@@ -1,0 +1,18 @@
+{
+  "npmScope": "picsa",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": "*",
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "picsa-e2e": {
+      "tags": []
+    },
+    "picsa": {
+      "tags": []
+    }
+  }
+}

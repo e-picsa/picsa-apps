@@ -1,0 +1,137 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "",
+  "projects": {
+    "picsa": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/workspace:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/picsa",
+      "sourceRoot": "apps/picsa/src",
+      "prefix": "picsa",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/picsa",
+            "index": "apps/picsa/src/index.html",
+            "main": "apps/picsa/src/main.ts",
+            "polyfills": "apps/picsa/src/polyfills.ts",
+            "tsConfig": "apps/picsa/tsconfig.app.json",
+            "assets": ["apps/picsa/src/favicon.ico", "apps/picsa/src/assets"],
+            "styles": ["apps/picsa/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/picsa/src/environments/environment.ts",
+                  "with": "apps/picsa/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "picsa:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "picsa:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "picsa:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/picsa/tsconfig.app.json",
+              "apps/picsa/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/picsa/jest.config.js",
+            "tsConfig": "apps/picsa/tsconfig.spec.json",
+            "setupFile": "apps/picsa/src/test-setup.ts"
+          }
+        }
+      }
+    },
+    "picsa-e2e": {
+      "root": "apps/picsa-e2e",
+      "sourceRoot": "apps/picsa-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/picsa-e2e/cypress.json",
+            "tsConfig": "apps/picsa-e2e/tsconfig.e2e.json",
+            "devServerTarget": "picsa:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "picsa:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "apps/picsa-e2e/tsconfig.e2e.json"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "warnings": {
+      "typescriptMismatch": false,
+      "versionMismatch": false
+    },
+    "defaultCollection": "@nrwl/angular"
+  },
+  "schematics": {
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "picsa"
+}
