@@ -1,0 +1,14 @@
+<div class="dot-value-container" s>
+  <div *ngFor="let dot of dotValueAllocation.large">
+    <img [class]="'dot large '+dot" [src]="'assets/img/budget/large-'+dot+'.png'">
+  </div>
+  <div *ngFor="let dot of dotValueAllocation.medium">
+    <img [class]="'dot medium '+dot" [src]="'assets/img/budget/medium-'+dot+'.png'">
+  </div>
+  <div *ngFor="let dot of dotValueAllocation.small">
+    <img [class]="'dot small '+dot" [src]="'assets/img/budget/small-'+dot+'.png'">
+  </div>
+  <div *ngFor="let dot of dotValueAllocation.half">
+    <img [class]="'dot half '+dot" [src]="'assets/img/budget/half-'+dot+'.png'">
+  </div>
+</div>

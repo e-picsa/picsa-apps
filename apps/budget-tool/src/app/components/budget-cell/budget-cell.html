@@ -1,0 +1,48 @@
+<div class="budget-cell-container" (click)="editCell()">
+  <div *ngIf="_cellData">
+    <div [ngSwitch]="type" style="height:100%">
+      <!-- inputs -->
+      <div *ngSwitchCase="'inputs'" style="display: flex; flex-wrap: wrap">
+        <div *ngFor="let card of _cellData">
+          <budget-card-image [class]="_cellData.length>1?'small':'medium'" [imageId]="card.id" [imageData]="card.customImg"></budget-card-image>
+          <budget-cell-value *ngIf="card.quantity && card.cost" [quantity]="card.quantity" [cost]="card.cost"></budget-cell-value>
+        </div>
+      </div>
+      <!-- family labour -->
+      <div *ngSwitchCase="'familyLabour'" style="display: flex; flex-wrap: wrap">
+        <div *ngFor="let card of _cellData">
+          <budget-cell-labour *ngIf="card.people && card.days" [people]="card.days" [days]="card.people"></budget-cell-labour>
+        </div>
+      </div>
+      <!-- outputs -->
+      <div *ngSwitchCase="'outputs'">
+        <div *ngFor="let card of _cellData">
+          <div style="display: flex">
+            <budget-card-image class="small" [imageId]="card.id" [imageData]="card.customImg"></budget-card-image>
+            <ion-badge class="output-badge">{{card.quantity}}</ion-badge>
+          </div>
+          <budget-cell-value *ngIf="card.quantity && card.cost" [quantity]="card.quantity" [cost]="card.cost"
+            [consumed]="card.consumed"></budget-cell-value>
+        </div>
+      </div>
+      <!-- produce consumed -->
+      <div *ngSwitchCase="'produceConsumed'">
+        <div *ngFor="let card of _cellData">
+          <div *ngIf="card.consumed" style="display: flex">
+            <budget-card-image class="small" [imageId]="card.id" [imageData]="card.customImg"></budget-card-image>
+            <ion-badge class="consumed-badge">{{card.consumed}}</ion-badge>
+          </div>
+        </div>
+      </div>
+      <!-- default (activities) -->
+      <div *ngSwitchDefault style="display: flex; flex-wrap: wrap">
+        <budget-card-image *ngFor="let card of _cellData" [class]="_cellData.length>1?'small':'medium'" [imageId]="card.id"
+          [imageData]="card.customImg"></budget-card-image>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!_cellData" class="add-cell-data">
+    <ion-icon name="add" class="add-cell-data-icon"></ion-icon>
+  </div>
+  <!-- *** future - only show add for produce consumed if there are outputs in the corresponding time period -->
+</div>

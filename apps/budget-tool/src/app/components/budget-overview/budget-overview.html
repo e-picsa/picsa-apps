@@ -1,0 +1,42 @@
+<div class="budget-container" id="budget" *ngIf="budget">
+  <!-- First column titles places vertically -->
+  <div class="time-period">
+    <div class="time-period-title cell top-row"></div>
+    <div [class]="'cell row-title '+title.label" *ngFor="let title of rowTitles">
+      <div>{{title.label}}</div>
+      <div *ngIf="title.type=='cashBalance'" class="cash-balance">
+        <div *ngFor="let dot of dotsLegend">
+          <div style="display: flex; font-size: small">
+            <div>
+              <img class="dot-value-image" [src]="'assets/img/budget/'+dot.key+'-positive.png'">
+            </div>
+            <div *ngIf="!editDotValue">= {{dot.value}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time periods calculated Vertically -->
+  <div style="display: flex; flex-basis: 100%" *ngIf="budgetUpdated">
+    <div class="time-period " *ngFor="let period of budget.periods.labels; let i = index">
+      <div class="time-period-title cell top-row">{{period}}</div>
+      <div *ngFor="let row of rowTitles" class="cell">
+        <div [ngSwitch]="row.type" style="height: 100%">
+          <!-- Cash Balance -->
+          <div *ngSwitchCase="'cashBalance'">
+            <div *ngIf="balance && balance[i]">
+              <div>{{period}}: {{balance[i].period}}</div>
+              <budget-cell-value quantity=1 [cost]="balance[i].period"></budget-cell-value>
+              <hr>
+              <div>running: {{balance[i].running}}</div>
+              <budget-cell-value quantity=1 [cost]="balance[i].running"></budget-cell-value>
+            </div>
+          </div>
+          <budget-cell *ngSwitchDefault [periodIndex]="i" [type]="row.type" [typeLabel]="row.label" [rowLabel]="period"
+            [cellData]="budget.data && budget.data[i] && budget.data[i][row.type] ? budget.data[i][row.type] : null"></budget-cell>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

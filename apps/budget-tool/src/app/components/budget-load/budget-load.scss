@@ -1,0 +1,24 @@
+budget-load {
+  .budget-load-container {
+    height: 100%;
+    background-color: white;
+    color: black;
+    display: flex;
+    flex-direction: column;
+  }
+  .saved-budgets-container {
+    overflow: auto;
+    max-height: 66vh;
+  }
+  .saved-details:hover {
+    font-weight: bold;
+  }
+  .item {
+    cursor: pointer;
+  }
+  #createNewBudget {
+    margin-top: 2em;
+    align-self: center;
+    min-width: 33%;
+  }
+}

@@ -1,0 +1,160 @@
+<div style="height: 100%">
+  <!-- <load-budget *ngIf="!(budget$ | async)"></load-budget> -->
+  <ion-slides #slides class="budget-slides" *ngIf="budget$ | async">
+    <!-- New budget enterprise select slide -->
+    <ion-slide class="budget-slide">
+      <div padding>
+        <h2>{{ "Type of Enterprise" | translate }}</h2>
+        <budget-meta-card
+          *ngFor="let type of enterpriseTypes"
+          valuePath="enterpriseType"
+          [card]="type"
+          type="enterprise"
+        ></budget-meta-card>
+        <div *ngIf="showIndividualEnterprises">
+          <h2>{{ "Select Enterprise" | translate }}</h2>
+          <budget-meta-card
+            *ngFor="let enterprise of filteredEnterprises"
+            valuePath="enterprise"
+            [card]="enterprise"
+            type="enterprise"
+          ></budget-meta-card>
+          <budget-new-card
+            *ngIf="(enterpriseType$ | async) == 'other'"
+            newCardType="enterprises"
+            type="enterprise"
+          ></budget-new-card>
+        </div>
+        <ion-button
+          color="primary-inverse"
+          [disabled]="!(enterprise$ | async) || !(enterpriseType$ | async)"
+          expand="block"
+          fill="outline"
+          slot="end"
+          shape="round"
+          (click)="nextSlide()"
+          >{{ "Continue" | translate }}
+          <ion-icon name="arrow-round-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-slide>
+    <!-- time periods select slide *** could be tidies or split *** -->
+    <ion-slide padding class="budget-slide" *ngIf="enterprise$ | async">
+      <h2>{{ "Time Periods" | translate }}</h2>
+      <div
+        *ngIf="budget.periods && budget.periods.labels"
+        class="time-period-table"
+      >
+        <div class="time-period" *ngFor="let period of budget.periods.labels">
+          {{ period | translate }}
+        </div>
+      </div>
+      <ion-list padding *ngIf="budget.periods">
+        <ion-item>
+          <ion-label>
+            <ion-icon name="calendar" slot="start"></ion-icon>
+            {{ "Measured in" | translate }}
+          </ion-label>
+          <ion-select
+            [(ngModel)]="budget.periods.scale"
+            (ionChange)="calculatePeriod()"
+          >
+            <ion-select-option
+              *ngFor="let scale of timescales"
+              [value]="scale"
+              >{{ scale | translate }}</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+        <ion-item
+          *ngIf="
+            budget.periods.scale == 'Days' || budget.periods.scale == 'Months'
+          "
+        >
+          <ion-label>
+            <ion-icon name="alarm" slot="start"></ion-icon>
+            {{ "Starting" | translate }}
+          </ion-label>
+          <ion-select
+            *ngIf="budget.periods.scale == 'Days'"
+            (ionChange)="calculatePeriod('Days')"
+            [(ngModel)]="budget.periods.starting"
+          >
+            <ion-select-option *ngFor="let day of days" [value]="day">{{
+              day | translate
+            }}</ion-select-option>
+          </ion-select>
+          <ion-select
+            *ngIf="budget.periods.scale == 'Months'"
+            (ionChange)="calculatePeriod('Months')"
+            [(ngModel)]="budget.periods.starting"
+          >
+            <ion-select-option *ngFor="let month of months" [value]="month">{{
+              month | translate
+            }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label inset>
+            <ion-icon name="calculator" slot="start"></ion-icon>
+            {{ "Total Periods" | translate }}
+          </ion-label>
+          <ion-input
+            (ionBlur)="calculatePeriod()"
+            (ionFocus)="clearPeriodInput()"
+            type="number"
+            [(ngModel)]="budget.periods.total"
+            class="input-right"
+          ></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button
+        color="primary-inverse"
+        [disabled]="!(enterprise$ | async)"
+        expand="block"
+        fill="outline"
+        slot="end"
+        shape="round"
+        (click)="nextSlide()"
+        >{{ "Continue" | translate }}
+        <ion-icon name="arrow-round-forward"></ion-icon>
+      </ion-button>
+    </ion-slide>
+    <!-- budget title slide -->
+    <ion-slide padding class="budget-slide" *ngIf="timescale$ | async">
+      <h2>{{ "Budget Title" | translate }}</h2>
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">
+            <ion-icon name="bookmark" slot="start"></ion-icon>
+            {{ "Enter a name for your budget" | translate }}
+          </ion-label>
+          <ion-input type="text" [(ngModel)]="budget.title"></ion-input>
+        </ion-item>
+        <ion-item style="margin-top:1em">
+          <ion-label position="floating">
+            <ion-icon name="create" slot="start"></ion-icon>
+            {{ "(optional) Description" | translate }}
+          </ion-label>
+          <ion-textarea
+            type="text"
+            [(ngModel)]="budget.description"
+          ></ion-textarea>
+        </ion-item>
+      </ion-list>
+      <ion-button
+        color="primary-inverse"
+        [disabled]="!budget.title"
+        expand="block"
+        fill="outline"
+        slot="end"
+        shape="round"
+        (click)="viewBudget()"
+      >
+        {{ "View Budget" | translate }}
+      </ion-button>
+    </ion-slide>
+  </ion-slides>
+</div>
+
+<!--  -->

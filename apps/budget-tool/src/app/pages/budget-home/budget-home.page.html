@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button text="Back" defaultHref="tools"></ion-back-button>
+    </ion-buttons>
+    <ion-title data-cy="title">{{ "Budget Tool" | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<!-- <budget-new-card *ngSwitchCase="'new-card'"></budget-new-card> -->
+
+<ion-content padding class="background-primary">
+  <div style="height: 100%">
+    <budget-overview
+      [style.display]="
+        (viewComponent$ | async) == 'overview' ? 'initial' : 'none'
+      "
+    ></budget-overview>
+    <budget-settings
+      [style.display]="
+        (viewComponent$ | async) == 'settings' ? 'initial' : 'none'
+      "
+    ></budget-settings>
+    <budget-card-list
+      [style.display]="
+        (viewComponent$ | async) == 'cell-edit' ? 'initial' : 'none'
+      "
+    ></budget-card-list>
+    <budget-load
+      [style.display]="(viewComponent$ | async) == 'load' ? 'initial' : 'none'"
+    ></budget-load>
+    <div
+      padding
+      [style.display]="
+        (viewComponent$ | async) == 'export' ? 'initial' : 'none'
+      "
+    >
+      Coming Soon...
+    </div>
+  </div>
+</ion-content>

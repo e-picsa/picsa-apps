@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { throwIfAlreadyLoaded } from '@picsa/utils';
 
 // app
-import { environment } from './environments/environment';
+import environment from './environments/environment';
 import { CORE_PROVIDERS, PlatformLanguageToken } from './services';
 import { LogService } from './services/log.service';
 

@@ -1,0 +1,10 @@
+<div class="family-labour-container">
+  <div *ngIf="daysArray">
+    <div *ngFor="let person of daysArray" style="display:flex">
+      <ion-icon name="person" class="labour-icon person-icon" style="margin-right:5px"></ion-icon>
+      <div *ngFor="let daysWorked of person">
+        <ion-icon name="clock" class="labour-icon day-icon"></ion-icon>
+      </div>
+    </div>
+  </div>
+</div>

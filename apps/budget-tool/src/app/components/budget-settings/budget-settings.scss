@@ -1,0 +1,63 @@
+budget-settings {
+  // fix slide formatting
+  ion-slide.budget-slide {
+    align-items: flex-start;
+  }
+  .slide-zoom {
+    height: 100%;
+    overflow: auto;
+  }
+  .saved-budgets {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+    color: black;
+  }
+  .large-icon {
+    font-size: xx-large;
+    font-weight: 700;
+  }
+  .item-inner {
+    font-size: larger;
+  }
+  .label {
+    color: #656464;
+  }
+  .column-button {
+    max-width: 400px;
+    margin: auto;
+  }
+  .button {
+    height: 7rem;
+  }
+  .select,
+  .text-input {
+    font-size: x-large;
+    color: #1f867d;
+  }
+  .time-period-table {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    margin: 0 16px 0 16px;
+    width: calc(100vw - 64px);
+    flex-wrap: wrap;
+    text-align: center;
+    border-left: 2px white solid;
+    border-top: 2px white solid;
+  }
+  .time-period {
+    flex-grow: 1;
+    border-right: 2px white solid;
+    border-bottom: 2px white solid;
+    border-collapse: collapse;
+    padding: 2px;
+    text-align: center;
+  }
+  .input-right {
+    input {
+      text-align: right;
+    }
+  }
+}

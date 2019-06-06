@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ title$ | async | translate }}</ion-title>
+    <!-- nav bar for main views -->
+    <div *ngIf="(viewComponent$ | async) != 'cell-edit'">
+      <ion-button
+        class="nav-icon"
+        icon-only
+        fill="clear"
+        (click)="setView(view)"
+        *ngFor="let view of views"
+        [disabled]="!budget"
+        [class.active]="(viewComponent$ | async) == view.component"
+      >
+        <ion-icon [name]="view.icon" [attr.icon]="view.icon"></ion-icon>
+      </ion-button>
+      <ion-button
+        [disabled]="shareDisabled"
+        slot="start"
+        fill="clear"
+        (click)="shareBudget()"
+        *ngIf="(viewComponent$ | async) == 'overview'"
+      >
+        <ion-icon name="share" attr.icon="share"></ion-icon>
+        {{ budgetDownloadMessage ? budgetDownloadMessage : "Share" }}
+      </ion-button>
+      <ion-button icon-only fill="clear" style="color: black" navPop>
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+    <!-- nav bar for cell edit mode -->
+    <div *ngIf="(viewComponent$ | async) == 'cell-edit'">
+      <ion-button fill="outline" slot="end" (click)="setView(views[0])">
+        {{ "Continue" | translate }}
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content> </ion-content>
