@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "module": "es2015",
+    "baseUrl": "./",
+    "paths": {
+      "@picsa/*": ["../../../libs/*"],
+      "@picsa/ionic": ["../../../xplat/ionic/index.ts"],
+      "@picsa/ionic/*": ["../../../xplat/ionic/*"],
+      "@picsa/web": ["../../../xplat/web/index.ts"],
+      "@picsa/web/*": ["../../../xplat/web/*"]
+    }
+  },
+  "exclude": ["test.ts", "**/*.spec.ts"]
+}

@@ -37,3 +37,23 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# nativescript
+hooks
+
+# libs
+libs/**/*.js
+libs/**/*.map
+libs/**/*.d.ts
+libs/**/*.metadata.json
+libs/**/*.ngfactory.ts
+libs/**/*.ngsummary.json
+      
+# xplat
+xplat/**/*.js
+xplat/**/*.map
+xplat/**/*.d.ts
+xplat/**/*.metadata.json
+xplat/**/*.ngfactory.ts
+xplat/**/*.ngsummary.json
+      

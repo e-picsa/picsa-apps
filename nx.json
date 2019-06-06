@@ -8,11 +8,32 @@
     "nx.json": "*"
   },
   "projects": {
-    "picsa-e2e": {
+    "libs": {
       "tags": []
     },
-    "picsa": {
+    "xplat": {
       "tags": []
+    },
+    "ionic-mobile": {
+      "tags": []
+    },
+    "budget-tool-e2e": {
+      "tags": []
+    },
+    "budget-tool": {
+      "tags": ["budgetTool"]
+    },
+    "station-data-e2e": {
+      "tags": []
+    },
+    "station-data": {
+      "tags": ["stationData"]
+    },
+    "extension-toolkit-e2e": {
+      "tags": []
+    },
+    "extension-toolkit": {
+      "tags": ["extensionToolkit"]
     }
   }
 }
