@@ -1,9 +1,9 @@
-import { Component, Input } from "@angular/core";
-import { BudgetToolProvider } from "../../store/budget-tool.provider";
+import { Component, Input } from '@angular/core';
+import { BudgetToolProvider } from '../../services/budget-tool.provider';
 
 @Component({
-  selector: "budget-cell-labour",
-  templateUrl: "budget-cell-labour.html"
+  selector: 'budget-cell-labour',
+  templateUrl: 'budget-cell-labour.html'
 })
 export class BudgetCellLabourComponent {
   @Input()
@@ -31,7 +31,7 @@ export class BudgetCellLabourComponent {
         daysArray.push(this._createArray(this._people, 1));
       }
     }
-    console.log("daysArray", daysArray);
+    console.log('daysArray', daysArray);
     this.daysArray = daysArray;
   }
   _createArray(length: number, value: any) {

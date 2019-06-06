@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { CanvasWhiteboardComponent } from 'ng2-canvas-whiteboard';
 import { Events, ModalController } from '@ionic/angular';
-import { BudgetToolProvider } from '../../store/budget-tool.provider';
+import { BudgetToolProvider } from '../../services/budget-tool.provider';
 import { AppState } from '@picsa/core/models';
 import { NgRedux } from '@angular-redux/store';
 // import { UserActions } from 'src/actions/user.actions';
@@ -21,9 +21,8 @@ export class BudgetNewCardPage {
     private modalCtrl: ModalController,
     private budgetToolProvider: BudgetToolProvider,
     private events: Events,
-    private ngRedux: NgRedux<AppState>
-  ) // private userActions: UserActions
-  {}
+    private ngRedux: NgRedux<AppState> // private userActions: UserActions
+  ) {}
 
   saveCard() {
     // *** TODO - get type from query params

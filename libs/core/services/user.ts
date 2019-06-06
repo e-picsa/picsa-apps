@@ -9,7 +9,7 @@ import { IFormResponse, IUser } from '../models/models';
 import { APP_VERSION } from '../environments/version';
 // unsure why, but can't import both from ./providers - not a big issue
 import { FileService } from './file-service';
-import { FirestoreStorageProvider } from './firestore';
+import { DBService } from './db.service';
 import { StorageProvider } from './storage';
 import { TranslationsProvider } from './translations';
 
@@ -24,7 +24,7 @@ export class UserProvider implements OnDestroy {
     private afAuth: AngularFireAuth,
     private storagePrvdr: StorageProvider,
     private actions: UserActions,
-    private firestorePrvdr: FirestoreStorageProvider,
+    private db: DBService,
     private translate: TranslateService,
     private filePrvdr: FileService,
     private utils: TranslationsProvider
@@ -39,7 +39,7 @@ export class UserProvider implements OnDestroy {
     this.initTranslate();
     await this.loadUser();
     await this.enableUserSync();
-    this.firestorePrvdr.syncCollections();
+    this.db.syncCollections();
     this.subscribeToFirebaseChanges();
   }
 
@@ -105,7 +105,7 @@ export class UserProvider implements OnDestroy {
         if (user) {
           await this.storagePrvdr.set('user', user);
           if (user && user.authenticated) {
-            this.firestorePrvdr.setDoc(`users/${user.id}`, user);
+            this.db.setDoc(`users/${user.id}`, user);
           }
           if (this.filePrvdr.isCordova) {
             this._backupUserToDisk();

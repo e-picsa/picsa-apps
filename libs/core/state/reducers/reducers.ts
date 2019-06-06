@@ -10,8 +10,8 @@ import { AppState } from '../../models';
 
 export const rootReducer: Reducer<AppState> = combineReducers({
   user: UserReducer,
-  // climate: ClimateToolReducer,
-  // budget: BudgetToolReducer,
+  climate: ClimateToolReducer,
+  budget: BudgetToolReducer,
   data: DataReducer,
   platform: PlatformReducer,
   router: routerReducer

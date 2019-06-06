@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'picsa-root',
+  selector: 'picsa-budget',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

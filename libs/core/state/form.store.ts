@@ -5,11 +5,7 @@ import { toJS } from 'mobx';
 import { Injectable } from '@angular/core';
 import { IForm, IFormResponse } from '../models';
 import { DataStore } from './data.store';
-import {
-  StorageProvider,
-  UserProvider,
-  FirestoreStorageProvider
-} from '../services';
+import { StorageProvider, UserProvider, DBService } from '../services';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +33,7 @@ export class FormStore extends DataStore {
   constructor(
     storagePrvdr: StorageProvider,
     private userPrvdr: UserProvider,
-    private firestorePrvdr: FirestoreStorageProvider
+    private db: DBService
   ) {
     super(storagePrvdr);
     this.init();
@@ -54,7 +50,7 @@ export class FormStore extends DataStore {
     // add to user forms
     this.userPrvdr.saveFormResponse(this.activeForm._key, response);
     // add to firebase forms
-    this.firestorePrvdr.addToCollection(
+    this.db.addToCollection(
       `forms/${this.activeForm._key}/submissions`,
       response,
       response._key

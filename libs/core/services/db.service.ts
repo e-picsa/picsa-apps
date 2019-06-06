@@ -5,7 +5,7 @@ import { StorageProvider } from './storage';
 import storageCollections from './storage.data';
 
 @Injectable({ providedIn: 'root' })
-export class FirestoreStorageProvider {
+export class DBService {
   constructor(
     public db: AngularFirestore,
     private actions: DataActions,

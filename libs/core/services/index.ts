@@ -7,7 +7,7 @@ export * from './log.service';
 export * from './window.service';
 export * from './tokens';
 export * from './translations';
-export * from './firestore';
+export * from './db.service';
 export * from './storage';
 export * from './user';
 export * from './print';

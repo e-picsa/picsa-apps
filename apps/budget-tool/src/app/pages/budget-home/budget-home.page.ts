@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { select } from '@angular-redux/store';
 import { IBudget, IBudgetView } from '../../models/budget-tool.models';
@@ -11,14 +11,14 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './budget-home.page.html',
   styleUrls: ['./budget-home.page.scss']
 })
-export class BudgetHomePage {
+export class BudgetHomePage implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
-  @select(['budget', 'active'])
-  readonly budget$: Observable<IBudget>;
-  @select(['budget', 'view', 'component'])
-  readonly viewComponent$: Observable<string>;
-  @select(['budget', 'view', 'title'])
-  readonly title$: Observable<string>;
+  // @select(['budget', 'active'])
+  // readonly budget$: Observable<IBudget>;
+  // @select(['budget', 'view', 'component'])
+  // readonly viewComponent$: Observable<string>;
+  // @select(['budget', 'view', 'title'])
+  // readonly title$: Observable<string>;
   budget: IBudget;
   views: IBudgetView[] = [
     { component: 'overview', title: null, icon: 'apps' },
@@ -36,9 +36,9 @@ export class BudgetHomePage {
     // show load screen when first opened
     this.actions.setBudgetView({ component: 'load', title: 'Budget Tool' });
     this.actions.setActiveBudget(null);
-    this.budget$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(budget => (this.budget = budget));
+    // this.budget$
+    //   .pipe(takeUntil(this.componentDestroyed))
+    //   .subscribe(budget => (this.budget = budget));
   }
   ngOnDestroy() {
     this.componentDestroyed.next();
@@ -55,7 +55,7 @@ export class BudgetHomePage {
       title: title,
       meta: null
     });
-    if (view.component == 'overview') {
+    if (view.component === 'overview') {
       this.events.publish('calculate:budget');
     }
   }

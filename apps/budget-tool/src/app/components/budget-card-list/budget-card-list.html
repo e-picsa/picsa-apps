@@ -1,19 +1,30 @@
 <!-- standard list -->
-<div class="editor-container" padding *ngIf="type!='produceConsumed'">
-  <h2>{{'Select cards' | translate}}</h2>
+<div class="editor-container" padding *ngIf="type != 'produceConsumed'">
+  <h2>{{ 'Select cards' | translate }}</h2>
   <div style="display: flex; flex-wrap: wrap" *ngIf="cards">
-    <budget-data-card *ngFor="let card of cards" [card]="card" [type]="type"></budget-data-card>
-    <budget-new-card [newCardType]="type" *ngIf="type!='familyLabour' && type!='produceConsumed'"></budget-new-card>
+    <picsa-budget-data-card
+      *ngFor="let card of cards"
+      [card]="card"
+      [type]="type"
+    ></picsa-budget-data-card>
+    <picsa-budget-new-card
+      [newCardType]="type"
+      *ngIf="type != 'familyLabour' && type != 'produceConsumed'"
+    ></picsa-budget-new-card>
   </div>
 </div>
 
 <!-- produce consumed list -->
-<div class="editor-container" padding *ngIf="type=='produceConsumed'">
-  <h2>{{'Produce Consumed' | translate}}</h2>
+<div class="editor-container" padding *ngIf="type == 'produceConsumed'">
+  <h2>{{ 'Produce Consumed' | translate }}</h2>
   <div style="display: flex; flex-wrap: wrap" *ngIf="cards">
-    <budget-data-card *ngFor="let card of cards" [card]="card" [type]="'produceConsumed'"></budget-data-card>
+    <picsa-budget-data-card
+      *ngFor="let card of cards"
+      [card]="card"
+      [type]="'produceConsumed'"
+    ></picsa-budget-data-card>
   </div>
   <div *ngIf="!cards">
-    {{'There are no outputs to consume' | translate}}
+    {{ 'There are no outputs to consume' | translate }}
   </div>
 </div>

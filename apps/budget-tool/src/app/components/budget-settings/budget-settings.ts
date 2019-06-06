@@ -1,5 +1,5 @@
 import { NgRedux, select } from '@angular-redux/store';
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild, OnInit } from '@angular/core';
 import { Events, IonSlides } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -11,13 +11,13 @@ import {
   IBudgetCard,
   ICustomBudgetCard
 } from '../../models/budget-tool.models';
-import { BudgetToolProvider } from '../../store/budget-tool.provider';
+import { BudgetToolProvider } from '../../services/budget-tool.provider';
 
 @Component({
   selector: 'picsa-budget-settings',
   templateUrl: 'budget-settings.html'
 })
-export class BudgetSettingsComponent implements OnDestroy {
+export class BudgetSettingsComponent implements OnDestroy, OnInit {
   private componentDestroyed: Subject<any> = new Subject();
   // budget property observers
   @select(['budget', 'active', 'enterpriseType'])
@@ -143,11 +143,11 @@ export class BudgetSettingsComponent implements OnDestroy {
         return e.group === type;
       });
       this.filteredEnterprises = this._sortByField(enterprises, 'name');
-      if (type == 'other') {
+      if (type === 'other') {
         this.showIndividualEnterprises = true;
       } else {
         // when only one result set it as type
-        if (enterprises.length == 1) {
+        if (enterprises.length === 1) {
           this.budgetPrvdr.patchBudget('enterprise', enterprises[0].id);
         } else {
           // otherwise set enterprise as null (if not already defined)
@@ -196,24 +196,24 @@ export class BudgetSettingsComponent implements OnDestroy {
     }
     console.log('calculate period', timescale);
     let arr = [];
-    if (timescale == 'Months') {
+    if (timescale === 'Months') {
       budget.periods.total = total ? total : 12;
       budget.periods.starting = MONTHS.includes(starting)
         ? starting
         : MONTHS[0];
       arr = this.calculatePeriodMonths(total, starting);
     }
-    if (timescale == 'Days') {
+    if (timescale === 'Days') {
       budget.periods.starting = DAYS.includes(starting) ? starting : 'Monday';
       budget.periods.total = total ? total : 7;
       arr = this.calculatePeriodDays(total, starting);
     }
-    if (timescale == 'Weeks') {
+    if (timescale === 'Weeks') {
       budget.periods.starting = null;
       budget.periods.total = 4;
       arr = this.calculatePeriodConsecutive(total, 'week');
     }
-    if (timescale == 'none') {
+    if (timescale === 'none') {
       arr = this.calculatePeriodConsecutive(total);
     }
     budget.periods.labels = arr;

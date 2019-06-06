@@ -2,20 +2,16 @@ import { NgRedux, select } from '@angular-redux/store';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { BudgetToolActions } from './budget-tool.actions';
+import { BudgetToolActions } from '../store/budget-tool.actions';
 import {
   IBudget,
   IBudgetCard,
   IBudgetDotValues,
   ICustomBudgetCard
 } from '../models/budget-tool.models';
-import { budgetMeta } from './data';
+import { budgetMeta } from '../store/data';
 import { AppState } from '@picsa/core/models';
-import {
-  FirestoreStorageProvider,
-  StorageProvider,
-  UserProvider
-} from '@picsa/core/services';
+import { StorageProvider, UserProvider, DBService } from '@picsa/core/services';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetToolProvider implements OnDestroy {
@@ -24,7 +20,7 @@ export class BudgetToolProvider implements OnDestroy {
   budget$: Observable<IBudget>;
   dotValues: IBudgetDotValues;
   constructor(
-    public firestorePrvdr: FirestoreStorageProvider,
+    public db: DBService,
     public userPrvdr: UserProvider,
     private actions: BudgetToolActions,
     private storagePrvdr: StorageProvider,
@@ -58,7 +54,7 @@ export class BudgetToolProvider implements OnDestroy {
     this.budget$.pipe(takeUntil(this.componentDestroyed)).subscribe(budget => {
       if (budget && budget.title) {
         if (!budget._key) {
-          budget._key = this.firestorePrvdr.db.createId();
+          budget._key = this.db.db.createId();
         }
         this.saveBudget(budget);
       }
@@ -96,7 +92,7 @@ export class BudgetToolProvider implements OnDestroy {
   // NOTE this is just for main card types and not custom (which is stored to user)
   async syncData() {
     for (const endpoint of Object.keys(budgetMeta)) {
-      const collection = this.firestorePrvdr.getCollection(
+      const collection = this.db.getCollection(
         `budgetTool/meta/${endpoint}`
       ) as Observable<ICustomBudgetCard[]>;
       collection.subscribe(data => {
@@ -135,10 +131,7 @@ export class BudgetToolProvider implements OnDestroy {
       const data: IBudgetCard[] = budgetMeta[endpoint];
       data.forEach(datum => {
         const docId = datum.id;
-        this.firestorePrvdr.setDoc(
-          `budgetTool/meta/${endpoint}/${docId}`,
-          datum
-        );
+        this.db.setDoc(`budgetTool/meta/${endpoint}/${docId}`, datum);
       });
     }
   }
