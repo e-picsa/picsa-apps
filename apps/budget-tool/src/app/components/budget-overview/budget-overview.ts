@@ -13,7 +13,7 @@ import {
 } from '../../models/budget-tool.models';
 
 @Component({
-  selector: 'budget-overview',
+  selector: 'picsa-budget-overview',
   templateUrl: 'budget-overview.html'
 })
 export class BudgetOverviewComponent implements OnDestroy {
@@ -77,10 +77,10 @@ export class BudgetOverviewComponent implements OnDestroy {
   }
 
   getIndex(array, card) {
-    let index: number = -1;
+    let index = -1;
     let i = 0;
     for (const item of array) {
-      if (item.ID == card.ID) {
+      if (item.ID === card.ID) {
         index = i;
       }
       i++;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { DataActions } from '../actions/data.actions';
+import { DataActions } from '../state/actions/data.actions';
 import { StorageProvider } from './storage';
 import storageCollections from './storage.data';
 

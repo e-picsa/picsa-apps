@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button text="Back" defaultHref="tools"></ion-back-button>
     </ion-buttons>
-    <ion-title data-cy="title">{{ "Budget Tool" | translate }}</ion-title>
+    <ion-title data-cy="title">{{ 'Budget Tool' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,24 +11,24 @@
 
 <ion-content padding class="background-primary">
   <div style="height: 100%">
-    <budget-overview
+    <picsa-budget-overview
       [style.display]="
         (viewComponent$ | async) == 'overview' ? 'initial' : 'none'
       "
-    ></budget-overview>
-    <budget-settings
+    ></picsa-budget-overview>
+    <picsa-budget-settings
       [style.display]="
         (viewComponent$ | async) == 'settings' ? 'initial' : 'none'
       "
-    ></budget-settings>
-    <budget-card-list
+    ></picsa-budget-settings>
+    <picsa-budget-card-list
       [style.display]="
         (viewComponent$ | async) == 'cell-edit' ? 'initial' : 'none'
       "
-    ></budget-card-list>
-    <budget-load
+    ></picsa-budget-card-list>
+    <picsa-budget-load
       [style.display]="(viewComponent$ | async) == 'load' ? 'initial' : 'none'"
-    ></budget-load>
+    ></picsa-budget-load>
     <div
       padding
       [style.display]="
