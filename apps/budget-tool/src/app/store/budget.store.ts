@@ -1,4 +1,8 @@
-import { IBudget, IEnterprise } from '../models/budget-tool.models';
+import {
+  IBudget,
+  IEnterprise,
+  IBudgetCard
+} from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
@@ -14,9 +18,8 @@ export class BudgetStore {
   @observable activeBudget: IBudget;
   @observable enterprises: IEnterprise[];
   @observable filteredEnterprises: IEnterprise[];
-  @computed get enterpriseTypes(): string[] {
-    const distinct = [...new Set(this.enterprises.map(e => e.group))];
-    return distinct;
+  @computed get enterpriseTypes(): IBudgetCard[] {
+    return this._getEnterpriseTypes();
   }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
@@ -36,6 +39,7 @@ export class BudgetStore {
     this.filteredEnterprises = [
       ...this.enterprises.filter(e => e.group === group)
     ];
+    console.log('enterprises filtered', group);
   }
 
   async loadBudget(budget: IBudget) {
@@ -75,5 +79,14 @@ export class BudgetStore {
     // });
     // await this.budgetPrvdr.saveBudget(budget);
     // await toast.present();
+  }
+
+  // reduce list of enterprises to distinct types and pass back in card format
+  private _getEnterpriseTypes(): IBudgetCard[] {
+    const distinct = [...new Set(this.enterprises.map(e => e.group))];
+    return distinct.map(e => ({
+      id: e,
+      name: e
+    }));
   }
 }

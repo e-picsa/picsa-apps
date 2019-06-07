@@ -5,10 +5,7 @@ import { INITIAL_STATE } from '@picsa/core/models';
 import { BudgetToolState, IBudgetCard } from '../models/budget-tool.models';
 type StandardAction = FluxStandardAction<any, any>;
 
-export function BudgetToolReducer(
-  state: BudgetToolState = INITIAL_STATE.budget,
-  action: Action
-) {
+export function BudgetToolReducer(state: any = {}, action: Action) {
   switch (action.type) {
     case BudgetToolActions.SET_ACTIVE_BUDGET:
       const updatedBudget = action as StandardAction;

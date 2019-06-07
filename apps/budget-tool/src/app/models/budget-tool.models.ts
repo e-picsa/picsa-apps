@@ -74,13 +74,14 @@ interface IPeriods {
 export interface IBudgetCard {
   name: string;
   id: string;
-  group?: string;
+  group?: enterpriseGroup;
   isSelected?: boolean;
   selectedIndex?: number;
   quantity?: number;
   consumed?: number;
   cost?: number;
 }
+type enterpriseGroup = string;
 
 export interface ICustomBudgetCard extends IBudgetCard {
   type: string;

@@ -90,20 +90,20 @@ export class BudgetOverviewComponent implements OnDestroy {
 
   calculateBalance() {
     // total for current period
-    const data = this.ngRedux.getState().budget.active.data;
-    const totals = {};
-    let runningTotal = 0;
-    for (const key in data) {
-      if (data.hasOwnProperty(key)) {
-        const periodTotal = this._calculatePeriodTotal(data[key]);
-        runningTotal = runningTotal + periodTotal;
-        totals[key] = {
-          period: periodTotal,
-          running: runningTotal
-        };
-      }
-    }
-    this.balance = totals;
+    // const data = this.store.activeBudget.data;
+    // const totals = {};
+    // let runningTotal = 0;
+    // for (const key in data) {
+    //   if (data.hasOwnProperty(key)) {
+    //     const periodTotal = this._calculatePeriodTotal(data[key]);
+    //     runningTotal = runningTotal + periodTotal;
+    //     totals[key] = {
+    //       period: periodTotal,
+    //       running: runningTotal
+    //     };
+    //   }
+    // }
+    // this.balance = totals;
   }
   _calculatePeriodTotal(period: IBudgetPeriodData) {
     let balance = 0;

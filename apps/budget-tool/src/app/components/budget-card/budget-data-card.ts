@@ -7,6 +7,7 @@ import { AppState } from '@picsa/core/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { IBudgetCard, IBudgetViewMeta } from '../../models/budget-tool.models';
 import { BudgetCardComponent } from './budget-card';
+import { BudgetStore } from '../../store/budget.store';
 
 /*
 Budget data cards are used to assign card value to nested budget data (e.g. week 1 activities)
@@ -25,16 +26,17 @@ export class BudgetDataCardComponent extends BudgetCardComponent
   constructor(
     public ngRedux: NgRedux<AppState>,
     public actions: BudgetToolActions,
-    private events: Events
+    private events: Events,
+    public store: BudgetStore
   ) {
     super(actions);
   }
 
   ngOnInit() {
-    this.viewMeta$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(meta => (this.viewMeta = meta));
-    this.viewMeta = this.ngRedux.getState().budget.view.meta;
+    // this.viewMeta$
+    //   .pipe(takeUntil(this.componentDestroyed))
+    //   .subscribe(meta => (this.viewMeta = meta));
+    // this.viewMeta = this.ngRedux.getState().budget.view.meta;
     this.selected = this.card.isSelected;
   }
   ngOnDestroy() {
@@ -43,7 +45,7 @@ export class BudgetDataCardComponent extends BudgetCardComponent
   }
 
   cardClicked() {
-    const budget = this.ngRedux.getState().budget.active;
+    const budget = this.store.activeBudget;
     this.selected ? this.unselectCard(budget) : this.updateCard(budget);
     this.selected = !this.selected;
   }
@@ -53,7 +55,7 @@ export class BudgetDataCardComponent extends BudgetCardComponent
     if (type === 'inputs') {
       this.card = this._makeValuesNegative(this.card as IBudgetCard);
     }
-    const budget = this.ngRedux.getState().budget.active;
+    const budget = this.store.activeBudget;
     this.updateCard(budget);
   }
 

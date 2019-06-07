@@ -1,6 +1,6 @@
-import { IBudget } from '@picsa/core';
 import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
 import REGIONAL_SETTINGS from '@picsa/core/environments/region';
+import { IBudget } from '../models/budget-tool.models';
 
 const BUDGET_DEFAULT_SETTINGS = {
   periods: {

@@ -72,13 +72,13 @@ export class BudgetToolProvider implements OnDestroy {
 
   // change single budget key/value
   patchBudget(key, val) {
-    setTimeout(() => {
-      const budget = this.ngRedux.getState().budget.active;
-      if (budget) {
-        budget[key] = val;
-        this.actions.setActiveBudget(budget);
-      }
-    }, 150);
+    // setTimeout(() => {
+    //   const budget = this.store.activeBudget;
+    //   if (budget) {
+    //     budget[key] = val;
+    //     this.actions.setActiveBudget(budget);
+    //   }
+    // }, 150);
   }
 
   /*

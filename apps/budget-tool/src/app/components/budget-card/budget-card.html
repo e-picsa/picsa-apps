@@ -1,12 +1,11 @@
 <ion-card [class]="'budget-card selectable ' + type" [attr.selected]="selected">
   <div style="display: flex">
     <div style="width:100%">
-      <budget-card-image
+      <picsa-budget-card-image
         [imageId]="card.id"
         [imageData]="card.customImg"
         (click)="cardClicked()"
-        [type]="type"
-      ></budget-card-image>
+      ></picsa-budget-card-image>
     </div>
     <div *ngIf="selected" id="budgetTypeCard">
       <div [ngSwitch]="type">

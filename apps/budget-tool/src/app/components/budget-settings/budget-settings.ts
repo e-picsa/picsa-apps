@@ -187,36 +187,36 @@ export class BudgetSettingsComponent implements OnDestroy, OnInit {
   }
 
   calculatePeriod(timescale?) {
-    const budget = this.ngRedux.getState().budget.active;
-    // return array representing time periods
-    const starting = budget.periods.starting;
-    const total = budget.periods.total;
-    if (!timescale) {
-      timescale = budget.periods.scale;
-    }
-    console.log('calculate period', timescale);
-    let arr = [];
-    if (timescale === 'Months') {
-      budget.periods.total = total ? total : 12;
-      budget.periods.starting = MONTHS.includes(starting)
-        ? starting
-        : MONTHS[0];
-      arr = this.calculatePeriodMonths(total, starting);
-    }
-    if (timescale === 'Days') {
-      budget.periods.starting = DAYS.includes(starting) ? starting : 'Monday';
-      budget.periods.total = total ? total : 7;
-      arr = this.calculatePeriodDays(total, starting);
-    }
-    if (timescale === 'Weeks') {
-      budget.periods.starting = null;
-      budget.periods.total = 4;
-      arr = this.calculatePeriodConsecutive(total, 'week');
-    }
-    if (timescale === 'none') {
-      arr = this.calculatePeriodConsecutive(total);
-    }
-    budget.periods.labels = arr;
+    // const budget = this.store.activeBudget;
+    // // return array representing time periods
+    // const starting = budget.periods.starting;
+    // const total = budget.periods.total;
+    // if (!timescale) {
+    //   timescale = budget.periods.scale;
+    // }
+    // console.log('calculate period', timescale);
+    // let arr = [];
+    // if (timescale === 'Months') {
+    //   budget.periods.total = total ? total : 12;
+    //   budget.periods.starting = MONTHS.includes(starting)
+    //     ? starting
+    //     : MONTHS[0];
+    //   arr = this.calculatePeriodMonths(total, starting);
+    // }
+    // if (timescale === 'Days') {
+    //   budget.periods.starting = DAYS.includes(starting) ? starting : 'Monday';
+    //   budget.periods.total = total ? total : 7;
+    //   arr = this.calculatePeriodDays(total, starting);
+    // }
+    // if (timescale === 'Weeks') {
+    //   budget.periods.starting = null;
+    //   budget.periods.total = 4;
+    //   arr = this.calculatePeriodConsecutive(total, 'week');
+    // }
+    // if (timescale === 'none') {
+    //   arr = this.calculatePeriodConsecutive(total);
+    // }
+    // budget.periods.labels = arr;
   }
   calculatePeriodConsecutive(total, prefix?) {
     if (!prefix) {

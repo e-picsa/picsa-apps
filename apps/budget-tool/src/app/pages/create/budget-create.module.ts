@@ -6,6 +6,7 @@ import { BudgetCreatePage } from './budget-create.page';
 import { PicsaMaterialModule } from '../../material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MobxAngularModule } from 'mobx-angular';
+import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 
 const routes: Routes = [
   {
@@ -21,7 +22,8 @@ const routes: Routes = [
     PicsaMaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    MobxAngularModule
+    MobxAngularModule,
+    BudgetToolComponentsModule
   ],
   declarations: [BudgetCreatePage]
 })

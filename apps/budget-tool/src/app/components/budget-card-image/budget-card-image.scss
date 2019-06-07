@@ -1,28 +1,26 @@
-budget-card-image {
-  img.card-image,
-  .card-image-holder {
-    height: 100px;
-    width: 100px;
-    object-fit: contain;
-    margin: auto;
-  }
-  img.card-image.add {
-    height: 60px;
-    width: 60px;
-    margin-top: 20px;
-  }
-  .card-image-holder {
-    margin: 2px;
-  }
-  img.error-not-fixed {
-    opacity: 0;
-  }
-  img.error-fixed {
-    opacity: 1;
-  }
+img.card-image,
+.card-image-holder {
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+  margin: auto;
+}
+img.card-image.add {
+  height: 60px;
+  width: 60px;
+  margin-top: 20px;
+}
+.card-image-holder {
+  margin: 2px;
+}
+img.error-not-fixed {
+  opacity: 0;
+}
+img.error-fixed {
+  opacity: 1;
 }
 
-budget-card-image.small {
+.small {
   img.card-image,
   .card-image-holder {
     height: 45px;
@@ -30,7 +28,7 @@ budget-card-image.small {
   }
 }
 
-budget-card-image.medium {
+.medium {
   img.card-image,
   .card-image-holder {
     height: 70px;

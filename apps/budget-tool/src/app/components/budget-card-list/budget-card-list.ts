@@ -11,6 +11,7 @@ import {
   IBudgetPeriodData,
   IBudgetViewMeta
 } from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'picsa-budget-card-list',
@@ -29,7 +30,8 @@ export class BudgetCardListComponent implements OnDestroy, OnInit {
   constructor(
     // private NgRedux: NgRedux<AppState>,
     private actions: BudgetToolActions,
-    private events: Events
+    private events: Events,
+    public store: BudgetStore
   ) {}
   // *** reviewed all this in a rush, need to work on
   ngOnInit() {
@@ -44,35 +46,33 @@ export class BudgetCardListComponent implements OnDestroy, OnInit {
   // check if the given time period index exists on budget data and card type within period
   // if not intialise values
   _checkBudgetDataPath(periodIndex, type) {
-    // const budget: IBudget = this.NgRedux.getState().budget.active;
-    // let dispatchUpdate;
-    // if (!budget.data[periodIndex]) {
-    //   budget.data[periodIndex] = {};
-    //   dispatchUpdate = true;
-    // }
-    // if (!budget.data[periodIndex][type]) {
-    //   budget.data[periodIndex][type] = {};
-    //   dispatchUpdate = true;
-    // }
-    // // only trigger update if things have changed
-    // if (dispatchUpdate) {
-    //   this.actions.setActiveBudget(budget);
-    // }
+    const budget: IBudget = this.store.activeBudget;
+    let dispatchUpdate;
+    if (!budget.data[periodIndex]) {
+      budget.data[periodIndex] = {};
+      dispatchUpdate = true;
+    }
+    if (!budget.data[periodIndex][type]) {
+      budget.data[periodIndex][type] = {};
+      dispatchUpdate = true;
+    }
+    // only trigger update if things have changed
+    if (dispatchUpdate) {
+      this.actions.setActiveBudget(budget);
+    }
   }
 
   // every time view changed recalculate what should be shown
   // *** could be optimised better but multiple subscribers proves difficult
   _generateCardList(type: string, periodIndex: string) {
-    // this.type = type;
-    // try {
-    //   const periodData = this.NgRedux.getState().budget.active.data[
-    //     periodIndex
-    //   ][type];
-    //   this.periodData = periodData;
-    // } catch (error) {
-    //   // no data for period
-    // }
-    // this.updateCardList();
+    this.type = type;
+    try {
+      const periodData = this.store.activeBudget.data[periodIndex][type];
+      this.periodData = periodData;
+    } catch (error) {
+      // no data for period
+    }
+    this.updateCardList();
   }
 
   // watch for updates to custom cards and add to list accordingly
@@ -149,7 +149,7 @@ export class BudgetCardListComponent implements OnDestroy, OnInit {
   // return list of outputs for current period (used for produce consumed)
   getListOfPeriodOutputs() {
     // try {
-    //   const outputsJson = this.NgRedux.getState().budget.active.data[
+    //   const outputsJson = this.store.activeBudget.data[
     //     this.viewMeta.periodIndex
     //   ].outputs;
     //   return Object.values(outputsJson);
