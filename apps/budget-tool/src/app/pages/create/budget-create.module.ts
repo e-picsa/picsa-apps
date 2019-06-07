@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import { IonicModule } from '@ionic/angular';
-
 import { BudgetCreatePage } from './budget-create.page';
+import { PicsaMaterialModule } from '../../material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MobxAngularModule } from 'mobx-angular';
 
 const routes: Routes = [
   {
@@ -17,9 +17,11 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    RouterModule.forChild(routes),
+    PicsaMaterialModule,
     FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes)
+    ReactiveFormsModule,
+    MobxAngularModule
   ],
   declarations: [BudgetCreatePage]
 })

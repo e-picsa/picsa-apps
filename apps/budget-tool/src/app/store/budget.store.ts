@@ -1,47 +1,41 @@
-import REGIONAL_SETTINGS from '@picsa/core/environments/region';
-import { IBudget } from '../models/budget-tool.models';
-import {
-  BUDGET_API_VERSION,
-  checkForBudgetUpgrades
-} from '../utils/budget.upgrade';
-import { defaults } from './data';
+import { IBudget, IEnterprise } from '../models/budget-tool.models';
+import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
-import { observable, action } from 'mobx-angular';
+import { observable, action, computed } from 'mobx-angular';
 import { TranslationsProvider } from '@picsa/core/services';
+import { NEW_BUDGET_TEMPLATE } from './templates';
+import { BUDGET_DATA } from './budget.data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetStore {
+  @observable test = 'hello';
   @observable activeBudget: IBudget;
+  @observable enterprises: IEnterprise[];
+  @observable filteredEnterprises: IEnterprise[];
+  @computed get enterpriseTypes(): string[] {
+    const distinct = [...new Set(this.enterprises.map(e => e.group))];
+    return distinct;
+  }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     console.log('active budget', this.activeBudget);
   }
-  constructor(private translations: TranslationsProvider) {}
+  constructor(private translations: TranslationsProvider) {
+    this.enterprises = BUDGET_DATA.enterprises;
+  }
 
   createNewBudget() {
-    const budget: IBudget = {
-      apiVersion: BUDGET_API_VERSION,
-      archived: false,
-      created: new Date().toISOString(),
-      data: {},
-      description: null,
-      enterprise: null,
-      _key: null,
-      periods: defaults.periods.days,
-      title: null,
-      scale: null,
-      enterpriseType: null,
-      dotValues: REGIONAL_SETTINGS.currencyCounters
-    };
+    const budget: IBudget = NEW_BUDGET_TEMPLATE;
     this.setActiveBudget(budget);
-    // this.actions.setBudgetView({
-    //   component: "settings",
-    //   title: "Settings"
-    // });
     // publish event to force card list update
     // this.events.publish("load:budget");
+  }
+  filterEnterprises(group: string) {
+    this.filteredEnterprises = [
+      ...this.enterprises.filter(e => e.group === group)
+    ];
   }
 
   async loadBudget(budget: IBudget) {

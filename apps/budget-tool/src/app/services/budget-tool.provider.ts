@@ -9,7 +9,7 @@ import {
   IBudgetDotValues,
   ICustomBudgetCard
 } from '../models/budget-tool.models';
-import { budgetMeta } from '../store/data';
+import { BUDGET_DATA } from '../store/budget.data';
 import { AppState } from '@picsa/core/models';
 import { StorageProvider, UserProvider, DBService } from '@picsa/core/services';
 
@@ -41,11 +41,11 @@ export class BudgetToolProvider implements OnDestroy {
   async init() {
     const budgetData = await this.storagePrvdr.storage.get('_budgetMeta');
     if (!budgetData) {
-      await this.storagePrvdr.storage.set('_budgetMeta', budgetMeta);
+      await this.storagePrvdr.storage.set('_budgetMeta', BUDGET_DATA);
       this.init();
     } else {
-      console.log('setting budget meta', budgetMeta);
-      this.actions.setBudgetMeta(budgetMeta);
+      console.log('setting budget meta', BUDGET_DATA);
+      this.actions.setBudgetMeta(BUDGET_DATA);
     }
   }
 
@@ -91,7 +91,7 @@ export class BudgetToolProvider implements OnDestroy {
   // watch afs data endpoints and reflect changes to redux and localstorage
   // NOTE this is just for main card types and not custom (which is stored to user)
   async syncData() {
-    for (const endpoint of Object.keys(budgetMeta)) {
+    for (const endpoint of Object.keys(BUDGET_DATA)) {
       const collection = this.db.getCollection(
         `budgetTool/meta/${endpoint}`
       ) as Observable<ICustomBudgetCard[]>;
@@ -127,8 +127,8 @@ export class BudgetToolProvider implements OnDestroy {
   // instead of usual sync from db to local, this can be used to populate the main db from local
   // NOTE, THIS OVERRIDES EXISTING DATA ON MATCH, ONLY USE IF YOU KNOW WHAT YOU ARE DOING
   async populateDB() {
-    for (const endpoint of Object.keys(budgetMeta)) {
-      const data: IBudgetCard[] = budgetMeta[endpoint];
+    for (const endpoint of Object.keys(BUDGET_DATA)) {
+      const data: IBudgetCard[] = BUDGET_DATA[endpoint];
       data.forEach(datum => {
         const docId = datum.id;
         this.db.setDoc(`budgetTool/meta/${endpoint}/${docId}`, datum);

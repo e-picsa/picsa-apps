@@ -6,8 +6,15 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () =>
-      import('./pages/budget-home/budget-home.module').then(
+      import('./pages/home/budget-home.module').then(
         mod => mod.BudgetHomePageModule
+      )
+  },
+  {
+    path: 'create',
+    loadChildren: () =>
+      import('./pages/create/budget-create.module').then(
+        mod => mod.BudgetCreatePageModule
       )
   }
 ];

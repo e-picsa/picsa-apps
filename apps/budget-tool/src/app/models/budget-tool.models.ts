@@ -21,11 +21,11 @@ export interface IBudget {
 }
 
 export interface IBudgetMeta {
-  templates?: IBudget[];
-  activities?: IBudgetCard[];
-  enterprises?: IBudgetCard[];
-  outputs?: IBudgetCard[];
-  inputs?: IBudgetCard[];
+  activities: IBudgetCard[];
+  enterprises: IEnterprise[];
+  familyLabour: IBudgetCard[];
+  outputs: IBudgetCard[];
+  inputs: IBudgetCard[];
 }
 
 export interface IBudgetPeriodData {
@@ -111,6 +111,11 @@ export interface ICustomCards {
   enterprises: IBudgetCard[];
   inputs: IInputCard[];
   outputs: IOutputCard[];
+}
+export interface IEnterprise {
+  group: string;
+  name: string;
+  id: string;
 }
 
 interface FamilyLabourCard {
