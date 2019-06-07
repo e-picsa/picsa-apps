@@ -4,14 +4,12 @@
 // note, unclear if import correct
 @import '~@picsa/scss/index';
 
-h1 {
-  // color: $primary;
-}
-
 // other ways to work with styles:
 // https://www.tektutorialshub.com/angular/angular-global-css-styles/
 // https://medium.com/@kmathy/angular-tips-and-tricks-for-css-structure-cb73fa50f0e8
 // https://github.com/nrwl/nx/issues/54
-:root {
-  --color-primary: hsl(234, 62%, 26%);
-}
+
+// CC Note - variables can't be picked up by components (e.g. $primary) unless explictly imported,
+// however angular.json does apply stylings from this file and can pass root color variables
+@import './styles/variables.scss';
+@import './styles/fonts.scss';

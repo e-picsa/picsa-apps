@@ -14,7 +14,7 @@
 .budget-card[selected='true'],
 .budget-card.enterprise[selected='true'] {
   font-weight: bold;
-  background: var(--ion-color-selected);
+  background: var(--color-selected);
 }
 .budget-card.inputs[selected='true'],
 .budget-card.outputs[selected='true'],
