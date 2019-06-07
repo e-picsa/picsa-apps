@@ -40,6 +40,5 @@ export class BudgetCardComponent implements OnInit {
 
   cardClicked() {
     // *** TODO - figure out what wanted handler to do
-    console.log('card clicked');
   }
 }

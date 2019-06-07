@@ -14,8 +14,7 @@ Budget meta cards are used to assign card value to top-level budget object data 
   selector: 'budget-meta-card',
   templateUrl: 'budget-card.html'
 })
-export class BudgetMetaCardComponent extends BudgetCardComponent
-   {
+export class BudgetMetaCardComponent extends BudgetCardComponent {
   // private componentDestroyed: Subject<any> = new Subject();
   // @Input() valuePath: string;
 
@@ -48,7 +47,5 @@ export class BudgetMetaCardComponent extends BudgetCardComponent
   // }
 
   // assign card id to value path on select (and remove if already selected)
-  cardClicked() {
-    console.log('card clicked');
-  }
+  cardClicked() {}
 }

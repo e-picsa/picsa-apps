@@ -1,18 +1,19 @@
-import { IBudget } from "../models/budget-tool.models";
+import { IBudget } from '../models/budget-tool.models';
+import { IV3Budget } from '../models/legacy/v3.models';
 
 /*  this file contains methods to make incremental changes to budgets 
     to upgrade for api changes
 */
-export const BUDGET_API_VERSION = 3;
+export const BUDGET_API_VERSION = 4;
 
 // recursively go through budget and if api version less than current perform incremental upgrade
 export const checkForBudgetUpgrades = (budget: IBudget) => {
-  console.log("checking for upgrade", budget.apiVersion, this.apiVersion);
+  console.log('checking for upgrade', budget.apiVersion, this.apiVersion);
   if (budget.apiVersion < this.apiVersion) {
     budget = upgradeBudget(budget);
     return this.checkForBudgetUpgrades(budget);
   } else {
-    console.log("budget up to date");
+    console.log('budget up to date');
     return budget;
   }
 };
@@ -25,6 +26,8 @@ export const upgradeBudget = (budget: IBudget) => {
       return v1Upgrade(budget);
     case 2:
       return v2Upgrade(budget);
+    case 3:
+      return v3Upgrade(budget);
     default:
       throw new Error(`could not upgrade budget: ${JSON.stringify(budget)}`);
   }
@@ -52,9 +55,17 @@ const v2Upgrade = (budget: IBudget | any) => {
       budget.periods.scale = upperSacle;
     }
     budget.apiVersion = 3;
-    console.log("v2 upgrade successful");
+    console.log('v2 upgrade successful');
   } catch (error) {
     budget.apiVersion = -1;
   }
   return budget;
+};
+
+const v3Upgrade = (budget: IV3Budget) => {
+  try {
+  } catch (error) {
+    // TODO
+    // log error and show error message (unable to upgrade or similar)
+  }
 };

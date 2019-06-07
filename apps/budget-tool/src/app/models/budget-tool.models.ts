@@ -9,11 +9,10 @@ export interface IBudget {
   _key: string;
   title: string;
   archived: boolean;
-  periods: IPeriods;
+  periods: IBudgetPeriodMeta;
   description: string;
   enterprise: string;
   enterpriseType: string;
-  scale: 'Days' | 'Months' | 'Weeks';
   dotValues: IBudgetDotValues;
   created: string;
   data: { [index: string]: IBudgetPeriodData };
@@ -62,12 +61,18 @@ export interface IBudgetViewMeta {
   periodIndex: number;
 }
 
-interface IPeriods {
-  labels: string[];
-  starting: string;
-  scale: string;
-  // v1-2 cast string, v3 upgrade to number
-  total: string | number;
+export interface IBudgetPeriodMeta extends IEnterpriseDefaults {
+  labels?: month[] | week[] | string[];
+  starting: number;
+  scale: IEnterpriseScale;
+  total: number;
+}
+export type IEnterpriseScale = 'months' | 'weeks';
+
+export interface IEnterpriseDefaults {
+  scale: IEnterpriseScale;
+  total: number;
+  starting: number;
 }
 
 // cards contain additional grouping (e.g. enterprise type) along with isSelected and selectedIndex populated when
@@ -117,6 +122,7 @@ export interface IEnterprise {
   type: string;
   name: string;
   id: string;
+  defaults: IEnterpriseDefaults;
 }
 
 interface FamilyLabourCard {
@@ -141,3 +147,31 @@ export interface IBudgetPublicData {
   customCards?: { ['id']: ICustomBudgetCard };
   templates?: { ['id']: IBudget };
 }
+
+type month =
+  | 'Jan'
+  | 'Feb'
+  | 'Mar'
+  | 'Apr'
+  | 'May'
+  | 'Jun'
+  | 'Jul'
+  | 'Aug'
+  | 'Sep'
+  | 'Oct'
+  | 'Nov'
+  | 'Dec';
+
+type week =
+  | 'Week 1'
+  | 'Week 2'
+  | 'Week 3'
+  | 'Week 4'
+  | 'Week 5'
+  | 'Week 6'
+  | 'Week 7'
+  | 'Week 8'
+  | 'Week 9'
+  | 'Week 10'
+  | 'Week 11'
+  | 'Week 12';

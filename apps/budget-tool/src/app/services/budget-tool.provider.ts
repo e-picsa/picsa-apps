@@ -9,7 +9,7 @@ import {
   IBudgetDotValues,
   ICustomBudgetCard
 } from '../models/budget-tool.models';
-import { BUDGET_DATA } from '../store/budget.data';
+import { BUDGET_DATA } from '../data/budget.data';
 import { AppState } from '@picsa/core/models';
 import { StorageProvider, UserProvider, DBService } from '@picsa/core/services';
 

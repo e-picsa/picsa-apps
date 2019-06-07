@@ -14,17 +14,18 @@
           [selected]="store.activeBudget.enterpriseType === type"
         ></budget-card>
       </div>
-      <div *ngIf="store.filteredEnterprises">
+      <div *ngIf="store.filteredEnterprises.length > 0">
         <h2>Select Enterprise</h2>
         <div
           style="display: flex; flex-wrap: wrap"
-          [@openClose]="enterpriseToggle ? 'open' : 'closed'"
+          [@fadeInOut]="enterpriseToggle ? 'in' : 'out'"
         >
           <budget-card
             *ngFor="let enterprise of store.filteredEnterprises"
             [card]="enterprise"
             style="margin: 0 10px 10px 0"
             (click)="enterpriseClicked(enterprise)"
+            [selected]="store.activeBudget.enterprise === enterprise.id"
           >
           </budget-card>
         </div>
@@ -34,21 +35,19 @@
 
   <!-- Step 2 -->
   <mat-step [stepControl]="secondFormGroup">
-    <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Fill out your address</ng-template>
-      <mat-form-field>
-        <input
-          matInput
-          placeholder="Address"
-          formControlName="secondCtrl"
-          required
-        />
-      </mat-form-field>
+    <ng-template matStepLabel>Length</ng-template>
+    <h2>Total Time</h2>
+    <div *mobxAutorun>
+      {{ store.activeBudget.periods.total }}
+      {{ store.activeBudget.periods.scale }}
+      <span>starting in</span>
+      {{ months[store.activeBudget.periods.starting] }}
       <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Next</button>
+        <span *ngFor="let label of store.activeBudget.periods.labels">
+          {{ label }}
+        </span>
       </div>
-    </form>
+    </div>
   </mat-step>
 
   <!-- Step 3 -->

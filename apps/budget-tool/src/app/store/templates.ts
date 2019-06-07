@@ -1,16 +1,11 @@
 import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
 import REGIONAL_SETTINGS from '@picsa/core/environments/region';
-import { IBudget } from '../models/budget-tool.models';
+import { IBudget, IEnterpriseDefaults } from '../models/budget-tool.models';
 
-const BUDGET_DEFAULT_SETTINGS = {
-  periods: {
-    days: {
-      labels: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],
-      starting: 'Mon',
-      scale: 'Days',
-      total: 7
-    }
-  }
+const BUDGET_PERIOD_DEFAULT: IEnterpriseDefaults = {
+  starting: 10,
+  scale: 'months',
+  total: 6
 };
 
 export const NEW_BUDGET_TEMPLATE: IBudget = {
@@ -21,9 +16,8 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
   description: null,
   enterprise: null,
   _key: null,
-  periods: BUDGET_DEFAULT_SETTINGS.periods.days,
+  periods: BUDGET_PERIOD_DEFAULT,
   title: null,
-  scale: null,
   enterpriseType: null,
   dotValues: REGIONAL_SETTINGS.currencyCounters
 };
@@ -42,5 +36,3 @@ export const MONTHS = [
   'Nov',
   'Dec'
 ];
-
-export const DAYS = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
