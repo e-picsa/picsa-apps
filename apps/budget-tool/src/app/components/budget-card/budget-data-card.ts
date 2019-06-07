@@ -2,7 +2,6 @@ import { NgRedux, select } from '@angular-redux/store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { AppState } from '@picsa/core/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { IBudgetCard, IBudgetViewMeta } from '../../models/budget-tool.models';
@@ -13,7 +12,7 @@ import { BudgetStore } from '../../store/budget.store';
 Budget data cards are used to assign card value to nested budget data (e.g. week 1 activities)
 */
 @Component({
-  selector: 'picsa-budget-data-card',
+  selector: 'budget-data-card',
   templateUrl: 'budget-card.html'
 })
 export class BudgetDataCardComponent extends BudgetCardComponent
@@ -29,7 +28,7 @@ export class BudgetDataCardComponent extends BudgetCardComponent
     private events: Events,
     public store: BudgetStore
   ) {
-    super(actions);
+    super(actions, store);
   }
 
   ngOnInit() {

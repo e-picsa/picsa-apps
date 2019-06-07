@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'picsa-budget-card-image',
+  selector: 'budget-card-image',
   templateUrl: 'budget-card-image.html',
   styleUrls: ['budget-card-image.scss']
 })

@@ -4,12 +4,13 @@ import { ModalController } from '@ionic/angular';
 import { AppState } from '@picsa/core/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { BudgetCardComponent } from './budget-card';
+import { BudgetStore } from '../../store/budget.store';
 
 /*
 Budget new cards are used to display new card placeholders
 */
 @Component({
-  selector: 'picsa-budget-new-card',
+  selector: 'budget-new-card',
   templateUrl: 'budget-card.html'
 })
 export class BudgetNewCardComponent extends BudgetCardComponent
@@ -19,9 +20,10 @@ export class BudgetNewCardComponent extends BudgetCardComponent
   constructor(
     public ngRedux: NgRedux<AppState>,
     public actions: BudgetToolActions,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    public store: BudgetStore
   ) {
-    super(actions);
+    super(actions, store);
   }
 
   // as no card is input instead create placeholder

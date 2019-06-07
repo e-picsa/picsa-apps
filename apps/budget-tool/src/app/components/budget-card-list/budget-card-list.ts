@@ -14,7 +14,7 @@ import {
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({
-  selector: 'picsa-budget-card-list',
+  selector: 'budget-card-list',
   templateUrl: 'budget-card-list.html'
 })
 export class BudgetCardListComponent implements OnDestroy, OnInit {

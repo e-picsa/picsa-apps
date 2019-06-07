@@ -14,7 +14,7 @@ import {
 import { BudgetToolProvider } from '../../services/budget-tool.provider';
 
 @Component({
-  selector: 'picsa-budget-settings',
+  selector: 'budget-settings',
   templateUrl: 'budget-settings.html'
 })
 export class BudgetSettingsComponent implements OnDestroy, OnInit {
@@ -119,7 +119,7 @@ export class BudgetSettingsComponent implements OnDestroy, OnInit {
   _generateEnterpriseTypes(enterprises: IBudgetCard[]) {
     const groups: any = { other: true };
     enterprises.forEach(enterprise => {
-      groups[enterprise.group] = true;
+      groups[enterprise.type] = true;
     });
     // convert to array, sort alphabetically and move 'other' group to end
     let types: string[] = Object.keys(groups);
@@ -140,7 +140,7 @@ export class BudgetSettingsComponent implements OnDestroy, OnInit {
     this.showIndividualEnterprises = false;
     if (type) {
       enterprises = enterprises.filter(e => {
-        return e.group === type;
+        return e.type === type;
       });
       this.filteredEnterprises = this._sortByField(enterprises, 'name');
       if (type === 'other') {

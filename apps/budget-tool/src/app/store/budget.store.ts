@@ -1,7 +1,8 @@
 import {
   IBudget,
   IEnterprise,
-  IBudgetCard
+  IBudgetCard,
+  IEnterpriseType
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
@@ -9,24 +10,22 @@ import { observable, action, computed } from 'mobx-angular';
 import { TranslationsProvider } from '@picsa/core/services';
 import { NEW_BUDGET_TEMPLATE } from './templates';
 import { BUDGET_DATA } from './budget.data';
+import { toJS } from 'mobx';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetStore {
-  @observable test = 'hello';
+  @observable enterprises = BUDGET_DATA.enterprises;
+  @observable enterpriseTypes = BUDGET_DATA.enterpriseTypes;
   @observable activeBudget: IBudget;
-  @observable enterprises: IEnterprise[];
   @observable filteredEnterprises: IEnterprise[];
-  @computed get enterpriseTypes(): IBudgetCard[] {
-    return this._getEnterpriseTypes();
-  }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
-    console.log('active budget', this.activeBudget);
+    console.log('active budget', toJS(this.activeBudget));
   }
   constructor(private translations: TranslationsProvider) {
-    this.enterprises = BUDGET_DATA.enterprises;
+    this.createNewBudget();
   }
 
   createNewBudget() {
@@ -35,11 +34,15 @@ export class BudgetStore {
     // publish event to force card list update
     // this.events.publish("load:budget");
   }
-  filterEnterprises(group: string) {
+  setEnterpriseType(type: IEnterpriseType) {
     this.filteredEnterprises = [
-      ...this.enterprises.filter(e => e.group === group)
+      ...this.enterprises.filter(e => e.type === type)
     ];
-    console.log('enterprises filtered', group);
+    this.setActiveBudget({ ...this.activeBudget, enterpriseType: type });
+  }
+
+  patchBudget(patch: Partial<IBudget>) {
+    this.setActiveBudget({ ...this.activeBudget, ...patch });
   }
 
   async loadBudget(budget: IBudget) {
@@ -79,14 +82,5 @@ export class BudgetStore {
     // });
     // await this.budgetPrvdr.saveBudget(budget);
     // await toast.present();
-  }
-
-  // reduce list of enterprises to distinct types and pass back in card format
-  private _getEnterpriseTypes(): IBudgetCard[] {
-    const distinct = [...new Set(this.enterprises.map(e => e.group))];
-    return distinct.map(e => ({
-      id: e,
-      name: e
-    }));
   }
 }

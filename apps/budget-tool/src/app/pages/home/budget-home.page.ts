@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BudgetStore } from '../../store/budget.store';
 import { Router } from '@angular/router';
 @Component({
-  selector: 'picsa-budget-home',
+  selector: 'budget-home',
   templateUrl: './budget-home.page.html',
   styleUrls: ['./budget-home.page.scss']
 })

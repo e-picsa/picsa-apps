@@ -8,7 +8,7 @@ import { NgRedux } from '@angular-redux/store';
 import { ICustomBudgetCard } from '../../models/budget-tool.models';
 
 @Component({
-  selector: 'picsa-budget-new-card',
+  selector: 'budget-new-card',
   templateUrl: './budget-new-card.page.html',
   styleUrls: ['./budget-new-card.page.scss']
 })

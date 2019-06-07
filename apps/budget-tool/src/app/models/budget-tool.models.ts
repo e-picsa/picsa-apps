@@ -22,6 +22,7 @@ export interface IBudget {
 
 export interface IBudgetMeta {
   activities: IBudgetCard[];
+  enterpriseTypes: IEnterpriseType[];
   enterprises: IEnterprise[];
   familyLabour: IBudgetCard[];
   outputs: IBudgetCard[];
@@ -74,17 +75,16 @@ interface IPeriods {
 export interface IBudgetCard {
   name: string;
   id: string;
-  group?: enterpriseGroup;
+  type?: IEnterpriseType;
   isSelected?: boolean;
   selectedIndex?: number;
   quantity?: number;
   consumed?: number;
   cost?: number;
 }
-type enterpriseGroup = string;
+export type IEnterpriseType = 'crop' | 'fish' | 'fruits' | 'livestock';
 
 export interface ICustomBudgetCard extends IBudgetCard {
-  type: string;
   custom: boolean;
   customImg: string;
   created: string;
@@ -114,7 +114,7 @@ export interface ICustomCards {
   outputs: IOutputCard[];
 }
 export interface IEnterprise {
-  group: string;
+  type: string;
   name: string;
   id: string;
 }

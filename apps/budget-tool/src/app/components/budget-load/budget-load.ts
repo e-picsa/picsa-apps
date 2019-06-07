@@ -8,7 +8,7 @@ import { PB_MOCK_API_2, PB_MOCK_API_3 } from '../../mocks/budget.mocks';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'picsa-budget-load',
+  selector: 'budget-load',
   templateUrl: `budget-load.html`
 })
 export class BudgetLoadComponent implements OnDestroy, OnInit {

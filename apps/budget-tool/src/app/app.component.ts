@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'picsa-budget',
+  // tslint:disable component-selector
+  selector: 'picsa-budget-tool',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'budget-tool';
+  title = 'picsa-budget-tool';
 }

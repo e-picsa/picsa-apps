@@ -11,7 +11,7 @@ import { BudgetStore } from '../../store/budget.store';
 Budget meta cards are used to assign card value to top-level budget object data (e.g. enterprise type)
 */
 @Component({
-  selector: 'picsa-budget-meta-card',
+  selector: 'budget-meta-card',
   templateUrl: 'budget-card.html'
 })
 export class BudgetMetaCardComponent extends BudgetCardComponent

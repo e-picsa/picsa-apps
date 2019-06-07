@@ -1,19 +1,38 @@
 <h1>Create New Budget</h1>
-<mat-horizontal-stepper [linear]="isLinear" #stepper>
+<mat-horizontal-stepper linear #stepper>
+  <!-- Step 1 -->
   <mat-step [stepControl]="firstFormGroup">
     <ng-template matStepLabel>Enterprise</ng-template>
-    <div *mobxAutorun>
-      <picsa-budget-card
-        *ngFor="let typeCard of store.enterpriseTypes"
-        (click)="store.filterEnterprises(type)"
-        [card]="typeCard"
-      >
-      </picsa-budget-card>
-    </div>
-    <div>
-      <button mat-button matStepperNext>Next</button>
+    <h2>Type of Enterprise</h2>
+    <div *mobxAutorun style="display: flex; flex-wrap: wrap">
+      <div style="display: flex; flex-wrap: wrap">
+        <budget-card
+          *ngFor="let type of store.enterpriseTypes"
+          (click)="enterpriseTypeClicked(type)"
+          [generator]="type"
+          style="margin: 0 10px 10px 0"
+          [selected]="store.activeBudget.enterpriseType === type"
+        ></budget-card>
+      </div>
+      <div *ngIf="store.filteredEnterprises">
+        <h2>Select Enterprise</h2>
+        <div
+          style="display: flex; flex-wrap: wrap"
+          [@openClose]="enterpriseToggle ? 'open' : 'closed'"
+        >
+          <budget-card
+            *ngFor="let enterprise of store.filteredEnterprises"
+            [card]="enterprise"
+            style="margin: 0 10px 10px 0"
+            (click)="enterpriseClicked(enterprise)"
+          >
+          </budget-card>
+        </div>
+      </div>
     </div>
   </mat-step>
+
+  <!-- Step 2 -->
   <mat-step [stepControl]="secondFormGroup">
     <form [formGroup]="secondFormGroup">
       <ng-template matStepLabel>Fill out your address</ng-template>
@@ -31,6 +50,8 @@
       </div>
     </form>
   </mat-step>
+
+  <!-- Step 3 -->
   <mat-step>
     <ng-template matStepLabel>Done</ng-template>
     You are now done.

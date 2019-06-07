@@ -3,7 +3,7 @@ import { CanvasWhiteboardComponent } from 'ng2-canvas-whiteboard';
 import REGIONAL_SETTINGS from '@picsa/core/environments/region';
 
 @Component({
-  selector: 'picsa-budget-card-select',
+  selector: 'budget-card-select',
   viewProviders: [CanvasWhiteboardComponent],
   templateUrl: 'card-select.html'
 })

@@ -13,7 +13,7 @@ import {
 } from '../../models/budget-tool.models';
 
 @Component({
-  selector: 'picsa-budget-overview',
+  selector: 'budget-overview',
   templateUrl: 'budget-overview.html'
 })
 export class BudgetOverviewComponent implements OnDestroy {

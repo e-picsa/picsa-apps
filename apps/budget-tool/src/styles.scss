@@ -1,2 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+// index file doesn't exist but pulls from package (see xplat https://github.com/nstudio/xplat/wiki/FAQ)
+// note, unclear if import correct
+@import '~@picsa/scss/index';
+
+h1 {
+  // color: $primary;
+}
+
+// other ways to work with styles:
+// https://www.tektutorialshub.com/angular/angular-global-css-styles/
+// https://medium.com/@kmathy/angular-tips-and-tricks-for-css-structure-cb73fa50f0e8
+// https://github.com/nrwl/nx/issues/54
+:root {
+  --color-primary: hsl(234, 62%, 26%);
+}
