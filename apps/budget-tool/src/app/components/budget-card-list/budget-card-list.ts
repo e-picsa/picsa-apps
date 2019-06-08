@@ -30,7 +30,6 @@ export class BudgetCardListComponent implements OnDestroy, OnInit {
   constructor(
     // private NgRedux: NgRedux<AppState>,
     private actions: BudgetToolActions,
-    private events: Events,
     public store: BudgetStore
   ) {}
   // *** reviewed all this in a rush, need to work on

@@ -3,7 +3,8 @@ import {
   MatCheckboxModule,
   MatStepperModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatSelectModule
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -14,14 +15,16 @@ import { NgModule } from '@angular/core';
     MatCheckboxModule,
     MatStepperModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSelectModule
   ],
   exports: [
     MatButtonModule,
     MatCheckboxModule,
     MatStepperModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSelectModule
   ]
 })
 export class PicsaMaterialModule {}

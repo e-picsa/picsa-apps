@@ -1,62 +1,131 @@
-<h1>Create New Budget</h1>
-<mat-horizontal-stepper linear #stepper>
-  <!-- Step 1 -->
-  <mat-step [stepControl]="firstFormGroup">
-    <ng-template matStepLabel>Enterprise</ng-template>
-    <h2>Type of Enterprise</h2>
-    <div *mobxAutorun style="display: flex; flex-wrap: wrap">
-      <div style="display: flex; flex-wrap: wrap">
-        <budget-card
-          *ngFor="let type of store.enterpriseTypes"
-          (click)="enterpriseTypeClicked(type)"
-          [generator]="type"
-          style="margin: 0 10px 10px 0"
-          [selected]="store.activeBudget.enterpriseType === type"
-        ></budget-card>
-      </div>
-      <div *ngIf="store.filteredEnterprises.length > 0">
-        <h2>Select Enterprise</h2>
-        <div
-          style="display: flex; flex-wrap: wrap"
-          [@fadeInOut]="enterpriseToggle ? 'in' : 'out'"
-        >
-          <budget-card
-            *ngFor="let enterprise of store.filteredEnterprises"
-            [card]="enterprise"
-            style="margin: 0 10px 10px 0"
-            (click)="enterpriseClicked(enterprise)"
-            [selected]="store.activeBudget.enterprise === enterprise.id"
-          >
-          </budget-card>
+<div class="page">
+  <h1>Create New Budget</h1>
+  <div class="page-content">
+    <mat-horizontal-stepper linear #stepper>
+      <!-- Step 1 - handled with custom elements-->
+      <mat-step [stepControl]="enterpriseForm">
+        <ng-template matStepLabel>Enterprise</ng-template>
+        <h2>What is your type of enterprise?</h2>
+        <div *mobxAutorun>
+          <div style="display: flex; flex-wrap: wrap">
+            <budget-card
+              *ngFor="let type of store.enterpriseTypes"
+              (click)="enterpriseTypeClicked(type)"
+              [generator]="type"
+              style="margin: 0 10px 10px 0"
+              [selected]="store.activeBudget.enterpriseType === type"
+            ></budget-card>
+          </div>
+          <div *ngIf="store.filteredEnterprises.length > 0">
+            <h2>Select Enterprise</h2>
+            <div
+              style="display: flex; flex-wrap: wrap"
+              [@fadeInOut]="enterpriseToggle ? 'in' : 'out'"
+            >
+              <budget-card
+                *ngFor="let enterprise of store.filteredEnterprises"
+                [card]="enterprise"
+                style="margin: 0 10px 10px 0"
+                (click)="enterpriseClicked(enterprise)"
+                [selected]="store.activeBudget.enterprise === enterprise.id"
+              >
+              </budget-card>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </mat-step>
+      </mat-step>
 
-  <!-- Step 2 -->
-  <mat-step [stepControl]="secondFormGroup">
-    <ng-template matStepLabel>Length</ng-template>
-    <h2>Total Time</h2>
-    <div *mobxAutorun>
-      {{ store.activeBudget.periods.total }}
-      {{ store.activeBudget.periods.scale }}
-      <span>starting in</span>
-      {{ months[store.activeBudget.periods.starting] }}
-      <div>
-        <span *ngFor="let label of store.activeBudget.periods.labels">
-          {{ label }}
-        </span>
-      </div>
-    </div>
-  </mat-step>
+      <!-- Step 2 - handled with form controls -->
+      <mat-step [stepControl]="periodForm">
+        <form [formGroup]="periodForm">
+          <ng-template matStepLabel>Length</ng-template>
+          <h2>How long is your budget for?</h2>
 
-  <!-- Step 3 -->
-  <mat-step>
-    <ng-template matStepLabel>Done</ng-template>
-    You are now done.
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="stepper.reset()">Reset</button>
-    </div>
-  </mat-step>
-</mat-horizontal-stepper>
+          <div style="display: flex; flex-wrap: wrap">
+            <button
+              mat-button
+              class="variable-container editable"
+              (click)="periodTotalSelect.open()"
+            >
+              <span>{{ periodForm.value.total }}</span>
+              <mat-select
+                class="select--hidden"
+                #periodTotalSelect
+                formControlName="total"
+                style="opacity: 0;"
+              >
+                <mat-option *ngFor="let n of periodTotalOptions" [value]="n">{{
+                  n
+                }}</mat-option>
+              </mat-select>
+            </button>
+
+            <button
+              mat-button
+              class="variable-container editable"
+              (click)="periodScaleSelect.open()"
+            >
+              <span>{{ periodForm.value.scale }}</span>
+              <mat-select
+                class="select--hidden"
+                #periodScaleSelect
+                formControlName="scale"
+                style="opacity: 0;"
+              >
+                <mat-option
+                  *ngFor="let option of periodScaleOptions"
+                  [value]="option"
+                  >{{ option }}</mat-option
+                >
+              </mat-select>
+            </button>
+            <div
+              *ngIf="periodForm.value.scale === 'months'"
+              class="variable-container"
+            >
+              starting in
+            </div>
+            <button
+              mat-button
+              *ngIf="periodForm.value.scale === 'months'"
+              class="variable-container editable"
+              (click)="periodStartSelect.open()"
+            >
+              <span>{{
+                periodLabelOptions[periodForm.value.starting - 1]
+              }}</span>
+              <mat-select
+                class="select--hidden"
+                #periodStartSelect
+                formControlName="starting"
+                style="opacity: 0;"
+              >
+                <mat-option
+                  *ngFor="let option of periodTotalOptions"
+                  [value]="option"
+                  >{{ periodLabelOptions[option - 1] }}</mat-option
+                >
+              </mat-select>
+            </button>
+          </div>
+          <button mat-button matStepperNext class="button--next">
+            Next
+          </button>
+        </form>
+      </mat-step>
+
+      <!-- Step 3 -->
+      <mat-step>
+        <ng-template matStepLabel>Save</ng-template>
+        You are now done.
+        <div>
+          <span *ngFor="let label of store.activeBudget.periods.labels">
+            {{ label }}
+          </span>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button (click)="stepper.reset()">Reset</button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+</div>

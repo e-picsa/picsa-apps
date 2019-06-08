@@ -62,7 +62,7 @@ export interface IBudgetViewMeta {
 }
 
 export interface IBudgetPeriodMeta extends IEnterpriseDefaults {
-  labels?: month[] | week[] | string[];
+  labels: month[] | week[] | string[];
   starting: number;
   scale: IEnterpriseScale;
   total: number;

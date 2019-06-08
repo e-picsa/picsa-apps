@@ -1,11 +1,12 @@
 import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
 import REGIONAL_SETTINGS from '@picsa/core/environments/region';
-import { IBudget, IEnterpriseDefaults } from '../models/budget-tool.models';
+import { IBudget, IBudgetPeriodMeta } from '../models/budget-tool.models';
 
-const BUDGET_PERIOD_DEFAULT: IEnterpriseDefaults = {
+const BUDGET_PERIOD_DEFAULT: IBudgetPeriodMeta = {
   starting: 10,
   scale: 'months',
-  total: 6
+  total: 6,
+  labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
 };
 
 export const NEW_BUDGET_TEMPLATE: IBudget = {
