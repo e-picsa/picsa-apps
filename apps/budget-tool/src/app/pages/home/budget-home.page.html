@@ -1,7 +1,12 @@
-<h1>{{ 'Create' | translate }}</h1>
-<button mat-raised-button color="primary" (click)="createClicked()">
-  {{ 'Create New Budget' | translate }}
-</button>
+<div class="page">
+  <h1>Budget Tool</h1>
+  <div class="page-content">
+    <h2>{{ 'Create' | translate }}</h2>
+    <button mat-raised-button color="primary" (click)="createClicked()">
+      {{ 'Create New Budget' | translate }}
+    </button>
 
-<h1>{{ 'Saved Budgets' | translate }}</h1>
-<div>{{ 'Budget list goes here' | translate }}</div>
+    <h2>{{ 'Saved Budgets' | translate }}</h2>
+    <div>{{ 'Budget list goes here' | translate }}</div>
+  </div>
+</div>

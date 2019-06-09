@@ -3,31 +3,31 @@
   <div class="page-content">
     <mat-horizontal-stepper linear #stepper>
       <!-- Step 1 - handled with custom elements-->
-      <mat-step [stepControl]="enterpriseForm">
+      <mat-step>
         <ng-template matStepLabel>Enterprise</ng-template>
         <h2>What is your type of enterprise?</h2>
-        <div *mobxAutorun>
+        <div>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
-              *ngFor="let type of store.enterpriseTypes"
+              *ngFor="let type of enterpriseTypes"
               (click)="enterpriseTypeClicked(type)"
               [generator]="type"
               style="margin: 0 10px 10px 0"
-              [selected]="store.activeBudget.enterpriseType === type"
+              [selected]="budgetForm.value.enterpriseType === type"
             ></budget-card>
           </div>
-          <div *ngIf="store.filteredEnterprises.length > 0">
+          <div *ngIf="filteredEnterprises.length > 0">
             <h2>Select Enterprise</h2>
             <div
               style="display: flex; flex-wrap: wrap"
               [@fadeInOut]="enterpriseToggle ? 'in' : 'out'"
             >
               <budget-card
-                *ngFor="let enterprise of store.filteredEnterprises"
+                *ngFor="let enterprise of filteredEnterprises"
                 [card]="enterprise"
                 style="margin: 0 10px 10px 0"
                 (click)="enterpriseClicked(enterprise)"
-                [selected]="store.activeBudget.enterprise === enterprise.id"
+                [selected]="budgetForm.value.enterprise === enterprise.id"
               >
               </budget-card>
             </div>
@@ -115,16 +115,20 @@
       </mat-step>
 
       <!-- Step 3 -->
-      <mat-step>
-        <ng-template matStepLabel>Save</ng-template>
-        You are now done.
-        <div>
-          <span *ngFor="let label of store.activeBudget.periods.labels">
-            {{ label }}
-          </span>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="stepper.reset()">Reset</button>
-        </div>
+      <mat-step [stepControl]="budgetForm">
+        <form [formGroup]="budgetForm">
+          <ng-template matStepLabel>Save</ng-template>
+          <input mat-input formControlName="title" />
+          <input mat-input formControlName="description" />
+          <button
+            mat-button
+            matStepperNext
+            disabled="budgetForm.invalid"
+            class="button--next"
+          >
+            Save
+          </button>
+        </form>
       </mat-step>
     </mat-horizontal-stepper>
   </div>

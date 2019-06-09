@@ -1,6 +1,6 @@
-import { IBudget } from "../models/budget-tool.models";
+import { IV3Budget } from '../models/legacy/v3.models';
 
-export const PB_MOCK_API_3: IBudget = {
+export const PB_MOCK_API_3: IV3Budget = {
   apiVersion: 3,
   archived: false,
   created: "2018-10-15T10:12:47.118Z",

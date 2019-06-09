@@ -2,7 +2,9 @@ import {
   IBudget,
   IEnterprise,
   IEnterpriseScale,
-  IBudgetPeriodMeta
+  IBudgetPeriodMeta,
+  IEnterpriseType,
+  IEnterpriseDefaults
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
@@ -18,38 +20,34 @@ import { toJS } from 'mobx';
 export class BudgetStore {
   @observable enterprises = BUDGET_DATA.enterprises;
   @observable enterpriseTypes = BUDGET_DATA.enterpriseTypes;
-  @computed get filteredEnterprises(): IEnterprise[] {
-    return this.filterEnterprises();
-  }
-  @observable enterprisePeriods: IBudgetPeriodMeta;
   @observable activeBudget: IBudget;
-
+  get activeBudgetValue() {
+    return toJS(this.activeBudget);
+  }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     console.log('active budget', toJS(this.activeBudget));
   }
+
   constructor(private translations: TranslationsProvider) {
     this.createNewBudget();
   }
 
   /**************************************************************************
-   *            Budget Settings
+   *            Enterprise methods
    *
    ***************************************************************************/
-  filterEnterprises() {
-    return this.enterprises.filter(
-      e => e.type === this.activeBudget.enterpriseType
-    );
+  getfilteredEnterprises(type: IEnterpriseType) {
+    return this.enterprises.filter(e => e.type === type);
   }
-  setBudgetEnterpriseDefaults(enterprise: IEnterprise) {
+  getBudgetEnterpriseDefaults(enterprise: IEnterprise): IBudgetPeriodMeta {
     const d = enterprise.defaults;
-    this.enterprisePeriods = {
+    return {
       scale: d.scale,
       total: d.total,
-      labels: this._generateLabels(d.scale, d.total, d.starting),
+      labels: this.generateLabels(d),
       starting: d.starting
     };
-    this.patchBudget({ periods: this.enterprisePeriods });
   }
   /**************************************************************************
    *            Budget Values
@@ -109,13 +107,13 @@ export class BudgetStore {
   }
 
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
-  _generateLabels(scale: IEnterpriseScale, total: number, starting: number) {
+  generateLabels(d: IEnterpriseDefaults): string[] {
     // duplicate array so that can still slice up to 12 months from dec
     let base = [...MONTHS, ...MONTHS];
-    if (scale === 'weeks') {
+    if (d.scale === 'weeks') {
       base = base.map((v, i) => `Week ${i + 1}`);
     }
-    const labels = base.slice(starting - 1, total + starting - 1);
+    const labels = base.slice(d.starting - 1, d.total + d.starting - 1);
     return labels;
   }
 }
