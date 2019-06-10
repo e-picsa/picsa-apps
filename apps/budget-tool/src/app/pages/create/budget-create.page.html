@@ -40,7 +40,6 @@
         <form [formGroup]="periodForm">
           <ng-template matStepLabel>Length</ng-template>
           <h2>How long is your budget for?</h2>
-
           <div style="display: flex; flex-wrap: wrap">
             <button
               mat-button
@@ -118,13 +117,19 @@
       <mat-step [stepControl]="budgetForm">
         <form [formGroup]="budgetForm">
           <ng-template matStepLabel>Save</ng-template>
-          <input mat-input formControlName="title" />
-          <input mat-input formControlName="description" />
+          <h2>Save your budget</h2>
+          <input matInput placeholder="Title" formControlName="title" />
+          <textarea
+            matInput
+            placeholder="Description (optional)"
+            formControlName="Description"
+          ></textarea>
           <button
             mat-button
             matStepperNext
-            disabled="budgetForm.invalid"
+            [disabled]="budgetForm.invalid"
             class="button--next"
+            (click)="save()"
           >
             Save
           </button>

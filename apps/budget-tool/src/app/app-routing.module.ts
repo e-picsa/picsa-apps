@@ -16,6 +16,13 @@ const routes: Routes = [
       import('./pages/create/budget-create.module').then(
         mod => mod.BudgetCreatePageModule
       )
+  },
+  {
+    path: 'view',
+    loadChildren: () =>
+      import('./pages/view/budget-view.module').then(
+        mod => mod.BudgetViewPageModule
+      )
   }
 ];
 

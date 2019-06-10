@@ -10,6 +10,7 @@ import {
 import { MatHorizontalStepper } from '@angular/material';
 import { FadeInOut } from '../../animations/animations';
 import { MONTHS } from '../../store/templates';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'budget-create',
@@ -27,7 +28,11 @@ export class BudgetCreatePage implements OnInit {
   periodTotalOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   periodLabelOptions = [...MONTHS];
   @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
-  constructor(private fb: FormBuilder, public store: BudgetStore) {}
+  constructor(
+    private fb: FormBuilder,
+    public store: BudgetStore,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.enterpriseTypes = this.store.enterpriseTypes;
@@ -50,7 +55,6 @@ export class BudgetCreatePage implements OnInit {
       this.store.activeBudgetValue.periods
     );
     this.budgetForm.setControl('periods', this.periodForm);
-    this.budgetForm.valueChanges.subscribe(v => console.log(this.budgetForm));
   }
 
   // custom method to generate simple form from json object and populate with provided initial values
@@ -96,7 +100,7 @@ export class BudgetCreatePage implements OnInit {
     this.periodForm.patchValue({
       labels: this.store.generateLabels(this.periodForm.value)
     });
-    console.log('saving', this.budgetForm, this.budgetForm);
     this.store.patchBudget(this.budgetForm.value);
+    this.router.navigate(['view']);
   }
 }

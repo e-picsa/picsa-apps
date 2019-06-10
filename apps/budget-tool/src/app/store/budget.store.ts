@@ -1,7 +1,6 @@
 import {
   IBudget,
   IEnterprise,
-  IEnterpriseScale,
   IBudgetPeriodMeta,
   IEnterpriseType,
   IEnterpriseDefaults
@@ -9,7 +8,7 @@ import {
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
-import { TranslationsProvider, MONTHS } from '@picsa/core/services';
+import { TranslationsProvider, MONTHS, DBService } from '@picsa/core/services';
 import { NEW_BUDGET_TEMPLATE } from './templates';
 import { BUDGET_DATA } from '../data/budget.data';
 import { toJS } from 'mobx';
@@ -29,7 +28,10 @@ export class BudgetStore {
     console.log('active budget', toJS(this.activeBudget));
   }
 
-  constructor(private translations: TranslationsProvider) {
+  constructor(
+    private translations: TranslationsProvider,
+    private db: DBService
+  ) {
     this.createNewBudget();
   }
 
@@ -61,11 +63,17 @@ export class BudgetStore {
    *            Budget Create/Save/Load
    *
    ***************************************************************************/
+  async setBudgetByKey(key: string) {
+    if (this.activeBudget._key !== key) {
+      try {
+        const doc = await this.db.getDocument(`budgets/${key}`).toPromise();
+        console.log('doc', doc);
+      } catch (error) {}
+    }
+  }
   createNewBudget() {
     const budget: IBudget = NEW_BUDGET_TEMPLATE;
     this.setActiveBudget(budget);
-    // publish event to force card list update
-    // this.events.publish("load:budget");
   }
   async loadBudget(budget: IBudget) {
     const loader = await this.translations.createTranslatedLoader({
@@ -74,10 +82,6 @@ export class BudgetStore {
     await loader.present();
     budget = checkForBudgetUpgrades(budget);
     this.setActiveBudget(budget);
-    // this.actions.setBudgetView({
-    //   component: "overview",
-    //   title: budget.title
-    // });
     // this.events.publish("calculate:budget");
     // // publish event to force card list update
     // this.events.publish("load:budget");
@@ -105,6 +109,11 @@ export class BudgetStore {
     // await this.budgetPrvdr.saveBudget(budget);
     // await toast.present();
   }
+
+  /**************************************************************************
+   *           Helper Methods
+   *
+   ***************************************************************************/
 
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
   generateLabels(d: IEnterpriseDefaults): string[] {
