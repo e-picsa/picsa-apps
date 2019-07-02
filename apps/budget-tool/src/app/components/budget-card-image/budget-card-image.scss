@@ -1,6 +1,17 @@
+:host(.small) {
+  width: 50px;
+
+  img.card-image,
+  .card-image-holder {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 img.card-image {
   width: 100%;
 }
+
 img.card-image,
 img.card-image-holder {
   height: 100px;
@@ -8,30 +19,27 @@ img.card-image-holder {
   object-fit: contain;
   margin: auto;
 }
+
 img.card-image.add {
   height: 60px;
   width: 60px;
   margin-top: 20px;
 }
+
 .card-image-holder {
   margin: 2px;
 }
+
 img.error-not-fixed {
   opacity: 0;
 }
+
 img.error-fixed {
   opacity: 1;
 }
 
-.small {
-  img.card-image,
-  .card-image-holder {
-    height: 45px;
-    width: 45px;
-  }
-}
-
 .medium {
+
   img.card-image,
   .card-image-holder {
     height: 70px;

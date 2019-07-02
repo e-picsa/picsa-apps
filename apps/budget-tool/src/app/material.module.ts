@@ -4,7 +4,10 @@ import {
   MatStepperModule,
   MatFormFieldModule,
   MatInputModule,
-  MatSelectModule
+  MatSelectModule,
+  MatToolbarModule,
+  MatListModule,
+  MatCardModule
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -16,7 +19,10 @@ import { NgModule } from '@angular/core';
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatToolbarModule,
+    MatListModule,
+    MatCardModule
   ],
   exports: [
     MatButtonModule,
@@ -24,7 +30,10 @@ import { NgModule } from '@angular/core';
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatToolbarModule,
+    MatListModule,
+    MatCardModule
   ]
 })
 export class PicsaMaterialModule {}

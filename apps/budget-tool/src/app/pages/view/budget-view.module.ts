@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { BudgetViewPage } from './budget-view.page';
 import { TranslateSharedLazyModuleModule } from '@picsa/core';
+import { PicsaMaterialModule } from '../../material.module';
+import { MobxAngularModule } from 'mobx-angular';
 
 const routes: Routes = [
   {
@@ -21,7 +23,9 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    TranslateSharedLazyModuleModule
+    TranslateSharedLazyModuleModule,
+    PicsaMaterialModule,
+    MobxAngularModule
   ],
   declarations: [BudgetViewPage]
 })

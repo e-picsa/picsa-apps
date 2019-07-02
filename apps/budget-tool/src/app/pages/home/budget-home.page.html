@@ -7,6 +7,13 @@
     </button>
 
     <h2>{{ 'Saved Budgets' | translate }}</h2>
-    <div>{{ 'Budget list goes here' | translate }}</div>
+    <div *mobxAutorun>
+      <budget-list-item
+        *ngFor="let budget of store.savedBudgets"
+        [routerLink]="['/view', budget._key]"
+        [budget]="budget"
+      >
+      </budget-list-item>
+    </div>
   </div>
 </div>

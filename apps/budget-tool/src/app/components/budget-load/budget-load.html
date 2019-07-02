@@ -1,5 +1,5 @@
-<div padding class="budget-load-container">
-  <h2>{{ "Saved Budgets" | translate }}</h2>
+<!-- <div padding class="budget-load-container">
+  <h2>{{ 'Saved Budgets' | translate }}</h2>
   <div class="saved-budgets-container">
     <ion-list *ngIf="savedBudgets">
       <div *ngFor="let budget of savedBudgets">
@@ -11,7 +11,7 @@
               style="flex-basis:100%"
             >
               <div>{{ budget.title }}</div>
-              <div>{{ budget.created | date: "mediumDate" }}</div>
+              <div>{{ budget.created | date: 'mediumDate' }}</div>
             </div>
             <ion-button
               (click)="archiveBudget(budget)"
@@ -27,7 +27,7 @@
       <div *ngIf="showArchived">
         <ion-list-header *ngIf="showArchived"
           ><ion-label>{{
-            "Archived Budgets" | translate
+            'Archived Budgets' | translate
           }}</ion-label></ion-list-header
         >
         <div *ngFor="let budget of savedBudgets">
@@ -39,10 +39,10 @@
                 style="flex-basis:100%"
               >
                 <div>{{ budget.title }}</div>
-                <div>{{ budget.created | date: "mediumDate" }}</div>
+                <div>{{ budget.created | date: 'mediumDate' }}</div>
               </div>
               <ion-button fill="clear" (click)="restoreBudget(budget)">{{
-                "Restore" | translate
+                'Restore' | translate
               }}</ion-button>
             </div>
           </ion-item>
@@ -53,10 +53,10 @@
       *ngIf="!showArchived"
       fill="clear"
       (click)="showArchivedBudgets()"
-      >{{ "Show archived" | translate }}</ion-button
+      >{{ 'Show archived' | translate }}</ion-button
     >
     <div *ngIf="!savedBudgets">
-      <p>{{ "There are no saved budgets" | translate }}</p>
+      <p>{{ 'There are no saved budgets' | translate }}</p>
     </div>
   </div>
   <ion-button
@@ -67,8 +67,7 @@
   >
     <ion-icon name="add" class="large-icon"></ion-icon>
     <span style="margin-left:10px">{{
-      "Create a new budget" | translate
+      'Create a new budget' | translate
     }}</span>
   </ion-button>
-  <!-- <button ion-button (click)="_ADMIN_LoadBudgetMocks()">Admin Load Budgets</button> -->
-</div>
+</div> -->

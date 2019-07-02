@@ -31,19 +31,10 @@ export class BudgetHomePage implements OnDestroy {
   budgetDownloadMessage: string;
   constructor(
     private translations: TranslationsProvider,
-    private actions: BudgetToolActions,
-    private events: Events,
     private printPrvdr: PrintProvider,
-    private store: BudgetStore,
+    public store: BudgetStore,
     private router: Router
-  ) {
-    // show load screen when first opened
-    // this.actions.setBudgetView({ component: 'load', title: 'Budget Tool' });
-    // this.actions.setActiveBudget(null);
-    // this.budget$
-    //   .pipe(takeUntil(this.componentDestroyed))
-    //   .subscribe(budget => (this.budget = budget));
-  }
+  ) {}
   createClicked() {
     this.router.navigate(['create']);
   }
@@ -52,30 +43,16 @@ export class BudgetHomePage implements OnDestroy {
     this.componentDestroyed.unsubscribe();
   }
 
-  async setView(view: IBudgetView) {
-    // console.log('setting view', view);
-    // const title = view.title
-    //   ? await this.translations.translateText(view.title)
-    //   : this.budget.title;
-    // this.actions.setBudgetView({
-    //   component: view.component,
-    //   title: title,
-    //   meta: null
-    // });
-    // if (view.component === 'overview') {
-    //   this.events.publish('calculate:budget');
-    // }
-  }
   async shareBudget() {
-    //   this.sharedDisabled = true;
-    //   try {
-    //     this.budgetDownloadMessage = 'preparing';
-    //     await this.printPrvdr.socialShareBudget('#budget', this.budget.title);
-    //     this.budgetDownloadMessage = null;
-    //   } catch (error) {
-    //     console.error(error);
-    //     this.budgetDownloadMessage = 'error';
-    //   }
-    //   this.sharedDisabled = false;
+    this.sharedDisabled = true;
+    try {
+      this.budgetDownloadMessage = 'preparing';
+      await this.printPrvdr.socialShareBudget('#budget', this.budget.title);
+      this.budgetDownloadMessage = null;
+    } catch (error) {
+      console.error(error);
+      this.budgetDownloadMessage = 'error';
+    }
+    this.sharedDisabled = false;
   }
 }

@@ -1,0 +1,12 @@
+<mat-card style="margin-bottom:10px; cursor:pointer">
+  <div style="display: flex">
+    <budget-card-image
+      class="small"
+      [imageId]="budget.enterprise"
+    ></budget-card-image>
+    <div>
+      <mat-card-title>{{ budget.title }}</mat-card-title>
+      <mat-card-subtitle>{{ budget.created | date }}</mat-card-subtitle>
+    </div>
+  </div>
+</mat-card>
