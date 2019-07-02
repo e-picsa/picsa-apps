@@ -1,52 +1,40 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { DataActions } from '../state/actions/data.actions';
-import { StorageProvider } from './storage';
 import storageCollections from './storage.data';
+import { IDBDoc, ITimestamp } from '../models';
+import { firestore } from 'firebase/app';
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
-  constructor(
-    public db: AngularFirestore,
-    private actions: DataActions,
-    private storagePrvdr: StorageProvider
-  ) {}
-  // automatically sync firebase collection data locally using list from storage.data
-  syncCollections() {
-    console.log('syncing collections from firebase');
-    for (const key of Object.keys(storageCollections)) {
-      // skip metadata marked with _ in key
-      if (!key.includes('_')) {
-        this.getCollection(key).subscribe(data => {
-          // if data returned (and not empty which can happen if never online)
-          if (data && data.length > 0) {
-            this.storagePrvdr.set(key, data);
-            this.actions.syncData({ [key]: data }, 'firestore');
-          }
-        });
-      }
-    }
-  }
+  constructor(private afs: AngularFirestore) {}
 
-  getCollection(path) {
+  public getCollection(endpoint: IDBEndpoint) {
     // return collection observable
-    return this.db.collection(path).valueChanges();
+    return this.afs.collection(endpoint).valueChanges();
   }
 
-  getDocument(path) {
-    return this.db.doc(path).valueChanges();
+  public getDocument(path: string) {
+    return this.afs.doc(path).valueChanges();
   }
 
-  updateDoc(path, data) {
-    return this.db.doc(path).update(this._cleanData(data));
+  public updateDoc(path: string, data: any) {
+    return this.afs.doc(path).update(this._cleanData(data));
   }
 
-  setDoc(path: string, data) {
-    return this.db.doc(path).set(this._cleanData(data));
+  public setDoc(path: string, data: any) {
+    return this.afs.doc(path).set(this._cleanData(data));
+  }
+
+  public generateDocMeta(doc?: IDBDoc): IDBDoc {
+    return {
+      _created: doc ? doc._created : this._generateTimestamp(),
+      _modified: this._generateTimestamp(),
+      _key: doc ? doc._key : this.afs.createId()
+    };
   }
 
   // clean data to remove undefined values
-  _cleanData(data) {
+  private _cleanData(data: any) {
     Object.keys(data).forEach(key => {
       if (typeof data[key] === 'undefined') {
         data[key] = null;
@@ -55,13 +43,17 @@ export class DBService {
     return data;
   }
 
+  private _generateTimestamp(): ITimestamp {
+    return firestore.Timestamp.fromDate(new Date());
+  }
+
   addToCollection(path: string, data, key?) {
     // update existing by providing key, set key in meta
     if (key === undefined) {
-      key = this.db.createId();
+      key = this.afs.createId();
     }
     data._key = key;
-    return this.db
+    return this.afs
       .collection(path)
       .doc(key)
       .set(data);
@@ -81,3 +73,18 @@ export class DBService {
     }
   }
 }
+
+/******************************************************************************************
+ *  Interfaces
+ *****************************************************************************************/
+
+// note, as most db writes are within nested collections hard to assert strong typings without
+// also lots of nested methods (e.g. setSubDoc, getSubCollectionEtc)
+// type below is mostly for reference
+export type IDBEndpoint =
+  | 'budgetTool'
+  | 'budgetTool/meta/inputs'
+  | 'budgetTool/meta/outputs'
+  | 'budgetTool/meta/familyLabour'
+  | 'budgetTool/meta/enterpriseTypes'
+  | 'budgetTool/meta/enterprises';

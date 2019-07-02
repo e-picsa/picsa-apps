@@ -1,7 +1,5 @@
-import { NgRedux, select } from '@angular-redux/store';
-import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { BudgetToolActions } from '../store/budget-tool.actions';
 import {
   IBudget,
@@ -10,30 +8,23 @@ import {
   ICustomBudgetCard
 } from '../models/budget-tool.models';
 import { BUDGET_DATA } from '../data/budget.data';
-import { AppState } from '@picsa/core/models';
-import { StorageProvider, UserProvider, DBService } from '@picsa/core/services';
+import {
+  StorageProvider,
+  UserProvider,
+  DBService,
+  IDBEndpoint
+} from '@picsa/core/services';
 
 @Injectable({ providedIn: 'root' })
-export class BudgetToolProvider implements OnDestroy {
-  private componentDestroyed: Subject<any> = new Subject();
-  @select(['budget', 'active'])
-  budget$: Observable<IBudget>;
+export class BudgetToolProvider {
   dotValues: IBudgetDotValues;
   constructor(
     public db: DBService,
     public userPrvdr: UserProvider,
     private actions: BudgetToolActions,
-    private storagePrvdr: StorageProvider,
-    private ngRedux: NgRedux<AppState>
+    private storagePrvdr: StorageProvider
   ) {
     this.init();
-    // this.syncData();
-    this.enableAutoSave();
-  }
-
-  ngOnDestroy() {
-    this.componentDestroyed.next();
-    this.componentDestroyed.unsubscribe();
   }
 
   // automatically populate data from storage
@@ -49,18 +40,6 @@ export class BudgetToolProvider implements OnDestroy {
     }
   }
 
-  // automatically save any changes to the active budget
-  enableAutoSave() {
-    this.budget$.pipe(takeUntil(this.componentDestroyed)).subscribe(budget => {
-      if (budget && budget.title) {
-        if (!budget._key) {
-          budget._key = this.db.db.createId();
-        }
-        this.saveBudget(budget);
-      }
-    });
-  }
-
   async saveBudget(budget: IBudget) {
     let savedBudgets = await this.userPrvdr.user.budgets;
     if (!savedBudgets) {
@@ -68,17 +47,6 @@ export class BudgetToolProvider implements OnDestroy {
     }
     savedBudgets[budget._key] = budget;
     this.userPrvdr.updateUser('budgets', savedBudgets);
-  }
-
-  // change single budget key/value
-  patchBudget(key, val) {
-    // setTimeout(() => {
-    //   const budget = this.store.activeBudget;
-    //   if (budget) {
-    //     budget[key] = val;
-    //     this.actions.setActiveBudget(budget);
-    //   }
-    // }, 150);
   }
 
   /*
@@ -93,16 +61,13 @@ export class BudgetToolProvider implements OnDestroy {
   async syncData() {
     for (const endpoint of Object.keys(BUDGET_DATA)) {
       const collection = this.db.getCollection(
-        `budgetTool/meta/${endpoint}`
+        `budgetTool/meta/${endpoint}` as IDBEndpoint
       ) as Observable<ICustomBudgetCard[]>;
       collection.subscribe(data => {
         if (data && data.length > 0) {
           const orderedData = this._sortData(data);
           console.log('updating syncd budget meta', data);
           this.actions.patchBudgetMeta({ [endpoint]: orderedData });
-          // const meta = this.ngRedux.getState().budget.meta;
-          // meta[endpoint] = orderedData;
-          // this.storagePrvdr.storage.set("_budgetMeta", meta);
         }
       });
     }

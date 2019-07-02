@@ -1,11 +1,4 @@
-// import { IWhatsAppGroup } from "../components/whatsapp-group/whatsapp-group";
-// import {
-//   IBudget,
-//   IBudgetMeta
-// } from "../tools/budget-tool/models/budget-tool.models";
-
-// *** TODO - types above used but doesn't fit current pattern
-// should decide best way to handle
+import { firestore } from 'firebase/app';
 
 // user doc format stored locally under 'user' key and reflected to firebase
 export interface IUser {
@@ -23,6 +16,13 @@ export interface IUser {
   authenticated?: boolean;
   permissions?: IUserPerimissions;
   defaults?: IUserDefaults;
+}
+
+export interface ITimestamp extends firestore.Timestamp {}
+export interface IDBDoc {
+  _key: string;
+  _created: firestore.Timestamp;
+  _modified: firestore.Timestamp;
 }
 
 interface IUserDefaults {

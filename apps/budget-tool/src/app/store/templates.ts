@@ -9,14 +9,14 @@ const BUDGET_PERIOD_DEFAULT: IBudgetPeriodMeta = {
   labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
 };
 
-export const NEW_BUDGET_TEMPLATE: IBudget = {
+// don't assert type so missing _key field picked up in create new budget from store
+export const NEW_BUDGET_TEMPLATE = {
   apiVersion: BUDGET_API_VERSION,
   archived: false,
   created: new Date().toISOString(),
   data: {},
   description: null,
   enterprise: null,
-  _key: null,
   periods: BUDGET_PERIOD_DEFAULT,
   title: null,
   enterpriseType: null,

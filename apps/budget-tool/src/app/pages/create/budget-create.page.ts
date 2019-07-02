@@ -47,6 +47,7 @@ export class BudgetCreatePage implements OnInit {
       'enterpriseType',
       'title'
     ];
+    console.log('active budget value', this.store.activeBudgetValue);
     this.budgetForm = this._generateFormFromValues(
       this.store.activeBudgetValue,
       requiredFields

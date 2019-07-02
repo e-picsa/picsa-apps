@@ -39,7 +39,6 @@ export class UserProvider implements OnDestroy {
     this.initTranslate();
     await this.loadUser();
     await this.enableUserSync();
-    this.db.syncCollections();
     this.subscribeToFirebaseChanges();
   }
 

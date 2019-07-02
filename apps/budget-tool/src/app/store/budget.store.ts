@@ -7,8 +7,13 @@ import {
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
-import { observable, action, computed } from 'mobx-angular';
-import { TranslationsProvider, MONTHS, DBService } from '@picsa/core/services';
+import { observable, action } from 'mobx-angular';
+import {
+  TranslationsProvider,
+  MONTHS,
+  DBService,
+  StorageProvider
+} from '@picsa/core/services';
 import { NEW_BUDGET_TEMPLATE } from './templates';
 import { BUDGET_DATA } from '../data/budget.data';
 import { toJS } from 'mobx';
@@ -30,7 +35,8 @@ export class BudgetStore {
 
   constructor(
     private translations: TranslationsProvider,
-    private db: DBService
+    private db: DBService,
+    private storage: StorageProvider
   ) {
     this.createNewBudget();
   }
@@ -57,6 +63,7 @@ export class BudgetStore {
    ***************************************************************************/
   patchBudget(patch: Partial<IBudget>) {
     this.setActiveBudget({ ...this.activeBudget, ...patch });
+    this.saveBudget();
   }
 
   /**************************************************************************
@@ -72,8 +79,15 @@ export class BudgetStore {
     }
   }
   createNewBudget() {
-    const budget: IBudget = NEW_BUDGET_TEMPLATE;
+    const budget: IBudget = {
+      ...NEW_BUDGET_TEMPLATE,
+      ...this.db.generateDocMeta()
+    };
     this.setActiveBudget(budget);
+  }
+  async saveBudget() {
+    const patch = { [this.activeBudgetValue._key]: this.activeBudgetValue };
+    await this.storage.patch('budgets', patch);
   }
   async loadBudget(budget: IBudget) {
     const loader = await this.translations.createTranslatedLoader({

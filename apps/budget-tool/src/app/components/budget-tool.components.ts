@@ -13,7 +13,6 @@ import { BudgetCellValueComponent } from './budget-cell-value/budget-cell-value'
 import { BudgetCellComponent } from './budget-cell/budget-cell';
 import { BudgetLoadComponent } from './budget-load/budget-load';
 import { BudgetOverviewComponent } from './budget-overview/budget-overview';
-import { BudgetSettingsComponent } from './budget-settings/budget-settings';
 import { CardSelectComponent } from './card-select/card-select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +31,6 @@ import { PicsaMaterialModule } from '../material.module';
     BudgetCellValueComponent,
     BudgetLoadComponent,
     BudgetOverviewComponent,
-    BudgetSettingsComponent,
     CardSelectComponent
   ],
   imports: [
@@ -55,7 +53,6 @@ import { PicsaMaterialModule } from '../material.module';
     BudgetCellValueComponent,
     BudgetLoadComponent,
     BudgetOverviewComponent,
-    BudgetSettingsComponent,
     CardSelectComponent
   ]
 })

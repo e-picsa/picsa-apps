@@ -24,6 +24,7 @@ export class StorageProvider {
   async loadData() {
     for (const key of Object.keys(storageData)) {
       const data = await this.storage.get(key);
+      console.log(`[${key}] data`, data);
       if (data && data.length > 0) {
         // currently populating both mobx and redux stores
         this.actions.loadData({ [key]: data }, 'storage');
@@ -33,11 +34,27 @@ export class StorageProvider {
     }
   }
   // standard storage methods
-  async get(storageKey: string) {
+  async get(storageKey: IStorageEndpoint) {
     return this.storage.get(storageKey);
   }
 
-  async set(storageKey: string, data: any) {
+  async set(storageKey: IStorageEndpoint, data: any) {
     return this.storage.set(storageKey, data);
   }
+
+  async patch(storageKey: IStorageEndpoint, data: any) {
+    const existing = await this.storage.get(storageKey);
+    const patched = { ...existing, [storageKey]: data };
+    console.log('storage patched', patched);
+    return this.storage.set(storageKey, patched);
+  }
 }
+
+type IStorageEndpoint =
+  | 'budgets'
+  | '_version'
+  | 'resources'
+  | 'forms'
+  | 'groups'
+  | 'whatsappGroups'
+  | 'user';
