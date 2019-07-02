@@ -32,12 +32,53 @@ export class BudgetCreatePage implements OnInit {
     private fb: FormBuilder,
     public store: BudgetStore,
     private router: Router
-  ) {}
+  ) {
+    this.store.createNewBudget();
+  }
 
   ngOnInit() {
     this.enterpriseTypes = this.store.enterpriseTypes;
     this.generateBudgetForm();
   }
+
+  /**************************************************************************
+   *  Public Helpers
+   **************************************************************************/
+
+  enterpriseTypeClicked(type: IEnterpriseType) {
+    // reset form on new type selected
+    this.enterpriseToggle = false;
+    this.budgetForm.patchValue({ enterprise: '', enterpriseType: type });
+    setTimeout(() => {
+      this.filteredEnterprises = this.store.getfilteredEnterprises(type);
+      this.enterpriseToggle = true;
+    }, 200);
+  }
+
+  enterpriseClicked(enterprise: IEnterprise) {
+    const enterpriseDefaultPeriods = this.store.getBudgetEnterpriseDefaults(
+      enterprise
+    );
+    this.budgetForm.patchValue({
+      enterprise: enterprise.id,
+      periods: enterpriseDefaultPeriods
+    });
+    setTimeout(() => {
+      this.stepper.next();
+    }, 800);
+  }
+  save() {
+    // generate period labels before saving
+    this.periodForm.patchValue({
+      labels: this.store.generateLabels(this.periodForm.value)
+    });
+    this.store.patchBudget(this.budgetForm.value);
+    this.router.navigate(['view', this.store.activeBudget._key]);
+  }
+
+  /**************************************************************************
+   *  Private Generators & Helpers
+   **************************************************************************/
 
   // create general form with formgroups for all budget fields
   // add required vaildation for fields which must be completed in this page
@@ -72,36 +113,5 @@ export class BudgetCreatePage implements OnInit {
         ])
     );
     return this.fb.group(fieldGroup);
-  }
-
-  enterpriseTypeClicked(type: IEnterpriseType) {
-    // reset form on new type selected
-    this.enterpriseToggle = false;
-    this.budgetForm.patchValue({ enterprise: '', enterpriseType: type });
-    setTimeout(() => {
-      this.filteredEnterprises = this.store.getfilteredEnterprises(type);
-      this.enterpriseToggle = true;
-    }, 200);
-  }
-
-  enterpriseClicked(enterprise: IEnterprise) {
-    const enterpriseDefaultPeriods = this.store.getBudgetEnterpriseDefaults(
-      enterprise
-    );
-    this.budgetForm.patchValue({
-      enterprise: enterprise.id,
-      periods: enterpriseDefaultPeriods
-    });
-    setTimeout(() => {
-      this.stepper.next();
-    }, 800);
-  }
-  save() {
-    // generate period labels before saving
-    this.periodForm.patchValue({
-      labels: this.store.generateLabels(this.periodForm.value)
-    });
-    this.store.patchBudget(this.budgetForm.value);
-    this.router.navigate(['view']);
   }
 }

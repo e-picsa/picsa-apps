@@ -8,12 +8,7 @@ import {
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
 import { observable, action } from 'mobx-angular';
-import {
-  TranslationsProvider,
-  MONTHS,
-  DBService,
-  StorageProvider
-} from '@picsa/core/services';
+import { MONTHS, DBService, StorageProvider } from '@picsa/core/services';
 import { NEW_BUDGET_TEMPLATE } from './templates';
 import { BUDGET_DATA } from '../data/budget.data';
 import { toJS } from 'mobx';
@@ -25,6 +20,7 @@ export class BudgetStore {
   @observable enterprises = BUDGET_DATA.enterprises;
   @observable enterpriseTypes = BUDGET_DATA.enterpriseTypes;
   @observable activeBudget: IBudget;
+  @observable savedBudgets: IBudget[];
   get activeBudgetValue() {
     return toJS(this.activeBudget);
   }
@@ -33,12 +29,8 @@ export class BudgetStore {
     console.log('active budget', toJS(this.activeBudget));
   }
 
-  constructor(
-    private translations: TranslationsProvider,
-    private db: DBService,
-    private storage: StorageProvider
-  ) {
-    this.createNewBudget();
+  constructor(private db: DBService, private storage: StorageProvider) {
+    this.loadSavedBudgets();
   }
 
   /**************************************************************************
@@ -70,14 +62,7 @@ export class BudgetStore {
    *            Budget Create/Save/Load
    *
    ***************************************************************************/
-  async setBudgetByKey(key: string) {
-    if (this.activeBudget._key !== key) {
-      try {
-        const doc = await this.db.getDocument(`budgets/${key}`).toPromise();
-        console.log('doc', doc);
-      } catch (error) {}
-    }
-  }
+
   createNewBudget() {
     const budget: IBudget = {
       ...NEW_BUDGET_TEMPLATE,
@@ -89,20 +74,27 @@ export class BudgetStore {
     const patch = { [this.activeBudgetValue._key]: this.activeBudgetValue };
     await this.storage.patch('budgets', patch);
   }
+  async loadBudgetByKey(key: string) {
+    if (!this.activeBudget || this.activeBudget._key !== key) {
+      await this.loadSavedBudgets();
+      const budget = this.savedBudgets.find(b => b._key === key);
+      this.loadBudget(toJS(budget));
+    }
+  }
   async loadBudget(budget: IBudget) {
-    const loader = await this.translations.createTranslatedLoader({
-      message: 'Preparing budget'
-    });
-    await loader.present();
     budget = checkForBudgetUpgrades(budget);
     this.setActiveBudget(budget);
     // this.events.publish("calculate:budget");
     // // publish event to force card list update
     // this.events.publish("load:budget");
-    // // give small timeout to give appearance of smoother rendering
-    setTimeout(async () => {
-      await loader.dismiss();
-    }, 1000);
+  }
+
+  private async loadSavedBudgets(): Promise<void> {
+    const stored: { [key: string]: IBudget } = await this.storage.get(
+      'budgets'
+    );
+    this.savedBudgets = Object.values({ ...stored });
+    console.log('saved budgets', toJS(this.savedBudgets));
   }
 
   async archiveBudget(budget: IBudget) {

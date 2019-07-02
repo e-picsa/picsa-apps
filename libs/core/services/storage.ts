@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { DataActions } from '../state/actions/data.actions';
 import storageData from './storage.data';
+import { IDBDoc } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class StorageProvider {
@@ -38,15 +39,16 @@ export class StorageProvider {
     return this.storage.get(storageKey);
   }
 
+  // all data set in db should have core IDBDoc fields including _key and _created
   async set(storageKey: IStorageEndpoint, data: any) {
     return this.storage.set(storageKey, data);
   }
 
+  // merge new data on top of exising, replacing where duplicate found
   async patch(storageKey: IStorageEndpoint, data: any) {
     const existing = await this.storage.get(storageKey);
-    const patched = { ...existing, [storageKey]: data };
-    console.log('storage patched', patched);
-    return this.storage.set(storageKey, patched);
+    const patch = { ...existing, ...data };
+    return this.storage.set(storageKey, patch);
   }
 }
 

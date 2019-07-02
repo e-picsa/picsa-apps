@@ -1,3 +1,5 @@
+import { IDBDoc } from '@picsa/core';
+
 export interface BudgetToolState {
   active: IBudget;
   meta: IBudgetMeta;
@@ -5,8 +7,7 @@ export interface BudgetToolState {
   // no additional parameters currently specified (may change)
 }
 
-export interface IBudget {
-  _key: string;
+export interface IBudget extends IDBDoc {
   title: string;
   archived: boolean;
   periods: IBudgetPeriodMeta;

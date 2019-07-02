@@ -1,9 +1,9 @@
-import { Injectable, OnDestroy } from "@angular/core";
-import { LoadingController, ToastController } from "@ionic/angular";
-import { LoadingOptions, ToastOptions } from "@ionic/core";
-import { TranslateService } from "@ngx-translate/core";
+import { Injectable, OnDestroy } from '@angular/core';
+import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingOptions, ToastOptions } from '@ionic/core';
+import { TranslateService } from '@ngx-translate/core';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class TranslationsProvider implements OnDestroy {
   loader: HTMLIonLoadingElement;
   monthNames: string[] = MONTHS;
@@ -58,7 +58,7 @@ export class TranslationsProvider implements OnDestroy {
   // these are calculated when language changed
   async prepareStaticTranslations() {
     this.monthNames = await this.translateArray(MONTHS);
-    console.log("month names", this.monthNames);
+    console.log('month names', this.monthNames);
   }
 }
 
@@ -66,26 +66,26 @@ export class TranslationsProvider implements OnDestroy {
 const _wait = ms => new Promise((r, j) => setTimeout(r, ms));
 
 export const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
 ];
 
 export const DAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday"
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
 ];

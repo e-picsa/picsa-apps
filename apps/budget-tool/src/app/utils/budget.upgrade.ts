@@ -8,19 +8,16 @@ export const BUDGET_API_VERSION = 4;
 
 // recursively go through budget and if api version less than current perform incremental upgrade
 export const checkForBudgetUpgrades = (budget: IBudget) => {
-  console.log('checking for upgrade', budget.apiVersion, this.apiVersion);
-  if (budget.apiVersion < this.apiVersion) {
+  if (budget.apiVersion < BUDGET_API_VERSION) {
     budget = upgradeBudget(budget);
     return this.checkForBudgetUpgrades(budget);
   } else {
-    console.log('budget up to date');
     return budget;
   }
 };
 
 export const upgradeBudget = (budget: IBudget) => {
   const version = budget.apiVersion;
-  console.log(`upgrading budget from v${version}`);
   switch (version) {
     case 1:
       return v1Upgrade(budget);
@@ -28,6 +25,8 @@ export const upgradeBudget = (budget: IBudget) => {
       return v2Upgrade(budget);
     case 3:
       return v3Upgrade(budget);
+    case 4:
+      return;
     default:
       throw new Error(`could not upgrade budget: ${JSON.stringify(budget)}`);
   }

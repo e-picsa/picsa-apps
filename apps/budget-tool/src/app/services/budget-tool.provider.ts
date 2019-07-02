@@ -40,15 +40,6 @@ export class BudgetToolProvider {
     }
   }
 
-  async saveBudget(budget: IBudget) {
-    let savedBudgets = await this.userPrvdr.user.budgets;
-    if (!savedBudgets) {
-      savedBudgets = {};
-    }
-    savedBudgets[budget._key] = budget;
-    this.userPrvdr.updateUser('budgets', savedBudgets);
-  }
-
   /*
       The methods below are used to keep firebase data sync'd locally when internet available
       They are sinukar to firebase and storage provider methods, but included again

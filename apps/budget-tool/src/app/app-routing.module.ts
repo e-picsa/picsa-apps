@@ -19,11 +19,17 @@ const routes: Routes = [
   },
   {
     path: 'view',
+    redirectTo: '/home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'view/:budgetKey',
     loadChildren: () =>
       import('./pages/view/budget-view.module').then(
         mod => mod.BudgetViewPageModule
       )
-  }
+  },
+  { path: '**', redirectTo: '/home' }
 ];
 
 @NgModule({
