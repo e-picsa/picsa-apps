@@ -569,6 +569,13 @@
     localforage-cordovasqlitedriver "1.7.0"
     tslib "^1.7.1"
 
+"@nebular/theme@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@nebular/theme/-/theme-4.1.0.tgz#10a51909f130d85a6e62c57484d1afbaa4aea4da"
+  integrity sha512-pfYR7vrqcsJ0TBLXzQhk2FQbC9FXeQ5RR/timCkByswY/W87IhN10onSlLgm/DPlVvZq0T0vDBrl50/sjtU2xQ==
+  dependencies:
+    intersection-observer "0.5.0"
+
 "@nestjs/common@^5.3.0":
   version "5.7.4"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-5.7.4.tgz#32eaf1de87449ab56af7e3a15b9060811150429a"
@@ -6187,6 +6194,11 @@ interpret@^1.0.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.2.0.tgz#d5061a6224be58e8083985f5014d844359576296"
   integrity sha512-mT34yGKMNceBQUoVn7iCDKDntA7SC6gycMAWzGx1z/CMCTV7b2AAtXlo3nRyHZ1FelRkQbQjprHSYGwzLtkVbw==
+
+intersection-observer@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/intersection-observer/-/intersection-observer-0.5.0.tgz#9fe8bee3953c755b1485c38efd9633d535775ea6"
+  integrity sha512-8Zgt4ijlyvIrQVTA7MPb2W9+KhoetrAbxlh0RmTGxpx0+ZsAXvy7IsbNnZIrqZ6TddAdWeQj49x7Ph7Ir6KRkA==
 
 invariant@^2.2.2:
   version "2.2.4"
