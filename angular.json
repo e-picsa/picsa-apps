@@ -24,9 +24,7 @@
               "testing/tsconfig.libs.json",
               "testing/tsconfig.libs.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -52,9 +50,7 @@
               "testing/tsconfig.xplat.json",
               "testing/tsconfig.xplat.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -79,7 +75,7 @@
       },
       "root": "apps/budget-tool",
       "sourceRoot": "apps/budget-tool/src",
-      "prefix": "picsa",
+      "prefix": "budget",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -93,9 +89,7 @@
               "apps/budget-tool/src/favicon.ico",
               "apps/budget-tool/src/assets"
             ],
-            "styles": [
-              "apps/budget-tool/src/styles.scss"
-            ],
+            "styles": ["apps/budget-tool/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -149,9 +143,7 @@
               "apps/budget-tool/tsconfig.app.json",
               "apps/budget-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -199,7 +191,7 @@
       },
       "root": "apps/station-data",
       "sourceRoot": "apps/station-data/src",
-      "prefix": "picsa",
+      "prefix": "data",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -213,9 +205,7 @@
               "apps/station-data/src/favicon.ico",
               "apps/station-data/src/assets"
             ],
-            "styles": [
-              "apps/station-data/src/styles.scss"
-            ],
+            "styles": ["apps/station-data/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -269,9 +259,7 @@
               "apps/station-data/tsconfig.app.json",
               "apps/station-data/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -333,9 +321,7 @@
               "apps/extension-toolkit/src/favicon.ico",
               "apps/extension-toolkit/src/assets"
             ],
-            "styles": [
-              "apps/extension-toolkit/src/styles.scss"
-            ],
+            "styles": ["apps/extension-toolkit/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -389,9 +375,7 @@
               "apps/extension-toolkit/tsconfig.app.json",
               "apps/extension-toolkit/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
