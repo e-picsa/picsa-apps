@@ -9,7 +9,7 @@ const routes: Routes = [
     component: PagesComponent,
     children: [
       {
-        path: 'home',
+        path: '',
         loadChildren: () =>
           import('./home/data-home.module').then(m => m.DataHomePageModule)
       }

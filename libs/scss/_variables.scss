@@ -5,72 +5,72 @@
 
 // could use a base theme here, for example:
 // @import '~@angular/material/theming';
+// picsa palette generated at http://mcg.mbitson.com
+$picsa-primary: (50 : #f1e5e9,
+100 : #dcbec7,
+200 : #c593a2,
+300 : #ad677c,
+400 : #9c4760,
+500 : #8a2644,
+600 : #82223e,
+700 : #771c35,
+800 : #6d172d,
+900 : #5a0d1f,
+A100 : #ff90a5,
+A200 : #ff5d7b,
+A400 : #ff2a52,
+A700 : #ff103d,
+contrast: (50 : #000000,
+100 : #000000,
+200 : #000000,
+300 : #ffffff,
+400 : #ffffff,
+500 : #ffffff,
+600 : #ffffff,
+700 : #ffffff,
+800 : #ffffff,
+900 : #ffffff,
+A100 : #000000,
+A200 : #000000,
+A400 : #ffffff,
+A700 : #ffffff,
+));
+$picsa-accent: (50 : #eceeef,
+100 : #cfd4d7,
+200 : #afb8bd,
+300 : #8e9ca2,
+400 : #76868e,
+500 : #5e717a,
+600 : #566972,
+700 : #4c5e67,
+800 : #42545d,
+900 : #31424a,
+A100 : #9bdeff,
+A200 : #68cdff,
+A400 : #35bcff,
+A700 : #1bb3ff,
+contrast: (50 : #000000,
+100 : #000000,
+200 : #000000,
+300 : #000000,
+400 : #000000,
+500 : #ffffff,
+600 : #ffffff,
+700 : #ffffff,
+800 : #ffffff,
+900 : #ffffff,
+A100 : #000000,
+A200 : #000000,
+A400 : #000000,
+A700 : #000000,
+));
+
+// could use functions to populate and alter these
+// https://scotch.io/tutorials/aesthetic-sass-2-colors
 :root {
-  --color-primary: hsl(234, 62%, 26%);
-  --color-secondary: hsl(323, 82%, 40%);
-  --color-selected: wheat;
+  --color-primary: #8a2644;
+  --color-secondary: #3f51b5;
+  --color-black: #1a2138;
   --color-light: #f8f9fa;
-
-  --ion-color-primary: #8a2644;
-  --ion-color-primary-rgb: 138, 38, 68;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #79213c;
-  --ion-color-primary-tint: #963c57;
-
-  --ion-color-secondary: #3f51b5;
-  --ion-color-secondary-rgb: 63, 81, 181;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #3f51b5;
-  --ion-color-secondary-tint: #3f51b5;
-
-  --ion-color-tertiary: #7044ff;
-  --ion-color-tertiary-rgb: 112, 68, 255;
-  --ion-color-tertiary-contrast: #ffffff;
-  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
-  --ion-color-tertiary-shade: #633ce0;
-  --ion-color-tertiary-tint: #7e57ff;
-
-  --ion-color-success: #10dc60;
-  --ion-color-success-rgb: 16, 220, 96;
-  --ion-color-success-contrast: #ffffff;
-  --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #0ec254;
-  --ion-color-success-tint: #28e070;
-
-  --ion-color-warning: #ffce00;
-  --ion-color-warning-rgb: 255, 206, 0;
-  --ion-color-warning-contrast: #ffffff;
-  --ion-color-warning-contrast-rgb: 255, 255, 255;
-  --ion-color-warning-shade: #e0b500;
-  --ion-color-warning-tint: #ffd31a;
-
-  --ion-color-danger: #f04141;
-  --ion-color-danger-rgb: 245, 61, 61;
-  --ion-color-danger-contrast: #ffffff;
-  --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #d33939;
-  --ion-color-danger-tint: #f25454;
-
-  --ion-color-dark: #222428;
-  --ion-color-dark-rgb: 34, 34, 34;
-  --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255, 255, 255;
-  --ion-color-dark-shade: #1e2023;
-  --ion-color-dark-tint: #383a3e;
-
-  --ion-color-medium: #989aa2;
-  --ion-color-medium-rgb: 152, 154, 162;
-  --ion-color-medium-contrast: #ffffff;
-  --ion-color-medium-contrast-rgb: 255, 255, 255;
-  --ion-color-medium-shade: #86888f;
-  --ion-color-medium-tint: #a2a4ab;
-
-  --ion-color-light: #f4f5f8;
-  --ion-color-light-rgb: 244, 244, 244;
-  --ion-color-light-contrast: #000000;
-  --ion-color-light-contrast-rgb: 0, 0, 0;
-  --ion-color-light-shade: #d7d8da;
-  --ion-color-light-tint: #f5f6f9;
+  --color-white: #ffffff;
 }
