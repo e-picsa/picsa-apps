@@ -205,7 +205,11 @@
               "apps/station-data/src/favicon.ico",
               "apps/station-data/src/assets"
             ],
-            "styles": ["apps/station-data/src/styles.scss"],
+            "styles": [
+              "apps/station-data/src/styles.scss",
+              "libs/scss/_index.scss"
+            ],
+            "stylePreprocessorOptions": { "includePaths": ["libs/scss/"] },
             "scripts": []
           },
           "configurations": {
