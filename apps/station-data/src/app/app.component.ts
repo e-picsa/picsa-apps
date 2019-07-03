@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'picsa-root',
-  templateUrl: './app.component.html',
+  selector: 'picsa-station-data',
+  template: `
+    <router-outlet></router-outlet>
+  `,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {

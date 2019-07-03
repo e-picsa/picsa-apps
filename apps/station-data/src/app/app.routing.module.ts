@@ -2,13 +2,11 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: 'pages', pathMatch: 'full' },
   {
-    path: 'home',
+    path: 'pages',
     loadChildren: () =>
-      import('./pages/home/data-home.module').then(
-        mod => mod.DataHomePageModule
-      )
+      import('./pages/pages.module').then(m => m.DataPagesModule)
   }
 ];
 
