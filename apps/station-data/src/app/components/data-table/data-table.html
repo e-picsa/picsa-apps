@@ -1,0 +1,8 @@
+<table mat-table [dataSource]="tableData" class="mat-elevation-z8 picsa-table">
+  <mat-text-column
+    *ngFor="let col of tableColumns"
+    [name]="col"
+  ></mat-text-column>
+  <tr mat-header-row *matHeaderRowDef="tableColumns" class="header-row"></tr>
+  <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
+</table>

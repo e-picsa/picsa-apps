@@ -48,8 +48,10 @@
         >Load example dataset</span
       >
     </div>
+    <h4 *ngIf="tableData.length > 0">Preview</h4>
+    <picsa-data-table [data]="tableData"></picsa-data-table>
 
-    <div>
+    <div style="margin-top:1em">
       <button mat-button matStepperPrevious color="primary">Back</button>
       <button mat-button matStepperNext color="primary">Next</button>
     </div>

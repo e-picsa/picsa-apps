@@ -4,8 +4,10 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { DataUpload } from './data-upload.page';
 import { NgxFileDropModule } from 'ngx-file-drop';
+import { PapaParseModule } from 'ngx-papaparse';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PicsaMaterialModule } from '../../material.module';
+import { StationDataComponentsModule } from '../../components/components.module';
 
 const routes: Routes = [
   {
@@ -21,7 +23,9 @@ const routes: Routes = [
     NgxFileDropModule,
     FormsModule,
     ReactiveFormsModule,
-    PicsaMaterialModule
+    PicsaMaterialModule,
+    StationDataComponentsModule,
+    PapaParseModule
   ],
   declarations: [DataUpload]
 })

@@ -8,7 +8,8 @@ import {
   MatToolbarModule,
   MatListModule,
   MatCardModule,
-  MatIconModule
+  MatIconModule,
+  MatTableModule
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -24,7 +25,8 @@ import { NgModule } from '@angular/core';
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatTableModule
   ],
   exports: [
     MatButtonModule,
@@ -36,7 +38,8 @@ import { NgModule } from '@angular/core';
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatTableModule
   ]
 })
 export class PicsaMaterialModule {}
