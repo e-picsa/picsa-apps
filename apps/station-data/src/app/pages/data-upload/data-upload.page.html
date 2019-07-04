@@ -17,20 +17,18 @@
   </mat-step>
   <!-- Upload Data -->
   <mat-step>
-    <ng-template matStepLabel>Select Data</ng-template>
+    <ng-template matStepLabel>Select</ng-template>
     <ngx-file-drop
       (onFileDrop)="dropped($event)"
       accept=".csv"
       [multiple]="false"
+      #fileDrop
     >
-      <ng-template
-        ngx-file-drop-content-tmp
-        let-openFileSelector="openFileSelector"
-      >
+      <ng-template ngx-file-drop-content-tmp>
         <div style="text-align: center">
           <button
             mat-button
-            (click)="openFileSelector()"
+            (click)="fileDrop.openFileSelector()"
             style="padding-right: 4px"
           >
             Choose a file
@@ -44,13 +42,13 @@
     </ngx-file-drop>
     <div style="margin:1em 0; font-size: small">
       <span>Don't have data? </span
-      ><span style="cursor: pointer; font-weight: bold"
+      ><span style="cursor: pointer; font-weight: bold" (click)="loadDemoData()"
         >Load example dataset</span
       >
     </div>
+    <!-- preview data -->
     <h4 *ngIf="tableData.length > 0">Preview</h4>
     <picsa-data-table [data]="tableData"></picsa-data-table>
-
     <div style="margin-top:1em">
       <button mat-button matStepperPrevious color="primary">Back</button>
       <button mat-button matStepperNext color="primary">Next</button>
@@ -58,7 +56,15 @@
   </mat-step>
   <!--  -->
   <mat-step>
-    <ng-template matStepLabel>Done</ng-template>
+    <ng-template matStepLabel>Prepare</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Result</ng-template>
     You are now done.
     <div>
       <button mat-button matStepperPrevious>Back</button>

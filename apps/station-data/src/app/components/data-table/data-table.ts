@@ -15,8 +15,10 @@ export class PicsaDataTable {
   tableData: any[] = [];
   tableColumns: string[] = [];
   @Input() set data(data: any[]) {
-    console.log('data set', data);
-    this.tableColumns = Object.keys(data[0]);
-    this.tableData = data;
+    if (data && data.length > 0) {
+      console.log('data', data);
+      this.tableColumns = Object.keys(data[0]);
+      this.tableData = data;
+    }
   }
 }

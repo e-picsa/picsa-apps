@@ -8,6 +8,7 @@ import { PapaParseModule } from 'ngx-papaparse';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PicsaMaterialModule } from '../../material.module';
 import { StationDataComponentsModule } from '../../components/components.module';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     PicsaMaterialModule,
     StationDataComponentsModule,
+    HttpClientModule,
     PapaParseModule
   ],
   declarations: [DataUpload]
