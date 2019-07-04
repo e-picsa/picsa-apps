@@ -3,9 +3,10 @@ import { StationDataSidebar } from '../layout/sidebar/sidebar';
 import { StationDataHeader } from '../layout/header/header';
 import { CommonModule } from '@angular/common';
 import { PicsaMaterialModule } from '../material.module';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
-  imports: [CommonModule, PicsaMaterialModule],
+  imports: [CommonModule, PicsaMaterialModule, RouterModule],
   exports: [StationDataHeader, StationDataSidebar],
   declarations: [StationDataSidebar, StationDataHeader]
 })

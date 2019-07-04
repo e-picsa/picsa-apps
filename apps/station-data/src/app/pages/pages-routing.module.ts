@@ -11,7 +11,22 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('./home/data-home.module').then(m => m.DataHomePageModule)
+          import('./home/home.module').then(m => m.HomePageModule)
+      },
+      {
+        path: 'summary',
+        loadChildren: () =>
+          import('./summary/summary.module').then(m => m.SummaryPageModule)
+      },
+      {
+        path: 'raw',
+        loadChildren: () =>
+          import('./raw/raw.module').then(m => m.RawPageModule)
+      },
+      {
+        path: 'map',
+        loadChildren: () =>
+          import('./map/map.module').then(m => m.MapPageModule)
       }
     ]
   }

@@ -1,5 +1,23 @@
 <div
   style="width:200px; height:100%; padding:2rem 1rem 1rem; background:whitesmoke "
 >
-  <div>Menu</div>
+  <mat-list>
+    <h3 mat-subheader>Generate From</h3>
+    <mat-list-item [routerLink]="['/summary']">
+      <img matListIcon src="assets/images/icons/summaries.svg" />
+      <h4 mat-line>Summaries</h4>
+    </mat-list-item>
+    <mat-list-item [routerLink]="['/raw']">
+      <mat-icon svgIcon="station_data_summaries"></mat-icon>
+      <h4 mat-line>Raw</h4>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+    <h3 mat-subheader>View Data</h3>
+    <mat-list-item [routerLink]="['/map']">
+      <h4 mat-line>Map</h4>
+    </mat-list-item>
+    <mat-list-item [routerLink]="['/stats']">
+      <h4 mat-line>Stats</h4>
+    </mat-list-item>
+  </mat-list>
 </div>

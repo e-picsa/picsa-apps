@@ -7,7 +7,8 @@ import {
   MatSelectModule,
   MatToolbarModule,
   MatListModule,
-  MatCardModule
+  MatCardModule,
+  MatIconModule
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -18,6 +19,7 @@ import { NgModule } from '@angular/core';
     MatCheckboxModule,
     MatStepperModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatSelectModule,
     MatToolbarModule,
@@ -29,6 +31,7 @@ import { NgModule } from '@angular/core';
     MatCheckboxModule,
     MatStepperModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatSelectModule,
     MatToolbarModule,

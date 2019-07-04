@@ -8317,6 +8317,13 @@ ng2-canvas-whiteboard@^3.0.4:
   dependencies:
     lodash "4.17.11"
 
+ngx-file-drop@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/ngx-file-drop/-/ngx-file-drop-8.0.3.tgz#89921a0c8dbdab389b354359454981dffd01b907"
+  integrity sha512-HSYuEEB8dPHpF9nsRVFZFIhJoyDx32GD38+jc6J6d1zGpYqZ5eOf+p+lxNHpCjmdVsW7PG4NZUZGO9NYDn66CA==
+  dependencies:
+    tslib "^1.9.0"
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
