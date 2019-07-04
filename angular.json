@@ -24,7 +24,9 @@
               "testing/tsconfig.libs.json",
               "testing/tsconfig.libs.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
@@ -50,7 +52,9 @@
               "testing/tsconfig.xplat.json",
               "testing/tsconfig.xplat.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
@@ -89,7 +93,9 @@
               "apps/budget-tool/src/favicon.ico",
               "apps/budget-tool/src/assets"
             ],
-            "styles": ["apps/budget-tool/src/styles.scss"],
+            "styles": [
+              "apps/budget-tool/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -143,7 +149,9 @@
               "apps/budget-tool/tsconfig.app.json",
               "apps/budget-tool/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -210,7 +218,9 @@
               "libs/scss/_index.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["libs/scss/"]
+              "includePaths": [
+                "libs/scss/"
+              ]
             },
             "scripts": []
           },
@@ -265,7 +275,9 @@
               "apps/station-data/tsconfig.app.json",
               "apps/station-data/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -327,7 +339,9 @@
               "apps/extension-toolkit/src/favicon.ico",
               "apps/extension-toolkit/src/assets"
             ],
-            "styles": ["apps/extension-toolkit/src/styles.scss"],
+            "styles": [
+              "apps/extension-toolkit/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -381,7 +395,9 @@
               "apps/extension-toolkit/tsconfig.app.json",
               "apps/extension-toolkit/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {

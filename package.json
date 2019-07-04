@@ -94,6 +94,7 @@
     "nativescript-theme-core": "^1.0.4",
     "ng2-canvas-whiteboard": "^3.0.4",
     "ngx-file-drop": "^8.0.3",
+    "ngx-papaparse": "3",
     "redux": "^4.0.1",
     "redux-observable": "^1.1.0",
     "reflect-metadata": "^0.1.12",

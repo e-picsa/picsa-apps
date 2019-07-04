@@ -14,14 +14,11 @@ const routes: Routes = [
           import('./home/home.module').then(m => m.HomePageModule)
       },
       {
-        path: 'summary',
+        path: 'upload',
         loadChildren: () =>
-          import('./summary/summary.module').then(m => m.SummaryPageModule)
-      },
-      {
-        path: 'raw',
-        loadChildren: () =>
-          import('./raw/raw.module').then(m => m.RawPageModule)
+          import('./data-upload/data-upload.module').then(
+            m => m.DataUploadModule
+          )
       },
       {
         path: 'map',

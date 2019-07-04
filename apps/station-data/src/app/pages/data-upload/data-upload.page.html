@@ -1,0 +1,66 @@
+<mat-horizontal-stepper linear #stepper>
+  <!-- Intro -->
+  <mat-step>
+    <ng-template matStepLabel>Introduction</ng-template>
+    <p>
+      Using this tool you can prepare and upload data for use in the PICSA app.
+    </p>
+    <p style="font-size: small">
+      <strong>Note</strong><br /><br />
+      This application assumes you have used R-Instat to prepare data. <br />
+      If you are unsure of how to do this please seek additional support before
+      adding your data
+    </p>
+    <div>
+      <button mat-button matStepperNext color="primary">Continue</button>
+    </div>
+  </mat-step>
+  <!-- Upload Data -->
+  <mat-step>
+    <ng-template matStepLabel>Select Data</ng-template>
+    <ngx-file-drop
+      (onFileDrop)="dropped($event)"
+      accept=".csv"
+      [multiple]="false"
+    >
+      <ng-template
+        ngx-file-drop-content-tmp
+        let-openFileSelector="openFileSelector"
+      >
+        <div style="text-align: center">
+          <button
+            mat-button
+            (click)="openFileSelector()"
+            style="padding-right: 4px"
+          >
+            Choose a file
+          </button>
+          <span>or drag it here</span>
+          <div style="color:var(--color-primary)" *ngIf="csvFile">
+            {{ csvFile.name }}
+          </div>
+        </div>
+      </ng-template>
+    </ngx-file-drop>
+    <div style="margin:1em 0; font-size: small">
+      <span>Don't have data? </span
+      ><span style="cursor: pointer; font-weight: bold"
+        >Load example dataset</span
+      >
+    </div>
+
+    <div>
+      <button mat-button matStepperPrevious color="primary">Back</button>
+      <button mat-button matStepperNext color="primary">Next</button>
+    </div>
+  </mat-step>
+  <!--  -->
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

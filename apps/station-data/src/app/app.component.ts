@@ -19,12 +19,21 @@ export class AppComponent {
     this.registerIcons();
   }
 
+  // register custom icons from the assets/images/icons folder for access within the app
+  // icons can be accessed in mat-icon as svgIcon='station_data_${key}'
   registerIcons() {
-    this.matIconRegistry.addSvgIcon(
-      'station_data_summaries',
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        'assets/images/icons/summaries.svg'
-      )
-    );
+    const icons = {
+      add_data: 'add_data',
+      map: 'map'
+    };
+    for (const [key, value] of Object.entries(icons)) {
+      console.log('adding icon', key, value);
+      this.matIconRegistry.addSvgIcon(
+        `station_data_${key}`,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(
+          `assets/images/icons/${value}.svg`
+        )
+      );
+    }
   }
 }

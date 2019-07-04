@@ -8324,6 +8324,14 @@ ngx-file-drop@^8.0.3:
   dependencies:
     tslib "^1.9.0"
 
+ngx-papaparse@3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/ngx-papaparse/-/ngx-papaparse-3.0.3.tgz#57de922597693a715bcfca85f04047b870b0cb62"
+  integrity sha512-FgVbFaQCPUNRd6Ndqf3nehv7fUo+wlqbKb62Vl5swbApNqWCL5wTrXjpFU98x6hgOLePiPhn5KDA3e0APam6CQ==
+  dependencies:
+    papaparse "~4.6.3"
+    tslib "^1.9.0"
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
@@ -9213,6 +9221,11 @@ pako@^1.0.7, pako@~1.0.5:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.10.tgz#4328badb5086a426aa90f541977d4955da5c9732"
   integrity sha512-0DTvPVU3ed8+HNXOu5Bs+o//Mbdj9VNQMUOe9oKCwh8l0GNwpTDMKCWbRjgtD291AWnkAgkqA/LOnQS8AmS1tw==
+
+papaparse@~4.6.3:
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-4.6.3.tgz#742e5eaaa97fa6c7e1358d2934d8f18f44aee781"
+  integrity sha512-LRq7BrHC2kHPBYSD50aKuw/B/dGcg29omyJbKWY3KsYUZU69RKwaBHu13jGmCYBtOc4odsLCrFyk6imfyNubJQ==
 
 parallel-transform@^1.1.0:
   version "1.1.0"
