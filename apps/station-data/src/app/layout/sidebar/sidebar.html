@@ -4,11 +4,10 @@
   <mat-list>
     <h3 mat-subheader>Generate From</h3>
     <mat-list-item [routerLink]="['/summary']">
-      <img matListIcon src="assets/images/icons/summaries.svg" />
       <h4 mat-line>Summaries</h4>
     </mat-list-item>
     <mat-list-item [routerLink]="['/raw']">
-      <mat-icon svgIcon="station_data_summaries"></mat-icon>
+      <mat-icon mat-list-icon svgIcon="station_data_summaries"></mat-icon>
       <h4 mat-line>Raw</h4>
     </mat-list-item>
     <mat-divider></mat-divider>
