@@ -47,8 +47,8 @@
       >
     </div>
     <!-- preview data -->
-    <h4 *ngIf="tableData.length > 0">Preview</h4>
-    <picsa-data-table [data]="tableData"></picsa-data-table>
+    <h4 *ngIf="csvData.length > 0">Preview</h4>
+    <picsa-data-table [data]="csvData"></picsa-data-table>
     <div style="margin-top:1em">
       <button mat-button matStepperPrevious color="primary">Back</button>
       <button mat-button matStepperNext color="primary">Next</button>
@@ -57,7 +57,17 @@
   <!--  -->
   <mat-step>
     <ng-template matStepLabel>Prepare</ng-template>
-    You are now done.
+    <div>Specify each of the following data fields</div>
+    <div *ngFor="let mapping of siteDataMapping">
+      <mat-form-field>
+        <mat-label>{{ mapping.field }}</mat-label>
+        <mat-select [(value)]="mapping.mappedField">
+          <mat-option *ngFor="let field of csvFields" [value]="field">{{
+            field
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div>
       <button mat-button matStepperPrevious>Back</button>
       <button mat-button (click)="stepper.reset()">Reset</button>
