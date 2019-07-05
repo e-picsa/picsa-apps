@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem
+} from '@angular/cdk/drag-drop';
 import { NgxFileDropEntry, FileSystemFileEntry } from 'ngx-file-drop';
 import { Papa, PapaParseConfig } from 'ngx-papaparse';
 import { HttpClient } from '@angular/common/http';
-import { ISite, IChartSummary2019 } from '@picsa/core/models';
+import { IChartSummary2019 } from '@picsa/core/models';
 
 @Component({
   selector: 'station-data-upload',
@@ -14,13 +19,31 @@ export class DataUpload implements OnInit {
   csvFile: File;
   csvData: any[] = [];
   csvFields: string[] = [];
+  mappedFields: string[] = [];
   siteDataMapping = SITE_DATA_MAPPINGS;
 
   constructor(private papa: Papa, private http: HttpClient) {}
 
   ngOnInit() {}
 
-  public dropped(files: NgxFileDropEntry[]) {
+  public dragDropped(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    }
+  }
+
+  public fileDropped(files: NgxFileDropEntry[]) {
     console.log('files dropped', files);
     this.files = files;
     for (const droppedFile of files) {

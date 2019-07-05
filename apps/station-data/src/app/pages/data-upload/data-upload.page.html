@@ -19,7 +19,7 @@
   <mat-step>
     <ng-template matStepLabel>Select</ng-template>
     <ngx-file-drop
-      (onFileDrop)="dropped($event)"
+      (onFileDrop)="fileDropped($event)"
       accept=".csv"
       [multiple]="false"
       #fileDrop
@@ -54,11 +54,64 @@
       <button mat-button matStepperNext color="primary">Next</button>
     </div>
   </mat-step>
-  <!--  -->
+  <!-- Field mapping -->
   <mat-step>
     <ng-template matStepLabel>Prepare</ng-template>
-    <div>Specify each of the following data fields</div>
-    <div *ngFor="let mapping of siteDataMapping">
+    <div>
+      Drag and drop fields from your csv to the corresponding station data
+      fields
+    </div>
+    <div class="field-mapping-container">
+      <h3>Required Fields</h3>
+      <div style="display: flex">
+        <div class="field-mapping-list key">
+          <div
+            class="field-mapping-item key"
+            *ngFor="let mapping of siteDataMapping"
+          >
+            <div>
+              <div style="font-weight: bold">{{ mapping.field }}</div>
+              <div style="font-size: small">
+                {{ mapping.description }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          cdkDropList
+          #todoList="cdkDropList"
+          [cdkDropListData]="mappedFields"
+          [cdkDropListConnectedTo]="[doneList]"
+          class="field-mapping-list"
+          (cdkDropListDropped)="dragDropped($event)"
+        >
+          <div
+            class="field-mapping-item"
+            *ngFor="let field of mappedFields"
+            cdkDrag
+          >
+            {{ field }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="field-mapping-container">
+      <h3>CSV Fields</h3>
+      <div
+        cdkDropList
+        #doneList="cdkDropList"
+        [cdkDropListData]="csvFields"
+        [cdkDropListConnectedTo]="[todoList]"
+        class="field-mapping-list"
+        (cdkDropListDropped)="dragDropped($event)"
+      >
+        <div class="field-mapping-item" *ngFor="let field of csvFields" cdkDrag>
+          {{ field }}
+        </div>
+      </div>
+    </div>
+
+    <!-- <div *ngFor="let mapping of siteDataMapping">
       <mat-form-field>
         <mat-label>{{ mapping.field }}</mat-label>
         <mat-select [(value)]="mapping.mappedField">
@@ -67,12 +120,13 @@
           }}</mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
+    </div> -->
     <div>
       <button mat-button matStepperPrevious>Back</button>
       <button mat-button (click)="stepper.reset()">Reset</button>
     </div>
   </mat-step>
+  <!-- Result -->
   <mat-step>
     <ng-template matStepLabel>Result</ng-template>
     You are now done.
@@ -81,4 +135,5 @@
       <button mat-button (click)="stepper.reset()">Reset</button>
     </div>
   </mat-step>
+  <!-- Save -->
 </mat-horizontal-stepper>

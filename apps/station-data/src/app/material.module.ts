@@ -11,6 +11,7 @@ import {
   MatIconModule,
   MatTableModule
 } from '@angular/material';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 
 // use custom module to make it easier to control what is available through app
@@ -26,7 +27,8 @@ import { NgModule } from '@angular/core';
     MatToolbarModule,
     MatListModule,
     MatCardModule,
-    MatTableModule
+    MatTableModule,
+    DragDropModule
   ],
   exports: [
     MatButtonModule,
@@ -39,7 +41,8 @@ import { NgModule } from '@angular/core';
     MatToolbarModule,
     MatListModule,
     MatCardModule,
-    MatTableModule
+    MatTableModule,
+    DragDropModule
   ]
 })
 export class PicsaMaterialModule {}
