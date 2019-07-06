@@ -9,7 +9,8 @@ import {
   MatListModule,
   MatCardModule,
   MatIconModule,
-  MatTableModule
+  MatTableModule,
+  MatPaginatorModule
 } from '@angular/material';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
@@ -27,6 +28,7 @@ import { NgModule } from '@angular/core';
     MatToolbarModule,
     MatListModule,
     MatCardModule,
+    MatPaginatorModule,
     MatTableModule,
     DragDropModule
   ],
@@ -41,6 +43,7 @@ import { NgModule } from '@angular/core';
     MatToolbarModule,
     MatListModule,
     MatCardModule,
+    MatPaginatorModule,
     MatTableModule,
     DragDropModule
   ]

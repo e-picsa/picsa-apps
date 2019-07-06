@@ -1,7 +1,7 @@
 <mat-horizontal-stepper linear #stepper>
   <!-- Intro -->
   <mat-step>
-    <ng-template matStepLabel>Introduction</ng-template>
+    <ng-template matStepLabel>Intro</ng-template>
     <p>
       Using this tool you can prepare and upload data for use in the PICSA app.
     </p>
@@ -46,7 +46,7 @@
         >Load example dataset</span
       >
     </div>
-    <!-- preview data -->
+    <!-- preview unmapped data -->
     <h4 *ngIf="csvData.length > 0">Preview</h4>
     <picsa-data-table [data]="csvData"></picsa-data-table>
     <div style="margin-top:1em">
@@ -57,83 +57,104 @@
   <!-- Field mapping -->
   <mat-step>
     <ng-template matStepLabel>Prepare</ng-template>
-    <div>
-      Drag and drop fields from your csv to the corresponding station data
-      fields
-    </div>
-    <div class="field-mapping-container">
-      <h3>Required Fields</h3>
-      <div style="display: flex">
-        <div class="field-mapping-list key">
-          <div
-            class="field-mapping-item key"
-            *ngFor="let mapping of siteDataMapping"
-          >
-            <div>
-              <div style="font-weight: bold">{{ mapping.field }}</div>
-              <div style="font-size: small">
-                {{ mapping.description }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          cdkDropList
-          #todoList="cdkDropList"
-          [cdkDropListData]="mappedFields"
-          [cdkDropListConnectedTo]="[doneList]"
-          class="field-mapping-list"
-          (cdkDropListDropped)="dragDropped($event)"
-        >
-          <div
-            class="field-mapping-item"
-            *ngFor="let field of mappedFields"
-            cdkDrag
-          >
-            {{ field }}
-          </div>
+    <p>
+      Drag and drop fields from your csv to the corresponding station data.
+    </p>
+    <div cdkDropListGroup>
+      <!-- drag items -->
+      <div
+        class="drag-items-container"
+        cdkDropList
+        [cdkDropListData]="csvFields"
+        (cdkDropListDropped)="dragDropped($event)"
+        cdkDropListSortingDisabled
+      >
+        <div class="drag-drop-item" *ngFor="let field of csvFields" cdkDrag>
+          <div class="drop-placeholder" *cdkDragPlaceholder></div>
+          {{ field }}
         </div>
       </div>
-    </div>
-    <div class="field-mapping-container">
-      <h3>CSV Fields</h3>
-      <div
-        cdkDropList
-        #doneList="cdkDropList"
-        [cdkDropListData]="csvFields"
-        [cdkDropListConnectedTo]="[todoList]"
-        class="field-mapping-list"
-        (cdkDropListDropped)="dragDropped($event)"
-      >
-        <div class="field-mapping-item" *ngFor="let field of csvFields" cdkDrag>
-          {{ field }}
+      <!-- drop zones -->
+      <div>
+        <div
+          class="dropzone"
+          *ngFor="let mapping of siteDataMapping; index as i"
+        >
+          <div style="font-weight: bold; width:80px">{{ mapping.field }}</div>
+          <div style="font-size: small; width:300px; margin:0 10px">
+            {{ mapping.description }}
+          </div>
+          <div
+            cdkDropList
+            class="dropzone-list"
+            (cdkDropListDropped)="dragDropped($event)"
+            [cdkDropListData]="siteDataMapping[i].mappedField"
+            [class.empty]="siteDataMapping[i].mappedField.length === 0"
+          >
+            <div
+              class="drag-drop-item dropped"
+              *ngFor="let field of siteDataMapping[i].mappedField"
+              cdkDrag
+            >
+              {{ field }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- <div *ngFor="let mapping of siteDataMapping">
-      <mat-form-field>
-        <mat-label>{{ mapping.field }}</mat-label>
-        <mat-select [(value)]="mapping.mappedField">
-          <mat-option *ngFor="let field of csvFields" [value]="field">{{
-            field
-          }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div> -->
     <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="stepper.reset()">Reset</button>
+      <!-- preview mapped data -->
+      <h4 *ngIf="csvMappedData.length > 0">Preview</h4>
+      <picsa-data-table-station
+        *ngIf="csvMappedData.length > 0"
+        [data]="csvMappedData"
+      ></picsa-data-table-station>
+      <div style="margin-top:1em">
+        <button mat-button matStepperPrevious color="primary">Back</button>
+        <button
+          mat-button
+          matStepperNext
+          (click)="processFullCSVData()"
+          color="primary"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </mat-step>
   <!-- Result -->
   <mat-step>
     <ng-template matStepLabel>Result</ng-template>
+    <div *ngIf="csvMappedData.length === 5">
+      <div>
+        You need not complete the previous step. Click the button below to
+        process the full data
+      </div>
+      <button mat-button color="primary" (click)="processFullCSVData()">
+        Process Data
+      </button>
+    </div>
+
+    <h3>Data</h3>
+    <picsa-data-table-station
+      *ngIf="csvMappedData.length > 0"
+      [data]="csvMappedData"
+    ></picsa-data-table-station>
+    <h3>App Graphs</h3>
     You are now done.
     <div>
-      <button mat-button matStepperPrevious>Back</button>
       <button mat-button (click)="stepper.reset()">Reset</button>
+      <button mat-button>Finish</button>
     </div>
   </mat-step>
   <!-- Save -->
+  <mat-step>
+    <ng-template matStepLabel>Save</ng-template>
+    You are now done.
+    <div>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+      <button mat-button>Finish</button>
+    </div>
+  </mat-step>
 </mat-horizontal-stepper>

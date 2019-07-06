@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, OnInit } from '@angular/core';
+import { MatPaginator, MatTableDataSource } from '@angular/material';
 
 @Component({
   // tslint:disable component-selector
@@ -11,14 +12,18 @@ import { Component, Input } from '@angular/core';
    See https://material.angular.io/components/table/overview for full implementation
   
 */
-export class PicsaDataTable {
-  tableData: any[] = [];
+export class PicsaDataTable implements OnInit {
+  tableData = new MatTableDataSource([]);
   tableColumns: string[] = [];
   @Input() set data(data: any[]) {
     if (data && data.length > 0) {
-      console.log('data', data);
       this.tableColumns = Object.keys(data[0]);
-      this.tableData = data;
+      this.tableData.data = data;
     }
+  }
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+
+  ngOnInit() {
+    this.tableData.paginator = this.paginator;
   }
 }

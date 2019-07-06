@@ -1,42 +1,57 @@
-.field-mapping-container {
-  width: 400px;
-  max-width: 100%;
-  margin: 0 25px 25px 0;
-  display: inline-block;
-  vertical-align: top;
+$drag-item-width: 120px;
+$drag-item-height: 3rem;
+
+.dropzone {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  margin-right: 10px;
 }
 
-.field-mapping-list {
-  border: solid 1px #ccc;
-  min-height: 60px;
-  background: white;
+.dropzone-list {
+  height: $drag-item-height;
+  width: $drag-item-width;
+  background-color: var(--color-secondary);
+  box-sizing: border-box;
   border-radius: 4px;
-  overflow: hidden;
-  display: block;
-  width: 100%;
-  max-width: 150px;
 }
-.field-mapping-list.key {
-  max-width: 250px;
+.dropzone-list.empty {
+  border: 1px dashed black;
+  background-color: white;
 }
-
-.field-mapping-item {
+.drop-placeholder {
+  // custom class for placeholder
+}
+.drag-items-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 10px 10px 10px;
+  margin-bottom: 2em;
+}
+.drag-drop-item {
+  margin: 10px 10px 0 0;
   padding: 20px 10px;
   border-bottom: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.87);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
-  background: white;
+  background: var(--color-secondary);
   font-size: 14px;
-  height: 5em;
+  height: $drag-item-height;
+  width: $drag-item-width;
+  color: rgba(255, 255, 255, 0.95);
+  word-break: break-all;
+  box-sizing: border-box;
+}
+.drag-drop-item.dropped {
+  margin: 0;
 }
 
-.cdk-drag-preview {
-  box-sizing: border-box;
+.cdk-drag-preview,
+.drag-drop-item.dropped {
   border-radius: 4px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
@@ -50,11 +65,11 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.field-mapping-item:last-child {
+.drag-drop-item:last-child {
   border: none;
 }
 
-.field-mapping-list.cdk-drop-list-dragging
+.dropzone-list.cdk-drop-list-dragging
   .field-mapping-item:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
