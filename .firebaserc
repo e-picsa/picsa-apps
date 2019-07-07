@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "picsa-apps"
+  },
+  "targets": {
+    "picsa-apps": {
+      "hosting": {
+        "dashboard": [
+          "picsa-dash"
+        ]
+      }
+    }
+  }
+}

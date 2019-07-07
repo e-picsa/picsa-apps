@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "target": "dashboard",
+      "public": "dist/apps/dashboard",
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}
