@@ -5,15 +5,13 @@ import {
   ElementRef,
   NgZone,
   SimpleChanges,
-  OnInit,
-  Output,
-  EventEmitter
+  OnInit
 } from '@angular/core';
 import * as c3 from 'c3';
 
 @Component({
   selector: 'picsa-chart',
-  templateUrl: './chart.html',
+  template: ``,
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
   encapsulation: ViewEncapsulation.None
@@ -38,10 +36,11 @@ export class PicsaChartComponent implements OnInit {
    *  Note - whilst reactive binding has been added for data, better functionality
    *  exists by simply accessing the api methods on this.chart, such as load() or unload()
    **********************************************************************************/
+
   ngOnInit() {
+    //  create chart on init, even if no data present so empty chart can be seen
     this.create();
   }
-
   // note, only detects object change, not content (so array push ignored)
   // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
   ngOnChanges(changes: SimpleChanges) {
@@ -50,6 +49,7 @@ export class PicsaChartComponent implements OnInit {
         // handle core changes which require chart rebuild
         this.create();
       } else if (changes['data']) {
+        console.log('data changed', changes.data);
         // difficult to detect full changes (ids as well as if values changed within)
         // therefore just unload all data and load all new
         this.chart.unload();
@@ -58,6 +58,8 @@ export class PicsaChartComponent implements OnInit {
           this.chart.load(changes.data.currentValue);
         }, 300);
       }
+    } else {
+      this.create();
     }
   }
 
@@ -79,6 +81,7 @@ export class PicsaChartComponent implements OnInit {
 
   // use create method to populate div which will also be available before viewInit
   private create() {
+    console.log('create chart', this.config, this.data);
     // run outside of angular change detection
     this.ngZone.runOutsideAngular(() => {
       if (this.container) {
@@ -90,8 +93,16 @@ export class PicsaChartComponent implements OnInit {
       this.chart = this.chart = c3.generate({
         ...this.config,
         bindto: this.container,
-        data: this.data
+        data: this.data,
+        axis:{
+          x:{
+            label: "Year"
+          }
+        }
       });
     });
   }
 }
+
+export interface c3ChartAPI extends c3.ChartAPI {}
+export interface c3ChartConfiguration extends c3.ChartConfiguration {}

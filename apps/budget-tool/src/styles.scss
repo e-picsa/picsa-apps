@@ -1,17 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
-// index file doesn't exist but pulls from package (see xplat https://github.com/nstudio/xplat/wiki/FAQ)
-// note, unclear if import correct
-@import '~@picsa/scss/index';
 
 // other ways to work with styles:
 // https://www.tektutorialshub.com/angular/angular-global-css-styles/
 // https://medium.com/@kmathy/angular-tips-and-tricks-for-css-structure-cb73fa50f0e8
 // https://github.com/nrwl/nx/issues/54
 
+// CC Note - shared variables from the libs/scss folder are imported in angular.json build steps
+// so no use for  `@import '~@picsa/scss/index';`
+
 // CC Note - variables can't be picked up by components (e.g. $primary) unless explictly imported,
 // however angular.json does apply stylings from this file and can pass root color variables
 @import './styles/variables.scss';
-@import './styles/fonts.scss';
 @import './styles/typography.scss';
 @import './styles/layout.scss';

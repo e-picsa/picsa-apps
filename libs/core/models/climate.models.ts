@@ -38,7 +38,7 @@ export interface IChartSummary {
   Rainfall: number;
 }
 export interface IChartSummary2019 {
-  Season: string;
+  Year: number;
   StartDate: Date;
   Length: number;
   Rainfall: number;

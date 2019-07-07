@@ -4,6 +4,6 @@ import { PicsaChartComponent } from './chart';
 @NgModule({
   imports: [],
   declarations: [PicsaChartComponent],
-  exports: [PicsaChartComponent]
+  exports: [PicsaChartComponent, PicsaChartComponent]
 })
 export class PicsaChartsModule {}
