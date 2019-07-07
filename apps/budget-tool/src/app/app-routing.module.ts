@@ -2,34 +2,34 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  // { path: '', redirectTo: '/budget/home', pathMatch: 'full' },
   {
-    path: 'home',
+    path: 'budget/home',
     loadChildren: () =>
       import('./pages/home/budget-home.module').then(
         mod => mod.BudgetHomePageModule
       )
   },
   {
-    path: 'create',
+    path: 'budget/create',
     loadChildren: () =>
       import('./pages/create/budget-create.module').then(
         mod => mod.BudgetCreatePageModule
       )
   },
   {
-    path: 'view',
+    path: 'budget/view',
     redirectTo: '/home',
     pathMatch: 'full'
   },
   {
-    path: 'view/:budgetKey',
+    path: 'budget/view/:budgetKey',
     loadChildren: () =>
       import('./pages/view/budget-view.module').then(
         mod => mod.BudgetViewPageModule
       )
   },
-  { path: '**', redirectTo: '/home' }
+  { path: 'budget', redirectTo: 'budget/home' }
 ];
 
 @NgModule({

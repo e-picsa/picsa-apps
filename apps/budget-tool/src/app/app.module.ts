@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -55,3 +55,15 @@ export function createTranslateLoader(http: HttpClient) {
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
+// additional export to allow it to be consumed by other apps
+// see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
+@NgModule({})
+export class BudgetToolModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: AppModule,
+      providers: []
+    };
+  }
+}
