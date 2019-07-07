@@ -75,6 +75,8 @@
     "@nrwl/nx": "^7.0.0",
     "@picsa/scss": "file:libs/scss",
     "@picsa/web": "file:xplat/web",
+    "@types/c3": "^0.7.0",
+    "c3": "^0.7.2",
     "cache-manager": "^2.9.0",
     "compression": "^1.7.3",
     "core-js": "^2.5.4",
