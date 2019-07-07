@@ -190,31 +190,31 @@
         }
       }
     },
-    "station-data": {
+    "dashboard": {
       "projectType": "application",
       "schematics": {
         "@nrwl/workspace:component": {
           "style": "scss"
         }
       },
-      "root": "apps/station-data",
-      "sourceRoot": "apps/station-data/src",
-      "prefix": "station-data",
+      "root": "apps/dashboard",
+      "sourceRoot": "apps/dashboard/src",
+      "prefix": "dashboard",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/apps/station-data",
-            "index": "apps/station-data/src/index.html",
-            "main": "apps/station-data/src/main.ts",
-            "polyfills": "apps/station-data/src/polyfills.ts",
-            "tsConfig": "apps/station-data/tsconfig.app.json",
+            "outputPath": "dist/apps/dashboard",
+            "index": "apps/dashboard/src/index.html",
+            "main": "apps/dashboard/src/main.ts",
+            "polyfills": "apps/dashboard/src/polyfills.ts",
+            "tsConfig": "apps/dashboard/tsconfig.app.json",
             "assets": [
-              "apps/station-data/src/favicon.ico",
-              "apps/station-data/src/assets"
+              "apps/dashboard/src/favicon.ico",
+              "apps/dashboard/src/assets"
             ],
             "styles": [
-              "apps/station-data/src/styles.scss",
+              "apps/dashboard/src/styles.scss",
               "libs/scss/_index.scss"
             ],
             "stylePreprocessorOptions": {
@@ -228,8 +228,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/station-data/src/environments/environment.ts",
-                  "with": "apps/station-data/src/environments/environment.prod.ts"
+                  "replace": "apps/dashboard/src/environments/environment.ts",
+                  "with": "apps/dashboard/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -254,26 +254,26 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "station-data:build"
+            "browserTarget": "dashboard:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "station-data:build:production"
+              "browserTarget": "dashboard:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "station-data:build"
+            "browserTarget": "dashboard:build"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "apps/station-data/tsconfig.app.json",
-              "apps/station-data/tsconfig.spec.json"
+              "apps/dashboard/tsconfig.app.json",
+              "apps/dashboard/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -283,35 +283,35 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/station-data/jest.config.js",
-            "tsConfig": "apps/station-data/tsconfig.spec.json",
-            "setupFile": "apps/station-data/src/test-setup.ts"
+            "jestConfig": "apps/dashboard/jest.config.js",
+            "tsConfig": "apps/dashboard/tsconfig.spec.json",
+            "setupFile": "apps/dashboard/src/test-setup.ts"
           }
         }
       }
     },
-    "station-data-e2e": {
-      "root": "apps/station-data-e2e",
-      "sourceRoot": "apps/station-data-e2e/src",
+    "dashboard-e2e": {
+      "root": "apps/dashboard-e2e",
+      "sourceRoot": "apps/dashboard-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/station-data-e2e/cypress.json",
-            "tsConfig": "apps/station-data-e2e/tsconfig.e2e.json",
-            "devServerTarget": "station-data:serve"
+            "cypressConfig": "apps/dashboard-e2e/cypress.json",
+            "tsConfig": "apps/dashboard-e2e/tsconfig.e2e.json",
+            "devServerTarget": "dashboard:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "station-data:serve:production"
+              "devServerTarget": "dashboard:serve:production"
             }
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": "apps/station-data-e2e/tsconfig.e2e.json"
+            "tsConfig": "apps/dashboard-e2e/tsconfig.e2e.json"
           }
         }
       }
