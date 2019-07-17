@@ -1,0 +1,40 @@
+site-select {
+  // @import "../../../build/leaflet.css";
+  #siteSelect {
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+  }
+  .countryLabel {
+    fill: transparent;
+    background: rgba(255, 255, 255, 0);
+    opacity: 0.5;
+    fill-opacity: 0.3;
+    border: 0;
+    border-radius: 0px;
+    box-shadow: 0 0px 0px;
+    color: black;
+    text-shadow: 0 0 0.2em #f87;
+  }
+  .site-select-button {
+    cursor: pointer;
+    padding: 10px;
+    color: white;
+  }
+  .leaflet-popup-content {
+    margin: 0;
+    padding: 5px;
+  }
+  button {
+    background-color: transparent;
+    padding: 0;
+  }
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip {
+    background-color: var(--ion-color-primary);
+  }
+  .leaflet-popup-close-button {
+    pointer-events: none;
+    display: none;
+  }
+}

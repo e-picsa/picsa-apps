@@ -1,0 +1,185 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button [text]="Back" defaultHref="tools"></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="!selectedSite">{{
+      "Select a site" | translate
+    }}</ion-title>
+    <ion-title *ngIf="selectedSite">{{ selectedSite.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <site-select *ngIf="!selectedSite"></site-select>
+  <div style="height: 1em"></div>
+  <climate-chart></climate-chart>
+  <div *ngIf="selectedSite" padding>
+    <!--chart-->
+    <div>
+      <!--combined probability component-->
+      <!-- <combined-probability *ngIf="activeChart && activeChart.name=='Combined Probability'"></combined-probability> -->
+      <div id="selectChart" class="flex wrap" *ngIf="!activeChart">
+        <div
+          *ngFor="let chart of availableCharts"
+          (click)="setChart(chart)"
+          class="chart-image"
+        >
+          <img src="{{ chart.image }}" />
+          <div>{{ chart.name | translate }}</div>
+        </div>
+      </div>
+
+      <div id="activeChart" class="flex wrap" *ngIf="showTools && activeChart">
+        <div>
+          <img
+            src="{{ activeChart.image }}"
+            class="active-chart-image"
+            (click)="showAllCharts()"
+          />
+          <div style="display: flex; margin-top:10px">
+            <div *ngFor="let chart of availableCharts">
+              <img
+                [src]="chart.image"
+                *ngIf="activeChart.image != chart.image"
+                (click)="setChart(chart)"
+                class="chart-image small"
+              />
+            </div>
+          </div>
+        </div>
+        <div id="tools" *ngIf="activeChart.tools">
+          <ion-list>
+            <ion-item *ngIf="activeChart.definition">
+              <ion-label>{{ "Definition" | translate }}</ion-label>
+              <ion-toggle [(ngModel)]="showDefinition"></ion-toggle>
+            </ion-item>
+            <ion-item *ngIf="activeChart.tools.line">
+              <ion-label>{{ "Line Tool" | translate }}</ion-label>
+              <ion-toggle [(ngModel)]="showLineTool"></ion-toggle>
+            </ion-item>
+            <ion-item *ngIf="activeChart.tools.line">
+              <ion-label>{{ "Probability" | translate }}</ion-label>
+              <ion-toggle
+                [(ngModel)]="showProbabilityTool"
+                [disabled]="!lineToolValue"
+              ></ion-toggle>
+            </ion-item>
+            <!-- <ion-item>
+              <button ion-button icon-start full outline (click)="showAllCharts()">
+                <ion-icon name="arrow-round-back"></ion-icon>
+                {{'All Charts' | translate}}
+              </button>
+            </ion-item> -->
+          </ion-list>
+        </div>
+        <!-- definition -->
+        <div
+          class="definition"
+          *ngIf="showDefinition && activeChart.definition"
+        >
+          {{ activeChart.definition | translate }}
+        </div>
+        <!-- probability -->
+        <div
+          id="probability"
+          *ngIf="showProbabilityTool && activeChart.tools.line"
+          class="tool-container"
+        >
+          <h3>{{ "Probability" | translate }}</h3>
+          <div id="blocks" class="flex">
+            <div
+              class="block good"
+              *ngFor="let block of probabilities.tens.above"
+            >
+              1
+            </div>
+            <div
+              class="block bad"
+              *ngFor="let block of probabilities.tens.below"
+            >
+              1
+            </div>
+          </div>
+          <div>
+            {{ probabilities.tens.above.length }} {{ "out of 10" | translate }}
+          </div>
+          <div class="flex wrap">
+            <div id="calculation">
+              <h3>{{ "Calculation" | translate }}</h3>
+              <div>
+                {{ "Points Above" | translate }}: {{ probabilities.above }}
+              </div>
+              <div>
+                {{ "Total Points" }}:
+                {{ probabilities.below + probabilities.above }}
+              </div>
+              <br />
+              <div>
+                <div>
+                  <sup>{{ probabilities.above }}</sup
+                  >&frasl;
+                  <sub>{{ probabilities.above + probabilities.below }}</sub> =
+                  {{ probabilities.percentage | percent: "1.0-0" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--line tool-->
+        <div
+          id="lineTool"
+          *ngIf="showLineTool && activeChart.tools.line"
+          class="tool-container"
+        >
+          <h3>{{ "Line Tool" | translate }}</h3>
+          <!--crops-->
+          <!-- <ion-input
+            type="number"
+            placeholder="{{
+              'Enter a custom value or select a crop below' | translate
+            }}"
+            [(ngModel)]="lineToolValue"
+            (focusout)="setLineToolValue()"
+          ></ion-input> -->
+          <div style="margin-top:1em">
+            <div
+              class="crop-select"
+              *ngFor="let crop of crops"
+              (click)="setCrop(crop)"
+              [attr.selected]="
+                selectedCrop && selectedCrop.variety == crop.variety
+                  ? 'true'
+                  : 'false'
+              "
+            >
+              <div class="crop-img-container">
+                <img
+                  [src]="'assets/img/budget/cards/' + crop.image + '.svg'"
+                  class="crop-image"
+                />
+              </div>
+              <div>
+                <div class="crop-type">{{ crop.crop }}</div>
+                <div class="crop-variety">{{ crop.variety }}</div>
+                <div class="crop-water-req crop-meta">
+                  <img
+                    class="crop-info-img"
+                    src="assets/img/budget/water.svg"
+                  />
+                  <span>{{ crop.waterMin }}</span>
+                  <span *ngIf="crop.waterMax"> - {{ crop.waterMax }}</span>
+                </div>
+                <div class="crop-days-req crop-meta">
+                  <img class="crop-info-img" src="assets/img/budget/days.svg" />
+                  <span>{{ crop.daysMin }}</span>
+                  <span *ngIf="crop.daysMax"> - {{ crop.daysMax }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -545,20 +545,21 @@
     tslib "^1.9.0"
     typescript "~3.1.0"
 
-"@ionic/angular@^4.0.0":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.4.2.tgz#9b4e23fb4e76b218332c63e5cb7a9fafcaaec586"
-  integrity sha512-ihjhvPFXqDS3HURvAfSH5vMlCersP08pnxfek36IOKX1sYOYq6VI/2miTv+jr7GuIZlmyZan0PibiRZPg7DIqA==
+"@ionic/angular@4.6.2":
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.6.2.tgz#4448b63d3bb9c055789b96c567da02192d62b34e"
+  integrity sha512-BUtT4ve6ThRaSRHX+YrkVyhcZP1FWY8P31/S/Hj7bWNCFTIdfB21dEAFzFx9SfGPfBCVYfDj5OoLYtKc1LUJQA==
   dependencies:
-    "@ionic/core" "4.4.2"
+    "@ionic/core" "4.6.2"
     tslib "^1.9.3"
 
-"@ionic/core@4.4.2":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.4.2.tgz#7bcadf125b77e08d2166581a00e1bcb35976547f"
-  integrity sha512-B6cA8Nz29hB+FxRHZ78em1Zlo2r1NqTl6HfiIA8lQtfI9tj4VQe7R1mF/Qb9jaati1U2k4eaHbxiwJ50Hez/4w==
+"@ionic/core@4.6.2":
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.6.2.tgz#c14da14ecacfd10a835adb5120d5c1ffb5a1a852"
+  integrity sha512-JThYU8YnEtxlByNm+77nNtQDMOBE496eye25b4WbCpKNHEIw2g6V0TMxx4vSP0ynAw6Mgu/hAo8EdUO3XvNcKw==
   dependencies:
-    ionicons "4.5.8"
+    ionicons "4.6.1"
+    tslib "^1.10.0"
 
 "@ionic/storage@^2.2.0":
   version "2.2.0"
@@ -6679,10 +6680,10 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-ionicons@4.5.8:
-  version "4.5.8"
-  resolved "https://registry.yarnpkg.com/ionicons/-/ionicons-4.5.8.tgz#a81177325153e7eaecb9546ee0b7955451743f8e"
-  integrity sha512-Zib/fFGHt+r9tWrvZnrxVj22cO4NVj+ZOb76v5yiOyvb0LSTbbReECDg7lEU8e+YR69qCtWHruStJ+b4G/OWxg==
+ionicons@4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/ionicons/-/ionicons-4.6.1.tgz#62515439ea54ae84dcc0fa0bfeb43076b2d5d64d"
+  integrity sha512-HIT6nAozXnM5yO9an0QpqABM4QFs1xtOjTz4Neyqbs0+fbPqN3p2PwJuh99WR9YaYGrFPzSCW6/n+LLL6C+xeg==
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -7779,6 +7780,18 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
+leaflet-ajax@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/leaflet-ajax/-/leaflet-ajax-2.1.0.tgz#269343d59bd38dc9dfa4f3a733e787ff32fe236f"
+  integrity sha1-JpND1ZvTjcnfpPOnM+eH/zL+I28=
+  dependencies:
+    lie "^3.0.1"
+
+leaflet@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.5.1.tgz#9afb9d963d66c870066b1342e7a06f92840f46bf"
+  integrity sha512-ekM9KAeG99tYisNBg0IzEywAlp0hYI5XRipsqRXyRTeuU8jcuntilpp+eFf5gaE0xubc9RuSNIVtByEKwqFV0w==
+
 less-loader@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-4.1.0.tgz#2c1352c5b09a4f84101490274fd51674de41363e"
@@ -7850,6 +7863,13 @@ lie@3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/lie/-/lie-3.1.1.tgz#9a436b2cc7746ca59de7a41fa469b3efb76bd87e"
   integrity sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=
+  dependencies:
+    immediate "~3.0.5"
+
+lie@^3.0.1:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/lie/-/lie-3.3.0.tgz#dcf82dee545f46074daf200c7c1c5a08e0f40f6a"
+  integrity sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==
   dependencies:
     immediate "~3.0.5"
 
@@ -12498,6 +12518,11 @@ tslib@1.9.3, tslib@^1.7.1, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
   integrity sha512-4krF8scpejhaOgqzBEcGM7yDIEfi0/8+8zDRZhNZZ2kjmHJ4hv3zCbQWxoJGz1iw5U0Jl0nma13xzHXcncMavQ==
+
+tslib@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
+  integrity sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
 
 tslint@~5.11.0:
   version "5.11.0"

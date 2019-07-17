@@ -1,0 +1,165 @@
+.tool-container,
+.definition {
+  // max-width: 200px;
+  // margin: 5px 0 0 5px;
+  padding: 10px;
+  flex: 1;
+  min-width: 200px;
+}
+.definition {
+  background-color: wheat;
+  font-size: large;
+}
+.chart-image > img,
+.active-chart-image {
+  height: 120px;
+  width: 120px;
+}
+.chart-image > div {
+  width: 120px;
+  text-align: center;
+}
+.chart-image:hover {
+  font-weight: bold;
+}
+img.chart-image.small {
+  width: 40px;
+  height: 40px;
+}
+.flex {
+  display: flex;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+.chart-image {
+  margin-right: 10px;
+  cursor: pointer;
+}
+#tools {
+  max-width: 160px;
+}
+.item {
+  padding-left: 8px;
+}
+#lineTool,
+#probability {
+  border: 1px solid black;
+  padding: 2px;
+  background-color: #ebebeb;
+}
+.crop-img-container {
+  width: 60px;
+  margin-right: 10px;
+  text-align: center;
+}
+.crop-image {
+  height: 60px;
+}
+.crop-info-img {
+  height: 1em;
+  width: 1em;
+  margin-right: 5px;
+}
+.crop-variety {
+  font-weight: bold;
+}
+.crop-select {
+  margin: 0;
+  border-bottom: 1px solid gray;
+  cursor: pointer;
+  display: flex;
+  padding: 5px;
+}
+.crop-select[selected="true"] {
+  background-color: wheat;
+}
+#filterImages img {
+  width: 100px;
+  margin: 1px;
+}
+#SeasonRainfall.selected {
+  border-color: #377eb8;
+}
+#LengthOfSeason.selected {
+  border-color: #e41a1c;
+}
+#SeasonStart.selected {
+  border-color: #984ea3;
+}
+#SeasonEnd.selected {
+  border-color: #4daf4a;
+}
+.selected {
+  box-shadow: 0px 12px 22px 1px #333;
+  border: solid;
+}
+#sitePickerIcon img {
+  width: 70px;
+  float: right;
+  margin: 5px 0px 5px 10px;
+}
+.toolTip {
+  width: 100px;
+  background-color: #fdff7a;
+  font-size: larger;
+  border: 2px solid black;
+}
+.selectedStation {
+  border: thick #e47172;
+  border-radius: 4px;
+  border-style: double;
+}
+#sites-button {
+  padding-top: 10px;
+  margin-top: 25px;
+}
+.ui-icon-wrench:after {
+  // background-image: url("images/icons-png/wrench.png");
+}
+#sites-button {
+  padding-bottom: 30px;
+  border-right-width: 1px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 30px;
+}
+#chartTools {
+  font-size: larger !important;
+}
+#mapContent {
+  padding: 0px !important;
+}
+.lineToolPicRepLeft,
+.lineToolPicRepRight {
+  border: 5px solid black;
+  padding-left: 20px;
+  display: inline;
+}
+.lineToolPicRepRight {
+  color: #9a2c04;
+  background-color: #9a2c04;
+}
+.lineToolPicRepLeft {
+  color: #25a234;
+  background-color: #25a234;
+}
+.block {
+  outline: 1px solid black;
+  flex-grow: 1;
+  min-width: 15px;
+}
+.block.good {
+  background-color: #739b65;
+  color: #739b65;
+}
+.block.bad {
+  background-color: #bf7720;
+  color: #bf7720;
+}
+#calculation {
+  padding-top: 15px;
+}
+h3 {
+  margin-bottom: 0;
+}
