@@ -1,7 +1,7 @@
 // import { dispatch } from '@angular-redux/store';
 // import { Injectable } from '@angular/core';
 // import { FluxStandardAction } from 'flux-standard-action';
-// import { IChartMeta, ISite } from '@picsa/core/models/climate.models';
+// import { IChartMeta, ISite } from '@picsa/models/climate.models';
 
 // type StandardAction = FluxStandardAction<string, ISite | IChartMeta>;
 

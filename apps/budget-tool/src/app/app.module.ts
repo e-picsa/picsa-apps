@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { NgReduxRouterModule } from '@angular-redux/router';
 import { NgReduxModule } from '@angular-redux/store';
@@ -14,8 +13,6 @@ import { MobxAngularModule } from 'mobx-angular';
 import { StoreModule } from '@picsa/core';
 import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 import { DbModule } from '@picsa/core/db/db.module';
-import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaMaterialModule } from './material.module';
 
@@ -51,7 +48,7 @@ export function createTranslateLoader(http: HttpClient) {
     DbModule
   ],
   exports: [TranslateModule],
-  providers: [SocialSharing, File, FileOpener],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

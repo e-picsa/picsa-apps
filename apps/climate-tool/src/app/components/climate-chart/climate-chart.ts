@@ -3,9 +3,9 @@ import { Component, OnDestroy } from '@angular/core';
 import * as c3 from 'c3';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslationsProvider } from '@picsa/core/services/translations';
+import { TranslationsProvider } from '@picsa/services/core/translations';
 // import { AppState } from "src/app/store/store.model";
-import { IChartMeta, IChartSummary } from '@picsa/core/models/climate.models';
+import { IChartMeta, IChartSummary } from '@picsa/models/climate.models';
 import { availableCharts } from 'src/app/data/availableCharts';
 
 @Component({

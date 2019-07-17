@@ -4,7 +4,7 @@ import * as Papa from 'papaparse';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 // import { ClimateToolActions } from './climate-tool.actions';
-import { IChartMeta, ISite } from '@picsa/core/models/climate.models';
+import { IChartMeta, ISite } from '@picsa/models/climate.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService implements OnDestroy {

@@ -4,7 +4,7 @@ import { Events } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { debounceTime } from 'rxjs/operators';
-import { AppState } from '@picsa/core/models';
+import { AppState } from '@picsa/models';
 import {
   IBudget,
   IBudgetCard,

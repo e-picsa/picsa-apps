@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import * as L from 'leaflet';
 // import { ClimateToolActions } from "src/app/store/climate-tool.actions";
 import { GEOJSON, SITES } from 'src/app/data/climate-tool.data';
-import { ISite } from '@picsa/core/models/climate.models';
+import { ISite } from '@picsa/models/climate.models';
 import { GeoJsonObject } from 'geojson';
 
 @Component({

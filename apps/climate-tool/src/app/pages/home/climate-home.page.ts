@@ -4,7 +4,7 @@ import {
   ISite,
   IChartMeta,
   ICropRequirement
-} from '@picsa/core/models/climate.models';
+} from '@picsa/models/climate.models';
 import { select } from '@angular-redux/store';
 import * as DATA from 'src/app/data/climate-tool.data';
 import { MenuController } from '@ionic/angular';

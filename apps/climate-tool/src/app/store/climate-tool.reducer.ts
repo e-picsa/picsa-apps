@@ -2,7 +2,7 @@
 // import { StandardAction } from "../../actions/actions";
 // import { INITIAL_STATE } from "src/app/store/store.model";
 // import { ClimateToolActions } from "./climate-tool.actions";
-// import { ClimateToolState } from '@picsa/core/models/climate.models';
+// import { ClimateToolState } from '@picsa/models/climate.models';
 
 // export function ClimateToolReducer(
 //   state: ClimateToolState = INITIAL_STATE.climate,

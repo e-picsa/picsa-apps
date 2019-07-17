@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { TranslationsProvider } from '@picsa/core/services';
+import { TranslationsProvider } from '@picsa/services/core';
 import { ClimateChartComponent } from './climate-chart/climate-chart';
 import { CombinedProbabilityComponent } from './combined-probability/combined-probability';
 import { SiteSelectComponent } from './site-select/site-select';

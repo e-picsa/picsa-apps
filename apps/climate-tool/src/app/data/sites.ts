@@ -1,4 +1,4 @@
-import { ISite } from '@picsa/core/models/climate.models';
+import { ISite } from '@picsa/models/climate.models';
 
 export const DEFINITIONS = {
   start: {
