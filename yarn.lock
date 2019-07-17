@@ -494,45 +494,45 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
-"@ionic-native/core@^5.0.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.7.0.tgz#5ad30f73f418f363b045f8214084cd94f2ee571a"
-  integrity sha512-UjSNnS6dPZjzBXrHqY2+UWBwfm8kGctq2l8di16m0+kDZrrSblH73lgjTHeNx/wlkpmZCJoatRwmV6CwiAK4hw==
+"@ionic-native/core@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.10.0.tgz#aa475f846490d0e748bf2172e3070878984dab11"
+  integrity sha512-HssaJBkXKVeQ5u0ejBmlzwsft5bwmtu2ZrsTVtK6jYiNm7Bez55II7c0cxcxs44l5wLu6uKuw/Ynt2vaZ2ngfg==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/file-opener@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/file-opener/-/file-opener-5.7.0.tgz#15bb46ccc3b23a5d953a8ef8554fa6ac09513d07"
-  integrity sha512-W+JapwiKVix/z2voMvAtr8IBS8FmubhKOHV0wQaXKifeYYk7lsiNCoFT5WwgJES/DGOuq0CHwOKRi8Lks3swMA==
+"@ionic-native/file-opener@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/file-opener/-/file-opener-5.10.0.tgz#e06177c2a33ea11d41c8f1de892509d72c30138f"
+  integrity sha512-KoL81qwmFfjm+dqlYx9sCnHOwwd8TWj7ip/81TVmS2D5D/gAlljVNPUBYepTdsqSxpCGaU3wUgF18NjLOKyiQQ==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/file@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/file/-/file-5.7.0.tgz#8bddad2010510bc0f41b02db257293be46c8221f"
-  integrity sha512-KjL4o0W9SfMJzCm8zczdJMfBHhB0XCxEDVQiTYAWxFGBmEAgay5SbRnblAPA3ufQUQw/U+JBb6cwQLytZSP13A==
+"@ionic-native/file@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/file/-/file-5.10.0.tgz#57de147a9657caf42cffa9727c0d19b1e74c9c13"
+  integrity sha512-B0rrsM3voWOM1Vx6KR0XoCeQhrLKaTN80qXUGHlckqheRIEfGWaFGYMNYVDmDC439U5Fdv9rTDW2NiD/9x/rww==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/social-sharing@^5.7.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/social-sharing/-/social-sharing-5.7.0.tgz#6d786c9f8fc97fb9bdddc1ae058497297ee61577"
-  integrity sha512-T3xZ+1JaHNrSVG33J/VsztYC+Bm66PvFcOG4z0DuStmwNca4LC9USGbPAxAsgX6DEB/IpqIupoKXmJFCWZM6pg==
+"@ionic-native/social-sharing@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/social-sharing/-/social-sharing-5.10.0.tgz#57ef320846b9964f8990ea62cdcc82d212b6e2e1"
+  integrity sha512-U7cQdlkz6dBw8RZaVYbmfV/t8IdEe/JCM9aW0LsZxOvN3aRfLXPwtHUpNbORDdHnL8jlFmNUeZ7Qq1lHDbHyxA==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/splash-screen@^5.0.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/splash-screen/-/splash-screen-5.7.0.tgz#bee2160bdecced10b01110ea8f9b8fd58726b8e6"
-  integrity sha512-+bWYKN6WSIlP9TwqKV/pILf0A4jdZs/sZD0EO8NyWVVq+FypwNLDsIQ0eDU0oENyu9+I/JghvcrlDExC/hyZwQ==
+"@ionic-native/splash-screen@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/splash-screen/-/splash-screen-5.10.0.tgz#055f8edede692f06230ce5b90e61e0671e2a15a0"
+  integrity sha512-aAXEGRJUdtoIXQ/Mvb9KnIk5Y8KM731/Xg67PmYAf3FtOu0kiDmM2FrvRaYNUFGi1pmfhp3DJ/mcbHpGleTtBw==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/status-bar@^5.0.0":
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/status-bar/-/status-bar-5.7.0.tgz#2afe1e6fbbd8987ad6e9a10287a5d75b0ed8c565"
-  integrity sha512-8Ak4Mm2IrX3QebaIahFyJv+SS7GZx/Lf1r3X0cEfJeZ3k04F1CFuRF27PAx2eidQYl0VaJwlxoiqGhq31LY25A==
+"@ionic-native/status-bar@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/status-bar/-/status-bar-5.10.0.tgz#5ccfa3f083b09bf8e707a7bedad19191ddde460f"
+  integrity sha512-SrL2jFpDjbYkawxZc7xBO4MulhoLWSeXk0PSLPb2Hf2I4ru0pE76TBwtq59qgffXZ+oxmXUdIIrkNzKMMRiRZw==
   dependencies:
     "@types/cordova" latest
 
@@ -7780,13 +7780,6 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
-leaflet-ajax@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/leaflet-ajax/-/leaflet-ajax-2.1.0.tgz#269343d59bd38dc9dfa4f3a733e787ff32fe236f"
-  integrity sha1-JpND1ZvTjcnfpPOnM+eH/zL+I28=
-  dependencies:
-    lie "^3.0.1"
-
 leaflet@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.5.1.tgz#9afb9d963d66c870066b1342e7a06f92840f46bf"
@@ -7863,13 +7856,6 @@ lie@3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/lie/-/lie-3.1.1.tgz#9a436b2cc7746ca59de7a41fa469b3efb76bd87e"
   integrity sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=
-  dependencies:
-    immediate "~3.0.5"
-
-lie@^3.0.1:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/lie/-/lie-3.3.0.tgz#dcf82dee545f46074daf200c7c1c5a08e0f40f6a"
-  integrity sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==
   dependencies:
     immediate "~3.0.5"
 
@@ -8811,10 +8797,10 @@ ng2-canvas-whiteboard@^3.0.4:
   dependencies:
     lodash "4.17.11"
 
-ngx-file-drop@^8.0.3:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/ngx-file-drop/-/ngx-file-drop-8.0.3.tgz#89921a0c8dbdab389b354359454981dffd01b907"
-  integrity sha512-HSYuEEB8dPHpF9nsRVFZFIhJoyDx32GD38+jc6J6d1zGpYqZ5eOf+p+lxNHpCjmdVsW7PG4NZUZGO9NYDn66CA==
+ngx-file-drop@8.0.4:
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/ngx-file-drop/-/ngx-file-drop-8.0.4.tgz#92f4ada9fd7b470f8386b293020f371a409aa8e0"
+  integrity sha512-m5OFLQ+eNxVm1vDN8mvoDVyUQZa6MwlK0pep6Z2gzkKAS1DUvvrzOvGMIxSB4IgANltdRP6H17FF2/98gdyN1Q==
   dependencies:
     tslib "^1.9.0"
 

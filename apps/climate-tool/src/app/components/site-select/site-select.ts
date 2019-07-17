@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
-import 'leaflet-ajax';
 // import { ClimateToolActions } from "src/app/store/climate-tool.actions";
 import { GEOJSON, SITES } from 'src/app/data/climate-tool.data';
 import { ISite } from '@picsa/core/models/climate.models';
+import { GeoJsonObject } from 'geojson';
 
 @Component({
   selector: 'site-select',
@@ -33,11 +33,8 @@ export class SiteSelectComponent {
       attribution: osmAttrib
     });
     this.map.setView(new L.LatLng(-13.7, 34.9), 6);
-    const geojsonLayer = L.geoJSON(GEOJSON.malawiAdmin, {
+    const geojsonLayer = L.geoJSON(GEOJSON.malawiAdmin as GeoJsonObject, {
       onEachFeature: this.setFeature.bind(this),
-      middleware: function(data) {
-        return data;
-      },
       style: this._getStyle()
     });
     geojsonLayer.addTo(this.map);

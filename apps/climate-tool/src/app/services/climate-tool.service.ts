@@ -7,12 +7,12 @@ import { takeUntil } from 'rxjs/operators';
 import { IChartMeta, ISite } from '@picsa/core/models/climate.models';
 
 @Injectable({ providedIn: 'root' })
-export class ClimateToolProvider implements OnDestroy {
+export class ClimateToolService implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
-  @select(['climate', 'site'])
-  readonly site$: Observable<ISite>;
-  @select(['climate', 'chart'])
-  readonly activeChart$: Observable<IChartMeta>;
+  // @select(['climate', 'site'])
+  // readonly site$: Observable<ISite>;
+  // @select(['climate', 'chart'])
+  // readonly activeChart$: Observable<IChartMeta>;
   public activeSite: ISite;
   public activeChart: IChartMeta;
   public yValues: number[];
@@ -162,19 +162,19 @@ export class ClimateToolProvider implements OnDestroy {
   }
 
   _addSubscriptions() {
-    this.activeChart$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(chart => {
-        if (chart) {
-          this.activeChart = chart;
-          this._chartChanged(chart);
-        }
-      });
-    this.site$.pipe(takeUntil(this.componentDestroyed)).subscribe(site => {
-      if (site) {
-        this.activeSite = site;
-        this._siteChanged(site);
-      }
-    });
+    // this.activeChart$
+    //   .pipe(takeUntil(this.componentDestroyed))
+    //   .subscribe(chart => {
+    //     if (chart) {
+    //       this.activeChart = chart;
+    //       this._chartChanged(chart);
+    //     }
+    //   });
+    // this.site$.pipe(takeUntil(this.componentDestroyed)).subscribe(site => {
+    //   if (site) {
+    //     this.activeSite = site;
+    //     this._siteChanged(site);
+    //   }
+    // });
   }
 }

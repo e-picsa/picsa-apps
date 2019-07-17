@@ -7,8 +7,8 @@ import {
 } from '@picsa/core/models/climate.models';
 import { select } from '@angular-redux/store';
 import * as DATA from 'src/app/data/climate-tool.data';
-import { NavController, NavParams, MenuController } from '@ionic/angular';
-import { ClimateToolProvider } from 'src/app/store/climate-tool.provider';
+import { MenuController } from '@ionic/angular';
+import { ClimateToolService } from 'src/app/services/climate-tool.service';
 // import { ClimateToolActions } from '../../store/climate-tool.actions';
 import { takeUntil } from 'rxjs/operators';
 
@@ -19,10 +19,10 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ClimateHomePage implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
-  @select(['climate', 'site'])
-  readonly site$: Observable<ISite>;
-  @select(['climate', 'chart'])
-  readonly activeChart$: Observable<IChartMeta>;
+  // @select(['climate', 'site'])
+  // readonly site$: Observable<ISite>;
+  // @select(['climate', 'chart'])
+  // readonly activeChart$: Observable<IChartMeta>;
   activeChart: IChartMeta;
   sites: any;
   selectedSite: ISite;
@@ -38,10 +38,8 @@ export class ClimateHomePage implements OnDestroy {
   columns = [];
 
   constructor(
-    public navCtrl: NavController,
-    public navParams: NavParams,
     public menuCtrl: MenuController,
-    public climatePrvdr: ClimateToolProvider // private actions: ClimateToolActions
+    public climateService: ClimateToolService // private actions: ClimateToolActions
   ) {
     this._addSubscriptions();
   }
@@ -51,22 +49,22 @@ export class ClimateHomePage implements OnDestroy {
     // this.actions.resetState();
   }
   _addSubscriptions() {
-    this.site$.pipe(takeUntil(this.componentDestroyed)).subscribe(site => {
-      if (site) {
-        this.siteChanged(site);
-      }
-    });
-    this.activeChart$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(chart => {
-        if (chart) {
-          this.activeChart = chart;
-          // update selected crop to pick new line tool value
-          if (this.selectedCrop) {
-            this.setCrop(this.selectedCrop);
-          }
-        }
-      });
+    // this.site$.pipe(takeUntil(this.componentDestroyed)).subscribe(site => {
+    //   if (site) {
+    //     this.siteChanged(site);
+    //   }
+    // });
+    // this.activeChart$
+    //   .pipe(takeUntil(this.componentDestroyed))
+    //   .subscribe(chart => {
+    //     if (chart) {
+    //       this.activeChart = chart;
+    //       // update selected crop to pick new line tool value
+    //       if (this.selectedCrop) {
+    //         this.setCrop(this.selectedCrop);
+    //       }
+    //     }
+    //   });
   }
 
   setChart(chart: IChartMeta) {
@@ -81,7 +79,7 @@ export class ClimateHomePage implements OnDestroy {
     this.activeChart = null;
   }
   close() {
-    this.navCtrl.pop();
+    // this.navCtrl.pop();
   }
   selectSite() {
     // this.actions.selectSite(null);
@@ -99,7 +97,7 @@ export class ClimateHomePage implements OnDestroy {
     //   lineToolValue: this.lineToolValue
     // });
     // this.climatePrvdr.setLineToolValue(this.lineToolValue);
-    this.probabilities = this.climatePrvdr.calculateProbabilities(
+    this.probabilities = this.climateService.calculateProbabilities(
       this.lineToolValue
     );
     console.log('probabilities', this.probabilities);

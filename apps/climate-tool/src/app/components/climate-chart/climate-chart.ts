@@ -14,12 +14,12 @@ import { availableCharts } from 'src/app/data/availableCharts';
 })
 export class ClimateChartComponent implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
-  @select(['climate', 'site', 'summaries'])
-  readonly chartData$: Observable<IChartSummary[]>;
-  @select(['climate', 'site', 'lineToolValue'])
-  readonly lineToolValue$: Observable<number>;
-  @select(['climate', 'chart'])
-  readonly activeChart$: Observable<IChartMeta>;
+  // @select(['climate', 'site', 'summaries'])
+  // readonly chartData$: Observable<IChartSummary[]>;
+  // @select(['climate', 'site', 'lineToolValue'])
+  // readonly lineToolValue$: Observable<number>;
+  // @select(['climate', 'chart'])
+  // readonly activeChart$: Observable<IChartMeta>;
   chart: any;
   lineToolValue: number;
   isFirstRender: boolean = true;
@@ -40,25 +40,25 @@ export class ClimateChartComponent implements OnDestroy {
   }
 
   _addSubscriptions() {
-    this.chartData$.pipe(takeUntil(this.componentDestroyed)).subscribe(data => {
-      if (data) {
-        this.dataUpdated(data);
-      }
-    });
-    this.lineToolValue$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(v => {
-        if (v) {
-          this.setLineToolValue(v);
-        }
-      });
-    this.activeChart$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(chart => {
-        if (chart) {
-          this.setChart(chart);
-        }
-      });
+    // this.chartData$.pipe(takeUntil(this.componentDestroyed)).subscribe(data => {
+    //   if (data) {
+    //     this.dataUpdated(data);
+    //   }
+    // });
+    // this.lineToolValue$
+    //   .pipe(takeUntil(this.componentDestroyed))
+    //   .subscribe(v => {
+    //     if (v) {
+    //       this.setLineToolValue(v);
+    //     }
+    //   });
+    // this.activeChart$
+    //   .pipe(takeUntil(this.componentDestroyed))
+    //   .subscribe(chart => {
+    //     if (chart) {
+    //       this.setChart(chart);
+    //     }
+    //   });
   }
 
   // when new data columns specified redraw any graphs

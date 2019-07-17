@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ClimateToolProvider } from 'src/app/store/climate-tool.provider';
+import { ClimateToolService } from 'src/app/services/climate-tool.service';
 
 @Component({
   selector: 'combined-probability',
@@ -15,7 +15,7 @@ export class CombinedProbabilityComponent {
   dayValue: number;
   test: string = 'red';
 
-  constructor(public climatePrvdr: ClimateToolProvider) {
+  constructor(public climateService: ClimateToolService) {
     this.plantDate = { min: 1, max: 8, value: 3, step: 1 };
     this.labels = {
       1: 'Week 1, November',
@@ -36,7 +36,7 @@ export class CombinedProbabilityComponent {
   plantDateChange(e) {
     //manually set 1 October as day 274 and multiple by 7.6 (rough number of days in 1/4 month)
     this.dayValue = 305 + (365 / 48) * this.plantDate.value;
-    this.startProbability = this.climatePrvdr.calculateCombinedProbability([
+    this.startProbability = this.climateService.calculateCombinedProbability([
       { key: 'Start', value: this.dayValue, operator: '<=' }
     ]);
     this.calculateCropProbabilities();
@@ -47,7 +47,7 @@ export class CombinedProbabilityComponent {
     for (const crop of this.crops) {
       this.crops[
         crop.index
-      ].lengthProbability = this.climatePrvdr.calculateCombinedProbability([
+      ].lengthProbability = this.climateService.calculateCombinedProbability([
         {
           key: 'End',
           value: (this.dayValue + crop.lengthAvg) % 366,
@@ -56,7 +56,7 @@ export class CombinedProbabilityComponent {
       ]);
       this.crops[
         crop.index
-      ].rainfallProbability = this.climatePrvdr.calculateCombinedProbability([
+      ].rainfallProbability = this.climateService.calculateCombinedProbability([
         {
           key: 'Rainfall',
           value: crop.waterAvg * (1 + this.plantDate.value / 16),

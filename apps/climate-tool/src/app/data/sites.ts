@@ -1,3 +1,5 @@
+import { ISite } from '@picsa/core/models/climate.models';
+
 export const DEFINITIONS = {
   start: {
     from: {
@@ -6,41 +8,47 @@ export const DEFINITIONS = {
     }
   }
 };
-export const SITES = [
+export const SITES: ISite[] = [
   {
-    name: "Chichiri",
+    name: 'Chichiri',
     latitude: -15.796432,
     longitude: 35.026425,
-    fileName: "chichiri"
+    fileName: 'chichiri',
+    country: 'Malawi'
   },
   {
-    name: "Chileka",
+    name: 'Chileka',
     latitude: -15.679203,
     longitude: 34.967697,
-    fileName: "chileka"
+    fileName: 'chileka',
+    country: 'Malawi'
   },
   {
-    name: "Makanjira",
+    name: 'Makanjira',
     latitude: -13.7050735,
     longitude: 35.037632,
-    fileName: "makanjira"
+    fileName: 'makanjira',
+    country: 'Malawi'
   },
   {
-    name: "Mangochi",
+    name: 'Mangochi',
     latitude: -14.4821775,
     longitude: 35.2352141,
-    fileName: "mangochi"
+    fileName: 'mangochi',
+    country: 'Malawi'
   },
   {
-    name: "Monkeybay",
+    name: 'Monkeybay',
     latitude: -14.0806369,
     longitude: 34.9062036,
-    fileName: "monkeybay"
+    fileName: 'monkeybay',
+    country: 'Malawi'
   },
   {
-    name: "Namwera",
+    name: 'Namwera',
     latitude: -14.3530807,
     longitude: 35.4706477,
-    fileName: "namwera"
+    fileName: 'namwera',
+    country: 'Malawi'
   }
 ];

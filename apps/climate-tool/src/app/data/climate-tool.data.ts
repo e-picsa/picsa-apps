@@ -1,6 +1,6 @@
-import { availableCharts } from "./data/availableCharts";
-import { cropRequirements } from "./data/cropRequirements";
-import { GEOJSON } from "./data/geoJson/geoJson";
-import { SITES } from "./data/sites";
+import { availableCharts } from 'src/app/data/availableCharts';
+import { cropRequirements } from 'src/app/data/cropRequirements';
+import { GEOJSON } from 'src/app/data/geoJson/geoJson';
+import { SITES } from 'src/app/data/sites';
 
 export { availableCharts, cropRequirements, GEOJSON, SITES };

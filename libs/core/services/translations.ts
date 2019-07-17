@@ -3,7 +3,7 @@ import { LoadingController, ToastController } from '@ionic/angular';
 import { LoadingOptions, ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class TranslationsProvider implements OnDestroy {
   loader: HTMLIonLoadingElement;
   monthNames: string[] = MONTHS;
