@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import storageCollections from './storage.data';
-import { IDBDoc, ITimestamp } from '../models';
+import { IDBDoc, ITimestamp } from '../../models';
 import { firestore } from 'firebase/app';
 
 @Injectable({ providedIn: 'root' })
@@ -61,7 +60,7 @@ export class DBService {
 
   // instead of usual sync from db to local, this can be used to populate the main db from local
   // NOTE, THIS OVERRIDES EXISTING DATA ON MATCH, ONLY USE IF YOU KNOW WHAT YOU ARE DOING
-  async populateDB() {
+  async populateDB(storageCollections) {
     for (const collection of Object.keys(storageCollections)) {
       if (!collection.includes('_')) {
         const data = storageCollections[collection];

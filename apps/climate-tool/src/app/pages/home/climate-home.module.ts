@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { ClimateHomePage } from './climate-home.page';
 import { ClimateToolComponentsModule } from 'src/app/components/climate-tool-components.module';
-import { TranslateSharedLazyModuleModule } from '@picsa/modules/translate.module';
 import { IonicModule } from '@ionic/angular';
+import { PICSATranslateModule } from '@picsa/modules/translate';
 
 const routes: Routes = [
   {
@@ -20,7 +20,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ClimateToolComponentsModule,
-    TranslateSharedLazyModuleModule,
+    PICSATranslateModule,
     RouterModule.forChild(routes)
   ],
   declarations: [ClimateHomePage]

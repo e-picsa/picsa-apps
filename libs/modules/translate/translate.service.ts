@@ -1,27 +1,27 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { OnDestroy, Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { LoadingOptions, ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
-export class TranslationsProvider implements OnDestroy {
+export class PicsaTranslateService implements OnDestroy {
   loader: HTMLIonLoadingElement;
   monthNames: string[] = MONTHS;
   constructor(
     public toastCtrl: ToastController,
-    public translate: TranslateService,
+    // public translate: TranslateService,
     public loadingCtrl: LoadingController
   ) {
     this.init();
   }
   // subscrib to language changes and retranslate static translations
   init() {
-    this.translate.onLangChange.subscribe(lang => {
-      this.prepareStaticTranslations();
-    });
+    // this.translate.onLangChange.subscribe(lang => {
+    //   this.prepareStaticTranslations();
+    // });
   }
   ngOnDestroy() {
-    this.translate.onLangChange.unsubscribe();
+    // this.translate.onLangChange.unsubscribe();
   }
 
   // simple wrapper for ionic toast to allow text translation
@@ -44,7 +44,8 @@ export class TranslationsProvider implements OnDestroy {
   // use translate service to translate strings that will be displayed
   // outside of html templates (where pipe method used instead)
   async translateText(text: string) {
-    const translation = await this.translate.get(text).toPromise();
+    // const translation = await this.translate.get(text).toPromise();
+    const translation = 'TODO';
     return translation;
   }
 

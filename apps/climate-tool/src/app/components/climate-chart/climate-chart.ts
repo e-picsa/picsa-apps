@@ -3,7 +3,7 @@ import { Component, OnDestroy } from '@angular/core';
 import * as c3 from 'c3';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslationsProvider } from '@picsa/services/core/translations';
+import { PicsaTranslateService } from '@picsa/modules/translate';
 // import { AppState } from "src/app/store/store.model";
 import { IChartMeta, IChartSummary } from '@picsa/models/climate.models';
 import { availableCharts } from 'src/app/data/availableCharts';
@@ -27,7 +27,7 @@ export class ClimateChartComponent implements OnDestroy {
 
   constructor(
     // private ngRedux: NgRedux<AppState>,
-    private translationsPrvdr: TranslationsProvider
+    private translateService: PicsaTranslateService
   ) {
     this._addSubscriptions();
   }
@@ -178,7 +178,7 @@ export class ClimateChartComponent implements OnDestroy {
   }
 
   async setChart(chart: IChartMeta) {
-    const loader = await this.translationsPrvdr.createTranslatedLoader({
+    const loader = await this.translateService.createTranslatedLoader({
       message: 'Loading...'
     });
     await loader.present();
@@ -203,7 +203,7 @@ export class ClimateChartComponent implements OnDestroy {
       //initialise year
       const d = new Date(2001, 0);
       d.setDate(dayNumber);
-      const monthNames: string[] = this.translationsPrvdr.monthNames;
+      const monthNames: string[] = this.translateService.monthNames;
       // just take first 3 letters
       const string = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(
         0,
