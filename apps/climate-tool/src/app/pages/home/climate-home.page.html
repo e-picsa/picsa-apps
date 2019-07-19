@@ -4,14 +4,16 @@
       <ion-back-button [text]="Back" defaultHref="tools"></ion-back-button>
     </ion-buttons>
     <ion-title *ngIf="!selectedSite">{{
-      "Select a site" | translate
+      'Select a site' | translate
     }}</ion-title>
     <ion-title *ngIf="selectedSite">{{ selectedSite.name }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <site-select *ngIf="!selectedSite"></site-select>
+  <div>Map</div>
+
+  
   <div style="height: 1em"></div>
   <climate-chart></climate-chart>
   <div *ngIf="selectedSite" padding>
@@ -51,15 +53,15 @@
         <div id="tools" *ngIf="activeChart.tools">
           <ion-list>
             <ion-item *ngIf="activeChart.definition">
-              <ion-label>{{ "Definition" | translate }}</ion-label>
+              <ion-label>{{ 'Definition' | translate }}</ion-label>
               <ion-toggle [(ngModel)]="showDefinition"></ion-toggle>
             </ion-item>
             <ion-item *ngIf="activeChart.tools.line">
-              <ion-label>{{ "Line Tool" | translate }}</ion-label>
+              <ion-label>{{ 'Line Tool' | translate }}</ion-label>
               <ion-toggle [(ngModel)]="showLineTool"></ion-toggle>
             </ion-item>
             <ion-item *ngIf="activeChart.tools.line">
-              <ion-label>{{ "Probability" | translate }}</ion-label>
+              <ion-label>{{ 'Probability' | translate }}</ion-label>
               <ion-toggle
                 [(ngModel)]="showProbabilityTool"
                 [disabled]="!lineToolValue"
@@ -86,7 +88,7 @@
           *ngIf="showProbabilityTool && activeChart.tools.line"
           class="tool-container"
         >
-          <h3>{{ "Probability" | translate }}</h3>
+          <h3>{{ 'Probability' | translate }}</h3>
           <div id="blocks" class="flex">
             <div
               class="block good"
@@ -102,16 +104,16 @@
             </div>
           </div>
           <div>
-            {{ probabilities.tens.above.length }} {{ "out of 10" | translate }}
+            {{ probabilities.tens.above.length }} {{ 'out of 10' | translate }}
           </div>
           <div class="flex wrap">
             <div id="calculation">
-              <h3>{{ "Calculation" | translate }}</h3>
+              <h3>{{ 'Calculation' | translate }}</h3>
               <div>
-                {{ "Points Above" | translate }}: {{ probabilities.above }}
+                {{ 'Points Above' | translate }}: {{ probabilities.above }}
               </div>
               <div>
-                {{ "Total Points" }}:
+                {{ 'Total Points' }}:
                 {{ probabilities.below + probabilities.above }}
               </div>
               <br />
@@ -120,7 +122,7 @@
                   <sup>{{ probabilities.above }}</sup
                   >&frasl;
                   <sub>{{ probabilities.above + probabilities.below }}</sub> =
-                  {{ probabilities.percentage | percent: "1.0-0" }}
+                  {{ probabilities.percentage | percent: '1.0-0' }}
                 </div>
               </div>
             </div>
@@ -132,7 +134,7 @@
           *ngIf="showLineTool && activeChart.tools.line"
           class="tool-container"
         >
-          <h3>{{ "Line Tool" | translate }}</h3>
+          <h3>{{ 'Line Tool' | translate }}</h3>
           <!--crops-->
           <!-- <ion-input
             type="number"

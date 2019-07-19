@@ -9,6 +9,13 @@ const routes: Routes = [
         mod => mod.ClimateHomePageModule
       )
   },
+  {
+    path: 'climate/site-select',
+    loadChildren: () =>
+      import('./pages/site-select/site-select.module').then(
+        mod => mod.ClimateSiteSelectPageModule
+      )
+  },
   { path: 'climate', redirectTo: 'climate/home' },
   { path: '**', redirectTo: 'climate/home' }
 ];

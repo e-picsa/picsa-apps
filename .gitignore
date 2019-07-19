@@ -56,4 +56,8 @@ xplat/**/*.d.ts
 xplat/**/*.metadata.json
 xplat/**/*.ngfactory.ts
 xplat/**/*.ngsummary.json
-      
+
+# map tiles   
+libs/features/map/tiles/assets-for-copy   
+libs/features/map/tiles/**/*.png
+

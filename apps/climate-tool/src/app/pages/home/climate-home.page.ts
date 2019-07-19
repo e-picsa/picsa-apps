@@ -6,7 +6,7 @@ import {
   ICropRequirement
 } from '@picsa/models/climate.models';
 import { select } from '@angular-redux/store';
-import * as DATA from 'src/app/data/climate-tool.data';
+import * as DATA from 'src/app/data';
 import { MenuController } from '@ionic/angular';
 import { ClimateToolService } from 'src/app/services/climate-tool.service';
 // import { ClimateToolActions } from '../../store/climate-tool.actions';

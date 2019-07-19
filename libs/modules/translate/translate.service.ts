@@ -2,6 +2,7 @@ import { OnDestroy, Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { LoadingOptions, ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
+import * as translations from './translations';
 
 @Injectable()
 export class PicsaTranslateService implements OnDestroy {
@@ -9,19 +10,26 @@ export class PicsaTranslateService implements OnDestroy {
   monthNames: string[] = MONTHS;
   constructor(
     public toastCtrl: ToastController,
-    // public translate: TranslateService,
+    public translate: TranslateService,
     public loadingCtrl: LoadingController
   ) {
+    console.log('picsa translate service init');
     this.init();
   }
   // subscrib to language changes and retranslate static translations
   init() {
-    // this.translate.onLangChange.subscribe(lang => {
-    //   this.prepareStaticTranslations();
-    // });
+    // add translations
+    // TODO - pass config param from module to customise what is loaded
+    this.translate.setTranslation('en', translations.en);
+    this.translate.setTranslation('ny', translations.ny);
+    this.translate.setTranslation('sw', translations.sw);
+    // add subscribers
+    this.translate.onLangChange.subscribe(lang => {
+      this.prepareStaticTranslations();
+    });
   }
   ngOnDestroy() {
-    // this.translate.onLangChange.unsubscribe();
+    this.translate.onLangChange.unsubscribe();
   }
 
   // simple wrapper for ionic toast to allow text translation
@@ -44,8 +52,7 @@ export class PicsaTranslateService implements OnDestroy {
   // use translate service to translate strings that will be displayed
   // outside of html templates (where pipe method used instead)
   async translateText(text: string) {
-    // const translation = await this.translate.get(text).toPromise();
-    const translation = 'TODO';
+    const translation = await this.translate.get(text).toPromise();
     return translation;
   }
 
