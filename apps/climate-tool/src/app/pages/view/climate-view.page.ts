@@ -13,11 +13,11 @@ import { ClimateToolService } from 'src/app/services/climate-tool.service';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'climate-home',
-  templateUrl: './climate-home.page.html',
-  styleUrls: ['./climate-home.page.scss']
+  selector: 'climate-view',
+  templateUrl: './climate-view.page.html',
+  styleUrls: ['./climate-view.page.scss']
 })
-export class ClimateHomePage implements OnDestroy {
+export class ClimateViewPage implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
   // @select(['climate', 'site'])
   // readonly site$: Observable<ISite>;

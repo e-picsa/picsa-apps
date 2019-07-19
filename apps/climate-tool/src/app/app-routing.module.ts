@@ -3,21 +3,21 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'climate/home',
-    loadChildren: () =>
-      import('./pages/home/climate-home.module').then(
-        mod => mod.ClimateHomePageModule
-      )
-  },
-  {
     path: 'climate/site-select',
     loadChildren: () =>
       import('./pages/site-select/site-select.module').then(
         mod => mod.ClimateSiteSelectPageModule
       )
   },
-  { path: 'climate', redirectTo: 'climate/home' },
-  { path: '**', redirectTo: 'climate/home' }
+  {
+    path: 'climate/view/:siteId',
+    loadChildren: () =>
+      import('./pages/view/climate-view.module').then(
+        mod => mod.ClimateViewPageModule
+      )
+  },
+  { path: 'climate', redirectTo: 'climate/site-select' },
+  { path: '**', redirectTo: 'climate/site-select' }
 ];
 
 @NgModule({

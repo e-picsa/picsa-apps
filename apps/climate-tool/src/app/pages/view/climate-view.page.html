@@ -13,8 +13,8 @@
 <ion-content>
   <div>Map</div>
 
-  
   <div style="height: 1em"></div>
+  <picsa-chart></picsa-chart>
   <climate-chart></climate-chart>
   <div *ngIf="selectedSite" padding>
     <!--chart-->
@@ -68,11 +68,11 @@
               ></ion-toggle>
             </ion-item>
             <!-- <ion-item>
-              <button ion-button icon-start full outline (click)="showAllCharts()">
-                <ion-icon name="arrow-round-back"></ion-icon>
-                {{'All Charts' | translate}}
-              </button>
-            </ion-item> -->
+                <button ion-button icon-start full outline (click)="showAllCharts()">
+                  <ion-icon name="arrow-round-back"></ion-icon>
+                  {{'All Charts' | translate}}
+                </button>
+              </ion-item> -->
           </ion-list>
         </div>
         <!-- definition -->
@@ -137,13 +137,13 @@
           <h3>{{ 'Line Tool' | translate }}</h3>
           <!--crops-->
           <!-- <ion-input
-            type="number"
-            placeholder="{{
-              'Enter a custom value or select a crop below' | translate
-            }}"
-            [(ngModel)]="lineToolValue"
-            (focusout)="setLineToolValue()"
-          ></ion-input> -->
+              type="number"
+              placeholder="{{
+                'Enter a custom value or select a crop below' | translate
+              }}"
+              [(ngModel)]="lineToolValue"
+              (focusout)="setLineToolValue()"
+            ></ion-input> -->
           <div style="margin-top:1em">
             <div
               class="crop-select"

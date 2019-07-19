@@ -17,26 +17,44 @@ import { GeoJsonObject, Feature, Geometry } from 'geojson';
 })
 export class PicsaMapComponent {
   @Output() onMapReady = new EventEmitter<L.Map>();
-  @Input() set mapOptions(mapOptions: L.MapOptions) {
-    this._mapOptions = { ...this._mapOptions, ...mapOptions };
-    console.log('map options', this._mapOptions);
-  }
+  @Output() onLayerClick = new EventEmitter<L.Layer>();
+  @Output() onMarkerClick = new EventEmitter<IMapMarker>();
+  @Input() mapOptions: L.MapOptions;
   @Input() featuredCountry: IFeaturedCountry;
   @Input() basemapOptions: IBasemapOptions;
   // make native map element available directly
   public map: L.Map;
-
   // expose full leaflet functionality for use within parent components
   public L = L;
-
+  // active marker used to toggle style classes
+  private _activeMarker: L.Marker;
   // default options are overwritten via input setter
   protected _mapOptions: L.MapOptions = MAP_DEFAULTS;
-
   ngOnInit() {
-    // initialise either web or local asset basemap
-    const options = { ...BASEMAP_DEFAULTS, ...this.basemapOptions };
-    const basemap = L.tileLayer(options.src, options);
-    this._mapOptions = { ...MAP_DEFAULTS, layers: [basemap] };
+    // the user provides basemap options separate to general map options, so combine here
+    // define the basemap layer and then bind to the view component
+    const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions };
+    const basemap = L.tileLayer(basemapOptions.src, basemapOptions);
+    const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions };
+    this._mapOptions = { ...mapOptions, layers: [basemap] };
+  }
+
+  public addMarkers(mapMarkers: IMapMarker[], popupContent?: HTMLDivElement) {
+    mapMarkers.forEach(m => {
+      const icon = L.icon({
+        ...ICON_DEFAULTS,
+        iconUrl: m.iconUrl
+      });
+      const activeIcon = L.icon({
+        ...ACTIVE_ICON_DEFAULTS,
+        iconUrl: m.iconUrl
+      });
+      const marker = L.marker(m.latlng, { icon });
+      marker.on({
+        click: () => this._onMarkerClick(m, marker, activeIcon, icon)
+      });
+      marker.addTo(this.map);
+    });
   }
 
   // when the map is ready it emits event with map, and also binds map to
@@ -47,6 +65,29 @@ export class PicsaMapComponent {
       this.addCountryFeatures(this.featuredCountry);
     }
     this.onMapReady.emit(map);
+  }
+
+  // zoom in on layer click and emit event.
+  // NOTE L.Layer doesn't recognize _bounds prop so just pass as any
+  protected _onLayerClick(layer: any) {
+    const bounds = layer._bounds as L.LatLngBounds;
+    this.map.fitBounds(bounds);
+    this.onLayerClick.emit(layer);
+  }
+
+  // when marker is clicked notifiy event with original marker data
+  protected _onMarkerClick(
+    m: IMapMarker,
+    marker: L.Marker,
+    activeIcon: L.Icon,
+    inactiveIcon: L.Icon
+  ) {
+    if (this._activeMarker) {
+      this._activeMarker.setIcon(inactiveIcon);
+    }
+    marker.setIcon(activeIcon);
+    this._activeMarker = marker;
+    this.onMarkerClick.emit(m);
   }
 
   /***********************************************************************
@@ -63,48 +104,11 @@ export class PicsaMapComponent {
     this.map.fitBounds([[-13.4787, 35.77], [-14.797, 34.7358]]);
   }
 
-  // when adding geoJson features want to set a label in the center of the feature
-  // or possibly different location if not suitable
   private setFeature(feature: Feature<Geometry, any>, layer: L.Layer) {
-    const overrides = {
-      'TA Kapeni': [-15.60583, 35.00381],
-      'TA Machinjili': [-15.67858, 35.07111]
-    };
-
     layer.on({
-      click: e => this.layerClick(e.target)
+      click: () => this._onLayerClick(layer)
     });
-
-    //automatically bind tooltips to centre of feature, unless want to manually specify from exceptions
-    if (!overrides[feature.properties.NAME_1]) {
-      layer.bindTooltip(feature.properties.NAME_1, {
-        permanent: true,
-        direction: 'center',
-        className: 'countryLabel'
-      });
-    } else {
-      const latLon = overrides[feature.properties.NAME_1];
-      const label = L.marker(latLon, {
-        icon: L.divIcon({
-          html: '',
-          iconSize: [0, 0]
-        })
-      }).addTo(this.map);
-      label.bindTooltip(feature.properties.NAME_1, {
-        permanent: true,
-        direction: 'center',
-        className: 'countryLabel'
-      });
-    }
   }
-
-  private layerClick(layer: L.Layer) {
-    console.log('layer clicked', layer);
-  }
-
-  // add label in center of feature
-  private addFeatureLabel() {}
-  private addCustomLabel() {}
 
   private _getCountryGeoJson(country?: IFeaturedCountry): GeoJsonObject {
     switch (country) {
@@ -127,14 +131,6 @@ const BASEMAP_DEFAULTS: IBasemapOptions = {
   attribution: 'Map data © OpenStreetMap contributors'
 };
 
-// L.tileLayer(
-//   'assets/mapTiles/raw/{z}/{x}/{y}.png',
-//   {
-//     maxZoom: 18,
-//     attribution: 'Map data © OpenStreetMap contributors',
-//     maxNativeZoom: 8
-//   }
-// );
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
   zoom: 5,
@@ -142,18 +138,83 @@ const MAP_DEFAULTS: L.MapOptions = {
 };
 
 const GEOJSON_STYLE: L.PathOptions = {
-  fillColor: '#f0d1b1',
-  fillOpacity: 0.3,
+  fillColor: '#000000',
+  fillOpacity: 0.05,
   color: '#000000',
   opacity: 1,
   weight: 2
 };
+const ICON_DEFAULTS: L.IconOptions = {
+  iconUrl: '',
+  // shadowUrl: "assets/img/leaf-shadow.png",
+  iconSize: [38, 38], // size of the icon
+  shadowSize: [50, 64], // size of the shadow
+  // location given from top-left corner of icon, with right positive x and down positive y
+  iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
+  shadowAnchor: [4, 62], // the same for the shadow
+  popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+};
+const ACTIVE_ICON_DEFAULTS: L.IconOptions = {
+  ...ICON_DEFAULTS,
+  // make icon smaller so border can appear without shifting
+  className: 'active'
+};
 
 type IFeaturedCountry = 'malawi' | 'kenya';
-interface IMapMarker {
-  icon: 'weather';
+export interface IMapMarker {
+  iconUrl: string;
   latlng: L.LatLngExpression;
+  data?: any;
 }
 export interface IBasemapOptions extends L.TileLayerOptions {
   src: string;
 }
+export interface IMapOptions extends L.MapOptions {}
+
+/***********************************************************************
+ *  Currently deprecated but may want in future
+ ***********************************************************************/
+
+// // when adding geoJson features want to set a label in the center of the feature
+// // or possibly different location if not suitable
+
+// addFeatureLabel(feature: Feature<Geometry,any>,layer:L.Layer){
+//   const overrides = {
+//     'TA Kapeni': [-15.60583, 35.00381],
+//     'TA Machinjili': [-15.67858, 35.07111]
+//   };
+//       //automatically bind tooltips to centre of feature, unless want to manually specify from exceptions
+//       if (!overrides[feature.properties.NAME_1]) {
+//         layer.bindTooltip(feature.properties.NAME_1, {
+//           permanent: true,
+//           direction: 'center',
+//           className: 'countryLabel'
+//         });
+//       } else {
+//         const latLon = overrides[feature.properties.NAME_1];
+//         const label = L.marker(latLon, {
+//           icon: L.divIcon({
+//             html: '',
+//             iconSize: [0, 0]
+//           })
+//         }).addTo(this.map);
+//         label.bindTooltip(feature.properties.NAME_1, {
+//           permanent: true,
+//           direction: 'center',
+//           className: 'countryLabel'
+//         });
+//       }
+//     }
+
+/* MARKER Popup
+        // const container = L.DomUtil.create('div');
+      // const btn = L.DomUtil.create('button', '', container);
+      // btn.setAttribute('type', 'button');
+      // btn.innerHTML = `<div class="site-select-button">${site.name} 🡺</div>`;
+      // const popup = L.popup().setContent(btn);
+      // L.DomEvent.on(btn, 'click', btn => {
+      //   this.selectSite(site);
+      // });
+
+
+*/
