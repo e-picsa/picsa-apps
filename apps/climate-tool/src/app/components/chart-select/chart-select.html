@@ -1,9 +1,20 @@
-<div>Chart Select</div>
-<div
-  *ngFor="let chart of availableCharts"
-  (click)="setChart(chart)"
-  class="chart-image"
->
-  <img src="{{ chart.image }}" />
-  <div>{{ chart.name | translate }}</div>
+<h2>{{ 'Select a chart' | translate }}</h2>
+<div style="display: flex; flex-wrap: wrap">
+  <mat-card
+    *ngFor="let chart of availableCharts"
+    class="mat-elevation-z8 chart-card"
+    (click)="setChart(chart)"
+  >
+    <mat-card-title class="chart-name" [attr.data-y]="chart.y">
+      {{ chart.name | translate }}
+    </mat-card-title>
+    <mat-card-content style="display: flex">
+      <div>
+        <img src="{{ chart.image }}" class="chart-image" />
+      </div>
+      <div class="chart-definition">
+        {{ chart.definition | translate }}
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

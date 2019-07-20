@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartSelectComponent } from './chart-select/chart-select';
 import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaMaterialModule } from '../material.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { PicsaTranslateModule } from '@picsa/modules';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    PicsaTranslateModule
+    PicsaTranslateModule,
+    PicsaMaterialModule
   ],
   exports: [
     ClimateChartComponent,
