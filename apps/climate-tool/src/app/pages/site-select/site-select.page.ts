@@ -1,4 +1,4 @@
-import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, NgZone } from '@angular/core';
 import { SITES } from 'src/app/data';
 import { ISite } from '@picsa/models/climate.models';
 import {
@@ -7,6 +7,7 @@ import {
   IMapOptions,
   IMapMarker
 } from '@picsa/features/map/map';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'climate-site-select',
@@ -22,18 +23,30 @@ export class SiteSelectPage {
     maxNativeZoom: 8
   };
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private ngZone: NgZone,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   // called from html when onMapReady is triggered
   onMapReady() {
     this.populateSites();
   }
   onMarkerClick(marker: IMapMarker) {
-    // strange bug why it isn't detecting changes in usual way
-    // so force with object assignment and cdr. May work without
-    // in future ng versions (CC 2019-07-19)
-    this.activeSite = { ...(marker.data as ISite) };
-    this.cdr.detectChanges();
+    // linking to callback forces angular outside of usual cdr strategy/zone
+    // so have to manually call ngZone.run to detect changes
+    this.ngZone.run(() => {
+      this.activeSite = { ...(marker.data as ISite) };
+    });
+  }
+
+  goToSite(site: ISite) {
+    this.ngZone.run(() => {
+      this.router.navigate(['../', 'view', site._id], {
+        relativeTo: this.route
+      });
+    });
   }
 
   populateSites() {

@@ -19,6 +19,7 @@ export interface ICropRequirement {
 }
 
 export interface ISite {
+  _id: string;
   name: string;
   latitude: number;
   longitude: number;

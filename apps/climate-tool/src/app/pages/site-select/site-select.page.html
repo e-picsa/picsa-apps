@@ -1,7 +1,7 @@
 <div class="page">
   <h1>{{ 'Select a site' | translate }}</h1>
-  <div class="page-content">
-    <div style="flex:1">
+  <div class="page-content no-padding">
+    <div style="flex:1; z-index:1">
       <picsa-map
         (onMapReady)="onMapReady()"
         (onMarkerClick)="onMarkerClick($event)"
@@ -12,12 +12,14 @@
       ></picsa-map>
     </div>
     <button
-      [routerLink]="['view', activeSite.name]"
-      mat-button
-      style="margin:1em 0"
+      (click)="goToSite(activeSite)"
+      mat-raised-button
+      color="primary"
       *ngIf="activeSite"
+      id="siteButton"
     >
-      View {{ activeSite.name }}
+      <span id="siteButtonText">{{ activeSite.name }}</span>
+      <mat-icon>arrow_forward</mat-icon>
     </button>
   </div>
 </div>

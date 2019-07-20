@@ -1,26 +1,8 @@
-<ion-header>
-  <ion-toolbar color="secondary">
-    <ion-buttons slot="start">
-      <ion-back-button [text]="Back" defaultHref="tools"></ion-back-button>
-    </ion-buttons>
-    <ion-title *ngIf="!selectedSite">{{
-      'Select a site' | translate
-    }}</ion-title>
-    <ion-title *ngIf="selectedSite">{{ selectedSite.name }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <div>Map</div>
-
-  <div style="height: 1em"></div>
-  <picsa-chart></picsa-chart>
-  <climate-chart></climate-chart>
-  <div *ngIf="selectedSite" padding>
-    <!--chart-->
+<div class="page">
+  <h1>{{ activeSite ? activeSite.name : '' }}</h1>
+  <div class="page-content">
+    <picsa-chart></picsa-chart>
     <div>
-      <!--combined probability component-->
-      <!-- <combined-probability *ngIf="activeChart && activeChart.name=='Combined Probability'"></combined-probability> -->
       <div id="selectChart" class="flex wrap" *ngIf="!activeChart">
         <div
           *ngFor="let chart of availableCharts"
@@ -67,12 +49,6 @@
                 [disabled]="!lineToolValue"
               ></ion-toggle>
             </ion-item>
-            <!-- <ion-item>
-                <button ion-button icon-start full outline (click)="showAllCharts()">
-                  <ion-icon name="arrow-round-back"></ion-icon>
-                  {{'All Charts' | translate}}
-                </button>
-              </ion-item> -->
           </ion-list>
         </div>
         <!-- definition -->
@@ -137,13 +113,13 @@
           <h3>{{ 'Line Tool' | translate }}</h3>
           <!--crops-->
           <!-- <ion-input
-              type="number"
-              placeholder="{{
-                'Enter a custom value or select a crop below' | translate
-              }}"
-              [(ngModel)]="lineToolValue"
-              (focusout)="setLineToolValue()"
-            ></ion-input> -->
+                    type="number"
+                    placeholder="{{
+                      'Enter a custom value or select a crop below' | translate
+                    }}"
+                    [(ngModel)]="lineToolValue"
+                    (focusout)="setLineToolValue()"
+                  ></ion-input> -->
           <div style="margin-top:1em">
             <div
               class="crop-select"
@@ -184,4 +160,9 @@
       </div>
     </div>
   </div>
-</ion-content>
+</div>
+
+<!--chart-->
+
+<!--combined probability component-->
+<!-- <combined-probability *ngIf="activeChart && activeChart.name=='Combined Probability'"></combined-probability> -->

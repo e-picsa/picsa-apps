@@ -10,6 +10,7 @@ export const DEFINITIONS = {
 };
 export const SITES: ISite[] = [
   {
+    _id: 'chichiri',
     name: 'Chichiri',
     latitude: -15.796432,
     longitude: 35.026425,
@@ -17,6 +18,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
+    _id: 'chileka',
     name: 'Chileka',
     latitude: -15.679203,
     longitude: 34.967697,
@@ -24,6 +26,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
+    _id: 'makanjira',
     name: 'Makanjira',
     latitude: -13.7050735,
     longitude: 35.037632,
@@ -31,6 +34,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
+    _id: 'mangochi',
     name: 'Mangochi',
     latitude: -14.4821775,
     longitude: 35.2352141,
@@ -38,6 +42,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
+    _id: 'monkeybay',
     name: 'Monkeybay',
     latitude: -14.0806369,
     longitude: 34.9062036,
@@ -45,6 +50,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
+    _id: 'namwera',
     name: 'Namwera',
     latitude: -14.3530807,
     longitude: 35.4706477,

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { PicsaMapModule } from '@picsa/features/map';
 import { SiteSelectPage } from './site-select.page';
-import { PicsaMaterialModule, PicsaTranslateModule } from '@picsa/modules';
+import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaMaterialModule } from 'src/app/material.module';
 
 const routes: Routes = [
   {

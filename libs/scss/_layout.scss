@@ -10,6 +10,7 @@ body {
   position: absolute;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .page-content {
@@ -18,4 +19,9 @@ body {
   padding: 10px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+.page-content.no-padding {
+  padding: 0;
 }

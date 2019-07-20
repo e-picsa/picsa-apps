@@ -1,88 +1,48 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import {
   ISite,
   IChartMeta,
   ICropRequirement
 } from '@picsa/models/climate.models';
-import { select } from '@angular-redux/store';
 import * as DATA from 'src/app/data';
 import { MenuController } from '@ionic/angular';
 import { ClimateToolService } from 'src/app/services/climate-tool.service';
-// import { ClimateToolActions } from '../../store/climate-tool.actions';
-import { takeUntil } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'climate-view',
   templateUrl: './climate-view.page.html',
   styleUrls: ['./climate-view.page.scss']
 })
-export class ClimateViewPage implements OnDestroy {
-  private componentDestroyed: Subject<any> = new Subject();
-  // @select(['climate', 'site'])
-  // readonly site$: Observable<ISite>;
-  // @select(['climate', 'chart'])
-  // readonly activeChart$: Observable<IChartMeta>;
+export class ClimateViewPage implements OnInit {
+  activeSite: ISite;
   activeChart: IChartMeta;
-  sites: any;
-  selectedSite: ISite;
-  selectedChart: string;
+  // selectedChart: string;
   availableCharts: IChartMeta[] = DATA.availableCharts;
-  showTools: boolean = true;
-  showDefinition: boolean = false;
+  // showTools: boolean = true;
+  // showDefinition: boolean = false;
   lineToolValue: number;
   probabilities: any;
   crops = DATA.cropRequirements;
   selectedCrop: ICropRequirement;
-  fullScreenView: boolean = true;
-  columns = [];
+  // columns = [];
 
   constructor(
     public menuCtrl: MenuController,
-    public climateService: ClimateToolService // private actions: ClimateToolActions
-  ) {
-    this._addSubscriptions();
-  }
-  ngOnDestroy() {
-    this.componentDestroyed.next();
-    this.componentDestroyed.unsubscribe();
-    // this.actions.resetState();
-  }
-  _addSubscriptions() {
-    // this.site$.pipe(takeUntil(this.componentDestroyed)).subscribe(site => {
-    //   if (site) {
-    //     this.siteChanged(site);
-    //   }
-    // });
-    // this.activeChart$
-    //   .pipe(takeUntil(this.componentDestroyed))
-    //   .subscribe(chart => {
-    //     if (chart) {
-    //       this.activeChart = chart;
-    //       // update selected crop to pick new line tool value
-    //       if (this.selectedCrop) {
-    //         this.setCrop(this.selectedCrop);
-    //       }
-    //     }
-    //   });
+    public climateService: ClimateToolService, // private actions: ClimateToolActions
+    private route: ActivatedRoute
+  ) {}
+  ngOnInit(): void {
+    const siteId = this.route.snapshot.params.siteId;
+    this.activeSite = DATA.SITES.find(s => s._id == siteId);
   }
 
   setChart(chart: IChartMeta) {
     // this.actions.selectChart(chart);
   }
 
-  async siteChanged(site: ISite) {
-    this.selectedSite = site;
-  }
-
   showAllCharts() {
     this.activeChart = null;
-  }
-  close() {
-    // this.navCtrl.pop();
-  }
-  selectSite() {
-    // this.actions.selectSite(null);
   }
   setAvailableCharts(list) {
     this.availableCharts = DATA.availableCharts;
