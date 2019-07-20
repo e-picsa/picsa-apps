@@ -1,37 +1,10 @@
 <div class="page">
   <h1>{{ activeSite ? activeSite.name : '' }}</h1>
   <div class="page-content">
-    <picsa-chart></picsa-chart>
+    <climate-chart-select *ngIf="!activeChart"></climate-chart-select>
+    <picsa-chart *ngIf="activeChart"></picsa-chart>
     <div>
-      <div id="selectChart" class="flex wrap" *ngIf="!activeChart">
-        <div
-          *ngFor="let chart of availableCharts"
-          (click)="setChart(chart)"
-          class="chart-image"
-        >
-          <img src="{{ chart.image }}" />
-          <div>{{ chart.name | translate }}</div>
-        </div>
-      </div>
-
       <div id="activeChart" class="flex wrap" *ngIf="showTools && activeChart">
-        <div>
-          <img
-            src="{{ activeChart.image }}"
-            class="active-chart-image"
-            (click)="showAllCharts()"
-          />
-          <div style="display: flex; margin-top:10px">
-            <div *ngFor="let chart of availableCharts">
-              <img
-                [src]="chart.image"
-                *ngIf="activeChart.image != chart.image"
-                (click)="setChart(chart)"
-                class="chart-image small"
-              />
-            </div>
-          </div>
-        </div>
         <div id="tools" *ngIf="activeChart.tools">
           <ion-list>
             <ion-item *ngIf="activeChart.definition">

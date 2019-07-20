@@ -1,65 +1,23 @@
-import { NgRedux, select } from '@angular-redux/store';
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import * as c3 from 'c3';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { PicsaTranslateService } from '@picsa/modules/translate';
-// import { AppState } from "src/app/store/store.model";
 import { IChartMeta, IChartSummary } from '@picsa/models/climate.models';
-import { availableCharts } from 'src/app/data/availableCharts';
+import { CHART_TYPES } from 'src/app/data';
 
 @Component({
   selector: 'climate-chart',
   templateUrl: 'climate-chart.html'
 })
-export class ClimateChartComponent implements OnDestroy {
-  private componentDestroyed: Subject<any> = new Subject();
-  // @select(['climate', 'site', 'summaries'])
-  // readonly chartData$: Observable<IChartSummary[]>;
-  // @select(['climate', 'site', 'lineToolValue'])
-  // readonly lineToolValue$: Observable<number>;
-  // @select(['climate', 'chart'])
-  // readonly activeChart$: Observable<IChartMeta>;
+export class ClimateChartComponent {
   chart: any;
   lineToolValue: number;
   isFirstRender: boolean = true;
-  activeChart: IChartMeta = availableCharts[0];
+  activeChart: IChartMeta = CHART_TYPES[0];
 
   constructor(
     // private ngRedux: NgRedux<AppState>,
     private translateService: PicsaTranslateService
-  ) {
-    this._addSubscriptions();
-  }
-  ngOnDestroy() {
-    // want to remove subscriptions on destroy (note automatically handled for @select bound to async pipe in html)
-    // using subject emits value manually (like event emitter) by calling the 'next()' function
-    // on destroy we want to emit any value so that the .pipe(takeUntil subscription records it no longer needs to subscribe
-    this.componentDestroyed.next();
-    this.componentDestroyed.unsubscribe();
-  }
-
-  _addSubscriptions() {
-    // this.chartData$.pipe(takeUntil(this.componentDestroyed)).subscribe(data => {
-    //   if (data) {
-    //     this.dataUpdated(data);
-    //   }
-    // });
-    // this.lineToolValue$
-    //   .pipe(takeUntil(this.componentDestroyed))
-    //   .subscribe(v => {
-    //     if (v) {
-    //       this.setLineToolValue(v);
-    //     }
-    //   });
-    // this.activeChart$
-    //   .pipe(takeUntil(this.componentDestroyed))
-    //   .subscribe(chart => {
-    //     if (chart) {
-    //       this.setChart(chart);
-    //     }
-    //   });
-  }
+  ) {}
 
   // when new data columns specified redraw any graphs
   // if no graph previously specified, default to rainfall

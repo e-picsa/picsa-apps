@@ -40,7 +40,7 @@ export class PicsaMapComponent {
   }
 
   public addMarkers(mapMarkers: IMapMarker[], popupContent?: HTMLDivElement) {
-    mapMarkers.forEach(m => {
+    mapMarkers.forEach((m, i) => {
       const icon = L.icon({
         ...ICON_DEFAULTS,
         iconUrl: m.iconUrl
@@ -50,6 +50,13 @@ export class PicsaMapComponent {
         iconUrl: m.iconUrl
       });
       const marker = L.marker(m.latlng, { icon });
+      if (m.numbered) {
+        const toolTip = L.tooltip(NUMBER_TOOLTIP_DEFAULTS);
+        marker
+          .bindTooltip(toolTip)
+          .setTooltipContent(`${i + 1}`)
+          .openTooltip();
+      }
       marker.on({
         click: () => this._onMarkerClick(m, marker, activeIcon, icon)
       });
@@ -121,7 +128,6 @@ export class PicsaMapComponent {
     }
   }
 }
-
 /***********************************************************************
  *  Default values and interfaces
  ***********************************************************************/
@@ -156,14 +162,24 @@ const ICON_DEFAULTS: L.IconOptions = {
 };
 const ACTIVE_ICON_DEFAULTS: L.IconOptions = {
   ...ICON_DEFAULTS,
+  iconAnchor: [24, 24],
   // make icon smaller so border can appear without shifting
   className: 'active'
+};
+
+const NUMBER_TOOLTIP_DEFAULTS: L.TooltipOptions = {
+  className: 'number-tooltip',
+  opacity: 1,
+  permanent: true,
+  direction: 'bottom',
+  offset: new L.Point(0, 16)
 };
 
 type IFeaturedCountry = 'malawi' | 'kenya';
 export interface IMapMarker {
   iconUrl: string;
   latlng: L.LatLngExpression;
+  numbered?: boolean;
   data?: any;
 }
 export interface IBasemapOptions extends L.TileLayerOptions {

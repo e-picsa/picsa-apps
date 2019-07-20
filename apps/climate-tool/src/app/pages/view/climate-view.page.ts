@@ -17,8 +17,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ClimateViewPage implements OnInit {
   activeSite: ISite;
   activeChart: IChartMeta;
-  // selectedChart: string;
-  availableCharts: IChartMeta[] = DATA.availableCharts;
+  availableCharts: IChartMeta[] = DATA.CHART_TYPES;
   // showTools: boolean = true;
   // showDefinition: boolean = false;
   lineToolValue: number;
@@ -35,17 +34,15 @@ export class ClimateViewPage implements OnInit {
   ngOnInit(): void {
     const siteId = this.route.snapshot.params.siteId;
     this.activeSite = DATA.SITES.find(s => s._id == siteId);
+    console.log('site', this.activeSite);
   }
 
   setChart(chart: IChartMeta) {
-    // this.actions.selectChart(chart);
+    this.activeChart = chart;
   }
 
   showAllCharts() {
     this.activeChart = null;
-  }
-  setAvailableCharts(list) {
-    this.availableCharts = DATA.availableCharts;
   }
   // when manually setting line tool value unselect all crops
   setLineToolValue() {

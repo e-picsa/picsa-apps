@@ -1,0 +1,9 @@
+<div>Chart Select</div>
+<div
+  *ngFor="let chart of availableCharts"
+  (click)="setChart(chart)"
+  class="chart-image"
+>
+  <img src="{{ chart.image }}" />
+  <div>{{ chart.name | translate }}</div>
+</div>

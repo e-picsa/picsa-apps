@@ -1,4 +1,6 @@
-export const availableCharts = [
+import { IChartMeta } from '@picsa/models';
+
+const CHART_TYPES: IChartMeta[] = [
   {
     name: 'Seasonal Rainfall',
     image: 'assets/img/season-rainfall.png',
@@ -43,3 +45,5 @@ export const availableCharts = [
   }
   // {name: "Combined Probability", image: "assets/img/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
 ];
+
+export default CHART_TYPES;
