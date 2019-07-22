@@ -13,7 +13,7 @@ interface IProbabilityTens {
 }
 
 export interface IClimateView {
-  _viewID: string;
+  _viewID: ClimateViewID;
   _viewType: 'report' | 'chart';
 }
 export interface IReportMeta extends IClimateView {
@@ -21,3 +21,5 @@ export interface IReportMeta extends IClimateView {
   image: string;
   description: string;
 }
+
+type ClimateViewID = 'cropAnalysis' | 'start' | 'end' | 'length' | 'rainfall';

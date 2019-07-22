@@ -43,7 +43,7 @@ export class SiteSelectPage {
 
   goToSite(site: ISite) {
     this.ngZone.run(() => {
-      this.router.navigate(['../', 'view', site._id], {
+      this.router.navigate(['../', 'site', site._id], {
         relativeTo: this.route
       });
     });

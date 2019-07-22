@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'climate/site-select',
+    path: 'climate/site',
     loadChildren: () =>
       import('./pages/site-select/site-select.module').then(
         mod => mod.ClimateSiteSelectPageModule
@@ -16,8 +16,8 @@ const routes: Routes = [
         mod => mod.ClimateSiteViewPageModule
       )
   },
-  { path: 'climate', redirectTo: 'climate/site-select' },
-  { path: '**', redirectTo: 'climate/site-select' }
+  { path: 'climate', redirectTo: 'climate/site' },
+  { path: '**', redirectTo: 'climate/site' }
 ];
 
 @NgModule({

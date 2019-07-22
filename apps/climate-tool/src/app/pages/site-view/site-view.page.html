@@ -3,11 +3,11 @@
   <div style="display: flex; justify-content: space-between">
     <h1>{{ activeSite ? activeSite.name : '' }}</h1>
     <div>
-      <button mat-button color="primary" (click)="unsetChart()">
+      <button mat-button color="primary" (click)="setView()">
         <mat-icon svgIcon="picsa_chart"></mat-icon>
         <span style="margin-left: 5px">{{ 'Chart' | translate }}</span>
       </button>
-      <button mat-button color="primary" [routerLink]="['climate/site-select']">
+      <button mat-button color="primary" [routerLink]="['climate/site']">
         <mat-icon svgIcon="picsa_station"></mat-icon>
         <span style="margin-left: 5px">{{ 'Site' | translate }}</span>
       </button>
@@ -15,40 +15,20 @@
   </div>
   <!-- content -->
   <div class="page-content">
-    <climate-chart-select
-      (onChartSelected)="setChart($event)"
-      *ngIf="!activeChart"
-    ></climate-chart-select>
+    <climate-view-select
+      (onViewSelected)="setView($event)"
+      *ngIf="!activeView"
+    ></climate-view-select>
     <!-- chart -->
     <div *ngIf="activeChart">
       <h3>{{ activeChart.name }}</h3>
       <picsa-chart *ngIf="activeChart"></picsa-chart>
+      <climate-line-tool></climate-line-tool>
+      <climate-probability-tool></climate-probability-tool>
     </div>
-    <!-- tool toggles -->
-    <!-- <div id="tools" *ngIf="activeChart.tools">
-          <ion-list>
-            <ion-item *ngIf="activeChart.tools.line">
-              <ion-label>{{ 'Line Tool' | translate }}</ion-label>
-              <ion-toggle [(ngModel)]="showLineTool"></ion-toggle>
-            </ion-item>
-            <ion-item *ngIf="activeChart.tools.line">
-              <ion-label>{{ 'Probability' | translate }}</ion-label>
-              <ion-toggle
-                [(ngModel)]="showProbabilityTool"
-                [disabled]="!lineToolValue"
-              ></ion-toggle>
-            </ion-item>
-          </ion-list>
-        </div> -->
-
-    <!-- probability -->
-    <climate-probability-tool></climate-probability-tool>
-    <!--line tool-->
-    <climate-line-tool></climate-line-tool>
+    <div *ngIf="activeView === 'cropAnalysis'">
+      <climate-crop-analysis></climate-crop-analysis>
+    </div>
+    <!-- <combined-probability></combined-probability> -->
   </div>
 </div>
-
-<!--chart-->
-
-<!--combined probability component-->
-<!-- <combined-probability *ngIf="activeChart && activeChart.name=='Combined Probability'"></combined-probability> -->

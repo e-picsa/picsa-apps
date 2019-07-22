@@ -30,30 +30,21 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  setChart(chart: IChartMeta) {
+  setView(viewID: string) {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { view: chart.name }
+      queryParams: { view: viewID }
     });
-  }
-  unsetChart() {
-    this.activeChart = undefined;
-  }
-
-  showAllCharts() {
-    this.activeChart = null;
   }
 
   private _subscribeToViewChanges() {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroyed$))
       .subscribe(params => {
-        console.log('finding view', params, this.availableViews);
         const view = this.availableViews.find(
           v => v._viewID === params.get('view')
         );
         this.activeView = view ? view._viewID : undefined;
-        console.log('activeView', this.activeView);
         this.activeChart =
           view && view._viewType === 'chart' ? (view as IChartMeta) : undefined;
       });

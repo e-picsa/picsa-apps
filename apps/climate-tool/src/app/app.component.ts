@@ -24,7 +24,8 @@ export class AppComponent {
       this.matIconRegistry.addSvgIcon(
         `picsa_${key}`,
         this.domSanitizer.bypassSecurityTrustResourceUrl(
-          `assets/icons/${value}.svg`
+          // NOTE - svgs are imported from shared lib (see angular.json for config)
+          `assets/svgs/${value}.svg`
         )
       );
     }

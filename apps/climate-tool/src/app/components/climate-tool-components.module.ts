@@ -4,7 +4,7 @@ import { ClimateChartComponent } from './climate-chart/climate-chart';
 import { CombinedProbabilityComponent } from './combined-probability/combined-probability';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ChartSelectComponent } from './chart-select/chart-select';
+import { ViewSelectComponent } from './view-select/view-select';
 import { PicsaTranslateModule } from '@picsa/modules';
 import { PicsaMaterialModule } from '../material.module';
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
@@ -15,7 +15,7 @@ import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
   declarations: [
     ClimateChartComponent,
     CombinedProbabilityComponent,
-    ChartSelectComponent,
+    ViewSelectComponent,
     ProbabilityToolComponent,
     LineToolComponent,
     CropAnalysisComponent
@@ -31,7 +31,7 @@ import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
   exports: [
     ClimateChartComponent,
     CombinedProbabilityComponent,
-    ChartSelectComponent,
+    ViewSelectComponent,
     ProbabilityToolComponent,
     LineToolComponent,
     CropAnalysisComponent

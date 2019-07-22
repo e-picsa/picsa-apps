@@ -3,7 +3,7 @@
   <mat-card
     *ngFor="let chart of availableCharts"
     class="mat-elevation-z8 chart-card"
-    (click)="setChart(chart)"
+    (click)="setView(chart._viewID)"
   >
     <mat-card-title class="chart-name" [attr.data-y]="chart.y">
       {{ chart.name | translate }}
@@ -23,7 +23,7 @@
   <mat-card
     *ngFor="let report of availableReports"
     class="mat-elevation-z8 chart-card"
-    (click)="setChart(chart)"
+    (click)="setView(report._viewID)"
   >
     <mat-card-title class="chart-name">
       {{ report.name | translate }}
