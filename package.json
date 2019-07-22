@@ -55,6 +55,7 @@
     "@nrwl/nx": "^7.0.0",
     "c3": "^0.7.2",
     "core-js": "^2.5.4",
+    "dexie": "^2.0.4",
     "file-saver": "^2.0.2",
     "firebase": "^6.1.1",
     "flux-standard-action": "^2.1.0",

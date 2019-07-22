@@ -1,12 +1,3 @@
-import { firestore } from 'firebase/app';
-
-export interface ITimestamp extends firestore.Timestamp {}
-export interface IDBDoc {
-  _key: string;
-  _created: firestore.Timestamp;
-  _modified: firestore.Timestamp;
-}
-
 export type regions = 'Malawi' | 'Kenya';
 
 export interface IEnvironment {

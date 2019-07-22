@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { IDBDoc, ITimestamp } from '../../models';
 import { firestore } from 'firebase/app';
+import { IDBEndpoint, IDBDoc, ITimestamp } from '@picsa/models/db.models';
 
 @Injectable({ providedIn: 'root' })
-export class DBService {
+export class DBServerService {
   constructor(private afs: AngularFirestore) {}
 
   public getCollection(endpoint: IDBEndpoint) {
@@ -72,18 +72,3 @@ export class DBService {
     }
   }
 }
-
-/******************************************************************************************
- *  Interfaces
- *****************************************************************************************/
-
-// note, as most db writes are within nested collections hard to assert strong typings without
-// also lots of nested methods (e.g. setSubDoc, getSubCollectionEtc)
-// type below is mostly for reference
-export type IDBEndpoint =
-  | 'budgetTool'
-  | 'budgetTool/meta/inputs'
-  | 'budgetTool/meta/outputs'
-  | 'budgetTool/meta/familyLabour'
-  | 'budgetTool/meta/enterpriseTypes'
-  | 'budgetTool/meta/enterprises';
