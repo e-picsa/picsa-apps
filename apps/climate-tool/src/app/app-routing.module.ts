@@ -10,10 +10,10 @@ const routes: Routes = [
       )
   },
   {
-    path: 'climate/view/:siteId',
+    path: 'climate/site/:siteId',
     loadChildren: () =>
-      import('./pages/view/climate-view.module').then(
-        mod => mod.ClimateViewPageModule
+      import('./pages/site-view/site-view.module').then(
+        mod => mod.ClimateSiteViewPageModule
       )
   },
   { path: 'climate', redirectTo: 'climate/site-select' },

@@ -12,7 +12,11 @@ interface IProbabilityTens {
   value: number;
 }
 
-export interface IReportMeta {
+export interface IClimateView {
+  _viewID: string;
+  _viewType: 'report' | 'chart';
+}
+export interface IReportMeta extends IClimateView {
   name: string;
   image: string;
   description: string;
