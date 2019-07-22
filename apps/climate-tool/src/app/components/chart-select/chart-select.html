@@ -18,3 +18,23 @@
     </mat-card-content>
   </mat-card>
 </div>
+<h2>{{ 'Or a report' | translate }}</h2>
+<div style="display: flex; flex-wrap: wrap">
+  <mat-card
+    *ngFor="let report of availableReports"
+    class="mat-elevation-z8 chart-card"
+    (click)="setChart(chart)"
+  >
+    <mat-card-title class="chart-name">
+      {{ report.name | translate }}
+    </mat-card-title>
+    <mat-card-content style="display: flex">
+      <div>
+        <img src="{{ report.image }}" class="chart-image" />
+      </div>
+      <div class="chart-definition">
+        {{ report.description | translate }}
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

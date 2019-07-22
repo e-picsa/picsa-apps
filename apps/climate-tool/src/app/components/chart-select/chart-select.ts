@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { CHART_TYPES } from 'src/app/data';
+import { Component, Output, EventEmitter } from '@angular/core';
+import * as DATA from 'src/app/data';
 import { IChartMeta } from '@picsa/models';
 
 @Component({
@@ -7,17 +7,13 @@ import { IChartMeta } from '@picsa/models';
   templateUrl: './chart-select.html',
   styleUrls: ['./chart-select.scss']
 })
-export class ChartSelectComponent implements OnInit {
-  @Output() onChartSet = new EventEmitter<IChartMeta>();
-  availableCharts = CHART_TYPES;
+export class ChartSelectComponent {
+  @Output() onChartSelected = new EventEmitter<IChartMeta>();
+  availableCharts = DATA.CHART_TYPES;
+  availableReports = DATA.REPORT_TYPES;
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('available charts', CHART_TYPES);
-  }
-
   setChart(chart: IChartMeta) {
-    console.log('chart set', chart);
-    this.onChartSet.emit(chart);
+    this.onChartSelected.emit(chart);
   }
 }

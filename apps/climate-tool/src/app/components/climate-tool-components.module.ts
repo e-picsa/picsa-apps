@@ -7,12 +7,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartSelectComponent } from './chart-select/chart-select';
 import { PicsaTranslateModule } from '@picsa/modules';
 import { PicsaMaterialModule } from '../material.module';
+import { ProbabilityToolComponent } from './probability-tool/probability-tool';
+import { LineToolComponent } from './line-tool/line-tool';
+import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
 
 @NgModule({
   declarations: [
     ClimateChartComponent,
     CombinedProbabilityComponent,
-    ChartSelectComponent
+    ChartSelectComponent,
+    ProbabilityToolComponent,
+    LineToolComponent,
+    CropAnalysisComponent
   ],
   imports: [
     IonicModule,
@@ -25,7 +31,10 @@ import { PicsaMaterialModule } from '../material.module';
   exports: [
     ClimateChartComponent,
     CombinedProbabilityComponent,
-    ChartSelectComponent
+    ChartSelectComponent,
+    ProbabilityToolComponent,
+    LineToolComponent,
+    CropAnalysisComponent
   ]
 })
 export class ClimateToolComponentsModule {}

@@ -1,0 +1,28 @@
+<h3>{{ 'Probability' | translate }}</h3>
+<div id="blocks" class="flex">
+  <div class="block good" *ngFor="let block of probabilities.tens.above">
+    1
+  </div>
+  <div class="block bad" *ngFor="let block of probabilities.tens.below">
+    1
+  </div>
+</div>
+<div>{{ probabilities.tens.above.length }} {{ 'out of 10' | translate }}</div>
+<div class="flex wrap">
+  <div id="calculation">
+    <h3>{{ 'Calculation' | translate }}</h3>
+    <div>{{ 'Points Above' | translate }}: {{ probabilities.above }}</div>
+    <div>
+      {{ 'Total Points' }}:
+      {{ probabilities.below + probabilities.above }}
+    </div>
+    <br />
+    <div>
+      <div>
+        <sup>{{ probabilities.above }}</sup
+        >&frasl; <sub>{{ probabilities.above + probabilities.below }}</sub> =
+        {{ probabilities.percentage | percent: '1.0-0' }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div
+  class="crop-select"
+  *ngFor="let crop of crops"
+  (click)="setCrop(crop)"
+  [attr.selected]="
+    selectedCrop && selectedCrop.variety == crop.variety ? 'true' : 'false'
+  "
+>
+  <div class="crop-img-container">
+    <img
+      [src]="'assets/img/budget/cards/' + crop.image + '.svg'"
+      class="crop-image"
+    />
+  </div>
+  <div>
+    <div class="crop-type">{{ crop.crop }}</div>
+    <div class="crop-variety">{{ crop.variety }}</div>
+    <div class="crop-water-req crop-meta">
+      <img class="crop-info-img" src="assets/img/budget/water.svg" />
+      <span>{{ crop.waterMin }}</span>
+      <span *ngIf="crop.waterMax"> - {{ crop.waterMax }}</span>
+    </div>
+    <div class="crop-days-req crop-meta">
+      <img class="crop-info-img" src="assets/img/budget/days.svg" />
+      <span>{{ crop.daysMin }}</span>
+      <span *ngIf="crop.daysMax"> - {{ crop.daysMax }}</span>
+    </div>
+  </div>
+</div>

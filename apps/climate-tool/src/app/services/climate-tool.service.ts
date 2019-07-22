@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 // import { ClimateToolActions } from './climate-tool.actions';
 import { IChartMeta, ISite } from '@picsa/models/climate.models';
+import { IProbabilities } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService implements OnDestroy {
@@ -67,7 +68,7 @@ export class ClimateToolService implements OnDestroy {
   // given a line tool value lookup the existing values and return probability information
   // based on how many points are above and below the given value
   // various outputs used to assist rendering graphics (e.g. number arrays and reverse %)
-  calculateProbabilities(value) {
+  calculateProbabilities(value: number): IProbabilities {
     console.log('calculating provbabilities', value);
     console.log('yValues', this.yValues);
     const points = this.yValues;

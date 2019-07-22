@@ -1,8 +1,8 @@
-export const cropRequirements = [
+const CROP_REQUIREMENTS = [
   {
-    crop: "Beans",
-    variety: "Maluwa",
-    image: "beans",
+    crop: 'Beans',
+    variety: 'Maluwa',
+    image: 'beans',
     name: null,
     daysMin: 85,
     daysMax: null,
@@ -10,9 +10,9 @@ export const cropRequirements = [
     waterMax: 330
   },
   {
-    crop: "Beans",
-    variety: "Chimbamba",
-    image: "beans",
+    crop: 'Beans',
+    variety: 'Chimbamba',
+    image: 'beans',
     name: null,
     daysMin: 85,
     daysMax: null,
@@ -20,9 +20,9 @@ export const cropRequirements = [
     waterMax: 330
   },
   {
-    crop: "Cow peas",
-    variety: "Sudan 1",
-    image: "cowpeas",
+    crop: 'Cow peas',
+    variety: 'Sudan 1',
+    image: 'cowpeas',
     name: null,
     daysMin: 90,
     daysMax: null,
@@ -30,9 +30,9 @@ export const cropRequirements = [
     waterMax: 330
   },
   {
-    crop: "Cow peas",
-    variety: "IT82E - 16",
-    image: "cowpeas",
+    crop: 'Cow peas',
+    variety: 'IT82E - 16',
+    image: 'cowpeas',
     name: null,
     daysMin: 90,
     daysMax: null,
@@ -40,9 +40,9 @@ export const cropRequirements = [
     waterMax: 330
   },
   {
-    crop: "Ground Nuts",
-    variety: "CG 7",
-    image: "groundnuts",
+    crop: 'Ground Nuts',
+    variety: 'CG 7',
+    image: 'groundnuts',
     name: null,
     daysMin: 130,
     daysMax: 150,
@@ -50,9 +50,9 @@ export const cropRequirements = [
     waterMax: 500
   },
   {
-    crop: "Ground Nuts",
-    variety: "Chalimbana",
-    image: "groundnuts",
+    crop: 'Ground Nuts',
+    variety: 'Chalimbana',
+    image: 'groundnuts',
     name: null,
     daysMin: 130,
     daysMax: 150,
@@ -60,9 +60,9 @@ export const cropRequirements = [
     waterMax: 600
   },
   {
-    crop: "Maize",
-    variety: "SC 403",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'SC 403',
+    image: 'maize',
     name: null,
     daysMin: 120,
     daysMax: 130,
@@ -70,9 +70,9 @@ export const cropRequirements = [
     waterMax: 400
   },
   {
-    crop: "Maize",
-    variety: "Pan 4M 19",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'Pan 4M 19',
+    image: 'maize',
     name: null,
     daysMin: 120,
     daysMax: 130,
@@ -80,9 +80,9 @@ export const cropRequirements = [
     waterMax: null
   },
   {
-    crop: "Maize",
-    variety: "DKC 8033",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'DKC 8033',
+    image: 'maize',
     name: null,
     daysMin: 120,
     daysMax: 130,
@@ -90,9 +90,9 @@ export const cropRequirements = [
     waterMax: null
   },
   {
-    crop: "Maize",
-    variety: "SC 627",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'SC 627',
+    image: 'maize',
     name: null,
     daysMin: 130,
     daysMax: 140,
@@ -100,9 +100,9 @@ export const cropRequirements = [
     waterMax: 500
   },
   {
-    crop: "Maize",
-    variety: "DKC 9089",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'DKC 9089',
+    image: 'maize',
     name: null,
     daysMin: 130,
     daysMax: 140,
@@ -110,9 +110,9 @@ export const cropRequirements = [
     waterMax: 500
   },
   {
-    crop: "Maize",
-    variety: "Pan 63",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'Pan 63',
+    image: 'maize',
     name: null,
     daysMin: 130,
     daysMax: 140,
@@ -120,9 +120,9 @@ export const cropRequirements = [
     waterMax: 500
   },
   {
-    crop: "Maize",
-    variety: "ZM 523",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'ZM 523',
+    image: 'maize',
     name: null,
     daysMin: 110,
     daysMax: 120,
@@ -130,9 +130,9 @@ export const cropRequirements = [
     waterMax: 350
   },
   {
-    crop: "Maize",
-    variety: "ZM 623",
-    image: "maize",
+    crop: 'Maize',
+    variety: 'ZM 623',
+    image: 'maize',
     name: null,
     daysMin: 130,
     daysMax: 140,
@@ -140,9 +140,9 @@ export const cropRequirements = [
     waterMax: 500
   },
   {
-    crop: "Pigeon peas",
-    variety: "Mwaiwathu alimi",
-    image: "pigeon-peas",
+    crop: 'Pigeon peas',
+    variety: 'Mwaiwathu alimi',
+    image: 'pigeon-peas',
     name: null,
     daysMin: 160,
     daysMax: 180,
@@ -150,9 +150,9 @@ export const cropRequirements = [
     waterMax: 600
   },
   {
-    crop: "Pigeon peas",
-    variety: "Nthawa Juni",
-    image: "pigeon-peas",
+    crop: 'Pigeon peas',
+    variety: 'Nthawa Juni',
+    image: 'pigeon-peas',
     name: null,
     daysMin: 120,
     daysMax: 150,
@@ -160,9 +160,9 @@ export const cropRequirements = [
     waterMax: 500
   },
   {
-    crop: "Rice",
-    variety: "Faya / Amanda",
-    image: "rice",
+    crop: 'Rice',
+    variety: 'Faya / Amanda',
+    image: 'rice',
     name: null,
     daysMin: 150,
     daysMax: 160,
@@ -170,9 +170,9 @@ export const cropRequirements = [
     waterMax: 650
   },
   {
-    crop: "Soya Beans",
-    variety: "Tikolole",
-    image: "soya-beans",
+    crop: 'Soya Beans',
+    variety: 'Tikolole',
+    image: 'soya-beans',
     name: null,
     daysMin: 90,
     daysMax: 95,
@@ -180,9 +180,9 @@ export const cropRequirements = [
     waterMax: 400
   },
   {
-    crop: "Soya Beans",
-    variety: "Nasoko",
-    image: "soya-beans",
+    crop: 'Soya Beans',
+    variety: 'Nasoko',
+    image: 'soya-beans',
     name: null,
     daysMin: 90,
     daysMax: 95,
@@ -190,9 +190,9 @@ export const cropRequirements = [
     waterMax: 400
   },
   {
-    crop: "Soya Beans",
-    variety: "Makwacha",
-    image: "soya-beans",
+    crop: 'Soya Beans',
+    variety: 'Makwacha',
+    image: 'soya-beans',
     name: null,
     daysMin: 90,
     daysMax: 95,
@@ -200,3 +200,5 @@ export const cropRequirements = [
     waterMax: 400
   }
 ];
+
+export default CROP_REQUIREMENTS;
