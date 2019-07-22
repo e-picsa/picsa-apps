@@ -4,7 +4,7 @@ const REPORT_TYPES: IReportMeta[] = [
   {
     name: 'Crop Analysis',
     image: 'assets/img/crop-analysis.png',
-    description: '',
+    description: 'View charts for a specific crop',
     _viewID: 'cropAnalysis',
     _viewType: 'report'
   }

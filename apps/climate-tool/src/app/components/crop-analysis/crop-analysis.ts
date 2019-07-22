@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ICropRequirement } from '@picsa/models';
 import * as DATA from 'src/app/data';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'climate-crop-analysis',
@@ -8,15 +9,34 @@ import * as DATA from 'src/app/data';
   styleUrls: ['./crop-analysis.scss']
 })
 export class CropAnalysisComponent implements OnInit {
-  selectedCrop: ICropRequirement;
-  crops = DATA.CROP_REQUIREMENTS;
+  selectedCrops: { [variety: string]: ICropRequirement } = {};
+  totalSelected: number = 0;
+  cropGroups: any[];
+  @Output() onCropsSelected = new EventEmitter<ICropRequirement[]>();
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
-  constructor() {}
+  ngOnInit(): void {
+    this.cropGroups = this._generateCropGroups(DATA.CROP_REQUIREMENTS);
+  }
 
-  ngOnInit(): void {}
+  toggleCropVariety(crop: ICropRequirement) {
+    if (this.selectedCrops.hasOwnProperty(crop.variety)) {
+      delete this.selectedCrops[crop.variety];
+    } else {
+      this.selectedCrops[crop.variety] = crop;
+    }
+    this.totalSelected = Object.keys(this.selectedCrops).length;
+  }
+  goToAnalysis() {
+    // this.router.navigate([], {
+    //   relativeTo: this.route,
+    //   queryParams: { crops: Object.keys(this.selectedCrops) },
+    //   queryParamsHandling: 'merge'
+    // });
+    this.onCropsSelected.emit(Object.values(this.selectedCrops));
+  }
 
-  setCrop(crop: ICropRequirement) {
-    this.selectedCrop = crop;
+  private setCrop(crop: ICropRequirement) {
     const cropValues = {
       rain: this._calculateMean(crop.waterMin, crop.waterMax),
       length: this._calculateMean(crop.daysMin, crop.daysMax)
@@ -24,9 +44,20 @@ export class CropAnalysisComponent implements OnInit {
     console.log('crop values', cropValues);
   }
 
+  private _generateCropGroups(crops: ICropRequirement[]): ICropGroup[] {
+    const groups = {};
+    crops.forEach(c => {
+      if (!groups.hasOwnProperty(c.crop)) {
+        groups[c.crop] = { crop: c.crop, image: c.image, varieties: [] };
+      }
+      groups[c.crop].varieties.push(c);
+    });
+    return Object.values(groups);
+  }
+
   // sometimes either min or max is not defined, so in that case simply return
   // the min/max that is given. Otherwise simple mean average
-  _calculateMean(min?: number, max?: number) {
+  private _calculateMean(min?: number, max?: number) {
     if (!min) {
       min = max as number;
     }
@@ -35,4 +66,10 @@ export class CropAnalysisComponent implements OnInit {
     }
     return (min + max) / 2;
   }
+}
+
+interface ICropGroup {
+  crop: string;
+  image: string;
+  varieties: ICropRequirement[];
 }

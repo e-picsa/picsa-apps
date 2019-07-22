@@ -1,0 +1,64 @@
+:host {
+  position: relative;
+}
+.crop-image {
+  height: 60px;
+}
+.crop-req-img {
+  height: 1em;
+  width: 1em;
+  margin-right: 5px;
+}
+.crop-group {
+  display: flex;
+  margin-bottom: 1em;
+  flex: 1;
+}
+.crop-group-info {
+  width: 120px;
+  min-width: 120px;
+}
+$crop-button-height: 100px;
+.crop-variety-button {
+  width: $crop-button-height;
+  height: $crop-button-height;
+  margin: 5px;
+  border: 1px solid #9b9b9b;
+  padding: 2px;
+}
+.crop-variety-button.selected {
+  background: var(--color-primary);
+  color: white;
+}
+.crop-variety-info {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.crop-req {
+  line-height: 1em;
+  margin: 4px 0;
+  text-align: left;
+}
+.variety-name {
+  text-align: center;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.crop-name {
+  margin: 5px;
+  font-weight: bold;
+}
+.continue-button {
+  position: sticky;
+  bottom: 20px;
+  margin-left: 10%;
+  width: 80%;
+}
+.continue-button-text {
+  font-size: 1.5em;
+  line-height: 3em;
+}
