@@ -19,13 +19,13 @@
       (onViewSelected)="setView($event)"
       *ngIf="!activeView"
     ></climate-view-select>
-    <!-- chart -->
+    <!-- charts -->
     <div *ngIf="activeChart">
-      <h3>{{ activeChart.name }}</h3>
-      <picsa-chart *ngIf="activeChart"></picsa-chart>
+      <climate-chart [chartMeta]="activeChart"></climate-chart>
       <climate-line-tool></climate-line-tool>
       <climate-probability-tool></climate-probability-tool>
     </div>
+    <!-- reports -->
     <div *ngIf="activeView === 'cropAnalysis'">
       <climate-crop-analysis></climate-crop-analysis>
     </div>

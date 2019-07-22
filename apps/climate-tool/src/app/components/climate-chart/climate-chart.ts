@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import * as c3 from 'c3';
+import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { PicsaTranslateService } from '@picsa/modules/translate';
 import { IChartMeta, IChartSummary } from '@picsa/models/climate.models';
 import { CHART_TYPES } from 'src/app/data';
@@ -8,8 +7,10 @@ import { CHART_TYPES } from 'src/app/data';
   selector: 'climate-chart',
   templateUrl: 'climate-chart.html'
 })
-export class ClimateChartComponent {
-  chart: any;
+export class ClimateChartComponent implements OnInit {
+  @Input() chartMeta: IChartMeta;
+  @ViewChild('chart', { static: true }) chart: any;
+  chartOptions: any;
   lineToolValue: number;
   isFirstRender: boolean = true;
   activeChart: IChartMeta = CHART_TYPES[0];
@@ -18,6 +19,10 @@ export class ClimateChartComponent {
     // private ngRedux: NgRedux<AppState>,
     private translateService: PicsaTranslateService
   ) {}
+
+  ngOnInit() {
+    console.log('chart init', this.chartMeta);
+  }
 
   // when new data columns specified redraw any graphs
   // if no graph previously specified, default to rainfall
@@ -39,8 +44,7 @@ export class ClimateChartComponent {
       keys.push(key);
     }
     // generate chart
-    this.chart = c3.generate({
-      bindto: '#chart',
+    this.chartOptions = {
       size: {
         height: 320
       },
@@ -104,7 +108,7 @@ export class ClimateChartComponent {
       onrendered: () => {
         this.firstRenderComplete();
       }
-    });
+    };
   }
 
   firstRenderComplete() {

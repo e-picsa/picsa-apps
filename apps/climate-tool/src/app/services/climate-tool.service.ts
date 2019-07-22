@@ -1,39 +1,44 @@
-import { select } from '@angular-redux/store';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as Papa from 'papaparse';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-// import { ClimateToolActions } from './climate-tool.actions';
 import { IChartMeta, ISite } from '@picsa/models/climate.models';
+import { DBCacheService } from '@picsa/services/core/db/db.cache';
 import { IProbabilities } from '../models';
+import { BehaviorSubject } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
-export class ClimateToolService implements OnDestroy {
-  private componentDestroyed: Subject<any> = new Subject();
-  // @select(['climate', 'site'])
-  // readonly site$: Observable<ISite>;
-  // @select(['climate', 'chart'])
-  // readonly activeChart$: Observable<IChartMeta>;
+export class ClimateToolService {
+  private ready$ = new BehaviorSubject<boolean>(false);
   public activeSite: ISite;
   public activeChart: IChartMeta;
   public yValues: number[];
   site: any;
-  constructor() // private actions: ClimateToolActions
-  {
-    this._addSubscriptions();
+
+  constructor(private db: DBCacheService) {}
+
+  private async init() {
+    await this.db.loadStores({ climateTool: null });
+    this.ready$.next(true);
   }
 
-  ngOnDestroy() {
-    this.componentDestroyed.next();
-    this.componentDestroyed.unsubscribe();
+  // obsevable to inform when service initialisation complete
+  public async ready() {
+    return new Promise(resolve => {
+      if (this.ready$.value === true) {
+        resolve();
+      } else {
+        this.ready$.pipe(first()).subscribe(() => resolve());
+      }
+    });
   }
-
+  async loadSiteData(siteID: string) {
+    console.log('loading site data', siteID);
+  }
   // when site changed load the relevant summaries and push to redux
   async _siteChanged(site: ISite) {
     if (!site.summaries) {
       const filePath = `assets/climate/summaries/${site.fileName}.csv`;
       site.summaries = await this.loadCSV(filePath);
-      // this.actions.selectSite(site);
     }
   }
   // when chart selected create list of chart-specific values from main site
@@ -160,22 +165,5 @@ export class ClimateToolService implements OnDestroy {
       reversePercentage: 1 - percentage,
       color: color
     };
-  }
-
-  _addSubscriptions() {
-    // this.activeChart$
-    //   .pipe(takeUntil(this.componentDestroyed))
-    //   .subscribe(chart => {
-    //     if (chart) {
-    //       this.activeChart = chart;
-    //       this._chartChanged(chart);
-    //     }
-    //   });
-    // this.site$.pipe(takeUntil(this.componentDestroyed)).subscribe(site => {
-    //   if (site) {
-    //     this.activeSite = site;
-    //     this._siteChanged(site);
-    //   }
-    // });
   }
 }
