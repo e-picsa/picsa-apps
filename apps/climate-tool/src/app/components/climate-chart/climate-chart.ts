@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { PicsaTranslateService } from '@picsa/modules/translate';
 import { IChartMeta, IChartSummary } from '@picsa/models/climate.models';
 import { CHART_TYPES } from 'src/app/data';
+import { ClimateToolService } from 'src/app/services/climate-tool.service';
 
 @Component({
   selector: 'climate-chart',
@@ -16,12 +17,17 @@ export class ClimateChartComponent implements OnInit {
   activeChart: IChartMeta = CHART_TYPES[0];
 
   constructor(
-    // private ngRedux: NgRedux<AppState>,
+    private climateService: ClimateToolService,
     private translateService: PicsaTranslateService
   ) {}
 
-  ngOnInit() {
-    console.log('chart init', this.chartMeta);
+  ngOnInit() {}
+
+  async setActiveStation() {}
+  async loadChartData() {
+    // ensure data and db fully loaded before querying
+    await this.climateService.ready();
+    await this.climateService.loadStationData(this.chartMeta.name);
   }
 
   // when new data columns specified redraw any graphs

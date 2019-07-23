@@ -1,4 +1,5 @@
-import { ISite } from '@picsa/models/climate.models';
+import { IStationData } from '@picsa/models/climate.models';
+import { DBMeta } from '@picsa/services/core/db/db.utils';
 
 export const DEFINITIONS = {
   start: {
@@ -8,9 +9,9 @@ export const DEFINITIONS = {
     }
   }
 };
-export const SITES: ISite[] = [
+export const STATIONS: IStationData[] = [
   {
-    _id: 'chichiri',
+    ...DBMeta('chichiri', new Date('2019-07-23')),
     name: 'Chichiri',
     latitude: -15.796432,
     longitude: 35.026425,
@@ -18,7 +19,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
-    _id: 'chileka',
+    ...DBMeta('chileka', new Date('2019-07-23')),
     name: 'Chileka',
     latitude: -15.679203,
     longitude: 34.967697,
@@ -26,7 +27,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
-    _id: 'makanjira',
+    ...DBMeta('makanjira', new Date('2019-07-23')),
     name: 'Makanjira',
     latitude: -13.7050735,
     longitude: 35.037632,
@@ -34,7 +35,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
-    _id: 'mangochi',
+    ...DBMeta('mangochi', new Date('2019-07-23')),
     name: 'Mangochi',
     latitude: -14.4821775,
     longitude: 35.2352141,
@@ -42,7 +43,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
-    _id: 'monkeybay',
+    ...DBMeta('monkeybay', new Date('2019-07-23')),
     name: 'Monkeybay',
     latitude: -14.0806369,
     longitude: 34.9062036,
@@ -50,7 +51,7 @@ export const SITES: ISite[] = [
     country: 'Malawi'
   },
   {
-    _id: 'namwera',
+    ...DBMeta('namwera', new Date('2019-07-23')),
     name: 'Namwera',
     latitude: -14.3530807,
     longitude: 35.4706477,

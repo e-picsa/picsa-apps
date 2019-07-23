@@ -1,57 +1,85 @@
 import { Injectable } from '@angular/core';
 import * as Papa from 'papaparse';
-import { IChartMeta, ISite } from '@picsa/models/climate.models';
+import { IChartMeta, IStationData } from '@picsa/models/climate.models';
 import { DBCacheService } from '@picsa/services/core/db/db.cache';
 import { IProbabilities } from '../models';
 import { BehaviorSubject } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { takeWhile } from 'rxjs/operators';
+import { IDBDoc } from '@picsa/models/db.models';
+import * as DATA from 'src/app/data';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService {
   private ready$ = new BehaviorSubject<boolean>(false);
-  public activeSite: ISite;
+  public activeStation: IStationData;
   public activeChart: IChartMeta;
   public yValues: number[];
-  site: any;
 
-  constructor(private db: DBCacheService) {}
+  constructor(private db: DBCacheService) {
+    this.init();
+  }
 
+  // not strict required, but considered useful to inform components
+  // when db has been initialised
   private async init() {
-    await this.db.loadStores({ climateTool: null });
+    await this.db.loadStores({ stationData: null });
+    if (await this.db.isEmpty('stationData')) {
+      console.log('table empty, initialising');
+      await this.initialiseHardcodedData();
+      // initialise hardcoded data
+    }
     this.ready$.next(true);
   }
 
-  // obsevable to inform when service initialisation complete
+  public async setActiveStation(stationID: string) {
+    const station = await this.db.getDoc('stationData', stationID);
+    console.log('active station', station);
+    return station;
+  }
+
+  async loadStationData(stationID: string) {
+    console.log('loading site data', stationID);
+    let station = await this.db.getDoc<IStationData>('stationData', stationID);
+  }
+
+  async initialiseHardcodedData() {
+    for (const station of DATA.STATIONS) {
+      const data = await this.loadCSV(`assets/summaries/${station._key}.csv`);
+      station.summaries = [...data];
+      console.log('initialise station', station);
+    }
+  }
+
+  // when site changed load the relevant summaries and push to redux
+  async _siteChanged(station: IStationData) {
+    //
+  }
+
+  // observable to inform when service initialisation complete
   public async ready() {
     return new Promise(resolve => {
       if (this.ready$.value === true) {
         resolve();
       } else {
-        this.ready$.pipe(first()).subscribe(() => resolve());
+        // only resolve when 'ready' status no longer false
+        this.ready$
+          .pipe(takeWhile(val => val === false))
+          .subscribe(() => resolve());
       }
     });
   }
-  async loadSiteData(siteID: string) {
-    console.log('loading site data', siteID);
-  }
-  // when site changed load the relevant summaries and push to redux
-  async _siteChanged(site: ISite) {
-    if (!site.summaries) {
-      const filePath = `assets/climate/summaries/${site.fileName}.csv`;
-      site.summaries = await this.loadCSV(filePath);
-    }
-  }
+
   // when chart selected create list of chart-specific values from main site
   // summary data to use when quickly calculating probabilities
   _chartChanged(chart: IChartMeta) {
     const selectedAxis = chart.y;
-    const yValues = this.activeSite.summaries.map(v => {
+    const yValues = this.activeStation.summaries.map(v => {
       return v[selectedAxis];
     });
     this.yValues = yValues;
   }
 
-  async loadCSV(filePath) {
+  async loadCSV<T>(filePath: string): Promise<T[]> {
     console.log('loading csv', filePath);
     return new Promise((resolve, reject) => {
       Papa.parse(filePath, {
@@ -60,7 +88,7 @@ export class ClimateToolService {
         header: true,
         complete: function(res, file) {
           // resolve(this.site);
-          resolve(res.data);
+          resolve(res.data as T[]);
         }.bind(this),
         error: function(err) {
           console.error('err', err);

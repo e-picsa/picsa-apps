@@ -1,6 +1,6 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
-import { SITES } from 'src/app/data';
-import { ISite } from '@picsa/models/climate.models';
+import { STATIONS } from 'src/app/data';
+import { IStationData } from '@picsa/models/climate.models';
 import {
   PicsaMapComponent,
   IBasemapOptions,
@@ -37,13 +37,13 @@ export class SiteSelectPage {
     // linking to callback forces angular outside of usual cdr strategy/zone
     // so have to manually call ngZone.run to detect changes
     this.ngZone.run(() => {
-      this.activeSite = { ...(marker.data as ISite) };
+      this.activeSite = { ...(marker.data as IStationData) };
     });
   }
 
-  goToSite(site: ISite) {
+  goToSite(site: IStationData) {
     this.ngZone.run(() => {
-      this.router.navigate(['../', 'site', site._id], {
+      this.router.navigate(['../', 'site', site._key], {
         relativeTo: this.route
       });
     });
@@ -51,11 +51,11 @@ export class SiteSelectPage {
 
   populateSites() {
     const iconUrl = STATION_ICON_WHITE;
-    const markers: IMapMarker[] = SITES.map(site => {
+    const markers: IMapMarker[] = STATIONS.map(s => {
       return {
         iconUrl,
-        latlng: [site.latitude, site.longitude],
-        data: site,
+        latlng: [s.latitude, s.longitude],
+        data: s,
         numbered: true
       };
     });

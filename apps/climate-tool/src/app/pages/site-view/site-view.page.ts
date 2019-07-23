@@ -22,7 +22,7 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private router: Router) {}
   ngOnInit(): void {
     const siteId = this.route.snapshot.params.siteId;
-    this.activeSite = DATA.SITES.find(s => s._id == siteId);
+    this.activeSite = DATA.STATIONS.find(s => s._key == siteId);
     this._subscribeToViewChanges();
   }
   ngOnDestroy() {

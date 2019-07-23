@@ -9,13 +9,13 @@ export type IDBEndpoint =
   | 'budgetTool/meta/enterpriseTypes'
   | 'budgetTool/meta/enterprises'
   | 'climateTool'
-  | 'climateTool/example';
+  | 'stationData';
 
 import { firestore } from 'firebase/app';
 
 export interface ITimestamp extends firestore.Timestamp {}
 export interface IDBDoc {
   _key: string;
-  _created: firestore.Timestamp;
-  _modified: firestore.Timestamp;
+  _created: ITimestamp;
+  _modified: ITimestamp;
 }

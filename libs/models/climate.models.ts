@@ -1,11 +1,4 @@
-export interface IClimateState {
-  site: ISite;
-  chart?: IChartMeta;
-}
-
-export interface ClimateToolState {
-  site: ISite;
-}
+import { IDBDoc } from './db.models';
 
 export interface ICropRequirement {
   crop: string;
@@ -18,15 +11,13 @@ export interface ICropRequirement {
   waterMax: number;
 }
 
-export interface ISite {
-  _id: string;
+export interface IStationData extends IDBDoc {
   name: string;
   latitude: number;
   longitude: number;
   fileName: string;
   country: string;
   summaries?: any;
-  view?: string;
 }
 
 export interface IChartSummary {
