@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import * as Papa from 'papaparse';
-import { IChartMeta, IStationData } from '@picsa/models/climate.models';
+import {
+  IChartMeta,
+  IStationData,
+  IChartSummary_V1,
+  IChartSummary
+} from '@picsa/models/climate.models';
 import { DBCacheService } from '@picsa/services/core/db/db.cache';
 import { IProbabilities } from '../models';
 import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { IDBDoc } from '@picsa/models/db.models';
 import * as DATA from 'src/app/data';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService {
   private ready$ = new BehaviorSubject<boolean>(false);
-  public activeStation: IStationData;
   public activeChart: IChartMeta;
   public yValues: number[];
 
@@ -24,29 +27,25 @@ export class ClimateToolService {
   private async init() {
     await this.db.loadStores({ stationData: null });
     if (await this.db.isEmpty('stationData')) {
-      console.log('table empty, initialising');
       await this.initialiseHardcodedData();
-      // initialise hardcoded data
     }
     this.ready$.next(true);
   }
 
-  public async setActiveStation(stationID: string) {
-    const station = await this.db.getDoc('stationData', stationID);
-    console.log('active station', station);
-    return station;
+  public async loadStation(stationID: string) {
+    await this.ready();
+    return this.db.getDoc<IStationData>('stationData', stationID);
   }
 
-  async loadStationData(stationID: string) {
-    console.log('loading site data', stationID);
-    let station = await this.db.getDoc<IStationData>('stationData', stationID);
-  }
-
+  // read hardcoded csv data and populate into cacheDB alongside station meta
   async initialiseHardcodedData() {
+    console.log(`Loading data for [${DATA.STATIONS.length}] stations`);
     for (const station of DATA.STATIONS) {
-      const data = await this.loadCSV(`assets/summaries/${station._key}.csv`);
+      const data = await this.loadCSV<IChartSummary_V1>(
+        `assets/summaries/${station._key}.csv`
+      );
       station.summaries = [...data];
-      console.log('initialise station', station);
+      await this.db.setDoc('stationData', station);
     }
   }
 
@@ -55,32 +54,17 @@ export class ClimateToolService {
     //
   }
 
-  // observable to inform when service initialisation complete
-  public async ready() {
-    return new Promise(resolve => {
-      if (this.ready$.value === true) {
-        resolve();
-      } else {
-        // only resolve when 'ready' status no longer false
-        this.ready$
-          .pipe(takeWhile(val => val === false))
-          .subscribe(() => resolve());
-      }
-    });
-  }
-
   // when chart selected create list of chart-specific values from main site
   // summary data to use when quickly calculating probabilities
-  _chartChanged(chart: IChartMeta) {
-    const selectedAxis = chart.y;
-    const yValues = this.activeStation.summaries.map(v => {
-      return v[selectedAxis];
-    });
-    this.yValues = yValues;
-  }
+  // _chartChanged(chart: IChartMeta) {
+  //   const selectedAxis = chart.y;
+  //   const yValues = this.activeStation.summaries.map(v => {
+  //     return v[selectedAxis];
+  //   });
+  //   this.yValues = yValues;
+  // }
 
   async loadCSV<T>(filePath: string): Promise<T[]> {
-    console.log('loading csv', filePath);
     return new Promise((resolve, reject) => {
       Papa.parse(filePath, {
         download: true,
@@ -143,9 +127,8 @@ export class ClimateToolService {
   }
 
   // used by combined probabilty component (not currently in use)
-  calculateCombinedProbability(conditions) {
+  calculateCombinedProbability(data: IChartSummary[], conditions) {
     //conditions are defined in format {key1:valueToTest1, key2:valueToTest2...}
-    let data = this.site.summaries;
     console.log('data', data);
     //remove values where conditions aren't known - current assumes null values non-numerical (e.g. string or null, may want to change later)
     for (const condition of conditions) {
@@ -193,5 +176,19 @@ export class ClimateToolService {
       reversePercentage: 1 - percentage,
       color: color
     };
+  }
+
+  // observable to inform when service initialisation complete
+  private async ready() {
+    return new Promise(resolve => {
+      if (this.ready$.value === true) {
+        resolve();
+      } else {
+        // only resolve when 'ready' status no longer false
+        this.ready$
+          .pipe(takeWhile(val => val === false))
+          .subscribe(val => null, err => null, () => resolve());
+      }
+    });
   }
 }

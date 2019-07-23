@@ -12,13 +12,13 @@
       ></picsa-map>
     </div>
     <button
-      (click)="goToSite(activeSite)"
+      (click)="goToSite(activeStation)"
       mat-raised-button
       color="primary"
-      *ngIf="activeSite"
+      *ngIf="activeStation"
       id="siteButton"
     >
-      <span id="siteButtonText">{{ activeSite.name }}</span>
+      <span id="siteButtonText">{{ activeStation.name }}</span>
       <mat-icon>arrow_forward</mat-icon>
     </button>
   </div>

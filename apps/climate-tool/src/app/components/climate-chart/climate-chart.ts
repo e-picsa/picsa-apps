@@ -10,6 +10,7 @@ import { ClimateToolService } from 'src/app/services/climate-tool.service';
 })
 export class ClimateChartComponent implements OnInit {
   @Input() chartMeta: IChartMeta;
+  @Input() columns: IChartSummary[];
   @ViewChild('chart', { static: true }) chart: any;
   chartOptions: any;
   lineToolValue: number;
@@ -21,24 +22,8 @@ export class ClimateChartComponent implements OnInit {
     private translateService: PicsaTranslateService
   ) {}
 
-  ngOnInit() {}
-
-  async setActiveStation() {}
-  async loadChartData() {
-    // ensure data and db fully loaded before querying
-    await this.climateService.ready();
-    await this.climateService.loadStationData(this.chartMeta.name);
-  }
-
-  // when new data columns specified redraw any graphs
-  // if no graph previously specified, default to rainfall
-  dataUpdated(data: IChartSummary[]) {
-    console.log('data updated', data);
-    let view = 'Rainfall';
-    try {
-      // view = this.ngRedux.getState().climate.site.view;
-    } catch (error) {}
-    this.generateChart(data, view);
+  ngOnInit() {
+    this.generateChart(this.columns, this.chartMeta.y);
   }
 
   // create chart given columns of data and a particular key to make visible

@@ -15,12 +15,11 @@ export interface IStationData extends IDBDoc {
   name: string;
   latitude: number;
   longitude: number;
-  fileName: string;
   country: string;
-  summaries?: any;
+  summaries?: IChartSummary_V1[] | IChartSummary_V2[];
 }
 
-export interface IChartSummary {
+export interface IChartSummary_V1 {
   Year: number;
   Start: number;
   StartDate: number;
@@ -29,12 +28,25 @@ export interface IChartSummary {
   Length: number;
   Rainfall: number;
 }
-export interface IChartSummary2019 {
+
+export interface IChartSummary_V2 {
   Year: number;
   StartDate: Date;
   Length: number;
   Rainfall: number;
 }
+// merged old and new formats for use when not sure type
+export type IChartSummary = IChartSummary_V1 & IChartSummary_V2;
+
+// export interface IChartSummary {
+//   Year: number;
+//   Start?: number;
+//   StartDate: number | Date;
+//   EndDay?: number;
+//   EndDate?: number;
+//   Length: number;
+//   Rainfall: number;
+// }
 
 export interface IChartMeta {
   name: string;

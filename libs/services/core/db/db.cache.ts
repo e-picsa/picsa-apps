@@ -38,6 +38,10 @@ export class DBCacheService {
     const length = await db.table(endpoint).count();
     return length === 0;
   }
+
+  public async setDoc(endpoint: IDBEndpoint, doc: IDBDoc) {
+    return db.table(endpoint).put(doc);
+  }
 }
 
 type IDBStores = { [endpoint in IDBEndpoint]?: string | null };

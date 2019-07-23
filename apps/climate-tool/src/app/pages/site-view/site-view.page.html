@@ -1,7 +1,7 @@
 <div class="page">
   <!-- header -->
   <div style="display: flex; justify-content: space-between">
-    <h1>{{ activeSite ? activeSite.name : '' }}</h1>
+    <h1>{{ activeStation ? activeStation.name : '' }}</h1>
     <div>
       <button mat-button color="primary" (click)="setView()">
         <mat-icon svgIcon="picsa_chart"></mat-icon>
@@ -20,8 +20,11 @@
       *ngIf="!activeView"
     ></climate-view-select>
     <!-- charts -->
-    <div *ngIf="activeChart">
-      <climate-chart [chartMeta]="activeChart"></climate-chart>
+    <div *ngIf="activeChart && activeStation">
+      <climate-chart
+        [chartMeta]="activeChart"
+        [columns]="activeStation.summaries"
+      ></climate-chart>
       <climate-line-tool></climate-line-tool>
       <climate-probability-tool></climate-probability-tool>
     </div>

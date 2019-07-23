@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ISite, IChartMeta } from '@picsa/models/climate.models';
+import { IChartMeta, IStationData } from '@picsa/models/climate.models';
 import * as DATA from 'src/app/data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { ClimateToolService } from 'src/app/services/climate-tool.service';
 
 @Component({
   selector: 'climate-site-view',
@@ -12,22 +13,29 @@ import { Subject } from 'rxjs';
 })
 export class ClimateSiteViewPage implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject();
-  activeSite: ISite;
+  activeStation: IStationData;
   activeChart: IChartMeta;
   availableViews = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
   activeView: string;
   availableCharts: IChartMeta[] = DATA.CHART_TYPES;
-  // columns = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private climateService: ClimateToolService
+  ) {}
   ngOnInit(): void {
-    const siteId = this.route.snapshot.params.siteId;
-    this.activeSite = DATA.STATIONS.find(s => s._key == siteId);
+    // readily subscribe to view changes to avoid flash of site-select page
     this._subscribeToViewChanges();
+    this.loadSiteData();
   }
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+  }
+  async loadSiteData() {
+    const siteId = this.route.snapshot.params.siteId;
+    this.activeStation = await this.climateService.loadStation(siteId);
   }
 
   setView(viewID: string) {

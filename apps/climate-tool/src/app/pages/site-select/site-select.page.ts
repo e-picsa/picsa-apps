@@ -15,7 +15,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./site-select.page.scss']
 })
 export class SiteSelectPage {
-  activeSite: any;
+  activeStation: any;
   @ViewChild('picsaMap', { static: true }) picsaMap: PicsaMapComponent;
   mapOptions: IMapOptions = { center: [-13.2543, 34.3015], zoom: 7 };
   basemapOptions: IBasemapOptions = {
@@ -37,7 +37,7 @@ export class SiteSelectPage {
     // linking to callback forces angular outside of usual cdr strategy/zone
     // so have to manually call ngZone.run to detect changes
     this.ngZone.run(() => {
-      this.activeSite = { ...(marker.data as IStationData) };
+      this.activeStation = { ...(marker.data as IStationData) };
     });
   }
 

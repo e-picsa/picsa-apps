@@ -74,7 +74,6 @@ export interface IResource {
   weblink: string;
   viewableBy?: string[];
   group: string;
-  region?: regions;
   description?: string;
   youtubeID?: string;
   filepath?: string;
