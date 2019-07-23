@@ -127,7 +127,7 @@ export class ClimateToolService {
   }
 
   // used by combined probabilty component (not currently in use)
-  calculateCombinedProbability(data: IChartSummary[], conditions) {
+  calculateCombinedProbability(data?: IChartSummary[], conditions = []) {
     //conditions are defined in format {key1:valueToTest1, key2:valueToTest2...}
     console.log('data', data);
     //remove values where conditions aren't known - current assumes null values non-numerical (e.g. string or null, may want to change later)

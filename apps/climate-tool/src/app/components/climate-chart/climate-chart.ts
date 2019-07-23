@@ -1,8 +1,10 @@
 import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { PicsaTranslateService } from '@picsa/modules/translate';
-import { IChartMeta, IChartSummary } from '@picsa/models/climate.models';
-import { CHART_TYPES } from 'src/app/data';
-import { ClimateToolService } from 'src/app/services/climate-tool.service';
+import {
+  IChartMeta,
+  IChartSummary,
+  IChartConfig
+} from '@picsa/models/climate.models';
 
 @Component({
   selector: 'climate-chart',
@@ -10,82 +12,56 @@ import { ClimateToolService } from 'src/app/services/climate-tool.service';
 })
 export class ClimateChartComponent implements OnInit {
   @Input() chartMeta: IChartMeta;
-  @Input() columns: IChartSummary[];
+  @Input() chartData: IChartSummary[];
   @ViewChild('chart', { static: true }) chart: any;
-  chartOptions: any;
+  chartConfig: IChartConfig;
   lineToolValue: number;
-  isFirstRender: boolean = true;
-  activeChart: IChartMeta = CHART_TYPES[0];
+  firstRenderComplete: boolean;
 
-  constructor(
-    private climateService: ClimateToolService,
-    private translateService: PicsaTranslateService
-  ) {}
+  constructor(private translateService: PicsaTranslateService) {}
 
   ngOnInit() {
-    this.generateChart(this.columns, this.chartMeta.y);
+    console.log('generating chart', this.chartMeta);
+    this.generateChart(this.chartData, this.chartMeta);
   }
 
   // create chart given columns of data and a particular key to make visible
-  generateChart(data: IChartSummary[], yAxis: string) {
-    // generate chart keys from csv row titles
-    console.log('generating chart');
-    const keys = [];
-    for (const key in data[0]) {
-      keys.push(key);
-    }
-    // generate chart
-    this.chartOptions = {
-      size: {
-        height: 320
-      },
+  generateChart(data: IChartSummary[], meta: IChartMeta) {
+    const startYear = data.reduce((a, b) => (a.Year < b.Year ? a : b)).Year;
+    const thisYear = new Date().getFullYear();
+    this.chartConfig = {
       padding: {
         right: 10
       },
       data: {
         json: data,
-        hide: true,
         keys: {
-          value: keys
+          value: [...meta.keys, meta.xVar]
         },
         x: 'Year',
         classes: { LineTool: 'LineTool' },
-        color: (color, d) => {
-          if (d.value >= this.lineToolValue) {
-            return '#739B65';
-          }
-          if (d.value < this.lineToolValue) {
-            return '#BF7720';
-          }
-          // default return color for series key, attached to d.id
-          return seriesColors[d.id];
-        }
+        color: (_, d) => this._getPointColour(d)
       },
       tooltip: {
         grouped: false,
         format: {
-          value: function(value, ratio, id) {
-            if (this.activeChart.yFormat == 'value') {
-              return `${parseInt(value).toString()} ${this.activeChart.units}`;
-            } else {
-              return `${this.formatAxis(value, this.activeChart.yFormat)} ${
-                this.activeChart.units
-              }`;
-            }
-          }.bind(this)
+          value: value => this._getTooltipFormat(value, meta)
         }
       },
+      // TODO - currently highly custom for handling years, may want to generalise
       axis: {
         x: {
-          label: 'Year'
+          label: meta.xVar,
+          max: new Date().getFullYear(),
+          tick: {
+            values: this._getXAxisValues(startYear, thisYear),
+            format: val => this._formatXAxis(val as number, thisYear)
+          }
         },
         y: {
           tick: {
-            format: function(d) {
-              return this.formatAxis(d, this.activeChart.yFormat);
-            }.bind(this)
+            format: (d: any) => this._formatAxis(d, meta)
           }
-          // label: `${this.activeChart.name} (${this.activeChart.units})`
         }
       },
       legend: {
@@ -97,37 +73,95 @@ export class ClimateChartComponent implements OnInit {
         }
       },
       onrendered: () => {
-        this.firstRenderComplete();
+        this.firstRenderComplete = true;
       }
     };
   }
 
-  firstRenderComplete() {
-    if (this.isFirstRender) {
-      console.log('first render complete');
-      // set rainfall chart to initially show
-      // this.actions.selectChart(this.activeChart);
-      this.isFirstRender = false;
+  setLineToolValue(value: number) {
+    this.lineToolValue = value;
+    const lineArray = Array(this.chartData.length).fill(value);
+    lineArray.unshift('LineTool');
+    this.chart.load({
+      columns: [lineArray],
+      classes: { LineTool: 'LineTool' }
+    });
+    this.chart.show('LineTool', { withLegend: true });
+  }
+
+  _getPointColour(d: any): string {
+    if (d.value >= this.lineToolValue) {
+      return '#739B65';
+    }
+    if (d.value < this.lineToolValue) {
+      return '#BF7720';
+    }
+    // default return color for series key, attached to d.id
+    return seriesColors[d.id];
+  }
+
+  // HACK pt 1 - want to ensure all values on x-axis up to current year
+  // note, just setting max does not work as cuts if null values
+  private _getXAxisValues(startYear: number, thisYear: number) {
+    const xValues = [];
+    for (let i = startYear; i <= thisYear; i++) {
+      xValues.push(i);
+    }
+    return xValues;
+  }
+
+  // HACK pt 2
+  // now all ticks are displayed we only want values for every 5
+  private _formatXAxis(value: number, thisYear: number) {
+    return (thisYear - value) % 5 === 0 ? value : '';
+  }
+
+  private _getTooltipFormat(value: number, meta: IChartMeta) {
+    if (meta.yFormat == 'value') {
+      return `${Number(value).toString()} ${meta.units}`;
+    } else {
+      return `${this._formatAxis(value, meta)} ${meta.units}`;
     }
   }
 
-  resize(size) {
+  private _formatAxis(value: number, meta: IChartMeta) {
+    switch (meta.yFormat) {
+      case 'date-from-July':
+        //181 based on local met +182 and -1 for index starting at 0
+        const dayNumber = (value + 181) % 366;
+        //simply converts number to day rough date value (same method as local met office)
+        //initialise year
+        const d = new Date(2001, 0);
+        d.setDate(dayNumber);
+        const monthNames: string[] = this.translateService.monthNames;
+        // just take first 3 letters
+        const string = `${d.getDate()}-${monthNames[
+          d.getMonth() % 12
+        ].substring(0, 3)}`;
+        return string;
+      case 'date':
+        // TODO
+        return `${value}`;
+      default:
+        return `${value}`;
+    }
+  }
+}
+
+const seriesColors = {
+  Rainfall: '#377eb8',
+  Start: '#e41a1c',
+  End: '#984ea3',
+  Length: '#4daf4a'
+};
+
+/* Deprecated - will remove when confirmed working
+
+  private _resize(size) {
     this.chart.resize({
       height: size.height,
       width: size.width
     });
-  }
-
-  setLineToolValue(value) {
-    // const data = this.ngRedux.getState().climate.site.summaries;
-    // this.lineToolValue = value;
-    // const lineArray = Array(data.length).fill(value);
-    // lineArray.unshift("LineTool");
-    // this.chart.load({
-    //   columns: [lineArray],
-    //   classes: { LineTool: "LineTool" }
-    // });
-    // this.chart.show("LineTool", { withLegend: true });
   }
 
   async setChart(chart: IChartMeta) {
@@ -148,32 +182,5 @@ export class ClimateChartComponent implements OnInit {
     await loader.dismiss();
   }
 
-  formatAxis(value, type) {
-    if (type == 'date-from-July') {
-      //181 based on local met +182 and -1 for index starting at 0
-      const dayNumber = (value + 181) % 366;
-      //simply converts number to day rough date value (same method as local met office)
-      //initialise year
-      const d = new Date(2001, 0);
-      d.setDate(dayNumber);
-      const monthNames: string[] = this.translateService.monthNames;
-      // just take first 3 letters
-      const string = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(
-        0,
-        3
-      )}`;
-      return string;
-    } else if (type == 'value') {
-      return value;
-    } else {
-      return value;
-    }
-  }
-}
 
-const seriesColors = {
-  Rainfall: '#377eb8',
-  Start: '#e41a1c',
-  End: '#984ea3',
-  Length: '#4daf4a'
-};
+*/

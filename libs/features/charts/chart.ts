@@ -8,6 +8,7 @@ import {
   OnInit
 } from '@angular/core';
 import * as c3 from 'c3';
+import { IChartConfig } from '@picsa/models';
 
 @Component({
   selector: 'picsa-chart',
@@ -29,7 +30,7 @@ export class PicsaChartComponent implements OnInit {
   @Input() data: c3.Data = {
     columns: []
   };
-  @Input() config: Partial<c3.ChartConfiguration>;
+  @Input() config: IChartConfig;
 
   /**********************************************************************************
    *  Custom creation and change event handling
@@ -93,12 +94,7 @@ export class PicsaChartComponent implements OnInit {
       this.chart = this.chart = c3.generate({
         ...this.config,
         bindto: this.container,
-        data: this.data,
-        axis:{
-          x:{
-            label: "Year"
-          }
-        }
+        data: this.config.data ? this.config.data : this.data
       });
     });
   }

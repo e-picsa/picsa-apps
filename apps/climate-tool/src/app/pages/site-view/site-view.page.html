@@ -23,7 +23,7 @@
     <div *ngIf="activeChart && activeStation">
       <climate-chart
         [chartMeta]="activeChart"
-        [columns]="activeStation.summaries"
+        [chartData]="activeStation.summaries"
       ></climate-chart>
       <climate-line-tool></climate-line-tool>
       <climate-probability-tool></climate-probability-tool>
