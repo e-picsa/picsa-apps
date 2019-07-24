@@ -3,8 +3,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
 import { NgModule } from '@angular/core';
-import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { GestureConfig } from '@angular/material/core';
 
 // NOTE - slide module requires import 'hammerjs' in app.module.ts;
 // also other deps from: https://material.angular.io/guide/getting-started

@@ -8,7 +8,8 @@ import {
 
 @Component({
   selector: 'climate-chart',
-  templateUrl: 'climate-chart.html'
+  templateUrl: 'climate-chart.html',
+  styleUrls: ['climate-chart.scss']
 })
 export class ClimateChartComponent implements OnInit {
   @Input() chartMeta: IChartMeta;
@@ -17,18 +18,56 @@ export class ClimateChartComponent implements OnInit {
   chartConfig: IChartConfig;
   lineToolValue: number;
   firstRenderComplete: boolean;
+  ranges: IDataRanges;
 
   constructor(private translateService: PicsaTranslateService) {}
 
   ngOnInit() {
-    console.log('generating chart', this.chartMeta);
+    this.ranges = this.calculateDataRanges(this.chartData, this.chartMeta);
+    console.log('ranges', this.ranges);
     this.generateChart(this.chartData, this.chartMeta);
+  }
+  // iterate over data and calculate min/max values for xVar and multiple yVars
+  calculateDataRanges(data: IChartSummary[], meta: IChartMeta) {
+    let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
+    data.forEach(d => {
+      const xVal = d[meta.xVar] as number;
+      const yVals = meta.keys.map(k => d[k]) as number[];
+      xMax = Math.max(xMax, xVal);
+      xMin = Math.min(xMin, xVal);
+      yMax = Math.max(yMax, ...yVals);
+      yMin = Math.min(yMin, ...yVals);
+    });
+    // NOTE - yAxis hardcoded to 0 start currently for rainfall chart
+    if (meta.yFormat === 'value') {
+      yMin = 0;
+    }
+    // Note - xAxis hardcoded to end at this year for all year charts
+    if (meta.xVar === 'Year') {
+      xMax = new Date().getFullYear();
+    }
+    return {
+      // round y max up to nearest 50 and y min down to nearest 50
+      yMin: Math.floor(yMin / 50) * 50,
+      yMax: Math.ceil(yMax / 50) * 50,
+      xMin,
+      xMax
+    };
   }
 
   // create chart given columns of data and a particular key to make visible
   generateChart(data: IChartSummary[], meta: IChartMeta) {
-    const startYear = data.reduce((a, b) => (a.Year < b.Year ? a : b)).Year;
-    const thisYear = new Date().getFullYear();
+    const { yMin, yMax, xMin, xMax } = this.ranges;
+    // intervals depend on chart type
+    const xInterval = meta.xVar === 'Year' ? 1 : 1;
+    const yInterval =
+      meta.yFormat === 'value' ? 50 : Math.round((yMax - yMin) / 20);
+    // specify x and y axis ticks
+    let xTicks = this._getAxisValues(xMin, xMax, xInterval);
+    let yTicks = this._getAxisValues(yMin, yMax, yInterval);
+    // specify main lines to draw on grid (major ticks)
+    const xLines = _getArraySubset(xTicks, 4) as number[];
+    const yLines = _getArraySubset(yTicks, 4) as number[];
     this.chartConfig = {
       padding: {
         right: 10
@@ -46,7 +85,8 @@ export class ClimateChartComponent implements OnInit {
         grouped: false,
         format: {
           value: value => this._getTooltipFormat(value, meta),
-          // HACK pt 3 - reformat missing  titles. Also i marked ? as incorrect typings
+          // HACK - reformat missing  titles (lost when passing "" values back from axis)
+          // i marked ? as incorrect typings
           title: (x, i?) => data[i as number][meta.xVar] as any
         }
       },
@@ -56,14 +96,40 @@ export class ClimateChartComponent implements OnInit {
           label: meta.xVar,
           max: new Date().getFullYear(),
           tick: {
-            values: this._getXAxisValues(startYear, thisYear),
-            format: val => this._formatXAxis(val as number, thisYear)
+            values: xTicks,
+            format: val => this._formatXAxis(val as number, xMax)
           }
         },
         y: {
           label: { position: 'inner-top', text: this.chartMeta.units },
           tick: {
-            format: (d: any) => this._formatAxis(d, meta)
+            values: yTicks,
+            format: (d: any) => this._formatYAxis(d, meta)
+          },
+          min: yMin,
+          max: yMax,
+          padding: {
+            bottom: 0,
+            top: 10
+          }
+        }
+      },
+      // add custom gridlines to only show on 'major' ticks
+      grid: {
+        // x: {
+        //   lines: xLines.map(l => {
+        //     return { value: l, class: 'picsa-gridline', text: '' };
+        //   })
+        // },
+        y: {
+          lines: yLines.map(l => {
+            return { value: l, class: 'picsa-gridline', text: '' };
+          })
+        },
+        // destructured as typings incorrect
+        ...{
+          lines: {
+            front: false
           }
         }
       },
@@ -92,6 +158,10 @@ export class ClimateChartComponent implements OnInit {
     this.chart.show('LineTool', { withLegend: true });
   }
 
+  /*****************************************************************************
+   *   Styles and Formatting
+   ****************************************************************************/
+
   _getPointColour(d: any): string {
     if (d.value >= this.lineToolValue) {
       return '#739B65';
@@ -103,31 +173,27 @@ export class ClimateChartComponent implements OnInit {
     return seriesColors[d.id];
   }
 
-  // HACK pt 1 - want to ensure all values on x-axis up to current year
-  // note, just setting max does not work as cuts if null values
-  private _getXAxisValues(startYear: number, thisYear: number) {
-    const xValues = [];
-    for (let i = startYear; i <= thisYear; i++) {
-      xValues.push(i);
+  // sometimes want to manually specify axis values so that y-axis can start at 0,
+  // or so x-axis can extend beyond range of dates to current year
+  private _getAxisValues(min: number, max: number, interval: number) {
+    const values = [];
+    for (let i = 0; i <= (max - min) / interval; i++) {
+      values.push(min + i * interval);
     }
-    return xValues;
+    return values;
   }
 
-  // HACK pt 2
   // now all ticks are displayed we only want values for every 5
   private _formatXAxis(value: number, thisYear: number) {
     return (thisYear - value) % 5 === 0 ? value : '';
   }
 
-  private _getTooltipFormat(value: number, meta: IChartMeta) {
-    if (meta.yFormat == 'value') {
-      return `${Math.round(value).toString()} ${meta.units}`;
-    } else {
-      return `${this._formatAxis(value, meta)} ${meta.units}`;
+  private _formatYAxis(value: number, meta: IChartMeta) {
+    // Only show 1/4 of the ticks
+    // TODO - link better to interval or other configurable options
+    if (value % 200 !== 0) {
+      return '';
     }
-  }
-
-  private _formatAxis(value: number, meta: IChartMeta) {
     switch (meta.yFormat) {
       case 'date-from-July':
         //181 based on local met +182 and -1 for index starting at 0
@@ -149,8 +215,32 @@ export class ClimateChartComponent implements OnInit {
         return `${value}`;
     }
   }
+
+  private _getTooltipFormat(value: number, meta: IChartMeta) {
+    if (meta.yFormat == 'value') {
+      return `${Math.round(value).toString()} ${meta.units}`;
+    } else {
+      return `${this._formatYAxis(value, meta)} ${meta.units}`;
+    }
+  }
 }
 
+/*****************************************************************************
+ *   helpers
+ ****************************************************************************/
+// take an array and return every nth element
+const _getArraySubset = (arr: any[], n: number) => {
+  console.log('getting array subset', arr, n);
+  const sub = [];
+  for (let i = 0; i < arr.length; i += n) {
+    sub.push(arr[i]);
+  }
+  return sub;
+};
+
+/*****************************************************************************
+ *   Defaults and Interfaces
+ ****************************************************************************/
 const seriesColors = {
   Rainfall: '#377eb8',
   Start: '#e41a1c',
@@ -158,7 +248,24 @@ const seriesColors = {
   Length: '#4daf4a'
 };
 
-/* Deprecated - will remove when confirmed working
+interface IDataRanges {
+  yMin: number;
+  yMax: number;
+  xMin: number;
+  xMax: number;
+}
+const DATA_RANGES_DEFAULT: IDataRanges = {
+  yMin: Infinity,
+  yMax: -Infinity,
+  xMin: Infinity,
+  xMax: -Infinity
+};
+
+/*****************************************************************************
+ *  Deprecated - will remove when confirmed working
+ ****************************************************************************/
+
+/* 
 
   private _resize(size) {
     this.chart.resize({
@@ -166,24 +273,5 @@ const seriesColors = {
       width: size.width
     });
   }
-
-  async setChart(chart: IChartMeta) {
-    const loader = await this.translateService.createTranslatedLoader({
-      message: 'Loading...'
-    });
-    await loader.present();
-    this.activeChart = chart;
-    console.log('activeChart', chart);
-    this.chart.hide();
-    this.chart.legend.hide();
-    this.chart.show(chart.y, { withLegend: true });
-
-    // reload new line tool value
-    if (this.lineToolValue && chart.tools.line) {
-      this.setLineToolValue(this.lineToolValue);
-    }
-    await loader.dismiss();
-  }
-
 
 */
