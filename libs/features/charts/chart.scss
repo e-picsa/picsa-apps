@@ -1,1 +1,32 @@
 @import '~c3/c3.min';
+
+#chart {
+  height: calc(100% - 220px);
+  width: calc(100% - 20px);
+  min-height: 320px;
+}
+.c3-line {
+  stroke-width: 2px;
+}
+.c3-line-LineTool {
+  stroke-width: 3px !important;
+  stroke: black !important;
+}
+.c3-circles-LineTool {
+  display: none;
+}
+.c3 text {
+  font-size: larger;
+}
+/*expanded circle fill, outline (stroke) and outline width*/
+.c3-circle._expanded_ {
+  /*fill: rgb(90, 50, 50)!important;*/
+  stroke: #000000 !important;
+  stroke-width: 2;
+}
+.c3-tooltip th {
+  font-size: x-large;
+}
+.c3-tooltip td {
+  font-size: x-large;
+}

@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { PicsaMapModule } from '@picsa/features/map';
 import { SiteSelectPage } from './site-select.page';
 import { PicsaTranslateModule } from '@picsa/modules';
-import { PicsaMaterialModule } from 'src/app/material.module';
+import { ClimateMaterialModule } from 'src/app/material.module';
 
 const routes: Routes = [
   {
@@ -19,7 +19,7 @@ const routes: Routes = [
     PicsaMapModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule.forChild(),
-    PicsaMaterialModule
+    ClimateMaterialModule
   ],
   declarations: [SiteSelectPage]
 })

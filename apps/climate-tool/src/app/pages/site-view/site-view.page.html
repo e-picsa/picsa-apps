@@ -20,16 +20,16 @@
       *ngIf="!activeView"
     ></climate-view-select>
     <!-- charts -->
-    <div *ngIf="activeChart && activeStation">
-      <climate-chart
-        [chartMeta]="activeChart"
-        [chartData]="activeStation.summaries"
-      ></climate-chart>
+    <div *ngIf="activeChart && activeStation" style="flex: 1">
+        <climate-chart
+          [chartMeta]="activeChart"
+          [chartData]="activeStation.summaries"
+        ></climate-chart>
       <climate-line-tool></climate-line-tool>
       <climate-probability-tool></climate-probability-tool>
     </div>
     <!-- reports -->
-    <div *ngIf="activeView === 'cropAnalysis'">
+    <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
       <climate-crop-analysis></climate-crop-analysis>
     </div>
     <!-- <combined-probability></combined-probability> -->

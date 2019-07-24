@@ -164,10 +164,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/animations@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-8.0.0.tgz#6286094babdb3879f7aefcd73aa31772469e50b4"
-  integrity sha512-hggSRi83rmocLwzrKZtmFcqPdivKSJqp2yiYaiNmJ2yQWJ1JW/Lurypv9H347RWxmwCCwC2kV8embTGbOXIFDQ==
+"@angular/animations@^8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-8.1.2.tgz#2e4fec78a9345d9f1d93e9d464911c71f8c80046"
+  integrity sha512-szR5qzRe6vS1qrPhV2p5fMp5vQxT2SaljXGs3Xgt2Tl23om0XVNcqK0I8NNuK/ehuJ5LXQ1fJHniGcmN2aUw0g==
   dependencies:
     tslib "^1.9.0"
 

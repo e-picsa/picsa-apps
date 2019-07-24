@@ -5,7 +5,7 @@
     class="mat-elevation-z8 chart-card"
     (click)="setView(chart._viewID)"
   >
-    <mat-card-title class="chart-name" [attr.data-y]="chart.y">
+    <mat-card-title class="chart-name" [attr.data-id]="chart._viewID">
       {{ chart.name | translate }}
     </mat-card-title>
     <mat-card-content style="display: flex">

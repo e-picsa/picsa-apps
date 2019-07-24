@@ -45,7 +45,9 @@ export class ClimateChartComponent implements OnInit {
       tooltip: {
         grouped: false,
         format: {
-          value: value => this._getTooltipFormat(value, meta)
+          value: value => this._getTooltipFormat(value, meta),
+          // HACK pt 3 - reformat missing  titles. Also i marked ? as incorrect typings
+          title: (x, i?) => data[i as number][meta.xVar] as any
         }
       },
       // TODO - currently highly custom for handling years, may want to generalise
@@ -59,6 +61,7 @@ export class ClimateChartComponent implements OnInit {
           }
         },
         y: {
+          label: { position: 'inner-top', text: this.chartMeta.units },
           tick: {
             format: (d: any) => this._formatAxis(d, meta)
           }
@@ -69,7 +72,7 @@ export class ClimateChartComponent implements OnInit {
       },
       point: {
         r: d => {
-          return 5;
+          return 8;
         }
       },
       onrendered: () => {
@@ -118,7 +121,7 @@ export class ClimateChartComponent implements OnInit {
 
   private _getTooltipFormat(value: number, meta: IChartMeta) {
     if (meta.yFormat == 'value') {
-      return `${Number(value).toString()} ${meta.units}`;
+      return `${Math.round(value).toString()} ${meta.units}`;
     } else {
       return `${this._formatAxis(value, meta)} ${meta.units}`;
     }

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ViewSelectComponent } from './view-select/view-select';
 import { PicsaTranslateModule } from '@picsa/modules';
-import { PicsaMaterialModule } from '../material.module';
+import { ClimateMaterialModule } from '../material.module';
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { LineToolComponent } from './line-tool/line-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
@@ -27,7 +27,7 @@ import { PicsaChartsModule } from '@picsa/features';
     FormsModule,
     ReactiveFormsModule,
     PicsaTranslateModule,
-    PicsaMaterialModule,
+    ClimateMaterialModule,
     PicsaChartsModule
   ],
   exports: [

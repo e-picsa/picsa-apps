@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { PicsaChartsModule } from '@picsa/features';
 import { ClimateToolComponentsModule } from 'src/app/components/climate-tool-components.module';
 import { PicsaTranslateModule } from '@picsa/modules';
-import { PicsaMaterialModule } from 'src/app/material.module';
+import { ClimateMaterialModule } from 'src/app/material.module';
 
 const routes: Routes = [
   {
@@ -24,7 +24,7 @@ const routes: Routes = [
     ClimateToolComponentsModule,
     PicsaChartsModule,
     PicsaTranslateModule.forChild(),
-    PicsaMaterialModule,
+    ClimateMaterialModule,
     RouterModule.forChild(routes)
   ],
   declarations: [ClimateSiteViewPage]

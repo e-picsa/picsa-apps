@@ -24,15 +24,15 @@ mat-card.chart-card {
   color: white;
   background: var(--color-black);
 }
-.chart-name[data-y='Rainfall'] {
+.chart-name[data-id='rainfall'] {
   background: $chart-Rainfall;
 }
-.chart-name[data-y='End'] {
+.chart-name[data-id='end'] {
   background: $chart-End;
 }
-.chart-name[data-y='Length'] {
+.chart-name[data-id='length'] {
   background: $chart-Length;
 }
-.chart-name[data-y='Start'] {
+.chart-name[data-id='start'] {
   background: $chart-Start;
 }
