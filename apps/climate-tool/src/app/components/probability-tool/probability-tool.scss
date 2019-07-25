@@ -1,5 +1,66 @@
-:root {
+#probabilityCount {
+  width: 86px;
+  text-align: center;
+  margin-right: 1em;
+}
+
+.probability-grid-container {
+  display: flex;
+  z-index: 1;
   border: 1px solid black;
-  padding: 2px;
-  background-color: #ebebeb;
+}
+
+.probability-grid-cell {
+  height: 2em;
+  flex: 1;
+  border-right: 1px solid black;
+  text-align: right;
+  position: relative;
+}
+.probability-grid-container :last-child {
+  border-right: unset;
+}
+.probability-grid-cell-label {
+  position: absolute;
+  right: -15px;
+  top: 0.25em;
+  width: 30px;
+  background: white;
+  text-align: center;
+}
+
+.probability-blocks-group {
+  display: flex;
+  width: 100%;
+  background: white;
+}
+
+.block {
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  flex-grow: 1;
+  height: 15px;
+  display: inline-block;
+}
+.probability-blocks-group :first-child {
+  border-left: 1px solid black;
+}
+.good {
+  color: #739b65;
+}
+.bad {
+  color: #bf7720;
+}
+.block.good {
+  background-color: #739b65;
+}
+.block.bad {
+  background-color: #bf7720;
+}
+.variable {
+  font-weight: bold;
+  font-size: large;
+}
+.mat-button-toggle-checked {
+  // color: var(--color-primary);
 }

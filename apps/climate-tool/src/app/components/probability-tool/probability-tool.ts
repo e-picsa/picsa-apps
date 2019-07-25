@@ -1,5 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ClimateToolService } from 'src/app/services/climate-tool.service';
+import { Component, Input } from '@angular/core';
 import { IProbabilities } from 'src/app/models';
 
 @Component({
@@ -14,8 +13,10 @@ export class ProbabilityToolComponent {
   @Input() set x(x: number) {
     if (x && this.values) {
       this.probabilities = this.calculateProbabilities(x);
+      console.log('probabilities', this.probabilities);
     }
   }
+  @Input() chartName: string;
   probabilities = DEFAULT_PROBABILITIES;
 
   // given a line tool value lookup the existing values and return probability information
@@ -23,20 +24,44 @@ export class ProbabilityToolComponent {
   // various outputs used to assist rendering graphics (e.g. number arrays and reverse %)
   calculateProbabilities(x: number): IProbabilities {
     const points = this.values;
-    let above = 0,
-      below = 0,
-      ratio = [0, 0];
+    let totalAbove = 0;
+    let totalBelow = 0;
     for (const point of points) {
       if (point != null) {
-        if (point >= x) {
-          above++;
+        if (point > x) {
+          totalAbove++;
         } else {
-          below++;
+          totalBelow++;
         }
       }
     }
-    const percentage = above / (above + below);
-    const reversePercentage = 1 - percentage;
+    const ratio = this._toRatio(totalAbove, totalBelow);
+    const total = totalAbove + totalBelow;
+    return {
+      above: {
+        count: totalAbove,
+        pct: Math.round((totalAbove / total) * 100),
+        inTen: Math.round((totalAbove / total) * 10)
+      },
+      below: {
+        count: totalBelow,
+        pct: 100 - Math.round((totalAbove / total) * 100),
+        inTen: 1 - Math.round((totalAbove / total) * 10)
+      },
+      total,
+      ratio
+    };
+  }
+
+  public numberToArray(n: number) {
+    const arr: number[] = [];
+    for (let i = 0; i < n; i++) arr.push(i);
+    return arr;
+  }
+
+  // represent a number in simplest forms x:1 or 1:x
+  private _toRatio(above: number, below: number) {
+    let ratio = [0, 0];
     const i = Math.round((below + above) / above);
     const j = Math.round((below + above) / below);
     if (above != 0 && above <= below) {
@@ -45,31 +70,29 @@ export class ProbabilityToolComponent {
     if (below != 0 && below <= above) {
       ratio = [j - 1, 1];
     }
-    const tens = {
-      above: Array(Math.round(percentage * 10)).fill(1),
-      below: Array(Math.round(reversePercentage * 10)).fill(-1),
-      value: Math.round(percentage * 10) * 10
-    };
-    return {
-      above: above,
-      below: below,
-      percentage: percentage,
-      reversePercentage: reversePercentage,
-      ratio: ratio,
-      tens: tens
-    };
+    return ratio as [number, number];
   }
 }
 
-const DEFAULT_PROBABILITIES: IProbabilities = {
-  above: 0,
-  below: 0,
-  percentage: 0,
-  ratio: [0, 0],
-  reversePercentage: 0,
-  tens: {
-    above: [],
-    below: [],
-    value: 0
-  }
+const DEFAULT_PROBABILITIES = {
+  above: {
+    count: 0,
+    pct: 0,
+    inTen: 0
+  },
+  below: {
+    count: 0,
+    pct: 0,
+    inTen: 0
+  },
+  total: 0,
+  ratio: [0, 0]
 };
+
+// const MOCK_PROBABILITIES: IProbabilities = {
+//   above: 30,
+//   below: 9,
+//   percentage: 0.7692307692307693,
+//   reversePercentage: 0.23076923076923073,
+//   ratio: [3, 1]
+// };

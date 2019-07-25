@@ -164,6 +164,11 @@ export class ClimateChartComponent implements OnInit {
     };
   }
 
+  export() {
+    console.log('exporting');
+    this.picsaChart.generatePng();
+  }
+
   /*****************************************************************************
    *   Styles and Formatting
    ****************************************************************************/

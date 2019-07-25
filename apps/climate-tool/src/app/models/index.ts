@@ -1,15 +1,16 @@
 export interface IProbabilities {
-  above: number;
-  below: number;
-  percentage: number;
-  reversePercentage: number;
-  ratio: number[];
-  tens: IProbabilityTens;
-}
-interface IProbabilityTens {
-  above: number[];
-  below: number[];
-  value: number;
+  above: {
+    count: number;
+    pct: number;
+    inTen: number;
+  };
+  below: {
+    count: number;
+    pct: number;
+    inTen: number;
+  };
+  total: number;
+  ratio: [number, number];
 }
 
 export interface IClimateView {

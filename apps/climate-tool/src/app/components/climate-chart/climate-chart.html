@@ -1,5 +1,6 @@
 <h3>{{ chartMeta.name }}</h3>
-<div style="display: flex">
+<button mat-button (click)="export()">Export</button>
+<div style="display: flex; margin-bottom: 2em">
   <div class="slider-container">
     <mat-slider
       *ngIf="ranges"
@@ -34,4 +35,5 @@
   *ngIf="lineToolValue"
   [x]="lineToolValue"
   [values]="y1Values"
+  [chartName]="chartMeta.name"
 ></climate-probability-tool>

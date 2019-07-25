@@ -30,3 +30,10 @@
 .c3-tooltip td {
   font-size: x-large;
 }
+
+#exportButton {
+  float: right;
+  position: absolute;
+  right: 10px;
+  z-index: 2;
+}

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
+import { saveSvgAsPng } from 'save-svg-as-png';
 
 @Component({
   selector: 'picsa-chart',
@@ -94,9 +95,18 @@ export class PicsaChartComponent implements OnInit {
       this.chart = this.chart = c3.generate({
         ...this.config,
         bindto: this.container,
-        data: this.config.data ? this.config.data : this.data
+        data: this.config.data ? this.config.data : this.data,
+        oninit: function() {
+          this.svg.attr('id', 'chart_svg');
+        }
       });
     });
+  }
+
+  public generatePng() {
+    console.log('generating png', saveSvgAsPng);
+    const svg = document.getElementById('chart_svg');
+    console.log('svg', svg);
   }
 }
 
