@@ -21,12 +21,10 @@
     ></climate-view-select>
     <!-- charts -->
     <div *ngIf="activeChart && activeStation" style="flex: 1">
-        <climate-chart
-          [chartMeta]="activeChart"
-          [chartData]="activeStation.summaries"
-        ></climate-chart>
-      <climate-line-tool></climate-line-tool>
-      <climate-probability-tool></climate-probability-tool>
+      <climate-chart
+        [chartMeta]="activeChart"
+        [chartData]="activeStation.summaries"
+      ></climate-chart>
     </div>
     <!-- reports -->
     <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">

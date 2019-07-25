@@ -49,21 +49,6 @@ export class ClimateToolService {
     }
   }
 
-  // when site changed load the relevant summaries and push to redux
-  async _siteChanged(station: IStationData) {
-    //
-  }
-
-  // when chart selected create list of chart-specific values from main site
-  // summary data to use when quickly calculating probabilities
-  // _chartChanged(chart: IChartMeta) {
-  //   const selectedAxis = chart.y;
-  //   const yValues = this.activeStation.summaries.map(v => {
-  //     return v[selectedAxis];
-  //   });
-  //   this.yValues = yValues;
-  // }
-
   async loadCSV<T>(filePath: string): Promise<T[]> {
     return new Promise((resolve, reject) => {
       Papa.parse(filePath, {
@@ -80,50 +65,6 @@ export class ClimateToolService {
         }
       });
     });
-  }
-
-  // given a line tool value lookup the existing values and return probability information
-  // based on how many points are above and below the given value
-  // various outputs used to assist rendering graphics (e.g. number arrays and reverse %)
-  calculateProbabilities(value: number): IProbabilities {
-    console.log('calculating provbabilities', value);
-    console.log('yValues', this.yValues);
-    const points = this.yValues;
-    let above = 0,
-      below = 0,
-      ratio = [0, 0];
-    for (const point of points) {
-      if (point != null) {
-        if (point >= value) {
-          above++;
-        } else {
-          below++;
-        }
-      }
-    }
-    const percentage = above / (above + below);
-    const reversePercentage = 1 - percentage;
-    const i = Math.round((below + above) / above);
-    const j = Math.round((below + above) / below);
-    if (above != 0 && above <= below) {
-      ratio = [1, i - 1];
-    }
-    if (below != 0 && below <= above) {
-      ratio = [j - 1, 1];
-    }
-    const tens = {
-      above: Array(Math.round(percentage * 10)).fill(1),
-      below: Array(Math.round(reversePercentage * 10)).fill(-1),
-      value: Math.round(percentage * 10) * 10
-    };
-    return {
-      above: above,
-      below: below,
-      percentage: percentage,
-      reversePercentage: reversePercentage,
-      ratio: ratio,
-      tens: tens
-    };
   }
 
   // used by combined probabilty component (not currently in use)

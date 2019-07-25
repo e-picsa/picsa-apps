@@ -5,7 +5,12 @@ import {
   IChartSummary,
   IChartConfig
 } from '@picsa/models/climate.models';
-
+import { PicsaChartComponent } from '@picsa/features/charts/chart';
+/******************************************************************
+ * Component to display highly customised charts for climate data
+ * Additionally renders line tool alongside (to prevent lots of
+ * data passing up and down)
+ *****************************************************************/
 @Component({
   selector: 'climate-chart',
   templateUrl: 'climate-chart.html',
@@ -14,18 +19,35 @@ import {
 export class ClimateChartComponent implements OnInit {
   @Input() chartMeta: IChartMeta;
   @Input() chartData: IChartSummary[];
-  @ViewChild('chart', { static: true }) chart: any;
+  @ViewChild('picsaChart', { static: true }) picsaChart: PicsaChartComponent;
   chartConfig: IChartConfig;
-  lineToolValue: number;
   firstRenderComplete: boolean;
   ranges: IDataRanges;
-
+  lineToolValue: number;
+  y1Values: number[];
   constructor(private translateService: PicsaTranslateService) {}
 
   ngOnInit() {
     this.ranges = this.calculateDataRanges(this.chartData, this.chartMeta);
-    console.log('ranges', this.ranges);
     this.generateChart(this.chartData, this.chartMeta);
+    // when using line tool and probabilities this is base solely on single y dataset
+    this.y1Values = this.chartData.map(
+      v => v[this.chartMeta.keys[0]] as number
+    );
+  }
+
+  setLineToolValue(value: number) {
+    if (value === 0) {
+      this.lineToolValue = undefined;
+      return this.picsaChart.chart.unload({ ids: ['LineTool'] });
+    }
+    const lineArray = Array(this.chartData.length).fill(value);
+    lineArray.unshift('LineTool');
+    this.picsaChart.chart.load({
+      columns: [lineArray],
+      classes: { LineTool: 'LineTool' }
+    });
+    this.picsaChart.chart.show('LineTool', { withLegend: true });
   }
   // iterate over data and calculate min/max values for xVar and multiple yVars
   calculateDataRanges(data: IChartSummary[], meta: IChartMeta) {
@@ -65,12 +87,12 @@ export class ClimateChartComponent implements OnInit {
     // specify x and y axis ticks
     let xTicks = this._getAxisValues(xMin, xMax, xInterval);
     let yTicks = this._getAxisValues(yMin, yMax, yInterval);
-    // specify main lines to draw on grid (major ticks)
-    const xLines = _getArraySubset(xTicks, 4) as number[];
+    // specify main lines to draw on grid (major ticks, currently only want y)
     const yLines = _getArraySubset(yTicks, 4) as number[];
     this.chartConfig = {
       padding: {
-        right: 10
+        right: 10,
+        left: 35
       },
       data: {
         json: data,
@@ -116,11 +138,6 @@ export class ClimateChartComponent implements OnInit {
       },
       // add custom gridlines to only show on 'major' ticks
       grid: {
-        // x: {
-        //   lines: xLines.map(l => {
-        //     return { value: l, class: 'picsa-gridline', text: '' };
-        //   })
-        // },
         y: {
           lines: yLines.map(l => {
             return { value: l, class: 'picsa-gridline', text: '' };
@@ -145,17 +162,6 @@ export class ClimateChartComponent implements OnInit {
         this.firstRenderComplete = true;
       }
     };
-  }
-
-  setLineToolValue(value: number) {
-    this.lineToolValue = value;
-    const lineArray = Array(this.chartData.length).fill(value);
-    lineArray.unshift('LineTool');
-    this.chart.load({
-      columns: [lineArray],
-      classes: { LineTool: 'LineTool' }
-    });
-    this.chart.show('LineTool', { withLegend: true });
   }
 
   /*****************************************************************************
@@ -230,7 +236,6 @@ export class ClimateChartComponent implements OnInit {
  ****************************************************************************/
 // take an array and return every nth element
 const _getArraySubset = (arr: any[], n: number) => {
-  console.log('getting array subset', arr, n);
   const sub = [];
   for (let i = 0; i < arr.length; i += n) {
     sub.push(arr[i]);

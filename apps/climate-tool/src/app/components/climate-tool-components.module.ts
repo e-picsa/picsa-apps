@@ -8,7 +8,6 @@ import { ViewSelectComponent } from './view-select/view-select';
 import { PicsaTranslateModule } from '@picsa/modules';
 import { ClimateMaterialModule } from '../material.module';
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
-import { LineToolComponent } from './line-tool/line-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
 import { PicsaChartsModule } from '@picsa/features';
 
@@ -18,7 +17,6 @@ import { PicsaChartsModule } from '@picsa/features';
     CombinedProbabilityComponent,
     ViewSelectComponent,
     ProbabilityToolComponent,
-    LineToolComponent,
     CropAnalysisComponent
   ],
   imports: [
@@ -35,7 +33,6 @@ import { PicsaChartsModule } from '@picsa/features';
     CombinedProbabilityComponent,
     ViewSelectComponent,
     ProbabilityToolComponent,
-    LineToolComponent,
     CropAnalysisComponent
   ]
 })
