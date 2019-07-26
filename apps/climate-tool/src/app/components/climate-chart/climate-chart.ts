@@ -89,7 +89,7 @@ export class ClimateChartComponent implements OnInit {
       // TODO - currently highly custom for handling years, may want to generalise
       axis: {
         x: {
-          label: meta.xVar,
+          label: meta.xLabel,
           max: new Date().getFullYear(),
           tick: {
             rotate: 75,
@@ -102,7 +102,7 @@ export class ClimateChartComponent implements OnInit {
           }
         },
         y: {
-          label: { position: 'inner-top', text: this.chartMeta.units },
+          label: { position: 'outer-middle', text: meta.yLabel },
           tick: {
             values: gridMeta.yTicks,
             format: (d: any) =>
@@ -168,9 +168,7 @@ export class ClimateChartComponent implements OnInit {
     this.chartConfig = printConfig;
     //
   }
-  share(){
-    
-  }
+  share() {}
 
   /*****************************************************************************
    *   Styles and Formatting

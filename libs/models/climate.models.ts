@@ -43,7 +43,9 @@ export interface IChartMeta {
   image: string;
   keys: (keyof IChartSummary)[];
   yFormat: 'value' | 'date' | 'date-from-July';
+  yLabel: string;
   xVar: keyof IChartSummary;
+  xLabel: string;
   tools: { line: boolean };
   units: string;
   definition: string;
