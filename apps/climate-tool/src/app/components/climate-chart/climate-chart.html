@@ -1,6 +1,23 @@
-<h3>{{ chartMeta.name }}</h3>
-<button mat-button (click)="export()">Export</button>
+<div style="display:flex;justify-content: space-between">
+  <h3>{{ chartMeta.name }}</h3>
+  <!-- export menu -->
+  <div>
+    <button mat-button [matMenuTriggerFor]="menu" style="margin-right: 10px">
+      Export
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="share()">
+        <mat-icon>share</mat-icon>Share
+      </button>
+      <button mat-menu-item (click)="downloadPrintVersion()">
+        <mat-icon>print</mat-icon>Print Version
+      </button>
+    </mat-menu>
+  </div>
+</div>
+
 <div style="display: flex; margin-bottom: 2em">
+  <!-- line tool -->
   <div class="slider-container">
     <mat-slider
       *ngIf="ranges"
@@ -24,6 +41,7 @@
     </mat-form-field>
   </div>
   <div style="flex:1; width:100%">
+    <!-- chart -->
     <picsa-chart
       #picsaChart
       [config]="chartConfig"
@@ -31,6 +49,7 @@
     ></picsa-chart>
   </div>
 </div>
+<!-- probability tool -->
 <climate-probability-tool
   *ngIf="lineToolValue"
   [x]="lineToolValue"

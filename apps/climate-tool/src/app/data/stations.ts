@@ -1,4 +1,4 @@
-import { IStationData } from '@picsa/models/climate.models';
+import { IStationMeta } from '@picsa/models/climate.models';
 import { DBMeta } from '@picsa/services/core/db/db.utils';
 
 export const DEFINITIONS = {
@@ -9,7 +9,7 @@ export const DEFINITIONS = {
     }
   }
 };
-export const STATIONS: IStationData[] = [
+export const STATIONS: IStationMeta[] = [
   {
     ...DBMeta('chichiri', new Date('2019-07-23')),
     name: 'Chichiri',

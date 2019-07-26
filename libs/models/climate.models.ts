@@ -11,7 +11,7 @@ export interface ICropRequirement {
   waterMax: number;
 }
 
-export interface IStationData extends IDBDoc {
+export interface IStationMeta extends IDBDoc {
   name: string;
   latitude: number;
   longitude: number;

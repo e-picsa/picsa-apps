@@ -3,9 +3,12 @@ import { PicsaTranslateService } from '@picsa/modules/translate';
 import {
   IChartMeta,
   IChartSummary,
-  IChartConfig
+  IChartConfig,
+  IStationMeta
 } from '@picsa/models/climate.models';
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
+import { Subject } from 'rxjs';
+import { take, delay } from 'rxjs/operators';
 /******************************************************************
  * Component to display highly customised charts for climate data
  * Additionally renders line tool alongside (to prevent lots of
@@ -19,9 +22,10 @@ import { PicsaChartComponent } from '@picsa/features/charts/chart';
 export class ClimateChartComponent implements OnInit {
   @Input() chartMeta: IChartMeta;
   @Input() chartData: IChartSummary[];
+  @Input() stationMeta: IStationMeta;
   @ViewChild('picsaChart', { static: true }) picsaChart: PicsaChartComponent;
   chartConfig: IChartConfig;
-  firstRenderComplete: boolean;
+  chartRendered$ = new Subject<void>();
   lineToolValue: number;
   y1Values: number[];
   ranges: IDataRanges;
@@ -69,6 +73,9 @@ export class ClimateChartComponent implements OnInit {
         x: 'Year',
         classes: { LineTool: 'LineTool' },
         color: (_, d) => this._getPointColour(d)
+      },
+      ['title' as any]: {
+        text: `${this.stationMeta.name} | ${this.chartMeta.name}`
       },
       tooltip: {
         grouped: false,
@@ -137,14 +144,32 @@ export class ClimateChartComponent implements OnInit {
         r: d => (d.id === 'LineTool' ? 0 : 8)
       },
       onrendered: () => {
-        this.firstRenderComplete = true;
+        console.log('rendered');
+        this.chartRendered$.next();
       }
     };
   }
 
-  export() {
+  // update styles and when rendered save as png
+  downloadPrintVersion() {
     console.log('exporting');
-    this.picsaChart.generatePng();
+    // call export only after the below rendering changes are implemented
+    this.chartRendered$
+      .pipe(delay(500))
+      .pipe(take(1))
+      .subscribe(() => null, null, () => this.picsaChart.generatePng());
+
+    // update chart view for better printing
+    const viewConfig = this.chartConfig;
+    const printConfig = { ...viewConfig };
+    // printConfig.data.color = () => '#000000';
+    printConfig.point.r = d => (d.id === 'LineTool' ? 0 : 3);
+    printConfig.size = { width: 900, height: 600 };
+    this.chartConfig = printConfig;
+    //
+  }
+  share(){
+    
   }
 
   /*****************************************************************************

@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgModule } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatMenuModule } from '@angular/material/menu';
 
 // NOTE - slide module requires import 'hammerjs' in app.module.ts;
 // also other deps from: https://material.angular.io/guide/getting-started
@@ -17,7 +18,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatCardModule,
     MatSliderModule,
     MatInputModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatMenuModule
   ],
   exports: [
     MatButtonModule,
@@ -25,7 +27,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatCardModule,
     MatSliderModule,
     MatInputModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatMenuModule
   ]
 })
 export class ClimateMaterialModule {}

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IChartMeta, IStationData } from '@picsa/models/climate.models';
+import { IChartMeta, IStationMeta } from '@picsa/models/climate.models';
 import * as DATA from 'src/app/data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { ClimateToolService } from 'src/app/services/climate-tool.service';
 })
 export class ClimateSiteViewPage implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject();
-  activeStation: IStationData;
+  activeStation: IStationMeta;
   activeChart: IChartMeta;
   availableViews = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
   activeView: string;
