@@ -22,13 +22,13 @@ export class ClimateChartComponent implements OnInit {
   @ViewChild('picsaChart', { static: true }) picsaChart: PicsaChartComponent;
   chartConfig: IChartConfig;
   firstRenderComplete: boolean;
-  ranges: IDataRanges;
   lineToolValue: number;
   y1Values: number[];
+  ranges: IDataRanges;
   constructor(private translateService: PicsaTranslateService) {}
 
   ngOnInit() {
-    this.ranges = this.calculateDataRanges(this.chartData, this.chartMeta);
+    this.ranges = this._calculateDataRanges(this.chartData, this.chartMeta);
     this.generateChart(this.chartData, this.chartMeta);
     // when using line tool and probabilities this is base solely on single y dataset
     this.y1Values = this.chartData.map(
@@ -49,50 +49,17 @@ export class ClimateChartComponent implements OnInit {
     });
     this.picsaChart.chart.show('LineTool', { withLegend: true });
   }
-  // iterate over data and calculate min/max values for xVar and multiple yVars
-  calculateDataRanges(data: IChartSummary[], meta: IChartMeta) {
-    let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
-    data.forEach(d => {
-      const xVal = d[meta.xVar] as number;
-      const yVals = meta.keys.map(k => d[k]) as number[];
-      xMax = Math.max(xMax, xVal);
-      xMin = Math.min(xMin, xVal);
-      yMax = Math.max(yMax, ...yVals);
-      yMin = Math.min(yMin, ...yVals);
-    });
-    // NOTE - yAxis hardcoded to 0 start currently for rainfall chart
-    if (meta.yFormat === 'value') {
-      yMin = 0;
-    }
-    // Note - xAxis hardcoded to end at this year for all year charts
-    if (meta.xVar === 'Year') {
-      xMax = new Date().getFullYear();
-    }
-    return {
-      // round y max up to nearest 50 and y min down to nearest 50
-      yMin: Math.floor(yMin / 50) * 50,
-      yMax: Math.ceil(yMax / 50) * 50,
-      xMin,
-      xMax
-    };
-  }
 
   // create chart given columns of data and a particular key to make visible
   generateChart(data: IChartSummary[], meta: IChartMeta) {
-    const { yMin, yMax, xMin, xMax } = this.ranges;
-    // intervals depend on chart type
-    const xInterval = meta.xVar === 'Year' ? 1 : 1;
-    const yInterval =
-      meta.yFormat === 'value' ? 50 : Math.round((yMax - yMin) / 20);
-    // specify x and y axis ticks
-    let xTicks = this._getAxisValues(xMin, xMax, xInterval);
-    let yTicks = this._getAxisValues(yMin, yMax, yInterval);
-    // specify main lines to draw on grid (major ticks, currently only want y)
-    const yLines = _getArraySubset(yTicks, 4) as number[];
+    // configure major and minor ticks, labels and gridlines
+    const gridMeta = this._calculateGridMeta(meta, this.ranges);
+    // configure chart
     this.chartConfig = {
+      // ensure axis labels fit
       padding: {
         right: 10,
-        left: 35
+        left: 40
       },
       data: {
         json: data,
@@ -118,18 +85,26 @@ export class ClimateChartComponent implements OnInit {
           label: meta.xVar,
           max: new Date().getFullYear(),
           tick: {
-            values: xTicks,
-            format: val => this._formatXAxis(val as number, xMax)
+            rotate: 75,
+            multiline: false,
+            values: gridMeta.xTicks,
+            format: d =>
+              gridMeta.xLines.includes(d as any)
+                ? this._formatXAxis(d as any)
+                : ''
           }
         },
         y: {
           label: { position: 'inner-top', text: this.chartMeta.units },
           tick: {
-            values: yTicks,
-            format: (d: any) => this._formatYAxis(d, meta)
+            values: gridMeta.yTicks,
+            format: (d: any) =>
+              gridMeta.yLines.includes(d as any)
+                ? this._formatYAxis(d as any, meta)
+                : ''
           },
-          min: yMin,
-          max: yMax,
+          min: this.ranges.yMin,
+          max: this.ranges.yMax,
           padding: {
             bottom: 0,
             top: 10
@@ -139,7 +114,12 @@ export class ClimateChartComponent implements OnInit {
       // add custom gridlines to only show on 'major' ticks
       grid: {
         y: {
-          lines: yLines.map(l => {
+          lines: gridMeta.yLines.map(l => {
+            return { value: l, class: 'picsa-gridline', text: '' };
+          })
+        },
+        x: {
+          lines: gridMeta.xLines.map(l => {
             return { value: l, class: 'picsa-gridline', text: '' };
           })
         },
@@ -154,9 +134,7 @@ export class ClimateChartComponent implements OnInit {
         hide: true
       },
       point: {
-        r: d => {
-          return 8;
-        }
+        r: d => (d.id === 'LineTool' ? 0 : 8)
       },
       onrendered: () => {
         this.firstRenderComplete = true;
@@ -184,6 +162,52 @@ export class ClimateChartComponent implements OnInit {
     return seriesColors[d.id];
   }
 
+  // iterate over data and calculate min/max values for xVar and multiple yVars
+  private _calculateDataRanges(data: IChartSummary[], meta: IChartMeta) {
+    let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
+    data.forEach(d => {
+      const xVal = d[meta.xVar] as number;
+      const yVals = meta.keys.map(k => d[k]) as number[];
+      xMax = Math.max(xMax, xVal);
+      xMin = Math.min(xMin, xVal);
+      yMax = Math.max(yMax, ...yVals);
+      yMin = Math.min(yMin, ...yVals);
+    });
+    // NOTE - yAxis hardcoded to 0 start currently for rainfall chart
+    if (meta.yFormat === 'value') {
+      yMin = 0;
+    }
+    // Note - xAxis hardcoded to end at this year for all year charts
+    if (meta.xVar === 'Year') {
+      xMax = new Date().getFullYear();
+    }
+    return {
+      // round y max up to nearest 50 and y min down to nearest 50
+      yMin: Math.floor(yMin / 50) * 50,
+      yMax: Math.ceil(yMax / 50) * 50,
+      xMin,
+      xMax
+    };
+  }
+
+  // calculate grid ticks, lines and label meta data
+  private _calculateGridMeta(meta: IChartMeta, ranges: IDataRanges): IGridMeta {
+    const { xMin, xMax, yMin, yMax } = ranges;
+    const xMinorInterval = meta.xVar === 'Year' ? 1 : 1;
+    const yMinorInterval =
+      meta.yFormat === 'value' ? 50 : Math.round((yMax - yMin) / 20);
+    const xMajorInterval =
+      meta.xVar === 'Year' ? 2 * xMinorInterval : xMinorInterval;
+    const yMajorInterval =
+      meta.yFormat === 'value' ? 4 * yMinorInterval : yMinorInterval;
+    return {
+      xTicks: this._getAxisValues(xMin, xMax, xMinorInterval) as number[],
+      xLines: this._getAxisValues(xMin, xMax, xMajorInterval) as number[],
+      yTicks: this._getAxisValues(yMin, yMax, yMinorInterval) as number[],
+      yLines: this._getAxisValues(yMin, yMax, yMajorInterval) as number[]
+    };
+  }
+
   // sometimes want to manually specify axis values so that y-axis can start at 0,
   // or so x-axis can extend beyond range of dates to current year
   private _getAxisValues(min: number, max: number, interval: number) {
@@ -195,16 +219,11 @@ export class ClimateChartComponent implements OnInit {
   }
 
   // now all ticks are displayed we only want values for every 5
-  private _formatXAxis(value: number, thisYear: number) {
-    return (thisYear - value) % 5 === 0 ? value : '';
+  private _formatXAxis(value: number) {
+    return value;
   }
 
   private _formatYAxis(value: number, meta: IChartMeta) {
-    // Only show 1/4 of the ticks
-    // TODO - link better to interval or other configurable options
-    if (value % 200 !== 0) {
-      return '';
-    }
     switch (meta.yFormat) {
       case 'date-from-July':
         //181 based on local met +182 and -1 for index starting at 0
@@ -237,18 +256,6 @@ export class ClimateChartComponent implements OnInit {
 }
 
 /*****************************************************************************
- *   helpers
- ****************************************************************************/
-// take an array and return every nth element
-const _getArraySubset = (arr: any[], n: number) => {
-  const sub = [];
-  for (let i = 0; i < arr.length; i += n) {
-    sub.push(arr[i]);
-  }
-  return sub;
-};
-
-/*****************************************************************************
  *   Defaults and Interfaces
  ****************************************************************************/
 const seriesColors = {
@@ -263,6 +270,12 @@ interface IDataRanges {
   yMax: number;
   xMin: number;
   xMax: number;
+}
+interface IGridMeta {
+  xTicks: number[];
+  yTicks: number[];
+  xLines: number[];
+  yLines: number[];
 }
 const DATA_RANGES_DEFAULT: IDataRanges = {
   yMin: Infinity,

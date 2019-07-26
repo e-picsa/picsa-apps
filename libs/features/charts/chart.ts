@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
-import { saveSvgAsPng } from 'save-svg-as-png';
+import { saveSvgAsPng, svgAsDataUri } from 'save-svg-as-png';
+import * as canvg from 'canvg';
 
 @Component({
   selector: 'picsa-chart',
@@ -25,7 +26,6 @@ import { saveSvgAsPng } from 'save-svg-as-png';
 export class PicsaChartComponent implements OnInit {
   public chart: c3.ChartAPI;
   private container: HTMLDivElement;
-
   constructor(private elementRef: ElementRef, private ngZone: NgZone) {}
 
   @Input() data: c3.Data = {
@@ -103,10 +103,34 @@ export class PicsaChartComponent implements OnInit {
     });
   }
 
+  // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
+  // https://github.com/exupero/saveSvgAsPng
+  // https://github.com/exupero/saveSvgAsPng/issues/186
   public generatePng() {
-    console.log('generating png', saveSvgAsPng);
+    console.log('generating png', canvg);
     const svg = document.getElementById('chart_svg');
-    console.log('svg', svg);
+    const options = {
+      // requires canvg imported
+      canvg: canvg,
+      scale: 2,
+
+      selectorRemap: s => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
+      // modify selector-properties
+      modifyCss: (s: string, p: string) => {
+        // modifyCss is used to take stylesheet classes that apply to svgElements and make inline
+        // use remap so that .c3-axis-y-label text detects the 'text' svg element
+        // NOTE - some properties don't work quite right (override other defaults)
+        const overrides = ['.c3 svg', '.c3-grid text'];
+        if (overrides.includes(s)) {
+          return;
+        }
+        console.log(s, ':', p);
+        s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
+
+        return s + '{' + p + '}';
+      }
+    };
+    saveSvgAsPng(svg, 'diagram.png', options);
   }
 }
 

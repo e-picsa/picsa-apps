@@ -12,12 +12,7 @@
   stroke-width: 3px !important;
   stroke: black !important;
 }
-.c3-circles-LineTool {
-  display: none;
-}
-.c3 text {
-  font-size: larger;
-}
+
 /*expanded circle fill, outline (stroke) and outline width*/
 .c3-circle._expanded_ {
   /*fill: rgb(90, 50, 50)!important;*/
@@ -25,10 +20,10 @@
   stroke-width: 2;
 }
 .c3-tooltip th {
-  font-size: x-large;
+  font-size: 16px;
 }
 .c3-tooltip td {
-  font-size: x-large;
+  font-size: 16px;
 }
 
 #exportButton {
@@ -36,4 +31,18 @@
   position: absolute;
   right: 10px;
   z-index: 2;
+}
+
+/****************************************************************************
+  SVG Selectors
+  Any changes should be prefixed by c3- so that they can be remapped correctly
+****************************************************************************/
+// need to explicitly define here so they correclty override svg selectors
+// when converting to png (replaces class with inline style)
+.c3-axis-y-label text,
+.c3-axis text,
+.c3-axis-x-label text {
+  font-size: 12px;
+  font-family: lato;
+  color: black;
 }
