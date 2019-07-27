@@ -106,11 +106,10 @@ export class PicsaChartComponent implements OnInit {
   // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
   // https://github.com/exupero/saveSvgAsPng
   // https://github.com/exupero/saveSvgAsPng/issues/186
-  public generatePng() {
+  public async generatePng(title: string = 'chart') {
     console.log('generating png', canvg);
     const svg = document.getElementById('chart_svg');
     const options = {
-      // requires canvg imported
       canvg: canvg,
       scale: 2,
 
@@ -124,13 +123,12 @@ export class PicsaChartComponent implements OnInit {
         if (overrides.includes(s)) {
           return;
         }
-        console.log(s, ':', p);
         s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
 
         return s + '{' + p + '}';
       }
     };
-    saveSvgAsPng(svg, 'diagram.png', options);
+    await saveSvgAsPng(svg, title, options);
   }
 }
 

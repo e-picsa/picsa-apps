@@ -9,7 +9,7 @@ import { PicsaTranslateModule } from '@picsa/modules';
 import { ClimateMaterialModule } from '../material.module';
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
-import { PicsaChartsModule } from '@picsa/features';
+import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/features';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,8 @@ import { PicsaChartsModule } from '@picsa/features';
     ReactiveFormsModule,
     PicsaTranslateModule,
     ClimateMaterialModule,
-    PicsaChartsModule
+    PicsaChartsModule,
+    PicsaDialogsModule
   ],
   exports: [
     ClimateChartComponent,

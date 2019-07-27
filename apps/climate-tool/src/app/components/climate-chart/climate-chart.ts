@@ -7,8 +7,10 @@ import {
   IStationMeta
 } from '@picsa/models/climate.models';
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
+import { PicsaDialogLoading } from '@picsa/features/dialogs/dialogs';
 import { Subject } from 'rxjs';
 import { take, delay } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 /******************************************************************
  * Component to display highly customised charts for climate data
  * Additionally renders line tool alongside (to prevent lots of
@@ -29,7 +31,10 @@ export class ClimateChartComponent implements OnInit {
   lineToolValue: number;
   y1Values: number[];
   ranges: IDataRanges;
-  constructor(private translateService: PicsaTranslateService) {}
+  constructor(
+    private translateService: PicsaTranslateService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.ranges = this._calculateDataRanges(this.chartData, this.chartMeta);
@@ -63,7 +68,7 @@ export class ClimateChartComponent implements OnInit {
       // ensure axis labels fit
       padding: {
         right: 10,
-        left: 40
+        left: 60
       },
       data: {
         json: data,
@@ -86,11 +91,10 @@ export class ClimateChartComponent implements OnInit {
           title: (x, i?) => data[i as number][meta.xVar] as any
         }
       },
-      // TODO - currently highly custom for handling years, may want to generalise
       axis: {
         x: {
           label: meta.xLabel,
-          max: new Date().getFullYear(),
+          max: this.ranges.xMax,
           tick: {
             rotate: 75,
             multiline: false,
@@ -150,14 +154,21 @@ export class ClimateChartComponent implements OnInit {
     };
   }
 
+  /*****************************************************************************
+   *   Download and Share
+   ****************************************************************************/
   // update styles and when rendered save as png
   downloadPrintVersion() {
     console.log('exporting');
+    this._showLoader();
+    const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${
+      this.translateService.language
+    }`;
     // call export only after the below rendering changes are implemented
     this.chartRendered$
       .pipe(delay(500))
       .pipe(take(1))
-      .subscribe(() => null, null, () => this.picsaChart.generatePng());
+      .subscribe(() => null, null, () => this.picsaChart.generatePng(title));
 
     // update chart view for better printing
     const viewConfig = this.chartConfig;
@@ -168,7 +179,16 @@ export class ClimateChartComponent implements OnInit {
     this.chartConfig = printConfig;
     //
   }
-  share() {}
+  // TODO - refactor for sharing
+  _showLoader() {
+    const dialogRef = this.dialog.open(PicsaDialogLoading, {
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
 
   /*****************************************************************************
    *   Styles and Formatting

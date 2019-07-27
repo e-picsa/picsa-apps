@@ -8,6 +8,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "nx lint && ng lint",
+    "deploy:climate": "firebase deploy --only hosting:climate-tool",
     "e2e": "ng e2e",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",

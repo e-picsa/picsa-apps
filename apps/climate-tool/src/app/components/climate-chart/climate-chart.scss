@@ -14,3 +14,8 @@
   height: 100%;
   padding: 0;
 }
+#exportButton {
+  position: absolute;
+  right: 20px;
+  z-index: 2;
+}

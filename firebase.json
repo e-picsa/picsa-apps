@@ -9,6 +9,16 @@
           "destination": "/index.html"
         }
       ]
+    },
+    {
+      "target": "climate-tool",
+      "public": "dist/apps/climate-tool",
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }

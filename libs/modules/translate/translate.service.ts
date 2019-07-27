@@ -1,13 +1,14 @@
 import { OnDestroy, Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { LoadingOptions, ToastOptions } from '@ionic/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import * as translations from './translations';
 
 @Injectable()
 export class PicsaTranslateService implements OnDestroy {
   loader: HTMLIonLoadingElement;
   monthNames: string[] = MONTHS;
+  public language: string;
   constructor(
     public toastCtrl: ToastController,
     public translate: TranslateService,
@@ -17,16 +18,18 @@ export class PicsaTranslateService implements OnDestroy {
     this.init();
   }
   // subscrib to language changes and retranslate static translations
-  init() {
+  init(defaultLang = 'en') {
     // add translations
     // TODO - pass config param from module to customise what is loaded
     this.translate.setTranslation('en', translations.en);
     this.translate.setTranslation('ny', translations.ny);
     this.translate.setTranslation('sw', translations.sw);
     // add subscribers
-    this.translate.onLangChange.subscribe(lang => {
+    this.translate.onLangChange.subscribe((l: LangChangeEvent) => {
+      this.language = l.lang;
       this.prepareStaticTranslations();
     });
+    this.translate.use(defaultLang);
   }
   ngOnDestroy() {
     this.translate.onLangChange.unsubscribe();
