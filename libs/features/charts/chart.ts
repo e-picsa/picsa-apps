@@ -40,12 +40,14 @@ export class PicsaChartComponent implements OnInit {
    **********************************************************************************/
 
   ngOnInit() {
-    //  create chart on init, even if no data present so empty chart can be seen
-    this.create();
+    // create chart on init, even if no data present so empty chart can be seen
+    // NOTE - removed as causes duplicate creation
+    // this.create();
   }
   // note, only detects object change, not content (so array push ignored)
   // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
   ngOnChanges(changes: SimpleChanges) {
+    console.log('changes', changes);
     if (this.chart) {
       if (changes['config']) {
         // handle core changes which require chart rebuild
@@ -65,25 +67,9 @@ export class PicsaChartComponent implements OnInit {
     }
   }
 
-  // method to extract the ids from data supplied to the chart
-  // note - not currently used as even when one can identify which ids have
-  // been added/removed we don't know whether existing id has changed data
-  private _getDataIDs(data: c3.Data): string[] {
-    if (data.columns) {
-      return data.columns.map(c => c[0] as string);
-    }
-    if (data.rows) {
-      return data.rows[0] as string[];
-    }
-    if (data.json) {
-      return Object.keys(data.json[0]);
-    }
-    return [];
-  }
-
   // use create method to populate div which will also be available before viewInit
   private create() {
-    console.log('create chart', this.config, this.data);
+    console.log('creating chart');
     // run outside of angular change detection
     this.ngZone.runOutsideAngular(() => {
       if (this.container) {
@@ -134,3 +120,23 @@ export class PicsaChartComponent implements OnInit {
 
 export interface c3ChartAPI extends c3.ChartAPI {}
 export interface c3ChartConfiguration extends c3.ChartConfiguration {}
+
+/****************************************************************************
+ *  Deprecated / Unused
+ **************************************************************************/
+
+// method to extract the ids from data supplied to the chart
+// note - not currently used as even when one can identify which ids have
+// been added/removed we don't know whether existing id has changed data
+// private _getDataIDs(data: c3.Data): string[] {
+//   if (data.columns) {
+//     return data.columns.map(c => c[0] as string);
+//   }
+//   if (data.rows) {
+//     return data.rows[0] as string[];
+//   }
+//   if (data.json) {
+//     return Object.keys(data.json[0]);
+//   }
+//   return [];
+// }

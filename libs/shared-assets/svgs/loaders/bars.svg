@@ -1,0 +1,15 @@
+<svg width="200px" height="200px" 
+  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-bars" style="background: none;">
+  <rect ng-attr-x="{{config.x1}}" y="30" ng-attr-width="{{config.width}}" height="40" fill="#d2d2cb" x="15" width="10">
+    <animate attributeName="opacity" calcMode="spline" values="1;0.2;1" keyTimes="0;0.5;1" dur="1.6" keySplines="0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.96s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect ng-attr-x="{{config.x2}}" y="30" ng-attr-width="{{config.width}}" height="40" fill="#4d695d" x="35" width="10">
+    <animate attributeName="opacity" calcMode="spline" values="1;0.2;1" keyTimes="0;0.5;1" dur="1.6" keySplines="0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.6400000000000001s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect ng-attr-x="{{config.x3}}" y="30" ng-attr-width="{{config.width}}" height="40" fill="#83a79d" x="55" width="10">
+    <animate attributeName="opacity" calcMode="spline" values="1;0.2;1" keyTimes="0;0.5;1" dur="1.6" keySplines="0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.32000000000000006s" repeatCount="indefinite"></animate>
+  </rect>
+  <rect ng-attr-x="{{config.x4}}" y="30" ng-attr-width="{{config.width}}" height="40" fill="#dae8e5" x="75" width="10">
+    <animate attributeName="opacity" calcMode="spline" values="1;0.2;1" keyTimes="0;0.5;1" dur="1.6" keySplines="0.5 0 0.5 1;0.5 0 0.5 1" begin="0s" repeatCount="indefinite"></animate>
+  </rect>
+</svg>

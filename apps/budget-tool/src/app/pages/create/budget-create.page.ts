@@ -7,7 +7,7 @@ import {
   IEnterpriseScale,
   IBudget
 } from '../../models/budget-tool.models';
-import { MatHorizontalStepper } from '@angular/material';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 import { FadeInOut } from '../../animations/animations';
 import { MONTHS } from '../../store/templates';
 import { Router } from '@angular/router';

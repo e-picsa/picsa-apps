@@ -1,4 +1,5 @@
 import { Component, Input, ViewChild, OnInit } from '@angular/core';
+import { PicsaDialogService } from '@picsa/features/dialog';
 import { PicsaTranslateService } from '@picsa/modules/translate';
 import {
   IChartMeta,
@@ -7,10 +8,7 @@ import {
   IStationMeta
 } from '@picsa/models/climate.models';
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
-import { PicsaDialogLoading } from '@picsa/features/dialogs/dialogs';
 import { Subject } from 'rxjs';
-import { take, delay } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
 /******************************************************************
  * Component to display highly customised charts for climate data
  * Additionally renders line tool alongside (to prevent lots of
@@ -33,12 +31,12 @@ export class ClimateChartComponent implements OnInit {
   ranges: IDataRanges;
   constructor(
     private translateService: PicsaTranslateService,
-    private dialog: MatDialog
+    private dialog: PicsaDialogService
   ) {}
 
   ngOnInit() {
     this.ranges = this._calculateDataRanges(this.chartData, this.chartMeta);
-    this.generateChart(this.chartData, this.chartMeta);
+    this.chartConfig = this._getChartConfig(this.chartData, this.chartMeta);
     // when using line tool and probabilities this is base solely on single y dataset
     this.y1Values = this.chartData.map(
       v => v[this.chartMeta.keys[0]] as number
@@ -59,12 +57,16 @@ export class ClimateChartComponent implements OnInit {
     this.picsaChart.chart.show('LineTool', { withLegend: true });
   }
 
+  /*****************************************************************************
+   *   Chart Config
+   ****************************************************************************/
+
   // create chart given columns of data and a particular key to make visible
-  generateChart(data: IChartSummary[], meta: IChartMeta) {
+  private _getChartConfig(data: IChartSummary[], meta: IChartMeta) {
     // configure major and minor ticks, labels and gridlines
     const gridMeta = this._calculateGridMeta(meta, this.ranges);
     // configure chart
-    this.chartConfig = {
+    const config = {
       // ensure axis labels fit
       padding: {
         right: 10,
@@ -152,6 +154,7 @@ export class ClimateChartComponent implements OnInit {
         this.chartRendered$.next();
       }
     };
+    return config;
   }
 
   /*****************************************************************************
@@ -159,35 +162,33 @@ export class ClimateChartComponent implements OnInit {
    ****************************************************************************/
   // update styles and when rendered save as png
   downloadPrintVersion() {
-    console.log('exporting');
     this._showLoader();
-    const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${
-      this.translateService.language
-    }`;
-    // call export only after the below rendering changes are implemented
-    this.chartRendered$
-      .pipe(delay(500))
-      .pipe(take(1))
-      .subscribe(() => null, null, () => this.picsaChart.generatePng(title));
+    // const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${
+    //   this.translateService.language
+    // }`;
+    // // call export only after the below rendering changes are implemented
+    // this.chartRendered$
+    //   .pipe(delay(500))
+    //   .pipe(take(1))
+    //   .subscribe(() => null, null, () => this.picsaChart.generatePng(title));
 
-    // update chart view for better printing
-    const viewConfig = this.chartConfig;
-    const printConfig = { ...viewConfig };
-    // printConfig.data.color = () => '#000000';
-    printConfig.point.r = d => (d.id === 'LineTool' ? 0 : 3);
-    printConfig.size = { width: 900, height: 600 };
-    this.chartConfig = printConfig;
-    //
+    // // update chart view for better printing
+    // const viewConfig = this.chartConfig;
+    // const printConfig = { ...viewConfig };
+    // // printConfig.data.color = () => '#000000';
+    // printConfig.point.r = d => (d.id === 'LineTool' ? 0 : 3);
+    // printConfig.size = { width: 900, height: 600 };
+    // this.chartConfig = printConfig;
   }
   // TODO - refactor for sharing
   _showLoader() {
-    const dialogRef = this.dialog.open(PicsaDialogLoading, {
-      width: '250px'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+    this.dialog.open('loading');
+    // const dialogRef = this.dialog.open(PicsaDialogLoading, {
+    //   width: '250px'
+    // });
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    // });
   }
 
   /*****************************************************************************

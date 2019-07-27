@@ -1,3 +1,3 @@
 export * from './map';
 export * from './charts';
-export * from './dialogs';
+export * from './dialog';
