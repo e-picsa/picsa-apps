@@ -71,29 +71,28 @@ export class PicsaChartComponent implements OnInit {
   private create() {
     console.log('creating chart');
     // run outside of angular change detection
-    this.ngZone.runOutsideAngular(() => {
-      if (this.container) {
-        this.elementRef.nativeElement.removeChild(this.container);
+    // this.ngZone.runOutsideAngular(() => {
+    if (this.container) {
+      this.elementRef.nativeElement.removeChild(this.container);
+    }
+    this.container = document.createElement('div');
+    this.container.setAttribute('id', 'chart');
+    this.elementRef.nativeElement.appendChild(this.container);
+    this.chart = this.chart = c3.generate({
+      ...this.config,
+      bindto: this.container,
+      data: this.config.data ? this.config.data : this.data,
+      oninit: function() {
+        this.svg.attr('id', 'chart_svg');
       }
-      this.container = document.createElement('div');
-      this.container.setAttribute('id', 'chart');
-      this.elementRef.nativeElement.appendChild(this.container);
-      this.chart = this.chart = c3.generate({
-        ...this.config,
-        bindto: this.container,
-        data: this.config.data ? this.config.data : this.data,
-        oninit: function() {
-          this.svg.attr('id', 'chart_svg');
-        }
-      });
     });
+    // });
   }
 
   // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
   // https://github.com/exupero/saveSvgAsPng
   // https://github.com/exupero/saveSvgAsPng/issues/186
   public async generatePng(title: string = 'chart') {
-    console.log('generating png', canvg);
     const svg = document.getElementById('chart_svg');
     const options = {
       canvg: canvg,

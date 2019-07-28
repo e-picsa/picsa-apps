@@ -57,21 +57,4 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
           view && view._viewType === 'chart' ? (view as IChartMeta) : undefined;
       });
   }
-
-  // toggleFullScreen() {
-  //   this.fullScreenView = !this.fullScreenView;
-  //   console.log("resize?");
-  //   console.log("screen", window.screen);
-  //   if (!this.fullScreenView) {
-  //     this.climatePrvdr.resize({
-  //       height: window.screen.height - 80,
-  //       width: window.screen.width - 20
-  //     });
-  //   } else {
-  //     this.climatePrvdr.resize({
-  //       height: 320,
-  //       width: window.screen.width - 20
-  //     });
-  //   }
-  // }
 }

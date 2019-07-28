@@ -39,4 +39,4 @@ export class PicsaLoadingComponent implements OnInit {
   }
 }
 
-type IPicsaLoaders = 'bars';
+export type IPicsaLoaders = 'bars';

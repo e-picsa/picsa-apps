@@ -2,9 +2,14 @@
   <h3>{{ chartMeta.name }}</h3>
   <!-- export menu -->
   <div>
-    <button id="exportButton" mat-button [matMenuTriggerFor]="menu">
+    <button
+      id="exportButton"
+      mat-button
+      [matMenuTriggerFor]="menu"
+      [disabled]="isExporting"
+    >
       <mat-icon svgIcon="picsa_download"></mat-icon>
-      Export
+      {{ isExporting ? 'Exporting...' : 'Export' }}
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="downloadPrintVersion()">

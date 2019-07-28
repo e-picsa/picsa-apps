@@ -9,6 +9,7 @@ import {
 } from '@picsa/models/climate.models';
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
 import { Subject } from 'rxjs';
+import { delay, take, count } from 'rxjs/operators';
 /******************************************************************
  * Component to display highly customised charts for climate data
  * Additionally renders line tool alongside (to prevent lots of
@@ -29,6 +30,7 @@ export class ClimateChartComponent implements OnInit {
   lineToolValue: number;
   y1Values: number[];
   ranges: IDataRanges;
+  isExporting: boolean;
   constructor(
     private translateService: PicsaTranslateService,
     private dialog: PicsaDialogService
@@ -161,34 +163,46 @@ export class ClimateChartComponent implements OnInit {
    *   Download and Share
    ****************************************************************************/
   // update styles and when rendered save as png
-  downloadPrintVersion() {
-    this._showLoader();
-    // const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${
-    //   this.translateService.language
-    // }`;
-    // // call export only after the below rendering changes are implemented
-    // this.chartRendered$
-    //   .pipe(delay(500))
-    //   .pipe(take(1))
-    //   .subscribe(() => null, null, () => this.picsaChart.generatePng(title));
-
-    // // update chart view for better printing
-    // const viewConfig = this.chartConfig;
-    // const printConfig = { ...viewConfig };
-    // // printConfig.data.color = () => '#000000';
-    // printConfig.point.r = d => (d.id === 'LineTool' ? 0 : 3);
-    // printConfig.size = { width: 900, height: 600 };
-    // this.chartConfig = printConfig;
+  async downloadPrintVersion() {
+    this.isExporting = true;
+    const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${
+      this.translateService.language
+    }`;
+    // update chart view for better printing
+    const viewConfig = { ...this.chartConfig };
+    // slightly messy - want to update chart config for print format, and wait until render
+    // complete before downloading and reverting back
+    this.chartRendered$
+      .pipe(delay(500))
+      .pipe(take(1))
+      .subscribe(
+        async () => {
+          await this.picsaChart.generatePng(title);
+          this.isExporting = false;
+          this.chartConfig = { ...viewConfig };
+        },
+        err => {
+          throw err;
+        }
+      );
+    const printConfig = { ...this.chartConfig };
+    printConfig.point.r = d => (d.id === 'LineTool' ? 0 : 3);
+    printConfig.size = { width: 900, height: 600 };
+    this.chartConfig = printConfig;
   }
-  // TODO - refactor for sharing
-  _showLoader() {
-    this.dialog.open('loading');
-    // const dialogRef = this.dialog.open(PicsaDialogLoading, {
-    //   width: '250px'
-    // });
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('The dialog was closed');
-    // });
+  // NOTE - below code not working correctly, can't get loader to close
+  // assume issue with ngzone
+  private async showLoader() {
+    const dialogRef = await this.dialog.open({
+      title: 'Generating Chart Image',
+      loader: 'bars'
+    });
+    return dialogRef;
+  }
+  private async closeLoader() {
+    setTimeout(() => {
+      this.dialog.closeAll();
+    }, 500);
   }
 
   /*****************************************************************************
