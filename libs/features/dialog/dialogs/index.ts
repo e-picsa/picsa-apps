@@ -5,19 +5,19 @@ import { IPicsaDialogData } from '../dialog.models';
 // Dialog base
 @Component({
   selector: 'picsa-dialog',
-  template: ''
+  template: '',
+  styleUrls: ['./dialogs.scss']
 })
 export class PicsaDialog {
-  loaders: any;
   constructor(@Inject(MAT_DIALOG_DATA) public data: IPicsaDialogData) {
     console.log('loading dialog', data);
-    this.loaders = data.loaders;
   }
 }
 
 // Individual dialogs - need to be included in dialog.module.ts entry components
 @Component({
   selector: 'picsa-dialog-loading',
-  templateUrl: './loading.html'
+  templateUrl: './loading.html',
+  styleUrls: ['./dialogs.scss']
 })
 export class PicsaDialogLoading extends PicsaDialog {}

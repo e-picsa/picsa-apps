@@ -6,6 +6,7 @@ import {
   MatDialogModule
 } from '@angular/material/dialog';
 import { PicsaDialogService } from './dialog.service';
+import { PicsaLoadingModule } from '../loading';
 
 const PICSA_DIALOG_DEFAULTS: MatDialogConfig = {
   backdropClass: 'picsa-dialog-backdrop',
@@ -19,7 +20,7 @@ const PICSA_DIALOG_DEFAULTS: MatDialogConfig = {
   entryComponents: [PicsaDialog, PicsaDialogLoading],
   declarations: [PicsaDialog, PicsaDialogLoading],
   exports: [PicsaDialogLoading],
-  imports: [MatDialogModule],
+  imports: [MatDialogModule, PicsaLoadingModule],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: PICSA_DIALOG_DEFAULTS },
     PicsaDialogService
