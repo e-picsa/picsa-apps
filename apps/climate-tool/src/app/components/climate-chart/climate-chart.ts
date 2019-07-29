@@ -56,7 +56,7 @@ export class ClimateChartComponent implements OnInit {
       columns: [lineArray],
       classes: { LineTool: 'LineTool' }
     });
-    this.picsaChart.chart.show('LineTool', { withLegend: true });
+    this.picsaChart.chart.show('LineTool', { withLegend: false });
   }
   // TODO - can't display dates nice on tooltip so just return empty string
   formatLineToolValue = (v: number) => {
@@ -116,7 +116,8 @@ export class ClimateChartComponent implements OnInit {
               gridMeta.xLines.includes(d as any)
                 ? this._formatXAxis(d as any, this.stationMeta)
                 : ''
-          }
+          },
+          height: 40
         },
         y: {
           label: { position: 'outer-middle', text: meta.yLabel },
