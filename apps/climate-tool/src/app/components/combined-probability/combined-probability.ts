@@ -39,8 +39,8 @@ export class CombinedProbabilityComponent {
       [{ key: 'Start', value: this.dayValue, operator: '<=' }]
     );
     this.calculateCropProbabilities();
-    console.log('start probability', this.startProbability);
-    console.log('day value', this.dayValue);
+    // console.log('start probability', this.startProbability);
+    // console.log('day value', this.dayValue);
   }
   calculateCropProbabilities() {
     for (const crop of this.crops) {
@@ -69,6 +69,5 @@ export class CombinedProbabilityComponent {
         ]
       );
     }
-    console.log('this.crops', this.crops);
   }
 }

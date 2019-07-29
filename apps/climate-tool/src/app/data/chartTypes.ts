@@ -72,8 +72,8 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     xVar: 'Year',
     xMinor: 1,
     xMajor: 5,
-    yMinor: 100,
-    yMajor: 200,
+    yMinor: 10,
+    yMajor: 50,
     tools: { line: true },
     units: 'days',
     definition:

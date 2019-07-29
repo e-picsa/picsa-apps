@@ -26,9 +26,10 @@
       *ngIf="ranges"
       [min]="ranges.yMin"
       [max]="ranges.yMax"
-      step="50"
+      [step]="chartMeta.yMinor"
       vertical
       thumbLabel
+      [displayWith]="formatLineToolValue"
       id="lineToolSlider"
       [(ngModel)]="lineToolValue"
       (ngModelChange)="setLineToolValue($event)"

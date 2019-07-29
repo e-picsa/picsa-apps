@@ -38,7 +38,6 @@ export class ClimateChartComponent implements OnInit {
 
   ngOnInit() {
     this.ranges = this._calculateDataRanges(this.chartData, this.chartMeta);
-    console.log('ranges', this.ranges);
     this.chartConfig = this._getChartConfig(this.chartData, this.chartMeta);
     // when using line tool and probabilities this is base solely on single y dataset
     this.y1Values = this.chartData.map(
@@ -47,7 +46,7 @@ export class ClimateChartComponent implements OnInit {
   }
 
   setLineToolValue(value: number) {
-    if (value === 0) {
+    if (value === this.ranges.yMin) {
       this.lineToolValue = undefined;
       return this.picsaChart.chart.unload({ ids: ['LineTool'] });
     }
@@ -59,6 +58,10 @@ export class ClimateChartComponent implements OnInit {
     });
     this.picsaChart.chart.show('LineTool', { withLegend: true });
   }
+  // TODO - can't display dates nice on tooltip so just return empty string
+  formatLineToolValue = (v: number) => {
+    return this.chartMeta.yFormat === 'value' ? v : '';
+  };
 
   /*****************************************************************************
    *   Chart Config
@@ -69,7 +72,7 @@ export class ClimateChartComponent implements OnInit {
     // configure major and minor ticks, labels and gridlines
     const gridMeta = this._calculateGridMeta(meta, this.ranges);
     // configure chart
-    const config = {
+    const config: IChartConfig = {
       // ensure axis labels fit
       padding: {
         right: 10,
@@ -93,7 +96,11 @@ export class ClimateChartComponent implements OnInit {
           value: value => this._getTooltipFormat(value, meta),
           // HACK - reformat missing  titles (lost when passing "" values back from axis)
           // i marked ? as incorrect typings
-          title: (x, i?) => data[i as number][meta.xVar] as any
+          title: (x, i?) =>
+            this._formatXAxis(
+              data[i as number][meta.xVar] as any,
+              this.stationMeta
+            )
         }
       },
       axis: {
@@ -107,7 +114,7 @@ export class ClimateChartComponent implements OnInit {
             values: gridMeta.xTicks,
             format: d =>
               gridMeta.xLines.includes(d as any)
-                ? this._formatXAxis(d as any)
+                ? this._formatXAxis(d as any, this.stationMeta)
                 : ''
           }
         },
@@ -275,8 +282,11 @@ export class ClimateChartComponent implements OnInit {
   }
 
   // now all ticks are displayed we only want values for every 5
-  private _formatXAxis(value: number) {
-    return value;
+  private _formatXAxis(value: number, stationMeta: IStationMeta): string {
+    if (stationMeta.country === 'Malawi') {
+      return `${value} - ${(value + 1).toString().substring(2, 4)}`;
+    }
+    return `${value}`;
   }
 
   private _formatYAxis(value: number, meta: IChartMeta, isAxisLabel?: boolean) {

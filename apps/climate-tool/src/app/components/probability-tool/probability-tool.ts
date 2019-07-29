@@ -13,7 +13,6 @@ export class ProbabilityToolComponent {
   @Input() set x(x: number) {
     if (x && this.values) {
       this.probabilities = this.calculateProbabilities(x);
-      console.log('probabilities', this.probabilities);
     }
   }
   @Input() chartName: string;
