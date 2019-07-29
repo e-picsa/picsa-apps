@@ -1,0 +1,40 @@
+<h2>{{ 'Select a chart' | translate }}</h2>
+<div style="display: flex; flex-wrap: wrap">
+  <mat-card
+    *ngFor="let chart of availableCharts"
+    class="mat-elevation-z8 chart-card"
+    (click)="setView(chart._viewID)"
+  >
+    <mat-card-title class="chart-name" [attr.data-id]="chart._viewID">
+      {{ chart.name | translate }}
+    </mat-card-title>
+    <mat-card-content style="display: flex">
+      <div>
+        <img src="{{ chart.image }}" class="chart-image" />
+      </div>
+      <div class="chart-definition">
+        {{ chart.definition | translate }}
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<h2>{{ 'Or a report' | translate }}</h2>
+<div style="display: flex; flex-wrap: wrap">
+  <mat-card
+    *ngFor="let report of availableReports"
+    class="mat-elevation-z8 chart-card"
+    (click)="setView(report._viewID)"
+  >
+    <mat-card-title class="chart-name">
+      {{ report.name | translate }}
+    </mat-card-title>
+    <mat-card-content style="display: flex">
+      <div>
+        <img src="{{ report.image }}" class="chart-image" />
+      </div>
+      <div class="chart-definition">
+        {{ report.description | translate }}
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

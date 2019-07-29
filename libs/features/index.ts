@@ -1,2 +1,3 @@
-export * from './ui';
-export * from './charts/charts.module';
+export * from './map';
+export * from './charts';
+export * from './dialog';

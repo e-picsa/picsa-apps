@@ -29,7 +29,8 @@ const routes: Routes = [
         mod => mod.BudgetViewPageModule
       )
   },
-  { path: 'budget', redirectTo: 'budget/home' }
+  { path: 'budget', redirectTo: 'budget/home' },
+  { path: '**', redirectTo: 'budget/home' }
 ];
 
 @NgModule({

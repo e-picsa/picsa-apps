@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { CanvasWhiteboardComponent } from 'ng2-canvas-whiteboard';
 import { Events, ModalController } from '@ionic/angular';
 import { BudgetToolProvider } from '../../services/budget-tool.provider';
-import { AppState } from '@picsa/core/models';
+import { AppState } from '@picsa/models';
 import { NgRedux } from '@angular-redux/store';
 // import { UserActions } from 'src/actions/user.actions';
 import { ICustomBudgetCard } from '../../models/budget-tool.models';

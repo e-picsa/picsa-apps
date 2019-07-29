@@ -1,0 +1,38 @@
+@import '../../../styles.scss';
+.chart-card {
+  margin: 10px;
+  max-width: 340px;
+  width: 100%;
+  cursor: pointer;
+}
+mat-card.chart-card {
+  padding: 0;
+}
+.chart-image {
+  padding: 10px;
+  height: 100px;
+  width: 100px;
+}
+.chart-definition {
+  text-align: left;
+  padding: 10px;
+}
+.chart-name {
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+  color: white;
+  background: var(--color-black);
+}
+.chart-name[data-id='rainfall'] {
+  background: $chart-Rainfall;
+}
+.chart-name[data-id='end'] {
+  background: $chart-End;
+}
+.chart-name[data-id='length'] {
+  background: $chart-Length;
+}
+.chart-name[data-id='start'] {
+  background: $chart-Start;
+}

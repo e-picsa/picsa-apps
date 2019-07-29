@@ -1,0 +1,36 @@
+<div class="page">
+  <!-- header -->
+  <div style="display: flex; justify-content: space-between">
+    <h1>{{ activeStation ? activeStation.name : '' }}</h1>
+    <div>
+      <button mat-button color="primary" (click)="setView()">
+        <mat-icon svgIcon="picsa_chart"></mat-icon>
+        <span style="margin-left: 5px">{{ 'Chart' | translate }}</span>
+      </button>
+      <button mat-button color="primary" [routerLink]="['climate/site']">
+        <mat-icon svgIcon="picsa_station"></mat-icon>
+        <span style="margin-left: 5px">{{ 'Site' | translate }}</span>
+      </button>
+    </div>
+  </div>
+  <!-- content -->
+  <div class="page-content">
+    <climate-view-select
+      (onViewSelected)="setView($event)"
+      *ngIf="!activeView"
+    ></climate-view-select>
+    <!-- charts -->
+    <div *ngIf="activeChart && activeStation" style="flex: 1">
+      <climate-chart
+        [chartMeta]="activeChart"
+        [chartData]="activeStation.summaries"
+        [stationMeta]="activeStation"
+      ></climate-chart>
+    </div>
+    <!-- reports -->
+    <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
+      <climate-crop-analysis></climate-crop-analysis>
+    </div>
+    <!-- <combined-probability></combined-probability> -->
+  </div>
+</div>

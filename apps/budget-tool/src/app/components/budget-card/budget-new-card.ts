@@ -1,7 +1,7 @@
 import { NgRedux } from '@angular-redux/store';
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AppState } from '@picsa/core/models';
+import { AppState } from '@picsa/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { BudgetCardComponent } from './budget-card';
 import { BudgetStore } from '../../store/budget.store';

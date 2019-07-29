@@ -10,54 +10,19 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@picsa/*": [
-        "libs/*"
-      ],
-      "@picsa/electron": [
-        "xplat/electron/index.ts"
-      ],
-      "@picsa/electron/*": [
-        "xplat/electron/*"
-      ],
-      "@picsa/ionic": [
-        "xplat/ionic/index.ts"
-      ],
-      "@picsa/ionic/*": [
-        "xplat/ionic/*"
-      ],
-      "@picsa/nativescript": [
-        "xplat/nativescript/index.ts"
-      ],
-      "@picsa/nativescript/*": [
-        "xplat/nativescript/*"
-      ],
-      "@picsa/nest": [
-        "xplat/nest/index.ts"
-      ],
-      "@picsa/nest/*": [
-        "xplat/nest/*"
-      ],
-      "@picsa/web": [
-        "xplat/web/index.ts"
-      ],
-      "@picsa/web/*": [
-        "xplat/web/*"
-      ]
+      "@picsa/*": ["libs/*"],
+      "@picsa/shared/*": ["libs/*"],
+      "@picsa/budget/*": ["apps/budget-tool/*"],
+      "@picsa/climate/*": ["apps/climate-tool/*"],
+      "@picsa/dashboard/*": ["apps/dashboard/*"],
+      "@picsa/extension/*": ["apps/extension-toolkit/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

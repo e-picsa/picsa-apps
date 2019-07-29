@@ -1,0 +1,46 @@
+<h3>Select crops to analyze</h3>
+<mat-card mat-elevation-z8 class="crop-group" *ngFor="let group of cropGroups">
+  <div class="crop-group-info">
+    <div class="crop-name">{{ group.crop }}</div>
+    <img
+      [src]="'assets/svgs/crops/' + group.image + '.svg'"
+      class="crop-image"
+    />
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+    <button
+      mat-button
+      *ngFor="let crop of group.varieties"
+      class="crop-variety-button"
+      [class.selected]="selectedCrops[crop.variety] ? true : false"
+      mat-elevation-z4
+      (click)="toggleCropVariety(crop)"
+    >
+      <div class="crop-variety-info">
+        <div class="variety-name">{{ crop.variety }}</div>
+        <div>
+          <div class="crop-req">
+            <img class="crop-req-img" src="assets/svgs/water.svg" />
+            <span>{{ crop.waterMin }}</span>
+            <span *ngIf="crop.waterMax"> - {{ crop.waterMax }}</span>
+          </div>
+          <div class="crop-req">
+            <img class="crop-req-img" src="assets/svgs/days.svg" />
+            <span>{{ crop.daysMin }}</span>
+            <span *ngIf="crop.daysMax"> - {{ crop.daysMax }}</span>
+          </div>
+        </div>
+      </div>
+    </button>
+  </div>
+</mat-card>
+<button
+  mat-raised-button
+  color="primary"
+  class="continue-button"
+  *ngIf="totalSelected > 0"
+  (click)="goToAnalysis()"
+>
+  <mat-icon>arrow_forward</mat-icon>
+  <span class="continue-button-text">{{ 'Analyse' | translate }}</span>
+</button>

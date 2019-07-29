@@ -10,10 +10,19 @@ body {
   position: absolute;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: auto;
 }
 
 .page-content {
   flex: 1;
   background-color: white;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+.page-content.no-padding {
+  padding: 0;
 }

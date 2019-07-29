@@ -425,6 +425,131 @@
           }
         }
       }
+    },
+    "climate-tool": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/workspace:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/climate-tool",
+      "sourceRoot": "apps/climate-tool/src",
+      "prefix": "climate",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/climate-tool",
+            "index": "apps/climate-tool/src/index.html",
+            "main": "apps/climate-tool/src/main.ts",
+            "polyfills": "apps/climate-tool/src/polyfills.ts",
+            "tsConfig": "apps/climate-tool/tsconfig.app.json",
+            "assets": [
+              "apps/climate-tool/src/favicon.ico",
+              "apps/climate-tool/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./libs/shared-assets/",
+                "output": "./assets"
+              }
+            ],
+            "styles": [
+              "apps/climate-tool/src/styles.scss",
+              "libs/scss/_index.scss",
+              "./node_modules/leaflet/dist/leaflet.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/climate-tool/src/environments/environment.ts",
+                  "with": "apps/climate-tool/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "climate-tool:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "climate-tool:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "climate-tool:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/climate-tool/tsconfig.app.json",
+              "apps/climate-tool/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/climate-tool/jest.config.js",
+            "tsConfig": "apps/climate-tool/tsconfig.spec.json",
+            "setupFile": "apps/climate-tool/src/test-setup.ts"
+          }
+        }
+      }
+    },
+    "climate-tool-e2e": {
+      "root": "apps/climate-tool-e2e",
+      "sourceRoot": "apps/climate-tool-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/climate-tool-e2e/cypress.json",
+            "tsConfig": "apps/climate-tool-e2e/tsconfig.e2e.json",
+            "devServerTarget": "climate-tool:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "climate-tool:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "apps/climate-tool-e2e/tsconfig.e2e.json"
+          }
+        }
+      }
     }
   },
   "cli": {

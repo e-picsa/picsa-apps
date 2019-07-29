@@ -8,6 +8,9 @@ import {
   OnInit
 } from '@angular/core';
 import * as c3 from 'c3';
+import { IChartConfig } from '@picsa/models';
+import { saveSvgAsPng, svgAsDataUri } from 'save-svg-as-png';
+import * as canvg from 'canvg';
 
 @Component({
   selector: 'picsa-chart',
@@ -23,13 +26,12 @@ import * as c3 from 'c3';
 export class PicsaChartComponent implements OnInit {
   public chart: c3.ChartAPI;
   private container: HTMLDivElement;
-
   constructor(private elementRef: ElementRef, private ngZone: NgZone) {}
 
   @Input() data: c3.Data = {
     columns: []
   };
-  @Input() config: Partial<c3.ChartConfiguration>;
+  @Input() config: IChartConfig;
 
   /**********************************************************************************
    *  Custom creation and change event handling
@@ -38,12 +40,14 @@ export class PicsaChartComponent implements OnInit {
    **********************************************************************************/
 
   ngOnInit() {
-    //  create chart on init, even if no data present so empty chart can be seen
-    this.create();
+    // create chart on init, even if no data present so empty chart can be seen
+    // NOTE - removed as causes duplicate creation
+    // this.create();
   }
   // note, only detects object change, not content (so array push ignored)
   // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
   ngOnChanges(changes: SimpleChanges) {
+    console.log('changes', changes);
     if (this.chart) {
       if (changes['config']) {
         // handle core changes which require chart rebuild
@@ -63,46 +67,75 @@ export class PicsaChartComponent implements OnInit {
     }
   }
 
-  // method to extract the ids from data supplied to the chart
-  // note - not currently used as even when one can identify which ids have
-  // been added/removed we don't know whether existing id has changed data
-  private _getDataIDs(data: c3.Data): string[] {
-    if (data.columns) {
-      return data.columns.map(c => c[0] as string);
-    }
-    if (data.rows) {
-      return data.rows[0] as string[];
-    }
-    if (data.json) {
-      return Object.keys(data.json[0]);
-    }
-    return [];
-  }
-
   // use create method to populate div which will also be available before viewInit
   private create() {
-    console.log('create chart', this.config, this.data);
+    console.log('creating chart');
     // run outside of angular change detection
-    this.ngZone.runOutsideAngular(() => {
-      if (this.container) {
-        this.elementRef.nativeElement.removeChild(this.container);
+    // this.ngZone.runOutsideAngular(() => {
+    if (this.container) {
+      this.elementRef.nativeElement.removeChild(this.container);
+    }
+    this.container = document.createElement('div');
+    this.container.setAttribute('id', 'chart');
+    this.elementRef.nativeElement.appendChild(this.container);
+    this.chart = this.chart = c3.generate({
+      ...this.config,
+      bindto: this.container,
+      data: this.config.data ? this.config.data : this.data,
+      oninit: function() {
+        this.svg.attr('id', 'chart_svg');
       }
-      this.container = document.createElement('div');
-      this.container.setAttribute('id', 'chart');
-      this.elementRef.nativeElement.appendChild(this.container);
-      this.chart = this.chart = c3.generate({
-        ...this.config,
-        bindto: this.container,
-        data: this.data,
-        axis:{
-          x:{
-            label: "Year"
-          }
-        }
-      });
     });
+    // });
+  }
+
+  // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
+  // https://github.com/exupero/saveSvgAsPng
+  // https://github.com/exupero/saveSvgAsPng/issues/186
+  public async generatePng(title: string = 'chart') {
+    const svg = document.getElementById('chart_svg');
+    const options = {
+      canvg: canvg,
+      scale: 2,
+
+      selectorRemap: s => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
+      // modify selector-properties
+      modifyCss: (s: string, p: string) => {
+        // modifyCss is used to take stylesheet classes that apply to svgElements and make inline
+        // use remap so that .c3-axis-y-label text detects the 'text' svg element
+        // NOTE - some properties don't work quite right (override other defaults)
+        const overrides = ['.c3 svg', '.c3-grid text'];
+        if (overrides.includes(s)) {
+          return;
+        }
+        s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
+
+        return s + '{' + p + '}';
+      }
+    };
+    await saveSvgAsPng(svg, title, options);
   }
 }
 
 export interface c3ChartAPI extends c3.ChartAPI {}
 export interface c3ChartConfiguration extends c3.ChartConfiguration {}
+
+/****************************************************************************
+ *  Deprecated / Unused
+ **************************************************************************/
+
+// method to extract the ids from data supplied to the chart
+// note - not currently used as even when one can identify which ids have
+// been added/removed we don't know whether existing id has changed data
+// private _getDataIDs(data: c3.Data): string[] {
+//   if (data.columns) {
+//     return data.columns.map(c => c[0] as string);
+//   }
+//   if (data.rows) {
+//     return data.rows[0] as string[];
+//   }
+//   if (data.json) {
+//     return Object.keys(data.json[0]);
+//   }
+//   return [];
+// }

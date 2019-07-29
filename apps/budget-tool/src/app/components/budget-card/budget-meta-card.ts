@@ -2,7 +2,7 @@ import { NgRedux } from '@angular-redux/store';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AppState } from '@picsa/core/models';
+import { AppState } from '@picsa/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { BudgetCardComponent } from './budget-card';
 import { BudgetStore } from '../../store/budget.store';

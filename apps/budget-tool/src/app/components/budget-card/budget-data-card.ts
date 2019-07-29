@@ -2,7 +2,7 @@ import { NgRedux, select } from '@angular-redux/store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
-import { AppState } from '@picsa/core/models';
+import { AppState } from '@picsa/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { IBudgetCard, IBudgetViewMeta } from '../../models/budget-tool.models';
 import { BudgetCardComponent } from './budget-card';

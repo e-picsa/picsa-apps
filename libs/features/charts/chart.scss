@@ -1,1 +1,52 @@
 @import '~c3/c3.min';
+
+#chart {
+  height: calc(100% - 220px);
+  width: calc(100% - 20px);
+  min-height: 320px;
+}
+.c3-line {
+  stroke-width: 2px;
+}
+.c3-line-LineTool {
+  stroke-width: 3px !important;
+  stroke: black !important;
+}
+
+/*expanded circle fill, outline (stroke) and outline width*/
+.c3-circle._expanded_ {
+  /*fill: rgb(90, 50, 50)!important;*/
+  stroke: #000000 !important;
+  stroke-width: 2;
+}
+.c3-tooltip th {
+  font-size: 16px;
+}
+.c3-tooltip td {
+  font-size: 16px;
+}
+
+#exportButton {
+  float: right;
+  position: absolute;
+  right: 10px;
+  z-index: 2;
+}
+
+/****************************************************************************
+  SVG Selectors
+  Any changes should be prefixed by c3- so that they can be remapped correctly
+****************************************************************************/
+// need to explicitly define here so they correclty override svg selectors
+// when converting to png (replaces class with inline style)
+.c3-axis-y-label text,
+.c3-axis text,
+.c3-axis-x-label text {
+  font-size: 12px;
+  font-family: sans-serif;
+  color: black;
+}
+.c3-title {
+  font-size: 20px;
+  font-weight: bold;
+}

@@ -1,0 +1,57 @@
+<div style="display: flex">
+  <!-- show/hide control -->
+  <div style="margin-right: 2em">
+    <mat-button-toggle-group #show="matButtonToggleGroup" value="show">
+      <mat-button-toggle
+        value="show"
+        [style.display]="show.value === 'hide' ? 'block' : 'none'"
+        ><mat-icon>visibility</mat-icon></mat-button-toggle
+      >
+      <mat-button-toggle
+        value="hide"
+        [style.display]="show.value === 'show' ? 'block' : 'none'"
+        ><mat-icon>visibility_off</mat-icon></mat-button-toggle
+      >
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- displays -->
+  <div
+    style="position:relative; margin-right:30px; flex:1"
+    [style.visibility]="show.value === 'show' ? 'visible' : 'hidden'"
+  >
+    <!-- 1-10 counters -->
+    <div class="probability-grid-container">
+      <div class="probability-grid-cell" *ngFor="let i of numberToArray(10)">
+        <span class="probability-grid-cell-label">{{ i + 1 }}0</span>
+      </div>
+    </div>
+    <!-- coloured blocks -->
+    <div class="probability-blocks-group" style="display: flex">
+      <div
+        class="block good"
+        *ngFor="let b of numberToArray(probabilities.above.count)"
+      ></div>
+      <div
+        class="block empty"
+        *ngFor="let b of numberToArray(probabilities.below.count)"
+      ></div>
+    </div>
+    <!-- text -->
+    <div class="probability-info">
+      <div style="display: flex; margin-top:1em">
+        <mat-card mat-elevation-z4 id="probabilityCount">
+          <span>{{ probabilities.above.count }}</span> out of
+          {{ probabilities.total }} above
+        </mat-card>
+        <mat-card mat-elevation-z4 style="flex:1; text-align:center">
+          On average,
+          <span class="variable">
+            {{ probabilities.above.inTen }} years out of every 10
+          </span>
+          meet required {{ chartName }}
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
