@@ -1,14 +1,6 @@
 import { IStationMeta } from '@picsa/models/climate.models';
 import { DBMeta } from '@picsa/services/core/db/db.utils';
 
-export const DEFINITIONS = {
-  start: {
-    from: {
-      month: 10,
-      day: 1
-    }
-  }
-};
 export const STATIONS: IStationMeta[] = [
   {
     ...DBMeta('chichiri', new Date('2019-07-23')),

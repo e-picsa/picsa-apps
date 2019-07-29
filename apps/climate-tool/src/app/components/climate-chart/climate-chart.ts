@@ -38,6 +38,7 @@ export class ClimateChartComponent implements OnInit {
 
   ngOnInit() {
     this.ranges = this._calculateDataRanges(this.chartData, this.chartMeta);
+    console.log('ranges', this.ranges);
     this.chartConfig = this._getChartConfig(this.chartData, this.chartMeta);
     // when using line tool and probabilities this is base solely on single y dataset
     this.y1Values = this.chartData.map(
@@ -98,6 +99,7 @@ export class ClimateChartComponent implements OnInit {
       axis: {
         x: {
           label: meta.xLabel,
+          min: this.ranges.xMin,
           max: this.ranges.xMax,
           tick: {
             rotate: 75,
@@ -115,7 +117,7 @@ export class ClimateChartComponent implements OnInit {
             values: gridMeta.yTicks,
             format: (d: any) =>
               gridMeta.yLines.includes(d as any)
-                ? this._formatYAxis(d as any, meta)
+                ? this._formatYAxis(d as any, meta, true)
                 : ''
           },
           min: this.ranges.yMin,
@@ -223,11 +225,13 @@ export class ClimateChartComponent implements OnInit {
   // iterate over data and calculate min/max values for xVar and multiple yVars
   private _calculateDataRanges(data: IChartSummary[], meta: IChartMeta) {
     let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
+    const { xMajor, yMajor } = meta;
     data.forEach(d => {
       const xVal = d[meta.xVar] as number;
-      const yVals = meta.keys.map(k => d[k]) as number[];
-      xMax = Math.max(xMax, xVal);
-      xMin = Math.min(xMin, xVal);
+      // take all possible yValues and filter out undefined
+      const yVals = meta.keys.map(k => d[k]).filter(v => v) as number[];
+      xMax = xVal ? Math.max(xMax, xVal) : xMax;
+      xMin = xVal ? Math.min(xMin, xVal) : xMin;
       yMax = Math.max(yMax, ...yVals);
       yMin = Math.min(yMin, ...yVals);
     });
@@ -240,29 +244,23 @@ export class ClimateChartComponent implements OnInit {
       xMax = new Date().getFullYear();
     }
     return {
-      // round y max up to nearest 50 and y min down to nearest 50
-      yMin: Math.floor(yMin / 50) * 50,
-      yMax: Math.ceil(yMax / 50) * 50,
-      xMin,
-      xMax
+      // round max up and min down to the nearest interval
+      yMin: Math.floor(yMin / yMajor) * yMajor,
+      yMax: Math.ceil(yMax / yMajor) * yMajor,
+      xMin: Math.floor(xMin / xMajor) * xMajor,
+      xMax: Math.ceil(xMax / xMajor) * xMajor
     };
   }
 
   // calculate grid ticks, lines and label meta data
   private _calculateGridMeta(meta: IChartMeta, ranges: IDataRanges): IGridMeta {
     const { xMin, xMax, yMin, yMax } = ranges;
-    const xMinorInterval = meta.xVar === 'Year' ? 1 : 1;
-    const yMinorInterval =
-      meta.yFormat === 'value' ? 50 : Math.round((yMax - yMin) / 20);
-    const xMajorInterval =
-      meta.xVar === 'Year' ? 2 * xMinorInterval : xMinorInterval;
-    const yMajorInterval =
-      meta.yFormat === 'value' ? 4 * yMinorInterval : yMinorInterval;
+    const { xMajor, yMajor, xMinor, yMinor } = meta;
     return {
-      xTicks: this._getAxisValues(xMin, xMax, xMinorInterval) as number[],
-      xLines: this._getAxisValues(xMin, xMax, xMajorInterval) as number[],
-      yTicks: this._getAxisValues(yMin, yMax, yMinorInterval) as number[],
-      yLines: this._getAxisValues(yMin, yMax, yMajorInterval) as number[]
+      xTicks: this._getAxisValues(xMin, xMax, xMinor) as number[],
+      xLines: this._getAxisValues(xMin, xMax, xMajor) as number[],
+      yTicks: this._getAxisValues(yMin, yMax, yMinor) as number[],
+      yLines: this._getAxisValues(yMin, yMax, yMajor) as number[]
     };
   }
 
@@ -281,21 +279,33 @@ export class ClimateChartComponent implements OnInit {
     return value;
   }
 
-  private _formatYAxis(value: number, meta: IChartMeta) {
+  private _formatYAxis(value: number, meta: IChartMeta, isAxisLabel?: boolean) {
+    const { yMajor } = meta;
+    const monthNames: string[] = this.translateService.monthNames;
+    let label: string;
     switch (meta.yFormat) {
       case 'date-from-July':
-        //181 based on local met +182 and -1 for index starting at 0
-        const dayNumber = (value + 181) % 366;
-        //simply converts number to day rough date value (same method as local met office)
-        //initialise year
-        const d = new Date(2001, 0);
-        d.setDate(dayNumber);
-        const monthNames: string[] = this.translateService.monthNames;
-        // just take first 3 letters
-        const string = `${d.getDate()}-${monthNames[
-          d.getMonth() % 12
-        ].substring(0, 3)}`;
-        return string;
+        // previously 181 based on local met +182 and -1 for index starting at 0
+        // now simply half of standard year 365 + 1 for index
+        const dayNumber = (value + 183) % 366;
+        if (isAxisLabel) {
+          // just want nearest month name
+          label = monthNames[Math.round(dayNumber / yMajor) % 12].substring(
+            0,
+            3
+          );
+        } else {
+          //simply converts number to day rough date value (same method as local met office)
+          //initialise year from a year with 365 days
+          const d = new Date(2015, 0);
+          d.setDate(dayNumber);
+          // just take first 3 letters
+          label = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(
+            0,
+            3
+          )}`;
+        }
+        return label;
       case 'date':
         // TODO
         return `${value}`;

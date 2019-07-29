@@ -12,6 +12,10 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     yLabel: 'Seasonal Total Rainfall (mm)',
     xLabel: '',
     xVar: 'Year',
+    xMinor: 1,
+    xMajor: 5,
+    yMinor: 100,
+    yMajor: 200,
     tools: { line: true },
     units: 'mm',
     definition:
@@ -27,6 +31,11 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     yLabel: 'Start of Season',
     xLabel: '',
     xVar: 'Year',
+    xMinor: 1,
+    xMajor: 5,
+    // assume 367 days in a year (366 leap + 1 for 0 index), mark weekly and mid month
+    yMinor: 365 / 48,
+    yMajor: 365 / 12,
     tools: { line: false },
     units: '',
     definition:
@@ -42,6 +51,10 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     yLabel: 'End of Season',
     xLabel: '',
     xVar: 'Year',
+    xMinor: 1,
+    xMajor: 5,
+    yMinor: 7.625,
+    yMajor: 15.25,
     tools: { line: false },
     units: '',
     definition:
@@ -57,6 +70,10 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     yLabel: 'Length of season',
     xLabel: '',
     xVar: 'Year',
+    xMinor: 1,
+    xMajor: 5,
+    yMinor: 100,
+    yMajor: 200,
     tools: { line: true },
     units: 'days',
     definition:

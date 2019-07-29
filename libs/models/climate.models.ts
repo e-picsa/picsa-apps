@@ -49,4 +49,8 @@ export interface IChartMeta {
   tools: { line: boolean };
   units: string;
   definition: string;
+  xMinor: number;
+  xMajor: number;
+  yMinor: number;
+  yMajor: number;
 }
