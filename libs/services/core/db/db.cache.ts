@@ -18,12 +18,14 @@ export class DBCacheService {
     await db.version(DB_VERSION).stores(schema);
   }
 
-  public async getCollection(endpoint: IDBEndpoint): Promise<IDBDoc[]> {
+  public async getCollection<T extends IDBDoc>(
+    endpoint: IDBEndpoint
+  ): Promise<T[]> {
     console.log('getting collection', endpoint);
     if (!db.hasOwnProperty(endpoint)) {
       await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
     }
-    return db.table<IDBDoc>(endpoint).toArray();
+    return db.table<T>(endpoint).toArray();
   }
 
   // NOTE - if no doc found will return undefined
@@ -41,6 +43,13 @@ export class DBCacheService {
 
   public async setDoc(endpoint: IDBEndpoint, doc: IDBDoc) {
     return db.table(endpoint).put(doc);
+  }
+
+  public async setDocs(endpoint: IDBEndpoint, docs: IDBDoc[]) {
+    if (!db.hasOwnProperty(endpoint)) {
+      await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
+    }
+    await db.table(endpoint).bulkPut(docs);
   }
 }
 

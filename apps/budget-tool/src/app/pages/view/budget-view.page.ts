@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BudgetStore } from '../../store/budget.store';
-import { TranslationsProvider } from '@picsa/core';
-import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'budget-view',
@@ -12,12 +10,7 @@ import { LoadingController } from '@ionic/angular';
 export class BudgetViewPage implements OnInit {
   loader: HTMLIonLoadingElement;
 
-  constructor(
-    private route: ActivatedRoute,
-    private store: BudgetStore,
-    private translations: TranslationsProvider,
-    private loadingCtrl: LoadingController
-  ) {}
+  constructor(private route: ActivatedRoute, private store: BudgetStore) {}
 
   ngOnInit() {
     this.loadBudget();

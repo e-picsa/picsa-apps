@@ -1,9 +1,6 @@
-import { NgRedux, select } from '@angular-redux/store';
+import { select } from '@angular-redux/store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Events } from '@ionic/angular';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { AppState } from '@picsa/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import {
   IBudget,

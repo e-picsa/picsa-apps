@@ -8,10 +8,11 @@ import {
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
 import { observable, action } from 'mobx-angular';
-import { MONTHS, DBService, StorageProvider } from '@picsa/core/services';
-import { NEW_BUDGET_TEMPLATE } from './templates';
+import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
 import { BUDGET_DATA } from '../data/budget.data';
 import { toJS } from 'mobx';
+import { DBServerService, DBCacheService } from '@picsa/services/core';
+import { DBMeta } from '@picsa/services/core/db/db.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class BudgetStore {
     console.log('active budget', toJS(this.activeBudget));
   }
 
-  constructor(private db: DBService, private storage: StorageProvider) {
+  constructor(private cache: DBCacheService, private server: DBServerService) {
     this.loadSavedBudgets();
   }
 
@@ -66,13 +67,12 @@ export class BudgetStore {
   createNewBudget() {
     const budget: IBudget = {
       ...NEW_BUDGET_TEMPLATE,
-      ...this.db.generateDocMeta()
+      ...DBMeta()
     };
     this.setActiveBudget(budget);
   }
   async saveBudget() {
-    const patch = { [this.activeBudgetValue._key]: this.activeBudgetValue };
-    await this.storage.patch('budgets', patch);
+    await this.cache.setDoc('budgetTool/budgets', this.activeBudgetValue);
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
@@ -90,10 +90,9 @@ export class BudgetStore {
   }
 
   private async loadSavedBudgets(): Promise<void> {
-    const stored: { [key: string]: IBudget } = await this.storage.get(
-      'budgets'
+    this.savedBudgets = await this.cache.getCollection<IBudget>(
+      'budgetTool/budgets'
     );
-    this.savedBudgets = Object.values({ ...stored });
     console.log('saved budgets', toJS(this.savedBudgets));
   }
 

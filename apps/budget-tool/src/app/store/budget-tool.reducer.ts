@@ -1,8 +1,7 @@
 import { Action } from 'redux';
 import { FluxStandardAction } from 'flux-standard-action';
 import { BudgetToolActions } from './budget-tool.actions';
-import { INITIAL_STATE } from '@picsa/models';
-import { BudgetToolState, IBudgetCard } from '../models/budget-tool.models';
+import { IBudgetCard } from '../models/budget-tool.models';
 type StandardAction = FluxStandardAction<any, any>;
 
 export function BudgetToolReducer(state: any = {}, action: Action) {

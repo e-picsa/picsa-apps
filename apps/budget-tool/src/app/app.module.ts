@@ -10,9 +10,9 @@ import { IonicStorageModule } from '@ionic/storage';
 import { NgReduxRouterModule } from '@angular-redux/router';
 import { NgReduxModule } from '@angular-redux/store';
 import { MobxAngularModule } from 'mobx-angular';
-import { StoreModule } from '@picsa/core';
+import { StoreModule } from '@picsa/extension/src/app/state';
 import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
-import { DbModule } from '@picsa/core/db/db.module';
+import { PicsaDbModule, PicsaNativeModule } from '@picsa/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaMaterialModule } from './material.module';
 
@@ -45,7 +45,8 @@ export function createTranslateLoader(http: HttpClient) {
     MobxAngularModule,
     StoreModule,
     CanvasWhiteboardModule,
-    DbModule
+    PicsaDbModule,
+    PicsaNativeModule.forRoot()
   ],
   exports: [TranslateModule],
   providers: [],

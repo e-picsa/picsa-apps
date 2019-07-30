@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CanvasWhiteboardComponent } from 'ng2-canvas-whiteboard';
-import REGIONAL_SETTINGS from '@picsa/core/environments/region';
+import REGIONAL_SETTINGS from '@picsa/environments/region';
 
 @Component({
   selector: 'budget-card-select',

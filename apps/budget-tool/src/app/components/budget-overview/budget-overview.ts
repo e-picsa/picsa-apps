@@ -4,7 +4,6 @@ import { Events } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { debounceTime } from 'rxjs/operators';
-import { AppState } from '@picsa/models';
 import {
   IBudget,
   IBudgetCard,
@@ -35,7 +34,7 @@ export class BudgetOverviewComponent implements OnDestroy {
   balance: any;
   budgetUpdated = true;
 
-  constructor(public events: Events, private ngRedux: NgRedux<AppState>) {
+  constructor(public events: Events) {
     // on changes refresh whole budget
     // *** inefficient but otherwise difficult to get bindings triggering correctly
     // tried cdr and application ref but neither seemed to work. Also tried listening

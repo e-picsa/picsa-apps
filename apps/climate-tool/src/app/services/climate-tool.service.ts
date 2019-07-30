@@ -17,15 +17,15 @@ export class ClimateToolService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  constructor(private db: DBCacheService) {
+  constructor(private cache: DBCacheService) {
     this.init();
   }
 
   // not strict required, but considered useful to inform components
   // when db has been initialised
   private async init() {
-    await this.db.loadStores({ stationData: null });
-    if (await this.db.isEmpty('stationData')) {
+    await this.cache.loadStores({ stationData: null });
+    if (await this.cache.isEmpty('stationData')) {
       await this.initialiseHardcodedData();
     }
     this.ready$.next(true);
@@ -33,7 +33,7 @@ export class ClimateToolService {
 
   public async loadStation(stationID: string) {
     await this.ready();
-    return this.db.getDoc<IStationMeta>('stationData', stationID);
+    return this.cache.getDoc<IStationMeta>('stationData', stationID);
   }
 
   // read hardcoded csv data and populate into cacheDB alongside station meta
@@ -44,7 +44,7 @@ export class ClimateToolService {
         `assets/summaries/${station._key}.csv`
       );
       station.summaries = [...data];
-      await this.db.setDoc('stationData', station);
+      await this.cache.setDoc('stationData', station);
     }
   }
 

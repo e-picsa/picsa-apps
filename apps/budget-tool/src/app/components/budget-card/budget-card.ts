@@ -4,7 +4,7 @@ import {
   ICustomBudgetCard,
   IBudgetCard
 } from '../../models/budget-tool.models';
-import REGIONAL_SETTINGS from '@picsa/core/environments/region';
+import REGIONAL_SETTINGS from '@picsa/environments/region';
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({

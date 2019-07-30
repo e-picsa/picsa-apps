@@ -19,7 +19,7 @@ import { createEpicMiddleware } from 'redux-observable';
 
 // The top-level reducers and epics that make up our app's logic.
 import { rootReducer } from './reducers';
-import { AppState, INITIAL_STATE } from '../../models';
+import { AppState, INITIAL_STATE } from '../models/store.model';
 
 @NgModule({
   imports: [NgReduxModule, NgReduxRouterModule.forRoot()],

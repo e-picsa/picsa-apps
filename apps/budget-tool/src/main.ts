@@ -2,7 +2,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
-import environment from '@picsa/core/environments/environment';
+import environment from '@picsa/environments/environment';
 import 'hammerjs';
 
 if (environment.production) {

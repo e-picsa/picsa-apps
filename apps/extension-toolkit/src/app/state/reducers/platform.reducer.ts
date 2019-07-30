@@ -1,6 +1,6 @@
 import { Action } from 'redux';
-import { INITIAL_STATE } from '../../../models';
 import { PlatformAction, PlatformActions } from '../actions';
+import { INITIAL_STATE } from '../../models/store.model';
 
 export function PlatformReducer(
   state: any = INITIAL_STATE.platform,

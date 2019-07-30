@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { File } from "@ionic-native/file/ngx";
-import { FileOpener } from "@ionic-native/file-opener/ngx";
-import { Platform } from "@ionic/angular";
-import mimetypes from "./mimetypes";
+import { Injectable } from '@angular/core';
+import { File } from '@ionic-native/file/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { Platform } from '@ionic/angular';
+import MIMETYPES from '../../data/mimetypes';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class FileService {
   platforms: any;
   isCordova: boolean;
@@ -27,34 +27,34 @@ export class FileService {
     }
   }
   async mobileInit() {
-    console.log("platform mobile, cordova enabled");
-    console.log("file plugin", this.file);
+    console.log('platform mobile, cordova enabled');
+    console.log('file plugin', this.file);
     this.appDir = this.file.applicationDirectory;
     this.externalDir = await this.checkFileDirectoryExists();
     this.externalBackupDir = await this.checkFileDirectoryExists(true);
   }
   checkPlatform() {
-    console.log("checking platform");
+    console.log('checking platform');
     this.platforms = this.platform.platforms();
-    this.isCordova = this.platform.is("cordova");
+    this.isCordova = this.platform.is('cordova');
   }
   async checkFileDirectoryExists(backup?: boolean) {
-    console.log("checking file directory");
+    console.log('checking file directory');
     const basePath = backup
       ? this.file.externalApplicationStorageDirectory
       : this.file.externalRootDirectory;
     try {
-      await this.file.checkDir(basePath, "picsa");
+      await this.file.checkDir(basePath, 'picsa');
       return this.file.externalApplicationStorageDirectory;
     } catch (error) {
-      console.log("picsa directory does not exist, creating");
-      await this.createDirectory(basePath, "picsa", false);
+      console.log('picsa directory does not exist, creating');
+      await this.createDirectory(basePath, 'picsa', false);
     }
   }
 
   // list directory contents for specified path
   async listDirectory(dir, path) {
-    console.log("listing", path);
+    console.log('listing', path);
     try {
       const files = await this.file.listDir(dir, path);
       return files;
@@ -83,22 +83,22 @@ export class FileService {
       const fileBase = backupStorage
         ? this.file.externalRootDirectory
         : this.file.externalApplicationStorageDirectory;
-      console.log("creating file", filename, fileBase);
+      console.log('creating file', filename, fileBase);
       await this.file.createFile(fileBase, `picsa/${filename}`, replace);
-      console.log("file created succesfully");
-      if (typeof data != "string") {
+      console.log('file created succesfully');
+      if (typeof data != 'string') {
         data = JSON.stringify(data);
       }
-      console.log("writing file data", data);
+      console.log('writing file data', data);
       await this.file.writeFile(fileBase, `picsa/${filename}`, data, {
         replace: true
       });
-      console.log(filename, "written successfully");
+      console.log(filename, 'written successfully');
       // return filepath
       return `${fileBase}picsa/${filename}`;
     } catch (error) {
-      console.log("could not create or write file", error);
-      throw new Error("could not create file");
+      console.log('could not create or write file', error);
+      throw new Error('could not create file');
     }
   }
 
@@ -107,13 +107,13 @@ export class FileService {
     const fileBase = backupStorage
       ? this.file.externalRootDirectory
       : this.file.externalApplicationStorageDirectory;
-    console.log("reading file", fileBase, `picsa/${filename}`);
+    console.log('reading file', fileBase, `picsa/${filename}`);
     try {
       const fileTxt = await this.file.readAsText(fileBase, `picsa/${filename}`);
-      console.log("file read", fileTxt);
+      console.log('file read', fileTxt);
       return fileTxt;
     } catch (error) {
-      console.error("could not read file", error);
+      console.error('could not read file', error);
       return null;
     }
   }
@@ -124,8 +124,8 @@ export class FileService {
   }
 
   _getMimetype(filename: string) {
-    const fileNameSplit = filename.split(".");
+    const fileNameSplit = filename.split('.');
     const extension: string = fileNameSplit[fileNameSplit.length - 1];
-    return mimetypes[extension];
+    return MIMETYPES[extension];
   }
 }

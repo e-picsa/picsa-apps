@@ -1,4 +1,4 @@
-import { IDBDoc } from '@picsa/core';
+import { IDBDoc } from '@picsa/models/db.models';
 
 export interface BudgetToolState {
   active: IBudget;

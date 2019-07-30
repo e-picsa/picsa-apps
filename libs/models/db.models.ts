@@ -3,12 +3,14 @@
 // type below is mostly for reference
 export type IDBEndpoint =
   | 'budgetTool'
+  | 'budgetTool/budgets'
   | 'budgetTool/meta/inputs'
   | 'budgetTool/meta/outputs'
   | 'budgetTool/meta/familyLabour'
   | 'budgetTool/meta/enterpriseTypes'
   | 'budgetTool/meta/enterprises'
   | 'climateTool'
+  | 'forms'
   | 'stationData';
 
 import { firestore } from 'firebase/app';

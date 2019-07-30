@@ -2,7 +2,6 @@ import { NgRedux, select } from '@angular-redux/store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
-import { AppState } from '@picsa/models';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { IBudgetCard, IBudgetViewMeta } from '../../models/budget-tool.models';
 import { BudgetCardComponent } from './budget-card';
@@ -23,7 +22,6 @@ export class BudgetDataCardComponent extends BudgetCardComponent
   viewMeta$: Observable<IBudgetViewMeta>;
   selected: boolean;
   constructor(
-    public ngRedux: NgRedux<AppState>,
     public actions: BudgetToolActions,
     private events: Events,
     public store: BudgetStore

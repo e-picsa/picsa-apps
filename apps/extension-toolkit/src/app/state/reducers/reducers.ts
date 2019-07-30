@@ -3,8 +3,7 @@ import { routerReducer } from '@angular-redux/router';
 import { UserReducer } from './user.reducer';
 import { DataReducer } from './data.reducer';
 import { PlatformReducer } from './platform.reducer';
-
-import { AppState } from '../../../models';
+import { AppState } from '../../models/store.model';
 
 export const rootReducer: Reducer<AppState> = combineReducers({
   user: UserReducer,

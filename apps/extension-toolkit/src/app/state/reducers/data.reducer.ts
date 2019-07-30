@@ -1,6 +1,7 @@
 import { Action } from 'redux';
 import { DataAction, DataActions } from '../actions/data.actions';
-import { IData, INITIAL_STATE } from '../../../models';
+import { IData } from '../../models/models';
+import { INITIAL_STATE } from '../../models/store.model';
 
 export function DataReducer(state: IData = INITIAL_STATE.data, action: Action) {
   switch (action.type) {

@@ -1,3 +1,5 @@
+import { IDBDoc } from '@picsa/models/db.models';
+
 interface IUserDefaults {
   country: string;
 }
@@ -49,8 +51,7 @@ export interface IUserGroup {
   isHidden?: boolean;
 }
 
-export interface IForm {
-  _key: string;
+export interface IForm extends IDBDoc {
   name: string;
   groups?: string[];
   icon?: string;
@@ -58,8 +59,7 @@ export interface IForm {
   surveyJson: any;
 }
 
-export interface IFormResponse {
-  _key: string;
+export interface IFormResponse extends IDBDoc {
   _userID: string;
   _submitted: string;
   ['questionKey']?: any;

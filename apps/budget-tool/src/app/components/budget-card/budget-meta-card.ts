@@ -1,8 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { AppState } from '@picsa/models';
+import { Component } from '@angular/core';
 import { BudgetToolActions } from '../../store/budget-tool.actions';
 import { BudgetCardComponent } from './budget-card';
 import { BudgetStore } from '../../store/budget.store';
@@ -18,11 +15,7 @@ export class BudgetMetaCardComponent extends BudgetCardComponent {
   // private componentDestroyed: Subject<any> = new Subject();
   // @Input() valuePath: string;
 
-  constructor(
-    public ngRedux: NgRedux<AppState>,
-    public actions: BudgetToolActions,
-    public store: BudgetStore
-  ) {
+  constructor(public actions: BudgetToolActions, public store: BudgetStore) {
     super(actions, store);
   }
 

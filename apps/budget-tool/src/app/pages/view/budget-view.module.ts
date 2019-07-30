@@ -2,13 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
-
 import { IonicModule } from '@ionic/angular';
-
 import { BudgetViewPage } from './budget-view.page';
-import { PICSATranslateModule } from '@picsa/core';
 import { PicsaMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
+import { PicsaTranslateModule } from '@picsa/modules';
 
 const routes: Routes = [
   {
@@ -23,7 +21,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    PICSATranslateModule,
+    PicsaTranslateModule,
     PicsaMaterialModule,
     MobxAngularModule
   ],

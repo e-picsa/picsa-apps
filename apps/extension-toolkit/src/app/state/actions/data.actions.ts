@@ -1,7 +1,7 @@
 import { dispatch } from '@angular-redux/store';
 import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
-import { IData } from '../../../models';
+import { IData } from '../../models/models';
 
 export type DataAction = FluxStandardAction<string, IData, any>;
 

@@ -3,14 +3,15 @@
 import { observable, action } from 'mobx-angular';
 import { toJS } from 'mobx';
 import { Injectable } from '@angular/core';
-import { IForm, IFormResponse } from '../../models';
-import { DataStore } from './data.store';
-import { StorageProvider, UserProvider, DBService } from '../services';
+import { IForm, IFormResponse } from '../models/models';
+import { DBCacheService } from '@picsa/services/core';
+import { UserProvider } from './user';
+import { DBMeta } from '@picsa/services/core/db/db.utils';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FormStore extends DataStore {
+export class FormStore {
   @observable forms: IForm[];
   @observable activeForm: IForm;
   @action setActiveForm(form: IForm) {
@@ -30,16 +31,11 @@ export class FormStore extends DataStore {
     return this.activeForm;
   }
 
-  constructor(
-    storagePrvdr: StorageProvider,
-    private userPrvdr: UserProvider,
-    private db: DBService
-  ) {
-    super(storagePrvdr);
+  constructor(private cache: DBCacheService, private userPrvdr: UserProvider) {
     this.init();
   }
   async init() {
-    this.forms = await this.getStoredData('forms');
+    this.forms = await this.cache.getCollection('forms');
     // *** TODO - add form filter depending on user type
   }
 
@@ -50,11 +46,10 @@ export class FormStore extends DataStore {
     // add to user forms
     this.userPrvdr.saveFormResponse(this.activeForm._key, response);
     // add to firebase forms
-    this.db.addToCollection(
-      `forms/${this.activeForm._key}/submissions`,
-      response,
-      response._key
-    );
+    this.cache.setDoc(`forms/${this.activeForm._key}/submissions` as any, {
+      ...DBMeta(),
+      ...response
+    });
     setTimeout(() => {
       // this.modalCtrl.dismiss();
     }, 1500);
