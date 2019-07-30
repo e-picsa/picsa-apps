@@ -63,9 +63,6 @@ export class BudgetCreatePage implements OnInit {
       enterprise: enterprise.id,
       periods: enterpriseDefaultPeriods
     });
-    setTimeout(() => {
-      this.stepper.next();
-    }, 800);
   }
   save() {
     // generate period labels before saving

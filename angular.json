@@ -24,9 +24,7 @@
               "testing/tsconfig.libs.json",
               "testing/tsconfig.libs.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -52,9 +50,7 @@
               "testing/tsconfig.xplat.json",
               "testing/tsconfig.xplat.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -91,7 +87,12 @@
             "tsConfig": "apps/budget-tool/tsconfig.app.json",
             "assets": [
               "apps/budget-tool/src/favicon.ico",
-              "apps/budget-tool/src/assets"
+              "apps/budget-tool/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./libs/shared-assets/",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "apps/budget-tool/src/styles.scss",
@@ -150,9 +151,7 @@
               "apps/budget-tool/tsconfig.app.json",
               "apps/budget-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -219,9 +218,7 @@
               "libs/scss/_index.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "libs/scss/"
-              ]
+              "includePaths": ["libs/scss/"]
             },
             "scripts": []
           },
@@ -276,9 +273,7 @@
               "apps/dashboard/tsconfig.app.json",
               "apps/dashboard/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -397,9 +392,7 @@
               "apps/extension-toolkit/tsconfig.app.json",
               "apps/extension-toolkit/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -524,9 +517,7 @@
               "apps/climate-tool/tsconfig.app.json",
               "apps/climate-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {

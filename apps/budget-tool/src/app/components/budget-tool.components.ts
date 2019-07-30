@@ -15,7 +15,7 @@ import { BudgetOverviewComponent } from './budget-overview/budget-overview';
 import { CardSelectComponent } from './card-select/card-select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PicsaMaterialModule } from '../material.module';
+import { BudgetMaterialModule } from '../material.module';
 import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
 
 @NgModule({
@@ -37,7 +37,7 @@ import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
     IonicModule,
     CommonModule,
     FormsModule,
-    PicsaMaterialModule,
+    BudgetMaterialModule,
     TranslateModule.forChild(),
     CanvasWhiteboardModule
   ],

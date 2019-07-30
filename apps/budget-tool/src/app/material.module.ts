@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 import { NgModule } from '@angular/core';
 
@@ -18,6 +19,7 @@ import { NgModule } from '@angular/core';
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
@@ -29,10 +31,11 @@ import { NgModule } from '@angular/core';
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
     MatCardModule
   ]
 })
-export class PicsaMaterialModule {}
+export class BudgetMaterialModule {}

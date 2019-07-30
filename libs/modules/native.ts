@@ -7,6 +7,7 @@ import {
 import { PrintProvider } from '../services/native/print';
 import { NetworkProvider } from '../services/native/network';
 import { FileService } from '../services/native/file-service';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
   imports: []
@@ -22,7 +23,7 @@ export class PicsaNativeModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: PicsaNativeModule,
-      providers: [PrintProvider, NetworkProvider, FileService]
+      providers: [PrintProvider, NetworkProvider, FileService, SocialSharing]
     };
   }
 }

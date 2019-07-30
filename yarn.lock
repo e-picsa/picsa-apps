@@ -522,6 +522,13 @@
   dependencies:
     "@types/cordova" latest
 
+"@ionic-native/network@^5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/network/-/network-5.11.0.tgz#71ac4c525f6973be363f412176cc1b6f5ffc4364"
+  integrity sha512-n/awmQIwOMvn1H4u2CEHKM3E8NSyv3ZfuuzKb30vU/CmtrVADsVArGWnukARApz1L8CavWI35lkRSGkjkPytWg==
+  dependencies:
+    "@types/cordova" latest
+
 "@ionic-native/social-sharing@^5.10.0":
   version "5.10.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/social-sharing/-/social-sharing-5.10.0.tgz#57ef320846b9964f8990ea62cdcc82d212b6e2e1"

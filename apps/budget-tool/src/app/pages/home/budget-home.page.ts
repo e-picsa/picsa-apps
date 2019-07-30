@@ -32,7 +32,7 @@ export class BudgetHomePage implements OnDestroy {
     private router: Router
   ) {}
   createClicked() {
-    this.router.navigate(['create']);
+    this.router.navigate(['budget/create']);
   }
   ngOnDestroy() {
     this.componentDestroyed.next();

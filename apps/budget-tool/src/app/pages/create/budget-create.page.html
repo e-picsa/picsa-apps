@@ -33,6 +33,17 @@
             </div>
           </div>
         </div>
+        <button
+          mat-button
+          matStepperNext
+          color="primary"
+          mat-raised-button
+          class="button--next"
+          [disabled]="!budgetForm.value.enterprise"
+        >
+          Next
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
       </mat-step>
 
       <!-- Step 2 - handled with form controls -->

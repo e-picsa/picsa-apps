@@ -47,6 +47,7 @@
     "@ionic-native/core": "^5.10.0",
     "@ionic-native/file": "^5.10.0",
     "@ionic-native/file-opener": "^5.10.0",
+    "@ionic-native/network": "^5.11.0",
     "@ionic-native/social-sharing": "^5.10.0",
     "@ionic/angular": "4.6.2",
     "@ionic/storage": "^2.2.0",

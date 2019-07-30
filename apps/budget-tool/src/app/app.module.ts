@@ -14,7 +14,7 @@ import { StoreModule } from '@picsa/extension/src/app/state';
 import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 import { PicsaDbModule, PicsaNativeModule } from '@picsa/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PicsaMaterialModule } from './material.module';
+import { BudgetMaterialModule } from './material.module';
 
 // configure translation from file
 export function createTranslateLoader(http: HttpClient) {
@@ -28,7 +28,7 @@ export function createTranslateLoader(http: HttpClient) {
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    PicsaMaterialModule,
+    BudgetMaterialModule,
     IonicStorageModule.forRoot({
       name: '__picsa'
     }),

@@ -38,12 +38,9 @@ mat-select.select--hidden {
 button.button--next {
   width: 100%;
   margin-top: 2em;
-  color: white;
-  background: var(--ion-color-secondary);
   font-size: 1.5em;
 }
 
 button.button--next[disabled] {
   background: white;
-
 }
