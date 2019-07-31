@@ -29,10 +29,12 @@ export class PicsaDbService implements AbstractDBService {
       : this.syncDoc<IDBDoc>(endpoint, key);
   }
   // when setting any doc update meta and return full doc after complete
+  // optional sync makes a copy of the document online
   async setDoc<T>(endpoint: IDBEndpoint, doc: T, sync = false) {
     const dbDoc = { ...doc, ...this.generateMeta(doc) };
     if (sync) {
       await this.server.setDoc(endpoint, dbDoc);
+      console.log('server uploaded');
     }
     await this.cache.setDoc(endpoint, dbDoc);
     return dbDoc;

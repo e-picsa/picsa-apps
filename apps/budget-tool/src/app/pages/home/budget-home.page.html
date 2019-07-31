@@ -9,7 +9,7 @@
     <div *mobxAutorun>
       <budget-list-item
         *ngFor="let budget of store.savedBudgets"
-        [routerLink]="['/view', budget._key]"
+        [routerLink]="['/budget/view', budget._key]"
         [budget]="budget"
       >
       </budget-list-item>

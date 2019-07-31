@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
 import { AbstractDBService } from './abstract.db';
+import ENVIRONMENT from '@picsa/environments/environment';
 
+console.log('environment', ENVIRONMENT);
 @Injectable({ providedIn: 'root' })
 class DBServerService implements AbstractDBService {
   constructor(private afs: AngularFirestore) {}
@@ -24,7 +26,12 @@ class DBServerService implements AbstractDBService {
   }
 
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {
-    await this.afs.doc(`${endpoint}/${doc._key}`).set(doc);
+    console.log('setting doc', endpoint, doc);
+    try {
+      await this.afs.doc(`${endpoint}/${doc._key}`).set(doc);
+    } catch (error) {
+      console.error(error);
+    }
     return doc;
   }
 

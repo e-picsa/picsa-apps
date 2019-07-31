@@ -71,7 +71,8 @@ export class BudgetStore {
     this.setActiveBudget(budget);
   }
   async saveBudget() {
-    await this.db.setDoc('budgetTool/budgets', this.activeBudgetValue);
+    await this.db.setDoc('budgetTool/v1/budgets', this.activeBudgetValue, true);
+    await this.loadSavedBudgets();
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
@@ -90,9 +91,8 @@ export class BudgetStore {
 
   private async loadSavedBudgets(): Promise<void> {
     this.savedBudgets = await this.db.getCollection<IBudget>(
-      'budgetTool/budgets'
+      'budgetTool/v1/budgets'
     );
-    console.log('saved budgets', toJS(this.savedBudgets));
   }
 
   async archiveBudget(budget: IBudget) {

@@ -80,7 +80,7 @@ export class BudgetCreatePage implements OnInit {
   // create general form with formgroups for all budget fields
   // add required vaildation for fields which must be completed in this page
   private generateBudgetForm() {
-    const requiredFields: (keyof IBudget)[] = [
+    const requiredFields: IBudgetKey[] = [
       'enterprise',
       'enterpriseType',
       'title'
@@ -104,11 +104,12 @@ export class BudgetCreatePage implements OnInit {
       key =>
         (fieldGroup[key] = [
           v[key],
-          requiredFields.includes(key as keyof IBudget)
-            ? Validators.required
-            : null
+          requiredFields.includes(key) ? Validators.required : null
         ])
     );
     return this.fb.group(fieldGroup);
   }
 }
+
+// need to specify only string keys as technically could be numbers (change in ts 2.9)
+type IBudgetKey = Extract<keyof IBudget, string>;

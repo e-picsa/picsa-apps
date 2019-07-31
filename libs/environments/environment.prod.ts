@@ -1,18 +1,18 @@
-import { sharedEnvironment as env } from "./base";
-import { IEnvironment } from "src/models/models";
+import { IEnvironment } from '@picsa/models';
 
 const ENVIRONMENT: IEnvironment = {
   // During production builds this file replaces default environment to indicate we have a production build
+  // Note, the keys are not committed within the default repo
   production: true,
   usesCordova: false,
   firebase: {
-    apiKey: env.firebaseApiKey,
-    authDomain: env.firebaseAuthDomain,
-    databaseURL: env.firebaseDatabaseUrl,
-    projectId: env.firebaseProjectId,
-    storageBucket: env.firebaseStorageBucket,
-    messagingSenderId: env.firebaseMessagingSenderId,
-    appId: env.firebaseAppId
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: ''
   }
 };
 

@@ -12,12 +12,9 @@ class DBCacheService implements AbstractDBService {
    ***********************************************************************/
   public async getCollection<T>(endpoint: IDBEndpoint): Promise<T[]> {
     console.log('getting collection', endpoint);
-    if (!db.hasOwnProperty(endpoint)) {
-      console.log('loading store');
-      await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
-    }
+    await this.ensureExists(endpoint);
+    // if no data will throw error
     try {
-      // if no data will throw error
       const collection = await db.table<T>(endpoint).toArray();
       return collection;
     } catch (error) {
@@ -30,14 +27,22 @@ class DBCacheService implements AbstractDBService {
     endpoint: IDBEndpoint,
     key: string
   ): Promise<IDBDoc | undefined> {
-    return db.table<IDBDoc>(endpoint).get(key);
+    await this.ensureExists(endpoint);
+    try {
+      const doc = await db.table<IDBDoc>(endpoint).get(key);
+      return doc;
+    } catch (error) {
+      return undefined;
+    }
   }
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {
+    await this.ensureExists(endpoint);
     await db.table(endpoint).put(doc);
     return doc;
   }
 
   public async setDocs<T>(endpoint: IDBEndpoint, docs: (T & IDBDoc)[]) {
+    await this.ensureExists(endpoint);
     if (!db.hasOwnProperty(endpoint)) {
       await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
     }
@@ -49,13 +54,18 @@ class DBCacheService implements AbstractDBService {
    *  Helper Methods
    ***********************************************************************/
 
+  //  Dexie throws errors if tables have not been initialised
+  private async ensureExists(endpoint: IDBEndpoint) {
+    if (!db.hasOwnProperty(endpoint)) {
+      await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
+    }
+  }
   // initialise database stores
   private async loadStores(stores: IDBStores) {
     const schema = {};
     for (let [key, value] of Object.entries(stores)) {
       schema[key] = value ? value : DEFAULT_STORE_SCHEMA;
     }
-    console.log('loading stores', schema);
     await db.version(DB_VERSION).stores(schema);
   }
 }
