@@ -15,5 +15,7 @@ const ENVIRONMENT: IEnvironment = {
     appId: ''
   }
 };
-
+if (ENVIRONMENT.firebase.apiKey === '') {
+  throw new Error('Production Firebase Environment Not Set');
+}
 export default ENVIRONMENT;

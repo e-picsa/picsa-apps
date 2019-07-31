@@ -104,8 +104,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/budget-tool/src/environments/environment.ts",
-                  "with": "apps/budget-tool/src/environments/environment.prod.ts"
+                  "replace": "libs/environments/environment.ts",
+                  "with": "libs/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -226,8 +226,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/dashboard/src/environments/environment.ts",
-                  "with": "apps/dashboard/src/environments/environment.prod.ts"
+                  "replace": "libs/environments/environment.ts",
+                  "with": "libs/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -345,8 +345,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/extension-toolkit/src/environments/environment.ts",
-                  "with": "apps/extension-toolkit/src/environments/environment.prod.ts"
+                  "replace": "libs/environments/environment.ts",
+                  "with": "libs/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -470,8 +470,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/climate-tool/src/environments/environment.ts",
-                  "with": "apps/climate-tool/src/environments/environment.prod.ts"
+                  "replace": "libs/environments/environment.ts",
+                  "with": "libs/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
