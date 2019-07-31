@@ -11,10 +11,18 @@ class DBCacheService implements AbstractDBService {
    *  Main Methods
    ***********************************************************************/
   public async getCollection<T>(endpoint: IDBEndpoint): Promise<T[]> {
+    console.log('getting collection', endpoint);
     if (!db.hasOwnProperty(endpoint)) {
+      console.log('loading store');
       await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
     }
-    return db.table<T>(endpoint).toArray();
+    try {
+      // if no data will throw error
+      const collection = await db.table<T>(endpoint).toArray();
+      return collection;
+    } catch (error) {
+      return [];
+    }
   }
 
   // NOTE - if no doc found will return undefined
@@ -47,6 +55,7 @@ class DBCacheService implements AbstractDBService {
     for (let [key, value] of Object.entries(stores)) {
       schema[key] = value ? value : DEFAULT_STORE_SCHEMA;
     }
+    console.log('loading stores', schema);
     await db.version(DB_VERSION).stores(schema);
   }
 }

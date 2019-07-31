@@ -25,7 +25,6 @@ export class ClimateToolService {
   // when db has been initialised
   private async init() {
     const collection = await this.db.getCollection('stationData');
-    console.log('TO CHECK! what happens on empty?', collection);
     if (collection.length === 0) {
       await this.initialiseHardcodedData();
     }
