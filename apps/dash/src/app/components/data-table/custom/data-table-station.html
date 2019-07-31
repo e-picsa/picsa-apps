@@ -1,0 +1,30 @@
+<div class="mat-elevation-z8" style="display: inline-block">
+  <table mat-table [dataSource]="tableData">
+    <ng-container matColumnDef="Year">
+      <th mat-header-cell *matHeaderCellDef>Year</th>
+      <td mat-cell *matCellDef="let el">{{ el.Year }}</td>
+    </ng-container>
+    <ng-container matColumnDef="StartDate">
+      <th mat-header-cell *matHeaderCellDef>StartDate</th>
+      <td mat-cell *matCellDef="let el">
+        {{ el.StartDate ? (el.StartDate | date: 'mediumDate') : '' }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Length">
+      <th mat-header-cell *matHeaderCellDef>Length</th>
+      <td mat-cell *matCellDef="let el">{{ el.Length | number: '1.0-0' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="Rainfall">
+      <th mat-header-cell *matHeaderCellDef>Rainfall</th>
+      <td mat-cell *matCellDef="let el">{{ el.Rainfall | number: '1.0-0' }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="tableColumns" class="header-row"></tr>
+    <tr mat-row *matRowDef="let el; columns: tableColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
