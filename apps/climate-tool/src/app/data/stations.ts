@@ -1,5 +1,5 @@
 import { IStationMeta } from '@picsa/models/climate.models';
-import { DBMeta } from '@picsa/services/core/db/db.utils';
+import { DBMeta } from '@picsa/services/core/db/utils.db';
 
 export const STATIONS: IStationMeta[] = [
   {

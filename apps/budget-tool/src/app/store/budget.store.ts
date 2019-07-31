@@ -11,8 +11,7 @@ import { observable, action } from 'mobx-angular';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
 import { BUDGET_DATA } from '../data/budget.data';
 import { toJS } from 'mobx';
-import { DBServerService, DBCacheService } from '@picsa/services/core';
-import { DBMeta } from '@picsa/services/core/db/db.utils';
+import { PicsaDbService } from '@picsa/services/core/';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +29,7 @@ export class BudgetStore {
     console.log('active budget', toJS(this.activeBudget));
   }
 
-  constructor(private cache: DBCacheService, private server: DBServerService) {
+  constructor(private db: PicsaDbService) {
     this.loadSavedBudgets();
   }
 
@@ -67,12 +66,12 @@ export class BudgetStore {
   createNewBudget() {
     const budget: IBudget = {
       ...NEW_BUDGET_TEMPLATE,
-      ...DBMeta()
+      ...this.db.generateMeta()
     };
     this.setActiveBudget(budget);
   }
   async saveBudget() {
-    await this.cache.setDoc('budgetTool/budgets', this.activeBudgetValue);
+    await this.db.setDoc('budgetTool/budgets', this.activeBudgetValue);
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
@@ -90,7 +89,7 @@ export class BudgetStore {
   }
 
   private async loadSavedBudgets(): Promise<void> {
-    this.savedBudgets = await this.cache.getCollection<IBudget>(
+    this.savedBudgets = await this.db.getCollection<IBudget>(
       'budgetTool/budgets'
     );
     console.log('saved budgets', toJS(this.savedBudgets));

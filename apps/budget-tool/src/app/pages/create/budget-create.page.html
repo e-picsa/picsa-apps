@@ -34,7 +34,6 @@
           </div>
         </div>
         <button
-          mat-button
           matStepperNext
           color="primary"
           mat-raised-button
@@ -118,8 +117,14 @@
               </mat-select>
             </button>
           </div>
-          <button mat-button matStepperNext class="button--next">
+          <button
+            matStepperNext
+            color="primary"
+            mat-raised-button
+            class="button--next"
+          >
             Next
+            <mat-icon>arrow_forward</mat-icon>
           </button>
         </form>
       </mat-step>
@@ -136,8 +141,9 @@
             formControlName="description"
           ></textarea>
           <button
-            mat-button
             matStepperNext
+            color="primary"
+            mat-raised-button
             [disabled]="budgetForm.invalid"
             class="button--next"
             (click)="save()"

@@ -20,4 +20,5 @@ export interface IDBDoc {
   _key: string;
   _created: ITimestamp;
   _modified: ITimestamp;
+  [key: string]: any;
 }
