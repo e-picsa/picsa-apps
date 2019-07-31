@@ -1,0 +1,24 @@
+<div
+  style="width:220px; height:100%; padding:2rem 1rem 1rem; background:whitesmoke "
+>
+  <mat-list>
+    <!-- material icons specified within mat-icon element tag  -->
+
+    <!-- <mat-list-item [routerLink]="['/']">
+      <mat-icon mat-list-icon>home</mat-icon>
+      <h4 mat-line>Home</h4>
+    </mat-list-item> -->
+    <h3 mat-subheader>Data Tools</h3>
+    <mat-list-item [routerLink]="['/upload']">
+      <!-- custom-registered icons defined as svgIcons -->
+      <mat-icon mat-list-icon svgIcon="station_data_add_data"></mat-icon>
+      <h4 mat-line>Add Station Data</h4>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+    <!-- <h3 mat-subheader>View Data</h3>
+    <mat-list-item [routerLink]="['/map']">
+      <mat-icon mat-list-icon svgIcon="station_data_map"></mat-icon>
+      <h4 mat-line>Map</h4>
+    </mat-list-item> -->
+  </mat-list>
+</div>
