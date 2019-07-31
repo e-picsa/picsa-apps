@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { PicsaDataTable } from '../data-table';
-import { IChartSummary2019 } from '@picsa/models';
+import { IChartSummary_V2 } from '@picsa/models/climate.models';
 
 @Component({
   // tslint:disable component-selector
@@ -13,13 +13,13 @@ import { IChartSummary2019 } from '@picsa/models';
   
 */
 export class PicsaDataTableStation extends PicsaDataTable {
-  tableColumns: (keyof IChartSummary2019)[] = [
+  tableColumns: (keyof IChartSummary_V2)[] = [
     'Year',
     'StartDate',
     'Length',
     'Rainfall'
   ];
-  @Input() set data(data: IChartSummary2019[]) {
+  @Input() set data(data: IChartSummary_V2[]) {
     if (data && data.length > 0) {
       this.tableData.data = data;
     }

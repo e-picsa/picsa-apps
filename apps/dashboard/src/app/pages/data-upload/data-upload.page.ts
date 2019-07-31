@@ -3,10 +3,10 @@ import { transferArrayItem, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { NgxFileDropEntry, FileSystemFileEntry } from 'ngx-file-drop';
 import { Papa, PapaParseConfig } from 'ngx-papaparse';
 import { HttpClient } from '@angular/common/http';
-import { IChartSummary2019 } from '@picsa/models';
+import { IChartSummary_V2 } from '@picsa/models';
 
 @Component({
-  selector: 'station-data-upload',
+  selector: 'dashboard-data-upload',
   templateUrl: './data-upload.page.html',
   styleUrls: ['./data-upload.page.scss']
 })
@@ -15,7 +15,7 @@ export class DataUpload implements OnInit {
   csvFile: File;
   csvData: IParsedField[] = [];
   demoData: string;
-  csvMappedData: IChartSummary2019[] = [];
+  csvMappedData: IChartSummary_V2[] = [];
   csvFields: string[] = [];
   mappedFields: string[] = [];
   rainfallChartData: any;
@@ -111,7 +111,10 @@ export class DataUpload implements OnInit {
     this.siteDataMapping.forEach((el, i) => {
       // do field mapping each time as original this.csvFields directly altered on match
       const csvFields = this.csvFields.map(field => field.toLowerCase());
-      const matchString = el.field.substr(0, 4).toLowerCase();
+      const matchString = el.field
+        .toString()
+        .substr(0, 4)
+        .toLowerCase();
       const matchField = csvFields.find(f => f.includes(matchString));
       // if match found remove from csvFields array and populate mapping array
       if (matchField) {
@@ -135,7 +138,7 @@ export class DataUpload implements OnInit {
     });
     // map data where exists
     this.csvMappedData = this.csvData.map(el => {
-      const summary: IChartSummary2019 = {
+      const summary: IChartSummary_V2 = {
         Year: map.Year ? Number(el[map.Year]) : null,
         StartDate: map.StartDate ? new Date(el[map.StartDate]) : null,
         Length: map.Length ? Number(el[map.Length]) : null,
@@ -185,7 +188,7 @@ export class DataUpload implements OnInit {
  *    Interfaces
  ******************************************************************************/
 interface ISiteDataField {
-  field: keyof IChartSummary2019;
+  field: keyof IChartSummary_V2;
   description: string;
   dataType: 'string' | 'number' | 'date';
 }

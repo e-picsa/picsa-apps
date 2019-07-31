@@ -31,7 +31,7 @@ export class PicsaChartComponent implements OnInit {
   @Input() data: c3.Data = {
     columns: []
   };
-  @Input() config: IChartConfig;
+  @Input() config: IChartConfig = {};
 
   /**********************************************************************************
    *  Custom creation and change event handling
