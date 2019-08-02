@@ -2,12 +2,16 @@
 // (see https://github.com/angular/angular-cli/issues/4318)
 
 // note, the key below is intentionally exposed and simply provides limited access to the staging/development site resources
+const firebaseConfig = {
+  apiKey: 'AIzaSyCHzsaVc4TuG3QMFjI_SKP1Px-E5QRglcM',
+  authDomain: 'extension-toolkit.firebaseapp.com',
+  databaseURL: 'https://extension-toolkit.firebaseio.com',
+  projectId: 'extension-toolkit',
+  storageBucket: 'extension-toolkit.appspot.com',
+  messagingSenderId: '249750594240',
+  appId: '1:249750594240:web:85afd34173faddcc'
+};
+
 export const sharedEnvironment = {
-  firebaseApiKey: 'AIzaSyCjVzdn5WTQKSDqGw9F0nNbhtdCDcPYP3I',
-  firebaseAuthDomain: 'extension-toolkit-staging.firebaseapp.com',
-  firebaseDatabaseUrl: 'https://extension-toolkit-staging.firebaseio.com',
-  firebaseProjectId: 'extension-toolkit-staging',
-  firebaseStorageBucket: 'extension-toolkit-staging.appspot.com',
-  firebaseMessagingSenderId: '621985864882',
-  firebaseAppId: '1:621985864882:web:a19ebe2425f632b6'
+  firebaseConfig
 };

@@ -4,6 +4,7 @@ import DBCacheService from './_cache.db';
 import { firestore } from 'firebase/app';
 import DBServerService from './_server.db';
 import { AbstractDBService } from './abstract.db';
+import { DBSyncService } from './sync.service';
 
 type IDBSource = 'cache' | 'server';
 /************************************************************************
@@ -17,26 +18,29 @@ type IDBSource = 'cache' | 'server';
  ***********************************************************************/
 @Injectable({ providedIn: 'root' })
 export class PicsaDbService implements AbstractDBService {
-  constructor(private cache: DBCacheService, private server: DBServerService) {}
+  constructor(
+    private cache: DBCacheService,
+    private server: DBServerService,
+    private sync: DBSyncService
+  ) {}
   getCollection<IDBDoc>(endpoint: IDBEndpoint, src: IDBSource = 'cache') {
     return src === 'cache'
       ? this.cache.getCollection<IDBDoc>(endpoint)
-      : this.syncCollection<IDBDoc>(endpoint);
+      : this.server.getCollection<IDBDoc>(endpoint);
   }
   getDoc<IDBDoc>(endpoint: IDBEndpoint, key: string, src: IDBSource = 'cache') {
     return src === 'cache'
       ? this.cache.getDoc<IDBDoc>(endpoint, key)
-      : this.syncDoc<IDBDoc>(endpoint, key);
+      : this.server.getDoc<IDBDoc>(endpoint, key);
   }
   // when setting any doc update meta and return full doc after complete
   // optional sync makes a copy of the document online
   async setDoc<T>(endpoint: IDBEndpoint, doc: T, sync = false) {
     const dbDoc = { ...doc, ...this.generateMeta(doc) };
-    if (sync) {
-      await this.server.setDoc(endpoint, dbDoc);
-      console.log('server uploaded');
-    }
     await this.cache.setDoc(endpoint, dbDoc);
+    if (sync) {
+      this.sync.addWrites(endpoint, [dbDoc._key]);
+    }
     return dbDoc;
   }
   // allow batch set functionality
@@ -48,12 +52,28 @@ export class PicsaDbService implements AbstractDBService {
     const dbDocs = docs.map(doc => {
       return { ...doc, ...this.generateMeta(doc) };
     });
-    if (sync) {
-      await this.server.setDocs(endpoint, dbDocs);
-    }
     await this.cache.setDocs(endpoint, dbDocs);
+    if (sync) {
+      this.sync.addWrites(endpoint, dbDocs.map(d => d._key));
+    }
     return dbDocs;
   }
+  async deleteDocs(endpoint: IDBEndpoint, keys: string[], deleteServer = true) {
+    await this.cache.deleteDocs(endpoint, keys);
+    // NOTE - when client offline this doesn't resolve, so don't wait
+    // assume fine if delete action queued assuming will be deleted from client
+    // alternatively could add sync methods like doc addition
+    if (deleteServer) {
+      this.server.deleteDocs(endpoint, keys);
+    }
+  }
+
+  /************************************************************************
+   *  Stream Methods - used to emit local and live updates
+   ***********************************************************************/
+
+  async streamCollection() {}
+  async streamDoc() {}
 
   /************************************************************************
    *  Sync Methods - invoked after server db calls. Pull from server
@@ -87,7 +107,6 @@ export class PicsaDbService implements AbstractDBService {
     const key = firestore()
       .collection('_')
       .doc().id;
-    console.log('key', key);
     return key;
   };
 

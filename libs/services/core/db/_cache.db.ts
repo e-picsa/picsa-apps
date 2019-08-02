@@ -1,21 +1,29 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
-import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
+import {
+  IDBEndpoint,
+  IDBDoc,
+  DB_SCHEMA,
+  DB_VERSION
+} from '@picsa/models/db.models';
 import { AbstractDBService } from './abstract.db';
 
-const DB_VERSION = 1;
 const db = new Dexie('PICSA_Apps');
 @Injectable({ providedIn: 'root' })
 class DBCacheService implements AbstractDBService {
+  constructor() {
+    // initialise database stores, NOTE - avoid dynamically adding tables
+    // https://github.com/dfahlander/Dexie.js/issues/684
+    db.version(DB_VERSION).stores(DB_SCHEMA);
+  }
   /************************************************************************
-   *  Main Methods
+   *  Main Methods - taken from abstract class
    ***********************************************************************/
   public async getCollection<T>(endpoint: IDBEndpoint): Promise<T[]> {
-    console.log('getting collection', endpoint);
-    await this.ensureExists(endpoint);
     // if no data will throw error
     try {
       const collection = await db.table<T>(endpoint).toArray();
+      console.log(endpoint, collection);
       return collection;
     } catch (error) {
       return [];
@@ -27,7 +35,6 @@ class DBCacheService implements AbstractDBService {
     endpoint: IDBEndpoint,
     key: string
   ): Promise<IDBDoc | undefined> {
-    await this.ensureExists(endpoint);
     try {
       const doc = await db.table<IDBDoc>(endpoint).get(key);
       return doc;
@@ -35,44 +42,32 @@ class DBCacheService implements AbstractDBService {
       return undefined;
     }
   }
-  public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {
-    await this.ensureExists(endpoint);
+  public async getDocs(endpoint: IDBEndpoint, keys: string[]) {
+    return db
+      .table(endpoint)
+      .where('_key')
+      .anyOf(keys);
+    // NOTE, above query can be replaced when dexie 3 released
+    // return db.table(endpoint).bulkGet(keys)
+  }
+  public async setDoc<T>(endpoint: IDBEndpoint, doc: T) {
     await db.table(endpoint).put(doc);
-    return doc;
+    return doc as T & IDBDoc;
   }
 
-  public async setDocs<T>(endpoint: IDBEndpoint, docs: (T & IDBDoc)[]) {
-    await this.ensureExists(endpoint);
-    if (!db.hasOwnProperty(endpoint)) {
-      await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
-    }
+  public async setDocs<T>(endpoint: IDBEndpoint, docs: T[]) {
     await db.table(endpoint).bulkPut(docs);
-    return docs;
+    // force type as doc not always IDBDoc (e.g. pending writes)
+    return docs as (T & IDBDoc)[];
+  }
+
+  public async deleteDocs(endpoint: IDBEndpoint, keys: string[]) {
+    return db.table(endpoint).bulkDelete(keys);
   }
 
   /************************************************************************
-   *  Helper Methods
+   *  Additional Methods - specific only to cache db
    ***********************************************************************/
-
-  //  Dexie throws errors if tables have not been initialised
-  private async ensureExists(endpoint: IDBEndpoint) {
-    if (!db.hasOwnProperty(endpoint)) {
-      await this.loadStores({ [endpoint]: DEFAULT_STORE_SCHEMA });
-    }
-  }
-  // initialise database stores
-  private async loadStores(stores: IDBStores) {
-    const schema = {};
-    for (let [key, value] of Object.entries(stores)) {
-      schema[key] = value ? value : DEFAULT_STORE_SCHEMA;
-    }
-    await db.version(DB_VERSION).stores(schema);
-  }
 }
-
-type IDBStores = { [endpoint in IDBEndpoint]?: string | null };
-
-// Dexie stores require schema for indexing. By default pass keys populated on dbdocs
-const DEFAULT_STORE_SCHEMA = '_key,_created,_modified';
 
 export default DBCacheService;

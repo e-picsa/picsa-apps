@@ -9,6 +9,10 @@ console.log('environment', ENVIRONMENT);
 class DBServerService implements AbstractDBService {
   constructor(private afs: AngularFirestore) {}
 
+  /************************************************************************
+   *  Main Methods - taken from abstract class
+   ***********************************************************************/
+
   public async getCollection<T>(endpoint: IDBEndpoint) {
     const snapshot = await this.afs
       .collection<T>(endpoint)
@@ -26,12 +30,8 @@ class DBServerService implements AbstractDBService {
   }
 
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {
-    console.log('setting doc', endpoint, doc);
-    try {
-      await this.afs.doc(`${endpoint}/${doc._key}`).set(doc);
-    } catch (error) {
-      console.error(error);
-    }
+    this.afs.firestore.doc(`${endpoint}/${doc._key}`).set(doc);
+    await this.afs.firestore.doc(`${endpoint}/${doc._key}`).set(doc);
     return doc;
   }
 
@@ -43,6 +43,37 @@ class DBServerService implements AbstractDBService {
     }
     await batch.commit();
     return docs;
+  }
+
+  // NOTE - this will not delete subcollection docs
+  // TODO - support subcollection deletion
+  public async deleteDocs(
+    endpoint: IDBEndpoint,
+    keys: string[],
+    subcollection?: string
+  ) {
+    const batch = this.afs.firestore.batch();
+    for (let key of keys) {
+      const ref = this.afs.firestore.collection(endpoint).doc(key);
+      batch.delete(ref);
+    }
+    return batch.commit();
+  }
+
+  /************************************************************************
+   *  Additional Methods - specific only to cache db
+   ***********************************************************************/
+
+  // similar to setDocs above but allow for multiple different endpoints (useful for sync methods)
+  public async setMultiple(refs: { endpoint: IDBEndpoint; doc: IDBDoc }[]) {
+    const batch = this.afs.firestore.batch();
+    // TODO - limit batch methods to process chunks of 500
+    for (let r of refs) {
+      const ref = this.afs.firestore.collection(r.endpoint).doc(r.doc._key);
+      batch.set(ref, r.doc);
+    }
+    await batch.commit();
+    return refs;
   }
 
   // instead of usual sync from db to local, this can be used to populate the main db from local

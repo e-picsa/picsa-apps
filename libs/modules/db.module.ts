@@ -8,6 +8,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import ENVIRONMENT from '../environments/environment';
+import { DBSyncService } from '@picsa/services/core/db/sync.service';
 
 // initiate db and auth in shared lib to be available throughout app
 @NgModule({
@@ -22,7 +23,13 @@ export class PicsaDbModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: PicsaDbModule,
-      providers: [DBCacheService, DBServerService, PicsaDbService, AuthService]
+      providers: [
+        DBCacheService,
+        DBServerService,
+        DBSyncService,
+        PicsaDbService,
+        AuthService
+      ]
     };
   }
 }

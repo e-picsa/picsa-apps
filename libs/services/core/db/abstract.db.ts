@@ -17,4 +17,6 @@ export abstract class AbstractDBService {
     endpoint: IDBEndpoint,
     docs: T[]
   ): Promise<(T & IDBDoc)[]>;
+
+  abstract deleteDocs(endpoint: IDBEndpoint, keys: string[]): Promise<void>;
 }
