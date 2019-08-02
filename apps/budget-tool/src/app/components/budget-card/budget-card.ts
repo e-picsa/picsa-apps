@@ -4,8 +4,8 @@ import {
   ICustomBudgetCard,
   IBudgetCard
 } from '../../models/budget-tool.models';
-import REGIONAL_SETTINGS from '@picsa/environments/regions';
 import { BudgetStore } from '../../store/budget.store';
+import { ENVIRONMENT } from '@picsa/environments';
 
 @Component({
   selector: 'budget-card',
@@ -20,7 +20,7 @@ export class BudgetCardComponent implements OnInit {
   @Input() generator: string;
   @Input() type: string;
   @Input() selected: boolean;
-  currency = REGIONAL_SETTINGS.currency;
+  currency = ENVIRONMENT.region.currency;
 
   constructor(public actions: BudgetToolActions, public store: BudgetStore) {}
 

@@ -1,4 +1,5 @@
 import { firestore } from 'firebase/app';
+import { ENVIRONMENT } from '@picsa/environments';
 
 // note, as most db writes are within nested collections hard to assert strong typings without
 // also lots of nested methods (e.g. setSubDoc, getSubCollectionEtc)
@@ -26,9 +27,10 @@ const DB_GROUP_SCHEMA = {
   'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA
 };
 
+// replace group variable with group code from environment and export collated endpoint schema
 export const DB_SCHEMA = {
   ...DB_COMMON_SCHEMA,
-  ...DB_GROUP_SCHEMA
+  ...keyReplace(DB_GROUP_SCHEMA, '${GROUP}', ENVIRONMENT.group.code)
 };
 
 export type IDBEndpoint = keyof typeof DB_SCHEMA;
@@ -39,4 +41,17 @@ export interface IDBDoc {
   _created: ITimestamp;
   _modified: ITimestamp;
   [key: string]: any;
+}
+
+function keyReplace(
+  obj: { [key: string]: string },
+  searchVal: string,
+  replaceVal: string
+) {
+  const rep = {};
+  Object.keys(obj).forEach(
+    k => (rep[k.replace(searchVal, replaceVal)] = obj[k])
+  );
+  console.log('replaced', rep);
+  return rep;
 }

@@ -1,6 +1,6 @@
 import { IRegionSettings, IAppVariants } from '@picsa/models';
 
-var REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
+const REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
   MALAWI: {
     countryCode: 'MW',
     languages: [
@@ -31,8 +31,13 @@ var REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
     },
     subtitle: 'for Financial Service Providers'
   },
-  DEFAULT: { ...REGIONS.MALAWI, subtitle: 'Extension Toolkit Demo' },
-  DEV: { ...REGIONS.MALAWI, subtitle: 'Development Preview' }
+  // add support for self-referencing default and dev
+  get DEFAULT() {
+    return this.MALAWI;
+  },
+  get DEV() {
+    return this.MALAWI;
+  }
 };
 
 export default REGIONS;

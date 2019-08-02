@@ -5,6 +5,7 @@ import { firestore } from 'firebase/app';
 import DBServerService from './_server.db';
 import { AbstractDBService } from './abstract.db';
 import { DBSyncService } from './sync.service';
+import { ENVIRONMENT } from '@picsa/environments';
 
 type IDBSource = 'cache' | 'server';
 /************************************************************************
@@ -24,11 +25,13 @@ export class PicsaDbService implements AbstractDBService {
     private sync: DBSyncService
   ) {}
   getCollection<IDBDoc>(endpoint: IDBEndpoint, src: IDBSource = 'cache') {
+    endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
       ? this.cache.getCollection<IDBDoc>(endpoint)
       : this.server.getCollection<IDBDoc>(endpoint);
   }
   getDoc<IDBDoc>(endpoint: IDBEndpoint, key: string, src: IDBSource = 'cache') {
+    endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
       ? this.cache.getDoc<IDBDoc>(endpoint, key)
       : this.server.getDoc<IDBDoc>(endpoint, key);
@@ -36,6 +39,7 @@ export class PicsaDbService implements AbstractDBService {
   // when setting any doc update meta and return full doc after complete
   // optional sync makes a copy of the document online
   async setDoc<T>(endpoint: IDBEndpoint, doc: T, sync = false) {
+    endpoint = this._mapEndpoint(endpoint);
     const dbDoc = { ...doc, ...this.generateMeta(doc) };
     await this.cache.setDoc(endpoint, dbDoc);
     if (sync) {
@@ -49,6 +53,7 @@ export class PicsaDbService implements AbstractDBService {
     docs: T[],
     sync = false
   ): Promise<(T & IDBDoc)[]> {
+    endpoint = this._mapEndpoint(endpoint);
     const dbDocs = docs.map(doc => {
       return { ...doc, ...this.generateMeta(doc) };
     });
@@ -59,6 +64,7 @@ export class PicsaDbService implements AbstractDBService {
     return dbDocs;
   }
   async deleteDocs(endpoint: IDBEndpoint, keys: string[], deleteServer = true) {
+    endpoint = this._mapEndpoint(endpoint);
     await this.cache.deleteDocs(endpoint, keys);
     // NOTE - when client offline this doesn't resolve, so don't wait
     // assume fine if delete action queued assuming will be deleted from client
@@ -122,5 +128,12 @@ export class PicsaDbService implements AbstractDBService {
       }
     });
     return data;
+  }
+
+  // Adjust database endpoint depending on group name
+  // done before all db operations.
+  private _mapEndpoint(endpoint: IDBEndpoint) {
+    const group = ENVIRONMENT.group.code;
+    return endpoint.replace('${GROUP}', group) as IDBEndpoint;
   }
 }

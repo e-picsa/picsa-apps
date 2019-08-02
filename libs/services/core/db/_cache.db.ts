@@ -7,8 +7,9 @@ import {
   DB_VERSION
 } from '@picsa/models/db.models';
 import { AbstractDBService } from './abstract.db';
+import { ENVIRONMENT } from '@picsa/environments';
 
-const db = new Dexie('PICSA_Apps');
+const db = new Dexie(`PICSA_Apps_${ENVIRONMENT.group.code}`);
 @Injectable({ providedIn: 'root' })
 class DBCacheService implements AbstractDBService {
   constructor() {

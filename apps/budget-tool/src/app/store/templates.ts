@@ -1,6 +1,6 @@
 import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
-import REGIONAL_SETTINGS from '@picsa/environments/regions';
-import { IBudget, IBudgetPeriodMeta } from '../models/budget-tool.models';
+import { IBudgetPeriodMeta } from '../models/budget-tool.models';
+import { ENVIRONMENT } from '@picsa/environments';
 
 const BUDGET_PERIOD_DEFAULT: IBudgetPeriodMeta = {
   starting: 10,
@@ -20,7 +20,7 @@ export const NEW_BUDGET_TEMPLATE = {
   periods: BUDGET_PERIOD_DEFAULT,
   title: null,
   enterpriseType: null,
-  dotValues: REGIONAL_SETTINGS.currencyCounters
+  dotValues: ENVIRONMENT.region.currencyCounters
 };
 
 export const MONTHS = [

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CanvasWhiteboardComponent } from 'ng2-canvas-whiteboard';
-import REGIONAL_SETTINGS from '@picsa/environments/regions';
+import { ENVIRONMENT } from '@picsa/environments';
 
 @Component({
   selector: 'budget-card-select',
@@ -8,7 +8,7 @@ import REGIONAL_SETTINGS from '@picsa/environments/regions';
   templateUrl: 'card-select.html'
 })
 export class CardSelectComponent {
-  currency = REGIONAL_SETTINGS.currency;
+  currency = ENVIRONMENT.region.currency;
   constructor() {
     console.log('currency', this.currency);
   }

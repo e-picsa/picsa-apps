@@ -1,7 +1,7 @@
 import { IEnvironment } from '@picsa/models';
 import BASE_ENV from '../environment.base';
 
-const ENVIRONMENT: IEnvironment = {
+const ENVIRONMENT_PROD: IEnvironment = {
   // During production builds this file replaces default environment to indicate we have a production build
   // Note, the keys are not committed within the default repo
   ...BASE_ENV,
@@ -16,7 +16,7 @@ const ENVIRONMENT: IEnvironment = {
     appId: ''
   }
 };
-if (ENVIRONMENT.firebase.apiKey === '') {
+if (ENVIRONMENT_PROD.firebase.apiKey === '') {
   throw new Error('Production Firebase Environment Not Set');
 }
-export default ENVIRONMENT;
+export default ENVIRONMENT_PROD;

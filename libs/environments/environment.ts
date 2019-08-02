@@ -6,8 +6,8 @@
 import BASE_ENV from './environment.base';
 import { IEnvironment } from '../models';
 
-const ENVIRONMENT: IEnvironment = {
+const DEFAULT_ENVIRONMENT: IEnvironment = {
   ...BASE_ENV
 };
 
-export default ENVIRONMENT;
+export default DEFAULT_ENVIRONMENT;
