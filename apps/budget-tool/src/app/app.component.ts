@@ -20,7 +20,8 @@ export class AppComponent {
 
   registerIcons() {
     const icons = {
-      download: 'download'
+      download: 'download',
+      delete: 'delete'
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(

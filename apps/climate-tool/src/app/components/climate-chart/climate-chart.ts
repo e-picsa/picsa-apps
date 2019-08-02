@@ -203,7 +203,7 @@ export class ClimateChartComponent implements OnInit {
   // NOTE - below code not working correctly, can't get loader to close
   // assume issue with ngzone
   private async showLoader() {
-    const dialogRef = await this.dialog.open({
+    const dialogRef = await this.dialog.open('blank', {
       title: 'Generating Chart Image',
       loader: 'bars'
     });

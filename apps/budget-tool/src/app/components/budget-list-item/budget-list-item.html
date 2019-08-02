@@ -4,9 +4,17 @@
       class="small"
       [imageId]="budget.enterprise"
     ></budget-card-image>
-    <div>
+    <div style="flex:1">
       <mat-card-title>{{ budget.title }}</mat-card-title>
       <mat-card-subtitle>{{ budget.created | date }}</mat-card-subtitle>
     </div>
+    <button
+      mat-button
+      aria-label="Delete"
+      color="light"
+      (click)="deleteClicked($event)"
+    >
+      <mat-icon svgIcon="picsa_delete"></mat-icon>
+    </button>
   </div>
 </mat-card>

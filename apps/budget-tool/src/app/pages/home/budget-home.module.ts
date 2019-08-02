@@ -6,6 +6,7 @@ import { BudgetToolComponentsModule } from '../../components/budget-tool.compone
 import { BudgetMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaDialogsModule } from '@picsa/features';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
+    PicsaDialogsModule,
     BudgetMaterialModule,
     BudgetToolComponentsModule,
     MobxAngularModule

@@ -1,7 +1,8 @@
 <div class="page">
   <h1>Budget Tool</h1>
   <div class="page-content">
-    <button mat-raised-button color="primary" (click)="createClicked()">
+    <button mat-stroked-button color="primary" (click)="createClicked()">
+      <mat-icon>add</mat-icon>
       {{ 'Create New Budget' | translate }}
     </button>
 
@@ -11,6 +12,7 @@
         *ngFor="let budget of store.savedBudgets"
         [routerLink]="['/budget/view', budget._key]"
         [budget]="budget"
+        (onDeleteClicked)="promptDelete(budget)"
       >
       </budget-list-item>
     </div>

@@ -10,15 +10,7 @@ const ENVIRONMENT: IEnvironment = {
   // For localhost set production to false to prevent service-worker registration and sentry error logs
   production: false,
   usesCordova: false,
-  firebase: {
-    apiKey: env.firebaseApiKey,
-    authDomain: env.firebaseAuthDomain,
-    databaseURL: env.firebaseDatabaseUrl,
-    projectId: env.firebaseProjectId,
-    storageBucket: env.firebaseStorageBucket,
-    messagingSenderId: env.firebaseMessagingSenderId,
-    appId: env.firebaseAppId
-  }
+  firebase: env.firebaseConfig
 };
 
 export default ENVIRONMENT;

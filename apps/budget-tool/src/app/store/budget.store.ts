@@ -55,7 +55,7 @@ export class BudgetStore {
    ***************************************************************************/
   patchBudget(patch: Partial<IBudget>) {
     this.setActiveBudget({ ...this.activeBudget, ...patch });
-    this.saveBudget();
+    return this.saveBudget();
   }
 
   /**************************************************************************
@@ -95,23 +95,11 @@ export class BudgetStore {
     );
   }
 
-  async archiveBudget(budget: IBudget) {
-    this.activeBudget = { ...this.activeBudget, archived: true };
-    // const toast = await this.translations.createTranslatedToast({
-    //   message: "Budget archived",
-    //   duration: 3000
-    // });
-    // await this.saveBudget(budget);
-    // await toast.present();
-  }
-  async restoreBudget(budget: IBudget) {
-    this.activeBudget = { ...this.activeBudget, archived: false };
-    // const toast = await this.translations.createTranslatedToast({
-    //   message: "Budget restored",
-    //   duration: 3000
-    // });
-    // await this.budgetPrvdr.saveBudget(budget);
-    // await toast.present();
+  async deleteBudget(budget: IBudget) {
+    console.log('archiving budget', budget, budget._key);
+    await this.db.deleteDocs('budgetTool/v1/budgets', [budget._key]);
+    this.loadSavedBudgets();
+    console.log('budget deleted');
   }
 
   /**************************************************************************

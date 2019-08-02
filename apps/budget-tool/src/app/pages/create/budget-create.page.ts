@@ -64,12 +64,12 @@ export class BudgetCreatePage implements OnInit {
       periods: enterpriseDefaultPeriods
     });
   }
-  save() {
+  async save() {
     // generate period labels before saving
     this.periodForm.patchValue({
       labels: this.store.generateLabels(this.periodForm.value)
     });
-    this.store.patchBudget(this.budgetForm.value);
+    await this.store.patchBudget(this.budgetForm.value);
     this.router.navigate(['view', this.store.activeBudget._key]);
   }
 

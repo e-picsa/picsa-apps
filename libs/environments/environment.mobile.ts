@@ -6,15 +6,7 @@ const ENVIRONMENT: IEnvironment = {
   // and native platform apis used
   production: true,
   usesCordova: true,
-  firebase: {
-    apiKey: env.firebaseApiKey,
-    authDomain: env.firebaseAuthDomain,
-    databaseURL: env.firebaseDatabaseUrl,
-    projectId: env.firebaseProjectId,
-    storageBucket: env.firebaseStorageBucket,
-    messagingSenderId: env.firebaseMessagingSenderId,
-    appId: env.firebaseAppId
-  }
+  firebase: env.firebaseConfig
 };
 
 export default ENVIRONMENT;

@@ -1,3 +1,26 @@
-<div [innerHTML]="data.title"></div>
-<div [innerHTML]="data.html"></div>
-<picsa-loading *ngIf="data.loader" [name]="data.loader"> </picsa-loading>
+<div id="picsaDialogContainer">
+  <div [innerHTML]="data.title"></div>
+  <div [innerHTML]="data.html"></div>
+  <picsa-loading *ngIf="data.loader" [name]="data.loader"> </picsa-loading>
+  <div mat-dialog-actions *ngIf="data.buttons">
+    <!-- HACK - want to disable autofocus on first element so provide conditional focus element -->
+    <ng-template ngFor let-button [ngForOf]="data.buttons">
+      <button
+        class="picsa-dialog-button"
+        *ngIf="!button.focus"
+        mat-button
+        [mat-dialog-close]="button.value"
+      >
+        {{ button.text }}
+      </button>
+      <button
+        mat-button
+        *ngIf="button.focus"
+        [mat-dialog-close]="button.value"
+        cdkFocusInitial
+      >
+        {{ button.text }}
+      </button>
+    </ng-template>
+  </div>
+</div>

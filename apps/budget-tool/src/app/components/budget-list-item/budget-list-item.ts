@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IBudget } from '../../models/budget-tool.models';
 
 @Component({
@@ -8,5 +8,11 @@ import { IBudget } from '../../models/budget-tool.models';
 })
 export class BudgetListItemComponent implements OnInit {
   @Input() budget: IBudget;
+  @Output() onDeleteClicked = new EventEmitter<void>();
   ngOnInit() {}
+
+  deleteClicked(e: Event) {
+    e.stopPropagation();
+    this.onDeleteClicked.emit();
+  }
 }
