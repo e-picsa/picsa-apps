@@ -3,14 +3,11 @@
 
 // sharedEnvironment passes process.env variables from the build pipeline, used to provide
 // the production database for production deployments and staging database for all others
-import { sharedEnvironment as env } from './base';
+import BASE_ENV from './environment.base';
 import { IEnvironment } from '../models';
 
 const ENVIRONMENT: IEnvironment = {
-  // For localhost set production to false to prevent service-worker registration and sentry error logs
-  production: false,
-  usesCordova: false,
-  firebase: env.firebaseConfig
+  ...BASE_ENV
 };
 
 export default ENVIRONMENT;

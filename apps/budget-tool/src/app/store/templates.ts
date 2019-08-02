@@ -1,5 +1,5 @@
 import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
-import REGIONAL_SETTINGS from '@picsa/environments/region';
+import REGIONAL_SETTINGS from '@picsa/environments/regions';
 import { IBudget, IBudgetPeriodMeta } from '../models/budget-tool.models';
 
 const BUDGET_PERIOD_DEFAULT: IBudgetPeriodMeta = {

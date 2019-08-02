@@ -1,10 +1,11 @@
 import { IEnvironment } from '@picsa/models';
+import BASE_ENV from '../environment.base';
 
 const ENVIRONMENT: IEnvironment = {
   // During production builds this file replaces default environment to indicate we have a production build
   // Note, the keys are not committed within the default repo
+  ...BASE_ENV,
   production: true,
-  usesCordova: false,
   firebase: {
     apiKey: '',
     authDomain: '',
