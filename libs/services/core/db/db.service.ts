@@ -104,8 +104,8 @@ export class PicsaDbService implements AbstractDBService {
     const { _key, _created } = doc;
     return {
       _key: _key ? _key : this._generateKey(),
-      _created: _created ? _created : this._toTimestamp(new Date()),
-      _modified: this._toTimestamp(new Date())
+      _created: _created ? _created : new Date(),
+      _modified: new Date()
     };
   };
 
@@ -114,10 +114,6 @@ export class PicsaDbService implements AbstractDBService {
       .collection('_')
       .doc().id;
     return key;
-  };
-
-  private _toTimestamp = (date?: Date) => {
-    return firestore.Timestamp.fromDate(date ? date : new Date());
   };
 
   // clean data to remove undefined values

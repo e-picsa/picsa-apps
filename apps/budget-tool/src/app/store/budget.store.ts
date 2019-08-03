@@ -71,7 +71,11 @@ export class BudgetStore {
     this.setActiveBudget(budget);
   }
   async saveBudget() {
-    await this.db.setDoc('budgetTool/v1/budgets', this.activeBudgetValue, true);
+    await this.db.setDoc(
+      'budgetTool/${GROUP}/budgets',
+      this.activeBudgetValue,
+      true
+    );
     await this.loadSavedBudgets();
   }
   async loadBudgetByKey(key: string) {
@@ -91,13 +95,13 @@ export class BudgetStore {
 
   private async loadSavedBudgets(): Promise<void> {
     this.savedBudgets = await this.db.getCollection<IBudget>(
-      'budgetTool/v1/budgets'
+      'budgetTool/${GROUP}/budgets'
     );
   }
 
   async deleteBudget(budget: IBudget) {
     console.log('archiving budget', budget, budget._key);
-    await this.db.deleteDocs('budgetTool/v1/budgets', [budget._key]);
+    await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
     this.loadSavedBudgets();
     console.log('budget deleted');
   }

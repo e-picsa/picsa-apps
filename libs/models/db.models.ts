@@ -33,9 +33,9 @@ export const DB_SCHEMA = {
   ...keyReplace(DB_GROUP_SCHEMA, '${GROUP}', ENVIRONMENT.group.code)
 };
 
-export type IDBEndpoint = keyof typeof DB_SCHEMA;
+export type IDBEndpoint = keyof typeof DB_SCHEMA | keyof typeof DB_GROUP_SCHEMA;
 
-export interface ITimestamp extends firestore.Timestamp {}
+export type ITimestamp = firestore.Timestamp | Date;
 export interface IDBDoc {
   _key: string;
   _created: ITimestamp;

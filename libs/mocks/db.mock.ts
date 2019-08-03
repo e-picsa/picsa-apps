@@ -25,12 +25,16 @@ export class MockDB implements AbstractDBService {
       return { ...d, ...this.meta() };
     });
   }
+  async deleteDocs(endpoint: IDBEndpoint, keys: string[]) {
+    await this._wait();
+    // TODO
+  }
   meta(doc: any = {}): IDBDoc {
     const { _key, _created } = doc;
     return {
       _key: _key ? _key : this._generateKey(),
-      _created: _created ? _created : this._toTimestamp(new Date()),
-      _modified: this._toTimestamp(new Date())
+      _created: _created ? _created : new Date(),
+      _modified: new Date()
     };
   }
 
@@ -40,10 +44,6 @@ export class MockDB implements AbstractDBService {
       .doc().id;
     console.log('key', key);
     return key;
-  };
-
-  private _toTimestamp = (date?: Date) => {
-    return firestore.Timestamp.fromDate(date ? date : new Date());
   };
 
   private _wait(ms: number = Math.random() * 5000) {

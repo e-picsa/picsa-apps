@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { IPicsaDialogData } from '../dialog.service';
+import { IPicsaDialogData } from '../dialog.models';
 
 // Dialog base
 @Component({
