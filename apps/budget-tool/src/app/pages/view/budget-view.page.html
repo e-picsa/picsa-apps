@@ -2,7 +2,11 @@
   <mat-toolbar>
     <span>Budget</span>
   </mat-toolbar>
-  <div class="page-content">
-    Goes here
+  <div class="page-content" *mobxAutorun>
+    <budget-table
+      *ngIf="store.activeBudget"
+      [budget]="store.activeBudget"
+      [@fade]="store.activeBudget ? 'in' : 'out'"
+    ></budget-table>
   </div>
 </div>

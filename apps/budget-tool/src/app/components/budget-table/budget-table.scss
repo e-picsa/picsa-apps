@@ -1,0 +1,152 @@
+// cell height needs to accomodate header, padding and potential scrollbar
+// $cellHeight: calc((100vh - 118px) / 6);
+.scroll-content {
+  background-color: white !important;
+}
+.budget-container {
+  display: flex;
+  overflow: auto;
+  height: 100%;
+  background-color: white;
+  color: black;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+} //  when printing want fixed positioning and top padding so that download export
+//  has room to populate title where navbar would be
+.budget-container.print-mode {
+  position: fixed;
+  top: 0;
+  padding-top: 56px;
+}
+.time-period {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+}
+.scroll-content {
+  overflow-x: scroll;
+}
+.grow {
+  flex-grow: 1;
+  align-content: center;
+}
+.flex-basis {
+  flex-basis: 100%;
+}
+.card-image {
+  max-height: 100%;
+  max-width: 100%;
+}
+.card-index {
+  position: absolute;
+  background: rgb(138, 38, 68);
+  color: white;
+  opacity: 0.9;
+  font-size: 0.8em;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+}
+.grid-card {
+  height: 100%;
+  width: 100%;
+  min-width: 150px;
+}
+.time-period {
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  flex-grow: 1;
+}
+.row,
+.cell {
+  // height: $cellHeight;
+  flex-basis: calc((100% - 20px) / 6);
+  display: block;
+  overflow: auto;
+}
+.cell.top-row {
+  height: 20px;
+  font-size: 16px;
+  text-align: center;
+  flex-basis: unset;
+} // want last row cells to adjust height to fill with/without scrollbar
+.cell.Cash {
+  height: 100%;
+}
+.cell.row-title {
+  padding: 5px;
+  font-size: large;
+}
+.cell {
+  min-width: 100px;
+}
+.cell {
+  border-bottom: 1px solid gray;
+}
+.cell-footer {
+  height: 20px;
+  line-height: 1vh;
+  font-size: 2vh;
+}
+.cell-main {
+  height: 8vh;
+}
+.cell-multiple {
+  max-height: 2em;
+}
+.image-holder {
+  height: 100%;
+}
+img {
+  max-width: 100%;
+  max-height: 5em;
+}
+.card-select-popover {
+  width: 80%;
+}
+.family-icon {
+  padding: 1px;
+}
+.person-icon {
+  margin-right: 5px;
+}
+.dot-value {
+  height: 1em;
+}
+.dot-value-image {
+  max-height: 1em;
+  margin: 1px;
+}
+.text-input {
+  margin: 0;
+}
+.one-em {
+  height: 1em;
+}
+.number-value {
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+h1 {
+  text-align: center;
+  margin: 0;
+  font-size: large;
+}
+ion-fab[top] {
+  top: 0;
+}
+.total-column {
+  background-color: wheat;
+}
+.counterBadge {
+  border-radius: 4px;
+  background-color: cadetblue;
+  color: white;
+  position: relative;
+  left: -12px;
+  top: 4px;
+  padding: 2px;
+}
+.consumed {
+  background-color: lightcoral;
+}

@@ -2,7 +2,7 @@ import { IStationMeta } from '@picsa/models/climate.models';
 import { MockDB } from '@picsa/mocks';
 
 const db = new MockDB();
-const _created = new Date('2019-07-23');
+const _created = new Date('2019-07-23').toISOString();
 
 export const STATIONS: IStationMeta[] = [
   {

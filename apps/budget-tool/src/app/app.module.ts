@@ -24,9 +24,9 @@ import { BudgetMaterialModule } from './material.module';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    BrowserAnimationsModule,
     BudgetMaterialModule,
     // TranslateModule.forRoot({
     //   loader: {

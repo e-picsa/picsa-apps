@@ -7,6 +7,7 @@ import { BudgetViewPage } from './budget-view.page';
 import { BudgetMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaTranslateModule } from '@picsa/modules';
+import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 
 const routes: Routes = [
   {
@@ -23,6 +24,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     PicsaTranslateModule,
     BudgetMaterialModule,
+    BudgetToolComponentsModule,
     MobxAngularModule
   ],
   declarations: [BudgetViewPage]

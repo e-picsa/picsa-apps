@@ -104,8 +104,8 @@ export class PicsaDbService implements AbstractDBService {
     const { _key, _created } = doc;
     return {
       _key: _key ? _key : this._generateKey(),
-      _created: _created ? _created : new Date(),
-      _modified: new Date()
+      _created: _created ? _created : new Date().toISOString(),
+      _modified: new Date().toISOString()
     };
   };
 

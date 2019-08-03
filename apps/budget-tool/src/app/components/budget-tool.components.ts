@@ -11,7 +11,7 @@ import { BudgetNewCardComponent } from './budget-card/budget-new-card';
 import { BudgetCellLabourComponent } from './budget-cell-labour/budget-cell-labour';
 import { BudgetCellValueComponent } from './budget-cell-value/budget-cell-value';
 import { BudgetCellComponent } from './budget-cell/budget-cell';
-import { BudgetOverviewComponent } from './budget-overview/budget-overview';
+import { BudgetTableComponent } from './budget-table/budget-table';
 import { CardSelectComponent } from './card-select/card-select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +30,7 @@ import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
     BudgetCellLabourComponent,
     BudgetCellValueComponent,
     BudgetListItemComponent,
-    BudgetOverviewComponent,
+    BudgetTableComponent,
     CardSelectComponent
   ],
   imports: [
@@ -52,7 +52,7 @@ import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
     BudgetCellLabourComponent,
     BudgetCellValueComponent,
     BudgetListItemComponent,
-    BudgetOverviewComponent,
+    BudgetTableComponent,
     CardSelectComponent
   ]
 })

@@ -8,15 +8,13 @@ import {
   IBudget
 } from '../../models/budget-tool.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
-import { FadeInOut } from '../../animations/animations';
 import { MONTHS } from '../../store/templates';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'budget-create',
   templateUrl: './budget-create.page.html',
-  styleUrls: ['./budget-create.page.scss'],
-  animations: [FadeInOut]
+  styleUrls: ['./budget-create.page.scss']
 })
 export class BudgetCreatePage implements OnInit {
   budgetForm: FormGroup;

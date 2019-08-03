@@ -34,12 +34,12 @@ export const DB_SCHEMA = {
 };
 
 export type IDBEndpoint = keyof typeof DB_SCHEMA | keyof typeof DB_GROUP_SCHEMA;
+type ISOString = string;
 
-export type ITimestamp = firestore.Timestamp | Date;
 export interface IDBDoc {
   _key: string;
-  _created: ITimestamp;
-  _modified: ITimestamp;
+  _created: ISOString;
+  _modified: ISOString;
   [key: string]: any;
 }
 

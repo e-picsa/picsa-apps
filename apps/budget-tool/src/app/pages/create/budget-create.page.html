@@ -18,10 +18,7 @@
           </div>
           <div *ngIf="filteredEnterprises.length > 0">
             <h2>Select Enterprise</h2>
-            <div
-              style="display: flex; flex-wrap: wrap"
-              [@fadeInOut]="enterpriseToggle ? 'in' : 'out'"
-            >
+            <div style="display: flex; flex-wrap: wrap">
               <budget-card
                 *ngFor="let enterprise of filteredEnterprises"
                 [card]="enterprise"

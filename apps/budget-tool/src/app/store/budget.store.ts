@@ -3,7 +3,9 @@ import {
   IEnterprise,
   IBudgetPeriodMeta,
   IEnterpriseType,
-  IEnterpriseDefaults
+  IEnterpriseDefaults,
+  IBudgetPeriodData,
+  IBudgetCard
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
@@ -104,6 +106,54 @@ export class BudgetStore {
     await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
     this.loadSavedBudgets();
     console.log('budget deleted');
+  }
+
+  /**************************************************************************
+   *            Calculation Methods
+   *
+   ***************************************************************************/
+
+  private calculateBalance() {
+    // total for current period
+    // const data = this.store.activeBudget.data;
+    // const totals = {};
+    // let runningTotal = 0;
+    // for (const key in data) {
+    //   if (data.hasOwnProperty(key)) {
+    //     const periodTotal = this._calculatePeriodTotal(data[key]);
+    //     runningTotal = runningTotal + periodTotal;
+    //     totals[key] = {
+    //       period: periodTotal,
+    //       running: runningTotal
+    //     };
+    //   }
+    // }
+    // this.balance = totals;
+  }
+  private _calculatePeriodTotal(period: IBudgetPeriodData) {
+    let balance = 0;
+    if (period) {
+      const inputCards = Object.values(period.inputs);
+      const inputsBalance = this._calculatePeriodCardTotals(inputCards);
+      const outputCards = Object.values(period.outputs);
+      const outputsBalance = this._calculatePeriodCardTotals(outputCards);
+      balance = inputsBalance + outputsBalance;
+    }
+    return balance;
+  }
+  private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
+    let total = 0;
+    if (cards && cards.length > 0) {
+      cards.forEach(card => {
+        if (card.quantity && card.cost) {
+          const quantity = card.consumed
+            ? card.quantity - card.consumed
+            : card.quantity;
+          total = total + quantity * card.cost;
+        }
+      });
+    }
+    return total;
   }
 
   /**************************************************************************
