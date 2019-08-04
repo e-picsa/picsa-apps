@@ -7,7 +7,11 @@ import { FadeInOut, OpenClosed, FlyInOut } from '@picsa/animations';
   selector: 'budget-view',
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
-  animations: [FadeInOut(), OpenClosed, FlyInOut(300, 'right')]
+  animations: [
+    FadeInOut(),
+    OpenClosed,
+    FlyInOut({ direction: 'bottom', outSpeed: 300 })
+  ]
 })
 export class BudgetViewPage implements OnInit {
   loader: HTMLIonLoadingElement;

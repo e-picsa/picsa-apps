@@ -42,7 +42,7 @@
             ? budget.data[i][row.type]
             : null
         "
-        (click)="onCellClick(row, period)"
+        (click)="onCellClick(period, row.type, row.label)"
       ></budget-cell>
     </div>
     <!-- Cash Balance -->

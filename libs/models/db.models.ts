@@ -1,10 +1,8 @@
-import { firestore } from 'firebase/app';
 import { ENVIRONMENT } from '@picsa/environments';
 
-// note, as most db writes are within nested collections hard to assert strong typings without
-// also lots of nested methods (e.g. setSubDoc, getSubCollectionEtc)
-// type below is mostly for reference
-const DEFAULT_STORE_SCHEMA = '_key,_modified';
+// schemas create indexes on the database
+// as datasets typically quite small these aren't really required, but probably good practice
+export const DEFAULT_STORE_SCHEMA = '_key,_modified';
 
 export const DB_VERSION = 1;
 // NOTE - changes to list of tables requires update db version
@@ -12,16 +10,16 @@ export const DB_VERSION = 1;
 
 const DB_COMMON_SCHEMA = {
   _pendingWrites: DEFAULT_STORE_SCHEMA,
-  budgetTool: DEFAULT_STORE_SCHEMA,
+  _appMeta: '_key',
+  budgetTool: '_key',
+  'budgetTool/_all/activities': '_key',
+  'budgetTool/_all/inputs': '_key',
+  'budgetTool/_all/outputs': '_key',
+  'budgetTool/_all/familyLabour': '_key',
+  'budgetTool/_all/enterprises': '_key',
   climateTool: DEFAULT_STORE_SCHEMA,
   forms: DEFAULT_STORE_SCHEMA,
   stationData: DEFAULT_STORE_SCHEMA
-  // 'budgetTool/meta/activities': DEFAULT_STORE_SCHEMA,
-  // 'budgetTool/meta/inputs': DEFAULT_STORE_SCHEMA,
-  // 'budgetTool/meta/outputs': DEFAULT_STORE_SCHEMA,
-  // 'budgetTool/meta/familyLabour': DEFAULT_STORE_SCHEMA,
-  // 'budgetTool/meta/enterpriseTypes': DEFAULT_STORE_SCHEMA,
-  // 'budgetTool/meta/enterprises': DEFAULT_STORE_SCHEMA,
 };
 const DB_GROUP_SCHEMA = {
   'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA
@@ -34,6 +32,7 @@ export const DB_SCHEMA = {
 };
 
 export type IDBEndpoint = keyof typeof DB_SCHEMA | keyof typeof DB_GROUP_SCHEMA;
+
 type ISOString = string;
 
 export interface IDBDoc {
@@ -43,7 +42,13 @@ export interface IDBDoc {
   [key: string]: any;
 }
 
-function keyReplace(
+// data stored on _appMeta store
+export interface IAppMeta {
+  _key: 'VERSION' | 'USER_ID';
+  value: string;
+}
+
+export function keyReplace(
   obj: { [key: string]: string },
   searchVal: string,
   replaceVal: string
@@ -52,6 +57,5 @@ function keyReplace(
   Object.keys(obj).forEach(
     k => (rep[k.replace(searchVal, replaceVal)] = obj[k])
   );
-  console.log('replaced', rep);
   return rep;
 }

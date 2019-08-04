@@ -6,15 +6,20 @@ import {
   DB_SCHEMA,
   DB_VERSION
 } from '@picsa/models/db.models';
+import { upgradeDatabases } from './_cache.upgrade.db';
 import { AbstractDBService } from './abstract.db';
 import { ENVIRONMENT } from '@picsa/environments';
 
+// multiple possible databases for different groups
+// TODO - handle group changes
 const db = new Dexie(`PICSA_Apps_${ENVIRONMENT.group.code}`);
 @Injectable({ providedIn: 'root' })
 class DBCacheService implements AbstractDBService {
   constructor() {
     // initialise database stores, NOTE - avoid dynamically adding tables
+    // instead, provide upgrade for changing structure
     // https://github.com/dfahlander/Dexie.js/issues/684
+    upgradeDatabases(db);
     db.version(DB_VERSION).stores(DB_SCHEMA);
   }
   /************************************************************************
@@ -72,3 +77,4 @@ class DBCacheService implements AbstractDBService {
 }
 
 export default DBCacheService;
+export const cached_db = db;

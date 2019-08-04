@@ -18,6 +18,8 @@ import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellValueComponent } from './cell/variants/value/value';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
+import { MobxAngularModule } from 'mobx-angular';
+import { PicsaDbModule } from '@picsa/modules';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,9 @@ import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
     FormsModule,
     BudgetMaterialModule,
     TranslateModule.forChild(),
-    CanvasWhiteboardModule
+    CanvasWhiteboardModule,
+    MobxAngularModule,
+    PicsaDbModule
   ],
   exports: [
     BudgetCardComponent,

@@ -1,6 +1,6 @@
 <div class="page">
   <h1>Create New Budget</h1>
-  <div class="page-content">
+  <div class="page-content" *mobxAutorun>
     <mat-horizontal-stepper linear #stepper>
       <!-- Step 1 - handled with custom elements-->
       <mat-step>
@@ -9,14 +9,15 @@
         <div>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
-              *ngFor="let type of enterpriseTypes"
+              *ngFor="let type of store.enterpriseTypes"
               (click)="enterpriseTypeClicked(type)"
               [generator]="type"
               style="margin: 0 10px 10px 0"
               [selected]="budgetForm.value.enterpriseType === type"
+              @fadeInOut
             ></budget-card>
           </div>
-          <div *ngIf="filteredEnterprises.length > 0">
+          <div *ngIf="filteredEnterprises.length > 0" @fadeInOut>
             <h2>Select Enterprise</h2>
             <div style="display: flex; flex-wrap: wrap">
               <budget-card
@@ -25,6 +26,7 @@
                 style="margin: 0 10px 10px 0"
                 (click)="enterpriseClicked(enterprise)"
                 [selected]="budgetForm.value.enterprise === enterprise.id"
+                @fadeInOut
               >
               </budget-card>
             </div>

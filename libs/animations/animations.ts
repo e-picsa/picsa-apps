@@ -26,7 +26,8 @@ export const OpenClosed = trigger('openClosed', [
 ]);
 
 // function to generate custom fade transition
-export const FadeInOut = (ms: number = 500) => {
+export const FadeInOut = (config: IAnimationConfig = {}) => {
+  const { inSpeed, outSpeed } = { ...ANIMATION_DEFAULTS, ...config };
   return trigger('fadeInOut', [
     state(
       'in',
@@ -44,14 +45,15 @@ export const FadeInOut = (ms: number = 500) => {
     // (e.g. part of ngIf statement), so explicitly define
     transition(':enter', [
       style({ opacity: 0 }),
-      animate(ms, style({ opacity: 1 }))
+      animate(inSpeed, style({ opacity: 1 }))
     ]),
-    transition('* => in', [animate(ms)]),
-    transition('in => out', [animate(ms / 2)])
+    transition('* => in', [animate(inSpeed)]),
+    transition('in => out', [animate(outSpeed)])
   ]);
 };
 
-export const FlyInOut = (ms = 200, direction: direction = 'left') => {
+export const FlyInOut = (config: IAnimationConfig = {}) => {
+  const { direction, inSpeed, outSpeed } = { ...ANIMATION_DEFAULTS, ...config };
   const axis = direction === 'left' || direction === 'right' ? 'X' : 'Y';
   const outPosition =
     direction === 'left' || direction === 'top' ? '-100%' : '100%';
@@ -62,11 +64,27 @@ export const FlyInOut = (ms = 200, direction: direction = 'left') => {
   return trigger('flyInOut', [
     state('in', style({ transform: inState })),
     state('out', style({ transform: outState })),
-    transition('void => in', [style({ transform: inState }), animate(ms)]),
-    transition('* => void', [animate(ms, style({ transform: outState }))]),
-    transition('out => in', [animate(ms)]),
-    transition('in => out', [animate(ms / 2)])
+    transition('void => in', [style({ transform: inState }), animate(inSpeed)]),
+    transition('* => void', [
+      animate(outSpeed, style({ transform: outState }))
+    ]),
+    transition('out => in', [animate(inSpeed)]),
+    transition('in => out', [animate(outSpeed / 2)])
   ]);
 };
 
+/*********************************************************************************
+ *  Interfaces and Constants
+ **********************************************************************************/
+const ANIMATION_DEFAULTS: IAnimationConfig = {
+  inSpeed: 250,
+  outSpeed: 150,
+  direction: 'left'
+};
+
+interface IAnimationConfig {
+  inSpeed?: number;
+  outSpeed?: number;
+  direction?: direction;
+}
 type direction = 'left' | 'right' | 'top' | 'bottom';

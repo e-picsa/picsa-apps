@@ -21,9 +21,8 @@ export class BudgetTableComponent implements OnInit {
     console.log('dots legend', this.dotsLegend);
   }
 
-  onCellClick(row: IBudgetPeriodType, period) {
-    console.log('cell clicked', row, period);
-    this.store.toggleEditor();
+  onCellClick(periodIndex: string, type: IBudgetPeriodType, typeLabel: string) {
+    this.store.toggleEditor({ periodIndex, type, typeLabel });
   }
 }
 

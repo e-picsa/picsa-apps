@@ -22,7 +22,6 @@ export interface IBudget extends IDBDoc {
 
 export interface IBudgetMeta {
   activities: IBudgetCard[];
-  enterpriseTypes: IEnterpriseType[];
   enterprises: IEnterprise[];
   familyLabour: IBudgetCard[];
   outputs: IBudgetCard[];
@@ -38,7 +37,14 @@ export interface IBudgetPeriodData {
 }
 
 export type IBudgetPeriodType = keyof IBudgetPeriodData;
-// i.e. 'activities' | 'enterpriseTypes' | ...
+// i.e. 'activities' | 'inputs' | ...
+
+export interface IBudgetActiveCell {
+  periodIndex: string;
+  type: IBudgetPeriodType;
+  typeLabel: string;
+  value?: IBudgetPeriodData;
+}
 
 export interface IBudgetDotValues {
   large: number;
@@ -84,14 +90,13 @@ export interface IEnterpriseDefaults {
 export interface IBudgetCard {
   name: string;
   id: string;
-  type?: IEnterpriseType;
+  type?: string;
   isSelected?: boolean;
   selectedIndex?: number;
   quantity?: number;
   consumed?: number;
   cost?: number;
 }
-export type IEnterpriseType = 'crop' | 'fish' | 'fruits' | 'livestock';
 
 export interface ICustomBudgetCard extends IBudgetCard {
   custom: boolean;
@@ -129,22 +134,9 @@ export interface IEnterprise {
   defaults: IEnterpriseDefaults;
 }
 
-interface FamilyLabourCard {
-  people: number;
-  days: number;
-}
-
 interface BalanceCounter {
   total: number;
   dots: any[];
-}
-
-interface IBudgetBalance {
-  inputs: BalanceCounter;
-  outputs: BalanceCounter;
-  consumed: BalanceCounter;
-  monthly: BalanceCounter;
-  running: BalanceCounter;
 }
 
 export interface IBudgetPublicData {

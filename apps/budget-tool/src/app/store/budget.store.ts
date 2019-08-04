@@ -2,30 +2,39 @@ import {
   IBudget,
   IEnterprise,
   IBudgetPeriodMeta,
-  IEnterpriseType,
   IEnterpriseDefaults,
   IBudgetPeriodData,
-  IBudgetCard
+  IBudgetCard,
+  IBudgetActiveCell,
+  IBudgetMeta
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
-import { observable, action } from 'mobx-angular';
+import { observable, action, computed } from 'mobx-angular';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
-import { BUDGET_DATA } from '../data/budget.data';
+import BUDGET_DATA from '../data';
 import { toJS } from 'mobx';
 import { PicsaDbService } from '@picsa/services/core/';
+import { IAppMeta, IDBEndpoint } from '@picsa/models/db.models';
+import { APP_VERSION } from '@picsa/environments/version';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetStore {
-  @observable enterprises = BUDGET_DATA.enterprises;
-  @observable enterpriseTypes = BUDGET_DATA.enterpriseTypes;
+  @observable budgetMeta: IBudgetMeta;
   @observable activeBudget: IBudget;
+  @observable activeCell: IBudgetActiveCell;
   @observable isEditorOpen = false;
   @observable savedBudgets: IBudget[];
   get activeBudgetValue() {
     return toJS(this.activeBudget);
+  }
+  // get unique list of types in enterprise cards
+  @computed get enterpriseTypes() {
+    return this.budgetMeta
+      ? [...new Set(this.budgetMeta.enterprises.map(e => e.type))].sort()
+      : [];
   }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
@@ -33,15 +42,63 @@ export class BudgetStore {
   }
 
   constructor(private db: PicsaDbService) {
+    this.init();
+  }
+
+  /**************************************************************************
+   *            Initialisation
+   *
+   ***************************************************************************/
+  async init() {
     this.loadSavedBudgets();
+    await this.checkForUpdates();
+    await this.preloadData();
+  }
+
+  // load the corresponding values into the budgetMeta observable
+  @action()
+  private async preloadData() {
+    const budgetMeta: any = {};
+    for (let key of Object.keys(BUDGET_DATA)) {
+      const endpoint = `budgetTool/_all/${key}` as IDBEndpoint;
+      budgetMeta[key] = await this.db.getCollection(endpoint);
+    }
+    this.budgetMeta = budgetMeta;
+  }
+  // check for latest app version initialised. If this one is different then
+  // attempt to reload any hardcoded data present in the app
+  private async checkForUpdates() {
+    const version = await this.db.getDoc<IAppMeta>('_appMeta', 'VERSION');
+    const updateRequired = !version || version.value !== APP_VERSION.number;
+    if (updateRequired) {
+      await this.setHardcodedData();
+      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.number };
+      this.db.setDoc('_appMeta', update);
+    }
+  }
+  private async setHardcodedData() {
+    for (let key of Object.keys(BUDGET_DATA)) {
+      const endpoint = `budgetTool/_all/${key}` as IDBEndpoint;
+      const docs = BUDGET_DATA[key].map(d => {
+        return {
+          ...d,
+          // add doc metadata - this would be auto populated however want to keep
+          // reference of app version date so can be overwritten by db if desired
+          _created: new Date(APP_VERSION.date).toISOString(),
+          _modified: new Date(APP_VERSION.date).toISOString(),
+          _key: d.id
+        };
+      });
+      await this.db.setDocs(endpoint, docs);
+    }
   }
 
   /**************************************************************************
    *            Enterprise methods
    *
    ***************************************************************************/
-  getfilteredEnterprises(type: IEnterpriseType) {
-    return this.enterprises.filter(e => e.type === type);
+  getfilteredEnterprises(type: string) {
+    return this.budgetMeta.enterprises.filter(e => e.type === type);
   }
   getBudgetEnterpriseDefaults(enterprise: IEnterprise): IBudgetPeriodMeta {
     const d = enterprise.defaults;
@@ -61,7 +118,13 @@ export class BudgetStore {
     return this.saveBudget();
   }
   @action()
-  toggleEditor() {
+  toggleEditor(cell?: IBudgetActiveCell) {
+    if (cell) {
+      const periodData = this.activeBudget.data[cell.periodIndex];
+      const value = periodData ? periodData[cell.type] : {};
+      this.activeCell = { ...cell, value };
+      console.log('cell', toJS(this.activeCell));
+    }
     this.isEditorOpen = !this.isEditorOpen;
   }
 
@@ -177,3 +240,8 @@ export class BudgetStore {
     return labels;
   }
 }
+
+/**************************************************************************
+ *          Interfaces
+ *
+ ***************************************************************************/

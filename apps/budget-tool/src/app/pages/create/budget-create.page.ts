@@ -3,24 +3,24 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BudgetStore } from '../../store/budget.store';
 import {
   IEnterprise,
-  IEnterpriseType,
   IEnterpriseScale,
   IBudget
 } from '../../models/budget-tool.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MONTHS } from '../../store/templates';
 import { Router } from '@angular/router';
+import { FadeInOut } from '@picsa/animations';
 
 @Component({
   selector: 'budget-create',
   templateUrl: './budget-create.page.html',
-  styleUrls: ['./budget-create.page.scss']
+  styleUrls: ['./budget-create.page.scss'],
+  animations: [FadeInOut()]
 })
 export class BudgetCreatePage implements OnInit {
   budgetForm: FormGroup;
   periodForm: FormGroup;
   enterpriseToggle = false;
-  enterpriseTypes: IEnterpriseType[] = [];
   filteredEnterprises: IEnterprise[] = [];
   periodScaleOptions: IEnterpriseScale[] = ['weeks', 'months'];
   periodTotalOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -35,7 +35,6 @@ export class BudgetCreatePage implements OnInit {
   }
 
   ngOnInit() {
-    this.enterpriseTypes = this.store.enterpriseTypes;
     this.generateBudgetForm();
   }
 
@@ -43,7 +42,7 @@ export class BudgetCreatePage implements OnInit {
    *  Public Helpers
    **************************************************************************/
 
-  enterpriseTypeClicked(type: IEnterpriseType) {
+  enterpriseTypeClicked(type: string) {
     // reset form on new type selected
     this.enterpriseToggle = false;
     this.budgetForm.patchValue({ enterprise: '', enterpriseType: type });
