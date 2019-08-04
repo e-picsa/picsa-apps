@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { Subject } from 'rxjs';
-import { IBudget } from '../../models/budget-tool.models';
+import { IBudget, IBudgetPeriodType } from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'budget-table',
@@ -9,38 +9,41 @@ import { IBudget } from '../../models/budget-tool.models';
   styleUrls: ['./budget-table.scss']
 })
 export class BudgetTableComponent implements OnInit {
-  private componentDestroyed: Subject<any> = new Subject();
   @Input() budget: IBudget;
-  rowTitles: any = [
-    { type: 'activities', label: 'Activities' },
-    { type: 'inputs', label: 'Inputs' },
-    { type: 'familyLabour', label: 'Family Labour' },
-    { type: 'outputs', label: 'Outputs' },
-    { type: 'produceConsumed', label: 'Produce Consumed' },
-    { type: 'cashBalance', label: 'Balance' }
-  ];
+  periodRows = periodRows;
+  metaRows = metaRows;
   dotsLegend = [];
   balance: any;
-  budgetUpdated = true;
 
-  constructor(public events: Events) {}
+  constructor(public events: Events, private store: BudgetStore) {}
   ngOnInit(): void {
     this.dotsLegend = Object.entries(this.budget.dotValues);
     console.log('dots legend', this.dotsLegend);
   }
 
-  // track-by function passed to ngFor loops where value already represents unique key
-  tbKey(index: number, key: string) {
-    return key;
-  }
-
-  private _objectToArray(json: any) {
-    const array = [];
-    for (const key in json) {
-      if (json.hasOwnProperty(key)) {
-        array.push({ key: key, value: json[key] });
-      }
-    }
-    return array;
+  onCellClick(row: IBudgetPeriodType, period) {
+    console.log('cell clicked', row, period);
+    this.store.toggleEditor();
   }
 }
+
+/********************************************************************************
+ *      Interfaces and constants
+ *******************************************************************************/
+interface IBudgetRow {
+  type: string;
+  label: string;
+}
+
+interface IPeriodRow extends IBudgetRow {
+  type: IBudgetPeriodType;
+}
+
+const periodRows: IPeriodRow[] = [
+  { type: 'activities', label: 'Activities' },
+  { type: 'inputs', label: 'Inputs' },
+  { type: 'familyLabour', label: 'Family Labour' },
+  { type: 'outputs', label: 'Outputs' },
+  { type: 'produceConsumed', label: 'Produce Consumed' }
+];
+const metaRows: IBudgetRow[] = [{ type: 'cashBalance', label: 'Balance' }];

@@ -6,7 +6,7 @@ import {
   transition
 } from '@angular/animations';
 
-export const OpenClose = trigger('openClose', [
+export const OpenClosed = trigger('openClosed', [
   state(
     'open',
     style({
@@ -25,26 +25,9 @@ export const OpenClose = trigger('openClose', [
   transition('closed => open', [animate('0.2s')])
 ]);
 
-export const FadeInOut = trigger('fadeInOut', [
-  state(
-    'in',
-    style({
-      opacity: 1
-    })
-  ),
-  state(
-    'out',
-    style({
-      opacity: 0
-    })
-  ),
-  transition('* => in', [animate('0.2s')]),
-  transition('in => out', [animate('0.2s')])
-]);
-
 // function to generate custom fade transition
-export const Fade = (ms: number = 500) => {
-  return trigger('fade', [
+export const FadeInOut = (ms: number = 500) => {
+  return trigger('fadeInOut', [
     state(
       'in',
       style({
@@ -64,6 +47,26 @@ export const Fade = (ms: number = 500) => {
       animate(ms, style({ opacity: 1 }))
     ]),
     transition('* => in', [animate(ms)]),
-    transition('in => out', [animate(ms - 0.2)])
+    transition('in => out', [animate(ms / 2)])
   ]);
 };
+
+export const FlyInOut = (ms = 200, direction: direction = 'left') => {
+  const axis = direction === 'left' || direction === 'right' ? 'X' : 'Y';
+  const outPosition =
+    direction === 'left' || direction === 'top' ? '-100%' : '100%';
+  const inState = `translate${axis}(0)`;
+  const outState = `translate${axis}(${outPosition})`;
+  console.log('inState', inState);
+  console.log('outState', outState);
+  return trigger('flyInOut', [
+    state('in', style({ transform: inState })),
+    state('out', style({ transform: outState })),
+    transition('void => in', [style({ transform: inState }), animate(ms)]),
+    transition('* => void', [animate(ms, style({ transform: outState }))]),
+    transition('out => in', [animate(ms)]),
+    transition('in => out', [animate(ms / 2)])
+  ]);
+};
+
+type direction = 'left' | 'right' | 'top' | 'bottom';

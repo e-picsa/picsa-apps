@@ -35,8 +35,11 @@ export interface IBudgetPeriodData {
   outputs?: { [index: string]: IOutputCard };
   familyLabour?: any;
   produceConsumed?: any;
-  // balance?: IBudgetBalance;
 }
+
+export type IBudgetPeriodType = keyof IBudgetPeriodData;
+// i.e. 'activities' | 'enterpriseTypes' | ...
+
 export interface IBudgetDotValues {
   large: number;
   medium: number;

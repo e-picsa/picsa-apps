@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BudgetStore } from '../../store/budget.store';
-import { Fade } from '@picsa/animations';
+import { FadeInOut, OpenClosed, FlyInOut } from '@picsa/animations';
 
 @Component({
   selector: 'budget-view',
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
-  animations: [Fade()]
+  animations: [FadeInOut(), OpenClosed, FlyInOut(300, 'right')]
 })
 export class BudgetViewPage implements OnInit {
   loader: HTMLIonLoadingElement;

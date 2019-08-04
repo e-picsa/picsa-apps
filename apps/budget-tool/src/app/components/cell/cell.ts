@@ -24,16 +24,16 @@ export class BudgetCellComponent {
 
   constructor(private events: Events) {}
 
-  public onCellClick() {
-    // use both events and redux as redux alone fails to trigger uipdate when period index changed
-    // but type remains (e.g. activity 1 => activity 2)
-    // listened to by card-list component
-    this.events.publish('cell:selected', {
-      type: this.type,
-      periodIndex: this.periodIndex,
-      title: `${this.rowLabel} ${this.typeLabel}`
-    });
-  }
+  // public onCellClick() {
+  //   // use both events and redux as redux alone fails to trigger uipdate when period index changed
+  //   // but type remains (e.g. activity 1 => activity 2)
+  //   // listened to by card-list component
+  //   this.events.publish('cell:selected', {
+  //     type: this.type,
+  //     periodIndex: this.periodIndex,
+  //     title: `${this.rowLabel} ${this.typeLabel}`
+  //   });
+  // }
 
   private cellDataUpdated(cellData: IBudgetPeriodData) {
     // as budget refreshed often only want to re-render when change so keep track of old data

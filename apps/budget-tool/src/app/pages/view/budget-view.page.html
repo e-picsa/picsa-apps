@@ -8,7 +8,11 @@
     <budget-table
       *ngIf="store.activeBudget"
       [budget]="store.activeBudget"
-      [@fade]="store.activeBudget ? 'in' : 'out'"
+      @fadeInOut
     ></budget-table>
+    <budget-cell-editor
+      *ngIf="store.activeBudget"
+      [@flyInOut]="store.isEditorOpen ? 'in' : 'out'"
+    ></budget-cell-editor>
   </div>
 </div>

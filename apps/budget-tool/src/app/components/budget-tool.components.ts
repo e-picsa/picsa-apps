@@ -17,6 +17,7 @@ import { BudgetMaterialModule } from '../material.module';
 import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellValueComponent } from './cell/variants/value/value';
+import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { BudgetCellValueComponent } from './cell/variants/value/value';
     BudgetCardImageComponent,
     BudgetCardListComponent,
     BudgetCellComponent,
+    BudgetCellEditorComponent,
     BudgetCellLabourComponent,
     BudgetCellValueComponent,
     BudgetListItemComponent,
@@ -49,6 +51,7 @@ import { BudgetCellValueComponent } from './cell/variants/value/value';
     BudgetCardImageComponent,
     BudgetCardListComponent,
     BudgetCellComponent,
+    BudgetCellEditorComponent,
     BudgetCellLabourComponent,
     BudgetCellValueComponent,
     BudgetListItemComponent,

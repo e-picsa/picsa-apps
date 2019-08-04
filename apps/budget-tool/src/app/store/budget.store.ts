@@ -22,6 +22,7 @@ export class BudgetStore {
   @observable enterprises = BUDGET_DATA.enterprises;
   @observable enterpriseTypes = BUDGET_DATA.enterpriseTypes;
   @observable activeBudget: IBudget;
+  @observable isEditorOpen = false;
   @observable savedBudgets: IBudget[];
   get activeBudgetValue() {
     return toJS(this.activeBudget);
@@ -58,6 +59,10 @@ export class BudgetStore {
   patchBudget(patch: Partial<IBudget>) {
     this.setActiveBudget({ ...this.activeBudget, ...patch });
     return this.saveBudget();
+  }
+  @action()
+  toggleEditor() {
+    this.isEditorOpen = !this.isEditorOpen;
   }
 
   /**************************************************************************
