@@ -1,6 +1,6 @@
-<div class="budget-cell-container" (click)="editCell()">
+<div class="cell-container" (click)="onCellClick()">
   <div *ngIf="_cellData">
-    <div [ngSwitch]="type" style="height:100%">
+    <div [ngSwitch]="type" style="height:100%" id="cellTypeSwitch">
       <!-- inputs -->
       <div *ngSwitchCase="'inputs'" style="display: flex; flex-wrap: wrap">
         <div *ngFor="let card of _cellData">
@@ -73,7 +73,7 @@
     </div>
   </div>
   <div *ngIf="!_cellData" class="add-cell-data">
-    <ion-icon name="add" class="add-cell-data-icon"></ion-icon>
+    <mat-icon>add</mat-icon>
   </div>
   <!-- *** future - only show add for produce consumed if there are outputs in the corresponding time period -->
 </div>

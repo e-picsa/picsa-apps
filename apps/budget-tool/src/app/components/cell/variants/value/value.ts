@@ -1,12 +1,12 @@
-import { select } from "@angular-redux/store";
-import { Component, Input, OnDestroy } from "@angular/core";
-import { Observable, Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
-import { IBudgetDotValues } from "../../models/budget-tool.models";
+import { select } from '@angular-redux/store';
+import { Component, Input, OnDestroy } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { IBudgetDotValues } from '@picsa/budget/src/app/models/budget-tool.models';
 
 @Component({
-  selector: "budget-cell-value",
-  templateUrl: "budget-cell-value.html"
+  selector: 'budget-cell-value',
+  templateUrl: './value.html'
 })
 export class BudgetCellValueComponent implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
@@ -25,7 +25,7 @@ export class BudgetCellValueComponent implements OnDestroy {
     this._consumed = consumed;
     this.generateRepresentation();
   }
-  @select(["budget", "active", "dotValues"])
+  @select(['budget', 'active', 'dotValues'])
   dotValues$: Observable<IBudgetDotValues>;
   _quantity: number;
   _cost: number;
@@ -50,7 +50,7 @@ export class BudgetCellValueComponent implements OnDestroy {
         ? this._quantity - this._consumed
         : this._quantity;
       const total = this._cost * quantity;
-      const sign = total >= 0 ? "positive" : "negative";
+      const sign = total >= 0 ? 'positive' : 'negative';
       let toAllocate = Math.abs(total);
       // keep track of how many times each value is multiplied by to make total
       const dotAllocation = Object.assign({}, this.dotValues);
@@ -68,7 +68,7 @@ export class BudgetCellValueComponent implements OnDestroy {
       this.dotValueAllocation = baseAllocation;
     }
   }
-  _createArray(length: number, sign: "positive" | "negative") {
+  _createArray(length: number, sign: 'positive' | 'negative') {
     return new Array(length).fill(sign);
   }
 

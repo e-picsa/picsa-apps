@@ -1,9 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { BudgetToolProvider } from '../../services/budget-tool.provider';
 
 @Component({
   selector: 'budget-cell-labour',
-  templateUrl: 'budget-cell-labour.html'
+  templateUrl: './labour.html'
 })
 export class BudgetCellLabourComponent {
   @Input()
@@ -20,7 +19,7 @@ export class BudgetCellLabourComponent {
   _people: number;
   daysArray: number[][];
 
-  constructor(private budgetPrvdr: BudgetToolProvider) {}
+  constructor() {}
 
   // given updates to people or days split the total into components of the large, medium, small and half values
   // map these values to directed arrays to populate images in the pictorial representation

@@ -8,15 +8,15 @@ import { BudgetCardComponent } from './budget-card/budget-card';
 import { BudgetDataCardComponent } from './budget-card/budget-data-card';
 import { BudgetMetaCardComponent } from './budget-card/budget-meta-card';
 import { BudgetNewCardComponent } from './budget-card/budget-new-card';
-import { BudgetCellLabourComponent } from './budget-cell-labour/budget-cell-labour';
-import { BudgetCellValueComponent } from './budget-cell-value/budget-cell-value';
-import { BudgetCellComponent } from './budget-cell/budget-cell';
+import { BudgetCellComponent } from './cell/cell';
 import { BudgetTableComponent } from './budget-table/budget-table';
 import { CardSelectComponent } from './card-select/card-select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BudgetMaterialModule } from '../material.module';
 import { BudgetListItemComponent } from './budget-list-item/budget-list-item';
+import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
+import { BudgetCellValueComponent } from './cell/variants/value/value';
 
 @NgModule({
   declarations: [

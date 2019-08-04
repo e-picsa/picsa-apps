@@ -1,4 +1,3 @@
-<div>Budget Table</div>
 <div class="budget-container" id="budget">
   <!-- First column titles places vertically -->
   <div class="time-period">
@@ -7,17 +6,20 @@
       [class]="'cell row-title ' + title.label"
       *ngFor="let title of rowTitles"
     >
-      <div>{{ title.label }}</div>
-      <div *ngIf="title.type == 'cashBalance'" class="cash-balance">
-        <div *ngFor="let dot of dotsLegend">
-          <div style="display: flex; font-size: small">
-            <div>
-              <img
-                class="dot-value-image"
-                [src]="'assets/img/budget/' + dot.key + '-positive.png'"
-              />
+      <div>
+        <div>{{ title.label }}</div>
+        <!-- first column cash balance legend -->
+        <div *ngIf="title.type == 'cashBalance'" class="cash-balance">
+          <div *ngFor="let dot of dotsLegend">
+            <div style="display: flex; font-size: small">
+              <div>
+                <img
+                  class="dot-value-image"
+                  [src]="'assets/' + dot[0] + '-positive.png'"
+                />
+              </div>
+              <div *ngIf="!editDotValue">= {{ dot[1] }}</div>
             </div>
-            <div *ngIf="!editDotValue">= {{ dot.value }}</div>
           </div>
         </div>
       </div>
@@ -28,11 +30,15 @@
   <div style="display: flex; flex-basis: 100%" *ngIf="budgetUpdated">
     <div
       class="time-period "
-      *ngFor="let period of budget.periods.labels; let i = index"
+      *ngFor="
+        let period of budget.periods.labels;
+        let i = index;
+        trackBy: tbKey
+      "
     >
       <div class="time-period-title cell top-row">{{ period }}</div>
       <div *ngFor="let row of rowTitles" class="cell">
-        <div [ngSwitch]="row.type" style="height: 100%">
+        <div [ngSwitch]="row.type">
           <!-- Cash Balance -->
           <div *ngSwitchCase="'cashBalance'">
             <div *ngIf="balance && balance[i]">

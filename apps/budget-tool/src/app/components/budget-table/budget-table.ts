@@ -1,26 +1,16 @@
-import { NgRedux, select } from '@angular-redux/store';
-import { Component, OnDestroy, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { debounceTime } from 'rxjs/operators';
-import {
-  IBudget,
-  IBudgetCard,
-  IBudgetDotValues,
-  IBudgetPeriodData
-} from '../../models/budget-tool.models';
+import { Subject } from 'rxjs';
+import { IBudget } from '../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-table',
-  templateUrl: 'budget-table.html'
+  templateUrl: 'budget-table.html',
+  styleUrls: ['./budget-table.scss']
 })
-export class BudgetTableComponent implements OnDestroy {
+export class BudgetTableComponent implements OnInit {
   private componentDestroyed: Subject<any> = new Subject();
   @Input() budget: IBudget;
-  // @select(['budget', 'active', 'dotValues'])
-  // dotValues$: Observable<IBudgetDotValues>;
-  // budget: IBudget;
   rowTitles: any = [
     { type: 'activities', label: 'Activities' },
     { type: 'inputs', label: 'Inputs' },
@@ -33,23 +23,18 @@ export class BudgetTableComponent implements OnDestroy {
   balance: any;
   budgetUpdated = true;
 
-  constructor(public events: Events) {
-    // this.dotValues$
-    //   .pipe(takeUntil(this.componentDestroyed))
-    //   .subscribe(values => {
-    //     if (values) {
-    //       this.dotsLegend = this._objectToArray(values);
-    //     }
-    //   });
-    // this.events.subscribe('calculate:budget', () => {
-    //   this.calculateBalance();
-    // });
+  constructor(public events: Events) {}
+  ngOnInit(): void {
+    this.dotsLegend = Object.entries(this.budget.dotValues);
+    console.log('dots legend', this.dotsLegend);
   }
-  ngOnDestroy() {
-    this.componentDestroyed.next();
-    this.componentDestroyed.unsubscribe();
+
+  // track-by function passed to ngFor loops where value already represents unique key
+  tbKey(index: number, key: string) {
+    return key;
   }
-  private _objectToArray(json) {
+
+  private _objectToArray(json: any) {
     const array = [];
     for (const key in json) {
       if (json.hasOwnProperty(key)) {
@@ -57,17 +42,5 @@ export class BudgetTableComponent implements OnDestroy {
       }
     }
     return array;
-  }
-
-  private getIndex(array, card) {
-    let index = -1;
-    let i = 0;
-    for (const item of array) {
-      if (item.ID === card.ID) {
-        index = i;
-      }
-      i++;
-    }
-    return index;
   }
 }

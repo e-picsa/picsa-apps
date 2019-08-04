@@ -1,8 +1,10 @@
-<div class="page">
+<div class="page" *mobxAutorun>
   <mat-toolbar>
-    <span>Budget</span>
+    <span>{{
+      store.activeBudget ? store.activeBudget.title : ('Budget' | translate)
+    }}</span>
   </mat-toolbar>
-  <div class="page-content" *mobxAutorun>
+  <div class="page-content">
     <budget-table
       *ngIf="store.activeBudget"
       [budget]="store.activeBudget"

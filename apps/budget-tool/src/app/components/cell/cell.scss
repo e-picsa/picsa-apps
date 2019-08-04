@@ -1,0 +1,39 @@
+:host {
+  height: 100%;
+}
+.cell-container {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  background: white;
+}
+.cell-container:hover {
+  background: wheat;
+}
+.add-cell-data {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.2;
+}
+
+.badge {
+  position: relative;
+  left: -10px;
+  height: calc(1em + 6px);
+  padding: 3px 5px;
+  border-radius: 50%;
+  z-index: 2;
+}
+.consumed-badge {
+  background-color: #5062bd;
+  color: rgba(255, 255, 255, 0.9);
+}
+.output-badge {
+  background-color: #bc9b06;
+  color: rgba(255, 255, 255, 0.9);
+}
