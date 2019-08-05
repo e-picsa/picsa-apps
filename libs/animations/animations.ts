@@ -59,8 +59,6 @@ export const FlyInOut = (config: IAnimationConfig = {}) => {
     direction === 'left' || direction === 'top' ? '-100%' : '100%';
   const inState = `translate${axis}(0)`;
   const outState = `translate${axis}(${outPosition})`;
-  console.log('inState', inState);
-  console.log('outState', outState);
   return trigger('flyInOut', [
     state('in', style({ transform: inState })),
     state('out', style({ transform: outState })),

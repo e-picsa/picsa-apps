@@ -1,47 +1,24 @@
-.budget-card {
-  cursor: pointer;
-  color: black;
-  width: unset;
+:host {
+  margin-right: 10px;
+  margin-bottom: 10px;
   display: inline-block;
+  cursor: pointer;
   text-align: center;
+  // prevent strange offset
+  vertical-align: bottom;
 }
-.budget-card {
-  height: 130px;
+
+mat-card.budget-card {
   width: 130px;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  padding: 0;
 }
-.budget-card[selected='true'],
-.budget-card.enterprise[selected='true'] {
+
+.budget-card[selected='true'] {
   font-weight: bold;
   background: var(--color-selected);
 }
-.budget-card.inputs[selected='true'],
-.budget-card.outputs[selected='true'],
-.budget-card.familyLabour[selected='true'],
-.budget-card.produceConsumed[selected='true'] {
-  width: 260px;
-}
-.budget-card.enterprise {
-  background: white;
-}
-.card-inputs-list {
-  height: 88px;
-  .item {
-    background-color: #fbf1d1;
-    color: black;
-  }
-  .label {
-    margin-top: 5px;
-  }
-  .text-input {
-    margin: 6px 0;
-  }
-}
 .card-title {
+  height: 2.5em;
   padding: 5px;
   background: #dcdcdc;
-}
-.card-title.add {
-  background: transparent;
 }

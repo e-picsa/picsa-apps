@@ -6,11 +6,13 @@ import {
   IBudgetCard
 } from '../../models/budget-tool.models';
 import { PicsaDbService } from '@picsa/services/core';
+import { FadeInOut } from '@picsa/animations';
 
 @Component({
   selector: 'budget-cell-editor',
   templateUrl: './cell-editor.html',
-  styleUrls: ['./cell-editor.scss']
+  styleUrls: ['./cell-editor.scss'],
+  animations: [FadeInOut()]
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
@@ -24,11 +26,8 @@ export class BudgetCellEditorComponent {
     console.log('budget cell editor');
   }
 
-  ngOnInit() {
-    this.loadCards();
-  }
-  async loadCards() {
-    const cards = await this.db.getCollection('budgetTool/_all/cards');
+  onCardClicked(card: IBudgetCard) {
+    console.log('card clicked', card);
   }
 
   cellChanged(cell: IBudgetActiveCell) {}

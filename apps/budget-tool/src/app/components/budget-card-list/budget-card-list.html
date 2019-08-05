@@ -5,12 +5,7 @@
     <budget-data-card
       *ngFor="let card of cards"
       [card]="card"
-      [type]="type"
     ></budget-data-card>
-    <budget-new-card
-      [newCardType]="type"
-      *ngIf="type != 'familyLabour' && type != 'produceConsumed'"
-    ></budget-new-card>
   </div>
 </div>
 
@@ -21,7 +16,6 @@
     <budget-data-card
       *ngFor="let card of cards"
       [card]="card"
-      [type]="'produceConsumed'"
     ></budget-data-card>
   </div>
   <div *ngIf="!cards">

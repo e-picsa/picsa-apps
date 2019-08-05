@@ -6,8 +6,6 @@ import { BudgetCardImageComponent } from './budget-card-image/budget-card-image'
 import { BudgetCardListComponent } from './budget-card-list/budget-card-list';
 import { BudgetCardComponent } from './budget-card/budget-card';
 import { BudgetDataCardComponent } from './budget-card/budget-data-card';
-import { BudgetMetaCardComponent } from './budget-card/budget-meta-card';
-import { BudgetNewCardComponent } from './budget-card/budget-new-card';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetTableComponent } from './budget-table/budget-table';
 import { CardSelectComponent } from './card-select/card-select';
@@ -24,9 +22,7 @@ import { PicsaDbModule } from '@picsa/modules';
 @NgModule({
   declarations: [
     BudgetCardComponent,
-    BudgetNewCardComponent,
     BudgetDataCardComponent,
-    BudgetMetaCardComponent,
     BudgetCardImageComponent,
     BudgetCardListComponent,
     BudgetCellComponent,
@@ -49,9 +45,7 @@ import { PicsaDbModule } from '@picsa/modules';
   ],
   exports: [
     BudgetCardComponent,
-    BudgetNewCardComponent,
     BudgetDataCardComponent,
-    BudgetMetaCardComponent,
     BudgetCardImageComponent,
     BudgetCardListComponent,
     BudgetCellComponent,

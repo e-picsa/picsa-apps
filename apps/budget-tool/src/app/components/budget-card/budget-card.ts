@@ -18,7 +18,6 @@ export class BudgetCardComponent implements OnInit {
   // use partial as not sure whether will be budget card or custom budget card
   @Input() card: Partial<ICustomBudgetCard>;
   @Input() generator: string;
-  @Input() type: string;
   @Input() selected: boolean;
   currency = ENVIRONMENT.region.currency;
 
@@ -38,7 +37,8 @@ export class BudgetCardComponent implements OnInit {
     };
   }
 
-  cardClicked() {
+  onCardClick() {
+    console.log('card clicked');
     // *** TODO - figure out what wanted handler to do
   }
 }

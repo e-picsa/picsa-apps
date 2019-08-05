@@ -12,24 +12,22 @@
               *ngFor="let type of store.enterpriseTypes"
               (click)="enterpriseTypeClicked(type)"
               [generator]="type"
-              style="margin: 0 10px 10px 0"
               [selected]="budgetForm.value.enterpriseType === type"
               @fadeInOut
             ></budget-card>
           </div>
-          <div *ngIf="filteredEnterprises.length > 0" @fadeInOut>
-            <h2>Select Enterprise</h2>
-            <div style="display: flex; flex-wrap: wrap">
-              <budget-card
-                *ngFor="let enterprise of filteredEnterprises"
-                [card]="enterprise"
-                style="margin: 0 10px 10px 0"
-                (click)="enterpriseClicked(enterprise)"
-                [selected]="budgetForm.value.enterprise === enterprise.id"
-                @fadeInOut
-              >
-              </budget-card>
-            </div>
+          <h2 *ngIf="filteredEnterprises.length" @fadeInOut>
+            Select Enterprise
+          </h2>
+          <div style="display: flex; flex-wrap: wrap">
+            <budget-card
+              *ngFor="let enterprise of filteredEnterprises"
+              [card]="enterprise"
+              (click)="enterpriseClicked(enterprise)"
+              [selected]="budgetForm.value.enterprise === enterprise.id"
+              @fadeInOut
+            >
+            </budget-card>
           </div>
         </div>
         <button

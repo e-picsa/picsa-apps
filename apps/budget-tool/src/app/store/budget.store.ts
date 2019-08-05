@@ -31,9 +31,15 @@ export class BudgetStore {
     return toJS(this.activeBudget);
   }
   // get unique list of types in enterprise cards
-  @computed get enterpriseTypes() {
+  @computed get enterpriseTypes(): string[] {
     return this.budgetMeta
       ? [...new Set(this.budgetMeta.enterprises.map(e => e.type))].sort()
+      : [];
+  }
+  // get filtered list of cards depending on cell being edited
+  @computed get activeCards(): IBudgetCard[] {
+    return this.budgetMeta && this.activeCell
+      ? this.budgetMeta[this.activeCell.type]
       : [];
   }
   @action setActiveBudget(budget: IBudget) {

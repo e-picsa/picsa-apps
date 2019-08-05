@@ -38,7 +38,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
     // first see if svg exists
     try {
       imgData = await this.http
-        .get(`../../assets/cards/${imageId}.svg`, { responseType: 'blob' })
+        .get(`../../assets/svgs/${imageId}.svg`, { responseType: 'blob' })
         .toPromise();
     } catch (error) {
       // then try png

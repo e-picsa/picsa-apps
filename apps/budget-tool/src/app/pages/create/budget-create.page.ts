@@ -23,7 +23,7 @@ export class BudgetCreatePage implements OnInit {
   enterpriseToggle = false;
   filteredEnterprises: IEnterprise[] = [];
   periodScaleOptions: IEnterpriseScale[] = ['weeks', 'months'];
-  periodTotalOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
   @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
   constructor(

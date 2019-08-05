@@ -6,11 +6,26 @@
     </h2>
   </div>
   <!--cards container-->
-  <div>
-    <!-- <div class="cards-container">
+  <div *mobxAutorun>
+    <div class="cards-container">
       <div class="flex wrap">
-        <div *ngFor="let card of cards; let i = index">
-          <div
+        <budget-card
+          *ngFor="let card of store.activeCards"
+          [card]="card"
+          (click)="onCardClicked(card)"
+          [selected]=""
+          @fadeInOut
+        ></budget-card>
+      </div>
+    </div>
+
+    <button mat-button (click)="saveCell()">Continue</button>
+  </div>
+</div>
+
+<!-- DEPRECATED - to check before removal -->
+
+<!-- <div
             class="card"
             *ngIf="!card.archived"
             (click)="highlight(card, i)"
@@ -36,14 +51,13 @@
                 {{ currency }} {{ selected[card.ID].cost }}
               </div>
             </div>
-          </div>
-        </div>
-        <ion-button slot="start" (click)="addCard()">
+          </div> -->
+<!-- <ion-button slot="start" (click)="addCard()">
           <ion-icon name="add"></ion-icon>
           Add Another
-        </ion-button>
-      </div>
-    </div>
+        </ion-button> -->
+
+<!--
     <div class="values-container" *ngIf="showValues">
       <div>
         <div class="flex">
@@ -158,6 +172,3 @@
       <ion-button (click)="saveNewCard()">Save</ion-button>
     </div>
   </div> -->
-    <button mat-button (click)="saveCell()">Continue</button>
-  </div>
-</div>
