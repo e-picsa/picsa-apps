@@ -1,19 +1,13 @@
 <div class="page-content" style="height: calc(100% - 20px);">
-  <div>
-    <h2>
-      {{ 'Select' | translate }} {{ cell.typeLabel | translate }}
-      {{ 'for' | translate }} {{ cell.periodIndex | translate }}
-    </h2>
-  </div>
   <!--cards select-->
   <mat-horizontal-stepper
     linear
     #stepper
     style="overflow: auto; margin-bottom: 20px; flex:1"
   >
-    <!-- Step 1 - handled with custom elements-->
-    <mat-step>
-      <ng-template matStepLabel>{{ 'Select Cards' | translate }}</ng-template>
+    <!-- Card Select Step-->
+    <mat-step *ngIf="stepsShown.cardStep">
+      <ng-template matStepLabel>{{ _cell.typeLabel | translate }}</ng-template>
       <div *mobxAutorun>
         <budget-card
           *ngFor="let card of store.activeCards"
@@ -24,17 +18,19 @@
         ></budget-card>
       </div>
     </mat-step>
-    <!-- Step 1 - handled with custom elements-->
-    <mat-step>
-      <ng-template matStepLabel>{{ 'Input Values' | translate }}</ng-template>
-      <div *mobxAutorun>
+    <!-- Value Input Step-->
+    <mat-step *ngIf="stepsShown.valueStep">
+      <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
+      <div>
         <budget-card
           *ngFor="let card of selectedArray"
           [card]="card"
         ></budget-card>
+        <div *ngIf="selectedArray.length === 0"></div>
       </div>
     </mat-step>
   </mat-horizontal-stepper>
+
   <button
     color="primary"
     mat-raised-button

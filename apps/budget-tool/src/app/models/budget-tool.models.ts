@@ -40,8 +40,11 @@ export type IBudgetPeriodType = keyof IBudgetPeriodData;
 // i.e. 'activities' | 'inputs' | ...
 
 export interface IBudgetActiveCell {
-  periodIndex: string;
-  type: IBudgetPeriodType;
+  periodKey: string;
+  periodIndex: number;
+  periodLabel: string;
+  typeKey: IBudgetPeriodType;
+  typeIndex: number;
   typeLabel: string;
   value?: IBudgetPeriodData;
 }
@@ -171,3 +174,11 @@ type week =
   | 'Week 10'
   | 'Week 11'
   | 'Week 12';
+
+export const BUDGET_PERIOD_ROWS: { key: IBudgetPeriodType; label: string }[] = [
+  { key: 'activities', label: 'Activities' },
+  { key: 'inputs', label: 'Inputs' },
+  { key: 'familyLabour', label: 'Family Labour' },
+  { key: 'outputs', label: 'Outputs' },
+  { key: 'produceConsumed', label: 'Produce Consumed' }
+];

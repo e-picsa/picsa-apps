@@ -2,7 +2,7 @@
   <!-- First column -->
   <div class="time-period">
     <div class="time-period-title cell top-row"></div>
-    <div class="cell row-title" *ngFor="let row of periodRows">
+    <div class="cell row-title" *ngFor="let row of rows">
       {{ row.label }}
     </div>
     <!-- cash balance legend -->
@@ -27,22 +27,21 @@
   <!-- Time periods calculated Vertically -->
   <div
     class="time-period"
-    *ngFor="let period of budget.periods.labels; let i = index"
+    *ngFor="let column of columns; let columnIndex = index"
   >
     <div class="time-period-title cell top-row">{{ period }}</div>
     <!-- period rows -->
-    <div *ngFor="let row of periodRows" class="cell">
+    <div *ngFor="let row of rows; let rowIndex = index" class="cell">
       <budget-cell
-        [periodIndex]="i"
-        [type]="row.type"
-        [typeLabel]="row.label"
-        [rowLabel]="period"
+        [type]="row.key"
         [cellData]="
-          budget.data && budget.data[i] && budget.data[i][row.type]
-            ? budget.data[i][row.type]
+          budget.data &&
+          budget.data[columnIndex] &&
+          budget.data[columnIndex][row.key]
+            ? budget.data[columnIndex][row.key]
             : null
         "
-        (click)="onCellClick(period, row.type, row.label)"
+        (click)="onCellClick(row, rowIndex, column, columnIndex)"
       ></budget-cell>
     </div>
     <!-- Cash Balance -->

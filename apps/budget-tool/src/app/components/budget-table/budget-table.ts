@@ -1,6 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { IBudget, IBudgetPeriodType } from '../../models/budget-tool.models';
+import {
+  IBudget,
+  IBudgetPeriodType,
+  IBudgetActiveCell,
+  BUDGET_PERIOD_ROWS
+} from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({
@@ -10,39 +15,51 @@ import { BudgetStore } from '../../store/budget.store';
 })
 export class BudgetTableComponent implements OnInit {
   @Input() budget: IBudget;
-  periodRows = periodRows;
-  metaRows = metaRows;
+  rows: IBudgetRow[] = BUDGET_PERIOD_ROWS;
+  columns: IBudgetColumn[] = [];
   dotsLegend = [];
   balance: any;
 
   constructor(public events: Events, private store: BudgetStore) {}
   ngOnInit(): void {
     this.dotsLegend = Object.entries(this.budget.dotValues);
+    const periods = this.budget.periods.labels as string[];
+    this.columns = periods.map(p => {
+      return {
+        key: p,
+        label: p
+      };
+    });
     console.log('dots legend', this.dotsLegend);
   }
 
-  onCellClick(periodIndex: string, type: IBudgetPeriodType, typeLabel: string) {
-    this.store.toggleEditor({ periodIndex, type, typeLabel });
+  onCellClick(
+    row: IBudgetRow,
+    rowIndex: number,
+    column: IBudgetColumn,
+    columnIndex: number
+  ) {
+    const activeCell: IBudgetActiveCell = {
+      periodIndex: columnIndex,
+      periodKey: column.key,
+      periodLabel: column.label,
+      typeIndex: rowIndex,
+      typeKey: row.key,
+      typeLabel: row.label
+    };
+    this.store.toggleEditor(activeCell);
   }
 }
 
 /********************************************************************************
  *      Interfaces and constants
  *******************************************************************************/
+
 interface IBudgetRow {
-  type: string;
+  key: IBudgetPeriodType;
   label: string;
 }
-
-interface IPeriodRow extends IBudgetRow {
-  type: IBudgetPeriodType;
+interface IBudgetColumn {
+  key: string;
+  label: string;
 }
-
-const periodRows: IPeriodRow[] = [
-  { type: 'activities', label: 'Activities' },
-  { type: 'inputs', label: 'Inputs' },
-  { type: 'familyLabour', label: 'Family Labour' },
-  { type: 'outputs', label: 'Outputs' },
-  { type: 'produceConsumed', label: 'Produce Consumed' }
-];
-const metaRows: IBudgetRow[] = [{ type: 'cashBalance', label: 'Balance' }];

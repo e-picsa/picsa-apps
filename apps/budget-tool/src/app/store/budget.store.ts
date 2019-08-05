@@ -6,7 +6,8 @@ import {
   IBudgetPeriodData,
   IBudgetCard,
   IBudgetActiveCell,
-  IBudgetMeta
+  IBudgetMeta,
+  BUDGET_PERIOD_ROWS
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
@@ -38,8 +39,9 @@ export class BudgetStore {
   }
   // get filtered list of cards depending on cell being edited
   @computed get activeCards(): IBudgetCard[] {
+    console.log('get active cards', toJS(this.activeCell));
     return this.budgetMeta && this.activeCell
-      ? this.budgetMeta[this.activeCell.type]
+      ? this.budgetMeta[this.activeCell.typeKey]
       : [];
   }
   @action setActiveBudget(budget: IBudget) {
@@ -49,6 +51,97 @@ export class BudgetStore {
 
   constructor(private db: PicsaDbService) {
     this.init();
+  }
+
+  /**************************************************************************
+   *            Enterprise methods
+   *
+   ***************************************************************************/
+  getfilteredEnterprises(type: string) {
+    return this.budgetMeta.enterprises.filter(e => e.type === type);
+  }
+  getBudgetEnterpriseDefaults(enterprise: IEnterprise): IBudgetPeriodMeta {
+    const d = enterprise.defaults;
+    return {
+      scale: d.scale,
+      total: d.total,
+      labels: this.generateLabels(d),
+      starting: d.starting
+    };
+  }
+  /**************************************************************************
+   *            Budget Values
+   *
+   ***************************************************************************/
+  patchBudget(patch: Partial<IBudget>) {
+    this.setActiveBudget({ ...this.activeBudget, ...patch });
+    return this.saveBudget();
+  }
+  @action()
+  toggleEditor(cell?: IBudgetActiveCell) {
+    if (cell) {
+      const periodData = this.activeBudget.data[cell.periodIndex];
+      const value = periodData ? periodData[cell.typeKey] : {};
+      this.activeCell = { ...cell, value };
+      console.log('cell', toJS(this.activeCell));
+    }
+    this.isEditorOpen = !this.isEditorOpen;
+  }
+  @action
+  editorNext() {
+    const rows = BUDGET_PERIOD_ROWS;
+    const columns = this.activeBudgetValue.periods;
+    console.log('going to next cell', toJS(this.activeCell));
+  }
+  @action
+  editorPrevious() {}
+
+  /**************************************************************************
+   *            Budget Create/Save/Load
+   *
+   ***************************************************************************/
+
+  createNewBudget() {
+    const budget: IBudget = {
+      ...NEW_BUDGET_TEMPLATE,
+      ...this.db.generateMeta()
+    };
+    this.setActiveBudget(budget);
+  }
+  async saveBudget() {
+    await this.db.setDoc(
+      'budgetTool/${GROUP}/budgets',
+      this.activeBudgetValue,
+      true
+    );
+    await this.loadSavedBudgets();
+  }
+  async loadBudgetByKey(key: string) {
+    if (!this.activeBudget || this.activeBudget._key !== key) {
+      await this.loadSavedBudgets();
+      const budget = this.savedBudgets.find(b => b._key === key);
+      this.loadBudget(toJS(budget));
+    }
+  }
+  async loadBudget(budget: IBudget) {
+    budget = checkForBudgetUpgrades(budget);
+    this.setActiveBudget(budget);
+    // this.events.publish("calculate:budget");
+    // // publish event to force card list update
+    // this.events.publish("load:budget");
+  }
+
+  private async loadSavedBudgets(): Promise<void> {
+    this.savedBudgets = await this.db.getCollection<IBudget>(
+      'budgetTool/${GROUP}/budgets'
+    );
+  }
+
+  async deleteBudget(budget: IBudget) {
+    console.log('archiving budget', budget, budget._key);
+    await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
+    this.loadSavedBudgets();
+    console.log('budget deleted');
   }
 
   /**************************************************************************
@@ -97,89 +190,6 @@ export class BudgetStore {
       });
       await this.db.setDocs(endpoint, docs);
     }
-  }
-
-  /**************************************************************************
-   *            Enterprise methods
-   *
-   ***************************************************************************/
-  getfilteredEnterprises(type: string) {
-    return this.budgetMeta.enterprises.filter(e => e.type === type);
-  }
-  getBudgetEnterpriseDefaults(enterprise: IEnterprise): IBudgetPeriodMeta {
-    const d = enterprise.defaults;
-    return {
-      scale: d.scale,
-      total: d.total,
-      labels: this.generateLabels(d),
-      starting: d.starting
-    };
-  }
-  /**************************************************************************
-   *            Budget Values
-   *
-   ***************************************************************************/
-  patchBudget(patch: Partial<IBudget>) {
-    this.setActiveBudget({ ...this.activeBudget, ...patch });
-    return this.saveBudget();
-  }
-  @action()
-  toggleEditor(cell?: IBudgetActiveCell) {
-    if (cell) {
-      const periodData = this.activeBudget.data[cell.periodIndex];
-      const value = periodData ? periodData[cell.type] : {};
-      this.activeCell = { ...cell, value };
-      console.log('cell', toJS(this.activeCell));
-    }
-    this.isEditorOpen = !this.isEditorOpen;
-  }
-
-  /**************************************************************************
-   *            Budget Create/Save/Load
-   *
-   ***************************************************************************/
-
-  createNewBudget() {
-    const budget: IBudget = {
-      ...NEW_BUDGET_TEMPLATE,
-      ...this.db.generateMeta()
-    };
-    this.setActiveBudget(budget);
-  }
-  async saveBudget() {
-    await this.db.setDoc(
-      'budgetTool/${GROUP}/budgets',
-      this.activeBudgetValue,
-      true
-    );
-    await this.loadSavedBudgets();
-  }
-  async loadBudgetByKey(key: string) {
-    if (!this.activeBudget || this.activeBudget._key !== key) {
-      await this.loadSavedBudgets();
-      const budget = this.savedBudgets.find(b => b._key === key);
-      this.loadBudget(toJS(budget));
-    }
-  }
-  async loadBudget(budget: IBudget) {
-    budget = checkForBudgetUpgrades(budget);
-    this.setActiveBudget(budget);
-    // this.events.publish("calculate:budget");
-    // // publish event to force card list update
-    // this.events.publish("load:budget");
-  }
-
-  private async loadSavedBudgets(): Promise<void> {
-    this.savedBudgets = await this.db.getCollection<IBudget>(
-      'budgetTool/${GROUP}/budgets'
-    );
-  }
-
-  async deleteBudget(budget: IBudget) {
-    console.log('archiving budget', budget, budget._key);
-    await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
-    this.loadSavedBudgets();
-    console.log('budget deleted');
   }
 
   /**************************************************************************
@@ -246,8 +256,3 @@ export class BudgetStore {
     return labels;
   }
 }
-
-/**************************************************************************
- *          Interfaces
- *
- ***************************************************************************/

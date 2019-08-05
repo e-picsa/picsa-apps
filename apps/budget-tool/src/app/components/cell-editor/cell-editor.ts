@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, ɵConsole } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
 import { ENVIRONMENT } from '@picsa/environments';
 import {
@@ -18,15 +18,36 @@ import { MatStepper } from '@angular/material';
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
  */
 export class BudgetCellEditorComponent {
-  @Input() cell: IBudgetActiveCell;
+  _cell: IBudgetActiveCell;
   isOpen = false;
   currency = ENVIRONMENT.region.currency;
   allBudgetCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCard[] = [];
+  stepsShown = {};
+  @Input() set cell(cell: IBudgetActiveCell) {
+    this.setSteps(cell);
+    this.reset();
+    this._cell = cell;
+  }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
-  constructor(private store: BudgetStore) {
-    console.log('budget cell editor');
+  constructor(private store: BudgetStore) {}
+
+  reset() {
+    this.selected = {};
+    this.selectedArray = [];
+    if (this.stepper && this.stepper.selectedIndex > 0) {
+      this.stepper.reset();
+    }
+  }
+
+  setSteps(cell: IBudgetActiveCell) {
+    const type = cell.typeKey;
+    this.stepsShown = {
+      cardStep: type !== 'familyLabour',
+      valueStep: ['inputs', 'outputs', 'produceConsumed'].includes(type),
+      labourStep: type === 'familyLabour'
+    };
   }
 
   // on click toggle keys on the selected cards property, saving full card data for use later
@@ -41,16 +62,16 @@ export class BudgetCellEditorComponent {
     }
   }
   onNextClicked() {
-    if (this.stepper.selectedIndex < 1) {
-      return this.stepper.next();
+    if (this.stepper.selectedIndex < this.stepper.steps.length - 1) {
+      this.stepper.next();
+    } else {
+      this.saveCell();
+      this.store.toggleEditor();
     }
   }
 
-  cellChanged(cell: IBudgetActiveCell) {}
-
   saveCell() {
-    console.log('TODO - saving cell');
     // TODO
-    this.store.toggleEditor();
+    console.log('TODO - saving cell');
   }
 }

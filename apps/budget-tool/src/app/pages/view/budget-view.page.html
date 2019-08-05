@@ -3,6 +3,19 @@
     <span>{{
       store.activeBudget ? store.activeBudget.title : ('Budget' | translate)
     }}</span>
+    <div *ngIf="store.isEditorOpen" style="flex:1; display: flex">
+      <span style="text-align: center; flex:1">{{
+        store.activeCell.periodLabel
+      }}</span>
+      <button
+        mat-button
+        color="primary"
+        (click)="store.toggleEditor()"
+        @fadeInOut
+      >
+        <mat-icon>close</mat-icon><span>{{ 'Cancel' | translate }}</span>
+      </button>
+    </div>
   </mat-toolbar>
   <!-- hide overflow so that editor can be stored outside bottom of page -->
   <div class="page-content" style="overflow-y: hidden; overflow-x: auto">
