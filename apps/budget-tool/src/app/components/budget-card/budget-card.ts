@@ -5,7 +5,6 @@ import {
   IBudgetCard
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { ENVIRONMENT } from '@picsa/environments';
 
 @Component({
   selector: 'budget-card',
@@ -19,7 +18,6 @@ export class BudgetCardComponent implements OnInit {
   @Input() card: Partial<ICustomBudgetCard>;
   @Input() generator: string;
   @Input() selected: boolean;
-  currency = ENVIRONMENT.region.currency;
 
   constructor(public actions: BudgetToolActions, public store: BudgetStore) {}
 
@@ -35,10 +33,5 @@ export class BudgetCardComponent implements OnInit {
       id: id,
       name: id
     };
-  }
-
-  onCardClick() {
-    console.log('card clicked');
-    // *** TODO - figure out what wanted handler to do
   }
 }

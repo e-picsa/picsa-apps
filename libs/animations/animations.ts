@@ -26,8 +26,9 @@ export const OpenClosed = trigger('openClosed', [
 ]);
 
 // function to generate custom fade transition
-export const FadeInOut = (config: IAnimationConfig = {}) => {
-  const { inSpeed, outSpeed } = { ...ANIMATION_DEFAULTS, ...config };
+export const FadeInOut = (config: Partial<IAnimationConfig> = {}) => {
+  const inTimings = getAnimationTimings(config, 'in');
+  const outTimings = getAnimationTimings(config, 'out');
   return trigger('fadeInOut', [
     state(
       'in',
@@ -45,15 +46,17 @@ export const FadeInOut = (config: IAnimationConfig = {}) => {
     // (e.g. part of ngIf statement), so explicitly define
     transition(':enter', [
       style({ opacity: 0 }),
-      animate(inSpeed, style({ opacity: 1 }))
+      animate(inTimings, style({ opacity: 1 }))
     ]),
-    transition('* => in', [animate(inSpeed)]),
-    transition('in => out', [animate(outSpeed)])
+    transition('* => in', [animate(inTimings)]),
+    transition('in => out', [animate(outTimings)])
   ]);
 };
 
-export const FlyInOut = (config: IAnimationConfig = {}) => {
-  const { direction, inSpeed, outSpeed } = { ...ANIMATION_DEFAULTS, ...config };
+export const FlyInOut = (config: Partial<IAnimationConfig> = {}) => {
+  const { direction } = { ...ANIMATION_DEFAULTS, ...config };
+  const inTimings = getAnimationTimings(config, 'in');
+  const outTimings = getAnimationTimings(config, 'out');
   const axis = direction === 'left' || direction === 'right' ? 'X' : 'Y';
   const outPosition =
     direction === 'left' || direction === 'top' ? '-100%' : '100%';
@@ -62,13 +65,31 @@ export const FlyInOut = (config: IAnimationConfig = {}) => {
   return trigger('flyInOut', [
     state('in', style({ transform: inState })),
     state('out', style({ transform: outState })),
-    transition('void => in', [style({ transform: inState }), animate(inSpeed)]),
-    transition('* => void', [
-      animate(outSpeed, style({ transform: outState }))
+    transition('void => in', [
+      style({ transform: inState }),
+      animate(inTimings)
     ]),
-    transition('out => in', [animate(inSpeed)]),
-    transition('in => out', [animate(outSpeed / 2)])
+    transition('* => void', [
+      animate(outTimings),
+      style({ transform: outState })
+    ]),
+    transition('out => in', [animate(inTimings)]),
+    transition('in => out', [animate(outTimings)])
   ]);
+};
+
+// helper method to turn config into string of animation parameters
+const getAnimationTimings = (
+  config: Partial<IAnimationConfig>,
+  direction: 'in' | 'out'
+) => {
+  const { inSpeed, inDelay, inEasing, outSpeed, outDelay, outEasing } = {
+    ...ANIMATION_DEFAULTS,
+    ...config
+  };
+  return direction === 'in'
+    ? `${inSpeed}ms ${inDelay}ms ${inEasing}`
+    : `${outSpeed}ms ${outDelay}ms ${outEasing}`;
 };
 
 /*********************************************************************************
@@ -76,13 +97,21 @@ export const FlyInOut = (config: IAnimationConfig = {}) => {
  **********************************************************************************/
 const ANIMATION_DEFAULTS: IAnimationConfig = {
   inSpeed: 250,
+  inDelay: 0,
+  inEasing: 'ease-in',
   outSpeed: 150,
+  outDelay: 0,
+  outEasing: 'ease-out',
   direction: 'left'
 };
 
 interface IAnimationConfig {
-  inSpeed?: number;
-  outSpeed?: number;
-  direction?: direction;
+  inSpeed: number;
+  inDelay: number;
+  inEasing: string;
+  outSpeed: number;
+  outDelay: number;
+  outEasing: string;
+  direction: direction;
 }
 type direction = 'left' | 'right' | 'top' | 'bottom';

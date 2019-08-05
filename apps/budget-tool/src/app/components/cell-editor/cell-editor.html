@@ -1,26 +1,49 @@
-<div style="padding:10px">
+<div class="page-content" style="height: calc(100% - 20px);">
   <div>
     <h2>
       {{ 'Select' | translate }} {{ cell.typeLabel | translate }}
       {{ 'for' | translate }} {{ cell.periodIndex | translate }}
     </h2>
   </div>
-  <!--cards container-->
-  <div *mobxAutorun>
-    <div class="cards-container">
-      <div class="flex wrap">
+  <!--cards select-->
+  <mat-horizontal-stepper
+    linear
+    #stepper
+    style="overflow: auto; margin-bottom: 20px; flex:1"
+  >
+    <!-- Step 1 - handled with custom elements-->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Select Cards' | translate }}</ng-template>
+      <div *mobxAutorun>
         <budget-card
           *ngFor="let card of store.activeCards"
           [card]="card"
           (click)="onCardClicked(card)"
-          [selected]=""
+          [selected]="selected[card.id]"
           @fadeInOut
         ></budget-card>
       </div>
-    </div>
-
-    <button mat-button (click)="saveCell()">Continue</button>
-  </div>
+    </mat-step>
+    <!-- Step 1 - handled with custom elements-->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Input Values' | translate }}</ng-template>
+      <div *mobxAutorun>
+        <budget-card
+          *ngFor="let card of selectedArray"
+          [card]="card"
+        ></budget-card>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+  <button
+    color="primary"
+    mat-raised-button
+    class="continue-button"
+    (click)="onNextClicked()"
+  >
+    <span class="continue-button-text">Next</span>
+    <mat-icon>arrow_forward</mat-icon>
+  </button>
 </div>
 
 <!-- DEPRECATED - to check before removal -->

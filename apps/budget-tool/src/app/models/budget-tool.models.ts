@@ -87,7 +87,7 @@ export interface IEnterpriseDefaults {
 
 // cards contain additional grouping (e.g. enterprise type) along with isSelected and selectedIndex populated when
 // attached to budget data
-export interface IBudgetCard {
+export interface IBudgetCard extends IDBDoc {
   name: string;
   id: string;
   type?: string;
