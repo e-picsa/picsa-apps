@@ -4,483 +4,358 @@ import { IBudgetCard } from '../models/budget-tool.models';
 const CARDS: IBudgetCard[] = [
   {
     type: 'activities',
-    grouping: '',
     label: 'apply fertiliser',
-    id: 'apply-fertiliser'
+    id: 'apply-fertiliser',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'apply pesticide',
-    id: 'apply-pesticide'
+    id: 'apply-pesticide',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
+    label: 'bagging',
+    id: 'bagging',
+    groupings: ['crop']
+  },
+  {
+    type: 'activities',
     label: 'compost manure making',
-    id: 'compost-manure-making'
+    id: 'compost-manure-making',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'feeding livestock',
-    id: 'feeding-livestock'
+    id: 'feeding-livestock',
+    groupings: ['livestock']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'harvesting',
-    id: 'harvesting'
+    id: 'harvesting',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'land clearing',
-    id: 'land-clearing'
+    id: 'land-clearing',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
-    label: 'marketing',
-    id: 'marketing'
+    label: 'marketing and selling',
+    id: 'marketing-and-selling',
+    groupings: ['crop', 'livestock']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'mulching',
-    id: 'mulching'
+    id: 'mulching',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
-    label: 'none',
-    id: 'none'
+    label: 'ploughing',
+    id: 'ploughing',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
-    label: 'other',
-    id: 'other'
-  },
-  {
-    type: 'activities',
-    grouping: '',
-    label: 'plough',
-    id: 'plough'
-  },
-  {
-    type: 'activities',
-    grouping: '',
     label: 'post-harvest handling',
-    id: 'post-harvest-handling'
+    id: 'post-harvest-handling',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
-    label: 'sow',
-    id: 'sow'
+    label: 'shelling',
+    id: 'shelling',
+    groupings: ['crop']
   },
+  { type: 'activities', label: 'sowing', id: 'sowing', groupings: ['crop'] },
   {
     type: 'activities',
-    grouping: '',
     label: 'storage',
-    id: 'storage'
+    id: 'storage',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'threshing',
-    id: 'threshing'
+    id: 'threshing',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'top dressing - fertiliser',
-    id: 'top-dressing---fertiliser'
+    id: 'top-dressing---fertiliser',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'transport',
-    id: 'transport'
+    id: 'transport',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'value addition',
-    id: 'value-addition'
+    id: 'value-addition',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
-    label: 'water',
-    id: 'water'
+    label: 'watering',
+    id: 'watering',
+    groupings: ['crop']
   },
   {
     type: 'activities',
-    grouping: '',
     label: 'weeding',
-    id: 'weeding'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'crop',
-    id: 'crop'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'eggs',
-    id: 'eggs'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'honey',
-    id: 'honey'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'meat',
-    id: 'meat'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'milk',
-    id: 'milk'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'money',
-    id: 'money'
-  },
-  {
-    type: 'produceConsumed',
-    grouping: '',
-    label: 'none',
-    id: 'none'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'beehive',
-    id: 'beehive'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'feed',
-    id: 'feed'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'fertiliser',
-    id: 'fertiliser'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'firewood',
-    id: 'firewood'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'hire ox cart',
-    id: 'hire-ox-cart'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'hired labour',
-    id: 'hired-labour'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'labour',
-    id: 'labour'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'none',
-    id: 'none'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'other',
-    id: 'other'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'pot for storage',
-    id: 'pot-for-storage'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'protective equipment',
-    id: 'protective-equipment'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'purchase ox cart',
-    id: 'purchase-ox-cart'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'purchasing sacks for harvest',
-    id: 'purchasing-sacks-for-harvest'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'sacks of manure',
-    id: 'sacks-of-manure'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'seeds',
-    id: 'seeds'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'tools',
-    id: 'tools'
-  },
-  {
-    type: 'inputs',
-    grouping: '',
-    label: 'wheelbarrows of manure',
-    id: 'wheelbarrows-of-manure'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'crop',
-    id: 'crop'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'eggs',
-    id: 'eggs'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'fodder for livestock',
-    id: 'fodder-for-livestock'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'honey',
-    id: 'honey'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'manure for compost',
-    id: 'manure-for-compost'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'meat',
-    id: 'meat'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'milk',
-    id: 'milk'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'money',
-    id: 'money'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'none',
-    id: 'none'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'other',
-    id: 'other'
-  },
-  {
-    type: 'outputs',
-    grouping: '',
-    label: 'pots',
-    id: 'pots'
+    id: 'weeding',
+    groupings: ['crop']
   },
   {
     type: 'enterprise',
-    grouping: 'afforestation',
     label: 'afforestation',
-    id: 'afforestation'
+    id: 'afforestation',
+    groupings: ['afforestation']
   },
   {
     type: 'enterprise',
-    grouping: 'crop',
-    label: 'groundnuts',
-    id: 'groundnuts'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'maize',
-    id: 'maize'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'pigeon peas',
-    id: 'pigeon-peas'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'rice',
-    id: 'rice'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'sorghum',
-    id: 'sorghum'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'sweet potatoes',
-    id: 'sweet-potatoes'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fish',
-    label: 'fish',
-    id: 'fish'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fish',
-    label: 'fishing',
-    id: 'fishing'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fruits',
     label: 'avocado pears',
-    id: 'avocado-pears'
+    id: 'avocado-pears',
+    groupings: ['fruits']
   },
   {
     type: 'enterprise',
-    grouping: 'fruits',
-    label: 'melons and pumpkins',
-    id: 'melons-and-pumpkins'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fruits',
-    label: 'mushrooms',
-    id: 'mushrooms'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fruits',
-    label: 'wild fruits',
-    id: 'wild-fruits'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'soya beans',
-    id: 'soya-beans'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'crop',
-    label: 'cowpeas',
-    id: 'cowpeas'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fruits',
-    label: 'paw-paw',
-    id: 'paw-paw'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fruits',
-    label: 'watermelon',
-    id: 'watermelon'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'fruits',
-    label: 'mixed',
-    id: 'mixed'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'livestock',
     label: 'cattle',
-    id: 'cattle'
+    id: 'cattle',
+    groupings: ['livestock']
   },
   {
     type: 'enterprise',
-    grouping: 'livestock',
-    label: 'goats',
-    id: 'goats'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'livestock',
-    label: 'sheep',
-    id: 'sheep'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'livestock',
-    label: 'ducks',
-    id: 'ducks'
-  },
-  {
-    type: 'enterprise',
-    grouping: 'livestock',
     label: 'chicken',
-    id: 'chicken'
+    id: 'chicken',
+    groupings: ['livestock']
   },
   {
     type: 'enterprise',
-    grouping: 'livestock',
+    label: 'cowpeas',
+    id: 'cowpeas',
+    groupings: ['crop']
+  },
+  {
+    type: 'enterprise',
+    label: 'ducks',
+    id: 'ducks',
+    groupings: ['livestock']
+  },
+  { type: 'enterprise', label: 'fish', id: 'fish', groupings: ['fish'] },
+  {
+    type: 'enterprise',
+    label: 'goats',
+    id: 'goats',
+    groupings: ['livestock']
+  },
+  {
+    type: 'enterprise',
+    label: 'groundnuts',
+    id: 'groundnuts',
+    groupings: ['crop']
+  },
+  {
+    type: 'enterprise',
     label: 'guinea fowl',
-    id: 'guinea-fowl'
+    id: 'guinea-fowl',
+    groupings: ['livestock']
+  },
+  { type: 'enterprise', label: 'maize', id: 'maize', groupings: ['crop'] },
+  {
+    type: 'enterprise',
+    label: 'melons and pumpkins',
+    id: 'melons-and-pumpkins',
+    groupings: ['fruits']
+  },
+  { type: 'enterprise', label: 'mixed', id: 'mixed', groupings: ['fruits'] },
+  {
+    type: 'enterprise',
+    label: 'mushrooms',
+    id: 'mushrooms',
+    groupings: ['fruits']
   },
   {
     type: 'enterprise',
-    grouping: 'livestock',
-    label: 'pigs',
-    id: 'pigs'
+    label: 'paw-paw',
+    id: 'paw-paw',
+    groupings: ['fruits']
+  },
+  {
+    type: 'enterprise',
+    label: 'pigeon peas',
+    id: 'pigeon-peas',
+    groupings: ['crop']
+  },
+  { type: 'enterprise', label: 'pigs', id: 'pigs', groupings: ['livestock'] },
+  { type: 'enterprise', label: 'rice', id: 'rice', groupings: ['crop'] },
+  {
+    type: 'enterprise',
+    label: 'sheep',
+    id: 'sheep',
+    groupings: ['livestock']
+  },
+  {
+    type: 'enterprise',
+    label: 'sorghum',
+    id: 'sorghum',
+    groupings: ['crop']
+  },
+  {
+    type: 'enterprise',
+    label: 'soya beans',
+    id: 'soya-beans',
+    groupings: ['crop']
+  },
+  {
+    type: 'enterprise',
+    label: 'sweet potatoes',
+    id: 'sweet-potatoes',
+    groupings: ['crop']
+  },
+  {
+    type: 'enterprise',
+    label: 'watermelon',
+    id: 'watermelon',
+    groupings: ['fruits']
+  },
+  {
+    type: 'enterprise',
+    label: 'wild fruits',
+    id: 'wild-fruits',
+    groupings: ['fruits']
+  },
+  { type: 'inputs', label: 'bags', id: 'bags', groupings: ['livestock'] },
+  {
+    type: 'inputs',
+    label: 'chemicals',
+    id: 'chemicals',
+    groupings: ['crop']
+  },
+  { type: 'inputs', label: 'feed', id: 'feed', groupings: ['livestock'] },
+  {
+    type: 'inputs',
+    label: 'fertiliser',
+    id: 'fertiliser',
+    groupings: ['crop']
+  },
+  { type: 'inputs', label: 'firewood', id: 'firewood', groupings: ['crop'] },
+  {
+    type: 'inputs',
+    label: 'hire ox cart',
+    id: 'hire-ox-cart',
+    groupings: ['crop']
+  },
+  {
+    type: 'inputs',
+    label: 'labour - paid',
+    id: 'labour---paid',
+    groupings: ['crop', 'livestock']
+  },
+  {
+    type: 'inputs',
+    label: 'manure sacks',
+    id: 'manure-sacks',
+    groupings: ['crop']
+  },
+  {
+    type: 'inputs',
+    label: 'manure wheelbarrows',
+    id: 'manure-wheelbarrows',
+    groupings: ['crop']
+  },
+  {
+    type: 'inputs',
+    label: 'pot for storage',
+    id: 'pot-for-storage',
+    groupings: ['crop']
+  },
+  {
+    type: 'inputs',
+    label: 'protective equipment',
+    id: 'protective-equipment',
+    groupings: ['crop']
+  },
+  {
+    type: 'inputs',
+    label: 'purchase ox cart',
+    id: 'purchase-ox-cart',
+    groupings: ['crop']
+  },
+  { type: 'inputs', label: 'seeds', id: 'seeds', groupings: ['crop'] },
+  {
+    type: 'inputs',
+    label: 'sheller hire',
+    id: 'sheller-hire',
+    groupings: ['crop']
+  },
+  { type: 'inputs', label: 'tools', id: 'tools', groupings: ['crop'] },
+  {
+    type: 'inputs',
+    label: 'tractor hire',
+    id: 'tractor-hire',
+    groupings: ['crop']
+  },
+  {
+    type: 'inputs',
+    label: 'transportation hire',
+    id: 'transportation-hire',
+    groupings: ['crop', 'livestock']
+  },
+  { type: 'outputs', label: 'crop', id: 'crop', groupings: ['crop'] },
+  { type: 'outputs', label: 'eggs', id: 'eggs', groupings: ['livestock'] },
+  {
+    type: 'outputs',
+    label: 'fodder for livestock',
+    id: 'fodder-for-livestock',
+    groupings: ['livestock']
+  },
+  {
+    type: 'outputs',
+    label: 'manure for compost',
+    id: 'manure-for-compost',
+    groupings: ['livestock']
+  },
+  { type: 'outputs', label: 'meat', id: 'meat', groupings: ['livestock'] },
+  { type: 'outputs', label: 'milk', id: 'milk', groupings: ['livestock'] },
+  { type: 'outputs', label: 'money', id: 'money', groupings: ['crop'] },
+  { type: 'outputs', label: 'pots', id: 'pots', groupings: ['crop'] },
+  { type: 'outputs', label: 'wood', id: 'wood', groupings: ['crop'] },
+  { type: 'produceConsumed', label: 'crop', id: 'crop', groupings: ['crop'] },
+  {
+    type: 'produceConsumed',
+    label: 'eggs',
+    id: 'eggs',
+    groupings: ['livestock']
+  },
+  {
+    type: 'produceConsumed',
+    label: 'meat',
+    id: 'meat',
+    groupings: ['livestock']
+  },
+  {
+    type: 'produceConsumed',
+    label: 'milk',
+    id: 'milk',
+    groupings: ['livestock']
+  },
+  {
+    type: 'produceConsumed',
+    label: 'money',
+    id: 'money',
+    groupings: ['crop']
   }
 ];
 

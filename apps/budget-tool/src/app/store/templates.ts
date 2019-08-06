@@ -26,7 +26,7 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
       id: null,
       label: null,
       type: null,
-      grouping: null
+      groupings: []
     },
     lengthScale: 'months',
     lengthTotal: 5,

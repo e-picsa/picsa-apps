@@ -43,7 +43,7 @@ export interface IBudgetCard {
   id: string;
   label: string;
   type: IBudgetPeriodType | 'enterprise';
-  grouping?: string;
+  groupings?: string[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
 }

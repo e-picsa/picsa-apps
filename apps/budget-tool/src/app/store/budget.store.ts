@@ -33,13 +33,15 @@ export class BudgetStore {
     const enterpriseCards = this.budgetCards.filter(
       c => c.type === 'enterprise'
     );
-    return [...new Set(enterpriseCards.map(e => e.grouping))].sort();
+    const allGroupings = enterpriseCards.map(e => e.groupings);
+    console.log('TODO = all groupings', allGroupings);
+    return [];
+    // return [...new Set(enterpriseCards.map(e => e.groupings))].sort();
   }
   // get filtered list of cards depending on cell being edited
   @computed get activeCards(): IBudgetCard[] {
-    console.log('get active cards', toJS(this.activeCell));
-    return this.budgetCards && this.activeCell
-      ? this.budgetCards[this.activeCell.typeKey]
+    return this.activeCell
+      ? this.budgetCards.filter(c => c.type === this.activeCell.typeKey)
       : [];
   }
   @computed get budgetPeriodLabels(): string[] {
@@ -60,7 +62,7 @@ export class BudgetStore {
    ***************************************************************************/
   getfilteredEnterprises(grouping: string) {
     return this.budgetCards.filter(
-      e => e.type === 'enterprise' && e.grouping === grouping
+      e => e.type === 'enterprise' && e.groupings.includes(grouping)
     );
   }
   /**************************************************************************
