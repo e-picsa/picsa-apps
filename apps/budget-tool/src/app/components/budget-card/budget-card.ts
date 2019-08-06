@@ -1,8 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  ICustomBudgetCard,
-  IBudgetCard
-} from '../../models/budget-tool.models';
+import { IBudgetCardDB, IBudgetCard } from '../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-card',
@@ -13,7 +10,7 @@ import {
 // implement CVA so can be used in form and template bindings to pass back value
 export class BudgetCardComponent implements OnInit {
   // use partial as not sure whether will be budget card or custom budget card
-  @Input() card: Partial<ICustomBudgetCard>;
+  @Input() card: Partial<IBudgetCard>;
   @Input() newCardId: string;
   @Input() selected: boolean;
   @Input() imageFormat: 'svg' | 'png' = 'png';
@@ -27,12 +24,13 @@ export class BudgetCardComponent implements OnInit {
   }
 
   // if not passing full details (e.g. just enterprise type) create a basic card
-  private generateCard(id: string): IBudgetCard {
+  private generateCard(id: string): IBudgetCardDB {
     return {
       // use any type as not budget type (e.g. 'activities') does not include meta enterprise cards
+      id,
       type: id as any,
       label: id.charAt(0).toUpperCase() + id.slice(1),
-      _key: id,
+      _key: `custom_${id}`,
       _created: new Date().toISOString(),
       _modified: new Date().toISOString()
     };

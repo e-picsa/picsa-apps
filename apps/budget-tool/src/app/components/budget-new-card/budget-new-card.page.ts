@@ -1,8 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { CanvasWhiteboardComponent } from 'ng2-canvas-whiteboard';
-import { Events, ModalController } from '@ionic/angular';
-import { BudgetToolProvider } from '../../services/budget-tool.provider';
-import { NgRedux } from '@angular-redux/store';
 
 @Component({
   selector: 'budget-new-card',
@@ -14,11 +11,7 @@ export class BudgetNewCardPage {
 
   @ViewChild('canvasWhiteboard', { static: false })
   canvasWhiteboard: CanvasWhiteboardComponent;
-  constructor(
-    private modalCtrl: ModalController,
-    private budgetToolProvider: BudgetToolProvider,
-    private events: Events
-  ) {}
+  constructor() {}
 
   saveCard() {
     // *** TODO - get type from query params
@@ -54,9 +47,5 @@ export class BudgetNewCardPage {
   saveCanvasImage() {
     const img = this.canvasWhiteboard.generateCanvasDataUrl('image/png', 0.3);
     return img;
-  }
-
-  dismiss() {
-    this.modalCtrl.dismiss();
   }
 }

@@ -8,7 +8,7 @@
     [imageData]="card.customImg"
     [format]="imageFormat"
   ></budget-card-image>
-  <div [class]="'card-title ' + card.id">{{ card.name }}</div>
+  <div [class]="'card-title ' + card.id">{{ card.label }}</div>
 </mat-card>
 <!-- <div *ngIf="selected" id="budgetTypeCard">
       <div [ngSwitch]="type">

@@ -29,7 +29,6 @@ export class BudgetCellComponent {
     if (cellData && cellData.toString() != this._oldCellData.toString()) {
       this.setCellData(cellData);
       this._oldCellData = cellData;
-      console.log('cell rendered', this._cellData);
     }
   }
 
@@ -41,6 +40,5 @@ export class BudgetCellComponent {
       // empty should be treated as null (cell has been entered but no data selected)
       this._cellData = null;
     }
-    console.log('cell data set', cards);
   }
 }

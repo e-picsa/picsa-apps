@@ -7,7 +7,6 @@ import {
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 import { BUDGET_PERIOD_ROWS } from '../../store/templates';
-import { ENVIRONMENT } from '@picsa/environments';
 
 @Component({
   selector: 'budget-table',
@@ -17,13 +16,11 @@ import { ENVIRONMENT } from '@picsa/environments';
 export class BudgetTableComponent implements OnInit {
   @Input() budget: IBudget;
   rows: IBudgetRow[] = BUDGET_PERIOD_ROWS;
-  dotsLegend = [];
+  // TODO - bring back balance and refactor to own component
   balance: any;
 
   constructor(private store: BudgetStore) {}
-  ngOnInit(): void {
-    this.dotsLegend = this._getDotLegend();
-  }
+  ngOnInit(): void {}
 
   onCellClick(columnIndex: number, row: IBudgetRow) {
     const activeCell: IBudgetActiveCell = {
@@ -31,12 +28,6 @@ export class BudgetTableComponent implements OnInit {
       typeKey: row.key
     };
     this.store.toggleEditor(activeCell);
-  }
-
-  _getDotLegend() {
-    const dots = ENVIRONMENT.region.currencyCounters;
-    const multiplier: number = this.budget.meta.valueScale;
-    return Object.keys(dots).map(k => [k, dots[k] * multiplier]);
   }
 }
 

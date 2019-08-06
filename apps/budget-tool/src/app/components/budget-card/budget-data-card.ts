@@ -38,10 +38,10 @@ export class BudgetDataCardComponent extends BudgetCardComponent {
 
   // outputs should be tracked as negative
   _makeValuesNegative(card: IBudgetCard) {
-    if (card.cost && card.cost >= 0) {
-      card.cost = -card.cost;
-    }
-    return card;
+    // if (card.cost && card.cost >= 0) {
+    //   card.cost = -card.cost;
+    // }
+    // return card;
   }
 
   updateCard(budget) {

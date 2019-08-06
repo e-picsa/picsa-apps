@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ɵConsole } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
 import { ENVIRONMENT } from '@picsa/environments';
 import {
@@ -53,9 +53,9 @@ export class BudgetCellEditorComponent {
 
   // on click toggle keys on the selected cards property, saving full card data for use later
   onCardClicked(card: IBudgetCard) {
-    this.selected[card._key] = !this.selected[card._key];
+    this.selected[card.id] = !this.selected[card.id];
     // check if card with key already exists in array, if yes remove, if no push
-    const arrIndex = this.selectedArray.map(el => el._key).indexOf(card._key);
+    const arrIndex = this.selectedArray.map(el => el.id).indexOf(card.id);
     if (arrIndex > -1) {
       this.selectedArray.splice(arrIndex, 1);
     } else {

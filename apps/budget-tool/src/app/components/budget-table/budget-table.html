@@ -9,17 +9,7 @@
     <div class="cell row-title">
       <div>
         <div>Balance</div>
-        <div *ngFor="let dot of dotsLegend">
-          <div style="display: flex; font-size: small">
-            <div>
-              <img
-                class="dot-value-image"
-                [src]="'assets/images/dot-' + dot[0] + '-positive.png'"
-              />
-            </div>
-            <div *ngIf="!editDotValue">= {{ dot[1] }}</div>
-          </div>
-        </div>
+        <budget-balance-dots></budget-balance-dots>
       </div>
     </div>
   </div>

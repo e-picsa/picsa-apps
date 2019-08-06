@@ -12,7 +12,7 @@ const DB_COMMON_SCHEMA = {
   _pendingWrites: DEFAULT_STORE_SCHEMA,
   _appMeta: '_key',
   budgetTool: '_key',
-  'budgetTool/_all/cards': '_key,type',
+  'budgetTool/_all/cards': '_key',
   climateTool: DEFAULT_STORE_SCHEMA,
   forms: DEFAULT_STORE_SCHEMA,
   stationData: DEFAULT_STORE_SCHEMA

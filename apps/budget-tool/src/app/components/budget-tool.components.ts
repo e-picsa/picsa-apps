@@ -18,9 +18,11 @@ import { BudgetCellValueComponent } from './cell/variants/value/value';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaDbModule } from '@picsa/modules';
+import { BudgetBalanceDotsComponent } from './balance-dots/balance-dots';
 
 @NgModule({
   declarations: [
+    BudgetBalanceDotsComponent,
     BudgetCardComponent,
     BudgetDataCardComponent,
     BudgetCardImageComponent,
@@ -44,6 +46,7 @@ import { PicsaDbModule } from '@picsa/modules';
     PicsaDbModule
   ],
   exports: [
+    BudgetBalanceDotsComponent,
     BudgetCardComponent,
     BudgetDataCardComponent,
     BudgetCardImageComponent,

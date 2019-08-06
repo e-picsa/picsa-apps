@@ -2,9 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BudgetStore } from '../../store/budget.store';
 import {
-  IEnterprise,
   IEnterpriseScaleLentgh,
-  IBudgetMeta
+  IBudgetMeta,
+  IBudgetCard
 } from '../../models/budget-tool.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
@@ -20,7 +20,7 @@ import { FadeInOut } from '@picsa/animations';
 export class BudgetCreatePage implements OnInit {
   budgetMetaForm: FormGroup;
   enterpriseToggle = false;
-  filteredEnterprises: IEnterprise[] = [];
+  filteredEnterprises: IBudgetCard[] = [];
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
@@ -51,12 +51,11 @@ export class BudgetCreatePage implements OnInit {
     }, 200);
   }
 
-  enterpriseClicked(enterprise: IEnterprise) {
-    const periods = enterprise.defaults;
-    delete enterprise.defaults;
+  enterpriseClicked(enterprise: IBudgetCard) {
+    // TODO - defaults no longer set for each enterprise,
+    // possibly find a way to store somewhere and lookup
     this.budgetMetaForm.patchValue({
-      enterprise,
-      periods
+      enterprise
     });
   }
   async save() {

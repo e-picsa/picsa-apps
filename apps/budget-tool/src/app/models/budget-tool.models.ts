@@ -22,12 +22,12 @@ export interface IBudgetMeta {
   lengthScale: IEnterpriseScaleLentgh;
   lengthTotal: number;
   monthStart?: number;
-  valueScale: 0.1 | 1 | 10 | 100;
+  valueScale: IBudgetValueScale;
   enterprise: IBudgetCard;
 }
 
 export type IEnterpriseScaleLentgh = 'months' | 'weeks' | 'days';
-
+export type IBudgetValueScale = 0.1 | 1 | 10;
 /***************************************************************************** */
 export interface IBudgetActiveCell {
   periodIndex: number;
