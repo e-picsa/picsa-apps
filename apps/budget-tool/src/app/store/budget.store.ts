@@ -28,21 +28,31 @@ export class BudgetStore {
   get activeBudgetValue() {
     return toJS(this.activeBudget);
   }
+  // enterprises only have a single group which is used during card filtering
+  get enterpriseGroup() {
+    return this.activeBudget.meta.enterprise.groupings![0];
+  }
   // get unique list of types in enterprise cards
   @computed get enterpriseTypes(): string[] {
     const enterpriseCards = this.budgetCards.filter(
       c => c.type === 'enterprise'
     );
-    const allGroupings = enterpriseCards.map(e => e.groupings);
-    console.log('TODO = all groupings', allGroupings);
-    return [];
-    // return [...new Set(enterpriseCards.map(e => e.groupings))].sort();
+    const allGroupings = enterpriseCards.map(e => toJS(e.groupings));
+    const mergedGroupings: string[] = [].concat.apply([], allGroupings);
+    return [...new Set(mergedGroupings)].sort();
   }
-  // get filtered list of cards depending on cell being edited
-  @computed get activeCards(): IBudgetCard[] {
-    return this.activeCell
-      ? this.budgetCards.filter(c => c.type === this.activeCell.typeKey)
-      : [];
+
+  // filter cards to match type (e.g. activities) and group (e.g. crops)
+  @computed get groupTypeCards(): IBudgetCard[] {
+    const type = this.activeCell.typeKey;
+    const typeCards = this.budgetCards.filter(c => c.type === type);
+    console.log('type cards', type, this.enterpriseGroup);
+    return typeCards.filter(c => c.groupings.includes(this.enterpriseGroup));
+  }
+  @computed get otherTypeCards(): IBudgetCard[] {
+    const type = this.activeCell.typeKey;
+    const typeCards = this.budgetCards.filter(c => c.type === type);
+    return typeCards.filter(c => !c.groupings.includes(this.enterpriseGroup));
   }
   @computed get budgetPeriodLabels(): string[] {
     return this._generateLabels(this.activeBudget.meta);
@@ -130,8 +140,11 @@ export class BudgetStore {
   }
 
   private async loadSavedBudgets(): Promise<void> {
-    this.savedBudgets = await this.db.getCollection<IBudget>(
+    const budgets = await this.db.getCollection<IBudget>(
       'budgetTool/${GROUP}/budgets'
+    );
+    this.savedBudgets = budgets.sort((a, b) =>
+      b._modified > a._modified ? 1 : -1
     );
   }
 

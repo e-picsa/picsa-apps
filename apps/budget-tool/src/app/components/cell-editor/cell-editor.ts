@@ -26,6 +26,7 @@ export class BudgetCellEditorComponent {
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCard[] = [];
   stepsShown = {};
+  showAllCards = false;
   @Input() set cell(cell: IBudgetActiveCell) {
     this.setSteps(cell);
     this.reset();
@@ -37,6 +38,7 @@ export class BudgetCellEditorComponent {
   reset() {
     this.selected = {};
     this.selectedArray = [];
+    this.showAllCards = false;
     if (this.stepper && this.stepper.selectedIndex > 0) {
       this.stepper.reset();
     }

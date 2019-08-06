@@ -125,12 +125,6 @@ const CARDS: IBudgetCard[] = [
   },
   {
     type: 'enterprise',
-    label: 'avocado pears',
-    id: 'avocado-pears',
-    groupings: ['fruits']
-  },
-  {
-    type: 'enterprise',
     label: 'cattle',
     id: 'cattle',
     groupings: ['livestock']
@@ -173,19 +167,7 @@ const CARDS: IBudgetCard[] = [
     groupings: ['livestock']
   },
   { type: 'enterprise', label: 'maize', id: 'maize', groupings: ['crop'] },
-  {
-    type: 'enterprise',
-    label: 'melons and pumpkins',
-    id: 'melons-and-pumpkins',
-    groupings: ['fruits']
-  },
   { type: 'enterprise', label: 'mixed', id: 'mixed', groupings: ['fruits'] },
-  {
-    type: 'enterprise',
-    label: 'mushrooms',
-    id: 'mushrooms',
-    groupings: ['fruits']
-  },
   {
     type: 'enterprise',
     label: 'paw-paw',
@@ -228,12 +210,6 @@ const CARDS: IBudgetCard[] = [
     type: 'enterprise',
     label: 'watermelon',
     id: 'watermelon',
-    groupings: ['fruits']
-  },
-  {
-    type: 'enterprise',
-    label: 'wild fruits',
-    id: 'wild-fruits',
     groupings: ['fruits']
   },
   { type: 'inputs', label: 'bags', id: 'bags', groupings: ['livestock'] },

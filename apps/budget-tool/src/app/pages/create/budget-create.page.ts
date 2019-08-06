@@ -10,6 +10,7 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
 import { Router } from '@angular/router';
 import { FadeInOut } from '@picsa/animations';
+import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-create',
@@ -20,6 +21,7 @@ import { FadeInOut } from '@picsa/animations';
 export class BudgetCreatePage implements OnInit {
   budgetMetaForm: FormGroup;
   enterpriseToggle = false;
+  selectedType: string;
   filteredEnterprises: IBudgetCard[] = [];
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
@@ -35,6 +37,8 @@ export class BudgetCreatePage implements OnInit {
 
   ngOnInit() {
     this.generateBudgetForm();
+    console.log('active budget', this.store.activeBudgetValue);
+    console.log('form', this.budgetMetaForm);
   }
 
   /**************************************************************************
@@ -43,6 +47,7 @@ export class BudgetCreatePage implements OnInit {
 
   enterpriseTypeClicked(type: string) {
     // reset form on new type selected
+    this.selectedType = type;
     this.enterpriseToggle = false;
     this.budgetMetaForm.patchValue({ enterprise: { type } });
     setTimeout(() => {
@@ -57,6 +62,7 @@ export class BudgetCreatePage implements OnInit {
     this.budgetMetaForm.patchValue({
       enterprise
     });
+    console.log('form', this.budgetMetaForm.value);
   }
   async save() {
     const meta = this.budgetMetaForm.value as IBudgetMeta;

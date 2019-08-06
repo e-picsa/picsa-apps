@@ -10,12 +10,30 @@
       <ng-template matStepLabel>{{ _cell.typeLabel | translate }}</ng-template>
       <div *mobxAutorun>
         <budget-card
-          *ngFor="let card of store.activeCards"
+          *ngFor="let card of store.groupTypeCards"
           [card]="card"
           (click)="onCardClicked(card)"
           [selected]="selected[card.id]"
           @fadeInOut
         ></budget-card>
+        <button
+          *ngIf="!showAllCards"
+          @fadeInOut
+          mat-button
+          (click)="showAllCards = true"
+          style="margin-bottom: 10px"
+        >
+          ...More
+        </button>
+        <div *ngIf="showAllCards" style="display: inline-block">
+          <budget-card
+            *ngFor="let card of store.otherTypeCards"
+            [card]="card"
+            (click)="onCardClicked(card)"
+            [selected]="selected[card.id]"
+            @fadeInOut
+          ></budget-card>
+        </div>
       </div>
     </mat-step>
     <!-- Value Input Step-->
