@@ -18,6 +18,7 @@ export class BudgetCardComponent implements OnInit {
   @Input() card: Partial<ICustomBudgetCard>;
   @Input() generator: string;
   @Input() selected: boolean;
+  @Input() imageFormat: 'svg' | 'png' = 'png';
 
   constructor(public actions: BudgetToolActions, public store: BudgetStore) {}
 
@@ -31,7 +32,10 @@ export class BudgetCardComponent implements OnInit {
   private generateCard(id: string): IBudgetCard {
     return {
       id: id,
-      name: id
+      name: id,
+      _key: id,
+      _created: new Date().toISOString(),
+      _modified: new Date().toISOString()
     };
   }
 }

@@ -10,6 +10,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
   @Input() imageId: string;
   @Input() imageData: string;
+  @Input() format: 'svg' | 'png' = 'png';
   imgUrl: SafeUrl;
   objUrl: string;
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
@@ -27,31 +28,29 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   }
 
   private async loadImageFromFile() {
-    const imgBlob = await this.getCardImg(this.imageId);
+    const imgBlob = await this.getCardImg(this.imageId, this.format);
     this.objUrl = URL.createObjectURL(imgBlob);
     this.imgUrl = this.sanitizer.bypassSecurityTrustUrl(this.objUrl);
   }
 
   // check card images for correct svg or png image and return
-  private async getCardImg(imageId: string): Promise<Blob> {
+  private async getCardImg(
+    imageId: string,
+    format: 'svg' | 'png'
+  ): Promise<Blob> {
     let imgData: Blob;
     // first see if svg exists
     try {
       imgData = await this.http
-        .get(`../../assets/svgs/${imageId}.svg`, { responseType: 'blob' })
+        .get(`../../assets/images/${imageId}.${format}`, {
+          responseType: 'blob'
+        })
         .toPromise();
     } catch (error) {
-      // then try png
-      try {
-        imgData = await this.http
-          .get(`../../assets/cards/${imageId}.png`, { responseType: 'blob' })
-          .toPromise();
-      } catch (error) {
-        // then placeholder
-        imgData = await this.http
-          .get(`../../assets/cards/no-image.png`, { responseType: 'blob' })
-          .toPromise();
-      }
+      // otherwise placeholder
+      imgData = await this.http
+        .get(`../../assets/images/no-image.png`, { responseType: 'blob' })
+        .toPromise();
     }
     return imgData;
   }

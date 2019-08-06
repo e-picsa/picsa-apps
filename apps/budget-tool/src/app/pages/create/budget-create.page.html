@@ -13,6 +13,7 @@
               (click)="enterpriseTypeClicked(type)"
               [generator]="type"
               [selected]="budgetForm.value.enterpriseType === type"
+              imageFormat="svg"
               @fadeInOut
             ></budget-card>
           </div>
@@ -25,6 +26,7 @@
               [card]="enterprise"
               (click)="enterpriseClicked(enterprise)"
               [selected]="budgetForm.value.enterprise === enterprise.id"
+              imageFormat="svg"
               @fadeInOut
             >
             </budget-card>

@@ -6,6 +6,7 @@
   <budget-card-image
     [imageId]="card.id"
     [imageData]="card.customImg"
+    [format]="imageFormat"
   ></budget-card-image>
   <div [class]="'card-title ' + card.id">{{ card.name }}</div>
 </mat-card>
