@@ -4,7 +4,7 @@ import { IV3Budget } from '../models/legacy/v3.models';
 /*  this file contains methods to make incremental changes to budgets 
     to upgrade for api changes
 */
-export const BUDGET_API_VERSION = 4;
+export const BUDGET_API_VERSION = 5;
 
 // recursively go through budget and if api version less than current perform incremental upgrade
 export const checkForBudgetUpgrades = (budget: IBudget) => {
@@ -26,6 +26,7 @@ export const upgradeBudget = (budget: IBudget) => {
     case 3:
       return v3Upgrade(budget);
     case 4:
+      // TODO - significant upgrade (data refactor)
       return;
     default:
       throw new Error(`could not upgrade budget: ${JSON.stringify(budget)}`);

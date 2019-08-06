@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BudgetStore } from '../../store/budget.store';
 import {
   IEnterprise,
-  IEnterpriseScale,
-  IBudget
+  IBudget,
+  IEnterpriseScaleLentgh,
+  IBudgetMeta
 } from '../../models/budget-tool.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
-import { MONTHS } from '../../store/templates';
+import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
 import { Router } from '@angular/router';
 import { FadeInOut } from '@picsa/animations';
 
@@ -18,11 +19,10 @@ import { FadeInOut } from '@picsa/animations';
   animations: [FadeInOut()]
 })
 export class BudgetCreatePage implements OnInit {
-  budgetForm: FormGroup;
-  periodForm: FormGroup;
+  budgetMetaForm: FormGroup;
   enterpriseToggle = false;
   filteredEnterprises: IEnterprise[] = [];
-  periodScaleOptions: IEnterpriseScale[] = ['weeks', 'months'];
+  periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
   @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
@@ -45,7 +45,7 @@ export class BudgetCreatePage implements OnInit {
   enterpriseTypeClicked(type: string) {
     // reset form on new type selected
     this.enterpriseToggle = false;
-    this.budgetForm.patchValue({ enterprise: '', enterpriseType: type });
+    this.budgetMetaForm.patchValue({ enterprise: { type } });
     setTimeout(() => {
       this.filteredEnterprises = this.store.getfilteredEnterprises(type);
       this.enterpriseToggle = true;
@@ -53,20 +53,18 @@ export class BudgetCreatePage implements OnInit {
   }
 
   enterpriseClicked(enterprise: IEnterprise) {
-    const enterpriseDefaultPeriods = this.store.getBudgetEnterpriseDefaults(
-      enterprise
-    );
-    this.budgetForm.patchValue({
-      enterprise: enterprise.id,
-      periods: enterpriseDefaultPeriods
+    const periods = enterprise.defaults;
+    delete enterprise.defaults;
+    this.budgetMetaForm.patchValue({
+      enterprise,
+      periods
     });
   }
   async save() {
-    // generate period labels before saving
-    this.periodForm.patchValue({
-      labels: this.store.generateLabels(this.periodForm.value)
-    });
-    await this.store.patchBudget(this.budgetForm.value);
+    const meta = this.budgetMetaForm.value as IBudgetMeta;
+    // generate period data
+    const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
+    await this.store.patchBudget({ data, meta });
     this.router.navigate(['view', this.store.activeBudget._key]);
   }
 
@@ -77,20 +75,15 @@ export class BudgetCreatePage implements OnInit {
   // create general form with formgroups for all budget fields
   // add required vaildation for fields which must be completed in this page
   private generateBudgetForm() {
-    const requiredFields: IBudgetKey[] = [
+    const requiredFields1: IBudgetMetaKey[] = [
       'enterprise',
-      'enterpriseType',
-      'title'
+      'title',
+      'lengthScale'
     ];
-    console.log('active budget value', this.store.activeBudgetValue);
-    this.budgetForm = this._generateFormFromValues(
-      this.store.activeBudgetValue,
-      requiredFields
+    this.budgetMetaForm = this._generateFormFromValues(
+      this.store.activeBudget.meta,
+      requiredFields1
     );
-    this.periodForm = this._generateFormFromValues(
-      this.store.activeBudgetValue.periods
-    );
-    this.budgetForm.setControl('periods', this.periodForm);
   }
 
   // custom method to generate simple form from json object and populate with provided initial values
@@ -109,4 +102,4 @@ export class BudgetCreatePage implements OnInit {
 }
 
 // need to specify only string keys as technically could be numbers (change in ts 2.9)
-type IBudgetKey = Extract<keyof IBudget, string>;
+type IBudgetMetaKey = Extract<keyof IBudgetMeta, string>;

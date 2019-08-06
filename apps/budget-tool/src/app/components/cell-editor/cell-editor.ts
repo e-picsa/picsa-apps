@@ -7,6 +7,7 @@ import {
 } from '../../models/budget-tool.models';
 import { FadeInOut } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
+import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-cell-editor',
@@ -58,7 +59,7 @@ export class BudgetCellEditorComponent {
     if (arrIndex > -1) {
       this.selectedArray.splice(arrIndex, 1);
     } else {
-      this.selectedArray.push(card);
+      this.selectedArray.push(toJS(card));
     }
   }
   onNextClicked() {
@@ -71,7 +72,6 @@ export class BudgetCellEditorComponent {
   }
 
   saveCell() {
-    // TODO
-    console.log('TODO - saving cell');
+    this.store.saveEditor(this.selectedArray);
   }
 }

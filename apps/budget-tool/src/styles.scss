@@ -13,3 +13,42 @@
 @import './styles/variables.scss';
 @import './styles/typography.scss';
 @import './styles/layout.scss';
+
+// instead of using bottom use top with calc to avoid jumping
+$footer-height: 3em;
+.sticky-footer {
+  position: fixed;
+  height: $footer-height;
+  top: calc(100vh - #{$footer-height});
+  left: 0;
+  width: 100vw;
+  background: white;
+  display: flex;
+  align-items: center;
+}
+
+.footer-button {
+  width: 60%;
+  left: 20%;
+}
+
+// used if want to use mat-stepper with fixed header and scrolling content
+.scrolling-stepper {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.scrolling-stepper {
+  ::ng-deep {
+    .mat-horizontal-content-container {
+      flex: 1;
+      // optional - leave space at bottom for next button
+      padding-bottom: 42px;
+    }
+    .mat-horizontal-stepper-content {
+      overflow: auto;
+      height: 100%;
+    }
+  }
+}

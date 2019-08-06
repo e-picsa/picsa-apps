@@ -1,13 +1,12 @@
 import {
   IBudget,
   IEnterprise,
-  IBudgetPeriodMeta,
   IEnterpriseDefaults,
   IBudgetPeriodData,
   IBudgetCard,
   IBudgetActiveCell,
   IBudgetMeta,
-  BUDGET_PERIOD_ROWS
+  IBudgetDBData
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
@@ -15,7 +14,7 @@ import { observable, action, computed } from 'mobx-angular';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
 import BUDGET_DATA from '../data';
 import { toJS } from 'mobx';
-import { PicsaDbService } from '@picsa/services/core/';
+import { PicsaDbService, generateDBMeta } from '@picsa/services/core/';
 import { IAppMeta, IDBEndpoint } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
 
@@ -23,7 +22,7 @@ import { APP_VERSION } from '@picsa/environments/version';
   providedIn: 'root'
 })
 export class BudgetStore {
-  @observable budgetMeta: IBudgetMeta;
+  @observable budgetDBData: IBudgetDBData;
   @observable activeBudget: IBudget;
   @observable activeCell: IBudgetActiveCell;
   @observable isEditorOpen = false;
@@ -33,15 +32,15 @@ export class BudgetStore {
   }
   // get unique list of types in enterprise cards
   @computed get enterpriseTypes(): string[] {
-    return this.budgetMeta
-      ? [...new Set(this.budgetMeta.enterprises.map(e => e.type))].sort()
+    return this.budgetDBData
+      ? [...new Set(this.budgetDBData.enterprises.map(e => e.type))].sort()
       : [];
   }
   // get filtered list of cards depending on cell being edited
   @computed get activeCards(): IBudgetCard[] {
     console.log('get active cards', toJS(this.activeCell));
-    return this.budgetMeta && this.activeCell
-      ? this.budgetMeta[this.activeCell.typeKey]
+    return this.budgetDBData && this.activeCell
+      ? this.budgetDBData[this.activeCell.typeKey]
       : [];
   }
   @action setActiveBudget(budget: IBudget) {
@@ -58,16 +57,7 @@ export class BudgetStore {
    *
    ***************************************************************************/
   getfilteredEnterprises(type: string) {
-    return this.budgetMeta.enterprises.filter(e => e.type === type);
-  }
-  getBudgetEnterpriseDefaults(enterprise: IEnterprise): IBudgetPeriodMeta {
-    const d = enterprise.defaults;
-    return {
-      scale: d.scale,
-      total: d.total,
-      labels: this.generateLabels(d),
-      starting: d.starting
-    };
+    return this.budgetDBData.enterprises.filter(e => e.type === type);
   }
   /**************************************************************************
    *            Budget Values
@@ -88,13 +78,15 @@ export class BudgetStore {
     this.isEditorOpen = !this.isEditorOpen;
   }
   @action
-  editorNext() {
-    const rows = BUDGET_PERIOD_ROWS;
-    const columns = this.activeBudgetValue.periods;
-    console.log('going to next cell', toJS(this.activeCell));
+  saveEditor(data: IBudgetCard[]) {
+    const d = this.activeBudget.data;
+    const c = this.activeCell;
+    d[c.periodIndex] = {
+      ...d[c.periodIndex],
+      ...{ [c.typeIndex]: data }
+    };
+    this.patchBudget({ data: d });
   }
-  @action
-  editorPrevious() {}
 
   /**************************************************************************
    *            Budget Create/Save/Load
@@ -104,7 +96,7 @@ export class BudgetStore {
   createNewBudget() {
     const budget: IBudget = {
       ...NEW_BUDGET_TEMPLATE,
-      ...this.db.generateMeta()
+      ...generateDBMeta()
     };
     this.setActiveBudget(budget);
   }
@@ -162,7 +154,7 @@ export class BudgetStore {
       const endpoint = `budgetTool/_all/${key}` as IDBEndpoint;
       budgetMeta[key] = await this.db.getCollection(endpoint);
     }
-    this.budgetMeta = budgetMeta;
+    this.budgetDBData = budgetMeta;
   }
   // check for latest app version initialised. If this one is different then
   // attempt to reload any hardcoded data present in the app

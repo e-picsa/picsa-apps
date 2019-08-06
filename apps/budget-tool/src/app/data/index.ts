@@ -1,7 +1,11 @@
-import { IBudgetMeta } from '../models/budget-tool.models';
+import {
+  IBudgetMeta,
+  IBudgetCard,
+  IBudgetDBData
+} from '../models/budget-tool.models';
 
 // This data is automatically populated on first load and update from live when available
-const BUDGET_DATA: IBudgetMeta = {
+const BUDGET_DB_DATA: IBudgetDBData = {
   activities: [
     {
       name: 'apply fertiliser',
@@ -148,7 +152,6 @@ const BUDGET_DATA: IBudgetMeta = {
       id: 'wood'
     }
   ],
-  familyLabour: [{ name: 'family labour', id: 'family-labour' }],
   enterprises: [
     {
       type: 'crop',
@@ -383,5 +386,4 @@ const BUDGET_DATA: IBudgetMeta = {
   ]
 };
 
-type IBudgetDataEndpoints = keyof typeof BUDGET_DATA;
-export default BUDGET_DATA;
+export default BUDGET_DB_DATA;

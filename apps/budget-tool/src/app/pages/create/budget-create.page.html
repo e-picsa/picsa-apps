@@ -1,18 +1,18 @@
 <div class="page">
   <h1>Create New Budget</h1>
   <div class="page-content" *mobxAutorun>
-    <mat-horizontal-stepper linear #stepper>
-      <!-- Step 1 - handled with custom elements-->
-      <mat-step>
-        <ng-template matStepLabel>Enterprise</ng-template>
-        <h2>What is your type of enterprise?</h2>
-        <div>
+    <form [formGroup]="budgetMetaForm">
+      <mat-horizontal-stepper linear #stepper>
+        <!-- Step 1 - handled with custom elements-->
+        <mat-step>
+          <ng-template matStepLabel>Enterprise</ng-template>
+          <h2>What is your type of enterprise?</h2>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
               *ngFor="let type of store.enterpriseTypes"
               (click)="enterpriseTypeClicked(type)"
               [generator]="type"
-              [selected]="budgetForm.value.enterpriseType === type"
+              [selected]="budgetMetaForm.value.enterprise.type === type"
               imageFormat="svg"
               @fadeInOut
             ></budget-card>
@@ -25,28 +25,28 @@
               *ngFor="let enterprise of filteredEnterprises"
               [card]="enterprise"
               (click)="enterpriseClicked(enterprise)"
-              [selected]="budgetForm.value.enterprise === enterprise.id"
+              [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
               imageFormat="svg"
               @fadeInOut
             >
             </budget-card>
           </div>
-        </div>
-        <button
-          matStepperNext
-          color="primary"
-          mat-raised-button
-          class="button--next"
-          [disabled]="!budgetForm.value.enterprise"
-        >
-          Next
-          <mat-icon>arrow_forward</mat-icon>
-        </button>
-      </mat-step>
+          <div class="sticky-footer">
+            <button
+              matStepperNext
+              color="primary"
+              mat-raised-button
+              class="footer-button"
+              [disabled]="!budgetMetaForm.value.enterprise.id"
+            >
+              Next
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
 
-      <!-- Step 2 - handled with form controls -->
-      <mat-step [stepControl]="periodForm">
-        <form [formGroup]="periodForm">
+        <!-- Step 2 - handled with form controls -->
+        <mat-step>
           <ng-template matStepLabel>Length</ng-template>
           <h2>How long is your budget for?</h2>
           <div style="display: flex; flex-wrap: wrap">
@@ -55,11 +55,11 @@
               class="variable-container editable"
               (click)="periodTotalSelect.open()"
             >
-              <span>{{ periodForm.value.total }}</span>
+              <span>{{ budgetMetaForm.value.lengthTotal }}</span>
               <mat-select
                 class="select--hidden"
                 #periodTotalSelect
-                formControlName="total"
+                formControlName="lengthTotal"
                 style="opacity: 0;"
               >
                 <mat-option *ngFor="let n of periodTotalOptions" [value]="n">{{
@@ -73,11 +73,11 @@
               class="variable-container editable"
               (click)="periodScaleSelect.open()"
             >
-              <span>{{ periodForm.value.scale }}</span>
+              <span>{{ budgetMetaForm.value.lengthScale }}</span>
               <mat-select
                 class="select--hidden"
                 #periodScaleSelect
-                formControlName="scale"
+                formControlName="lengthScale"
                 style="opacity: 0;"
               >
                 <mat-option
@@ -88,24 +88,24 @@
               </mat-select>
             </button>
             <div
-              *ngIf="periodForm.value.scale === 'months'"
+              *ngIf="budgetMetaForm.value.lengthScale === 'months'"
               class="variable-container"
             >
               starting in
             </div>
             <button
               mat-button
-              *ngIf="periodForm.value.scale === 'months'"
+              *ngIf="budgetMetaForm.value.lengthScale === 'months'"
               class="variable-container editable"
               (click)="periodStartSelect.open()"
             >
               <span>{{
-                periodLabelOptions[periodForm.value.starting - 1]
+                periodLabelOptions[budgetMetaForm.value.monthStart - 1]
               }}</span>
               <mat-select
                 class="select--hidden"
                 #periodStartSelect
-                formControlName="starting"
+                formControlName="monthStart"
                 style="opacity: 0;"
               >
                 <mat-option
@@ -116,21 +116,21 @@
               </mat-select>
             </button>
           </div>
-          <button
-            matStepperNext
-            color="primary"
-            mat-raised-button
-            class="button--next"
-          >
-            Next
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </form>
-      </mat-step>
+          <div class="sticky-footer">
+            <button
+              matStepperNext
+              color="primary"
+              mat-raised-button
+              class="footer-button"
+            >
+              Next
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
 
-      <!-- Step 3 -->
-      <mat-step [stepControl]="budgetForm">
-        <form [formGroup]="budgetForm">
+        <!-- Step 3 -->
+        <mat-step>
           <ng-template matStepLabel>Save</ng-template>
           <h2>Save your budget</h2>
           <input matInput placeholder="Title" formControlName="title" />
@@ -139,18 +139,20 @@
             placeholder="Description (optional)"
             formControlName="description"
           ></textarea>
-          <button
-            matStepperNext
-            color="primary"
-            mat-raised-button
-            [disabled]="budgetForm.invalid"
-            class="button--next"
-            (click)="save()"
-          >
-            Save
-          </button>
-        </form>
-      </mat-step>
-    </mat-horizontal-stepper>
+          <div class="sticky-footer">
+            <button
+              matStepperNext
+              color="primary"
+              mat-raised-button
+              [disabled]="budgetMetaForm.invalid"
+              class="footer-button"
+              (click)="save()"
+            >
+              Save
+            </button>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </form>
   </div>
 </div>

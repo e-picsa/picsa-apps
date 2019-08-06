@@ -29,6 +29,7 @@ export class BudgetCellComponent {
     if (cellData && cellData.toString() != this._oldCellData.toString()) {
       this.setCellData(cellData);
       this._oldCellData = cellData;
+      console.log('cell rendered', this._cellData);
     }
   }
 

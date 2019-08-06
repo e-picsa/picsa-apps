@@ -40,7 +40,7 @@ export class PicsaDbService implements AbstractDBService {
   // optional sync makes a copy of the document online
   async setDoc<T>(endpoint: IDBEndpoint, doc: T, sync = false) {
     endpoint = this._mapEndpoint(endpoint);
-    const dbDoc = { ...doc, ...this.generateMeta(doc) };
+    const dbDoc = { ...doc, ...generateDBMeta(doc) };
     await this.cache.setDoc(endpoint, dbDoc);
     if (sync) {
       this.sync.addWrites(endpoint, [dbDoc._key]);
@@ -55,7 +55,7 @@ export class PicsaDbService implements AbstractDBService {
   ): Promise<(T & IDBDoc)[]> {
     endpoint = this._mapEndpoint(endpoint);
     const dbDocs = docs.map(doc => {
-      return { ...doc, ...this.generateMeta(doc) };
+      return { ...doc, ...generateDBMeta(doc) };
     });
     await this.cache.setDocs(endpoint, dbDocs);
     if (sync) {
@@ -100,22 +100,6 @@ export class PicsaDbService implements AbstractDBService {
    *  Helper Methods
    ***********************************************************************/
 
-  public generateMeta = (doc: any = {}): IDBDoc => {
-    const { _key, _created } = doc;
-    return {
-      _key: _key ? _key : this._generateKey(),
-      _created: _created ? _created : new Date().toISOString(),
-      _modified: new Date().toISOString()
-    };
-  };
-
-  private _generateKey = () => {
-    const key = firestore()
-      .collection('_')
-      .doc().id;
-    return key;
-  };
-
   // clean data to remove undefined values
   private _cleanData(data: any) {
     Object.keys(data).forEach(key => {
@@ -132,4 +116,29 @@ export class PicsaDbService implements AbstractDBService {
     const group = ENVIRONMENT.group.code;
     return endpoint.replace('${GROUP}', group) as IDBEndpoint;
   }
+}
+
+/************************************************************************
+ *  Additional exports - available without injection
+ ***********************************************************************/
+export const generateDBMeta = (doc: any = {}): IDBDoc => {
+  const { _key, _created } = doc;
+  return {
+    _key: _key ? _key : _generateID(),
+    _created: _created ? _created : new Date().toISOString(),
+    _modified: new Date().toISOString()
+  };
+};
+
+// taken from firestore generation methods
+// https://github.com/firebase/firebase-js-sdk/blob/73a586c92afe3f39a844b2be86086fddb6877bb7/packages/firestore/src/util/misc.ts#L36
+function _generateID() {
+  // Alphanumeric characters
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let autoId = '';
+  for (let i = 0; i < 20; i++) {
+    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return autoId;
 }
