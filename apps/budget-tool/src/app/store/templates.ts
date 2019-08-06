@@ -24,8 +24,9 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
     description: null,
     enterprise: {
       id: null,
-      name: null,
-      type: null
+      label: null,
+      type: null,
+      grouping: null
     },
     lengthScale: 'months',
     lengthTotal: 5,
@@ -44,18 +45,6 @@ export const BUDGET_PERIOD_ROWS: { key: IBudgetPeriodType; label: string }[] = [
   { key: 'outputs', label: 'Outputs' },
   { key: 'produceConsumed', label: 'Produce Consumed' }
 ];
-
-// take an array [a,b,c,d] and cycle by offset (e.g. 1=> [b,c,d,a])
-function _arrayOffset(arr: any[], offset: number, totalLength?: number) {
-  const offArr = [];
-  arr.forEach((v, i) => {
-    offArr[(i + (arr.length - offset)) % arr.length] = v;
-  });
-  console.log('offArr', offArr);
-  const trimEnd = totalLength ? totalLength : arr.length - 1;
-  console.log('sliced', offArr.slice(0, trimEnd));
-  return offArr.slice(0, trimEnd);
-}
 
 export const MONTHS = [
   'Jan',

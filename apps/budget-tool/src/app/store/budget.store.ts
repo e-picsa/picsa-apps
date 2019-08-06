@@ -1,28 +1,26 @@
 import {
   IBudget,
-  IEnterprise,
-  IEnterpriseDefaults,
   IBudgetPeriodData,
   IBudgetCard,
   IBudgetActiveCell,
   IBudgetMeta,
-  IBudgetDBData
+  IBudgetCardDB
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
-import BUDGET_DATA from '../data';
+import CARDS from '../data/cards';
 import { toJS } from 'mobx';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core/';
-import { IAppMeta, IDBEndpoint } from '@picsa/models/db.models';
+import { IAppMeta } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetStore {
-  @observable budgetDBData: IBudgetDBData;
+  @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget;
   @observable activeCell: IBudgetActiveCell;
   @observable isEditorOpen = false;
@@ -32,15 +30,16 @@ export class BudgetStore {
   }
   // get unique list of types in enterprise cards
   @computed get enterpriseTypes(): string[] {
-    return this.budgetDBData
-      ? [...new Set(this.budgetDBData.enterprises.map(e => e.type))].sort()
-      : [];
+    const enterpriseCards = this.budgetCards.filter(
+      c => c.type === 'enterprise'
+    );
+    return [...new Set(enterpriseCards.map(e => e.grouping))].sort();
   }
   // get filtered list of cards depending on cell being edited
   @computed get activeCards(): IBudgetCard[] {
     console.log('get active cards', toJS(this.activeCell));
-    return this.budgetDBData && this.activeCell
-      ? this.budgetDBData[this.activeCell.typeKey]
+    return this.budgetCards && this.activeCell
+      ? this.budgetCards[this.activeCell.typeKey]
       : [];
   }
   @computed get budgetPeriodLabels(): string[] {
@@ -59,8 +58,10 @@ export class BudgetStore {
    *            Enterprise methods
    *
    ***************************************************************************/
-  getfilteredEnterprises(type: string) {
-    return this.budgetDBData.enterprises.filter(e => e.type === type);
+  getfilteredEnterprises(grouping: string) {
+    return this.budgetCards.filter(
+      e => e.type === 'enterprise' && e.grouping === grouping
+    );
   }
   /**************************************************************************
    *            Budget Values
@@ -82,13 +83,13 @@ export class BudgetStore {
   }
   @action
   saveEditor(data: IBudgetCard[]) {
-    const d = this.activeBudget.data;
-    const c = this.activeCell;
-    d[c.periodIndex] = {
-      ...d[c.periodIndex],
-      ...{ [c.typeIndex]: data }
-    };
-    this.patchBudget({ data: d });
+    // const d = this.activeBudget.data;
+    // const c = this.activeCell;
+    // d[c.periodIndex] = {
+    //   ...d[c.periodIndex],
+    //   ...{ [c.typeIndex]: data }
+    // };
+    // this.patchBudget({ data: d });
   }
 
   /**************************************************************************
@@ -152,12 +153,9 @@ export class BudgetStore {
   // load the corresponding values into the budgetMeta observable
   @action()
   private async preloadData() {
-    const budgetMeta: any = {};
-    for (let key of Object.keys(BUDGET_DATA)) {
-      const endpoint = `budgetTool/_all/${key}` as IDBEndpoint;
-      budgetMeta[key] = await this.db.getCollection(endpoint);
-    }
-    this.budgetDBData = budgetMeta;
+    const endpoint = 'budgetTool/_all/cards';
+    this.budgetCards = await this.db.getCollection<IBudgetCard>(endpoint);
+    console.log('budgetcards', toJS(this.budgetCards));
   }
   // check for latest app version initialised. If this one is different then
   // attempt to reload any hardcoded data present in the app
@@ -171,20 +169,18 @@ export class BudgetStore {
     }
   }
   private async setHardcodedData() {
-    for (let key of Object.keys(BUDGET_DATA)) {
-      const endpoint = `budgetTool/_all/${key}` as IDBEndpoint;
-      const docs = BUDGET_DATA[key].map(d => {
-        return {
-          ...d,
-          // add doc metadata - this would be auto populated however want to keep
-          // reference of app version date so can be overwritten by db if desired
-          _created: new Date(APP_VERSION.date).toISOString(),
-          _modified: new Date(APP_VERSION.date).toISOString(),
-          _key: d.id
-        };
-      });
-      await this.db.setDocs(endpoint, docs);
-    }
+    const endpoint = 'budgetTool/_all/cards';
+    const docs: IBudgetCardDB[] = CARDS.map(card => {
+      return {
+        ...card,
+        // add doc metadata - this would be auto populated however want to keep
+        // reference of app version date so can be overwritten by db if desired
+        _created: new Date(APP_VERSION.date).toISOString(),
+        _modified: new Date(APP_VERSION.date).toISOString(),
+        _key: `${card.type}_${card.id}`
+      };
+    });
+    await this.db.setDocs(endpoint, docs);
   }
 
   /**************************************************************************
@@ -210,29 +206,30 @@ export class BudgetStore {
     // this.balance = totals;
   }
   private _calculatePeriodTotal(period: IBudgetPeriodData) {
-    let balance = 0;
-    if (period) {
-      const inputCards = Object.values(period.inputs);
-      const inputsBalance = this._calculatePeriodCardTotals(inputCards);
-      const outputCards = Object.values(period.outputs);
-      const outputsBalance = this._calculatePeriodCardTotals(outputCards);
-      balance = inputsBalance + outputsBalance;
-    }
-    return balance;
+    // let balance = 0;
+    // if (period) {
+    //   const inputCards = Object.values(period.inputs);
+    //   const inputsBalance = this._calculatePeriodCardTotals(inputCards);
+    //   const outputCards = Object.values(period.outputs);
+    //   const outputsBalance = this._calculatePeriodCardTotals(outputCards);
+    //   balance = inputsBalance + outputsBalance;
+    // }
+    // return balance;
   }
   private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
-    let total = 0;
-    if (cards && cards.length > 0) {
-      cards.forEach(card => {
-        if (card.quantity && card.cost) {
-          const quantity = card.consumed
-            ? card.quantity - card.consumed
-            : card.quantity;
-          total = total + quantity * card.cost;
-        }
-      });
-    }
-    return total;
+    console.log('TODO');
+    // let total = 0;
+    // if (cards && cards.length > 0) {
+    //   cards.forEach(card => {
+    //     if (card.quantity && card.cost) {
+    //       const quantity = card.consumed
+    //         ? card.quantity - card.consumed
+    //         : card.quantity;
+    //       total = total + quantity * card.cost;
+    //     }
+    //   });
+    // }
+    // return total;
   }
 
   /**************************************************************************

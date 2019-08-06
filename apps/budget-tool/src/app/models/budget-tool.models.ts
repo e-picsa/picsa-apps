@@ -23,7 +23,7 @@ export interface IBudgetMeta {
   lengthTotal: number;
   monthStart?: number;
   valueScale: 0.1 | 1 | 10 | 100;
-  enterprise: IEnterprise;
+  enterprise: IBudgetCard;
 }
 
 export type IEnterpriseScaleLentgh = 'months' | 'weeks' | 'days';
@@ -36,34 +36,36 @@ export interface IBudgetActiveCell {
 }
 
 /***************************************************************************** */
-// hardcoded database data
-export interface IBudgetDBData {
-  activities: IBudgetCard[];
-  inputs: IBudgetCard[];
-  outputs: IBudgetCard[];
-  enterprises: IEnterprise[];
-}
-// cards contain additional grouping (e.g. enterprise type) along with isSelected and selectedIndex populated when
-// attached to budget data
-export interface IBudgetCard extends IDBDoc {
+
+// cards are used for budget table population as well as enterprise
+export interface IBudgetCard {
+  // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
+  id: string;
   label: string;
-  type: IBudgetPeriodType;
+  type: IBudgetPeriodType | 'enterprise';
+  grouping?: string;
+  customMeta?: IBudgetCardCustomMeta;
+  values?: IBudgetCardValues;
+}
+export type IBudgetCardDB = IBudgetCard & IDBDoc;
+
+interface IBudgetCardWithValues extends IBudgetCard {
+  values: IBudgetCardValues;
 }
 
-// used to store input meta with cards
-export interface IBudgetCardWithValues extends IBudgetCard {
-  values: {
-    quantity: number;
-    cost: number;
-  };
+interface IBudgetCardCustomMeta {
+  customImg: string;
+  dateCreated: string;
+  createdBy: string;
+}
+interface IBudgetCardValues {
+  quantity: number;
+  cost: number;
 }
 
-export interface ICustomBudgetCard extends IBudgetCard {
-  customMeta: {
-    customImg: string;
-    dateCreated: string;
-    createdBy: string;
-  };
+/***************************************************************************** */
+export interface IBudgetDatabase {
+  cards: IBudgetCard[];
 }
 
 // export interface IActivityCard extends IBudgetCard {}
@@ -88,22 +90,6 @@ export interface ICustomBudgetCard extends IBudgetCard {
 //   inputs: IInputCard[];
 //   outputs: IOutputCard[];
 // }
-/***************************************************************************** */
-export interface IEnterprise {
-  type: string;
-  name: string;
-  id: string;
-  defaults?: IEnterpriseDefaults;
-}
-export interface IEnterpriseDefaults extends Partial<IBudgetMeta> {
-  lengthScale: IEnterpriseScaleLentgh;
-  valueScale: 0.1 | 1 | 10 | 100;
-}
-/***************************************************************************** */
-export interface IBudgetPublicData {
-  customCards?: { ['id']: ICustomBudgetCard };
-  templates?: { ['id']: IBudget };
-}
 
 // export interface IBudgetDotValues {
 //   large: number;

@@ -11,7 +11,7 @@
             <budget-card
               *ngFor="let type of store.enterpriseTypes"
               (click)="enterpriseTypeClicked(type)"
-              [generator]="type"
+              [newCardId]="type"
               [selected]="budgetMetaForm.value.enterprise.type === type"
               imageFormat="svg"
               @fadeInOut

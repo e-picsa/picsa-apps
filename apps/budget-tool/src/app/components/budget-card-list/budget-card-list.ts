@@ -1,12 +1,10 @@
 import { select } from '@angular-redux/store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { BudgetToolActions } from '../../store/budget-tool.actions';
 import {
   IBudget,
   IBudgetCard,
-  IBudgetPeriodData,
-  IBudgetViewMeta
+  IBudgetPeriodData
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 
@@ -17,16 +15,13 @@ import { BudgetStore } from '../../store/budget.store';
 export class BudgetCardListComponent implements OnDestroy, OnInit {
   private componentDestroyed: Subject<any> = new Subject();
   @select(['budget', 'view', 'meta'])
-  viewMeta$: Observable<IBudgetViewMeta>;
   cards: IBudgetCard[];
   periodData: IBudgetPeriodData;
-  viewMeta: IBudgetViewMeta;
   type: string;
   cardSubscriber$: Subscription;
 
   constructor(
     // private NgRedux: NgRedux<AppState>,
-    private actions: BudgetToolActions,
     public store: BudgetStore
   ) {}
   // *** reviewed all this in a rush, need to work on
@@ -42,20 +37,20 @@ export class BudgetCardListComponent implements OnDestroy, OnInit {
   // check if the given time period index exists on budget data and card type within period
   // if not intialise values
   _checkBudgetDataPath(periodIndex, type) {
-    const budget: IBudget = this.store.activeBudget;
-    let dispatchUpdate;
-    if (!budget.data[periodIndex]) {
-      budget.data[periodIndex] = {};
-      dispatchUpdate = true;
-    }
-    if (!budget.data[periodIndex][type]) {
-      budget.data[periodIndex][type] = {};
-      dispatchUpdate = true;
-    }
-    // only trigger update if things have changed
-    if (dispatchUpdate) {
-      this.actions.setActiveBudget(budget);
-    }
+    // const budget: IBudget = this.store.activeBudget;
+    // let dispatchUpdate;
+    // if (!budget.data[periodIndex]) {
+    //   budget.data[periodIndex] = {};
+    //   dispatchUpdate = true;
+    // }
+    // if (!budget.data[periodIndex][type]) {
+    //   budget.data[periodIndex][type] = {};
+    //   dispatchUpdate = true;
+    // }
+    // // only trigger update if things have changed
+    // if (dispatchUpdate) {
+    //   this.actions.setActiveBudget(budget);
+    // }
   }
 
   // every time view changed recalculate what should be shown

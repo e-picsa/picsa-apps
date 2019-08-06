@@ -27,8 +27,9 @@ const LEGACY_STORES: ILegacyStore = {
   1: {
     stores: {
       _pendingWrites: DEFAULT_STORE_SCHEMA,
-      budgetTool: DEFAULT_STORE_SCHEMA,
-      'budgetTool/_all/cards': DEFAULT_STORE_SCHEMA + 'TODO-cardType',
+      _appMeta: '_key',
+      budgetTool: '_key',
+      'budgetTool/_all/cards': '_key,type',
       climateTool: DEFAULT_STORE_SCHEMA,
       forms: DEFAULT_STORE_SCHEMA,
       stationData: DEFAULT_STORE_SCHEMA,

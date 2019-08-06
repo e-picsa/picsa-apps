@@ -1,10 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BudgetToolActions } from '../../store/budget-tool.actions';
 import {
   ICustomBudgetCard,
   IBudgetCard
 } from '../../models/budget-tool.models';
-import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'budget-card',
@@ -16,23 +14,24 @@ import { BudgetStore } from '../../store/budget.store';
 export class BudgetCardComponent implements OnInit {
   // use partial as not sure whether will be budget card or custom budget card
   @Input() card: Partial<ICustomBudgetCard>;
-  @Input() generator: string;
+  @Input() newCardId: string;
   @Input() selected: boolean;
   @Input() imageFormat: 'svg' | 'png' = 'png';
 
-  constructor(public actions: BudgetToolActions, public store: BudgetStore) {}
+  constructor() {}
 
   ngOnInit(): void {
-    if (this.generator) {
-      this.card = this.generateCard(this.generator);
+    if (this.newCardId) {
+      this.card = this.generateCard(this.newCardId);
     }
   }
 
   // if not passing full details (e.g. just enterprise type) create a basic card
   private generateCard(id: string): IBudgetCard {
     return {
-      id: id,
-      name: id,
+      // use any type as not budget type (e.g. 'activities') does not include meta enterprise cards
+      type: id as any,
+      label: id.charAt(0).toUpperCase() + id.slice(1),
       _key: id,
       _created: new Date().toISOString(),
       _modified: new Date().toISOString()
