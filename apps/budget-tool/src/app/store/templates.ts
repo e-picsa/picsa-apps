@@ -35,6 +35,8 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
   ...generateDBMeta()
 };
 
+export const BUDGET_DOT_VALUES = {};
+
 export const BUDGET_PERIOD_ROWS: { key: IBudgetPeriodType; label: string }[] = [
   { key: 'activities', label: 'Activities' },
   { key: 'inputs', label: 'Inputs' },

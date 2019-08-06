@@ -3,10 +3,11 @@ import { Events } from '@ionic/angular';
 import {
   IBudget,
   IBudgetPeriodType,
-  IBudgetActiveCell,
-  BUDGET_PERIOD_ROWS
+  IBudgetActiveCell
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
+import { BUDGET_PERIOD_ROWS } from '../../store/templates';
+import { ENVIRONMENT } from '@picsa/environments';
 
 @Component({
   selector: 'budget-table',
@@ -16,38 +17,26 @@ import { BudgetStore } from '../../store/budget.store';
 export class BudgetTableComponent implements OnInit {
   @Input() budget: IBudget;
   rows: IBudgetRow[] = BUDGET_PERIOD_ROWS;
-  columns: IBudgetColumn[] = [];
   dotsLegend = [];
   balance: any;
 
-  constructor(public events: Events, private store: BudgetStore) {}
+  constructor(private store: BudgetStore) {}
   ngOnInit(): void {
-    this.dotsLegend = Object.entries(this.budget.dotValues);
-    const periods = this.budget.periods.labels as string[];
-    this.columns = periods.map(p => {
-      return {
-        key: p,
-        label: p
-      };
-    });
-    console.log('dots legend', this.dotsLegend);
+    this.dotsLegend = this._getDotLegend();
   }
 
-  onCellClick(
-    row: IBudgetRow,
-    rowIndex: number,
-    column: IBudgetColumn,
-    columnIndex: number
-  ) {
+  onCellClick(columnIndex: number, row: IBudgetRow) {
     const activeCell: IBudgetActiveCell = {
       periodIndex: columnIndex,
-      periodKey: column.key,
-      periodLabel: column.label,
-      typeIndex: rowIndex,
-      typeKey: row.key,
-      typeLabel: row.label
+      typeKey: row.key
     };
     this.store.toggleEditor(activeCell);
+  }
+
+  _getDotLegend() {
+    const dots = ENVIRONMENT.region.currencyCounters;
+    const multiplier: number = this.budget.meta.valueScale;
+    return Object.keys(dots).map(k => [k, dots[k] * multiplier]);
   }
 }
 

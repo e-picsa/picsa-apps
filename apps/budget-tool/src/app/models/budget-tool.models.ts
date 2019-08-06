@@ -7,9 +7,9 @@ export interface IBudget extends IDBDoc {
 }
 
 export interface IBudgetPeriodData {
-  activities: IActivityCard[];
-  inputs: IInputCard[];
-  outputs: IOutputCard[];
+  activities: IBudgetCard[];
+  inputs: IBudgetCardWithValues[];
+  outputs: IBudgetCardWithValues[];
   familyLabour: any;
   produceConsumed: any;
 }
@@ -38,53 +38,56 @@ export interface IBudgetActiveCell {
 /***************************************************************************** */
 // hardcoded database data
 export interface IBudgetDBData {
-  activities: IActivityCard[];
-  inputs: IInputCard[];
-  outputs: IOutputCard[];
+  activities: IBudgetCard[];
+  inputs: IBudgetCard[];
+  outputs: IBudgetCard[];
   enterprises: IEnterprise[];
 }
 // cards contain additional grouping (e.g. enterprise type) along with isSelected and selectedIndex populated when
 // attached to budget data
-export interface IBudgetCard {
-  name: string;
-  id: string;
-  type?: string;
-  isSelected?: boolean;
-  selectedIndex?: number;
-  quantity?: number;
-  consumed?: number;
-  cost?: number;
+export interface IBudgetCard extends IDBDoc {
+  label: string;
+  type: IBudgetPeriodType;
+}
+
+// used to store input meta with cards
+export interface IBudgetCardWithValues extends IBudgetCard {
+  values: {
+    quantity: number;
+    cost: number;
+  };
 }
 
 export interface ICustomBudgetCard extends IBudgetCard {
-  custom: boolean;
-  customImg: string;
-  created: string;
-  createdBy: string;
+  customMeta: {
+    customImg: string;
+    dateCreated: string;
+    createdBy: string;
+  };
 }
 
-export interface IActivityCard extends IBudgetCard {}
-export interface IInputCard extends IBudgetCard {
-  // Type: "input";
-  quantity?: number;
-  total?: number;
-  dots?: any[];
-  cost?: number;
-}
-export interface IOutputCard extends IBudgetCard {
-  // Type: "output";
-  quantity?: number;
-  total?: number;
-  dots?: any[];
-  cost?: number;
-  consumed?: number;
-}
+// export interface IActivityCard extends IBudgetCard {}
+// export interface IInputCard extends IBudgetCard {
+//   // Type: "input";
+//   quantity?: number;
+//   total?: number;
+//   dots?: any[];
+//   cost?: number;
+// }
+// export interface IOutputCard extends IBudgetCard {
+//   // Type: "output";
+//   quantity?: number;
+//   total?: number;
+//   dots?: any[];
+//   cost?: number;
+//   consumed?: number;
+// }
 
-export interface ICustomCards {
-  enterprises: IBudgetCard[];
-  inputs: IInputCard[];
-  outputs: IOutputCard[];
-}
+// export interface ICustomCards {
+//   enterprises: IBudgetCard[];
+//   inputs: IInputCard[];
+//   outputs: IOutputCard[];
+// }
 /***************************************************************************** */
 export interface IEnterprise {
   type: string;

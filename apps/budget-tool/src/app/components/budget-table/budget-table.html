@@ -1,4 +1,4 @@
-<div class="budget-container" id="budget">
+<div class="budget-container" id="budget" *mobxAutorun>
   <!-- First column -->
   <div class="time-period">
     <div class="time-period-title cell top-row"></div>
@@ -14,7 +14,7 @@
             <div>
               <img
                 class="dot-value-image"
-                [src]="'assets/images/' + dot[0] + '-positive.png'"
+                [src]="'assets/images/dot-' + dot[0] + '-positive.png'"
               />
             </div>
             <div *ngIf="!editDotValue">= {{ dot[1] }}</div>
@@ -27,9 +27,11 @@
   <!-- Time periods calculated Vertically -->
   <div
     class="time-period"
-    *ngFor="let column of columns; let columnIndex = index"
+    *ngFor="let column of store.activeBudget.data; let columnIndex = index"
   >
-    <div class="time-period-title cell top-row">{{ period }}</div>
+    <div class="time-period-title cell top-row">
+      {{ store.budgetPeriodLabels[columnIndex] }}
+    </div>
     <!-- period rows -->
     <div *ngFor="let row of rows; let rowIndex = index" class="cell">
       <budget-cell
@@ -41,7 +43,7 @@
             ? budget.data[columnIndex][row.key]
             : null
         "
-        (click)="onCellClick(row, rowIndex, column, columnIndex)"
+        (click)="onCellClick(columnIndex, row)"
       ></budget-cell>
     </div>
     <!-- Cash Balance -->

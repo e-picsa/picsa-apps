@@ -43,6 +43,9 @@ export class BudgetStore {
       ? this.budgetDBData[this.activeCell.typeKey]
       : [];
   }
+  @computed get budgetPeriodLabels(): string[] {
+    return this._generateLabels(this.activeBudget.meta);
+  }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     console.log('active budget', toJS(this.activeBudget));
@@ -238,13 +241,17 @@ export class BudgetStore {
    ***************************************************************************/
 
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
-  generateLabels(d: IEnterpriseDefaults): string[] {
+  private _generateLabels(meta: IBudgetMeta): string[] {
+    const { lengthScale, lengthTotal, monthStart = 1 } = meta;
     // duplicate array so that can still slice up to 12 months from dec
     let base = [...MONTHS, ...MONTHS];
-    if (d.scale === 'weeks') {
-      base = base.map((v, i) => `Week ${i + 1}`);
+    if (lengthScale === 'weeks') {
+      base = base.map((_, i) => `Week ${i + 1}`);
     }
-    const labels = base.slice(d.starting - 1, d.total + d.starting - 1);
+    if (lengthScale === 'days') {
+      base = base.map((_, i) => `Day ${i + 1}`);
+    }
+    const labels = base.slice(monthStart - 1, lengthTotal + monthStart - 1);
     return labels;
   }
 }

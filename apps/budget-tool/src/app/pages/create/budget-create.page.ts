@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BudgetStore } from '../../store/budget.store';
 import {
   IEnterprise,
-  IBudget,
   IEnterpriseScaleLentgh,
   IBudgetMeta
 } from '../../models/budget-tool.models';
