@@ -10,15 +10,17 @@ import {
   IBudgetActiveCell,
   IBudgetMeta,
   IBudgetCardDB,
-  IBudgetCardWithValues
+  IBudgetCardWithValues,
+  IBudgetValueScale,
+  IBudgetValueCounters
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
-import { NEW_BUDGET_TEMPLATE, MONTHS, BUDGET_PERIOD_ROWS } from './templates';
+import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
 import CARDS from '../data/cards';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core/';
 import { IAppMeta } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
-
+import { ENVIRONMENT } from '@picsa/environments';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,6 +30,7 @@ export class BudgetStore {
   @observable activeCell: IBudgetActiveCell;
   @observable isEditorOpen = false;
   @observable savedBudgets: IBudget[];
+  @observable valueCounters: IBudgetValueCounters;
   get activeBudgetValue() {
     return toJS(this.activeBudget);
   }
@@ -60,6 +63,8 @@ export class BudgetStore {
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     console.log('active budget', toJS(this.activeBudget));
+    this.valueCounters = this._generateValueCounters();
+    console.log('value counters', toJS(this.valueCounters));
   }
 
   constructor(private db: PicsaDbService) {
@@ -108,6 +113,15 @@ export class BudgetStore {
   @action()
   toggleEditor() {
     this.isEditorOpen = !this.isEditorOpen;
+  }
+  @action()
+  scaleValueCounters(scale: IBudgetValueScale) {
+    const oldScale = this.activeBudget.meta.valueScale;
+    const newScale = scale * oldScale;
+    this.patchBudget({
+      meta: { ...this.activeBudget.meta, valueScale: newScale }
+    });
+    this.valueCounters = this._generateValueCounters();
   }
 
   /**************************************************************************
@@ -284,5 +298,19 @@ export class BudgetStore {
       };
     });
     return enterpriseTypeCards;
+  }
+  // each currency has a base unit (e.g. MK 1000) which is used to generate
+  // counter representations in orders of 10 (i.e. 100, 1000, 10000) and half values.
+  // These can additionaly be scaled up or down by magnitudes of 10.
+  private _generateValueCounters() {
+    const scale = this.activeBudget.meta.valueScale;
+    // use rounding to avoid annoying precious errors
+    const b = Math.round(ENVIRONMENT.region.currencyBaseValue * scale);
+    // return as arrays to ensure order retained if iterating over
+    const counters: IBudgetValueCounters = [
+      ['large', 'large-half', 'medium', 'medium-half', 'small', 'small-half'],
+      [10 * b, 5 * b, b, b / 5, b / 10, b / 20]
+    ];
+    return counters;
   }
 }

@@ -8,12 +8,7 @@ const REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
       { label: 'Chichewa', code: 'ny' }
     ],
     currency: 'MK',
-    currencyCounters: {
-      large: 50000,
-      medium: 10000,
-      small: 1000,
-      half: 500
-    },
+    currencyBaseValue: 10000,
     subtitle: 'Extension Toolkit'
   },
   KENYA: {
@@ -23,12 +18,7 @@ const REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
       { label: 'Swahili', code: 'sw' }
     ],
     currency: 'KSH',
-    currencyCounters: {
-      large: 5000,
-      medium: 1000,
-      small: 100,
-      half: 50
-    },
+    currencyBaseValue: 1000,
     subtitle: 'for Financial Service Providers'
   },
   // add support for self-referencing default and dev

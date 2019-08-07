@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { Events } from '@ionic/angular';
 import {
   IBudgetCard,
   IBudgetPeriodData
 } from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'budget-cell',
@@ -19,7 +19,7 @@ export class BudgetCellComponent {
   _oldCellData: any = [];
   _cellData: IBudgetCard[];
 
-  constructor() {}
+  constructor(public store: BudgetStore) {}
 
   private cellDataUpdated(cellData: IBudgetPeriodData) {
     // as budget refreshed often only want to re-render when change so keep track of old data

@@ -14,16 +14,17 @@ import { FormsModule } from '@angular/forms';
 import { BudgetMaterialModule } from '../material.module';
 import { BudgetListItemComponent } from './list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
-import { BudgetCellValueComponent } from './cell/variants/value/value';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaDbModule } from '@picsa/modules';
-import { BudgetBalanceDotsComponent } from './balance/balance-dots/balance-dots';
+import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
 import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
+import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 
 @NgModule({
   declarations: [
-    BudgetBalanceDotsComponent,
+    BudgetBalanceLegendComponent,
+    BudgetBalanceDotValueComponent,
     BudgetCardComponent,
     BudgetDataCardComponent,
     BudgetCardImageComponent,
@@ -33,7 +34,6 @@ import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellLabourComponent,
-    BudgetCellValueComponent,
     BudgetListItemComponent,
     BudgetTableComponent,
     CardSelectComponent
@@ -49,7 +49,8 @@ import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values
     PicsaDbModule
   ],
   exports: [
-    BudgetBalanceDotsComponent,
+    BudgetBalanceLegendComponent,
+    BudgetBalanceDotValueComponent,
     BudgetCardComponent,
     BudgetDataCardComponent,
     BudgetCardImageComponent,
@@ -58,7 +59,6 @@ import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellLabourComponent,
-    BudgetCellValueComponent,
     BudgetListItemComponent,
     BudgetTableComponent,
     CardSelectComponent

@@ -9,7 +9,9 @@
     <div class="cell row-title">
       <div>
         <div>Balance</div>
-        <budget-balance-dots></budget-balance-dots>
+        <budget-balance-legend
+          [valueCounters]="store.valueCounters"
+        ></budget-balance-legend>
       </div>
     </div>
   </div>
@@ -34,16 +36,16 @@
     <div class="cell">
       <div *ngIf="balance && balance[i]">
         <div>{{ period }}: {{ balance[i].period }}</div>
-        <budget-cell-value
-          quantity="1"
-          [cost]="balance[i].period"
-        ></budget-cell-value>
+        <budget-balance-dot-value
+          [value]="card.total"
+          [valueCounters]="store.valueCounters"
+        ></budget-balance-dot-value>
         <hr />
         <div>running: {{ balance[i].running }}</div>
-        <budget-cell-value
-          quantity="1"
-          [cost]="balance[i].running"
-        ></budget-cell-value>
+        <budget-balance-dot-value
+          [value]="card.total"
+          [valueCounters]="store.valueCounters"
+        ></budget-balance-dot-value>
       </div>
     </div>
   </div>

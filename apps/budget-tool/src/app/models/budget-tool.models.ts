@@ -28,7 +28,11 @@ export interface IBudgetMeta {
 }
 
 export type IEnterpriseScaleLentgh = 'months' | 'weeks' | 'days';
-export type IBudgetValueScale = 0.1 | 1 | 10;
+// budget counters scaled in multiples of 10
+export type IBudgetValueScale = number;
+// counters form 2 arrays, one with a list of labels (/images) and the next with values
+// values are in descending order
+export type IBudgetValueCounters = [string[], number[]];
 /***************************************************************************** */
 export interface IBudgetActiveCell {
   periodIndex: number;

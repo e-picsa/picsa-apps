@@ -18,13 +18,14 @@ export interface IRegionSettings {
   countryCode: CountryCode;
   languages: IRegionLang[];
   currency: string;
-  currencyCounters: {
-    large: number;
-    medium: number;
-    small: number;
-    half: number;
-  };
+  currencyBaseValue: number;
   subtitle: string;
+}
+export interface ICurrencyCounters {
+  large: number;
+  medium: number;
+  small: number;
+  half: number;
 }
 // firebase
 interface IFirebaseSettings {
