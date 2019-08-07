@@ -65,6 +65,7 @@ interface IBudgetCardCustomMeta {
 export interface IBudgetCardValues {
   quantity: number;
   cost: number;
+  total: number;
 }
 
 /***************************************************************************** */

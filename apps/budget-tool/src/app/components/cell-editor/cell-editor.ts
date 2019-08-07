@@ -1,6 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
-import { ENVIRONMENT } from '@picsa/environments';
 import {
   IBudgetActiveCell,
   IBudgetCard,
@@ -9,7 +8,6 @@ import {
 } from '../../models/budget-tool.models';
 import { FadeInOut } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
-import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-cell-editor',
@@ -24,7 +22,7 @@ import { toJS } from 'mobx';
  */
 export class BudgetCellEditorComponent {
   _cell: IBudgetActiveCell;
-  currency = ENVIRONMENT.region.currency;
+
   allBudgetCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCardWithValues[] = [];
@@ -71,7 +69,7 @@ export class BudgetCellEditorComponent {
     if (arrIndex > -1) {
       this.selectedArray.splice(arrIndex, 1);
     } else {
-      const defaultValues = { cost: null, quantity: null };
+      const defaultValues = { cost: null, quantity: null, total: null };
       this.selectedArray.push({ ...card, values: defaultValues });
     }
   }

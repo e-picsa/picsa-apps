@@ -3,5 +3,38 @@
 }
 
 .card-input-field {
-  width: 80px;
+  margin: 0 10px 10px;
+  padding: 5px;
+  border-radius: 2px;
+}
+.input-editable {
+  font-size: 30px;
+  color: var(--color-primary);
+}
+.mat-form-field-disabled {
+  border: none;
+}
+
+.card-input-field.quantity {
+  width: 65px;
+}
+.card-input-field.cost {
+  width: 135px;
+}
+.card-input.total {
+  width: 200px;
+}
+.underline {
+  background-position: 0;
+  background-color: transparent;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.42) 33%,
+    transparent 0%
+  );
+  background-size: 4px 100%;
+  background-repeat: repeat-x;
+  height: 1px;
+  width: 100%;
 }
