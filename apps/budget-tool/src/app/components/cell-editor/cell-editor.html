@@ -16,16 +16,12 @@
           [selected]="selected[card.id]"
           @fadeInOut
         ></budget-card>
-        <button
-          *ngIf="!showAllCards"
-          @fadeInOut
-          mat-button
-          (click)="showAllCards = true"
-          style="margin-bottom: 10px"
-        >
-          ...More
-        </button>
-        <div *ngIf="showAllCards" style="display: inline-block">
+        <div @fadeInOut *ngIf="!showAllCards">
+          <button mat-button (click)="showAllCards = true">
+            {{ 'Show More' | translate }}
+          </button>
+        </div>
+        <div *ngIf="showAllCards">
           <budget-card
             *ngFor="let card of store.otherTypeCards"
             [card]="card"

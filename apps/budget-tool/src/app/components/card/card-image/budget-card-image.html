@@ -1,0 +1,9 @@
+<!-- image loaded from file -->
+<div *ngIf="imgUrl" class="card-image-holder">
+  <img [src]="imgUrl" class="card-image" [attr.data-card-id]="card.id" />
+</div>
+
+<!-- image loaded from custom drawing -->
+<div *ngIf="imgData" class="card-image-holder">
+  <img [src]="imgData" [class]="'card-image'" />
+</div>

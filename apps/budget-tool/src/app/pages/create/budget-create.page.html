@@ -1,6 +1,6 @@
 <div class="page">
   <h1>Create New Budget</h1>
-  <div class="page-content" *mobxAutorun>
+  <div class="page-content" *mobxAutorun style="padding-bottom: 52px">
     <form [formGroup]="budgetMetaForm">
       <mat-horizontal-stepper linear #stepper>
         <!-- Step 1 - handled with custom elements-->
@@ -9,11 +9,10 @@
           <h2>What is your type of enterprise?</h2>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
-              *ngFor="let type of store.enterpriseTypes"
-              (click)="enterpriseTypeClicked(type)"
-              [newCardId]="type"
-              [selected]="selectedType === type"
-              imageFormat="svg"
+              *ngFor="let card of store.enterpriseTypeCards"
+              [card]="card"
+              (click)="enterpriseTypeClicked(card.id)"
+              [selected]="selectedType === card.id"
               @fadeInOut
             ></budget-card>
           </div>
@@ -26,7 +25,6 @@
               [card]="enterprise"
               (click)="enterpriseClicked(enterprise)"
               [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
-              imageFormat="svg"
               @fadeInOut
             >
             </budget-card>

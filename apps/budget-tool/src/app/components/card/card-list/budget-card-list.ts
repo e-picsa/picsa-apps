@@ -5,8 +5,8 @@ import {
   IBudget,
   IBudgetCard,
   IBudgetPeriodData
-} from '../../models/budget-tool.models';
-import { BudgetStore } from '../../store/budget.store';
+} from '../../../models/budget-tool.models';
+import { BudgetStore } from '../../../store/budget.store';
 
 @Component({
   selector: 'budget-card-list',

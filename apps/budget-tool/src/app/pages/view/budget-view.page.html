@@ -1,7 +1,9 @@
 <div class="page" *mobxAutorun>
   <mat-toolbar>
     <span>{{
-      store.activeBudget ? store.activeBudget.title : ('Budget' | translate)
+      store.activeBudget
+        ? store.activeBudget.meta.title
+        : ('Budget' | translate)
     }}</span>
     <div *ngIf="store.isEditorOpen" style="flex:1; display: flex">
       <span style="text-align: center; flex:1">{{

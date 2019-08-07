@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BudgetStore } from '../../store/budget.store';
+import { BudgetStore } from '../../../store/budget.store';
 import { ENVIRONMENT } from '@picsa/environments';
-import { IBudgetValueScale } from '../../models/budget-tool.models';
+import { IBudgetValueScale } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-balance-dots',

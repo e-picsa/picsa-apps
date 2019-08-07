@@ -46,6 +46,7 @@ export interface IBudgetCard {
   groupings?: string[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
+  imgType?: 'svg' | 'png';
 }
 export type IBudgetCardDB = IBudgetCard & IDBDoc;
 
@@ -54,7 +55,7 @@ interface IBudgetCardWithValues extends IBudgetCard {
 }
 
 interface IBudgetCardCustomMeta {
-  customImg: string;
+  imgData: string;
   dateCreated: string;
   createdBy: string;
 }

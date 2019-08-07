@@ -3,11 +3,7 @@
   class="budget-card selectable"
   [attr.selected]="selected"
 >
-  <budget-card-image
-    [imageId]="card.id"
-    [imageData]="card.customImg"
-    [format]="imageFormat"
-  ></budget-card-image>
+  <budget-card-image [card]="card"></budget-card-image>
   <div [class]="'card-title ' + card.id">{{ card.label }}</div>
 </mat-card>
 <!-- <div *ngIf="selected" id="budgetTypeCard">

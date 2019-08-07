@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, OnDestroy, Sanitizer } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { IBudgetCardDB } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-card-image',
@@ -8,15 +9,17 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['budget-card-image.scss']
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
-  @Input() imageId: string;
-  @Input() imageData: string;
-  @Input() format: 'svg' | 'png' = 'png';
+  @Input() card: IBudgetCardDB;
+  imgData: string;
   imgUrl: SafeUrl;
   objUrl: string;
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
-    if (!this.imageData) {
+    console.log('init', this.card);
+    if (this.card.customMeta) {
+      this.imgData = this.card.customMeta.imgData;
+    } else {
       this.loadImageFromFile();
     }
   }
@@ -28,7 +31,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   }
 
   private async loadImageFromFile() {
-    const imgBlob = await this.getCardImg(this.imageId, this.format);
+    const imgBlob = await this.getCardImg(this.card.id, this.card.imgType);
     this.objUrl = URL.createObjectURL(imgBlob);
     this.imgUrl = this.sanitizer.bypassSecurityTrustUrl(this.objUrl);
   }
@@ -36,13 +39,13 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   // check card images for correct svg or png image and return
   private async getCardImg(
     imageId: string,
-    format: 'svg' | 'png'
+    imageType: 'svg' | 'png' = 'png'
   ): Promise<Blob> {
     let imgData: Blob;
     // first see if svg exists
     try {
       imgData = await this.http
-        .get(`../../assets/images/${imageId}.${format}`, {
+        .get(`../../assets/images/${imageId}.${imageType}`, {
           responseType: 'blob'
         })
         .toPromise();

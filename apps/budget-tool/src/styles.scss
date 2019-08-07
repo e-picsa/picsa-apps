@@ -15,7 +15,7 @@
 @import './styles/layout.scss';
 
 // instead of using bottom use top with calc to avoid jumping
-$footer-height: 3em;
+$footer-height: 5em;
 .sticky-footer {
   position: fixed;
   height: $footer-height;
@@ -30,6 +30,7 @@ $footer-height: 3em;
 .footer-button {
   width: 60%;
   left: 20%;
+  height: calc(#{$footer-height} - 10px);
 }
 
 // used if want to use mat-stepper with fixed header and scrolling content

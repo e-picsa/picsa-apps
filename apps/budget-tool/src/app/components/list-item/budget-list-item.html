@@ -2,8 +2,7 @@
   <div style="display: flex">
     <budget-card-image
       class="small"
-      [imageId]="budget.meta.enterprise.id"
-      format="svg"
+      [card]="budget.meta.enterprise"
     ></budget-card-image>
     <div style="flex:1">
       <mat-card-title>{{ budget.meta.title }}</mat-card-title>

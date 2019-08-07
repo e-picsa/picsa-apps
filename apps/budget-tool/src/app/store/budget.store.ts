@@ -33,13 +33,11 @@ export class BudgetStore {
     return this.activeBudget.meta.enterprise.groupings![0];
   }
   // get unique list of types in enterprise cards
-  @computed get enterpriseTypes(): string[] {
+  @computed get enterpriseTypeCards(): IBudgetCardDB[] {
     const enterpriseCards = this.budgetCards.filter(
       c => c.type === 'enterprise'
     );
-    const allGroupings = enterpriseCards.map(e => toJS(e.groupings));
-    const mergedGroupings: string[] = [].concat.apply([], allGroupings);
-    return [...new Set(mergedGroupings)].sort();
+    return this._createCardGroupCards(enterpriseCards);
   }
 
   // filter cards to match type (e.g. activities) and group (e.g. crops)
@@ -265,5 +263,26 @@ export class BudgetStore {
     }
     const labels = base.slice(monthStart - 1, lengthTotal + monthStart - 1);
     return labels;
+  }
+  // group all enterprise cards and create new parent card that will be used to reveal group
+  private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {
+    console.log('create group', cards);
+    const allGroupings = cards.map(e => toJS(e.groupings));
+    const mergedGroupings: string[] = [].concat.apply([], allGroupings);
+    const uniqueGroups = [...new Set(mergedGroupings)].sort();
+    console.log('unique groups', uniqueGroups);
+    const enterpriseTypeCards: IBudgetCardDB[] = uniqueGroups.map(group => {
+      return {
+        id: group,
+        label: group,
+        type: 'enterprise',
+        imgType: 'svg',
+        _key: `_group_${group}`,
+        _created: new Date().toISOString(),
+        _modified: new Date().toISOString()
+      };
+    });
+    console.log('type cards', enterpriseTypeCards);
+    return enterpriseTypeCards;
   }
 }

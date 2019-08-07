@@ -20,7 +20,6 @@ import { toJS } from 'mobx';
  */
 export class BudgetCellEditorComponent {
   _cell: IBudgetActiveCell;
-  isOpen = false;
   currency = ENVIRONMENT.region.currency;
   allBudgetCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};

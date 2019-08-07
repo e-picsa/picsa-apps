@@ -9,7 +9,9 @@ import { IBudget } from '../../models/budget-tool.models';
 export class BudgetListItemComponent implements OnInit {
   @Input() budget: IBudget;
   @Output() onDeleteClicked = new EventEmitter<void>();
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('budget list item', this.budget);
+  }
 
   deleteClicked(e: Event) {
     e.stopPropagation();

@@ -89,12 +89,6 @@ const CARDS: IBudgetCard[] = [
   },
   {
     type: 'activities',
-    label: 'top dressing - fertiliser',
-    id: 'top-dressing---fertiliser',
-    groupings: ['crop']
-  },
-  {
-    type: 'activities',
     label: 'transport',
     id: 'transport',
     groupings: ['crop']
@@ -103,7 +97,8 @@ const CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'value addition',
     id: 'value-addition',
-    groupings: ['crop']
+    groupings: ['crop', 'livestock'],
+    imgType: 'svg'
   },
   {
     type: 'activities',
@@ -121,96 +116,141 @@ const CARDS: IBudgetCard[] = [
     type: 'enterprise',
     label: 'afforestation',
     id: 'afforestation',
-    groupings: ['afforestation']
+    groupings: ['afforestation'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'cattle',
     id: 'cattle',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'chicken',
     id: 'chicken',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'cowpeas',
     id: 'cowpeas',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'ducks',
     id: 'ducks',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
-  { type: 'enterprise', label: 'fish', id: 'fish', groupings: ['fish'] },
+  {
+    type: 'enterprise',
+    label: 'fish',
+    id: 'fish',
+    groupings: ['fish'],
+    imgType: 'svg'
+  },
   {
     type: 'enterprise',
     label: 'goats',
     id: 'goats',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'groundnuts',
     id: 'groundnuts',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'guinea fowl',
     id: 'guinea-fowl',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
-  { type: 'enterprise', label: 'maize', id: 'maize', groupings: ['crop'] },
-  { type: 'enterprise', label: 'mixed', id: 'mixed', groupings: ['fruits'] },
+  {
+    type: 'enterprise',
+    label: 'maize',
+    id: 'maize',
+    groupings: ['crop'],
+    imgType: 'svg'
+  },
+  {
+    type: 'enterprise',
+    label: 'mixed',
+    id: 'mixed',
+    groupings: ['fruits'],
+    imgType: 'svg'
+  },
   {
     type: 'enterprise',
     label: 'paw-paw',
     id: 'paw-paw',
-    groupings: ['fruits']
+    groupings: ['fruits'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'pigeon peas',
     id: 'pigeon-peas',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
-  { type: 'enterprise', label: 'pigs', id: 'pigs', groupings: ['livestock'] },
-  { type: 'enterprise', label: 'rice', id: 'rice', groupings: ['crop'] },
+  {
+    type: 'enterprise',
+    label: 'pigs',
+    id: 'pigs',
+    groupings: ['livestock'],
+    imgType: 'svg'
+  },
+  {
+    type: 'enterprise',
+    label: 'rice',
+    id: 'rice',
+    groupings: ['crop'],
+    imgType: 'svg'
+  },
   {
     type: 'enterprise',
     label: 'sheep',
     id: 'sheep',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'sorghum',
     id: 'sorghum',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'soya beans',
     id: 'soya-beans',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'sweet potatoes',
     id: 'sweet-potatoes',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
     label: 'watermelon',
     id: 'watermelon',
-    groupings: ['fruits']
+    groupings: ['fruits'],
+    imgType: 'svg'
   },
   { type: 'inputs', label: 'bags', id: 'bags', groupings: ['livestock'] },
   {
@@ -306,7 +346,6 @@ const CARDS: IBudgetCard[] = [
   { type: 'outputs', label: 'meat', id: 'meat', groupings: ['livestock'] },
   { type: 'outputs', label: 'milk', id: 'milk', groupings: ['livestock'] },
   { type: 'outputs', label: 'money', id: 'money', groupings: ['crop'] },
-  { type: 'outputs', label: 'pots', id: 'pots', groupings: ['crop'] },
   { type: 'outputs', label: 'wood', id: 'wood', groupings: ['crop'] },
   { type: 'produceConsumed', label: 'crop', id: 'crop', groupings: ['crop'] },
   {

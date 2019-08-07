@@ -6,8 +6,7 @@
         <div *ngFor="let card of _cellData">
           <budget-card-image
             [class]="_cellData.length > 1 ? 'small' : 'medium'"
-            [imageId]="card.id"
-            [imageData]="card.customImg"
+            [card]="card"
           ></budget-card-image>
           <budget-cell-value
             *ngIf="card.quantity && card.cost"
@@ -33,11 +32,7 @@
       <div *ngSwitchCase="'outputs'">
         <div *ngFor="let card of _cellData">
           <div style="display: flex">
-            <budget-card-image
-              class="small"
-              [imageId]="card.id"
-              [imageData]="card.customImg"
-            ></budget-card-image>
+            <budget-card-image class="small" [card]="card"></budget-card-image>
             <ion-badge class="output-badge">{{ card.quantity }}</ion-badge>
           </div>
           <budget-cell-value
@@ -52,11 +47,7 @@
       <div *ngSwitchCase="'produceConsumed'">
         <div *ngFor="let card of _cellData">
           <div *ngIf="card.consumed" style="display: flex">
-            <budget-card-image
-              class="small"
-              [imageId]="card.id"
-              [imageData]="card.customImg"
-            ></budget-card-image>
+            <budget-card-image class="small" [card]="card"></budget-card-image>
             <ion-badge class="consumed-badge">{{ card.consumed }}</ion-badge>
           </div>
         </div>
@@ -66,8 +57,7 @@
         <budget-card-image
           *ngFor="let card of _cellData"
           [class]="_cellData.length > 1 ? 'small' : 'medium'"
-          [imageId]="card.id"
-          [imageData]="card.customImg"
+          [card]="card"
         ></budget-card-image>
       </div>
     </div>
