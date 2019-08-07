@@ -11,8 +11,8 @@ export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
   activities: [],
   inputs: [],
   outputs: [],
-  familyLabour: {},
-  produceConsumed: {}
+  familyLabour: [],
+  produceConsumed: []
 };
 
 // don't assert type so missing _key field picked up in create new budget from store
@@ -38,13 +38,13 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
 
 export const BUDGET_DOT_VALUES = {};
 
-export const BUDGET_PERIOD_ROWS: { key: IBudgetPeriodType; label: string }[] = [
-  { key: 'activities', label: 'Activities' },
-  { key: 'inputs', label: 'Inputs' },
-  { key: 'familyLabour', label: 'Family Labour' },
-  { key: 'outputs', label: 'Outputs' },
-  { key: 'produceConsumed', label: 'Produce Consumed' }
-];
+export const BUDGET_PERIOD_ROWS: { [key in IBudgetPeriodType]: string } = {
+  activities: 'Activities',
+  inputs: 'Inputs',
+  familyLabour: 'Family Labour',
+  outputs: 'Outputs',
+  produceConsumed: 'Produce Consumed'
+};
 
 export const MONTHS = [
   'Jan',

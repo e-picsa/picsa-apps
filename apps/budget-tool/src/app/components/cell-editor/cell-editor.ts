@@ -3,7 +3,8 @@ import { BudgetStore } from '../../store/budget.store';
 import { ENVIRONMENT } from '@picsa/environments';
 import {
   IBudgetActiveCell,
-  IBudgetCard
+  IBudgetCard,
+  IBudgetPeriodData
 } from '../../models/budget-tool.models';
 import { FadeInOut } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
@@ -27,16 +28,20 @@ export class BudgetCellEditorComponent {
   stepsShown = {};
   showAllCards = false;
   @Input() set cell(cell: IBudgetActiveCell) {
+    this.resetView();
     this.setSteps(cell);
-    this.reset();
+    this.setValues(cell);
     this._cell = cell;
   }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   constructor(private store: BudgetStore) {}
 
-  reset() {
-    this.selected = {};
-    this.selectedArray = [];
+  setValues(cell: IBudgetActiveCell) {
+    cell.cellData.forEach(card => (this.selected[card.id] = true));
+    this.selectedArray = cell.cellData;
+  }
+
+  resetView() {
     this.showAllCards = false;
     if (this.stepper && this.stepper.selectedIndex > 0) {
       this.stepper.reset();

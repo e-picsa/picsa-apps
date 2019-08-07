@@ -20,20 +20,14 @@
     *ngFor="let column of store.activeBudget.data; let columnIndex = index"
   >
     <div class="time-period-title cell top-row">
-      {{ store.budgetPeriodLabels[columnIndex] }}
+      {{ periodLabels[columnIndex] }}
     </div>
     <!-- period rows -->
     <div *ngFor="let row of rows; let rowIndex = index" class="cell">
       <budget-cell
         [type]="row.key"
-        [cellData]="
-          budget.data &&
-          budget.data[columnIndex] &&
-          budget.data[columnIndex][row.key]
-            ? budget.data[columnIndex][row.key]
-            : null
-        "
-        (click)="onCellClick(columnIndex, row)"
+        [cellData]="budget.data[columnIndex][row.key]"
+        (click)="onCellClick(columnIndex, row, rowIndex)"
       ></budget-cell>
     </div>
     <!-- Cash Balance -->

@@ -30,7 +30,6 @@ export class BudgetCellLabourComponent {
         daysArray.push(this._createArray(this._people, 1));
       }
     }
-    console.log('daysArray', daysArray);
     this.daysArray = daysArray;
   }
   _createArray(length: number, value: any) {

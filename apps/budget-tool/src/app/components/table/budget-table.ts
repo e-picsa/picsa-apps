@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Events } from '@ionic/angular';
 import {
   IBudget,
   IBudgetPeriodType,
@@ -15,19 +14,35 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
 })
 export class BudgetTableComponent implements OnInit {
   @Input() budget: IBudget;
-  rows: IBudgetRow[] = BUDGET_PERIOD_ROWS;
+  periodLabels: string[] = [];
+  rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map(
+    (key: IBudgetPeriodType) => {
+      const label = BUDGET_PERIOD_ROWS[key];
+      return {
+        key,
+        label
+      };
+    }
+  );
   // TODO - bring back balance and refactor to own component
   balance: any;
 
   constructor(private store: BudgetStore) {}
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.periodLabels = this.store.budgetPeriodLabels;
+  }
 
-  onCellClick(columnIndex: number, row: IBudgetRow) {
-    const activeCell: IBudgetActiveCell = {
+  onCellClick(columnIndex: number, row: IBudgetRow, rowIndex: number) {
+    console.log(columnIndex, row, rowIndex);
+    const cell: IBudgetActiveCell = {
       periodIndex: columnIndex,
-      typeKey: row.key
+      periodLabel: this.periodLabels[columnIndex],
+      typeKey: row.key,
+      typeLabel: row.label,
+      // cell data will be populated by the store
+      cellData: []
     };
-    this.store.toggleEditor(activeCell);
+    this.store.toggleEditor(cell);
   }
 }
 
@@ -37,9 +52,5 @@ export class BudgetTableComponent implements OnInit {
 
 interface IBudgetRow {
   key: IBudgetPeriodType;
-  label: string;
-}
-interface IBudgetColumn {
-  key: string;
   label: string;
 }

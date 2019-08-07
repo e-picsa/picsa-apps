@@ -9,9 +9,7 @@ import { ENVIRONMENT } from '@picsa/environments';
 })
 export class CardSelectComponent {
   currency = ENVIRONMENT.region.currency;
-  constructor() {
-    console.log('currency', this.currency);
-  }
+  constructor() {}
 
   // *** TODO - figure out why these methods exist in template and complete
   showNewCard() {}

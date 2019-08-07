@@ -1,17 +1,20 @@
+import { Injectable } from '@angular/core';
+import { toJS } from 'mobx';
+import { observable, action, computed } from 'mobx-angular';
+import * as merge from 'deepmerge';
+
 import {
   IBudget,
   IBudgetPeriodData,
   IBudgetCard,
   IBudgetActiveCell,
   IBudgetMeta,
-  IBudgetCardDB
+  IBudgetCardDB,
+  IBudgetPeriodType
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
-import { Injectable } from '@angular/core';
-import { observable, action, computed } from 'mobx-angular';
-import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
+import { NEW_BUDGET_TEMPLATE, MONTHS, BUDGET_PERIOD_ROWS } from './templates';
 import CARDS from '../data/cards';
-import { toJS } from 'mobx';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core/';
 import { IAppMeta } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
@@ -44,7 +47,6 @@ export class BudgetStore {
   @computed get groupTypeCards(): IBudgetCard[] {
     const type = this.activeCell.typeKey;
     const typeCards = this.budgetCards.filter(c => c.type === type);
-    console.log('type cards', type, this.enterpriseGroup);
     return typeCards.filter(c => c.groupings.includes(this.enterpriseGroup));
   }
   @computed get otherTypeCards(): IBudgetCard[] {
@@ -77,29 +79,30 @@ export class BudgetStore {
    *            Budget Values
    *
    ***************************************************************************/
-  patchBudget(patch: Partial<IBudget>) {
-    this.setActiveBudget({ ...this.activeBudget, ...patch });
-    return this.saveBudget();
+  // merge current budget with added data, optionally can merge deep to include
+  // nested properties
+  patchBudget(patch: Partial<IBudget>, deepMerge = false) {
+    console.log('patching', patch, deepMerge);
+    const budget = deepMerge
+      ? merge(this.activeBudget, patch)
+      : { ...this.activeBudget, ...patch };
+    this.setActiveBudget(budget);
+    this.saveBudget();
+  }
+  // populate correct budget data based on editor data and current active cell
+  saveEditor(data: IBudgetCard[]) {
+    const d = this.activeBudget.data;
+    const c = this.activeCell;
+    d[c.periodIndex][c.typeKey] = data;
+    this.patchBudget({ data: d });
   }
   @action()
-  toggleEditor(cell?: IBudgetActiveCell) {
+  toggleEditor(cell: IBudgetActiveCell) {
     if (cell) {
-      const periodData = this.activeBudget.data[cell.periodIndex];
-      const value = periodData ? periodData[cell.typeKey] : {};
-      this.activeCell = { ...cell, value };
-      console.log('cell', toJS(this.activeCell));
+      cell.cellData = this.activeBudget.data[cell.periodIndex][cell.typeKey];
+      this.activeCell = cell;
     }
     this.isEditorOpen = !this.isEditorOpen;
-  }
-  @action
-  saveEditor(data: IBudgetCard[]) {
-    // const d = this.activeBudget.data;
-    // const c = this.activeCell;
-    // d[c.periodIndex] = {
-    //   ...d[c.periodIndex],
-    //   ...{ [c.typeIndex]: data }
-    // };
-    // this.patchBudget({ data: d });
   }
 
   /**************************************************************************
@@ -130,11 +133,9 @@ export class BudgetStore {
     }
   }
   async loadBudget(budget: IBudget) {
+    console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
     this.setActiveBudget(budget);
-    // this.events.publish("calculate:budget");
-    // // publish event to force card list update
-    // this.events.publish("load:budget");
   }
 
   private async loadSavedBudgets(): Promise<void> {
@@ -147,10 +148,8 @@ export class BudgetStore {
   }
 
   async deleteBudget(budget: IBudget) {
-    console.log('archiving budget', budget, budget._key);
     await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
     this.loadSavedBudgets();
-    console.log('budget deleted');
   }
 
   /**************************************************************************
@@ -168,7 +167,6 @@ export class BudgetStore {
   private async preloadData() {
     const endpoint = 'budgetTool/_all/cards';
     this.budgetCards = await this.db.getCollection<IBudgetCard>(endpoint);
-    console.log('budgetcards', toJS(this.budgetCards));
   }
   // check for latest app version initialised. If this one is different then
   // attempt to reload any hardcoded data present in the app
@@ -266,11 +264,9 @@ export class BudgetStore {
   }
   // group all enterprise cards and create new parent card that will be used to reveal group
   private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {
-    console.log('create group', cards);
     const allGroupings = cards.map(e => toJS(e.groupings));
     const mergedGroupings: string[] = [].concat.apply([], allGroupings);
     const uniqueGroups = [...new Set(mergedGroupings)].sort();
-    console.log('unique groups', uniqueGroups);
     const enterpriseTypeCards: IBudgetCardDB[] = uniqueGroups.map(group => {
       return {
         id: group,
@@ -282,7 +278,6 @@ export class BudgetStore {
         _modified: new Date().toISOString()
       };
     });
-    console.log('type cards', enterpriseTypeCards);
     return enterpriseTypeCards;
   }
 }

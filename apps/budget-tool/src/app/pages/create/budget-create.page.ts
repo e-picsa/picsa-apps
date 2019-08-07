@@ -37,8 +37,6 @@ export class BudgetCreatePage implements OnInit {
 
   ngOnInit() {
     this.generateBudgetForm();
-    console.log('active budget', this.store.activeBudgetValue);
-    console.log('form', this.budgetMetaForm);
   }
 
   /**************************************************************************
@@ -62,7 +60,6 @@ export class BudgetCreatePage implements OnInit {
     this.budgetMetaForm.patchValue({
       enterprise
     });
-    console.log('form', this.budgetMetaForm.value);
   }
   async save() {
     const meta = this.budgetMetaForm.value as IBudgetMeta;

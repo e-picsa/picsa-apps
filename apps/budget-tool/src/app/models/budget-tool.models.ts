@@ -6,12 +6,13 @@ export interface IBudget extends IDBDoc {
   apiVersion: number;
 }
 
+// NOTE - keep all value formats as arrays to make easier to work with generally
 export interface IBudgetPeriodData {
   activities: IBudgetCard[];
   inputs: IBudgetCardWithValues[];
   outputs: IBudgetCardWithValues[];
-  familyLabour: any;
-  produceConsumed: any;
+  familyLabour: IBudgetCardWithValues[];
+  produceConsumed: IBudgetCardWithValues[];
 }
 // i.e. 'activities' | 'inputs' | ... use with 'key in IBudgetPeriodType' for asserting on objects
 export type IBudgetPeriodType = keyof IBudgetPeriodData;
@@ -31,8 +32,11 @@ export type IBudgetValueScale = 0.1 | 1 | 10;
 /***************************************************************************** */
 export interface IBudgetActiveCell {
   periodIndex: number;
+  periodLabel: string;
   typeKey: IBudgetPeriodType;
-  value?: IBudgetPeriodData;
+  typeLabel: string;
+  // manually adapted from IBudgetPeriodData above as automated typings difficult
+  cellData: IBudgetCardWithValues[] | IBudgetCard[];
 }
 
 /***************************************************************************** */
