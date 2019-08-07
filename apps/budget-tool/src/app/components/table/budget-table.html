@@ -23,11 +23,11 @@
       {{ periodLabels[columnIndex] }}
     </div>
     <!-- period rows -->
-    <div *ngFor="let row of rows; let rowIndex = index" class="cell">
+    <div *ngFor="let row of rows" class="cell">
       <budget-cell
         [type]="row.key"
         [cellData]="budget.data[columnIndex][row.key]"
-        (click)="onCellClick(columnIndex, row, rowIndex)"
+        (click)="onCellClick(columnIndex, row)"
       ></budget-cell>
     </div>
     <!-- Cash Balance -->

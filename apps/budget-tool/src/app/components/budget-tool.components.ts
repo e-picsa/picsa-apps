@@ -19,6 +19,7 @@ import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaDbModule } from '@picsa/modules';
 import { BudgetBalanceDotsComponent } from './balance/balance-dots/balance-dots';
+import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,8 @@ import { BudgetBalanceDotsComponent } from './balance/balance-dots/balance-dots'
     BudgetCardListComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
+    BudgetCellEditorComponent,
+    BudgetCellEditorInputValuesComponent,
     BudgetCellLabourComponent,
     BudgetCellValueComponent,
     BudgetListItemComponent,
@@ -53,6 +56,7 @@ import { BudgetBalanceDotsComponent } from './balance/balance-dots/balance-dots'
     BudgetCardListComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
+    BudgetCellEditorInputValuesComponent,
     BudgetCellLabourComponent,
     BudgetCellValueComponent,
     BudgetListItemComponent,

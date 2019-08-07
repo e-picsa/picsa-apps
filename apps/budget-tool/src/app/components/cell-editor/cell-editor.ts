@@ -4,7 +4,8 @@ import { ENVIRONMENT } from '@picsa/environments';
 import {
   IBudgetActiveCell,
   IBudgetCard,
-  IBudgetPeriodData
+  IBudgetCardWithValues,
+  IBudgetCardValues
 } from '../../models/budget-tool.models';
 import { FadeInOut } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
@@ -14,7 +15,9 @@ import { toJS } from 'mobx';
   selector: 'budget-cell-editor',
   templateUrl: './cell-editor.html',
   styleUrls: ['./cell-editor.scss'],
-  animations: [FadeInOut({ inSpeed: 200, inDelay: 500 })]
+  animations: [
+    FadeInOut({ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 })
+  ]
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
@@ -24,7 +27,7 @@ export class BudgetCellEditorComponent {
   currency = ENVIRONMENT.region.currency;
   allBudgetCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};
-  selectedArray: IBudgetCard[] = [];
+  selectedArray: IBudgetCardWithValues[] = [];
   stepsShown = {};
   showAllCards = false;
   @Input() set cell(cell: IBudgetActiveCell) {
@@ -37,8 +40,11 @@ export class BudgetCellEditorComponent {
   constructor(private store: BudgetStore) {}
 
   setValues(cell: IBudgetActiveCell) {
-    cell.cellData.forEach(card => (this.selected[card.id] = true));
-    this.selectedArray = cell.cellData;
+    const selected = {};
+    cell.cellData.forEach(card => (selected[card.id] = true));
+    this.selected = selected;
+    const cellData = cell.cellData;
+    this.selectedArray = cellData;
   }
 
   resetView() {
@@ -65,7 +71,8 @@ export class BudgetCellEditorComponent {
     if (arrIndex > -1) {
       this.selectedArray.splice(arrIndex, 1);
     } else {
-      this.selectedArray.push(toJS(card));
+      const defaultValues = { cost: null, quantity: null };
+      this.selectedArray.push({ ...card, values: defaultValues });
     }
   }
   onNextClicked() {
@@ -77,7 +84,18 @@ export class BudgetCellEditorComponent {
     }
   }
 
+  // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
+  onCardValueChange(values: IBudgetCardValues, index: number) {
+    this.selectedArray[index].values = values;
+  }
+
   saveCell() {
     this.store.saveEditor(this.selectedArray);
+  }
+
+  // use trackby on inputs as otherwise each one changing would re-render all others
+  // (updating any input re-renders all others)
+  trackByIndex(index: number, obj: any): any {
+    return index;
   }
 }

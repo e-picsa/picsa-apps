@@ -1,0 +1,19 @@
+<mat-form-field class="card-input-field">
+  <input
+    matInput
+    [placeholder]="'Quantity' | translate"
+    [value]="values.quantity"
+    type="number"
+    (change)="setValue($event, 'quantity')"
+  />
+</mat-form-field>
+<mat-form-field class="card-input-field">
+  <span matPrefix>{{ currency }} &nbsp;</span>
+  <input
+    matInput
+    [placeholder]="'Cost' | translate"
+    [value]="values.cost"
+    type="number"
+    (change)="setValue($event, 'cost')"
+  />
+</mat-form-field>

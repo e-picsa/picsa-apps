@@ -32,8 +32,7 @@ export class BudgetTableComponent implements OnInit {
     this.periodLabels = this.store.budgetPeriodLabels;
   }
 
-  onCellClick(columnIndex: number, row: IBudgetRow, rowIndex: number) {
-    console.log(columnIndex, row, rowIndex);
+  onCellClick(columnIndex: number, row: IBudgetRow) {
     const cell: IBudgetActiveCell = {
       periodIndex: columnIndex,
       periodLabel: this.periodLabels[columnIndex],
@@ -42,7 +41,7 @@ export class BudgetTableComponent implements OnInit {
       // cell data will be populated by the store
       cellData: []
     };
-    this.store.toggleEditor(cell);
+    this.store.setActiveCell(cell);
   }
 }
 

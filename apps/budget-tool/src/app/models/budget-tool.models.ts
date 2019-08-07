@@ -8,7 +8,7 @@ export interface IBudget extends IDBDoc {
 
 // NOTE - keep all value formats as arrays to make easier to work with generally
 export interface IBudgetPeriodData {
-  activities: IBudgetCard[];
+  activities: IBudgetCardWithValues[];
   inputs: IBudgetCardWithValues[];
   outputs: IBudgetCardWithValues[];
   familyLabour: IBudgetCardWithValues[];
@@ -35,8 +35,7 @@ export interface IBudgetActiveCell {
   periodLabel: string;
   typeKey: IBudgetPeriodType;
   typeLabel: string;
-  // manually adapted from IBudgetPeriodData above as automated typings difficult
-  cellData: IBudgetCardWithValues[] | IBudgetCard[];
+  cellData: IBudgetCardWithValues[];
 }
 
 /***************************************************************************** */
@@ -54,7 +53,7 @@ export interface IBudgetCard {
 }
 export type IBudgetCardDB = IBudgetCard & IDBDoc;
 
-interface IBudgetCardWithValues extends IBudgetCard {
+export interface IBudgetCardWithValues extends IBudgetCard {
   values: IBudgetCardValues;
 }
 
@@ -63,7 +62,7 @@ interface IBudgetCardCustomMeta {
   dateCreated: string;
   createdBy: string;
 }
-interface IBudgetCardValues {
+export interface IBudgetCardValues {
   quantity: number;
   cost: number;
 }

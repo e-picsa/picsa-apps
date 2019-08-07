@@ -35,14 +35,20 @@
     <!-- Value Input Step-->
     <mat-step *ngIf="stepsShown.valueStep">
       <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
-      <div>
-        <budget-card
-          *ngFor="let card of selectedArray"
-          [card]="card"
-        ></budget-card>
+      <div
+        *ngFor="let card of selectedArray; let i = index; trackBy: trackByIndex"
+      >
+        <!-- NOTE - difficult and expensive to use ngModels in ngFor so use manual bindings -->
+        <budget-card [card]="card"></budget-card>
+        <budget-cell-editor-input-values
+          [values]="card.values"
+          (onValueChange)="onCardValueChange($event, i)"
+        ></budget-cell-editor-input-values>
         <div *ngIf="selectedArray.length === 0"></div>
       </div>
     </mat-step>
+    <!-- Family Labout Step -->
+    <mat-step *ngIf="stepsShown.familyLabourStep"> </mat-step>
   </mat-horizontal-stepper>
 
   <button

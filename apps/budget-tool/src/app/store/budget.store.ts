@@ -10,7 +10,7 @@ import {
   IBudgetActiveCell,
   IBudgetMeta,
   IBudgetCardDB,
-  IBudgetPeriodType
+  IBudgetCardWithValues
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS, BUDGET_PERIOD_ROWS } from './templates';
@@ -90,18 +90,23 @@ export class BudgetStore {
     this.saveBudget();
   }
   // populate correct budget data based on editor data and current active cell
-  saveEditor(data: IBudgetCard[]) {
+  saveEditor(data: IBudgetCardWithValues[]) {
     const d = this.activeBudget.data;
     const c = this.activeCell;
     d[c.periodIndex][c.typeKey] = data;
     this.patchBudget({ data: d });
   }
   @action()
-  toggleEditor(cell: IBudgetActiveCell) {
-    if (cell) {
-      cell.cellData = this.activeBudget.data[cell.periodIndex][cell.typeKey];
-      this.activeCell = cell;
-    }
+  setActiveCell(cell: IBudgetActiveCell) {
+    cell.cellData = this.activeBudgetValue.data[cell.periodIndex][cell.typeKey];
+    this.activeCell = cell;
+    // use small timeout to allow time for exit animations
+    setTimeout(() => {
+      this.toggleEditor();
+    }, 200);
+  }
+  @action()
+  toggleEditor() {
     this.isEditorOpen = !this.isEditorOpen;
   }
 
