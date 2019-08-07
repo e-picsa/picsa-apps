@@ -6,7 +6,8 @@ const CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'apply fertiliser',
     id: 'apply-fertiliser',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'activities',
@@ -305,7 +306,8 @@ const CARDS: IBudgetCard[] = [
     type: 'inputs',
     label: 'manure sacks',
     id: 'manure-sacks',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'inputs',
