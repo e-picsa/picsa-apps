@@ -90,11 +90,6 @@
               "apps/budget-tool/src/assets",
               {
                 "glob": "**/*",
-                "input": "./libs/shared-assets/svgs/crops",
-                "output": "./assets/images"
-              },
-              {
-                "glob": "**/*",
                 "input": "./libs/shared-assets/svgs",
                 "output": "./assets/images"
               }

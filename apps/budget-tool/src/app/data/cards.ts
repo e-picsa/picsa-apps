@@ -30,7 +30,8 @@ const CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'feeding livestock',
     id: 'feeding-livestock',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'activities',
@@ -66,7 +67,8 @@ const CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'post-harvest handling',
     id: 'post-harvest-handling',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'activities',
@@ -91,7 +93,8 @@ const CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'transport',
     id: 'transport',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'activities',
@@ -252,26 +255,45 @@ const CARDS: IBudgetCard[] = [
     groupings: ['fruits'],
     imgType: 'svg'
   },
-  { type: 'inputs', label: 'bags', id: 'bags', groupings: ['livestock'] },
+  {
+    type: 'inputs',
+    label: 'bags',
+    id: 'bags',
+    groupings: ['livestock', 'crops']
+  },
   {
     type: 'inputs',
     label: 'chemicals',
     id: 'chemicals',
-    groupings: ['crop']
+    groupings: ['crop'],
+    imgType: 'svg'
   },
-  { type: 'inputs', label: 'feed', id: 'feed', groupings: ['livestock'] },
+  {
+    type: 'inputs',
+    label: 'feed',
+    id: 'feed',
+    groupings: ['livestock'],
+    imgType: 'svg'
+  },
   {
     type: 'inputs',
     label: 'fertiliser',
     id: 'fertiliser',
     groupings: ['crop']
   },
-  { type: 'inputs', label: 'firewood', id: 'firewood', groupings: ['crop'] },
   {
     type: 'inputs',
-    label: 'hire ox cart',
-    id: 'hire-ox-cart',
-    groupings: ['crop']
+    label: 'wood',
+    id: 'wood',
+    groupings: ['crop'],
+    imgType: 'svg'
+  },
+  {
+    type: 'inputs',
+    label: 'ox cart',
+    id: 'ox-cart',
+    groupings: ['crop'],
+    imgType: 'svg'
   },
   {
     type: 'inputs',
@@ -303,12 +325,6 @@ const CARDS: IBudgetCard[] = [
     id: 'protective-equipment',
     groupings: ['crop']
   },
-  {
-    type: 'inputs',
-    label: 'purchase ox cart',
-    id: 'purchase-ox-cart',
-    groupings: ['crop']
-  },
   { type: 'inputs', label: 'seeds', id: 'seeds', groupings: ['crop'] },
   {
     type: 'inputs',
@@ -330,12 +346,19 @@ const CARDS: IBudgetCard[] = [
     groupings: ['crop', 'livestock']
   },
   { type: 'outputs', label: 'crop', id: 'crop', groupings: ['crop'] },
-  { type: 'outputs', label: 'eggs', id: 'eggs', groupings: ['livestock'] },
+  {
+    type: 'outputs',
+    label: 'eggs',
+    id: 'eggs',
+    groupings: ['livestock'],
+    imgType: 'svg'
+  },
   {
     type: 'outputs',
     label: 'fodder for livestock',
     id: 'fodder-for-livestock',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'outputs',
@@ -343,22 +366,42 @@ const CARDS: IBudgetCard[] = [
     id: 'manure-for-compost',
     groupings: ['livestock']
   },
-  { type: 'outputs', label: 'meat', id: 'meat', groupings: ['livestock'] },
-  { type: 'outputs', label: 'milk', id: 'milk', groupings: ['livestock'] },
+  {
+    type: 'outputs',
+    label: 'meat',
+    id: 'meat',
+    groupings: ['livestock'],
+    imgType: 'svg'
+  },
+  {
+    type: 'outputs',
+    label: 'milk',
+    id: 'milk',
+    groupings: ['livestock'],
+    imgType: 'svg'
+  },
   { type: 'outputs', label: 'money', id: 'money', groupings: ['crop'] },
-  { type: 'outputs', label: 'wood', id: 'wood', groupings: ['crop'] },
+  {
+    type: 'outputs',
+    label: 'wood',
+    id: 'wood',
+    groupings: ['crop'],
+    imgType: 'svg'
+  },
   { type: 'produceConsumed', label: 'crop', id: 'crop', groupings: ['crop'] },
   {
     type: 'produceConsumed',
     label: 'eggs',
     id: 'eggs',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'produceConsumed',
     label: 'meat',
     id: 'meat',
-    groupings: ['livestock']
+    groupings: ['livestock'],
+    imgType: 'svg'
   },
   {
     type: 'produceConsumed',
@@ -370,7 +413,7 @@ const CARDS: IBudgetCard[] = [
     type: 'produceConsumed',
     label: 'money',
     id: 'money',
-    groupings: ['crop']
+    groupings: ['crop', 'livestock']
   }
 ];
 

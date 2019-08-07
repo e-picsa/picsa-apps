@@ -16,7 +16,6 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
-    console.log('init', this.card);
     if (this.card.customMeta) {
       this.imgData = this.card.customMeta.imgData;
     } else {
