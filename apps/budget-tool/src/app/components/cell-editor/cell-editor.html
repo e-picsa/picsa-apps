@@ -45,7 +45,21 @@
           [values]="card.values"
           (onValueChange)="onCardValueChange($event, i)"
         ></budget-cell-editor-input-values>
-        <div *ngIf="selectedArray.length === 0"></div>
+      </div>
+    </mat-step>
+    <!-- Consumed Input Step-->
+    <mat-step *ngIf="stepsShown.consumedStep && selectedArray.length > 0">
+      <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
+      <div
+        *ngFor="let card of selectedArray; let i = index"
+        class="input-values-container"
+      >
+        <!-- NOTE - difficult and expensive to use ngModels in ngFor so use manual bindings -->
+        <budget-card [card]="card"></budget-card>
+        <budget-cell-editor-produce-consumed
+          [values]="card.values"
+          (onValueChange)="onCardValueChange($event, i)"
+        ></budget-cell-editor-produce-consumed>
       </div>
     </mat-step>
     <!-- Family Labour Step -->

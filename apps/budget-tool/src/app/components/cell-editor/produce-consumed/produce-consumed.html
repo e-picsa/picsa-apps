@@ -1,0 +1,12 @@
+<div class="input-values-container">
+  <mat-form-field class="card-input-field quantity">
+    <input
+      matInput
+      class="input-editable"
+      [placeholder]="'Quantity' | translate"
+      [value]="values.quantity"
+      type="number"
+      (change)="setValue($event, 'quantity')"
+    />
+  </mat-form-field>
+</div>

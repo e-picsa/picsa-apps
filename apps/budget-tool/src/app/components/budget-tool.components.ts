@@ -19,6 +19,7 @@ import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-l
 import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
+import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labo
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
+    BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
     BudgetTableComponent,
@@ -55,6 +57,7 @@ import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labo
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
+    BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
     BudgetTableComponent,

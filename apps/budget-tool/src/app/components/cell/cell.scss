@@ -22,19 +22,20 @@
   opacity: 0.2;
 }
 
-.badge {
-  position: relative;
-  left: -10px;
-  height: calc(1em + 6px);
-  padding: 3px 5px;
-  border-radius: 50%;
-  z-index: 2;
-}
 .consumed-badge {
-  background-color: #5062bd;
-  color: rgba(255, 255, 255, 0.9);
 }
-.output-badge {
-  background-color: #bc9b06;
-  color: rgba(255, 255, 255, 0.9);
+.badge {
+  left: -14px;
+  bottom: -14px;
+  color: rgba(255, 255, 255, 0.95);
+}
+.badge.input-badge > .mat-badge-content {
+  background-color: #bc89d8;
+}
+.badge.output-badge > .mat-badge-content {
+  background-color: #90b36e;
+}
+.badge.consumed-badge > .mat-badge-content {
+  background-color: #d8d8d8;
+  color: rgba(0, 0, 0, 0.8);
 }

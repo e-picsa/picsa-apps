@@ -4,12 +4,10 @@ import {
   IBudgetActiveCell,
   IBudgetCard,
   IBudgetCardWithValues,
-  IBudgetCardValues,
-  IBudgetFamilyLabourValues
+  IBudgetCardValues
 } from '../../models/budget-tool.models';
 import { FadeInOut } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
-import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-cell-editor',
@@ -59,8 +57,9 @@ export class BudgetCellEditorComponent {
     const type = cell.typeKey;
     this.stepsShown = {
       cardStep: type !== 'familyLabour',
-      valueStep: ['inputs', 'outputs', 'produceConsumed'].includes(type),
-      labourStep: type === 'familyLabour'
+      valueStep: ['inputs', 'outputs'].includes(type),
+      labourStep: type === 'familyLabour',
+      consumedStep: type === 'produceConsumed'
     };
   }
 
@@ -89,9 +88,8 @@ export class BudgetCellEditorComponent {
   onCardValueChange(values: IBudgetCardValues, index: number) {
     this.selectedArray[index].values = values;
   }
-  onFamilyLabourChange(values: IBudgetFamilyLabourValues) {
-    // HACK - force selected array to take object value for saving
-    this.selectedArray = values as any;
+  onFamilyLabourChange(values: IBudgetCardWithValues[]) {
+    this.selectedArray = values;
   }
 
   saveCell() {

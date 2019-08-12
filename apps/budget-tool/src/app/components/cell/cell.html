@@ -1,18 +1,22 @@
 <div class="cell-container" *mobxAutorun>
-  <div *ngIf="_cellData">
+  <div *ngIf="cellData">
     <div [ngSwitch]="type" style="height:100%" id="cellTypeSwitch">
       <!-- activities -->
       <div *ngSwitchCase="'activities'" style="display: flex; flex-wrap: wrap">
         <budget-card-image
-          *ngFor="let card of _cellData"
-          [class]="_cellData.length > 1 ? 'small' : 'medium'"
+          *ngFor="let card of cellData"
+          [class]="cellData.length > 1 ? 'small' : 'medium'"
           [card]="card"
         ></budget-card-image>
       </div>
       <!-- inputs -->
       <div *ngSwitchCase="'inputs'">
-        <div *ngFor="let card of _cellData">
+        <div *ngFor="let card of cellData">
           <budget-card-image class="small" [card]="card"></budget-card-image>
+          <span
+            class="badge input-badge"
+            [matBadge]="card.values.quantity"
+          ></span>
           <budget-balance-dot-value
             *ngIf="card.values.total"
             [value]="card.values.total"
@@ -27,15 +31,19 @@
         style="display: flex; flex-wrap: wrap; padding:5px"
       >
         <budget-card-image
-          *ngFor="let card of _cellData"
+          *ngFor="let card of cellData"
           class="x-small"
           [card]="card"
         ></budget-card-image>
       </div>
       <!-- outputs -->
       <div *ngSwitchCase="'outputs'">
-        <div *ngFor="let card of _cellData">
+        <div *ngFor="let card of cellData">
           <budget-card-image class="small" [card]="card"></budget-card-image>
+          <span
+            class="badge output-badge"
+            [matBadge]="card.values.quantity"
+          ></span>
           <budget-balance-dot-value
             *ngIf="card.values.total"
             [value]="card.values.total"
@@ -45,18 +53,19 @@
       </div>
       <!-- produce consumed -->
       <div *ngSwitchCase="'produceConsumed'">
-        <div *ngFor="let card of _cellData">
-          <div *ngIf="card.values.consumed" style="display: flex">
-            <budget-card-image class="small" [card]="card"></budget-card-image>
-            <ion-badge class="consumed-badge">{{ card.consumed }}</ion-badge>
-          </div>
+        <div *ngFor="let card of cellData">
+          <budget-card-image class="small" [card]="card"></budget-card-image>
+          <span
+            class="badge consumed-badge"
+            [matBadge]="card.values.quantity"
+          ></span>
         </div>
       </div>
       <!-- default (none) -->
       <!-- <div *ngSwitchDefault></div> -->
     </div>
   </div>
-  <div *ngIf="!_cellData" class="add-cell-data">
+  <div *ngIf="!cellData" class="add-cell-data">
     <mat-icon>add</mat-icon>
   </div>
   <!-- *** future - only show add for produce consumed if there are outputs in the corresponding time period -->

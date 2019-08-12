@@ -21,10 +21,12 @@ import { PicsaDbService, generateDBMeta } from '@picsa/services/core/';
 import { IAppMeta } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
 import { ENVIRONMENT } from '@picsa/environments';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetStore {
+  changes = new BehaviorSubject<[number, string]>([null, null]);
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget;
   @observable activeCell: IBudgetActiveCell;
@@ -88,7 +90,6 @@ export class BudgetStore {
   // merge current budget with added data, optionally can merge deep to include
   // nested properties
   patchBudget(patch: Partial<IBudget>, deepMerge = false) {
-    console.log('patching', patch, deepMerge);
     const budget = deepMerge
       ? merge(this.activeBudget, patch)
       : { ...this.activeBudget, ...patch };
@@ -101,6 +102,8 @@ export class BudgetStore {
     const c = this.activeCell;
     d[c.periodIndex][c.typeKey] = data;
     this.patchBudget({ data: d });
+    // use behaviour subject to provide better change detection binding on changes
+    this.changes.next([c.periodIndex, c.typeKey]);
   }
   @action()
   setActiveCell(cell: IBudgetActiveCell) {

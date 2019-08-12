@@ -27,8 +27,8 @@
     <!-- period rows -->
     <div *ngFor="let row of rows" class="cell">
       <budget-cell
+        [periodIndex]="columnIndex"
         [type]="row.key"
-        [cellData]="budget.data[columnIndex][row.key]"
         (click)="onCellClick(columnIndex, row)"
       ></budget-cell>
     </div>
