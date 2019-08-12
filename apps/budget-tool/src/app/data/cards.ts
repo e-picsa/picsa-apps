@@ -389,27 +389,6 @@ const CARDS: IBudgetCard[] = [
     groupings: ['crop'],
     imgType: 'svg'
   },
-  { type: 'produceConsumed', label: 'crop', id: 'crop', groupings: ['crop'] },
-  {
-    type: 'produceConsumed',
-    label: 'eggs',
-    id: 'eggs',
-    groupings: ['livestock'],
-    imgType: 'svg'
-  },
-  {
-    type: 'produceConsumed',
-    label: 'meat',
-    id: 'meat',
-    groupings: ['livestock'],
-    imgType: 'svg'
-  },
-  {
-    type: 'produceConsumed',
-    label: 'milk',
-    id: 'milk',
-    groupings: ['livestock']
-  },
   {
     type: 'other',
     label: 'family labour',

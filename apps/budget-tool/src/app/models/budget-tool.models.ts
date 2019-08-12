@@ -76,3 +76,10 @@ export interface IBudgetCardValues {
 export interface IBudgetDatabase {
   cards: IBudgetCard[];
 }
+
+export type IBudgetBalance = IBudgetPeriodBalance[];
+
+interface IBudgetPeriodBalance {
+  period: number;
+  running: number;
+}

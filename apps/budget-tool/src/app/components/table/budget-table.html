@@ -34,18 +34,16 @@
     </div>
     <!-- Cash Balance -->
     <div class="cell">
-      <div *ngIf="balance && balance[i]">
-        <div>{{ period }}: {{ balance[i].period }}</div>
-        <budget-balance-dot-value
-          [value]="card.total"
-          [valueCounters]="store.valueCounters"
-        ></budget-balance-dot-value>
+      <div>
+        <div style="padding:5px">
+          {{ periodLabels[columnIndex] }}:
+          {{ store.balance[columnIndex].period | number: '.0' }}
+        </div>
         <hr />
-        <div>running: {{ balance[i].running }}</div>
-        <budget-balance-dot-value
-          [value]="card.total"
-          [valueCounters]="store.valueCounters"
-        ></budget-balance-dot-value>
+        <div style="padding:5px">
+          <div>{{ 'Balance' | translate }}</div>
+          <span>{{ store.balance[columnIndex].running | number: '.0' }}</span>
+        </div>
       </div>
     </div>
   </div>

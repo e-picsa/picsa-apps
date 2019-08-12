@@ -12,7 +12,8 @@ import {
   IBudgetCardDB,
   IBudgetCardWithValues,
   IBudgetValueScale,
-  IBudgetValueCounters
+  IBudgetValueCounters,
+  IBudgetBalance
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
@@ -33,13 +34,7 @@ export class BudgetStore {
   @observable isEditorOpen = false;
   @observable savedBudgets: IBudget[];
   @observable valueCounters: IBudgetValueCounters;
-  get activeBudgetValue() {
-    return toJS(this.activeBudget);
-  }
-  // enterprises only have a single group which is used during card filtering
-  get enterpriseGroup() {
-    return this.activeBudget.meta.enterprise.groupings![0];
-  }
+  @observable balance: IBudgetBalance;
   // get unique list of types in enterprise cards
   @computed get enterpriseTypeCards(): IBudgetCardDB[] {
     const enterpriseCards = this.budgetCards.filter(
@@ -50,24 +45,42 @@ export class BudgetStore {
 
   // filter cards to match type (e.g. activities) and group (e.g. crops)
   @computed get groupTypeCards(): IBudgetCard[] {
-    const type = this.activeCell.typeKey;
-    const typeCards = this.budgetCards.filter(c => c.type === type);
-    return typeCards.filter(
+    return this.typeCards.filter(
       c =>
         c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
     );
   }
+
   @computed get otherTypeCards(): IBudgetCard[] {
-    const type = this.activeCell.typeKey;
-    const typeCards = this.budgetCards.filter(c => c.type === type);
-    return typeCards.filter(c => !c.groupings.includes(this.enterpriseGroup));
+    return this.typeCards.filter(
+      c => !c.groupings.includes(this.enterpriseGroup)
+    );
   }
   @computed get budgetPeriodLabels(): string[] {
     return this._generateLabels(this.activeBudget.meta);
   }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
-    this.valueCounters = this._generateValueCounters();
+  }
+  @action calculateBalance() {
+    this.balance = this._calculateBalance(this.activeBudget);
+    console.log('balance', toJS(this.balance));
+  }
+
+  get typeCards() {
+    let type = this.activeCell.typeKey;
+    // produce consumed shows same cards as outpus
+    if (type === 'produceConsumed') {
+      type = 'outputs';
+    }
+    return this.budgetCards.filter(c => c.type === type);
+  }
+  get activeBudgetValue() {
+    return toJS(this.activeBudget);
+  }
+  // enterprises only have a single group which is used during card filtering
+  get enterpriseGroup() {
+    return this.activeBudget.meta.enterprise.groupings![0];
   }
 
   constructor(private db: PicsaDbService) {
@@ -104,6 +117,7 @@ export class BudgetStore {
     this.patchBudget({ data: d });
     // use behaviour subject to provide better change detection binding on changes
     this.changes.next([c.periodIndex, c.typeKey]);
+    this.calculateBalance();
   }
   @action()
   setActiveCell(cell: IBudgetActiveCell) {
@@ -125,7 +139,7 @@ export class BudgetStore {
     this.patchBudget({
       meta: { ...this.activeBudget.meta, valueScale: newScale }
     });
-    this.valueCounters = this._generateValueCounters();
+    this.valueCounters = this._generateValueCounters(this.activeBudget);
   }
 
   /**************************************************************************
@@ -158,6 +172,10 @@ export class BudgetStore {
   async loadBudget(budget: IBudget) {
     console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
+    this.valueCounters = this._generateValueCounters(budget);
+    console.log('value counters', toJS(this.valueCounters));
+    this.balance = this._calculateBalance(budget);
+    console.log('balance', toJS(this.balance));
     this.setActiveBudget(budget);
   }
 
@@ -222,48 +240,36 @@ export class BudgetStore {
    *
    ***************************************************************************/
 
-  private calculateBalance() {
+  private _calculateBalance(budget: IBudget): IBudgetBalance {
     // total for current period
-    // const data = this.store.activeBudget.data;
-    // const totals = {};
-    // let runningTotal = 0;
-    // for (const key in data) {
-    //   if (data.hasOwnProperty(key)) {
-    //     const periodTotal = this._calculatePeriodTotal(data[key]);
-    //     runningTotal = runningTotal + periodTotal;
-    //     totals[key] = {
-    //       period: periodTotal,
-    //       running: runningTotal
-    //     };
-    //   }
-    // }
-    // this.balance = totals;
+    const totals = [];
+    let runningTotal = 0;
+    budget.data.forEach((period, i) => {
+      const periodTotal = this._calculatePeriodTotal(period);
+      runningTotal = runningTotal + periodTotal;
+      totals[i] = {
+        period: periodTotal,
+        running: runningTotal
+      };
+    });
+    return totals;
   }
   private _calculatePeriodTotal(period: IBudgetPeriodData) {
-    // let balance = 0;
-    // if (period) {
-    //   const inputCards = Object.values(period.inputs);
-    //   const inputsBalance = this._calculatePeriodCardTotals(inputCards);
-    //   const outputCards = Object.values(period.outputs);
-    //   const outputsBalance = this._calculatePeriodCardTotals(outputCards);
-    //   balance = inputsBalance + outputsBalance;
-    // }
-    // return balance;
+    let balance = 0;
+    const inputCards = Object.values(period.inputs);
+    const inputsBalance = this._calculatePeriodCardTotals(inputCards);
+    const outputCards = Object.values(period.outputs);
+    const outputsBalance = this._calculatePeriodCardTotals(outputCards);
+    balance = outputsBalance - inputsBalance;
+    return balance;
   }
   private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
-    console.log('TODO');
-    // let total = 0;
-    // if (cards && cards.length > 0) {
-    //   cards.forEach(card => {
-    //     if (card.quantity && card.cost) {
-    //       const quantity = card.consumed
-    //         ? card.quantity - card.consumed
-    //         : card.quantity;
-    //       total = total + quantity * card.cost;
-    //     }
-    //   });
-    // }
-    // return total;
+    let total = 0;
+    cards.forEach(card => {
+      const t = card.values.total ? card.values.total : 0;
+      total = total + t;
+    });
+    return total;
   }
 
   /**************************************************************************
@@ -306,8 +312,8 @@ export class BudgetStore {
   // each currency has a base unit (e.g. MK 1000) which is used to generate
   // counter representations in orders of 10 (i.e. 100, 1000, 10000) and half values.
   // These can additionaly be scaled up or down by magnitudes of 10.
-  private _generateValueCounters() {
-    const scale = this.activeBudget.meta.valueScale;
+  private _generateValueCounters(budget: IBudget) {
+    const scale = budget.meta.valueScale;
     // use rounding to avoid annoying precious errors
     const b = Math.round(ENVIRONMENT.region.currencyBaseValue * scale);
     // return as arrays to ensure order retained if iterating over

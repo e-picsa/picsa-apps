@@ -6,7 +6,7 @@
     style="overflow: auto; margin-bottom: 20px; flex:1"
   >
     <!-- Card Select Step-->
-    <mat-step *ngIf="stepsShown.cardStep">
+    <mat-step *ngIf="stepsShown.cardStep" @fadeInOut>
       <ng-template matStepLabel>{{ _cell.typeLabel | translate }}</ng-template>
       <div *mobxAutorun>
         <budget-card
@@ -33,7 +33,10 @@
       </div>
     </mat-step>
     <!-- Value Input Step-->
-    <mat-step *ngIf="stepsShown.valueStep && selectedArray.length > 0">
+    <mat-step
+      *ngIf="stepsShown.valueStep && selectedArray.length > 0"
+      @fadeInOut
+    >
       <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
       <div
         *ngFor="let card of selectedArray; let i = index"
@@ -48,7 +51,10 @@
       </div>
     </mat-step>
     <!-- Consumed Input Step-->
-    <mat-step *ngIf="stepsShown.consumedStep && selectedArray.length > 0">
+    <mat-step
+      *ngIf="stepsShown.consumedStep && selectedArray.length > 0"
+      @fadeInOut
+    >
       <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
       <div
         *ngFor="let card of selectedArray; let i = index"
@@ -63,7 +69,7 @@
       </div>
     </mat-step>
     <!-- Family Labour Step -->
-    <mat-step *ngIf="stepsShown.labourStep">
+    <mat-step *ngIf="stepsShown.labourStep" @fadeInOut>
       <ng-template matStepLabel>{{ 'Family Labour' | translate }}</ng-template>
       <budget-cell-editor-family-labour
         [values]="_cell.cellData"
