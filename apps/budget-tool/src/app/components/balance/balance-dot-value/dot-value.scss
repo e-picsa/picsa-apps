@@ -1,12 +1,12 @@
-.dot-value-container {
-  display: flex;
-  background: white;
-  padding: 1px;
-  opacity: 0.9;
-  max-height: 1.5em;
+:host {
+  display: inline-block;
+  width: 50px;
+  vertical-align: top;
 }
-
-img.dot {
+:host(.negative) {
+  filter: hue-rotate(200deg);
+}
+img {
   width: 10px;
   height: 10px;
 }

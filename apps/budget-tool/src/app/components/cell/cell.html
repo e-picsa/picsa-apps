@@ -2,16 +2,14 @@
   <div *ngIf="_cellData">
     <div [ngSwitch]="type" style="height:100%" id="cellTypeSwitch">
       <!-- inputs -->
-      <div *ngSwitchCase="'inputs'" style="display: flex; flex-wrap: wrap">
+      <div *ngSwitchCase="'inputs'">
         <div *ngFor="let card of _cellData">
-          <budget-card-image
-            [class]="_cellData.length > 1 ? 'small' : 'medium'"
-            [card]="card"
-          ></budget-card-image>
+          <budget-card-image class="small" [card]="card"></budget-card-image>
           <budget-balance-dot-value
             *ngIf="card.values.total"
             [value]="card.values.total"
             [valueCounters]="store.valueCounters"
+            class="negative"
           ></budget-balance-dot-value>
         </div>
       </div>
@@ -31,10 +29,7 @@
       <!-- outputs -->
       <div *ngSwitchCase="'outputs'">
         <div *ngFor="let card of _cellData">
-          <div style="display: flex">
-            <budget-card-image class="small" [card]="card"></budget-card-image>
-            <ion-badge class="output-badge">{{ card.quantity }}</ion-badge>
-          </div>
+          <budget-card-image class="small" [card]="card"></budget-card-image>
           <budget-balance-dot-value
             *ngIf="card.values.total"
             [value]="card.values.total"

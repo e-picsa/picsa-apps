@@ -1,44 +1,10 @@
 :host(.small) {
-  width: 50px;
-
-  img.card-image,
-  .card-image-holder {
-    width: 40px;
-    height: 40px;
-  }
+  width: 40px;
+  display: inline-block;
+  padding: 0 5px 5px 0;
 }
 
 img.card-image {
-  width: 100%;
-}
-
-img.card-image,
-img.card-image-holder {
-  height: 100px;
-  width: 100px;
   object-fit: contain;
-  margin: auto;
-}
-
-img.card-image.add {
-  height: 60px;
-  width: 60px;
-  margin-top: 20px;
-}
-
-img.error-not-fixed {
-  opacity: 0;
-}
-
-img.error-fixed {
-  opacity: 1;
-}
-
-.medium {
-  img.card-image,
-  .card-image-holder {
-    height: 70px;
-    width: 70px;
-    margin: auto;
-  }
+  width: 100%;
 }
