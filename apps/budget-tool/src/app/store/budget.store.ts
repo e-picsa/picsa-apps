@@ -309,7 +309,7 @@ export class BudgetStore {
     // return as arrays to ensure order retained if iterating over
     const counters: IBudgetValueCounters = [
       ['large', 'large-half', 'medium', 'medium-half', 'small', 'small-half'],
-      [10 * b, 5 * b, b, b / 5, b / 10, b / 20]
+      [10 * b, 5 * b, b, b / 2, b / 10, b / 20]
     ];
     return counters;
   }

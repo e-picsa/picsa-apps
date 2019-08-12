@@ -15,6 +15,7 @@ export class BudgetBalanceDotValueComponent implements OnInit {
   counterAllocation: ICounterAllocation[];
   @Input()
   set value(value: number) {
+    console.log('value set', value);
     this._value = value;
     this.generateRepresentation();
   }
@@ -31,7 +32,6 @@ export class BudgetBalanceDotValueComponent implements OnInit {
       const labels = this._valueCounters[0];
       const divisors = this._valueCounters[1];
       const val = this._value;
-      const sign = val >= 0 ? 'positive' : 'negative';
       let allocation = [];
       // keep track of how many times each value is multiplied by to make total
       let toAllocate = Math.abs(val);
@@ -41,18 +41,17 @@ export class BudgetBalanceDotValueComponent implements OnInit {
         allocation = allocation.concat(
           new Array(multiples).fill({
             value: divisor,
-            img: `dot-${labels[i]}-${sign}`,
-            color: sign
+            img: `dot-${labels[i]}`,
+            isNegative: val < 0
           })
         );
       });
       this.counterAllocation = allocation;
-      console.log('value', val, allocation.map(a => a.value));
     }
   }
 }
 type ICounterAllocation = {
   value: number;
   img: string;
-  color: 'positive' | 'negative';
+  isNegative: boolean;
 };
