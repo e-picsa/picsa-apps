@@ -49,9 +49,7 @@ export class BudgetStore {
   // filter cards to match type (e.g. activities) and group (e.g. crops)
   @computed get groupTypeCards(): IBudgetCard[] {
     const type = this.activeCell.typeKey;
-    const typeCards = this.budgetCards.filter(
-      c => c.type === type || c.type === 'other'
-    );
+    const typeCards = this.budgetCards.filter(c => c.type === type);
     return typeCards.filter(
       c =>
         c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
@@ -67,9 +65,7 @@ export class BudgetStore {
   }
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
-    console.log('active budget', toJS(this.activeBudget));
     this.valueCounters = this._generateValueCounters();
-    console.log('value counters', toJS(this.valueCounters));
   }
 
   constructor(private db: PicsaDbService) {

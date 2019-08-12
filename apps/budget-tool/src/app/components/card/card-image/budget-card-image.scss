@@ -9,6 +9,11 @@
   height: 40px;
   padding: 0 5px 5px 0;
 }
+:host(.x-small) {
+  width: 20px;
+  height: 20px;
+  padding: 0 5px 5px 0;
+}
 
 img.card-image {
   object-fit: contain;

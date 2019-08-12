@@ -4,10 +4,12 @@ import {
   IBudgetActiveCell,
   IBudgetCard,
   IBudgetCardWithValues,
-  IBudgetCardValues
+  IBudgetCardValues,
+  IBudgetFamilyLabourValues
 } from '../../models/budget-tool.models';
 import { FadeInOut } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
+import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-cell-editor',
@@ -37,11 +39,13 @@ export class BudgetCellEditorComponent {
   constructor(private store: BudgetStore) {}
 
   setValues(cell: IBudgetActiveCell) {
-    const selected = {};
-    cell.cellData.forEach(card => (selected[card.id] = true));
-    this.selected = selected;
-    const cellData = cell.cellData;
-    this.selectedArray = cellData;
+    // family labour handled directly, otherwise iterate over objects
+    if (cell.typeKey !== 'familyLabour') {
+      const selected = {};
+      cell.cellData.forEach(card => (selected[card.id] = true));
+      this.selected = selected;
+      this.selectedArray = [...cell.cellData];
+    }
   }
 
   resetView() {
@@ -54,7 +58,7 @@ export class BudgetCellEditorComponent {
   setSteps(cell: IBudgetActiveCell) {
     const type = cell.typeKey;
     this.stepsShown = {
-      cardStep: true,
+      cardStep: type !== 'familyLabour',
       valueStep: ['inputs', 'outputs', 'produceConsumed'].includes(type),
       labourStep: type === 'familyLabour'
     };
@@ -84,6 +88,10 @@ export class BudgetCellEditorComponent {
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
   onCardValueChange(values: IBudgetCardValues, index: number) {
     this.selectedArray[index].values = values;
+  }
+  onFamilyLabourChange(values: IBudgetFamilyLabourValues) {
+    // HACK - force selected array to take object value for saving
+    this.selectedArray = values as any;
   }
 
   saveCell() {

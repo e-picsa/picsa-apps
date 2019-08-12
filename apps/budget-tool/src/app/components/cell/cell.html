@@ -1,6 +1,14 @@
 <div class="cell-container" *mobxAutorun>
   <div *ngIf="_cellData">
     <div [ngSwitch]="type" style="height:100%" id="cellTypeSwitch">
+      <!-- activities -->
+      <div *ngSwitchCase="'activities'" style="display: flex; flex-wrap: wrap">
+        <budget-card-image
+          *ngFor="let card of _cellData"
+          [class]="_cellData.length > 1 ? 'small' : 'medium'"
+          [card]="card"
+        ></budget-card-image>
+      </div>
       <!-- inputs -->
       <div *ngSwitchCase="'inputs'">
         <div *ngFor="let card of _cellData">
@@ -16,15 +24,13 @@
       <!-- family labour -->
       <div
         *ngSwitchCase="'familyLabour'"
-        style="display: flex; flex-wrap: wrap"
+        style="display: flex; flex-wrap: wrap; padding:5px"
       >
-        <div *ngFor="let card of _cellData">
-          <budget-cell-labour
-            *ngIf="card.values.people && card.values.days"
-            [people]="card.days"
-            [days]="card.people"
-          ></budget-cell-labour>
-        </div>
+        <budget-card-image
+          *ngFor="let card of _cellData"
+          class="x-small"
+          [card]="card"
+        ></budget-card-image>
       </div>
       <!-- outputs -->
       <div *ngSwitchCase="'outputs'">
@@ -46,14 +52,8 @@
           </div>
         </div>
       </div>
-      <!-- default (activities) -->
-      <div *ngSwitchDefault style="display: flex; flex-wrap: wrap">
-        <budget-card-image
-          *ngFor="let card of _cellData"
-          [class]="_cellData.length > 1 ? 'small' : 'medium'"
-          [card]="card"
-        ></budget-card-image>
-      </div>
+      <!-- default (none) -->
+      <!-- <div *ngSwitchDefault></div> -->
     </div>
   </div>
   <div *ngIf="!_cellData" class="add-cell-data">

@@ -76,33 +76,3 @@ export interface IBudgetCardValues {
 export interface IBudgetDatabase {
   cards: IBudgetCard[];
 }
-
-// export interface IActivityCard extends IBudgetCard {}
-// export interface IInputCard extends IBudgetCard {
-//   // Type: "input";
-//   quantity?: number;
-//   total?: number;
-//   dots?: any[];
-//   cost?: number;
-// }
-// export interface IOutputCard extends IBudgetCard {
-//   // Type: "output";
-//   quantity?: number;
-//   total?: number;
-//   dots?: any[];
-//   cost?: number;
-//   consumed?: number;
-// }
-
-// export interface ICustomCards {
-//   enterprises: IBudgetCard[];
-//   inputs: IInputCard[];
-//   outputs: IOutputCard[];
-// }
-
-// export interface IBudgetDotValues {
-//   large: number;
-//   medium: number;
-//   small: number;
-//   half: number;
-// }

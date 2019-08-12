@@ -1,22 +1,16 @@
 :host {
   flex: 1;
 }
-
-// cell height needs to accomodate header, padding and potential scrollbar
-// $cellHeight: calc((100vh - 118px) / 6);
 .scroll-content {
   background-color: white !important;
 }
 .budget-container {
   display: flex;
-  overflow: auto;
   height: 100%;
   background-color: white;
   color: black;
-  border-top: 2px solid black;
-  border-left: 2px solid black;
-} //  when printing want fixed positioning and top padding so that download export
-//  has room to populate title where navbar would be
+}
+// TODO - lots of styles below are deprecated, requires tidying
 .budget-container.print-mode {
   position: fixed;
   top: 0;
@@ -26,6 +20,13 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 120px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  border-top: 2px solid black;
+}
+.time-period:first-of-type {
+  border-left: 2px solid black;
 }
 .scroll-content {
   overflow-x: scroll;
@@ -54,17 +55,11 @@
   width: 100%;
   min-width: 150px;
 }
-.time-period {
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
-  flex-grow: 1;
-}
 .cell > div {
   height: 100%;
 }
 .row,
 .cell {
-  // height: $cellHeight;
   flex: 1;
   display: block;
   overflow: auto;
@@ -83,23 +78,9 @@
   font-size: large;
 }
 .cell {
-  width: 120px;
-  padding: 2px;
-}
-.cell {
   border-bottom: 1px solid gray;
 }
-.cell-footer {
-  height: 20px;
-  line-height: 1vh;
-  font-size: 2vh;
-}
-.cell-main {
-  height: 8vh;
-}
-.cell-multiple {
-  max-height: 2em;
-}
+
 .image-holder {
   height: 100%;
 }

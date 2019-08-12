@@ -6,8 +6,7 @@ const CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'apply fertiliser',
     id: 'apply-fertiliser',
-    groupings: ['crop'],
-    imgType: 'svg'
+    groupings: ['crop']
   },
   {
     type: 'activities',
@@ -382,7 +381,7 @@ const CARDS: IBudgetCard[] = [
     groupings: ['livestock'],
     imgType: 'svg'
   },
-  { type: 'outputs', label: 'money', id: 'money', groupings: ['crop'] },
+  { type: 'outputs', label: 'money', id: 'money', groupings: ['*'] },
   {
     type: 'outputs',
     label: 'wood',
@@ -412,16 +411,10 @@ const CARDS: IBudgetCard[] = [
     groupings: ['livestock']
   },
   {
-    type: 'produceConsumed',
-    label: 'money',
-    id: 'money',
-    groupings: ['crop', 'livestock']
-  },
-  {
-    type: 'familyLabour',
+    type: 'other',
     label: 'family labour',
     id: 'family-labour',
-    groupings: ['*'],
+    groupings: [],
     imgType: 'svg'
   },
   {

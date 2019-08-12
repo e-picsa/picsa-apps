@@ -3,9 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
-import { BudgetCardListComponent } from './card/card-list/budget-card-list';
 import { BudgetCardComponent } from './card/budget-card';
-import { BudgetDataCardComponent } from './card/budget-data-card';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetTableComponent } from './table/budget-table';
 import { CardSelectComponent } from './card/card-select/card-select';
@@ -27,9 +25,7 @@ import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labo
     BudgetBalanceLegendComponent,
     BudgetBalanceDotValueComponent,
     BudgetCardComponent,
-    BudgetDataCardComponent,
     BudgetCardImageComponent,
-    BudgetCardListComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
     BudgetCellEditorComponent,
@@ -54,9 +50,7 @@ import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labo
     BudgetBalanceLegendComponent,
     BudgetBalanceDotValueComponent,
     BudgetCardComponent,
-    BudgetDataCardComponent,
     BudgetCardImageComponent,
-    BudgetCardListComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,

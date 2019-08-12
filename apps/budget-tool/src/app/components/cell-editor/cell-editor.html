@@ -33,10 +33,10 @@
       </div>
     </mat-step>
     <!-- Value Input Step-->
-    <mat-step *ngIf="stepsShown.valueStep">
+    <mat-step *ngIf="stepsShown.valueStep && selectedArray.length > 0">
       <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
       <div
-        *ngFor="let card of selectedArray; let i = index; trackBy: trackByIndex"
+        *ngFor="let card of selectedArray; let i = index"
         class="input-values-container"
       >
         <!-- NOTE - difficult and expensive to use ngModels in ngFor so use manual bindings -->
@@ -49,9 +49,12 @@
       </div>
     </mat-step>
     <!-- Family Labour Step -->
-    <mat-step *ngIf="stepsShown.familyLabourStep">
+    <mat-step *ngIf="stepsShown.labourStep">
       <ng-template matStepLabel>{{ 'Family Labour' | translate }}</ng-template>
-      <budget-cell-editor-family-labour></budget-cell-editor-family-labour>
+      <budget-cell-editor-family-labour
+        [values]="_cell.cellData"
+        (onValueChange)="onFamilyLabourChange($event, i)"
+      ></budget-cell-editor-family-labour>
     </mat-step>
   </mat-horizontal-stepper>
 

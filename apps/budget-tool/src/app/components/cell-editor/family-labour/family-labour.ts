@@ -1,27 +1,36 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IBudgetCardValues } from '../../../models/budget-tool.models';
-import { ENVIRONMENT } from '@picsa/environments';
+import {
+  IBudgetCardWithValues,
+  IBudgetCard
+} from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-cell-editor-family-labour',
   templateUrl: './family-labour.html',
   styleUrls: ['./family-labour.scss']
 })
-
-/*  The budget cell editor sits on top of the budget table, so that when opened covers the table
- */
 export class BudgetCellEditorFamilyLabourComponent {
-  @Input() values: IBudgetCardValues;
-  @Output() onValueChange = new EventEmitter<IBudgetCardValues>();
-  currency = ENVIRONMENT.region.currency;
+  @Input() values: IBudgetCardWithValues[];
+  @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
+  totalPeople: number;
 
-  // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
-  setValue(e: Event, key: 'quantity' | 'cost') {
+  ngOnInit(): void {
+    this.totalPeople = this.values.length > 0 ? this.values.length : null;
+  }
+
+  // NOTE - to maintain array format family labour simply populates a basic card for every member
+  // of family labour indicated. In future this might contain more meta info
+  setValue(e: Event) {
     const target = e.target as HTMLInputElement;
-    this.values[key] = Number(target.value);
-    if (this.values.quantity && this.values.cost) {
-      this.values.total = this.values.quantity * this.values.cost;
-    }
-    this.onValueChange.emit(this.values);
+    this.totalPeople = Number(target.value);
+    this.onValueChange.emit(
+      new Array(this.totalPeople).fill(FAMILY_MEMBER_CARD)
+    );
   }
 }
+const FAMILY_MEMBER_CARD: IBudgetCard = {
+  id: 'family-member',
+  label: 'family member',
+  type: 'familyLabour',
+  imgType: 'svg'
+};
