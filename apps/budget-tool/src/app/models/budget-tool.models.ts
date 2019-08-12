@@ -49,7 +49,7 @@ export interface IBudgetCard {
   // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
   id: string;
   label: string;
-  type: IBudgetPeriodType | 'enterprise';
+  type: IBudgetPeriodType | 'enterprise' | 'other';
   groupings?: string[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;

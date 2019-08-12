@@ -15,7 +15,6 @@ export class BudgetBalanceDotValueComponent implements OnInit {
   counterAllocation: ICounterAllocation[];
   @Input()
   set value(value: number) {
-    console.log('value set', value);
     this._value = value;
     this.generateRepresentation();
   }

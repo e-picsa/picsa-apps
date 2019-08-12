@@ -48,8 +48,11 @@
         <div *ngIf="selectedArray.length === 0"></div>
       </div>
     </mat-step>
-    <!-- Family Labout Step -->
-    <mat-step *ngIf="stepsShown.familyLabourStep"> </mat-step>
+    <!-- Family Labour Step -->
+    <mat-step *ngIf="stepsShown.familyLabourStep">
+      <ng-template matStepLabel>{{ 'Family Labour' | translate }}</ng-template>
+      <budget-cell-editor-family-labour></budget-cell-editor-family-labour>
+    </mat-step>
   </mat-horizontal-stepper>
 
   <button

@@ -416,6 +416,20 @@ const CARDS: IBudgetCard[] = [
     label: 'money',
     id: 'money',
     groupings: ['crop', 'livestock']
+  },
+  {
+    type: 'familyLabour',
+    label: 'family labour',
+    id: 'family-labour',
+    groupings: ['*'],
+    imgType: 'svg'
+  },
+  {
+    type: 'other',
+    label: 'add custom',
+    id: 'add-custom',
+    groupings: [],
+    imgType: 'svg'
   }
 ];
 

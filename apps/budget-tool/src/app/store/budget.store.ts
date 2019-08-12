@@ -49,8 +49,13 @@ export class BudgetStore {
   // filter cards to match type (e.g. activities) and group (e.g. crops)
   @computed get groupTypeCards(): IBudgetCard[] {
     const type = this.activeCell.typeKey;
-    const typeCards = this.budgetCards.filter(c => c.type === type);
-    return typeCards.filter(c => c.groupings.includes(this.enterpriseGroup));
+    const typeCards = this.budgetCards.filter(
+      c => c.type === type || c.type === 'other'
+    );
+    return typeCards.filter(
+      c =>
+        c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
+    );
   }
   @computed get otherTypeCards(): IBudgetCard[] {
     const type = this.activeCell.typeKey;

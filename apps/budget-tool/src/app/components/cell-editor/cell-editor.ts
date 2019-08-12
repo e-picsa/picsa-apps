@@ -22,7 +22,6 @@ import { MatStepper } from '@angular/material';
  */
 export class BudgetCellEditorComponent {
   _cell: IBudgetActiveCell;
-
   allBudgetCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCardWithValues[] = [];
@@ -55,7 +54,7 @@ export class BudgetCellEditorComponent {
   setSteps(cell: IBudgetActiveCell) {
     const type = cell.typeKey;
     this.stepsShown = {
-      cardStep: type !== 'familyLabour',
+      cardStep: true,
       valueStep: ['inputs', 'outputs', 'produceConsumed'].includes(type),
       labourStep: type === 'familyLabour'
     };

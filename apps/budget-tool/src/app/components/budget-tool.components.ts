@@ -20,6 +20,7 @@ import { PicsaDbModule } from '@picsa/modules';
 import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
 import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
+import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-
     BudgetCellEditorComponent,
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,
+    BudgetCellEditorFamilyLabourComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
     BudgetTableComponent,
@@ -58,6 +60,7 @@ import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-
     BudgetCellComponent,
     BudgetCellEditorComponent,
     BudgetCellEditorInputValuesComponent,
+    BudgetCellEditorFamilyLabourComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
     BudgetTableComponent,
