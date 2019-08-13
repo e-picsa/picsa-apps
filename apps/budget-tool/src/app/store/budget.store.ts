@@ -295,7 +295,9 @@ export class BudgetStore {
   private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {
     const allGroupings = cards.map(e => toJS(e.groupings));
     const mergedGroupings: string[] = [].concat.apply([], allGroupings);
-    const uniqueGroups = [...new Set(mergedGroupings)].sort();
+    // NOTE - technically Array.from shouldn't be required but current issue with typescript
+    // see https://stackoverflow.com/questions/33464504/using-spread-syntax-and-new-set-with-typescript/33464709
+    const uniqueGroups = [...Array.from(new Set(mergedGroupings))].sort();
     const enterpriseTypeCards: IBudgetCardDB[] = uniqueGroups.map(group => {
       return {
         id: group,
