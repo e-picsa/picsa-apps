@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { HomePage } from './home.page';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { PicsaTranslateModule } from '@picsa/modules';
+import { ExtensionToolkitMaterialModule } from 'src/app/material.module';
 
 const routes: Routes = [
   {
@@ -23,6 +24,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     ComponentsModule,
+    ExtensionToolkitMaterialModule,
     PicsaTranslateModule
   ],
   declarations: [HomePage]

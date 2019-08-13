@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { observable, action, computed } from 'mobx-angular';
-import { IUser, IFormResponse } from '../models/models';
+import { observable, action } from 'mobx-angular';
+import { IUser } from '../models/models';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
@@ -17,6 +17,7 @@ export class UserStore {
   @action()
   updateUser(patch: Partial<IUser>) {
     this.user = { ...this.user, ...patch };
+    this.syncUser(this.user);
   }
 
   constructor(
@@ -35,7 +36,7 @@ export class UserStore {
       user = await this._loadUserBackup();
       if (!user) {
         await this.createNewUser();
-        // return this.loadUser();
+        return this.loadUser();
       }
     }
     console.log('user', user);
@@ -43,17 +44,18 @@ export class UserStore {
   }
 
   async createNewUser() {
-    console.log('creating user');
     const meta = generateDBMeta();
     const user: IUser = {
       lang: ENVIRONMENT.region.languages[0].code,
       ...meta
     };
     // update meta
-    await this.db.setDoc('_appMeta', 'CURRENT_USER');
-    console.log('user created', user);
-    // sync to user db
-    // await this.db.setDoc('users/${GROUP}/users', user, true);
+    await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
+    this.syncUser(user);
+  }
+
+  async syncUser(user: IUser) {
+    return this.db.setDoc('users/${GROUP}/users', user, true);
   }
 
   private async _backupUserToDisk() {
