@@ -1,0 +1,130 @@
+:host {
+  flex: 1;
+}
+.scroll-content {
+  background-color: white !important;
+}
+.budget-container {
+  display: flex;
+  height: 100%;
+  background-color: white;
+  color: black;
+  overflow-x: auto;
+}
+// TODO - lots of styles below are deprecated, requires tidying
+.budget-container.print-mode {
+  position: fixed;
+  top: 0;
+  padding-top: 56px;
+}
+.time-period {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 120px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  border-top: 2px solid black;
+}
+.time-period:first-of-type {
+  border-left: 2px solid black;
+}
+.scroll-content {
+  overflow-x: scroll;
+}
+.grow {
+  flex-grow: 1;
+  align-content: center;
+}
+
+.card-image {
+  max-height: 100%;
+  max-width: 100%;
+}
+.card-index {
+  position: absolute;
+  background: rgb(138, 38, 68);
+  color: white;
+  opacity: 0.9;
+  font-size: 0.8em;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+}
+.grid-card {
+  height: 100%;
+  width: 100%;
+  min-width: 150px;
+}
+.cell > div {
+  height: 100%;
+}
+.row,
+.cell {
+  flex: 1;
+  display: block;
+  overflow: auto;
+}
+.cell.top-row {
+  height: 20px;
+  font-size: 16px;
+  text-align: center;
+  flex: unset;
+} // want last row cells to adjust height to fill with/without scrollbar
+.cell.Cash {
+  height: 100%;
+}
+.cell.row-title {
+  padding: 5px;
+  font-size: large;
+}
+.cell {
+  border-bottom: 1px solid gray;
+}
+
+.image-holder {
+  height: 100%;
+}
+img {
+  max-width: 100%;
+  max-height: 5em;
+}
+.card-select-popover {
+  width: 80%;
+}
+.family-icon {
+  padding: 1px;
+}
+.person-icon {
+  margin-right: 5px;
+}
+.text-input {
+  margin: 0;
+}
+.one-em {
+  height: 1em;
+}
+.number-value {
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+h1 {
+  text-align: center;
+  margin: 0;
+  font-size: large;
+}
+.total-column {
+  background-color: wheat;
+}
+.counterBadge {
+  border-radius: 4px;
+  background-color: cadetblue;
+  color: white;
+  position: relative;
+  left: -12px;
+  top: 4px;
+  padding: 2px;
+}
+.consumed {
+  background-color: lightcoral;
+}

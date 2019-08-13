@@ -1,3 +1,5 @@
+import { NgModule } from '@angular/core';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -7,32 +9,36 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-
-import { NgModule } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatBadgeModule } from '@angular/material/badge';
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
   imports: [
+    MatBadgeModule,
     MatButtonModule,
     MatCheckboxModule,
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
     MatCardModule
   ],
   exports: [
+    MatBadgeModule,
     MatButtonModule,
     MatCheckboxModule,
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
     MatCardModule
   ]
 })
-export class PicsaMaterialModule {}
+export class BudgetMaterialModule {}

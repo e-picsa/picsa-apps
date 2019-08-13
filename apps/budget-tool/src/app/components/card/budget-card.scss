@@ -1,0 +1,24 @@
+:host {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+  // prevent strange offset
+  vertical-align: bottom;
+}
+
+mat-card.budget-card {
+  width: 130px;
+  padding: 0;
+}
+
+.budget-card[selected='true'] {
+  font-weight: bold;
+  background: var(--color-selected);
+}
+.card-title {
+  height: 2.5em;
+  padding: 5px;
+  background: #dcdcdc;
+}

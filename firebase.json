@@ -19,6 +19,16 @@
           "destination": "/index.html"
         }
       ]
+    },
+    {
+      "target": "budget-tool",
+      "public": "dist/apps/budget-tool",
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }

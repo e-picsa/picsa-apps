@@ -1,0 +1,41 @@
+:host {
+  height: 100%;
+  width: 100%;
+}
+.cell-container {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  background: white;
+}
+.cell-container:hover {
+  background: wheat;
+}
+.add-cell-data {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.2;
+}
+
+.consumed-badge {
+}
+.badge {
+  left: -14px;
+  bottom: -14px;
+  color: rgba(255, 255, 255, 0.95);
+}
+.badge.input-badge > .mat-badge-content {
+  background-color: #bc89d8;
+}
+.badge.output-badge > .mat-badge-content {
+  background-color: #90b36e;
+}
+.badge.consumed-badge > .mat-badge-content {
+  background-color: #d8d8d8;
+  color: rgba(0, 0, 0, 0.8);
+}

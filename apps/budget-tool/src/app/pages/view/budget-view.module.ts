@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { BudgetViewPage } from './budget-view.page';
-import { PicsaMaterialModule } from '../../material.module';
+import { BudgetMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaTranslateModule } from '@picsa/modules';
+import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 
 const routes: Routes = [
   {
@@ -22,7 +23,8 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
-    PicsaMaterialModule,
+    BudgetMaterialModule,
+    BudgetToolComponentsModule,
     MobxAngularModule
   ],
   declarations: [BudgetViewPage]

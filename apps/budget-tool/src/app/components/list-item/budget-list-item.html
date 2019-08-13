@@ -1,0 +1,21 @@
+<mat-card style="margin-bottom:10px; cursor:pointer">
+  <div style="display: flex">
+    <budget-card-image
+      class="small"
+      [card]="budget.meta.enterprise"
+    ></budget-card-image>
+    <div style="flex:1">
+      <mat-card-title>{{ budget.meta.title }}</mat-card-title>
+      <mat-card-content>{{ budget.meta.description }}</mat-card-content>
+      <mat-card-subtitle>{{ budget._created | date }}</mat-card-subtitle>
+    </div>
+    <button
+      mat-button
+      aria-label="Delete"
+      color="light"
+      (click)="deleteClicked($event)"
+    >
+      <mat-icon svgIcon="picsa_delete"></mat-icon>
+    </button>
+  </div>
+</mat-card>

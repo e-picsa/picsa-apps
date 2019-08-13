@@ -1,0 +1,10 @@
+<mat-form-field class="card-input-field quantity">
+  <input
+    matInput
+    class="input-editable"
+    [placeholder]="'How Many People' | translate"
+    [value]="totalPeople"
+    type="number"
+    (change)="setValue($event, 'quantity')"
+  />
+</mat-form-field>

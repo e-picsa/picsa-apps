@@ -1,0 +1,10 @@
+<!-- image loaded from file -->
+<img
+  *ngIf="imgUrl"
+  [src]="imgUrl"
+  class="card-image"
+  [attr.data-card-id]="card.id"
+/>
+
+<!-- image loaded from custom drawing -->
+<img *ngIf="imgData" [src]="imgData" [class]="'card-image'" />

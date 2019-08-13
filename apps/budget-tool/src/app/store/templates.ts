@@ -1,26 +1,49 @@
 import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
-import REGIONAL_SETTINGS from '@picsa/environments/region';
-import { IBudget, IBudgetPeriodMeta } from '../models/budget-tool.models';
+import {
+  // IBudgetPeriodMeta,
+  IBudget,
+  IBudgetPeriodData,
+  IBudgetPeriodType
+} from '../models/budget-tool.models';
+import { generateDBMeta } from '@picsa/services/core';
 
-const BUDGET_PERIOD_DEFAULT: IBudgetPeriodMeta = {
-  starting: 10,
-  scale: 'months',
-  total: 6,
-  labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
+export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
+  activities: [],
+  inputs: [],
+  outputs: [],
+  familyLabour: [],
+  produceConsumed: []
 };
 
 // don't assert type so missing _key field picked up in create new budget from store
-export const NEW_BUDGET_TEMPLATE = {
+export const NEW_BUDGET_TEMPLATE: IBudget = {
   apiVersion: BUDGET_API_VERSION,
-  archived: false,
-  created: new Date().toISOString(),
-  data: {},
-  description: null,
-  enterprise: null,
-  periods: BUDGET_PERIOD_DEFAULT,
-  title: null,
-  enterpriseType: null,
-  dotValues: REGIONAL_SETTINGS.currencyCounters
+  data: [],
+  meta: {
+    title: null,
+    description: null,
+    enterprise: {
+      id: null,
+      label: null,
+      type: null,
+      groupings: []
+    },
+    lengthScale: 'months',
+    lengthTotal: 5,
+    monthStart: 9,
+    valueScale: 1
+  },
+  ...generateDBMeta()
+};
+
+export const BUDGET_DOT_VALUES = {};
+
+export const BUDGET_PERIOD_ROWS: { [key in IBudgetPeriodType]: string } = {
+  activities: 'Activities',
+  inputs: 'Inputs',
+  familyLabour: 'Family Labour',
+  outputs: 'Outputs',
+  produceConsumed: 'Produce Consumed'
 };
 
 export const MONTHS = [

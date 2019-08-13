@@ -1,8 +1,35 @@
-<div class="page">
+<div class="page" *mobxAutorun>
   <mat-toolbar>
-    <span>Budget</span>
+    <span>{{
+      store.activeBudget
+        ? store.activeBudget.meta.title
+        : ('Budget' | translate)
+    }}</span>
+    <div *ngIf="store.isEditorOpen" style="flex:1; display: flex">
+      <span style="text-align: center; flex:1">{{
+        store.activeCell.periodLabel
+      }}</span>
+      <button
+        mat-button
+        color="primary"
+        (click)="store.toggleEditor()"
+        @fadeInOut
+      >
+        <mat-icon>close</mat-icon><span>{{ 'Cancel' | translate }}</span>
+      </button>
+    </div>
   </mat-toolbar>
-  <div class="page-content">
-    Goes here
+  <!-- hide overflow so that editor can be stored outside bottom of page -->
+  <div class="page-content" style="overflow-y: hidden; overflow-x: auto">
+    <budget-table
+      *ngIf="store.activeBudget"
+      [budget]="store.activeBudget"
+      @fadeInOut
+    ></budget-table>
+    <budget-cell-editor
+      *ngIf="store.activeCell"
+      [@flyInOut]="store.isEditorOpen ? 'in' : 'out'"
+      [cell]="store.activeCell"
+    ></budget-cell-editor>
   </div>
 </div>

@@ -1,44 +1,47 @@
 import { IStationMeta } from '@picsa/models/climate.models';
-import { DBMeta } from '@picsa/services/core/db/db.utils';
+import { MockDB } from '@picsa/mocks';
+
+const db = new MockDB();
+const _created = new Date('2019-07-23').toISOString();
 
 export const STATIONS: IStationMeta[] = [
   {
-    ...DBMeta('chichiri', new Date('2019-07-23')),
+    ...db.meta({ _key: 'chichiri', _created }),
     name: 'Chichiri',
     latitude: -15.796432,
     longitude: 35.026425,
     country: 'Malawi'
   },
   {
-    ...DBMeta('chileka', new Date('2019-07-23')),
+    ...db.meta({ _key: 'chileka', _created }),
     name: 'Chileka',
     latitude: -15.679203,
     longitude: 34.967697,
     country: 'Malawi'
   },
   {
-    ...DBMeta('makanjira', new Date('2019-07-23')),
+    ...db.meta({ _key: 'makanjira', _created }),
     name: 'Makanjira',
     latitude: -13.7050735,
     longitude: 35.037632,
     country: 'Malawi'
   },
   {
-    ...DBMeta('mangochi', new Date('2019-07-23')),
+    ...db.meta({ _key: 'mangochi', _created }),
     name: 'Mangochi',
     latitude: -14.4821775,
     longitude: 35.2352141,
     country: 'Malawi'
   },
   {
-    ...DBMeta('monkeybay', new Date('2019-07-23')),
+    ...db.meta({ _key: 'monkeybay', _created }),
     name: 'Monkeybay',
     latitude: -14.0806369,
     longitude: 34.9062036,
     country: 'Malawi'
   },
   {
-    ...DBMeta('namwera', new Date('2019-07-23')),
+    ...db.meta({ _key: 'namwera', _created }),
     name: 'Namwera',
     latitude: -14.3530807,
     longitude: 35.4706477,

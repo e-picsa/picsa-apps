@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { IForm, IFormResponse } from '../models/models';
 import { DBCacheService } from '@picsa/services/core';
 import { UserProvider } from './user';
-import { DBMeta } from '@picsa/services/core/db/db.utils';
+import { DBMeta } from '@picsa/services/core/db/utils.db';
 
 @Injectable({
   providedIn: 'root'

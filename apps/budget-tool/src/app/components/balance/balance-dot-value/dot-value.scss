@@ -1,0 +1,12 @@
+:host {
+  display: inline-block;
+  width: 50px;
+  vertical-align: top;
+}
+:host(.negative) {
+  filter: hue-rotate(200deg);
+}
+img {
+  width: 10px;
+  height: 10px;
+}

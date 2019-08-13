@@ -6,10 +6,10 @@ import {
   IChartSummary_V1,
   IChartSummary
 } from '@picsa/models/climate.models';
-import { DBCacheService } from '@picsa/services/core/db/db.cache';
 import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import * as DATA from 'src/app/data';
+import * as DATA from '../data';
+import { PicsaDbService } from '@picsa/services/core';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService {
@@ -17,15 +17,15 @@ export class ClimateToolService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  constructor(private cache: DBCacheService) {
+  constructor(private db: PicsaDbService) {
     this.init();
   }
 
   // not strict required, but considered useful to inform components
   // when db has been initialised
   private async init() {
-    await this.cache.loadStores({ stationData: null });
-    if (await this.cache.isEmpty('stationData')) {
+    const collection = await this.db.getCollection('stationData');
+    if (collection.length === 0) {
       await this.initialiseHardcodedData();
     }
     this.ready$.next(true);
@@ -33,7 +33,7 @@ export class ClimateToolService {
 
   public async loadStation(stationID: string) {
     await this.ready();
-    return this.cache.getDoc<IStationMeta>('stationData', stationID);
+    return this.db.getDoc<IStationMeta>('stationData', stationID);
   }
 
   // read hardcoded csv data and populate into cacheDB alongside station meta
@@ -44,7 +44,7 @@ export class ClimateToolService {
         `assets/summaries/${station._key}.csv`
       );
       station.summaries = [...data];
-      await this.cache.setDoc('stationData', station);
+      await this.db.setDoc('stationData', station);
     }
   }
 

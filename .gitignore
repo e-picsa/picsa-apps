@@ -48,6 +48,7 @@ libs/**/*.d.ts
 libs/**/*.metadata.json
 libs/**/*.ngfactory.ts
 libs/**/*.ngsummary.json
+libs/environments/environment.prod.ts
       
 # xplat
 xplat/**/*.js
@@ -62,3 +63,4 @@ libs/features/map/tiles/assets-for-copy
 libs/features/map/tiles/**/*.png
 
 apps/climate-tool/src/assets/summaries/*.csv
+

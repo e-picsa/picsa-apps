@@ -1,0 +1,50 @@
+<div class="budget-container" id="budget" *mobxAutorun>
+  <!-- First column -->
+  <div class="time-period">
+    <div class="time-period-title cell top-row"></div>
+    <div class="cell row-title" *ngFor="let row of rows">
+      {{ row.label }}
+    </div>
+    <!-- cash balance legend -->
+    <div class="cell row-title">
+      <div>
+        <div>Balance</div>
+        <budget-balance-legend
+          [valueCounters]="store.valueCounters"
+        ></budget-balance-legend>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time periods calculated Vertically -->
+  <div
+    class="time-period"
+    *ngFor="let column of store.activeBudget.data; let columnIndex = index"
+  >
+    <div class="time-period-title cell top-row">
+      {{ periodLabels[columnIndex] }}
+    </div>
+    <!-- period rows -->
+    <div *ngFor="let row of rows" class="cell">
+      <budget-cell
+        [periodIndex]="columnIndex"
+        [type]="row.key"
+        (click)="onCellClick(columnIndex, row)"
+      ></budget-cell>
+    </div>
+    <!-- Cash Balance -->
+    <div class="cell">
+      <div>
+        <div style="padding:5px">
+          <div>{{ periodLabels[columnIndex] }}</div>
+          <div>{{ store.balance[columnIndex].period | number: '.0' }}</div>
+        </div>
+        <hr />
+        <div style="padding:5px">
+          <div>{{ 'Balance' | translate }}</div>
+          <span>{{ store.balance[columnIndex].running | number: '.0' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

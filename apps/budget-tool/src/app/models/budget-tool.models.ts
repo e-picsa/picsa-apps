@@ -1,178 +1,85 @@
 import { IDBDoc } from '@picsa/models/db.models';
 
-export interface BudgetToolState {
-  active: IBudget;
-  meta: IBudgetMeta;
-  view?: IBudgetView;
-  // no additional parameters currently specified (may change)
-}
-
 export interface IBudget extends IDBDoc {
-  title: string;
-  archived: boolean;
-  periods: IBudgetPeriodMeta;
-  description: string;
-  enterprise: string;
-  enterpriseType: string;
-  dotValues: IBudgetDotValues;
-  created: string;
-  data: { [index: string]: IBudgetPeriodData };
+  data: IBudgetPeriodData[];
+  meta: IBudgetMeta;
   apiVersion: number;
 }
 
-export interface IBudgetMeta {
-  activities: IBudgetCard[];
-  enterpriseTypes: IEnterpriseType[];
-  enterprises: IEnterprise[];
-  familyLabour: IBudgetCard[];
-  outputs: IBudgetCard[];
-  inputs: IBudgetCard[];
-}
-
+// NOTE - keep all value formats as arrays to make easier to work with generally
 export interface IBudgetPeriodData {
-  activities?: { [index: string]: IActivityCard };
-  inputs?: { [index: string]: IInputCard };
-  outputs?: { [index: string]: IOutputCard };
-  familyLabour?: any;
-  produceConsumed?: any;
-  // balance?: IBudgetBalance;
+  activities: IBudgetCardWithValues[];
+  inputs: IBudgetCardWithValues[];
+  outputs: IBudgetCardWithValues[];
+  familyLabour: IBudgetCardWithValues[];
+  produceConsumed: IBudgetCardWithValues[];
 }
-export interface IBudgetDotValues {
-  large: number;
-  medium: number;
-  small: number;
-  half: number;
-}
+// i.e. 'activities' | 'inputs' | ... use with 'key in IBudgetPeriodType' for asserting on objects
+export type IBudgetPeriodType = keyof IBudgetPeriodData;
 
-export interface IBudgetView {
-  component:
-    | 'overview'
-    | 'cell-edit'
-    | 'load'
-    | 'settings'
-    | 'new-card'
-    | 'export';
+export interface IBudgetMeta {
   title: string;
-  icon?: string;
-  meta?: any;
+  description: string;
+  lengthScale: IEnterpriseScaleLentgh;
+  lengthTotal: number;
+  monthStart?: number;
+  valueScale: IBudgetValueScale;
+  enterprise: IBudgetCard;
 }
 
-export interface IBudgetViewMeta {
-  type: string;
+export type IEnterpriseScaleLentgh = 'months' | 'weeks' | 'days';
+// budget counters scaled in multiples of 10
+export type IBudgetValueScale = number;
+// counters form 2 arrays, one with a list of labels (/images) and the next with values
+// values are in descending order
+export type IBudgetValueCounters = [string[], number[]];
+/***************************************************************************** */
+export interface IBudgetActiveCell {
   periodIndex: number;
+  periodLabel: string;
+  typeKey: IBudgetPeriodType;
+  typeLabel: string;
+  cellData: IBudgetCardWithValues[];
 }
 
-export interface IBudgetPeriodMeta extends IEnterpriseDefaults {
-  labels: month[] | week[] | string[];
-  starting: number;
-  scale: IEnterpriseScale;
-  total: number;
-}
-export type IEnterpriseScale = 'months' | 'weeks';
+/***************************************************************************** */
 
-export interface IEnterpriseDefaults {
-  scale: IEnterpriseScale;
-  total: number;
-  starting: number;
-}
-
-// cards contain additional grouping (e.g. enterprise type) along with isSelected and selectedIndex populated when
-// attached to budget data
+// cards are used for budget table population as well as enterprise
 export interface IBudgetCard {
-  name: string;
+  // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
   id: string;
-  type?: IEnterpriseType;
-  isSelected?: boolean;
-  selectedIndex?: number;
-  quantity?: number;
-  consumed?: number;
-  cost?: number;
+  label: string;
+  type: IBudgetPeriodType | 'enterprise' | 'other';
+  groupings?: string[];
+  customMeta?: IBudgetCardCustomMeta;
+  values?: IBudgetCardValues;
+  imgType?: 'svg' | 'png';
 }
-export type IEnterpriseType = 'crop' | 'fish' | 'fruits' | 'livestock';
+export type IBudgetCardDB = IBudgetCard & IDBDoc;
 
-export interface ICustomBudgetCard extends IBudgetCard {
-  custom: boolean;
-  customImg: string;
-  created: string;
+export interface IBudgetCardWithValues extends IBudgetCard {
+  values: IBudgetCardValues;
+}
+
+interface IBudgetCardCustomMeta {
+  imgData: string;
+  dateCreated: string;
   createdBy: string;
 }
-
-export interface IActivityCard extends IBudgetCard {}
-export interface IInputCard extends IBudgetCard {
-  // Type: "input";
-  quantity?: number;
-  total?: number;
-  dots?: any[];
-  cost?: number;
-}
-export interface IOutputCard extends IBudgetCard {
-  // Type: "output";
-  quantity?: number;
-  total?: number;
-  dots?: any[];
-  cost?: number;
-  consumed?: number;
-}
-
-export interface ICustomCards {
-  enterprises: IBudgetCard[];
-  inputs: IInputCard[];
-  outputs: IOutputCard[];
-}
-export interface IEnterprise {
-  type: string;
-  name: string;
-  id: string;
-  defaults: IEnterpriseDefaults;
-}
-
-interface FamilyLabourCard {
-  people: number;
-  days: number;
-}
-
-interface BalanceCounter {
+export interface IBudgetCardValues {
+  quantity: number;
+  cost: number;
   total: number;
-  dots: any[];
 }
 
-interface IBudgetBalance {
-  inputs: BalanceCounter;
-  outputs: BalanceCounter;
-  consumed: BalanceCounter;
-  monthly: BalanceCounter;
-  running: BalanceCounter;
+/***************************************************************************** */
+export interface IBudgetDatabase {
+  cards: IBudgetCard[];
 }
 
-export interface IBudgetPublicData {
-  customCards?: { ['id']: ICustomBudgetCard };
-  templates?: { ['id']: IBudget };
+export type IBudgetBalance = IBudgetPeriodBalance[];
+
+interface IBudgetPeriodBalance {
+  period: number;
+  running: number;
 }
-
-type month =
-  | 'Jan'
-  | 'Feb'
-  | 'Mar'
-  | 'Apr'
-  | 'May'
-  | 'Jun'
-  | 'Jul'
-  | 'Aug'
-  | 'Sep'
-  | 'Oct'
-  | 'Nov'
-  | 'Dec';
-
-type week =
-  | 'Week 1'
-  | 'Week 2'
-  | 'Week 3'
-  | 'Week 4'
-  | 'Week 5'
-  | 'Week 6'
-  | 'Week 7'
-  | 'Week 8'
-  | 'Week 9'
-  | 'Week 10'
-  | 'Week 11'
-  | 'Week 12';
