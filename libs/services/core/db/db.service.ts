@@ -47,6 +47,7 @@ export class PicsaDbService implements AbstractDBService {
     }
     return dbDoc;
   }
+
   // allow batch set functionality
   async setDocs<T>(
     endpoint: IDBEndpoint,

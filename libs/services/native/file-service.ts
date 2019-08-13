@@ -5,7 +5,7 @@ import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
 
 @Injectable({ providedIn: 'root' })
-export class FileService {
+export class PicsaFileService {
   platforms: any;
   isCordova: boolean;
   appDir: string;

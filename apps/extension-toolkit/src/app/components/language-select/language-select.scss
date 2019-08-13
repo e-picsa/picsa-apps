@@ -1,0 +1,29 @@
+.language-container {
+  display: flex;
+  align-items: center;
+  color: white;
+  .item-inner {
+    border-bottom: none !important;
+  }
+}
+.language-item {
+  width: 150px;
+  background-color: transparent;
+  padding-left: 5px;
+}
+ion-icon {
+  font-size: 32px;
+}
+ion-item.language-item {
+  --border-style: "none";
+}
+
+ion-select.language-select {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  color: white;
+  .select-icon {
+    display: none;
+  }
+}

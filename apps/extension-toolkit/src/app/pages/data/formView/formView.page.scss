@@ -1,0 +1,28 @@
+@import "./survey.scss";
+.sv_complete_btn {
+  margin-top: 2em;
+}
+textarea,
+input {
+  color: var(--ion-color-primary) !important;
+}
+input[type="button"] {
+  color: white !important;
+}
+textarea::-webkit-input-placeholder {
+  color: #7e7e7e;
+}
+
+textarea:-moz-placeholder {
+  /* Firefox 18- */
+  color: #7e7e7e;
+}
+
+textarea::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #7e7e7e;
+}
+
+textarea:-ms-input-placeholder {
+  color: #7e7e7e;
+}

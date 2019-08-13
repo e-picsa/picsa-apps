@@ -3,18 +3,16 @@
 import { observable, action } from 'mobx-angular';
 import { toJS } from 'mobx';
 import { Injectable } from '@angular/core';
-import { IForm, IFormResponse } from '../models/models';
-import { DBCacheService } from '@picsa/services/core';
-import { UserProvider } from './user';
-import { DBMeta } from '@picsa/services/core/db/utils.db';
+import { IForm, IFormResponse, IFormDB } from '../models/models';
+import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FormStore {
-  @observable forms: IForm[];
-  @observable activeForm: IForm;
-  @action setActiveForm(form: IForm) {
+  @observable forms: IFormDB[];
+  @observable activeForm: IFormDB;
+  @action setActiveForm(form: IFormDB) {
     this.activeForm = form;
     console.log('active form', this.activeForm);
   }
@@ -31,11 +29,11 @@ export class FormStore {
     return this.activeForm;
   }
 
-  constructor(private cache: DBCacheService, private userPrvdr: UserProvider) {
+  constructor(private db: PicsaDbService) {
     this.init();
   }
   async init() {
-    this.forms = await this.cache.getCollection('forms');
+    this.forms = await this.db.getCollection('forms');
     // *** TODO - add form filter depending on user type
   }
 
@@ -44,10 +42,10 @@ export class FormStore {
 
   public submitForm(response: IFormResponse) {
     // add to user forms
-    this.userPrvdr.saveFormResponse(this.activeForm._key, response);
+    this.saveFormResponse(this.activeForm._key, response);
     // add to firebase forms
-    this.cache.setDoc(`forms/${this.activeForm._key}/submissions` as any, {
-      ...DBMeta(),
+    this.db.setDoc(`forms/${this.activeForm._key}/submissions` as any, {
+      ...generateDBMeta(),
       ...response
     });
     setTimeout(() => {
@@ -57,5 +55,17 @@ export class FormStore {
 
   private _getFormByKey(key: string) {
     return this.forms.find(form => form._key === key);
+  }
+
+  private saveFormResponse(formID: string, response: IFormResponse) {
+    // const user = this.user;
+    // if (!user.submittedForms) {
+    //   user.submittedForms = {};
+    // }
+    // if (!user.submittedForms[formID]) {
+    //   user.submittedForms[formID] = {};
+    // }
+    // user.submittedForms[formID][response._key] = response;
+    // this.actions.updateUser(user);
   }
 }

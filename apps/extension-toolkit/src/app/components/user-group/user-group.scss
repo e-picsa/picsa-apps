@@ -1,0 +1,30 @@
+user-group {
+  .group-name {
+    text-align: center;
+    padding: 5px;
+    height: 4em;
+    white-space: normal;
+    border: 1px solid black;
+    border-bottom: none;
+  }
+
+  .group-container {
+    width: 150px;
+    margin: 0 5px 5px 0;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+  }
+  .join-button {
+    margin-top: 0;
+  }
+  .joined {
+    opacity: 0.7;
+    background-color: #268a48;
+  }
+}
+
+.invalid-key {
+  color: red;
+}

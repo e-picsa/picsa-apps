@@ -72,10 +72,12 @@
     "ng2-canvas-whiteboard": "^3.0.4",
     "ngx-file-drop": "8.0.4",
     "ngx-papaparse": "3",
+    "ngx-youtube-player": "^7.1.1",
     "redux": "^4.0.1",
     "redux-observable": "^1.1.0",
     "rxjs": "~6.4.0",
     "save-svg-as-png": "^1.4.14",
+    "survey-angular": "^1.1.5",
     "topojson": "^3.0.2",
     "typeorm": "^0.2.9",
     "zone.js": "^0.9.1"

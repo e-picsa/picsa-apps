@@ -1,18 +1,7 @@
 import { IDBDoc } from '@picsa/models/db.models';
 
-interface IUserDefaults {
-  country: string;
-}
-
-interface IUserPerimissions {
-  canViewDiscussionsPage: boolean;
-  canViewRecordDataPage: boolean;
-  canViewViewDataPage: boolean;
-  privateWhatsappGroups: { ['id']: boolean }[];
-}
-
 // user doc format stored locally under 'user' key and reflected to firebase
-export interface IUser {
+export interface IUser extends IDBDoc {
   appVersion?: string;
   name?: string;
   type?: string;
@@ -27,6 +16,17 @@ export interface IUser {
   authenticated?: boolean;
   permissions?: IUserPerimissions;
   defaults?: IUserDefaults;
+}
+
+interface IUserDefaults {
+  country: string;
+}
+
+interface IUserPerimissions {
+  canViewDiscussionsPage: boolean;
+  canViewRecordDataPage: boolean;
+  canViewViewDataPage: boolean;
+  privateWhatsappGroups: { ['id']: boolean }[];
 }
 
 // data stored locally and sync'd from online
@@ -51,19 +51,22 @@ export interface IUserGroup {
   isHidden?: boolean;
 }
 
-export interface IForm extends IDBDoc {
+export interface IForm {
   name: string;
   groups?: string[];
   icon?: string;
   isActive: boolean;
   surveyJson: any;
 }
+export type IFormDB = IForm & IDBDoc;
 
-export interface IFormResponse extends IDBDoc {
+export interface IFormResponse {
   _userID: string;
   _submitted: string;
   ['questionKey']?: any;
 }
+
+export type IFormResponseDB = IFormResponse & IDBDoc;
 
 export interface IResource {
   _key: string;
@@ -87,3 +90,12 @@ export interface IResourceGroup {
   name: string;
   resources: IResource[] | IVideoResource[];
 }
+
+type IStorageEndpoint =
+  | 'budgets'
+  | '_version'
+  | 'resources'
+  | 'forms'
+  | 'groups'
+  | 'whatsappGroups'
+  | 'user';

@@ -12,8 +12,12 @@ const routes: Routes = [
         mod => mod.BudgetToolModule
       )
   },
-  { path: '**', redirectTo: '/budget/home' }
-  // { path: '**', redirectTo: '/budget' }
+  {
+    path: 'home',
+    loadChildren: () =>
+      import('./pages/home/home.module').then(mod => mod.HomePageModule)
+  },
+  { path: '**', redirectTo: '/home' }
 ];
 
 @NgModule({
@@ -23,7 +27,7 @@ const routes: Routes = [
       // CC Note - strategy fails with embedded sub-apps (not sure why), could add custom strategy
       // , { preloadingStrategy: PreloadAllModules }
     ),
-    BudgetToolModule.forRoot()
+    BudgetToolModule
   ],
   exports: [RouterModule]
 })

@@ -1,0 +1,37 @@
+<ion-content>
+  <div class="main-container">
+    <div class="top-bar" style="display: flex; justify-content: space-between">
+      <language-select></language-select>
+      <div class="version-info">
+        <div>
+          <span style="font-weight: bold">v{{ version.text }}</span>
+        </div>
+        <ion-button fill="clear" expand="block" [routerLink]="['/changelog']">
+          {{ "What's New?" | translate }}
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="title" data-cy="title">{{ "PICSA" | translate }}</div>
+    <div class="subtitle">{{ subtitle | translate }}</div>
+
+    <div class="link-holder">
+      <a
+        *ngFor="let link of links"
+        (click)="linkClicked(link)"
+        class="navlink"
+        data-cy="link"
+      >
+        <div class="flex">
+          <ion-icon name="{{ link.icon }}" *ngIf="link.icon"></ion-icon>
+          <img
+            class="icon img-icon"
+            [src]="'assets/img/' + link.img + '.svg'"
+            *ngIf="link.img"
+          />
+          <div class="button-text">{{ link.name | translate }}</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</ion-content>
