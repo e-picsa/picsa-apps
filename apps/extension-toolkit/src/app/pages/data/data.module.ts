@@ -12,6 +12,11 @@ const routes: Routes = [
   {
     path: '',
     component: DataPage
+  },
+  {
+    path: 'record',
+    loadChildren: () =>
+      import('./record/record.module').then(mod => mod.RecordPageModule)
   }
 ];
 

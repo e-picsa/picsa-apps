@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IChartMeta, IStationMeta } from '@picsa/models/climate.models';
-import * as DATA from 'src/app/data';
+import * as DATA from '@picsa/climate/src/app/data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { ClimateToolService } from 'src/app/services/climate-tool.service';
+import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool.service';
 
 @Component({
   selector: 'climate-site-view',

@@ -10,11 +10,11 @@ import { ENVIRONMENT } from '@picsa/environments';
 })
 export class UserStore {
   @observable user: IUser;
-  @action()
+  @action
   setUser(user: IUser) {
     this.user = user;
   }
-  @action()
+  @action
   updateUser(patch: Partial<IUser>) {
     this.user = { ...this.user, ...patch };
     this.syncUser(this.user);

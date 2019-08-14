@@ -1,42 +1,61 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [
-  // { path: '', redirectTo: '/budget/home', pathMatch: 'full' },
+const commonRoutes: Routes = [
+  // { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
-    path: 'budget/home',
+    path: 'home',
     loadChildren: () =>
       import('./pages/home/budget-home.module').then(
         mod => mod.BudgetHomePageModule
       )
   },
   {
-    path: 'budget/create',
+    path: 'create',
     loadChildren: () =>
       import('./pages/create/budget-create.module').then(
         mod => mod.BudgetCreatePageModule
       )
   },
   {
-    path: 'budget/view',
+    path: 'view',
     redirectTo: '/home',
     pathMatch: 'full'
   },
   {
-    path: 'budget/view/:budgetKey',
+    path: 'view/:budgetKey',
     loadChildren: () =>
       import('./pages/view/budget-view.module').then(
         mod => mod.BudgetViewPageModule
       )
-  },
-  { path: 'budget', redirectTo: 'budget/home' },
-  { path: '**', redirectTo: 'budget/home' }
+  }
+];
+const standaloneRoutes: Routes = [
+  // { path: '**', redirectTo: 'home' }
 ];
 
+/*******************************************************************
+ *  Standalone Version
+ ******************************************************************/
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot([...commonRoutes, ...standaloneRoutes], {
+      preloadingStrategy: PreloadAllModules
+    })
   ],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
+
+/*******************************************************************
+ *  Embedded Version (requires standalone imports in master app)
+ ******************************************************************/
+@NgModule({
+  imports: [RouterModule.forChild(commonRoutes)],
+  exports: [RouterModule]
+})
+export class BudgetToolRoutingModule {
+  constructor() {
+    console.log('budget tool constructor', commonRoutes);
+  }
+}

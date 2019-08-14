@@ -2,59 +2,59 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+import {
+  AppRoutingModule,
+  BudgetToolRoutingModule
+} from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NgReduxRouterModule } from '@angular-redux/router';
-import { NgReduxModule } from '@angular-redux/store';
 import { MobxAngularModule } from 'mobx-angular';
-// import { StoreModule } from '@picsa/extension/src/app/state';
 // import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 import { PicsaDbModule, PicsaNativeModule } from '@picsa/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BudgetMaterialModule } from './material.module';
 
-// configure translation from file
-// export function createTranslateLoader(http: HttpClient) {
-//   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
-// }
+const StandaloneImports = [
+  BrowserModule,
+  BrowserAnimationsModule,
+  AppRoutingModule,
+  NgReduxRouterModule.forRoot(),
+  PicsaDbModule.forRoot(),
+  PicsaNativeModule.forRoot(),
+  HttpClientModule,
+  BudgetMaterialModule,
+  MobxAngularModule
+  // CanvasWhiteboardModule,
+];
+const CommonImports = [];
+const ChildImports = [BudgetToolRoutingModule];
 
+/*******************************************************************
+ *  Standalone Version
+ ******************************************************************/
 @NgModule({
   declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    BudgetMaterialModule,
-    // TranslateModule.forRoot({
-    //   loader: {
-    //     provide: TranslateLoader,
-    //     useFactory: createTranslateLoader,
-    //     deps: [HttpClient]
-    //   },
-    //   isolate: false
-    // }),
-    NgReduxModule,
-    NgReduxRouterModule.forRoot(),
-    MobxAngularModule,
-    // StoreModule,
-    // CanvasWhiteboardModule,
-    PicsaDbModule.forRoot(),
-    PicsaNativeModule.forRoot()
-  ],
-  exports: [],
-  providers: [],
+  imports: [...StandaloneImports, ...CommonImports],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
 
-// additional export to allow it to be consumed by other apps
-// see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
+/*******************************************************************
+ *  Embedded Version (requires standalone imports in master app)
+ * https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
+ ******************************************************************/
+@NgModule({
+  declarations: [AppComponent],
+  imports: [...CommonImports, ...ChildImports],
+  bootstrap: [AppComponent]
+})
+class AppEmbeddedModule {}
+
 @NgModule({})
 export class BudgetToolModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: AppModule,
+      ngModule: AppEmbeddedModule,
       providers: []
     };
   }

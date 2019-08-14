@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ClimateToolService } from 'src/app/services/climate-tool.service';
+import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool.service';
 import { IChartSummary } from '@picsa/models';
 
 @Component({

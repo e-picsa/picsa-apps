@@ -1,5 +1,5 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
-import { STATIONS } from 'src/app/data';
+import { STATIONS } from '@picsa/climate/src/app/data';
 import { IStationMeta } from '@picsa/models/climate.models';
 import {
   PicsaMapComponent,
@@ -43,7 +43,7 @@ export class SiteSelectPage {
 
   goToSite(site: IStationMeta) {
     this.ngZone.run(() => {
-      this.router.navigate(['../', 'site', site._key], {
+      this.router.navigate(['./', 'site', site._key], {
         relativeTo: this.route
       });
     });

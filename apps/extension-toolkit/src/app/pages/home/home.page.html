@@ -18,6 +18,7 @@
         [rowspan]="link.rows"
         data-cy="link"
         class="grid-tile"
+        (click)="linkClicked(link)"
       >
         <div style="text-align: center">
           <mat-icon [svgIcon]="link.icon" class="nav-icon"></mat-icon>

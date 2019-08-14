@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { PicsaMapModule } from '@picsa/features/map';
 import { SiteSelectPage } from './site-select.page';
 import { PicsaTranslateModule } from '@picsa/modules';
-import { ClimateMaterialModule } from 'src/app/material.module';
+import { ClimateMaterialModule } from '@picsa/climate/src/app/material.module';
 
 const routes: Routes = [
   {

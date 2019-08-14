@@ -1,25 +1,54 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+import {
+  AppRoutingModule,
+  ClimateToolRoutingModule
+} from './app-routing.module';
 import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { PicsaDbModule } from '@picsa/modules';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';
 
+const StandaloneImports = [
+  BrowserModule,
+  BrowserAnimationsModule,
+  MatSliderModule,
+  PicsaTranslateModule.forRoot(),
+  PicsaDbModule.forRoot(),
+  AppRoutingModule
+];
+const ChildImports = [ClimateToolRoutingModule];
+
+/*******************************************************************
+ *  Standalone Version
+ ******************************************************************/
 @NgModule({
   declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    // required if using mat-slider lazy loaded
-    BrowserAnimationsModule,
-    MatSliderModule,
-    AppRoutingModule,
-    PicsaTranslateModule.forRoot(),
-    PicsaDbModule.forRoot()
-  ],
+  imports: StandaloneImports,
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
+/*******************************************************************
+ *  Embedded Version (requires standalone imports in master app)
+ *  Note, could also be duplicated here and shouldn't throw error
+ ******************************************************************/
+@NgModule({
+  declarations: [AppComponent],
+  imports: ChildImports,
+  bootstrap: [AppComponent]
+})
+class AppEmbeddedModule {}
+
+@NgModule({})
+export class ClimateToolModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: AppEmbeddedModule,
+      providers: []
+    };
+  }
+}

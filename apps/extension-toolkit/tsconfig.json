@@ -1,11 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "baseUrl": ".",
-    "paths": {
-      "@picsa/*": ["../../libs/*"]
-    }
+    "types": ["node", "jest"]
   },
   "include": ["**/*.ts"]
 }

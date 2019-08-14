@@ -24,9 +24,7 @@
               "testing/tsconfig.libs.json",
               "testing/tsconfig.libs.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -52,9 +50,7 @@
               "testing/tsconfig.xplat.json",
               "testing/tsconfig.xplat.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -155,9 +151,7 @@
               "apps/budget-tool/tsconfig.app.json",
               "apps/budget-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -224,9 +218,7 @@
               "libs/scss/_index.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "libs/scss/"
-              ]
+              "includePaths": ["libs/scss/"]
             },
             "scripts": []
           },
@@ -281,9 +273,7 @@
               "apps/dashboard/tsconfig.app.json",
               "apps/dashboard/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -343,11 +333,29 @@
             "tsConfig": "apps/extension-toolkit/tsconfig.app.json",
             "assets": [
               "apps/extension-toolkit/src/favicon.ico",
-              "apps/extension-toolkit/src/assets"
+              "apps/extension-toolkit/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./libs/shared-assets/",
+                "output": "./assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./apps/budget-tool/src/assets",
+                "output": "./assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./apps/climate-tool/src/assets",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "apps/extension-toolkit/src/styles.scss",
-              "libs/scss/_index.scss"
+              "apps/budget-tool/src/styles.scss",
+              "apps/climate-tool/src/styles.scss",
+              "libs/scss/_index.scss",
+              "./node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           },
@@ -402,9 +410,7 @@
               "apps/extension-toolkit/tsconfig.app.json",
               "apps/extension-toolkit/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -529,9 +535,7 @@
               "apps/climate-tool/tsconfig.app.json",
               "apps/climate-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
