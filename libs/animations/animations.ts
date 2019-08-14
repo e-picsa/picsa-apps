@@ -5,7 +5,9 @@ import {
   animate,
   transition
 } from '@angular/animations';
-
+// NOTE - AOT very temperamental with animations, see guidance here:
+// https://blog.angularindepth.com/total-guide-to-dynamic-angular-animations-that-can-be-toggled-at-runtime-be5bb6778a0a
+// Main issues are declaring new const/let/var or string interpolation
 export const OpenClosed = trigger('openClosed', [
   state(
     'open',
@@ -26,9 +28,7 @@ export const OpenClosed = trigger('openClosed', [
 ]);
 
 // function to generate custom fade transition
-export const FadeInOut = (config: Partial<IAnimationConfig> = {}) => {
-  const inTimings = getAnimationTimings(config, 'in');
-  const outTimings = getAnimationTimings(config, 'out');
+export function FadeInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
   return trigger('fadeInOut', [
     state(
       'in',
@@ -46,63 +46,67 @@ export const FadeInOut = (config: Partial<IAnimationConfig> = {}) => {
     // (e.g. part of ngIf statement), so explicitly define
     transition(':enter', [
       style({ opacity: 0 }),
-      animate(inTimings, style({ opacity: 1 }))
+      animate(
+        c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing,
+        style({ opacity: 1 })
+      )
     ]),
-    transition('* => in', [animate(inTimings)]),
-    transition('in => out', [animate(outTimings)])
+    transition('* => in', [
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)
+    ]),
+    transition('in => out', [
+      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing)
+    ])
   ]);
-};
+}
 
-export const FlyInOut = (config: Partial<IAnimationConfig> = {}) => {
-  const { direction } = { ...ANIMATION_DEFAULTS, ...config };
-  const inTimings = getAnimationTimings(config, 'in');
-  const outTimings = getAnimationTimings(config, 'out');
-  const axis = direction === 'left' || direction === 'right' ? 'X' : 'Y';
-  const outPosition =
-    direction === 'left' || direction === 'top' ? '-100%' : '100%';
-  const inState = `translate${axis}(0)`;
-  const outState = `translate${axis}(${outPosition})`;
+export function FlyInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
   return trigger('flyInOut', [
-    state('in', style({ transform: inState })),
-    state('out', style({ transform: outState })),
+    state('in', style({ transform: 'translate' + c.axis + '(0)' })),
+    state('out', style({ transform: 'translate' + c.axis + '(100%)' })),
     transition('void => in', [
-      style({ transform: inState }),
-      animate(inTimings)
+      style({ transform: 'translate' + c.axis + '(0)' }),
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)
     ]),
     transition('* => void', [
-      animate(outTimings),
-      style({ transform: outState })
+      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
+      style({ transform: 'translate' + c.axis + '(100%)' })
     ]),
-    transition('out => in', [animate(inTimings)]),
-    transition('in => out', [animate(outTimings)])
+    transition('out => in', [
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)
+    ]),
+    transition('in => out', [
+      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing)
+    ])
   ]);
-};
+}
 
 // helper method to turn config into string of animation parameters
-const getAnimationTimings = (
+// NOTE - not called directly as doesn't work with AOT, but kept for reference
+export function getAnimationTimings(
   config: Partial<IAnimationConfig>,
   direction: 'in' | 'out'
-) => {
-  const { inSpeed, inDelay, inEasing, outSpeed, outDelay, outEasing } = {
+) {
+  const c = {
     ...ANIMATION_DEFAULTS,
     ...config
   };
   return direction === 'in'
-    ? `${inSpeed}ms ${inDelay}ms ${inEasing}`
-    : `${outSpeed}ms ${outDelay}ms ${outEasing}`;
-};
+    ? c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing
+    : c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing;
+}
 
 /*********************************************************************************
  *  Interfaces and Constants
  **********************************************************************************/
-const ANIMATION_DEFAULTS: IAnimationConfig = {
+export const ANIMATION_DEFAULTS: IAnimationConfig = {
   inSpeed: 250,
   inDelay: 0,
   inEasing: 'ease-in',
   outSpeed: 150,
   outDelay: 0,
   outEasing: 'ease-out',
-  direction: 'left'
+  axis: 'X'
 };
 
 interface IAnimationConfig {
@@ -112,6 +116,5 @@ interface IAnimationConfig {
   outSpeed: number;
   outDelay: number;
   outEasing: string;
-  direction: direction;
+  axis: 'X' | 'Y';
 }
-type direction = 'left' | 'right' | 'top' | 'bottom';

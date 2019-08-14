@@ -90,8 +90,8 @@
               "apps/budget-tool/src/assets",
               {
                 "glob": "**/*",
-                "input": "./libs/shared-assets/svgs",
-                "output": "./assets/images"
+                "input": "./libs/shared-assets",
+                "output": "./assets"
               }
             ],
             "styles": [
@@ -105,7 +105,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -227,7 +227,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -364,7 +364,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -489,7 +489,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,

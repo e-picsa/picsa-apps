@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppComponent } from './app.component';
+import { AppComponent, AppComponentEmbedded } from './app.component';
 import {
   AppRoutingModule,
   ClimateToolRoutingModule
@@ -37,11 +37,11 @@ export class AppModule {}
  *  Note, could also be duplicated here and shouldn't throw error
  ******************************************************************/
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponentEmbedded],
   imports: ChildImports,
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponentEmbedded]
 })
-class AppEmbeddedModule {}
+export class AppEmbeddedModule {}
 
 @NgModule({})
 export class ClimateToolModule {

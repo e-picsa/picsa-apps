@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-
-import { AppComponent } from './app.component';
+import { AppComponent, AppComponentEmbedded } from './app.component';
 import {
   AppRoutingModule,
   BudgetToolRoutingModule
@@ -44,11 +43,11 @@ export class AppModule {}
  * https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
  ******************************************************************/
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponentEmbedded],
   imports: [...CommonImports, ...ChildImports],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponentEmbedded]
 })
-class AppEmbeddedModule {}
+export class AppEmbeddedModule {}
 
 @NgModule({})
 export class BudgetToolModule {

@@ -8,15 +8,19 @@ import {
 } from '../../models/budget-tool.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
-import { Router } from '@angular/router';
-import { FadeInOut } from '@picsa/animations';
-import { toJS } from 'mobx';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FadeInOut, ANIMATION_DEFAULTS } from '@picsa/animations';
 
 @Component({
   selector: 'budget-create',
   templateUrl: './budget-create.page.html',
   styleUrls: ['./budget-create.page.scss'],
-  animations: [FadeInOut()]
+  animations: [
+    FadeInOut({
+      ...ANIMATION_DEFAULTS,
+      ...{ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 }
+    })
+  ]
 })
 export class BudgetCreatePage implements OnInit {
   budgetMetaForm: FormGroup;
@@ -30,7 +34,8 @@ export class BudgetCreatePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.store.createNewBudget();
   }
@@ -66,7 +71,9 @@ export class BudgetCreatePage implements OnInit {
     // generate period data
     const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
     await this.store.patchBudget({ data, meta });
-    this.router.navigate(['view', this.store.activeBudget._key]);
+    this.router.navigate(['../', 'view', this.store.activeBudget._key], {
+      relativeTo: this.route
+    });
   }
 
   /**************************************************************************

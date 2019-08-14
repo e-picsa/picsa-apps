@@ -10,6 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class AppComponent {
   title = 'picsa-budget-tool';
+  standalone = true;
 
   constructor(
     private matIconRegistry: MatIconRegistry,
@@ -34,3 +35,11 @@ export class AppComponent {
     }
   }
 }
+
+@Component({
+  // tslint:disable component-selector
+  selector: 'picsa-budget-tool',
+  template: '',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponentEmbedded extends AppComponent {}

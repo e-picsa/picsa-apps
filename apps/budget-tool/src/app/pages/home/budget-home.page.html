@@ -10,7 +10,7 @@
     <div *mobxAutorun>
       <budget-list-item
         *ngFor="let budget of store.savedBudgets"
-        [routerLink]="['/budget/view', budget._key]"
+        [routerLink]="['./view', budget._key]"
         [budget]="budget"
         (onDeleteClicked)="promptDelete(budget)"
       >

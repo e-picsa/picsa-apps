@@ -6,7 +6,7 @@ import {
   IBudgetCardWithValues,
   IBudgetCardValues
 } from '../../models/budget-tool.models';
-import { FadeInOut } from '@picsa/animations';
+import { FadeInOut, ANIMATION_DEFAULTS } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
 
 @Component({
@@ -14,7 +14,10 @@ import { MatStepper } from '@angular/material';
   templateUrl: './cell-editor.html',
   styleUrls: ['./cell-editor.scss'],
   animations: [
-    FadeInOut({ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 })
+    FadeInOut({
+      ...ANIMATION_DEFAULTS,
+      ...{ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 }
+    })
   ]
 })
 

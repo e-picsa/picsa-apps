@@ -1,9 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { select } from '@angular-redux/store';
+import { Component } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { takeUntil } from 'rxjs/operators';
-import { IUser, IUserGroup } from '../../models/models';
+import { IUser } from '../../models/models';
 import { UserStore } from '../../store/user.store';
 
 @Component({
@@ -11,24 +8,13 @@ import { UserStore } from '../../store/user.store';
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss']
 })
-export class SettingsPage implements OnDestroy {
-  private componentDestroyed: Subject<any> = new Subject();
+export class SettingsPage {
   user: IUser;
   lastBackup: string;
   name: string;
-  @select('user') user$: Observable<IUser>;
-  @select(['data', 'groups'])
-  userGroups$: Observable<IUserGroup[]>;
 
   constructor(public alertCtrl: AlertController, private userStore: UserStore) {
     this.getLastBackup();
-    this.user$
-      .pipe(takeUntil(this.componentDestroyed))
-      .subscribe(user => (this.user = user));
-  }
-  ngOnDestroy() {
-    this.componentDestroyed.next();
-    this.componentDestroyed.unsubscribe();
   }
 
   async getLastBackup() {

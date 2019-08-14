@@ -44,16 +44,12 @@ export class AppRoutingModule {}
   imports: [RouterModule.forChild(embeddedRoutes)],
   exports: [RouterModule]
 })
-export class ClimateToolRoutingModule {
-  constructor() {
-    console.log('climate routes', embeddedRoutes);
-  }
-}
+export class ClimateToolRoutingModule {}
 
 // note, whilst child routing should automatically add and handle prefixes,
 // currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
 // possibly linked to multiple router outlets, for now just add prefixes
-function addRoutePrefix(routes: Routes) {
+export function addRoutePrefix(routes: Routes) {
   return routes.map(r => {
     return {
       ...r,

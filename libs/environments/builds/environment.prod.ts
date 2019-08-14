@@ -1,5 +1,5 @@
 import { IEnvironment } from '@picsa/models';
-import BASE_ENV from '../environment.base';
+import BASE_ENV from '@picsa/environments/environment.base';
 
 const ENVIRONMENT_PROD: IEnvironment = {
   // During production builds this file replaces default environment to indicate we have a production build

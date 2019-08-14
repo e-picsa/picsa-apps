@@ -8,5 +8,6 @@
 > 0.5%
 last 2 versions
 Firefox ESR
-not dead
-not IE 9-11 # For IE 9-11 support, remove 'not'.
+# remove not from in front to disable differential builds
+dead
+IE 9-11
