@@ -11,6 +11,7 @@ import {
   PicsaNativeModule,
   PicsaTranslateModule
 } from '@picsa/modules';
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,7 +23,8 @@ import {
     PicsaDbModule.forRoot(),
     PicsaNativeModule.forRoot(),
     PicsaTranslateModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    IonicModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

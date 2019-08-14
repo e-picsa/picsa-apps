@@ -88,12 +88,13 @@
     "@angular/cli": "8.0.0",
     "@angular/compiler-cli": "^8.0.0",
     "@angular/language-service": "^8.0.0",
-    "@ionic/angular-toolkit": "~1.2.0",
+    "@ionic/angular-toolkit": "~2.0.0",
     "@nrwl/cypress": "8.1.0",
     "@nrwl/jest": "8.1.0",
     "@nrwl/schematics": "^8.1.0",
     "@nrwl/workspace": "8.1.0",
     "@nstudio/schematics": "^7.4.8",
+    "@nstudio/xplat": "^8.0.5",
     "@types/c3": "^0.7.0",
     "@types/jest": "^20.0.8",
     "@types/leaflet": "^1.4.6",
@@ -115,5 +116,20 @@
     "tslint": "~5.11.0",
     "typescript": "~3.4.5",
     "wait-on": "~3.2.0"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-ionic-keyboard": {}
+    },
+    "platforms": [
+      "android"
+    ]
   }
 }
