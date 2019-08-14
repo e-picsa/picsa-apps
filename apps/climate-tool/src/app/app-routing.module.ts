@@ -22,7 +22,24 @@ const commonRoutes: Routes = [
 const standaloneRoutes: Routes = [
   // { path: '**', redirectTo: '/site' }
 ];
-const embeddedRoutes = addRoutePrefix(commonRoutes);
+// const embeddedRoutes = addRoutePrefix(commonRoutes);
+const embeddedRoutes = [
+  {
+    path: 'climate',
+    loadChildren: () =>
+      import('./pages/site-select/site-select.module').then(
+        mod => mod.ClimateSiteSelectPageModule
+      )
+  },
+  {
+    path: 'climate/site/:siteId',
+    loadChildren: () =>
+      import('./pages/site-view/site-view.module').then(
+        mod => mod.ClimateSiteViewPageModule
+      )
+  }
+  // { path: '', redirectTo: '/site', pathMatch: 'full' }
+];
 
 /*******************************************************************
  *  Standalone Version

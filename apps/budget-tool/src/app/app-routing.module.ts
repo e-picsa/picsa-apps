@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const commonRoutes: Routes = [
-  // { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: '',
     loadChildren: () =>
@@ -31,7 +30,35 @@ const commonRoutes: Routes = [
   }
 ];
 const standaloneRoutes: Routes = [{ path: '**', redirectTo: 'home' }];
-const embeddedRoutes = addRoutePrefix(commonRoutes);
+// const embeddedRoutes = addRoutePrefix(commonRoutes);
+const embeddedRoutes = [
+  {
+    path: 'budget',
+    loadChildren: () =>
+      import('./pages/home/budget-home.module').then(
+        mod => mod.BudgetHomePageModule
+      )
+  },
+  {
+    path: 'budget/create',
+    loadChildren: () =>
+      import('./pages/create/budget-create.module').then(
+        mod => mod.BudgetCreatePageModule
+      )
+  },
+  {
+    path: 'budget/view',
+    redirectTo: '/home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'budget/view/:budgetKey',
+    loadChildren: () =>
+      import('./pages/view/budget-view.module').then(
+        mod => mod.BudgetViewPageModule
+      )
+  }
+];
 
 /*******************************************************************
  *  Standalone Version
@@ -62,6 +89,7 @@ export class BudgetToolRoutingModule {
 // note, whilst child routing should automatically add and handle prefixes,
 // currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
 // possibly linked to multiple router outlets, for now just add prefixes
+// NOTE 2 - BREAKS AOT, SO DEFINE MANUALLY INSTEAD
 export function addRoutePrefix(routes: Routes) {
   return routes.map(r => {
     return {

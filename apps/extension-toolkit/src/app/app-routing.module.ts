@@ -6,20 +6,20 @@ import { ClimateToolModule } from '@picsa/climate/src/app/app.module';
 const routes: Routes = [
   // support embed of budget tool app
   // see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
-  // {
-  //   path: 'budget',
-  //   loadChildren: () =>
-  //     import('../../../budget-tool/src/app/app.module').then(
-  //       mod => mod.BudgetToolModule
-  //     )
-  // },
-  // {
-  //   path: 'climate',
-  //   loadChildren: () =>
-  //     import('../../../climate-tool/src/app/app.module').then(
-  //       mod => mod.ClimateToolModule
-  //     )
-  // },
+  {
+    path: 'budget',
+    loadChildren: () =>
+      import('../../../budget-tool/src/app/app.module').then(
+        mod => mod.BudgetToolModule
+      )
+  },
+  {
+    path: 'climate',
+    loadChildren: () =>
+      import('../../../climate-tool/src/app/app.module').then(
+        mod => mod.ClimateToolModule
+      )
+  },
   {
     path: 'resources',
     loadChildren: () =>
@@ -62,9 +62,9 @@ const routes: Routes = [
       // Note - preload strategy calls max call stack issue
       // unclear why, but assume not required for toolkit app anyway
       // { preloadingStrategy: PreloadAllModules }
-    )
-    // ClimateToolModule.forRoot(),
-    // BudgetToolModule.forRoot()
+    ),
+    ClimateToolModule.forRoot(),
+    BudgetToolModule.forRoot()
   ],
   exports: [RouterModule]
 })
