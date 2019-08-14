@@ -28,7 +28,7 @@ export class BudgetCellEditorComponent {
   allBudgetCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCardWithValues[] = [];
-  stepsShown = {};
+  stepsShown: any = {};
   showAllCards = false;
   @Input() set cell(cell: IBudgetActiveCell) {
     this.resetView();

@@ -14,7 +14,7 @@ import { ENVIRONMENT } from '@picsa/environments';
 // TODO - handle group changes
 const db = new Dexie(`PICSA_Apps_${ENVIRONMENT.group.code}`);
 @Injectable({ providedIn: 'root' })
-class DBCacheService implements AbstractDBService {
+export class DBCacheService implements AbstractDBService {
   constructor() {
     // initialise database stores, NOTE - avoid dynamically adding tables
     // instead, provide upgrade for changing structure
@@ -76,5 +76,5 @@ class DBCacheService implements AbstractDBService {
    ***********************************************************************/
 }
 
-export default DBCacheService;
+// export default DBCacheService;
 export const cached_db = db;

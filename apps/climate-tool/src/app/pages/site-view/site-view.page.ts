@@ -38,7 +38,7 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
     this.activeStation = await this.climateService.loadStation(siteId);
   }
 
-  setView(viewID: string) {
+  setView(viewID?: string) {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { view: viewID }

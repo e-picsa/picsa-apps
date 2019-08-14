@@ -1,8 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PicsaDbService } from '@picsa/services/core';
-import DBCacheService from '@picsa/services/core/db/_cache.db';
-import DBServerService from '@picsa/services/core/db/_cache.db';
+import { DBCacheService } from '@picsa/services/core/db/_cache.db';
+import { DBServerService } from '@picsa/services/core/db/_server.db';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
@@ -23,10 +23,10 @@ export class PicsaDbModule {
     return {
       ngModule: PicsaDbModule,
       providers: [
-        // DBCacheService,
-        // DBServerService,
-        // DBSyncService,
-        // PicsaDbService
+        DBCacheService,
+        DBServerService,
+        DBSyncService,
+        PicsaDbService
       ]
     };
   }

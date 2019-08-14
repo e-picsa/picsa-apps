@@ -6,7 +6,7 @@ import ENVIRONMENT from '@picsa/environments/environment';
 
 console.log('environment', ENVIRONMENT);
 @Injectable({ providedIn: 'root' })
-class DBServerService implements AbstractDBService {
+export class DBServerService implements AbstractDBService {
   constructor(private afs: AngularFirestore) {}
 
   /************************************************************************
@@ -90,4 +90,4 @@ class DBServerService implements AbstractDBService {
   //   }
   // }
 }
-export default DBServerService;
+// export default DBServerService;
