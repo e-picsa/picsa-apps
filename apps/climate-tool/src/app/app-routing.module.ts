@@ -22,6 +22,7 @@ const commonRoutes: Routes = [
 const standaloneRoutes: Routes = [
   // { path: '**', redirectTo: '/site' }
 ];
+const embeddedRoutes = addRoutePrefix(commonRoutes);
 
 /*******************************************************************
  *  Standalone Version
@@ -40,7 +41,23 @@ export class AppRoutingModule {}
  *  Embedded Version (requires standalone imports in master app)
  ******************************************************************/
 @NgModule({
-  imports: [RouterModule.forChild(commonRoutes)],
+  imports: [RouterModule.forChild(embeddedRoutes)],
   exports: [RouterModule]
 })
-export class ClimateToolRoutingModule {}
+export class ClimateToolRoutingModule {
+  constructor() {
+    console.log('climate routes', embeddedRoutes);
+  }
+}
+
+// note, whilst child routing should automatically add and handle prefixes,
+// currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
+// possibly linked to multiple router outlets, for now just add prefixes
+function addRoutePrefix(routes: Routes) {
+  return routes.map(r => {
+    return {
+      ...r,
+      path: `climate${r.path === '' ? '' : '/' + r.path}`
+    };
+  });
+}

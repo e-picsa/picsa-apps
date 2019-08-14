@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const commonRoutes: Routes = [
   // { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
-    path: 'home',
+    path: '',
     loadChildren: () =>
       import('./pages/home/budget-home.module').then(
         mod => mod.BudgetHomePageModule
@@ -33,6 +33,7 @@ const commonRoutes: Routes = [
 const standaloneRoutes: Routes = [
   // { path: '**', redirectTo: 'home' }
 ];
+const embeddedRoutes = addRoutePrefix(commonRoutes);
 
 /*******************************************************************
  *  Standalone Version
@@ -51,11 +52,23 @@ export class AppRoutingModule {}
  *  Embedded Version (requires standalone imports in master app)
  ******************************************************************/
 @NgModule({
-  imports: [RouterModule.forChild(commonRoutes)],
+  imports: [RouterModule.forChild(embeddedRoutes)],
   exports: [RouterModule]
 })
 export class BudgetToolRoutingModule {
   constructor() {
-    console.log('budget tool constructor', commonRoutes);
+    console.log('budget tool routes', embeddedRoutes);
   }
+}
+
+// note, whilst child routing should automatically add and handle prefixes,
+// currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
+// possibly linked to multiple router outlets, for now just add prefixes
+function addRoutePrefix(routes: Routes) {
+  return routes.map(r => {
+    return {
+      ...r,
+      path: `budget${r.path === '' ? '' : '/' + r.path}`
+    };
+  });
 }
