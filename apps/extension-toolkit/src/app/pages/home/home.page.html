@@ -12,7 +12,7 @@
       >
         <div style="text-align: center">
           <mat-icon [svgIcon]="link.icon" class="nav-icon"></mat-icon>
-          <div class="button-text">{{ link.name | translate }}</div>
+          <div class="nav-text">{{ link.name | translate }}</div>
         </div>
       </mat-grid-tile>
     </mat-grid-list>
@@ -22,7 +22,6 @@
       [language]="store.language"
       (onlanguageSelected)="store.setLanguage($event.code)"
     ></language-select>
-    <div>{{ 'Activities' | translate }}</div>
     <div class="version-info">v{{ version.number }}</div>
   </footer>
 </div>

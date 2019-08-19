@@ -9,7 +9,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgReduxRouterModule } from '@angular-redux/router';
 import { MobxAngularModule } from 'mobx-angular';
 // import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
-import { PicsaDbModule, PicsaNativeModule } from '@picsa/modules';
+import {
+  PicsaDbModule,
+  PicsaNativeModule,
+  PicsaTranslateModule,
+  PicsaTranslateService
+} from '@picsa/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BudgetMaterialModule } from './material.module';
 
@@ -22,7 +27,8 @@ const StandaloneImports = [
   PicsaNativeModule.forRoot(),
   HttpClientModule,
   BudgetMaterialModule,
-  MobxAngularModule
+  MobxAngularModule,
+  PicsaTranslateModule.forRoot()
   // CanvasWhiteboardModule,
 ];
 const CommonImports = [];
@@ -54,7 +60,7 @@ export class BudgetToolModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: AppEmbeddedModule,
-      providers: []
+      providers: [PicsaTranslateService]
     };
   }
 }
