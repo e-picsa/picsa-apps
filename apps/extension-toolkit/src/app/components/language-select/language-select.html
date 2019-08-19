@@ -1,14 +1,7 @@
-<div class="language-container">
-  <ion-icon name="globe" (click)="openLanguageSelect()"></ion-icon>
-  <ion-item class="language-item">
-    <ion-select
-      class="language-select"
-      [(ngModel)]="language"
-      (ionChange)="setLanguage(null, 'home')"
-    >
-      <ion-select-option *ngFor="let language of languages" [value]="language">
-        {{ language.label }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-</div>
+<button mat-button class="language-container" (click)="openLanguageSelect()">
+  <img
+    class="language-flag"
+    [src]="'assets/images/flags/' + language.country + '.svg'"
+  />
+  <span class="language-label">{{ language.label }}</span>
+</button>

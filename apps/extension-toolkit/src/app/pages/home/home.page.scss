@@ -32,7 +32,7 @@
   opacity: 0.4;
 }
 mat-grid-tile {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.65);
   color: white;
   cursor: pointer;
   font-size: 18px;
@@ -41,60 +41,18 @@ mat-grid-tile:hover {
   transform: scale(1.02);
   transition: all 0.3s ease-out;
 }
-.title,
-.subtitle {
-  color: white;
-  text-align: center;
-}
-.title {
-  height: 15vh;
-  font-size: 13vh;
-  padding: 0;
-}
-.subtitle {
-  height: 5vh;
-  font-size: 4vh;
-  margin-bottom: 5vh;
+footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
 }
 .version-info {
-  position: absolute;
-  right: 16px;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
-  text-align: center;
-  .button {
-    padding: 0;
-    margin: 0;
-    color: rgba(255, 255, 255, 0.9);
-    height: 1.5em;
-  }
+  align-self: flex-end;
 }
-// .navlink {
-//   // height: calc(100% / 5 - 5px) !important;
-//   flex: 1;
-//   max-height: 100px;
-//   word-wrap: break-word;
-//   border-top: 1px solid white;
-//   margin: 0 !important;
-//   padding: 0 20px 0 20px;
-//   font-size: larger;
-//   color: var(--color-primary);
-//   opacity: 0.95;
-//   cursor: pointer;
-//   text-decoration: none;
-// }
+
 .nav-icon {
   width: 60px;
   height: 60px;
-}
-.link:hover {
-  font-weight: bold;
-}
-.top-bar {
-  padding: 16px;
-}
-@media only screen and (max-width: 400px) {
-  .version-info {
-    display: block;
-  }
 }

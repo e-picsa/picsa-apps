@@ -8,3 +8,10 @@ h1 {
   margin: 0;
   background: white;
 }
+
+h1.inverted {
+  color: white;
+  padding: 10px;
+  margin: 0;
+  background: var(--color-primary);
+}

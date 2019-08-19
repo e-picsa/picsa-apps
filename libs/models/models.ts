@@ -8,11 +8,12 @@ export interface IGroupSettings {
 }
 
 // region settings
-type CountryCode = 'MW' | 'KE';
+type CountryCode = 'mw' | 'ke' | 'gb';
 type LanguageCode = 'en' | 'ny' | 'sw';
-interface IRegionLang {
+export interface IRegionLang {
   label: string;
   code: LanguageCode;
+  country: CountryCode;
 }
 export interface IRegionSettings {
   countryCode: CountryCode;

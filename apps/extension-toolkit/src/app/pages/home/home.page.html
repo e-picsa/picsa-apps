@@ -1,17 +1,11 @@
 <div class="page">
-  <div class="top-bar" style="display: flex; justify-content: space-between">
-    <language-select></language-select>
-    <div class="version-info">
-      <div style="font-weight: bold">v{{ version.number }}</div>
-      <div>{{ version.date }}</div>
-    </div>
-  </div>
+  <h1 class="inverted">PICSA</h1>
   <!-- <div>
     <div class="title" data-cy="title">{{ 'PICSA' | translate }}</div>
     <div class="subtitle">{{ subtitle | translate }}</div>
   </div> -->
   <div class="page-content background-image">
-    <mat-grid-list [cols]="columns">
+    <mat-grid-list [cols]="columns" style="flex:1">
       <mat-grid-tile
         *ngFor="let link of links"
         [colspan]="link.cols"
@@ -27,4 +21,8 @@
       </mat-grid-tile>
     </mat-grid-list>
   </div>
+  <footer>
+    <language-select></language-select>
+    <div class="version-info">v{{ version.number }}</div>
+  </footer>
 </div>

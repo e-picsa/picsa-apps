@@ -1,51 +1,50 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { IonSelect } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { UserStore } from '../../store/user.store';
+import { PicsaDialogService } from '@picsa/features';
+import { IRegionLang } from '@picsa/models';
 
-interface ILanguage {
-  label: string;
-  code: string;
-}
 @Component({
   selector: 'language-select',
   templateUrl: 'language-select.html',
   styleUrls: ['./language-select.scss']
 })
 export class LanguageSelectComponent implements OnInit {
-  languages: ILanguage[] = ENVIRONMENT.region.languages;
-  language: ILanguage;
-  @ViewChild(IonSelect, { static: false }) select: IonSelect;
+  languages: IRegionLang[] = ENVIRONMENT.region.languages;
+  language: IRegionLang;
 
-  constructor(private userStore: UserStore) {}
-  ngOnInit() {
-    // console.log('langCode', this.langCode$);
-    // this.langCode$.pipe(takeUntil(this.componentDestroyed)).subscribe(code => {
-    //   if (code) {
-    //     this.setLanguage(code, 'redux');
-    //   } else {
-    //     console.log('no language specified, setting default');
-    //     this.language = this.languages[0];
-    //   }
-    // });
+  constructor(
+    private userStore: UserStore,
+    private dialog: PicsaDialogService
+  ) {
+    this.language = this.languages[0];
   }
-  ngOnDestroy() {}
-  openLanguageSelect() {
-    this.select.open();
+  ngOnInit() {}
+
+  async openLanguageSelect() {
+    const selectOptions = this.languages.map(l => {
+      return {
+        image: `assets/images/flags/${l.country}.svg`,
+        text: l.label,
+        data: l
+      };
+    });
+    const dialog = await this.dialog.open('languageSelect', {
+      selectOptions,
+      title: 'Select Language'
+    });
+    await dialog.afterClosed().subscribe(data => {
+      if (data) {
+        this.setLanguage(data);
+      }
+    });
   }
 
   // send language update to redux or update local ngmodel depending on source of update
-  setLanguage(code: string, source: 'redux' | 'home') {
-    if (source == 'redux') {
-      if (code && this.language && this.language.code != code) {
-        this.language = this.languages.filter(l => {
-          return l.code === code;
-        })[0];
-      }
-    } else {
-      this.userStore.updateUser({
-        lang: this.language.code
-      });
-    }
+  setLanguage(language: IRegionLang) {
+    this.userStore.updateUser({
+      lang: language.code
+    });
+    this.language = language;
   }
 }
