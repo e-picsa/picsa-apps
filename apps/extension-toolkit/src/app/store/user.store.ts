@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { observable, action } from 'mobx-angular';
+import { observable, action, computed } from 'mobx-angular';
 import { IUser } from '../models/models';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
+import { LanguageCode } from '@picsa/models';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,9 @@ export class UserStore {
     this.user = { ...this.user, ...patch };
     this.syncUser(this.user);
   }
+  @computed get language() {
+    return this.user ? this._getLanguage(this.user.lang) : {};
+  }
 
   constructor(
     private db: PicsaDbService,
@@ -30,7 +34,6 @@ export class UserStore {
   async loadUser() {
     // TODO - generate user id and save to /user/userID - use to allow user syncing
     let user: IUser = await this.db.getDoc('_appMeta', 'CURRENT_USER');
-
     if (!user) {
       // no user, see if a backup exists on file if using mobile
       user = await this._loadUserBackup();
@@ -55,6 +58,7 @@ export class UserStore {
   }
 
   async syncUser(user: IUser) {
+    await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
     return this.db.setDoc('users/${GROUP}/users', user, true);
   }
 
@@ -84,6 +88,10 @@ export class UserStore {
     // TODO
     console.log('TODO - change language');
     // this.translate.use(code);
+  }
+  private _getLanguage(code: LanguageCode) {
+    const lang = ENVIRONMENT.region.languages.find(l => l.code === code);
+    return lang ? lang : {};
   }
 
   joinGroup() {

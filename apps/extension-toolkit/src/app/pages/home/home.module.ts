@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import { IonicModule } from '@ionic/angular';
-
 import { HomePage } from './home.page';
 import { ComponentsModule } from '@picsa/extension/src/app/components/components.module';
 import { PicsaTranslateModule } from '@picsa/modules';
 import { ExtensionToolkitMaterialModule } from '@picsa/extension/src/app/material.module';
+import { MobxAngularModule } from 'mobx-angular';
 
 const routes: Routes = [
   {
@@ -21,7 +20,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
+    MobxAngularModule,
     RouterModule.forChild(routes),
     ComponentsModule,
     ExtensionToolkitMaterialModule,

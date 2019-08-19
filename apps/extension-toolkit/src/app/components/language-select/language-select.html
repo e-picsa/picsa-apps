@@ -1,4 +1,9 @@
-<button mat-button class="language-container" (click)="openLanguageSelect()">
+<button
+  mat-button
+  class="language-container"
+  (click)="openLanguageSelect()"
+  [style.visibility]="language.country ? 'visible' : 'hidden'"
+>
   <img
     class="language-flag"
     [src]="'assets/images/flags/' + language.country + '.svg'"

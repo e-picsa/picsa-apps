@@ -8,9 +8,7 @@ export class PicsaDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IPicsaDialogData = {},
     public dialogRef: MatDialogRef<PicsaDialogComponent>
-  ) {
-    console.log('dialog data', data);
-  }
+  ) {}
 }
 
 // action dialogs present title, html content, optional loader and action buttons

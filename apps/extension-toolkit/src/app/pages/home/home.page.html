@@ -1,9 +1,5 @@
-<div class="page">
+<div class="page" *mobxAutorun>
   <h1 class="inverted">PICSA</h1>
-  <!-- <div>
-    <div class="title" data-cy="title">{{ 'PICSA' | translate }}</div>
-    <div class="subtitle">{{ subtitle | translate }}</div>
-  </div> -->
   <div class="page-content background-image">
     <mat-grid-list [cols]="columns" style="flex:1">
       <mat-grid-tile
@@ -22,7 +18,10 @@
     </mat-grid-list>
   </div>
   <footer>
-    <language-select></language-select>
+    <language-select
+      [language]="store.language"
+      (onlanguageSelected)="setLanguage($event)"
+    ></language-select>
     <div class="version-info">v{{ version.number }}</div>
   </footer>
 </div>

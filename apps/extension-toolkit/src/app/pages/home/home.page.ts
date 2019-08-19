@@ -2,6 +2,8 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/version';
+import { UserStore } from '../../store/user.store';
+import { IRegionLang } from '@picsa/models';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +17,7 @@ export class HomePage implements OnInit {
   subtitle: string = ENVIRONMENT.region.subtitle;
   columns: number;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, public store: UserStore) {
     this.links = [
       {
         ...LINK_DEFAULTS,
@@ -55,6 +57,10 @@ export class HomePage implements OnInit {
         url: '/settings'
       }
     ];
+  }
+
+  setLanguage(lang: IRegionLang) {
+    this.store.updateUser({ lang: lang.code });
   }
   linkClicked(link: ILink) {
     console.log('link clicked', link);

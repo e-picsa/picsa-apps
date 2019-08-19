@@ -9,7 +9,7 @@ export interface IGroupSettings {
 
 // region settings
 type CountryCode = 'mw' | 'ke' | 'gb';
-type LanguageCode = 'en' | 'ny' | 'sw';
+export type LanguageCode = 'en' | 'ny' | 'sw';
 export interface IRegionLang {
   label: string;
   code: LanguageCode;
