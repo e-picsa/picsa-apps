@@ -1,8 +1,8 @@
 import { OnDestroy, Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { LoadingOptions, ToastOptions } from '@ionic/core';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import * as translations from './translations';
+import { LanguageCode } from '@picsa/models';
 
 @Injectable()
 export class PicsaTranslateService implements OnDestroy {
@@ -21,35 +21,24 @@ export class PicsaTranslateService implements OnDestroy {
   init(defaultLang = 'en') {
     // add translations
     // TODO - pass config param from module to customise what is loaded
-    this.translate.setTranslation('en', translations.en);
-    this.translate.setTranslation('ny', translations.ny);
-    this.translate.setTranslation('sw', translations.sw);
+    // this.translate.setTranslation('en', translations.en);
+    // this.translate.setTranslation('ny', translations.ny);
+    // this.translate.setTranslation('sw', translations.sw);
     // add subscribers
-    this.translate.onLangChange.subscribe((l: LangChangeEvent) => {
+    this.translate.onLangChange.subscribe(async (l: LangChangeEvent) => {
       this.language = l.lang;
+      const strings = await this.translate.getTranslation(l.lang).toPromise();
+      const test = await this.translateText('Activities');
+      console.log(`[${this.language}] language`, test);
       this.prepareStaticTranslations();
     });
     this.translate.use(defaultLang);
   }
+  setLang(code: LanguageCode) {
+    this.translate.use(code);
+  }
   ngOnDestroy() {
     this.translate.onLangChange.unsubscribe();
-  }
-
-  // simple wrapper for ionic toast to allow text translation
-  async createTranslatedToast(config: ToastOptions, timeout?: number) {
-    config.message = await this.translateText(config.message);
-    if (timeout) {
-      await _wait(timeout);
-    }
-    return await this.toastCtrl.create(config);
-  }
-
-  async createTranslatedLoader(config: LoadingOptions) {
-    config.message = await this.translateText(config.message);
-    if (this.loader) {
-      await this.loader.dismiss();
-    }
-    return this.loadingCtrl.create(config);
   }
 
   // use translate service to translate strings that will be displayed
@@ -69,7 +58,6 @@ export class PicsaTranslateService implements OnDestroy {
   // these are calculated when language changed
   async prepareStaticTranslations() {
     this.monthNames = await this.translateArray(MONTHS);
-    console.log('month names', this.monthNames);
   }
 }
 

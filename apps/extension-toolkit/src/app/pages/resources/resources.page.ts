@@ -53,52 +53,52 @@ export class ResourcesPage implements OnInit {
 
   // on load copy resources from app to external directory, checking directory exists first
   async initMobileStorageDirectory() {
-    const loader = await this.translations.createTranslatedLoader({
-      message: 'Preparing Resources'
-    });
-    await loader.present();
-    this.externalDir = await this.filePrvdr
-      .checkFileDirectoryExists()
-      .catch(err => {
-        throw new Error(
-          `check file directory exists error: ${JSON.stringify(err)}`
-        );
-      });
-    const appDir = this.filePrvdr.appDir;
-    const hardResources = await this._listHardResources().catch(err => {
-      throw new Error(`list hard resources error: ${JSON.stringify(err)}`);
-    });
-    const savedResources = await this.filePrvdr
-      .listDirectory(this.externalDir, 'picsa')
-      .catch(err => {
-        throw new Error(`list directory error: ${JSON.stringify(err)}`);
-      });
-    // copy hard resources
-    if (hardResources.length != savedResources.length) {
-      for (const resource of hardResources) {
-        {
-          try {
-            console.log('copying file', resource);
-            await this.file
-              .copyFile(
-                `${appDir}www/assets/resources`,
-                resource.name,
-                `${this.externalDir}picsa`,
-                resource.name
-              )
-              .catch(err => {
-                throw new Error(`copy file error: ${JSON.stringify(err)}`);
-              });
-            console.log('file copied succes');
-          } catch (error) {
-            console.log('file not copied', error, resource.name);
-          }
-        }
-      }
-    } else {
-      console.log('all resources exist :D');
-    }
-    await loader.dismiss();
+    // const loader = await this.translations.createTranslatedLoader({
+    //   message: 'Preparing Resources'
+    // });
+    // await loader.present();
+    // this.externalDir = await this.filePrvdr
+    //   .checkFileDirectoryExists()
+    //   .catch(err => {
+    //     throw new Error(
+    //       `check file directory exists error: ${JSON.stringify(err)}`
+    //     );
+    //   });
+    // const appDir = this.filePrvdr.appDir;
+    // const hardResources = await this._listHardResources().catch(err => {
+    //   throw new Error(`list hard resources error: ${JSON.stringify(err)}`);
+    // });
+    // const savedResources = await this.filePrvdr
+    //   .listDirectory(this.externalDir, 'picsa')
+    //   .catch(err => {
+    //     throw new Error(`list directory error: ${JSON.stringify(err)}`);
+    //   });
+    // // copy hard resources
+    // if (hardResources.length != savedResources.length) {
+    //   for (const resource of hardResources) {
+    //     {
+    //       try {
+    //         console.log('copying file', resource);
+    //         await this.file
+    //           .copyFile(
+    //             `${appDir}www/assets/resources`,
+    //             resource.name,
+    //             `${this.externalDir}picsa`,
+    //             resource.name
+    //           )
+    //           .catch(err => {
+    //             throw new Error(`copy file error: ${JSON.stringify(err)}`);
+    //           });
+    //         console.log('file copied succes');
+    //       } catch (error) {
+    //         console.log('file not copied', error, resource.name);
+    //       }
+    //     }
+    //   }
+    // } else {
+    //   console.log('all resources exist :D');
+    // }
+    // await loader.dismiss();
   }
 
   async _listHardResources() {

@@ -4,7 +4,8 @@ import { IUser } from '../models/models';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
-import { LanguageCode } from '@picsa/models';
+import { LanguageCode, IRegionLang } from '@picsa/models';
+import { PicsaTranslateService } from '@picsa/modules';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,8 @@ export class UserStore {
 
   constructor(
     private db: PicsaDbService,
-    private fileService: PicsaFileService
+    private fileService: PicsaFileService,
+    private translate: PicsaTranslateService
   ) {
     this.loadUser();
   }
@@ -44,6 +46,7 @@ export class UserStore {
     }
     console.log('user', user);
     this.setUser(user);
+    this.setLanguage(user.lang);
   }
 
   async createNewUser() {
@@ -84,11 +87,11 @@ export class UserStore {
     return null;
   }
 
-  changeLanguage(code: string) {
-    // TODO
-    console.log('TODO - change language');
-    // this.translate.use(code);
+  setLanguage(code: LanguageCode) {
+    this.updateUser({ lang: code });
+    this.translate.setLang(code);
   }
+
   private _getLanguage(code: LanguageCode) {
     const lang = ENVIRONMENT.region.languages.find(l => l.code === code);
     return lang ? lang : {};

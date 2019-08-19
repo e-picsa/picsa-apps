@@ -20,8 +20,9 @@
   <footer>
     <language-select
       [language]="store.language"
-      (onlanguageSelected)="setLanguage($event)"
+      (onlanguageSelected)="store.setLanguage($event.code)"
     ></language-select>
+    <div>{{ 'Activities' | translate }}</div>
     <div class="version-info">v{{ version.number }}</div>
   </footer>
 </div>

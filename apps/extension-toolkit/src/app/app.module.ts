@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { MobxAngularModule } from 'mobx-angular';
 import {
   PicsaDbModule,
@@ -12,6 +12,7 @@ import {
   PicsaTranslateModule
 } from '@picsa/modules';
 import { IonicModule } from '@ionic/angular';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +24,7 @@ import { IonicModule } from '@ionic/angular';
     PicsaDbModule.forRoot(),
     PicsaNativeModule.forRoot(),
     PicsaTranslateModule.forRoot(),
+    HttpClientModule,
     AppRoutingModule,
     IonicModule.forRoot()
   ],
@@ -30,3 +32,7 @@ import { IonicModule } from '@ionic/angular';
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}

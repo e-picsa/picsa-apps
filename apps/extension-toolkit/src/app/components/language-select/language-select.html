@@ -2,7 +2,7 @@
   mat-button
   class="language-container"
   (click)="openLanguageSelect()"
-  [style.visibility]="language.country ? 'visible' : 'hidden'"
+  *ngIf="language.country"
 >
   <img
     class="language-flag"
