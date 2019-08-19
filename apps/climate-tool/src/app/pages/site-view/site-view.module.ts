@@ -23,7 +23,7 @@ const routes: Routes = [
     IonicModule,
     ClimateToolComponentsModule,
     PicsaChartsModule,
-    PicsaTranslateModule.forChild(),
+    PicsaTranslateModule,
     ClimateMaterialModule,
     RouterModule.forChild(routes)
   ],

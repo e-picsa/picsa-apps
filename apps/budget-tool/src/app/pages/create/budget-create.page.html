@@ -1,12 +1,12 @@
 <div class="page">
-  <h1>Create New Budget</h1>
+  <h1>{{ 'Create New Budget' | translate }}</h1>
   <div class="page-content" *mobxAutorun style="padding-bottom: 52px">
     <form [formGroup]="budgetMetaForm">
       <mat-horizontal-stepper linear #stepper>
         <!-- Step 1 - handled with custom elements-->
         <mat-step>
-          <ng-template matStepLabel>Enterprise</ng-template>
-          <h2>What is your type of enterprise?</h2>
+          <ng-template matStepLabel>{{ 'Enterprise' | translate }}</ng-template>
+          <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
               *ngFor="let card of store.enterpriseTypeCards"
@@ -17,7 +17,7 @@
             ></budget-card>
           </div>
           <h2 *ngIf="filteredEnterprises.length" @fadeInOut>
-            Select Enterprise
+            {{ 'Select Enterprise' | translate }}
           </h2>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
@@ -37,7 +37,7 @@
               class="footer-button"
               [disabled]="!budgetMetaForm.value.enterprise.id"
             >
-              Next
+              {{ 'Next' | translate }}
               <mat-icon>arrow_forward</mat-icon>
             </button>
           </div>
@@ -45,8 +45,8 @@
 
         <!-- Step 2 - handled with form controls -->
         <mat-step>
-          <ng-template matStepLabel>Length</ng-template>
-          <h2>How long is your budget for?</h2>
+          <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
+          <h2>{{ 'How long is your budget for?' | translate }}</h2>
           <div style="display: flex; flex-wrap: wrap">
             <button
               mat-button
@@ -71,7 +71,7 @@
               class="variable-container editable"
               (click)="periodScaleSelect.open()"
             >
-              <span>{{ budgetMetaForm.value.lengthScale }}</span>
+              <span>{{ budgetMetaForm.value.lengthScale | translate }}</span>
               <mat-select
                 class="select--hidden"
                 #periodScaleSelect
@@ -81,7 +81,7 @@
                 <mat-option
                   *ngFor="let option of periodScaleOptions"
                   [value]="option"
-                  >{{ option }}</mat-option
+                  >{{ option | translate }}</mat-option
                 >
               </mat-select>
             </button>
@@ -89,7 +89,7 @@
               *ngIf="budgetMetaForm.value.lengthScale === 'months'"
               class="variable-container"
             >
-              starting in
+              {{ 'starting in' | translate }}
             </div>
             <button
               mat-button
@@ -99,6 +99,7 @@
             >
               <span>{{
                 periodLabelOptions[budgetMetaForm.value.monthStart - 1]
+                  | translate
               }}</span>
               <mat-select
                 class="select--hidden"
@@ -109,7 +110,7 @@
                 <mat-option
                   *ngFor="let option of periodTotalOptions"
                   [value]="option"
-                  >{{ periodLabelOptions[option - 1] }}</mat-option
+                  >{{ periodLabelOptions[option - 1] | translate }}</mat-option
                 >
               </mat-select>
             </button>
@@ -121,7 +122,7 @@
               mat-raised-button
               class="footer-button"
             >
-              Next
+              {{ 'Next' | translate }}
               <mat-icon>arrow_forward</mat-icon>
             </button>
           </div>
@@ -129,12 +130,16 @@
 
         <!-- Step 3 -->
         <mat-step>
-          <ng-template matStepLabel>Save</ng-template>
-          <h2>Save your budget</h2>
-          <input matInput placeholder="Title" formControlName="title" />
+          <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
+          <h2>{{ 'Save your budget' | translate }}</h2>
+          <input
+            matInput
+            placeholder="{{ 'Title' | translate }}"
+            formControlName="title"
+          />
           <textarea
             matInput
-            placeholder="Description (optional)"
+            placeholder="{{ 'Description (optional)' | translate }}"
             formControlName="description"
           ></textarea>
           <div class="sticky-footer">
@@ -146,7 +151,7 @@
               class="footer-button"
               (click)="save()"
             >
-              Save
+              {{ 'Save' | translate }}
             </button>
           </div>
         </mat-step>

@@ -5,7 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
 import { ComponentsModule } from '@picsa/extension/src/app/components/components.module';
-// import { PicsaTranslateModule } from '@picsa/modules';
 import { ExtensionToolkitMaterialModule } from '@picsa/extension/src/app/material.module';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaTranslateModule } from '@picsa/modules';

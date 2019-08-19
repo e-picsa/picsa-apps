@@ -18,7 +18,7 @@ const routes: Routes = [
     CommonModule,
     PicsaMapModule,
     RouterModule.forChild(routes),
-    PicsaTranslateModule.forChild(),
+    PicsaTranslateModule,
     ClimateMaterialModule
   ],
   declarations: [SiteSelectPage]

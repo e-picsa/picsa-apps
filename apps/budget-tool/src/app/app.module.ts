@@ -42,7 +42,11 @@ const ChildImports = [BudgetToolRoutingModule];
   imports: [...StandaloneImports, ...CommonImports],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private translate: PicsaTranslateService) {
+    console.log('hello budget tool module', this.translate);
+  }
+}
 
 /*******************************************************************
  *  Embedded Version (requires standalone imports in master app)
@@ -53,7 +57,10 @@ export class AppModule {}
   imports: [...CommonImports, ...ChildImports],
   bootstrap: [AppComponentEmbedded]
 })
-export class AppEmbeddedModule {}
+export class AppEmbeddedModule {
+  // ensure translate has been initiated
+  constructor(private translate: PicsaTranslateService) {}
+}
 
 @NgModule({})
 export class BudgetToolModule {

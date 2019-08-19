@@ -1,7 +1,6 @@
 import { OnDestroy, Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import * as translations from './translations';
 import { LanguageCode } from '@picsa/models';
 
 @Injectable()
@@ -18,7 +17,7 @@ export class PicsaTranslateService implements OnDestroy {
     this.init();
   }
   // subscrib to language changes and retranslate static translations
-  init(defaultLang = 'en') {
+  init(defaultLang = 'ny') {
     // TODO - pass config param from module to customise what is loaded
     // add subscribers
     this.translate.onLangChange.subscribe(async (l: LangChangeEvent) => {

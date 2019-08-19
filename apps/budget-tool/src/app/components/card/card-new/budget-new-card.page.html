@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title data-cy="title">Add New Card</ion-title>
+    <ion-title data-cy="title">{{ 'Add New Card' | translate }}</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="dismiss()" slot="start">
         <ion-icon name="close"></ion-icon>
@@ -13,13 +13,15 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
-      <ion-label position="stacked">Name for card</ion-label>
+      <ion-label position="stacked">{{
+        'Name for card' | translate
+      }}</ion-label>
       <ion-input type="text" [(ngModel)]="cardName"></ion-input>
     </ion-item>
   </ion-list>
 
   <!--Add card-->
-  <div>Card Picture</div>
+  <div>{{ 'Card Picture' | translate }}</div>
   <div style="position: relative">
     <div class="canvas-container">
       <canvas-whiteboard
@@ -43,8 +45,13 @@
     </div>
   </div>
   <ion-item>
-    <ion-button slot="start" expand="block" (click)="saveCard()" [disabled]="!cardName">
-      <ion-icon name="add"></ion-icon>Save Card</ion-button
+    <ion-button
+      slot="start"
+      expand="block"
+      (click)="saveCard()"
+      [disabled]="!cardName"
+    >
+      <ion-icon name="add"></ion-icon>{{ 'Save Card' | translate }}</ion-button
     >
   </ion-item>
 </ion-content>

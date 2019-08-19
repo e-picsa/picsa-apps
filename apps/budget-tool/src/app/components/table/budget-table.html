@@ -3,12 +3,12 @@
   <div class="time-period">
     <div class="time-period-title cell top-row"></div>
     <div class="cell row-title" *ngFor="let row of rows">
-      {{ row.label }}
+      {{ row.label | translate }}
     </div>
     <!-- cash balance legend -->
     <div class="cell row-title">
       <div>
-        <div>Balance</div>
+        <div>{{ 'Balance' | translate }}</div>
         <budget-balance-legend
           [valueCounters]="store.valueCounters"
         ></budget-balance-legend>
@@ -22,7 +22,7 @@
     *ngFor="let column of store.activeBudget.data; let columnIndex = index"
   >
     <div class="time-period-title cell top-row">
-      {{ periodLabels[columnIndex] }}
+      {{ periodLabels[columnIndex] | translate }}
     </div>
     <!-- period rows -->
     <div *ngFor="let row of rows" class="cell">
@@ -36,8 +36,10 @@
     <div class="cell">
       <div>
         <div style="padding:5px">
-          <div>{{ periodLabels[columnIndex] }}</div>
-          <div>{{ store.balance[columnIndex].period | number: '.0' }}</div>
+          <div>{{ periodLabels[columnIndex] | translate }}</div>
+          <div>
+            {{ store.balance[columnIndex].period | number: '.0' }}
+          </div>
         </div>
         <hr />
         <div style="padding:5px">

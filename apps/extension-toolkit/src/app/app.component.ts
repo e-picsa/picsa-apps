@@ -17,6 +17,8 @@ export class AppComponent {
     this.registerIcons();
   }
 
+  // Note, any icons registered in child modules will also need to be registered here
+  // TODO - see if there is a better system for this
   registerIcons() {
     const icons = {
       resources: 'resources',
@@ -24,7 +26,10 @@ export class AppComponent {
       'data-collection': 'data-collection',
       settings: 'settings',
       'budget-tool': 'budget-tool',
-      'climate-tool': 'climate-tool'
+      'climate-tool': 'climate-tool',
+      station: 'station',
+      chart: 'chart',
+      download: 'download'
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(
