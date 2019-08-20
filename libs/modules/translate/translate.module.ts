@@ -35,7 +35,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   exports: []
 })
-class PicsaTranslateRootModule {}
+export class _PicsaTranslateRootModule {}
 
 @NgModule({
   imports: [
@@ -51,7 +51,7 @@ class PicsaTranslateRootModule {}
   ],
   exports: []
 })
-class PicsaTranslateChildModule {}
+export class _PicsaTranslateChildModule {}
 
 @NgModule({
   imports: [],
@@ -60,13 +60,13 @@ class PicsaTranslateChildModule {}
 export class PicsaTranslateModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: PicsaTranslateRootModule,
+      ngModule: _PicsaTranslateRootModule,
       providers: [PicsaTranslateService]
     };
   }
   static forChild(): ModuleWithProviders {
     return {
-      ngModule: PicsaTranslateChildModule,
+      ngModule: _PicsaTranslateChildModule,
       providers: [PicsaTranslateService]
     };
   }

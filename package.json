@@ -9,6 +9,7 @@
     "test": "ng test",
     "lint": "nx lint && ng lint",
     "build:extension": "ng build extension-toolkit --prod",
+    "_run-android_": "have to build extension, cd in, and cordova run android from there ",
     "deploy:climate": "npm run build climate-tool && firebase deploy --only hosting:climate-tool",
     "deploy:budget": "npm run build budget-tool && firebase deploy --only hosting:budget-tool",
     "e2e": "ng e2e",

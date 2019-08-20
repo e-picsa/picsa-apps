@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { PicsaDialogService } from '@picsa/features';
-import { IRegionLang, LanguageCode } from '@picsa/models';
+import { IRegionLang } from '@picsa/models';
 
 @Component({
   selector: 'language-select',
@@ -10,7 +10,7 @@ import { IRegionLang, LanguageCode } from '@picsa/models';
 })
 export class LanguageSelectComponent implements OnInit {
   languages: IRegionLang[] = ENVIRONMENT.region.languages;
-  @Input() language: LanguageCode;
+  @Input() language: IRegionLang;
   @Output() onlanguageSelected = new EventEmitter<IRegionLang>();
 
   constructor(private dialog: PicsaDialogService) {}
