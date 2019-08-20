@@ -1,6 +1,6 @@
 {
   "name": "picsa",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -8,6 +8,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "nx lint && ng lint",
+    "build:extension": "ng build extension-toolkit --prod",
+    "_run-android_": "have to build extension, cd in, and cordova run android from there ",
     "deploy:climate": "npm run build climate-tool && firebase deploy --only hosting:climate-tool",
     "deploy:budget": "npm run build budget-tool && firebase deploy --only hosting:budget-tool",
     "e2e": "ng e2e",
@@ -72,10 +74,12 @@
     "ng2-canvas-whiteboard": "^3.0.4",
     "ngx-file-drop": "8.0.4",
     "ngx-papaparse": "3",
+    "ngx-youtube-player": "^7.1.1",
     "redux": "^4.0.1",
     "redux-observable": "^1.1.0",
     "rxjs": "~6.4.0",
     "save-svg-as-png": "^1.4.14",
+    "survey-angular": "^1.1.5",
     "topojson": "^3.0.2",
     "typeorm": "^0.2.9",
     "zone.js": "^0.9.1"
@@ -85,12 +89,13 @@
     "@angular/cli": "8.0.0",
     "@angular/compiler-cli": "^8.0.0",
     "@angular/language-service": "^8.0.0",
-    "@ionic/angular-toolkit": "~1.2.0",
+    "@ionic/angular-toolkit": "~2.0.0",
     "@nrwl/cypress": "8.1.0",
     "@nrwl/jest": "8.1.0",
     "@nrwl/schematics": "^8.1.0",
     "@nrwl/workspace": "8.1.0",
     "@nstudio/schematics": "^7.4.8",
+    "@nstudio/xplat": "^8.0.5",
     "@types/c3": "^0.7.0",
     "@types/jest": "^20.0.8",
     "@types/leaflet": "^1.4.6",
@@ -112,5 +117,20 @@
     "tslint": "~5.11.0",
     "typescript": "~3.4.5",
     "wait-on": "~3.2.0"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-ionic-keyboard": {}
+    },
+    "platforms": [
+      "android"
+    ]
   }
 }

@@ -26,9 +26,17 @@ export class AppComponent {
         `picsa_${key}`,
         this.domSanitizer.bypassSecurityTrustResourceUrl(
           // NOTE - svgs are imported from shared lib (see angular.json for config)
-          `assets/svgs/${value}.svg`
+          `assets/images/${value}.svg`
         )
       );
     }
   }
 }
+
+@Component({
+  selector: 'climate-tool',
+  // use empty template as router outlet not required
+  template: '',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponentEmbedded extends AppComponent {}

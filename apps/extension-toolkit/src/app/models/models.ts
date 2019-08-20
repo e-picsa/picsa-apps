@@ -1,4 +1,23 @@
 import { IDBDoc } from '@picsa/models/db.models';
+import { LanguageCode } from '@picsa/models';
+
+// user doc format stored locally under 'user' key and reflected to firebase
+export interface IUser extends IDBDoc {
+  appVersion?: string;
+  name?: string;
+  type?: string;
+  id?: string;
+  budgets?: { ['key']?: any };
+  budgetCustomCards?: any;
+  submittedForms?: any;
+  email?: string;
+  verified?: boolean;
+  lang: LanguageCode;
+  groups?: string[];
+  authenticated?: boolean;
+  permissions?: IUserPerimissions;
+  defaults?: IUserDefaults;
+}
 
 interface IUserDefaults {
   country: string;
@@ -9,24 +28,6 @@ interface IUserPerimissions {
   canViewRecordDataPage: boolean;
   canViewViewDataPage: boolean;
   privateWhatsappGroups: { ['id']: boolean }[];
-}
-
-// user doc format stored locally under 'user' key and reflected to firebase
-export interface IUser {
-  appVersion?: string;
-  name?: string;
-  type?: string;
-  id?: string;
-  budgets?: { ['key']?: any };
-  budgetCustomCards?: any;
-  submittedForms?: any;
-  email?: string;
-  verified?: boolean;
-  lang?: string;
-  groups?: string[];
-  authenticated?: boolean;
-  permissions?: IUserPerimissions;
-  defaults?: IUserDefaults;
 }
 
 // data stored locally and sync'd from online
@@ -51,19 +52,22 @@ export interface IUserGroup {
   isHidden?: boolean;
 }
 
-export interface IForm extends IDBDoc {
+export interface IForm {
   name: string;
   groups?: string[];
   icon?: string;
   isActive: boolean;
   surveyJson: any;
 }
+export type IFormDB = IForm & IDBDoc;
 
-export interface IFormResponse extends IDBDoc {
+export interface IFormResponse {
   _userID: string;
   _submitted: string;
   ['questionKey']?: any;
 }
+
+export type IFormResponseDB = IFormResponse & IDBDoc;
 
 export interface IResource {
   _key: string;
@@ -87,3 +91,12 @@ export interface IResourceGroup {
   name: string;
   resources: IResource[] | IVideoResource[];
 }
+
+type IStorageEndpoint =
+  | 'budgets'
+  | '_version'
+  | 'resources'
+  | 'forms'
+  | 'groups'
+  | 'whatsappGroups'
+  | 'user';

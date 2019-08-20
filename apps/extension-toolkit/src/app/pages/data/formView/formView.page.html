@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button
+        text="Back"
+        defaultHref="data/record"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button slot="start" fill="clear" (click)="close()">
+        <ion-icon name="close"></ion-icon>Close
+      </ion-button>
+    </ion-buttons>
+    <ion-title data-cy="title">{{ "Form View" | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div class="survey-container contentcontainer codecontainer">
+    <div id="surveyElement"></div>
+  </div>
+</ion-content>

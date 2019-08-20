@@ -24,49 +24,8 @@
               "testing/tsconfig.libs.json",
               "testing/tsconfig.libs.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
-        }
-      }
-    },
-    "xplat": {
-      "root": "xplat",
-      "sourceRoot": "xplat",
-      "projectType": "library",
-      "prefix": "foo",
-      "architect": {
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "testing/test.xplat.ts",
-            "tsConfig": "testing/tsconfig.xplat.spec.json",
-            "karmaConfig": "testing/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "testing/tsconfig.xplat.json",
-              "testing/tsconfig.xplat.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "ionic-mobile": {
-      "root": "apps/ionic-mobile/",
-      "sourceRoot": "apps/ionic-mobile/src",
-      "projectType": "application",
-      "prefix": "foo",
-      "schematics": {
-        "@schematics/angular:component": {
-          "styleext": "scss"
         }
       }
     },
@@ -94,8 +53,8 @@
               "apps/budget-tool/src/assets",
               {
                 "glob": "**/*",
-                "input": "./libs/shared-assets/svgs",
-                "output": "./assets/images"
+                "input": "./libs/shared-assets",
+                "output": "./assets"
               }
             ],
             "styles": [
@@ -109,7 +68,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -155,9 +114,7 @@
               "apps/budget-tool/tsconfig.app.json",
               "apps/budget-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -166,32 +123,6 @@
             "jestConfig": "apps/budget-tool/jest.config.js",
             "tsConfig": "apps/budget-tool/tsconfig.spec.json",
             "setupFile": "apps/budget-tool/src/test-setup.ts"
-          }
-        }
-      }
-    },
-    "budget-tool-e2e": {
-      "root": "apps/budget-tool-e2e",
-      "sourceRoot": "apps/budget-tool-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/budget-tool-e2e/cypress.json",
-            "tsConfig": "apps/budget-tool-e2e/tsconfig.e2e.json",
-            "devServerTarget": "budget-tool:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "budget-tool:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "apps/budget-tool-e2e/tsconfig.e2e.json"
           }
         }
       }
@@ -224,9 +155,7 @@
               "libs/scss/_index.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "libs/scss/"
-              ]
+              "includePaths": ["libs/scss/"]
             },
             "scripts": []
           },
@@ -235,7 +164,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -281,9 +210,7 @@
               "apps/dashboard/tsconfig.app.json",
               "apps/dashboard/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -292,32 +219,6 @@
             "jestConfig": "apps/dashboard/jest.config.js",
             "tsConfig": "apps/dashboard/tsconfig.spec.json",
             "setupFile": "apps/dashboard/src/test-setup.ts"
-          }
-        }
-      }
-    },
-    "dashboard-e2e": {
-      "root": "apps/dashboard-e2e",
-      "sourceRoot": "apps/dashboard-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/dashboard-e2e/cypress.json",
-            "tsConfig": "apps/dashboard-e2e/tsconfig.e2e.json",
-            "devServerTarget": "dashboard:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "dashboard:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "apps/dashboard-e2e/tsconfig.e2e.json"
           }
         }
       }
@@ -336,18 +237,36 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/apps/extension-toolkit",
+            "outputPath": "apps/extension-toolkit/www",
             "index": "apps/extension-toolkit/src/index.html",
             "main": "apps/extension-toolkit/src/main.ts",
             "polyfills": "apps/extension-toolkit/src/polyfills.ts",
             "tsConfig": "apps/extension-toolkit/tsconfig.app.json",
             "assets": [
               "apps/extension-toolkit/src/favicon.ico",
-              "apps/extension-toolkit/src/assets"
+              "apps/extension-toolkit/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./libs/shared-assets/",
+                "output": "./assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./apps/budget-tool/src/assets",
+                "output": "./assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./apps/climate-tool/src/assets",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "apps/extension-toolkit/src/styles.scss",
-              "libs/scss/_index.scss"
+              "apps/budget-tool/src/styles.scss",
+              "apps/climate-tool/src/styles.scss",
+              "libs/scss/_index.scss",
+              "./node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           },
@@ -356,7 +275,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -402,9 +321,7 @@
               "apps/extension-toolkit/tsconfig.app.json",
               "apps/extension-toolkit/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -414,31 +331,29 @@
             "tsConfig": "apps/extension-toolkit/tsconfig.spec.json",
             "setupFile": "apps/extension-toolkit/src/test-setup.ts"
           }
-        }
-      }
-    },
-    "extension-toolkit-e2e": {
-      "root": "apps/extension-toolkit-e2e",
-      "sourceRoot": "apps/extension-toolkit-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
+        },
+        "ionic-cordova-serve": {
+          "builder": "@ionic/angular-toolkit:cordova-serve",
           "options": {
-            "cypressConfig": "apps/extension-toolkit-e2e/cypress.json",
-            "tsConfig": "apps/extension-toolkit-e2e/tsconfig.e2e.json",
+            "cordovaBuildTarget": "extension-toolkit:ionic-cordova-build",
             "devServerTarget": "extension-toolkit:serve"
           },
           "configurations": {
             "production": {
+              "cordovaBuildTarget": "extension-toolkit:ionic-cordova-build:production",
               "devServerTarget": "extension-toolkit:serve:production"
             }
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+        "ionic-cordova-build": {
+          "builder": "@ionic/angular-toolkit:cordova-build",
           "options": {
-            "tsConfig": "apps/extension-toolkit-e2e/tsconfig.e2e.json"
+            "browserTarget": "extension-toolkit:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "extension-toolkit:build:production"
+            }
           }
         }
       }
@@ -483,7 +398,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/environment.prod.ts"
+                  "with": "libs/environments/builds/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -529,9 +444,7 @@
               "apps/climate-tool/tsconfig.app.json",
               "apps/climate-tool/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -543,32 +456,6 @@
           }
         }
       }
-    },
-    "climate-tool-e2e": {
-      "root": "apps/climate-tool-e2e",
-      "sourceRoot": "apps/climate-tool-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/climate-tool-e2e/cypress.json",
-            "tsConfig": "apps/climate-tool-e2e/tsconfig.e2e.json",
-            "devServerTarget": "climate-tool:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "climate-tool:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "apps/climate-tool-e2e/tsconfig.e2e.json"
-          }
-        }
-      }
     }
   },
   "cli": {
@@ -576,7 +463,7 @@
       "typescriptMismatch": false,
       "versionMismatch": false
     },
-    "defaultCollection": "@nstudio/schematics"
+    "defaultCollection": "@nstudio/xplat"
   },
   "schematics": {
     "@nrwl/angular:application": {

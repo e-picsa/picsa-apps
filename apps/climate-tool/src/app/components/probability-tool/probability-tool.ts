@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IProbabilities } from 'src/app/models';
+import { IProbabilities } from '@picsa/climate/src/app/models';
 
 @Component({
   selector: 'climate-probability-tool',

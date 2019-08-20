@@ -29,7 +29,7 @@ export class PicsaMapComponent {
   // active marker used to toggle style classes
   private _activeMarker: L.Marker;
   // default options are overwritten via input setter
-  protected _mapOptions: L.MapOptions = MAP_DEFAULTS;
+  _mapOptions: L.MapOptions = MAP_DEFAULTS;
   ngOnInit() {
     // the user provides basemap options separate to general map options, so combine here
     // define the basemap layer and then bind to the view component
@@ -66,7 +66,7 @@ export class PicsaMapComponent {
 
   // when the map is ready it emits event with map, and also binds map to
   // public api to be accessed by other services
-  protected _onMapReady(map: L.Map) {
+  _onMapReady(map: L.Map) {
     this.map = map;
     if (this.featuredCountry) {
       this.addCountryFeatures(this.featuredCountry);

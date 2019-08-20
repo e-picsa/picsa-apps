@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PicsaDialogComponent } from './components/dialog';
-import DIALOG_TEMPLATES, { ICustomTempate } from './components/TEMPLATES';
+import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
 import { IPicsaDialogData, IPicsaDialogConfig } from './dialog.models';
 
 @Injectable({
@@ -15,23 +14,23 @@ export class PicsaDialogService {
    ***********************************************************************/
 
   async open(
-    template: ICustomTempate = 'blank',
+    template: ICustomTemplate = 'blank',
     customData: IPicsaDialogData = {},
     customConfig: IPicsaDialogConfig = {}
   ) {
+    // merge default with custom data and additional config
     const templateConfig = DIALOG_TEMPLATES[template];
-    const dialogRef = this.dialog.open(PicsaDialogComponent, {
-      // merge default with custom data and additional config
+    const config = {
       ...templateConfig,
       ...customConfig,
       data: { ...templateConfig.data, ...customData }
-    });
+    };
+    const dialogRef = this.dialog.open(config.component, config);
     dialogRef.afterClosed().subscribe(v => {});
     return dialogRef;
   }
 
   closeAll() {
-    console.log('closing all', this.dialog.openDialogs);
     return this.dialog.closeAll();
   }
 }

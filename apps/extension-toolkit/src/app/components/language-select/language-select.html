@@ -1,0 +1,12 @@
+<button
+  mat-button
+  class="language-container"
+  (click)="openLanguageSelect()"
+  *ngIf="language.country"
+>
+  <img
+    class="language-flag"
+    [src]="'assets/images/flags/' + language.country + '.svg'"
+  />
+  <span class="language-label">{{ language.label }}</span>
+</button>

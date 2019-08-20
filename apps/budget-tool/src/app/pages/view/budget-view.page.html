@@ -7,7 +7,7 @@
     }}</span>
     <div *ngIf="store.isEditorOpen" style="flex:1; display: flex">
       <span style="text-align: center; flex:1">{{
-        store.activeCell.periodLabel
+        store.activeCell.periodLabel | translate
       }}</span>
       <button
         mat-button

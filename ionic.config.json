@@ -1,0 +1,15 @@
+{
+  "defaultProject": "extension-toolkit",
+  "projects": {
+    "extension-toolkit": {
+      "name": "extension-toolkit",
+      "integrations": {
+        "cordova": {
+          "root": "apps\\extension-toolkit"
+        }
+      },
+      "type": "angular",
+      "root": "apps\\extension-toolkit"
+    }
+  }
+}

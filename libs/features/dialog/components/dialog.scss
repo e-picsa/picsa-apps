@@ -4,5 +4,18 @@
   justify-content: space-between;
   height: 100%;
 }
-.picsa-dialog-button {
+.select-option {
+  margin: 0 5px 0 5px;
+  text-align: center;
+  cursor: pointer;
+}
+.select-option:hover {
+  font-weight: bold;
+}
+.select-option > img {
+  width: 120px;
+  height: 90px;
+}
+h2 {
+  margin-top: 0;
 }

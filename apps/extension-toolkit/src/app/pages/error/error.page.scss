@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.error-image {
+  object-fit: contain;
+  max-height: 200px;
+}
+.reload-button {
+  margin-top: 2em;
+}
+.dismiss-button {
+  float: right;
+}
+.error-message {
+  overflow: auto;
+  max-height: 6em;
+  opacity: 0.4;
+  margin-bottom: 2em;
+}
+.top-content,
+.bottom-content,
+.central-content {
+  flex: 1;
+}
+.central-content {
+  height: 700px;
+}
+.bottom-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}

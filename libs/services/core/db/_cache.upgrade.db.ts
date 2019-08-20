@@ -34,7 +34,8 @@ const LEGACY_STORES: ILegacyStore = {
       forms: DEFAULT_STORE_SCHEMA,
       stationData: DEFAULT_STORE_SCHEMA,
       'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA
-    }
+    },
+    upgrade: tx => null
   }
 };
 

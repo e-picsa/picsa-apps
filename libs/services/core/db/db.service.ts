@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
-import DBCacheService from './_cache.db';
-import { firestore } from 'firebase/app';
-import DBServerService from './_server.db';
+import { DBCacheService } from './_cache.db';
+import { DBServerService } from './_server.db';
 import { AbstractDBService } from './abstract.db';
 import { DBSyncService } from './sync.service';
 import { ENVIRONMENT } from '@picsa/environments';
@@ -47,6 +46,7 @@ export class PicsaDbService implements AbstractDBService {
     }
     return dbDoc;
   }
+
   // allow batch set functionality
   async setDocs<T>(
     endpoint: IDBEndpoint,

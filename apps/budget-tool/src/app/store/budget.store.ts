@@ -119,7 +119,7 @@ export class BudgetStore {
     this.changes.next([c.periodIndex, c.typeKey]);
     this.calculateBalance();
   }
-  @action()
+  @action
   setActiveCell(cell: IBudgetActiveCell) {
     cell.cellData = this.activeBudgetValue.data[cell.periodIndex][cell.typeKey];
     this.activeCell = cell;
@@ -128,11 +128,11 @@ export class BudgetStore {
       this.toggleEditor();
     }, 200);
   }
-  @action()
+  @action
   toggleEditor() {
     this.isEditorOpen = !this.isEditorOpen;
   }
-  @action()
+  @action
   scaleValueCounters(scale: IBudgetValueScale) {
     const oldScale = this.activeBudget.meta.valueScale;
     const newScale = scale * oldScale;
@@ -204,7 +204,7 @@ export class BudgetStore {
   }
 
   // load the corresponding values into the budgetMeta observable
-  @action()
+  @action
   private async preloadData() {
     const endpoint = 'budgetTool/_all/cards';
     this.budgetCards = await this.db.getCollection<IBudgetCard>(endpoint);

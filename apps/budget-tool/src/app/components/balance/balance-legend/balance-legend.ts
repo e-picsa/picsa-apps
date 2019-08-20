@@ -8,8 +8,8 @@ import { IBudgetValueCounters } from '../../../models/budget-tool.models';
   styleUrls: ['./balance-legend.scss']
 })
 export class BudgetBalanceLegendComponent {
-  labels: string[];
-  values: number[];
+  labels: string[] = [];
+  values: number[] = [];
   constructor(private store: BudgetStore) {}
   @Input() set valueCounters(valueCounters: IBudgetValueCounters) {
     // only keep the even items (non-half values)

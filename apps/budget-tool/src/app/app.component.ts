@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PicsaTranslateService } from '@picsa/modules';
 
 @Component({
   // tslint:disable component-selector
@@ -10,10 +11,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class AppComponent {
   title = 'picsa-budget-tool';
-
+  standalone = true;
   constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private matIconRegistry?: MatIconRegistry,
+    private domSanitizer?: DomSanitizer,
+    public translate?: PicsaTranslateService
   ) {
     this.registerIcons();
   }
@@ -34,3 +36,10 @@ export class AppComponent {
     }
   }
 }
+
+@Component({
+  // tslint:disable component-selector
+  selector: 'picsa-budget-tool',
+  template: ''
+})
+export class AppComponentEmbedded extends AppComponent {}

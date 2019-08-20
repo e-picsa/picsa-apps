@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import * as DATA from 'src/app/data';
+import * as DATA from '@picsa/climate/src/app/data';
 
 @Component({
   selector: 'climate-view-select',

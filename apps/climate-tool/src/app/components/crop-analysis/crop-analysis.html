@@ -3,7 +3,7 @@
   <div class="crop-group-info">
     <div class="crop-name">{{ group.crop }}</div>
     <img
-      [src]="'assets/svgs/crops/' + group.image + '.svg'"
+      [src]="'assets/images/crops/' + group.image + '.svg'"
       class="crop-image"
     />
   </div>
@@ -20,12 +20,12 @@
         <div class="variety-name">{{ crop.variety }}</div>
         <div>
           <div class="crop-req">
-            <img class="crop-req-img" src="assets/svgs/water.svg" />
+            <img class="crop-req-img" src="assets/images/water.svg" />
             <span>{{ crop.waterMin }}</span>
             <span *ngIf="crop.waterMax"> - {{ crop.waterMax }}</span>
           </div>
           <div class="crop-req">
-            <img class="crop-req-img" src="assets/svgs/days.svg" />
+            <img class="crop-req-img" src="assets/images/days.svg" />
             <span>{{ crop.daysMin }}</span>
             <span *ngIf="crop.daysMax"> - {{ crop.daysMax }}</span>
           </div>
