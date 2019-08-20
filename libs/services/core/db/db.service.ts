@@ -76,10 +76,11 @@ export class PicsaDbService implements AbstractDBService {
 
   /************************************************************************
    *  Stream Methods - used to emit local and live updates
+   *  Currently handled within individual stores
    ***********************************************************************/
 
-  async streamCollection() {}
-  async streamDoc() {}
+  // async streamCollection() {}
+  // async streamDoc() {}
 
   /************************************************************************
    *  Sync Methods - invoked after server db calls. Pull from server

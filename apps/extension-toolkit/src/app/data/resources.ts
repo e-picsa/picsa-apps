@@ -1,11 +1,5 @@
-import { IData, IResource } from '../models/models';
-import FORMS from './surveys';
+import { IResource } from '../models/models';
 
-/* 
-data in this file is saved locally for retrieval (via storage provider), and the keys
-are used to automatically sync data from the live db (via firebase provider)
-
-*/
 const resources: IResource[] = [
   {
     _key: '4I4F36gD0MUef26HfPZG',
@@ -61,26 +55,4 @@ const resources: IResource[] = [
   }
 ];
 
-const groups = [
-  {
-    _key: 'u3EP0KB66MDcD3Ibom0o',
-    name: 'PICSA Mangochi Training 2018',
-    accessKey: 'picsa',
-    defaults: null,
-    order: 10
-  }
-];
-
-const whatsappGroups = [];
-
-// make available as single export so keys can all be taken in one go
-// update version number to automatically override old data if this file has been updated in line with live db
-// (don't want to automatically pull current version number as then this will override data that is on live db but not downloaded prior to release)
-const data: IData = {
-  _version: 10102,
-  forms: FORMS,
-  resources: resources,
-  groups: groups,
-  whatsappGroups: whatsappGroups
-};
-export default data;
+export default resources;

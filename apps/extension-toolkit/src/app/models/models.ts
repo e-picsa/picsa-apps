@@ -30,16 +30,6 @@ interface IUserPerimissions {
   privateWhatsappGroups: { ['id']: boolean }[];
 }
 
-// data stored locally and sync'd from online
-// meta fields with '_' are not sync'd, all other data should come as arrays to populate collection
-export interface IData {
-  _version?: number;
-  resources?: IResource[] | IVideoResource[];
-  forms?: IForm[];
-  groups?: IUserGroup[];
-  whatsappGroups?: any[];
-}
-
 // users can register to groups which provide specific access
 // group order specifies a hierarchy which can be used to handle overrides
 // if overriding permissions or defaults for multiple groups
@@ -82,6 +72,7 @@ export interface IResource {
   youtubeID?: string;
   filepath?: string;
 }
+export type IResourceDB = IResource & IDBDoc;
 export interface IVideoResource extends IResource {
   description: string;
   youtubeID: string;

@@ -4,7 +4,7 @@ import { IUser } from '../models/models';
 import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
-import { LanguageCode, IRegionLang } from '@picsa/models';
+import { LanguageCode } from '@picsa/models';
 import { PicsaTranslateService } from '@picsa/modules';
 
 @Injectable({

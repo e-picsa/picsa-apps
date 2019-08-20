@@ -19,8 +19,10 @@ export class DBCacheService implements AbstractDBService {
     // initialise database stores, NOTE - avoid dynamically adding tables
     // instead, provide upgrade for changing structure
     // https://github.com/dfahlander/Dexie.js/issues/684
+    console.log('dexie version', db);
     upgradeDatabases(db);
     db.version(DB_VERSION).stores(DB_SCHEMA);
+    console.log('db initiatlised', DB_VERSION, DB_SCHEMA);
   }
   /************************************************************************
    *  Main Methods - taken from abstract class
@@ -57,6 +59,7 @@ export class DBCacheService implements AbstractDBService {
     // return db.table(endpoint).bulkGet(keys)
   }
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T) {
+    console.log('set doc', endpoint, doc, db.table(endpoint));
     await db.table(endpoint).put(doc);
     return doc as T & IDBDoc;
   }
