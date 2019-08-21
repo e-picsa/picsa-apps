@@ -294,6 +294,30 @@
                   "maximumError": "5mb"
                 }
               ]
+            },
+            "mw": {
+              "fileReplacements": [
+                {
+                  "replace": "libs/environments/environment.ts",
+                  "with": "libs/environments/builds/environment.mw.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
             }
           }
         },
