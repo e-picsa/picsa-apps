@@ -19,10 +19,8 @@ export class DBCacheService implements AbstractDBService {
     // initialise database stores, NOTE - avoid dynamically adding tables
     // instead, provide upgrade for changing structure
     // https://github.com/dfahlander/Dexie.js/issues/684
-    console.log('dexie version', db);
     upgradeDatabases(db);
     db.version(DB_VERSION).stores(DB_SCHEMA);
-    console.log('db initiatlised', DB_VERSION, DB_SCHEMA);
   }
   /************************************************************************
    *  Main Methods - taken from abstract class

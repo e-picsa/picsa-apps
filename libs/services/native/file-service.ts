@@ -118,8 +118,10 @@ export class PicsaFileService {
     }
   }
 
-  async openFileCordova(filePath) {
+  async openFileCordova(storagePath: string) {
+    const filePath = `${this.externalDir}picsa/${storagePath}`;
     const mimetype = this._getMimetype(filePath);
+    console.log('opening file', filePath, mimetype);
     this.fileOpener.open(filePath, mimetype);
   }
 

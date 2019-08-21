@@ -1,0 +1,23 @@
+.resource {
+  margin: 10px;
+  display: inline-block;
+  cursor: pointer;
+  padding: 2px;
+  width: 200px;
+}
+.resource:hover {
+  font-weight: bold;
+}
+.resource-title,
+.resource-subtitle {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 1.2em;
+}
+img {
+  height: 250px;
+  width: 100%;
+  object-fit: cover;
+}

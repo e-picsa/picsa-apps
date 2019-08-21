@@ -59,9 +59,10 @@ export interface IFormResponse {
 
 export type IFormResponseDB = IFormResponse & IDBDoc;
 
-export interface IResource {
+export interface IResource extends IDBDoc {
   _key: string;
-  name: string;
+  title: string;
+  subtitle: string;
   filename: string;
   type: string;
   image: string;
@@ -72,7 +73,6 @@ export interface IResource {
   youtubeID?: string;
   filepath?: string;
 }
-export type IResourceDB = IResource & IDBDoc;
 export interface IVideoResource extends IResource {
   description: string;
   youtubeID: string;

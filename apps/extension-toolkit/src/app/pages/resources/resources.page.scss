@@ -1,34 +1,3 @@
-.resource {
-  margin: 10px;
-  display: inline-block;
-  cursor: pointer;
-  padding: 2px;
-}
-.resource:hover {
-  font-weight: bold;
-}
-.resource-name {
-  width: 200px;
-  text-align: center;
-}
-img {
-  height: 250px;
-  width: 200px;
-  object-fit: cover;
-}
-ion-card.resource {
-  width: unset;
-  margin: 10px;
-}
-.resource-group-container {
-  margin-top: 2em;
-}
-.resource-group-heading {
-  margin: 0;
-  padding: 5px;
-  background-color: var(--ion-color-primary);
-  color: rgba(255, 255, 255, 0.95);
-}
 .video-resource-container {
   display: none;
   position: fixed;
@@ -58,9 +27,5 @@ ion-card.resource {
   font-weight: bold;
   button {
     margin-right: 0;
-  }
-  ion-icon {
-    color: white;
-    padding: 0;
   }
 }

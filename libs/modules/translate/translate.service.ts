@@ -13,7 +13,6 @@ export class PicsaTranslateService implements OnDestroy {
     public translate: TranslateService,
     public loadingCtrl: LoadingController
   ) {
-    console.log('picsa translate service init');
     this.init();
   }
   // subscrib to language changes and retranslate static translations

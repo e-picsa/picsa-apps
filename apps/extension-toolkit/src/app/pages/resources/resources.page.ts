@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResource, IResourceGroup } from '../../models/models';
 import { ResourcesStore } from '../../store/resources.store';
@@ -8,7 +8,7 @@ import { ResourcesStore } from '../../store/resources.store';
   templateUrl: './resources.page.html',
   styleUrls: ['./resources.page.scss']
 })
-export class ResourcesPage implements OnInit {
+export class ResourcesPage implements AfterViewInit {
   resources$: Observable<IResource[]>;
   resourceGroups: IResourceGroup[];
   activeResource: IResource;
@@ -16,16 +16,7 @@ export class ResourcesPage implements OnInit {
   externalDir: string;
   platformIsWeb = false;
 
-  constructor(public store: ResourcesStore) {
-    console.log('resources constructor');
-  }
-  ngOnInit() {
-    // if (this.platform.is('mobile')) {
-    //   this.initMobileStorageDirectory();
-    // } else {
-    //   this.platformIsWeb = true;
-    // }
-  }
+  constructor(public store: ResourcesStore) {}
 
   ngAfterViewInit() {
     this._setVideoPlayerWidth();
@@ -94,67 +85,10 @@ export class ResourcesPage implements OnInit {
     // }
   }
 
-  // take list of all resources and split into groups to view in sections
-  updateResources(resources: IResource[]) {
-    // console.log('resource init', resources);
-    // // filter for what user should be able to access
-    // //  current placeholder filters out 2017 content
-    // //***add trigger for group change
-    // resources = resources.filter(r => {
-    //   if (r.viewableBy && !r.viewableBy.includes('EXAMPLE')) {
-    //     return false;
-    //   }
-    //   // if (r.region && REGIONAL_SETTINGS.country !== r.region) {
-    //   //   return false;
-    //   // }
-    //   return true;
-    // });
-    // // allocate resources into groups
-    // const groups = {};
-    // console.log('building resource groups');
-    // resources.forEach(res => {
-    //   if (!groups[res.group]) {
-    //     groups[res.group] = {
-    //       name: res.group,
-    //       resources: []
-    //     };
-    //   }
-    //   groups[res.group].resources.push(res);
-    // });
-    // console.log('groups', groups);
-    // this.resourceGroups = _jsonObjectValues(groups);
-    // console.log('this.resources', this.resourceGroups);
-  }
-
-  unsetResource() {
-    this.activeResource = null;
-  }
-
   // video width needs to be set programtically
   _setVideoPlayerWidth() {
     const width = window.innerWidth;
     this.playerWidth = width * 0.9;
     console.log('width', this.playerWidth, window);
-  }
-
-  async copyApplicationFileLocally(filename) {}
-
-  _getMimetype(filename: string) {
-    // const fileNameSplit = filename.split('.');
-    // const extension: string = fileNameSplit[fileNameSplit.length - 1];
-    // return mimetypes[extension];
-  }
-
-  // depending on mobile/web, use cordova fileopener or new tab to show resources
-  async openResource(resource: IResource) {
-    //   this.activeResource = resource;
-    //   if (!this.platform.is('cordova')) {
-    //     return window.open(resource.weblink, '_blank');
-    //   } else {
-    //     return this.filePrvdr.openFileCordova(
-    //       `${this.externalDir}picsa/${resource.filename}`
-    //     );
-    //   }
-    // }
   }
 }

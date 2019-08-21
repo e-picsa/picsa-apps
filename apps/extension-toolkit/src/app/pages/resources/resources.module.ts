@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import { IonicModule } from '@ionic/angular';
-
 import { ResourcesPage } from './resources.page';
 import { NgxYoutubePlayerModule } from 'ngx-youtube-player';
 import { PicsaTranslateModule } from '@picsa/modules';
+import { MobxAngularModule } from 'mobx-angular';
+import { ExtensionToolkitMaterialModule } from '../../material.module';
+import { ComponentsModule } from '../../components/components.module';
 
 const routes: Routes = [
   {
@@ -20,10 +21,12 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
+    ComponentsModule,
     RouterModule.forChild(routes),
     NgxYoutubePlayerModule,
-    PicsaTranslateModule
+    PicsaTranslateModule,
+    MobxAngularModule,
+    ExtensionToolkitMaterialModule
   ],
   declarations: [ResourcesPage]
 })

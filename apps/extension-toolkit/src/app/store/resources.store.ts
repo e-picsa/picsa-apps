@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
-import { IResource, IResourceDB } from '../models/models';
+import { IResource } from '../models/models';
 import { PicsaDbService } from '@picsa/services/core';
 import { PicsaFileService } from '@picsa/services/native/file-service';
-import { IDBEndpoint } from '@picsa/models/db.models';
-import { APP_VERSION } from '@picsa/environments/version';
 import { RESOURCES } from '../data';
+import { ENVIRONMENT } from '@picsa/environments';
 
 @Injectable({
   providedIn: 'root'
@@ -21,29 +20,51 @@ export class ResourcesStore {
   }
 
   @action
-  async resourceInit() {
+  async resourceInit(checkUpdates = true) {
     const cached = await this.db.getCollection<IResource>('resources', 'cache');
-    if (cached.length === 0) {
-      await this.setHardcodedData();
-      return this.resourceInit();
-    }
-    console.log('cached resources', cached);
     this.resources = cached;
+    if (checkUpdates) {
+      await this.checkHardcodedData(cached);
+      this._checkForUpdates(cached);
+    }
+  }
+
+  openResource(resource: IResource) {
+    return ENVIRONMENT.usesCordova
+      ? this.fileService.openFileCordova(resource.filename)
+      : window.open(resource.weblink, '_blank');
+  }
+
+  private async _checkForUpdates(cached: IResource[]) {
+    const latest = cached
+      .map(r => r._modified)
+      .sort()
+      .reverse()[0];
+    const updates = await this.db.getCollection('resources', 'server', latest);
+    console.log('updates', latest, updates);
+    if (updates.length > 0) {
+      await this.db.setDocs('resources', updates);
+      await this.resourceInit(false);
+    }
   }
 
   // TODO - code similar to budget store, should find way to combine
-  private async setHardcodedData() {
-    const endpoint: IDBEndpoint = 'resources';
-
-    const resources: IResource[] = RESOURCES;
-    const dbDocs: IResourceDB[] = resources.map(r => {
-      return {
-        ...r,
-        _created: new Date(APP_VERSION.date).toISOString(),
-        _modified: new Date(APP_VERSION.date).toISOString()
-      };
+  // also should check budget hardcoded if will be overwritten
+  // because no keepModified
+  private async checkHardcodedData(cached: IResource[]) {
+    // check if cache resources are fresher than hardcoded
+    const cacheList = {};
+    cached.forEach(r => (cacheList[r._key] = r._modified));
+    const newerResources = RESOURCES.filter(r => {
+      const lastCache = cacheList[r._key];
+      return !cached || lastCache < r._modified;
     });
-    console.log('setting docs', dbDocs);
-    await this.db.setDocs(endpoint, dbDocs);
+    if (newerResources.length > 0) {
+      console.log('adding hardcoded resources', newerResources);
+      // when setting hardcoded resources to db make sure not to overwrite
+      // _modified timestamp as could miss updates (although unlikely as
+      // resources rarely modified)
+      await this.db.setDocs('resources', newerResources, false, true);
+    }
   }
 }

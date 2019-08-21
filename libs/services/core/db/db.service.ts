@@ -23,11 +23,15 @@ export class PicsaDbService implements AbstractDBService {
     private server: DBServerService,
     private sync: DBSyncService
   ) {}
-  getCollection<IDBDoc>(endpoint: IDBEndpoint, src: IDBSource = 'cache') {
+  getCollection<IDBDoc>(
+    endpoint: IDBEndpoint,
+    src: IDBSource = 'cache',
+    newerThan: string = ''
+  ) {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
       ? this.cache.getCollection<IDBDoc>(endpoint)
-      : this.server.getCollection<IDBDoc>(endpoint);
+      : this.server.getCollection<IDBDoc>(endpoint, newerThan);
   }
   getDoc<IDBDoc>(endpoint: IDBEndpoint, key: string, src: IDBSource = 'cache') {
     endpoint = this._mapEndpoint(endpoint);
@@ -37,9 +41,14 @@ export class PicsaDbService implements AbstractDBService {
   }
   // when setting any doc update meta and return full doc after complete
   // optional sync makes a copy of the document online
-  async setDoc<T>(endpoint: IDBEndpoint, doc: T, sync = false) {
+  async setDoc<T>(
+    endpoint: IDBEndpoint,
+    doc: T,
+    sync = false,
+    keepModified = false
+  ) {
     endpoint = this._mapEndpoint(endpoint);
-    const dbDoc = { ...doc, ...generateDBMeta(doc) };
+    const dbDoc = { ...doc, ...generateDBMeta(doc, keepModified) };
     await this.cache.setDoc(endpoint, dbDoc);
     if (sync) {
       this.sync.addWrites(endpoint, [dbDoc._key]);
@@ -51,11 +60,13 @@ export class PicsaDbService implements AbstractDBService {
   async setDocs<T>(
     endpoint: IDBEndpoint,
     docs: T[],
-    sync = false
+    sync = false,
+    keepModified = false
   ): Promise<(T & IDBDoc)[]> {
     endpoint = this._mapEndpoint(endpoint);
     const dbDocs = docs.map(doc => {
-      return { ...doc, ...generateDBMeta(doc) };
+      const meta = generateDBMeta(doc, keepModified);
+      return { ...doc, ...meta };
     });
     await this.cache.setDocs(endpoint, dbDocs);
     if (sync) {
@@ -122,12 +133,16 @@ export class PicsaDbService implements AbstractDBService {
 /************************************************************************
  *  Additional exports - available without injection
  ***********************************************************************/
-export const generateDBMeta = (doc: any = {}): IDBDoc => {
-  const { _key, _created } = doc;
+export const generateDBMeta = (
+  doc: any = {},
+  // sometimes we want to keep the modification date such as loading hardcoded data
+  keepModified: boolean
+): IDBDoc => {
+  const { _key, _created, _modified } = doc;
   return {
     _key: _key ? _key : _generateID(),
     _created: _created ? _created : new Date().toISOString(),
-    _modified: new Date().toISOString()
+    _modified: keepModified && _modified ? _modified : new Date().toISOString()
   };
 };
 

@@ -8,12 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { PicsaTranslateModule } from '@picsa/modules';
 import { ExtensionToolkitMaterialModule } from '../material.module';
 import { PicsaDialogsModule } from '@picsa/features';
+import { ResourceItemComponent } from './resource-item/resource-item';
 
 @NgModule({
   declarations: [
     UserGroupComponent,
     WhatsappGroupComponent,
-    LanguageSelectComponent
+    LanguageSelectComponent,
+    ResourceItemComponent
   ],
   imports: [
     CommonModule,
@@ -21,8 +23,14 @@ import { PicsaDialogsModule } from '@picsa/features';
     IonicModule,
     PicsaTranslateModule,
     ExtensionToolkitMaterialModule,
-    PicsaDialogsModule
+    PicsaDialogsModule,
+    ExtensionToolkitMaterialModule
   ],
-  exports: [UserGroupComponent, WhatsappGroupComponent, LanguageSelectComponent]
+  exports: [
+    UserGroupComponent,
+    WhatsappGroupComponent,
+    LanguageSelectComponent,
+    ResourceItemComponent
+  ]
 })
 export class ComponentsModule {}

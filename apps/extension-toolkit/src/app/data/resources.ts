@@ -3,17 +3,23 @@ import { IResource } from '../models/models';
 const resources: IResource[] = [
   {
     _key: '4I4F36gD0MUef26HfPZG',
-    name: 'PICSA Manual',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-21T16:57:13.604Z',
+    title: 'PICSA Manual',
+    subtitle: '',
     filename: 'picsa-field-manual.pdf',
     type: 'pdf',
-    image: 'assets/resources/picsa-field-manual-cover.png',
+    image: 'assets/resources/picsa-field-manual-cover.jpg',
     group: 'PICSA Manual',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpicsa-field-manual.pdf?alt=media&token=c394b68a-3f67-4494-8620-c35d65151c45'
   },
   {
     _key: '9Pkro1VYBUlwuNg5oHok',
-    name: 'Crop Information - Chileka',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-08-21T16:57:13.604Z',
+    title: 'Crop Information',
+    subtitle: 'Chileka',
     filename: 'crop-info-sheet-chileka.pdf',
     type: 'pdf',
     image: 'assets/resources/crop-info-sheet-chileka-cover.png',
@@ -24,7 +30,10 @@ const resources: IResource[] = [
   },
   {
     _key: '6VjjF3yZJejFigwDIPr8',
-    name: 'Potential Training Schedule',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-20T16:57:13.604Z',
+    title: 'Potential Training Schedule',
+    subtitle: '',
     filename: 'potential-PICSA-training-schedule.pdf',
     type: 'pdf',
     image: 'assets/resources/potential-PICSA-training-schedule-cover.png',
@@ -34,7 +43,10 @@ const resources: IResource[] = [
   },
   {
     _key: 'm6I8TfROsyr5Wp73BcAd',
-    name: 'RAM Refresher',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-20T16:57:13.604Z',
+    title: 'RAM Refresher',
+    subtitle: '',
     filename: 'ram-refresher.mp4',
     type: 'video',
     image: 'assets/resources/ram-refresher-cover.jpg',
@@ -45,10 +57,13 @@ const resources: IResource[] = [
   },
   {
     _key: 'Yx8927IVTGyM1C4njOIv',
-    name: 'Seasonal Forecast Mangochi 2017-2018',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-20T16:57:13.604Z',
+    title: 'Seasonal Forecast',
+    subtitle: 'Mangochi 2017-2018',
     filename: 'seasonal-forecast-mangochi-2017-2018.pdf',
     type: 'pdf',
-    image: 'assets/resources/seasonal-forecast-mangochi-2017-2018.png',
+    image: 'assets/resources/seasonal-forecast-mangochi-2017-2018.jpg',
     group: 'Documents',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fseasonal-forecast-mangochi-2017-2018.pdf?alt=media&token=c60180cd-8dcd-4d98-aa7e-48f37dc83849'
