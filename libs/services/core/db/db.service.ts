@@ -136,7 +136,7 @@ export class PicsaDbService implements AbstractDBService {
 export const generateDBMeta = (
   doc: any = {},
   // sometimes we want to keep the modification date such as loading hardcoded data
-  keepModified: boolean
+  keepModified = false
 ): IDBDoc => {
   const { _key, _created, _modified } = doc;
   return {

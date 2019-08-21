@@ -57,7 +57,6 @@ export class DBCacheService implements AbstractDBService {
     // return db.table(endpoint).bulkGet(keys)
   }
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T) {
-    console.log('set doc', endpoint, doc, db.table(endpoint));
     await db.table(endpoint).put(doc);
     return doc as T & IDBDoc;
   }

@@ -6,6 +6,7 @@ import { PicsaFileService } from '@picsa/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { LanguageCode } from '@picsa/models';
 import { PicsaTranslateService } from '@picsa/modules';
+import { toJS } from 'mobx';
 
 @Injectable({
   providedIn: 'root'
@@ -40,10 +41,11 @@ export class UserStore {
       // no user, see if a backup exists on file if using mobile
       user = await this._loadUserBackup();
       if (!user) {
-        await this.createNewUser();
-        return this.loadUser();
+        user = await this.createNewUser();
       }
     }
+    // in case user has been pulled form appMeta replace key
+    user._key = user.id;
     console.log('user', user);
     this.setUser(user);
     this.setLanguage(user.lang);
@@ -53,16 +55,20 @@ export class UserStore {
     const meta = generateDBMeta();
     const user: IUser = {
       lang: ENVIRONMENT.region.languages[0].code,
+      // keep id as well as key so can persist within appMeta in different key
+      id: meta._key,
       ...meta
     };
     // update meta
     await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
-    this.syncUser(user);
+    return user;
   }
 
   async syncUser(user: IUser) {
+    console.log('syncing user', toJS(user));
     await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
-    return this.db.setDoc('users/${GROUP}/users', user, true);
+    console.log('user updated locally');
+    // return this.db.setDoc('users/${GROUP}/users', user, true);
   }
 
   private async _backupUserToDisk() {
@@ -88,7 +94,6 @@ export class UserStore {
   }
 
   setLanguage(code: LanguageCode) {
-    this.updateUser({ lang: code });
     this.translate.setLang(code);
   }
 

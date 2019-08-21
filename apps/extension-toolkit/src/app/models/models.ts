@@ -6,7 +6,7 @@ export interface IUser extends IDBDoc {
   appVersion?: string;
   name?: string;
   type?: string;
-  id?: string;
+  id: string;
   budgets?: { ['key']?: any };
   budgetCustomCards?: any;
   submittedForms?: any;
