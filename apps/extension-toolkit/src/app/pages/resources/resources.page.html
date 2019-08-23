@@ -1,7 +1,13 @@
 <div class="page" *mobxAutorun>
   <h1 class="inverted">{{ 'Resources' | translate }}</h1>
   <div class="page-content">
-    <picsa-resource *ngFor="let resource of store.resources"> </picsa-resource>
+    <div>
+      <resource-item
+        *ngFor="let resource of store.resources"
+        [resource]="resource"
+      >
+      </resource-item>
+    </div>
 
     <!-- video resources TODO - refactor to own component -->
     <div

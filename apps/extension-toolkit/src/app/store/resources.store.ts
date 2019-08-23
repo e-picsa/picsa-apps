@@ -5,18 +5,23 @@ import { PicsaDbService } from '@picsa/services/core';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { RESOURCES } from '../data';
 import { ENVIRONMENT } from '@picsa/environments';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ResourcesStore {
   @observable resources: IResource[] = [];
-
+  @observable downloads = {};
   constructor(
     private db: PicsaDbService,
-    private fileService: PicsaFileService
+    private fileService: PicsaFileService,
+    private platform: Platform
   ) {
     this.resourceInit();
+    if (this.platform.is('cordova')) {
+      this.checkDownloadedResources();
+    }
   }
 
   @action
@@ -25,12 +30,18 @@ export class ResourcesStore {
     this.resources = cached;
     if (checkUpdates) {
       await this.checkHardcodedData(cached);
-      this._checkForUpdates(cached);
+      await this._checkForUpdates(cached);
     }
+  }
+  @action
+  async checkDownloadedResources() {
+    console.log('checking downloaded resources');
+    const downloads = await this.fileService.listDirectory('storage', 'picsa');
+    console.log('downloads', downloads);
   }
 
   openResource(resource: IResource) {
-    return ENVIRONMENT.usesCordova
+    return this.platform.is('cordova')
       ? this.fileService.openFileCordova(resource.filename)
       : window.open(resource.weblink, '_blank');
   }
@@ -41,7 +52,6 @@ export class ResourcesStore {
       .sort()
       .reverse()[0];
     const updates = await this.db.getCollection('resources', 'server', latest);
-    console.log('updates', latest, updates);
     if (updates.length > 0) {
       await this.db.setDocs('resources', updates);
       await this.resourceInit(false);

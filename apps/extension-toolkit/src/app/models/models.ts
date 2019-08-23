@@ -61,6 +61,7 @@ export type IFormResponseDB = IFormResponse & IDBDoc;
 
 export interface IResource extends IDBDoc {
   _key: string;
+  _isDownloaded?: boolean;
   title: string;
   subtitle: string;
   filename: string;
@@ -82,12 +83,3 @@ export interface IResourceGroup {
   name: string;
   resources: IResource[] | IVideoResource[];
 }
-
-type IStorageEndpoint =
-  | 'budgets'
-  | '_version'
-  | 'resources'
-  | 'forms'
-  | 'groups'
-  | 'whatsappGroups'
-  | 'user';

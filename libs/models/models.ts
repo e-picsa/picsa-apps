@@ -29,7 +29,7 @@ export interface ICurrencyCounters {
   half: number;
 }
 // firebase
-interface IFirebaseSettings {
+export interface IFirebaseSettings {
   apiKey: string;
   authDomain: string;
   databaseURL: string;
@@ -41,8 +41,7 @@ interface IFirebaseSettings {
 
 // combined settings
 export interface IEnvironment {
-  production: boolean;
-  usesCordova: boolean;
+  enableProduction: boolean;
   firebase: IFirebaseSettings;
   group: IGroupSettings;
   region: IRegionSettings;

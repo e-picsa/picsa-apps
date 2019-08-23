@@ -12,6 +12,8 @@ export class PicsaFileService {
   externalDir: string;
   externalBackupDir: string;
 
+  dir: IPicsaDirectory;
+
   constructor(
     public platform: Platform,
     private file: File,
@@ -27,36 +29,39 @@ export class PicsaFileService {
     }
   }
   async mobileInit() {
-    console.log('platform mobile, cordova enabled');
-    console.log('file plugin', this.file);
-    this.appDir = this.file.applicationDirectory;
-    this.externalDir = await this.checkFileDirectoryExists();
-    this.externalBackupDir = await this.checkFileDirectoryExists(true);
+    this.dir = {
+      app: this.file.applicationDirectory,
+      storage: this.file.externalApplicationStorageDirectory,
+      public: this.file.externalRootDirectory
+    };
+    await this.ensurePicsaDirectory('storage');
+    await this.ensurePicsaDirectory('public');
   }
   checkPlatform() {
     console.log('checking platform');
     this.platforms = this.platform.platforms();
     this.isCordova = this.platform.is('cordova');
   }
-  async checkFileDirectoryExists(backup?: boolean) {
-    console.log('checking file directory');
-    const basePath = backup
-      ? this.file.externalApplicationStorageDirectory
-      : this.file.externalRootDirectory;
+  // given a basepath check if subfolder 'picsa' exists. If not create
+  async ensurePicsaDirectory(base: IPicsaDirectoryBase) {
+    const path = this.dir[base];
     try {
-      await this.file.checkDir(basePath, 'picsa');
-      return this.file.externalApplicationStorageDirectory;
+      await this.file.checkDir(path, 'picsa');
     } catch (error) {
-      console.log('picsa directory does not exist, creating');
-      await this.createDirectory(basePath, 'picsa', false);
+      console.log(`creating folder [${path}/picsa]`);
+      await this.createDirectory(path, 'picsa', false);
     }
   }
 
-  // list directory contents for specified path
-  async listDirectory(dir, path) {
-    console.log('listing', path);
+  /**
+   * list directory contents for specified path
+   * @param base - specify base directory
+   * @param dir - folder path, can contain subfolders
+   */
+  async listDirectory(base: IPicsaDirectoryBase, dir: string) {
+    console.log('listing', dir);
     try {
-      const files = await this.file.listDir(dir, path);
+      const files = await this.file.listDir(this.dir[base], dir);
       return files;
     } catch (error) {
       throw new Error(JSON.stringify(error));
@@ -131,3 +136,32 @@ export class PicsaFileService {
     return MIMETYPES[extension];
   }
 }
+
+type IPicsaDirectoryBase = 'app' | 'public' | 'storage';
+
+/**
+ * @param app applicationDirectory: readonly android assets directory
+ * @param storage externalApplicationStorageDirectory: external files specific to app (good for downloaded assets)
+ * @param public externalRootDirectory: external files general, good for persisting beyond uninstall
+ */
+type IPicsaDirectory = { [key in IPicsaDirectoryBase]: string };
+
+/*
+Device Path	                 cordova.file.*	                      AndroidExtraFileSystems	      r/w?  persistent?   OS clears   private
+
+file:///android_asset/	     applicationDirectory	                assets	                      r	    N/A	          N/A	          Yes
+
+/data/data/<app-id>/	       applicationStorageDirectory	        -	                            r/w	  N/A           N/A	          Yes
+  cache	                     cacheDirectory	                      cache	                        r/w	  Yes	          Yes*	        Yes
+  files	                     dataDirectory	                      files	                        r/w	  Yes	          No	          Yes
+    Documents		                                                  documents	                    r/w	  Yes	          No	          Yes
+
+<sdcard>/	                   externalRootDirectory	              sdcard	                      r/w	  Yes	          No	          No
+  Android/data/<app-id>/	   externalApplicationStorageDirectory	  -	                          r/w	  Yes	          No          	No
+  cache	                     externalCacheDirectory	              cache-external	              r/w	  Yes	          No**	        No
+  files	                     externalDataDirectory	              files-external	              r/w	  Yes	          No	          No
+
+
+
+
+*/

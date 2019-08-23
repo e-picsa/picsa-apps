@@ -1,9 +1,14 @@
-.resource {
+:host {
+  width: 200px;
   margin: 10px;
+  display: inline-block;
+}
+
+.resource {
+  width: 100%;
   display: inline-block;
   cursor: pointer;
   padding: 2px;
-  width: 200px;
 }
 .resource:hover {
   font-weight: bold;
