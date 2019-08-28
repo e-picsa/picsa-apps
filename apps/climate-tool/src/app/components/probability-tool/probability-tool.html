@@ -41,15 +41,17 @@
     <div class="probability-info">
       <div style="display: flex; margin-top:1em">
         <mat-card mat-elevation-z4 id="probabilityCount">
-          <span>{{ probabilities.above.count }}</span> out of
-          {{ probabilities.total }} above
+          <span>{{ probabilities.above.count }}</span>
+          {{ 'out of' | translate }} {{ probabilities.total }}
+          {{ 'above' | translate }}
         </mat-card>
         <mat-card mat-elevation-z4 style="flex:1; text-align:center">
-          On average,
+          {{ 'On average' | translate }},
           <span class="variable">
-            {{ probabilities.above.inTen }} years out of every 10
+            {{ probabilities.above.inTen }}
+            {{ 'years out of every 10' | translate }}
           </span>
-          meet required {{ chartName }}
+          {{ 'satisfy' | translate }} {{ chartName }}
         </mat-card>
       </div>
     </div>

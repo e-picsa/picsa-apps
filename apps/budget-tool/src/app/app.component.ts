@@ -21,11 +21,7 @@ export class AppComponent {
   }
 
   registerIcons() {
-    const icons = {
-      download: 'download',
-      delete: 'delete'
-    };
-    for (const [key, value] of Object.entries(icons)) {
+    for (const [key, value] of Object.entries(BUDGET_ICONS)) {
       this.matIconRegistry.addSvgIcon(
         `picsa_${key}`,
         this.domSanitizer.bypassSecurityTrustResourceUrl(
@@ -43,3 +39,8 @@ export class AppComponent {
   template: ''
 })
 export class AppComponentEmbedded extends AppComponent {}
+
+export const BUDGET_ICONS = {
+  download: 'download',
+  delete: 'delete'
+};

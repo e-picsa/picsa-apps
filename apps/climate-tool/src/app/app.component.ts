@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { PicsaTranslateService } from '@picsa/modules';
 
 @Component({
   selector: 'climate-tool',
@@ -11,17 +12,13 @@ export class AppComponent {
   title = 'climate-tool';
   constructor(
     private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    public translate: PicsaTranslateService
   ) {
     this.registerIcons();
   }
   registerIcons() {
-    const icons = {
-      station: 'station',
-      chart: 'chart',
-      download: 'download'
-    };
-    for (const [key, value] of Object.entries(icons)) {
+    for (const [key, value] of Object.entries(CLIMATE_ICONS)) {
       this.matIconRegistry.addSvgIcon(
         `picsa_${key}`,
         this.domSanitizer.bypassSecurityTrustResourceUrl(
@@ -40,3 +37,10 @@ export class AppComponent {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponentEmbedded extends AppComponent {}
+
+export const CLIMATE_ICONS = {
+  station: 'station',
+  chart: 'chart',
+  download: 'download',
+  controls: 'controls'
+};

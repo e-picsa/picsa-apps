@@ -1,19 +1,20 @@
 <div style="display:flex;justify-content: space-between">
-  <h3>{{ chartMeta.name }}</h3>
+  <h3>{{ chartMeta.name | translate }}</h3>
   <!-- export menu -->
   <div>
     <button
-      id="exportButton"
+      id="advancedButton"
       mat-button
+      (click)="showAdvancedOptions()"
       [matMenuTriggerFor]="menu"
       [disabled]="isExporting"
     >
-      <mat-icon svgIcon="picsa_download"></mat-icon>
-      {{ isExporting ? 'Exporting...' : 'Export' }}
+      <mat-icon svgIcon="picsa_controls"></mat-icon>
+      {{ isExporting ? 'Exporting...' : ('Customise' | translate) }}
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="downloadPrintVersion()">
-        <mat-icon>print</mat-icon>Print Version
+        <mat-icon>print</mat-icon>{{ 'Print Version' | translate }}
       </button>
     </mat-menu>
   </div>

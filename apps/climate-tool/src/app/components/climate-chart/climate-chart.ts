@@ -37,12 +37,22 @@ export class ClimateChartComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.prepareChart();
+  }
+  async prepareChart() {
+    // handle translations
+    this.chartMeta.name = await this.translateService.translateText(
+      this.chartMeta.name
+    );
     this.ranges = this._calculateDataRanges(this.chartData, this.chartMeta);
     this.chartConfig = this._getChartConfig(this.chartData, this.chartMeta);
     // when using line tool and probabilities this is base solely on single y dataset
     this.y1Values = this.chartData.map(
       v => v[this.chartMeta.keys[0]] as number
     );
+  }
+  async showAdvancedOptions() {
+    const dialogRef = await this.dialog.open('chartOptions');
   }
 
   setLineToolValue(value: number) {
