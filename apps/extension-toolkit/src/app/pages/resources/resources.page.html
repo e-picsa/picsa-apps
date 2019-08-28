@@ -5,6 +5,7 @@
       <resource-item
         *ngFor="let resource of store.resources"
         [resource]="resource"
+        (click)="store.openResource(resource)"
       >
       </resource-item>
     </div>

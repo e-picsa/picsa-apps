@@ -29,6 +29,7 @@ export class ResourcesStore {
     const cached = await this.db.getCollection<IResource>('resources', 'cache');
     this.resources = cached;
     if (checkUpdates) {
+      console.log('checking updates');
       await this.checkHardcodedData(cached);
       await this._checkForUpdates(cached);
     }
@@ -41,6 +42,7 @@ export class ResourcesStore {
   }
 
   openResource(resource: IResource) {
+    console.log('open resource', resource);
     return this.platform.is('cordova')
       ? this.fileService.openFileCordova(resource.filename)
       : window.open(resource.weblink, '_blank');
@@ -67,14 +69,14 @@ export class ResourcesStore {
     cached.forEach(r => (cacheList[r._key] = r._modified));
     const newerResources = RESOURCES.filter(r => {
       const lastCache = cacheList[r._key];
-      return !cached || lastCache < r._modified;
+      return !lastCache || lastCache < r._modified;
     });
     if (newerResources.length > 0) {
-      console.log('adding hardcoded resources', newerResources);
       // when setting hardcoded resources to db make sure not to overwrite
       // _modified timestamp as could miss updates (although unlikely as
       // resources rarely modified)
       await this.db.setDocs('resources', newerResources, false, true);
+      this.resourceInit(false);
     }
   }
 }
