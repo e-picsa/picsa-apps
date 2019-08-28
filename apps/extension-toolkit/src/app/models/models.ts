@@ -6,7 +6,7 @@ export interface IUser extends IDBDoc {
   appVersion?: string;
   name?: string;
   type?: string;
-  id?: string;
+  id: string;
   budgets?: { ['key']?: any };
   budgetCustomCards?: any;
   submittedForms?: any;
@@ -28,16 +28,6 @@ interface IUserPerimissions {
   canViewRecordDataPage: boolean;
   canViewViewDataPage: boolean;
   privateWhatsappGroups: { ['id']: boolean }[];
-}
-
-// data stored locally and sync'd from online
-// meta fields with '_' are not sync'd, all other data should come as arrays to populate collection
-export interface IData {
-  _version?: number;
-  resources?: IResource[] | IVideoResource[];
-  forms?: IForm[];
-  groups?: IUserGroup[];
-  whatsappGroups?: any[];
 }
 
 // users can register to groups which provide specific access
@@ -69,9 +59,11 @@ export interface IFormResponse {
 
 export type IFormResponseDB = IFormResponse & IDBDoc;
 
-export interface IResource {
+export interface IResource extends IDBDoc {
   _key: string;
-  name: string;
+  _isDownloaded?: boolean;
+  title: string;
+  subtitle: string;
   filename: string;
   type: string;
   image: string;
@@ -91,12 +83,3 @@ export interface IResourceGroup {
   name: string;
   resources: IResource[] | IVideoResource[];
 }
-
-type IStorageEndpoint =
-  | 'budgets'
-  | '_version'
-  | 'resources'
-  | 'forms'
-  | 'groups'
-  | 'whatsappGroups'
-  | 'user';

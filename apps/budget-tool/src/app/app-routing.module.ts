@@ -81,9 +81,7 @@ export class AppRoutingModule {}
   exports: [RouterModule]
 })
 export class BudgetToolRoutingModule {
-  constructor() {
-    console.log('budget tool routes', embeddedRoutes);
-  }
+  constructor() {}
 }
 
 // note, whilst child routing should automatically add and handle prefixes,

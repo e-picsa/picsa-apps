@@ -1,25 +1,25 @@
-import { IData, IResource } from '../models/models';
-import FORMS from './surveys';
+import { IResource } from '../models/models';
 
-/* 
-data in this file is saved locally for retrieval (via storage provider), and the keys
-are used to automatically sync data from the live db (via firebase provider)
-
-*/
 const resources: IResource[] = [
   {
     _key: '4I4F36gD0MUef26HfPZG',
-    name: 'PICSA Manual',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-21T16:57:13.604Z',
+    title: 'PICSA Manual',
+    subtitle: '',
     filename: 'picsa-field-manual.pdf',
     type: 'pdf',
-    image: 'assets/resources/picsa-field-manual-cover.png',
+    image: 'assets/resources/picsa-field-manual-cover.jpg',
     group: 'PICSA Manual',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpicsa-field-manual.pdf?alt=media&token=c394b68a-3f67-4494-8620-c35d65151c45'
   },
   {
     _key: '9Pkro1VYBUlwuNg5oHok',
-    name: 'Crop Information - Chileka',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-08-21T16:57:13.604Z',
+    title: 'Crop Information',
+    subtitle: 'Chileka',
     filename: 'crop-info-sheet-chileka.pdf',
     type: 'pdf',
     image: 'assets/resources/crop-info-sheet-chileka-cover.png',
@@ -30,7 +30,10 @@ const resources: IResource[] = [
   },
   {
     _key: '6VjjF3yZJejFigwDIPr8',
-    name: 'Potential Training Schedule',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-20T16:57:13.604Z',
+    title: 'Potential Training Schedule',
+    subtitle: '',
     filename: 'potential-PICSA-training-schedule.pdf',
     type: 'pdf',
     image: 'assets/resources/potential-PICSA-training-schedule-cover.png',
@@ -40,7 +43,10 @@ const resources: IResource[] = [
   },
   {
     _key: 'm6I8TfROsyr5Wp73BcAd',
-    name: 'RAM Refresher',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-20T16:57:13.604Z',
+    title: 'RAM Refresher',
+    subtitle: '',
     filename: 'ram-refresher.mp4',
     type: 'video',
     image: 'assets/resources/ram-refresher-cover.jpg',
@@ -51,36 +57,17 @@ const resources: IResource[] = [
   },
   {
     _key: 'Yx8927IVTGyM1C4njOIv',
-    name: 'Seasonal Forecast Mangochi 2017-2018',
+    _created: '2019-07-20T16:57:13.604Z',
+    _modified: '2019-07-20T16:57:13.604Z',
+    title: 'Seasonal Forecast',
+    subtitle: 'Mangochi 2017-2018',
     filename: 'seasonal-forecast-mangochi-2017-2018.pdf',
     type: 'pdf',
-    image: 'assets/resources/seasonal-forecast-mangochi-2017-2018.png',
+    image: 'assets/resources/seasonal-forecast-mangochi-2017-2018.jpg',
     group: 'Documents',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fseasonal-forecast-mangochi-2017-2018.pdf?alt=media&token=c60180cd-8dcd-4d98-aa7e-48f37dc83849'
   }
 ];
 
-const groups = [
-  {
-    _key: 'u3EP0KB66MDcD3Ibom0o',
-    name: 'PICSA Mangochi Training 2018',
-    accessKey: 'picsa',
-    defaults: null,
-    order: 10
-  }
-];
-
-const whatsappGroups = [];
-
-// make available as single export so keys can all be taken in one go
-// update version number to automatically override old data if this file has been updated in line with live db
-// (don't want to automatically pull current version number as then this will override data that is on live db but not downloaded prior to release)
-const data: IData = {
-  _version: 10102,
-  forms: FORMS,
-  resources: resources,
-  groups: groups,
-  whatsappGroups: whatsappGroups
-};
-export default data;
+export default resources;

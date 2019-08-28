@@ -1,53 +1,37 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button text="Back" defaultHref="home"></ion-back-button>
-    </ion-buttons>
-    <ion-title data-cy="title">{{ "Resources" | translate }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content padding>
-  <div
-    class="video-resource-container"
-    [style.display]="
-      activeResource && platformIsWeb && activeResource.youtubeID
-        ? 'block'
-        : 'none'
-    "
-    (click)="unsetResource()"
-  >
-    <div class="video-resource-content">
-      <div class="video-close-button">
-        <ion-button icon-only fill="clear">
-          <ion-icon name="close"></ion-icon>
-        </ion-button>
-      </div>
-      <youtube-player
-        [videoId]="activeResource.youtubeID"
-        *ngIf="activeResource && !platformIsWeb"
-        [width]="playerWidth"
-      ></youtube-player>
-    </div>
-  </div>
-  <div
-    *ngFor="let group of resourceGroups"
-    class="resource-group-container"
-    [id]="group.name"
-    padding
-  >
-    <h2 class="resource-group-heading">
-      {{ group.name | translate }}
-    </h2>
-    <div style="display: flex; flex-wrap: wrap">
-      <ion-card
-        class="resource"
-        *ngFor="let resource of group.resources"
-        (click)="openResource(resource, $event)"
+<div class="page" *mobxAutorun>
+  <h1 class="inverted">{{ 'Resources' | translate }}</h1>
+  <div class="page-content">
+    <div>
+      <resource-item
+        *ngFor="let resource of store.resources"
+        [resource]="resource"
+        (click)="store.openResource(resource)"
       >
-        <img class="resource-image" [src]="resource.image" />
-        <div class="resource-name">{{ resource.name | translate }}</div>
-      </ion-card>
+      </resource-item>
+    </div>
+
+    <!-- video resources TODO - refactor to own component -->
+    <div
+      class="video-resource-container"
+      [style.display]="
+        activeResource && platformIsWeb && activeResource.youtubeID
+          ? 'block'
+          : 'none'
+      "
+      (click)="unsetResource()"
+    >
+      <div class="video-resource-content">
+        <div class="video-close-button">
+          <button mat-button icon-only fill="clear">
+            <mat-icon name="close"></mat-icon>
+          </button>
+        </div>
+        <youtube-player
+          [videoId]="activeResource.youtubeID"
+          *ngIf="activeResource && !platformIsWeb"
+          [width]="playerWidth"
+        ></youtube-player>
+      </div>
     </div>
   </div>
-</ion-content>
+</div>

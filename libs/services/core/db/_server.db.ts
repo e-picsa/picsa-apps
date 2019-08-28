@@ -13,9 +13,9 @@ export class DBServerService implements AbstractDBService {
    *  Main Methods - taken from abstract class
    ***********************************************************************/
 
-  public async getCollection<T>(endpoint: IDBEndpoint) {
+  public async getCollection<T>(endpoint: IDBEndpoint, newerThan = '') {
     const snapshot = await this.afs
-      .collection<T>(endpoint)
+      .collection<T>(endpoint, ref => ref.where('_modified', '>', newerThan))
       .get()
       .toPromise();
     return snapshot.docs.map(d => d.data()) as (T & IDBDoc)[];

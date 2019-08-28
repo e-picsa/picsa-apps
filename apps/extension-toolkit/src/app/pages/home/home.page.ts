@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/version';
 import { UserStore } from '../../store/user.store';
+import { LanguageCode } from '@picsa/models';
 
 @Component({
   selector: 'app-home',
@@ -64,6 +65,10 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.columns = this._calculateColumns(window.innerWidth);
+  }
+  setLanguage(code: LanguageCode) {
+    this.store.updateUser({ lang: code });
+    this.store.setLanguage(code);
   }
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {

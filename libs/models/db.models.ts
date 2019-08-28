@@ -4,7 +4,7 @@ import { ENVIRONMENT } from '@picsa/environments';
 // as datasets typically quite small these aren't really required, but probably good practice
 export const DEFAULT_STORE_SCHEMA = '_key,_modified';
 
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 // NOTE - changes to list of tables requires update db version
 // changes within table schema (including fields) require upgrade function
 
@@ -15,7 +15,8 @@ const DB_COMMON_SCHEMA = {
   'budgetTool/_all/cards': '_key',
   climateTool: DEFAULT_STORE_SCHEMA,
   forms: DEFAULT_STORE_SCHEMA,
-  stationData: DEFAULT_STORE_SCHEMA
+  stationData: DEFAULT_STORE_SCHEMA,
+  resources: DEFAULT_STORE_SCHEMA
 };
 const DB_GROUP_SCHEMA = {
   'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA,
