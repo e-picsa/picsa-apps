@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { ClimateSiteViewPage } from './site-view.page';
-import { IonicModule } from '@ionic/angular';
 import { PicsaChartsModule } from '@picsa/features';
 import { ClimateToolComponentsModule } from '@picsa/climate/src/app/components/climate-tool-components.module';
 import { PicsaTranslateModule } from '@picsa/modules';
@@ -20,7 +19,6 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     ClimateToolComponentsModule,
     PicsaChartsModule,
     PicsaTranslateModule,

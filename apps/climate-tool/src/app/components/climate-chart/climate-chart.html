@@ -6,17 +6,11 @@
       id="advancedButton"
       mat-button
       (click)="showAdvancedOptions()"
-      [matMenuTriggerFor]="menu"
       [disabled]="isExporting"
     >
       <mat-icon svgIcon="picsa_controls"></mat-icon>
       {{ isExporting ? 'Exporting...' : ('Customise' | translate) }}
     </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="downloadPrintVersion()">
-        <mat-icon>print</mat-icon>{{ 'Print Version' | translate }}
-      </button>
-    </mat-menu>
   </div>
 </div>
 

@@ -10,6 +10,11 @@ import {
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
 import { Subject } from 'rxjs';
 import { delay, take, count } from 'rxjs/operators';
+import {
+  MatBottomSheet,
+  MatBottomSheetRef
+} from '@angular/material/bottom-sheet';
+import { ChartOptionsComponent } from '../chart-options/chart-options';
 /******************************************************************
  * Component to display highly customised charts for climate data
  * Additionally renders line tool alongside (to prevent lots of
@@ -33,7 +38,8 @@ export class ClimateChartComponent implements OnInit {
   isExporting: boolean;
   constructor(
     private translateService: PicsaTranslateService,
-    private dialog: PicsaDialogService
+    private dialog: PicsaDialogService,
+    private bottomSheet: MatBottomSheet
   ) {}
 
   ngOnInit() {
@@ -52,7 +58,17 @@ export class ClimateChartComponent implements OnInit {
     );
   }
   async showAdvancedOptions() {
-    const dialogRef = await this.dialog.open('chartOptions');
+    const ref = this.bottomSheet.open(ChartOptionsComponent, {
+      data: this.chartMeta
+    });
+    ref.afterDismissed().subscribe(d => {
+      if (d) {
+        console.log('dismissed', d);
+        if (d.action === 'print') {
+          this.downloadPrintVersion();
+        }
+      }
+    });
   }
 
   setLineToolValue(value: number) {
