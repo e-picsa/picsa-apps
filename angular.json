@@ -299,7 +299,7 @@
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/builds/environment.mw.ts"
+                  "with": "libs/environments/environment.mw.ts"
                 }
               ],
               "optimization": true,
