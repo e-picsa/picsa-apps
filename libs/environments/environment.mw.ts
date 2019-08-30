@@ -7,7 +7,7 @@ const DEFAULT_ENVIRONMENT: IEnvironment = {
   firebase: FIREBASE_CONFIG,
   group: GROUPS.MALAWI,
   region: REGIONS.MALAWI,
-  enableProduction: true
+  enableProduction: false
 };
 
 export default DEFAULT_ENVIRONMENT;
