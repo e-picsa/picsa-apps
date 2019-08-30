@@ -63,6 +63,5 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
         this.activeChart =
           view && view._viewType === 'chart' ? (view as IChartMeta) : undefined;
       });
-    console.log('view changed', this.activeView, this.activeChart);
   }
 }

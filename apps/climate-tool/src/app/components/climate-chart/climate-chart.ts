@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  ViewChild,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { PicsaDialogService } from '@picsa/features/dialog';
 import { PicsaTranslateService } from '@picsa/modules/translate';
 import {
@@ -15,12 +9,10 @@ import {
 } from '@picsa/models/climate.models';
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
 import { Subject } from 'rxjs';
-import { delay, take, count } from 'rxjs/operators';
-import {
-  MatBottomSheet,
-  MatBottomSheetRef
-} from '@angular/material/bottom-sheet';
+import { delay, take } from 'rxjs/operators';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ChartOptionsComponent } from '../chart-options/chart-options';
+import { IClimateView } from '../../models';
 /******************************************************************
  * Component to display highly customised charts for climate data
  * Additionally renders line tool alongside (to prevent lots of
@@ -32,13 +24,14 @@ import { ChartOptionsComponent } from '../chart-options/chart-options';
   styleUrls: ['climate-chart.scss']
 })
 export class ClimateChartComponent {
-  @Input() chartMeta: IChartMeta;
+  @Input() chartMeta: IChartMeta & IClimateView;
   @Input() chartData: IChartSummary[];
   @Input() stationMeta: IStationMeta;
   @ViewChild('picsaChart', { static: true }) picsaChart: PicsaChartComponent;
   chartConfig: IChartConfig;
   chartRendered$ = new Subject<void>();
   lineToolValue: number;
+  reverseLineTool: boolean;
   y1Values: number[];
   ranges: IDataRanges;
   isExporting: boolean;
@@ -49,13 +42,14 @@ export class ClimateChartComponent {
   ) {}
 
   // use ngOnchanges so that chartMeta can be changed directly from parent and update
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('changes', changes);
+  ngOnChanges() {
+    this.lineToolValue = undefined;
     this.prepareChart();
   }
   async prepareChart() {
+    // use reverse line tool for start of season chart
+    this.reverseLineTool = this.chartMeta._viewID === 'start';
     // handle translations
-    console.log('preparing chart', this.chartMeta);
     this.chartMeta.name = await this.translateService.translateText(
       this.chartMeta.name
     );
@@ -72,7 +66,6 @@ export class ClimateChartComponent {
     });
     ref.afterDismissed().subscribe(d => {
       if (d) {
-        console.log('dismissed', d);
         if (d.action === 'print') {
           this.downloadPrintVersion();
         }
@@ -255,11 +248,15 @@ export class ClimateChartComponent {
    ****************************************************************************/
 
   _getPointColour(d: any): string {
+    // reverse colours for start of seasion chart
+    const colours = this.reverseLineTool
+      ? ['#BF7720', '#739B65']
+      : ['#739B65', '#BF7720'];
     if (d.value >= this.lineToolValue) {
-      return '#739B65';
+      return colours[0];
     }
     if (d.value < this.lineToolValue) {
-      return '#BF7720';
+      return colours[1];
     }
     // default return color for series key, attached to d.id
     return seriesColors[d.id];

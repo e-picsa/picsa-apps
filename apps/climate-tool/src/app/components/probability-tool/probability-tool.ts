@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { IProbabilities } from '@picsa/climate/src/app/models';
 
 @Component({
@@ -10,18 +10,24 @@ import { IProbabilities } from '@picsa/climate/src/app/models';
 // take an array of numbers (values) and number to test (x), and display metrics
 export class ProbabilityToolComponent {
   @Input() values: number[];
-  @Input() set x(x: number) {
-    if (x && this.values) {
-      this.probabilities = this.calculateProbabilities(x);
-    }
-  }
+  @Input() x: number;
   @Input() chartName: string;
+  // for start of seasion need to reverse
+  @Input() reverseProbabilities: boolean;
   probabilities = DEFAULT_PROBABILITIES;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const p = this.calculateProbabilities();
+    this.probabilities = this.reverseProbabilities
+      ? this._swapValues(p, 'above', 'below')
+      : p;
+  }
 
   // given a line tool value lookup the existing values and return probability information
   // based on how many points are above and below the given value
   // various outputs used to assist rendering graphics (e.g. number arrays and reverse %)
-  calculateProbabilities(x: number): IProbabilities {
+  calculateProbabilities(): IProbabilities {
+    const x = this.x;
     const points = this.values;
     let totalAbove = 0;
     let totalBelow = 0;
@@ -71,6 +77,14 @@ export class ProbabilityToolComponent {
     }
     return ratio as [number, number];
   }
+
+  private _swapValues(obj: any, key1: string, key2: string) {
+    return {
+      ...obj,
+      [key1]: obj[key2],
+      [key2]: obj[key1]
+    };
+  }
 }
 
 const DEFAULT_PROBABILITIES = {
@@ -87,11 +101,3 @@ const DEFAULT_PROBABILITIES = {
   total: 0,
   ratio: [0, 0]
 };
-
-// const MOCK_PROBABILITIES: IProbabilities = {
-//   above: 30,
-//   below: 9,
-//   percentage: 0.7692307692307693,
-//   reversePercentage: 0.23076923076923073,
-//   ratio: [3, 1]
-// };
