@@ -4,6 +4,12 @@
   width: 60px;
   text-align: center;
 }
+.chart-container {
+  flex: 1;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
 #lineToolInputField {
   width: 100%;
   text-align: center;
@@ -13,9 +19,4 @@
 #lineToolSlider {
   height: 100%;
   padding: 0;
-}
-#advancedButton {
-  position: absolute;
-  right: 20px;
-  z-index: 2;
 }

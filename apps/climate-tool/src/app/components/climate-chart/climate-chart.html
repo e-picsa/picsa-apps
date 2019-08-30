@@ -1,17 +1,9 @@
-<div style="display:flex;justify-content: space-between">
-  <h3>{{ chartMeta.name | translate }}</h3>
-  <!-- export menu -->
-  <div>
-    <button
-      id="advancedButton"
-      mat-button
-      (click)="showAdvancedOptions()"
-      [disabled]="isExporting"
-    >
-      <mat-icon svgIcon="picsa_controls"></mat-icon>
-      {{ isExporting ? 'Exporting...' : ('Customise' | translate) }}
-    </button>
-  </div>
+<!-- export menu -->
+<div style="text-align: right">
+  <button mat-button (click)="showAdvancedOptions()" [disabled]="isExporting">
+    <mat-icon svgIcon="picsa_controls"></mat-icon>
+    {{ isExporting ? 'Preparing...' : ('Options' | translate) }}
+  </button>
 </div>
 
 <div style="display: flex; margin-bottom: 2em">
@@ -39,7 +31,7 @@
       />
     </mat-form-field>
   </div>
-  <div style="flex:1; width:100%">
+  <div class="chart-container">
     <!-- chart -->
     <picsa-chart
       #picsaChart

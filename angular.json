@@ -417,12 +417,12 @@
             ],
             "scripts": []
           },
-          "configurations": {
+          "mw": {
             "production": {
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/builds/environment.prod.ts"
+                  "with": "libs/environments/environment.mw.ts"
                 }
               ],
               "optimization": true,

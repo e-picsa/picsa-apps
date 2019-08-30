@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool.service';
+import { IClimateView } from '../../models';
 
 @Component({
   selector: 'climate-site-view',
@@ -37,12 +38,18 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
     const siteId = this.route.snapshot.params.siteId;
     this.activeStation = await this.climateService.loadStation(siteId);
   }
+  changeSite() {
+    this.router.navigate(['/'], {
+      relativeTo: this.route
+    });
+  }
 
-  setView(viewID?: string) {
+  setView(view: string) {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { view: viewID }
+      queryParams: { view: view }
     });
+    // this.activeChart = view as IChartMeta;
   }
 
   private _subscribeToViewChanges() {
@@ -56,5 +63,6 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
         this.activeChart =
           view && view._viewType === 'chart' ? (view as IChartMeta) : undefined;
       });
+    console.log('view changed', this.activeView, this.activeChart);
   }
 }

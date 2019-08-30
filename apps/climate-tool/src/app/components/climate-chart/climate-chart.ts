@@ -1,4 +1,10 @@
-import { Component, Input, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewChild,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
 import { PicsaDialogService } from '@picsa/features/dialog';
 import { PicsaTranslateService } from '@picsa/modules/translate';
 import {
@@ -25,7 +31,7 @@ import { ChartOptionsComponent } from '../chart-options/chart-options';
   templateUrl: 'climate-chart.html',
   styleUrls: ['climate-chart.scss']
 })
-export class ClimateChartComponent implements OnInit {
+export class ClimateChartComponent {
   @Input() chartMeta: IChartMeta;
   @Input() chartData: IChartSummary[];
   @Input() stationMeta: IStationMeta;
@@ -42,11 +48,14 @@ export class ClimateChartComponent implements OnInit {
     private bottomSheet: MatBottomSheet
   ) {}
 
-  ngOnInit() {
+  // use ngOnchanges so that chartMeta can be changed directly from parent and update
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('changes', changes);
     this.prepareChart();
   }
   async prepareChart() {
     // handle translations
+    console.log('preparing chart', this.chartMeta);
     this.chartMeta.name = await this.translateService.translateText(
       this.chartMeta.name
     );
