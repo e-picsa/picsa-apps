@@ -21,7 +21,10 @@
       [(ngModel)]="lineToolValue"
       (ngModelChange)="setLineToolValue($event)"
     ></mat-slider>
-    <mat-form-field id="lineToolInputField">
+    <mat-form-field
+      id="lineToolInputField"
+      [style.visibility]="chartMeta.yFormat === 'value' ? 'visible' : 'hidden'"
+    >
       <input
         matInput
         id="lineToolInput"

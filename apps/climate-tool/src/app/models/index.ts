@@ -10,7 +10,6 @@ export interface IProbabilities {
     inTen: number;
   };
   total: number;
-  ratio: [number, number];
 }
 
 export interface IClimateView {

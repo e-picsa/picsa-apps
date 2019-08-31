@@ -40,7 +40,6 @@ export class ProbabilityToolComponent {
         }
       }
     }
-    const ratio = this._toRatio(totalAbove, totalBelow);
     const total = totalAbove + totalBelow;
     return {
       above: {
@@ -51,10 +50,9 @@ export class ProbabilityToolComponent {
       below: {
         count: totalBelow,
         pct: 100 - Math.round((totalAbove / total) * 100),
-        inTen: 1 - Math.round((totalAbove / total) * 10)
+        inTen: 10 - Math.round((totalAbove / total) * 10)
       },
-      total,
-      ratio
+      total
     };
   }
 
@@ -62,20 +60,6 @@ export class ProbabilityToolComponent {
     const arr: number[] = [];
     for (let i = 0; i < n; i++) arr.push(i);
     return arr;
-  }
-
-  // represent a number in simplest forms x:1 or 1:x
-  private _toRatio(above: number, below: number) {
-    let ratio = [0, 0];
-    const i = Math.round((below + above) / above);
-    const j = Math.round((below + above) / below);
-    if (above != 0 && above <= below) {
-      ratio = [1, i - 1];
-    }
-    if (below != 0 && below <= above) {
-      ratio = [j - 1, 1];
-    }
-    return ratio as [number, number];
   }
 
   private _swapValues(obj: any, key1: string, key2: string) {
