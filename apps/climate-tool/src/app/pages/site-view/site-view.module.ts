@@ -7,9 +7,6 @@ import { PicsaChartsModule } from '@picsa/features';
 import { ClimateToolComponentsModule } from '@picsa/climate/src/app/components/climate-tool-components.module';
 import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { ClimateMaterialModule } from '@picsa/climate/src/app/material.module';
-import { PicsaDbModule } from '@picsa/modules/db.module';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 const routes: Routes = [
   {
@@ -26,10 +23,7 @@ const routes: Routes = [
     PicsaTranslateModule,
     ClimateMaterialModule,
     PicsaChartsModule,
-    FormsModule,
-    PicsaDbModule,
-    AngularFireModule,
-    AngularFirestoreModule
+    FormsModule
   ],
   declarations: [ClimateSiteViewPage]
 })

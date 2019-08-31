@@ -11,8 +11,6 @@ import { PicsaDbModule } from '@picsa/modules/db.module';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 const StandaloneImports = [
   BrowserModule,
@@ -20,8 +18,6 @@ const StandaloneImports = [
   MatSliderModule,
   PicsaTranslateModule.forRoot(),
   PicsaDbModule.forRoot(),
-  AngularFireModule,
-  AngularFirestoreModule,
   AppRoutingModule
 ];
 const ChildImports = [ClimateToolRoutingModule];
