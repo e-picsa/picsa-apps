@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ClimateSiteViewPage } from './site-view.page';
 import { PicsaChartsModule } from '@picsa/features';
 import { ClimateToolComponentsModule } from '@picsa/climate/src/app/components/climate-tool-components.module';
-import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { ClimateMaterialModule } from '@picsa/climate/src/app/material.module';
 
 const routes: Routes = [
@@ -18,12 +18,12 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     ClimateToolComponentsModule,
-    PicsaChartsModule,
+    RouterModule.forChild(routes),
     PicsaTranslateModule,
     ClimateMaterialModule,
-    RouterModule.forChild(routes)
+    PicsaChartsModule,
+    FormsModule
   ],
   declarations: [ClimateSiteViewPage]
 })

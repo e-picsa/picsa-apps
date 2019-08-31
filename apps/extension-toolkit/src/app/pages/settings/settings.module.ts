@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { SettingsPage } from './settings.page';
-import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { ComponentsModule } from '../../components/components.module';
 
 const routes: Routes = [

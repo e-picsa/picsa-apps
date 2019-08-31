@@ -14,7 +14,7 @@ import { DBSyncService } from '@picsa/services/core/db/sync.service';
   imports: [
     CommonModule,
     AngularFireModule.initializeApp(ENVIRONMENT.firebase),
-    AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
+    AngularFirestoreModule,
     AngularFireAuthModule
   ]
 })

@@ -7,7 +7,6 @@ import {
   ClimateToolRoutingModule
 } from './app-routing.module';
 import { PicsaTranslateModule } from '@picsa/modules/translate';
-import { PicsaDbModule } from '@picsa/modules';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';
@@ -17,7 +16,6 @@ const StandaloneImports = [
   BrowserAnimationsModule,
   MatSliderModule,
   PicsaTranslateModule.forRoot(),
-  PicsaDbModule.forRoot(),
   AppRoutingModule
 ];
 const ChildImports = [ClimateToolRoutingModule];

@@ -4,7 +4,7 @@ import { CombinedProbabilityComponent } from './combined-probability/combined-pr
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ViewSelectComponent } from './view-select/view-select';
-import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { ClimateMaterialModule } from '../material.module';
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
