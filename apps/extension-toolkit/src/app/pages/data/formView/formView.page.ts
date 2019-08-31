@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UserStore } from '../../../store/user.store';
 import { IForm, IFormResponse, IUser } from '../../../models/models';
 import { FormStore } from '../../../store/form.store';
-import { generateDBMeta } from '@picsa/services/core';
+import { generateDBMeta } from '@picsa/services/core/db';
 
 @Component({
   selector: 'app-form-view',

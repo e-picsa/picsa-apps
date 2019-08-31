@@ -7,15 +7,21 @@ import {
   ClimateToolRoutingModule
 } from './app-routing.module';
 import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaDbModule } from '@picsa/modules/db.module';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 const StandaloneImports = [
   BrowserModule,
   BrowserAnimationsModule,
   MatSliderModule,
   PicsaTranslateModule.forRoot(),
+  PicsaDbModule.forRoot(),
+  AngularFireModule,
+  AngularFirestoreModule,
   AppRoutingModule
 ];
 const ChildImports = [ClimateToolRoutingModule];

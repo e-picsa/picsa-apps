@@ -24,7 +24,9 @@
               "testing/tsconfig.libs.json",
               "testing/tsconfig.libs.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
@@ -114,7 +116,9 @@
               "apps/budget-tool/tsconfig.app.json",
               "apps/budget-tool/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -155,7 +159,9 @@
               "libs/scss/_index.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["libs/scss/"]
+              "includePaths": [
+                "libs/scss/"
+              ]
             },
             "scripts": []
           },
@@ -210,7 +216,9 @@
               "apps/dashboard/tsconfig.app.json",
               "apps/dashboard/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -345,7 +353,9 @@
               "apps/extension-toolkit/tsconfig.app.json",
               "apps/extension-toolkit/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -492,7 +502,9 @@
               "apps/climate-tool/tsconfig.app.json",
               "apps/climate-tool/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {

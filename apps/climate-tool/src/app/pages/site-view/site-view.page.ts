@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool.service';
-import { IClimateView } from '../../models';
 
 @Component({
   selector: 'climate-site-view',

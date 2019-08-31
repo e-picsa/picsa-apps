@@ -4,7 +4,7 @@ import { observable, action } from 'mobx-angular';
 import { toJS } from 'mobx';
 import { Injectable } from '@angular/core';
 import { IForm, IFormResponse, IFormDB } from '../models/models';
-import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
+import { PicsaDbService, generateDBMeta } from '@picsa/services/core/db';
 
 @Injectable({
   providedIn: 'root'

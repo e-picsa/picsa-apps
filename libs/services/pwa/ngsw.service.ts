@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { SwUpdate } from '@angular/service-worker';
-import { TranslationsProvider } from '@picsa/services/core';
+import { PicsaTranslateService } from '@picsa/modules/translate';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class ServiceWorkerService {
   constructor(
     private toastCtrl: ToastController,
     private swUpdate: SwUpdate,
-    private translations: TranslationsProvider
+    private translations: PicsaTranslateService
   ) {}
   // callable initialisation as will likely depend on environment
   initialiseSw() {

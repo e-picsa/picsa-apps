@@ -199,17 +199,17 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/animations@^8.1.2":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-8.1.2.tgz#2e4fec78a9345d9f1d93e9d464911c71f8c80046"
-  integrity sha512-szR5qzRe6vS1qrPhV2p5fMp5vQxT2SaljXGs3Xgt2Tl23om0XVNcqK0I8NNuK/ehuJ5LXQ1fJHniGcmN2aUw0g==
+"@angular/animations@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-8.2.4.tgz#0780f9cb98a2ec3d43d80c42976420597932dc36"
+  integrity sha512-EHTvA5ugoFiYVwi9SyozJORWcBhUIn06VbNa2uhQQdOUrsbvKBCF0PpH2nZZJz7wsQ6Pyonizee8vgea8/X59Q==
   dependencies:
     tslib "^1.9.0"
 
-"@angular/cdk@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-8.0.0.tgz#34ca95e71d71780b29b5ba07318c88c4577bdc25"
-  integrity sha512-2vsRWEHNARe0iRmqgzvM67gwfRy+aKvdef4Qu9L+ndSsTrrZT3tSgG8SMn1v9SfBHnx5G8mo4d1AMquXG69AuQ==
+"@angular/cdk@^8.1.4":
+  version "8.1.4"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-8.1.4.tgz#69066053fe4cbd80cee2bb7fa238f1c9abb963fc"
+  integrity sha512-U0tjhAZM4qqUHGGKIKFZZ9d8929s2U/HO0FdoT/eX+oHPOA6mm3bBep7myrSzlkP9V7O1JJfYdhEgijXhYxprQ==
   dependencies:
     tslib "^1.7.1"
   optionalDependencies:
@@ -239,10 +239,10 @@
     universal-analytics "^0.4.20"
     uuid "^3.3.2"
 
-"@angular/common@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-8.0.0.tgz#700aeda9be8af96692fce0ea6bf6157f7c874c0e"
-  integrity sha512-iOAJZ0+1zTRHnHE/5G30+4Q66W1pfZkSkxZIXvgijZ+wtuNloYdWNy/IdZ/m7ayBI7A6FsYEhyMUoWz2HVEJNw==
+"@angular/common@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-8.2.4.tgz#a300938b327a109ea1229bcbf47158902d3770d9"
+  integrity sha512-sPeTkor3uf8T3MvpekS0ZQe9K/yzlHBSoMyT0bIPOYeDTHUph3f/0XyYhH7KSGXLo7tSw1Mx9Ua05nQ+VHtLGQ==
   dependencies:
     tslib "^1.9.0"
 
@@ -263,10 +263,10 @@
     tslib "^1.9.0"
     yargs "13.1.0"
 
-"@angular/compiler@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-8.0.0.tgz#302c987737e1473db3a113ff70fbbb315aa41b58"
-  integrity sha512-4rKsVFMNykF83tPL1VE1+j9kZ3cWHUsLOAB/VqmF64EcR/GsbjKog2v23rSso5kqUtPiVq/FWGYllW6qMdxtJA==
+"@angular/compiler@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-8.2.4.tgz#741bb5042d7bd4b3af93edc0d26f6831f536627d"
+  integrity sha512-LYaYhQlW3GFiXrNywJBYQtsLOWmUFcgudacF1m7QHHhlljnkG3BqkosbT0Dkcl7ayrIDYT/ZMTkVmaiGvgAhnw==
   dependencies:
     tslib "^1.9.0"
 
@@ -282,10 +282,10 @@
   resolved "https://registry.yarnpkg.com/@angular/fire/-/fire-5.2.1.tgz#4b966aaed10cda0b430c9d80769b39d08032004d"
   integrity sha512-pS4zWhLLANzMbYVIKNtebDQKhm9+KANUDvDV6DwKP24XHzkZdvazKe1HC6uXWlf7QmDxSPFleCSBkn0tnQQzdQ==
 
-"@angular/forms@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-8.0.0.tgz#6d636c4f83004290e1a5732a05e87148aaf6ed64"
-  integrity sha512-T6XdG3mALWzvnrN3fA1hAmfwvraiF1SPMWNXgPk2riuMf8CFdoro+tQZ4eo1islHrTTw5QzmqN8JJALfhAG6bg==
+"@angular/forms@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-8.2.4.tgz#dbc9c2fb48a17f3fba7853e315aedc37b81adbb4"
+  integrity sha512-TsaMrfy/Ls9kpxxlkqaPSQCL3DWqIzh3fMd0aGXTjcsEFI3gztttAmE/dlU0dtVsQxD0M9cdqjjPqi0TGamfTw==
   dependencies:
     tslib "^1.9.0"
 
@@ -294,38 +294,38 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-8.0.0.tgz#1ee4ce5003897cad53597da28f4c94fe30519bfb"
   integrity sha512-vGk14oWroEo6ycO4cooznx57nn2sASmCQ/sdE8UVwySUKl940TsVzijgaGqapTepFof9sMqN77y2G15eRKQeAQ==
 
-"@angular/material@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-8.0.0.tgz#21dd15c318d1e29eb4d1a2dd888ddb027897eb49"
-  integrity sha512-c7O7GhZd46xF2WB6T/YPam5lJkTgQLdIS53IqwZIFhL427+SEfPvejVzRnVfZCI3NdrKiWt/5VsvtQZwWzlGvw==
+"@angular/material@^8.1.4":
+  version "8.1.4"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-8.1.4.tgz#8bda747bb023af8ccce2c2d3e9e8dc25f05b3605"
+  integrity sha512-HV1qU63MaOtAc+cWg21Y2ygQKdEDjsGQ/3d3qym9sfR0xU2vvY7OG6gH48BfPeU63oMYxQkhxfoGP8wWMXSU1w==
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser-dynamic@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-8.0.0.tgz#c15f394579ff44f3752033de58edc1afa5065d59"
-  integrity sha512-dx7W7JoSFbsveexjZ/BPlsXbMDLWVLmRCo7IqLvibMrTbdpaaOCNJIXJk1X+f7JJrQ7SwlZaVkoLCMoDWw6fmA==
+"@angular/platform-browser-dynamic@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-8.2.4.tgz#ef0d3896533efbed7c6f301d7cb9ba3a740f3d27"
+  integrity sha512-qn84B796UZIl1KB+YcxwFCx/Ze439Zf7G8ZK+xKsUA16H0R6GswAgBndnYq8xFjww1g4dY7zNH/XZ2FKngETKA==
   dependencies:
     tslib "^1.9.0"
 
-"@angular/platform-browser@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-8.0.0.tgz#fc7c55a0483e67e5606e499c129fda60ae8d4363"
-  integrity sha512-fTD+pTMbq+On9Uv3VXiei2lfuX7GX31dngm/Y4yWTFeW6eXy0+7kkfflzpLOb0hykCZvcXzarqCuEBBYNLrrOg==
+"@angular/platform-browser@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-8.2.4.tgz#ce89c2397ce945699cbe8b9e7c1d2d932f5d04f9"
+  integrity sha512-3nd71h6S4RT9lHu9mVGD/741O+8MBSjI1A0V8H/LjT79yWnkxoR6BgZA7KL76AeTTITagUcVIuxtNAaxssgLHg==
   dependencies:
     tslib "^1.9.0"
 
-"@angular/router@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@angular/router/-/router-8.0.0.tgz#26094fd473e17441b0ae8af4883ec1b4ea3ad569"
-  integrity sha512-DGUTb8qpndE5m716xh00GxuC8o7qamlqbUruGB+SQD6ynU7s5yLGxtKffxqb1BT63+YewpsVxc2Koruvb1qjDw==
+"@angular/router@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/router/-/router-8.2.4.tgz#035b4e8e3de03214ee46b6808175b51f25f6eb41"
+  integrity sha512-ZJwsztlD1vbb2HF9SgvHfpIK82BkOlDP2OmdZZavnxV7RstbU5hUkJ4lB4JB/EN9B76djo117CwOxxIveOhJMQ==
   dependencies:
     tslib "^1.9.0"
 
-"@angular/service-worker@^8.1.2":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-8.1.2.tgz#24a3b180cc0d8a760b71844b26f8ca4d94aee6c8"
-  integrity sha512-Q4eqxFWlR81cLJYWCFKmFzcEdUUVQtRhCn8XqUJUcMFPMlhogd2gH9r+SWnLwR9bXHag6DWt4YYzDrDwERrx7w==
+"@angular/service-worker@^8.2.4":
+  version "8.2.4"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-8.2.4.tgz#6a523fac1ac6bf3f9a2a177f0f89da709ae1e359"
+  integrity sha512-4JQ2ot2NdF2NJgCRKbUUpJKsV+3WmA+bRqYbXccA1CjzUX8K5/UTZ1xag9CJehTdWaneRJkxXW11D0GoZ1TIbg==
   dependencies:
     tslib "^1.9.0"
 
@@ -1168,38 +1168,38 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
-"@ionic-native/core@^5.10.0":
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.10.0.tgz#aa475f846490d0e748bf2172e3070878984dab11"
-  integrity sha512-HssaJBkXKVeQ5u0ejBmlzwsft5bwmtu2ZrsTVtK6jYiNm7Bez55II7c0cxcxs44l5wLu6uKuw/Ynt2vaZ2ngfg==
+"@ionic-native/core@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.13.0.tgz#9d4068ae58334a4589178d135cfe7abdbad5003a"
+  integrity sha512-gfGkWdeh6F0cYfnUWd3XUJ1JQ7l9h91u25Mx+xE/EoM1PW/5jXtSFPqU4O3U6ttrUUPINI3BDJqC75D7eTWSEQ==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/file-opener@^5.10.0":
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/file-opener/-/file-opener-5.10.0.tgz#e06177c2a33ea11d41c8f1de892509d72c30138f"
-  integrity sha512-KoL81qwmFfjm+dqlYx9sCnHOwwd8TWj7ip/81TVmS2D5D/gAlljVNPUBYepTdsqSxpCGaU3wUgF18NjLOKyiQQ==
+"@ionic-native/file-opener@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/file-opener/-/file-opener-5.13.0.tgz#f3365c2d81ab10c5a97e073ce5536e7a5f96860f"
+  integrity sha512-Rnq/rv9lVQ/U4ChdfgirWuuxeo8eUj4Xn9otMwg9qDPJPmmeCVjJLSlpLvHrWacLgvP9AYfX1SL4eYzGZiSaZw==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/file@^5.10.0":
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/file/-/file-5.10.0.tgz#57de147a9657caf42cffa9727c0d19b1e74c9c13"
-  integrity sha512-B0rrsM3voWOM1Vx6KR0XoCeQhrLKaTN80qXUGHlckqheRIEfGWaFGYMNYVDmDC439U5Fdv9rTDW2NiD/9x/rww==
+"@ionic-native/file@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/file/-/file-5.13.0.tgz#c34c8f9fdfe13cd1aeb8af58d5b8cc978fea8dc4"
+  integrity sha512-88fbrqLzZ9wJ0S9ybdtT0kQbv60cMT/5LbkevIBY5ST9Qbv/G7MoysvlJSvSXxf2bVPBsXqXD4W8y3VCZAJW5A==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/network@^5.11.0":
-  version "5.11.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/network/-/network-5.11.0.tgz#71ac4c525f6973be363f412176cc1b6f5ffc4364"
-  integrity sha512-n/awmQIwOMvn1H4u2CEHKM3E8NSyv3ZfuuzKb30vU/CmtrVADsVArGWnukARApz1L8CavWI35lkRSGkjkPytWg==
+"@ionic-native/network@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/network/-/network-5.13.0.tgz#fe4cf0f7333872cb13354bcdae3e8e2d5dc32924"
+  integrity sha512-m9BWsjo5o7QbWk0SoyCRlFSIgtOW8pdbnteu9avCld+Na1Q51tSZH8QIhSl5FUHDh09crYzC1Vpo/7Jh9mMiig==
   dependencies:
     "@types/cordova" latest
 
-"@ionic-native/social-sharing@^5.10.0":
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/social-sharing/-/social-sharing-5.10.0.tgz#57ef320846b9964f8990ea62cdcc82d212b6e2e1"
-  integrity sha512-U7cQdlkz6dBw8RZaVYbmfV/t8IdEe/JCM9aW0LsZxOvN3aRfLXPwtHUpNbORDdHnL8jlFmNUeZ7Qq1lHDbHyxA==
+"@ionic-native/social-sharing@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/social-sharing/-/social-sharing-5.13.0.tgz#8547ea22e96c287aca844ded63d3d4d6fd40e98a"
+  integrity sha512-SofDEa5xVR6qWbHmdkuFZEzrJ8LLlGISMI91CeUCsgJHf+PAvm1eUaCpYAOCIZIRLmGy7bqU1vB45qt9stEUrg==
   dependencies:
     "@types/cordova" latest
 
@@ -1213,20 +1213,20 @@
     typescript "3.4.3"
     ws "^6.1.4"
 
-"@ionic/angular@4.6.2":
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.6.2.tgz#4448b63d3bb9c055789b96c567da02192d62b34e"
-  integrity sha512-BUtT4ve6ThRaSRHX+YrkVyhcZP1FWY8P31/S/Hj7bWNCFTIdfB21dEAFzFx9SfGPfBCVYfDj5OoLYtKc1LUJQA==
+"@ionic/angular@4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@ionic/angular/-/angular-4.8.1.tgz#2c4815cac6ad6b8f076bdb8296930e62a49a4df5"
+  integrity sha512-fb/Mqx1SzqjkW5hzk15Ms1XtCgrhpReC7Ep+UH9gdFLRwcz3RZZG+prMv0V980hudQvtfyth6nVPKmBcdlwTig==
   dependencies:
-    "@ionic/core" "4.6.2"
+    "@ionic/core" "4.8.1"
     tslib "^1.9.3"
 
-"@ionic/core@4.6.2":
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.6.2.tgz#c14da14ecacfd10a835adb5120d5c1ffb5a1a852"
-  integrity sha512-JThYU8YnEtxlByNm+77nNtQDMOBE496eye25b4WbCpKNHEIw2g6V0TMxx4vSP0ynAw6Mgu/hAo8EdUO3XvNcKw==
+"@ionic/core@4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-4.8.1.tgz#317dc353c3787246b425a91ef3efa996a3098528"
+  integrity sha512-OCTOOIzwUTobA256xHLqguxt/X1tQuYklvIaTxODu81Dziew2sYG54sILDSGmWhTn8henivcPm9eOpOUkaBexg==
   dependencies:
-    ionicons "4.6.1"
+    ionicons "^4.6.3"
     tslib "^1.10.0"
 
 "@ionic/storage@^2.2.0":
@@ -1249,7 +1249,7 @@
     tree-kill "1.2.1"
     webpack-sources "1.4.3"
 
-"@ngx-translate/core@~11.0.0":
+"@ngx-translate/core@~11.0.1":
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/@ngx-translate/core/-/core-11.0.1.tgz#cecefad41f06368f5859dac48fec8fcc4485615f"
   integrity sha512-nBCa1ZD9fAUY/3eskP3Lql2fNg8OMrYIej1/5GRsfcutx9tG/5fZLCv9m6UCw1aS+u4uK/vXjv1ctG/FdMvaWg==
@@ -4041,12 +4041,12 @@ core-js-compat@^3.1.1:
     browserslist "^4.6.6"
     semver "^6.3.0"
 
-core-js@3.2.1:
+core-js@3.2.1, core-js@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.2.1.tgz#cd41f38534da6cc59f7db050fe67307de9868b09"
   integrity sha512-Qa5XSVefSVPRxy2XfUC13WbvqkxhkwB3ve+pgCQveNgYzbM/UxZeu1dcOX/xr4UmfUd+muuvsaxilQzCyUurMw==
 
-core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.4, core-js@^2.5.7:
+core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.7:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
   integrity sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==
@@ -7100,10 +7100,10 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-ionicons@4.6.1:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/ionicons/-/ionicons-4.6.1.tgz#62515439ea54ae84dcc0fa0bfeb43076b2d5d64d"
-  integrity sha512-HIT6nAozXnM5yO9an0QpqABM4QFs1xtOjTz4Neyqbs0+fbPqN3p2PwJuh99WR9YaYGrFPzSCW6/n+LLL6C+xeg==
+ionicons@^4.6.3:
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/ionicons/-/ionicons-4.6.3.tgz#e4f3a3e9b66761eb8c0db27798cc1a8ce97777d2"
+  integrity sha512-cgP+VIr2cTJpMfFyVHTerq6n2jeoiGboVoe3GlaAo5zoSBDAEXORwUZhv6m+lCyxlsHCS3nqPUE+MKyZU71t8Q==
 
 ip-regex@^1.0.1:
   version "1.0.3"

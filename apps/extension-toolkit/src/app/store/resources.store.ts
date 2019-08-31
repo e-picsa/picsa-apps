@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
 import { IResource } from '../models/models';
-import { PicsaDbService } from '@picsa/services/core';
+import { PicsaDbService } from '@picsa/services/core/db';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { RESOURCES } from '../data';
 import { ENVIRONMENT } from '@picsa/environments';
