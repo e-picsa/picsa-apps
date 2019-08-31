@@ -6,7 +6,7 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     _viewID: 'rainfall',
     _viewType: 'chart',
     name: 'Seasonal Rainfall',
-    image: 'assets/img/season-rainfall.png',
+    image: 'assets/images/season-rainfall.png',
     keys: ['Rainfall'],
     yFormat: 'value',
     yLabel: 'Seasonal Total Rainfall (mm)',
@@ -25,7 +25,7 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     _viewID: 'start',
     _viewType: 'chart',
     name: 'Start of Season',
-    image: 'assets/img/season-start.png',
+    image: 'assets/images/season-start.png',
     keys: ['Start'],
     yFormat: 'date-from-July',
     yLabel: 'Start of Season',
@@ -45,7 +45,7 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     _viewID: 'end',
     _viewType: 'chart',
     name: 'End of Season',
-    image: 'assets/img/season-end.png',
+    image: 'assets/images/season-end.png',
     keys: ['End'],
     yFormat: 'date-from-July',
     yLabel: 'End of Season',
@@ -64,7 +64,7 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     _viewID: 'length',
     _viewType: 'chart',
     name: 'Length of Season',
-    image: 'assets/img/season-length.png',
+    image: 'assets/images/season-length.png',
     keys: ['Length'],
     yFormat: 'value',
     yLabel: 'Length of season',
@@ -79,7 +79,7 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     definition:
       'Length of season is defined as the total days from the start of the season until the end of the season as defined'
   }
-  // {name: "Combined Probability", image: "assets/img/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
+  // {name: "Combined Probability", image: "assets/images/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
 ];
 
 export default CHART_TYPES;
