@@ -5,7 +5,8 @@ import {
   FadeInOut,
   OpenClosed,
   FlyInOut,
-  ANIMATION_DEFAULTS
+  ANIMATION_DELAYED,
+  ANIMATION_DEFAULTS_Y
 } from '@picsa/animations';
 
 @Component({
@@ -13,15 +14,9 @@ import {
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
   animations: [
-    FadeInOut({
-      ...ANIMATION_DEFAULTS,
-      ...{ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 }
-    }),
+    FadeInOut(ANIMATION_DELAYED),
     OpenClosed,
-    FlyInOut({
-      ...ANIMATION_DEFAULTS,
-      ...{ axis: 'Y', outSpeed: 300 }
-    })
+    FlyInOut(ANIMATION_DEFAULTS_Y)
   ]
 })
 export class BudgetViewPage implements OnInit {

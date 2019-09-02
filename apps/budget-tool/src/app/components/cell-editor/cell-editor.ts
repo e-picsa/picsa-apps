@@ -6,19 +6,14 @@ import {
   IBudgetCardWithValues,
   IBudgetCardValues
 } from '../../models/budget-tool.models';
-import { FadeInOut, ANIMATION_DEFAULTS } from '@picsa/animations';
+import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
 
 @Component({
   selector: 'budget-cell-editor',
   templateUrl: './cell-editor.html',
   styleUrls: ['./cell-editor.scss'],
-  animations: [
-    FadeInOut({
-      ...ANIMATION_DEFAULTS,
-      ...{ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 }
-    })
-  ]
+  animations: [FadeInOut(ANIMATION_DELAYED)]
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
