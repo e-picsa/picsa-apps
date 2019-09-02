@@ -5,7 +5,7 @@ import { BudgetHomePage } from './budget-home.page';
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 import { BudgetMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
-import { PicsaTranslateModule } from '@picsa/modules';
+import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { PicsaDialogsModule } from '@picsa/features';
 
 const routes: Routes = [

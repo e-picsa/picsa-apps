@@ -16,7 +16,7 @@ export class PicsaTranslateService implements OnDestroy {
     this.init();
   }
   // subscrib to language changes and retranslate static translations
-  init(defaultLang = 'ny') {
+  init(defaultLang = 'en') {
     // TODO - pass config param from module to customise what is loaded
     // add subscribers
     this.translate.onLangChange.subscribe(async (l: LangChangeEvent) => {

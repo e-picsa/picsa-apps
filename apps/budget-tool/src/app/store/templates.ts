@@ -5,7 +5,7 @@ import {
   IBudgetPeriodData,
   IBudgetPeriodType
 } from '../models/budget-tool.models';
-import { generateDBMeta } from '@picsa/services/core';
+import { generateDBMeta } from '@picsa/services/core/db';
 
 export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
   activities: [],

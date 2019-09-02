@@ -47,29 +47,29 @@ export class PicsaChartComponent implements OnInit {
   // note, only detects object change, not content (so array push ignored)
   // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
   ngOnChanges(changes: SimpleChanges) {
-    console.log('changes', changes);
-    if (this.chart) {
-      if (changes['config']) {
-        // handle core changes which require chart rebuild
+    if (changes.config.currentValue) {
+      if (this.chart) {
+        if (changes['config']) {
+          // handle core changes which require chart rebuild
+          this.create();
+        } else if (changes['data']) {
+          console.log('data changed', changes.data);
+          // difficult to detect full changes (ids as well as if values changed within)
+          // therefore just unload all data and load all new
+          this.chart.unload();
+          // need to wait after unload before reload as animation gets blocked
+          setTimeout(() => {
+            this.chart.load(changes.data.currentValue);
+          }, 300);
+        }
+      } else {
         this.create();
-      } else if (changes['data']) {
-        console.log('data changed', changes.data);
-        // difficult to detect full changes (ids as well as if values changed within)
-        // therefore just unload all data and load all new
-        this.chart.unload();
-        // need to wait after unload before reload as animation gets blocked
-        setTimeout(() => {
-          this.chart.load(changes.data.currentValue);
-        }, 300);
       }
-    } else {
-      this.create();
     }
   }
 
   // use create method to populate div which will also be available before viewInit
   private create() {
-    console.log('creating chart');
     // run outside of angular change detection
     // this.ngZone.runOutsideAngular(() => {
     if (this.container) {

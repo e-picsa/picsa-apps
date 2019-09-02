@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
+import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
+import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
 
 @Component({
   selector: 'picsa-root',
@@ -21,15 +23,13 @@ export class AppComponent {
   // TODO - see if there is a better system for this
   registerIcons() {
     const icons = {
+      ...CLIMATE_ICONS,
+      ...BUDGET_ICONS,
       resources: 'resources',
       discussions: 'discussions',
       'data-collection': 'data-collection',
-      settings: 'settings',
       'budget-tool': 'budget-tool',
-      'climate-tool': 'climate-tool',
-      station: 'station',
-      chart: 'chart',
-      download: 'download'
+      'climate-tool': 'climate-tool'
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(

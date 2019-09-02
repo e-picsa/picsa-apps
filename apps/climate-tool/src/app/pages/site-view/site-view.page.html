@@ -1,16 +1,26 @@
 <div class="page">
   <!-- header -->
-  <div style="display: flex; justify-content: space-between">
-    <h1>{{ activeStation ? activeStation.name : '' }}</h1>
-    <div>
-      <button mat-button color="primary" (click)="setView()">
-        <mat-icon svgIcon="picsa_chart"></mat-icon>
-        <span style="margin-left: 5px">{{ 'Chart' | translate }}</span>
-      </button>
-      <button mat-button color="primary" [routerLink]="['climate/site']">
-        <mat-icon svgIcon="picsa_station"></mat-icon>
-        <span style="margin-left: 5px">{{ 'Site' | translate }}</span>
-      </button>
+  <div style="display: flex; align-items: center">
+    <button mat-button color="primary" (click)="changeSite()">
+      <mat-icon svgIcon="picsa_station"></mat-icon>
+      <span style="font-size: 20px; margin-left:8px">{{
+        activeStation ? activeStation.name : ''
+      }}</span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <div *ngIf="activeView" style="padding:8px">
+      <mat-card
+        class="chart-thumb-card"
+        *ngFor="let view of availableViews"
+        (click)="setView(view._viewID)"
+        [class.active]="view._viewID == activeView"
+      >
+        <img
+          src="{{ view.image }}"
+          class="chart-thumb-img"
+          [class.active]="view._viewID == activeView"
+        />
+      </mat-card>
     </div>
   </div>
   <!-- content -->
