@@ -20,6 +20,7 @@ import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
+import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
+    BudgetNewCardPage,
     BudgetListItemComponent,
     BudgetTableComponent,
     CardSelectComponent
@@ -60,6 +62,7 @@ import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-
     BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
+    BudgetNewCardPage,
     BudgetTableComponent,
     CardSelectComponent
   ]

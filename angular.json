@@ -64,16 +64,16 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "staging": {
               "fileReplacements": [
                 {
                   "replace": "libs/environments/environment.ts",
-                  "with": "libs/environments/builds/environment.prod.ts"
+                  "with": "libs/environments/environment.staging.ts"
                 }
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,

@@ -18,7 +18,7 @@ import {
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
 import CARDS from '../data/cards';
-import { PicsaDbService, generateDBMeta } from '@picsa/services/core/';
+import { PicsaDbService, generateDBMeta } from '@picsa/services/core/db';
 import { IAppMeta } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
 import { ENVIRONMENT } from '@picsa/environments';
