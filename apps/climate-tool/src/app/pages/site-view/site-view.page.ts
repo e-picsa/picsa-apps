@@ -37,12 +37,18 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
     const siteId = this.route.snapshot.params.siteId;
     this.activeStation = await this.climateService.loadStation(siteId);
   }
+  changeSite() {
+    this.router.navigate(['/'], {
+      relativeTo: this.route
+    });
+  }
 
-  setView(viewID?: string) {
+  setView(view: string) {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { view: viewID }
+      queryParams: { view: view }
     });
+    // this.activeChart = view as IChartMeta;
   }
 
   private _subscribeToViewChanges() {

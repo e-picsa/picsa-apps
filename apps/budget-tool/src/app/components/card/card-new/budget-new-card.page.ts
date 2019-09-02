@@ -16,7 +16,7 @@ export class BudgetNewCardPage {
   saveCard() {
     // *** TODO - get type from query params
     // const type = 'TODO';
-    // const id = `_custom_${this.budgetToolProvider.firestorePrvdr.db.createId()}`;
+    // const id = `TODO`;
     // // *** should add check for uniqueness and possibly strip any other special characters
     // // *** need createdBy but won't be populated if firebase never initialised (could use a second local id)
     // const card: ICustomBudgetCard = {

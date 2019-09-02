@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
 import { IUser } from '../models/models';
-import { PicsaDbService, generateDBMeta } from '@picsa/services/core';
+import { PicsaDbService, generateDBMeta } from '@picsa/services/core/db';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { LanguageCode } from '@picsa/models';
-import { PicsaTranslateService } from '@picsa/modules';
+import { PicsaTranslateService } from '@picsa/modules/translate';
 import { toJS } from 'mobx';
 
 @Injectable({

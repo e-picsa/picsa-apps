@@ -5,8 +5,8 @@ import FIREBASE_CONFIG from './firebase/config';
 
 const DEFAULT_ENVIRONMENT: IEnvironment = {
   firebase: FIREBASE_CONFIG,
-  group: GROUPS.MALAWI,
-  region: REGIONS.MALAWI,
+  group: GROUPS.DEV,
+  region: REGIONS.DEV,
   enableProduction: true
 };
 
