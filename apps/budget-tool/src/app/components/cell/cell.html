@@ -1,8 +1,11 @@
 <div class="cell-container" *mobxAutorun>
-  <div *ngIf="cellData">
+  <div *ngIf="cellData" style="height: 100%;">
     <div [ngSwitch]="type" style="height:100%" id="cellTypeSwitch">
       <!-- activities -->
-      <div *ngSwitchCase="'activities'" style="display: flex; flex-wrap: wrap">
+      <div
+        *ngSwitchCase="'activities'"
+        style="display: flex; flex-wrap: wrap; height: 100%;"
+      >
         <budget-card-image
           *ngFor="let card of cellData"
           [class]="cellData.length > 1 ? 'small' : 'medium'"
