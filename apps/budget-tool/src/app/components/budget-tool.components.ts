@@ -15,7 +15,10 @@ import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaDbModule } from '@picsa/modules';
-import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
+import {
+  BudgetBalanceLegendComponent,
+  BudgetBalanceEditorComponent
+} from './balance/balance-legend/balance-legend';
 import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
@@ -26,6 +29,7 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
   declarations: [
     BudgetBalanceLegendComponent,
     BudgetBalanceDotValueComponent,
+    BudgetBalanceEditorComponent,
     BudgetCardComponent,
     BudgetCardImageComponent,
     BudgetCellComponent,
@@ -65,6 +69,7 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
     BudgetNewCardPage,
     BudgetTableComponent,
     CardSelectComponent
-  ]
+  ],
+  entryComponents: [BudgetBalanceEditorComponent]
 })
 export class BudgetToolComponentsModule {}

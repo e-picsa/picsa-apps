@@ -42,5 +42,7 @@ export class AppComponentEmbedded extends AppComponent {}
 
 export const BUDGET_ICONS = {
   download: 'download',
-  delete: 'delete'
+  delete: 'delete',
+  settings: 'settings',
+  controls: 'controls'
 };

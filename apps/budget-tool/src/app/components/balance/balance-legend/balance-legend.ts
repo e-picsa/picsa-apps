@@ -1,6 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import { BudgetStore } from '../../../store/budget.store';
 import { IBudgetValueCounters } from '../../../models/budget-tool.models';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'budget-balance-legend',
@@ -10,9 +15,8 @@ import { IBudgetValueCounters } from '../../../models/budget-tool.models';
 export class BudgetBalanceLegendComponent {
   labels: string[] = [];
   values: number[] = [];
-  constructor(private store: BudgetStore) {}
+  constructor(private store: BudgetStore, public dialog: MatDialog) {}
   @Input() set valueCounters(valueCounters: IBudgetValueCounters) {
-    console.log('setting value counters', valueCounters);
     if (valueCounters) {
       // only keep the even items (non-half values)
       this.labels = valueCounters[0].filter((v, i) => i % 2 === 0);
@@ -20,11 +24,41 @@ export class BudgetBalanceLegendComponent {
     }
   }
 
-  ngOnInit(): void {
-    console.log('value counteer legend', this.valueCounters);
-  }
-
   scaleValues(scaleFactor: 0.1 | 10) {
     this.store.scaleValueCounters(scaleFactor);
+  }
+
+  showScaleEdit() {
+    const dialogRef = this.dialog.open(BudgetBalanceEditorComponent, {
+      width: '250px'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.scaleValues(result);
+      }
+    });
+  }
+}
+
+// Dialog popup component
+@Component({
+  selector: 'budget-balance-editor',
+  template: `
+    <div style="width:24px">
+      <button mat-button class="balance-button" (click)="scaleValues(10)">
+        <mat-icon>arrow_upward</mat-icon>
+        {{ 'Increase Scale' | translate }}
+      </button>
+      <button mat-button class="balance-button" (click)="scaleValues(0.1)">
+        <mat-icon>arrow_downward</mat-icon>
+        {{ 'Decrease Scale' | translate }}
+      </button>
+    </div>
+  `
+})
+export class BudgetBalanceEditorComponent {
+  constructor(public dialogRef: MatDialogRef<BudgetBalanceEditorComponent>) {}
+  scaleValues(scaleFactor: 0.1 | 10) {
+    this.dialogRef.close(scaleFactor);
   }
 }

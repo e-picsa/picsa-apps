@@ -11,6 +11,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialogModule } from '@angular/material/dialog';
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
@@ -25,7 +26,8 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatDialogModule
   ],
   exports: [
     MatBadgeModule,
@@ -38,7 +40,8 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatSelectModule,
     MatToolbarModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatDialogModule
   ]
 })
 export class BudgetMaterialModule {}
