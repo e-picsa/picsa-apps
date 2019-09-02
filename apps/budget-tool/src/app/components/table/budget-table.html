@@ -34,7 +34,7 @@
     </div>
     <!-- Cash Balance -->
     <div class="cell">
-      <div>
+      <div *ngIf="store.balance && store.balance[columnIndex]">
         <div style="padding:5px">
           <div>{{ periodLabels[columnIndex] | translate }}</div>
           <div>

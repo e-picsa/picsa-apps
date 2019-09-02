@@ -30,6 +30,7 @@ export class BudgetTableComponent implements OnInit {
   constructor(private store: BudgetStore) {}
   ngOnInit(): void {
     this.periodLabels = this.store.budgetPeriodLabels;
+    console.log('labels', this.periodLabels);
   }
 
   onCellClick(columnIndex: number, row: IBudgetRow) {

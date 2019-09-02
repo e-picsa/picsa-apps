@@ -12,9 +12,12 @@ export class BudgetBalanceLegendComponent {
   values: number[] = [];
   constructor(private store: BudgetStore) {}
   @Input() set valueCounters(valueCounters: IBudgetValueCounters) {
-    // only keep the even items (non-half values)
-    this.labels = valueCounters[0].filter((v, i) => i % 2 === 0);
-    this.values = valueCounters[1].filter((v, i) => i % 2 === 0);
+    console.log('setting value counters', valueCounters);
+    if (valueCounters) {
+      // only keep the even items (non-half values)
+      this.labels = valueCounters[0].filter((v, i) => i % 2 === 0);
+      this.values = valueCounters[1].filter((v, i) => i % 2 === 0);
+    }
   }
 
   ngOnInit(): void {
