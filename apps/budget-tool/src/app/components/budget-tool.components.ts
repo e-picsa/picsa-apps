@@ -24,6 +24,9 @@ import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-
 import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
 import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
+import { RouterModule } from '@angular/router';
+import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
+import { NextButton } from './nextButton';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,7 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
     BudgetCardImageComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
-    BudgetCellEditorComponent,
+    BudgetCellEditorCardSelectComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
@@ -42,7 +45,8 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
     BudgetNewCardPage,
     BudgetListItemComponent,
     BudgetTableComponent,
-    CardSelectComponent
+    CardSelectComponent,
+    NextButton
   ],
   imports: [
     IonicModule,
@@ -52,7 +56,8 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
     TranslateModule.forChild(),
     CanvasWhiteboardModule,
     MobxAngularModule,
-    PicsaDbModule
+    PicsaDbModule,
+    RouterModule
   ],
   exports: [
     BudgetBalanceLegendComponent,
@@ -61,6 +66,7 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
     BudgetCardImageComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
+    BudgetCellEditorCardSelectComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
@@ -68,7 +74,8 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
     BudgetListItemComponent,
     BudgetNewCardPage,
     BudgetTableComponent,
-    CardSelectComponent
+    CardSelectComponent,
+    NextButton
   ],
   entryComponents: [BudgetBalanceEditorComponent]
 })

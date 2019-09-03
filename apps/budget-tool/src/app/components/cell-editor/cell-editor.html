@@ -1,4 +1,4 @@
-<div class="page-content" style="height: calc(100% - 20px);">
+<div class="page-content" style="height: calc(100% - 20px);" *mobxAutorun>
   <!--cards select-->
   <mat-horizontal-stepper
     linear
@@ -8,7 +8,7 @@
     <!-- Card Select Step-->
     <mat-step *ngIf="stepsShown.cardStep" @fadeInOut>
       <ng-template matStepLabel>{{ _cell.typeLabel | translate }}</ng-template>
-      <div *mobxAutorun>
+      <div>
         <budget-card
           *ngFor="let card of store.groupTypeCards"
           [card]="card"

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BudgetStore } from '../../store/budget.store';
 import {
   FadeInOut,
@@ -19,13 +19,33 @@ import {
     FlyInOut(ANIMATION_DEFAULTS_Y)
   ]
 })
-export class BudgetViewPage implements OnInit {
+export class BudgetViewPage implements OnInit, OnDestroy {
   loader: HTMLIonLoadingElement;
+  isEditorOpen = false;
+  periodLabel: string;
 
-  constructor(private route: ActivatedRoute, private store: BudgetStore) {}
+  constructor(
+    private route: ActivatedRoute,
+    private store: BudgetStore,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadBudget();
+    this._addRouterSubscription();
+  }
+  ngOnDestroy() {
+    console.log('Budget DESTROYED - TODO - REMOVE SUBSCRIPTIONS');
+  }
+  private _addRouterSubscription() {
+    this.route.queryParams.subscribe(params => {
+      this.isEditorOpen = params.edit;
+      this.periodLabel = params.label;
+    });
+  }
+
+  closeEditor() {
+    this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
   }
 
   async loadBudget() {

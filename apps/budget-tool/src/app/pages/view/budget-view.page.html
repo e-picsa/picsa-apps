@@ -5,17 +5,12 @@
         ? store.activeBudget.meta.title
         : ('Budget' | translate)
     }}</span>
-    <div *ngIf="store.isEditorOpen" style="flex:1; display: flex">
+    <div *ngIf="isEditorOpen" style="flex:1; display: flex">
       <span style="text-align: center; flex:1">{{
-        store.activeCell.periodLabel | translate
+        periodLabel | translate
       }}</span>
-      <button
-        mat-button
-        color="primary"
-        (click)="store.toggleEditor()"
-        @fadeInOut
-      >
-        <mat-icon>close</mat-icon><span>{{ 'Cancel' | translate }}</span>
+      <button mat-button color="primary" @fadeInOut (click)="closeEditor()">
+        <mat-icon>close</mat-icon><span>{{ 'Close' | translate }}</span>
       </button>
     </div>
   </mat-toolbar>
@@ -27,9 +22,9 @@
       @fadeInOut
     ></budget-table>
     <budget-cell-editor
-      *ngIf="store.activeCell"
-      [@flyInOut]="store.isEditorOpen ? 'in' : 'out'"
-      [cell]="store.activeCell"
+      *ngIf="store.activeBudget && store.activeCell"
+      [data]="store.activeBudget."
+      [@flyInOut]="isEditorOpen ? 'in' : 'out'"
     ></budget-cell-editor>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy, ɵConsole } from '@angular/core';
 import { toJS } from 'mobx';
 import { observable, action, computed } from 'mobx-angular';
 import * as merge from 'deepmerge';
@@ -7,13 +7,15 @@ import {
   IBudget,
   IBudgetPeriodData,
   IBudgetCard,
-  IBudgetActiveCell,
   IBudgetMeta,
   IBudgetCardDB,
   IBudgetCardWithValues,
   IBudgetValueScale,
   IBudgetValueCounters,
-  IBudgetBalance
+  IBudgetBalance,
+  IBudgetActiveCell,
+  IBudgetQueryParams,
+  IBudgetPeriodType
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
@@ -23,15 +25,15 @@ import { IAppMeta } from '@picsa/models/db.models';
 import { APP_VERSION } from '@picsa/environments/version';
 import { ENVIRONMENT } from '@picsa/environments';
 import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
-export class BudgetStore {
+export class BudgetStore implements OnDestroy {
   changes = new BehaviorSubject<[number, string]>([null, null]);
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget;
-  @observable activeCell: IBudgetActiveCell;
-  @observable isEditorOpen = false;
+  @observable activeCell: IBudgetActiveCell = DEFAULT_ACTIVE_CELL;
   @observable savedBudgets: IBudget[];
   @observable valueCounters: IBudgetValueCounters;
   @observable balance: IBudgetBalance;
@@ -42,23 +44,49 @@ export class BudgetStore {
     );
     return this._createCardGroupCards(enterpriseCards);
   }
-
-  // filter cards to match type (e.g. activities) and group (e.g. crops)
-  @computed get groupTypeCards(): IBudgetCard[] {
-    return this.typeCards.filter(
-      c =>
-        c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
-    );
+  @computed get budgetCardsByType() {
+    console.log('getting budget cards by type');
+    const typeCards: {
+      [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[]
+    } = {
+      activities: [],
+      familyLabour: [],
+      inputs: [],
+      outputs: [],
+      produceConsumed: [],
+      enterprise: [],
+      other: []
+    };
+    this.budgetCards.forEach(card => {
+      typeCards[card.type].push(card);
+    });
+    console.log('type cards', toJS(typeCards));
+    return typeCards;
   }
-
-  @computed get otherTypeCards(): IBudgetCard[] {
-    return this.typeCards.filter(
-      c => !c.groupings.includes(this.enterpriseGroup)
-    );
-  }
+  // // filter cards to match type (e.g. activities) and group (e.g. crops)
+  // @computed get groupTypeCards(): IBudgetCard[] {
+  //   return this.typeCards.filter(
+  //     c =>
+  //       c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
+  //   );
+  // }
+  // @computed get otherTypeCards(): IBudgetCard[] {
+  //   return this.typeCards.filter(
+  //     c => !c.groupings.includes(this.enterpriseGroup)
+  //   );
+  // }
+  // get typeCards() {
+  //   let type = this.activeCell.type;
+  //   // produce consumed shows same cards as outpus
+  //   if (type === 'produceConsumed') {
+  //     type = 'outputs';
+  //   }
+  //   return this.budgetCards.filter(c => c.type === type);
+  // }
   @computed get budgetPeriodLabels(): string[] {
     return this._generateLabels(this.activeBudget.meta);
   }
+
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
   }
@@ -66,15 +94,14 @@ export class BudgetStore {
     this.balance = this._calculateBalance(this.activeBudget);
     console.log('balance', toJS(this.balance));
   }
-
-  get typeCards() {
-    let type = this.activeCell.typeKey;
-    // produce consumed shows same cards as outpus
-    if (type === 'produceConsumed') {
-      type = 'outputs';
-    }
-    return this.budgetCards.filter(c => c.type === type);
+  // on budget load or query params change want to set relevant active cell data
+  @action setActiveCell(params: IBudgetQueryParams = DEFAULT_ACTIVE_CELL) {
+    const { period, type } = params;
+    const data = this.activeBudget ? this.activeBudget.data[period][type] : [];
+    this.activeCell = { ...params, data };
+    console.log('active cell set', toJS(this.activeCell));
   }
+
   get activeBudgetValue() {
     return toJS(this.activeBudget);
   }
@@ -83,8 +110,12 @@ export class BudgetStore {
     return this.activeBudget.meta.enterprise.groupings![0];
   }
 
-  constructor(private db: PicsaDbService) {
+  constructor(private db: PicsaDbService, private route: ActivatedRoute) {
     this.init();
+    this._subscribeToRouteChanges();
+  }
+  ngOnDestroy(): void {
+    console.log('TODO - REMOVE SUBSCRIPTIONS');
   }
 
   /**************************************************************************
@@ -113,25 +144,13 @@ export class BudgetStore {
   saveEditor(data: IBudgetCardWithValues[]) {
     const d = this.activeBudget.data;
     const c = this.activeCell;
-    d[c.periodIndex][c.typeKey] = data;
+    d[c.period][c.type] = data;
     this.patchBudget({ data: d });
     // use behaviour subject to provide better change detection binding on changes
-    this.changes.next([c.periodIndex, c.typeKey]);
+    this.changes.next([c.period, c.type]);
     this.calculateBalance();
   }
-  @action
-  setActiveCell(cell: IBudgetActiveCell) {
-    cell.cellData = this.activeBudgetValue.data[cell.periodIndex][cell.typeKey];
-    this.activeCell = cell;
-    // use small timeout to allow time for exit animations
-    setTimeout(() => {
-      this.toggleEditor();
-    }, 200);
-  }
-  @action
-  toggleEditor() {
-    this.isEditorOpen = !this.isEditorOpen;
-  }
+
   @action
   scaleValueCounters(scale: IBudgetValueScale) {
     const oldScale = this.activeBudget.meta.valueScale;
@@ -173,10 +192,9 @@ export class BudgetStore {
     console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
     this.valueCounters = this._generateValueCounters(budget);
-    console.log('value counters', toJS(this.valueCounters));
     this.balance = this._calculateBalance(budget);
-    console.log('balance', toJS(this.balance));
     this.setActiveBudget(budget);
+    this.setActiveCell();
   }
 
   private async loadSavedBudgets(): Promise<void> {
@@ -201,6 +219,13 @@ export class BudgetStore {
     this.loadSavedBudgets();
     await this.checkForUpdates();
     await this.preloadData();
+  }
+  _subscribeToRouteChanges() {
+    this.route.queryParams.subscribe((params: IBudgetQueryParams) => {
+      if (params.period && params.type) {
+        this.setActiveCell(params);
+      }
+    });
   }
 
   // load the corresponding values into the budgetMeta observable
@@ -326,3 +351,10 @@ export class BudgetStore {
     return counters;
   }
 }
+
+const DEFAULT_ACTIVE_CELL: IBudgetActiveCell = {
+  label: 'Activities',
+  period: 0,
+  type: 'activities',
+  data: []
+};

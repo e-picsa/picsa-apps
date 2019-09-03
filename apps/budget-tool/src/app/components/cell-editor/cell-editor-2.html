@@ -1,0 +1,54 @@
+<div class="page-content" style="height: calc(100% - 20px);">
+  <!-- Optional ^ disable animations (note persists through all children elements) -->
+  <mat-horizontal-stepper
+    linear
+    #stepper
+    style="overflow: auto; margin-bottom: 20px; flex:1"
+    (selectionChange)="stepChange($event)"
+    [@.disabled]="false"
+  >
+    <!-- Activities -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Activities' | translate }}</ng-template>
+      <budget-cell-editor-card-select
+        [values]="cell.data"
+        [cards]="store.budgetCardsByType.activities"
+        (onValueChange)="onCardSelectValueChange($event)"
+      >
+      </budget-cell-editor-card-select>
+      <next-button></next-button>
+    </mat-step>
+    <!-- Inputs -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Inputs' | translate }}</ng-template>
+      <budget-cell-editor-card-select
+        [values]="cell.data"
+        [cards]="store.budgetCardsByType.inputs"
+        (onValueChange)="onCardSelectValueChange($event)"
+      >
+      </budget-cell-editor-card-select>
+      <next-button></next-button>
+    </mat-step>
+    <!-- Family Labour -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Family' | translate }}</ng-template>
+      <next-button></next-button>
+    </mat-step>
+    <!-- Outputs -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Outputs' | translate }}</ng-template>
+      <budget-cell-editor-card-select
+        [values]="cell.data"
+        [cards]="store.budgetCardsByType.outputs"
+        (onValueChange)="onCardSelectValueChange($event)"
+      >
+      </budget-cell-editor-card-select>
+      <next-button></next-button>
+    </mat-step>
+    <!-- Activities -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Consumed' | translate }}</ng-template>
+      <next-button></next-button>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
