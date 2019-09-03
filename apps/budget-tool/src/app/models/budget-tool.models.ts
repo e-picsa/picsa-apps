@@ -37,7 +37,7 @@ export type IBudgetValueCounters = [string[], number[]];
 
 // query params are used to track which cell is being edited
 export interface IBudgetQueryParams {
-  period: number;
+  period: string;
   label: string;
   type: IBudgetPeriodType;
 }

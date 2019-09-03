@@ -33,7 +33,8 @@ export class BudgetStore implements OnDestroy {
   changes = new BehaviorSubject<[number, string]>([null, null]);
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget;
-  @observable activeCell: IBudgetActiveCell = DEFAULT_ACTIVE_CELL;
+  @observable activePeriod = 0;
+  @observable activeType: IBudgetPeriodType = 'activities';
   @observable savedBudgets: IBudget[];
   @observable valueCounters: IBudgetValueCounters;
   @observable balance: IBudgetBalance;
@@ -63,28 +64,11 @@ export class BudgetStore implements OnDestroy {
     console.log('type cards', toJS(typeCards));
     return typeCards;
   }
-  // // filter cards to match type (e.g. activities) and group (e.g. crops)
-  // @computed get groupTypeCards(): IBudgetCard[] {
-  //   return this.typeCards.filter(
-  //     c =>
-  //       c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
-  //   );
-  // }
-  // @computed get otherTypeCards(): IBudgetCard[] {
-  //   return this.typeCards.filter(
-  //     c => !c.groupings.includes(this.enterpriseGroup)
-  //   );
-  // }
-  // get typeCards() {
-  //   let type = this.activeCell.type;
-  //   // produce consumed shows same cards as outpus
-  //   if (type === 'produceConsumed') {
-  //     type = 'outputs';
-  //   }
-  //   return this.budgetCards.filter(c => c.type === type);
-  // }
   @computed get budgetPeriodLabels(): string[] {
     return this._generateLabels(this.activeBudget.meta);
+  }
+  @computed get budgetPeriodData() {
+    return this.activeBudget.data[this.activePeriod];
   }
 
   @action setActiveBudget(budget: IBudget) {
@@ -94,14 +78,6 @@ export class BudgetStore implements OnDestroy {
     this.balance = this._calculateBalance(this.activeBudget);
     console.log('balance', toJS(this.balance));
   }
-  // on budget load or query params change want to set relevant active cell data
-  @action setActiveCell(params: IBudgetQueryParams = DEFAULT_ACTIVE_CELL) {
-    const { period, type } = params;
-    const data = this.activeBudget ? this.activeBudget.data[period][type] : [];
-    this.activeCell = { ...params, data };
-    console.log('active cell set', toJS(this.activeCell));
-  }
-
   get activeBudgetValue() {
     return toJS(this.activeBudget);
   }
@@ -141,13 +117,13 @@ export class BudgetStore implements OnDestroy {
     this.saveBudget();
   }
   // populate correct budget data based on editor data and current active cell
-  saveEditor(data: IBudgetCardWithValues[]) {
+  saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
     const d = this.activeBudget.data;
-    const c = this.activeCell;
-    d[c.period][c.type] = data;
+    d[this.activePeriod][type] = data;
     this.patchBudget({ data: d });
     // use behaviour subject to provide better change detection binding on changes
-    this.changes.next([c.period, c.type]);
+    console.log('emit change', this.activePeriod, type);
+    this.changes.next([this.activePeriod, type]);
     this.calculateBalance();
   }
 
@@ -194,7 +170,6 @@ export class BudgetStore implements OnDestroy {
     this.valueCounters = this._generateValueCounters(budget);
     this.balance = this._calculateBalance(budget);
     this.setActiveBudget(budget);
-    this.setActiveCell();
   }
 
   private async loadSavedBudgets(): Promise<void> {
@@ -221,11 +196,16 @@ export class BudgetStore implements OnDestroy {
     await this.preloadData();
   }
   _subscribeToRouteChanges() {
-    this.route.queryParams.subscribe((params: IBudgetQueryParams) => {
-      if (params.period && params.type) {
-        this.setActiveCell(params);
-      }
-    });
+    this.route.queryParams.subscribe((params: IBudgetQueryParams) =>
+      this.routeParamsChanged(params)
+    );
+  }
+  @action
+  private routeParamsChanged(params: IBudgetQueryParams) {
+    if (params.period && params.type) {
+      this.activePeriod = Number(params.period);
+      this.activeType = params.type;
+    }
   }
 
   // load the corresponding values into the budgetMeta observable
@@ -351,10 +331,3 @@ export class BudgetStore implements OnDestroy {
     return counters;
   }
 }
-
-const DEFAULT_ACTIVE_CELL: IBudgetActiveCell = {
-  label: 'Activities',
-  period: 0,
-  type: 'activities',
-  data: []
-};

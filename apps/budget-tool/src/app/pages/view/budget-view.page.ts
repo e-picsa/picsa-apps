@@ -45,6 +45,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   }
 
   closeEditor() {
+    this.isEditorOpen = false;
     this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
   }
 

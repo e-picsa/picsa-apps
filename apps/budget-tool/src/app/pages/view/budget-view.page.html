@@ -22,8 +22,9 @@
       @fadeInOut
     ></budget-table>
     <budget-cell-editor
-      *ngIf="store.activeBudget && store.activeCell"
-      [data]="store.activeBudget."
+      *ngIf="store.activeBudget && store.budgetPeriodData"
+      [data]="store.budgetPeriodData"
+      [activeType]="store.activeType"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
     ></budget-cell-editor>
   </div>

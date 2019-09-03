@@ -5,10 +5,7 @@ import {
   OnDestroy,
   ChangeDetectorRef
 } from '@angular/core';
-import {
-  IBudgetCard,
-  IBudgetPeriodData
-} from '../../models/budget-tool.models';
+import { IBudgetCard } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 import { Subject } from 'rxjs';
 

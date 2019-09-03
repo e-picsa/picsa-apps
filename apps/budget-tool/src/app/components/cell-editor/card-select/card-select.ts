@@ -22,25 +22,18 @@ export class BudgetCellEditorCardSelectComponent {
   @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
   enterpriseCards: IBudgetCard[];
   otherCards: IBudgetCard[];
-  enterpriseGroup: string;
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCardWithValues[] = [];
   showAllCards = false;
 
   constructor(private store: BudgetStore) {}
-
-  ngOnInit(): void {
-    this.enterpriseGroup = this.store.enterpriseGroup;
-  }
   // split type cards between those matching current enterprise and those not
   filterCards(cards: IBudgetCard[]) {
+    const enterpriseGroup = this.store.enterpriseGroup;
     const enterpriseCards = [];
     const otherCards = [];
     cards.forEach(c => {
-      if (
-        c.groupings.includes(this.enterpriseGroup) ||
-        c.groupings.includes('*')
-      ) {
+      if (c.groupings.includes(enterpriseGroup) || c.groupings.includes('*')) {
         enterpriseCards.push(c);
       } else {
         otherCards.push(c);
@@ -48,12 +41,6 @@ export class BudgetCellEditorCardSelectComponent {
     });
     this.enterpriseCards = enterpriseCards;
     this.otherCards = otherCards;
-  }
-  isEnterpriseCard(c: IBudgetCard) {
-    console.log('is enterprise card?', c);
-    return (
-      c.groupings.includes(this.enterpriseGroup) || c.groupings.includes('*')
-    );
   }
 
   setValues(values: IBudgetCardWithValues[] = []) {

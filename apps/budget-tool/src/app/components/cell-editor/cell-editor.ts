@@ -1,22 +1,19 @@
 import { Component, ViewChild, OnDestroy, OnInit, Input } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
 import {
-  IBudgetCard,
   IBudgetCardWithValues,
   IBudgetCardValues,
   IBudgetPeriodType,
-  IBudgetActiveCell,
   IBudgetPeriodData
 } from '../../models/budget-tool.models';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
-import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-cell-editor',
-  templateUrl: './cell-editor-2.html',
+  templateUrl: './cell-editor.html',
   styleUrls: ['./cell-editor.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)]
 })
@@ -25,15 +22,23 @@ import { toJS } from 'mobx';
  */
 export class BudgetCellEditorComponent {
   steps = EDITOR_STEPS;
-  @Input() cell: IBudgetActiveCell;
   @Input() data: IBudgetPeriodData;
+  @Input() set activeType(type: IBudgetPeriodType) {
+    const index = EDITOR_STEPS.indexOf(type);
+    console.log('setting index', index);
+    this.stepper.selectedIndex = index;
+  }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
-
   constructor(
     private store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute
   ) {}
+
+  ngAfterViewInit(): void {
+    // ignore icons and just display number
+    this.stepper._getIndicatorType = () => 'number';
+  }
 
   // as can't easily prevent default step click behaviour, instead add extra call to update
   // query params after
@@ -43,24 +48,40 @@ export class BudgetCellEditorComponent {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        type: step.type
+        type: step
       },
       queryParamsHandling: 'merge'
     });
   }
-  // the store already knows what period and type it is, so just pass the updated values
-  // back up to save
-  onCardSelectValueChange(values: IBudgetCardWithValues[]) {
-    this.store.saveEditor(values);
+  // TODO - could be moved to store along with budget-table similar code
+  goToNextPeriod() {
+    const period = this.store.activePeriod;
+    const totalPeriods = this.store.activeBudget.meta.lengthTotal;
+    this.stepper.reset();
+    if (period < totalPeriods) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {
+          period: period + 1,
+          type: 'activities',
+          label: this.store.budgetPeriodLabels[period + 1]
+        },
+        queryParamsHandling: 'merge'
+      });
+    } else {
+      this.router.navigate([], {
+        relativeTo: this.route
+      });
+    }
   }
 
-  onNextClicked() {
-    if (this.stepper.selectedIndex < this.stepper.steps.length - 1) {
-      this.stepper.next();
-    } else {
-      this.saveCell();
-      console.log('TODO - ROUTING');
-    }
+  // the store already knows what period and type it is, so just pass the updated values
+  // back up to save
+  onCardSelectValueChange(
+    values: IBudgetCardWithValues[],
+    type: IBudgetPeriodType
+  ) {
+    this.store.saveEditor(values, type);
   }
 
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
@@ -71,40 +92,17 @@ export class BudgetCellEditorComponent {
     // this.selectedArray = values;
   }
 
-  saveCell() {
-    // this.store.saveEditor(this.selectedArray);
-  }
-
   // use trackby on inputs as otherwise each one changing would re-render all others
   // (updating any input re-renders all others)
   trackByIndex(index: number, obj: any): any {
     return index;
   }
 }
-interface IEditorStep {
-  type: IBudgetPeriodType;
-  label: string;
-}
-const EDITOR_STEPS: IEditorStep[] = [
-  {
-    type: 'activities',
-    label: 'Activities'
-  },
-  {
-    type: 'inputs',
-    label: 'Inputs'
-  },
 
-  {
-    type: 'familyLabour',
-    label: 'Family'
-  },
-  {
-    type: 'outputs',
-    label: 'Outputs'
-  },
-  {
-    type: 'produceConsumed',
-    label: 'Consumed'
-  }
+const EDITOR_STEPS: (IBudgetPeriodType)[] = [
+  'activities',
+  'inputs',
+  'familyLabour',
+  'outputs',
+  'produceConsumed'
 ];
