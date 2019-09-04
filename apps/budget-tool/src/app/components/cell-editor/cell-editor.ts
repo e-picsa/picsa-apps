@@ -77,10 +77,7 @@ export class BudgetCellEditorComponent {
 
   // the store already knows what period and type it is, so just pass the updated values
   // back up to save
-  onCardSelectValueChange(
-    values: IBudgetCardWithValues[],
-    type: IBudgetPeriodType
-  ) {
+  onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
     this.store.saveEditor(values, type);
   }
 

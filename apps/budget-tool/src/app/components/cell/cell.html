@@ -33,11 +33,13 @@
         *ngSwitchCase="'familyLabour'"
         style="display: flex; flex-wrap: wrap; padding:5px"
       >
-        <budget-card-image
-          *ngFor="let card of cellData"
-          class="x-small"
-          [card]="card"
-        ></budget-card-image>
+        <div *ngFor="let card of cellData">
+          <budget-card-image class="x-small" [card]="card"></budget-card-image>
+          <span
+            class="badge family-badge"
+            [matBadge]="card.values.quantity"
+          ></span>
+        </div>
       </div>
       <!-- outputs -->
       <div *ngSwitchCase="'outputs'">

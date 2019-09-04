@@ -22,8 +22,6 @@
   opacity: 0.2;
 }
 
-.consumed-badge {
-}
 .badge {
   left: -14px;
   bottom: -14px;
@@ -36,6 +34,10 @@
   background-color: #90b36e;
 }
 .badge.consumed-badge > .mat-badge-content {
+  background-color: #d8d8d8;
+  color: rgba(0, 0, 0, 0.8);
+}
+.badge.family-badge > .mat-badge-content {
   background-color: #d8d8d8;
   color: rgba(0, 0, 0, 0.8);
 }

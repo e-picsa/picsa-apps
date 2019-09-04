@@ -5,7 +5,7 @@
       <input
         matInput
         class="input-editable"
-        [placeholder]="'Days work' | translate"
+        [placeholder]="'Days' | translate"
         [value]="member.values ? member.values.quantity : null"
         type="number"
         (change)="setValue($event, i)"
@@ -16,6 +16,7 @@
     </button>
   </mat-card>
   <button mat-button class="add-member-button" (click)="addMember()">
+    <mat-icon>add</mat-icon>
     {{ 'Add Family Member' | translate }}
   </button>
 </div>

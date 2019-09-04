@@ -15,9 +15,11 @@ export class BudgetCellEditorFamilyLabourComponent {
 
   addMember() {
     this.values.push(FAMILY_MEMBER_CARD);
+    this.onValueChange.emit(this.values);
   }
   removeMember(i: number) {
     this.values.splice(i, 1);
+    this.onValueChange.emit(this.values);
   }
 
   // NOTE - to maintain array format family labour simply populates a basic card for every member
@@ -30,7 +32,7 @@ export class BudgetCellEditorFamilyLabourComponent {
   }
 }
 const FAMILY_MEMBER_CARD: IBudgetCardWithValues = {
-  id: 'family-labour',
+  id: 'family-member',
   label: 'family member',
   type: 'familyLabour',
   imgType: 'svg',
