@@ -8,6 +8,7 @@ import {
 import { IBudgetCard } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'budget-cell',
@@ -25,7 +26,7 @@ export class BudgetCellComponent implements OnInit, OnDestroy {
 
   // subscribe to changes store object to run manual changed detection on cell update
   ngOnInit(): void {
-    this.store.changes.subscribe(change => {
+    this.store.changes.pipe(takeUntil(this.destroyed$)).subscribe(change => {
       if (change[0] === this.periodIndex && change[1] === this.type) {
         this.getCellValue();
       }

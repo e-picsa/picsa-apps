@@ -14,7 +14,7 @@
       </div>
       <!-- inputs -->
       <div *ngSwitchCase="'inputs'">
-        <div *ngFor="let card of cellData">
+        <div *ngFor="let card of cellData" class="cell-values-row">
           <budget-card-image class="small" [card]="card"></budget-card-image>
           <span
             class="badge input-badge"
@@ -43,7 +43,7 @@
       </div>
       <!-- outputs -->
       <div *ngSwitchCase="'outputs'">
-        <div *ngFor="let card of cellData">
+        <div *ngFor="let card of cellData" class="cell-values-row">
           <budget-card-image class="small" [card]="card"></budget-card-image>
           <span
             class="badge output-badge"
@@ -58,7 +58,7 @@
       </div>
       <!-- produce consumed -->
       <div *ngSwitchCase="'produceConsumed'">
-        <div *ngFor="let card of cellData">
+        <div *ngFor="let card of cellData" class="cell-values-row">
           <budget-card-image class="small" [card]="card"></budget-card-image>
           <span
             class="badge consumed-badge"

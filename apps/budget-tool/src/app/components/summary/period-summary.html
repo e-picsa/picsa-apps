@@ -1,0 +1,9 @@
+<div *mobxAutorun>
+  <div *ngFor="let row of rows">
+    <div style="display: flex">
+      <div style="width:150px">{{ row.label }}</div>
+      <budget-cell [periodIndex]="periodIndex" [type]="row.key"></budget-cell>
+    </div>
+    <hr />
+  </div>
+</div>

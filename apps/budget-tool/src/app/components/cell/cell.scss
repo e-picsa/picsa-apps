@@ -4,6 +4,7 @@
 }
 .cell-container {
   height: 100%;
+  min-height: 60px;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -40,4 +41,7 @@
 .badge.family-badge > .mat-badge-content {
   background-color: #d8d8d8;
   color: rgba(0, 0, 0, 0.8);
+}
+.cell-values-row {
+  min-height: 60px;
 }

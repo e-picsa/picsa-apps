@@ -27,6 +27,7 @@ import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
 import { RouterModule } from '@angular/router';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
 import { NextButton } from './nextButton';
+import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { NextButton } from './nextButton';
     BudgetCellLabourComponent,
     BudgetNewCardPage,
     BudgetListItemComponent,
+    BudgetPeriodSummaryComponent,
     BudgetTableComponent,
     CardSelectComponent,
     NextButton
@@ -74,6 +76,7 @@ import { NextButton } from './nextButton';
     BudgetListItemComponent,
     BudgetNewCardPage,
     BudgetTableComponent,
+    BudgetPeriodSummaryComponent,
     CardSelectComponent,
     NextButton
   ],
