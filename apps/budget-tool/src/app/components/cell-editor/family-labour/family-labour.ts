@@ -1,8 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {
-  IBudgetCardWithValues,
-  IBudgetCard
-} from '../../../models/budget-tool.models';
+import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-cell-editor-family-labour',
@@ -13,24 +10,33 @@ export class BudgetCellEditorFamilyLabourComponent {
   @Input() values: IBudgetCardWithValues[];
   @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
   totalPeople: number;
+  familyCard = FAMILY_MEMBER_CARD;
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-    this.totalPeople = this.values.length > 0 ? this.values.length : null;
+  addMember() {
+    this.values.push(FAMILY_MEMBER_CARD);
+  }
+  removeMember(i: number) {
+    this.values.splice(i, 1);
   }
 
   // NOTE - to maintain array format family labour simply populates a basic card for every member
   // of family labour indicated. In future this might contain more meta info
-  setValue(e: Event) {
+  setValue(e: Event, cardIndex: number) {
+    console.log('set card', cardIndex);
     const target = e.target as HTMLInputElement;
-    this.totalPeople = Number(target.value);
-    this.onValueChange.emit(
-      new Array(this.totalPeople).fill(FAMILY_MEMBER_CARD)
-    );
+    this.values[cardIndex].values.quantity = Number(target.value);
+    this.onValueChange.emit(this.values);
   }
 }
-const FAMILY_MEMBER_CARD: IBudgetCard = {
-  id: 'family-member',
+const FAMILY_MEMBER_CARD: IBudgetCardWithValues = {
+  id: 'family-labour',
   label: 'family member',
   type: 'familyLabour',
-  imgType: 'svg'
+  imgType: 'svg',
+  values: {
+    quantity: null,
+    cost: 0,
+    total: 0
+  }
 };

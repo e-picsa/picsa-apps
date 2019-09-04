@@ -1,0 +1,12 @@
+.add-member-button {
+  width: 100%;
+  margin: 10px 0;
+  height: 70px;
+  outline: 1px dashed var(--color-primary);
+}
+.member-card {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+}
