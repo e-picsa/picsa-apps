@@ -18,7 +18,7 @@ const commonRoutes: Routes = [
   },
   {
     path: 'view',
-    redirectTo: '/home',
+    redirectTo: '/',
     pathMatch: 'full'
   },
   {
@@ -29,7 +29,7 @@ const commonRoutes: Routes = [
       )
   }
 ];
-const standaloneRoutes: Routes = [{ path: '**', redirectTo: 'home' }];
+const standaloneRoutes: Routes = [{ path: '**', redirectTo: '' }];
 // const embeddedRoutes = addRoutePrefix(commonRoutes);
 const embeddedRoutes = [
   {
@@ -48,7 +48,7 @@ const embeddedRoutes = [
   },
   {
     path: 'budget/view',
-    redirectTo: '/home',
+    redirectTo: 'budget',
     pathMatch: 'full'
   },
   {

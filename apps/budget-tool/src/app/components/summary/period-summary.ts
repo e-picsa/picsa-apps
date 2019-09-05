@@ -28,7 +28,6 @@ export class BudgetPeriodSummaryComponent {
     private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
-    console.log('period index', this.store.activePeriod, this.periodIndex);
     this.periodLabels = this.store.budgetPeriodLabels;
   }
 

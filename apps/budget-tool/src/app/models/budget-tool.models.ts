@@ -53,13 +53,14 @@ export interface IBudgetCard {
   // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
   id: string;
   label: string;
-  type: IBudgetPeriodType | 'enterprise' | 'other';
+  type: IBudgetCardType;
   groupings?: string[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
   imgType?: 'svg' | 'png';
 }
 export type IBudgetCardDB = IBudgetCard & IDBDoc;
+export type IBudgetCardType = IBudgetPeriodType | 'enterprise' | 'other';
 
 export interface IBudgetCardWithValues extends IBudgetCard {
   values: IBudgetCardValues;

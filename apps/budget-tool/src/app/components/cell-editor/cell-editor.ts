@@ -89,10 +89,11 @@ export class BudgetCellEditorComponent {
   }
 }
 
-const EDITOR_STEPS: (IBudgetPeriodType)[] = [
+const EDITOR_STEPS: (IBudgetPeriodType | 'summary')[] = [
   'activities',
   'inputs',
   'familyLabour',
   'outputs',
-  'produceConsumed'
+  'produceConsumed',
+  'summary'
 ];

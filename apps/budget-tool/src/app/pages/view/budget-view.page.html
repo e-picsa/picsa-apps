@@ -1,6 +1,7 @@
 <div class="page" *mobxAutorun>
   <mat-toolbar>
-    <span>{{
+    <back-button *ngIf="!isEditorOpen"></back-button>
+    <span *ngIf="!isEditorOpen" style="flex: 1; text-align: center">{{
       store.activeBudget
         ? store.activeBudget.meta.title
         : ('Budget' | translate)
@@ -9,7 +10,13 @@
       <span style="text-align: center; flex:1">{{
         periodLabel | translate
       }}</span>
-      <button mat-button color="primary" @fadeInOut (click)="closeEditor()">
+      <button
+        mat-button
+        color="primary"
+        @fadeInOut
+        (click)="closeEditor()"
+        style="position: absolute; right: 0;"
+      >
         <mat-icon>close</mat-icon><span>{{ 'Close' | translate }}</span>
       </button>
     </div>
