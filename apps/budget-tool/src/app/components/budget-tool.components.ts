@@ -28,6 +28,7 @@ import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/c
 import { NextButton } from './general/next-button';
 import { BackButton } from './general/back-button';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
+import { PicsaDialogsModule } from '@picsa/features';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { BudgetPeriodSummaryComponent } from './summary/period-summary';
     FormsModule,
     BudgetMaterialModule,
     TranslateModule.forChild(),
+    PicsaDialogsModule,
     CanvasWhiteboardModule,
     MobxAngularModule,
     PicsaDbModule,

@@ -143,6 +143,9 @@ export class BudgetStore implements OnDestroy {
   saveCustomCard(card: IBudgetCard) {
     return this.db.setDoc('budgetTool/_all/cards', card);
   }
+  deleteCustomCard(card: IBudgetCardDB) {
+    return this.db.deleteDocs('budgetTool/_all/cards', [card._key]);
+  }
 
   /**************************************************************************
    *            Budget Create/Save/Load
