@@ -1,0 +1,9 @@
+<mat-card
+  mat-elevation-z4
+  class="budget-card selectable"
+  [attr.selected]="selected"
+  (click)="showCardDialog()"
+>
+  <budget-card-image [card]="card"></budget-card-image>
+  <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
+</mat-card>

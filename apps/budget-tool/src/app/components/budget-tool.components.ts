@@ -6,7 +6,6 @@ import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetTableComponent } from './table/budget-table';
-import { CardSelectComponent } from './card/card-select/card-select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BudgetMaterialModule } from '../material.module';
@@ -23,10 +22,11 @@ import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
-import { BudgetNewCardPage } from './card/card-new/budget-new-card.page';
+import { BudgetCardNew, BudgetCardNewDialog } from './card/card-new/card-new';
 import { RouterModule } from '@angular/router';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
-import { NextButton } from './nextButton';
+import { NextButton } from './general/next-button';
+import { BackButton } from './general/back-button';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 
 @NgModule({
@@ -43,11 +43,12 @@ import { BudgetPeriodSummaryComponent } from './summary/period-summary';
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
-    BudgetNewCardPage,
+    BudgetCardNew,
+    BudgetCardNewDialog,
     BudgetListItemComponent,
     BudgetPeriodSummaryComponent,
     BudgetTableComponent,
-    CardSelectComponent,
+    BackButton,
     NextButton
   ],
   imports: [
@@ -74,12 +75,12 @@ import { BudgetPeriodSummaryComponent } from './summary/period-summary';
     BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
-    BudgetNewCardPage,
+    BudgetCardNew,
     BudgetTableComponent,
     BudgetPeriodSummaryComponent,
-    CardSelectComponent,
+    BackButton,
     NextButton
   ],
-  entryComponents: [BudgetBalanceEditorComponent]
+  entryComponents: [BudgetBalanceEditorComponent, BudgetCardNewDialog]
 })
 export class BudgetToolComponentsModule {}

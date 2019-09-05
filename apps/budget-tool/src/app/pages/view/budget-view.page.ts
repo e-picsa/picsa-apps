@@ -8,6 +8,7 @@ import {
   ANIMATION_DELAYED,
   ANIMATION_DEFAULTS_Y
 } from '@picsa/animations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'budget-view',
@@ -23,6 +24,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   loader: HTMLIonLoadingElement;
   isEditorOpen = false;
   periodLabel: string;
+  param$: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,10 +37,11 @@ export class BudgetViewPage implements OnInit, OnDestroy {
     this._addRouterSubscription();
   }
   ngOnDestroy() {
-    console.log('Budget DESTROYED - TODO - REMOVE SUBSCRIPTIONS');
+    this.param$.unsubscribe();
   }
+
   private _addRouterSubscription() {
-    this.route.queryParams.subscribe(params => {
+    this.param$ = this.route.queryParams.subscribe(params => {
       this.isEditorOpen = params.edit;
       this.periodLabel = params.label;
     });

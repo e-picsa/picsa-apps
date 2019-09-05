@@ -4,12 +4,10 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
-  ChangeDetectionStrategy,
-  SimpleChanges,
-  OnChanges
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
 import { IBudgetCardDB } from '../../../models/budget-tool.models';
 
 @Component({
@@ -20,7 +18,7 @@ import { IBudgetCardDB } from '../../../models/budget-tool.models';
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
   @Input() card: IBudgetCardDB;
-  imgData: string;
+  imgData: SafeHtml;
   imgUrl: SafeUrl;
   objUrl: string;
   constructor(
@@ -31,7 +29,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.card.customMeta) {
-      this.imgData = this.card.customMeta.imgData;
+      this.imgData = this.convertSVGToImageData(this.card.customMeta.imgData);
     } else {
       this.loadImageFromFile();
     }
@@ -72,5 +70,23 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
         .toPromise();
     }
     return imgData;
+  }
+
+  // svgs can't be embedded programatically (angular sanitize limitation)
+  // so convert to html that embeds within an <img> tag and div innerhtml
+  private convertSVGToImageData(svgTag?: string) {
+    const encodedSVG = this._encodeSVG(svgTag);
+    const Html = `<img class='card-image' style='width:100%;height:100%;' src="data:image/svg+xml,${encodedSVG}"/>`;
+    return this.sanitizer.bypassSecurityTrustHtml(Html);
+  }
+
+  // method taken from http://yoksel.github.io/url-encoder/
+  // applies selective replacement of uri characters
+  private _encodeSVG(data: string): string {
+    const symbols = /[\r\n%#()<>?\[\\\]^`{|}]/g;
+    data = data.replace(/"/g, "'");
+    data = data.replace(/>\s{1,}</g, '><');
+    data = data.replace(/\s{2,}/g, ' ');
+    return data.replace(symbols, encodeURIComponent);
   }
 }

@@ -44,6 +44,11 @@
               @fadeInOut
             >
             </budget-card>
+            <budget-card-new
+              type="enterprise"
+              [groupings]="[selectedType]"
+              (onCardCreated)="enterpriseClicked(enterprise)"
+            ></budget-card-new>
           </div>
           <div class="sticky-footer">
             <button

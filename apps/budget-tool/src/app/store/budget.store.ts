@@ -59,6 +59,9 @@ export class BudgetStore implements OnDestroy {
       other: []
     };
     this.budgetCards.forEach(card => {
+      if (!typeCards[card.type]) {
+        typeCards[card.type] = [];
+      }
       typeCards[card.type].push(card);
     });
     console.log('type cards', toJS(typeCards));
@@ -135,6 +138,10 @@ export class BudgetStore implements OnDestroy {
       meta: { ...this.activeBudget.meta, valueScale: newScale }
     });
     this.valueCounters = this._generateValueCounters(this.activeBudget);
+  }
+
+  saveCustomCard(card: IBudgetCard) {
+    return this.db.setDoc('budgetTool/_all/cards', card);
   }
 
   /**************************************************************************
