@@ -58,7 +58,7 @@ export class BudgetCreatePage implements OnInit {
     // TODO - defaults no longer set for each enterprise,
     // possibly find a way to store somewhere and lookup
     this.budgetMetaForm.patchValue({
-      enterprise
+      enterprise: enterprise
     });
   }
   async save() {

@@ -47,7 +47,7 @@
             <budget-card-new
               type="enterprise"
               [groupings]="[selectedType]"
-              (onCardCreated)="enterpriseClicked(enterprise)"
+              (onCardCreated)="enterpriseClicked($event)"
             ></budget-card-new>
           </div>
           <div class="sticky-footer">

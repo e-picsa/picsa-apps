@@ -50,6 +50,11 @@ export class BudgetCellEditorCardSelectComponent {
     this.selectedArray = values;
   }
 
+  onCardCreated(card: IBudgetCard) {
+    this.enterpriseCards.push(card);
+    this.onCardClicked(card);
+  }
+
   // on click toggle keys on the selected cards property, saving full card data for use later
   onCardClicked(card: IBudgetCard) {
     this.selected[card.id] = !this.selected[card.id];

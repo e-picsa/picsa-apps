@@ -18,4 +18,8 @@
     [selected]="selected[card.id]"
     @fadeInOut
   ></budget-card>
+  <budget-card-new
+    (cardSaved)="onCardCreated($event)"
+    @fadeInOut
+  ></budget-card-new>
 </div>

@@ -6,6 +6,7 @@ import {
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { generateDBMeta } from '@picsa/services/core/db';
 import { BudgetStore } from '../../../store/budget.store';
+import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-card-new',
@@ -21,11 +22,18 @@ export class BudgetCardNew {
   constructor(public dialog: MatDialog, private store: BudgetStore) {}
 
   showCardDialog() {
+    // type passed for enterprise select but otherwise can pick from store
+    const type = this.type ? this.type : this.store.activeType;
+    // groupings should match the current enterprise unless otherwise specified
+    const groupings = this.groupings
+      ? this.groupings
+      : toJS(this.store.activeBudget.meta.enterprise.groupings);
     const card: IBudgetCard = {
       ...NEW_CARD,
-      type: this.type,
-      groupings: this.groupings
+      type,
+      groupings
     };
+    console.log('card', card);
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
       width: '250px',
       data: card
@@ -52,31 +60,32 @@ export class BudgetCardNewDialog {
     @Inject(MAT_DIALOG_DATA) card: IBudgetCard
   ) {
     this.card = card;
-    console.log('card', card);
-    // own error check in case forget to pass
-    if (!this.card.type || !this.card.groupings) {
-      throw new Error('card type and group must be specified');
-    }
   }
   save() {
     this.card.id = this.card.label.replace(/\s+/g, '-').toLowerCase();
     this.card.customMeta = {
       imgData: this.generateImage(this.card.label),
       dateCreated: new Date().toISOString(),
-      createdBy: undefined
+      createdBy: ''
     };
     this.dialogRef.close(this.card);
   }
 
+  // return an svg circle with text in the middle
+  // text is either first 2 initials (if multiple words) or first 2 letters (if one word)
   generateImage(text: string) {
-    const abbr = text.substr(0, 2);
+    const byWord = text.split(' ');
+    const abbr =
+      byWord.length > 1
+        ? `${byWord[0].charAt(0)}.${byWord[1].charAt(0)}`
+        : text.substr(0, 2);
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
     viewBox="0 0 100 100">
       <g id="UrTavla">
         <circle style="fill:url(#toning);stroke:#adadad;stroke-width:3;stroke-miterlimit:10;" cx="50" cy="50" r="40">
         </circle>
         <text font-family="Super Sans" letter-spacing="2" x="50%" y="50%" text-anchor="middle" stroke="#adadad" fill="#adadad" font-size="35" stroke-width="2px" dy=".3em">
-        ${abbr.toUpperCase()}
+        ${abbr}
         </text>
       </g>
     </svg>
