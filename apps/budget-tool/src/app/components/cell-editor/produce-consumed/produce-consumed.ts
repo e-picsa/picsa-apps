@@ -23,7 +23,7 @@ export class BudgetCellEditorProduceConsumedComponent {
   setValue(e: Event, key: 'quantity' | 'cost', cardIndex: number) {
     const card = this.cards[cardIndex];
     const target = e.target as HTMLInputElement;
-    card[key] = Number(target.value);
+    card.values[key] = Number(target.value);
     this.cards[cardIndex] = card;
     this.onValueChange.emit(this.cards);
   }

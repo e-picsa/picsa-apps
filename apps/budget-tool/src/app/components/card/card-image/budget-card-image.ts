@@ -1,4 +1,13 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  SimpleChanges,
+  OnChanges
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { IBudgetCardDB } from '../../../models/budget-tool.models';
@@ -6,14 +15,19 @@ import { IBudgetCardDB } from '../../../models/budget-tool.models';
 @Component({
   selector: 'budget-card-image',
   templateUrl: 'budget-card-image.html',
-  styleUrls: ['budget-card-image.scss']
+  styleUrls: ['budget-card-image.scss'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
   @Input() card: IBudgetCardDB;
   imgData: string;
   imgUrl: SafeUrl;
   objUrl: string;
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(
+    private http: HttpClient,
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     if (this.card.customMeta) {
@@ -22,6 +36,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
       this.loadImageFromFile();
     }
   }
+
   ngOnDestroy(): void {
     //  revoke imgURL to prevent memory leaks
     if (this.objUrl) {
@@ -33,6 +48,8 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
     const imgBlob = await this.getCardImg(this.card.id, this.card.imgType);
     this.objUrl = URL.createObjectURL(imgBlob);
     this.imgUrl = this.sanitizer.bypassSecurityTrustUrl(this.objUrl);
+    // as parent cell using onpush strategy extra check required here (not entirely sure why)
+    this.cdr.markForCheck();
   }
 
   // check card images for correct svg or png image and return

@@ -206,6 +206,7 @@ export class BudgetStore implements OnDestroy {
       this.activePeriod = Number(params.period);
       this.activeType = params.type;
     }
+    console.log('active period', toJS(this.activePeriod));
   }
 
   // load the corresponding values into the budgetMeta observable

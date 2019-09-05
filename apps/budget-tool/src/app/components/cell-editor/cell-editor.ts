@@ -2,7 +2,6 @@ import { Component, ViewChild, OnDestroy, OnInit, Input } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
 import {
   IBudgetCardWithValues,
-  IBudgetCardValues,
   IBudgetPeriodType,
   IBudgetPeriodData
 } from '../../models/budget-tool.models';
@@ -25,7 +24,7 @@ export class BudgetCellEditorComponent {
   @Input() data: IBudgetPeriodData;
   @Input() set activeType(type: IBudgetPeriodType) {
     const index = EDITOR_STEPS.indexOf(type);
-    console.log('setting index', index);
+    console.log('active index', index);
     this.stepper.selectedIndex = index;
   }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
@@ -40,6 +39,12 @@ export class BudgetCellEditorComponent {
     this.stepper._getIndicatorType = () => 'number';
   }
 
+  // the store already knows what period and type it is, so just pass the updated values
+  // back up to save
+  onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
+    this.store.saveEditor(values, type);
+  }
+
   // as can't easily prevent default step click behaviour, instead add extra call to update
   // query params after
   stepChange(e: StepperSelectionEvent) {
@@ -50,9 +55,11 @@ export class BudgetCellEditorComponent {
       queryParams: {
         type: step
       },
+      replaceUrl: true,
       queryParamsHandling: 'merge'
     });
   }
+
   // TODO - could be moved to store along with budget-table similar code
   goToNextPeriod() {
     const period = this.store.activePeriod;
@@ -73,20 +80,6 @@ export class BudgetCellEditorComponent {
         relativeTo: this.route
       });
     }
-  }
-
-  // the store already knows what period and type it is, so just pass the updated values
-  // back up to save
-  onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
-    this.store.saveEditor(values, type);
-  }
-
-  // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
-  onCardValueChange(values: IBudgetCardValues, index: number) {
-    // this.selectedArray[index].values = values;
-  }
-  onFamilyLabourChange(values: IBudgetCardWithValues[]) {
-    // this.selectedArray = values;
   }
 
   // use trackby on inputs as otherwise each one changing would re-render all others

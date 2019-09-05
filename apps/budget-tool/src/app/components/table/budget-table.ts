@@ -41,7 +41,10 @@ export class BudgetTableComponent implements OnInit {
         period: columnIndex,
         label: this.periodLabels[columnIndex],
         type: row.key
-      }
+      },
+      // just to make explicit, when navigating from main budget page want to keep history
+      // to go back to full budget. This is different than once in editor
+      replaceUrl: false
     });
   }
 }
