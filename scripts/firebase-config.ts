@@ -24,7 +24,7 @@ console.log('firebase config', firebaseConfig);
 // } else if (environment === 'test') {
 //   apiURL = process.env.TEST_API_ENDPOINT;
 // }
-const targetPath = `./libs/environments/firebase/config.prod.ts`;
+const targetPath = `./libs/environments/firebase/config.ts`;
 const envConfigFile = `export default ${JSON.stringify(firebaseConfig)}`;
 fs.writeFile(targetPath, envConfigFile, function(err) {
   if (err) {
