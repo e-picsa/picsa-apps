@@ -9,7 +9,10 @@ import { BudgetTableComponent } from './table/budget-table';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BudgetMaterialModule } from '../material.module';
-import { BudgetListItemComponent } from './list-item/budget-list-item';
+import {
+  BudgetListItemComponent,
+  BudgetListItemRenameDialog
+} from './list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
@@ -47,6 +50,7 @@ import { PicsaDialogsModule } from '@picsa/features';
     BudgetCardNew,
     BudgetCardNewDialog,
     BudgetListItemComponent,
+    BudgetListItemRenameDialog,
     BudgetPeriodSummaryComponent,
     BudgetTableComponent,
     BackButton,
@@ -83,6 +87,10 @@ import { PicsaDialogsModule } from '@picsa/features';
     BackButton,
     NextButton
   ],
-  entryComponents: [BudgetBalanceEditorComponent, BudgetCardNewDialog]
+  entryComponents: [
+    BudgetBalanceEditorComponent,
+    BudgetCardNewDialog,
+    BudgetListItemRenameDialog
+  ]
 })
 export class BudgetToolComponentsModule {}

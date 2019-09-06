@@ -44,5 +44,6 @@ export const BUDGET_ICONS = {
   download: 'download',
   delete: 'delete',
   settings: 'settings',
-  controls: 'controls'
+  controls: 'controls',
+  copy: 'copy'
 };
