@@ -26,7 +26,7 @@ export class BudgetCellEditorCardSelectComponent {
   selectedArray: IBudgetCardWithValues[] = [];
   showAllCards = false;
 
-  constructor(private store: BudgetStore) {}
+  constructor(public store: BudgetStore) {}
   // split type cards between those matching current enterprise and those not
   filterCards(cards: IBudgetCard[]) {
     const enterpriseGroup = this.store.enterpriseGroup;

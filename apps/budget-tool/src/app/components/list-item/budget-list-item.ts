@@ -20,7 +20,7 @@ import { toJS } from 'mobx';
 export class BudgetListItemComponent {
   @Input() budget: IBudget;
   @Output() onDeleteClicked = new EventEmitter<void>();
-  constructor(private dialog: MatDialog, private store: BudgetStore) {}
+  constructor(private dialog: MatDialog, public store: BudgetStore) {}
 
   deleteClicked(e: Event) {
     e.stopPropagation();

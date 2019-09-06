@@ -15,7 +15,7 @@ import {
 export class BudgetBalanceLegendComponent {
   labels: string[] = [];
   values: number[] = [];
-  constructor(private store: BudgetStore, public dialog: MatDialog) {}
+  constructor(public store: BudgetStore, public dialog: MatDialog) {}
   @Input() set valueCounters(valueCounters: IBudgetValueCounters) {
     if (valueCounters) {
       // only keep the even items (non-half values)

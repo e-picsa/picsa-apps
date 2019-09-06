@@ -23,7 +23,7 @@ export class BudgetPeriodSummaryComponent {
   );
 
   constructor(
-    private store: BudgetStore,
+    public store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute
   ) {}

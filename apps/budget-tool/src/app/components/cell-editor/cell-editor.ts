@@ -29,7 +29,7 @@ export class BudgetCellEditorComponent {
   }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   constructor(
-    private store: BudgetStore,
+    public store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute
   ) {}

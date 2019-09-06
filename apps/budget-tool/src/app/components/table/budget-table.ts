@@ -25,7 +25,7 @@ export class BudgetTableComponent implements OnInit {
   balance: any;
 
   constructor(
-    private store: BudgetStore,
+    public store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute
   ) {}

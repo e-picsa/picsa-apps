@@ -28,7 +28,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private store: BudgetStore,
+    public store: BudgetStore,
     private router: Router
   ) {}
 

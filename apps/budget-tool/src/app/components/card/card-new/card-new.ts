@@ -19,7 +19,7 @@ export class BudgetCardNew {
   @Output() cardSaved = new EventEmitter<IBudgetCard>();
   card = PLACEHOLDER_CARD;
 
-  constructor(public dialog: MatDialog, private store: BudgetStore) {}
+  constructor(public dialog: MatDialog, public store: BudgetStore) {}
 
   showCardDialog() {
     // type passed for enterprise select but otherwise can pick from store
