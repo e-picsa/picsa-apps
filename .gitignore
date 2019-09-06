@@ -65,3 +65,4 @@ libs/features/map/tiles/**/*.png
 apps/climate-tool/src/assets/summaries/*.csv
 
 libs/environments/firebase/config.prod.ts
+.env
