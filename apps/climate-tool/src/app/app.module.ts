@@ -47,8 +47,7 @@ export class AppEmbeddedModule {}
 export class ClimateToolModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: AppEmbeddedModule,
-      providers: []
+      ngModule: AppEmbeddedModule
     };
   }
 }

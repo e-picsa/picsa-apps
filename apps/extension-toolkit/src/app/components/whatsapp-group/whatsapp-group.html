@@ -1,14 +1,12 @@
 <div class="group-container" *ngIf="group">
   <div class="group-label">
-    <ion-icon name="logo-whatsapp"></ion-icon>
-    {{group.label | translate}}
+    <mat-icon svgIcon="picsa_whatsapp"></mat-icon>
+    <span> {{ group.label | translate }}</span>
   </div>
   <div class="group-detail">
-    <div class="group-description">{{group.description | translate}}</div>
+    <div class="group-description">{{ group.description | translate }}</div>
     <a [href]="group.link" target="_blank" rel="nofollow">
-      <ion-button expand="block" fill="clear">
-        {{'Join' | translate}}
-      </ion-button>
+      <button mat-button>{{ 'Join' | translate }}</button>
     </a>
   </div>
 </div>

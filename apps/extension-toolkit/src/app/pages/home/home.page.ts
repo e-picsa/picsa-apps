@@ -43,19 +43,19 @@ export class HomePage implements OnInit {
         name: 'Discussions',
         icon: 'picsa_discussions',
         url: '/discussions'
-      },
-      {
-        ...LINK_DEFAULTS,
-        name: 'Data Collection',
-        icon: 'picsa_data-collection',
-        url: '/data/record'
-      },
-      {
-        ...LINK_DEFAULTS,
-        name: 'Settings',
-        icon: 'picsa_settings',
-        url: '/settings'
       }
+      // {
+      //   ...LINK_DEFAULTS,
+      //   name: 'Data Collection',
+      //   icon: 'picsa_data-collection',
+      //   url: '/data/record'
+      // },
+      // {
+      //   ...LINK_DEFAULTS,
+      //   name: 'Settings',
+      //   icon: 'picsa_settings',
+      //   url: '/settings'
+      // }
     ];
   }
   linkClicked(link: ILink) {

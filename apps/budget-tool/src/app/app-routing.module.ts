@@ -30,7 +30,6 @@ const commonRoutes: Routes = [
   }
 ];
 const standaloneRoutes: Routes = [{ path: '**', redirectTo: '' }];
-// const embeddedRoutes = addRoutePrefix(commonRoutes);
 const embeddedRoutes = [
   {
     path: 'budget',
@@ -84,15 +83,15 @@ export class BudgetToolRoutingModule {
   constructor() {}
 }
 
-// note, whilst child routing should automatically add and handle prefixes,
-// currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
-// possibly linked to multiple router outlets, for now just add prefixes
-// NOTE 2 - BREAKS AOT, SO DEFINE MANUALLY INSTEAD
-export function addRoutePrefix(routes: Routes) {
-  return routes.map(r => {
-    return {
-      ...r,
-      path: `budget${r.path === '' ? '' : '/' + r.path}`
-    };
-  });
-}
+// // note, whilst child routing should automatically add and handle prefixes,
+// // currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
+// // possibly linked to multiple router outlets, for now just add prefixes
+// // NOTE 2 - BREAKS AOT, SO DEFINE MANUALLY INSTEAD
+// export function addRoutePrefix(routes: Routes) {
+//   return routes.map(r => {
+//     return {
+//       ...r,
+//       path: `budget${r.path === '' ? '' : '/' + r.path}`
+//     };
+//   });
+// }

@@ -13,12 +13,16 @@ import {
 } from '@picsa/modules';
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+// NOTE - climate slider requires import into main modules
+import { MatSliderModule } from '@angular/material/slider';
+import 'hammerjs';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    MatSliderModule,
     HttpClientModule,
     MobxAngularModule,
     PicsaDbModule.forRoot(),

@@ -1,19 +1,13 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button text="Back" defaultHref="home"></ion-back-button>
-    </ion-buttons>
-    <ion-title data-cy="title">{{ "Discussions" | translate }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content padding>
-  <p>
-    {{
-      "Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in"
-        | translate
-    }}:
-  </p>
-  <whatsapp-group *ngFor="let group of groups" [group]="group">
-  </whatsapp-group>
-</ion-content>
+<div class="page">
+  <h1 class="inverted">{{ 'Discussions' | translate }}</h1>
+  <div class="page-content">
+    <p>
+      {{
+        'Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in'
+          | translate
+      }}:
+    </p>
+    <whatsapp-group *ngFor="let group of groups" [group]="group">
+    </whatsapp-group>
+  </div>
+</div>
