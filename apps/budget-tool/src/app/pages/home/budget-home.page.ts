@@ -21,7 +21,7 @@ export class BudgetHomePage {
   ) {}
 
   createClicked() {
-    this.router.navigate(['../create'], { relativeTo: this.route });
+    this.router.navigate(['create'], { relativeTo: this.route });
   }
   async promptDelete(budget: IBudget) {
     const dialog = await this.dialog.open('delete');
