@@ -34,12 +34,16 @@ export type IBudgetValueScale = number;
 // values are in descending order
 export type IBudgetValueCounters = [string[], number[]];
 /***************************************************************************** */
-export interface IBudgetActiveCell {
-  periodIndex: number;
-  periodLabel: string;
-  typeKey: IBudgetPeriodType;
-  typeLabel: string;
-  cellData: IBudgetCardWithValues[];
+
+// query params are used to track which cell is being edited
+export interface IBudgetQueryParams {
+  period: string;
+  label: string;
+  type: IBudgetPeriodType;
+}
+// active cell data is calculated separately by store
+export interface IBudgetActiveCell extends IBudgetQueryParams {
+  data: IBudgetCardWithValues[];
 }
 
 /***************************************************************************** */
@@ -49,13 +53,15 @@ export interface IBudgetCard {
   // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
   id: string;
   label: string;
-  type: IBudgetPeriodType | 'enterprise' | 'other';
+  type: IBudgetCardType;
   groupings?: string[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
   imgType?: 'svg' | 'png';
+  _deleted?: boolean;
 }
 export type IBudgetCardDB = IBudgetCard & IDBDoc;
+export type IBudgetCardType = IBudgetPeriodType | 'enterprise' | 'other';
 
 export interface IBudgetCardWithValues extends IBudgetCard {
   values: IBudgetCardValues;

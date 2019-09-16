@@ -52,6 +52,7 @@ export class PicsaDbService implements AbstractDBService {
     endpoint = this._mapEndpoint(endpoint);
     const dbDoc = { ...doc, ...generateDBMeta(doc, keepModified) };
     await this.cache.setDoc(endpoint, dbDoc);
+
     if (sync) {
       this.sync.addWrites(endpoint, [dbDoc._key]);
     }

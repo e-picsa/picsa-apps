@@ -16,6 +16,22 @@
               @fadeInOut
             ></budget-card>
           </div>
+          <div class="sticky-footer">
+            <button
+              matStepperNext
+              color="primary"
+              mat-raised-button
+              class="footer-button"
+              [disabled]="!budgetMetaForm.value.enterprise.type"
+            >
+              {{ 'Next' | translate }}
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </mat-step>
+        <!-- Step 2 - enterprise select -->
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
           <h2 *ngIf="filteredEnterprises.length" @fadeInOut>
             {{ 'Select Enterprise' | translate }}
           </h2>
@@ -28,6 +44,11 @@
               @fadeInOut
             >
             </budget-card>
+            <budget-card-new
+              type="enterprise"
+              [groupings]="[selectedType]"
+              (onCardCreated)="enterpriseClicked($event)"
+            ></budget-card-new>
           </div>
           <div class="sticky-footer">
             <button
@@ -43,7 +64,7 @@
           </div>
         </mat-step>
 
-        <!-- Step 2 - handled with form controls -->
+        <!-- Step 3 - handled with form controls -->
         <mat-step>
           <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
           <h2>{{ 'How long is your budget for?' | translate }}</h2>

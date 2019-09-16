@@ -10,12 +10,30 @@
       <mat-card-subtitle>{{ budget._created | date }}</mat-card-subtitle>
     </div>
     <button
-      mat-button
-      aria-label="Delete"
-      color="light"
-      (click)="deleteClicked($event)"
+      mat-icon-button
+      [matMenuTriggerFor]="budgetMenu"
+      (click)="menuClick($event)"
+      style="height: 70px; width:50px"
     >
-      <mat-icon svgIcon="picsa_delete"></mat-icon>
+      <mat-icon>more_vert</mat-icon>
     </button>
+
+    <mat-menu #budgetMenu="matMenu">
+      <button mat-menu-item aria-label="Copy" (click)="showCopyDialog()">
+        <mat-icon svgIcon="picsa_copy"></mat-icon>Copy
+      </button>
+      <button mat-menu-item aria-label="Edit" (click)="showRenameDialog()">
+        <mat-icon>edit</mat-icon>Rename
+      </button>
+      <button
+        mat-menu-item
+        aria-label="Delete"
+        color="light"
+        (click)="deleteClicked($event)"
+      >
+        <mat-icon svgIcon="picsa_delete">Delete</mat-icon>
+        Delete
+      </button>
+    </mat-menu>
   </div>
 </mat-card>

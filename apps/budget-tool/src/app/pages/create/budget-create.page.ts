@@ -9,18 +9,13 @@ import {
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FadeInOut, ANIMATION_DEFAULTS } from '@picsa/animations';
+import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
 
 @Component({
   selector: 'budget-create',
   templateUrl: './budget-create.page.html',
   styleUrls: ['./budget-create.page.scss'],
-  animations: [
-    FadeInOut({
-      ...ANIMATION_DEFAULTS,
-      ...{ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 }
-    })
-  ]
+  animations: [FadeInOut(ANIMATION_DELAYED)]
 })
 export class BudgetCreatePage implements OnInit {
   budgetMetaForm: FormGroup;
@@ -63,7 +58,7 @@ export class BudgetCreatePage implements OnInit {
     // TODO - defaults no longer set for each enterprise,
     // possibly find a way to store somewhere and lookup
     this.budgetMetaForm.patchValue({
-      enterprise
+      enterprise: enterprise
     });
   }
   async save() {

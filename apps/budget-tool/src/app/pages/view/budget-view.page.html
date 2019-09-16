@@ -1,21 +1,23 @@
 <div class="page" *mobxAutorun>
   <mat-toolbar>
-    <span>{{
+    <back-button *ngIf="!isEditorOpen"></back-button>
+    <span *ngIf="!isEditorOpen" style="flex: 1; text-align: center">{{
       store.activeBudget
         ? store.activeBudget.meta.title
         : ('Budget' | translate)
     }}</span>
-    <div *ngIf="store.isEditorOpen" style="flex:1; display: flex">
+    <div *ngIf="isEditorOpen" style="flex:1; display: flex">
       <span style="text-align: center; flex:1">{{
-        store.activeCell.periodLabel | translate
+        periodLabel | translate
       }}</span>
       <button
         mat-button
         color="primary"
-        (click)="store.toggleEditor()"
         @fadeInOut
+        (click)="closeEditor()"
+        style="position: absolute; right: 0;"
       >
-        <mat-icon>close</mat-icon><span>{{ 'Cancel' | translate }}</span>
+        <mat-icon>close</mat-icon><span>{{ 'Close' | translate }}</span>
       </button>
     </div>
   </mat-toolbar>
@@ -27,9 +29,10 @@
       @fadeInOut
     ></budget-table>
     <budget-cell-editor
-      *ngIf="store.activeCell"
-      [@flyInOut]="store.isEditorOpen ? 'in' : 'out'"
-      [cell]="store.activeCell"
+      *ngIf="store.activeBudget && store.budgetPeriodData"
+      [data]="store.budgetPeriodData"
+      [activeType]="store.activeType"
+      [@flyInOut]="isEditorOpen ? 'in' : 'out'"
     ></budget-cell-editor>
   </div>
 </div>

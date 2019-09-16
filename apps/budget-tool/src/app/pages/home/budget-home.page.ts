@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IBudget } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { PrintProvider } from '@picsa/services/native/print';
 import { PicsaDialogService } from '@picsa/features';
 @Component({
@@ -16,11 +16,12 @@ export class BudgetHomePage {
     private printPrvdr: PrintProvider,
     public store: BudgetStore,
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: PicsaDialogService
   ) {}
 
   createClicked() {
-    this.router.navigate(['budget/create']);
+    this.router.navigate(['/create'], { relativeTo: this.route });
   }
   async promptDelete(budget: IBudget) {
     const dialog = await this.dialog.open('delete');

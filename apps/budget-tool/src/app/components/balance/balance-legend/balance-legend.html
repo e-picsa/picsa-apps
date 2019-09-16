@@ -1,23 +1,16 @@
-<div style="display: flex">
-  <div style="width:24px">
-    <button mat-button class="balance-button" (click)="scaleValues(10)">
-      <mat-icon>arrow_upward</mat-icon>
-    </button>
-    <button mat-button class="balance-button" (click)="scaleValues(0.1)">
-      <mat-icon>arrow_downward</mat-icon>
-    </button>
-  </div>
-  <div style="flex:1;  margin: 10px 0 0 5px">
-    <div *ngFor="let label of labels; let i = index">
-      <div style="display: flex; font-size: small">
-        <div>
-          <img
-            class="dot-value-image"
-            [src]="'assets/images/dot-' + label + '.png'"
-          />
-        </div>
-        <div *ngIf="!editDotValue">= {{ values[i] | number: '.0' }}</div>
+<button mat-button class="legend-edit-button" (click)="showScaleEdit()">
+  <mat-icon class="legend-edit-button-icon" svgIcon="picsa_controls"></mat-icon>
+</button>
+<div style="margin: 10px 0 0 5px">
+  <div *ngFor="let label of labels; let i = index">
+    <div style="display: flex; font-size: small">
+      <div>
+        <img
+          class="dot-value-image"
+          [src]="'assets/images/dot-' + label + '.png'"
+        />
       </div>
+      <div *ngIf="!editDotValue">= {{ values[i] | number: '.0' }}</div>
     </div>
   </div>
 </div>

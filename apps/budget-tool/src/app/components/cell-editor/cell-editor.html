@@ -1,90 +1,113 @@
-<div class="page-content" style="height: calc(100% - 20px);">
-  <!--cards select-->
+<div class="page-content" style="height: calc(100% - 50px);">
+  <!-- Optional [@.disabled]="false" to disable animations (note persists through all children elements) -->
   <mat-horizontal-stepper
-    linear
     #stepper
     style="overflow: auto; margin-bottom: 20px; flex:1"
+    (selectionChange)="stepChange($event)"
   >
-    <!-- Card Select Step-->
-    <mat-step *ngIf="stepsShown.cardStep" @fadeInOut>
-      <ng-template matStepLabel>{{ _cell.typeLabel | translate }}</ng-template>
-      <div *mobxAutorun>
-        <budget-card
-          *ngFor="let card of store.groupTypeCards"
-          [card]="card"
-          (click)="onCardClicked(card)"
-          [selected]="selected[card.id]"
-          @fadeInOut
-        ></budget-card>
-        <div @fadeInOut *ngIf="!showAllCards">
-          <button mat-button (click)="showAllCards = true">
-            {{ 'Show More' | translate }}
-          </button>
-        </div>
-        <div *ngIf="showAllCards">
-          <budget-card
-            *ngFor="let card of store.otherTypeCards"
-            [card]="card"
-            (click)="onCardClicked(card)"
-            [selected]="selected[card.id]"
-            @fadeInOut
-          ></budget-card>
-        </div>
-      </div>
-    </mat-step>
-    <!-- Value Input Step-->
-    <mat-step
-      *ngIf="stepsShown.valueStep && selectedArray.length > 0"
-      @fadeInOut
-    >
-      <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
-      <div
-        *ngFor="let card of selectedArray; let i = index"
-        class="input-values-container"
+    <!-- Activities -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Activities' | translate }}</ng-template>
+      <budget-cell-editor-card-select
+        [values]="data.activities"
+        [cards]="store.budgetCardsByType.activities"
+        (onValueChange)="onEditorChange($event, 'activities')"
       >
-        <!-- NOTE - difficult and expensive to use ngModels in ngFor so use manual bindings -->
-        <budget-card [card]="card"></budget-card>
-        <budget-cell-editor-input-values
-          [values]="card.values"
-          (onValueChange)="onCardValueChange($event, i)"
-        ></budget-cell-editor-input-values>
-      </div>
+      </budget-cell-editor-card-select>
+      <next-button></next-button>
     </mat-step>
-    <!-- Consumed Input Step-->
-    <mat-step
-      *ngIf="stepsShown.consumedStep && selectedArray.length > 0"
-      @fadeInOut
-    >
-      <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
-      <div
-        *ngFor="let card of selectedArray; let i = index"
-        class="input-values-container"
-      >
-        <!-- NOTE - difficult and expensive to use ngModels in ngFor so use manual bindings -->
-        <budget-card [card]="card"></budget-card>
-        <budget-cell-editor-produce-consumed
-          [values]="card.values"
-          (onValueChange)="onCardValueChange($event, i)"
-        ></budget-cell-editor-produce-consumed>
-      </div>
+    <!-- Inputs -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Inputs' | translate }}</ng-template>
+      <mat-horizontal-stepper #subStepper>
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
+          <budget-cell-editor-card-select
+            [values]="data.inputs"
+            [cards]="store.budgetCardsByType.inputs"
+            (onValueChange)="onEditorChange($event, 'inputs')"
+          >
+          </budget-cell-editor-card-select>
+          <next-button></next-button>
+        </mat-step>
+        <!-- Input Values -->
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
+          <budget-cell-editor-input-values
+            [cards]="data.inputs"
+            (onValueChange)="onEditorChange($event, 'inputs')"
+          ></budget-cell-editor-input-values>
+          <next-button (click)="stepper.next()"></next-button>
+        </mat-step>
+      </mat-horizontal-stepper>
     </mat-step>
-    <!-- Family Labour Step -->
-    <mat-step *ngIf="stepsShown.labourStep" @fadeInOut>
-      <ng-template matStepLabel>{{ 'Family Labour' | translate }}</ng-template>
+
+    <!-- Family Labour -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Family' | translate }}</ng-template>
       <budget-cell-editor-family-labour
-        [values]="_cell.cellData"
-        (onValueChange)="onFamilyLabourChange($event, i)"
+        [values]="data.familyLabour"
+        (onValueChange)="onEditorChange($event, 'familyLabour')"
       ></budget-cell-editor-family-labour>
+      <next-button></next-button>
+    </mat-step>
+    <!-- Outputs -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Outputs' | translate }}</ng-template>
+      <mat-horizontal-stepper #subStepper>
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
+          <budget-cell-editor-card-select
+            [values]="data.outputs"
+            [cards]="store.budgetCardsByType.outputs"
+            (onValueChange)="onEditorChange($event, 'outputs')"
+          >
+          </budget-cell-editor-card-select>
+          <next-button></next-button>
+        </mat-step>
+        <!-- Output Values -->
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
+          <budget-cell-editor-input-values
+            [cards]="data.outputs"
+            (onValueChange)="onEditorChange($event, 'outputs')"
+          ></budget-cell-editor-input-values>
+          <next-button (click)="stepper.next()"></next-button
+        ></mat-step>
+      </mat-horizontal-stepper>
+    </mat-step>
+    <!-- Consumed -->
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Consumed' | translate }}</ng-template>
+      <mat-horizontal-stepper #subStepper>
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
+          <budget-cell-editor-card-select
+            [values]="data.produceConsumed"
+            [cards]="store.budgetCardsByType.outputs"
+            (onValueChange)="onEditorChange($event, 'produceConsumed')"
+          >
+          </budget-cell-editor-card-select>
+          <next-button></next-button>
+        </mat-step>
+        <!-- Consumed Values -->
+        <mat-step>
+          <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
+          <budget-cell-editor-produce-consumed
+            [cards]="data.produceConsumed"
+            (onValueChange)="onEditorChange($event, 'produceConsumed')"
+          ></budget-cell-editor-produce-consumed>
+          <next-button (click)="stepper.next()"></next-button
+        ></mat-step>
+      </mat-horizontal-stepper>
+      <!-- ------------------------------------------------------------------- -->
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>{{ 'Summary' | translate }}</ng-template>
+      <budget-period-summary
+        [periodIndex]="store.activePeriod"
+      ></budget-period-summary>
+      <next-button (click)="goToNextPeriod()"></next-button>
     </mat-step>
   </mat-horizontal-stepper>
-
-  <button
-    color="primary"
-    mat-raised-button
-    class="continue-button"
-    (click)="onNextClicked()"
-  >
-    <span class="continue-button-text">{{ 'Next' | translate }}</span>
-    <mat-icon>arrow_forward</mat-icon>
-  </button>
 </div>

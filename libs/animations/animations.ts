@@ -99,12 +99,33 @@ export function getAnimationTimings(
 /*********************************************************************************
  *  Interfaces and Constants
  **********************************************************************************/
+// note, if providing changes to defaults need to create entire new object with settings
+// so that AOT works. I.e. not {...ANIMATION_DEFAULTS,inSpeed:400}
 export const ANIMATION_DEFAULTS: IAnimationConfig = {
   inSpeed: 250,
   inDelay: 0,
   inEasing: 'ease-in',
   outSpeed: 150,
   outDelay: 0,
+  outEasing: 'ease-out',
+  axis: 'X'
+};
+export const ANIMATION_DEFAULTS_Y: IAnimationConfig = {
+  inSpeed: 250,
+  inDelay: 0,
+  inEasing: 'ease-in',
+  outSpeed: 300,
+  outDelay: 0,
+  outEasing: 'ease-out',
+  axis: 'Y'
+};
+
+export const ANIMATION_DELAYED: IAnimationConfig = {
+  inSpeed: 200,
+  inDelay: 500,
+  outSpeed: 100,
+  outDelay: 0,
+  inEasing: 'ease-in',
   outEasing: 'ease-out',
   axis: 'X'
 };

@@ -1,10 +1,22 @@
-<mat-form-field class="card-input-field quantity">
-  <input
-    matInput
-    class="input-editable"
-    [placeholder]="'How Many People' | translate"
-    [value]="totalPeople"
-    type="number"
-    (change)="setValue($event)"
-  />
-</mat-form-field>
+<div>
+  <mat-card class="member-card" *ngFor="let member of values; let i = index">
+    <budget-card-image class="small" [card]="familyCard"></budget-card-image>
+    <mat-form-field class="card-input-field quantity">
+      <input
+        matInput
+        class="input-editable"
+        [placeholder]="'Days' | translate"
+        [value]="member.values ? member.values.quantity : null"
+        type="number"
+        (change)="setValue($event, i)"
+      />
+    </mat-form-field>
+    <button mat-button (click)="removeMember(i)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-card>
+  <button mat-button class="add-member-button" (click)="addMember()">
+    <mat-icon>add</mat-icon>
+    {{ 'Add Family Member' | translate }}
+  </button>
+</div>

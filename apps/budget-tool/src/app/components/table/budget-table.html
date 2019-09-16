@@ -34,17 +34,24 @@
     </div>
     <!-- Cash Balance -->
     <div class="cell">
-      <div>
-        <div style="padding:5px">
-          <div>{{ periodLabels[columnIndex] | translate }}</div>
-          <div>
+      <div
+        *ngIf="store.balance && store.balance[columnIndex]"
+        class="balance-cell-contents"
+      >
+        <div class="balance-value-container">
+          <div class="balance-label">
+            {{ periodLabels[columnIndex] | translate }}
+          </div>
+          <div class="balance-value">
             {{ store.balance[columnIndex].period | number: '.0' }}
           </div>
         </div>
         <hr />
-        <div style="padding:5px">
-          <div>{{ 'Balance' | translate }}</div>
-          <span>{{ store.balance[columnIndex].running | number: '.0' }}</span>
+        <div class="balance-value-container">
+          <div class="balance-label">{{ 'Total' | translate }}</div>
+          <div class="balance-value">
+            {{ store.balance[columnIndex].running | number: '.0' }}
+          </div>
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ export class FormViewPage implements OnInit {
   constructor(
     private userStore: UserStore,
     private route: ActivatedRoute,
-    private store: FormStore
+    public store: FormStore
   ) {}
 
   ngOnInit(): void {

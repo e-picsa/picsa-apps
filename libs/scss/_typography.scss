@@ -15,3 +15,11 @@ h1.inverted {
   margin: 0;
   background: var(--color-primary);
 }
+
+/*******************************************************************
+      Inputs
+******************************************************************/
+.mat-input-element.input-editable {
+  font-size: 30px;
+  color: var(--color-primary);
+}

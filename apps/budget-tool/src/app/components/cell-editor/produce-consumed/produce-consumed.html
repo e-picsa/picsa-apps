@@ -1,12 +1,21 @@
-<div class="input-values-container">
-  <mat-form-field class="card-input-field quantity">
-    <input
-      matInput
-      class="input-editable"
-      [placeholder]="'Quantity' | translate"
-      [value]="values.quantity"
-      type="number"
-      (change)="setValue($event, 'quantity')"
-    />
-  </mat-form-field>
+<mat-card
+  *ngFor="let card of cards; let i = index"
+  style="display: flex; margin-bottom: 10px"
+>
+  <budget-card [card]="card"></budget-card>
+  <div class="input-values-container">
+    <mat-form-field class="card-input-field quantity">
+      <input
+        matInput
+        class="input-editable"
+        [placeholder]="'Quantity' | translate"
+        [value]="card.quantity"
+        type="number"
+        (change)="setValue($event, 'quantity', i)"
+      />
+    </mat-form-field>
+  </div>
+</mat-card>
+<div *ngIf="cards.length === 0" style="margin:1em 0 2em 0">
+  You have not selected any cards
 </div>

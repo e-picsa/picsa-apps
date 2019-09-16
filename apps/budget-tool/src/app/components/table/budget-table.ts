@@ -1,11 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  IBudget,
-  IBudgetPeriodType,
-  IBudgetActiveCell
-} from '../../models/budget-tool.models';
+import { IBudget, IBudgetPeriodType } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 import { BUDGET_PERIOD_ROWS } from '../../store/templates';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'budget-table',
@@ -27,21 +24,28 @@ export class BudgetTableComponent implements OnInit {
   // TODO - bring back balance and refactor to own component
   balance: any;
 
-  constructor(private store: BudgetStore) {}
+  constructor(
+    public store: BudgetStore,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
   ngOnInit(): void {
     this.periodLabels = this.store.budgetPeriodLabels;
   }
 
   onCellClick(columnIndex: number, row: IBudgetRow) {
-    const cell: IBudgetActiveCell = {
-      periodIndex: columnIndex,
-      periodLabel: this.periodLabels[columnIndex],
-      typeKey: row.key,
-      typeLabel: row.label,
-      // cell data will be populated by the store
-      cellData: []
-    };
-    this.store.setActiveCell(cell);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        edit: true,
+        period: columnIndex,
+        label: this.periodLabels[columnIndex],
+        type: row.key
+      },
+      // just to make explicit, when navigating from main budget page want to keep history
+      // to go back to full budget. This is different than once in editor
+      replaceUrl: false
+    });
   }
 }
 

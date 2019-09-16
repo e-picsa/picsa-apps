@@ -128,3 +128,25 @@ h1 {
 .consumed {
   background-color: lightcoral;
 }
+hr {
+  margin: 0;
+}
+.balance-value-container {
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+.balance-value {
+  margin-left: 5px;
+  flex: 1;
+  word-break: break-all;
+  text-align: right;
+}
+.balance-cell-contents {
+  display: flex;
+  flex-direction: column;
+}
+.balance-label {
+  font-size: 12px;
+}

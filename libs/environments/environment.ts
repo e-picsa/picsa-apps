@@ -3,6 +3,7 @@ import GROUPS from '@picsa/environments/groups';
 import REGIONS from '@picsa/environments/regions';
 import FIREBASE_CONFIG from './firebase/config';
 
+console.log('firebase environments', FIREBASE_CONFIG);
 const DEFAULT_ENVIRONMENT: IEnvironment = {
   firebase: FIREBASE_CONFIG,
   group: GROUPS.DEV,

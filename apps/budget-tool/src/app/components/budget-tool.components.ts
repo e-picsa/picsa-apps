@@ -6,37 +6,55 @@ import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetTableComponent } from './table/budget-table';
-import { CardSelectComponent } from './card/card-select/card-select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BudgetMaterialModule } from '../material.module';
-import { BudgetListItemComponent } from './list-item/budget-list-item';
+import {
+  BudgetListItemComponent,
+  BudgetListItemRenameDialog
+} from './list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaDbModule } from '@picsa/modules';
-import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
+import {
+  BudgetBalanceLegendComponent,
+  BudgetBalanceEditorComponent
+} from './balance/balance-legend/balance-legend';
 import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
+import { BudgetCardNew, BudgetCardNewDialog } from './card/card-new/card-new';
+import { RouterModule } from '@angular/router';
+import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
+import { NextButton } from './general/next-button';
+import { BackButton } from './general/back-button';
+import { BudgetPeriodSummaryComponent } from './summary/period-summary';
+import { PicsaDialogsModule } from '@picsa/features';
 
 @NgModule({
   declarations: [
     BudgetBalanceLegendComponent,
     BudgetBalanceDotValueComponent,
+    BudgetBalanceEditorComponent,
     BudgetCardComponent,
     BudgetCardImageComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
-    BudgetCellEditorComponent,
+    BudgetCellEditorCardSelectComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
+    BudgetCardNew,
+    BudgetCardNewDialog,
     BudgetListItemComponent,
+    BudgetListItemRenameDialog,
+    BudgetPeriodSummaryComponent,
     BudgetTableComponent,
-    CardSelectComponent
+    BackButton,
+    NextButton
   ],
   imports: [
     IonicModule,
@@ -44,9 +62,11 @@ import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-
     FormsModule,
     BudgetMaterialModule,
     TranslateModule.forChild(),
+    PicsaDialogsModule,
     CanvasWhiteboardModule,
     MobxAngularModule,
-    PicsaDbModule
+    PicsaDbModule,
+    RouterModule
   ],
   exports: [
     BudgetBalanceLegendComponent,
@@ -55,13 +75,22 @@ import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-
     BudgetCardImageComponent,
     BudgetCellComponent,
     BudgetCellEditorComponent,
+    BudgetCellEditorCardSelectComponent,
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
+    BudgetCardNew,
     BudgetTableComponent,
-    CardSelectComponent
+    BudgetPeriodSummaryComponent,
+    BackButton,
+    NextButton
+  ],
+  entryComponents: [
+    BudgetBalanceEditorComponent,
+    BudgetCardNewDialog,
+    BudgetListItemRenameDialog
   ]
 })
 export class BudgetToolComponentsModule {}

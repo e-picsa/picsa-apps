@@ -1,102 +1,85 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnDestroy, OnInit, Input } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
 import {
-  IBudgetActiveCell,
-  IBudgetCard,
   IBudgetCardWithValues,
-  IBudgetCardValues
+  IBudgetPeriodType,
+  IBudgetPeriodData
 } from '../../models/budget-tool.models';
-import { FadeInOut, ANIMATION_DEFAULTS } from '@picsa/animations';
+import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
 import { MatStepper } from '@angular/material';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'budget-cell-editor',
   templateUrl: './cell-editor.html',
   styleUrls: ['./cell-editor.scss'],
-  animations: [
-    FadeInOut({
-      ...ANIMATION_DEFAULTS,
-      ...{ inSpeed: 200, inDelay: 500, outSpeed: 100, outDelay: 0 }
-    })
-  ]
+  animations: [FadeInOut(ANIMATION_DELAYED)]
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
  */
 export class BudgetCellEditorComponent {
-  _cell: IBudgetActiveCell;
-  allBudgetCards: IBudgetCard[];
-  selected: { [id: string]: boolean } = {};
-  selectedArray: IBudgetCardWithValues[] = [];
-  stepsShown: any = {};
-  showAllCards = false;
-  @Input() set cell(cell: IBudgetActiveCell) {
-    this.resetView();
-    this.setSteps(cell);
-    this.setValues(cell);
-    this._cell = cell;
+  steps = EDITOR_STEPS;
+  @Input() data: IBudgetPeriodData;
+  @Input() set activeType(type: IBudgetPeriodType) {
+    const index = EDITOR_STEPS.indexOf(type);
+    console.log('active index', index);
+    this.stepper.selectedIndex = index;
   }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
-  constructor(private store: BudgetStore) {}
+  constructor(
+    public store: BudgetStore,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
-  setValues(cell: IBudgetActiveCell) {
-    // family labour handled directly, otherwise iterate over objects
-    if (cell.typeKey !== 'familyLabour') {
-      const selected = {};
-      cell.cellData.forEach(card => (selected[card.id] = true));
-      this.selected = selected;
-      this.selectedArray = [...cell.cellData];
-    }
+  ngAfterViewInit(): void {
+    // ignore icons and just display number
+    this.stepper._getIndicatorType = () => 'number';
   }
 
-  resetView() {
-    this.showAllCards = false;
-    if (this.stepper && this.stepper.selectedIndex > 0) {
-      this.stepper.reset();
-    }
+  // the store already knows what period and type it is, so just pass the updated values
+  // back up to save
+  onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
+    this.store.saveEditor(values, type);
   }
 
-  setSteps(cell: IBudgetActiveCell) {
-    const type = cell.typeKey;
-    this.stepsShown = {
-      cardStep: type !== 'familyLabour',
-      valueStep: ['inputs', 'outputs'].includes(type),
-      labourStep: type === 'familyLabour',
-      consumedStep: type === 'produceConsumed'
-    };
+  // as can't easily prevent default step click behaviour, instead add extra call to update
+  // query params after
+  stepChange(e: StepperSelectionEvent) {
+    const step = EDITOR_STEPS[e.selectedIndex];
+    // as can't disable stepper slide animation use timeout to delay other animations
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        type: step
+      },
+      replaceUrl: true,
+      queryParamsHandling: 'merge'
+    });
   }
 
-  // on click toggle keys on the selected cards property, saving full card data for use later
-  onCardClicked(card: IBudgetCard) {
-    this.selected[card.id] = !this.selected[card.id];
-    // check if card with key already exists in array, if yes remove, if no push
-    const arrIndex = this.selectedArray.map(el => el.id).indexOf(card.id);
-    if (arrIndex > -1) {
-      this.selectedArray.splice(arrIndex, 1);
+  // TODO - could be moved to store along with budget-table similar code
+  goToNextPeriod() {
+    const period = this.store.activePeriod;
+    const totalPeriods = this.store.activeBudget.meta.lengthTotal;
+    this.stepper.reset();
+    if (period < totalPeriods) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {
+          period: period + 1,
+          type: 'activities',
+          label: this.store.budgetPeriodLabels[period + 1]
+        },
+        queryParamsHandling: 'merge'
+      });
     } else {
-      const defaultValues = { cost: null, quantity: null, total: null };
-      this.selectedArray.push({ ...card, values: defaultValues });
+      this.router.navigate([], {
+        relativeTo: this.route
+      });
     }
-  }
-  onNextClicked() {
-    if (this.stepper.selectedIndex < this.stepper.steps.length - 1) {
-      this.stepper.next();
-    } else {
-      this.saveCell();
-      this.store.toggleEditor();
-    }
-  }
-
-  // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
-  onCardValueChange(values: IBudgetCardValues, index: number) {
-    this.selectedArray[index].values = values;
-  }
-  onFamilyLabourChange(values: IBudgetCardWithValues[]) {
-    this.selectedArray = values;
-  }
-
-  saveCell() {
-    this.store.saveEditor(this.selectedArray);
   }
 
   // use trackby on inputs as otherwise each one changing would re-render all others
@@ -105,3 +88,12 @@ export class BudgetCellEditorComponent {
     return index;
   }
 }
+
+const EDITOR_STEPS: (IBudgetPeriodType | 'summary')[] = [
+  'activities',
+  'inputs',
+  'familyLabour',
+  'outputs',
+  'produceConsumed',
+  'summary'
+];
