@@ -13,9 +13,10 @@
 }
 // TODO - lots of styles below are deprecated, requires tidying
 .budget-container.print-mode {
-  position: fixed;
-  top: 0;
-  padding-top: 56px;
+  height: 21cm;
+  width: 29.7cm;
+  position: absolute;
+  top: 100vh;
 }
 .time-period {
   display: flex;

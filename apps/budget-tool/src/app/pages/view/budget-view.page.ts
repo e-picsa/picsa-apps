@@ -9,6 +9,7 @@ import {
   ANIMATION_DEFAULTS_Y
 } from '@picsa/animations';
 import { Subscription } from 'rxjs';
+import { PrintProvider } from '@picsa/services/native/print';
 
 @Component({
   selector: 'budget-view',
@@ -29,7 +30,8 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     public store: BudgetStore,
-    private router: Router
+    private router: Router,
+    private printPrvdr: PrintProvider
   ) {}
 
   ngOnInit() {
@@ -39,21 +41,30 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.param$.unsubscribe();
   }
+  closeEditor() {
+    this.isEditorOpen = false;
+    this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
+  }
+  async showShareDialog() {
+    try {
+      await this.printPrvdr.socialShareBudget(
+        '#budget',
+        this.store.activeBudget.meta.title
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async loadBudget() {
+    const budgetKey = this.route.snapshot.params.budgetKey;
+    this.store.loadBudgetByKey(budgetKey);
+  }
 
   private _addRouterSubscription() {
     this.param$ = this.route.queryParams.subscribe(params => {
       this.isEditorOpen = params.edit;
       this.periodLabel = params.label;
     });
-  }
-
-  closeEditor() {
-    this.isEditorOpen = false;
-    this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
-  }
-
-  async loadBudget() {
-    const budgetKey = this.route.snapshot.params.budgetKey;
-    this.store.loadBudgetByKey(budgetKey);
   }
 }

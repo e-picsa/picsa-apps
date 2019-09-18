@@ -6,6 +6,23 @@
         ? store.activeBudget.meta.title
         : ('Budget' | translate)
     }}</span>
+    <!-- Header Menu -->
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="budgetMenu"
+      style="height: 70px; width:50px"
+      *ngIf="!isEditorOpen"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #budgetMenu="matMenu">
+      <button mat-menu-item aria-label="Copy" (click)="showShareDialog()">
+        <mat-icon>share</mat-icon>Share
+      </button>
+    </mat-menu>
+
+    <!-- Editor Close -->
     <div *ngIf="isEditorOpen" style="flex:1; display: flex">
       <span style="text-align: center; flex:1">{{
         periodLabel | translate

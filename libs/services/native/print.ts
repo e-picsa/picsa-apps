@@ -23,16 +23,20 @@ export class PrintProvider {
   // similar method to above but add filename title to top of canvas
   async socialShareBudget(domSelector: string, title: string) {
     const domEl: HTMLElement = document.querySelector(domSelector);
-    domEl.classList.toggle('print-mode');
-    const width = domEl.offsetWidth;
-    const canvasElm = await html2canvas(domEl);
+    const clone = domEl.cloneNode(true) as HTMLElement;
+    clone.classList.toggle('print-mode');
+    console.log('clone', clone);
+    const body = document.querySelector('body');
+    body.appendChild(clone);
+    const width = clone.offsetWidth;
+    const canvasElm = await html2canvas(clone);
     // add title
     const ctx = canvasElm.getContext('2d');
     ctx.font = '30px Arial';
     ctx.textAlign = 'start';
     ctx.fillText(title, width / 2, 43);
     await this.shareCanvasImage(canvasElm, title);
-    domEl.classList.toggle('print-mode');
+    body.removeChild(clone);
   }
 
   async shareCanvasImage(canvasElm: HTMLCanvasElement, title: string) {
