@@ -29,24 +29,29 @@ export class PrintProvider {
     const body = document.querySelector('body');
     body.appendChild(clone);
     const width = clone.offsetWidth;
-    const canvasElm = await html2canvas(clone);
+    // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
+    const canvasElm = await html2canvas(clone, { allowTaint: true });
     // add title
     const ctx = canvasElm.getContext('2d');
     ctx.font = '30px Arial';
     ctx.textAlign = 'start';
     ctx.fillText(title, width / 2, 43);
-    await this.shareCanvasImage(canvasElm, title);
-    body.removeChild(clone);
+    // use set timeout to ensure resizing complete
+    // TODO - check if required or if better solution could exist
+    setTimeout(async () => {
+      await this.shareCanvasImage(canvasElm, title);
+      body.removeChild(clone);
+    }, 200);
   }
 
   async shareCanvasImage(canvasElm: HTMLCanvasElement, title: string) {
     const base64 = canvasElm.toDataURL();
     if (this.platform.is('cordova')) {
-      this.socialSharing
+      return this.socialSharing
         .share('', title, base64)
         .then(res => console.log(res), err => console.error(err));
     } else {
-      this.downloadCanvasImage(canvasElm, title);
+      return this.downloadCanvasImage(canvasElm, title);
     }
   }
 
