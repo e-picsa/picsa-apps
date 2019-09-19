@@ -7,7 +7,7 @@
         : ('Budget' | translate)
     }}</span>
     <!-- Header Menu -->
-    <button
+    <!-- <button
       mat-icon-button
       [matMenuTriggerFor]="budgetMenu"
       style="height: 70px; width:50px"
@@ -15,12 +15,19 @@
     >
       <mat-icon>more_vert</mat-icon>
     </button>
-
     <mat-menu #budgetMenu="matMenu">
-      <button mat-menu-item aria-label="Copy" (click)="showShareDialog()">
+      <button mat-menu-item aria-label="Share" (click)="showShareDialog()">
         <mat-icon>share</mat-icon>Share
       </button>
-    </mat-menu>
+    </mat-menu> -->
+    <button
+      mat-button
+      *ngIf="!isEditorOpen"
+      aria-label="Share"
+      (click)="showShareDialog()"
+    >
+      <mat-icon>share</mat-icon>Share
+    </button>
 
     <!-- Editor Close -->
     <div *ngIf="isEditorOpen" style="flex:1; display: flex">
