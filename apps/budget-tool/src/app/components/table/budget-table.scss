@@ -12,9 +12,9 @@
   overflow-x: auto;
 }
 // TODO - lots of styles below are deprecated, requires tidying
-.budget-container.print-mode {
-  height: 21cm;
-  width: 29.7cm;
+#budget.print-mode {
+  height: 21cm !important;
+  width: 29.7cm !important;
   position: absolute;
   top: 100vh;
 }

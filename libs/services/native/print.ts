@@ -29,7 +29,7 @@ export class PrintProvider {
     clone.prepend(titleEl);
     // attach clone, generate svg and export
     const body = document.querySelector('body');
-    body.appendChild(clone);
+    body.prepend(clone);
     // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
     const canvasElm = await html2canvas(clone, { allowTaint: true });
     // use set timeout to ensure resizing complete
