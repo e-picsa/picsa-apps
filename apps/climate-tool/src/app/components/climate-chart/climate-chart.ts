@@ -66,7 +66,7 @@ export class ClimateChartComponent {
     });
     ref.afterDismissed().subscribe(d => {
       if (d) {
-        if (d.action === 'print') {
+        if (d.action === 'share') {
           this.downloadPrintVersion();
         }
       }
@@ -207,7 +207,6 @@ export class ClimateChartComponent {
       this.translateService.language
     }`;
     // update chart view for better printing
-    const viewConfig = { ...this.chartConfig };
     // slightly messy - want to update chart config for print format, and wait until render
     // complete before downloading and reverting back
     this.chartRendered$
@@ -217,16 +216,24 @@ export class ClimateChartComponent {
         async () => {
           await this.picsaChart.generatePng(title);
           this.isExporting = false;
-          this.chartConfig = { ...viewConfig };
+          // rebuild chart config instead of store/replace as issue with point r function scope
+          this.chartConfig = this._getChartConfig(
+            this.chartData,
+            this.chartMeta
+          );
         },
         err => {
           throw err;
         }
       );
-    const printConfig = { ...this.chartConfig };
-    printConfig.point.r = d => (d.id === 'LineTool' ? 0 : 3);
-    printConfig.size = { width: 900, height: 600 };
-    this.chartConfig = printConfig;
+
+    this.chartConfig = this._getPrintConfig();
+  }
+  private _getPrintConfig() {
+    const config = Object.assign({}, this.chartConfig);
+    config.point.r = d => (d.id === 'LineTool' ? 0 : 3);
+    config.size = { width: 900, height: 600 };
+    return config;
   }
   // NOTE - below code not working correctly, can't get loader to close
   // assume issue with ngzone

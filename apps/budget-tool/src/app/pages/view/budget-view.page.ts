@@ -24,6 +24,7 @@ import { PrintProvider } from '@picsa/services/native/print';
 export class BudgetViewPage implements OnInit, OnDestroy {
   loader: HTMLIonLoadingElement;
   isEditorOpen = false;
+  isSharing = false;
   periodLabel: string;
   param$: Subscription;
 
@@ -47,12 +48,15 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   }
   async showShareDialog() {
     try {
+      this.isSharing = true;
       await this.printPrvdr.socialShareBudget(
         '#budget',
         this.store.activeBudget.meta.title
       );
+      this.isSharing = false;
     } catch (error) {
       console.error(error);
+      this.isSharing = false;
     }
   }
 

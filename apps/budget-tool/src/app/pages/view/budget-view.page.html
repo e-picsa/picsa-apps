@@ -25,6 +25,7 @@
       *ngIf="!isEditorOpen"
       aria-label="Share"
       (click)="showShareDialog()"
+      [disabled]="isSharing"
     >
       <mat-icon>share</mat-icon>Share
     </button>
