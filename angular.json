@@ -381,6 +381,9 @@
           "configurations": {
             "production": {
               "browserTarget": "extension-toolkit:build:production"
+            },
+            "mw": {
+              "browserTarget": "extension-toolkit:build:mw"
             }
           }
         }

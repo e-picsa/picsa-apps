@@ -14,6 +14,7 @@
     "build:extension": "ng build \"extension-toolkit\" --configuration=staging",
     "build:budget": "ng build \"budget-tool\" --configuration=staging",
     "build:extension:mw": "ng build \"extension-toolkit\" --configuration=mw",
+    "android:extension:mw": "ng.cmd run extension-toolkit:ionic-cordova-build --cordova-base-path=apps\\extension-toolkit --configuration=mw --platform=android",
     "_run-android_": "have to build extension, cd in, and cordova run android from there ",
     "deploy:climate": "firebase deploy --only hosting:climate-tool",
     "deploy:budget": "firebase deploy --only hosting:budget-tool",

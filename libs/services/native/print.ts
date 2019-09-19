@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform } from '@ionic/angular';
-import { saveAs } from 'file-saver';
 import { svgAsPngUri } from 'save-svg-as-png';
 import download from 'downloadjs';
 import * as canvg from 'canvg';
@@ -71,7 +70,9 @@ export class PrintProvider {
   }
 
   private async shareDataImage(base64Img: string, title: string) {
+    console.log('sharing data image', this.platform.platforms());
     if (this.platform.is('cordova')) {
+      console.log('social sharing image', base64Img);
       return this.socialSharing
         .share('', title, base64Img)
         .then(res => console.log(res), err => console.error(err));
