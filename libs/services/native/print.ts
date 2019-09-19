@@ -25,17 +25,15 @@ export class PrintProvider {
     const domEl: HTMLElement = document.querySelector(domSelector);
     const clone = domEl.cloneNode(true) as HTMLElement;
     clone.classList.toggle('print-mode');
-    console.log('clone', clone);
+    // add title
+    const titleEl = document.createElement('h1');
+    titleEl.textContent = title;
+    clone.prepend(titleEl);
+    // attach clone, generate svg and export
     const body = document.querySelector('body');
     body.appendChild(clone);
-    const width = clone.offsetWidth;
     // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
     const canvasElm = await html2canvas(clone, { allowTaint: true });
-    // add title
-    const ctx = canvasElm.getContext('2d');
-    ctx.font = '30px Arial';
-    ctx.textAlign = 'start';
-    ctx.fillText(title, width / 2, 43);
     // use set timeout to ensure resizing complete
     // TODO - check if required or if better solution could exist
     setTimeout(async () => {
