@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform } from '@ionic/angular';
 import { saveAs } from 'file-saver';
+import { svgAsPngUri } from 'save-svg-as-png';
+import download from 'downloadjs';
+import * as canvg from 'canvg';
 // note, import not working so loading from assets in index.html
 // import * as html2canvas from "html2canvas";
 declare var html2canvas: any;
@@ -13,15 +16,11 @@ export class PrintProvider {
     private socialSharing: SocialSharing
   ) {}
 
-  // convert a dom selector to canvas and share as image using social sharing
-  async socialShare(domSelector: string, filename: string) {
-    const domEl: HTMLElement = document.querySelector(domSelector);
-    const canvasElm = await html2canvas(domEl);
-    this.shareCanvasImage(canvasElm, filename);
+  async socialShareBudget(domSelector: string, title: string) {
+    return this.shareHtmlDom(domSelector, title);
   }
 
-  // similar method to above but add filename title to top of canvas
-  async socialShareBudget(domSelector: string, title: string) {
+  async shareHtmlDom(domSelector: string, title: string) {
     const domEl: HTMLElement = document.querySelector(domSelector);
     const clone = domEl.cloneNode(true) as HTMLElement;
     clone.classList.toggle('print-mode');
@@ -37,47 +36,47 @@ export class PrintProvider {
     // use set timeout to ensure resizing complete
     // TODO - check if required or if better solution could exist
     setTimeout(async () => {
-      await this.shareCanvasImage(canvasElm, title);
+      const base64 = canvasElm.toDataURL();
+      await this.shareDataImage(base64, title);
       body.removeChild(clone);
     }, 200);
   }
 
-  async shareCanvasImage(canvasElm: HTMLCanvasElement, title: string) {
-    const base64 = canvasElm.toDataURL();
-    if (this.platform.is('cordova')) {
-      return this.socialSharing
-        .share('', title, base64)
-        .then(res => console.log(res), err => console.error(err));
-    } else {
-      return this.downloadCanvasImage(canvasElm, title);
-    }
+  async shareSVG(svgDomSelector: string, title: string) {
+    const svg = document.getElementById(svgDomSelector);
+    const options = {
+      canvg: canvg,
+      scale: 2,
+
+      selectorRemap: s => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
+      // modify selector-properties
+      modifyCss: (s: string, p: string) => {
+        // modifyCss is used to take stylesheet classes that apply to svgElements and make inline
+        // use remap so that .c3-axis-y-label text detects the 'text' svg element
+        // NOTE - some properties don't work quite right (override other defaults)
+        const overrides = ['.c3 svg', '.c3-grid text'];
+        if (overrides.includes(s)) {
+          return;
+        }
+        s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
+
+        return s + '{' + p + '}';
+      }
+    };
+    const pngUri = await svgAsPngUri(svg, options);
+    // const imgEl = document.createElement('img');
+    // imgEl.src = pngUri;
+    // document.querySelector('body').prepend(imgEl);
+    await this.shareDataImage(pngUri, title);
   }
 
-  async downloadCanvasImage(canvasElm: HTMLCanvasElement, filename: string) {
-    canvasElm.toBlob(blob => {
-      // on error null blob created
-      if (blob) {
-        saveAs(blob, `${filename}.png`);
-      } else {
-        throw new Error('could not create download');
-      }
-    });
+  private async shareDataImage(base64Img: string, title: string) {
+    if (this.platform.is('cordova')) {
+      return this.socialSharing
+        .share('', title, base64Img)
+        .then(res => console.log(res), err => console.error(err));
+    } else {
+      return download(base64Img, title + '.png', 'image/png');
+    }
   }
-  // if (this.platform.is("cordova")) {
-  //   // *** not working, blob seems correct but writes empty json
-  //   // similarly 'saveAs' function says downloading but no file generated
-  //   canvasElm.toBlob(async blob => {
-  //     console.log("blob created", blob);
-  //     const filePath = await this.filePrvdr.createFile(
-  //       `budget-${filename}.png`,
-  //       blob,
-  //       true,
-  //       true
-  //     );
-  //     console.log("file created", filePath);
-  //     this.filePrvdr.openFileCordova(filePath);
-  //   });
-  // }
-  // }
-  // }
 }

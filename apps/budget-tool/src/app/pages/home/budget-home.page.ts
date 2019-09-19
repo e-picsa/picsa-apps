@@ -35,17 +35,4 @@ export class BudgetHomePage {
   async deleteBudget(budget: IBudget) {
     this.store.deleteBudget(budget);
   }
-
-  async shareBudget() {
-    // this.sharedDisabled = true;
-    // try {
-    //   this.budgetDownloadMessage = 'preparing';
-    //   await this.printPrvdr.socialShareBudget('#budget', this.budget.title);
-    //   this.budgetDownloadMessage = null;
-    // } catch (error) {
-    //   console.error(error);
-    //   this.budgetDownloadMessage = 'error';
-    // }
-    // this.sharedDisabled = false;
-  }
 }
