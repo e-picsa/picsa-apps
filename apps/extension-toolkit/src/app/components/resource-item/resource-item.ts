@@ -20,7 +20,6 @@ export class ResourceItemComponent {
       this.isDownloading = true;
       this.store.downloadResource(this.resource).subscribe(
         progress => {
-          console.log('progress', progress);
           this.progress = progress;
         },
         err => {

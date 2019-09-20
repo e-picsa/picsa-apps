@@ -6,6 +6,7 @@ import { PicsaFileService } from '@picsa/services/native/file-service';
 import { RESOURCES } from '../data';
 import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
+import { toJS } from 'mobx';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -74,7 +75,10 @@ export class ResourcesStore {
           this.fileService
             .downloadFile(resource.weblink, resource.filename)
             .subscribe(
-              progress => observer.next(progress.loaded / progress.total),
+              progress =>
+                observer.next(
+                  Math.round((progress.loaded / progress.total) * 100)
+                ),
               err => {
                 throw err;
               },
@@ -93,8 +97,12 @@ export class ResourcesStore {
   }
 
   // update cached resource entry (e.g. mark resource as downloaded)
-  private async updateCachedResource(resource, update: Partial<IResource>) {
-    await this.db.setDoc('resources', { ...resource, ...update }, false, true);
+  private async updateCachedResource(
+    resource: IResource,
+    update: Partial<IResource>
+  ) {
+    const doc = { ...toJS(resource), ...update };
+    await this.db.setDoc('resources', doc, false, true);
     this.resourceInit(false);
   }
 
