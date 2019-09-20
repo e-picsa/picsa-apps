@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
-import * as canvg from 'canvg';
 import { PrintProvider } from '@picsa/services/native';
 
 @Component({
@@ -86,6 +85,8 @@ export class PicsaChartComponent implements OnInit {
       data: this.config.data ? this.config.data : this.data,
       oninit: function() {
         this.svg.attr('id', 'chart_svg');
+        // const svg = document.getElementById('chart_svg');
+        // svg.style.backgroundColor = 'green';
       }
     });
     // });

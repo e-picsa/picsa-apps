@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform } from '@ionic/angular';
-import { svgAsPngUri } from 'save-svg-as-png';
+import { svgAsPngUri, saveSvgAsPng } from 'save-svg-as-png';
 import download from 'downloadjs';
 import * as canvg from 'canvg';
 // note, import not working so loading from assets in index.html
@@ -42,11 +42,12 @@ export class PrintProvider {
   }
 
   async shareSVG(svgDomSelector: string, title: string) {
-    const svg = document.getElementById(svgDomSelector);
+    const svg = document.getElementById(svgDomSelector) as HTMLElement;
     const options = {
-      canvg: canvg,
+      // remove canvg as doesn't support background colours
+      // canvg: canvg,
       scale: 2,
-
+      backgroundColor: 'white',
       selectorRemap: s => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
       // modify selector-properties
       modifyCss: (s: string, p: string) => {
