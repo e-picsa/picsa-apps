@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import {
+  FileTransfer,
+  FileTransferObject
+} from '@ionic-native/file-transfer/ngx';
 import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaFileService {
@@ -11,24 +16,26 @@ export class PicsaFileService {
   appDir: string;
   externalDir: string;
   externalBackupDir: string;
-
   dir: IPicsaDirectory;
 
   constructor(
     public platform: Platform,
     private file: File,
-    private fileOpener: FileOpener
+    private fileOpener: FileOpener,
+    private transfer: FileTransfer
   ) {
     // want to keep functions out of constructor as sometimes initialise before
     // cordova ready. Better to call init function after platform ready
   }
   init() {
+    console.log('file service init', this.fileOpener);
     this.checkPlatform();
     if (this.isCordova) {
       this.mobileInit();
     }
   }
   async mobileInit() {
+    console.log('mobile init');
     this.dir = {
       app: this.file.applicationDirectory,
       storage: this.file.externalApplicationStorageDirectory,
@@ -44,22 +51,34 @@ export class PicsaFileService {
   }
   // given a basepath check if subfolder 'picsa' exists. If not create
   async ensurePicsaDirectory(base: IPicsaDirectoryBase) {
+    console.log(`ensuring [${base}] directory`);
     const path = this.dir[base];
     try {
       await this.file.checkDir(path, 'picsa');
+      console.log(`[${base}] directory exists`);
     } catch (error) {
       console.log(`creating folder [${path}/picsa]`);
       await this.createDirectory(path, 'picsa', false);
     }
   }
+  downloadFile(url: string, filename: string) {
+    const fileTransfer: FileTransferObject = this.transfer.create();
+    return new Observable<ProgressEvent>(observer => {
+      fileTransfer.onProgress(p => observer.next(p));
+      fileTransfer.download(url, this.dir.storage + filename).then(file => {
+        observer.complete();
+      });
+    });
+  }
 
   /**
    * list directory contents for specified path
-   * @param base - specify base directory
+   * @param base - specify base directory, for app public or storage directory
    * @param dir - folder path, can contain subfolders
    */
   async listDirectory(base: IPicsaDirectoryBase, dir: string) {
-    console.log('listing', dir);
+    console.log('file', this.file);
+    console.log(`listing [${dir}]`);
     try {
       const files = await this.file.listDir(this.dir[base], dir);
       return files;
@@ -124,7 +143,7 @@ export class PicsaFileService {
   }
 
   async openFileCordova(storagePath: string) {
-    const filePath = `${this.externalDir}picsa/${storagePath}`;
+    const filePath = `${this.dir.storage}/${storagePath}`;
     const mimetype = this._getMimetype(filePath);
     console.log('opening file', filePath, mimetype);
     this.fileOpener.open(filePath, mimetype);

@@ -4,15 +4,18 @@ import { IResource } from '../models/models';
 import { PicsaDbService } from '@picsa/services/core/db';
 import { PicsaFileService } from '@picsa/services/native/file-service';
 import { RESOURCES } from '../data';
-import { ENVIRONMENT } from '@picsa/environments';
 import { Platform } from '@ionic/angular';
+import { Observable } from 'rxjs';
 
+/****************************************************************************************
+ *  The resources store offers methods to list, download and open resources.
+ ****************************************************************************************/
 @Injectable({
   providedIn: 'root'
 })
 export class ResourcesStore {
   @observable resources: IResource[] = [];
-  @observable downloads = {};
+  @observable downloads = [];
   constructor(
     private db: PicsaDbService,
     private fileService: PicsaFileService,
@@ -28,24 +31,71 @@ export class ResourcesStore {
   async resourceInit(checkUpdates = true) {
     const cached = await this.db.getCollection<IResource>('resources', 'cache');
     this.resources = cached;
+
     if (checkUpdates) {
       console.log('checking updates');
       await this.checkHardcodedData(cached);
       await this._checkForUpdates(cached);
     }
   }
-  @action
   async checkDownloadedResources() {
+    console.log('check downloaded resources');
+    // ensure file service initialised and directories present
+    await this.fileService.init();
     console.log('checking downloaded resources');
     const downloads = await this.fileService.listDirectory('storage', 'picsa');
     console.log('downloads', downloads);
+    this.downloads = downloads;
   }
 
-  openResource(resource: IResource) {
+  async openResource(resource: IResource) {
     console.log('open resource', resource);
-    return this.platform.is('cordova')
-      ? this.fileService.openFileCordova(resource.filename)
-      : window.open(resource.weblink, '_blank');
+    if (this.platform.is('cordova')) {
+      try {
+        this.fileService.openFileCordova(resource.filename);
+      } catch (error) {
+        console.error(error);
+        await this.updateCachedResource(resource, { _isDownloaded: false });
+        return this.resourceInit(false);
+      }
+    } else {
+      return window.open(resource.weblink, '_blank');
+    }
+  }
+
+  // create an observable that stream progress snapshots and completes when file downloaded
+  downloadResource(resource: IResource) {
+    console.log('downloading resource', resource.weblink);
+    // only download on cordova
+    return new Observable<number>(observer => {
+      if (this.platform.is('cordova')) {
+        // double check not already downloaded
+        if (!this.downloads.includes(resource.filename)) {
+          this.fileService
+            .downloadFile(resource.weblink, resource.filename)
+            .subscribe(
+              progress => observer.next(progress.loaded / progress.total),
+              err => {
+                throw err;
+              },
+              () =>
+                this.updateCachedResource(resource, {
+                  _isDownloaded: true
+                }).then(() => observer.complete())
+            );
+        }
+      } else {
+        this.updateCachedResource(resource, { _isDownloaded: true }).then(() =>
+          observer.complete()
+        );
+      }
+    });
+  }
+
+  // update cached resource entry (e.g. mark resource as downloaded)
+  private async updateCachedResource(resource, update: Partial<IResource>) {
+    await this.db.setDoc('resources', { ...resource, ...update }, false, true);
+    this.resourceInit(false);
   }
 
   private async _checkForUpdates(cached: IResource[]) {
