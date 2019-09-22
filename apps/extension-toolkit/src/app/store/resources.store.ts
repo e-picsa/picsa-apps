@@ -29,16 +29,23 @@ export class ResourcesStore {
   }
 
   @action
+  /**
+   *  Load resources listed in cache.
+   *  @param checkUpdates - check if hardcoded data lists any additional resources
+   *  that should be popluated, and check server for any updates also
+   */
   async resourceInit(checkUpdates = true) {
     const cached = await this.db.getCollection<IResource>('resources', 'cache');
     this.resources = cached;
-
     if (checkUpdates) {
       console.log('checking updates');
       await this.checkHardcodedData(cached);
       await this._checkForUpdates(cached);
     }
   }
+  /**
+   * Initialise file server, list storage directory and save list of downloaded resources
+   */
   async checkDownloadedResources() {
     console.log('check downloaded resources');
     // ensure file service initialised and directories present
@@ -53,7 +60,8 @@ export class ResourcesStore {
     console.log('open resource', resource);
     if (this.platform.is('cordova')) {
       try {
-        this.fileService.openFileCordova(resource.filename);
+        const base = resource._isHardcoded ? 'app' : 'storage';
+        this.fileService.openFileCordova(base, resource.filename);
       } catch (error) {
         console.error(error);
         await this.updateCachedResource(resource, { _isDownloaded: false });
@@ -130,9 +138,11 @@ export class ResourcesStore {
       return !lastCache || lastCache < r._modified;
     });
     if (newerResources.length > 0) {
+      // id hardcoded resources
       // when setting hardcoded resources to db make sure not to overwrite
       // _modified timestamp as could miss updates (although unlikely as
       // resources rarely modified)
+      console.log('newer resources detected', newerResources);
       await this.db.setDocs('resources', newerResources, false, true);
       this.resourceInit(false);
     }

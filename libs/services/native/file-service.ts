@@ -142,8 +142,17 @@ export class PicsaFileService {
     }
   }
 
-  async openFileCordova(storagePath: string) {
-    const filePath = `${this.dir.storage}/${storagePath}`;
+  /**
+   *
+   * @param directoryBase - indicate whether the resource can be found within hardcoded app
+   * asset files, app storage, or public folder   *
+   * @param storagePath - the relative filepath from the base directory
+   */
+  async openFileCordova(
+    directoryBase: IPicsaDirectoryBase,
+    storagePath: string
+  ) {
+    const filePath = `${this.dir[directoryBase]}/${storagePath}`;
     const mimetype = this._getMimetype(filePath);
     console.log('opening file', filePath, mimetype);
     this.fileOpener.open(filePath, mimetype);

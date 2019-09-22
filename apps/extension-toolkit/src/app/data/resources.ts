@@ -1,19 +1,27 @@
 import { IResource } from '../models/models';
 
-const resources: IResource[] = [
+/**
+ * These resources are hard-coded into the app, and therefore should be made available in the
+ * assets folder
+ */
+const hardcodedResources: IResource[] = [
   {
     _key: '4I4F36gD0MUef26HfPZG',
     _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-07-21T16:57:13.604Z',
+    _modified: '2019-09-22T16:57:13.604Z',
+    _isHardcoded: true,
+    _isDownloaded: true,
     title: 'PICSA Manual',
     subtitle: '',
-    filename: 'picsa-field-manual.pdf',
+    filename: 'picsa-field-manual-en.pdf',
     type: 'pdf',
     image: 'assets/resources/picsa-field-manual-cover.jpg',
     group: 'PICSA Manual',
     weblink:
-      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpicsa-field-manual.pdf?alt=media&token=c394b68a-3f67-4494-8620-c35d65151c45'
-  },
+      'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/picsa-field-manual-en.pdf?alt=media&token=6e2f1601-80c8-4f56-9a3d-52789f08c303'
+  }
+];
+const webResources: IResource[] = [
   {
     _key: '9Pkro1VYBUlwuNg5oHok',
     _created: '2019-07-20T16:57:13.604Z',
@@ -54,20 +62,21 @@ const resources: IResource[] = [
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fram-refresher.mp4?alt=media&token=27939a71-0656-440b-8407-24877acaeede',
     youtubeID: 'Kw5UznKvCN8'
-  },
-  {
-    _key: 'Yx8927IVTGyM1C4njOIv',
-    _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-07-20T16:57:13.604Z',
-    title: 'Seasonal Forecast',
-    subtitle: 'Mangochi 2017-2018',
-    filename: 'seasonal-forecast-mangochi-2017-2018.pdf',
-    type: 'pdf',
-    image: 'assets/resources/seasonal-forecast-mangochi-2017-2018.jpg',
-    group: 'Documents',
-    weblink:
-      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fseasonal-forecast-mangochi-2017-2018.pdf?alt=media&token=c60180cd-8dcd-4d98-aa7e-48f37dc83849'
   }
+  // {
+  //   _key: 'Yx8927IVTGyM1C4njOIv',
+  //   _created: '2019-07-20T16:57:13.604Z',
+  //   _modified: '2019-07-20T16:57:13.604Z',
+  //   _deleted: true,
+  //   title: 'Seasonal Forecast',
+  //   subtitle: 'Mangochi 2017-2018',
+  //   filename: 'seasonal-forecast-mangochi-2017-2018.pdf',
+  //   type: 'pdf',
+  //   image: 'assets/resources/seasonal-forecast-mangochi-2017-2018.jpg',
+  //   group: 'Documents',
+  //   weblink:
+  //     'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fseasonal-forecast-mangochi-2017-2018.pdf?alt=media&token=c60180cd-8dcd-4d98-aa7e-48f37dc83849'
+  // }
 ];
 
-export default resources;
+export default [...hardcodedResources, ...webResources];
