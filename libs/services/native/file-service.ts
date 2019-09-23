@@ -83,7 +83,7 @@ export class PicsaFileService {
       this.dir.app,
       assetsPath,
       this.dir.storage,
-      ''
+      `${folderpath}/${fileName}`
     );
     console.log('file copied successfully', entry);
   }

@@ -59,12 +59,6 @@ export class ResourcesStore {
     console.log('open resource', resource);
     if (this.platform.is('cordova')) {
       try {
-        // if hardcoded copy from assets folder first (if not already done)
-        // TODO - add check to see if already copied over (use this.downloads)
-        if (resource._isHardcoded) {
-          console.log('TODO - check if exists', toJS(this.downloads));
-          await this, this.copyHardcodedResource(resource);
-        }
         this.fileService.openFileCordova(
           'storage',
           `resources/${resource.filename}`
@@ -156,6 +150,14 @@ export class ResourcesStore {
       // _modified timestamp as could miss updates (although unlikely as
       // resources rarely modified)
       console.log('newer resources detected', newerResources);
+      // if hardcoded copy from assets folder first (if not already done)
+      // TODO - add check to see if already copied over (use this.downloads)
+      for (let resource of newerResources) {
+        if (resource._isHardcoded) {
+          console.log('copying resource', resource.filename);
+          await this, this.copyHardcodedResource(resource);
+        }
+      }
       await this.db.setDocs('resources', newerResources, false, true);
       this.resourceInit(false);
     }
