@@ -106,32 +106,27 @@ export class PicsaFileService {
 
   // create files in external directory
   // optionally can use backupStorage location to make independent of app
-  async createFile(
+  async writeFile(
+    base: IDirectoryBase,
+    folder = 'picsa',
     filename: string,
-    data: any,
-    replace: boolean,
-    backupStorage: boolean
+    data: any
   ) {
     try {
-      const fileBase = backupStorage
-        ? this.file.externalRootDirectory
-        : this.file.externalApplicationStorageDirectory;
-      await this.ensureDirectory('public', 'picsa');
-      console.log('creating file', filename, fileBase);
-      await this.file.createFile(fileBase, `picsa/${filename}`, replace);
+      await this.ensureDirectory(base, folder);
+      console.log('creating file', filename);
+      await this.file.createFile(this.dir[base], `${folder}/${filename}`, true);
       console.log('file created succesfully');
       if (typeof data != 'string') {
         data = JSON.stringify(data);
       }
       console.log('writing file data', data);
-      await this.file.writeFile(fileBase, `picsa/${filename}`, data, {
+      await this.file.writeFile(base, `${folder}/${filename}`, data, {
         replace: true
       });
       console.log(filename, 'written successfully');
       // return filepath
-      return `${fileBase}picsa/${filename}`;
     } catch (error) {
-      console.log('could not create or write file', error);
       throw new Error('could not create file');
     }
   }

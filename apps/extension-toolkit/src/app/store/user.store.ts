@@ -67,23 +67,24 @@ export class UserStore {
   async syncUser(user: IUser) {
     console.log('syncing user', toJS(user));
     await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
+    await this._backupUserToDisk();
     console.log('user updated locally');
     // return this.db.setDoc('users/${GROUP}/users', user, true);
   }
 
   private async _backupUserToDisk() {
-    await this.fileService.createFile(
-      'picsaUserBackup.txt',
-      this.user,
-      true,
-      true
+    await this.fileService.writeFile(
+      'public',
+      'picsa',
+      'picsaUserBackupV2.txt',
+      toJS(this.user)
     );
     return;
   }
 
   private async _loadUserBackup() {
     const fileTxt = await this.fileService.readTextFile(
-      'picsaUserBackup.txt',
+      'picsaUserBackupV2.txt',
       true
     );
     if (fileTxt) {
