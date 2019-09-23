@@ -8,7 +8,7 @@ const hardcodedResources: IResource[] = [
   {
     _key: '4I4F36gD0MUef26HfPZG',
     _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-09-22T16:57:13.604Z',
+    _modified: '2019-09-22T17:00:13.604Z',
     _isHardcoded: true,
     _isDownloaded: true,
     title: 'PICSA Manual',

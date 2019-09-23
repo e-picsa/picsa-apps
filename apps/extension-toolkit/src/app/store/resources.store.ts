@@ -47,21 +47,28 @@ export class ResourcesStore {
    * Initialise file server, list storage directory and save list of downloaded resources
    */
   async checkDownloadedResources() {
-    console.log('check downloaded resources');
     // ensure file service initialised and directories present
     await this.fileService.init();
-    console.log('checking downloaded resources');
-    const downloads = await this.fileService.listDirectory('storage', 'picsa');
-    console.log('downloads', downloads);
-    this.downloads = downloads;
+    this.downloads = await this.fileService.ensureDirectory(
+      'storage',
+      'resources'
+    );
   }
 
   async openResource(resource: IResource) {
     console.log('open resource', resource);
     if (this.platform.is('cordova')) {
       try {
-        const base = resource._isHardcoded ? 'app' : 'storage';
-        this.fileService.openFileCordova(base, resource.filename);
+        // if hardcoded copy from assets folder first (if not already done)
+        // TODO - add check to see if already copied over (use this.downloads)
+        if (resource._isHardcoded) {
+          console.log('TODO - check if exists', toJS(this.downloads));
+          await this, this.copyHardcodedResource(resource);
+        }
+        this.fileService.openFileCordova(
+          'storage',
+          `resources/${resource.filename}`
+        );
       } catch (error) {
         console.error(error);
         await this.updateCachedResource(resource, { _isDownloaded: false });
@@ -70,6 +77,12 @@ export class ResourcesStore {
     } else {
       return window.open(resource.weblink, '_blank');
     }
+  }
+
+  async copyHardcodedResource(resource: IResource) {
+    console.log('copying resource', resource);
+    await this.fileService.copyAssetFile('resources', resource.filename);
+    await this.updateCachedResource(resource, { _isDownloaded: true });
   }
 
   // create an observable that stream progress snapshots and completes when file downloaded

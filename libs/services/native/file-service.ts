@@ -11,12 +11,10 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaFileService {
-  platforms: any;
-  isCordova: boolean;
   appDir: string;
   externalDir: string;
   externalBackupDir: string;
-  dir: IPicsaDirectory;
+  dir: IDirectory;
 
   constructor(
     public platform: Platform,
@@ -28,37 +26,40 @@ export class PicsaFileService {
     // cordova ready. Better to call init function after platform ready
   }
   init() {
-    console.log('file service init', this.fileOpener);
-    this.checkPlatform();
-    if (this.isCordova) {
+    if (this.platform.is('cordova')) {
       this.mobileInit();
     }
   }
   async mobileInit() {
-    console.log('mobile init');
     this.dir = {
       app: this.file.applicationDirectory,
       storage: this.file.externalApplicationStorageDirectory,
       public: this.file.externalRootDirectory
     };
-    await this.ensurePicsaDirectory('storage');
-    await this.ensurePicsaDirectory('public');
   }
-  checkPlatform() {
-    console.log('checking platform');
-    this.platforms = this.platform.platforms();
-    this.isCordova = this.platform.is('cordova');
-  }
-  // given a basepath check if subfolder 'picsa' exists. If not create
-  async ensurePicsaDirectory(base: IPicsaDirectoryBase) {
-    console.log(`ensuring [${base}] directory`);
-    const path = this.dir[base];
+
+  /**
+   * Given a base path ensure a folder exists, returning it's contents
+   * @param base
+   * @param folder
+   */
+  async ensureDirectory(base: IDirectoryBase, folder: string = '') {
+    // remove trailing slash from directory
+    let baseDir = this.dir[base];
     try {
-      await this.file.checkDir(path, 'picsa');
-      console.log(`[${base}] directory exists`);
+      const contents = await this.listDirectory(base, folder);
+      console.log(`[${base}${folder}] contents:`, contents);
+      return contents;
     } catch (error) {
-      console.log(`creating folder [${path}/picsa]`);
-      await this.createDirectory(path, 'picsa', false);
+      console.log(`[${base}${folder}] dir does not exists, creating`);
+      try {
+        await this.file.createDir(baseDir, folder, true);
+        console.log(`${baseDir}${folder} exists`);
+        return [];
+      } catch (error) {
+        console.error('could not create directory', `${baseDir}${folder}`);
+        throw error;
+      }
     }
   }
   downloadFile(url: string, filename: string) {
@@ -70,13 +71,29 @@ export class PicsaFileService {
       });
     });
   }
+  /**
+   * Copy a file from the android app www/assets folder to corresponding
+   * app storage folder
+   */
+  async copyAssetFile(folderpath: string, fileName: string) {
+    console.log('copying asset file', folderpath, fileName);
+    const basePath = `www/assets/${folderpath}`;
+    const assetsPath = `${basePath}/${fileName}`;
+    const entry = await this.file.copyFile(
+      this.dir.app,
+      assetsPath,
+      this.dir.storage,
+      ''
+    );
+    console.log('file copied successfully', entry);
+  }
 
   /**
    * list directory contents for specified path
    * @param base - specify base directory, for app public or storage directory
    * @param dir - folder path, can contain subfolders
    */
-  async listDirectory(base: IPicsaDirectoryBase, dir: string) {
+  async listDirectory(base: IDirectoryBase, dir: string) {
     console.log('file', this.file);
     console.log(`listing [${dir}]`);
     try {
@@ -86,16 +103,8 @@ export class PicsaFileService {
       throw new Error(JSON.stringify(error));
     }
   }
-  async createDirectory(path: string, name: string, replace: boolean) {
-    try {
-      await this.file.createDir(path, name, replace);
-      return path;
-    } catch (error) {
-      return new Error(`${name} directory could not be created`);
-    }
-  }
 
-  // create files in external picsa directory
+  // create files in external directory
   // optionally can use backupStorage location to make independent of app
   async createFile(
     filename: string,
@@ -107,6 +116,7 @@ export class PicsaFileService {
       const fileBase = backupStorage
         ? this.file.externalRootDirectory
         : this.file.externalApplicationStorageDirectory;
+      await this.ensureDirectory('public', 'picsa');
       console.log('creating file', filename, fileBase);
       await this.file.createFile(fileBase, `picsa/${filename}`, replace);
       console.log('file created succesfully');
@@ -126,7 +136,7 @@ export class PicsaFileService {
     }
   }
 
-  // read files from the external picsa directory
+  // read files from the external directory
   async readTextFile(filename: string, backupStorage?: boolean) {
     const fileBase = backupStorage
       ? this.file.externalRootDirectory
@@ -148,14 +158,15 @@ export class PicsaFileService {
    * asset files, app storage, or public folder   *
    * @param storagePath - the relative filepath from the base directory
    */
-  async openFileCordova(
-    directoryBase: IPicsaDirectoryBase,
-    storagePath: string
-  ) {
-    const filePath = `${this.dir[directoryBase]}/${storagePath}`;
+  async openFileCordova(directoryBase: IDirectoryBase, storagePath: string) {
+    const filePath = `${this.dir[directoryBase]}${storagePath}`;
     const mimetype = this._getMimetype(filePath);
-    console.log('opening file', filePath, mimetype);
-    this.fileOpener.open(filePath, mimetype);
+    try {
+      this.fileOpener.open(filePath, mimetype);
+    } catch (error) {
+      console.error('failed to open', filePath);
+      throw error;
+    }
   }
 
   _getMimetype(filename: string) {
@@ -165,14 +176,14 @@ export class PicsaFileService {
   }
 }
 
-type IPicsaDirectoryBase = 'app' | 'public' | 'storage';
+type IDirectoryBase = 'app' | 'public' | 'storage';
 
 /**
- * @param app applicationDirectory: readonly android assets directory
+ * @param app applicationDirectory: readonly android assets directory - node to get www assets require /www/assets
  * @param storage externalApplicationStorageDirectory: external files specific to app (good for downloaded assets)
  * @param public externalRootDirectory: external files general, good for persisting beyond uninstall
  */
-type IPicsaDirectory = { [key in IPicsaDirectoryBase]: string };
+type IDirectory = { [key in IDirectoryBase]: string };
 
 /*
 Device Path	                 cordova.file.*	                      AndroidExtraFileSystems	      r/w?  persistent?   OS clears   private
