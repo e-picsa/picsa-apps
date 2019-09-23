@@ -7,7 +7,8 @@ import {
 } from '@ionic-native/file-transfer/ngx';
 import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { takeUntil, takeWhile } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaFileService {
@@ -15,27 +16,52 @@ export class PicsaFileService {
   externalDir: string;
   externalBackupDir: string;
   dir: IDirectory;
-
+  private ready$ = new BehaviorSubject(false);
   constructor(
     public platform: Platform,
     private file: File,
     private fileOpener: FileOpener,
     private transfer: FileTransfer
   ) {
-    // want to keep functions out of constructor as sometimes initialise before
-    // cordova ready. Better to call init function after platform ready
+    this._init();
   }
-  init() {
-    if (this.platform.is('cordova')) {
-      this.mobileInit();
-    }
+
+  /**********************************************************************************
+   *      Initialisation
+   *********************************************************************************/
+  /**
+   * Promise used to ensure file service has been initialised before use
+   * Should be checked when interacting for the first time
+   */
+  ready() {
+    return new Promise(resolve => {
+      this.ready$.pipe(takeWhile(v => v === false)).subscribe(
+        () => null,
+        () => null,
+        () => {
+          console.log('platform ready');
+          resolve();
+        }
+      );
+    });
   }
-  async mobileInit() {
-    this.dir = {
-      app: this.file.applicationDirectory,
-      storage: this.file.externalApplicationStorageDirectory,
-      public: this.file.externalRootDirectory
-    };
+
+  /**
+   * Wait for platform, detect if cordova, create storage directory shorthand
+   * and inform subscription function
+   */
+  private _init() {
+    console.log('file service init');
+    this.platform.ready().then(() => {
+      if (this.platform.is('cordova')) {
+        this.dir = {
+          app: this.file.applicationDirectory,
+          storage: this.file.externalApplicationStorageDirectory,
+          public: this.file.externalRootDirectory
+        };
+      }
+      this.ready$.next(true);
+    });
   }
 
   /**
@@ -44,8 +70,8 @@ export class PicsaFileService {
    * @param folder
    */
   async ensureDirectory(base: IDirectoryBase, folder: string = '') {
-    // remove trailing slash from directory
     let baseDir = this.dir[base];
+    console.log('ensuring directory', base, folder);
     try {
       const contents = await this.listDirectory(base, folder);
       console.log(`[${base}${folder}] contents:`, contents);
@@ -62,13 +88,19 @@ export class PicsaFileService {
       }
     }
   }
-  downloadFile(url: string, filename: string) {
+  downloadToStorage(
+    url: string,
+    folder: IStorageFolder = 'resources',
+    filename: string
+  ) {
     const fileTransfer: FileTransferObject = this.transfer.create();
     return new Observable<ProgressEvent>(observer => {
       fileTransfer.onProgress(p => observer.next(p));
-      fileTransfer.download(url, this.dir.storage + filename).then(file => {
-        observer.complete();
-      });
+      fileTransfer
+        .download(url, `${this.dir.storage}${folder}/${filename}`)
+        .then(file => {
+          observer.complete();
+        });
     });
   }
   /**
@@ -94,13 +126,12 @@ export class PicsaFileService {
    * @param dir - folder path, can contain subfolders
    */
   async listDirectory(base: IDirectoryBase, dir: string) {
-    console.log('file', this.file);
     console.log(`listing [${dir}]`);
     try {
       const files = await this.file.listDir(this.dir[base], dir);
       return files;
     } catch (error) {
-      throw new Error(JSON.stringify(error));
+      throw error;
     }
   }
 
@@ -108,13 +139,14 @@ export class PicsaFileService {
   // optionally can use backupStorage location to make independent of app
   async writeFile(
     base: IDirectoryBase,
-    folder = 'picsa',
+    folder: IPublicFolder | IStorageFolder = 'picsa',
     filename: string,
     data: any
   ) {
+    console.log('write file', base, folder, filename);
+    await this.ensureDirectory(base, folder);
+    console.log('directory exists, creating file', filename);
     try {
-      await this.ensureDirectory(base, folder);
-      console.log('creating file', filename);
       await this.file.createFile(this.dir[base], `${folder}/${filename}`, true);
       console.log('file created succesfully');
       if (typeof data != 'string') {
@@ -164,6 +196,10 @@ export class PicsaFileService {
     }
   }
 
+  /**********************************************************************************
+   *      Helper Methods
+   *********************************************************************************/
+
   _getMimetype(filename: string) {
     const fileNameSplit = filename.split('.');
     const extension: string = fileNameSplit[fileNameSplit.length - 1];
@@ -171,6 +207,12 @@ export class PicsaFileService {
   }
 }
 
+/**********************************************************************************
+ *      Interfaces
+ *********************************************************************************/
+
+type IPublicFolder = 'picsa';
+type IStorageFolder = 'resources';
 type IDirectoryBase = 'app' | 'public' | 'storage';
 
 /**

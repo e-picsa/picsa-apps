@@ -67,6 +67,8 @@ export class UserStore {
   async syncUser(user: IUser) {
     console.log('syncing user', toJS(user));
     await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
+    // user sync happens on first load so ensure ready first
+    await this.fileService.ready();
     await this._backupUserToDisk();
     console.log('user updated locally');
     // return this.db.setDoc('users/${GROUP}/users', user, true);
@@ -76,7 +78,7 @@ export class UserStore {
     await this.fileService.writeFile(
       'public',
       'picsa',
-      'picsaUserBackupV2.txt',
+      `picsaUserBackup_${ENVIRONMENT.region.countryCode}.txt`,
       toJS(this.user)
     );
     return;
@@ -84,7 +86,7 @@ export class UserStore {
 
   private async _loadUserBackup() {
     const fileTxt = await this.fileService.readTextFile(
-      'picsaUserBackupV2.txt',
+      `picsaUserBackup_${ENVIRONMENT.region.countryCode}.txt`,
       true
     );
     if (fileTxt) {

@@ -66,3 +66,5 @@ apps/climate-tool/src/assets/summaries/*.csv
 
 libs/environments/firebase/config.prod.ts
 .env
+*.keystore
+*.apk

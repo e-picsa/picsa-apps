@@ -10,7 +10,7 @@ import { ResourcesStore } from '../../store/resources.store';
 export class ResourceItemComponent {
   @Input() resource: IResource;
   isDownloading = false;
-  progress = 0;
+  progress: number = 0;
   constructor(private store: ResourcesStore) {}
 
   resourceClick() {
@@ -20,6 +20,7 @@ export class ResourceItemComponent {
       this.isDownloading = true;
       this.store.downloadResource(this.resource).subscribe(
         progress => {
+          console.log('progress', progress);
           this.progress = progress;
         },
         err => {

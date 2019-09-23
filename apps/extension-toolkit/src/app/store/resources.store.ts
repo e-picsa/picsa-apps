@@ -48,11 +48,12 @@ export class ResourcesStore {
    */
   async checkDownloadedResources() {
     // ensure file service initialised and directories present
-    await this.fileService.init();
+    await this.fileService.ready();
     this.downloads = await this.fileService.ensureDirectory(
       'storage',
       'resources'
     );
+    console.log('downloads', toJS(this.downloads));
   }
 
   async openResource(resource: IResource) {
@@ -88,12 +89,12 @@ export class ResourcesStore {
         // double check not already downloaded
         if (!this.downloads.includes(resource.filename)) {
           this.fileService
-            .downloadFile(resource.weblink, resource.filename)
+            .downloadToStorage(resource.weblink, 'resources', resource.filename)
             .subscribe(
-              progress =>
-                observer.next(
-                  Math.round((progress.loaded / progress.total) * 100)
-                ),
+              progress => {
+                const p = Math.round((progress.loaded / progress.total) * 100);
+                observer.next(p);
+              },
               err => {
                 throw err;
               },
