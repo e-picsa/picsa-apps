@@ -276,7 +276,9 @@ export class ClimateChartComponent {
     data.forEach(d => {
       const xVal = d[meta.xVar] as number;
       // take all possible yValues and filter out undefined
-      const yVals = meta.keys.map(k => d[k]).filter(v => v) as number[];
+      const yVals = meta.keys
+        .map(k => d[k])
+        .filter(v => typeof v === 'number') as number[];
       xMax = xVal ? Math.max(xMax, xVal) : xMax;
       xMin = xVal ? Math.min(xMin, xVal) : xMin;
       yMax = Math.max(yMax, ...yVals);
