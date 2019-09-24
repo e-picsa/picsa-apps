@@ -157,6 +157,7 @@ export class BudgetStore implements OnDestroy {
       ...NEW_BUDGET_TEMPLATE,
       ...generateDBMeta()
     };
+    this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
   }
   async saveBudget() {
