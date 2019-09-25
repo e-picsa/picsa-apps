@@ -59,7 +59,7 @@ export class ResourcesStore {
       'resources'
     );
     console.log('downloads', toJS(this.downloads));
-    this.fileService.copyAppApk();
+    // this.fileService.copyAppApk();
   }
 
   async openResource(resource: IResource) {
