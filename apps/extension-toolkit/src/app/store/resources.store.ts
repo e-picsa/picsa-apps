@@ -27,6 +27,11 @@ export class ResourcesStore {
       this.checkDownloadedResources();
     }
   }
+  @computed get sortedResources() {
+    return [...this.resources].sort((a, b) => {
+      return a._created > b._created ? 1 : -1;
+    });
+  }
 
   @action
   /**
@@ -54,6 +59,7 @@ export class ResourcesStore {
       'resources'
     );
     console.log('downloads', toJS(this.downloads));
+    this.fileService.copyAppApk();
   }
 
   async openResource(resource: IResource) {

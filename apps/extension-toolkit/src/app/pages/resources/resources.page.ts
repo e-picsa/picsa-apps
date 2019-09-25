@@ -22,6 +22,10 @@ export class ResourcesPage implements AfterViewInit {
     this._setVideoPlayerWidth();
   }
 
+  unsetResources() {
+    this.activeResource = undefined;
+  }
+
   // video width needs to be set programtically
   _setVideoPlayerWidth() {
     const width = window.innerWidth;

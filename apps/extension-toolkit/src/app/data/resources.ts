@@ -2,13 +2,14 @@ import { IResource } from '../models/models';
 
 /**
  * These resources are hard-coded into the app, and therefore should be made available in the
- * assets folder
+ * assets folder. Note, the order is specified via _created
+ * To make changes, the _modified field should also be updated
  */
 const hardcodedResources: IResource[] = [
   {
     _key: '4I4F36gD0MUef26HfPZG',
-    _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-09-22T17:00:13.604Z',
+    _created: '2019-09-25T10:00:01.000Z',
+    _modified: '2019-09-25T11:00:01.000Z',
     _isHardcoded: true,
     _isDownloaded: true,
     title: 'PICSA Manual',
@@ -19,13 +20,28 @@ const hardcodedResources: IResource[] = [
     group: 'PICSA Manual',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/picsa-field-manual-en.pdf?alt=media&token=6e2f1601-80c8-4f56-9a3d-52789f08c303'
+  },
+  {
+    _key: '9xqr6hxcWoVlsqydsNne',
+    _created: '2019-09-25T10:00:02.000Z',
+    _modified: '2019-09-25T11:00:01.000Z',
+    _isHardcoded: true,
+    _isDownloaded: true,
+    title: 'Buku la PICSA',
+    subtitle: '',
+    filename: 'picsa-field-manual-chichewa.pdf',
+    type: 'pdf',
+    image: 'assets/resources/picsa-field-manual-cover-chichewa.jpg',
+    group: 'PICSA Manual',
+    weblink:
+      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-chichewa.pdf?alt=media&token=7ab629a9-d2c1-4b37-8237-88825033708e'
   }
 ];
 const webResources: IResource[] = [
   {
     _key: '9Pkro1VYBUlwuNg5oHok',
-    _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-08-21T16:57:13.604Z',
+    _created: '2019-09-25T10:00:03.000Z',
+    _modified: '2019-09-25T11:00:01.000Z',
     title: 'Crop Information',
     subtitle: 'Chileka',
     filename: 'crop-info-sheet-chileka.pdf',
@@ -38,8 +54,8 @@ const webResources: IResource[] = [
   },
   {
     _key: '6VjjF3yZJejFigwDIPr8',
-    _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-07-20T16:57:13.604Z',
+    _created: '2019-09-25T10:00:04.000Z',
+    _modified: '2019-09-25T11:00:01.000Z',
     title: 'Potential Training Schedule',
     subtitle: '',
     filename: 'potential-PICSA-training-schedule.pdf',
@@ -51,8 +67,8 @@ const webResources: IResource[] = [
   },
   {
     _key: 'm6I8TfROsyr5Wp73BcAd',
-    _created: '2019-07-20T16:57:13.604Z',
-    _modified: '2019-07-20T16:57:13.604Z',
+    _created: '2019-09-25T10:00:05.000Z',
+    _modified: '2019-09-25T11:00:01.000Z',
     title: 'RAM Refresher',
     subtitle: '',
     filename: 'ram-refresher.mp4',
