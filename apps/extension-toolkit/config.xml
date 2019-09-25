@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.picsa.malawi" version="2.0.4" 
+<widget id="io.picsa.malawi" version="2.0.5" 
   xmlns="http://www.w3.org/ns/widgets" 
   xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>Picsa Malawi</name>
@@ -102,5 +102,6 @@
   <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
   <plugin name="cordova-plugin-ionic-webview" spec="^4.0.0" />
   <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
-  <engine name="android" spec="~8.1.0" />
+  <plugin name="cordova-plugin-codeplay-share-own-apk" spec="~0.0.1" />
+  <engine name="android" spec="^8.1.0" />
 </widget>

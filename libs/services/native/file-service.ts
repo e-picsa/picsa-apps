@@ -9,6 +9,8 @@ import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { takeUntil, takeWhile } from 'rxjs/operators';
+import { ENVIRONMENT } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/version';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaFileService {
@@ -198,16 +200,22 @@ export class PicsaFileService {
 
   /**
    * Experimental method to copy the source app apk for sharing
-   * NOTE - apk only available if installed from play store (?)
-   * https://stackoverflow.com/questions/2507960/does-android-keep-the-apk-files-if-so-where/32312241
+   * Uses https://www.npmjs.com/package/cordova-plugin-codeplay-share-own-apk
    */
-  async copyAppApk() {
-    console.log('TESTING -copy app apk');
+  async shareAppApk() {
     try {
-      const test1 = await this.file.listDir('data', 'app');
-      console.log('test1', test1);
+      const plugins = cordova.plugins as any;
+      plugins.codeplay_shareapk.isSupport(
+        function(success) {
+          console.log('plugin supported', success);
+          plugins.codeplay_shareapk.openShare('Share the PICSA App');
+        },
+        function(fail) {
+          console.log('plugin not supported', fail);
+        }
+      );
     } catch (error) {
-      console.log('test1 failed', error);
+      throw error;
     }
   }
 
