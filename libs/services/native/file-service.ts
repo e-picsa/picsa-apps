@@ -196,6 +196,21 @@ export class PicsaFileService {
     }
   }
 
+  /**
+   * Experimental method to copy the source app apk for sharing
+   * NOTE - apk only available if installed from play store (?)
+   * https://stackoverflow.com/questions/2507960/does-android-keep-the-apk-files-if-so-where/32312241
+   */
+  async copyAppApk() {
+    console.log('TESTING -copy app apk');
+    try {
+      const test1 = await this.file.listDir('data', 'app');
+      console.log('test1', test1);
+    } catch (error) {
+      console.log('test1 failed', error);
+    }
+  }
+
   /**********************************************************************************
    *      Helper Methods
    *********************************************************************************/
@@ -236,8 +251,5 @@ file:///android_asset/	     applicationDirectory	                assets	        
   Android/data/<app-id>/	   externalApplicationStorageDirectory	  -	                          r/w	  Yes	          No          	No
   cache	                     externalCacheDirectory	              cache-external	              r/w	  Yes	          No**	        No
   files	                     externalDataDirectory	              files-external	              r/w	  Yes	          No	          No
-
-
-
 
 */
