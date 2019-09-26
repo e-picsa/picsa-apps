@@ -41,6 +41,12 @@ const CARDS: IBudgetCard[] = [
   },
   {
     type: 'activities',
+    label: 'banding',
+    id: 'banding',
+    groupings: ['banding']
+  },
+  {
+    type: 'activities',
     label: 'land clearing',
     id: 'land-clearing',
     groupings: ['crop']
