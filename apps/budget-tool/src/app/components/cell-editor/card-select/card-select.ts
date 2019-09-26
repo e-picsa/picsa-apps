@@ -51,7 +51,7 @@ export class BudgetCellEditorCardSelectComponent {
   }
 
   onCardCreated(card: IBudgetCard) {
-    this.enterpriseCards.push(card);
+    // this.enterpriseCards.push(card);
     this.onCardClicked(card);
   }
 

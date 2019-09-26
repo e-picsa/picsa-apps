@@ -41,7 +41,6 @@ export class BudgetCardNew {
 
     dialogRef.afterClosed().subscribe(async data => {
       await this.store.saveCustomCard(data);
-      console.log('card saved', data);
       this.cardSaved.emit(data);
     });
   }
@@ -62,7 +61,9 @@ export class BudgetCardNewDialog {
     this.card = card;
   }
   save() {
-    this.card.id = this.card.label.replace(/\s+/g, '-').toLowerCase();
+    this.card.id = `${this.card.type}-${this.card.label}`
+      .replace(/\s+/g, '-')
+      .toLowerCase();
     this.card.customMeta = {
       imgData: this.generateImage(this.card.label),
       dateCreated: new Date().toISOString(),
