@@ -63,7 +63,6 @@ export class BudgetStore implements OnDestroy {
       }
       typeCards[card.type].push(card);
     });
-    console.log('type cards', toJS(typeCards));
     return typeCards;
   }
   @computed get budgetPeriodLabels(): string[] {

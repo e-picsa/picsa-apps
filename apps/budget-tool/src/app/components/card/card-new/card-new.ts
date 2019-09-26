@@ -61,9 +61,7 @@ export class BudgetCardNewDialog {
     this.card = card;
   }
   save() {
-    this.card.id = `${this.card.type}-${this.card.label}`
-      .replace(/\s+/g, '-')
-      .toLowerCase();
+    this.card.id = this.card.label.replace(/\s+/g, '-').toLowerCase();
     this.card.customMeta = {
       imgData: this.generateImage(this.card.label),
       dateCreated: new Date().toISOString(),
