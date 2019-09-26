@@ -13,10 +13,10 @@
 }
 // TODO - lots of styles below are deprecated, requires tidying
 #budget.print-mode {
-  height: 21cm !important;
-  width: 29.7cm !important;
+  // ensure 12 months will fit in image
+  max-width: 1600px !important;
   position: absolute;
-  top: 100vh;
+  // top: 100vh;
 }
 .time-period {
   display: flex;
