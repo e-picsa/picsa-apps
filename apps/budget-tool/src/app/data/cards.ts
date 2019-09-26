@@ -194,6 +194,13 @@ const CARDS: IBudgetCard[] = [
   },
   {
     type: 'enterprise',
+    label: 'onions',
+    id: 'onions',
+    groupings: ['crop'],
+    imgType: 'svg'
+  },
+  {
+    type: 'enterprise',
     label: 'paw-paw',
     id: 'paw-paw',
     groupings: ['fruits'],
@@ -250,6 +257,14 @@ const CARDS: IBudgetCard[] = [
   },
   {
     type: 'enterprise',
+    label: 'tomatoes',
+    id: 'tomatoes',
+    groupings: ['crop'],
+    imgType: 'svg'
+  },
+
+  {
+    type: 'enterprise',
     label: 'watermelon',
     id: 'watermelon',
     groupings: ['fruits'],
@@ -259,7 +274,7 @@ const CARDS: IBudgetCard[] = [
     type: 'inputs',
     label: 'bags',
     id: 'bags',
-    groupings: ['livestock', 'crops']
+    groupings: ['livestock', 'crop']
   },
   {
     type: 'inputs',
