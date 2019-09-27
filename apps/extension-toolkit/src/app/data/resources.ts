@@ -24,17 +24,32 @@ const hardcodedResources: IResource[] = [
   {
     _key: '9xqr6hxcWoVlsqydsNne',
     _created: '2019-09-25T10:00:02.000Z',
-    _modified: '2019-09-25T11:00:01.000Z',
+    _modified: '2019-09-27T15:00:03.000Z',
     _isHardcoded: true,
     _isDownloaded: true,
     title: 'Buku la PICSA',
-    subtitle: '',
+    subtitle: 'Chichewa',
     filename: 'picsa-field-manual-chichewa.pdf',
     type: 'pdf',
     image: 'assets/resources/picsa-field-manual-cover-chichewa.jpg',
     group: 'PICSA Manual',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-chichewa.pdf?alt=media&token=7ab629a9-d2c1-4b37-8237-88825033708e'
+  },
+  {
+    _key: 'lqsSRwYx3Lq1bFYG3lke',
+    _created: '2019-09-25T10:00:03.000Z',
+    _modified: '2019-09-27T15:00:05.000Z',
+    _isHardcoded: true,
+    _isDownloaded: true,
+    title: 'Buku la PICSA',
+    subtitle: 'Tumbuka',
+    filename: 'picsa-field-manual-tumbuka.pdf',
+    type: 'pdf',
+    image: 'assets/resources/picsa-field-manual-cover-tumbuka.jpg',
+    group: 'PICSA Manual',
+    weblink:
+      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-tumbuka.pdf?alt=media&token=31a885e7-d6fa-4903-a747-ed8f9f7168b3'
   },
   {
     _key: '6VjjF3yZJejFigwDIPr8',
