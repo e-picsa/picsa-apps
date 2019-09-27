@@ -9,4 +9,4 @@ read VERSION;
 jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore picsa-mw.keystore ${BUILD_DIR}/app-release-unsigned.apk picsa-mw
 #### NOTE 4 - access windows program from linux subsystem using via /mnt
 ZIPALIGN="/mnt/c/Users/chris/AppData/Local/Android/sdk/build-tools/28.0.3/zipalign.exe";
-${ZIPALIGN} -v 4 ${BUILD_DIR}/app-release-unsigned.apk ./publish/${VERSION}.signed.apk;
+${ZIPALIGN} -v 4 ${BUILD_DIR}/app-release-unsigned.apk ./releases/${VERSION}.signed.apk;
