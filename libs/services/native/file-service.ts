@@ -208,7 +208,10 @@ export class PicsaFileService {
       plugins.codeplay_shareapk.isSupport(
         function(success) {
           console.log('plugin supported', success);
-          plugins.codeplay_shareapk.openShare('Share the PICSA App');
+          plugins.codeplay_shareapk.openShare(
+            'Share the PICSA App',
+            `picsa-app-${APP_VERSION.number}`
+          );
         },
         function(fail) {
           console.log('plugin not supported', fail);
