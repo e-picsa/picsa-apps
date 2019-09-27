@@ -40,6 +40,8 @@ const hardcodedResources: IResource[] = [
     _key: '6VjjF3yZJejFigwDIPr8',
     _created: '2019-09-25T10:00:04.000Z',
     _modified: '2019-09-27T11:00:01.000Z',
+    _isHardcoded: true,
+    _isDownloaded: true,
     title: 'Potential Training Schedule',
     subtitle: '',
     filename: 'potential-PICSA-training-schedule.pdf',

@@ -160,9 +160,9 @@ export class ResourcesStore {
       // if hardcoded copy from assets folder first (if not already done)
       // TODO - add check to see if already copied over (use this.downloads)
       for (let resource of newerResources) {
-        if (resource._isHardcoded) {
+        if (resource._isHardcoded && this.platform.is('cordova')) {
           console.log('copying resource', resource.filename);
-          await this, this.copyHardcodedResource(resource);
+          await this.copyHardcodedResource(resource);
         }
       }
       await this.db.setDocs('resources', newerResources, false, true);
