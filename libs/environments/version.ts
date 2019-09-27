@@ -5,5 +5,5 @@ const VERSION_NUMBER = require('../../package.json').version as string;
 
 export const APP_VERSION = {
   number: VERSION_NUMBER,
-  date: '2019-08-04'
+  date: '2019-09-27'
 };

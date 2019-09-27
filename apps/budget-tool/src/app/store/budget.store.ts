@@ -238,6 +238,7 @@ export class BudgetStore implements OnDestroy {
       this.db.setDoc('_appMeta', update);
     }
   }
+
   private async setHardcodedData() {
     const endpoint = 'budgetTool/_all/cards';
     const docs: IBudgetCardDB[] = CARDS.map(card => {
