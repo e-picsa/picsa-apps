@@ -35,27 +35,11 @@ const hardcodedResources: IResource[] = [
     group: 'PICSA Manual',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-chichewa.pdf?alt=media&token=7ab629a9-d2c1-4b37-8237-88825033708e'
-  }
-];
-const webResources: IResource[] = [
-  {
-    _key: '9Pkro1VYBUlwuNg5oHok',
-    _created: '2019-09-25T10:00:03.000Z',
-    _modified: '2019-09-25T11:00:01.000Z',
-    title: 'Crop Information',
-    subtitle: 'Chileka',
-    filename: 'crop-info-sheet-chileka.pdf',
-    type: 'pdf',
-    image: 'assets/resources/crop-info-sheet-chileka-cover.png',
-    group: 'Documents',
-    viewableBy: ['wfp-2017'],
-    weblink:
-      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fcrop-info-sheet-chileka.pdf?alt=media&token=cb8a6243-1d37-43f6-a97c-a0a7bc0f11f2'
   },
   {
     _key: '6VjjF3yZJejFigwDIPr8',
     _created: '2019-09-25T10:00:04.000Z',
-    _modified: '2019-09-25T11:00:01.000Z',
+    _modified: '2019-09-27T11:00:01.000Z',
     title: 'Potential Training Schedule',
     subtitle: '',
     filename: 'potential-PICSA-training-schedule.pdf',
@@ -64,7 +48,24 @@ const webResources: IResource[] = [
     group: 'Documents',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpotential-PICSA-training-schedule.pdf?alt=media&token=618737d1-949b-467a-9f28-1dcc35ce3c8c'
-  },
+  }
+];
+const webResources: IResource[] = [
+  // {
+  //   _key: '9Pkro1VYBUlwuNg5oHok',
+  //   _created: '2019-09-25T10:00:03.000Z',
+  //   _modified: '2019-09-25T11:00:01.000Z',
+  //   title: 'Crop Information',
+  //   subtitle: 'Chileka',
+  //   filename: 'crop-info-sheet-chileka.pdf',
+  //   type: 'pdf',
+  //   image: 'assets/resources/crop-info-sheet-chileka-cover.png',
+  //   group: 'Documents',
+  //   viewableBy: ['wfp-2017'],
+  //   weblink:
+  //     'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fcrop-info-sheet-chileka.pdf?alt=media&token=cb8a6243-1d37-43f6-a97c-a0a7bc0f11f2'
+  // },
+
   {
     _key: 'm6I8TfROsyr5Wp73BcAd',
     _created: '2019-09-25T10:00:05.000Z',
