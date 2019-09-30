@@ -62,6 +62,8 @@ export type IFormResponseDB = IFormResponse & IDBDoc;
 export interface IResource extends IDBDoc {
   _key: string;
   _isDownloaded?: boolean;
+  _isHardcoded?: boolean;
+  _deleted?: boolean;
   title: string;
   subtitle: string;
   filename: string;

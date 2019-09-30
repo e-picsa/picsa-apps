@@ -5,24 +5,10 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'back-button',
   template: `
-    <button
-      *ngIf="showButton"
-      mat-button
-      (click)="back()"
-      style="position: absolute"
-    >
+    <button *ngIf="showButton" mat-button (click)="back()">
       <mat-icon>arrow_back</mat-icon>Back
     </button>
-  `,
-  styles: [
-    `
-      :host {
-        position: absolute;
-        left: 0;
-        top: 12px;
-      }
-    `
-  ]
+  `
 })
 export class BackButton implements OnDestroy {
   route$: Subscription;
@@ -39,7 +25,7 @@ export class BackButton implements OnDestroy {
   }
   checkButtonState() {
     const url = this.router.url;
-    this.showButton = url.split('/').length > 2;
+    this.showButton = url.split('/').length > 1;
   }
 
   back() {

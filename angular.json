@@ -322,6 +322,9 @@
                   "maximumError": "5mb"
                 }
               ]
+            },
+            "dev": {
+              "sourceMap": true
             }
           }
         },
@@ -376,11 +379,11 @@
         "ionic-cordova-build": {
           "builder": "@ionic/angular-toolkit:cordova-build",
           "options": {
-            "browserTarget": "extension-toolkit:build"
+            "browserTarget": "extension-toolkit:build:dev"
           },
           "configurations": {
-            "production": {
-              "browserTarget": "extension-toolkit:build:production"
+            "mw": {
+              "browserTarget": "extension-toolkit:build:mw"
             }
           }
         }

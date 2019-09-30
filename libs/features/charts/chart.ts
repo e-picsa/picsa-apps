@@ -3,14 +3,12 @@ import {
   ViewEncapsulation,
   Input,
   ElementRef,
-  NgZone,
   SimpleChanges,
   OnInit
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
-import { saveSvgAsPng, svgAsDataUri } from 'save-svg-as-png';
-import * as canvg from 'canvg';
+import { PrintProvider } from '@picsa/services/native';
 
 @Component({
   selector: 'picsa-chart',
@@ -26,7 +24,10 @@ import * as canvg from 'canvg';
 export class PicsaChartComponent implements OnInit {
   public chart: c3.ChartAPI;
   private container: HTMLDivElement;
-  constructor(private elementRef: ElementRef, private ngZone: NgZone) {}
+  constructor(
+    private elementRef: ElementRef,
+    private printPrvdr: PrintProvider
+  ) {}
 
   @Input() data: c3.Data = {
     columns: []
@@ -84,6 +85,8 @@ export class PicsaChartComponent implements OnInit {
       data: this.config.data ? this.config.data : this.data,
       oninit: function() {
         this.svg.attr('id', 'chart_svg');
+        // const svg = document.getElementById('chart_svg');
+        // svg.style.backgroundColor = 'green';
       }
     });
     // });
@@ -93,27 +96,7 @@ export class PicsaChartComponent implements OnInit {
   // https://github.com/exupero/saveSvgAsPng
   // https://github.com/exupero/saveSvgAsPng/issues/186
   public async generatePng(title: string = 'chart') {
-    const svg = document.getElementById('chart_svg');
-    const options = {
-      canvg: canvg,
-      scale: 2,
-
-      selectorRemap: s => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
-      // modify selector-properties
-      modifyCss: (s: string, p: string) => {
-        // modifyCss is used to take stylesheet classes that apply to svgElements and make inline
-        // use remap so that .c3-axis-y-label text detects the 'text' svg element
-        // NOTE - some properties don't work quite right (override other defaults)
-        const overrides = ['.c3 svg', '.c3-grid text'];
-        if (overrides.includes(s)) {
-          return;
-        }
-        s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
-
-        return s + '{' + p + '}';
-      }
-    };
-    await saveSvgAsPng(svg, title, options);
+    await this.printPrvdr.shareSVG('chart_svg', title);
   }
 }
 

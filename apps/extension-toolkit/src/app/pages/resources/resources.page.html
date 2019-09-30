@@ -1,11 +1,10 @@
 <div class="page" *mobxAutorun>
-  <h1 class="inverted">{{ 'Resources' | translate }}</h1>
+  <picsa-header>{{ 'Resources' | translate }}</picsa-header>
   <div class="page-content">
     <div>
       <resource-item
-        *ngFor="let resource of store.resources"
+        *ngFor="let resource of store.sortedResources"
         [resource]="resource"
-        (click)="store.openResource(resource)"
       >
       </resource-item>
     </div>

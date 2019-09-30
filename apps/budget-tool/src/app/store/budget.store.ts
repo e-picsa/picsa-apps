@@ -13,7 +13,6 @@ import {
   IBudgetValueScale,
   IBudgetValueCounters,
   IBudgetBalance,
-  IBudgetActiveCell,
   IBudgetQueryParams,
   IBudgetPeriodType
 } from '../models/budget-tool.models';
@@ -64,7 +63,6 @@ export class BudgetStore implements OnDestroy {
       }
       typeCards[card.type].push(card);
     });
-    console.log('type cards', toJS(typeCards));
     return typeCards;
   }
   @computed get budgetPeriodLabels(): string[] {
@@ -140,8 +138,11 @@ export class BudgetStore implements OnDestroy {
     this.valueCounters = this._generateValueCounters(this.activeBudget);
   }
 
-  saveCustomCard(card: IBudgetCard) {
-    return this.db.setDoc('budgetTool/_all/cards', card);
+  async saveCustomCard(card: IBudgetCard) {
+    await this.db.setDoc('budgetTool/_all/cards', card);
+    // re-populate budget cards
+    console.log('card saved', card);
+    await this.preloadData();
   }
   deleteCustomCard(card: IBudgetCardDB) {
     return this.db.deleteDocs('budgetTool/_all/cards', [card._key]);
@@ -157,6 +158,7 @@ export class BudgetStore implements OnDestroy {
       ...NEW_BUDGET_TEMPLATE,
       ...generateDBMeta()
     };
+    this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
   }
   async saveBudget() {
@@ -236,6 +238,7 @@ export class BudgetStore implements OnDestroy {
       this.db.setDoc('_appMeta', update);
     }
   }
+
   private async setHardcodedData() {
     const endpoint = 'budgetTool/_all/cards';
     const docs: IBudgetCardDB[] = CARDS.map(card => {

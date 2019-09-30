@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import { IBudgetCard } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'budget-cell',

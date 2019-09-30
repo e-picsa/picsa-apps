@@ -29,7 +29,8 @@ export class AppComponent {
       discussions: 'discussions',
       'data-collection': 'data-collection',
       'budget-tool': 'budget-tool',
-      'climate-tool': 'climate-tool'
+      'climate-tool': 'climate-tool',
+      whatsapp: 'whatsapp'
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(

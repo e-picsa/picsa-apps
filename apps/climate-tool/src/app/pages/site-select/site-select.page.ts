@@ -17,7 +17,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class SiteSelectPage {
   activeStation: any;
   @ViewChild('picsaMap', { static: true }) picsaMap: PicsaMapComponent;
-  mapOptions: IMapOptions = { center: [-13.2543, 34.3015], zoom: 7 };
+  // main options handled by featuredCountry
+  mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.png',
     maxNativeZoom: 8

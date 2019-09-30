@@ -38,8 +38,9 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
     this.activeStation = await this.climateService.loadStation(siteId);
   }
   changeSite() {
-    this.router.navigate(['/'], {
-      relativeTo: this.route
+    this.router.navigate(['../../'], {
+      relativeTo: this.route,
+      replaceUrl: true
     });
   }
 

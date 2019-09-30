@@ -3,17 +3,11 @@ body {
 }
 
 h1 {
-  color: var(--color-primary);
   padding: 10px;
   margin: 0;
-  background: white;
-}
-
-h1.inverted {
-  color: white;
-  padding: 10px;
-  margin: 0;
-  background: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /*******************************************************************

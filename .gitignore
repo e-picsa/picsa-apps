@@ -62,7 +62,9 @@ xplat/**/*.ngsummary.json
 libs/features/map/tiles/assets-for-copy   
 libs/features/map/tiles/**/*.png
 
-apps/climate-tool/src/assets/summaries/*.csv
+releases/
 
 libs/environments/firebase/config.prod.ts
 .env
+*.keystore
+*.apk

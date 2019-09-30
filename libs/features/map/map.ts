@@ -108,7 +108,7 @@ export class PicsaMapComponent {
     });
     geojsonLayer.addTo(this.map);
     // *** TODO - ADD METHOD TO CALCULATE AND AUTO FIT BOUNDS DEPENDENT ON USER
-    this.map.fitBounds([[-13.4787, 35.77], [-14.797, 34.7358]]);
+    this.map.fitBounds([[-13.7, 34.5], [-15.7, 35.5]]);
   }
 
   private setFeature(feature: Feature<Geometry, any>, layer: L.Layer) {
@@ -140,6 +140,7 @@ const BASEMAP_DEFAULTS: IBasemapOptions = {
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
   zoom: 5,
+  // NOTE - center will be overridden if using country variants above
   center: L.latLng(46.879966, -121.726909)
 };
 

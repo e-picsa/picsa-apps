@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform } from '@ionic/angular';
-import { saveAs } from 'file-saver';
+import { svgAsPngUri, saveSvgAsPng } from 'save-svg-as-png';
+import download from 'downloadjs';
+import * as canvg from 'canvg';
 // note, import not working so loading from assets in index.html
 // import * as html2canvas from "html2canvas";
 declare var html2canvas: any;
@@ -13,64 +15,70 @@ export class PrintProvider {
     private socialSharing: SocialSharing
   ) {}
 
-  // convert a dom selector to canvas and share as image using social sharing
-  async socialShare(domSelector: string, filename: string) {
-    const domEl: HTMLElement = document.querySelector(domSelector);
-    const canvasElm = await html2canvas(domEl);
-    this.shareCanvasImage(canvasElm, filename);
-  }
-
-  // similar method to above but add filename title to top of canvas
   async socialShareBudget(domSelector: string, title: string) {
-    const domEl: HTMLElement = document.querySelector(domSelector);
-    domEl.classList.toggle('print-mode');
-    const width = domEl.offsetWidth;
-    const canvasElm = await html2canvas(domEl);
-    // add title
-    const ctx = canvasElm.getContext('2d');
-    ctx.font = '30px Arial';
-    ctx.textAlign = 'start';
-    ctx.fillText(title, width / 2, 43);
-    await this.shareCanvasImage(canvasElm, title);
-    domEl.classList.toggle('print-mode');
+    return this.shareHtmlDom(domSelector, title);
   }
 
-  async shareCanvasImage(canvasElm: HTMLCanvasElement, title: string) {
-    const base64 = canvasElm.toDataURL();
+  async shareHtmlDom(domSelector: string, title: string) {
+    const domEl: HTMLElement = document.querySelector(domSelector);
+    const clone = domEl.cloneNode(true) as HTMLElement;
+    clone.classList.toggle('print-mode');
+    // add title
+    const titleEl = document.createElement('h1');
+    titleEl.textContent = title;
+    clone.prepend(titleEl);
+    // attach clone, generate svg and export
+    const body = document.querySelector('body');
+    body.prepend(clone);
+    // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
+    const canvasElm = await html2canvas(clone, { allowTaint: true });
+    // use set timeout to ensure resizing complete
+    // TODO - check if required or if better solution could exist
+    setTimeout(async () => {
+      const base64 = canvasElm.toDataURL();
+      await this.shareDataImage(base64, title);
+      body.removeChild(clone);
+    }, 200);
+  }
+
+  async shareSVG(svgDomSelector: string, title: string) {
+    const svg = document.getElementById(svgDomSelector) as HTMLElement;
+    const options = {
+      // remove canvg as doesn't support background colours
+      // canvg: canvg,
+      scale: 2,
+      backgroundColor: 'white',
+      selectorRemap: s => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
+      // modify selector-properties
+      modifyCss: (s: string, p: string) => {
+        // modifyCss is used to take stylesheet classes that apply to svgElements and make inline
+        // use remap so that .c3-axis-y-label text detects the 'text' svg element
+        // NOTE - some properties don't work quite right (override other defaults)
+        const overrides = ['.c3 svg', '.c3-grid text'];
+        if (overrides.includes(s)) {
+          return;
+        }
+        s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
+
+        return s + '{' + p + '}';
+      }
+    };
+    const pngUri = await svgAsPngUri(svg, options);
+    // const imgEl = document.createElement('img');
+    // imgEl.src = pngUri;
+    // document.querySelector('body').prepend(imgEl);
+    await this.shareDataImage(pngUri, title);
+  }
+
+  private async shareDataImage(base64Img: string, title: string) {
+    console.log('sharing data image', this.platform.platforms());
     if (this.platform.is('cordova')) {
-      this.socialSharing
-        .share('', title, base64)
+      console.log('social sharing image', base64Img);
+      return this.socialSharing
+        .share('', title, base64Img)
         .then(res => console.log(res), err => console.error(err));
     } else {
-      this.downloadCanvasImage(canvasElm, title);
+      return download(base64Img, title + '.png', 'image/png');
     }
   }
-
-  async downloadCanvasImage(canvasElm: HTMLCanvasElement, filename: string) {
-    canvasElm.toBlob(blob => {
-      // on error null blob created
-      if (blob) {
-        saveAs(blob, `${filename}.png`);
-      } else {
-        throw new Error('could not create download');
-      }
-    });
-  }
-  // if (this.platform.is("cordova")) {
-  //   // *** not working, blob seems correct but writes empty json
-  //   // similarly 'saveAs' function says downloading but no file generated
-  //   canvasElm.toBlob(async blob => {
-  //     console.log("blob created", blob);
-  //     const filePath = await this.filePrvdr.createFile(
-  //       `budget-${filename}.png`,
-  //       blob,
-  //       true,
-  //       true
-  //     );
-  //     console.log("file created", filePath);
-  //     this.filePrvdr.openFileCordova(filePath);
-  //   });
-  // }
-  // }
-  // }
 }

@@ -61,6 +61,13 @@ export class BudgetCreatePage implements OnInit {
       enterprise: enterprise
     });
   }
+
+  customEnterpriseCreated(enterprise: IBudgetCard) {
+    this.filteredEnterprises = this.store.getfilteredEnterprises(
+      this.selectedType
+    );
+    this.enterpriseClicked(enterprise);
+  }
   async save() {
     const meta = this.budgetMetaForm.value as IBudgetMeta;
     // generate period data

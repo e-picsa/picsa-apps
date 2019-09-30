@@ -1,5 +1,5 @@
 <div class="page" *mobxAutorun>
-  <h1 class="inverted">PICSA</h1>
+  <h1 style="color:white; background:var(--color-primary)">PICSA</h1>
   <div class="page-content background-image">
     <mat-grid-list [cols]="columns" style="flex:1">
       <mat-grid-tile
@@ -22,6 +22,14 @@
       [language]="store.language"
       (onlanguageSelected)="setLanguage($event.code)"
     ></language-select>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="shareApp()"
+      class="share-button"
+    >
+      {{ 'Share PICSA App' | translate }}
+    </button>
     <div class="version-info">v{{ version.number }}</div>
   </footer>
 </div>

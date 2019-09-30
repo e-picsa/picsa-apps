@@ -29,9 +29,9 @@ import { BudgetCardNew, BudgetCardNewDialog } from './card/card-new/card-new';
 import { RouterModule } from '@angular/router';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
 import { NextButton } from './general/next-button';
-import { BackButton } from './general/back-button';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { PicsaDialogsModule } from '@picsa/features';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 @NgModule({
   declarations: [
@@ -53,7 +53,6 @@ import { PicsaDialogsModule } from '@picsa/features';
     BudgetListItemRenameDialog,
     BudgetPeriodSummaryComponent,
     BudgetTableComponent,
-    BackButton,
     NextButton
   ],
   imports: [
@@ -63,6 +62,7 @@ import { PicsaDialogsModule } from '@picsa/features';
     BudgetMaterialModule,
     TranslateModule.forChild(),
     PicsaDialogsModule,
+    PicsaCommonComponentsModule,
     CanvasWhiteboardModule,
     MobxAngularModule,
     PicsaDbModule,
@@ -84,8 +84,8 @@ import { PicsaDialogsModule } from '@picsa/features';
     BudgetCardNew,
     BudgetTableComponent,
     BudgetPeriodSummaryComponent,
-    BackButton,
-    NextButton
+    NextButton,
+    PicsaCommonComponentsModule
   ],
   entryComponents: [
     BudgetBalanceEditorComponent,

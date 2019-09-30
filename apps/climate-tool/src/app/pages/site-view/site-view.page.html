@@ -1,13 +1,18 @@
 <div class="page">
   <!-- header -->
-  <div style="display: flex; align-items: center">
-    <button mat-button color="primary" (click)="changeSite()">
-      <mat-icon svgIcon="picsa_station"></mat-icon>
-      <span style="font-size: 20px; margin-left:8px">{{
-        activeStation ? activeStation.name : ''
-      }}</span>
-      <mat-icon>arrow_drop_down</mat-icon>
-    </button>
+  <div
+    style="display: flex; align-items: center; overflow-x: auto;
+    white-space: nowrap;"
+  >
+    <div>
+      <button mat-button color="primary" (click)="changeSite()">
+        <mat-icon svgIcon="picsa_station"></mat-icon>
+        <span style="font-size: 20px; margin-left:8px">{{
+          activeStation ? activeStation.name : ''
+        }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </div>
     <div *ngIf="activeView" style="padding:8px">
       <mat-card
         class="chart-thumb-card"

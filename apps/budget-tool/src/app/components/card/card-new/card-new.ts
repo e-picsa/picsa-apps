@@ -41,7 +41,6 @@ export class BudgetCardNew {
 
     dialogRef.afterClosed().subscribe(async data => {
       await this.store.saveCustomCard(data);
-      console.log('card saved', data);
       this.cardSaved.emit(data);
     });
   }

@@ -70,7 +70,13 @@
       <!-- <div *ngSwitchDefault></div> -->
     </div>
   </div>
-  <div *ngIf="!cellData" class="add-cell-data">
+
+  <div
+    *ngIf="!cellData"
+    class="add-cell-data"
+    [attr.data-html2canvas-ignore]="true"
+  >
+    <!-- ignore add icon when rendering to canvas -->
     <mat-icon>add</mat-icon>
   </div>
   <!-- *** future - only show add for produce consumed if there are outputs in the corresponding time period -->
