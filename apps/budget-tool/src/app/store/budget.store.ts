@@ -156,7 +156,6 @@ export class BudgetStore implements OnDestroy {
   createNewBudget() {
     const budget: IBudget = {
       ...NEW_BUDGET_TEMPLATE,
-      _appVersion: APP_VERSION.number,
       ...generateDBMeta()
     };
     this.valueCounters = this._generateValueCounters(budget);
