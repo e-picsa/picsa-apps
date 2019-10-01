@@ -1,11 +1,11 @@
 # upload sourcemaps for extension toolkit and then remove files
 # code adapted from: https://stackoverflow.com/questions/53715981/how-to-automatically-create-a-sentry-release-and-upload-source-maps-to-sentry-in
 
-
+#1) Set variables
 APP_DIR="$PWD/apps/extension-toolkit"
 PACKAGE_VERSION=$(grep 'version' package.json | cut -d '"' -f4 | tr -d '[[:space:]]')
-export SENTRY_PROPERTIES="$PWD/apps/extension-toolkit/sentry.properties"
 
+#2) Extract sourcemap files
 cd $APP_DIR
 rm -r www_sourcemaps
 mkdir www_sourcemaps
@@ -16,14 +16,12 @@ echo $SOURCE_MAP
 
 #3) create Sentry release
 printf "\nPreparing version $PACKAGE_VERSION...\n\n"
-
 # NOTE - for below code to work sentry-cli must be installed on linux subsystem
 # see install guides at: https://docs.sentry.io/cli/installation/
-
-# export properties to be picked up by cli
 cd "$APP_DIR/www_sourcemaps"
 SENTRY_VERSION="picsa-app@$PACKAGE_VERSION"
-
+# export properties to be picked up by cli
+export SENTRY_PROPERTIES="$APP_DIR/sentry.properties"
 sentry-cli releases new $SENTRY_VERSION
 sentry-cli releases files $SENTRY_VERSION upload-sourcemaps ./
 
