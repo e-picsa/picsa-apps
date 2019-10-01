@@ -98,14 +98,14 @@ const CARDS: IBudgetCard[] = [
     label: 'meat',
     id: 'meat',
     groupings: ['livestock'],
-    imgType: 'png'
+    imgType: 'svg'
   },
   {
     type: 'outputs',
     label: 'milk',
     id: 'milk',
     groupings: ['livestock'],
-    imgType: 'png'
+    imgType: 'svg'
   },
   {
     type: 'enterprise',
@@ -507,6 +507,13 @@ const CARDS: IBudgetCard[] = [
     imgType: 'svg'
   },
   {
+    type: 'inputs',
+    label: 'money',
+    id: 'money',
+    groupings: ['*'],
+    imgType: 'svg'
+  },
+  {
     type: 'activities',
     label: 'value addition',
     id: 'value-addition',
@@ -546,7 +553,7 @@ const CARDS: IBudgetCard[] = [
     label: 'money',
     id: 'money',
     groupings: ['*'],
-    imgType: 'png'
+    imgType: 'svg'
   },
   {
     type: 'activities',
