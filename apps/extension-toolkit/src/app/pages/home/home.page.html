@@ -27,6 +27,7 @@
       color="primary"
       (click)="shareApp()"
       class="share-button"
+      [disabled]="isPreparingShare"
     >
       {{ 'Share PICSA App' | translate }}
     </button>

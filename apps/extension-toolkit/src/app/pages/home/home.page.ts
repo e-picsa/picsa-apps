@@ -18,6 +18,7 @@ export class HomePage implements OnInit {
   version = APP_VERSION;
   subtitle: string = ENVIRONMENT.region.subtitle;
   columns: number;
+  isPreparingShare = false;
 
   constructor(
     private router: Router,
@@ -78,10 +79,12 @@ export class HomePage implements OnInit {
     this.store.updateUser({ lang: code });
     this.store.setLanguage(code);
   }
-  shareApp() {
+  async shareApp() {
     if (this.platform.is('cordova')) {
+      this.isPreparingShare = true;
       console.log('sharing the app', this.fileService);
-      this.fileService.shareAppApk();
+      await this.fileService.shareAppApk();
+      this.isPreparingShare = false;
     }
   }
   @HostListener('window:resize', ['$event'])

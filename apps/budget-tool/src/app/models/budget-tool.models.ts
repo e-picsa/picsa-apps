@@ -4,6 +4,7 @@ export interface IBudget extends IDBDoc {
   data: IBudgetPeriodData[];
   meta: IBudgetMeta;
   apiVersion: number;
+  _appVersion: string;
 }
 
 // NOTE - keep all value formats as arrays to make easier to work with generally
