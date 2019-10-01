@@ -1,6 +1,6 @@
 {
   "name": "picsa",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -78,6 +78,7 @@
     "redux-observable": "^1.1.0",
     "rxjs": "~6.4.0",
     "save-svg-as-png": "^1.4.14",
+    "sentry-cordova": "^0.16.0",
     "survey-angular": "^1.1.5",
     "topojson": "^3.0.2",
     "typeorm": "^0.2.9",
@@ -94,7 +95,7 @@
     "@nrwl/schematics": "^8.1.0",
     "@nrwl/workspace": "8.1.0",
     "@nstudio/schematics": "^7.4.8",
-    "@nstudio/xplat": "^8.0.5",
+    "@nstudio/xplat": "^8.0.7",
     "@types/c3": "^0.7.0",
     "@types/jest": "^20.0.8",
     "@types/leaflet": "^1.4.6",

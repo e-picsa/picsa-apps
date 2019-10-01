@@ -71,9 +71,7 @@ export class PrintProvider {
   }
 
   private async shareDataImage(base64Img: string, title: string) {
-    console.log('sharing data image', this.platform.platforms());
     if (this.platform.is('cordova')) {
-      console.log('social sharing image', base64Img);
       return this.socialSharing
         .share('', title, base64Img)
         .then(res => console.log(res), err => console.error(err));
