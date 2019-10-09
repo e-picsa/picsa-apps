@@ -6,16 +6,19 @@
 }
 .budget-container {
   display: flex;
-  height: 100%;
+  flex: 1;
   background-color: white;
   color: black;
   overflow-x: auto;
 }
 // TODO - lots of styles below are deprecated, requires tidying
-.budget-container.print-mode {
-  position: fixed;
-  top: 0;
-  padding-top: 56px;
+#budget.print-mode {
+  // ensure 12 months will fit in image
+  max-width: 1600px !important;
+  // target 16x9 for full 12 months (more square less)
+  height: 900px;
+  position: absolute;
+  // top: 100vh;
 }
 .time-period {
   display: flex;

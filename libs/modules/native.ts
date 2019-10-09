@@ -10,6 +10,7 @@ import { PicsaFileService } from '../services/native/file-service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
   imports: []
@@ -31,7 +32,8 @@ export class PicsaNativeModule {
         PicsaFileService,
         SocialSharing,
         File,
-        FileOpener
+        FileOpener,
+        FileTransfer
       ]
     };
   }

@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { DiscussionsPage } from './discussions.page';
 import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { ComponentsModule } from '../../components/components.module';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
     IonicModule,
     ComponentsModule,
     RouterModule.forChild(routes),
-    PicsaTranslateModule
+    PicsaTranslateModule,
+    PicsaCommonComponentsModule
   ],
   declarations: [DiscussionsPage]
 })

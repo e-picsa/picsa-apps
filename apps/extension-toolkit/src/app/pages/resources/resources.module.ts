@@ -9,6 +9,7 @@ import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { MobxAngularModule } from 'mobx-angular';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
 import { ComponentsModule } from '../../components/components.module';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     NgxYoutubePlayerModule,
     PicsaTranslateModule,
+    PicsaCommonComponentsModule,
     MobxAngularModule,
     ExtensionToolkitMaterialModule
   ],

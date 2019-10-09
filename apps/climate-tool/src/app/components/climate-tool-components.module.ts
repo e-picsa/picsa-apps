@@ -10,6 +10,7 @@ import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
 import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/features';
 import { ChartOptionsComponent } from './chart-options/chart-options';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ChartOptionsComponent } from './chart-options/chart-options';
     FormsModule,
     ReactiveFormsModule,
     PicsaTranslateModule,
+    PicsaCommonComponentsModule,
     ClimateMaterialModule,
     PicsaChartsModule,
     PicsaDialogsModule
@@ -34,7 +36,8 @@ import { ChartOptionsComponent } from './chart-options/chart-options';
     CombinedProbabilityComponent,
     ViewSelectComponent,
     ProbabilityToolComponent,
-    CropAnalysisComponent
+    CropAnalysisComponent,
+    PicsaCommonComponentsModule
   ],
   entryComponents: [ChartOptionsComponent]
 })

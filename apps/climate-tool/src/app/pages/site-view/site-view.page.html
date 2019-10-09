@@ -1,28 +1,29 @@
 <div class="page">
   <!-- header -->
-  <div style="display: flex; align-items: center">
-    <button mat-button color="primary" (click)="changeSite()">
-      <mat-icon svgIcon="picsa_station"></mat-icon>
+  <picsa-header inverted>
+    <div
+      style="display: flex; align-items: center; overflow-x: auto;
+    white-space: nowrap;"
+    >
       <span style="font-size: 20px; margin-left:8px">{{
         activeStation ? activeStation.name : ''
       }}</span>
-      <mat-icon>arrow_drop_down</mat-icon>
-    </button>
-    <div *ngIf="activeView" style="padding:8px">
-      <mat-card
-        class="chart-thumb-card"
-        *ngFor="let view of availableViews"
-        (click)="setView(view._viewID)"
-        [class.active]="view._viewID == activeView"
-      >
-        <img
-          src="{{ view.image }}"
-          class="chart-thumb-img"
+      <div *ngIf="activeView" style="padding:8px">
+        <mat-card
+          class="chart-thumb-card"
+          *ngFor="let view of availableViews"
+          (click)="setView(view._viewID)"
           [class.active]="view._viewID == activeView"
-        />
-      </mat-card>
+        >
+          <img
+            src="{{ view.image }}"
+            class="chart-thumb-img"
+            [class.active]="view._viewID == activeView"
+          />
+        </mat-card>
+      </div>
     </div>
-  </div>
+  </picsa-header>
   <!-- content -->
   <div class="page-content">
     <climate-view-select

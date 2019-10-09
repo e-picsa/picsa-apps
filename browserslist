@@ -8,6 +8,9 @@
 > 0.5%
 last 2 versions
 Firefox ESR
-# remove not from in front to disable differential builds
 dead
-IE 9-11
+IE 9-11 
+# For IE 9-11 support, remove 'not'.
+
+# List above includes non-es2015 so will result in single build
+# instead of differential (means to disable)

@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IResource } from '../../models/models';
+import { ResourcesStore } from '../../store/resources.store';
 
 @Component({
   selector: 'resource-item',
@@ -8,10 +9,26 @@ import { IResource } from '../../models/models';
 })
 export class ResourceItemComponent {
   @Input() resource: IResource;
-  @Output() onResourceClick = new EventEmitter<IResource>();
+  isDownloading = false;
+  progress: number = 0;
+  constructor(private store: ResourcesStore) {}
 
   resourceClick() {
-    console.log('resource clicked');
-    this.onResourceClick.emit(this.resource);
+    if (this.resource._isDownloaded) {
+      this.store.openResource(this.resource);
+    } else {
+      this.isDownloading = true;
+      this.store.downloadResource(this.resource).subscribe(
+        progress => {
+          console.log('progress', progress);
+          this.progress = progress;
+        },
+        err => {
+          this.isDownloading = false;
+          throw err;
+        },
+        () => (this.isDownloading = false)
+      );
+    }
   }
 }

@@ -39,8 +39,8 @@ export class BudgetCellEditorCardSelectComponent {
         otherCards.push(c);
       }
     });
-    this.enterpriseCards = enterpriseCards;
-    this.otherCards = otherCards;
+    this.enterpriseCards = this._sortAZ(enterpriseCards);
+    this.otherCards = this._sortAZ(otherCards);
   }
 
   setValues(values: IBudgetCardWithValues[] = []) {
@@ -51,7 +51,8 @@ export class BudgetCellEditorCardSelectComponent {
   }
 
   onCardCreated(card: IBudgetCard) {
-    this.enterpriseCards.push(card);
+    // note, only need to handle card click as store automatically
+    // handles list updating
     this.onCardClicked(card);
   }
 
@@ -68,5 +69,9 @@ export class BudgetCellEditorCardSelectComponent {
     }
     // emit value
     this.onValueChange.emit(this.selectedArray);
+  }
+
+  private _sortAZ(cards: IBudgetCard[]) {
+    return cards.sort((a, b) => (a.label > b.label ? 1 : -1));
   }
 }
