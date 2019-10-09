@@ -1,6 +1,6 @@
 {
   "name": "picsa-malawi",
-  "version": "2.0.7",
+  "version": "2.0.9",
   "author": "C2Dev Ltd",
   "homepage": "https://picsa.app",
   "scripts": {
@@ -30,7 +30,8 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-file-transfer": {},
-      "cordova-plugin-codeplay-share-own-apk": {}
+      "cordova-plugin-codeplay-share-own-apk": {},
+      "sentry-cordova": {}
     },
     "platforms": [
       "android"

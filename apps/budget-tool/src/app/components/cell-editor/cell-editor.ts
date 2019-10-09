@@ -23,11 +23,10 @@ export class BudgetCellEditorComponent {
   steps = EDITOR_STEPS;
   @Input() data: IBudgetPeriodData;
   @Input() set activeType(type: IBudgetPeriodType) {
-    const index = EDITOR_STEPS.indexOf(type);
-    console.log('active index', index);
-    this.stepper.selectedIndex = index;
+    this.setActiveStep(type);
   }
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
+  @ViewChild('subStepper', { static: true }) subStepper: MatStepper;
   constructor(
     public store: BudgetStore,
     private router: Router,
@@ -39,9 +38,16 @@ export class BudgetCellEditorComponent {
     this.stepper._getIndicatorType = () => 'number';
   }
 
+  setActiveStep(type: IBudgetPeriodType) {
+    const index = EDITOR_STEPS.indexOf(type);
+    this.stepper.selectedIndex = index;
+  }
+
   // the store already knows what period and type it is, so just pass the updated values
   // back up to save
   onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
+    // reset substepper (in case already on values)
+    this.subStepper.reset();
     this.store.saveEditor(values, type);
   }
 
@@ -65,6 +71,7 @@ export class BudgetCellEditorComponent {
     const period = this.store.activePeriod;
     const totalPeriods = this.store.activeBudget.meta.lengthTotal;
     this.stepper.reset();
+    this.subStepper.reset();
     if (period < totalPeriods) {
       this.router.navigate([], {
         relativeTo: this.route,

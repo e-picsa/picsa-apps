@@ -4,7 +4,6 @@ import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
 import { AbstractDBService } from './abstract.db';
 import ENVIRONMENT from '@picsa/environments/environment';
 
-console.log('environment', ENVIRONMENT);
 @Injectable({ providedIn: 'root' })
 export class DBServerService implements AbstractDBService {
   constructor(private afs: AngularFirestore) {}

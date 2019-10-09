@@ -299,16 +299,17 @@ export class BudgetStore implements OnDestroy {
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
   private _generateLabels(meta: IBudgetMeta): string[] {
     const { lengthScale, lengthTotal, monthStart = 1 } = meta;
-    // duplicate array so that can still slice up to 12 months from dec
-    let base = [...MONTHS, ...MONTHS];
     if (lengthScale === 'weeks') {
-      base = base.map((_, i) => `Week ${i + 1}`);
+      return new Array(lengthTotal).fill(0).map((_, i) => 'Week ' + (i + 1));
     }
     if (lengthScale === 'days') {
-      base = base.map((_, i) => `Day ${i + 1}`);
+      return new Array(lengthTotal).fill(0).map((_, i) => 'Day ' + (i + 1));
     }
-    const labels = base.slice(monthStart - 1, lengthTotal + monthStart - 1);
-    return labels;
+    if (lengthScale === 'months') {
+      // duplicate array so that can still slice up to 12 months from dec
+      let base = [...MONTHS, ...MONTHS];
+      return base.slice(monthStart - 1, lengthTotal + monthStart - 1);
+    }
   }
   // group all enterprise cards and create new parent card that will be used to reveal group
   private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {

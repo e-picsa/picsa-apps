@@ -15,8 +15,12 @@ const commonRoutes: Routes = [
       import('./pages/site-view/site-view.module').then(
         mod => mod.ClimateSiteViewPageModule
       )
+  },
+  {
+    path: 'site',
+    redirectTo: '',
+    pathMatch: 'full'
   }
-  // { path: '', redirectTo: '/site', pathMatch: 'full' }
 ];
 // catch-all routes conflict when embedded, so only use in standalone
 const standaloneRoutes: Routes = [
@@ -37,6 +41,11 @@ const embeddedRoutes = [
       import('./pages/site-view/site-view.module').then(
         mod => mod.ClimateSiteViewPageModule
       )
+  },
+  {
+    path: 'climate/site',
+    redirectTo: 'climate',
+    pathMatch: 'full'
   }
   // { path: '', redirectTo: '/site', pathMatch: 'full' }
 ];
