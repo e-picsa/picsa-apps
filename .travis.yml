@@ -16,7 +16,7 @@ script:
   # BUDGET-TOOL Specific
   - if [[ "$TRAVIS_BRANCH" = production/budget-tool ]]; then echo "building budget" && npm run build:budget; fi
   # EXTENSION-TOOLKIT Specific
-  - if [[ "$TRAVIS_BRANCH" = production/budget-tool ]]; then echo "building budget" && npm run build:extension; fi
+  - if [[ "$TRAVIS_BRANCH" = production/extension-toolkit ]]; then echo "building budget" && npm run build:extension; fi
 
 deploy:
   - provider: script
@@ -28,4 +28,4 @@ deploy:
     script: firebase deploy --only hosting:extension-toolkit
     skip_cleanup: true
     on:
-      branch: production/budget-tool
+      branch: production/extension-toolkit
