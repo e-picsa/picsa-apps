@@ -13,11 +13,19 @@ before_script:
 script:
   # populate production environment variables (currently just firebase config)
   - if [[ "$TRAVIS_BRANCH" = production/* ]]; then echo "setting production env" && npm run config:prod; fi
-  # build specific app
+  # BUDGET-TOOL Specific
   - if [[ "$TRAVIS_BRANCH" = production/budget-tool ]]; then echo "building budget" && npm run build:budget; fi
+  # EXTENSION-TOOLKIT Specific
+  - if [[ "$TRAVIS_BRANCH" = production/budget-tool ]]; then echo "building budget" && npm run build:extension; fi
+
 deploy:
   - provider: script
     script: firebase deploy --only hosting:budget-tool
+    skip_cleanup: true
+    on:
+      branch: production/budget-tool
+  - provider: script
+    script: firebase deploy --only hosting:extension-toolkit
     skip_cleanup: true
     on:
       branch: production/budget-tool

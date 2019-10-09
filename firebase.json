@@ -29,6 +29,16 @@
           "destination": "/index.html"
         }
       ]
+    },
+    {
+      "target": "extension-toolkit",
+      "public": "apps/extension-toolkit/www",
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }
