@@ -46,8 +46,6 @@ export class BudgetCellEditorComponent {
   // the store already knows what period and type it is, so just pass the updated values
   // back up to save
   onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
-    // reset substepper (in case already on values)
-    this.subStepper.reset();
     this.store.saveEditor(values, type);
   }
 

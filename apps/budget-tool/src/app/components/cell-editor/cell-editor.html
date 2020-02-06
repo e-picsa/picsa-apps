@@ -20,7 +20,7 @@
     <mat-step>
       <ng-template matStepLabel>{{ 'Inputs' | translate }}</ng-template>
       <mat-horizontal-stepper #subStepper>
-        <mat-step>
+        <mat-step aria-label="Select">
           <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
           <budget-cell-editor-card-select
             [values]="data.inputs"
@@ -31,7 +31,7 @@
           <next-button></next-button>
         </mat-step>
         <!-- Input Values -->
-        <mat-step>
+        <mat-step aria-label="Values">
           <ng-template matStepLabel>{{ 'Values' | translate }}</ng-template>
           <budget-cell-editor-input-values
             [cards]="data.inputs"
