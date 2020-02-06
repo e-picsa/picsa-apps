@@ -9,7 +9,8 @@
           "picsa-dash"
         ],
         "climate-tool":["picsa-climate-tool"],
-        "budget-tool":["picsa-budget-tool"]
+        "budget-tool":["picsa-budget-tool"],
+        "extension-toolkit":["picsa-extension-toolkit"]
       }
     }
   }
