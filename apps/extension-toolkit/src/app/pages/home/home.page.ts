@@ -30,16 +30,15 @@ export class HomePage implements OnInit {
     this.links = [
       {
         ...LINK_DEFAULTS,
-        name: 'Budget Tool',
-        icon: 'picsa_budget-tool',
-        url: '/budget'
-      },
-
-      {
-        ...LINK_DEFAULTS,
         name: 'Climate Tool',
         icon: 'picsa_climate-tool',
         url: '/climate'
+      },
+      {
+        ...LINK_DEFAULTS,
+        name: 'Budget Tool',
+        icon: 'picsa_budget-tool',
+        url: '/budget'
       },
       {
         ...LINK_DEFAULTS,
