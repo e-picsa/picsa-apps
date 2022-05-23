@@ -61,7 +61,7 @@
     "canvg": "^2.0.0",
     "core-js": "^3.2.1",
     "deepmerge": "^4.0.0",
-    "dexie": "^2.0.4",
+    "dexie": "^3.2.2",
     "downloadjs": "^1.4.7",
     "file-saver": "^2.0.2",
     "firebase": "^6.5.0",
