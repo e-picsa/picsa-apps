@@ -6,7 +6,7 @@
 /out-tsc
 
 # dependencies
-/node_modules
+node_modules
 
 # IDEs and editors
 /.idea
@@ -38,8 +38,15 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# nativescript
-hooks
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.angular
 
 # libs
 libs/**/*.js
@@ -49,14 +56,7 @@ libs/**/*.metadata.json
 libs/**/*.ngfactory.ts
 libs/**/*.ngsummary.json
 libs/environments/environment.prod.ts
-      
-# xplat
-xplat/**/*.js
-xplat/**/*.map
-xplat/**/*.d.ts
-xplat/**/*.metadata.json
-xplat/**/*.ngfactory.ts
-xplat/**/*.ngsummary.json
+libs/environments/firebase/config.prod.ts
 
 # map tiles   
 libs/features/map/tiles/assets-for-copy   
@@ -65,7 +65,6 @@ libs/features/map/tiles/**/*.png
 releases/
 apps/extension-toolkit/www_sourcemaps
 
-libs/environments/firebase/config.prod.ts
 .env
 *.keystore
 *.apk
