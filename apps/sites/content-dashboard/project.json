@@ -34,12 +34,7 @@
               "maximumError": "4kb"
             }
           ],
-          "fileReplacements": [
-            {
-              "replace": "apps/sites/content-dashboard/src/environments/environment.ts",
-              "with": "apps/sites/content-dashboard/src/environments/environment.prod.ts"
-            }
-          ],
+          "fileReplacements": [{}],
           "outputHashing": "all"
         },
         "development": {

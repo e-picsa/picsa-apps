@@ -15,6 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@picsa/*": ["libs/*"],
+      "@picsa/shared/*": ["libs/*"],
+      "@picsa/budget/*": ["apps/webcomponents/budget-tool/*"],
+      "@picsa/climate/*": ["apps/webcomponents/climate-tool/*"],
+      "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
+      "@picsa/extension/*": ["apps/native/extension-toolkit/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

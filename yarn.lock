@@ -2422,6 +2422,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/devkit@npm:^13.0.0":
+  version: 13.10.5
+  resolution: "@nrwl/devkit@npm:13.10.5"
+  dependencies:
+    ejs: ^3.1.5
+    ignore: ^5.0.4
+    rxjs: ^6.5.4
+    semver: 7.3.4
+    tslib: ^2.3.0
+  peerDependencies:
+    nx: ">= 13.10 <= 15"
+  checksum: 270b0bfddc256f6629e8510eb92aa6ee09fea6aa7276c74551664d7037262395d52a510a78d0502486003fb590f81c1975335569feb68f8be0b8c3e05765385c
+  languageName: node
+  linkType: hard
+
 "@nrwl/eslint-plugin-nx@npm:14.1.9":
   version: 14.1.9
   resolution: "@nrwl/eslint-plugin-nx@npm:14.1.9"
@@ -2624,6 +2639,17 @@ __metadata:
     prettier:
       optional: true
   checksum: 9c3f5778ad762653160902b611eca5b3d05be75b946d25eaf95b3eb808d22e401e89f96677deb8b8453a85c83c3415b1473752788997a1790a418667eb6c8f0c
+  languageName: node
+  linkType: hard
+
+"@nxtend/capacitor@npm:13.0.0":
+  version: 13.0.0
+  resolution: "@nxtend/capacitor@npm:13.0.0"
+  dependencies:
+    "@nrwl/devkit": ^13.0.0
+  peerDependencies:
+    "@nrwl/workspace": ^13.0.0
+  checksum: 44bd07170114f9d178821f1c48aabb3e4ba49e68cf0438fe19930716c90d49ee07ce8ab2aa980d14fe8bbc3058049038b8ed79c97737a07286e61c30c4445602
   languageName: node
   linkType: hard
 
@@ -5593,7 +5619,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ejs@npm:^3.1.7":
+"ejs@npm:^3.1.5, ejs@npm:^3.1.7":
   version: 3.1.8
   resolution: "ejs@npm:3.1.8"
   dependencies:
@@ -10060,6 +10086,7 @@ __metadata:
     "@nrwl/nest": 14.1.9
     "@nrwl/nx-cloud": latest
     "@nrwl/workspace": 14.1.9
+    "@nxtend/capacitor": 13.0.0
     "@types/jest": 27.4.1
     "@types/node": 16.11.7
     "@typescript-eslint/eslint-plugin": ~5.18.0

@@ -12,8 +12,8 @@ import { PicsaTranslateModule } from '@picsa/modules/translate';
 const routes: Routes = [
   {
     path: '',
-    component: HomePage
-  }
+    component: HomePage,
+  },
 ];
 
 @NgModule({
@@ -24,8 +24,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ComponentsModule,
     ExtensionToolkitMaterialModule,
-    PicsaTranslateModule
+    PicsaTranslateModule,
   ],
-  declarations: [HomePage]
+  declarations: [HomePage],
 })
 export class HomePageModule {}

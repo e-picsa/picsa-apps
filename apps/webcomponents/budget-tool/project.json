@@ -34,12 +34,7 @@
               "maximumError": "4kb"
             }
           ],
-          "fileReplacements": [
-            {
-              "replace": "apps/webcomponents/budget-tool/src/environments/environment.ts",
-              "with": "apps/webcomponents/budget-tool/src/environments/environment.prod.ts"
-            }
-          ],
+          "fileReplacements": [{}],
           "outputHashing": "all"
         },
         "development": {

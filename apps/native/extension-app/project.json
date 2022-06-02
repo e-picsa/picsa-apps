@@ -34,12 +34,7 @@
               "maximumError": "4kb"
             }
           ],
-          "fileReplacements": [
-            {
-              "replace": "apps/native/extension-app/src/environments/environment.ts",
-              "with": "apps/native/extension-app/src/environments/environment.prod.ts"
-            }
-          ],
+          "fileReplacements": [{}],
           "outputHashing": "all"
         },
         "development": {
