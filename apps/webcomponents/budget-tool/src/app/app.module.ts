@@ -14,7 +14,7 @@ import {
   PicsaNativeModule,
   PicsaTranslateModule,
   PicsaTranslateService,
-} from '@picsa/modules';
+} from '@picsa/shared/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BudgetMaterialModule } from './material.module';
 
@@ -57,7 +57,7 @@ export class AppModule {
 })
 export class AppEmbeddedModule {
   // ensure translate has been initiated
-  constructor(private translate: PicsaTranslateService) {}
+  constructor(public translate: PicsaTranslateService) {}
 }
 
 @NgModule({})

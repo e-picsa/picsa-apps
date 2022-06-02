@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import { PicsaMapModule } from '@picsa/features/map';
+import { PicsaMapModule } from '@picsa/shared/features/map';
 import { SiteSelectPage } from './site-select.page';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ClimateMaterialModule } from '@picsa/climate/src/app/material.module';
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: SiteSelectPage
-  }
+    component: SiteSelectPage,
+  },
 ];
 
 @NgModule({
@@ -21,8 +21,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     PicsaTranslateModule,
     ClimateMaterialModule,
-    PicsaMapModule
+    PicsaMapModule,
   ],
-  declarations: [SiteSelectPage]
+  declarations: [SiteSelectPage],
 })
 export class ClimateSiteSelectPageModule {}

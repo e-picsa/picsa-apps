@@ -5,7 +5,7 @@ import {
   IBudgetPeriodType,
   IBudgetPeriodData,
 } from '../../models/budget-tool.models';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
+import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router, ActivatedRoute } from '@angular/router';

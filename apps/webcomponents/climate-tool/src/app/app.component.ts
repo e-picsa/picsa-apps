@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { PicsaTranslateService } from '@picsa/modules/translate';
+import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 
 @Component({
   selector: 'climate-tool',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'climate-tool';
@@ -34,7 +34,7 @@ export class AppComponent {
   selector: 'climate-tool',
   // use empty template as router outlet not required
   template: '',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponentEmbedded extends AppComponent {}
 
@@ -42,5 +42,5 @@ export const CLIMATE_ICONS = {
   station: 'station',
   chart: 'chart',
   download: 'download',
-  controls: 'controls'
+  controls: 'controls',
 };

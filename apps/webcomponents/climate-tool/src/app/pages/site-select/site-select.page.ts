@@ -6,7 +6,7 @@ import {
   IBasemapOptions,
   IMapOptions,
   IMapMarker,
-} from '@picsa/features/map/map';
+} from '@picsa/shared/features/map/map';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({

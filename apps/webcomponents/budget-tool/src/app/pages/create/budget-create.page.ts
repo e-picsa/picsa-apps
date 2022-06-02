@@ -4,18 +4,18 @@ import { BudgetStore } from '../../store/budget.store';
 import {
   IEnterpriseScaleLentgh,
   IBudgetMeta,
-  IBudgetCard
+  IBudgetCard,
 } from '../../models/budget-tool.models';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
+import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 
 @Component({
   selector: 'budget-create',
   templateUrl: './budget-create.page.html',
   styleUrls: ['./budget-create.page.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED)]
+  animations: [FadeInOut(ANIMATION_DELAYED)],
 })
 export class BudgetCreatePage implements OnInit {
   budgetMetaForm: FormGroup;
@@ -58,7 +58,7 @@ export class BudgetCreatePage implements OnInit {
     // TODO - defaults no longer set for each enterprise,
     // possibly find a way to store somewhere and lookup
     this.budgetMetaForm.patchValue({
-      enterprise: enterprise
+      enterprise: enterprise,
     });
   }
 
@@ -74,7 +74,7 @@ export class BudgetCreatePage implements OnInit {
     const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
     await this.store.patchBudget({ data, meta });
     this.router.navigate(['../', 'view', this.store.activeBudget._key], {
-      relativeTo: this.route
+      relativeTo: this.route,
     });
   }
 
@@ -88,7 +88,7 @@ export class BudgetCreatePage implements OnInit {
     const requiredFields1: IBudgetMetaKey[] = [
       'enterprise',
       'title',
-      'lengthScale'
+      'lengthScale',
     ];
     this.budgetMetaForm = this._generateFormFromValues(
       this.store.activeBudget.meta,
@@ -101,10 +101,10 @@ export class BudgetCreatePage implements OnInit {
   private _generateFormFromValues(v: any, requiredFields: string[] = []) {
     const fieldGroup = {};
     Object.keys(v).forEach(
-      key =>
+      (key) =>
         (fieldGroup[key] = [
           v[key],
-          requiredFields.includes(key) ? Validators.required : null
+          requiredFields.includes(key) ? Validators.required : null,
         ])
     );
     return this.fb.group(fieldGroup);

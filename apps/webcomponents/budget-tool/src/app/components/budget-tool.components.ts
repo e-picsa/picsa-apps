@@ -11,15 +11,15 @@ import { FormsModule } from '@angular/forms';
 import { BudgetMaterialModule } from '../material.module';
 import {
   BudgetListItemComponent,
-  BudgetListItemRenameDialog
+  BudgetListItemRenameDialog,
 } from './list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
 import { MobxAngularModule } from 'mobx-angular';
-import { PicsaDbModule } from '@picsa/modules';
+import { PicsaDbModule } from '@picsa/shared/modules';
 import {
   BudgetBalanceLegendComponent,
-  BudgetBalanceEditorComponent
+  BudgetBalanceEditorComponent,
 } from './balance/balance-legend/balance-legend';
 import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
@@ -30,8 +30,8 @@ import { RouterModule } from '@angular/router';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
 import { NextButton } from './general/next-button';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
-import { PicsaDialogsModule } from '@picsa/features';
-import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaDialogsModule } from '@picsa/shared/features';
+import { PicsaCommonComponentsModule } from '@picsa/shared/components';
 
 @NgModule({
   declarations: [
@@ -53,7 +53,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     BudgetListItemRenameDialog,
     BudgetPeriodSummaryComponent,
     BudgetTableComponent,
-    NextButton
+    NextButton,
   ],
   imports: [
     IonicModule,
@@ -66,7 +66,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     CanvasWhiteboardModule,
     MobxAngularModule,
     PicsaDbModule,
-    RouterModule
+    RouterModule,
   ],
   exports: [
     BudgetBalanceLegendComponent,
@@ -85,12 +85,12 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     BudgetTableComponent,
     BudgetPeriodSummaryComponent,
     NextButton,
-    PicsaCommonComponentsModule
+    PicsaCommonComponentsModule,
   ],
   entryComponents: [
     BudgetBalanceEditorComponent,
     BudgetCardNewDialog,
-    BudgetListItemRenameDialog
-  ]
+    BudgetListItemRenameDialog,
+  ],
 })
 export class BudgetToolComponentsModule {}

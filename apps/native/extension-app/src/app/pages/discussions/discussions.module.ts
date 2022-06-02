@@ -6,15 +6,15 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { DiscussionsPage } from './discussions.page';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ComponentsModule } from '../../components/components.module';
-import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaCommonComponentsModule } from '@picsa/shared/components';
 
 const routes: Routes = [
   {
     path: '',
-    component: DiscussionsPage
-  }
+    component: DiscussionsPage,
+  },
 ];
 
 @NgModule({
@@ -25,8 +25,8 @@ const routes: Routes = [
     ComponentsModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
-    PicsaCommonComponentsModule
+    PicsaCommonComponentsModule,
   ],
-  declarations: [DiscussionsPage]
+  declarations: [DiscussionsPage],
 })
 export class DiscussionsPageModule {}

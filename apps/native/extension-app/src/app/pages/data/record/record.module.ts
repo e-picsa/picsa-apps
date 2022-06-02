@@ -6,13 +6,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { RecordPage } from './record.page';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 const routes: Routes = [
   {
     path: '',
-    component: RecordPage
-  }
+    component: RecordPage,
+  },
 ];
 
 @NgModule({
@@ -21,9 +21,9 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    PicsaTranslateModule
+    PicsaTranslateModule,
   ],
   declarations: [RecordPage],
-  entryComponents: []
+  entryComponents: [],
 })
 export class RecordPageModule {}

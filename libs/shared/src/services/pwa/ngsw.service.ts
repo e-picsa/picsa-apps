@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { SwUpdate } from '@angular/service-worker';
-import { PicsaTranslateService } from '@picsa/modules/translate';
+import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ServiceWorkerService {
   // want to use on all live sites as well as firebase production serve
@@ -30,7 +30,7 @@ export class ServiceWorkerService {
       closeButtonText: 'Reload',
       message: message,
       showCloseButton: true,
-      position: 'bottom'
+      position: 'bottom',
     });
     await toast.present();
     await toast.onDidDismiss();
@@ -41,12 +41,12 @@ export class ServiceWorkerService {
     // console.log("push enabled?", this.push.isEnabled);
   }
   private _subscribeToUpdates() {
-    this.swUpdate.available.subscribe(event => {
+    this.swUpdate.available.subscribe((event) => {
       console.log('current version is', event.current);
       console.log('available version is', event.available);
       this.promptUpdate();
     });
-    this.swUpdate.activated.subscribe(event => {
+    this.swUpdate.activated.subscribe((event) => {
       console.log('old version was', event.previous);
       console.log('new version is', event.current);
       location.reload();

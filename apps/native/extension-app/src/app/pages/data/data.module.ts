@@ -6,18 +6,18 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { DataPage } from './data.page';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 const routes: Routes = [
   {
     path: '',
-    component: DataPage
+    component: DataPage,
   },
   {
     path: 'record',
     loadChildren: () =>
-      import('./record/record.module').then(mod => mod.RecordPageModule)
-  }
+      import('./record/record.module').then((mod) => mod.RecordPageModule),
+  },
 ];
 
 @NgModule({
@@ -26,8 +26,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    PicsaTranslateModule
+    PicsaTranslateModule,
   ],
-  declarations: [DataPage]
+  declarations: [DataPage],
 })
 export class DataPageModule {}

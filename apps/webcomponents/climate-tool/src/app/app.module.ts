@@ -6,8 +6,8 @@ import {
   AppRoutingModule,
   ClimateToolRoutingModule,
 } from './app-routing.module';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
-import { PicsaDbModule } from '@picsa/modules/db.module';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { PicsaDbModule } from '@picsa/shared/modules/db.module';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';

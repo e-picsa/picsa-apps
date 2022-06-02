@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
-import { PicsaDialogService } from '@picsa/features';
+import { PicsaDialogService } from '@picsa/shared/features';
 import { IRegionLang } from '@picsa/models';
 
 @Component({
   selector: 'language-select',
   templateUrl: 'language-select.html',
-  styleUrls: ['./language-select.scss']
+  styleUrls: ['./language-select.scss'],
 })
 export class LanguageSelectComponent implements OnInit {
   languages: IRegionLang[] = ENVIRONMENT.region.languages;
@@ -17,18 +17,18 @@ export class LanguageSelectComponent implements OnInit {
   ngOnInit() {}
 
   async openLanguageSelect() {
-    const selectOptions = this.languages.map(l => {
+    const selectOptions = this.languages.map((l) => {
       return {
         image: `assets/images/flags/${l.country}.svg`,
         text: l.label,
-        data: l
+        data: l,
       };
     });
     const dialog = await this.dialog.open('languageSelect', {
       selectOptions,
-      title: 'Select Language'
+      title: 'Select Language',
     });
-    await dialog.afterClosed().subscribe(data => {
+    await dialog.afterClosed().subscribe((data) => {
       if (data) {
         this.setLanguage(data);
       }

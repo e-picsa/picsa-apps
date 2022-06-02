@@ -7,13 +7,13 @@ import { BudgetMaterialModule } from '../../material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MobxAngularModule } from 'mobx-angular';
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 const routes: Routes = [
   {
     path: '',
-    component: BudgetCreatePage
-  }
+    component: BudgetCreatePage,
+  },
 ];
 
 @NgModule({
@@ -25,8 +25,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     MobxAngularModule,
     BudgetToolComponentsModule,
-    PicsaTranslateModule
+    PicsaTranslateModule,
   ],
-  declarations: [BudgetCreatePage]
+  declarations: [BudgetCreatePage],
 })
 export class BudgetCreatePageModule {}

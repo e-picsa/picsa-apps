@@ -6,13 +6,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ErrorPage } from './error.page';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 const routes: Routes = [
   {
     path: '',
-    component: ErrorPage
-  }
+    component: ErrorPage,
+  },
 ];
 
 @NgModule({
@@ -21,8 +21,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    PicsaTranslateModule
+    PicsaTranslateModule,
   ],
-  declarations: [ErrorPage]
+  declarations: [ErrorPage],
 })
 export class ErrorPageModule {}

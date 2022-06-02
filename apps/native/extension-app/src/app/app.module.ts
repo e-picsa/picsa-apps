@@ -9,8 +9,8 @@ import { MobxAngularModule } from 'mobx-angular';
 import {
   PicsaDbModule,
   PicsaNativeModule,
-  PicsaTranslateModule
-} from '@picsa/modules';
+  PicsaTranslateModule,
+} from '@picsa/shared/modules';
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 // NOTE - climate slider requires import into main modules
@@ -46,10 +46,10 @@ export class SentryIonicErrorHandler extends ErrorHandler {
     PicsaTranslateModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
-    IonicModule.forRoot()
+    IonicModule.forRoot(),
   ],
   providers: [{ provide: ErrorHandler, useClass: SentryIonicErrorHandler }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
 

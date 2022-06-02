@@ -3,7 +3,7 @@ import { IBudget } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PrintProvider } from '@picsa/shared/services/native/print';
-import { PicsaDialogService } from '@picsa/features';
+import { PicsaDialogService } from '@picsa/shared/features';
 @Component({
   selector: 'budget-home',
   templateUrl: './budget-home.page.html',

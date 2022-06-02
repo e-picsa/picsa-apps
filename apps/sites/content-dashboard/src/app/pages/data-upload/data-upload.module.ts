@@ -6,7 +6,7 @@ import { DataUpload } from './data-upload.page';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PicsaChartsModule } from '@picsa/features';
+import { PicsaChartsModule } from '@picsa/shared/features';
 import { PicsaMaterialModule } from '../../material.module';
 import { StationDataComponentsModule } from '../../components/components.module';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,8 +14,8 @@ import { HttpClientModule } from '@angular/common/http';
 const routes: Routes = [
   {
     path: '',
-    component: DataUpload
-  }
+    component: DataUpload,
+  },
 ];
 
 @NgModule({
@@ -29,8 +29,8 @@ const routes: Routes = [
     StationDataComponentsModule,
     HttpClientModule,
     PapaParseModule,
-    PicsaChartsModule
+    PicsaChartsModule,
   ],
-  declarations: [DataUpload]
+  declarations: [DataUpload],
 })
 export class DataUploadModule {}

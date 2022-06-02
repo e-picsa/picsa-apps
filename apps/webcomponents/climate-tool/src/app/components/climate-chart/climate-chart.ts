@@ -1,13 +1,13 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { PicsaDialogService } from '@picsa/features/dialog';
-import { PicsaTranslateService } from '@picsa/modules/translate';
+import { PicsaDialogService } from '@picsa/shared/features/dialog';
+import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import {
   IChartMeta,
   IChartSummary,
   IChartConfig,
   IStationMeta,
 } from '@picsa/models';
-import { PicsaChartComponent } from '@picsa/features/charts/chart';
+import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { Subject } from 'rxjs';
 import { delay, take } from 'rxjs/operators';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';

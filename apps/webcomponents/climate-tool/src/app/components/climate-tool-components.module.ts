@@ -4,13 +4,13 @@ import { CombinedProbabilityComponent } from './combined-probability/combined-pr
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ViewSelectComponent } from './view-select/view-select';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ClimateMaterialModule } from '../material.module';
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
-import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/features';
+import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/shared/features';
 import { ChartOptionsComponent } from './chart-options/chart-options';
-import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaCommonComponentsModule } from '@picsa/shared/components';
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     ViewSelectComponent,
     ProbabilityToolComponent,
     CropAnalysisComponent,
-    ChartOptionsComponent
+    ChartOptionsComponent,
   ],
   imports: [
     CommonModule,
@@ -29,7 +29,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     PicsaCommonComponentsModule,
     ClimateMaterialModule,
     PicsaChartsModule,
-    PicsaDialogsModule
+    PicsaDialogsModule,
   ],
   exports: [
     ClimateChartComponent,
@@ -37,8 +37,8 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     ViewSelectComponent,
     ProbabilityToolComponent,
     CropAnalysisComponent,
-    PicsaCommonComponentsModule
+    PicsaCommonComponentsModule,
   ],
-  entryComponents: [ChartOptionsComponent]
+  entryComponents: [ChartOptionsComponent],
 })
 export class ClimateToolComponentsModule {}

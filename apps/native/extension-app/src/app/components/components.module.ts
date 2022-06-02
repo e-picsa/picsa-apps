@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
-import { PicsaDialogsModule } from '@picsa/features';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { PicsaDialogsModule } from '@picsa/shared/features';
 import { ExtensionToolkitMaterialModule } from '../material.module';
 import { LanguageSelectComponent } from './language-select/language-select';
 import { UserGroupComponent } from './user-group/user-group';
@@ -15,7 +15,7 @@ import { ResourceItemComponent } from './resource-item/resource-item';
     UserGroupComponent,
     WhatsappGroupComponent,
     LanguageSelectComponent,
-    ResourceItemComponent
+    ResourceItemComponent,
   ],
   imports: [
     CommonModule,
@@ -24,13 +24,13 @@ import { ResourceItemComponent } from './resource-item/resource-item';
     PicsaTranslateModule,
     ExtensionToolkitMaterialModule,
     PicsaDialogsModule,
-    ExtensionToolkitMaterialModule
+    ExtensionToolkitMaterialModule,
   ],
   exports: [
     UserGroupComponent,
     WhatsappGroupComponent,
     LanguageSelectComponent,
-    ResourceItemComponent
-  ]
+    ResourceItemComponent,
+  ],
 })
 export class ComponentsModule {}

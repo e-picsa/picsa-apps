@@ -5,7 +5,7 @@ import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { LanguageCode } from '@picsa/models';
-import { PicsaTranslateService } from '@picsa/modules/translate';
+import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import { toJS } from 'mobx';
 
 @Injectable({

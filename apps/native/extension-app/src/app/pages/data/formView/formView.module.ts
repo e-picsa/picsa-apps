@@ -6,14 +6,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { FormViewPage } from './formView.page';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ComponentsModule } from '../../../components/components.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: FormViewPage
-  }
+    component: FormViewPage,
+  },
 ];
 
 @NgModule({
@@ -23,8 +23,8 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
-    ComponentsModule
+    ComponentsModule,
   ],
-  declarations: [FormViewPage]
+  declarations: [FormViewPage],
 })
 export class FormViewPageModule {}

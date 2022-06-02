@@ -3,16 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { ClimateSiteViewPage } from './site-view.page';
-import { PicsaChartsModule } from '@picsa/features';
+import { PicsaChartsModule } from '@picsa/shared/features';
 import { ClimateToolComponentsModule } from '@picsa/climate/src/app/components/climate-tool-components.module';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ClimateMaterialModule } from '@picsa/climate/src/app/material.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: ClimateSiteViewPage
-  }
+    component: ClimateSiteViewPage,
+  },
 ];
 
 @NgModule({
@@ -23,8 +23,8 @@ const routes: Routes = [
     PicsaTranslateModule,
     ClimateMaterialModule,
     PicsaChartsModule,
-    FormsModule
+    FormsModule,
   ],
-  declarations: [ClimateSiteViewPage]
+  declarations: [ClimateSiteViewPage],
 })
 export class ClimateSiteViewPageModule {}

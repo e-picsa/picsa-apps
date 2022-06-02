@@ -5,17 +5,17 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { ResourcesPage } from './resources.page';
 import { NgxYoutubePlayerModule } from 'ngx-youtube-player';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { MobxAngularModule } from 'mobx-angular';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
 import { ComponentsModule } from '../../components/components.module';
-import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaCommonComponentsModule } from '@picsa/shared/components';
 
 const routes: Routes = [
   {
     path: '',
-    component: ResourcesPage
-  }
+    component: ResourcesPage,
+  },
 ];
 
 @NgModule({
@@ -28,8 +28,8 @@ const routes: Routes = [
     PicsaTranslateModule,
     PicsaCommonComponentsModule,
     MobxAngularModule,
-    ExtensionToolkitMaterialModule
+    ExtensionToolkitMaterialModule,
   ],
-  declarations: [ResourcesPage]
+  declarations: [ResourcesPage],
 })
 export class ResourcesPageModule {}

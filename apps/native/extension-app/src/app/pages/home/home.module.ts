@@ -7,7 +7,7 @@ import { HomePage } from './home.page';
 import { ComponentsModule } from '@picsa/extension/src/app/components/components.module';
 import { ExtensionToolkitMaterialModule } from '@picsa/extension/src/app/material.module';
 import { MobxAngularModule } from 'mobx-angular';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 const routes: Routes = [
   {

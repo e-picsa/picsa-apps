@@ -1,4 +1,4 @@
 import ENVIRONMENT from './environment';
-export * from './version';
+import { APP_VERSION } from './version';
 
-export { ENVIRONMENT };
+export { ENVIRONMENT, APP_VERSION };

@@ -6,14 +6,14 @@ import { IonicModule } from '@ionic/angular';
 import { BudgetViewPage } from './budget-view.page';
 import { BudgetMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
-import { PicsaTranslateModule } from '@picsa/modules/translate';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 
 const routes: Routes = [
   {
     path: '',
-    component: BudgetViewPage
-  }
+    component: BudgetViewPage,
+  },
 ];
 
 @NgModule({
@@ -25,8 +25,8 @@ const routes: Routes = [
     PicsaTranslateModule,
     BudgetMaterialModule,
     BudgetToolComponentsModule,
-    MobxAngularModule
+    MobxAngularModule,
   ],
-  declarations: [BudgetViewPage]
+  declarations: [BudgetViewPage],
 })
 export class BudgetViewPageModule {}

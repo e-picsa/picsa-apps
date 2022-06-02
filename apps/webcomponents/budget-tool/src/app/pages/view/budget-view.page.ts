@@ -7,7 +7,7 @@ import {
   FlyInOut,
   ANIMATION_DELAYED,
   ANIMATION_DEFAULTS_Y,
-} from '@picsa/animations';
+} from '@picsa/shared/animations';
 import { Subscription } from 'rxjs';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 
