@@ -1,10 +1,10 @@
 import { IPicsaDialogData, IPicsaDialogConfig } from '../dialog.models';
-import { MatDialogConfig } from '@angular/material';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { TemplateRef } from '@angular/core';
 import {
   PicsaActionDialog,
   PicsaDialogComponent,
-  PicsaSelectDialog
+  PicsaSelectDialog,
 } from './dialog';
 import { ComponentType } from '@angular/cdk/portal';
 
@@ -15,7 +15,7 @@ const PICSA_DIALOG_DEFAULTS: MatDialogConfig = {
   disableClose: true,
   data: {},
   height: '250px',
-  width: '250px'
+  width: '250px',
 };
 
 // very long-winded way of specifying types due to difficulties pulling keys from cutom templates (ts 2.9 changes)
@@ -31,7 +31,7 @@ const CUSTOM_TEMPLATES: { [key in ICustomTemplate]: CustomTemplateFields } = {
   blank: {
     component: PicsaActionDialog,
     data: {},
-    config: PICSA_DIALOG_DEFAULTS
+    config: PICSA_DIALOG_DEFAULTS,
   },
   delete: {
     component: PicsaActionDialog,
@@ -40,25 +40,25 @@ const CUSTOM_TEMPLATES: { [key in ICustomTemplate]: CustomTemplateFields } = {
       buttons: [
         {
           text: 'Cancel',
-          value: false
+          value: false,
         },
         {
           text: 'Delete',
           value: true,
-          focus: true
-        }
-      ]
+          focus: true,
+        },
+      ],
     },
     config: {
       ...PICSA_DIALOG_DEFAULTS,
-      height: '180px'
-    }
+      height: '180px',
+    },
   },
   languageSelect: {
     component: PicsaSelectDialog,
     data: {},
-    config: PICSA_DIALOG_DEFAULTS
-  }
+    config: PICSA_DIALOG_DEFAULTS,
+  },
 };
 
 export default CUSTOM_TEMPLATES;

@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { PicsaDbService } from '@picsa/services/core/db';
 import { DBCacheService } from '@picsa/services/core/db/_cache.db';
 import { DBServerService } from '@picsa/services/core/db/_server.db';
-import { AngularFireModule, FirebaseOptionsToken } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireModule, FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import ENVIRONMENT from '@picsa/environments/environment';
 import { DBSyncService } from '@picsa/services/core/db/sync.service';
 
@@ -19,9 +19,7 @@ import { DBSyncService } from '@picsa/services/core/db/sync.service';
     AngularFirestoreModule,
     AngularFireAuthModule,
   ],
-  providers: [
-    { provide: FirebaseOptionsToken, useValue: ENVIRONMENT.firebase },
-  ],
+  providers: [{ provide: FIREBASE_OPTIONS, useValue: ENVIRONMENT.firebase }],
 })
 export class PicsaDbModule {
   static forRoot(): ModuleWithProviders<PicsaDbModule> {
