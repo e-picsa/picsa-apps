@@ -2,8 +2,11 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "environments": "libs/environments",
+    "models": "libs/models",
     "native-extension-app": "apps/native/extension-app",
     "native-extension-app-e2e": "apps/native/extension-app-e2e",
+    "shared": "libs/shared",
     "sites-content-dashboard": "apps/sites/content-dashboard",
     "sites-content-dashboard-e2e": "apps/sites/content-dashboard-e2e",
     "webcomponents-budget-tool": "apps/webcomponents/budget-tool",

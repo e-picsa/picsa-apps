@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
 import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
@@ -7,7 +7,7 @@ import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
 @Component({
   selector: 'picsa-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'extension-toolkit';
@@ -30,7 +30,7 @@ export class AppComponent {
       'data-collection': 'data-collection',
       'budget-tool': 'budget-tool',
       'climate-tool': 'climate-tool',
-      whatsapp: 'whatsapp'
+      whatsapp: 'whatsapp',
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(

@@ -1,13 +1,13 @@
 import { IEnvironment } from '../models';
-import GROUPS from '@picsa/environments/groups';
-import REGIONS from '@picsa/environments/regions';
+import GROUPS from './groups';
+import REGIONS from './regions';
 import FIREBASE_CONFIG from './firebase/config';
 
 const DEFAULT_ENVIRONMENT: IEnvironment = {
   firebase: FIREBASE_CONFIG,
   group: GROUPS.MALAWI,
   region: REGIONS.MALAWI,
-  enableProduction: true
+  enableProduction: true,
 };
 
 export default DEFAULT_ENVIRONMENT;

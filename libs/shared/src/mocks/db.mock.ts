@@ -1,4 +1,4 @@
-import { AbstractDBService } from '@picsa/services/core/db/abstract.db';
+import { AbstractDBService } from '@picsa/shared/services/core/db/abstract.db';
 import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
 import { firestore } from 'firebase/app';
 
@@ -21,7 +21,7 @@ export class MockDB implements AbstractDBService {
   async setDocs<T>(endpoint: IDBEndpoint, docs: T[]) {
     await this._wait();
     // TODO - some sort of data check here
-    return docs.map(d => {
+    return docs.map((d) => {
       return { ...d, ...this.meta() };
     });
   }
@@ -34,19 +34,17 @@ export class MockDB implements AbstractDBService {
     return {
       _key: _key ? _key : this._generateKey(),
       _created: _created ? _created : new Date().toISOString(),
-      _modified: new Date().toISOString()
+      _modified: new Date().toISOString(),
     };
   }
 
   private _generateKey = () => {
-    const key = firestore()
-      .collection('_')
-      .doc().id;
+    const key = firestore().collection('_').doc().id;
     console.log('key', key);
     return key;
   };
 
   private _wait(ms: number = Math.random() * 5000) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

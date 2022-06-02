@@ -1,17 +1,16 @@
-import {
-  MatButtonModule,
-  MatCheckboxModule,
-  MatStepperModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatSelectModule,
-  MatToolbarModule,
-  MatListModule,
-  MatCardModule,
-  MatIconModule,
-  MatTableModule,
-  MatPaginatorModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 
@@ -30,7 +29,7 @@ import { NgModule } from '@angular/core';
     MatCardModule,
     MatPaginatorModule,
     MatTableModule,
-    DragDropModule
+    DragDropModule,
   ],
   exports: [
     MatButtonModule,
@@ -45,7 +44,7 @@ import { NgModule } from '@angular/core';
     MatCardModule,
     MatPaginatorModule,
     MatTableModule,
-    DragDropModule
-  ]
+    DragDropModule,
+  ],
 })
 export class PicsaMaterialModule {}

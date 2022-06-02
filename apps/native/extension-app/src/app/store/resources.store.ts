@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
 import { IResource } from '../models/models';
-import { PicsaDbService } from '@picsa/services/core/db';
-import { PicsaFileService } from '@picsa/services/native/file-service';
+import { PicsaDbService } from '@picsa/shared/services/core/db';
+import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { RESOURCES } from '../data';
 import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
@@ -12,7 +12,7 @@ import { toJS } from 'mobx';
  *  The resources store offers methods to list, download and open resources.
  ****************************************************************************************/
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ResourcesStore {
   @observable resources: IResource[] = [];
@@ -90,23 +90,23 @@ export class ResourcesStore {
   downloadResource(resource: IResource) {
     console.log('downloading resource', resource.weblink);
     // only download on cordova
-    return new Observable<number>(observer => {
+    return new Observable<number>((observer) => {
       if (this.platform.is('cordova')) {
         // double check not already downloaded
         if (!this.downloads.includes(resource.filename)) {
           this.fileService
             .downloadToStorage(resource.weblink, 'resources', resource.filename)
             .subscribe(
-              progress => {
+              (progress) => {
                 const p = Math.round((progress.loaded / progress.total) * 100);
                 observer.next(p);
               },
-              err => {
+              (err) => {
                 throw err;
               },
               () =>
                 this.updateCachedResource(resource, {
-                  _isDownloaded: true
+                  _isDownloaded: true,
                 }).then(() => observer.complete())
             );
         }
@@ -130,7 +130,7 @@ export class ResourcesStore {
 
   private async _checkForUpdates(cached: IResource[]) {
     const latest = cached
-      .map(r => r._modified)
+      .map((r) => r._modified)
       .sort()
       .reverse()[0];
     const updates = await this.db.getCollection('resources', 'server', latest);
@@ -146,8 +146,8 @@ export class ResourcesStore {
   private async checkHardcodedData(cached: IResource[]) {
     // check if cache resources are fresher than hardcoded
     const cacheList = {};
-    cached.forEach(r => (cacheList[r._key] = r._modified));
-    const newerResources = RESOURCES.filter(r => {
+    cached.forEach((r) => (cacheList[r._key] = r._modified));
+    const newerResources = RESOURCES.filter((r) => {
       const lastCache = cacheList[r._key];
       return !lastCache || lastCache < r._modified;
     });

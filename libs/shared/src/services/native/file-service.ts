@@ -9,7 +9,7 @@ import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { APP_VERSION } from '@picsa/environments/version';
+import { APP_VERSION } from '@picsa/environments';
 
 declare const cordova: any;
 

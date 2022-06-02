@@ -4,10 +4,10 @@ import { observable, action } from 'mobx-angular';
 import { toJS } from 'mobx';
 import { Injectable } from '@angular/core';
 import { IForm, IFormResponse, IFormDB } from '../models/models';
-import { PicsaDbService, generateDBMeta } from '@picsa/services/core/db';
+import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FormStore {
   @observable forms: IFormDB[];
@@ -46,7 +46,7 @@ export class FormStore {
     // add to firebase forms
     this.db.setDoc(`forms/${this.activeForm._key}/submissions` as any, {
       ...generateDBMeta(),
-      ...response
+      ...response,
     });
     setTimeout(() => {
       // this.modalCtrl.dismiss();
@@ -54,7 +54,7 @@ export class FormStore {
   }
 
   private _getFormByKey(key: string) {
-    return this.forms.find(form => form._key === key);
+    return this.forms.find((form) => form._key === key);
   }
 
   private saveFormResponse(formID: string, response: IFormResponse) {

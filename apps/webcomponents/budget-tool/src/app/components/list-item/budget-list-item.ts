@@ -4,18 +4,22 @@ import {
   Input,
   Output,
   EventEmitter,
-  Inject
+  Inject,
 } from '@angular/core';
 import { IBudget } from '../../models/budget-tool.models';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog,
+} from '@angular/material/dialog';
 import { BudgetStore } from '../../store/budget.store';
-import { generateDBMeta } from '@picsa/services/core/db';
+import { generateDBMeta } from '@picsa/shared/services/core/db';
 import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-list-item',
   templateUrl: './budget-list-item.html',
-  styleUrls: ['./budget-list-item.scss']
+  styleUrls: ['./budget-list-item.scss'],
 })
 export class BudgetListItemComponent {
   @Input() budget: IBudget;
@@ -36,9 +40,9 @@ export class BudgetListItemComponent {
     const editableCopy = { ...toJS(this.budget), ...generateDBMeta() };
     const dialogRef = this.dialog.open(BudgetListItemRenameDialog, {
       width: '250px',
-      data: editableCopy
+      data: editableCopy,
     });
-    dialogRef.afterClosed().subscribe(budget => {
+    dialogRef.afterClosed().subscribe((budget) => {
       if (budget) {
         this.store.setActiveBudget(budget);
         this.store.saveBudget();
@@ -49,10 +53,10 @@ export class BudgetListItemComponent {
     const editableBudget = { ...toJS(this.budget) };
     const dialogRef = this.dialog.open(BudgetListItemRenameDialog, {
       width: '250px',
-      data: editableBudget
+      data: editableBudget,
     });
 
-    dialogRef.afterClosed().subscribe(budget => {
+    dialogRef.afterClosed().subscribe((budget) => {
       if (budget) {
         this.store.setActiveBudget(budget);
         this.store.saveBudget();
@@ -85,7 +89,7 @@ export class BudgetListItemComponent {
       <button mat-button mat-dialog-close>Cancel</button>
       <button mat-button [mat-dialog-close]="editableBudget">Save</button>
     </div>
-  `
+  `,
 })
 export class BudgetListItemRenameDialog {
   constructor(

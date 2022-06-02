@@ -1,16 +1,15 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { ENVIRONMENT } from '@picsa/environments';
-import { APP_VERSION } from '@picsa/environments/version';
+import { ENVIRONMENT, APP_VERSION } from '@picsa/environments';
 import { UserStore } from '../../store/user.store';
 import { LanguageCode } from '@picsa/models';
-import { PicsaFileService } from '@picsa/services/native';
+import { PicsaFileService } from '@picsa/shared/services/native';
 import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss']
+  styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
   links: ILink[];
@@ -32,26 +31,26 @@ export class HomePage implements OnInit {
         ...LINK_DEFAULTS,
         name: 'Climate Tool',
         icon: 'picsa_climate-tool',
-        url: '/climate'
+        url: '/climate',
       },
       {
         ...LINK_DEFAULTS,
         name: 'Budget Tool',
         icon: 'picsa_budget-tool',
-        url: '/budget'
+        url: '/budget',
       },
       {
         ...LINK_DEFAULTS,
         name: 'Resources',
         icon: 'picsa_resources',
-        url: '/resources'
+        url: '/resources',
       },
       {
         ...LINK_DEFAULTS,
         name: 'Discussions',
         icon: 'picsa_discussions',
-        url: '/discussions'
-      }
+        url: '/discussions',
+      },
       // {
       //   ...LINK_DEFAULTS,
       //   name: 'Data Collection',
@@ -97,7 +96,7 @@ export class HomePage implements OnInit {
 
 const LINK_DEFAULTS: ILink = {
   cols: 1,
-  rows: 1
+  rows: 1,
 };
 
 interface ILink {

@@ -6,12 +6,12 @@ import { ActivatedRoute } from '@angular/router';
 import { UserStore } from '../../../store/user.store';
 import { IForm, IFormResponse, IUser } from '../../../models/models';
 import { FormStore } from '../../../store/form.store';
-import { generateDBMeta } from '@picsa/services/core/db';
+import { generateDBMeta } from '@picsa/shared/services/core/db';
 
 @Component({
   selector: 'app-form-view',
   templateUrl: './formView.page.html',
-  styleUrls: ['./formView.page.scss']
+  styleUrls: ['./formView.page.scss'],
 })
 export class FormViewPage implements OnInit {
   form: IForm;
@@ -62,7 +62,7 @@ export class FormViewPage implements OnInit {
       ...data,
       _userID: user.id ? user.id : null,
       _submitted: new Date().toISOString(),
-      ...generateDBMeta()
+      ...generateDBMeta(),
     };
   }
 }

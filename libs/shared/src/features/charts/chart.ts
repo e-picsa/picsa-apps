@@ -4,18 +4,18 @@ import {
   Input,
   ElementRef,
   SimpleChanges,
-  OnInit
+  OnInit,
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
-import { PrintProvider } from '@picsa/services/native';
+import { PrintProvider } from '../../services/native';
 
 @Component({
   selector: 'picsa-chart',
   template: ``,
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 /*  angular wrapper for c3.js lib
     see https://github.com/emn178/angular2-chartjs/blob/master/src/chart.component.ts
@@ -30,7 +30,7 @@ export class PicsaChartComponent implements OnInit {
   ) {}
 
   @Input() data: c3.Data = {
-    columns: []
+    columns: [],
   };
   @Input() config: IChartConfig = {};
 
@@ -83,11 +83,11 @@ export class PicsaChartComponent implements OnInit {
       ...this.config,
       bindto: this.container,
       data: this.config.data ? this.config.data : this.data,
-      oninit: function() {
+      oninit: function () {
         this.svg.attr('id', 'chart_svg');
         // const svg = document.getElementById('chart_svg');
         // svg.style.backgroundColor = 'green';
-      }
+      },
     });
     // });
   }
@@ -95,13 +95,13 @@ export class PicsaChartComponent implements OnInit {
   // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
   // https://github.com/exupero/saveSvgAsPng
   // https://github.com/exupero/saveSvgAsPng/issues/186
-  public async generatePng(title: string = 'chart') {
+  public async generatePng(title = 'chart') {
     await this.printPrvdr.shareSVG('chart_svg', title);
   }
 }
 
-export interface c3ChartAPI extends c3.ChartAPI {}
-export interface c3ChartConfiguration extends c3.ChartConfiguration {}
+export type c3ChartAPI = c3.ChartAPI;
+export type c3ChartConfiguration = c3.ChartConfiguration;
 
 /****************************************************************************
  *  Deprecated / Unused

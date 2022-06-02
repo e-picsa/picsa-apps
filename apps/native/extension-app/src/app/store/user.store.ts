@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
 import { IUser } from '../models/models';
-import { PicsaDbService, generateDBMeta } from '@picsa/services/core/db';
-import { PicsaFileService } from '@picsa/services/native/file-service';
+import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
+import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { LanguageCode } from '@picsa/models';
 import { PicsaTranslateService } from '@picsa/modules/translate';
 import { toJS } from 'mobx';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserStore {
   @observable user: IUser;
@@ -57,7 +57,7 @@ export class UserStore {
       lang: ENVIRONMENT.region.languages[0].code,
       // keep id as well as key so can persist within appMeta in different key
       id: meta._key,
-      ...meta
+      ...meta,
     };
     // update meta
     await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
@@ -101,7 +101,7 @@ export class UserStore {
   }
 
   private _getLanguage(code: LanguageCode) {
-    const lang = ENVIRONMENT.region.languages.find(l => l.code === code);
+    const lang = ENVIRONMENT.region.languages.find((l) => l.code === code);
     return lang ? lang : {};
   }
 

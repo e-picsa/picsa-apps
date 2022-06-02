@@ -4,12 +4,12 @@ import {
   IChartMeta,
   IStationMeta,
   IChartSummary_V1,
-  IChartSummary
+  IChartSummary,
 } from '@picsa/models/climate.models';
 import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import * as DATA from '../data';
-import { PicsaDbService } from '@picsa/services/core/db';
+import { PicsaDbService } from '@picsa/shared/services/core/db';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateToolService {
@@ -54,28 +54,30 @@ export class ClimateToolService {
         download: true,
         dynamicTyping: true,
         header: true,
-        complete: function(res, file) {
+        complete: function (res, file) {
           // resolve(this.site);
           resolve(res.data as T[]);
         }.bind(this),
-        error: function(err) {
+        error: function (err) {
           console.error('err', err);
           reject(err);
-        }
+        },
       });
     });
   }
 
   // observable to inform when service initialisation complete
   private async ready() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.ready$.value === true) {
         resolve();
       } else {
         // only resolve when 'ready' status no longer false
-        this.ready$
-          .pipe(takeWhile(val => val === false))
-          .subscribe(val => null, err => null, () => resolve());
+        this.ready$.pipe(takeWhile((val) => val === false)).subscribe(
+          (val) => null,
+          (err) => null,
+          () => resolve()
+        );
       }
     });
   }

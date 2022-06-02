@@ -3,17 +3,17 @@ import {
   // IBudgetPeriodMeta,
   IBudget,
   IBudgetPeriodData,
-  IBudgetPeriodType
+  IBudgetPeriodType,
 } from '../models/budget-tool.models';
-import { generateDBMeta } from '@picsa/services/core/db';
-import { APP_VERSION } from '@picsa/environments/version';
+import { generateDBMeta } from '@picsa/shared/services/core/db';
+import { APP_VERSION } from '@picsa/environments';
 
 export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
   activities: [],
   inputs: [],
   outputs: [],
   familyLabour: [],
-  produceConsumed: []
+  produceConsumed: [],
 };
 
 // don't assert type so missing _key field picked up in create new budget from store
@@ -22,20 +22,20 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
   _appVersion: APP_VERSION.number,
   data: [],
   meta: {
-    title: null,
-    description: null,
+    title: '',
+    description: '',
     enterprise: {
-      id: null,
-      label: null,
-      type: null,
-      groupings: []
+      id: '',
+      label: '',
+      type: null as any,
+      groupings: [],
     },
     lengthScale: 'months',
     lengthTotal: 5,
     monthStart: 9,
-    valueScale: 1
+    valueScale: 1,
   },
-  ...generateDBMeta()
+  ...generateDBMeta(),
 };
 
 export const BUDGET_DOT_VALUES = {};
@@ -45,7 +45,7 @@ export const BUDGET_PERIOD_ROWS: { [key in IBudgetPeriodType]: string } = {
   inputs: 'Inputs',
   familyLabour: 'Family Labour',
   outputs: 'Outputs',
-  produceConsumed: 'Produce Consumed'
+  produceConsumed: 'Produce Consumed',
 };
 
 export const MONTHS = [
@@ -60,5 +60,5 @@ export const MONTHS = [
   'Sep',
   'Oct',
   'Nov',
-  'Dec'
+  'Dec',
 ];

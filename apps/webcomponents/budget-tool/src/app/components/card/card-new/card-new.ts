@@ -1,17 +1,21 @@
 import { Component, Input, Inject, Output, EventEmitter } from '@angular/core';
 import {
   IBudgetCard,
-  IBudgetCardType
+  IBudgetCardType,
 } from '../../../models/budget-tool.models';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
-import { generateDBMeta } from '@picsa/services/core/db';
+import {
+  MatDialogRef,
+  MatDialog,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import { generateDBMeta } from '@picsa/shared/services/core/db';
 import { BudgetStore } from '../../../store/budget.store';
 import { toJS } from 'mobx';
 
 @Component({
   selector: 'budget-card-new',
   templateUrl: './card-new.html',
-  styleUrls: ['./card-new.scss', '../budget-card.scss']
+  styleUrls: ['./card-new.scss', '../budget-card.scss'],
 })
 export class BudgetCardNew {
   @Input() type: IBudgetCardType;
@@ -31,15 +35,15 @@ export class BudgetCardNew {
     const card: IBudgetCard = {
       ...NEW_CARD,
       type,
-      groupings
+      groupings,
     };
     console.log('card', card);
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
       width: '250px',
-      data: card
+      data: card,
     });
 
-    dialogRef.afterClosed().subscribe(async data => {
+    dialogRef.afterClosed().subscribe(async (data) => {
       await this.store.saveCustomCard(data);
       this.cardSaved.emit(data);
     });
@@ -50,7 +54,7 @@ export class BudgetCardNew {
 @Component({
   selector: 'budget-card-new-dialog',
   templateUrl: './card-new-dialog.html',
-  styleUrls: ['./card-new.scss', '../budget-card.scss']
+  styleUrls: ['./card-new.scss', '../budget-card.scss'],
 })
 export class BudgetCardNewDialog {
   public card: IBudgetCard;
@@ -65,7 +69,7 @@ export class BudgetCardNewDialog {
     this.card.customMeta = {
       imgData: this.generateImage(this.card.label),
       dateCreated: new Date().toISOString(),
-      createdBy: ''
+      createdBy: '',
     };
     this.dialogRef.close(this.card);
   }
@@ -100,10 +104,10 @@ const PLACEHOLDER_CARD: IBudgetCard = {
   label: 'add other',
   type: 'other',
   imgType: 'svg',
-  groupings: ['*']
+  groupings: ['*'],
 };
 const NEW_CARD: IBudgetCard = {
   id: generateDBMeta()._key,
   label: '',
-  type: 'other'
+  type: 'other',
 };

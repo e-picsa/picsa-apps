@@ -1,12 +1,12 @@
-import { Component, ViewChild, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { BudgetStore } from '../../store/budget.store';
 import {
   IBudgetCardWithValues,
   IBudgetPeriodType,
-  IBudgetPeriodData
+  IBudgetPeriodData,
 } from '../../models/budget-tool.models';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/animations';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -14,7 +14,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   selector: 'budget-cell-editor',
   templateUrl: './cell-editor.html',
   styleUrls: ['./cell-editor.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED)]
+  animations: [FadeInOut(ANIMATION_DELAYED)],
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
@@ -57,10 +57,10 @@ export class BudgetCellEditorComponent {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        type: step
+        type: step,
       },
       replaceUrl: true,
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -76,13 +76,13 @@ export class BudgetCellEditorComponent {
         queryParams: {
           period: period + 1,
           type: 'activities',
-          label: this.store.budgetPeriodLabels[period + 1]
+          label: this.store.budgetPeriodLabels[period + 1],
         },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       });
     } else {
       this.router.navigate([], {
-        relativeTo: this.route
+        relativeTo: this.route,
       });
     }
   }
@@ -100,5 +100,5 @@ const EDITOR_STEPS: (IBudgetPeriodType | 'summary')[] = [
   'familyLabour',
   'outputs',
   'produceConsumed',
-  'summary'
+  'summary',
 ];
