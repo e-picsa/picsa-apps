@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
+import { IDBEndpoint, IDBDoc } from '@picsa/models';
 import { DBCacheService } from './_cache.db';
 import { DBServerService } from './_server.db';
 import { AbstractDBService } from './abstract.db';
@@ -67,13 +67,16 @@ export class PicsaDbService implements AbstractDBService {
     keepModified = false
   ): Promise<(T & IDBDoc)[]> {
     endpoint = this._mapEndpoint(endpoint);
-    const dbDocs = docs.map(doc => {
+    const dbDocs = docs.map((doc) => {
       const meta = generateDBMeta(doc, keepModified);
       return { ...doc, ...meta };
     });
     await this.cache.setDocs(endpoint, dbDocs);
     if (sync) {
-      this.sync.addWrites(endpoint, dbDocs.map(d => d._key));
+      this.sync.addWrites(
+        endpoint,
+        dbDocs.map((d) => d._key)
+      );
     }
     return dbDocs;
   }
@@ -117,7 +120,7 @@ export class PicsaDbService implements AbstractDBService {
 
   // clean data to remove undefined values
   private _cleanData(data: any) {
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       if (typeof data[key] === 'undefined') {
         data[key] = null;
       }
@@ -145,7 +148,7 @@ export const generateDBMeta = (
   return {
     _key: _key ? _key : _generateID(),
     _created: _created ? _created : new Date().toISOString(),
-    _modified: keepModified && _modified ? _modified : new Date().toISOString()
+    _modified: keepModified && _modified ? _modified : new Date().toISOString(),
   };
 };
 

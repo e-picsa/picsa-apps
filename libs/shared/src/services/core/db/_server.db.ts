@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import type { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
+import type { IDBEndpoint, IDBDoc } from '@picsa/models';
 import { AbstractDBService } from './abstract.db';
 
 @Injectable({ providedIn: 'root' })

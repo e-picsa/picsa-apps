@@ -5,8 +5,8 @@ import {
   IChartMeta,
   IChartSummary,
   IChartConfig,
-  IStationMeta
-} from '@picsa/models/climate.models';
+  IStationMeta,
+} from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/features/charts/chart';
 import { Subject } from 'rxjs';
 import { delay, take } from 'rxjs/operators';
@@ -21,7 +21,7 @@ import { IClimateView } from '../../models';
 @Component({
   selector: 'climate-chart',
   templateUrl: 'climate-chart.html',
-  styleUrls: ['climate-chart.scss']
+  styleUrls: ['climate-chart.scss'],
 })
 export class ClimateChartComponent {
   @Input() chartMeta: IChartMeta & IClimateView;
@@ -57,14 +57,14 @@ export class ClimateChartComponent {
     this.chartConfig = this._getChartConfig(this.chartData, this.chartMeta);
     // when using line tool and probabilities this is base solely on single y dataset
     this.y1Values = this.chartData.map(
-      v => v[this.chartMeta.keys[0]] as number
+      (v) => v[this.chartMeta.keys[0]] as number
     );
   }
   async showAdvancedOptions() {
     const ref = this.bottomSheet.open(ChartOptionsComponent, {
-      data: this.chartMeta
+      data: this.chartMeta,
     });
-    ref.afterDismissed().subscribe(d => {
+    ref.afterDismissed().subscribe((d) => {
       if (d) {
         if (d.action === 'share') {
           this.downloadPrintVersion();
@@ -82,7 +82,7 @@ export class ClimateChartComponent {
     lineArray.unshift('LineTool');
     this.picsaChart.chart.load({
       columns: [lineArray],
-      classes: { LineTool: 'LineTool' }
+      classes: { LineTool: 'LineTool' },
     });
     this.picsaChart.chart.show('LineTool');
   }
@@ -104,32 +104,32 @@ export class ClimateChartComponent {
       // ensure axis labels fit
       padding: {
         right: 10,
-        left: 60
+        left: 60,
       },
       data: {
         json: data,
         keys: {
-          value: [...meta.keys, meta.xVar]
+          value: [...meta.keys, meta.xVar],
         },
         x: 'Year',
         classes: { LineTool: 'LineTool' },
-        color: (_, d) => this._getPointColour(d)
+        color: (_, d) => this._getPointColour(d),
       },
       ['title' as any]: {
-        text: `${this.stationMeta.name} | ${this.chartMeta.name}`
+        text: `${this.stationMeta.name} | ${this.chartMeta.name}`,
       },
       tooltip: {
         grouped: false,
         format: {
-          value: value => this._getTooltipFormat(value, meta),
+          value: (value) => this._getTooltipFormat(value, meta),
           // HACK - reformat missing  titles (lost when passing "" values back from axis)
           // i marked ? as incorrect typings
           title: (x, i?) =>
             this._formatXAxis(
               data[i as number][meta.xVar] as any,
               this.stationMeta
-            )
-        }
+            ),
+        },
       },
       axis: {
         x: {
@@ -140,12 +140,12 @@ export class ClimateChartComponent {
             rotate: 75,
             multiline: false,
             values: gridMeta.xTicks,
-            format: d =>
+            format: (d) =>
               gridMeta.xLines.includes(d as any)
                 ? this._formatXAxis(d as any, this.stationMeta)
-                : ''
+                : '',
           },
-          height: 60
+          height: 60,
         },
         y: {
           label: { position: 'outer-middle', text: meta.yLabel },
@@ -154,45 +154,45 @@ export class ClimateChartComponent {
             format: (d: any) =>
               gridMeta.yLines.includes(d as any)
                 ? this._formatYAxis(d as any, meta, true)
-                : ''
+                : '',
           },
           min: this.ranges.yMin,
           max: this.ranges.yMax,
           padding: {
             bottom: 0,
-            top: 10
-          }
-        }
+            top: 10,
+          },
+        },
       },
       // add custom gridlines to only show on 'major' ticks
       grid: {
         y: {
-          lines: gridMeta.yLines.map(l => {
+          lines: gridMeta.yLines.map((l) => {
             return { value: l, class: 'picsa-gridline', text: '' };
-          })
+          }),
         },
         x: {
-          lines: gridMeta.xLines.map(l => {
+          lines: gridMeta.xLines.map((l) => {
             return { value: l, class: 'picsa-gridline', text: '' };
-          })
+          }),
         },
         // destructured as typings incorrect
         ...{
           lines: {
-            front: false
-          }
-        }
+            front: false,
+          },
+        },
       },
       legend: {
-        show: false
+        show: false,
       },
       point: {
-        r: d => (d.id === 'LineTool' ? 0 : 8)
+        r: (d) => (d.id === 'LineTool' ? 0 : 8),
       },
       onrendered: () => {
         console.log('rendered');
         this.chartRendered$.next();
-      }
+      },
     };
     return config;
   }
@@ -203,9 +203,7 @@ export class ClimateChartComponent {
   // update styles and when rendered save as png
   async downloadPrintVersion() {
     this.isExporting = true;
-    const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${
-      this.translateService.language
-    }`;
+    const title = `${this.stationMeta.name} - ${this.chartMeta.name} - ${this.translateService.language}`;
     // update chart view for better printing
     // slightly messy - want to update chart config for print format, and wait until render
     // complete before downloading and reverting back
@@ -222,7 +220,7 @@ export class ClimateChartComponent {
             this.chartMeta
           );
         },
-        err => {
+        (err) => {
           throw err;
         }
       );
@@ -231,7 +229,7 @@ export class ClimateChartComponent {
   }
   private _getPrintConfig() {
     const config = Object.assign({}, this.chartConfig);
-    config.point.r = d => (d.id === 'LineTool' ? 0 : 3);
+    config.point.r = (d) => (d.id === 'LineTool' ? 0 : 3);
     config.size = { width: 900, height: 600 };
     return config;
   }
@@ -240,7 +238,7 @@ export class ClimateChartComponent {
   private async showLoader() {
     const dialogRef = await this.dialog.open('blank', {
       title: 'Generating Chart Image',
-      loader: 'bars'
+      loader: 'bars',
     });
     return dialogRef;
   }
@@ -273,12 +271,12 @@ export class ClimateChartComponent {
   private _calculateDataRanges(data: IChartSummary[], meta: IChartMeta) {
     let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
     const { xMajor, yMajor } = meta;
-    data.forEach(d => {
+    data.forEach((d) => {
       const xVal = d[meta.xVar] as number;
       // take all possible yValues and filter out undefined
       const yVals = meta.keys
-        .map(k => d[k])
-        .filter(v => typeof v === 'number') as number[];
+        .map((k) => d[k])
+        .filter((v) => typeof v === 'number') as number[];
       xMax = xVal ? Math.max(xMax, xVal) : xMax;
       xMin = xVal ? Math.min(xMin, xVal) : xMin;
       yMax = Math.max(yMax, ...yVals);
@@ -297,7 +295,7 @@ export class ClimateChartComponent {
       yMin: Math.floor(yMin / yMajor) * yMajor,
       yMax: Math.ceil(yMax / yMajor) * yMajor,
       xMin: Math.floor(xMin / xMajor) * xMajor,
-      xMax: Math.ceil(xMax / xMajor) * xMajor
+      xMax: Math.ceil(xMax / xMajor) * xMajor,
     };
   }
 
@@ -309,7 +307,7 @@ export class ClimateChartComponent {
       xTicks: this._getAxisValues(xMin, xMax, xMinor) as number[],
       xLines: this._getAxisValues(xMin, xMax, xMajor) as number[],
       yTicks: this._getAxisValues(yMin, yMax, yMinor) as number[],
-      yLines: this._getAxisValues(yMin, yMax, yMajor) as number[]
+      yLines: this._getAxisValues(yMin, yMax, yMajor) as number[],
     };
   }
 
@@ -382,7 +380,7 @@ const seriesColors = {
   Rainfall: '#377eb8',
   Start: '#e41a1c',
   End: '#984ea3',
-  Length: '#4daf4a'
+  Length: '#4daf4a',
 };
 
 interface IDataRanges {
@@ -401,7 +399,7 @@ const DATA_RANGES_DEFAULT: IDataRanges = {
   yMin: Infinity,
   yMax: -Infinity,
   xMin: Infinity,
-  xMax: -Infinity
+  xMax: -Infinity,
 };
 
 /*****************************************************************************

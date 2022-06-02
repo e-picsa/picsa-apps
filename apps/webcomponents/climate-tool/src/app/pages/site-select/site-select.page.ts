@@ -1,18 +1,18 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
 import { STATIONS } from '@picsa/climate/src/app/data';
-import { IStationMeta } from '@picsa/models/climate.models';
+import { IStationMeta } from '@picsa/models';
 import {
   PicsaMapComponent,
   IBasemapOptions,
   IMapOptions,
-  IMapMarker
+  IMapMarker,
 } from '@picsa/features/map/map';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
-  styleUrls: ['./site-select.page.scss']
+  styleUrls: ['./site-select.page.scss'],
 })
 export class SiteSelectPage {
   activeStation: any;
@@ -21,7 +21,7 @@ export class SiteSelectPage {
   mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.png',
-    maxNativeZoom: 8
+    maxNativeZoom: 8,
   };
 
   constructor(
@@ -45,19 +45,19 @@ export class SiteSelectPage {
   goToSite(site: IStationMeta) {
     this.ngZone.run(() => {
       this.router.navigate(['./', 'site', site._key], {
-        relativeTo: this.route
+        relativeTo: this.route,
       });
     });
   }
 
   populateSites() {
     const iconUrl = STATION_ICON_WHITE;
-    const markers: IMapMarker[] = STATIONS.map(s => {
+    const markers: IMapMarker[] = STATIONS.map((s) => {
       return {
         iconUrl,
         latlng: [s.latitude, s.longitude],
         data: s,
-        numbered: true
+        numbered: true,
       };
     });
     this.picsaMap.addMarkers(markers);

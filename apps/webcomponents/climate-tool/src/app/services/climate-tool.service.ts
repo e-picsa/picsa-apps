@@ -5,7 +5,7 @@ import {
   IStationMeta,
   IChartSummary_V1,
   IChartSummary,
-} from '@picsa/models/climate.models';
+} from '@picsa/models';
 import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import * as DATA from '../data';

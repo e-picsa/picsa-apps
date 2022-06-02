@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IChartMeta, IStationMeta } from '@picsa/models/climate.models';
+import { IChartMeta, IStationMeta } from '@picsa/models';
 import * as DATA from '@picsa/climate/src/app/data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool
 @Component({
   selector: 'climate-site-view',
   templateUrl: './site-view.page.html',
-  styleUrls: ['./site-view.page.scss']
+  styleUrls: ['./site-view.page.scss'],
 })
 export class ClimateSiteViewPage implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject();
@@ -40,14 +40,14 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
   changeSite() {
     this.router.navigate(['../../'], {
       relativeTo: this.route,
-      replaceUrl: true
+      replaceUrl: true,
     });
   }
 
   setView(view: string) {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { view: view }
+      queryParams: { view: view },
     });
     // this.activeChart = view as IChartMeta;
   }
@@ -55,9 +55,9 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
   private _subscribeToViewChanges() {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(params => {
+      .subscribe((params) => {
         const view = this.availableViews.find(
-          v => v._viewID === params.get('view')
+          (v) => v._viewID === params.get('view')
         );
         this.activeView = view ? view._viewID : undefined;
         this.activeChart =

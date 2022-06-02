@@ -1,4 +1,4 @@
-import { IDBDoc } from '@picsa/models/db.models';
+import { IDBDoc } from '@picsa/models';
 
 export interface IBudget extends IDBDoc {
   data: IBudgetPeriodData[];

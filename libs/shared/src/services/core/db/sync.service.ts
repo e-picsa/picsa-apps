@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IDBDoc, IDBEndpoint } from '@picsa/models/db.models';
+import { IDBDoc, IDBEndpoint } from '@picsa/models';
 import { DBCacheService } from './_cache.db';
 import { DBServerService } from './_server.db';
 import { BehaviorSubject } from 'rxjs';

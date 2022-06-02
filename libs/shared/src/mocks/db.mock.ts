@@ -1,5 +1,5 @@
 import { AbstractDBService } from '@picsa/shared/services/core/db/abstract.db';
-import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
+import { IDBEndpoint, IDBDoc } from '@picsa/models';
 import { firestore } from 'firebase/app';
 
 export class MockDB implements AbstractDBService {

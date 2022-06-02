@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
-import {
-  IDBEndpoint,
-  IDBDoc,
-  DB_SCHEMA,
-  DB_VERSION
-} from '@picsa/models/db.models';
+import { IDBEndpoint, IDBDoc, DB_SCHEMA, DB_VERSION } from '@picsa/models';
 import { upgradeDatabases } from './_cache.upgrade.db';
 import { AbstractDBService } from './abstract.db';
 import { ENVIRONMENT } from '@picsa/environments';
@@ -49,10 +44,7 @@ export class DBCacheService implements AbstractDBService {
     }
   }
   public async getDocs(endpoint: IDBEndpoint, keys: string[]) {
-    return db
-      .table(endpoint)
-      .where('_key')
-      .anyOf(keys);
+    return db.table(endpoint).where('_key').anyOf(keys);
     // NOTE, above query can be replaced when dexie 3 released
     // return db.table(endpoint).bulkGet(keys)
   }
