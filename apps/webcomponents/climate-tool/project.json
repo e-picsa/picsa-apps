@@ -1,0 +1,93 @@
+{
+  "projectType": "application",
+  "sourceRoot": "apps/webcomponents/climate-tool/src",
+  "prefix": "picsa",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/webcomponents/climate-tool",
+        "index": "apps/webcomponents/climate-tool/src/index.html",
+        "main": "apps/webcomponents/climate-tool/src/main.ts",
+        "polyfills": "apps/webcomponents/climate-tool/src/polyfills.ts",
+        "tsConfig": "apps/webcomponents/climate-tool/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/webcomponents/climate-tool/src/favicon.ico",
+          "apps/webcomponents/climate-tool/src/assets"
+        ],
+        "styles": ["apps/webcomponents/climate-tool/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/webcomponents/climate-tool/src/environments/environment.ts",
+              "with": "apps/webcomponents/climate-tool/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "webcomponents-climate-tool:build:production"
+        },
+        "development": {
+          "browserTarget": "webcomponents-climate-tool:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "webcomponents-climate-tool:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/webcomponents/climate-tool/**/*.ts",
+          "apps/webcomponents/climate-tool/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/webcomponents/climate-tool"],
+      "options": {
+        "jestConfig": "apps/webcomponents/climate-tool/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

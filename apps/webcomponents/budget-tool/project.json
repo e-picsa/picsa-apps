@@ -1,0 +1,93 @@
+{
+  "projectType": "application",
+  "sourceRoot": "apps/webcomponents/budget-tool/src",
+  "prefix": "picsa",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/webcomponents/budget-tool",
+        "index": "apps/webcomponents/budget-tool/src/index.html",
+        "main": "apps/webcomponents/budget-tool/src/main.ts",
+        "polyfills": "apps/webcomponents/budget-tool/src/polyfills.ts",
+        "tsConfig": "apps/webcomponents/budget-tool/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/webcomponents/budget-tool/src/favicon.ico",
+          "apps/webcomponents/budget-tool/src/assets"
+        ],
+        "styles": ["apps/webcomponents/budget-tool/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/webcomponents/budget-tool/src/environments/environment.ts",
+              "with": "apps/webcomponents/budget-tool/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "webcomponents-picsa-budget-tool:build:production"
+        },
+        "development": {
+          "browserTarget": "webcomponents-picsa-budget-tool:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "webcomponents-picsa-budget-tool:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/webcomponents/budget-tool/**/*.ts",
+          "apps/webcomponents/budget-tool/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/webcomponents/budget-tool"],
+      "options": {
+        "jestConfig": "apps/webcomponents/budget-tool/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
