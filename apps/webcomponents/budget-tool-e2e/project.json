@@ -1,0 +1,30 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "sourceRoot": "apps/webcomponents/picsa-budget-tool-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/webcomponents/picsa-budget-tool-e2e/cypress.json",
+        "devServerTarget": "webcomponents-picsa-budget-tool:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "webcomponents-picsa-budget-tool:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/webcomponents/picsa-budget-tool-e2e/**/*.{js,ts}"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["webcomponents-picsa-budget-tool"]
+}
