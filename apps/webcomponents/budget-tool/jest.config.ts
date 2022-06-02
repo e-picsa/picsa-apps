@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'webcomponents-picsa-budget-tool',
+  displayName: 'webcomponents-budget-tool',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {

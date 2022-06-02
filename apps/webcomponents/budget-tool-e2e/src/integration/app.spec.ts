@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('webcomponents-picsa-budget-tool', () => {
+describe('webcomponents-budget-tool', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('webcomponents-picsa-budget-tool', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome webcomponents-picsa-budget-tool');
+    getGreeting().contains('Welcome webcomponents-budget-tool');
   });
 });

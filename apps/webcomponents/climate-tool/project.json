@@ -34,7 +34,7 @@
               "maximumError": "4kb"
             }
           ],
-          "fileReplacements": [{}],
+          "fileReplacements": [],
           "outputHashing": "all"
         },
         "development": {
