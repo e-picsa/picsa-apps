@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import * as Survey from 'survey-angular';
-import { select } from '@angular-redux/store';
-import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { UserStore } from '../../../store/user.store';
 import { IForm, IFormResponse, IUser } from '../../../models/models';
@@ -16,7 +14,8 @@ import { generateDBMeta } from '@picsa/shared/services/core/db';
 export class FormViewPage implements OnInit {
   form: IForm;
   surveyJson: any;
-  @select('forms') forms$: Observable<IForm[]>;
+  // TODO - migrate to mobx (previously angular-redux)
+  // @select('forms') forms$: Observable<IForm[]>;
   constructor(
     private userStore: UserStore,
     private route: ActivatedRoute,

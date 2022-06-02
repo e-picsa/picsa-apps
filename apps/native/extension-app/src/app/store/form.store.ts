@@ -1,9 +1,7 @@
-// Whilst project has angular-redux throughout, also planning migration to mobx with initial modules
-
 import { observable, action } from 'mobx-angular';
 import { toJS } from 'mobx';
 import { Injectable } from '@angular/core';
-import { IForm, IFormResponse, IFormDB } from '../models/models';
+import { IFormResponse, IFormDB } from '../models/models';
 import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 
 @Injectable({
@@ -54,7 +52,7 @@ export class FormStore {
   }
 
   private _getFormByKey(key: string) {
-    return this.forms.find((form) => form._key === key);
+    return this.forms.find((form) => form._key === key) as IFormDB;
   }
 
   private saveFormResponse(formID: string, response: IFormResponse) {

@@ -7,20 +7,18 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'budget-table',
   templateUrl: 'budget-table.html',
-  styleUrls: ['./budget-table.scss']
+  styleUrls: ['./budget-table.scss'],
 })
 export class BudgetTableComponent implements OnInit {
   @Input() budget: IBudget;
   periodLabels: string[] = [];
-  rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map(
-    (key: IBudgetPeriodType) => {
-      const label = BUDGET_PERIOD_ROWS[key];
-      return {
-        key,
-        label
-      };
-    }
-  );
+  rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map((key) => {
+    const label = BUDGET_PERIOD_ROWS[key];
+    return {
+      key: key as IBudgetPeriodType,
+      label,
+    };
+  });
   // TODO - bring back balance and refactor to own component
   balance: any;
 
@@ -40,11 +38,11 @@ export class BudgetTableComponent implements OnInit {
         edit: true,
         period: columnIndex,
         label: this.periodLabels[columnIndex],
-        type: row.key
+        type: row.key,
       },
       // just to make explicit, when navigating from main budget page want to keep history
       // to go back to full budget. This is different than once in editor
-      replaceUrl: false
+      replaceUrl: false,
     });
   }
 }

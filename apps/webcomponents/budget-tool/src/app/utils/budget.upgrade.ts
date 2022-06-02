@@ -10,7 +10,7 @@ export const BUDGET_API_VERSION = 5;
 export const checkForBudgetUpgrades = (budget: IBudget) => {
   if (budget.apiVersion < BUDGET_API_VERSION) {
     budget = upgradeBudget(budget);
-    return this.checkForBudgetUpgrades(budget);
+    return checkForBudgetUpgrades(budget);
   } else {
     return budget;
   }

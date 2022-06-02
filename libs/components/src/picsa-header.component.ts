@@ -22,13 +22,13 @@ import { Component, Directive, HostBinding } from '@angular/core';
         color: var(--color-primary);
         background-color: white;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class PicsaHeaderComponent {}
 
 @Directive({
-  selector: '[inverted]'
+  selector: '[inverted]',
 })
 export class PicsaHeaderInvertedDirective {
   @HostBinding('class.inverted') inverted = true;

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { toJS } from 'mobx';
 import { observable, action, computed } from 'mobx-angular';
-import * as merge from 'deepmerge';
+import merge from 'deepmerge';
 
 import {
   IBudget,
@@ -83,6 +83,7 @@ export class BudgetStore implements OnDestroy {
   }
   // enterprises only have a single group which is used during card filtering
   get enterpriseGroup() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.activeBudget.meta.enterprise.groupings![0];
   }
 
@@ -100,7 +101,7 @@ export class BudgetStore implements OnDestroy {
    ***************************************************************************/
   getfilteredEnterprises(grouping: string) {
     return this.budgetCards.filter(
-      (e) => e.type === 'enterprise' && e.groupings.includes(grouping)
+      (e) => e.type === 'enterprise' && e.groupings?.includes(grouping)
     );
   }
   /**************************************************************************
@@ -209,8 +210,8 @@ export class BudgetStore implements OnDestroy {
     await this.preloadData();
   }
   _subscribeToRouteChanges() {
-    this.route.queryParams.subscribe((params: IBudgetQueryParams) =>
-      this.routeParamsChanged(params)
+    this.route.queryParams.subscribe((params) =>
+      this.routeParamsChanged(params as IBudgetQueryParams)
     );
   }
   @action
@@ -262,7 +263,7 @@ export class BudgetStore implements OnDestroy {
 
   private _calculateBalance(budget: IBudget): IBudgetBalance {
     // total for current period
-    const totals = [];
+    const totals: { period: number; running: number }[] = [];
     let runningTotal = 0;
     budget.data.forEach((period, i) => {
       const periodTotal = this._calculatePeriodTotal(period);
@@ -286,7 +287,7 @@ export class BudgetStore implements OnDestroy {
   private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
     let total = 0;
     cards.forEach((card) => {
-      const t = card.values.total ? card.values.total : 0;
+      const t = card.values?.total ? card.values.total : 0;
       total = total + t;
     });
     return total;
@@ -308,14 +309,21 @@ export class BudgetStore implements OnDestroy {
     }
     if (lengthScale === 'months') {
       // duplicate array so that can still slice up to 12 months from dec
-      let base = [...MONTHS, ...MONTHS];
+      const base = [...MONTHS, ...MONTHS];
       return base.slice(monthStart - 1, lengthTotal + monthStart - 1);
     }
+    return [];
   }
   // group all enterprise cards and create new parent card that will be used to reveal group
   private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {
-    const allGroupings = cards.map((e) => toJS(e.groupings));
-    const mergedGroupings: string[] = [].concat.apply([], allGroupings);
+    const allGroupings: string[][] = cards.map(
+      (e) => toJS(e.groupings) as string[]
+    );
+    // eslint-disable-next-line prefer-spread
+    const mergedGroupings: string[] = ([] as any).concat.apply(
+      [],
+      allGroupings
+    );
     // NOTE - technically Array.from shouldn't be required but current issue with typescript
     // see https://stackoverflow.com/questions/33464504/using-spread-syntax-and-new-set-with-typescript/33464709
     const uniqueGroups = [...Array.from(new Set(mergedGroupings))].sort();

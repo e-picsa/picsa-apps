@@ -9,7 +9,7 @@ import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { MobxAngularModule } from 'mobx-angular';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
 import { ComponentsModule } from '../../components/components.module';
-import { PicsaCommonComponentsModule } from '@picsa/shared/components';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 const routes: Routes = [
   {

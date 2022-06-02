@@ -4,7 +4,7 @@ import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 @Component({
   selector: 'budget-cell-editor-family-labour',
   templateUrl: './family-labour.html',
-  styleUrls: ['./family-labour.scss']
+  styleUrls: ['./family-labour.scss'],
 })
 export class BudgetCellEditorFamilyLabourComponent {
   @Input() values: IBudgetCardWithValues[];
@@ -37,8 +37,8 @@ const FAMILY_MEMBER_CARD: IBudgetCardWithValues = {
   type: 'familyLabour',
   imgType: 'svg',
   values: {
-    quantity: null,
+    quantity: null as any,
     cost: 0,
-    total: 0
-  }
+    total: 0,
+  },
 };

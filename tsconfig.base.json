@@ -17,13 +17,20 @@
     "noImplicitAny": false,
     "strictPropertyInitialization": false,
     "noPropertyAccessFromIndexSignature": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@picsa/*": ["libs/*"],
-      "@picsa/shared/*": ["libs/*"],
       "@picsa/budget/*": ["apps/webcomponents/budget-tool/*"],
       "@picsa/climate/*": ["apps/webcomponents/climate-tool/*"],
       "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
-      "@picsa/extension/*": ["apps/native/extension-toolkit/*"]
+      "@picsa/environments": ["libs/environments/src/index.ts"],
+      "@picsa/extension/*": ["apps/native/extension-toolkit/*"],
+      "@picsa/components": ["libs/components/src/index.ts"],
+      "@picsa/models": ["libs/models/src/index.ts"],
+      "@picsa/shared": ["libs/shared/src/index.ts"],
+      "@picsa/shared/*": ["libs/shared/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

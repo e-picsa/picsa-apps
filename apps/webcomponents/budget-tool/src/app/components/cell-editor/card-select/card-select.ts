@@ -19,6 +19,7 @@ export class BudgetCellEditorCardSelectComponent {
   @Input() set cards(cards: IBudgetCard[]) {
     this.filterCards(cards);
   }
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
   enterpriseCards: IBudgetCard[];
   otherCards: IBudgetCard[];
@@ -30,10 +31,13 @@ export class BudgetCellEditorCardSelectComponent {
   // split type cards between those matching current enterprise and those not
   filterCards(cards: IBudgetCard[]) {
     const enterpriseGroup = this.store.enterpriseGroup;
-    const enterpriseCards = [];
-    const otherCards = [];
+    const enterpriseCards: IBudgetCard[] = [];
+    const otherCards: IBudgetCard[] = [];
     cards.forEach((c) => {
-      if (c.groupings.includes(enterpriseGroup) || c.groupings.includes('*')) {
+      if (
+        c.groupings?.includes(enterpriseGroup) ||
+        c.groupings?.includes('*')
+      ) {
         enterpriseCards.push(c);
       } else {
         otherCards.push(c);
@@ -65,7 +69,7 @@ export class BudgetCellEditorCardSelectComponent {
       this.selectedArray.splice(arrIndex, 1);
     } else {
       const defaultValues = { cost: null, quantity: null, total: null };
-      this.selectedArray.push({ ...card, values: defaultValues });
+      this.selectedArray.push({ ...card, values: defaultValues as any });
     }
     // emit value
     this.onValueChange.emit(this.selectedArray);

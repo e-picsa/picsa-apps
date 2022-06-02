@@ -10,7 +10,7 @@ import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
 import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/shared/features';
 import { ChartOptionsComponent } from './chart-options/chart-options';
-import { PicsaCommonComponentsModule } from '@picsa/shared/components';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 @NgModule({
   declarations: [

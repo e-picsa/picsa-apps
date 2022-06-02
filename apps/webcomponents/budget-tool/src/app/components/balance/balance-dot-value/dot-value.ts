@@ -1,12 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IBudgetValueCounters } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-balance-dot-value',
   templateUrl: './dot-value.html',
-  styleUrls: ['./dot-value.scss']
+  styleUrls: ['./dot-value.scss'],
 })
-export class BudgetBalanceDotValueComponent implements OnInit {
+export class BudgetBalanceDotValueComponent {
   constructor() {}
   _value: number = 0;
   _valueCounters: IBudgetValueCounters;
@@ -24,14 +24,12 @@ export class BudgetBalanceDotValueComponent implements OnInit {
     this.generateRepresentation();
   }
 
-  ngOnInit() {}
-
   generateRepresentation() {
     if (this._value && this._valueCounters) {
       const labels = this._valueCounters[0];
       const divisors = this._valueCounters[1];
       const val = this._value;
-      let allocation = [];
+      let allocation: ICounterAllocation[] = [];
       // keep track of how many times each value is multiplied by to make total
       let toAllocate = Math.abs(val);
       divisors.forEach((divisor, i) => {
@@ -41,7 +39,7 @@ export class BudgetBalanceDotValueComponent implements OnInit {
           new Array(multiples).fill({
             value: divisor,
             img: `dot-${labels[i]}`,
-            isNegative: val < 0
+            isNegative: val < 0,
           })
         );
       });

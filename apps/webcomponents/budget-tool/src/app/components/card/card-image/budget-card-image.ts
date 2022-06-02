@@ -4,7 +4,7 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
@@ -14,7 +14,7 @@ import { IBudgetCardDB } from '../../../models/budget-tool.models';
   selector: 'budget-card-image',
   templateUrl: 'budget-card-image.html',
   styleUrls: ['budget-card-image.scss'],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
   @Input() card: IBudgetCardDB;
@@ -58,23 +58,23 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
     let imgData: Blob;
     // first see if svg exists
     try {
-      imgData = await this.http
+      imgData = (await this.http
         .get(`../../assets/images/${imageId}.${imageType}`, {
-          responseType: 'blob'
+          responseType: 'blob',
         })
-        .toPromise();
+        .toPromise()) as Blob;
     } catch (error) {
       // otherwise placeholder
-      imgData = await this.http
+      imgData = (await this.http
         .get(`../../assets/images/no-image.png`, { responseType: 'blob' })
-        .toPromise();
+        .toPromise()) as Blob;
     }
     return imgData;
   }
 
   // svgs can't be embedded programatically (angular sanitize limitation)
   // so convert to html that embeds within an <img> tag and div innerhtml
-  private convertSVGToImageData(svgTag?: string) {
+  private convertSVGToImageData(svgTag: string) {
     const encodedSVG = this._encodeSVG(svgTag);
     const Html = `<img class='card-image' style='width:100%;height:100%;' src="data:image/svg+xml,${encodedSVG}"/>`;
     return this.sanitizer.bypassSecurityTrustHtml(Html);

@@ -8,7 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { DiscussionsPage } from './discussions.page';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ComponentsModule } from '../../components/components.module';
-import { PicsaCommonComponentsModule } from '@picsa/shared/components';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 const routes: Routes = [
   {

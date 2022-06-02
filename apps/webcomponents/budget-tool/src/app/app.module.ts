@@ -6,7 +6,6 @@ import {
   BudgetToolRoutingModule,
 } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
-import { NgReduxRouterModule } from '@angular-redux/router';
 import { MobxAngularModule } from 'mobx-angular';
 // import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 import {
@@ -22,7 +21,6 @@ const StandaloneImports = [
   BrowserModule,
   BrowserAnimationsModule,
   AppRoutingModule,
-  NgReduxRouterModule.forRoot(),
   PicsaDbModule.forRoot(),
   PicsaNativeModule.forRoot(),
   HttpClientModule,

@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import {
   PicsaHeaderComponent,
-  PicsaHeaderInvertedDirective
+  PicsaHeaderInvertedDirective,
 } from './picsa-header.component';
 // import {} from './warning.component';
 
@@ -13,9 +13,9 @@ import {
   declarations: [
     BackButton,
     PicsaHeaderComponent,
-    PicsaHeaderInvertedDirective
+    PicsaHeaderInvertedDirective,
   ],
   imports: [CommonModule, MatIconModule, MatButtonModule],
-  exports: [BackButton, PicsaHeaderComponent, PicsaHeaderInvertedDirective]
+  exports: [BackButton, PicsaHeaderComponent, PicsaHeaderInvertedDirective],
 })
 export class PicsaCommonComponentsModule {}

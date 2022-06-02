@@ -8,13 +8,13 @@ import { Subscription } from 'rxjs';
     <button *ngIf="showButton" mat-button (click)="back()">
       <mat-icon>arrow_back</mat-icon>Back
     </button>
-  `
+  `,
 })
 export class BackButton implements OnDestroy {
   route$: Subscription;
-  showButton: Boolean;
+  showButton = false;
   constructor(private router: Router, private route: ActivatedRoute) {
-    this.route$ = this.router.events.subscribe(e => {
+    this.route$ = this.router.events.subscribe((e) => {
       if (e instanceof NavigationStart) {
         this.checkButtonState();
       }

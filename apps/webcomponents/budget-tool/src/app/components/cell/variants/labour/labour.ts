@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'budget-cell-labour',
-  templateUrl: './labour.html'
+  templateUrl: './labour.html',
 })
 export class BudgetCellLabourComponent {
   @Input()
@@ -24,20 +24,21 @@ export class BudgetCellLabourComponent {
   // given updates to people or days split the total into components of the large, medium, small and half values
   // map these values to directed arrays to populate images in the pictorial representation
   generateRepresentation() {
-    const daysArray = [];
+    const daysArray: number[][] = [];
     if (this._people && this._days) {
       for (let i = 0; i < this._days; i++) {
-        daysArray.push(this._createArray(this._people, 1));
+        const arr = this._createArray<number>(this._people, 1);
+        daysArray.push(arr);
       }
     }
     this.daysArray = daysArray;
   }
-  _createArray(length: number, value: any) {
-    return new Array(length).fill(value);
+  _createArray<T>(length: number, value: T) {
+    return new Array(length).fill(value) as T[];
   }
 }
 
 const baseAllocation = {
   days: [],
-  people: []
+  people: [],
 };

@@ -40,7 +40,6 @@ export class AppComponent {
   selector: 'picsa-budget-tool',
   template: '',
 })
-// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class AppComponentEmbedded extends AppComponent {}
 
 export const BUDGET_ICONS = {
