@@ -3,14 +3,15 @@ import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import {
   FileTransfer,
-  FileTransferObject
+  FileTransferObject,
 } from '@ionic-native/file-transfer/ngx';
 import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { takeUntil, takeWhile } from 'rxjs/operators';
-import { ENVIRONMENT } from '@picsa/environments';
+import { takeWhile } from 'rxjs/operators';
 import { APP_VERSION } from '@picsa/environments/version';
+
+declare const cordova: any;
 
 @Injectable({ providedIn: 'root' })
 export class PicsaFileService {
@@ -36,13 +37,13 @@ export class PicsaFileService {
    * Should be checked when interacting for the first time
    */
   ready() {
-    return new Promise(resolve => {
-      this.ready$.pipe(takeWhile(v => v === false)).subscribe(
+    return new Promise((resolve) => {
+      this.ready$.pipe(takeWhile((v) => v === false)).subscribe(
         () => null,
         () => null,
         () => {
           console.log('platform ready');
-          resolve();
+          resolve(true);
         }
       );
     });
@@ -59,7 +60,7 @@ export class PicsaFileService {
         this.dir = {
           app: this.file.applicationDirectory,
           storage: this.file.externalApplicationStorageDirectory,
-          public: this.file.externalRootDirectory
+          public: this.file.externalRootDirectory,
         };
       }
       this.ready$.next(true);
@@ -96,11 +97,11 @@ export class PicsaFileService {
     filename: string
   ) {
     const fileTransfer: FileTransferObject = this.transfer.create();
-    return new Observable<ProgressEvent>(observer => {
-      fileTransfer.onProgress(p => observer.next(p));
+    return new Observable<ProgressEvent>((observer) => {
+      fileTransfer.onProgress((p) => observer.next(p));
       fileTransfer
         .download(url, `${this.dir.storage}${folder}/${filename}`)
-        .then(file => {
+        .then((file) => {
           observer.complete();
         });
     });
@@ -156,7 +157,7 @@ export class PicsaFileService {
       }
       console.log('writing file data', data);
       await this.file.writeFile(base, `${folder}/${filename}`, data, {
-        replace: true
+        replace: true,
       });
       console.log(filename, 'written successfully');
       // return filepath
@@ -206,14 +207,14 @@ export class PicsaFileService {
     try {
       const plugins = cordova.plugins as any;
       plugins.codeplay_shareapk.isSupport(
-        function(success) {
+        function (success) {
           console.log('plugin supported', success);
           plugins.codeplay_shareapk.openShare(
             'Share the PICSA App',
             `picsa-app-${APP_VERSION.number}`
           );
         },
-        function(fail) {
+        function (fail) {
           console.log('plugin not supported', fail);
         }
       );

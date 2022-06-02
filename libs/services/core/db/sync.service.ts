@@ -14,11 +14,11 @@ export class DBSyncService {
 
   // add a write to the table of pending writes and process queue
   public async addWrites(endpoint: IDBEndpoint, keys: string[]) {
-    const refs: IPendingBatchRef[] = keys.map(_key => {
+    const refs: IPendingBatchRef[] = keys.map((_key) => {
       return {
         endpoint,
         _key,
-        _random: this._generateRandom()
+        _random: this._generateRandom(),
       };
     });
     await this.cache.setDocs('_pendingWrites', refs);
@@ -51,10 +51,10 @@ export class DBSyncService {
         console.log(`[${pending.length}] docs written`);
         // retrieve full doc again to check hasn't been updated
         // if no updates remove from pending writes
-        const deletableKeys = [];
+        const deletableKeys: string[] = [];
         for (let p of pending) {
           const latest = await this.getDoc('_pendingWrites', p._key);
-          if (latest._random === p._random) {
+          if (latest?.['_random'] === p._random) {
             deletableKeys.push(p._key);
           }
         }
@@ -71,12 +71,8 @@ export class DBSyncService {
 
   private _generateRandom() {
     return (
-      Math.random()
-        .toString(36)
-        .substring(2, 15) +
-      Math.random()
-        .toString(36)
-        .substring(2, 15)
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
     );
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, ɵConsole } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { toJS } from 'mobx';
 import { observable, action, computed } from 'mobx-angular';
 import * as merge from 'deepmerge';
@@ -14,7 +14,7 @@ import {
   IBudgetValueCounters,
   IBudgetBalance,
   IBudgetQueryParams,
-  IBudgetPeriodType
+  IBudgetPeriodType,
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
@@ -26,28 +26,28 @@ import { ENVIRONMENT } from '@picsa/environments';
 import { BehaviorSubject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BudgetStore implements OnDestroy {
-  changes = new BehaviorSubject<[number, string]>([null, null]);
+  changes = new BehaviorSubject<[number, string]>([null, null] as any);
   @observable budgetCards: IBudgetCard[] = [];
-  @observable activeBudget: IBudget;
+  @observable activeBudget: IBudget = undefined as any;
   @observable activePeriod = 0;
   @observable activeType: IBudgetPeriodType = 'activities';
-  @observable savedBudgets: IBudget[];
-  @observable valueCounters: IBudgetValueCounters;
-  @observable balance: IBudgetBalance;
+  @observable savedBudgets: IBudget[] = [];
+  @observable valueCounters: IBudgetValueCounters = [[], []];
+  @observable balance: IBudgetBalance = [];
   // get unique list of types in enterprise cards
   @computed get enterpriseTypeCards(): IBudgetCardDB[] {
     const enterpriseCards = this.budgetCards.filter(
-      c => c.type === 'enterprise'
+      (c) => c.type === 'enterprise'
     );
     return this._createCardGroupCards(enterpriseCards);
   }
   @computed get budgetCardsByType() {
     console.log('getting budget cards by type');
     const typeCards: {
-      [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[]
+      [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
     } = {
       activities: [],
       familyLabour: [],
@@ -55,9 +55,9 @@ export class BudgetStore implements OnDestroy {
       outputs: [],
       produceConsumed: [],
       enterprise: [],
-      other: []
+      other: [],
     };
-    this.budgetCards.forEach(card => {
+    this.budgetCards.forEach((card) => {
       if (!typeCards[card.type]) {
         typeCards[card.type] = [];
       }
@@ -101,7 +101,7 @@ export class BudgetStore implements OnDestroy {
    ***************************************************************************/
   getfilteredEnterprises(grouping: string) {
     return this.budgetCards.filter(
-      e => e.type === 'enterprise' && e.groupings.includes(grouping)
+      (e) => e.type === 'enterprise' && e.groupings.includes(grouping)
     );
   }
   /**************************************************************************
@@ -133,7 +133,7 @@ export class BudgetStore implements OnDestroy {
     const oldScale = this.activeBudget.meta.valueScale;
     const newScale = scale * oldScale;
     this.patchBudget({
-      meta: { ...this.activeBudget.meta, valueScale: newScale }
+      meta: { ...this.activeBudget.meta, valueScale: newScale },
     });
     this.valueCounters = this._generateValueCounters(this.activeBudget);
   }
@@ -156,7 +156,7 @@ export class BudgetStore implements OnDestroy {
   createNewBudget() {
     const budget: IBudget = {
       ...NEW_BUDGET_TEMPLATE,
-      ...generateDBMeta()
+      ...generateDBMeta(),
     };
     this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
@@ -172,8 +172,10 @@ export class BudgetStore implements OnDestroy {
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
       await this.loadSavedBudgets();
-      const budget = this.savedBudgets.find(b => b._key === key);
-      this.loadBudget(toJS(budget));
+      const budget = this.savedBudgets.find((b) => b._key === key);
+      if (budget) {
+        this.loadBudget(toJS(budget));
+      }
     }
   }
   async loadBudget(budget: IBudget) {
@@ -241,14 +243,14 @@ export class BudgetStore implements OnDestroy {
 
   private async setHardcodedData() {
     const endpoint = 'budgetTool/_all/cards';
-    const docs: IBudgetCardDB[] = CARDS.map(card => {
+    const docs: IBudgetCardDB[] = CARDS.map((card) => {
       return {
         ...card,
         // add doc metadata - this would be auto populated however want to keep
         // reference of app version date so can be overwritten by db if desired
         _created: new Date(APP_VERSION.date).toISOString(),
         _modified: new Date(APP_VERSION.date).toISOString(),
-        _key: `${card.type}_${card.id}`
+        _key: `${card.type}_${card.id}`,
       };
     });
     await this.db.setDocs(endpoint, docs);
@@ -268,7 +270,7 @@ export class BudgetStore implements OnDestroy {
       runningTotal = runningTotal + periodTotal;
       totals[i] = {
         period: periodTotal,
-        running: runningTotal
+        running: runningTotal,
       };
     });
     return totals;
@@ -284,7 +286,7 @@ export class BudgetStore implements OnDestroy {
   }
   private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
     let total = 0;
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const t = card.values.total ? card.values.total : 0;
       total = total + t;
     });
@@ -313,12 +315,12 @@ export class BudgetStore implements OnDestroy {
   }
   // group all enterprise cards and create new parent card that will be used to reveal group
   private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {
-    const allGroupings = cards.map(e => toJS(e.groupings));
+    const allGroupings = cards.map((e) => toJS(e.groupings));
     const mergedGroupings: string[] = [].concat.apply([], allGroupings);
     // NOTE - technically Array.from shouldn't be required but current issue with typescript
     // see https://stackoverflow.com/questions/33464504/using-spread-syntax-and-new-set-with-typescript/33464709
     const uniqueGroups = [...Array.from(new Set(mergedGroupings))].sort();
-    const enterpriseTypeCards: IBudgetCardDB[] = uniqueGroups.map(group => {
+    const enterpriseTypeCards: IBudgetCardDB[] = uniqueGroups.map((group) => {
       return {
         id: group,
         label: group,
@@ -326,7 +328,7 @@ export class BudgetStore implements OnDestroy {
         imgType: 'svg',
         _key: `_group_${group}`,
         _created: new Date().toISOString(),
-        _modified: new Date().toISOString()
+        _modified: new Date().toISOString(),
       };
     });
     return enterpriseTypeCards;
@@ -341,7 +343,7 @@ export class BudgetStore implements OnDestroy {
     // return as arrays to ensure order retained if iterating over
     const counters: IBudgetValueCounters = [
       ['large', 'large-half', 'medium', 'medium-half', 'small', 'small-half'],
-      [10 * b, 5 * b, b, b / 2, b / 10, b / 20]
+      [10 * b, 5 * b, b, b / 2, b / 10, b / 20],
     ];
     return counters;
   }

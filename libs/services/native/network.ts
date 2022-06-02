@@ -1,31 +1,31 @@
-import { Injectable } from "@angular/core";
-import { Network } from "@ionic-native/network/ngx";
-import { Platform } from "@ionic/angular";
+import { Injectable } from '@angular/core';
+import { Network } from '@ionic-native/network/ngx';
+import { Platform } from '@ionic/angular';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class NetworkProvider {
-  online: boolean;
+  online = false;
 
   constructor(private network: Network, private platform: Platform) {
-    console.log("Hello NetworkProvider Provider");
+    console.log('Hello NetworkProvider Provider');
   }
   init() {
     this.online = this.getNetworkStatus();
-    console.log("online?", this.online);
+    console.log('online?', this.online);
     this.subscribeToNetworkChanges();
   }
 
   getNetworkStatus() {
-    if (this.platform.is("cordova")) {
-      return this.network.type != "none";
+    if (this.platform.is('cordova')) {
+      return this.network.type != 'none';
     } else {
       return navigator.onLine;
     }
   }
 
   subscribeToNetworkChanges() {
-    console.log("subscribing to network changes");
-    if (this.platform.is("cordova")) {
+    console.log('subscribing to network changes');
+    if (this.platform.is('cordova')) {
       this.network.onDisconnect().subscribe(() => {
         this.online = false;
       });
@@ -33,8 +33,8 @@ export class NetworkProvider {
         this.online = true;
       });
     } else {
-      window.addEventListener("online", e => this.updateOnlineStatus(e));
-      window.addEventListener("offline", e => this.updateOnlineStatus(e));
+      window.addEventListener('online', (e) => this.updateOnlineStatus(e));
+      window.addEventListener('offline', (e) => this.updateOnlineStatus(e));
     }
   }
   updateOnlineStatus(e) {

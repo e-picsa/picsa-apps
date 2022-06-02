@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import type { IDBEndpoint, IDBDoc } from '@picsa/models/db.models';
 import { AbstractDBService } from './abstract.db';
-import ENVIRONMENT from '@picsa/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DBServerService implements AbstractDBService {
@@ -14,18 +13,18 @@ export class DBServerService implements AbstractDBService {
 
   public async getCollection<T>(endpoint: IDBEndpoint, newerThan = '') {
     const snapshot = await this.afs
-      .collection<T>(endpoint, ref => ref.where('_modified', '>', newerThan))
+      .collection<T>(endpoint, (ref) => ref.where('_modified', '>', newerThan))
       .get()
       .toPromise();
-    return snapshot.docs.map(d => d.data()) as (T & IDBDoc)[];
+    return snapshot.docs.map((d) => d.data()) as (T & IDBDoc)[];
   }
 
   public async getDoc<T>(endpoint: IDBEndpoint, key: string) {
     const snapshot = await this.afs
-      .doc(`${endpoint}/${key}`)
+      .doc<T & IDBDoc>(`${endpoint}/${key}`)
       .get()
       .toPromise();
-    return snapshot.data() as T & IDBDoc;
+    return snapshot!.data() as T & IDBDoc;
   }
 
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {

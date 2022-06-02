@@ -14,6 +14,8 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
     "paths": {
       "@picsa/*": ["libs/*"],
       "@picsa/shared/*": ["libs/*"],

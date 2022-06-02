@@ -28,12 +28,12 @@ export function HttpLoaderFactory(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
+        deps: [HttpClient],
       },
-      isolate: false
-    })
+      isolate: false,
+    }),
   ],
-  exports: []
+  exports: [],
 })
 export class _PicsaTranslateRootModule {}
 
@@ -44,30 +44,30 @@ export class _PicsaTranslateRootModule {}
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
+        deps: [HttpClient],
       },
-      isolate: false
-    })
+      isolate: false,
+    }),
   ],
-  exports: []
+  exports: [],
 })
 export class _PicsaTranslateChildModule {}
 
 @NgModule({
   imports: [],
-  exports: [TranslateModule]
+  exports: [TranslateModule],
 })
 export class PicsaTranslateModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<_PicsaTranslateRootModule> {
     return {
       ngModule: _PicsaTranslateRootModule,
-      providers: [PicsaTranslateService]
+      providers: [PicsaTranslateService],
     };
   }
-  static forChild(): ModuleWithProviders {
+  static forChild(): ModuleWithProviders<_PicsaTranslateChildModule> {
     return {
       ngModule: _PicsaTranslateChildModule,
-      providers: [PicsaTranslateService]
+      providers: [PicsaTranslateService],
     };
   }
 }
