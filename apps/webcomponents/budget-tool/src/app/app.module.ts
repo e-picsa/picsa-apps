@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { AppComponent, AppComponentEmbedded } from './app.component';
 import {
   AppRoutingModule,
-  BudgetToolRoutingModule
+  BudgetToolRoutingModule,
 } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NgReduxRouterModule } from '@angular-redux/router';
@@ -13,7 +13,7 @@ import {
   PicsaDbModule,
   PicsaNativeModule,
   PicsaTranslateModule,
-  PicsaTranslateService
+  PicsaTranslateService,
 } from '@picsa/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BudgetMaterialModule } from './material.module';
@@ -28,7 +28,7 @@ const StandaloneImports = [
   HttpClientModule,
   BudgetMaterialModule,
   MobxAngularModule,
-  PicsaTranslateModule.forRoot()
+  PicsaTranslateModule.forRoot(),
   // CanvasWhiteboardModule,
 ];
 const CommonImports = [];
@@ -40,7 +40,7 @@ const ChildImports = [BudgetToolRoutingModule];
 @NgModule({
   declarations: [AppComponent],
   imports: [...StandaloneImports, ...CommonImports],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(private translate: PicsaTranslateService) {}
@@ -53,7 +53,7 @@ export class AppModule {
 @NgModule({
   declarations: [AppComponentEmbedded],
   imports: [...CommonImports, ...ChildImports],
-  bootstrap: [AppComponentEmbedded]
+  bootstrap: [AppComponentEmbedded],
 })
 export class AppEmbeddedModule {
   // ensure translate has been initiated
@@ -62,10 +62,10 @@ export class AppEmbeddedModule {
 
 @NgModule({})
 export class BudgetToolModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<AppEmbeddedModule> {
     return {
       ngModule: AppEmbeddedModule,
-      providers: [PicsaTranslateService]
+      providers: [PicsaTranslateService],
     };
   }
 }

@@ -2908,6 +2908,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ngx-translate/http-loader@npm:~4.0.0":
+  version: 4.0.0
+  resolution: "@ngx-translate/http-loader@npm:4.0.0"
+  dependencies:
+    tslib: ^1.9.0
+  peerDependencies:
+    "@angular/common": ">=7.0.0"
+    "@ngx-translate/core": ">=11.0.0"
+    rxjs: ">=6.3.0"
+  checksum: 40ef72341a42ab96c136b309ea0b02e55c2b2decc3cfeeb00d1e03c70eb31e32877ac967c777462270e8ca67ad1828cae3491f607c3ac5d805abf5eaf7059240
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -11170,6 +11183,7 @@ __metadata:
     "@ionic-native/social-sharing": ^5.13.0
     "@ionic/angular": 4.8.1
     "@ngx-translate/core": ~11.0.1
+    "@ngx-translate/http-loader": ~4.0.0
     "@nrwl/angular": 14.1.9
     "@nrwl/cli": 14.1.9
     "@nrwl/cypress": 14.1.9

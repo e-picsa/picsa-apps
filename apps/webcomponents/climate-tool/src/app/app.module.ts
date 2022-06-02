@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent, AppComponentEmbedded } from './app.component';
 import {
   AppRoutingModule,
-  ClimateToolRoutingModule
+  ClimateToolRoutingModule,
 } from './app-routing.module';
 import { PicsaTranslateModule } from '@picsa/modules/translate';
 import { PicsaDbModule } from '@picsa/modules/db.module';
@@ -18,7 +18,7 @@ const StandaloneImports = [
   MatSliderModule,
   PicsaTranslateModule.forRoot(),
   PicsaDbModule.forRoot(),
-  AppRoutingModule
+  AppRoutingModule,
 ];
 const ChildImports = [ClimateToolRoutingModule];
 
@@ -28,7 +28,7 @@ const ChildImports = [ClimateToolRoutingModule];
 @NgModule({
   declarations: [AppComponent],
   imports: StandaloneImports,
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
 
@@ -39,15 +39,15 @@ export class AppModule {}
 @NgModule({
   declarations: [AppComponentEmbedded],
   imports: ChildImports,
-  bootstrap: [AppComponentEmbedded]
+  bootstrap: [AppComponentEmbedded],
 })
 export class AppEmbeddedModule {}
 
 @NgModule({})
 export class ClimateToolModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<AppEmbeddedModule> {
     return {
-      ngModule: AppEmbeddedModule
+      ngModule: AppEmbeddedModule,
     };
   }
 }

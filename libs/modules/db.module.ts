@@ -17,20 +17,22 @@ import { DBSyncService } from '@picsa/services/core/db/sync.service';
     // see https://github.com/angular/angularfire2/issues/1635
     AngularFireModule,
     AngularFirestoreModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
   ],
-  providers: [{ provide: FirebaseOptionsToken, useValue: ENVIRONMENT.firebase }]
+  providers: [
+    { provide: FirebaseOptionsToken, useValue: ENVIRONMENT.firebase },
+  ],
 })
 export class PicsaDbModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<PicsaDbModule> {
     return {
       ngModule: PicsaDbModule,
       providers: [
         DBCacheService,
         DBServerService,
         DBSyncService,
-        PicsaDbService
-      ]
+        PicsaDbService,
+      ],
     };
   }
 }

@@ -2,7 +2,7 @@
 import {
   DB_VERSION,
   keyReplace,
-  DEFAULT_STORE_SCHEMA
+  DEFAULT_STORE_SCHEMA,
 } from '@picsa/models/db.models';
 import Dexie from 'dexie';
 import { ENVIRONMENT } from '@picsa/environments';
@@ -20,7 +20,7 @@ export const upgradeDatabases = (db: Dexie) => {
     if (LEGACY_STORES[i]) {
       db.version(i)
         .stores(keyReplace(stores, '${GROUP}', ENVIRONMENT.group.code))
-        .upgrade(tx => upgrade(tx));
+        .upgrade((tx) => upgrade(tx));
     }
   }
 };
@@ -36,16 +36,16 @@ const LEGACY_STORES = {
     climateTool: DEFAULT_STORE_SCHEMA,
     forms: DEFAULT_STORE_SCHEMA,
     stationData: DEFAULT_STORE_SCHEMA,
-    'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA
+    'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA,
   },
   // added user store
   get 2() {
-    return { ...this.a, 'users/${GROUP}/users': DEFAULT_STORE_SCHEMA };
-  }
+    return { ...this['1'], 'users/${GROUP}/users': DEFAULT_STORE_SCHEMA };
+  },
 };
 
 // modifications within stores should be kept here
 const UPGRADES = {
-  1: tx => null,
-  2: tx => null
+  1: (tx) => null,
+  2: (tx) => null,
 };

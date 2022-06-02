@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "noImplicitAny": false,
     "strictPropertyInitialization": false,
+    "noPropertyAccessFromIndexSignature": false,
     "paths": {
       "@picsa/*": ["libs/*"],
       "@picsa/shared/*": ["libs/*"],

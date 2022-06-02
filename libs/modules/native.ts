@@ -2,7 +2,7 @@ import {
   NgModule,
   ModuleWithProviders,
   Optional,
-  SkipSelf
+  SkipSelf,
 } from '@angular/core';
 import { PrintProvider } from '../services/native/print';
 import { NetworkProvider } from '../services/native/network';
@@ -13,7 +13,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
-  imports: []
+  imports: [],
 })
 export class PicsaNativeModule {
   constructor(@Optional() @SkipSelf() parentModule: PicsaNativeModule) {
@@ -23,7 +23,7 @@ export class PicsaNativeModule {
       );
     }
   }
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<PicsaNativeModule> {
     return {
       ngModule: PicsaNativeModule,
       providers: [
@@ -33,8 +33,8 @@ export class PicsaNativeModule {
         SocialSharing,
         File,
         FileOpener,
-        FileTransfer
-      ]
+        FileTransfer,
+      ],
     };
   }
 }

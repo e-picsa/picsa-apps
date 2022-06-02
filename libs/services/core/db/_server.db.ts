@@ -16,7 +16,9 @@ export class DBServerService implements AbstractDBService {
       .collection<T>(endpoint, (ref) => ref.where('_modified', '>', newerThan))
       .get()
       .toPromise();
-    return snapshot.docs.map((d) => d.data()) as (T & IDBDoc)[];
+    return snapshot
+      ? (snapshot.docs.map((d) => d.data()) as (T & IDBDoc)[])
+      : [];
   }
 
   public async getDoc<T>(endpoint: IDBEndpoint, key: string) {
@@ -24,7 +26,7 @@ export class DBServerService implements AbstractDBService {
       .doc<T & IDBDoc>(`${endpoint}/${key}`)
       .get()
       .toPromise();
-    return snapshot!.data() as T & IDBDoc;
+    return snapshot ? (snapshot.data() as T & IDBDoc) : (null as any);
   }
 
   public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {
