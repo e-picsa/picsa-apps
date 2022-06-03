@@ -30,7 +30,8 @@
       "@picsa/extension/*": ["apps/native/extension-toolkit/*"],
       "@picsa/models": ["libs/models/src/index.ts"],
       "@picsa/shared": ["libs/shared/src/index.ts"],
-      "@picsa/shared/*": ["libs/shared/src/*"]
+      "@picsa/shared/*": ["libs/shared/src/*"],
+      "@picsa/theme": ["libs/theme/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

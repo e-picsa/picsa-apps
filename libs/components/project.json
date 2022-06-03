@@ -3,22 +3,6 @@
   "sourceRoot": "libs/components/src",
   "prefix": "picsa",
   "targets": {
-    "build": {
-      "executor": "@nrwl/angular:ng-packagr-lite",
-      "outputs": ["dist/libs/components"],
-      "options": {
-        "project": "libs/components/ng-package.json"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "libs/components/tsconfig.lib.prod.json"
-        },
-        "development": {
-          "tsConfig": "libs/components/tsconfig.lib.json"
-        }
-      },
-      "defaultConfiguration": "production"
-    },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/components"],

@@ -1,6 +1,6 @@
 // import "./node_modules/leaflet/dist/leaflet.css" to add leaflet styles
 // this has to be done in angular.json
-@import '../../scss/variables';
+@import '../../../../theme/src/variables';
 .countryLabel {
   fill: transparent;
   background: rgba(255, 255, 255, 0);

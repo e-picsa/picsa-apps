@@ -17,7 +17,10 @@
           "apps/webcomponents/budget-tool/src/favicon.ico",
           "apps/webcomponents/budget-tool/src/assets"
         ],
-        "styles": ["apps/webcomponents/budget-tool/src/styles.scss"],
+        "styles": [
+          "apps/webcomponents/budget-tool/src/styles.scss",
+          "libs/theme/src/_index.scss"
+        ],
         "scripts": []
       },
       "configurations": {

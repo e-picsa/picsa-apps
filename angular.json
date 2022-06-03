@@ -2,6 +2,7 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "components": "libs/components",
     "environments": "libs/environments",
     "models": "libs/models",
     "native-extension-app": "apps/native/extension-app",
@@ -9,6 +10,7 @@
     "shared": "libs/shared",
     "sites-content-dashboard": "apps/sites/content-dashboard",
     "sites-content-dashboard-e2e": "apps/sites/content-dashboard-e2e",
+    "theme": "libs/theme",
     "webcomponents-budget-tool": "apps/webcomponents/budget-tool",
     "webcomponents-budget-tool-e2e": "apps/webcomponents/budget-tool-e2e",
     "webcomponents-climate-tool": "apps/webcomponents/climate-tool",

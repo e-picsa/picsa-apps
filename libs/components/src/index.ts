@@ -1,9 +1,25 @@
-export { PicsaCommonComponentsModule } from './components';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-// Additional export to allow individual consumption
-// https://stackoverflow.com/a/60122077/5693245
-export { BackButton } from './components/back-button.component';
-export {
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
+import { BackButton } from './components/back-button.component';
+import {
   PicsaHeaderComponent,
   PicsaHeaderInvertedDirective,
 } from './components/picsa-header.component';
+
+// import {} from './warning.component';
+const components = [
+  BackButton,
+  PicsaHeaderComponent,
+  PicsaHeaderInvertedDirective,
+];
+
+@NgModule({
+  declarations: components,
+  imports: [CommonModule, MatIconModule, MatButtonModule],
+  exports: components,
+})
+export class PicsaCommonComponentsModule {}
