@@ -6,7 +6,7 @@ import { UserStore } from '../../store/user.store';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
-  styleUrls: ['./settings.page.scss']
+  styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage {
   user: IUser;
@@ -29,21 +29,21 @@ export class SettingsPage {
         {
           name: 'val',
           placeholder: field,
-          type: 'text'
-        }
+          type: 'text',
+        },
       ],
       buttons: [
         {
           text: 'Cancel',
-          handler: data => {}
+          handler: (data) => null,
         },
         {
           text: 'Save',
-          handler: data => {
+          handler: (data) => {
             this.updateUser(field, data.val);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await prompt.present();
   }

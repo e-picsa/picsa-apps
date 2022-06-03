@@ -72,8 +72,8 @@ export class PicsaFileService {
    * @param base
    * @param folder
    */
-  async ensureDirectory(base: IDirectoryBase, folder: string = '') {
-    let baseDir = this.dir[base];
+  async ensureDirectory(base: IDirectoryBase, folder = '') {
+    const baseDir = this.dir[base];
     console.log('ensuring directory', base, folder);
     try {
       const contents = await this.listDirectory(base, folder);
@@ -130,6 +130,7 @@ export class PicsaFileService {
    */
   async listDirectory(base: IDirectoryBase, dir: string) {
     console.log(`listing [${dir}]`);
+    // eslint-disable-next-line no-useless-catch
     try {
       const files = await this.file.listDir(this.dir[base], dir);
       return files;

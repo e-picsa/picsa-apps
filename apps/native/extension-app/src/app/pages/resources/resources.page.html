@@ -17,7 +17,7 @@
           ? 'block'
           : 'none'
       "
-      (click)="unsetResource()"
+      (click)="unsetResources()"
     >
       <div class="video-resource-content">
         <div class="video-close-button">
@@ -27,7 +27,7 @@
         </div>
         <youtube-player
           [videoId]="activeResource.youtubeID"
-          *ngIf="activeResource && !platformIsWeb"
+          *ngIf="activeResource && activeResource.youtubeID && !platformIsWeb"
           [width]="playerWidth"
         ></youtube-player>
       </div>

@@ -6,12 +6,12 @@ import { ResourcesStore } from '../../store/resources.store';
 @Component({
   selector: 'app-resources',
   templateUrl: './resources.page.html',
-  styleUrls: ['./resources.page.scss']
+  styleUrls: ['./resources.page.scss'],
 })
 export class ResourcesPage implements AfterViewInit {
   resources$: Observable<IResource[]>;
   resourceGroups: IResourceGroup[];
-  activeResource: IResource;
+  activeResource: IResource | undefined;
   playerWidth: number;
   externalDir: string;
   platformIsWeb = false;

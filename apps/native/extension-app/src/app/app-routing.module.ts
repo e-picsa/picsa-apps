@@ -1,5 +1,6 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module';
 
@@ -9,48 +10,48 @@ const routes: Routes = [
   {
     path: 'budget',
     loadChildren: () =>
-      import('../../../budget-tool/src/app/app.module').then(
-        mod => mod.BudgetToolModule
-      )
+      import('../../../../webcomponents/budget-tool/src/app/app.module').then(
+        (mod) => mod.BudgetToolModule
+      ),
   },
   {
     path: 'climate',
     loadChildren: () =>
-      import('../../../climate-tool/src/app/app.module').then(
-        mod => mod.ClimateToolModule
-      )
+      import('../../../../webcomponents/climate-tool/src/app/app.module').then(
+        (mod) => mod.ClimateToolModule
+      ),
   },
   {
     path: 'resources',
     loadChildren: () =>
       import('./pages/resources/resources.module').then(
-        mod => mod.ResourcesPageModule
-      )
+        (mod) => mod.ResourcesPageModule
+      ),
   },
   {
     path: '',
     loadChildren: () =>
-      import('./pages/home/home.module').then(mod => mod.HomePageModule)
+      import('./pages/home/home.module').then((mod) => mod.HomePageModule),
   },
   {
     path: 'settings',
     loadChildren: () =>
       import('./pages/settings/settings.module').then(
-        mod => mod.SettingsPageModule
-      )
+        (mod) => mod.SettingsPageModule
+      ),
   },
   {
     path: 'discussions',
     loadChildren: () =>
       import('./pages/discussions/discussions.module').then(
-        mod => mod.DiscussionsPageModule
-      )
+        (mod) => mod.DiscussionsPageModule
+      ),
   },
   {
     path: 'data',
     loadChildren: () =>
-      import('./pages/data/data.module').then(mod => mod.DataPageModule)
-  }
+      import('./pages/data/data.module').then((mod) => mod.DataPageModule),
+  },
   // { path: '**', redirectTo: '/home' }
   // NOTE - multiple 'catch-all' with sub apps causes issues
 ];
@@ -64,8 +65,8 @@ const routes: Routes = [
       // { preloadingStrategy: PreloadAllModules }
     ),
     ClimateToolModule.forRoot(),
-    BudgetToolModule.forRoot()
+    BudgetToolModule.forRoot(),
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

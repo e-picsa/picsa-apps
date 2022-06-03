@@ -94,16 +94,16 @@ export class HomePage implements OnInit {
   }
 }
 
-const LINK_DEFAULTS: ILink = {
+const LINK_DEFAULTS = {
   cols: 1,
   rows: 1,
 };
 
 interface ILink {
-  name?: string;
+  name: string;
   cols: number;
   rows: number;
-  icon?: string;
+  icon: string;
   img?: string;
   url?: string;
 }

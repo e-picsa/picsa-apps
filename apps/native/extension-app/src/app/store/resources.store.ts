@@ -16,7 +16,7 @@ import { toJS } from 'mobx';
 })
 export class ResourcesStore {
   @observable resources: IResource[] = [];
-  @observable downloads = [];
+  @observable downloads: any[] = [];
   constructor(
     private db: PicsaDbService,
     private fileService: PicsaFileService,

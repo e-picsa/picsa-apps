@@ -493,6 +493,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular/service-worker@npm:^13.3.0":
+  version: 13.3.11
+  resolution: "@angular/service-worker@npm:13.3.11"
+  dependencies:
+    tslib: ^2.3.0
+  peerDependencies:
+    "@angular/common": 13.3.11
+    "@angular/core": 13.3.11
+  bin:
+    ngsw-config: ngsw-config.js
+  checksum: 2e0ebbe531066e4cc8d5e8d18350a8402dd2fc383d3501660c05c8f9911b41e82172c14fc537be3df57472dd2e7e77659d7ad57fd2461899196bec43e28ba1cb
+  languageName: node
+  linkType: hard
+
 "@assemblyscript/loader@npm:^0.10.1":
   version: 0.10.1
   resolution: "@assemblyscript/loader@npm:0.10.1"
@@ -4551,6 +4565,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/youtube@npm:0.0.46":
+  version: 0.0.46
+  resolution: "@types/youtube@npm:0.0.46"
+  checksum: a56f6572a3adc71c741403f93fd51df80ef15aa2bf797a1a122973015abb3579a716d6d9dc50457cb4576c6401638d2f4d44a74455d6b3c4a9f078e1e4cbbc06
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:~5.18.0":
   version: 5.18.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.18.0"
@@ -5548,6 +5569,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base64-arraybuffer@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "base64-arraybuffer@npm:1.0.2"
+  checksum: 15e6400d2d028bf18be4ed97702b11418f8f8779fb8c743251c863b726638d52f69571d4cc1843224da7838abef0949c670bde46936663c45ad078e89fee5c62
+  languageName: node
+  linkType: hard
+
 "base64-js@npm:^1.2.0, base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
@@ -6512,6 +6540,15 @@ __metadata:
   bin:
     css-has-pseudo: dist/cli.cjs
   checksum: 8f165d68f6621891d9fa1d874794916a52ed8847dfbec591523ad68774650cc1eae062ba08f59514666e04aeba27be72c9b211892f3a187c5ba6e287bd4260e7
+  languageName: node
+  linkType: hard
+
+"css-line-break@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "css-line-break@npm:2.1.0"
+  dependencies:
+    utrie: ^1.0.2
+  checksum: 37b1fe632b03be7a287cd394cef8b5285666343443125c510df9cfb6a4734a2c71e154ec8f7bbff72d7c339e1e5872989b1c52d86162aed27d6cc114725bb4d0
   languageName: node
   linkType: hard
 
@@ -9401,6 +9438,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html2canvas@npm:^1.0.0-rc.3":
+  version: 1.4.1
+  resolution: "html2canvas@npm:1.4.1"
+  dependencies:
+    css-line-break: ^2.1.0
+    text-segmentation: ^1.0.3
+  checksum: c134324af57f3262eecf982e436a4843fded3c6cf61954440ffd682527e4dd350e0c2fafd217c0b6f9a455fe345d0c67b4505689796ab160d4ca7c91c3766739
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.0":
   version: 4.1.0
   resolution: "http-cache-semantics@npm:4.1.0"
@@ -11775,6 +11822,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ngx-file-drop@npm:8.0.4":
+  version: 8.0.4
+  resolution: "ngx-file-drop@npm:8.0.4"
+  dependencies:
+    tslib: ^1.9.0
+  peerDependencies:
+    "@angular/common": ">=8.0.0 <9.0.0"
+    "@angular/core": ">=8.0.0 <9.0.0"
+  checksum: e28b849f3705ab9072783c9eb174d0da6dcd1442a16da3fffabb4002750529c9a62229fede4f9a7c01825729ce51a384f3849227acce8b48f2852465aa86b9da
+  languageName: node
+  linkType: hard
+
+"ngx-youtube-player@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "ngx-youtube-player@npm:12.0.1"
+  dependencies:
+    "@types/youtube": 0.0.46
+    tslib: ^2.0.0
+  peerDependencies:
+    "@angular/common": ^8.2.0
+    "@angular/core": ^8.2.0
+  checksum: 1afe925d14e70ae4ec528a4220e48f25837dd3404be7716be130b2a310176e8b08e7ac39c59e2ee6a4b364c3074118eb3f44e4579fdab4524c6e4266b155d586
+  languageName: node
+  linkType: hard
+
 "nice-napi@npm:^1.0.2":
   version: 1.0.2
   resolution: "nice-napi@npm:1.0.2"
@@ -12495,6 +12567,7 @@ __metadata:
     "@angular/platform-browser": ~13.3.0
     "@angular/platform-browser-dynamic": ~13.3.0
     "@angular/router": ~13.3.0
+    "@angular/service-worker": ^13.3.0
     "@asymmetrik/ngx-leaflet": ^6.0.1
     "@ionic-native/core": ^5.13.0
     "@ionic-native/file": ^5.13.0
@@ -12533,6 +12606,7 @@ __metadata:
     eslint-plugin-cypress: ^2.10.3
     firebase: ^9.8.2
     hammerjs: ^2.0.8
+    html2canvas: ^1.0.0-rc.3
     jest: 27.5.1
     jest-preset-angular: 11.1.1
     leaflet: ^1.5.1
@@ -12540,6 +12614,8 @@ __metadata:
     mobx-angular: ^3.0.1
     ng-packagr: ^13.0.0
     ng2-canvas-whiteboard: ^3.0.4
+    ngx-file-drop: 8.0.4
+    ngx-youtube-player: ^12.0.1
     nx: 14.1.9
     papaparse: ^5.3.2
     postcss: ^8.4.5
@@ -12549,6 +12625,7 @@ __metadata:
     prettier: ^2.5.1
     rxjs: ~7.4.0
     save-svg-as-png: ^1.4.14
+    survey-angular: ^1.1.5
     tailwindcss: ^3.0.2
     ts-jest: 27.1.4
     ts-node: 9.1.1
@@ -14657,6 +14734,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"survey-angular@npm:^1.1.5":
+  version: 1.9.33
+  resolution: "survey-angular@npm:1.9.33"
+  checksum: 1e90060a471ffa161792709f4a46641f6ed5a7266a33e54ca559fb12a994b06b7b5074a168ab9bcb0756753ca3ca8409d14d0b470424154669a00eef246052c5
+  languageName: node
+  linkType: hard
+
 "symbol-observable@npm:4.0.0":
   version: 4.0.0
   resolution: "symbol-observable@npm:4.0.0"
@@ -14821,6 +14905,15 @@ __metadata:
   version: 1.0.0
   resolution: "text-hex@npm:1.0.0"
   checksum: 1138f68adc97bf4381a302a24e2352f04992b7b1316c5003767e9b0d3367ffd0dc73d65001ea02b07cd0ecc2a9d186de0cf02f3c2d880b8a522d4ccb9342244a
+  languageName: node
+  linkType: hard
+
+"text-segmentation@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "text-segmentation@npm:1.0.3"
+  dependencies:
+    utrie: ^1.0.2
+  checksum: 2e24632d59567c55ab49ac324815e2f7a8043e63e26b109636322ac3e30692cee8679a448fd5d0f0598a345f407afd0e34ba612e22524cf576d382d84058c013
   languageName: node
   linkType: hard
 
@@ -15338,6 +15431,15 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
+  languageName: node
+  linkType: hard
+
+"utrie@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "utrie@npm:1.0.2"
+  dependencies:
+    base64-arraybuffer: ^1.0.2
+  checksum: c96fbb7d4d8855a154327da0b18e39b7511cc70a7e4bcc3658e24f424bb884312d72b5ba777500b8858e34d365dc6b1a921dc5ca2f0d341182519c6b78e280a5
   languageName: node
   linkType: hard
 

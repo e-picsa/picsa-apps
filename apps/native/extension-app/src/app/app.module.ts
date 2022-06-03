@@ -19,19 +19,19 @@ import 'hammerjs';
 /**************************************************************
  *  Sentry error handler
  * ***************************************************************/
-import * as Sentry from 'sentry-cordova';
-import { SENTRY_CONFIG } from '@picsa/environments/sentry';
-Sentry.init(SENTRY_CONFIG);
-export class SentryIonicErrorHandler extends ErrorHandler {
-  handleError(error) {
-    super.handleError(error);
-    try {
-      Sentry.captureException(error.originalError || error);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-}
+// import * as Sentry from 'sentry-cordova';
+// import { SENTRY_CONFIG } from '@picsa/environments/sentry';
+// Sentry.init(SENTRY_CONFIG);
+// export class SentryIonicErrorHandler extends ErrorHandler {
+//   override handleError(error) {
+//     super.handleError(error);
+//     try {
+//       Sentry.captureException(error.originalError || error);
+//     } catch (e) {
+//       console.error(e);
+//     }
+//   }
+// }
 
 @NgModule({
   declarations: [AppComponent],
@@ -48,7 +48,7 @@ export class SentryIonicErrorHandler extends ErrorHandler {
     AppRoutingModule,
     IonicModule.forRoot(),
   ],
-  providers: [{ provide: ErrorHandler, useClass: SentryIonicErrorHandler }],
+  // providers: [{ provide: ErrorHandler, useClass: SentryIonicErrorHandler }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

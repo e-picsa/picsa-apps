@@ -8,9 +8,9 @@
 </ion-header>
 
 <ion-content padding>
-  <div *ngIf="!forms || forms.length == 0" style="display: flex">
+  <div *ngIf="!forms || forms.length === 0" style="display: flex">
     <ion-icon name="warning"></ion-icon>
-    <div style="margin-left:20px">
+    <div style="margin-left: 20px">
       <div>There are no forms available for data submission</div>
       <div>
         Forms become available when groups are joined from the settings page
@@ -22,11 +22,11 @@
     <ion-card
       class="form-card"
       *ngFor="let form of forms"
-      (click)="openForm(form)"
+      (click)="openForm($any(form))"
     >
       <ion-card-header>
         <ion-icon name="clipboard"></ion-icon>
-        <span style="margin-left:5px">{{ form.name | translate }}</span>
+        <span style="margin-left: 5px">{{ form.name | translate }}</span>
       </ion-card-header>
       <img
         [src]="'assets/img/' + form.icon + '.svg'"

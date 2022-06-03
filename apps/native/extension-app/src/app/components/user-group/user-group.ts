@@ -1,17 +1,16 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { IUser, IUserGroup } from '../../models/models';
 import { UserStore } from '../../store/user.store';
 
 @Component({
   selector: 'user-group',
-  templateUrl: 'user-group.html'
+  templateUrl: 'user-group.html',
 })
 export class UserGroupComponent implements OnDestroy {
   private componentDestroyed: Subject<any> = new Subject();
-  @Input('group') group: IUserGroup;
+  @Input() group: IUserGroup;
   user: IUser;
   joined: boolean;
 
@@ -21,22 +20,16 @@ export class UserGroupComponent implements OnDestroy {
   ) {}
 
   ngOnDestroy() {
-    this.componentDestroyed.next();
+    this.componentDestroyed.next(true);
     this.componentDestroyed.unsubscribe();
-  }
-
-  ngOnInit(): void {
-    // subscrib after group input bind so can use group key
-    // this.user$.pipe(takeUntil(this.componentDestroyed)).subscribe(user => {
-    //   if (user) {
-    //     this.userUpdate(user);
-    //   }
-    // });
   }
 
   userUpdate(user: IUser) {
     // set joined status
-    this.joined = user && user.groups && user.groups.includes(this.group._key);
+    this.joined =
+      user && user.groups && user.groups.includes(this.group._key)
+        ? true
+        : false;
     console.log('user updated', user);
     this.user = user;
   }
@@ -64,32 +57,33 @@ export class UserGroupComponent implements OnDestroy {
         {
           name: 'key',
           placeholder: 'Access Key',
-          type: 'password'
-        }
+          type: 'password',
+        },
       ],
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
-          handler: data => {
+          handler: () => {
             console.log('Cancel clicked');
-          }
+            return;
+          },
         },
         {
           text: 'Join',
-          handler: data => {
+          handler: (data) => {
             console.log('data', data);
             if (data.key == this.group.accessKey) {
               // logged in!
-              this.joinGroup();
+              return this.joinGroup();
             } else {
               // *** TODO - invalid login
               // alert.data.message = `<div class="invalid-key">Invalid access key</div>`;
               return false;
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     await alert.present();
   }
