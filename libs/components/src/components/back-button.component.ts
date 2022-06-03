@@ -1,8 +1,9 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'back-button',
   template: `
     <button *ngIf="showButton" mat-button (click)="back()">
@@ -10,7 +11,8 @@ import { Subscription } from 'rxjs';
     </button>
   `,
 })
-export class BackButton implements OnDestroy {
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class BackButton implements OnDestroy, OnInit {
   route$: Subscription;
   showButton = false;
   constructor(private router: Router, private route: ActivatedRoute) {

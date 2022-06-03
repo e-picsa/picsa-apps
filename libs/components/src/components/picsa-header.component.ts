@@ -12,22 +12,12 @@ import { Component, Directive, HostBinding } from '@angular/core';
       </h1>
     </header>
   `,
-  styles: [
-    `
-      :host() {
-        color: white;
-        background-color: var(--color-primary);
-      }
-      :host(.inverted) {
-        color: var(--color-primary);
-        background-color: white;
-      }
-    `,
-  ],
+  styleUrls: ['./picsa-header.component.scss'],
 })
 export class PicsaHeaderComponent {}
 
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[inverted]',
 })
 export class PicsaHeaderInvertedDirective {
