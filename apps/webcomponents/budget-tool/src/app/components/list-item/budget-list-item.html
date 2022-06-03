@@ -1,10 +1,10 @@
-<mat-card style="margin-bottom:10px; cursor:pointer">
+<mat-card style="margin-bottom: 10px; cursor: pointer">
   <div style="display: flex">
     <budget-card-image
       class="small"
       [card]="budget.meta.enterprise"
     ></budget-card-image>
-    <div style="flex:1">
+    <div style="flex: 1">
       <mat-card-title>{{ budget.meta.title }}</mat-card-title>
       <mat-card-content>{{ budget.meta.description }}</mat-card-content>
       <mat-card-subtitle>{{ budget._created | date }}</mat-card-subtitle>
@@ -13,7 +13,7 @@
       mat-icon-button
       [matMenuTriggerFor]="budgetMenu"
       (click)="menuClick($event)"
-      style="height: 70px; width:50px"
+      style="height: 70px; width: 50px"
     >
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -29,7 +29,7 @@
         mat-menu-item
         aria-label="Delete"
         color="light"
-        (click)="deleteClicked($event)"
+        (click)="handleDeleteClicked($event)"
       >
         <mat-icon svgIcon="picsa_delete">Delete</mat-icon>
         Delete

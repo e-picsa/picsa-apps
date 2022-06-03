@@ -1,10 +1,10 @@
 <div class="cell-container" *mobxAutorun>
-  <div *ngIf="cellData" style="height: 100%;">
-    <div [ngSwitch]="type" style="height:100%" id="cellTypeSwitch">
+  <div *ngIf="cellData" style="height: 100%">
+    <div [ngSwitch]="type" style="height: 100%" id="cellTypeSwitch">
       <!-- activities -->
       <div
         *ngSwitchCase="'activities'"
-        style="display: flex; flex-wrap: wrap; height: 100%;"
+        style="display: flex; flex-wrap: wrap; height: 100%"
       >
         <budget-card-image
           *ngFor="let card of cellData"
@@ -18,11 +18,11 @@
           <budget-card-image class="small" [card]="card"></budget-card-image>
           <span
             class="badge input-badge"
-            [matBadge]="card.values.quantity"
+            [matBadge]="card.values!.quantity"
           ></span>
           <budget-balance-dot-value
-            *ngIf="card.values.total"
-            [value]="card.values.total"
+            *ngIf="card.values!.total"
+            [value]="card.values!.total"
             [valueCounters]="store.valueCounters"
             class="negative"
           ></budget-balance-dot-value>
@@ -31,13 +31,13 @@
       <!-- family labour -->
       <div
         *ngSwitchCase="'familyLabour'"
-        style="display: flex; flex-wrap: wrap; padding:5px"
+        style="display: flex; flex-wrap: wrap; padding: 5px"
       >
         <div *ngFor="let card of cellData">
           <budget-card-image class="x-small" [card]="card"></budget-card-image>
           <span
             class="badge family-badge"
-            [matBadge]="card.values.quantity"
+            [matBadge]="card.values!.quantity"
           ></span>
         </div>
       </div>
@@ -47,11 +47,11 @@
           <budget-card-image class="small" [card]="card"></budget-card-image>
           <span
             class="badge output-badge"
-            [matBadge]="card.values.quantity"
+            [matBadge]="card.values!.quantity"
           ></span>
           <budget-balance-dot-value
-            *ngIf="card.values.total"
-            [value]="card.values.total"
+            *ngIf="card.values!.total"
+            [value]="card.values!.total"
             [valueCounters]="store.valueCounters"
           ></budget-balance-dot-value>
         </div>
@@ -62,7 +62,7 @@
           <budget-card-image class="small" [card]="card"></budget-card-image>
           <span
             class="badge consumed-badge"
-            [matBadge]="card.values.quantity"
+            [matBadge]="card.values!.quantity"
           ></span>
         </div>
       </div>

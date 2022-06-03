@@ -24,10 +24,10 @@
       "@picsa/*": ["libs/*"],
       "@picsa/budget/*": ["apps/webcomponents/budget-tool/*"],
       "@picsa/climate/*": ["apps/webcomponents/climate-tool/*"],
+      "@picsa/components": ["libs/components/src/index.ts"],
       "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
       "@picsa/environments": ["libs/environments/src/index.ts"],
       "@picsa/extension/*": ["apps/native/extension-toolkit/*"],
-      "@picsa/components": ["libs/components/src/index.ts"],
       "@picsa/models": ["libs/models/src/index.ts"],
       "@picsa/shared": ["libs/shared/src/index.ts"],
       "@picsa/shared/*": ["libs/shared/src/*"]

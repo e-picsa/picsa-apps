@@ -21,8 +21,8 @@ import { Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetCellComponent implements OnInit, OnDestroy, OnChanges {
-  @Input('type') type: string;
-  @Input('periodIndex') periodIndex: number;
+  @Input() type: string;
+  @Input() periodIndex: number;
   cellValue$: Subscription;
   cellData: IBudgetCard[];
 

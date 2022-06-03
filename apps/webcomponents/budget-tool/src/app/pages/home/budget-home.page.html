@@ -12,7 +12,7 @@
         *ngFor="let budget of store.savedBudgets"
         [routerLink]="['./view', budget._key]"
         [budget]="budget"
-        (onDeleteClicked)="promptDelete(budget)"
+        (deleteClicked)="promptDelete(budget)"
       >
       </budget-list-item>
     </div>

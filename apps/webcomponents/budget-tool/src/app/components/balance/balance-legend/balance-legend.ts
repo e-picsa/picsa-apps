@@ -1,16 +1,12 @@
-import { Component, Input, Inject } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { BudgetStore } from '../../../store/budget.store';
 import { IBudgetValueCounters } from '../../../models/budget-tool.models';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'budget-balance-legend',
   templateUrl: './balance-legend.html',
-  styleUrls: ['./balance-legend.scss']
+  styleUrls: ['./balance-legend.scss'],
 })
 export class BudgetBalanceLegendComponent {
   labels: string[] = [];
@@ -30,9 +26,9 @@ export class BudgetBalanceLegendComponent {
 
   showScaleEdit() {
     const dialogRef = this.dialog.open(BudgetBalanceEditorComponent, {
-      width: '250px'
+      width: '250px',
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.scaleValues(result);
       }
@@ -54,7 +50,7 @@ export class BudgetBalanceLegendComponent {
         {{ 'Decrease Scale' | translate }}
       </button>
     </div>
-  `
+  `,
 })
 export class BudgetBalanceEditorComponent {
   constructor(public dialogRef: MatDialogRef<BudgetBalanceEditorComponent>) {}

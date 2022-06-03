@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  Inject,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { IBudget } from '../../models/budget-tool.models';
 import {
   MatDialogRef,
@@ -23,12 +16,12 @@ import { toJS } from 'mobx';
 })
 export class BudgetListItemComponent {
   @Input() budget: IBudget;
-  @Output() onDeleteClicked = new EventEmitter<void>();
+  @Output() deleteClicked = new EventEmitter<void>();
   constructor(private dialog: MatDialog, public store: BudgetStore) {}
 
-  deleteClicked(e: Event) {
+  handleDeleteClicked(e: Event) {
     e.stopPropagation();
-    this.onDeleteClicked.emit();
+    this.deleteClicked.emit();
   }
 
   menuClick(e: Event) {

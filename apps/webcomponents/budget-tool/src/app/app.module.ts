@@ -41,7 +41,8 @@ const ChildImports = [BudgetToolRoutingModule];
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(private translate: PicsaTranslateService) {}
+  // ensure translate service initialised
+  constructor(public translate: PicsaTranslateService) {}
 }
 
 /*******************************************************************

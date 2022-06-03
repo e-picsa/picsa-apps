@@ -8,18 +8,18 @@ import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 })
 export class BudgetCellEditorFamilyLabourComponent {
   @Input() values: IBudgetCardWithValues[];
-  @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
+  @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
   totalPeople: number;
   familyCard = FAMILY_MEMBER_CARD;
   ngOnInit(): void {}
 
   addMember() {
     this.values.push(FAMILY_MEMBER_CARD);
-    this.onValueChange.emit(this.values);
+    this.valueChanged.emit(this.values);
   }
   removeMember(i: number) {
     this.values.splice(i, 1);
-    this.onValueChange.emit(this.values);
+    this.valueChanged.emit(this.values);
   }
 
   // NOTE - to maintain array format family labour simply populates a basic card for every member
@@ -28,7 +28,7 @@ export class BudgetCellEditorFamilyLabourComponent {
     console.log('set card', cardIndex);
     const target = e.target as HTMLInputElement;
     this.values[cardIndex].values.quantity = Number(target.value);
-    this.onValueChange.emit(this.values);
+    this.valueChanged.emit(this.values);
   }
 }
 const FAMILY_MEMBER_CARD: IBudgetCardWithValues = {

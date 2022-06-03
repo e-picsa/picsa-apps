@@ -20,7 +20,7 @@ export class BudgetCellEditorCardSelectComponent {
     this.filterCards(cards);
   }
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
+  @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
   enterpriseCards: IBudgetCard[];
   otherCards: IBudgetCard[];
   selected: { [id: string]: boolean } = {};
@@ -72,7 +72,7 @@ export class BudgetCellEditorCardSelectComponent {
       this.selectedArray.push({ ...card, values: defaultValues as any });
     }
     // emit value
-    this.onValueChange.emit(this.selectedArray);
+    this.valueChanged.emit(this.selectedArray);
   }
 
   private _sortAZ(cards: IBudgetCard[]) {

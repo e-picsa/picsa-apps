@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
-import { IBudgetCardDB } from '../../../models/budget-tool.models';
+import { IBudgetCard } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-card-image',
@@ -17,7 +17,7 @@ import { IBudgetCardDB } from '../../../models/budget-tool.models';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
-  @Input() card: IBudgetCardDB;
+  @Input() card: IBudgetCard;
   imgData: SafeHtml;
   imgUrl: SafeUrl;
   objUrl: string;
@@ -83,7 +83,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   // method taken from http://yoksel.github.io/url-encoder/
   // applies selective replacement of uri characters
   private _encodeSVG(data: string): string {
-    const symbols = /[\r\n%#()<>?\[\\\]^`{|}]/g;
+    const symbols = /[\r\n%#()<>?[\\\]^`{|}]/g;
     data = data.replace(/"/g, "'");
     data = data.replace(/>\s{1,}</g, '><');
     data = data.replace(/\s{2,}/g, ' ');

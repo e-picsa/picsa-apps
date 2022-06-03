@@ -5,14 +5,14 @@ import { ENVIRONMENT } from '@picsa/environments';
 @Component({
   selector: 'budget-cell-editor-input-values',
   templateUrl: './input-values.html',
-  styleUrls: ['./input-values.scss']
+  styleUrls: ['./input-values.scss'],
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
  */
 export class BudgetCellEditorInputValuesComponent {
   @Input() cards: IBudgetCardWithValues[];
-  @Output() onValueChange = new EventEmitter<IBudgetCardWithValues[]>();
+  @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
   currency = ENVIRONMENT.region.currency;
 
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
@@ -25,6 +25,6 @@ export class BudgetCellEditorInputValuesComponent {
     }
     this.cards[cardIndex] = card;
     console.log('cards', this.cards);
-    this.onValueChange.emit(this.cards);
+    this.valueChanged.emit(this.cards);
   }
 }
