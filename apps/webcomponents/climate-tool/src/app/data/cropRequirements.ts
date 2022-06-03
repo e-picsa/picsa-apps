@@ -1,4 +1,6 @@
-const CROP_REQUIREMENTS = [
+import { ICropRequirement } from '@picsa/models/src';
+
+const CROP_REQUIREMENTS: ICropRequirement[] = [
   {
     crop: 'Beans',
     variety: 'Maluwa',
@@ -7,7 +9,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 85,
     daysMax: null,
     waterMin: 300,
-    waterMax: 330
+    waterMax: 330,
   },
   {
     crop: 'Beans',
@@ -17,7 +19,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 85,
     daysMax: null,
     waterMin: 300,
-    waterMax: 330
+    waterMax: 330,
   },
   {
     crop: 'Cow peas',
@@ -27,7 +29,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 90,
     daysMax: null,
     waterMin: 300,
-    waterMax: 330
+    waterMax: 330,
   },
   {
     crop: 'Cow peas',
@@ -37,7 +39,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 90,
     daysMax: null,
     waterMin: 300,
-    waterMax: 330
+    waterMax: 330,
   },
   {
     crop: 'Ground Nuts',
@@ -47,7 +49,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 130,
     daysMax: 150,
     waterMin: 400,
-    waterMax: 500
+    waterMax: 500,
   },
   {
     crop: 'Ground Nuts',
@@ -57,7 +59,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 130,
     daysMax: 150,
     waterMin: 550,
-    waterMax: 600
+    waterMax: 600,
   },
   {
     crop: 'Maize',
@@ -67,7 +69,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 120,
     daysMax: 130,
     waterMin: 330,
-    waterMax: 400
+    waterMax: 400,
   },
   {
     crop: 'Maize',
@@ -77,7 +79,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 120,
     daysMax: 130,
     waterMin: 400,
-    waterMax: null
+    waterMax: null,
   },
   {
     crop: 'Maize',
@@ -87,7 +89,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 120,
     daysMax: 130,
     waterMin: 400,
-    waterMax: null
+    waterMax: null,
   },
   {
     crop: 'Maize',
@@ -97,7 +99,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 130,
     daysMax: 140,
     waterMin: 430,
-    waterMax: 500
+    waterMax: 500,
   },
   {
     crop: 'Maize',
@@ -107,7 +109,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 130,
     daysMax: 140,
     waterMin: 430,
-    waterMax: 500
+    waterMax: 500,
   },
   {
     crop: 'Maize',
@@ -117,7 +119,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 130,
     daysMax: 140,
     waterMin: 430,
-    waterMax: 500
+    waterMax: 500,
   },
   {
     crop: 'Maize',
@@ -127,7 +129,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 110,
     daysMax: 120,
     waterMin: 300,
-    waterMax: 350
+    waterMax: 350,
   },
   {
     crop: 'Maize',
@@ -137,7 +139,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 130,
     daysMax: 140,
     waterMin: 430,
-    waterMax: 500
+    waterMax: 500,
   },
   {
     crop: 'Pigeon peas',
@@ -147,7 +149,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 160,
     daysMax: 180,
     waterMin: 500,
-    waterMax: 600
+    waterMax: 600,
   },
   {
     crop: 'Pigeon peas',
@@ -157,7 +159,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 120,
     daysMax: 150,
     waterMin: 400,
-    waterMax: 500
+    waterMax: 500,
   },
   {
     crop: 'Rice',
@@ -167,7 +169,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 150,
     daysMax: 160,
     waterMin: 450,
-    waterMax: 650
+    waterMax: 650,
   },
   {
     crop: 'Soya Beans',
@@ -177,7 +179,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 90,
     daysMax: 95,
     waterMin: 370,
-    waterMax: 400
+    waterMax: 400,
   },
   {
     crop: 'Soya Beans',
@@ -187,7 +189,7 @@ const CROP_REQUIREMENTS = [
     daysMin: 90,
     daysMax: 95,
     waterMin: 370,
-    waterMax: 400
+    waterMax: 400,
   },
   {
     crop: 'Soya Beans',
@@ -197,8 +199,8 @@ const CROP_REQUIREMENTS = [
     daysMin: 90,
     daysMax: 95,
     waterMin: 370,
-    waterMax: 400
-  }
+    waterMax: 400,
+  },
 ];
 
 export default CROP_REQUIREMENTS;

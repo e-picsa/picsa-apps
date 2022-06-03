@@ -17,7 +17,11 @@
           "apps/webcomponents/climate-tool/src/favicon.ico",
           "apps/webcomponents/climate-tool/src/assets"
         ],
-        "styles": ["apps/webcomponents/climate-tool/src/styles.scss"],
+        "styles": [
+          "apps/webcomponents/climate-tool/src/styles.scss",
+          "libs/theme/src/_index.scss",
+          "node_modules/leaflet/dist/leaflet.css"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -26,7 +30,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "2mb"
             },
             {
               "type": "anyComponentStyle",

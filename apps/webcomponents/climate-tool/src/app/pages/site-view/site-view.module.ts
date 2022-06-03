@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { ClimateSiteViewPage } from './site-view.page';
 import { PicsaChartsModule } from '@picsa/shared/features';
-import { ClimateToolComponentsModule } from '@picsa/climate/src/app/components/climate-tool-components.module';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
-import { ClimateMaterialModule } from '@picsa/climate/src/app/material.module';
+import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
+import { ClimateMaterialModule } from '../../material.module';
 
 const routes: Routes = [
   {

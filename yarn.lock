@@ -4415,6 +4415,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "@types/papaparse@npm:5.3.2"
+  dependencies:
+    "@types/node": "*"
+  checksum: e8f7f5c251a952b97507cc89e76f69b67876a771b23827013701f6b9c6d9a062a75a2925e7f9ad68f063aad8f98089c76187e22223fa35dffa02283bd8665b96
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -12310,6 +12319,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"papaparse@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "papaparse@npm:5.3.2"
+  checksum: a5950ef931a42f6759a8d3823a43dd30f375b37a0ddea6ea5448c0c5024cd226819231958c49c24fbcdeab297c63fd1d630130b3439876ea0fd17d8a267738ae
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -12503,6 +12519,7 @@ __metadata:
     "@types/jest": 27.4.1
     "@types/leaflet": ^1.4.6
     "@types/node": 16.11.7
+    "@types/papaparse": ^5.3.2
     "@typescript-eslint/eslint-plugin": ~5.18.0
     "@typescript-eslint/parser": ~5.18.0
     autoprefixer: ^10.4.0
@@ -12524,6 +12541,7 @@ __metadata:
     ng-packagr: ^13.0.0
     ng2-canvas-whiteboard: ^3.0.4
     nx: 14.1.9
+    papaparse: ^5.3.2
     postcss: ^8.4.5
     postcss-import: ~14.1.0
     postcss-preset-env: ~7.5.0

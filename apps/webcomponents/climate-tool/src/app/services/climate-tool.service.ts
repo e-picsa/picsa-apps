@@ -70,13 +70,13 @@ export class ClimateToolService {
   private async ready() {
     return new Promise((resolve) => {
       if (this.ready$.value === true) {
-        resolve();
+        resolve(true);
       } else {
         // only resolve when 'ready' status no longer false
         this.ready$.pipe(takeWhile((val) => val === false)).subscribe(
           (val) => null,
           (err) => null,
-          () => resolve()
+          () => resolve(true)
         );
       }
     });
@@ -86,7 +86,10 @@ export class ClimateToolService {
    *  Not currently in use, but may want in future
    *****************************************************************************/
   // used by combined probabilty component (not currently in use)
-  calculateCombinedProbability(data?: IChartSummary[], conditions = []) {
+  calculateCombinedProbability(
+    data?: IChartSummary[],
+    conditions: { key: string; value: any; operator: '>=' | '<=' }[] = []
+  ) {
     // //conditions are defined in format {key1:valueToTest1, key2:valueToTest2...}
     // console.log('data', data);
     // //remove values where conditions aren't known - current assumes null values non-numerical (e.g. string or null, may want to change later)

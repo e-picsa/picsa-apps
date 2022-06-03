@@ -10,7 +10,7 @@
       ],
       "rules": {
         "@angular-eslint/directive-selector": [
-          "error",
+          "warn",
           {
             "type": "attribute",
             "prefix": "picsa",
@@ -24,7 +24,10 @@
             "prefix": "picsa",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@angular-eslint/component-class-suffix": ["warn"],
+        "@typescript-eslint/no-non-null-assertion": "warn",
+        "no-prototype-builtins": "off"
       }
     },
     {

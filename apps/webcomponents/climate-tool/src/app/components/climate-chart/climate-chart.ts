@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { PicsaDialogService } from '@picsa/shared/features/dialog';
 import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import {
@@ -23,14 +23,14 @@ import { IClimateView } from '../../models';
   templateUrl: 'climate-chart.html',
   styleUrls: ['climate-chart.scss'],
 })
-export class ClimateChartComponent {
+export class ClimateChartComponent implements OnChanges {
   @Input() chartMeta: IChartMeta & IClimateView;
   @Input() chartData: IChartSummary[];
   @Input() stationMeta: IStationMeta;
   @ViewChild('picsaChart', { static: true }) picsaChart: PicsaChartComponent;
   chartConfig: IChartConfig;
   chartRendered$ = new Subject<void>();
-  lineToolValue: number;
+  lineToolValue: number | undefined;
   reverseLineTool: boolean;
   y1Values: number[];
   ranges: IDataRanges;
@@ -81,7 +81,7 @@ export class ClimateChartComponent {
     const lineArray = Array(this.chartData.length).fill(value);
     lineArray.unshift('LineTool');
     this.picsaChart.chart.load({
-      columns: [lineArray],
+      columns: [lineArray as any],
       classes: { LineTool: 'LineTool' },
     });
     this.picsaChart.chart.show('LineTool');
@@ -107,7 +107,7 @@ export class ClimateChartComponent {
         left: 60,
       },
       data: {
-        json: data,
+        json: data as any,
         keys: {
           value: [...meta.keys, meta.xVar],
         },
@@ -121,7 +121,7 @@ export class ClimateChartComponent {
       tooltip: {
         grouped: false,
         format: {
-          value: (value) => this._getTooltipFormat(value, meta),
+          value: (value) => this._getTooltipFormat(value as any, meta),
           // HACK - reformat missing  titles (lost when passing "" values back from axis)
           // i marked ? as incorrect typings
           title: (x, i?) =>
@@ -229,7 +229,7 @@ export class ClimateChartComponent {
   }
   private _getPrintConfig() {
     const config = Object.assign({}, this.chartConfig);
-    config.point.r = (d) => (d.id === 'LineTool' ? 0 : 3);
+    config.point!.r = (d) => (d.id === 'LineTool' ? 0 : 3);
     config.size = { width: 900, height: 600 };
     return config;
   }
@@ -257,11 +257,13 @@ export class ClimateChartComponent {
     const colours = this.reverseLineTool
       ? ['#BF7720', '#739B65']
       : ['#739B65', '#BF7720'];
-    if (d.value >= this.lineToolValue) {
-      return colours[0];
-    }
-    if (d.value < this.lineToolValue) {
-      return colours[1];
+    if (this.lineToolValue) {
+      if (d.value >= this.lineToolValue) {
+        return colours[0];
+      }
+      if (d.value < this.lineToolValue) {
+        return colours[1];
+      }
     }
     // default return color for series key, attached to d.id
     return seriesColors[d.id];
@@ -314,7 +316,7 @@ export class ClimateChartComponent {
   // sometimes want to manually specify axis values so that y-axis can start at 0,
   // or so x-axis can extend beyond range of dates to current year
   private _getAxisValues(min: number, max: number, interval: number) {
-    const values = [];
+    const values: number[] = [];
     for (let i = 0; i <= (max - min) / interval; i++) {
       values.push(min + i * interval);
     }
@@ -334,7 +336,7 @@ export class ClimateChartComponent {
     const monthNames: string[] = this.translateService.monthNames;
     let label: string;
     switch (meta.yFormat) {
-      case 'date-from-July':
+      case 'date-from-July': {
         // previously 181 based on local met +182 and -1 for index starting at 0
         // now simply half of standard year 365 + 1 for index
         const dayNumber = (value + 183) % 366;
@@ -356,6 +358,7 @@ export class ClimateChartComponent {
           )}`;
         }
         return label;
+      }
       case 'date':
         // TODO
         return `${value}`;

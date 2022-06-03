@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IChartMeta, IStationMeta } from '@picsa/models';
-import * as DATA from '@picsa/climate/src/app/data';
+import * as DATA from '../../data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool.service';
+import { ClimateToolService } from '../../services/climate-tool.service';
+import { IClimateView } from '../../models';
 
 @Component({
   selector: 'climate-site-view',
@@ -14,9 +15,9 @@ import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool
 export class ClimateSiteViewPage implements OnInit, OnDestroy {
   destroyed$: Subject<boolean> = new Subject();
   activeStation: IStationMeta;
-  activeChart: IChartMeta;
+  activeChart: (IChartMeta & IClimateView) | undefined;
   availableViews = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
-  activeView: string;
+  activeView: string | undefined;
   availableCharts: IChartMeta[] = DATA.CHART_TYPES;
 
   constructor(
@@ -61,7 +62,9 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
         );
         this.activeView = view ? view._viewID : undefined;
         this.activeChart =
-          view && view._viewType === 'chart' ? (view as IChartMeta) : undefined;
+          view && view._viewType === 'chart'
+            ? (view as IChartMeta & IClimateView)
+            : undefined;
       });
   }
 }

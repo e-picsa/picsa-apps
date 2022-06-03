@@ -1,18 +1,18 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ICropRequirement } from '@picsa/models';
-import * as DATA from '@picsa/climate/src/app/data';
+import * as DATA from '../../data';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'climate-crop-analysis',
   templateUrl: './crop-analysis.html',
-  styleUrls: ['./crop-analysis.scss']
+  styleUrls: ['./crop-analysis.scss'],
 })
 export class CropAnalysisComponent implements OnInit {
   selectedCrops: { [variety: string]: ICropRequirement } = {};
-  totalSelected: number = 0;
+  totalSelected = 0;
   cropGroups: any[];
-  @Output() onCropsSelected = new EventEmitter<ICropRequirement[]>();
+  @Output() cropsSelected = new EventEmitter<ICropRequirement[]>();
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
@@ -33,20 +33,20 @@ export class CropAnalysisComponent implements OnInit {
     //   queryParams: { crops: Object.keys(this.selectedCrops) },
     //   queryParamsHandling: 'merge'
     // });
-    this.onCropsSelected.emit(Object.values(this.selectedCrops));
+    this.cropsSelected.emit(Object.values(this.selectedCrops));
   }
 
-  private setCrop(crop: ICropRequirement) {
-    const cropValues = {
-      rain: this._calculateMean(crop.waterMin, crop.waterMax),
-      length: this._calculateMean(crop.daysMin, crop.daysMax)
-    };
-    console.log('crop values', cropValues);
-  }
+  // private setCrop(crop: ICropRequirement) {
+  //   const cropValues = {
+  //     rain: this._calculateMean(crop.waterMin, crop.waterMax),
+  //     length: this._calculateMean(crop.daysMin, crop.daysMax),
+  //   };
+  //   console.log('crop values', cropValues);
+  // }
 
   private _generateCropGroups(crops: ICropRequirement[]): ICropGroup[] {
     const groups = {};
-    crops.forEach(c => {
+    crops.forEach((c) => {
       if (!groups.hasOwnProperty(c.crop)) {
         groups[c.crop] = { crop: c.crop, image: c.image, varieties: [] };
       }
@@ -57,15 +57,15 @@ export class CropAnalysisComponent implements OnInit {
 
   // sometimes either min or max is not defined, so in that case simply return
   // the min/max that is given. Otherwise simple mean average
-  private _calculateMean(min?: number, max?: number) {
-    if (!min) {
-      min = max as number;
-    }
-    if (!max) {
-      max = min as number;
-    }
-    return (min + max) / 2;
-  }
+  // private _calculateMean(min?: number, max?: number) {
+  //   if (!min) {
+  //     min = max as number;
+  //   }
+  //   if (!max) {
+  //     max = min as number;
+  //   }
+  //   return (min + max) / 2;
+  // }
 }
 
 interface ICropGroup {

@@ -1,4 +1,4 @@
-import { IFirebaseSettings } from '@picsa/models';
+import { IFirebaseSettings } from '../libs/models/src';
 
 /***********************************************************************************
  *  Write firebase prod config from environment (either .env or travis env)
@@ -14,7 +14,7 @@ const firebaseConfig: IFirebaseSettings = {
   databaseURL: e.FIREBASE_PROD_DATABASE_URL,
   messagingSenderId: e.FIREBASE_PROD_MESSAGING_SENDER_ID,
   projectId: e.FIREBASE_PROD_API_PROJECT_ID,
-  storageBucket: e.FIREBASE_PROD_STORAGE_BUCKET
+  storageBucket: e.FIREBASE_PROD_STORAGE_BUCKET,
 };
 
 console.log('firebase config', firebaseConfig);
@@ -26,7 +26,7 @@ console.log('firebase config', firebaseConfig);
 // }
 const targetPath = `./libs/environments/firebase/config.prod.ts`;
 const envConfigFile = `export default ${JSON.stringify(firebaseConfig)}`;
-fs.writeFile(targetPath, envConfigFile, function(err) {
+fs.writeFile(targetPath, envConfigFile, function (err) {
   if (err) {
     console.log(err);
   }

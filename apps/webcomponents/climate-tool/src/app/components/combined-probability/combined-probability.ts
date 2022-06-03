@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ClimateToolService } from '@picsa/climate/src/app/services/climate-tool.service';
 import { IChartSummary } from '@picsa/models';
+import { ClimateToolService } from '../../services/climate-tool.service';
 
 @Component({
   selector: 'combined-probability',
-  templateUrl: 'combined-probability.html'
+  templateUrl: 'combined-probability.html',
 })
 export class CombinedProbabilityComponent {
   @Input() data: IChartSummary[];
@@ -16,7 +16,7 @@ export class CombinedProbabilityComponent {
   lengthProbability: any = { reversePercentage: null };
   selectedCrop: any = {};
   dayValue: number;
-  test: string = 'red';
+  test = 'red';
 
   constructor(public climateService: ClimateToolService) {
     this.plantDate = { min: 1, max: 8, value: 3, step: 1 };
@@ -28,7 +28,7 @@ export class CombinedProbabilityComponent {
       5: 'Week 1, December',
       6: 'Week 2, December',
       7: 'Week 3, December',
-      8: 'Week 4, December'
+      8: 'Week 4, December',
     };
   }
   plantDateChange(e) {
@@ -44,30 +44,22 @@ export class CombinedProbabilityComponent {
   }
   calculateCropProbabilities() {
     for (const crop of this.crops) {
-      this.crops[
-        crop.index
-      ].lengthProbability = this.climateService.calculateCombinedProbability(
-        this.data,
-        [
+      this.crops[crop.index].lengthProbability =
+        this.climateService.calculateCombinedProbability(this.data, [
           {
             key: 'End',
             value: (this.dayValue + crop.lengthAvg) % 366,
-            operator: '>='
-          }
-        ]
-      );
-      this.crops[
-        crop.index
-      ].rainfallProbability = this.climateService.calculateCombinedProbability(
-        this.data,
-        [
+            operator: '>=',
+          },
+        ]);
+      this.crops[crop.index].rainfallProbability =
+        this.climateService.calculateCombinedProbability(this.data, [
           {
             key: 'Rainfall',
             value: crop.waterAvg * (1 + this.plantDate.value / 16),
-            operator: '>='
-          }
-        ]
-      );
+            operator: '>=',
+          },
+        ]);
     }
   }
 }

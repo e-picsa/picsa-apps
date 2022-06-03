@@ -1,5 +1,5 @@
 import { IStationMeta } from '@picsa/models';
-import { MockDB } from '@picsa/mocks';
+import { MockDB } from '@picsa/shared/mocks';
 
 const db = new MockDB();
 const _created = new Date('2019-07-23').toISOString();

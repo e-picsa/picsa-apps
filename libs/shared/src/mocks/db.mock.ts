@@ -1,6 +1,7 @@
-import { AbstractDBService } from '@picsa/shared/services/core/db/abstract.db';
 import { IDBEndpoint, IDBDoc } from '@picsa/models';
-import { firestore } from 'firebase/app';
+import { AbstractDBService } from '../services/core/db/abstract.db';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 export class MockDB implements AbstractDBService {
   async getCollection(endpoint: IDBEndpoint) {
@@ -39,7 +40,7 @@ export class MockDB implements AbstractDBService {
   }
 
   private _generateKey = () => {
-    const key = firestore().collection('_').doc().id;
+    const key = firebase.firestore().collection('_').doc().id;
     console.log('key', key);
     return key;
   };

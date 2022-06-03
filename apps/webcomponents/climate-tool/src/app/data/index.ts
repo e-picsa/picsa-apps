@@ -1,6 +1,6 @@
-import CHART_TYPES from '@picsa/climate/src/app/data/chartTypes';
-import REPORT_TYPES from '@picsa/climate/src/app/data/reportTypes';
-import CROP_REQUIREMENTS from '@picsa/climate/src/app/data/cropRequirements';
-import { STATIONS } from '@picsa/climate/src/app/data/stations';
+import CHART_TYPES from './chartTypes';
+import REPORT_TYPES from './reportTypes';
+import CROP_REQUIREMENTS from './cropRequirements';
+import { STATIONS } from './stations';
 
 export { CHART_TYPES, REPORT_TYPES, CROP_REQUIREMENTS, STATIONS };

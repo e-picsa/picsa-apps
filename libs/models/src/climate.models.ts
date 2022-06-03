@@ -5,11 +5,11 @@ export interface ICropRequirement {
   crop: string;
   variety: string;
   image: string;
-  name: string;
+  name: string | null;
   daysMin: number;
-  daysMax: number;
+  daysMax: number | null;
   waterMin: number;
-  waterMax: number;
+  waterMax: number | null;
 }
 
 export interface IStationMeta extends IDBDoc {
