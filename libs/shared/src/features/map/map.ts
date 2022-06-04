@@ -186,7 +186,7 @@ export interface IMapMarker {
 export interface IBasemapOptions extends L.TileLayerOptions {
   src: string;
 }
-export interface IMapOptions extends L.MapOptions {}
+export type IMapOptions = L.MapOptions;
 
 /***********************************************************************
  *  Currently deprecated but may want in future
