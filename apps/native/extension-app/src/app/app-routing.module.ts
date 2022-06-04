@@ -1,7 +1,7 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BudgetToolModule } from '@picsa/budget/src/app/app.module';
+import { BudgetToolModule } from '@picsa/budget/src/app/app-embedded.module';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module';
 
 const routes: Routes = [
@@ -10,14 +10,14 @@ const routes: Routes = [
   {
     path: 'budget',
     loadChildren: () =>
-      import('../../../../webcomponents/budget-tool/src/app/app.module').then(
+      import('@picsa/budget/src/app/app-embedded.module').then(
         (mod) => mod.BudgetToolModule
       ),
   },
   {
     path: 'climate',
     loadChildren: () =>
-      import('../../../../webcomponents/climate-tool/src/app/app.module').then(
+      import('@picsa/climate/src/app/app.module').then(
         (mod) => mod.ClimateToolModule
       ),
   },
@@ -58,14 +58,9 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(
-      routes
-      // Note - preload strategy calls max call stack issue
-      // unclear why, but assume not required for toolkit app anyway
-      // { preloadingStrategy: PreloadAllModules }
-    ),
+    RouterModule.forRoot(routes),
     ClimateToolModule.forRoot(),
-    BudgetToolModule.forRoot(),
+    BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
   ],
   exports: [RouterModule],
 })

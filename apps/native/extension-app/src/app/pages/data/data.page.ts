@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-data',
   templateUrl: './data.page.html',
   styleUrls: ['./data.page.scss'],
 })
-export class DataPage implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class DataPage {
+  constructor() {}
 }
