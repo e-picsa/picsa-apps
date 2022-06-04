@@ -36,8 +36,10 @@
         "styles": [
           "apps/native/extension-app/src/styles.scss",
           "libs/theme/src/_index.scss",
-          // climate tool styles
-          "node_modules/leaflet/dist/leaflet.css"
+          // external tool styles
+          "node_modules/leaflet/dist/leaflet.css",
+          "apps/webcomponents/climate-tool/src/styles.scss",
+          "apps/webcomponents/budget-tool/src/styles.scss"
         ],
         "scripts": []
       },
