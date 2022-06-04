@@ -514,14 +514,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asymmetrik/ngx-leaflet@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "@asymmetrik/ngx-leaflet@npm:6.0.1"
+"@asymmetrik/ngx-leaflet@npm:^13.0.2":
+  version: 13.0.2
+  resolution: "@asymmetrik/ngx-leaflet@npm:13.0.2"
+  dependencies:
+    tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": ">=8"
-    "@angular/core": ">=8"
+    "@angular/common": 13
+    "@angular/core": 13
     leaflet: 1
-  checksum: bf93ac142f3a62bd7a14fc33b035437bfd5a876f96abcfe5ce79de45102405bc4b674e1420ebd01fa4dae821e5d87eab77d7bc4d8db0c39e2dd279b3b1a07d11
+  checksum: abc337309d41b8049560753e5f27febfede78f1be57e030a016c6e2cfecac1a0bbdb0abcc88297dc42d0a06e8c6c39c4956a232e3e700137c429b8cb4afa8523
   languageName: node
   linkType: hard
 
@@ -2666,7 +2668,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/core@npm:^5.13.0":
+"@ionic-native/core@npm:^5.36.0":
   version: 5.36.0
   resolution: "@ionic-native/core@npm:5.36.0"
   dependencies:
@@ -2677,7 +2679,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/file-opener@npm:^5.13.0":
+"@ionic-native/file-opener@npm:^5.36.0":
   version: 5.36.0
   resolution: "@ionic-native/file-opener@npm:5.36.0"
   dependencies:
@@ -2689,7 +2691,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/file-transfer@npm:^5.14.0":
+"@ionic-native/file-transfer@npm:^5.36.0":
   version: 5.36.0
   resolution: "@ionic-native/file-transfer@npm:5.36.0"
   dependencies:
@@ -2701,7 +2703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/file@npm:^5.13.0":
+"@ionic-native/file@npm:^5.36.0":
   version: 5.36.0
   resolution: "@ionic-native/file@npm:5.36.0"
   dependencies:
@@ -2725,7 +2727,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/social-sharing@npm:^5.13.0":
+"@ionic-native/social-sharing@npm:^5.36.0":
   version: 5.36.0
   resolution: "@ionic-native/social-sharing@npm:5.36.0"
   dependencies:
@@ -2737,36 +2739,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic/angular@npm:4.8.1":
-  version: 4.8.1
-  resolution: "@ionic/angular@npm:4.8.1"
+"@ionic/angular@npm:6.1.8":
+  version: 6.1.8
+  resolution: "@ionic/angular@npm:6.1.8"
   dependencies:
-    "@ionic/core": 4.8.1
-    tslib: ^1.9.3
+    "@ionic/core": ^6.1.8
+    jsonc-parser: ^3.0.0
+    tslib: ^2.0.0
   peerDependencies:
-    "@angular-devkit/core": 7.2.1 - 8
-    "@angular-devkit/schematics": 7.2.1 - 8
-    "@angular/common": 7.2.1 - 8
-    "@angular/compiler": 7.2.1 - 8
-    "@angular/compiler-cli": 7.2.1 - 8
-    "@angular/core": 7.2.1 - 8
-    "@angular/forms": 7.2.1 - 8
-    "@angular/platform-browser": 7.2.1 - 8
-    "@angular/platform-browser-dynamic": 7.2.1 - 8
-    "@angular/router": 7.2.1 - 8
-    rxjs: ">=6.2.0"
-    zone.js: ">=0.8.26"
-  checksum: a79b0f41faf8bbaf1877c2eca7b2848edde888613ffda55761ebcf6a45cb0428913a405d97c87b659c4dbce974f75aad91f47484feb155fdf5e6302c5e18c75d
+    "@angular/core": ">=12.0.0"
+    "@angular/forms": ">=12.0.0"
+    "@angular/router": ">=12.0.0"
+    rxjs: ">=6.6.0"
+    zone.js: ">=0.11.0"
+  checksum: 9f4a45f56a298531c4d7d705fdca60229d528799e7149f1572ed403e306ad4151396d618adf03b482c2069c162245f776a0861d5933e6af700c727691de240cf
   languageName: node
   linkType: hard
 
-"@ionic/core@npm:4.8.1":
-  version: 4.8.1
-  resolution: "@ionic/core@npm:4.8.1"
+"@ionic/core@npm:^6.1.8":
+  version: 6.1.8
+  resolution: "@ionic/core@npm:6.1.8"
   dependencies:
-    ionicons: ^4.6.3
-    tslib: ^1.10.0
-  checksum: 58189a566134215bd6d77e28d1acaeaf9c8a4f5a299977ceeab887439c5d95e81c03f25b16b64088083ff54aed2091622aac297b6e55bb8bcdccef22544c15df
+    "@stencil/core": ^2.16.0
+    ionicons: ^6.0.2
+    tslib: ^2.1.0
+  checksum: 33e5b599dece92620d70fe36f9bc377e44d744f1274bec60842cb6656d4ce1acccfc9fc422dc1615f2a8dc1dedfad0d27d1632ecec5d2683ee32db6610c652a8
   languageName: node
   linkType: hard
 
@@ -3079,28 +3076,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngx-translate/core@npm:~11.0.1":
-  version: 11.0.1
-  resolution: "@ngx-translate/core@npm:11.0.1"
+"@ngx-translate/core@npm:~14.0.0":
+  version: 14.0.0
+  resolution: "@ngx-translate/core@npm:14.0.0"
   dependencies:
-    tslib: ^1.9.0
+    tslib: ^2.3.0
   peerDependencies:
-    "@angular/core": ">=7.0.0"
-    rxjs: ">=6.3.0"
-  checksum: 9a7b7a6611867ad65354e1501c7ec5e922e361e7cdb9bab82c418ce51c4bd93ad18eb519a24dc16fa36e6f509e9ba31c68bc3461cb457a2ce0b76311a1eaf06c
+    "@angular/core": ">=13.0.0"
+    rxjs: ^6.5.3 || ^7.4.0
+  checksum: d1afc35e7b729caf776e78c10badc0853b63252bdf2fa129f1b95a271cd15cf6f22ffecc52922ffbe1c3aca7d8e08351669e8bae18727664aba66b5d405f05e1
   languageName: node
   linkType: hard
 
-"@ngx-translate/http-loader@npm:~4.0.0":
-  version: 4.0.0
-  resolution: "@ngx-translate/http-loader@npm:4.0.0"
+"@ngx-translate/http-loader@npm:~7.0.0":
+  version: 7.0.0
+  resolution: "@ngx-translate/http-loader@npm:7.0.0"
   dependencies:
-    tslib: ^1.9.0
+    tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": ">=7.0.0"
-    "@ngx-translate/core": ">=11.0.0"
-    rxjs: ">=6.3.0"
-  checksum: 40ef72341a42ab96c136b309ea0b02e55c2b2decc3cfeeb00d1e03c70eb31e32877ac967c777462270e8ca67ad1828cae3491f607c3ac5d805abf5eaf7059240
+    "@angular/common": ">=13.0.0"
+    "@ngx-translate/core": ">=14.0.0"
+    rxjs: ^6.5.3 || ^7.4.0
+  checksum: ac20c888c7955656b729029a521d85b0f9964ab2acfd4c42faa37fde3aa56ea56a9ea0424ddf102cac2f33cec2d411b6359f062c068ec3c3e1163b7a465c1c4b
   languageName: node
   linkType: hard
 
@@ -3701,6 +3698,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stencil/core@npm:^2.16.0, @stencil/core@npm:~2.16.0":
+  version: 2.16.1
+  resolution: "@stencil/core@npm:2.16.1"
+  bin:
+    stencil: bin/stencil
+  checksum: 78618d427bc1b3e9f1a459e1f9880f72a17e4dd48a28f3690a8aba0ec6e82fcaa2785c0c47cc9f53612bb9a7b4c49b00968fdb16d4b59c5c5f7528be4486c21d
+  languageName: node
+  linkType: hard
+
 "@swc-node/core@npm:^1.9.0":
   version: 1.9.0
   resolution: "@swc-node/core@npm:1.9.0"
@@ -3950,7 +3956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/c3@npm:^0.7.0":
+"@types/c3@npm:^0.7.8":
   version: 0.7.8
   resolution: "@types/c3@npm:0.7.8"
   dependencies:
@@ -4385,7 +4391,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet@npm:^1.4.6":
+"@types/leaflet@npm:^1.7.10":
   version: 1.7.10
   resolution: "@types/leaflet@npm:1.7.10"
   dependencies:
@@ -5822,7 +5828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"c3@npm:^0.7.2":
+"c3@npm:^0.7.20":
   version: 0.7.20
   resolution: "c3@npm:0.7.20"
   dependencies:
@@ -7150,7 +7156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.0.0, deepmerge@npm:^4.2.2":
+"deepmerge@npm:^4.2.2":
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
   checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
@@ -7284,10 +7290,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dexie@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "dexie@npm:2.0.4"
-  checksum: faf0d7774e5fb2d90d772c8544e12c5aec38cc6384c67e8de8b7e78b38150c59909384357d59fabcfb552f4566e1a4032146bdcc15b60b70bc9f4634181b9cef
+"dexie@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "dexie@npm:3.2.2"
+  checksum: 7a21079f7ab139ebd724a009917f9293f2b01c341e2a3cd51d2455dda4d4e78b9ca7de0373e963108395cf1921ce7f6556cac967c1e957005a3c7c11794ceccf
   languageName: node
   linkType: hard
 
@@ -9438,7 +9444,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html2canvas@npm:^1.0.0-rc.3":
+"html2canvas@npm:^1.4.1":
   version: 1.4.1
   resolution: "html2canvas@npm:1.4.1"
   dependencies:
@@ -9854,10 +9860,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ionicons@npm:^4.6.3":
-  version: 4.6.3
-  resolution: "ionicons@npm:4.6.3"
-  checksum: 8c74493ebbd8bb45841536aa6748c83bfe17e3b480895a82072948dc528202bbe37138b695fbe445770d5aa5b70e5999e06fee9c4a7b1a3cd7d16d2a52ae0369
+"ionicons@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "ionicons@npm:6.0.2"
+  dependencies:
+    "@stencil/core": ~2.16.0
+  checksum: 8d50d3afd862cc8a1c9aa17800b2b6c8b8fa1859bf2c2f26e1d4b104b5944950edb4209696cedb53c2e7e543d5b0964e2297f8b820a0c748a3c860c7d9081e14
   languageName: node
   linkType: hard
 
@@ -11001,7 +11009,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"leaflet@npm:^1.5.1":
+"leaflet@npm:^1.8.0":
   version: 1.8.0
   resolution: "leaflet@npm:1.8.0"
   checksum: 4a27895d4253844f2f13f94cbc52a2030b10833cdf553085d931b834745236a8d2a38844a01eb968cc109eb43268bfadb97aad85b51deffb17b6ccd106542e00
@@ -11174,6 +11182,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:4.17.15":
+  version: 4.17.15
+  resolution: "lodash-es@npm:4.17.15"
+  checksum: dd76e36efca24f8294cdd99563c3bcaff8061732b04af8721313fe9a87e1f8e578ff466cfbcc103d1cb4db067d7d4bd143e3be390d957e22e0cb5d195b3847ed
+  languageName: node
+  linkType: hard
+
 "lodash.camelcase@npm:^4.3.0":
   version: 4.3.0
   resolution: "lodash.camelcase@npm:4.3.0"
@@ -11206,13 +11221,6 @@ __metadata:
   version: 4.1.1
   resolution: "lodash.once@npm:4.1.1"
   checksum: d768fa9f9b4e1dc6453be99b753906f58990e0c45e7b2ca5a3b40a33111e5d17f6edf2f768786e2716af90a8e78f8f91431ab8435f761fef00f9b0c256f6d245
-  languageName: node
-  linkType: hard
-
-"lodash@npm:4.17.13":
-  version: 4.17.13
-  resolution: "lodash@npm:4.17.13"
-  checksum: 09c75bf27993df72bc2af16998ce973842619dac74af4366cea214cf5dadfc551f68c1f78f1715ba0e162dedb5e23b07e6f427b370f9b924f58a928da38889ba
   languageName: node
   linkType: hard
 
@@ -11662,20 +11670,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mobx-angular@npm:^3.0.1":
-  version: 3.1.1
-  resolution: "mobx-angular@npm:3.1.1"
+"mobx-angular@npm:^4.5.1":
+  version: 4.5.1
+  resolution: "mobx-angular@npm:4.5.1"
+  dependencies:
+    tslib: ^2.0.0
   peerDependencies:
-    "@angular/core": ">=2.3.0"
+    "@angular/common": ">=11.1.1 <14.0.0"
+    "@angular/core": ">=11.1.1 <14.0.0"
     mobx: ">=2"
-  checksum: 590b22577f6faf15c820522a701fddfdadc622c8ffc19cf399302023af43f095df103c3bde5d4a4d4eb72517c800cfe3dcad7f0cddaafa4c3e1c285183d24e7a
+  checksum: 722d37bb6a6e954296efa2bb0055d66eedd9abca0ead87f0efa8bd89010f9ef22a200a6c3f95893513e58172ed49f3214b22cbb5a8bcb8ddcf6828e569d83d57
   languageName: node
   linkType: hard
 
-"mobx@npm:^5.13.0":
-  version: 5.15.7
-  resolution: "mobx@npm:5.15.7"
-  checksum: 46aa00c330a256fdde1c030cf8bab0baebc7fdfb23709884400ac486c318ce650acc336fd8f1e629b5c8680d82051f2aed4737406c4ac6fe1b2d9f3d978c4339
+"mobx@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "mobx@npm:6.6.0"
+  checksum: 369b8d6830ec286e9c856c80002c7a554d46bca739b7f76432cb56b3ce1fe0a7ed7e5a994b9793d30023beeff0dd16300a501e831fa97107104e4fedc7d4af8f
   languageName: node
   linkType: hard
 
@@ -11811,26 +11822,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng2-canvas-whiteboard@npm:^3.0.4":
-  version: 3.1.3
-  resolution: "ng2-canvas-whiteboard@npm:3.1.3"
+"ng2-canvas-whiteboard@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "ng2-canvas-whiteboard@npm:4.0.2"
   dependencies:
-    lodash: 4.17.13
+    lodash-es: 4.17.15
+    tslib: ^2.0.0
   peerDependencies:
+    "@angular/common": ^10.0.6
+    "@angular/core": ^10.0.6
     rxjs: ^6.0.0
-  checksum: 257a8da8645fe611a49f0e0252fe3a07802a14faf772a7e7e573d5c747d537da1fc173f7cf039b4a101332fed65891e8b1118d55c7d336c7ac349206224f2623
+  checksum: e5eafab7c92845f6e5195da662a775faf564822b2cbf59fe2501b99c547e658b5544d60afc90aaab1f77e92298dfd3584112f90db26da73bb159bed7d8f5a2a8
   languageName: node
   linkType: hard
 
-"ngx-file-drop@npm:8.0.4":
-  version: 8.0.4
-  resolution: "ngx-file-drop@npm:8.0.4"
+"ngx-file-drop@npm:13.0.0":
+  version: 13.0.0
+  resolution: "ngx-file-drop@npm:13.0.0"
   dependencies:
-    tslib: ^1.9.0
+    tslib: ^2.0.0
   peerDependencies:
-    "@angular/common": ">=8.0.0 <9.0.0"
-    "@angular/core": ">=8.0.0 <9.0.0"
-  checksum: e28b849f3705ab9072783c9eb174d0da6dcd1442a16da3fffabb4002750529c9a62229fede4f9a7c01825729ce51a384f3849227acce8b48f2852465aa86b9da
+    "@angular/common": ">=13.0.0"
+    "@angular/core": ">=13.0.0"
+  checksum: caed0f9347af8935ceacaa0871e6b9792f3db28e708e08152765629a86c7a0b57b5a81810db75b8b8e72135672b9f55c1306aa4d5476d4653b9da6afe3b496b2
   languageName: node
   linkType: hard
 
@@ -12568,16 +12582,16 @@ __metadata:
     "@angular/platform-browser-dynamic": ~13.3.0
     "@angular/router": ~13.3.0
     "@angular/service-worker": ^13.3.0
-    "@asymmetrik/ngx-leaflet": ^6.0.1
-    "@ionic-native/core": ^5.13.0
-    "@ionic-native/file": ^5.13.0
-    "@ionic-native/file-opener": ^5.13.0
-    "@ionic-native/file-transfer": ^5.14.0
+    "@asymmetrik/ngx-leaflet": ^13.0.2
+    "@ionic-native/core": ^5.36.0
+    "@ionic-native/file": ^5.36.0
+    "@ionic-native/file-opener": ^5.36.0
+    "@ionic-native/file-transfer": ^5.36.0
     "@ionic-native/network": ^5.13.0
-    "@ionic-native/social-sharing": ^5.13.0
-    "@ionic/angular": 4.8.1
-    "@ngx-translate/core": ~11.0.1
-    "@ngx-translate/http-loader": ~4.0.0
+    "@ionic-native/social-sharing": ^5.36.0
+    "@ionic/angular": 6.1.8
+    "@ngx-translate/core": ~14.0.0
+    "@ngx-translate/http-loader": ~7.0.0
     "@nrwl/angular": 14.1.9
     "@nrwl/cli": 14.1.9
     "@nrwl/cypress": 14.1.9
@@ -12588,33 +12602,33 @@ __metadata:
     "@nrwl/nx-cloud": latest
     "@nrwl/workspace": 14.1.9
     "@nxtend/capacitor": 13.0.0
-    "@types/c3": ^0.7.0
+    "@types/c3": ^0.7.8
     "@types/jest": 27.4.1
-    "@types/leaflet": ^1.4.6
+    "@types/leaflet": ^1.7.10
     "@types/node": 16.11.7
     "@types/papaparse": ^5.3.2
     "@typescript-eslint/eslint-plugin": ~5.18.0
     "@typescript-eslint/parser": ~5.18.0
     autoprefixer: ^10.4.0
-    c3: ^0.7.2
+    c3: ^0.7.20
     cypress: ^9.1.0
-    deepmerge: ^4.0.0
-    dexie: ^2.0.4
+    deepmerge: ^4.2.2
+    dexie: ^3.2.2
     downloadjs: ^1.4.7
     eslint: ~8.12.0
     eslint-config-prettier: 8.1.0
     eslint-plugin-cypress: ^2.10.3
     firebase: ^9.8.2
     hammerjs: ^2.0.8
-    html2canvas: ^1.0.0-rc.3
+    html2canvas: ^1.4.1
     jest: 27.5.1
     jest-preset-angular: 11.1.1
-    leaflet: ^1.5.1
-    mobx: ^5.13.0
-    mobx-angular: ^3.0.1
+    leaflet: ^1.8.0
+    mobx: ^6.6.0
+    mobx-angular: ^4.5.1
     ng-packagr: ^13.0.0
-    ng2-canvas-whiteboard: ^3.0.4
-    ngx-file-drop: 8.0.4
+    ng2-canvas-whiteboard: ^4.0.2
+    ngx-file-drop: 13.0.0
     ngx-youtube-player: ^12.0.1
     nx: 14.1.9
     papaparse: ^5.3.2
@@ -12623,9 +12637,9 @@ __metadata:
     postcss-preset-env: ~7.5.0
     postcss-url: ~10.1.3
     prettier: ^2.5.1
-    rxjs: ~7.4.0
-    save-svg-as-png: ^1.4.14
-    survey-angular: ^1.1.5
+    rxjs: ~7.5.5
+    save-svg-as-png: ^1.4.17
+    survey-angular: ^1.9.33
     tailwindcss: ^3.0.2
     ts-jest: 27.1.4
     ts-node: 9.1.1
@@ -13919,21 +13933,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.0.0, rxjs@npm:^7.2.0, rxjs@npm:^7.5.1, rxjs@npm:^7.5.5":
+"rxjs@npm:^7.0.0, rxjs@npm:^7.2.0, rxjs@npm:^7.5.1, rxjs@npm:^7.5.5, rxjs@npm:~7.5.5":
   version: 7.5.5
   resolution: "rxjs@npm:7.5.5"
   dependencies:
     tslib: ^2.1.0
   checksum: e034f60805210cce756dd2f49664a8108780b117cf5d0e2281506e9e6387f7b4f1532d974a8c8b09314fa7a16dd2f6cff3462072a5789672b5dcb45c4173f3c6
-  languageName: node
-  linkType: hard
-
-"rxjs@npm:~7.4.0":
-  version: 7.4.0
-  resolution: "rxjs@npm:7.4.0"
-  dependencies:
-    tslib: ~2.1.0
-  checksum: 6b33172a760dcad6882fdc836ee8cf1ebe160dd7eaad95c45a12338ffdaa96eb41e48e6c25bbd3d1fdf45075949ff447954bc17a9d01c688558a67967d09c114
   languageName: node
   linkType: hard
 
@@ -14013,7 +14018,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"save-svg-as-png@npm:^1.4.14":
+"save-svg-as-png@npm:^1.4.17":
   version: 1.4.17
   resolution: "save-svg-as-png@npm:1.4.17"
   checksum: 5c321f142a15d5455ee22e27afe6eab0ceaece8c029bc34e70014ff1c01117bda5b941f99169ab81e74f36235b2dcd869946fecdebd1f5cf442d79dc74763c13
@@ -14734,7 +14739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"survey-angular@npm:^1.1.5":
+"survey-angular@npm:^1.9.33":
   version: 1.9.33
   resolution: "survey-angular@npm:1.9.33"
   checksum: 1e90060a471ffa161792709f4a46641f6ed5a7266a33e54ca559fb12a994b06b7b5074a168ab9bcb0756753ca3ca8409d14d0b470424154669a00eef246052c5
@@ -15185,14 +15190,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:^1.8.1, tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.9.0 || ~2.1.0, tslib@npm:~2.1.0":
+"tslib@npm:^1.9.0 || ~2.1.0":
   version: 2.1.0
   resolution: "tslib@npm:2.1.0"
   checksum: aa189c8179de0427b0906da30926fd53c59d96ec239dff87d6e6bc831f608df0cbd6f77c61dabc074408bd0aa0b9ae4ec35cb2c15f729e32f37274db5730cb78

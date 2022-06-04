@@ -5,7 +5,7 @@ import { PicsaMapComponent } from './map';
 
 @NgModule({
   declarations: [PicsaMapComponent],
-  imports: [CommonModule, LeafletModule.forRoot()],
-  exports: [PicsaMapComponent]
+  imports: [CommonModule, LeafletModule],
+  exports: [PicsaMapComponent],
 })
 export class PicsaMapModule {}
