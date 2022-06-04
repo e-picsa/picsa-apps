@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import {
   PicsaDialogComponent,
   PicsaActionDialog,
-  PicsaSelectDialog
+  PicsaSelectDialog,
 } from './components/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { PicsaDialogService } from './dialog.service';
@@ -13,7 +13,6 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
-  entryComponents: [PicsaDialogComponent, PicsaActionDialog, PicsaSelectDialog],
   declarations: [PicsaDialogComponent, PicsaActionDialog, PicsaSelectDialog],
   exports: [PicsaDialogComponent],
   imports: [
@@ -22,8 +21,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     A11yModule,
     PicsaLoadingModule,
-    CommonModule
+    CommonModule,
   ],
-  providers: [PicsaDialogService]
+  providers: [PicsaDialogService],
 })
 export class PicsaDialogsModule {}

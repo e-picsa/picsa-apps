@@ -39,6 +39,5 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     CropAnalysisComponent,
     PicsaCommonComponentsModule,
   ],
-  entryComponents: [ChartOptionsComponent],
 })
 export class ClimateToolComponentsModule {}

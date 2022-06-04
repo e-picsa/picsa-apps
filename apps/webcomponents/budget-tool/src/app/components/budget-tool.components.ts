@@ -87,10 +87,5 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     NextButton,
     PicsaCommonComponentsModule,
   ],
-  entryComponents: [
-    BudgetBalanceEditorComponent,
-    BudgetCardNewDialog,
-    BudgetListItemRenameDialog,
-  ],
 })
 export class BudgetToolComponentsModule {}

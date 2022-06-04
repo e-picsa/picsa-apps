@@ -24,6 +24,5 @@ const routes: Routes = [
     PicsaTranslateModule,
   ],
   declarations: [RecordPage],
-  entryComponents: [],
 })
 export class RecordPageModule {}

@@ -6,7 +6,7 @@ import {
   IBudgetMeta,
   IBudgetCard,
 } from '../../models/budget-tool.models';
-import { MatHorizontalStepper } from '@angular/material/stepper';
+import { MatStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
@@ -25,7 +25,7 @@ export class BudgetCreatePage implements OnInit {
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
-  @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
+  @ViewChild('stepper', { static: true }) stepper: MatStepper;
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,

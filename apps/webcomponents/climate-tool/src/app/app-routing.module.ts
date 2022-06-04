@@ -6,47 +6,47 @@ const commonRoutes: Routes = [
     path: '',
     loadChildren: () =>
       import('./pages/site-select/site-select.module').then(
-        mod => mod.ClimateSiteSelectPageModule
-      )
+        (mod) => mod.ClimateSiteSelectPageModule
+      ),
   },
   {
     path: 'site/:siteId',
     loadChildren: () =>
       import('./pages/site-view/site-view.module').then(
-        mod => mod.ClimateSiteViewPageModule
-      )
+        (mod) => mod.ClimateSiteViewPageModule
+      ),
   },
   {
     path: 'site',
     redirectTo: '',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
 // catch-all routes conflict when embedded, so only use in standalone
 const standaloneRoutes: Routes = [
   // { path: '**', redirectTo: '/site' }
 ];
 // const embeddedRoutes = addRoutePrefix(commonRoutes);
-const embeddedRoutes = [
+const embeddedRoutes: Routes = [
   {
     path: 'climate',
     loadChildren: () =>
       import('./pages/site-select/site-select.module').then(
-        mod => mod.ClimateSiteSelectPageModule
-      )
+        (mod) => mod.ClimateSiteSelectPageModule
+      ),
   },
   {
     path: 'climate/site/:siteId',
     loadChildren: () =>
       import('./pages/site-view/site-view.module').then(
-        mod => mod.ClimateSiteViewPageModule
-      )
+        (mod) => mod.ClimateSiteViewPageModule
+      ),
   },
   {
     path: 'climate/site',
     redirectTo: 'climate',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
   // { path: '', redirectTo: '/site', pathMatch: 'full' }
 ];
 
@@ -56,10 +56,10 @@ const embeddedRoutes = [
 @NgModule({
   imports: [
     RouterModule.forRoot([...commonRoutes, ...standaloneRoutes], {
-      preloadingStrategy: PreloadAllModules
-    })
+      preloadingStrategy: PreloadAllModules,
+    }),
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}
 
@@ -68,7 +68,7 @@ export class AppRoutingModule {}
  ******************************************************************/
 @NgModule({
   imports: [RouterModule.forChild(embeddedRoutes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class ClimateToolRoutingModule {}
 
@@ -76,10 +76,10 @@ export class ClimateToolRoutingModule {}
 // currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
 // possibly linked to multiple router outlets, for now just add prefixes
 export function addRoutePrefix(routes: Routes) {
-  return routes.map(r => {
+  return routes.map((r) => {
     return {
       ...r,
-      path: `climate${r.path === '' ? '' : '/' + r.path}`
+      path: `climate${r.path === '' ? '' : '/' + r.path}`,
     };
   });
 }
