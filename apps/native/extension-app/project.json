@@ -14,9 +14,13 @@
         "tsConfig": "apps/native/extension-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/native/extension-app/src/favicon.ico",
           "apps/native/extension-app/src/assets",
           // external tool assets
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
           {
             "glob": "**/*",
             "input": "libs/shared-assets/",
@@ -34,12 +38,13 @@
           }
         ],
         "styles": [
-          "apps/native/extension-app/src/styles.scss",
-          "libs/theme/src/_index.scss",
           // external tool styles
           "node_modules/leaflet/dist/leaflet.css",
           "apps/webcomponents/climate-tool/src/styles.scss",
-          "apps/webcomponents/budget-tool/src/styles.scss"
+          "apps/webcomponents/budget-tool/src/styles.scss",
+          "libs/theme/src/_index.scss",
+          // priority given to workspace
+          "apps/native/extension-app/src/styles.scss"
         ],
         "scripts": []
       },

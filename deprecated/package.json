@@ -3,12 +3,6 @@
   "version": "2.1.1",
   "license": "MIT",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "nx lint && ng lint",
-    "_NOTE": "climate tool build failing due to mem, current windows workaround:",
     "_NOTE-Max Errors": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ ng",
     "build:climate": "ng build \"climate-tool\" --configuration=staging",
     "build:extension": "ng build \"extension-toolkit\" --configuration=staging",
@@ -53,7 +47,6 @@
     "csstype": "^2.6.6",
     "dotenv": "^8.1.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "1.16.4",
     "supertest": "^3.0.0",
     "wait-on": "~3.2.0"
   },
