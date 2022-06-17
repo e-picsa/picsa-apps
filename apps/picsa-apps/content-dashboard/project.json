@@ -1,28 +1,24 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/sites/content-dashboard/src",
+  "sourceRoot": "apps/picsa-apps/content-dashboard/src",
   "prefix": "picsa",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/sites/content-dashboard",
-        "index": "apps/sites/content-dashboard/src/index.html",
-        "main": "apps/sites/content-dashboard/src/main.ts",
-        "polyfills": "apps/sites/content-dashboard/src/polyfills.ts",
-        "tsConfig": "apps/sites/content-dashboard/tsconfig.app.json",
+        "outputPath": "dist/apps/picsa-apps/content-dashboard",
+        "index": "apps/picsa-apps/content-dashboard/src/index.html",
+        "main": "apps/picsa-apps/content-dashboard/src/main.ts",
+        "polyfills": "apps/picsa-apps/content-dashboard/src/polyfills.ts",
+        "tsConfig": "apps/picsa-apps/content-dashboard/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/sites/content-dashboard/src/favicon.ico",
-          "apps/sites/content-dashboard/src/assets"
+          "apps/picsa-apps/content-dashboard/src/favicon.ico",
+          "apps/picsa-apps/content-dashboard/src/assets"
         ],
-        "styles": [
-          "apps/sites/content-dashboard/src/styles.scss"
-        ],
+        "styles": ["apps/picsa-apps/content-dashboard/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -57,10 +53,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "sites-content-dashboard:build:production"
+          "browserTarget": "picsa-apps-content-dashboard:build:production"
         },
         "development": {
-          "browserTarget": "sites-content-dashboard:build:development"
+          "browserTarget": "picsa-apps-content-dashboard:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -68,25 +64,23 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "sites-content-dashboard:build"
+        "browserTarget": "picsa-apps-content-dashboard:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/sites/content-dashboard/**/*.ts",
-          "apps/sites/content-dashboard/**/*.html"
+          "apps/picsa-apps/content-dashboard/**/*.ts",
+          "apps/picsa-apps/content-dashboard/**/*.html"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/sites/content-dashboard"
-      ],
+      "outputs": ["coverage/apps/picsa-apps/content-dashboard"],
       "options": {
-        "jestConfig": "apps/sites/content-dashboard/jest.config.ts",
+        "jestConfig": "apps/picsa-apps/content-dashboard/jest.config.ts",
         "passWithNoTests": true
       }
     }

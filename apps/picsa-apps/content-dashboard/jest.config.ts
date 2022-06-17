@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'sites-content-dashboard',
+  displayName: 'picsa-apps-content-dashboard',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../coverage/apps/sites/content-dashboard',
+  coverageDirectory: '../../../coverage/apps/picsa-apps/content-dashboard',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
