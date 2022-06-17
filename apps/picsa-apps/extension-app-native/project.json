@@ -1,16 +1,16 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/native/extension-app-native",
+  "sourceRoot": "apps/picsa-apps/extension-app-native",
   "prefix": "picsa",
-  "implicitDependencies": ["native-extension-app"],
+  "implicitDependencies": ["picsa-apps-extension-app"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "outputs": [],
       "options": {
         "command": "npx cap sync",
-        "cwd": "apps/native/extension-app-native"
+        "cwd": "apps/picsa-apps/extension-app-native"
       }
     },
     "cap": {
@@ -18,7 +18,7 @@
       "outputs": [],
       "options": {
         "command": "npx cap",
-        "cwd": "apps/native/extension-app-native"
+        "cwd": "apps/picsa-apps/extension-app-native"
       }
     }
   },

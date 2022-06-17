@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'native-extension-app',
+  displayName: 'picsa-apps-extension-app',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../coverage/apps/native/extension-app',
+  coverageDirectory: '../../../coverage/apps/picsa-apps/extension-app',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

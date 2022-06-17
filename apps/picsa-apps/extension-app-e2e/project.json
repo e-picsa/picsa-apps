@@ -1,17 +1,17 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
-  "sourceRoot": "apps/native/extension-app-e2e/src",
+  "sourceRoot": "apps/picsa-apps/extension-app-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/native/extension-app-e2e/cypress.json",
-        "devServerTarget": "native-extension-app:serve:development"
+        "cypressConfig": "apps/picsa-apps/extension-app-e2e/cypress.json",
+        "devServerTarget": "picsa-apps-extension-app:serve:development"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "native-extension-app:serve:production"
+          "devServerTarget": "picsa-apps-extension-app:serve:production"
         }
       }
     },
@@ -19,10 +19,10 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/native/extension-app-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/picsa-apps/extension-app-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["native-extension-app"]
+  "implicitDependencies": ["picsa-apps-extension-app"]
 }

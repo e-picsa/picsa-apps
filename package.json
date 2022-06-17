@@ -6,7 +6,7 @@
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2020 browser module main",
     "start": "nx serve",
-    "build": "nx run native-extension-app-native:build",
+    "build": "nx run picsa-apps-extension-app-native:build",
     "test": "nx test",
     "cache:clear": "nx reset"
   },

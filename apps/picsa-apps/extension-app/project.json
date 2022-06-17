@@ -1,21 +1,21 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/native/extension-app/src",
+  "sourceRoot": "apps/picsa-apps/extension-app/src",
   "prefix": "picsa",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/native/extension-app",
-        "index": "apps/native/extension-app/src/index.html",
-        "main": "apps/native/extension-app/src/main.ts",
-        "polyfills": "apps/native/extension-app/src/polyfills.ts",
-        "tsConfig": "apps/native/extension-app/tsconfig.app.json",
+        "outputPath": "dist/apps/picsa-apps/extension-app",
+        "index": "apps/picsa-apps/extension-app/src/index.html",
+        "main": "apps/picsa-apps/extension-app/src/main.ts",
+        "polyfills": "apps/picsa-apps/extension-app/src/polyfills.ts",
+        "tsConfig": "apps/picsa-apps/extension-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/native/extension-app/src/assets",
+          "apps/picsa-apps/extension-app/src/assets",
           {
             "glob": "**/*",
             "input": "libs/shared-assets/favicon",
@@ -42,7 +42,7 @@
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "apps/picsa-tools/budget-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
-          "apps/native/extension-app/src/styles.scss"
+          "apps/picsa-apps/extension-app/src/styles.scss"
         ],
         "scripts": []
       },
@@ -78,10 +78,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "native-extension-app:build:production"
+          "browserTarget": "picsa-apps-extension-app:build:production"
         },
         "development": {
-          "browserTarget": "native-extension-app:build:development"
+          "browserTarget": "picsa-apps-extension-app:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -89,23 +89,23 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "native-extension-app:build"
+        "browserTarget": "picsa-apps-extension-app:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/native/extension-app/**/*.ts",
-          "apps/native/extension-app/**/*.html"
+          "apps/picsa-apps/extension-app/**/*.ts",
+          "apps/picsa-apps/extension-app/**/*.html"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/native/extension-app"],
+      "outputs": ["coverage/apps/picsa-apps/extension-app"],
       "options": {
-        "jestConfig": "apps/native/extension-app/jest.config.ts",
+        "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts",
         "passWithNoTests": true
       }
     }

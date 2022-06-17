@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('native-extension-app', () => {
+describe('picsa-apps-extension-app', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('native-extension-app', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome native-extension-app');
+    getGreeting().contains('Welcome picsa-apps-extension-app');
   });
 });

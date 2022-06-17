@@ -38,7 +38,7 @@
       "style": "scss"
     }
   },
-  "defaultProject": "native-extension-app",
+  "defaultProject": "picsa-apps-extension-app",
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"]
