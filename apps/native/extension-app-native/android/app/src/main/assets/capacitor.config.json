@@ -1,0 +1,6 @@
+{
+	"appId": "io.picsa.extension_toolkit",
+	"appName": "PICSA Extension Toolkit",
+	"webDir": "../../../dist/apps/native/extension-app",
+	"bundledWebRuntime": false
+}
