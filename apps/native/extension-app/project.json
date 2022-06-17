@@ -1,11 +1,14 @@
 {
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/native/extension-app/src",
   "prefix": "picsa",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/native/extension-app",
         "index": "apps/native/extension-app/src/index.html",
@@ -15,7 +18,6 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/native/extension-app/src/assets",
-          // external tool assets
           {
             "glob": "**/*",
             "input": "libs/shared-assets/favicon",
@@ -38,12 +40,10 @@
           }
         ],
         "styles": [
-          // external tool styles
           "node_modules/leaflet/dist/leaflet.css",
           "apps/webcomponents/climate-tool/src/styles.scss",
           "apps/webcomponents/budget-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
-          // priority given to workspace
           "apps/native/extension-app/src/styles.scss"
         ],
         "scripts": []
@@ -105,7 +105,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/native/extension-app"],
+      "outputs": [
+        "coverage/apps/native/extension-app"
+      ],
       "options": {
         "jestConfig": "apps/native/extension-app/jest.config.ts",
         "passWithNoTests": true

@@ -1,11 +1,14 @@
 {
+  "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/components/src",
   "prefix": "picsa",
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/components"],
+      "outputs": [
+        "coverage/libs/components"
+      ],
       "options": {
         "jestConfig": "libs/components/jest.config.ts",
         "passWithNoTests": true

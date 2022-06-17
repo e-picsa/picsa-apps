@@ -1,11 +1,14 @@
 {
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/webcomponents/climate-tool/src",
   "prefix": "picsa",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/webcomponents/climate-tool",
         "index": "apps/webcomponents/climate-tool/src/index.html",
@@ -81,7 +84,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/webcomponents/climate-tool"],
+      "outputs": [
+        "coverage/apps/webcomponents/climate-tool"
+      ],
       "options": {
         "jestConfig": "apps/webcomponents/climate-tool/jest.config.ts",
         "passWithNoTests": true

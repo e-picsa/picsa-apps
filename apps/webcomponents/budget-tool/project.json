@@ -1,11 +1,14 @@
 {
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/webcomponents/budget-tool/src",
   "prefix": "budget",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/webcomponents/budget-tool",
         "index": "apps/webcomponents/budget-tool/src/index.html",
@@ -80,7 +83,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/webcomponents/budget-tool"],
+      "outputs": [
+        "coverage/apps/webcomponents/budget-tool"
+      ],
       "options": {
         "jestConfig": "apps/webcomponents/budget-tool/jest.config.ts",
         "passWithNoTests": true
