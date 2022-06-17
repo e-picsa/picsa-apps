@@ -22,8 +22,8 @@
     "allowSyntheticDefaultImports": true,
     "paths": {
       "@picsa/*": ["libs/*"],
-      "@picsa/budget/*": ["apps/webcomponents/budget-tool/*"],
-      "@picsa/climate/*": ["apps/webcomponents/climate-tool/*"],
+      "@picsa/budget/*": ["apps/picsa-tools/budget-tool/*"],
+      "@picsa/climate/*": ["apps/picsa-tools/climate-tool/*"],
       "@picsa/components": ["libs/components/src/index.ts"],
       "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
       "@picsa/environments": ["libs/environments/src/index.ts"],

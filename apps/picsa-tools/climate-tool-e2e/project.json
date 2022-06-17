@@ -1,17 +1,17 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
-  "sourceRoot": "apps/webcomponents/climate-tool-e2e/src",
+  "sourceRoot": "apps/picsa-tools/climate-tool-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/webcomponents/climate-tool-e2e/cypress.json",
-        "devServerTarget": "webcomponents-climate-tool:serve:development"
+        "cypressConfig": "apps/picsa-tools/climate-tool-e2e/cypress.json",
+        "devServerTarget": "picsa-tools-climate-tool:serve:development"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "webcomponents-climate-tool:serve:production"
+          "devServerTarget": "picsa-tools-climate-tool:serve:production"
         }
       }
     },
@@ -19,10 +19,10 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/webcomponents/climate-tool-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/picsa-tools/climate-tool-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["webcomponents-climate-tool"]
+  "implicitDependencies": ["picsa-tools-climate-tool"]
 }

@@ -1,27 +1,25 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/webcomponents/budget-tool/src",
+  "sourceRoot": "apps/picsa-tools/budget-tool/src",
   "prefix": "budget",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/webcomponents/budget-tool",
-        "index": "apps/webcomponents/budget-tool/src/index.html",
-        "main": "apps/webcomponents/budget-tool/src/main.ts",
-        "polyfills": "apps/webcomponents/budget-tool/src/polyfills.ts",
-        "tsConfig": "apps/webcomponents/budget-tool/tsconfig.app.json",
+        "outputPath": "dist/apps/picsa-tools/budget-tool",
+        "index": "apps/picsa-tools/budget-tool/src/index.html",
+        "main": "apps/picsa-tools/budget-tool/src/main.ts",
+        "polyfills": "apps/picsa-tools/budget-tool/src/polyfills.ts",
+        "tsConfig": "apps/picsa-tools/budget-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/webcomponents/budget-tool/src/favicon.ico",
-          "apps/webcomponents/budget-tool/src/assets"
+          "apps/picsa-tools/budget-tool/src/favicon.ico",
+          "apps/picsa-tools/budget-tool/src/assets"
         ],
         "styles": [
-          "apps/webcomponents/budget-tool/src/styles.scss",
+          "apps/picsa-tools/budget-tool/src/styles.scss",
           "libs/theme/src/_index.scss"
         ],
         "scripts": []
@@ -58,10 +56,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "webcomponents-budget-tool:build:production"
+          "browserTarget": "picsa-tools-budget-tool:build:production"
         },
         "development": {
-          "browserTarget": "webcomponents-budget-tool:build:development"
+          "browserTarget": "picsa-tools-budget-tool:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -69,25 +67,23 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "webcomponents-budget-tool:build"
+        "browserTarget": "picsa-tools-budget-tool:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/webcomponents/budget-tool/**/*.ts",
-          "apps/webcomponents/budget-tool/**/*.html"
+          "apps/picsa-tools/budget-tool/**/*.ts",
+          "apps/picsa-tools/budget-tool/**/*.html"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/webcomponents/budget-tool"
-      ],
+      "outputs": ["coverage/apps/picsa-tools/budget-tool"],
       "options": {
-        "jestConfig": "apps/webcomponents/budget-tool/jest.config.ts",
+        "jestConfig": "apps/picsa-tools/budget-tool/jest.config.ts",
         "passWithNoTests": true
       }
     }

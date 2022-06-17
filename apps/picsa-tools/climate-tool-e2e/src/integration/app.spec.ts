@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('webcomponents-climate-tool', () => {
+describe('picsa-tools-climate-tool', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('webcomponents-climate-tool', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome webcomponents-climate-tool');
+    getGreeting().contains('Welcome picsa-tools-climate-tool');
   });
 });

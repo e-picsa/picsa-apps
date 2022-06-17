@@ -6,9 +6,7 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/native/extension-app",
         "index": "apps/native/extension-app/src/index.html",
@@ -30,19 +28,19 @@
           },
           {
             "glob": "**/*",
-            "input": "apps/webcomponents/budget-tool/src/assets",
+            "input": "apps/picsa-tools/budget-tool/src/assets",
             "output": "assets"
           },
           {
             "glob": "**/*",
-            "input": "apps/webcomponents/climate-tool/src/assets",
+            "input": "apps/picsa-tools/climate-tool/src/assets",
             "output": "assets"
           }
         ],
         "styles": [
           "node_modules/leaflet/dist/leaflet.css",
-          "apps/webcomponents/climate-tool/src/styles.scss",
-          "apps/webcomponents/budget-tool/src/styles.scss",
+          "apps/picsa-tools/climate-tool/src/styles.scss",
+          "apps/picsa-tools/budget-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
           "apps/native/extension-app/src/styles.scss"
         ],
@@ -105,9 +103,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/native/extension-app"
-      ],
+      "outputs": ["coverage/apps/native/extension-app"],
       "options": {
         "jestConfig": "apps/native/extension-app/jest.config.ts",
         "passWithNoTests": true

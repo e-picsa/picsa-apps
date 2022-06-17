@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'webcomponents-climate-tool',
+  displayName: 'picsa-tools-climate-tool',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../coverage/apps/webcomponents/climate-tool',
+  coverageDirectory: '../../../coverage/apps/picsa-tools/climate-tool',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

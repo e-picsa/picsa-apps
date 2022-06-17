@@ -12,9 +12,9 @@
     "sites-content-dashboard": "apps/sites/content-dashboard",
     "sites-content-dashboard-e2e": "apps/sites/content-dashboard-e2e",
     "theme": "libs/theme",
-    "webcomponents-budget-tool": "apps/webcomponents/budget-tool",
-    "webcomponents-budget-tool-e2e": "apps/webcomponents/budget-tool-e2e",
-    "webcomponents-climate-tool": "apps/webcomponents/climate-tool",
-    "webcomponents-climate-tool-e2e": "apps/webcomponents/climate-tool-e2e"
+    "picsa-tools-budget-tool": "apps/picsa-tools/budget-tool",
+    "picsa-tools-budget-tool-e2e": "apps/picsa-tools/budget-tool-e2e",
+    "picsa-tools-climate-tool": "apps/picsa-tools/climate-tool",
+    "picsa-tools-climate-tool-e2e": "apps/picsa-tools/climate-tool-e2e"
   }
 }

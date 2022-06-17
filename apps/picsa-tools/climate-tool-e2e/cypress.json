@@ -6,7 +6,7 @@
   "supportFile": "./src/support/index.ts",
   "pluginsFile": false,
   "video": true,
-  "videosFolder": "../../../dist/cypress/apps/webcomponents/climate-tool-e2e/videos",
-  "screenshotsFolder": "../../../dist/cypress/apps/webcomponents/climate-tool-e2e/screenshots",
+  "videosFolder": "../../../dist/cypress/apps/picsa-tools/climate-tool-e2e/videos",
+  "screenshotsFolder": "../../../dist/cypress/apps/picsa-tools/climate-tool-e2e/screenshots",
   "chromeWebSecurity": false
 }

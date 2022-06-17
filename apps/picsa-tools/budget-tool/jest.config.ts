@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'webcomponents-budget-tool',
+  displayName: 'picsa-tools-budget-tool',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../../coverage/apps/webcomponents/budget-tool',
+  coverageDirectory: '../../../coverage/apps/picsa-tools/budget-tool',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

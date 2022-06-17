@@ -1,27 +1,25 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/webcomponents/climate-tool/src",
+  "sourceRoot": "apps/picsa-tools/climate-tool/src",
   "prefix": "picsa",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/webcomponents/climate-tool",
-        "index": "apps/webcomponents/climate-tool/src/index.html",
-        "main": "apps/webcomponents/climate-tool/src/main.ts",
-        "polyfills": "apps/webcomponents/climate-tool/src/polyfills.ts",
-        "tsConfig": "apps/webcomponents/climate-tool/tsconfig.app.json",
+        "outputPath": "dist/apps/picsa-tools/climate-tool",
+        "index": "apps/picsa-tools/climate-tool/src/index.html",
+        "main": "apps/picsa-tools/climate-tool/src/main.ts",
+        "polyfills": "apps/picsa-tools/climate-tool/src/polyfills.ts",
+        "tsConfig": "apps/picsa-tools/climate-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/webcomponents/climate-tool/src/favicon.ico",
-          "apps/webcomponents/climate-tool/src/assets"
+          "apps/picsa-tools/climate-tool/src/favicon.ico",
+          "apps/picsa-tools/climate-tool/src/assets"
         ],
         "styles": [
-          "apps/webcomponents/climate-tool/src/styles.scss",
+          "apps/picsa-tools/climate-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
           "node_modules/leaflet/dist/leaflet.css"
         ],
@@ -59,10 +57,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "webcomponents-climate-tool:build:production"
+          "browserTarget": "picsa-tools-climate-tool:build:production"
         },
         "development": {
-          "browserTarget": "webcomponents-climate-tool:build:development"
+          "browserTarget": "picsa-tools-climate-tool:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -70,25 +68,23 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "webcomponents-climate-tool:build"
+        "browserTarget": "picsa-tools-climate-tool:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/webcomponents/climate-tool/**/*.ts",
-          "apps/webcomponents/climate-tool/**/*.html"
+          "apps/picsa-tools/climate-tool/**/*.ts",
+          "apps/picsa-tools/climate-tool/**/*.html"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/webcomponents/climate-tool"
-      ],
+      "outputs": ["coverage/apps/picsa-tools/climate-tool"],
       "options": {
-        "jestConfig": "apps/webcomponents/climate-tool/jest.config.ts",
+        "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts",
         "passWithNoTests": true
       }
     }
