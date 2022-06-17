@@ -2,6 +2,51 @@
 
 ## Adding a new native app
 
+There is a plugin to help generate schematics for new android apps via:
+https://nxtend.dev/
+
+However at the time of development this has been outdated and not compatible with recent updates to nx.
+
+As such manual methods are used to add android build. You can see the results of existing android apps, steps generally being:
+
+1. Create a folder in the apps director for the app
+2. Add a placeholder package.json file with content `{}`
+3. Add a `project.json` file to allow access to commands. Define the workspace of the source code in `implicitDependencies` and replace the correct `PATH_TO_APP`. E.g.
+
+```json
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/PATH_TO_APP",
+  "prefix": "picsa",
+  "implicitDependencies": ["SOURCE_CODE_APP_NAME"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npx cap sync",
+        "cwd": "apps/PATH_TO_APP"
+      }
+    },
+    "cap": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npx cap",
+        "cwd": "apps/PATH_TO_APP"
+      }
+    }
+  },
+  "tags": []
+}
+```
+
+This also contains a _build_ configuration that just syncs content that should have been build from the source code app
+
+4. Add a reference to the created project file in the main `angular.json`
+5. Run `cap` commands as usual, e.g. `nx my-app-name:cap platform add android`
+
 ## Adding a new webcomponent
 
 Webcomponents can be build in any valid way, however for the project most are typically built with Angular Elements
