@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PICSA Extension Toolkit</string>
+    <string name="title_activity_main">PICSA Extension Toolkit</string>
+    <string name="package_name">io.picsa.extension_toolkit</string>
+    <string name="custom_url_scheme">io.picsa.extension_toolkit</string>
+</resources>

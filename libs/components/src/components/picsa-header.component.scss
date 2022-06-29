@@ -1,0 +1,8 @@
+:host {
+  color: white;
+  background-color: var(--color-primary);
+}
+:host.inverted {
+  color: var(--color-primary);
+  background-color: white;
+}

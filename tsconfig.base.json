@@ -1,0 +1,38 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@picsa/*": ["libs/*"],
+      "@picsa/budget/*": ["apps/picsa-tools/budget-tool/*"],
+      "@picsa/climate/*": ["apps/picsa-tools/climate-tool/*"],
+      "@picsa/components": ["libs/components/src/index.ts"],
+      "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
+      "@picsa/environments": ["libs/environments/src/index.ts"],
+      "@picsa/extension/*": ["apps/native/extension-toolkit/*"],
+      "@picsa/models": ["libs/models/src/index.ts"],
+      "@picsa/shared": ["libs/shared/src/index.ts"],
+      "@picsa/shared/*": ["libs/shared/src/*"],
+      "@picsa/theme": ["libs/theme/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

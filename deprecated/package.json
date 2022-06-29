@@ -1,0 +1,68 @@
+{
+  "name": "picsa",
+  "version": "2.1.1",
+  "license": "MIT",
+  "scripts": {
+    "_NOTE-Max Errors": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ ng",
+    "build:climate": "ng build \"climate-tool\" --configuration=staging",
+    "build:extension": "ng build \"extension-toolkit\" --configuration=staging",
+    "build:budget": "ng build \"budget-tool\" --configuration=staging",
+    "build:extension:mw": "ng build \"extension-toolkit\" --configuration=mw",
+    "cordova:run:extension": "cd apps/extension-toolkit && cordova run android && cd ../../ && npm run beep",
+    "ionic:build:extension": "ng.cmd run extension-toolkit:ionic-cordova-build --cordova-base-path=apps\\extension-toolkit --platform=android && npm run beep",
+    "ionic:build:extension:mw": "ng.cmd run extension-toolkit:ionic-cordova-build --cordova-base-path=apps\\extension-toolkit --configuration=mw --platform=android",
+    "ionic:run:extension": "npm run ionic:build:extension && npm run beep && npm run cordova:run:extension",
+    "release:mw": "npm run ionic:build:extension:mw && npm run sentry:prepare && npm run cordova:release",
+    "cordova:release": "set SENTRY_SKIP_AUTO_RELEASE=true && cd apps/extension-toolkit && cordova build android --release && cd ../../ && npm run beep && npm run sign",
+    "sign": "bash ./scripts/sign_android.sh",
+    "sentry:prepare": "bash ./scripts/sentry_prepare.sh",
+    "deploy:climate": "firebase deploy --only hosting:climate-tool",
+    "deploy:budget": "firebase deploy --only hosting:budget-tool",
+    "config:prod": "ts-node ./scripts/firebase-config.ts",
+    "serve:climate:mw": "ng serve \"climate-tool\" --configuration=mw",
+    "beep": "node ./scripts/alert.js"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular-redux/router": "^10.0.0",
+    "@angular-redux/store": "^10.0.0",
+    "@ionic/storage": "^2.2.0",
+    "canvg": "^2.0.0",
+    "deepmerge": "^4.0.0",
+    "dexie": "^2.0.4",
+    "file-saver": "^2.0.2",
+    "flux-standard-action": "^2.1.0",
+    "redux": "^4.0.1",
+    "redux-observable": "^1.1.0",
+    "sentry-cordova": "^0.16.0",
+    "survey-angular": "^1.1.5",
+    "topojson": "^3.0.2",
+    "typeorm": "^0.2.9"
+  },
+  "devDependencies": {
+    "beepbeep": "^1.3.0",
+    "codelyzer": "~5.0.1",
+    "compress-images": "^1.5.8",
+    "cross-var": "^1.1.0",
+    "csstype": "^2.6.6",
+    "dotenv": "^8.1.0",
+    "npm-run-all": "^4.1.5",
+    "supertest": "^3.0.0",
+    "wait-on": "~3.2.0"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
+      "cordova-plugin-ionic-keyboard": {}
+    },
+    "platforms": [
+      "android"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "sourceRoot": "apps/picsa-tools/climate-tool-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/picsa-tools/climate-tool-e2e/cypress.json",
+        "devServerTarget": "picsa-tools-climate-tool:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "picsa-tools-climate-tool:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/picsa-tools/climate-tool-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["picsa-tools-climate-tool"]
+}

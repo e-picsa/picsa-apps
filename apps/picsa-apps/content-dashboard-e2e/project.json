@@ -1,0 +1,30 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "sourceRoot": "apps/picsa-apps/content-dashboard-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/picsa-apps/content-dashboard-e2e/cypress.json",
+        "devServerTarget": "picsa-apps-content-dashboard:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "picsa-apps-content-dashboard:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/picsa-apps/content-dashboard-e2e/**/*.{js,ts}"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["picsa-apps-content-dashboard"]
+}

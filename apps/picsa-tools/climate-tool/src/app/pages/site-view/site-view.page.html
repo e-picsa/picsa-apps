@@ -1,0 +1,51 @@
+<div class="page">
+  <!-- header -->
+  <picsa-header inverted>
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+      "
+    >
+      <span style="font-size: 20px; margin-left: 8px"
+        >{{ activeStation ? activeStation.name : '' }}</span
+      >
+      <div *ngIf="activeView" style="padding: 8px">
+        <mat-card
+          class="chart-thumb-card"
+          *ngFor="let view of availableViews"
+          (click)="setView(view._viewID)"
+          [class.active]="view._viewID === activeView"
+        >
+          <img
+            src="{{ view.image }}"
+            class="chart-thumb-img"
+            [class.active]="view._viewID === activeView"
+          />
+        </mat-card>
+      </div>
+    </div>
+  </picsa-header>
+  <!-- content -->
+  <div class="page-content">
+    <climate-view-select
+      (onViewSelected)="setView($event)"
+      *ngIf="!activeView"
+    ></climate-view-select>
+    <!-- charts -->
+    <div *ngIf="activeChart && activeStation" style="flex: 1">
+      <climate-chart
+        [chartMeta]="activeChart"
+        [chartData]="$any(activeStation.summaries)"
+        [stationMeta]="activeStation"
+      ></climate-chart>
+    </div>
+    <!-- reports -->
+    <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
+      <climate-crop-analysis></climate-crop-analysis>
+    </div>
+    <!-- <combined-probability></combined-probability> -->
+  </div>
+</div>
