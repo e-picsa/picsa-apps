@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "docker": {
+      "implementation": "./docker",
+      "schema": "./schema.json",
+      "description": "Runs a docker command"
+    }
+  }
+}
