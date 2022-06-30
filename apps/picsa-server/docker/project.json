@@ -13,14 +13,6 @@
         "commands": ["compose up"],
         "cwd": "apps/picsa-server/docker"
       }
-    },
-    "bootstrap": {
-      "executor": "./tools/executors/execa:commandSync",
-      "outputs": [],
-      "options": {
-        "commands": ["npm run bootstrap"],
-        "cwd": "apps/picsa-server/docker"
-      }
     }
   },
   "tags": []
