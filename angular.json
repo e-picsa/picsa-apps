@@ -11,6 +11,7 @@
     "shared": "libs/shared",
     "picsa-apps-content-dashboard": "apps/picsa-apps/content-dashboard",
     "picsa-apps-content-dashboard-e2e": "apps/picsa-apps/content-dashboard-e2e",
+    "picsa-server": "apps/picsa-server",
     "theme": "libs/theme",
     "picsa-tools-budget-tool": "apps/picsa-tools/budget-tool",
     "picsa-tools-budget-tool-e2e": "apps/picsa-tools/budget-tool-e2e",

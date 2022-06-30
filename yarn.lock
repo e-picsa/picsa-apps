@@ -2030,6 +2030,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime-corejs3@npm:7.17.8":
+  version: 7.17.8
+  resolution: "@babel/runtime-corejs3@npm:7.17.8"
+  dependencies:
+    core-js-pure: ^3.20.2
+    regenerator-runtime: ^0.13.4
+  checksum: 91f96437393b48c51000d1bb9d7a219de9394c5cf5227f1d263b6653fac3ff78e9d5e445e7c4410e9e3b24497715098ea6ade6fcad6cf964b0cf3ff161a85bd9
+  languageName: node
+  linkType: hard
+
 "@babel/runtime-corejs3@npm:^7.10.2":
   version: 7.18.3
   resolution: "@babel/runtime-corejs3@npm:7.18.3"
@@ -4998,6 +5008,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/parse@npm:^2.18.16":
+  version: 2.18.16
+  resolution: "@types/parse@npm:2.18.16"
+  dependencies:
+    "@types/node": "*"
+  checksum: 4d66b21319e4a1e73d23ea4d7456b0b25fed20786d0d6c3c34bac2f5916d1fab411c153505087d6fe54160152321715cad7370248f5cd337fa615ad3e05e7339
+  languageName: node
+  linkType: hard
+
 "@types/prettier@npm:^2.1.5":
   version: 2.6.3
   resolution: "@types/prettier@npm:2.6.3"
@@ -7288,6 +7307,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crypto-js@npm:4.1.1":
+  version: 4.1.1
+  resolution: "crypto-js@npm:4.1.1"
+  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
+  languageName: node
+  linkType: hard
+
 "css-blank-pseudo@npm:^3.0.3":
   version: 3.0.3
   resolution: "css-blank-pseudo@npm:3.0.3"
@@ -9219,7 +9245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:^5.0.0":
+"execa@npm:^5, execa@npm:^5.0.0":
   version: 5.1.1
   resolution: "execa@npm:5.1.1"
   dependencies:
@@ -10421,6 +10447,15 @@ __metadata:
   peerDependencies:
     postcss: ^8.1.0
   checksum: 5c324d283552b1269cfc13a503aaaa172a280f914e5b81544f3803bc6f06a3b585fb79f66f7c771a2c052db7982c18bf92d001e3b47282e3abbbb4c4cc488d68
+  languageName: node
+  linkType: hard
+
+"idb-keyval@npm:6.0.3":
+  version: 6.0.3
+  resolution: "idb-keyval@npm:6.0.3"
+  dependencies:
+    safari-14-idb-fix: ^3.0.0
+  checksum: cbd123a49f4e2059b9a0a9f0ff66114ca1960198f1204ed30b9d7c26a4eb73fb9685c4c7d0de99bd4bf07c881846aa832e4ee3760a2f745c21f03212caa2d944
   languageName: node
   linkType: hard
 
@@ -13625,6 +13660,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "parse@npm:3.4.2"
+  dependencies:
+    "@babel/runtime": 7.17.9
+    "@babel/runtime-corejs3": 7.17.8
+    crypto-js: 4.1.1
+    idb-keyval: 6.0.3
+    react-native-crypto-js: 1.0.0
+    uuid: 3.4.0
+    ws: 7.5.1
+    xmlhttprequest: 1.8.0
+  dependenciesMeta:
+    crypto-js:
+      optional: true
+  checksum: 3e5b295ae0d019f884aeb438993f4957bc06cbedb2992fdf61f6d8385c3c44aedb5437bf75b177db6ee90d8bc0e284092c0e2917348072768b6c177b492e7e8a
+  languageName: node
+  linkType: hard
+
 "parseurl@npm:~1.3.2, parseurl@npm:~1.3.3":
   version: 1.3.3
   resolution: "parseurl@npm:1.3.3"
@@ -13770,6 +13824,7 @@ __metadata:
     "@types/leaflet": ^1.7.10
     "@types/node": 16.11.7
     "@types/papaparse": ^5.3.2
+    "@types/parse": ^2.18.16
     "@typescript-eslint/eslint-plugin": 5.24.0
     "@typescript-eslint/parser": 5.24.0
     autoprefixer: ^10.4.0
@@ -13781,6 +13836,7 @@ __metadata:
     eslint: 8.15.0
     eslint-config-prettier: 8.1.0
     eslint-plugin-cypress: ^2.10.3
+    execa: ^5
     firebase: ^9.8.2
     hammerjs: ^2.0.8
     html2canvas: ^1.4.1
@@ -13795,6 +13851,7 @@ __metadata:
     ngx-youtube-player: ^12.0.1
     nx: 14.3.6
     papaparse: ^5.3.2
+    parse: ^3.4.2
     postcss: ^8.4.5
     postcss-import: ~14.1.0
     postcss-preset-env: ~7.5.0
@@ -15097,6 +15154,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-crypto-js@npm:1.0.0":
+  version: 1.0.0
+  resolution: "react-native-crypto-js@npm:1.0.0"
+  checksum: 74aa3f16820b8d76fbb21a0bff720f0152e21ecc5e46edb4d1d01dcb86af4da934f4d8a1d5059bf8680bbc5090852b302b29bb742980c45137bfed6cef5991d3
+  languageName: node
+  linkType: hard
+
 "react-refresh@npm:^0.10.0":
   version: 0.10.0
   resolution: "react-refresh@npm:0.10.0"
@@ -15563,6 +15627,13 @@ __metadata:
   dependencies:
     tslib: ^2.1.0
   checksum: e034f60805210cce756dd2f49664a8108780b117cf5d0e2281506e9e6387f7b4f1532d974a8c8b09314fa7a16dd2f6cff3462072a5789672b5dcb45c4173f3c6
+  languageName: node
+  linkType: hard
+
+"safari-14-idb-fix@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "safari-14-idb-fix@npm:3.0.0"
+  checksum: 30d5baf3d9a17b52842b2c3fd3f0001fde7095a36191b6140ac78c19e8e1ff4b2607b9beb3b066c6bec107ccb5399c96e29748a6f5fcd592425f806f5e36f759
   languageName: node
   linkType: hard
 
@@ -17271,6 +17342,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:3.4.0":
+  version: 3.4.0
+  resolution: "uuid@npm:3.4.0"
+  bin:
+    uuid: ./bin/uuid
+  checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
+  languageName: node
+  linkType: hard
+
 "uuid@npm:8.3.2, uuid@npm:^8.3.2":
   version: 8.3.2
   resolution: "uuid@npm:8.3.2"
@@ -17894,6 +17974,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:7.5.1":
+  version: 7.5.1
+  resolution: "ws@npm:7.5.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: b9da1b5dc8cd57725453b7f2305e39e21ddcfb5d908cc8ae8b12112b955f50d0d4921009f0f9d587000b0c72cb3748db329b3ddbd98e86829ffcf7b9700a58bf
+  languageName: node
+  linkType: hard
+
 "ws@npm:>=7.4.6, ws@npm:^8.4.2":
   version: 8.7.0
   resolution: "ws@npm:8.7.0"
@@ -17981,6 +18076,13 @@ __metadata:
   version: 2.2.0
   resolution: "xmlchars@npm:2.2.0"
   checksum: 8c70ac94070ccca03f47a81fcce3b271bd1f37a591bf5424e787ae313fcb9c212f5f6786e1fa82076a2c632c0141552babcd85698c437506dfa6ae2d58723062
+  languageName: node
+  linkType: hard
+
+"xmlhttprequest@npm:1.8.0":
+  version: 1.8.0
+  resolution: "xmlhttprequest@npm:1.8.0"
+  checksum: c891cf0d7884b4f5cce835aa01f1965727cd352cbd2d7a2e0605bf11ec99ae2198364cca54656ec8b2581a5704dee6c2bf9911922a0ff2a71b613455d32e81b7
   languageName: node
   linkType: hard
 
