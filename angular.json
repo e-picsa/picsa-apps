@@ -11,7 +11,10 @@
     "shared": "libs/shared",
     "picsa-apps-content-dashboard": "apps/picsa-apps/content-dashboard",
     "picsa-apps-content-dashboard-e2e": "apps/picsa-apps/content-dashboard-e2e",
-    "picsa-server": "apps/picsa-server",
+
+    "picsa-server-cloud-functions": "apps/picsa-server/cloud-functions",
+    "picsa-server-docker": "apps/picsa-server/docker",
+    "picsa-server-scripts": "apps/picsa-server/scripts",
     "theme": "libs/theme",
     "picsa-tools-budget-tool": "apps/picsa-tools/budget-tool",
     "picsa-tools-budget-tool-e2e": "apps/picsa-tools/budget-tool-e2e",

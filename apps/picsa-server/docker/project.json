@@ -1,0 +1,27 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-server/docker",
+  "prefix": "picsa",
+  "implicitDependencies": ["picsa-server-scripts"],
+  "targets": {
+    "start": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
+      "outputs": [],
+      "options": {
+        "commands": ["compose up"],
+        "cwd": "apps/picsa-server/docker"
+      }
+    },
+    "bootstrap": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": ["npm run bootstrap"],
+        "cwd": "apps/picsa-server/docker"
+      }
+    }
+  },
+  "tags": []
+}

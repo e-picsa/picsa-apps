@@ -26,13 +26,12 @@ services:
     networks:
       - db_network
     env_file:
-      - ./.env
+      - ../.env
   ####################################################################
   # DB Admin - PGAdmin4
   ####################################################################
   db_admin:
     container_name: picsa_db_admin
-    # image: postgis/postgis:13-3.2
     image: dpage/pgadmin4:6.10
     restart: unless-stopped
     volumes:
@@ -43,7 +42,7 @@ services:
     networks:
       - db_network
     env_file:
-      - ./.env
+      - ../.env
 
   ####################################################################
   # Server - Parse Platform server
@@ -53,16 +52,16 @@ services:
     image: 'parseplatform/parse-server:5.2.3'
     restart: unless-stopped
     volumes:
-      - ./cloud_functions/dist:/parse-server/cloud
+      - ./cloud-functions:/parse-server/cloud
     logging: *logging_default
     ports:
       - '1337:1337'
     depends_on:
       - db
-    env_file:
-      - ./.env
     networks:
       - db_network
+    env_file:
+      - ../.env
     environment:
       - PARSE_SERVER_MOUNT_PATH=/parse
       - PARSE_SERVER_CLOUD=/parse-server/cloud/main.js
@@ -77,10 +76,10 @@ services:
     logging: *logging_default
     ports:
       - '4040:4040'
-    env_file:
-      - ./.env
     networks:
       - db_network
+    env_file:
+      - ../.env
     environment:
       - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=true
       - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse

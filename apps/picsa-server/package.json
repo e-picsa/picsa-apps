@@ -1,8 +1,0 @@
-{
-  "name": "picsa-server",
-  "scripts": {
-    "build:functions": "tsc --project cloud_functions/tsconfig.app.json",
-    "start": "docker-compose up",
-    "bootstrap": "ts-node scripts/bootstrap.ts"
-  }
-}
