@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "commandSync": {
+      "implementation": "./commandSync",
+      "schema": "./schema.json",
+      "description": "Runs a command in interactive terminal"
+    }
+  }
+}
