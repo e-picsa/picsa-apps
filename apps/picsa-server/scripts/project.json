@@ -13,11 +13,20 @@
         "commands": ["ts-node apps/picsa-server/scripts/docker-prepare.ts"]
       }
     },
-    "db-bootstrap": {
+    "db-migrate": {
       "executor": "./tools/executors/execa:commandSync",
       "outputs": [],
       "options": {
-        "commands": ["ts-node apps/picsa-server/scripts/db-bootstrap.ts"]
+        "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts"]
+      }
+    },
+    "type-definitions-generate": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": [
+          "ts-node apps/picsa-server/scripts/type-definitions-generate.ts"
+        ]
       }
     }
   },
