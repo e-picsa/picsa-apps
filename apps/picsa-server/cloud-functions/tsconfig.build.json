@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
+    "module": "CommonJS",
     "sourceMap": false,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
