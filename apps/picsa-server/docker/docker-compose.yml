@@ -53,6 +53,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./cloud-functions:/parse-server/cloud
+      # Could mount config file, but handling via env vars instead
+      # - ./config/parse-server:/parse-server/config
     logging: *logging_default
     ports:
       - '1337:1337'
@@ -65,6 +67,9 @@ services:
     environment:
       - PARSE_SERVER_MOUNT_PATH=/parse
       - PARSE_SERVER_CLOUD=/parse-server/cloud/main.js
+      - PARSE_SERVER_MOUNT_GRAPHQL=true
+      - PARSE_SERVER_SESSION_LENGTH=86400
+      - PARSE_SERVER_ALLOW_CUSTOM_OBJECT_ID=true
 
   ####################################################################
   # Server Dashboard - Parse Platform server dashboard
@@ -83,6 +88,7 @@ services:
     environment:
       - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=true
       - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
+      - PARSE_DASHBOARD_GRAPHQL_SERVER_URL=http://localhost:1337/graphql
       - MOUNT_PATH=/
 
 volumes:
