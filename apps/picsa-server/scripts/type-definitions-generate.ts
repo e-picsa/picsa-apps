@@ -72,18 +72,30 @@ class TypeDefinitionGenerator {
   private writeIndexFile() {
     const { sdk, outputPath } = this.options;
     if (sdk) {
-      fs.writeFileSync(
-        path.resolve(outputPath, 'index.ts'),
-        this.schema
-          .map((field) => field.className)
-          .map(
-            (className) =>
-              `export { ${this.p(className)}, ${this.p(
-                className
-              )}Attributes } from "./${this.p(className)}";`
-          )
-          .join('\n') + '\n'
-      );
+      // Export all files under a common namespace
+      const classNames = this.schema.map((field) => field.className);
+      const importStatements: string[] = [];
+      const exportStatements: string[] = [];
+      // handle import statements
+      for (const className of classNames) {
+        const importName = this.p(className);
+        importStatements.push(
+          `import * as _${className} from './${className}';`
+        );
+        exportStatements.push(
+          `export type ${importName} = _${importName}.${importName};`
+        );
+        exportStatements.push(
+          `export type ${importName}Attributes = _${importName}.${importName}Attributes;`
+        );
+      }
+      let indexTs = '';
+      indexTs += importStatements.join('\n') + '\n\n';
+      indexTs += `export namespace ServerSchema {\n`;
+      indexTs += exportStatements.map((s) => `  ${s}`).join('\n') + '\n';
+      indexTs += `}\n`;
+
+      fs.writeFileSync(path.resolve(outputPath, 'index.ts'), indexTs);
     } else {
       fs.writeFileSync(
         path.resolve(outputPath, 'index.ts'),
@@ -124,7 +136,7 @@ class TypeDefinitionGenerator {
         (v) => !externalDependencies.includes(v)
       );
       internalDependencies.forEach((dep) => {
-        file += `import { ${this.p(dep)}${
+        file += `import type{ ${this.p(dep)}${
           sdk ? '' : 'Attributes'
         } } from "./${dep}";\n`;
       });

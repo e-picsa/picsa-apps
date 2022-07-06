@@ -1,6 +1,6 @@
 import Parse from "parse";
 
-import { _User } from "./_User";
+import type{ _User } from "./_User";
 
 export interface _RoleAttributes {
   id: string;
