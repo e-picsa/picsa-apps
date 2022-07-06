@@ -8305,6 +8305,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.0.1":
+  version: 16.0.1
+  resolution: "dotenv@npm:16.0.1"
+  checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:~10.0.0":
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
@@ -13832,6 +13839,7 @@ __metadata:
     cypress: ^9.1.0
     deepmerge: ^4.2.2
     dexie: ^3.2.2
+    dotenv: ^16.0.1
     downloadjs: ^1.4.7
     eslint: 8.15.0
     eslint-config-prettier: 8.1.0

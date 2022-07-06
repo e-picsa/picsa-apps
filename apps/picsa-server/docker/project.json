@@ -10,7 +10,7 @@
       "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
       "outputs": [],
       "options": {
-        "commands": ["compose up"],
+        "commands": ["compose --project-name picsa-server up"],
         "cwd": "apps/picsa-server/docker"
       }
     }
