@@ -3781,6 +3781,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/devkit@npm:14.4.2":
+  version: 14.4.2
+  resolution: "@nrwl/devkit@npm:14.4.2"
+  dependencies:
+    ejs: ^3.1.7
+    ignore: ^5.0.4
+    rxjs: ^6.5.4
+    semver: 7.3.4
+    tslib: ^2.3.0
+  peerDependencies:
+    nx: ">= 13.10 <= 15"
+  checksum: ed4c619803b211efa9f8f001cb3c4fdb8f2449036ae5e6abbc18a65ecc7b0cc0b82d2ecc2b998478600371023bd83bfff9338a44d0d977dca34031601a1eeb8c
+  languageName: node
+  linkType: hard
+
 "@nrwl/eslint-plugin-nx@npm:14.3.6":
   version: 14.3.6
   resolution: "@nrwl/eslint-plugin-nx@npm:14.3.6"
@@ -3818,6 +3833,26 @@ __metadata:
     rxjs: ^6.5.4
     tslib: ^2.3.0
   checksum: 8b9cda2bfc3ceea56c1871c46e80b8fe93e7a16d20ec54a6cd7df48da0fe47c21caa9b35affe413520c7596f5b82cd893df4e76d9e22011edaef4e7831042698
+  languageName: node
+  linkType: hard
+
+"@nrwl/jest@npm:^14.4.2":
+  version: 14.4.2
+  resolution: "@nrwl/jest@npm:14.4.2"
+  dependencies:
+    "@jest/reporters": 27.5.1
+    "@jest/test-result": 27.5.1
+    "@nrwl/devkit": 14.4.2
+    "@phenomnomnominal/tsquery": 4.1.1
+    chalk: 4.1.0
+    identity-obj-proxy: 3.0.0
+    jest-config: 27.5.1
+    jest-resolve: 27.5.1
+    jest-util: 27.5.1
+    resolve.exports: 1.1.0
+    rxjs: ^6.5.4
+    tslib: ^2.3.0
+  checksum: ed32575b4236a477df225f35777657d1ebdf642764e05a0940de0b89887e280a06f48130d1ddc406c579d9f3a8c29aeb310ed54457bb72f1690d060c7a6ba475
   languageName: node
   linkType: hard
 
@@ -13821,7 +13856,7 @@ __metadata:
     "@nrwl/cli": 14.3.6
     "@nrwl/cypress": 14.3.6
     "@nrwl/eslint-plugin-nx": 14.3.6
-    "@nrwl/jest": 14.3.6
+    "@nrwl/jest": ^14.4.2
     "@nrwl/linter": 14.3.6
     "@nrwl/nest": 14.3.6
     "@nrwl/nx-cloud": 14.1.2

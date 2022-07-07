@@ -1,0 +1,18 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-server/test",
+  "prefix": "picsa",
+  "implicitDependencies": ["picsa-server-test"],
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/picsa-server/test"],
+      "options": {
+        "jestConfig": "apps/picsa-server/test/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -13,6 +13,28 @@
         "commands": ["compose --project-name picsa-server up"],
         "cwd": "apps/picsa-server/docker"
       }
+    },
+    "start-test": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
+      "outputs": [],
+      "options": {
+        "commands": [
+          "compose -f docker-compose.test.yml --project-name picsa-server-test up"
+        ],
+        "cwd": "apps/picsa-server/docker"
+      }
+    },
+    "stop-test": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
+      "outputs": [],
+      "options": {
+        "commands": [
+          "compose -f docker-compose.test.yml --project-name picsa-server-test down -v"
+        ],
+        "cwd": "apps/picsa-server/docker"
+      }
     }
   },
   "tags": []

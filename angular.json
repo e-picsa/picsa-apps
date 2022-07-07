@@ -5,20 +5,20 @@
     "components": "libs/components",
     "environments": "libs/environments",
     "models": "libs/models",
-    "picsa-apps-extension-app": "apps/picsa-apps/extension-app",
-    "picsa-apps-extension-app-native": "apps/picsa-apps/extension-app-native",
-    "picsa-apps-extension-app-e2e": "apps/picsa-apps/extension-app-e2e",
-    "shared": "libs/shared",
     "picsa-apps-content-dashboard": "apps/picsa-apps/content-dashboard",
     "picsa-apps-content-dashboard-e2e": "apps/picsa-apps/content-dashboard-e2e",
-
+    "picsa-apps-extension-app": "apps/picsa-apps/extension-app",
+    "picsa-apps-extension-app-e2e": "apps/picsa-apps/extension-app-e2e",
+    "picsa-apps-extension-app-native": "apps/picsa-apps/extension-app-native",
     "picsa-server-cloud-functions": "apps/picsa-server/cloud-functions",
     "picsa-server-docker": "apps/picsa-server/docker",
     "picsa-server-scripts": "apps/picsa-server/scripts",
-    "theme": "libs/theme",
+    "picsa-server-test": "apps/picsa-server/test",
     "picsa-tools-budget-tool": "apps/picsa-tools/budget-tool",
     "picsa-tools-budget-tool-e2e": "apps/picsa-tools/budget-tool-e2e",
     "picsa-tools-climate-tool": "apps/picsa-tools/climate-tool",
-    "picsa-tools-climate-tool-e2e": "apps/picsa-tools/climate-tool-e2e"
+    "picsa-tools-climate-tool-e2e": "apps/picsa-tools/climate-tool-e2e",
+    "shared": "libs/shared",
+    "theme": "libs/theme"
   }
 }

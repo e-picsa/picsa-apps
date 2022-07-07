@@ -1,0 +1,54 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+services:
+  ####################################################################
+  # DB - Postgres with PostGIS extension
+  ####################################################################
+  db:
+    container_name: picsa_db_test
+    # image: postgis/postgis:13-3.2
+    image: postgres:13.7
+    restart: unless-stopped
+    volumes:
+      - ./config/db:/docker-entrypoint-initdb.d/ # bind db init scripts
+    ports:
+      - 5433:5433
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_db_network
+    env_file:
+      - ../.env.sample
+      - ../.env.test
+  ####################################################################
+  # Server - Parse Platform server
+  ####################################################################
+  server:
+    container_name: picsa_server_test
+    image: 'parseplatform/parse-server:5.2.3'
+    restart: unless-stopped
+    volumes:
+      - ./cloud-functions:/parse-server/cloud
+      # Could mount config file, but handling via env vars instead
+      # - ./config/parse-server:/parse-server/config
+    ports:
+      - '1338:1338'
+    depends_on:
+      - db
+    networks:
+      - test_db_network
+    env_file:
+      - ../.env.sample
+      - ../.env.test
+    environment:
+      - PARSE_SERVER_MOUNT_PATH=/parse
+      - PARSE_SERVER_CLOUD=/parse-server/cloud/main.js
+      - PARSE_SERVER_SESSION_LENGTH=86400
+      - PARSE_SERVER_ALLOW_CUSTOM_OBJECT_ID=true
+
+networks:
+  # User a bridge network to allow connection from external (e.g. pgadmin)
+  test_db_network:
