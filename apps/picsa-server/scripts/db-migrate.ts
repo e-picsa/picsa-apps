@@ -3,11 +3,9 @@ import path from 'path';
 import { ClassLevelPermissions, IMigration } from '../models';
 import { PATHS } from './paths';
 
-import dotenv from 'dotenv';
 import { typeDefinitionsGenerate } from './type-definitions-generate';
-import { getParseServer } from './utils';
+import { initializeParseServer, populateEnv } from './utils';
 import { Migration } from '../generatedSchema';
-dotenv.config({ path: PATHS.envFilePath });
 
 /**
  * Run a file-based migration system to systematically update database schema
@@ -19,11 +17,10 @@ dotenv.config({ path: PATHS.envFilePath });
  * https://github.com/parse-community/parse-server/pull/7418
  */
 class DBMigrate {
-  parse = getParseServer();
+  parse = initializeParseServer();
 
   public async run() {
     await this.handleMigrations();
-
     await typeDefinitionsGenerate();
   }
 
@@ -110,6 +107,7 @@ class DBMigrate {
 }
 
 if (require.main === module) {
+  populateEnv();
   new DBMigrate().run().catch((err) => {
     console.error(err);
     process.exit(1);

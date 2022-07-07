@@ -20,6 +20,15 @@
         "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts"]
       }
     },
+    "db-migrate-test": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": [
+          "ts-node apps/picsa-server/scripts/db-migrate.ts --env=test"
+        ]
+      }
+    },
     "type-definitions-generate": {
       "executor": "./tools/executors/execa:commandSync",
       "outputs": [],

@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { PATHS } from './paths';
-import { getParseServer } from './utils';
+import { initializeParseServer } from './utils';
 
 /**
  * Convert parse schema to typescript type definitions
@@ -11,7 +11,7 @@ import { getParseServer } from './utils';
  * Alternative option in thread to export from graphql instead
  */
 export async function typeDefinitionsGenerate() {
-  const parse = getParseServer();
+  const parse = initializeParseServer();
   const schema = await parse.Schema.all();
   return new TypeDefinitionGenerator(schema, {
     outputPath: PATHS.generatedTSdir,
@@ -66,19 +66,19 @@ class TypeDefinitionGenerator {
     const { outputPath } = this.options;
     // Export all files under a common namespace
     const classNames = this.schema.map((field) => field.className);
-    const statements: string[] = [];
+    const exportStatements: string[] = [];
     for (const className of classNames) {
-      statements.push(`export * from './${className}';`);
+      exportStatements.push(`export * from './${className}';`);
     }
     let indexTs = '';
-    indexTs += statements.join('\n') + '\n';
+    indexTs += exportStatements.join('\n') + '\n';
     fs.writeFileSync(path.resolve(outputPath, 'index.ts'), indexTs);
   }
 
   private writeSchemaDefinitionFile(className: string, outputPath: string) {
     const { prefix } = this.options;
     let file = '// Auto-generated types - Do not manually modify\n\n';
-    file += `import Parse from "parse";\n\n`;
+    file += `import Parse from 'parse';\n\n`;
     const prefixedName = this.p(className);
     const uniqueDependencies = this.dependencies
       .filter((v) => v !== prefixedName)
@@ -91,7 +91,7 @@ class TypeDefinitionGenerator {
       (v) => !externalDependencies.includes(v)
     );
     internalDependencies.forEach((dep) => {
-      file += `import type { ${this.p(dep)} } from "./${dep}";\n`;
+      file += `import type { ${this.p(dep)} } from './${dep}';\n`;
     });
     if (internalDependencies.length > 0) {
       file += '\n';
@@ -118,10 +118,11 @@ class TypeDefinitionGenerator {
     } else {
       file += `export class ${prefixedName} extends Parse.Object<${prefixedName}Attributes> {\n`;
       file += `  constructor(data?: Partial<${prefixedName}Attributes>) {\n`;
-      file += `    super("${className}", data as ${prefixedName}Attributes);\n`;
+      file += `    super('${className}', data as ${prefixedName}Attributes);\n`;
       file += `  }\n`;
       file += `}\n\n`;
-      file += `Parse.Object.registerSubclass("${className}", ${prefixedName});\n`;
+      file += `export const register${className}Subclass = () =>\n`;
+      file += `  Parse.Object.registerSubclass('${className}', ${prefixedName});\n`;
     }
 
     fs.writeFileSync(path.resolve(outputPath, prefixedName + '.ts'), file);
@@ -179,10 +180,10 @@ class TypeDefinitionGenerator {
       Number: 'number;',
       Object: 'any;',
       String: 'string;',
-      Date: `{ __type: "Date"; iso: string };`,
-      File: `{ __type: "File"; name: string; url: string };`,
-      GeoPoint: `{ __type: "GeoPoint"; latitude: number; longitude: number };`,
-      Polygon: `{ __type: "Polygon"; coordinates: [number, number][] };`,
+      Date: `{ __type: 'Date'; iso: string };`,
+      File: `{ __type: 'File'; name: string; url: string };`,
+      GeoPoint: `{ __type: 'GeoPoint'; latitude: number; longitude: number };`,
+      Polygon: `{ __type: 'Polygon'; coordinates: [number, number][] };`,
       Pointer: null as any,
       Relation: null as any,
     };

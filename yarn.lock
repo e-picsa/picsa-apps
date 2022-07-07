@@ -8340,6 +8340,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv-expand@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "dotenv-expand@npm:8.0.3"
+  checksum: 128ce90ac825b543de3ece0154a51b056ab0dc36bb26d97a68cd0b8707327ecd3c182fb6ac63b26a0fcdfa85064419906a1065cb634f1f9dc08ad311375f1fc0
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^16.0.1":
   version: 16.0.1
   resolution: "dotenv@npm:16.0.1"
@@ -13875,6 +13882,7 @@ __metadata:
     deepmerge: ^4.2.2
     dexie: ^3.2.2
     dotenv: ^16.0.1
+    dotenv-expand: ^8.0.3
     downloadjs: ^1.4.7
     eslint: 8.15.0
     eslint-config-prettier: 8.1.0

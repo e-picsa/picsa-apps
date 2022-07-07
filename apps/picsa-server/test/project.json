@@ -3,7 +3,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-server/test",
   "prefix": "picsa",
-  "implicitDependencies": ["picsa-server-test"],
+  "implicitDependencies": [],
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
