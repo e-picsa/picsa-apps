@@ -14,7 +14,6 @@ export async function typeDefinitionsGenerate() {
   const parse = getParseServer();
   const schema = await parse.Schema.all();
   return new TypeDefinitionGenerator(schema, {
-    sdk: true,
     outputPath: PATHS.generatedTSdir,
   }).run();
 }
@@ -27,14 +26,8 @@ class TypeDefinitionGenerator {
     public options: {
       outputPath: string;
       prefix?: string;
-      sdk?: boolean;
-      globalSdk?: boolean;
-      useClass?: boolean;
     }
   ) {
-    this.options.sdk ??= true;
-    this.options.globalSdk ??= false;
-    this.options.useClass ??= false;
     if (this.options.prefix) {
       this.schema = schema.filter(
         (s) =>
@@ -46,7 +39,7 @@ class TypeDefinitionGenerator {
 
   public run() {
     console.log('generating types');
-    const { sdk, outputPath } = this.options;
+    const { outputPath } = this.options;
 
     fs.ensureDirSync(outputPath);
     fs.emptyDirSync(outputPath);
@@ -70,134 +63,68 @@ class TypeDefinitionGenerator {
   }
 
   private writeIndexFile() {
-    const { sdk, outputPath } = this.options;
-    if (sdk) {
-      // Export all files under a common namespace
-      const classNames = this.schema.map((field) => field.className);
-      const importStatements: string[] = [];
-      const exportStatements: string[] = [];
-      // handle import statements
-      for (const className of classNames) {
-        const importName = this.p(className);
-        importStatements.push(
-          `import * as _${className} from './${className}';`
-        );
-        exportStatements.push(
-          `export type ${importName} = _${importName}.${importName};`
-        );
-        exportStatements.push(
-          `export type ${importName}Attributes = _${importName}.${importName}Attributes;`
-        );
-      }
-      let indexTs = '';
-      indexTs += importStatements.join('\n') + '\n\n';
-      indexTs += `export namespace ServerSchema {\n`;
-      indexTs += exportStatements.map((s) => `  ${s}`).join('\n') + '\n';
-      indexTs += `}\n`;
-
-      fs.writeFileSync(path.resolve(outputPath, 'index.ts'), indexTs);
-    } else {
-      fs.writeFileSync(
-        path.resolve(outputPath, 'index.ts'),
-        this.schema
-          .map((field) => field.className)
-          .map(
-            (className) =>
-              `export { ${this.p(className)}Attributes } from "./${this.p(
-                className
-              )}";`
-          )
-          .join('\n') + '\n'
-      );
+    const { outputPath } = this.options;
+    // Export all files under a common namespace
+    const classNames = this.schema.map((field) => field.className);
+    const statements: string[] = [];
+    for (const className of classNames) {
+      statements.push(`export * from './${className}';`);
     }
+    let indexTs = '';
+    indexTs += statements.join('\n') + '\n';
+    fs.writeFileSync(path.resolve(outputPath, 'index.ts'), indexTs);
   }
 
   private writeSchemaDefinitionFile(className: string, outputPath: string) {
-    const { sdk, globalSdk, prefix, useClass } = this.options;
-    let file = '';
-    if (sdk && !globalSdk) {
-      file += `import Parse from "parse";\n\n`;
+    const { prefix } = this.options;
+    let file = '// Auto-generated types - Do not manually modify\n\n';
+    file += `import Parse from "parse";\n\n`;
+    const prefixedName = this.p(className);
+    const uniqueDependencies = this.dependencies
+      .filter((v) => v !== prefixedName)
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .sort();
+    const externalDependencies = uniqueDependencies.filter(
+      (v) => !v.startsWith('_') && !v.startsWith(prefix || '_')
+    );
+    const internalDependencies = uniqueDependencies.filter(
+      (v) => !externalDependencies.includes(v)
+    );
+    internalDependencies.forEach((dep) => {
+      file += `import type { ${this.p(dep)} } from "./${dep}";\n`;
+    });
+    if (internalDependencies.length > 0) {
+      file += '\n';
     }
-    if (sdk) {
-      const uniqueDependencies = this.dependencies
-        .filter((v) => v !== this.p(className))
-        .filter((v, i, a) => a.indexOf(v) === i)
-        .sort();
-      const externalDependencies = uniqueDependencies.filter((v) => {
-        if (v.startsWith('_')) {
-          return false;
-        }
-        if (prefix && v.startsWith(prefix)) {
-          return false;
-        }
-        return true;
-      });
-      const internalDependencies = uniqueDependencies.filter(
-        (v) => !externalDependencies.includes(v)
-      );
-      internalDependencies.forEach((dep) => {
-        file += `import type{ ${this.p(dep)}${
-          sdk ? '' : 'Attributes'
-        } } from "./${dep}";\n`;
-      });
-      if (internalDependencies.length > 0) {
-        file += '\n';
-      }
-      externalDependencies.forEach((dep) => {
-        file += `type ${this.p(dep)} = Parse.Object;\n`;
-      });
-      if (externalDependencies.length > 0) {
-        file += '\n';
-      }
+    externalDependencies.forEach((dep) => {
+      file += `type ${this.p(dep)} = Parse.Object;\n`;
+    });
+    if (externalDependencies.length > 0) {
+      file += '\n';
     }
-    file += `export interface ${this.p(className)}Attributes {\n`;
+
+    file += `export interface ${prefixedName}Attributes {\n`;
     this.attributes.forEach((attr) => {
       file += `  ${attr}\n`;
     });
-    file += '}\n';
-    if (sdk && useClass) {
-      file += '\n';
-      if (className === '_Session') {
-        file += `export type ${className} = Parse.Session<${className}Attributes>;\n`;
-      } else if (className === '_User') {
-        file += `export type ${className} = Parse.User<${className}Attributes>;\n`;
-      } else if (className === '_Role') {
-        file += `export type ${className} = Parse.Role<${className}Attributes>;\n`;
-      } else {
-        file += `export class ${this.p(
-          className
-        )} extends Parse.Object<${this.p(className)}Attributes> {\n`;
-        file += `  constructor(data?: Partial<${this.p(
-          className
-        )}Attributes>) {\n`;
-        file += `    super("${className}", data as ${this.p(
-          className
-        )}Attributes);\n`;
-        file += `  }\n`;
-        file += `}\n`;
-        file += '\n';
-        file += `Parse.Object.registerSubclass("${className}", ${this.p(
-          className
-        )});\n`;
-      }
+    file += '}\n\n';
+
+    if (className === '_Session') {
+      file += `export type ${className} = Parse.Session<${className}Attributes>;\n`;
+    } else if (className === '_User') {
+      file += `export type ${className} = Parse.User<${className}Attributes>;\n`;
+    } else if (className === '_Role') {
+      file += `export type ${className} = Parse.Role<${className}Attributes>;\n`;
+    } else {
+      file += `export class ${prefixedName} extends Parse.Object<${prefixedName}Attributes> {\n`;
+      file += `  constructor(data?: Partial<${prefixedName}Attributes>) {\n`;
+      file += `    super("${className}", data as ${prefixedName}Attributes);\n`;
+      file += `  }\n`;
+      file += `}\n\n`;
+      file += `Parse.Object.registerSubclass("${className}", ${prefixedName});\n`;
     }
 
-    if (sdk && !useClass) {
-      file += '\n';
-      if (className === '_Session') {
-        file += `export type ${className} = Parse.Session<${className}Attributes>;\n`;
-      } else if (className === '_User') {
-        file += `export type ${className} = Parse.User<${className}Attributes>;\n`;
-      } else if (className === '_Role') {
-        file += `export type ${className} = Parse.Role<${className}Attributes>;\n`;
-      } else {
-        file += `export type ${this.p(className)} = Parse.Object<${this.p(
-          className
-        )}Attributes>;\n`;
-      }
-    }
-
-    fs.writeFileSync(path.resolve(outputPath, this.p(className) + '.ts'), file);
+    fs.writeFileSync(path.resolve(outputPath, prefixedName + '.ts'), file);
   }
 
   private getFieldTypeMapping(
@@ -259,11 +186,9 @@ class TypeDefinitionGenerator {
       Pointer: null as any,
       Relation: null as any,
     };
-    if (this.options.sdk) {
-      Object.entries(sdkMappings).forEach(
-        ([type, m]) => ((mapping as any)[type] = m)
-      );
-    }
+    Object.entries(sdkMappings).forEach(
+      ([type, m]) => ((mapping as any)[type] = m)
+    );
     const mappedType = (mapping as any)[type];
     return mappedType;
   }
@@ -272,32 +197,22 @@ class TypeDefinitionGenerator {
     fieldAttributes: Parse.RestSchema['fields'][string],
     className: string
   ) {
-    const { sdk } = this.options;
     const pointerTarget = this.p(fieldAttributes.targetClass as string);
     if (pointerTarget !== className) {
       this.dependencies.push(pointerTarget);
     }
-    if (sdk) {
-      return `${pointerTarget};`;
-    } else {
-      return `{ __type: "Pointer", className: "${pointerTarget}", objectId: string};`;
-    }
+    return `${pointerTarget};`;
   }
 
   private getRelationTypeMapping(
     fieldAttributes: Parse.RestSchema['fields'][string],
     className: string
   ) {
-    const { sdk } = this.options;
     const relationTarget = this.p(fieldAttributes.targetClass as string);
     if (relationTarget !== className) {
       this.dependencies.push(relationTarget);
     }
-    if (sdk) {
-      return `Parse.Relation<${relationTarget}>;`;
-    } else {
-      return `{ __type: "Pointer", className: "${relationTarget}";`;
-    }
+    return `Parse.Relation<${relationTarget}>;`;
   }
 
   /** Utility to apply class prefix */

@@ -6,7 +6,7 @@ import { PATHS } from './paths';
 import dotenv from 'dotenv';
 import { typeDefinitionsGenerate } from './type-definitions-generate';
 import { getParseServer } from './utils';
-import { ServerSchema } from '../generatedTypes';
+import { Migration } from '../generatedSchema';
 dotenv.config({ path: PATHS.envFilePath });
 
 /**
@@ -52,9 +52,7 @@ class DBMigrate {
    * @returns
    */
   private async saveMigrationRecord(fileName: string) {
-    const Record = this.parse.Object.extend('Migration');
-    const record = new Record() as ServerSchema.Migration
-    record.set('fileName', fileName);
+    const record = new Migration({ fileName });
     return record.save(null as any, { userMasterKey: true });
   }
 
@@ -91,8 +89,9 @@ class DBMigrate {
     try {
       await schema.get();
       // Get all migration filenames
-      const queryObj = this.parse.Object<ServerSchema.MigrationAttributes>.extend('Migration');
-      const query = new this.parse.Query(queryObj);
+
+      // const queryObj = this.parse.Object<ServerSchema.MigrationAttributes>.extend('Migration');
+      const query = new this.parse.Query(Migration);
       query.distinct('fileName');
       const queryRes = await query.findAll({ useMasterKey: true });
       return queryRes.map((res) => res.get('fileName'));

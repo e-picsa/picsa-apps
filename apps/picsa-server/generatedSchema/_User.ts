@@ -1,3 +1,5 @@
+// Auto-generated types - Do not manually modify
+
 import Parse from "parse";
 
 export interface _UserAttributes {

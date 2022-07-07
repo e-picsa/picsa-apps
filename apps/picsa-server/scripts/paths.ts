@@ -10,7 +10,7 @@ const dockerCloudFunctionsDist = path.resolve(
   'cloud-functions'
 );
 const envFilePath = path.resolve(serverDir, '.env');
-const generatedTSdir = path.resolve(serverDir, 'generatedTypes');
+const generatedTSdir = path.resolve(serverDir, 'generatedSchema');
 
 export const PATHS = {
   cloudFunctionsDist,
