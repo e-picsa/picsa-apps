@@ -1,6 +1,7 @@
 import { readdirSync } from 'fs';
 import path from 'path';
 import Parse from 'parse/node';
+import prompts from 'prompts';
 import { ClassLevelPermissions, IMigration } from '../models';
 import { PATHS } from './paths';
 
@@ -32,12 +33,17 @@ class Migration extends Parse.Object<MigrationAttributes> {
  */
 class DBMigrate {
   public async run() {
+    const direction = process.argv.includes('--down') ? 'down' : 'up';
     initializeParseServer();
-    await this.handleMigrations();
+    if (process.argv.includes('--down')) {
+      await this.handleDownMigration();
+    } else {
+      await this.handleUpMigration();
+    }
     await typeDefinitionsGenerate();
   }
 
-  private async handleMigrations() {
+  private async handleUpMigration() {
     console.log('Checking migrations...\n');
     const migrationFiles = readdirSync(PATHS.migrationsDir);
     const processedMigrations = await this.getProcessedMigrations();
@@ -55,6 +61,38 @@ class DBMigrate {
       }
     }
   }
+  private async handleDownMigration() {
+    const migrationFiles = readdirSync(PATHS.migrationsDir);
+    const processedMigrations = await this.getProcessedMigrations();
+    const targets = migrationFiles
+      .reverse()
+      .filter((m) => processedMigrations.includes(m));
+    if (targets.length === 0) {
+      console.log('No downgrades possible');
+      return;
+    }
+    const { target } = await prompts({
+      type: 'select',
+      message: 'Specify downgrade target (inclusive)',
+      name: 'target',
+      choices: targets.map((m) => ({ title: m, value: m })),
+    });
+    let continueDowngrade = true;
+    for (const fileName of targets) {
+      if (continueDowngrade) {
+        if (target === fileName) {
+          continueDowngrade = false;
+        }
+        console.log('Downgrade migration...\n', fileName);
+        const ts = await import(path.resolve(PATHS.migrationsDir, fileName));
+        const migration = ts.default as IMigration;
+        await migration.down();
+        const query = new Parse.Query(Migration);
+        const record = await query.equalTo('fileName', fileName).find();
+        await record[0].destroy();
+      }
+    }
+  }
 
   /**
    *
@@ -67,31 +105,7 @@ class DBMigrate {
   }
 
   private async processMigration(migration: IMigration) {
-    // create
-    for (const [className, schemaOps] of Object.entries(
-      migration.create || {}
-    )) {
-      console.log('[CREATE]', className);
-      const schema = new Parse.Schema(className);
-      schemaOps(schema);
-      await schema.save();
-    }
-    //   update
-    for (const [className, schemaOps] of Object.entries(
-      migration.update || {}
-    )) {
-      console.log('[UPDATE]', className);
-      const schema = new Parse.Schema(className);
-      schemaOps(schema);
-      await schema.update();
-    }
-    // delete
-    for (const [className] of Object.entries(migration.delete || {})) {
-      console.log('[DELETE]', className);
-      const schema = new Parse.Schema(className);
-      await schema.purge();
-      await schema.delete();
-    }
+    await migration.up();
   }
 
   private async getProcessedMigrations(): Promise<string[]> {
@@ -99,8 +113,11 @@ class DBMigrate {
     const initialMigration = new Migration({
       fileName: '000-initial-bootstrap',
     });
-    const exists = await initialMigration.exists();
-    if (!exists) {
+    const schema = await Parse.Schema.all();
+    const schemaExists = schema.find(
+      (s) => s.className === initialMigration.className
+    );
+    if (!schemaExists) {
       await initialMigration.save();
       new Parse.Schema(initialMigration.className).setCLP(
         ClassLevelPermissions.serverOnly
