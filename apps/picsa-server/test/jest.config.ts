@@ -9,8 +9,15 @@ const config: InitialOptionsTsJest = {
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
+      // Skip type-checking for shared libs
+      // https://kulshekhar.github.io/ts-jest/docs/getting-started/options/diagnostics/
+      diagnostics: {
+        warnOnly: true,
+        exclude: ['!**/*.(spec|test).ts'],
+      },
     },
   },
+
   coverageDirectory: '../../../coverage/apps/picsa-server/test',
 };
 
