@@ -31,7 +31,7 @@
       "outputs": [],
       "options": {
         "commands": [
-          "ts-node --project apps/picsa-server/scripts/tsconfig.lib.json apps/picsa-server/scripts/type-definitions-generate.ts"
+          "ts-node apps/picsa-server/scripts/type-definitions-generate.ts"
         ]
       }
     }
