@@ -1,6 +1,6 @@
 // Auto-generated types - Do not manually modify
 
-import Parse from 'parse';
+import Parse from 'parse/node'
 
 import type { _User } from './_User';
 

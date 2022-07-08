@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import Parse from 'parse/node';
 import { PATHS } from './paths';
 import { initializeParseServer } from './utils';
 
@@ -11,8 +12,8 @@ import { initializeParseServer } from './utils';
  * Alternative option in thread to export from graphql instead
  */
 export async function typeDefinitionsGenerate() {
-  const parse = initializeParseServer();
-  const schema = await parse.Schema.all();
+  initializeParseServer();
+  const schema = await Parse.Schema.all();
   return new TypeDefinitionGenerator(schema, {
     outputPath: PATHS.generatedTSdir,
   }).run();
@@ -78,7 +79,7 @@ class TypeDefinitionGenerator {
   private writeSchemaDefinitionFile(className: string, outputPath: string) {
     const { prefix } = this.options;
     let file = '// Auto-generated types - Do not manually modify\n\n';
-    file += `import Parse from 'parse';\n\n`;
+    file += `import Parse from 'parse/node'\n\n`;
     const prefixedName = this.p(className);
     const uniqueDependencies = this.dependencies
       .filter((v) => v !== prefixedName)
@@ -117,12 +118,17 @@ class TypeDefinitionGenerator {
       file += `export type ${className} = Parse.Role<${className}Attributes>;\n`;
     } else {
       file += `export class ${prefixedName} extends Parse.Object<${prefixedName}Attributes> {\n`;
+
+      // Add register and unregister methods
+      file += `  public static register = () =>\n`;
+      file += `    Parse.Object.registerSubclass('${className}', ${prefixedName});\n`;
+      file += `  public static unregister = () =>\n`;
+      file += `    (Parse.Object as any).unregisterSubclass('${className}', ${prefixedName});\n\n`;
+
       file += `  constructor(data?: Partial<${prefixedName}Attributes>) {\n`;
       file += `    super('${className}', data as ${prefixedName}Attributes);\n`;
       file += `  }\n`;
-      file += `}\n\n`;
-      file += `export const register${className}Subclass = () =>\n`;
-      file += `  Parse.Object.registerSubclass('${className}', ${prefixedName});\n`;
+      file += `}\n`;
     }
 
     fs.writeFileSync(path.resolve(outputPath, prefixedName + '.ts'), file);
