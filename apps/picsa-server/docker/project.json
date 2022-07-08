@@ -20,7 +20,7 @@
       "outputs": [],
       "options": {
         "commands": [
-          "compose -f docker-compose.test.yml --project-name picsa-server-test up"
+          "compose -f docker-compose.yml -f docker-compose.test.yml --project-name picsa-server-test up --detach"
         ],
         "cwd": "apps/picsa-server/docker"
       }
@@ -30,9 +30,7 @@
       "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
       "outputs": [],
       "options": {
-        "commands": [
-          "compose -f docker-compose.test.yml --project-name picsa-server-test down -v"
-        ],
+        "commands": ["compose --project-name picsa-server-test down -v"],
         "cwd": "apps/picsa-server/docker"
       }
     }

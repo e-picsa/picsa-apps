@@ -46,6 +46,7 @@ services:
 
   ####################################################################
   # Server - Parse Platform server
+  # NOTE - important to ensure version use has same version of parse
   ####################################################################
   server:
     container_name: picsa_server

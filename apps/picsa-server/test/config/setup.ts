@@ -1,20 +1,29 @@
-import { command, commandSync } from 'execa';
+import { commandSync } from 'execa';
 import path from 'path';
-import { waitForServerReady } from './common';
+import { isServerReady, populateEnv, waitForServerReady } from './common';
+import { stopTestServer } from './teardown';
 
 const rootDir = path.resolve(__dirname, '../../../../');
 
 async function setup() {
-  startTestServer();
+  populateEnv();
+  const serverReady = await isServerReady();
+  if (serverReady) {
+    const msg =
+      'A server already appears to be running on port 1337, attempting close';
+    console.log(msg);
+    stopTestServer();
+  }
+  await startTestServer();
   console.log('\n\nwaiting for server setup...\n');
   await waitForServerReady();
   runDBMigrations();
 }
-function startTestServer() {
-  command('yarn nx run picsa-server-docker:start-test', {
+async function startTestServer() {
+  commandSync('yarn nx run picsa-server-docker:start-test', {
     cwd: rootDir,
     shell: true,
-    stdio: 'inherit',
+    stdio: ['pipe', 'inherit', 'inherit'],
   });
 }
 

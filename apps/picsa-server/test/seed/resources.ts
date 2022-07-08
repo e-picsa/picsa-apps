@@ -1,4 +1,4 @@
-import { Migration } from '../../generatedSchema';
+import { Migration } from '../../generated/schema';
 
 const migrations = [new Migration({ fileName: 'test1' })];
 
