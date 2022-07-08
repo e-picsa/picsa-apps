@@ -1,8 +1,10 @@
 import { IMigration } from '../../models';
 
 const migration: IMigration = {
-  delete: {
-    Resource: {},
+  update: {
+    Test: (schema) => {
+      schema.addString('description');
+    },
   },
 };
 export default migration;

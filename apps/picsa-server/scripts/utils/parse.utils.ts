@@ -12,7 +12,15 @@ export function initializeParseServer() {
   Parse.serverURL = 'http://localhost:1337/parse';
 }
 
-/** Call registration methods to register custom subclasses */
+/**
+ * Call registration methods to register custom subclasses
+ * This will instantiate results of queries with the class methods
+ *
+ * This can only be done after parse has been initialised, and hence why
+ * not inlined into imports as in many examples
+ *
+ * https://community.parseplatform.org/t/registersubclass-doesnt-work/2578/5
+ * */
 export function registerParseSubclasses() {
   for (const subclass of Object.values(generatedSchema)) {
     if (subclass.hasOwnProperty('unregister')) {

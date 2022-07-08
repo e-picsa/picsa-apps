@@ -79,7 +79,7 @@ class TypeDefinitionGenerator {
   private writeSchemaDefinitionFile(className: string, outputPath: string) {
     const { prefix } = this.options;
     let file = '// Auto-generated types - Do not manually modify\n\n';
-    file += `import Parse from 'parse/node'\n\n`;
+    file += `import Parse from 'parse/node';\n\n`;
     const prefixedName = this.p(className);
     const uniqueDependencies = this.dependencies
       .filter((v) => v !== prefixedName)
