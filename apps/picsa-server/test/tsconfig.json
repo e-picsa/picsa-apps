@@ -1,7 +1,10 @@
 {
-  "compilerOptions": {
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "module": "ESNext"
-  }
+  "extends": "../../../tsconfig.base.json",
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "include": ["config/**/*.ts", "seed/**/*.ts"],
+  "files": ["../../../tsconfig.base.json"]
 }

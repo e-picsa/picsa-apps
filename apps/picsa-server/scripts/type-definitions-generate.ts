@@ -165,7 +165,7 @@ class TypeDefinitionGenerator {
         `Parse type '${type}' not implemented for typescript conversation.`
       );
     }
-    let optionalString = required ? '' : '?';
+    const optionalString = required ? '' : '?';
     return `${field}${optionalString}: ${mappedType}`;
   }
 
@@ -190,13 +190,11 @@ class TypeDefinitionGenerator {
       File: `{ __type: 'File'; name: string; url: string };`,
       GeoPoint: `{ __type: 'GeoPoint'; latitude: number; longitude: number };`,
       Polygon: `{ __type: 'Polygon'; coordinates: [number, number][] };`,
-      Pointer: null as any,
-      Relation: null as any,
+      Pointer: null,
+      Relation: null,
     };
-    Object.entries(sdkMappings).forEach(
-      ([type, m]) => ((mapping as any)[type] = m)
-    );
-    const mappedType = (mapping as any)[type];
+    Object.entries(sdkMappings).forEach(([type, m]) => (mapping[type] = m));
+    const mappedType = mapping[type];
     return mappedType;
   }
 

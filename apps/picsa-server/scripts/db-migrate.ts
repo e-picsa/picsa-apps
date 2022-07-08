@@ -5,7 +5,7 @@ import { ClassLevelPermissions, IMigration } from '../models';
 import { PATHS } from './paths';
 
 import { typeDefinitionsGenerate } from './type-definitions-generate';
-import { initializeParseServer, sleep } from './utils';
+import { initializeParseServer } from './utils';
 
 interface MigrationAttributes {
   id: string;
@@ -62,10 +62,8 @@ class DBMigrate {
    * @returns
    */
   private async saveMigrationRecord(fileName: string) {
-    const Record = Parse.Object.extend('Migration');
-    const record = new Record();
-    record.set('fileName', fileName);
-    return record.save(null as any, { userMasterKey: true });
+    const migration = new Migration({ fileName });
+    return migration.save(null, { userMasterKey: true });
   }
 
   private async processMigration(migration: IMigration) {
@@ -104,7 +102,7 @@ class DBMigrate {
     const exists = await initialMigration.exists();
     if (!exists) {
       await initialMigration.save();
-      new Parse.Schema<any>(initialMigration.className).setCLP(
+      new Parse.Schema(initialMigration.className).setCLP(
         ClassLevelPermissions.serverOnly
       );
     }

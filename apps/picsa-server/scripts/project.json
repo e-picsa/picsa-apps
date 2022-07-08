@@ -1,10 +1,16 @@
 {
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
-  "projectType": "application",
+  "projectType": "library",
   "sourceRoot": "apps/picsa-server/scripts",
-  "prefix": "picsa",
   "implicitDependencies": ["picsa-server-cloud-functions"],
   "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/picsa-server/scripts/**/*.ts"]
+      }
+    },
     "docker-prepare": {
       "executor": "./tools/executors/execa:commandSync",
       "dependsOn": [{ "projects": "dependencies", "target": "build" }],
@@ -20,21 +26,12 @@
         "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts"]
       }
     },
-    "db-migrate-test": {
-      "executor": "./tools/executors/execa:commandSync",
-      "outputs": [],
-      "options": {
-        "commands": [
-          "ts-node apps/picsa-server/scripts/db-migrate.ts --env=test"
-        ]
-      }
-    },
     "type-definitions-generate": {
       "executor": "./tools/executors/execa:commandSync",
       "outputs": [],
       "options": {
         "commands": [
-          "ts-node apps/picsa-server/scripts/type-definitions-generate.ts"
+          "ts-node --project apps/picsa-server/scripts/tsconfig.lib.json apps/picsa-server/scripts/type-definitions-generate.ts"
         ]
       }
     }
