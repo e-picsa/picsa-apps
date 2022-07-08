@@ -1,10 +1,15 @@
-import { IMigration } from '../../models';
+import { IMigration, updateSchema } from '../../models';
 
 const migration: IMigration = {
-  update: {
-    Test: (schema) => {
+  async up() {
+    await updateSchema('Test', (schema) => {
       schema.addString('description');
-    },
+    });
+  },
+  async down() {
+    await updateSchema('Test', (schema) => {
+      schema.deleteField('description');
+    });
   },
 };
 export default migration;

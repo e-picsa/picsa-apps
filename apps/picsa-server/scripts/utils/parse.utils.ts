@@ -1,8 +1,16 @@
 import * as generatedSchema from '../../generated/schema';
 import Parse from 'parse/node';
+import { PATHS } from '../paths';
+import { populateEnv } from './cli.utils';
 
 /** Return configured Parse server namespace */
 export function initializeParseServer() {
+  // When running in docker environment env vars should be populated
+  // When calling scripts direct locally it will not
+  if (!process.env.PARSE_SERVER_APPLICATION_ID) {
+    const { envFilePath } = PATHS;
+    populateEnv(envFilePath);
+  }
   const { PARSE_SERVER_APPLICATION_ID, PARSE_SERVER_MASTER_KEY } = process.env;
   Parse.initialize(
     PARSE_SERVER_APPLICATION_ID as string,

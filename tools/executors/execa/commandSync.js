@@ -39,7 +39,7 @@ exports.__esModule = true;
 var execa_1 = require("execa");
 /**
  * Call a sync command via execa
- * Build via `npx tsc tools/executors/execa/commandSync`
+ * Build via `yarn tsc tools/executors/execa/commandSync`
  *
  * https://nx.dev/executors/creating-custom-builders
  * https://github.com/nrwl/nx/issues/8269

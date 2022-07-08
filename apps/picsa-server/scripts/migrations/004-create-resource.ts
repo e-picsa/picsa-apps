@@ -1,15 +1,27 @@
-import { ClassLevelPermissions, IMigration } from '../../models';
+import {
+  ClassLevelPermissions,
+  createSchema,
+  deleteSchema,
+  IMigration,
+} from '../../models';
 
 const migration: IMigration = {
-  create: {
-    Resource: (schema) => {
-      schema.addString('label', { required: true });
-      schema.addString('url', { required: true });
-      schema.addBoolean('isFileResource');
-      schema.addBoolean('isWebResource');
-      schema.addNumber('sizeKb');
-      schema.setCLP(ClassLevelPermissions.public_read_only);
-    },
+  async up() {
+    await createSchema(
+      'Resource',
+      (schema) => {
+        schema.addString('title', { required: true });
+        schema.addString('url', { required: true });
+        schema.addString('mimetype', { required: true });
+        schema.addString('description');
+        schema.addString('coverImage');
+        schema.addNumber('sizeKb');
+      },
+      ClassLevelPermissions.public_read_only
+    );
+  },
+  async down() {
+    await deleteSchema('Resource');
   },
 };
 export default migration;

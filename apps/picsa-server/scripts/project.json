@@ -26,6 +26,13 @@
         "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts"]
       }
     },
+    "db-downgrade": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts --down"]
+      }
+    },
     "type-definitions-generate": {
       "executor": "./tools/executors/execa:commandSync",
       "outputs": [],

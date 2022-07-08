@@ -46,7 +46,8 @@ services:
 
   ####################################################################
   # Server - Parse Platform server
-  # NOTE - important to ensure version use has same version of parse
+  # NOTE - important to ensure version of parse bundled with the
+  # server also matches root (e.g. server 5.2.3 includes parse 3.4.2)
   ####################################################################
   server:
     container_name: picsa_server
