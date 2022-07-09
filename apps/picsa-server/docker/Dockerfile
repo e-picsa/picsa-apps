@@ -8,7 +8,7 @@
 
 FROM parseplatform/parse-server:5.2.3
 USER root
-RUN /bin/sh -c "mkdir -p /parse-server/files && chown node:node /parse-server/files"
+RUN /bin/sh -c "mkdir -p files && chown node:node files"
 USER node
 VOLUME /parse-server/files 
 

@@ -32,7 +32,8 @@ async function setup() {
   await startTestServer();
   console.log('\n\nwaiting for server setup...\n');
   await waitForServerReady();
-  runDBMigrations();
+  dbRunMigrations();
+  dbSeedData();
 }
 async function startTestServer() {
   commandSync('yarn nx run picsa-server-docker:start-test', {
@@ -42,8 +43,15 @@ async function startTestServer() {
   });
 }
 
-function runDBMigrations() {
+function dbRunMigrations() {
   commandSync('yarn nx run picsa-server-scripts:db-migrate', {
+    cwd: rootDir,
+    shell: true,
+    stdio: 'inherit',
+  });
+}
+function dbSeedData() {
+  commandSync('yarn nx run picsa-server-scripts:db-seed', {
     cwd: rootDir,
     shell: true,
     stdio: 'inherit',

@@ -15,8 +15,13 @@ class DBSeed {
     await this.uploadFiles();
   }
 
+  /**
+   *
+   */
   private async uploadFiles() {
-    const files = recursiveFindByExtension(PATHS.seedFilesDir);
+    const files = recursiveFindByExtension(PATHS.seedFilesDir).filter(
+      (filePath) => !path.basename(filePath).startsWith('.')
+    );
     for (const filepath of files) {
       const name = path.basename(filepath);
       const base64 = fs.readFileSync(filepath, { encoding: 'base64' });
