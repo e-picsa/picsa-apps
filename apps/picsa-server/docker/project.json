@@ -20,7 +20,7 @@
       "outputs": [],
       "options": {
         "commands": [
-          "compose -f docker-compose.yml -f docker-compose.test.yml --project-name picsa-server-test up --detach"
+          "compose -f docker-compose.yml -f docker-compose.test.yml --project-name picsa-server-test up --build -V --detach"
         ],
         "cwd": "apps/picsa-server/docker"
       }

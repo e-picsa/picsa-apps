@@ -2,6 +2,9 @@ import path from 'path';
 
 const serverDir = path.resolve(__dirname, '../');
 const migrationsDir = path.resolve(__dirname, 'migrations');
+const seedDir = path.resolve(__dirname, 'seed');
+
+const seedFilesDir = path.resolve(seedDir, 'files');
 
 const cloudFunctionsDist = path.resolve(serverDir, 'cloud-functions', 'dist');
 const dockerCloudFunctionsDist = path.resolve(
@@ -19,4 +22,5 @@ export const PATHS = {
   generatedTSdir,
   migrationsDir,
   serverDir,
+  seedFilesDir,
 };

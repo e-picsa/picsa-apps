@@ -4,8 +4,8 @@ services:
   db:
     container_name: picsa_db_test
     volumes:
-      # remove persistent data volume for test
       - ./config/db:/docker-entrypoint-initdb.d/
+        # removed db_data volume (do not persist)
     env_file:
       - ../.env.sample
 
@@ -18,6 +18,9 @@ services:
 
   server:
     container_name: picsa_server_test
+    volumes:
+      - ./cloud-functions:/parse-server/cloud
+      # removed server_files volume (do not persist)
     env_file:
       - ../.env.sample
 

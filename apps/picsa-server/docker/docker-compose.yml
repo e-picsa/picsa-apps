@@ -51,13 +51,18 @@ services:
   ####################################################################
   server:
     container_name: picsa_server
-    image: 'parseplatform/parse-server:5.2.3'
+    build: .
+    # image: 'parseplatform/parse-server:5.2.3'
     restart: unless-stopped
     volumes:
       - ./cloud-functions:/parse-server/cloud
+      - server_files:/parse-server/files
       # Could mount config file, but handling via env vars instead
       # - ./config/parse-server:/parse-server/config
     logging: *logging_default
+    # If running with custom config file uncomment
+    # entrypoint:
+    # ['node', './bin/parse-server', '/parse-server/config/config.json']
     ports:
       - '1337:1337'
     depends_on:
@@ -96,6 +101,7 @@ services:
 volumes:
   db_data:
   db_admin_data:
+  server_files:
 
 networks:
   # User a bridge network to allow connection from external (e.g. pgadmin)

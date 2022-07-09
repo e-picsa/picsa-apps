@@ -33,7 +33,6 @@ class Migration extends Parse.Object<MigrationAttributes> {
  */
 class DBMigrate {
   public async run() {
-    const direction = process.argv.includes('--down') ? 'down' : 'up';
     initializeParseServer();
     if (process.argv.includes('--down')) {
       await this.handleDownMigration();

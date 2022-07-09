@@ -33,6 +33,13 @@
         "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts --down"]
       }
     },
+    "db-seed": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": ["ts-node apps/picsa-server/scripts/db-seed.ts"]
+      }
+    },
     "type-definitions-generate": {
       "executor": "./tools/executors/execa:commandSync",
       "outputs": [],
