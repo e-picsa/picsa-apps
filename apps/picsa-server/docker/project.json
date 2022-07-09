@@ -7,7 +7,12 @@
   "targets": {
     "start": {
       "executor": "./tools/executors/docker:docker",
-      "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
+      "dependsOn": [
+        {
+          "projects": "dependencies",
+          "target": "docker-prepare"
+        }
+      ],
       "outputs": [],
       "options": {
         "commands": ["compose --project-name picsa-server up"],
@@ -16,7 +21,12 @@
     },
     "start-test": {
       "executor": "./tools/executors/docker:docker",
-      "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
+      "dependsOn": [
+        {
+          "projects": "dependencies",
+          "target": "docker-prepare"
+        }
+      ],
       "outputs": [],
       "options": {
         "commands": [
@@ -27,7 +37,12 @@
     },
     "stop-test": {
       "executor": "./tools/executors/docker:docker",
-      "dependsOn": [{ "projects": "dependencies", "target": "docker-prepare" }],
+      "dependsOn": [
+        {
+          "projects": "dependencies",
+          "target": "docker-prepare"
+        }
+      ],
       "outputs": [],
       "options": {
         "commands": ["compose --project-name picsa-server-test down -v"],
