@@ -1,0 +1,22 @@
+{
+  "extends": ["../../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@angular-eslint/component-selector": ["off"],
+        "@angular-eslint/component-class-suffix": ["off"],
+        "no-prototype-builtins": "off"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

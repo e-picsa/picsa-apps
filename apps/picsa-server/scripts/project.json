@@ -1,0 +1,54 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "apps/picsa-server/scripts",
+  "implicitDependencies": ["picsa-server-cloud-functions"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/picsa-server/scripts/**/*.ts"]
+      }
+    },
+    "docker-prepare": {
+      "executor": "./tools/executors/execa:commandSync",
+      "dependsOn": [{ "projects": "dependencies", "target": "build" }],
+      "outputs": ["apps/picsa-server/docker/cloud-functions"],
+      "options": {
+        "commands": ["ts-node apps/picsa-server/scripts/docker-prepare.ts"]
+      }
+    },
+    "db-migrate": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts"]
+      }
+    },
+    "db-downgrade": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": ["ts-node apps/picsa-server/scripts/db-migrate.ts --down"]
+      }
+    },
+    "db-seed": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": ["ts-node apps/picsa-server/scripts/db-seed.ts"]
+      }
+    },
+    "type-definitions-generate": {
+      "executor": "./tools/executors/execa:commandSync",
+      "outputs": [],
+      "options": {
+        "commands": [
+          "ts-node apps/picsa-server/scripts/type-definitions-generate.ts"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

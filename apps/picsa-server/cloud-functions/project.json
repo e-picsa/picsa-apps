@@ -1,0 +1,19 @@
+{
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-server/cloud-functions",
+  "prefix": "picsa",
+  "implicitDependencies": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["apps/picsa-server/cloud-functions/dist"],
+      "options": {
+        "commands": [
+          "tsc --project apps/picsa-server/cloud-functions/tsconfig.build.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
