@@ -10,10 +10,11 @@ export interface ResourceAttributes {
   createdAt?: { __type: 'Date'; iso: string };
   updatedAt?: { __type: 'Date'; iso: string };
   url: string;
-  label: string;
+  title: string;
   sizeKb?: number;
-  isWebResource?: boolean;
-  isFileResource?: boolean;
+  mimetype: string;
+  coverImage?: string;
+  description?: string;
 }
 
 export class Resource extends Parse.Object<ResourceAttributes> {
