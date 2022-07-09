@@ -1,53 +1,40 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppComponent, AppComponentEmbedded } from './app.component';
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import {
-  AppRoutingModule,
-  ClimateToolRoutingModule,
-} from './app-routing.module';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+  PicsaTranslateModule,
+  PicsaTranslateService,
+} from '@picsa/shared/modules/translate';
 import { PicsaDbModule } from '@picsa/shared/modules/db.module';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';
 
+/** Core imports only required when running standalone */
 const StandaloneImports = [
   BrowserModule,
   BrowserAnimationsModule,
+  AppRoutingModule,
+];
+
+/** Common imports used in both standalone and embedded formats */
+export const APP_COMMON_IMPORTS = [
   MatSliderModule,
   PicsaTranslateModule.forRoot(),
   PicsaDbModule.forRoot(),
-  AppRoutingModule,
 ];
-const ChildImports = [ClimateToolRoutingModule];
 
 /*******************************************************************
  *  Standalone Version
  ******************************************************************/
 @NgModule({
   declarations: [AppComponent],
-  imports: StandaloneImports,
+  imports: [...StandaloneImports, ...APP_COMMON_IMPORTS],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
-
-/*******************************************************************
- *  Embedded Version (requires standalone imports in master app)
- *  Note, could also be duplicated here and shouldn't throw error
- ******************************************************************/
-@NgModule({
-  declarations: [AppComponentEmbedded],
-  imports: ChildImports,
-  bootstrap: [AppComponentEmbedded],
-})
-export class AppEmbeddedModule {}
-
-@NgModule({})
-export class ClimateToolModule {
-  static forRoot(): ModuleWithProviders<AppEmbeddedModule> {
-    return {
-      ngModule: AppEmbeddedModule,
-    };
-  }
+export class AppModule {
+  // ensure translate service initialised
+  constructor(public translate: PicsaTranslateService) {}
 }
