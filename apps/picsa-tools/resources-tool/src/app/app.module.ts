@@ -38,14 +38,8 @@ export const APP_COMMON_IMPORTS = [
   MobxAngularModule,
   ResourcesMaterialModule,
   PicsaTranslateModule.forRoot(),
-  // ComponentsModule,
-  // ExtensionToolkitMaterialModule,
-
-  // From budget tool, will likely remove
-
   PicsaDbModule.forRoot(),
   PicsaNativeModule.forRoot(),
-  // HttpClientModule,
 ];
 
 /*******************************************************************
