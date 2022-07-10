@@ -13,6 +13,7 @@ import {
 } from '@picsa/shared/modules';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BudgetMaterialModule } from './material.module';
+import { BudgetStore } from './store/budget.store';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -41,5 +42,10 @@ export const APP_COMMON_IMPORTS = [
 })
 export class AppModule {
   // ensure translate service initialised
-  constructor(public translate: PicsaTranslateService) {}
+  constructor(
+    public translate: PicsaTranslateService,
+    budgetStore: BudgetStore
+  ) {
+    budgetStore.init();
+  }
 }

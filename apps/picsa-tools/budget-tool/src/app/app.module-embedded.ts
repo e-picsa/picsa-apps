@@ -4,6 +4,7 @@ import { PicsaTranslateService } from '@picsa/shared/modules';
 import { ROUTES_COMMON } from './app-routing.module';
 import { AppComponentEmbedded } from './app.component';
 import { APP_COMMON_IMPORTS } from './app.module';
+import { BudgetStore } from './store/budget.store';
 
 export class EmbeddedConfig {
   /** Path app routed through, e.g. 'budget' */
@@ -45,7 +46,12 @@ export class EmbeddedRoutingModule {
 })
 export class BaseModule {
   // ensure translate has been initiated
-  constructor(public translate: PicsaTranslateService) {}
+  constructor(
+    public translate: PicsaTranslateService,
+    budgetStore: BudgetStore
+  ) {
+    budgetStore.init();
+  }
 }
 
 /** Use to import directly into another app via lazy-loading */

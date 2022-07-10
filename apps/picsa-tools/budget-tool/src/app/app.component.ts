@@ -15,15 +15,12 @@ export class AppComponent {
   standalone = true;
   storeReady = false;
   constructor(
-    private budgetStore: BudgetStore,
+    public store: BudgetStore,
     private matIconRegistry?: MatIconRegistry,
     private domSanitizer?: DomSanitizer,
     public translate?: PicsaTranslateService
   ) {
     this.registerIcons();
-    this.budgetStore.init().then(() => {
-      this.storeReady = true;
-    });
   }
 
   registerIcons() {
