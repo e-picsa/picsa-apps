@@ -8,14 +8,12 @@ import { ExtensionToolkitMaterialModule } from '../material.module';
 import { LanguageSelectComponent } from './language-select/language-select';
 import { UserGroupComponent } from './user-group/user-group';
 import { WhatsappGroupComponent } from './whatsapp-group/whatsapp-group';
-import { ResourceItemComponent } from './resource-item/resource-item';
 
 @NgModule({
   declarations: [
     UserGroupComponent,
     WhatsappGroupComponent,
     LanguageSelectComponent,
-    ResourceItemComponent,
   ],
   imports: [
     CommonModule,
@@ -30,7 +28,6 @@ import { ResourceItemComponent } from './resource-item/resource-item';
     UserGroupComponent,
     WhatsappGroupComponent,
     LanguageSelectComponent,
-    ResourceItemComponent,
   ],
 })
 export class ComponentsModule {}

@@ -1,14 +1,14 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IResource, IResourceGroup } from '../../models/models';
-import { ResourcesStore } from '../../store/resources.store';
+import { IResource, IResourceGroup } from '../../models';
+import { ResourcesStore } from '../../stores';
 
 @Component({
-  selector: 'app-resources',
-  templateUrl: './resources.page.html',
-  styleUrls: ['./resources.page.scss'],
+  selector: 'picsa-resource-list',
+  templateUrl: './resource-list.component.html',
+  styleUrls: ['./resource-list.component.scss'],
 })
-export class ResourcesPage implements AfterViewInit {
+export class ResourceListComponent implements AfterViewInit {
   resources$: Observable<IResource[]>;
   resourceGroups: IResourceGroup[];
   activeResource: IResource | undefined;

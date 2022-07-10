@@ -6,13 +6,14 @@
         *ngIf="!isDownloading"
         svgIcon="picsa_download"
       ></mat-icon>
+
       <!-- <mat-progress-spinner></mat-progress-spinner> -->
     </button>
   </div>
   <img class="resource-image" [src]="resource.image" />
   <mat-progress-bar
     [value]="progress"
-    style="margin-top:-4px"
+    style="margin-top: -4px"
     *ngIf="isDownloading"
   ></mat-progress-bar>
   <div class="resource-title">{{ resource.title | translate }}</div>

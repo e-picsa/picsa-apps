@@ -1,16 +1,16 @@
 import { Component, Input } from '@angular/core';
-import { IResource } from '../../models/models';
-import { ResourcesStore } from '../../store/resources.store';
+import { IResource } from '../../models';
+import { ResourcesStore } from '../../stores';
 
 @Component({
-  selector: 'resource-item',
-  templateUrl: './resource-item.html',
-  styleUrls: ['./resource-item.scss']
+  selector: 'picsa-resource-item',
+  templateUrl: './resource-item.component.html',
+  styleUrls: ['./resource-item.component.scss'],
 })
 export class ResourceItemComponent {
   @Input() resource: IResource;
   isDownloading = false;
-  progress: number = 0;
+  progress = 0;
   constructor(private store: ResourcesStore) {}
 
   resourceClick() {
@@ -19,11 +19,11 @@ export class ResourceItemComponent {
     } else {
       this.isDownloading = true;
       this.store.downloadResource(this.resource).subscribe(
-        progress => {
+        (progress) => {
           console.log('progress', progress);
           this.progress = progress;
         },
-        err => {
+        (err) => {
           this.isDownloading = false;
           throw err;
         },

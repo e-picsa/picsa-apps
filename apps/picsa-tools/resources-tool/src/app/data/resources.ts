@@ -1,4 +1,4 @@
-import { IResource } from '../models/models';
+import { IResource } from '../models';
 
 /**
  * These resources are hard-coded into the app, and therefore should be made available in the
@@ -19,7 +19,7 @@ const hardcodedResources: IResource[] = [
     image: 'assets/resources/picsa-field-manual-cover.jpg',
     group: 'PICSA Manual',
     weblink:
-      'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/picsa-field-manual-en.pdf?alt=media&token=6e2f1601-80c8-4f56-9a3d-52789f08c303'
+      'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/picsa-field-manual-en.pdf?alt=media&token=6e2f1601-80c8-4f56-9a3d-52789f08c303',
   },
   {
     _key: '9xqr6hxcWoVlsqydsNne',
@@ -34,7 +34,7 @@ const hardcodedResources: IResource[] = [
     image: 'assets/resources/picsa-field-manual-cover-chichewa.jpg',
     group: 'PICSA Manual',
     weblink:
-      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-chichewa.pdf?alt=media&token=7ab629a9-d2c1-4b37-8237-88825033708e'
+      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-chichewa.pdf?alt=media&token=7ab629a9-d2c1-4b37-8237-88825033708e',
   },
   {
     _key: 'lqsSRwYx3Lq1bFYG3lke',
@@ -49,7 +49,7 @@ const hardcodedResources: IResource[] = [
     image: 'assets/resources/picsa-field-manual-cover-tumbuka.jpg',
     group: 'PICSA Manual',
     weblink:
-      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-tumbuka.pdf?alt=media&token=31a885e7-d6fa-4903-a747-ed8f9f7168b3'
+      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Manuals%2Fpicsa-field-manual-tumbuka.pdf?alt=media&token=31a885e7-d6fa-4903-a747-ed8f9f7168b3',
   },
   {
     _key: '6VjjF3yZJejFigwDIPr8',
@@ -64,8 +64,8 @@ const hardcodedResources: IResource[] = [
     image: 'assets/resources/potential-PICSA-training-schedule-cover.png',
     group: 'Documents',
     weblink:
-      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpotential-PICSA-training-schedule.pdf?alt=media&token=618737d1-949b-467a-9f28-1dcc35ce3c8c'
-  }
+      'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpotential-PICSA-training-schedule.pdf?alt=media&token=618737d1-949b-467a-9f28-1dcc35ce3c8c',
+  },
 ];
 const webResources: IResource[] = [
   // {
@@ -95,8 +95,8 @@ const webResources: IResource[] = [
     group: 'Videos',
     weblink:
       'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fram-refresher.mp4?alt=media&token=27939a71-0656-440b-8407-24877acaeede',
-    youtubeID: 'Kw5UznKvCN8'
-  }
+    youtubeID: 'Kw5UznKvCN8',
+  },
   // {
   //   _key: 'Yx8927IVTGyM1C4njOIv',
   //   _created: '2019-07-20T16:57:13.604Z',

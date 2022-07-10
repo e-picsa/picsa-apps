@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { observable, action, computed } from 'mobx-angular';
-import { IResource } from '../models/models';
 import { PicsaDbService } from '@picsa/shared/services/core/db';
 import { PicsaFileService } from '@picsa/shared/services/native/file-service';
-import { RESOURCES } from '../data';
 import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { toJS } from 'mobx';
+import RESOURCES from '../data/resources';
+import { IResource } from '../models';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -159,7 +159,7 @@ export class ResourcesStore {
       console.log('newer resources detected', newerResources);
       // if hardcoded copy from assets folder first (if not already done)
       // TODO - add check to see if already copied over (use this.downloads)
-      for (let resource of newerResources) {
+      for (const resource of newerResources) {
         if (resource._isHardcoded && this.platform.is('cordova')) {
           console.log('copying resource', resource.filename);
           await this.copyHardcodedResource(resource);

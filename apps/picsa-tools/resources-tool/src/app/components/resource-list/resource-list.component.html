@@ -2,11 +2,11 @@
   <picsa-header>{{ 'Resources' | translate }}</picsa-header>
   <div class="page-content">
     <div>
-      <resource-item
+      <picsa-resource-item
         *ngFor="let resource of store.sortedResources"
         [resource]="resource"
       >
-      </resource-item>
+      </picsa-resource-item>
     </div>
 
     <!-- video resources TODO - refactor to own component -->
@@ -22,7 +22,7 @@
       <div class="video-resource-content">
         <div class="video-close-button">
           <button mat-button icon-only fill="clear">
-            <mat-icon name="close"></mat-icon>
+            <!-- <mat-icon name="close"></mat-icon> -->
           </button>
         </div>
         <youtube-player

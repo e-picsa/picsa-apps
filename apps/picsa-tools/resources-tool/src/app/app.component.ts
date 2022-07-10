@@ -1,10 +1,18 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'picsa-root',
+  selector: 'picsa-resources-tool',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'picsa-tools-resources-tool';
+  title = 'picsa-resources';
 }
+
+@Component({
+  // tslint:disable component-selector
+  selector: 'picsa-budget-tool',
+  template: '',
+})
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class AppComponentEmbedded extends AppComponent {}
