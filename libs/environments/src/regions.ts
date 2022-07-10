@@ -1,4 +1,9 @@
-import { IAppVariants, IRegionLang, IRegionSettings } from '@picsa/models/src';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import type {
+  IAppVariants,
+  IRegionLang,
+  IRegionSettings,
+} from '@picsa/models/src';
 
 const langs: { [key: string]: IRegionLang } = {
   en: { label: 'English', code: 'en', country: 'gb' },
