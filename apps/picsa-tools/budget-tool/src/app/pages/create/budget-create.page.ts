@@ -1,10 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BudgetStore } from '../../store/budget.store';
 import {
   IEnterpriseScaleLentgh,
   IBudgetMeta,
   IBudgetCard,
+  IBudgetCardDB,
 } from '../../models/budget-tool.models';
 import { MatStepper } from '@angular/material/stepper';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
@@ -16,6 +22,7 @@ import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
   templateUrl: './budget-create.page.html',
   styleUrls: ['./budget-create.page.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetCreatePage implements OnInit {
   budgetMetaForm: FormGroup;
@@ -25,18 +32,19 @@ export class BudgetCreatePage implements OnInit {
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
+  enterpriseTypeCards: IBudgetCardDB[] = [];
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute
-  ) {
-    this.store.createNewBudget();
-  }
+  ) {}
 
   ngOnInit() {
+    this.store.createNewBudget();
     this.generateBudgetForm();
+    this.enterpriseTypeCards = this.store.enterpriseTypeCards;
   }
 
   /**************************************************************************
@@ -76,6 +84,10 @@ export class BudgetCreatePage implements OnInit {
     this.router.navigate(['../', 'view', this.store.activeBudget._key], {
       relativeTo: this.route,
     });
+  }
+
+  public trackByFn(index: number, item: IBudgetCardDB) {
+    return item.id;
   }
 
   /**************************************************************************

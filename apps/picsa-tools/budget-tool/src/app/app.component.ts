@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PicsaTranslateService } from '@picsa/shared/modules/translate';
+import { BudgetStore } from './store/budget.store';
 
 @Component({
   // tslint:disable component-selector
@@ -12,12 +13,17 @@ import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 export class AppComponent {
   title = 'picsa-budget-tool';
   standalone = true;
+  storeReady = false;
   constructor(
+    private budgetStore: BudgetStore,
     private matIconRegistry?: MatIconRegistry,
     private domSanitizer?: DomSanitizer,
     public translate?: PicsaTranslateService
   ) {
     this.registerIcons();
+    this.budgetStore.init().then(() => {
+      this.storeReady = true;
+    });
   }
 
   registerIcons() {

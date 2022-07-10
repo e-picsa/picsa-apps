@@ -1,6 +1,6 @@
 <div class="page">
   <picsa-header>{{ 'Create New Budget' | translate }}</picsa-header>
-  <div class="page-content" *mobxAutorun style="padding-bottom: 52px">
+  <div class="page-content" style="padding-bottom: 52px">
     <form [formGroup]="budgetMetaForm">
       <mat-horizontal-stepper linear #stepper>
         <!-- Step 1 - handled with custom elements-->
@@ -9,7 +9,7 @@
           <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
           <div style="display: flex; flex-wrap: wrap">
             <budget-card
-              *ngFor="let card of store.enterpriseTypeCards"
+              *ngFor="let card of enterpriseTypeCards; trackBy: trackByFn"
               [card]="card"
               (click)="enterpriseTypeClicked(card.id)"
               [selected]="selectedType === card.id"
@@ -79,11 +79,11 @@
                 class="select--hidden"
                 #periodTotalSelect
                 formControlName="lengthTotal"
-                style="opacity: 0;"
+                style="opacity: 0"
               >
-                <mat-option *ngFor="let n of periodTotalOptions" [value]="n">{{
-                  n
-                }}</mat-option>
+                <mat-option *ngFor="let n of periodTotalOptions" [value]="n"
+                  >{{ n }}</mat-option
+                >
               </mat-select>
             </button>
 
@@ -97,7 +97,7 @@
                 class="select--hidden"
                 #periodScaleSelect
                 formControlName="lengthScale"
-                style="opacity: 0;"
+                style="opacity: 0"
               >
                 <mat-option
                   *ngFor="let option of periodScaleOptions"
@@ -118,15 +118,15 @@
               class="variable-container editable"
               (click)="periodStartSelect.open()"
             >
-              <span>{{
-                periodLabelOptions[budgetMetaForm.value.monthStart - 1]
-                  | translate
-              }}</span>
+              <span
+                >{{ periodLabelOptions[budgetMetaForm.value.monthStart - 1] |
+                translate }}</span
+              >
               <mat-select
                 class="select--hidden"
                 #periodStartSelect
                 formControlName="monthStart"
-                style="opacity: 0;"
+                style="opacity: 0"
               >
                 <mat-option
                   *ngFor="let option of periodTotalOptions"

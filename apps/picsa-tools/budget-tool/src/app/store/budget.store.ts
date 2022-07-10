@@ -87,10 +87,7 @@ export class BudgetStore implements OnDestroy {
     return this.activeBudget.meta.enterprise.groupings![0];
   }
 
-  constructor(private db: PicsaDbService, private route: ActivatedRoute) {
-    this.init();
-    this._subscribeToRouteChanges();
-  }
+  constructor(private db: PicsaDbService, private route: ActivatedRoute) {}
   ngOnDestroy(): void {
     console.log('TODO - REMOVE SUBSCRIPTIONS');
   }
@@ -204,10 +201,11 @@ export class BudgetStore implements OnDestroy {
    *            Initialisation
    *
    ***************************************************************************/
-  async init() {
+  public async init() {
     this.loadSavedBudgets();
     await this.checkForUpdates();
     await this.preloadData();
+    this._subscribeToRouteChanges();
   }
   _subscribeToRouteChanges() {
     this.route.queryParams.subscribe((params) =>
