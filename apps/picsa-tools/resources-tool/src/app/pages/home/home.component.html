@@ -1,0 +1,17 @@
+<div class="page" *mobxAutorun>
+  <picsa-header>{{ 'Resources' | translate }}</picsa-header>
+  <div class="page-content">
+    <div class="page-columns">
+      <div class="search-container">
+        <h2>Search</h2>
+      </div>
+      <div class="content-container">
+        <h2>Collections</h2>
+        <div class="list-container">
+          <picsa-resource-list [resources]="store.resourceGroups">
+          </picsa-resource-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

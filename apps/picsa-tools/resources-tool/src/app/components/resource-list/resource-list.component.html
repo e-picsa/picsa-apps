@@ -1,36 +1,4 @@
-<div class="page" *mobxAutorun>
-  <picsa-header>{{ 'Resources' | translate }}</picsa-header>
-  <div class="page-content">
-    <div>
-      <picsa-resource-item
-        *ngFor="let resource of store.sortedResources"
-        [resource]="resource"
-      >
-      </picsa-resource-item>
-    </div>
-
-    <!-- video resources TODO - refactor to own component -->
-    <div
-      class="video-resource-container"
-      [style.display]="
-        activeResource && platformIsWeb && activeResource.youtubeID
-          ? 'block'
-          : 'none'
-      "
-      (click)="unsetResources()"
-    >
-      <div class="video-resource-content">
-        <div class="video-close-button">
-          <button mat-button icon-only fill="clear">
-            <!-- <mat-icon name="close"></mat-icon> -->
-          </button>
-        </div>
-        <youtube-player
-          [videoId]="activeResource.youtubeID"
-          *ngIf="activeResource && activeResource.youtubeID && !platformIsWeb"
-          [width]="playerWidth"
-        ></youtube-player>
-      </div>
-    </div>
-  </div>
+<div class="list-container">
+  <picsa-resource-item *ngFor="let resource of resources" [resource]="resource">
+  </picsa-resource-item>
 </div>

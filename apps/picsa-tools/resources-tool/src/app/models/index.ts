@@ -1,28 +1,31 @@
 import type { IDBDoc } from '@picsa/models';
 
-export interface IResource extends IDBDoc {
-  _key: string;
+interface IResourceItemBase extends IDBDoc {
+  title: string;
+  subtitle?: string;
+  description: string;
+  image: string;
+  type: 'group' | 'file' | 'video';
+}
+//
+export interface IResourceFile extends IResourceItemBase {
   _isDownloaded?: boolean;
   _isHardcoded?: boolean;
   _deleted?: boolean;
-  title: string;
-  subtitle: string;
+  type: 'file';
   filename: string;
-  type: string;
-  image: string;
   weblink: string;
   viewableBy?: string[];
-  group: string;
-  description?: string;
-  youtubeID?: string;
   filepath?: string;
 }
-export interface IVideoResource extends IResource {
-  description: string;
+export interface IResourceVideo extends IResourceItemBase {
+  type: 'video';
   youtubeID: string;
 }
 
-export interface IResourceGroup {
-  name: string;
-  resources: IResource[] | IVideoResource[];
+export interface IResourceGroup extends IResourceItemBase {
+  type: 'group';
+  resources: IResource[];
 }
+
+export type IResource = IResourceFile | IResourceVideo | IResourceGroup;

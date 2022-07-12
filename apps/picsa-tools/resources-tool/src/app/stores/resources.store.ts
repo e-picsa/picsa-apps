@@ -6,7 +6,7 @@ import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { toJS } from 'mobx';
 import RESOURCES from '../data/resources';
-import { IResource } from '../models';
+import { IResource, IResourceFile } from '../models';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -27,6 +27,9 @@ export class ResourcesStore {
       this.checkDownloadedResources();
     }
   }
+  @observable resourceGroups = RESOURCES.grouped;
+  @observable resourceStandalone = RESOURCES.standalone;
+
   @computed get sortedResources() {
     return [...this.resources].sort((a, b) => {
       return a._created > b._created ? 1 : -1;
@@ -62,7 +65,7 @@ export class ResourcesStore {
     // this.fileService.copyAppApk();
   }
 
-  async openResource(resource: IResource) {
+  async openResource(resource: IResourceFile) {
     console.log('open resource', resource);
     if (this.platform.is('cordova')) {
       try {
@@ -80,14 +83,14 @@ export class ResourcesStore {
     }
   }
 
-  async copyHardcodedResource(resource: IResource) {
+  async copyHardcodedResource(resource: IResourceFile) {
     console.log('copying resource', resource);
     await this.fileService.copyAssetFile('resources', resource.filename);
     await this.updateCachedResource(resource, { _isDownloaded: true });
   }
 
   // create an observable that stream progress snapshots and completes when file downloaded
-  downloadResource(resource: IResource) {
+  downloadResource(resource: IResourceFile) {
     console.log('downloading resource', resource.weblink);
     // only download on cordova
     return new Observable<number>((observer) => {
@@ -119,9 +122,9 @@ export class ResourcesStore {
   }
 
   // update cached resource entry (e.g. mark resource as downloaded)
-  private async updateCachedResource(
-    resource: IResource,
-    update: Partial<IResource>
+  private async updateCachedResource<T extends IResource>(
+    resource: T,
+    update: Partial<T>
   ) {
     const doc = { ...toJS(resource), ...update };
     await this.db.setDoc('resources', doc, false, true);
@@ -147,7 +150,7 @@ export class ResourcesStore {
     // check if cache resources are fresher than hardcoded
     const cacheList = {};
     cached.forEach((r) => (cacheList[r._key] = r._modified));
-    const newerResources = RESOURCES.filter((r) => {
+    const newerResources = RESOURCES.combined.filter((r) => {
       const lastCache = cacheList[r._key];
       return !lastCache || lastCache < r._modified;
     });
@@ -160,9 +163,10 @@ export class ResourcesStore {
       // if hardcoded copy from assets folder first (if not already done)
       // TODO - add check to see if already copied over (use this.downloads)
       for (const resource of newerResources) {
-        if (resource._isHardcoded && this.platform.is('cordova')) {
-          console.log('copying resource', resource.filename);
-          await this.copyHardcodedResource(resource);
+        const { _isHardcoded, filename } = resource as IResourceFile;
+        if (_isHardcoded && this.platform.is('cordova')) {
+          console.log('copying resource', filename);
+          await this.copyHardcodedResource(resource as IResourceFile);
         }
       }
       await this.db.setDocs('resources', newerResources, false, true);
