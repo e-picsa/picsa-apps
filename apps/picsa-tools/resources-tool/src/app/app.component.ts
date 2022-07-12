@@ -11,7 +11,7 @@ export class AppComponent {
 
 @Component({
   // tslint:disable component-selector
-  selector: 'picsa-budget-tool',
+  selector: 'picsa-resources-tool',
   template: '',
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix

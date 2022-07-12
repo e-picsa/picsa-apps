@@ -14,12 +14,8 @@ import {
 
 import { MobxAngularModule } from 'mobx-angular';
 
-import { PicsaCommonComponentsModule } from '@picsa/components';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ResourceListComponent } from './components/resource-list/resource-list.component';
-import { ResourceItemComponent } from './components/resource-item/resource-item.component';
 import { ResourcesMaterialModule } from './material.module';
 
 /** Core imports only required when running standalone */
@@ -27,6 +23,7 @@ const StandaloneImports = [
   AppRoutingModule,
   BrowserModule,
   BrowserAnimationsModule,
+  PicsaTranslateModule.forRoot(),
 ];
 
 /** Common imports used in both standalone and embedded formats */
@@ -34,10 +31,8 @@ export const APP_COMMON_IMPORTS = [
   FormsModule,
   NgxYoutubePlayerModule,
   PicsaTranslateModule,
-  PicsaCommonComponentsModule,
   MobxAngularModule,
   ResourcesMaterialModule,
-  PicsaTranslateModule.forRoot(),
   PicsaDbModule.forRoot(),
   PicsaNativeModule.forRoot(),
 ];
@@ -46,7 +41,7 @@ export const APP_COMMON_IMPORTS = [
  *  Standalone Version
  ******************************************************************/
 @NgModule({
-  declarations: [AppComponent, ResourceListComponent, ResourceItemComponent],
+  declarations: [AppComponent],
   imports: [...StandaloneImports, ...APP_COMMON_IMPORTS],
   bootstrap: [AppComponent],
 })
