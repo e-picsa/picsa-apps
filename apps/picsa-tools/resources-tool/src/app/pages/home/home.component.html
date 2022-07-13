@@ -8,8 +8,12 @@
       <div class="content-container">
         <h2>Collections</h2>
         <div class="list-container">
-          <picsa-resource-list [resources]="store.resourceGroups">
-          </picsa-resource-list>
+          <picsa-resource-item
+            *ngFor="let resource of store.collections"
+            trackBy:resource.__key
+            [resource]="resource"
+          >
+          </picsa-resource-item>
         </div>
       </div>
     </div>

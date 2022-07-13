@@ -6,7 +6,7 @@ import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { toJS } from 'mobx';
 import RESOURCES from '../data/resources';
-import { IResource, IResourceFile } from '../models';
+import { IResource, IResourceCollection, IResourceFile } from '../models';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -27,7 +27,7 @@ export class ResourcesStore {
       this.checkDownloadedResources();
     }
   }
-  @observable resourceGroups = RESOURCES.grouped;
+  @observable collections = RESOURCES.collections;
   @observable resourceStandalone = RESOURCES.standalone;
 
   @computed get sortedResources() {
@@ -51,6 +51,16 @@ export class ResourcesStore {
       await this._checkForUpdates(cached);
     }
   }
+  public getCollectionById(id: string, subcollectionId?: string) {
+    const collection = this.collections.find((c) => c._key === id);
+    if (subcollectionId) {
+      return (collection as IResourceCollection).resources.find(
+        (c) => c._key === subcollectionId
+      );
+    }
+    return collection;
+  }
+
   /**
    * Initialise file server, list storage directory and save list of downloaded resources
    */
