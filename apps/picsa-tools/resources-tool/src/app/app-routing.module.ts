@@ -6,6 +6,7 @@ export const ROUTES_COMMON: Routes = [
     path: '',
     loadChildren: () =>
       import('./pages/home/home.module').then((m) => m.HomeModule),
+    title: 'Resources',
   },
   {
     path: 'collection',

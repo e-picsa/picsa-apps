@@ -16,6 +16,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 // NOTE - climate slider requires import into main modules
 import { MatSliderModule } from '@angular/material/slider';
 import 'hammerjs';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 /**************************************************************
  *  Sentry error handler
  * ***************************************************************/
@@ -44,6 +45,8 @@ import 'hammerjs';
     PicsaDbModule.forRoot(),
     PicsaNativeModule.forRoot(),
     PicsaTranslateModule.forRoot(),
+    PicsaTranslateModule,
+    PicsaCommonComponentsModule,
     HttpClientModule,
     AppRoutingModule,
     IonicModule.forRoot(),

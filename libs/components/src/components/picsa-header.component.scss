@@ -1,8 +1,19 @@
-:host {
+header {
   color: white;
   background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  height: 3.5rem;
+  line-height: 3.5rem;
 }
-:host.inverted {
+header[data-style='inverted'] {
   color: var(--color-primary);
   background-color: white;
+}
+h1 {
+  flex: 1;
+  font-size: 2rem;
+  text-align: center;
+  margin-right: 70px;
+  padding: 0;
 }

@@ -8,6 +8,7 @@ export const ROUTES_COMMON: Routes = [
       import('./pages/home/budget-home.module').then(
         (mod) => mod.BudgetHomePageModule
       ),
+    title: 'Budget Tool',
   },
   {
     path: 'create',

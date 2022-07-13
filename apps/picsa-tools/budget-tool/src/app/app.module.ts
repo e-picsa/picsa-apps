@@ -14,6 +14,7 @@ import {
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BudgetMaterialModule } from './material.module';
 import { BudgetStore } from './store/budget.store';
+import { PicsaCommonComponentsModule } from '@picsa/components/src';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -30,6 +31,7 @@ export const APP_COMMON_IMPORTS = [
   PicsaNativeModule.forRoot(),
   HttpClientModule,
   PicsaTranslateModule.forRoot(),
+  PicsaCommonComponentsModule,
 ];
 
 /*******************************************************************

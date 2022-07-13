@@ -17,6 +17,7 @@ import { MobxAngularModule } from 'mobx-angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ResourcesMaterialModule } from './material.module';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -35,6 +36,7 @@ export const APP_COMMON_IMPORTS = [
   ResourcesMaterialModule,
   PicsaDbModule.forRoot(),
   PicsaNativeModule.forRoot(),
+  PicsaCommonComponentsModule,
 ];
 
 /*******************************************************************

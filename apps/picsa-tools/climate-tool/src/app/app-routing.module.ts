@@ -8,6 +8,7 @@ export const ROUTES_COMMON: Routes = [
       import('./pages/site-select/site-select.module').then(
         (mod) => mod.ClimateSiteSelectPageModule
       ),
+    title: 'Select a site',
   },
   {
     path: 'site/:siteId',

@@ -33,6 +33,7 @@ const routes: Routes = [
     path: '',
     loadChildren: () =>
       import('./pages/home/home.module').then((mod) => mod.HomePageModule),
+    title: 'PICSA',
   },
   {
     path: 'settings',
@@ -47,6 +48,7 @@ const routes: Routes = [
       import('./pages/discussions/discussions.module').then(
         (mod) => mod.DiscussionsPageModule
       ),
+    title: 'Discussions',
   },
   {
     path: 'data',
