@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CollectionRoutingModule } from './collection-routing.module';
 import { CollectionComponent } from './collection.component';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
-import { PicsaCommonComponentsModule } from '@picsa/components/src';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ResourcesComponentsModule } from '../../components/components.module';
 import { ResourcesMaterialModule } from '../../material.module';
 
