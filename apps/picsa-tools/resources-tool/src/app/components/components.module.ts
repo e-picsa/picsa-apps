@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { ResourcesMaterialModule } from '../material.module';
 
-import { ResourceListComponent } from './resource-list/resource-list.component';
 import { ResourceItemComponent } from './resource-item/resource-item.component';
 import { RouterModule } from '@angular/router';
 
-const components = [ResourceListComponent, ResourceItemComponent];
+const components = [ResourceItemComponent];
 
 @NgModule({
   imports: [

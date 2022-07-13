@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { ResourceListComponent } from './components/resource-list/resource-list.component';
 
 export const ROUTES_COMMON: Routes = [
   {
@@ -8,8 +7,13 @@ export const ROUTES_COMMON: Routes = [
     loadChildren: () =>
       import('./pages/home/home.module').then((m) => m.HomeModule),
   },
-
-  { path: 'group/:id', component: ResourceListComponent },
+  {
+    path: 'collection',
+    loadChildren: () =>
+      import('./pages/collection/collection.module').then(
+        (m) => m.CollectionModule
+      ),
+  },
 ];
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: 'home' }];

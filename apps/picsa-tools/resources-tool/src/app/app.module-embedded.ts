@@ -1,6 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
+import { registerEmbeddedRoutes } from '@picsa/utils';
 import { ROUTES_COMMON } from './app-routing.module';
 import { AppComponentEmbedded } from './app.component';
 import { APP_COMMON_IMPORTS } from './app.module';
@@ -18,23 +19,7 @@ export class EmbeddedConfig {
 })
 export class EmbeddedRoutingModule {
   constructor(router: Router, embeddedConfig: EmbeddedConfig) {
-    console.log('embedding routes', embeddedConfig);
-    this.registerEmbeddedRoutes(router, embeddedConfig.urlPrefix);
-    console.log('routes', router);
-  }
-  /**
-   * When embedding as part of another application the route will have an initial prefix
-   * Rewrite all existing routes to use the same prefix
-   */
-  private registerEmbeddedRoutes(router: Router, prefix: string) {
-    console.log('registering embedded routes', prefix);
-    router.resetConfig([
-      ...router.config.filter((route) => !route.path?.startsWith(prefix)),
-      ...ROUTES_COMMON.map((route) => {
-        route.path = route.path ? `${prefix}/${route.path}` : prefix;
-        return route;
-      }),
-    ]);
+    registerEmbeddedRoutes(ROUTES_COMMON, router, embeddedConfig.urlPrefix);
   }
 }
 
