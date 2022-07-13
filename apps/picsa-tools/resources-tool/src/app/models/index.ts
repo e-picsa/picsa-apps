@@ -2,10 +2,12 @@ import type { IDBDoc } from '@picsa/models';
 
 interface IResourceItemBase extends IDBDoc {
   title: string;
-  subtitle?: string;
   description: string;
   image: string;
-  type: 'group' | 'file' | 'video';
+  type: 'collection' | 'file' | 'youtube' | 'link';
+  //
+  subtitle?: string;
+  language?: string;
 }
 //
 export interface IResourceFile extends IResourceItemBase {
@@ -18,14 +20,21 @@ export interface IResourceFile extends IResourceItemBase {
   viewableBy?: string[];
   filepath?: string;
 }
-export interface IResourceVideo extends IResourceItemBase {
-  type: 'video';
+export interface IResourceYoutube extends IResourceItemBase {
+  type: 'youtube';
   youtubeID: string;
 }
 
-export interface IResourceGroup extends IResourceItemBase {
-  type: 'group';
+export interface IResourceCollection extends IResourceItemBase {
+  type: 'collection';
   resources: IResource[];
 }
+export interface IResourceLink extends IResourceItemBase {
+  weblink: string;
+}
 
-export type IResource = IResourceFile | IResourceVideo | IResourceGroup;
+export type IResource =
+  | IResourceFile
+  | IResourceYoutube
+  | IResourceCollection
+  | IResourceLink;

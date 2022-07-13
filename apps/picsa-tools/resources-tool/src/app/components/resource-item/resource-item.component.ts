@@ -1,6 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
-import { IResource, IResourceGroup } from '../../models';
+import { IResource, IResourceCollection } from '../../models';
+
+type IResourceClickHandlers = {
+  [type in IResource['type']]: (resource: any) => void;
+};
 
 @Component({
   selector: 'picsa-resource-item',
@@ -8,26 +13,51 @@ import { IResource, IResourceGroup } from '../../models';
   styleUrls: ['./resource-item.component.scss'],
 })
 export class ResourceItemComponent implements OnInit {
+  @Input() viewStyle: 'expanded' | 'default' = 'default';
   @Input() resource: IResource;
-  subtitle = '';
 
+  showDownloadButton = false;
   // isDownloading = false;
   // progress = 0;
-  constructor(private translateService: PicsaTranslateService) {}
+
+  public subtitle = '';
+
+  private inputHandlers: IResourceClickHandlers = {
+    collection: () => new CollectionItemHandler(this),
+    file: () => new FileItemHandler(this),
+    youtube: () => null,
+    link: () => null,
+  };
+
+  public handleResourceClick: (e: Event) => void = (e) => e.stopPropagation();
+
+  constructor(
+    public translateService: PicsaTranslateService,
+    public router: Router,
+    public route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    if (this.resource.type === 'group') {
-      this.handleGroupResource(this.resource as IResourceGroup);
+    const inputHandler = this.inputHandlers[this.resource.type];
+    if (inputHandler) {
+      inputHandler(this.resource);
     }
   }
+}
 
-  private async handleGroupResource(resource: IResourceGroup) {
-    const suffix = await this.translateService.translateText('Resources');
-    this.subtitle = `${resource.resources.length} ${suffix}`;
+class FileItemHandler {
+  resource: IResourceCollection;
+  constructor(private parent: ResourceItemComponent) {
+    this.resource = parent.resource as IResourceCollection;
+    parent.handleResourceClick = (e) => this.handleClick(e);
+    this.handleOverrides();
+  }
+  private async handleOverrides() {
+    this.parent.showDownloadButton = true;
   }
 
-  handleResourceClick() {
-    console.log('handle resource click', this.resource);
+  private handleClick(e: Event) {
+    e.stopPropagation();
     //   this.store.openResource(this.resource);
     // } else {
     //   this.isDownloading = true;
@@ -43,5 +73,38 @@ export class ResourceItemComponent implements OnInit {
     //     () => (this.isDownloading = false)
     //   );
     // }
+  }
+}
+
+class CollectionItemHandler {
+  resource: IResourceCollection;
+  constructor(private parent: ResourceItemComponent) {
+    this.resource = parent.resource as IResourceCollection;
+    parent.handleResourceClick = (e) => this.handleClick(e);
+    this.handleOverrides();
+  }
+
+  private async handleOverrides() {
+    const { translateService } = this.parent;
+    const resource = this.resource as IResourceCollection;
+    const suffix = await translateService.translateText('Resources');
+    this.parent.subtitle = `${resource.resources.length} ${suffix}`;
+  }
+
+  private handleClick(e: Event) {
+    e.stopPropagation();
+    const { route, router } = this.parent;
+    // Route from one collection to another
+    if (route.snapshot.paramMap.get('collectionId')) {
+      router.navigate([this.resource._key], {
+        relativeTo: route,
+      });
+    }
+    // Route from base to collection
+    else {
+      router.navigate(['collection', this.resource._key], {
+        relativeTo: route,
+      });
+    }
   }
 }
