@@ -1,4 +1,4 @@
-import { IResource, IResourceGroup } from '../models';
+import { IResource, IResourceCollection } from '../models';
 
 /**
  * These resources are hard-coded into the app, and therefore should be made available in the
@@ -6,12 +6,12 @@ import { IResource, IResourceGroup } from '../models';
  * To make changes, the _modified field should also be updated
  */
 
-const grouped: IResourceGroup[] = [
+const collections: IResourceCollection[] = [
   {
     _created: '2019-09-25T10:00:04.000Z',
     _modified: '2019-09-27T11:00:01.000Z',
     _key: 'picsaManual',
-    type: 'group',
+    type: 'collection',
     title: 'PICSA Manual',
     description: 'PICSA training manuals available in a variety of languages',
     image: 'assets/resources/picsa-field-manual-cover.jpg',
@@ -23,6 +23,7 @@ const grouped: IResourceGroup[] = [
         _isHardcoded: true,
         _isDownloaded: true,
         title: 'PICSA Manual',
+        language: 'eng',
         description: '',
         subtitle: '',
         filename: 'picsa-field-manual-en.pdf',
@@ -38,6 +39,7 @@ const grouped: IResourceGroup[] = [
         _isHardcoded: true,
         _isDownloaded: true,
         title: 'Buku la PICSA',
+        language: 'nya',
         description: '',
         subtitle: 'Chichewa',
         filename: 'picsa-field-manual-chichewa.pdf',
@@ -54,6 +56,7 @@ const grouped: IResourceGroup[] = [
         _isDownloaded: true,
         title: 'Buku la PICSA',
         description: '',
+        language: 'tum',
         subtitle: 'Tumbuka',
         filename: 'picsa-field-manual-tumbuka.pdf',
         type: 'file',
@@ -67,7 +70,7 @@ const grouped: IResourceGroup[] = [
     _created: '2019-09-25T10:00:04.000Z',
     _modified: '2019-09-27T11:00:01.000Z',
     _key: 'picsaTrainingVideo',
-    type: 'group',
+    type: 'collection',
     title: 'PICSA Videos',
     description: 'Training videos to support PICSA',
     image: 'assets/resources/ram-refresher-cover.jpg',
@@ -85,6 +88,65 @@ const grouped: IResourceGroup[] = [
         weblink:
           'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fram-refresher.mp4?alt=media&token=27939a71-0656-440b-8407-24877acaeede',
         // youtubeID: 'Kw5UznKvCN8',
+      },
+    ],
+  },
+  {
+    _created: '2019-05-25T10:00:04.000Z',
+    _modified: '2019-05-27T11:00:01.000Z',
+    _key: 'otherApps',
+    type: 'collection',
+    title: 'Apps and Games',
+    description: 'Links to other useful apps and games',
+    image: 'assets/resources/apps-cover.png',
+    resources: [
+      {
+        _key: '6VjjF3yZJejFigwDIPr8',
+        _created: '2019-09-25T10:00:04.000Z',
+        _modified: '2019-09-27T11:00:01.000Z',
+        title: 'Access Agriculture',
+        description:
+          'Access Agriculture is a non-profit organisation that showcases agricultural training videos in local languages',
+        subtitle: '',
+        type: 'link',
+        image: 'assets/resources/access-ag-cover.jpg',
+        weblink: 'https://www.accessagriculture.org',
+      },
+    ],
+  },
+  {
+    _created: '2019-05-25T10:00:04.000Z',
+    _modified: '2019-05-27T11:00:01.000Z',
+    _key: 'meteoBlue',
+    type: 'collection',
+    title: 'MeteoBlue Forecasts',
+    description: 'Local forecasts provided by MeteoBlue',
+    image: '',
+    resources: [
+      {
+        _key: 'meteoBlueMangochi',
+        _created: '2019-09-25T10:00:04.000Z',
+        _modified: '2019-09-27T11:00:01.000Z',
+        title: 'Mangochi',
+        resources: [
+          {
+            _key: '6VjjF3yZJejFigwDIPr8',
+            _created: '2019-09-25T10:00:04.000Z',
+            _modified: '2019-09-27T11:00:01.000Z',
+            title: '14 Day Forecast',
+            description: '',
+            subtitle: '',
+            type: 'link',
+            image: '',
+            weblink: '',
+          },
+        ],
+
+        description:
+          'Access Agriculture is a non-profit organisation that showcases agricultural training videos in local languages',
+        subtitle: '',
+        type: 'collection',
+        image: '',
       },
     ],
   },
@@ -108,11 +170,11 @@ const standalone: IResource[] = [
 ];
 
 const combined: IResource[] = ([] as IResource[]).concat(
-  ...grouped.map((g) => g.resources),
+  ...collections.map((g) => g.resources),
   ...standalone
 );
 
-export default { grouped, standalone, combined };
+export default { collections, standalone, combined };
 
 // {
 //   _key: '9Pkro1VYBUlwuNg5oHok',
