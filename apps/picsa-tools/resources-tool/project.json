@@ -3,6 +3,18 @@
   "sourceRoot": "apps/picsa-tools/resources-tool/src",
   "prefix": "picsa",
   "targets": {
+    "deploy": {
+      "executor": "./tools/executors/execa:commandSync",
+      "dependsOn": [
+        {
+          "projects": "self",
+          "target": "build"
+        }
+      ],
+      "options": {
+        "commands": ["firebase deploy --only hosting:resources-tool"]
+      }
+    },
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
