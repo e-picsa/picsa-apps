@@ -24,6 +24,7 @@
 }
 .resource-card[data-viewStyle='expanded'] {
   cursor: unset;
+  padding: 1rem;
   &:hover {
     background: unset;
   }

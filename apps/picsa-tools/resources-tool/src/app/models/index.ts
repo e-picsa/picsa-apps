@@ -1,6 +1,6 @@
 import type { IDBDoc } from '@picsa/models';
 
-interface IResourceItemBase extends IDBDoc {
+export interface IResourceItemBase extends IDBDoc {
   title: string;
   description: string;
   image: string;
@@ -11,12 +11,16 @@ interface IResourceItemBase extends IDBDoc {
 }
 //
 export interface IResourceFile extends IResourceItemBase {
+  // Local meta
   _isDownloaded?: boolean;
   _isHardcoded?: boolean;
   _deleted?: boolean;
+  // Core DB type
   type: 'file';
   filename: string;
-  weblink: string;
+  mimetype: 'application/pdf';
+  url: string;
+  // TODO - legacy types
   viewableBy?: string[];
   filepath?: string;
 }
@@ -27,10 +31,10 @@ export interface IResourceYoutube extends IResourceItemBase {
 
 export interface IResourceCollection extends IResourceItemBase {
   type: 'collection';
-  resources: IResource[];
+  resources: string[];
 }
 export interface IResourceLink extends IResourceItemBase {
-  weblink: string;
+  url: string;
 }
 
 export type IResource =
