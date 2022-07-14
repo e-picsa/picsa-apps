@@ -24,7 +24,6 @@ export class BackButton implements OnDestroy {
   }
 
   checkButtonState(url: string) {
-    console.log('check button state', url);
     this.showButton = url !== '/';
   }
 

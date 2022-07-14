@@ -81,7 +81,6 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(({ title, headerStyle }) => {
-        console.log({ title, headerStyle });
         this.componentsService.setHeader({ style: headerStyle as any, title });
       });
   }
