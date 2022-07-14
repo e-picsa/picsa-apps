@@ -26,6 +26,7 @@
     "@angular/router": "14.0.2",
     "@angular/service-worker": "14.0.2",
     "@asymmetrik/ngx-leaflet": "^13.0.2",
+    "@capacitor/browser": "^1.0.7",
     "@capacitor/core": "^3.6.0",
     "@ionic-native/core": "^5.36.0",
     "@ionic-native/file": "^5.36.0",

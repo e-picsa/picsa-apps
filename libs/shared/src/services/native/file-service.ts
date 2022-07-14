@@ -205,23 +205,19 @@ export class PicsaFileService {
    * Uses https://www.npmjs.com/package/cordova-plugin-codeplay-share-own-apk
    */
   async shareAppApk() {
-    try {
-      const plugins = cordova.plugins as any;
-      plugins.codeplay_shareapk.isSupport(
-        function (success) {
-          console.log('plugin supported', success);
-          plugins.codeplay_shareapk.openShare(
-            'Share the PICSA App',
-            `picsa-app-${APP_VERSION.number}`
-          );
-        },
-        function (fail) {
-          console.log('plugin not supported', fail);
-        }
-      );
-    } catch (error) {
-      throw error;
-    }
+    const plugins = cordova.plugins as any;
+    plugins.codeplay_shareapk.isSupport(
+      function (success) {
+        console.log('plugin supported', success);
+        plugins.codeplay_shareapk.openShare(
+          'Share the PICSA App',
+          `picsa-app-${APP_VERSION.number}`
+        );
+      },
+      function (fail) {
+        console.log('plugin not supported', fail);
+      }
+    );
   }
 
   /**********************************************************************************

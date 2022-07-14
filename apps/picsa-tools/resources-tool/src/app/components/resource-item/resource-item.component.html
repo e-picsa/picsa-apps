@@ -41,8 +41,11 @@
         <ng-content></ng-content>
       </mat-card-content>
     </div>
-    <button mat-button class="download-button" *ngIf="showDownloadButton">
-      <mat-icon color="primary">file_download</mat-icon>
+    <!--  -->
+    <button mat-button class="action-button">
+      <mat-icon *ngIf="actionButtonIcon" color="primary">{{
+        actionButtonIcon
+      }}</mat-icon>
     </button>
   </div>
 </mat-card>

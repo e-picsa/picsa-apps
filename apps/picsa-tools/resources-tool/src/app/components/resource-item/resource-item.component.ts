@@ -1,7 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
-import { IResource, IResourceCollection, IResourceLink } from '../../models';
+import {
+  IResource,
+  IResourceCollection,
+  IResourceFile,
+  IResourceLink,
+} from '../../models';
 import { ResourcesStore } from '../../stores';
 
 type IResourceClickHandlers = {
@@ -17,7 +22,7 @@ export class ResourceItemComponent implements OnInit {
   @Input() viewStyle: 'expanded' | 'default' = 'default';
   @Input() resource: IResource;
 
-  showDownloadButton = false;
+  actionButtonIcon: string;
   // isDownloading = false;
   // progress = 0;
 
@@ -55,7 +60,7 @@ class LinkItemHandler {
     this.handleOverrides();
   }
   private async handleOverrides() {
-    //
+    this.parent.actionButtonIcon = 'open_in_new';
   }
 
   private handleClick(e: Event) {
@@ -66,20 +71,22 @@ class LinkItemHandler {
 }
 
 class FileItemHandler {
-  resource: IResourceCollection;
+  resource: IResourceFile;
   constructor(private parent: ResourceItemComponent) {
-    this.resource = parent.resource as IResourceCollection;
+    this.resource = parent.resource as IResourceFile;
     parent.handleResourceClick = (e) => this.handleClick(e);
     this.handleOverrides();
   }
   private async handleOverrides() {
-    this.parent.showDownloadButton = true;
+    const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
+    this.parent.actionButtonIcon = isDownloaded
+      ? 'open_in_new'
+      : 'file_download';
   }
 
   private handleClick(e: Event) {
     e.stopPropagation();
-
-    console.log('open resource', this.resource);
+    this.parent.store.openFileResource(this.resource);
     //   this.store.openResource(this.resource);
     // } else {
     //   this.isDownloading = true;

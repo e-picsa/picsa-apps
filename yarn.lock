@@ -2141,6 +2141,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/browser@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@capacitor/browser@npm:1.0.7"
+  peerDependencies:
+    "@capacitor/core": ^3.0.0
+  checksum: b226a28679b25474cfda6535a6e194f4b284cc19785fc538264d0a5bce92fe916c2027f99a2eafc88f682bded6cf070f0094ec86e550af7379c4ede8c8306122
+  languageName: node
+  linkType: hard
+
 "@capacitor/cli@npm:^3.6.0":
   version: 3.6.0
   resolution: "@capacitor/cli@npm:3.6.0"
@@ -13855,6 +13864,7 @@ __metadata:
     "@angular/service-worker": 14.0.2
     "@asymmetrik/ngx-leaflet": ^13.0.2
     "@capacitor/android": ^3.6.0
+    "@capacitor/browser": ^1.0.7
     "@capacitor/cli": ^3.6.0
     "@capacitor/core": ^3.6.0
     "@ionic-native/core": ^5.36.0

@@ -3,6 +3,9 @@ import { observable, action, computed } from 'mobx-angular';
 import { PicsaDbService } from '@picsa/shared/services/core/db';
 import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { Platform } from '@ionic/angular';
+import type { Entry as FileEntry } from '@ionic-native/file/ngx';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { Observable } from 'rxjs';
 import { toJS } from 'mobx';
 import RESOURCES from '../data';
@@ -16,14 +19,15 @@ import { IResource, IResourceFile, IResourceLink } from '../models';
 })
 export class ResourcesStore {
   @observable resources: IResource[] = [];
-  @observable downloads: any[] = [];
+  downloadedResources: { [filename: string]: FileEntry } = {};
+  isNative = Capacitor.isNativePlatform();
   constructor(
     private db: PicsaDbService,
     private fileService: PicsaFileService,
     private platform: Platform
   ) {
     this.resourceInit();
-    if (this.platform.is('cordova')) {
+    if (this.isNative) {
       this.checkDownloadedResources();
     }
   }
@@ -56,24 +60,31 @@ export class ResourcesStore {
   public getResourceById<T extends IResource>(id: string) {
     return this.resourcesById[id] as T;
   }
+  public isFileDownloaded(file: IResourceFile) {
+    if (this.isNative) {
+      return !!this.downloadedResources[file.filename];
+    } else {
+      return true;
+    }
+  }
 
   /**
    * Initialise file server, list storage directory and save list of downloaded resources
    */
-  async checkDownloadedResources() {
+  private async checkDownloadedResources() {
     // ensure file service initialised and directories present
     await this.fileService.ready();
-    this.downloads = await this.fileService.ensureDirectory(
+    const downloads = await this.fileService.ensureDirectory(
       'storage',
       'resources'
     );
-    console.log('downloads', toJS(this.downloads));
-    // this.fileService.copyAppApk();
+    const downloadedResources: typeof this.downloadedResources = {};
+    downloads.forEach((d) => (downloadedResources[d.name] = d));
+    this.downloadedResources = downloadedResources;
   }
 
-  async openResource(resource: IResourceFile) {
-    console.log('open resource', resource);
-    if (this.platform.is('cordova')) {
+  async openFileResource(resource: IResourceFile) {
+    if (this.isNative) {
       try {
         this.fileService.openFileCordova(
           'storage',
@@ -81,32 +92,38 @@ export class ResourcesStore {
         );
       } catch (error) {
         console.error(error);
-        await this.updateCachedResource(resource, { _isDownloaded: false });
+        await this.updateCachedResource(resource, {
+          // _isDownloaded: false
+        });
         return this.resourceInit(false);
       }
     } else {
-      return window.open(resource.url, '_blank');
+      console.log('non-native open', Browser);
+      return Browser.open({ url: resource.url });
+      // return window.open(resource.url, '_blank');
     }
   }
+
   async openLinkresource(resource: IResourceLink) {
-    // TODO
-    window.open(resource.url, '_blank');
+    return Browser.open({ url: resource.url });
   }
 
   async copyHardcodedResource(resource: IResourceFile) {
     console.log('copying resource', resource);
     await this.fileService.copyAssetFile('resources', resource.filename);
-    await this.updateCachedResource(resource, { _isDownloaded: true });
+    await this.updateCachedResource(resource, {
+      // _isDownloaded: true
+    });
   }
 
   // create an observable that stream progress snapshots and completes when file downloaded
-  downloadResource(resource: IResourceFile) {
+  public async downloadResource(resource: IResourceFile) {
     console.log('downloading resource', resource.url);
     // only download on cordova
     return new Observable<number>((observer) => {
       if (this.platform.is('cordova')) {
         // double check not already downloaded
-        if (!this.downloads.includes(resource.filename)) {
+        if (!this.downloadResource[resource.filename]) {
           this.fileService
             .downloadToStorage(resource.url, 'resources', resource.filename)
             .subscribe(
@@ -119,14 +136,14 @@ export class ResourcesStore {
               },
               () =>
                 this.updateCachedResource(resource, {
-                  _isDownloaded: true,
+                  // _isDownloaded: true,
                 }).then(() => observer.complete())
             );
         }
       } else {
-        this.updateCachedResource(resource, { _isDownloaded: true }).then(() =>
-          observer.complete()
-        );
+        this.updateCachedResource(resource, {
+          //  _isDownloaded: true
+        }).then(() => observer.complete());
       }
     });
   }
@@ -173,11 +190,11 @@ export class ResourcesStore {
       // if hardcoded copy from assets folder first (if not already done)
       // TODO - add check to see if already copied over (use this.downloads)
       for (const resource of newerResources) {
-        const { _isHardcoded, filename } = resource as IResourceFile;
-        if (_isHardcoded && this.platform.is('cordova')) {
-          console.log('copying resource', filename);
-          await this.copyHardcodedResource(resource as IResourceFile);
-        }
+        // const { _isHardcoded, filename } = resource as IResourceFile;
+        // if (_isHardcoded && this.platform.is('cordova')) {
+        //   console.log('copying resource', filename);
+        //   await this.copyHardcodedResource(resource as IResourceFile);
+        // }
       }
       await this.db.setDocs('resources', newerResources, false, true);
       this.resourceInit(false);

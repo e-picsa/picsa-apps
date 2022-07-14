@@ -3,18 +3,14 @@ import type { IDBDoc } from '@picsa/models';
 export interface IResourceItemBase extends IDBDoc {
   title: string;
   description: string;
-  image: string;
   type: 'collection' | 'file' | 'youtube' | 'link';
   //
+  image?: string;
   subtitle?: string;
   language?: string;
 }
 //
 export interface IResourceFile extends IResourceItemBase {
-  // Local meta
-  _isDownloaded?: boolean;
-  _isHardcoded?: boolean;
-  _deleted?: boolean;
   // Core DB type
   type: 'file';
   filename: string;
