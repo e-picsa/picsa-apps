@@ -90,13 +90,15 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
     this.componentsService.headerOptions$
       .pipe(takeUntil(this.destroyed$))
       .subscribe(({ title, style }) => {
-        if (title) {
-          this.title = title;
-          this.titleService.setTitle(title);
-        }
-        if (style) {
-          this.style = style;
-        }
+        requestAnimationFrame(() => {
+          if (title) {
+            this.title = title;
+            this.titleService.setTitle(title);
+          }
+          if (style) {
+            this.style = style;
+          }
+        });
       });
   }
 }
