@@ -9,19 +9,6 @@
     >
       <mat-icon>share</mat-icon>Share
     </button>
-
-    <!-- Editor Close -->
-    <div *ngIf="isEditorOpen" style="flex: 1; display: flex">
-      <button
-        mat-button
-        color="primary"
-        @fadeInOut
-        (click)="closeEditor()"
-        style="position: absolute; right: 0"
-      >
-        <mat-icon>close</mat-icon><span>{{ 'Close' | translate }}</span>
-      </button>
-    </div>
   </div>
 
   <!-- hide overflow so that editor can be stored outside bottom of page -->

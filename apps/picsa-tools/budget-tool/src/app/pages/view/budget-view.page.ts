@@ -32,7 +32,6 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     public store: BudgetStore,
-    private router: Router,
     private printPrvdr: PrintProvider,
     private componentsService: PicsaCommonComponentsService
   ) {}
@@ -44,10 +43,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.param$.unsubscribe();
   }
-  closeEditor() {
-    this.isEditorOpen = false;
-    this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
-  }
+
   async showShareDialog() {
     try {
       this.isSharing = true;
