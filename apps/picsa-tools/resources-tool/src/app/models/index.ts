@@ -31,7 +31,8 @@ export interface IResourceYoutube extends IResourceItemBase {
 
 export interface IResourceCollection extends IResourceItemBase {
   type: 'collection';
-  resources: string[];
+  parentResource?: string;
+  childResources: string[];
 }
 export interface IResourceLink extends IResourceItemBase {
   url: string;

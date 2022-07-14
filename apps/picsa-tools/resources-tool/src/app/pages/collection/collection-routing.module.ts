@@ -7,11 +7,6 @@ const title = 'Collection';
 const routes: Routes = [
   { path: '', component: CollectionComponent, title },
   { path: ':collectionId', component: CollectionComponent, title },
-  {
-    path: ':collectionId/:subcollectionId',
-    component: CollectionComponent,
-    title,
-  },
 ];
 
 @NgModule({

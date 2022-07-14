@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { Subject, takeUntil } from 'rxjs';
-import { IResourceCollection } from '../../models';
+import { IResource, IResourceCollection } from '../../models';
 import { ResourcesStore } from '../../stores';
 
 @Component({
@@ -12,8 +13,13 @@ import { ResourcesStore } from '../../stores';
 export class CollectionComponent implements OnInit, OnDestroy {
   title = 'Collection';
   collection: IResourceCollection | undefined;
+  collectionResources: IResource[] = [];
   componentDestroyed$ = new Subject();
-  constructor(private store: ResourcesStore, private route: ActivatedRoute) {}
+  constructor(
+    private store: ResourcesStore,
+    private route: ActivatedRoute,
+    private componentsService: PicsaCommonComponentsService
+  ) {}
 
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
@@ -25,20 +31,23 @@ export class CollectionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((params) => {
         console.log('params', params);
-        const { collectionId, subcollectionId } = params;
+        const { collectionId } = params;
         if (collectionId) {
-          this.loadCollection(collectionId, subcollectionId);
+          this.loadCollection(collectionId);
         } else {
           this.collection = undefined;
         }
       });
   }
 
-  private async loadCollection(id: string, subcollectionId?: string) {
-    const foundCollection = this.store.getCollectionById(id, subcollectionId);
+  private async loadCollection(id: string) {
+    const foundCollection = this.store.getResourceById<IResourceCollection>(id);
     if (foundCollection) {
-      this.collection = foundCollection as IResourceCollection;
-      this.title = this.collection.title;
+      this.collection = foundCollection;
+      this.componentsService.setHeader({ title: foundCollection.title });
+      this.collectionResources = this.collection.childResources.map(
+        (resourceId) => this.store.getResourceById(resourceId)
+      );
     }
   }
 }

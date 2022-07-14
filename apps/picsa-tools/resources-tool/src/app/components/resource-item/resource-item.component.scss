@@ -5,9 +5,9 @@
 .background-image {
   width: 100px;
   background-size: cover;
+  background-position: center;
 }
 .expanded-image {
-  width: 100%;
   height: fit-content;
   max-height: 50vh;
   object-fit: contain;

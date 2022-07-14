@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
-import { IResource, IResourceCollection } from '../../models';
+import { IResource, IResourceCollection, IResourceLink } from '../../models';
+import { ResourcesStore } from '../../stores';
 
 type IResourceClickHandlers = {
   [type in IResource['type']]: (resource: any) => void;
@@ -26,12 +27,13 @@ export class ResourceItemComponent implements OnInit {
     collection: () => new CollectionItemHandler(this),
     file: () => new FileItemHandler(this),
     youtube: () => null,
-    link: () => null,
+    link: () => new LinkItemHandler(this),
   };
 
   public handleResourceClick: (e: Event) => void = (e) => e.stopPropagation();
 
   constructor(
+    public store: ResourcesStore,
     public translateService: PicsaTranslateService,
     public router: Router,
     public route: ActivatedRoute
@@ -42,6 +44,24 @@ export class ResourceItemComponent implements OnInit {
     if (inputHandler) {
       inputHandler(this.resource);
     }
+  }
+}
+
+class LinkItemHandler {
+  resource: IResourceLink;
+  constructor(private parent: ResourceItemComponent) {
+    this.resource = parent.resource as IResourceLink;
+    parent.handleResourceClick = (e) => this.handleClick(e);
+    this.handleOverrides();
+  }
+  private async handleOverrides() {
+    //
+  }
+
+  private handleClick(e: Event) {
+    e.stopPropagation();
+    console.log('open resource', this.resource);
+    this.parent.store.openLinkresource(this.resource);
   }
 }
 
@@ -58,6 +78,8 @@ class FileItemHandler {
 
   private handleClick(e: Event) {
     e.stopPropagation();
+
+    console.log('open resource', this.resource);
     //   this.store.openResource(this.resource);
     // } else {
     //   this.isDownloading = true;
@@ -88,15 +110,16 @@ class CollectionItemHandler {
     const { translateService } = this.parent;
     const resource = this.resource as IResourceCollection;
     const suffix = await translateService.translateText('Resources');
-    this.parent.subtitle = `${resource.resources.length} ${suffix}`;
+    this.parent.subtitle = `${resource.childResources.length} ${suffix}`;
   }
 
   private handleClick(e: Event) {
+    if (this.parent.viewStyle === 'expanded') return;
     e.stopPropagation();
     const { route, router } = this.parent;
     // Route from one collection to another
     if (route.snapshot.paramMap.get('collectionId')) {
-      router.navigate([this.resource._key], {
+      router.navigate(['../', this.resource._key], {
         relativeTo: route,
       });
     }

@@ -5,18 +5,18 @@
 >
   <div style="display: flex; height: 100%; flex-wrap: wrap">
     <!-- Side Image -->
-    <div
-      *ngIf="viewStyle === 'expanded'; else imgDefault"
-      style="min-width: 320px; flex: 1; text-align: center"
-    >
-      <img [src]="resource.image" class="expanded-image" />
+    <div *ngIf="resource.image" style="display: contents">
+      <div *ngIf="viewStyle === 'expanded'; else imgDefault">
+        <img [src]="resource.image" class="expanded-image" />
+      </div>
+      <ng-template #imgDefault>
+        <div
+          class="background-image"
+          [style.background-image]="'url(' + resource.image + ')'"
+        ></div>
+      </ng-template>
     </div>
-    <ng-template #imgDefault>
-      <div
-        class="background-image"
-        [style.background-image]="'url(' + resource.image + ')'"
-      ></div>
-    </ng-template>
+
     <div style="flex: 2">
       <!-- Header -->
       <mat-card-header>

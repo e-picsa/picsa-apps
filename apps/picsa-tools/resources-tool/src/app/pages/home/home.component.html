@@ -1,16 +1,18 @@
-<div class="page-columns" *mobxAutorun>
-  <div class="search-container">
-    <h2>Search</h2>
-  </div>
-  <div class="content-container">
-    <h2>Collections</h2>
-    <div class="list-container">
-      <picsa-resource-item
-        *ngFor="let resource of store.collections"
-        trackBy:resource.__key
-        [resource]="resource"
-      >
-      </picsa-resource-item>
+<div class="page-content">
+  <div class="page-columns" *mobxAutorun>
+    <!-- <div class="search-container">
+      <h2>Search</h2>
+    </div> -->
+    <div class="content-container">
+      <h2>Collections</h2>
+      <div class="list-container">
+        <picsa-resource-item
+          *ngFor="let resource of store.collections"
+          trackBy:resource.__key
+          [resource]="resource"
+        >
+        </picsa-resource-item>
+      </div>
     </div>
   </div>
 </div>

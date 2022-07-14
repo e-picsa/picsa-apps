@@ -5,8 +5,8 @@ import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { toJS } from 'mobx';
-import RESOURCES from '../data/resources';
-import { IResource, IResourceCollection, IResourceFile } from '../models';
+import RESOURCES from '../data';
+import { IResource, IResourceFile, IResourceLink } from '../models';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -27,8 +27,10 @@ export class ResourcesStore {
       this.checkDownloadedResources();
     }
   }
-  @observable collections = RESOURCES.collections;
-  @observable resourceStandalone = RESOURCES.standalone;
+  resourcesById = RESOURCES.byId;
+  @observable collections = RESOURCES.collection.filter(
+    (c) => !c.parentResource
+  );
 
   @computed get sortedResources() {
     return [...this.resources].sort((a, b) => {
@@ -51,14 +53,8 @@ export class ResourcesStore {
       await this._checkForUpdates(cached);
     }
   }
-  public getCollectionById(id: string, subcollectionId?: string) {
-    const collection = this.collections.find((c) => c._key === id);
-    if (subcollectionId) {
-      return (collection as IResourceCollection).resources.find(
-        (c) => c._key === subcollectionId
-      );
-    }
-    return collection;
+  public getResourceById<T extends IResource>(id: string) {
+    return this.resourcesById[id] as T;
   }
 
   /**
@@ -89,8 +85,12 @@ export class ResourcesStore {
         return this.resourceInit(false);
       }
     } else {
-      return window.open(resource.weblink, '_blank');
+      return window.open(resource.url, '_blank');
     }
+  }
+  async openLinkresource(resource: IResourceLink) {
+    // TODO
+    window.open(resource.url, '_blank');
   }
 
   async copyHardcodedResource(resource: IResourceFile) {
@@ -101,14 +101,14 @@ export class ResourcesStore {
 
   // create an observable that stream progress snapshots and completes when file downloaded
   downloadResource(resource: IResourceFile) {
-    console.log('downloading resource', resource.weblink);
+    console.log('downloading resource', resource.url);
     // only download on cordova
     return new Observable<number>((observer) => {
       if (this.platform.is('cordova')) {
         // double check not already downloaded
         if (!this.downloads.includes(resource.filename)) {
           this.fileService
-            .downloadToStorage(resource.weblink, 'resources', resource.filename)
+            .downloadToStorage(resource.url, 'resources', resource.filename)
             .subscribe(
               (progress) => {
                 const p = Math.round((progress.loaded / progress.total) * 100);
@@ -160,7 +160,7 @@ export class ResourcesStore {
     // check if cache resources are fresher than hardcoded
     const cacheList = {};
     cached.forEach((r) => (cacheList[r._key] = r._modified));
-    const newerResources = RESOURCES.combined.filter((r) => {
+    const newerResources = Object.values(RESOURCES.byId).filter((r) => {
       const lastCache = cacheList[r._key];
       return !lastCache || lastCache < r._modified;
     });

@@ -9,7 +9,7 @@ const collections: { [id: string]: IResourceCollection } = {
     title: 'PICSA Manual',
     description: 'PICSA training manuals available in a variety of languages',
     image: 'assets/resources/picsa-field-manual-cover.jpg',
-    resources: [
+    childResources: [
       '4I4F36gD0MUef26HfPZG',
       '9xqr6hxcWoVlsqydsNne',
       'lqsSRwYx3Lq1bFYG3lke',
@@ -23,7 +23,7 @@ const collections: { [id: string]: IResourceCollection } = {
     title: 'PICSA Videos',
     description: 'Training videos to support PICSA',
     image: 'assets/resources/ram-refresher-cover.jpg',
-    resources: ['m6I8TfROsyr5Wp73BcAd'],
+    childResources: ['m6I8TfROsyr5Wp73BcAd'],
   },
   otherApps: {
     _created: '2019-05-25T10:00:04.000Z',
@@ -33,7 +33,7 @@ const collections: { [id: string]: IResourceCollection } = {
     title: 'Apps and Games',
     description: 'Links to other useful apps and games',
     image: 'assets/resources/apps-cover.png',
-    resources: ['6VjjF3yZJejFigwDIPr8'],
+    childResources: ['6VjjF3yZJejFigwDIPr8'],
   },
 };
 export default collections;
