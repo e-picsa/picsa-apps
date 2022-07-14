@@ -13,7 +13,12 @@
     },
     "docker-prepare": {
       "executor": "./tools/executors/execa:commandSync",
-      "dependsOn": [{ "projects": "dependencies", "target": "build" }],
+      "dependsOn": [
+        {
+          "projects": "dependencies",
+          "target": "build"
+        }
+      ],
       "outputs": ["apps/picsa-server/docker/cloud-functions"],
       "options": {
         "commands": ["ts-node apps/picsa-server/scripts/docker-prepare.ts"]

@@ -9,12 +9,15 @@ export interface ResourceAttributes {
   objectId?: string;
   createdAt?: { __type: 'Date'; iso: string };
   updatedAt?: { __type: 'Date'; iso: string };
-  url: string;
+  url?: string;
+  file?: Parse.File;
+  type: string;
+  image: Parse.File;
   title: string;
   sizeKb?: number;
-  mimetype: string;
-  coverImage?: string;
-  description?: string;
+  mimetype?: string;
+  resources?: any[];
+  description: string;
 }
 
 export class Resource extends Parse.Object<ResourceAttributes> {

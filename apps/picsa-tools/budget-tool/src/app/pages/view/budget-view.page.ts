@@ -10,6 +10,7 @@ import {
 } from '@picsa/shared/animations';
 import { Subscription } from 'rxjs';
 import { PrintProvider } from '@picsa/shared/services/native/print';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 
 @Component({
   selector: 'budget-view',
@@ -31,8 +32,8 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     public store: BudgetStore,
-    private router: Router,
-    private printPrvdr: PrintProvider
+    private printPrvdr: PrintProvider,
+    private componentsService: PicsaCommonComponentsService
   ) {}
 
   ngOnInit() {
@@ -42,10 +43,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.param$.unsubscribe();
   }
-  closeEditor() {
-    this.isEditorOpen = false;
-    this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
-  }
+
   async showShareDialog() {
     try {
       this.isSharing = true;
@@ -62,13 +60,19 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   async loadBudget() {
     const budgetKey = this.route.snapshot.params.budgetKey;
-    this.store.loadBudgetByKey(budgetKey);
+    await this.store.loadBudgetByKey(budgetKey);
+    this.componentsService.setHeader({
+      title: this.store.activeBudget.meta.title,
+    });
   }
 
   private _addRouterSubscription() {
     this.param$ = this.route.queryParams.subscribe((params) => {
       this.isEditorOpen = params.edit;
       this.periodLabel = params.label;
+      const { meta } = this.store.activeBudget;
+      const title = this.isEditorOpen ? `${params.label}` : meta.title;
+      this.componentsService.setHeader({ title });
     });
   }
 }

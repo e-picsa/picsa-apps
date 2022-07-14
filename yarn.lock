@@ -2141,6 +2141,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/browser@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@capacitor/browser@npm:1.0.7"
+  peerDependencies:
+    "@capacitor/core": ^3.0.0
+  checksum: b226a28679b25474cfda6535a6e194f4b284cc19785fc538264d0a5bce92fe916c2027f99a2eafc88f682bded6cf070f0094ec86e550af7379c4ede8c8306122
+  languageName: node
+  linkType: hard
+
 "@capacitor/cli@npm:^3.6.0":
   version: 3.6.0
   resolution: "@capacitor/cli@npm:3.6.0"
@@ -12790,23 +12799,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mobx-angular@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "mobx-angular@npm:4.5.1"
+"mobx-angular@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "mobx-angular@npm:4.6.0"
   dependencies:
     tslib: ^2.0.0
   peerDependencies:
-    "@angular/common": ">=11.1.1 <14.0.0"
-    "@angular/core": ">=11.1.1 <14.0.0"
+    "@angular/common": ">=11.1.1 <15.0.0"
+    "@angular/core": ">=11.1.1 <15.0.0"
     mobx: ">=2"
-  checksum: 722d37bb6a6e954296efa2bb0055d66eedd9abca0ead87f0efa8bd89010f9ef22a200a6c3f95893513e58172ed49f3214b22cbb5a8bcb8ddcf6828e569d83d57
+  checksum: d93973046cb68e89c0057c0a0fd336e2a250ac392ed5041676b4df052554ec2101ef241bb200605b6499fcc53802c163d40fdcfa11035a6d04eed222ed10be7d
   languageName: node
   linkType: hard
 
-"mobx@npm:^6.6.0":
-  version: 6.6.0
-  resolution: "mobx@npm:6.6.0"
-  checksum: 369b8d6830ec286e9c856c80002c7a554d46bca739b7f76432cb56b3ce1fe0a7ed7e5a994b9793d30023beeff0dd16300a501e831fa97107104e4fedc7d4af8f
+"mobx@npm:^6.6.1":
+  version: 6.6.1
+  resolution: "mobx@npm:6.6.1"
+  checksum: 20e876693d1a99916d347ba666f47e7931d5aa5a1172eae48d172477d537577d604207a8f8918041f9b6c74280b6533a516cf1639929735c6bb514f34776225a
   languageName: node
   linkType: hard
 
@@ -13855,6 +13864,7 @@ __metadata:
     "@angular/service-worker": 14.0.2
     "@asymmetrik/ngx-leaflet": ^13.0.2
     "@capacitor/android": ^3.6.0
+    "@capacitor/browser": ^1.0.7
     "@capacitor/cli": ^3.6.0
     "@capacitor/core": ^3.6.0
     "@ionic-native/core": ^5.36.0
@@ -13903,8 +13913,8 @@ __metadata:
     jest: 27.5.1
     jest-preset-angular: 12.1.0
     leaflet: ^1.8.0
-    mobx: ^6.6.0
-    mobx-angular: ^4.5.1
+    mobx: ^6.6.1
+    mobx-angular: ^4.6.0
     ng-packagr: 14.0.2
     ng2-canvas-whiteboard: ^4.0.2
     ngx-file-drop: 13.0.0

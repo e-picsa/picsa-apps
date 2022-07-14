@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IBudgetCard, IBudgetCardDB } from '../../models/budget-tool.models';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { BudgetStore } from '../../store/budget.store';
@@ -7,6 +7,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-card',
   templateUrl: 'budget-card.html',
   styleUrls: ['budget-card.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 // implement CVA so can be used in form and template bindings to pass back value
@@ -20,7 +21,7 @@ export class BudgetCardComponent {
   async promptCustomDelete(e: Event) {
     e.stopPropagation();
     const dialogRef = await this.dialog.open('delete');
-    await dialogRef.afterClosed().subscribe((v) => {
+    dialogRef.afterClosed().subscribe((v) => {
       if (v) {
         this.store.deleteCustomCard(this.card as IBudgetCardDB);
         // HACK - instead of refreshing from store just mark

@@ -1,25 +1,22 @@
-<div class="page">
-  <picsa-header inverted>{{ 'Select a site' | translate }}</picsa-header>
-  <div class="page-content no-padding">
-    <div style="flex:1; z-index:1">
-      <picsa-map
-        (onMapReady)="onMapReady()"
-        (onMarkerClick)="onMarkerClick($event)"
-        [mapOptions]="mapOptions"
-        featuredCountry="malawi"
-        [basemapOptions]="basemapOptions"
-        #picsaMap
-      ></picsa-map>
-    </div>
-    <button
-      (click)="goToSite(activeStation)"
-      mat-raised-button
-      color="primary"
-      *ngIf="activeStation"
-      id="siteButton"
-    >
-      <span id="siteButtonText">{{ activeStation.name }}</span>
-      <mat-icon>arrow_forward</mat-icon>
-    </button>
+<div class="page-content no-padding">
+  <div style="flex: 1; z-index: 1">
+    <picsa-map
+      (onMapReady)="onMapReady()"
+      (onMarkerClick)="onMarkerClick($event)"
+      [mapOptions]="mapOptions"
+      featuredCountry="malawi"
+      [basemapOptions]="basemapOptions"
+      #picsaMap
+    ></picsa-map>
   </div>
+  <button
+    (click)="goToSite(activeStation)"
+    mat-raised-button
+    color="primary"
+    *ngIf="activeStation"
+    id="siteButton"
+  >
+    <span id="siteButtonText">{{ activeStation.name }}</span>
+    <mat-icon>arrow_forward</mat-icon>
+  </button>
 </div>

@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-const commonRoutes: Routes = [
+export const ROUTES_COMMON: Routes = [
   {
     path: '',
     loadChildren: () =>
       import('./pages/site-select/site-select.module').then(
         (mod) => mod.ClimateSiteSelectPageModule
       ),
+    title: 'Select a site',
   },
   {
     path: 'site/:siteId',
@@ -15,6 +16,9 @@ const commonRoutes: Routes = [
       import('./pages/site-view/site-view.module').then(
         (mod) => mod.ClimateSiteViewPageModule
       ),
+    data: {
+      headerStyle: 'inverted',
+    },
   },
   {
     path: 'site',
@@ -22,64 +26,18 @@ const commonRoutes: Routes = [
     pathMatch: 'full',
   },
 ];
-// catch-all routes conflict when embedded, so only use in standalone
-const standaloneRoutes: Routes = [
-  // { path: '**', redirectTo: '/site' }
-];
-// const embeddedRoutes = addRoutePrefix(commonRoutes);
-const embeddedRoutes: Routes = [
-  {
-    path: 'climate',
-    loadChildren: () =>
-      import('./pages/site-select/site-select.module').then(
-        (mod) => mod.ClimateSiteSelectPageModule
-      ),
-  },
-  {
-    path: 'climate/site/:siteId',
-    loadChildren: () =>
-      import('./pages/site-view/site-view.module').then(
-        (mod) => mod.ClimateSiteViewPageModule
-      ),
-  },
-  {
-    path: 'climate/site',
-    redirectTo: 'climate',
-    pathMatch: 'full',
-  },
-  // { path: '', redirectTo: '/site', pathMatch: 'full' }
-];
+/** Routes only registered in standalone mode */
+const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
 
 /*******************************************************************
  *  Standalone Version
  ******************************************************************/
 @NgModule({
   imports: [
-    RouterModule.forRoot([...commonRoutes, ...standaloneRoutes], {
+    RouterModule.forRoot([...ROUTES_COMMON, ...ROUTES_STANDALONE], {
       preloadingStrategy: PreloadAllModules,
     }),
   ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
-
-/*******************************************************************
- *  Embedded Version (requires standalone imports in master app)
- ******************************************************************/
-@NgModule({
-  imports: [RouterModule.forChild(embeddedRoutes)],
-  exports: [RouterModule],
-})
-export class ClimateToolRoutingModule {}
-
-// note, whilst child routing should automatically add and handle prefixes,
-// currently if there is conflict (e.g. '' or 'home') routes don't resolve correctly
-// possibly linked to multiple router outlets, for now just add prefixes
-export function addRoutePrefix(routes: Routes) {
-  return routes.map((r) => {
-    return {
-      ...r,
-      path: `climate${r.path === '' ? '' : '/' + r.path}`,
-    };
-  });
-}

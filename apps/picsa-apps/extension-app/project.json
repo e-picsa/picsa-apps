@@ -35,12 +35,18 @@
             "glob": "**/*",
             "input": "apps/picsa-tools/climate-tool/src/assets",
             "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/resources-tool/src/assets",
+            "output": "assets"
           }
         ],
         "styles": [
           "node_modules/leaflet/dist/leaflet.css",
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "apps/picsa-tools/budget-tool/src/styles.scss",
+          "apps/picsa-tools/resources-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
           "apps/picsa-apps/extension-app/src/styles.scss"
         ],

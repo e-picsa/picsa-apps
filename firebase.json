@@ -10,9 +10,10 @@
         }
       ]
     },
+
     {
-      "target": "climate-tool",
-      "public": "dist/apps/climate-tool",
+      "target": "budget-tool",
+      "public": "dist/apps/picsa-tools/budget-tool",
       "rewrites": [
         {
           "source": "**",
@@ -21,8 +22,18 @@
       ]
     },
     {
-      "target": "budget-tool",
-      "public": "dist/apps/budget-tool",
+      "target": "climate-tool",
+      "public": "dist/apps/picsa-tools/climate-tool",
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "resources-tool",
+      "public": "dist/apps/picsa-tools/resources-tool",
       "rewrites": [
         {
           "source": "**",

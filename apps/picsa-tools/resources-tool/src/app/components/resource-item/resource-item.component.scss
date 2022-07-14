@@ -1,0 +1,39 @@
+:host {
+  display: contents;
+}
+
+.background-image {
+  width: 100px;
+  background-size: cover;
+  background-position: center;
+}
+.expanded-image {
+  height: fit-content;
+  max-height: 50vh;
+  object-fit: contain;
+  max-width: 300px;
+}
+.resource-card {
+  padding: 0;
+  cursor: pointer;
+  min-height: 100px;
+  position: relative;
+}
+.resource-card:hover {
+  background: var(--color-primary-50);
+}
+.resource-card[data-viewStyle='expanded'] {
+  cursor: unset;
+  padding: 1rem;
+  &:hover {
+    background: unset;
+  }
+}
+.language-code {
+  background: var(--color-secondary);
+  padding: 4px;
+  color: white;
+}
+.action-button {
+  margin: auto;
+}

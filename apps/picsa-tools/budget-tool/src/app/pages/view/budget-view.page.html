@@ -1,11 +1,5 @@
-<div class="page" *mobxAutorun>
-  <mat-toolbar>
-    <back-button *ngIf="!isEditorOpen"></back-button>
-    <span *ngIf="!isEditorOpen" style="flex: 1; text-align: center">{{
-      store.activeBudget
-        ? store.activeBudget.meta.title
-        : ('Budget' | translate)
-    }}</span>
+<div class="page-content" *mobxAutorun>
+  <div class="header-buttons">
     <button
       mat-button
       *ngIf="!isEditorOpen"
@@ -15,23 +9,8 @@
     >
       <mat-icon>share</mat-icon>Share
     </button>
+  </div>
 
-    <!-- Editor Close -->
-    <div *ngIf="isEditorOpen" style="flex:1; display: flex">
-      <span style="text-align: center; flex:1">{{
-        periodLabel | translate
-      }}</span>
-      <button
-        mat-button
-        color="primary"
-        @fadeInOut
-        (click)="closeEditor()"
-        style="position: absolute; right: 0;"
-      >
-        <mat-icon>close</mat-icon><span>{{ 'Close' | translate }}</span>
-      </button>
-    </div>
-  </mat-toolbar>
   <!-- hide overflow so that editor can be stored outside bottom of page -->
   <div class="page-content" style="overflow-y: hidden; overflow-x: auto">
     <budget-table

@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -12,29 +13,51 @@ import { Subscription } from 'rxjs';
   `,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
-export class BackButton implements OnDestroy, OnInit {
-  route$: Subscription;
+export class BackButton implements OnDestroy {
   showButton = false;
-  constructor(private router: Router, private route: ActivatedRoute) {
-    this.route$ = this.router.events.subscribe((e) => {
-      if (e instanceof NavigationStart) {
-        this.checkButtonState();
-      }
-    });
-  }
-  ngOnInit(): void {
-    this.checkButtonState();
-  }
-  checkButtonState() {
-    const url = this.router.url;
-    this.showButton = url.split('/').length > 1;
+  /** Track list of page views for back navigation */
+  private history: string[] = [];
+  private componentDestroyed$ = new Subject<boolean>();
+
+  constructor(private router: Router, private location: Location) {
+    this.subscribeToRouteChanges();
   }
 
+  checkButtonState(url: string) {
+    this.showButton = url !== '/';
+  }
+
+  private subscribeToRouteChanges() {
+    this.router.events
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((e) => {
+        if (e instanceof NavigationEnd) {
+          this.history.push(e.urlAfterRedirects);
+          this.checkButtonState(e.urlAfterRedirects);
+        }
+      });
+  }
+
+  /**
+   * Handle back navigation. Prefer to use history location back, however if initial nav
+   * just navigate to home page. Adapated from:
+   * https://nils-mehlhorn.de/posts/angular-navigate-back-previous-page
+   *
+   * TODO - complex routing requirements could likely be solved more easily when nav Api supported
+   * https://caniuse.com/mdn-api_navigation
+   */
   back() {
-    this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+    if (this.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/'], {
+        replaceUrl: true,
+      });
+    }
   }
 
   ngOnDestroy(): void {
-    this.route$.unsubscribe();
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
   }
 }

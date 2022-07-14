@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ClimateToolService } from '../../services/climate-tool.service';
 import { IClimateView } from '../../models';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 
 @Component({
   selector: 'climate-site-view',
@@ -23,7 +24,8 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private climateService: ClimateToolService
+    private climateService: ClimateToolService,
+    private componentsService: PicsaCommonComponentsService
   ) {}
   ngOnInit(): void {
     // readily subscribe to view changes to avoid flash of site-select page
@@ -37,6 +39,7 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
   async loadSiteData() {
     const siteId = this.route.snapshot.params.siteId;
     this.activeStation = await this.climateService.loadStation(siteId);
+    this.componentsService.setHeader({ title: this.activeStation.name });
   }
   changeSite() {
     this.router.navigate(['../../'], {

@@ -9,12 +9,13 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
 import { IBudgetCard } from '../../../models/budget-tool.models';
+import { catchError, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'budget-card-image',
   templateUrl: 'budget-card-image.html',
   styleUrls: ['budget-card-image.scss'],
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
   @Input() card: IBudgetCard;
@@ -44,31 +45,27 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
 
   private async loadImageFromFile() {
     const imgBlob = await this.getCardImg(this.card.id, this.card.imgType);
-    this.objUrl = URL.createObjectURL(imgBlob);
-    this.imgUrl = this.sanitizer.bypassSecurityTrustUrl(this.objUrl);
-    // as parent cell using onpush strategy extra check required here (not entirely sure why)
-    this.cdr.markForCheck();
+    if (imgBlob) {
+      this.objUrl = URL.createObjectURL(imgBlob);
+      this.imgUrl = this.sanitizer.bypassSecurityTrustUrl(this.objUrl);
+      this.cdr.markForCheck();
+    }
   }
 
   // check card images for correct svg or png image and return
   private async getCardImg(
     imageId: string,
     imageType: 'svg' | 'png' = 'png'
-  ): Promise<Blob> {
-    let imgData: Blob;
+  ): Promise<Blob | null> {
     // first see if svg exists
-    try {
-      imgData = (await this.http
-        .get(`../../assets/images/${imageId}.${imageType}`, {
-          responseType: 'blob',
-        })
-        .toPromise()) as Blob;
-    } catch (error) {
-      // otherwise placeholder
-      imgData = (await this.http
-        .get(`../../assets/images/no-image.png`, { responseType: 'blob' })
-        .toPromise()) as Blob;
-    }
+    const targetImg = `assets/images/${imageId}.${imageType}`;
+    const fallbackImg = 'assets/images/no-image.png';
+    const imgData = await firstValueFrom(
+      this.http.get(targetImg, { responseType: 'blob' }).pipe(
+        // send fallback image on error
+        catchError(() => this.http.get(fallbackImg, { responseType: 'blob' }))
+      )
+    );
     return imgData;
   }
 

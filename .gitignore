@@ -68,3 +68,4 @@ apps/extension-toolkit/www_sourcemaps
 .env
 *.keystore
 *.apk
+.firebase

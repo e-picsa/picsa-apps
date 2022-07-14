@@ -1,0 +1,21 @@
+<mat-card class="resource" (click)="resourceClick()">
+  <div class="download-placeholder" *ngIf="!resource._isDownloaded">
+    <button mat-button class="download-button" [disabled]="isDownloading">
+      <mat-icon
+        class="download-icon"
+        *ngIf="!isDownloading"
+        svgIcon="picsa_download"
+      ></mat-icon>
+
+      <!-- <mat-progress-spinner></mat-progress-spinner> -->
+    </button>
+  </div>
+  <img class="resource-image" [src]="resource.image" />
+  <mat-progress-bar
+    [value]="progress"
+    style="margin-top: -4px"
+    *ngIf="isDownloading"
+  ></mat-progress-bar>
+  <div class="resource-title">{{ resource.title | translate }}</div>
+  <div class="resource-subtitle">{{ resource.subtitle | translate }}</div>
+</mat-card>

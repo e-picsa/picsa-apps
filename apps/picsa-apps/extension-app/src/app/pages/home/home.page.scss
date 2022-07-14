@@ -45,6 +45,11 @@ footer {
   display: flex;
   justify-content: space-between;
   padding: 5px;
+  position: absolute;
+  bottom: 0;
+  width: calc(100% - 10px);
+  left: 0;
+  background: var(--color-primary);
 }
 .version-info {
   color: rgba(255, 255, 255, 0.7);

@@ -29,6 +29,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class BudgetStore implements OnDestroy {
   changes = new BehaviorSubject<[number, string]>([null, null] as any);
+  @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
   @observable activePeriod = 0;
@@ -38,6 +39,7 @@ export class BudgetStore implements OnDestroy {
   @observable balance: IBudgetBalance = [];
   // get unique list of types in enterprise cards
   @computed get enterpriseTypeCards(): IBudgetCardDB[] {
+    console.log('get enterprisetype cards');
     const enterpriseCards = this.budgetCards.filter(
       (c) => c.type === 'enterprise'
     );
@@ -87,10 +89,7 @@ export class BudgetStore implements OnDestroy {
     return this.activeBudget.meta.enterprise.groupings![0];
   }
 
-  constructor(private db: PicsaDbService, private route: ActivatedRoute) {
-    this.init();
-    this._subscribeToRouteChanges();
-  }
+  constructor(private db: PicsaDbService, private route: ActivatedRoute) {}
   ngOnDestroy(): void {
     console.log('TODO - REMOVE SUBSCRIPTIONS');
   }
@@ -204,10 +203,13 @@ export class BudgetStore implements OnDestroy {
    *            Initialisation
    *
    ***************************************************************************/
-  async init() {
+  @action
+  public async init() {
     this.loadSavedBudgets();
     await this.checkForUpdates();
     await this.preloadData();
+    this._subscribeToRouteChanges();
+    this.storeReady = true;
   }
   _subscribeToRouteChanges() {
     this.route.queryParams.subscribe((params) =>

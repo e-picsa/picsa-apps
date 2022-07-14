@@ -1,8 +1,9 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BudgetToolModule } from '@picsa/budget/src/app/app-embedded.module';
-import { ClimateToolModule } from '@picsa/climate/src/app/app.module';
+import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
+import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
+import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
 
 const routes: Routes = [
   // support embed of budget tool app
@@ -10,28 +11,29 @@ const routes: Routes = [
   {
     path: 'budget',
     loadChildren: () =>
-      import('@picsa/budget/src/app/app-embedded.module').then(
+      import('@picsa/budget/src/app/app.module-embedded').then(
         (mod) => mod.BudgetToolModule
       ),
   },
   {
     path: 'climate',
     loadChildren: () =>
-      import('@picsa/climate/src/app/app.module').then(
+      import('@picsa/climate/src/app/app.module-embedded').then(
         (mod) => mod.ClimateToolModule
       ),
   },
   {
     path: 'resources',
     loadChildren: () =>
-      import('./pages/resources/resources.module').then(
-        (mod) => mod.ResourcesPageModule
+      import('@picsa/resources/src/app/app.module-embedded').then(
+        (mod) => mod.ResourcesToolModule
       ),
   },
   {
     path: '',
     loadChildren: () =>
       import('./pages/home/home.module').then((mod) => mod.HomePageModule),
+    title: 'PICSA',
   },
   {
     path: 'settings',
@@ -46,6 +48,7 @@ const routes: Routes = [
       import('./pages/discussions/discussions.module').then(
         (mod) => mod.DiscussionsPageModule
       ),
+    title: 'Discussions',
   },
   {
     path: 'data',
@@ -59,8 +62,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes),
-    ClimateToolModule.forRoot(),
+    ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
+    ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
   ],
   exports: [RouterModule],
 })

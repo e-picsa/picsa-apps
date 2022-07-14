@@ -1,0 +1,99 @@
+{
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-tools/resources-tool/src",
+  "prefix": "picsa",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/picsa-tools/resources-tool",
+        "index": "apps/picsa-tools/resources-tool/src/index.html",
+        "main": "apps/picsa-tools/resources-tool/src/main.ts",
+        "polyfills": "apps/picsa-tools/resources-tool/src/polyfills.ts",
+        "tsConfig": "apps/picsa-tools/resources-tool/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/picsa-tools/resources-tool/src/favicon.ico",
+          "apps/picsa-tools/resources-tool/src/assets"
+        ],
+        "styles": [
+          "apps/picsa-tools/resources-tool/src/styles.scss",
+          "libs/theme/src/_index.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/picsa-tools/resources-tool/src/environments/environment.ts",
+              "with": "apps/picsa-tools/resources-tool/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "picsa-tools-resources-tool:build:production"
+        },
+        "development": {
+          "browserTarget": "picsa-tools-resources-tool:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/picsa-tools/resources-tool/proxy.conf.json"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "picsa-tools-resources-tool:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/picsa-tools/resources-tool/**/*.ts",
+          "apps/picsa-tools/resources-tool/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/picsa-tools/resources-tool"],
+      "options": {
+        "jestConfig": "apps/picsa-tools/resources-tool/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -16,17 +16,17 @@ const DB_COMMON_SCHEMA = {
   climateTool: DEFAULT_STORE_SCHEMA,
   forms: DEFAULT_STORE_SCHEMA,
   stationData: DEFAULT_STORE_SCHEMA,
-  resources: DEFAULT_STORE_SCHEMA
+  resources: DEFAULT_STORE_SCHEMA,
 };
 const DB_GROUP_SCHEMA = {
   'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA,
-  'users/${GROUP}/users': DEFAULT_STORE_SCHEMA
+  'users/${GROUP}/users': DEFAULT_STORE_SCHEMA,
 };
 
 // replace group variable with group code from environment and export collated endpoint schema
 export const DB_SCHEMA = {
   ...DB_COMMON_SCHEMA,
-  ...keyReplace(DB_GROUP_SCHEMA, '${GROUP}', ENVIRONMENT.group.code)
+  ...keyReplace(DB_GROUP_SCHEMA, '${GROUP}', ENVIRONMENT.group.code),
 };
 
 export type IDBEndpoint = keyof typeof DB_SCHEMA | keyof typeof DB_GROUP_SCHEMA;
@@ -37,7 +37,6 @@ export interface IDBDoc {
   _key: string;
   _created: ISOString;
   _modified: ISOString;
-  [key: string]: any;
 }
 
 // data stored on _appMeta store
@@ -53,7 +52,7 @@ export function keyReplace(
 ) {
   const rep = {};
   Object.keys(obj).forEach(
-    k => (rep[k.replace(searchVal, replaceVal)] = obj[k])
+    (k) => (rep[k.replace(searchVal, replaceVal)] = obj[k])
   );
   return rep;
 }

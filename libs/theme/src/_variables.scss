@@ -35,8 +35,8 @@ $picsa-primary: (
     A100: #000000,
     A200: #000000,
     A400: #ffffff,
-    A700: #ffffff
-  )
+    A700: #ffffff,
+  ),
 );
 $picsa-accent: (
   50: #eceeef,
@@ -67,14 +67,15 @@ $picsa-accent: (
     A100: #000000,
     A200: #000000,
     A400: #000000,
-    A700: #000000
-  )
+    A700: #000000,
+  ),
 );
 
 // could use functions to populate and alter these
 // https://scotch.io/tutorials/aesthetic-sass-2-colors
 :root {
   --color-primary: #8a2644;
+  --color-primary-50: #{map-get($picsa-primary, 50)};
   --color-secondary: #3f51b5;
   --color-black: #1a2138;
   --color-light: #d8d8d8;

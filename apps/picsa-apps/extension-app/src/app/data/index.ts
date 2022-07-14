@@ -1,5 +1,4 @@
 import FORMS from './surveys';
-import RESOURCES from './resources';
 
 /* 
 data in this file is saved locally for retrieval (via storage provider), and the keys
@@ -12,10 +11,10 @@ const GROUPS = [
     name: 'PICSA Mangochi Training 2018',
     accessKey: 'picsa',
     defaults: null,
-    order: 10
-  }
+    order: 10,
+  },
 ];
 
 const WHATSAPP_GROUPS = [];
 
-export { RESOURCES, FORMS, GROUPS, WHATSAPP_GROUPS };
+export { FORMS, GROUPS, WHATSAPP_GROUPS };
