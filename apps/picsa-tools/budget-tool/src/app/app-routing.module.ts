@@ -16,6 +16,7 @@ export const ROUTES_COMMON: Routes = [
       import('./pages/create/budget-create.module').then(
         (mod) => mod.BudgetCreatePageModule
       ),
+    title: 'New Budget',
   },
   {
     path: 'view',
@@ -28,6 +29,9 @@ export const ROUTES_COMMON: Routes = [
       import('./pages/view/budget-view.module').then(
         (mod) => mod.BudgetViewPageModule
       ),
+    data: {
+      headerStyle: 'inverted',
+    },
   },
 ];
 /** Routes only registered in standalone mode */

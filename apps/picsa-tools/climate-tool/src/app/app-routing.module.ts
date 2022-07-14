@@ -16,6 +16,9 @@ export const ROUTES_COMMON: Routes = [
       import('./pages/site-view/site-view.module').then(
         (mod) => mod.ClimateSiteViewPageModule
       ),
+    data: {
+      headerStyle: 'inverted',
+    },
   },
   {
     path: 'site',

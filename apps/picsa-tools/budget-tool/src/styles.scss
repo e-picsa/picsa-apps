@@ -21,7 +21,7 @@ $footer-height: 5em;
   height: $footer-height;
   top: calc(100vh - #{$footer-height});
   left: 0;
-  width: 100vw;
+  width: 100%;
   background: white;
   display: flex;
   align-items: center;

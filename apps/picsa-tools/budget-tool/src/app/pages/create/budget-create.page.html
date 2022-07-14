@@ -1,182 +1,179 @@
-<div class="page">
-  <picsa-header>{{ 'Create New Budget' | translate }}</picsa-header>
-  <div class="page-content" style="padding-bottom: 52px">
-    <form [formGroup]="budgetMetaForm">
-      <mat-horizontal-stepper linear #stepper>
-        <!-- Step 1 - handled with custom elements-->
-        <mat-step>
-          <ng-template matStepLabel>{{ 'Enterprise' | translate }}</ng-template>
-          <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
-          <div style="display: flex; flex-wrap: wrap">
-            <budget-card
-              *ngFor="let card of enterpriseTypeCards; trackBy: trackByFn"
-              [card]="card"
-              (click)="enterpriseTypeClicked(card.id)"
-              [selected]="selectedType === card.id"
-              @fadeInOut
-            ></budget-card>
-          </div>
-          <div class="sticky-footer">
-            <button
-              matStepperNext
-              color="primary"
-              mat-raised-button
-              class="footer-button"
-              [disabled]="!budgetMetaForm.value.enterprise.type"
-            >
-              {{ 'Next' | translate }}
-              <mat-icon>arrow_forward</mat-icon>
-            </button>
-          </div>
-        </mat-step>
-        <!-- Step 2 - enterprise select -->
-        <mat-step>
-          <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
-          <h2 *ngIf="filteredEnterprises.length" @fadeInOut>
-            {{ 'Select Enterprise' | translate }}
-          </h2>
-          <div style="display: flex; flex-wrap: wrap">
-            <budget-card
-              *ngFor="let enterprise of filteredEnterprises"
-              [card]="enterprise"
-              (click)="enterpriseClicked(enterprise)"
-              [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
-              @fadeInOut
-            >
-            </budget-card>
-            <budget-card-new
-              type="enterprise"
-              [groupings]="[selectedType]"
-              (cardSaved)="customEnterpriseCreated($event)"
-            ></budget-card-new>
-          </div>
-          <div class="sticky-footer">
-            <button
-              matStepperNext
-              color="primary"
-              mat-raised-button
-              class="footer-button"
-              [disabled]="!budgetMetaForm.value.enterprise.id"
-            >
-              {{ 'Next' | translate }}
-              <mat-icon>arrow_forward</mat-icon>
-            </button>
-          </div>
-        </mat-step>
+<div class="page-content" style="padding-bottom: 52px">
+  <form [formGroup]="budgetMetaForm">
+    <mat-horizontal-stepper linear #stepper>
+      <!-- Step 1 - handled with custom elements-->
+      <mat-step>
+        <ng-template matStepLabel>{{ 'Enterprise' | translate }}</ng-template>
+        <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
+        <div style="display: flex; flex-wrap: wrap">
+          <budget-card
+            *ngFor="let card of enterpriseTypeCards; trackBy: trackByFn"
+            [card]="card"
+            (click)="enterpriseTypeClicked(card.id)"
+            [selected]="selectedType === card.id"
+            @fadeInOut
+          ></budget-card>
+        </div>
+        <div class="sticky-footer">
+          <button
+            matStepperNext
+            color="primary"
+            mat-raised-button
+            class="footer-button"
+            [disabled]="!budgetMetaForm.value.enterprise.type"
+          >
+            {{ 'Next' | translate }}
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </mat-step>
+      <!-- Step 2 - enterprise select -->
+      <mat-step>
+        <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
+        <h2 *ngIf="filteredEnterprises.length" @fadeInOut>
+          {{ 'Select Enterprise' | translate }}
+        </h2>
+        <div style="display: flex; flex-wrap: wrap">
+          <budget-card
+            *ngFor="let enterprise of filteredEnterprises"
+            [card]="enterprise"
+            (click)="enterpriseClicked(enterprise)"
+            [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
+            @fadeInOut
+          >
+          </budget-card>
+          <budget-card-new
+            type="enterprise"
+            [groupings]="[selectedType]"
+            (cardSaved)="customEnterpriseCreated($event)"
+          ></budget-card-new>
+        </div>
+        <div class="sticky-footer">
+          <button
+            matStepperNext
+            color="primary"
+            mat-raised-button
+            class="footer-button"
+            [disabled]="!budgetMetaForm.value.enterprise.id"
+          >
+            {{ 'Next' | translate }}
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </mat-step>
 
-        <!-- Step 3 - handled with form controls -->
-        <mat-step>
-          <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
-          <h2>{{ 'How long is your budget for?' | translate }}</h2>
-          <div style="display: flex; flex-wrap: wrap">
-            <button
-              mat-button
-              class="variable-container editable"
-              (click)="periodTotalSelect.open()"
+      <!-- Step 3 - handled with form controls -->
+      <mat-step>
+        <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
+        <h2>{{ 'How long is your budget for?' | translate }}</h2>
+        <div style="display: flex; flex-wrap: wrap">
+          <button
+            mat-button
+            class="variable-container editable"
+            (click)="periodTotalSelect.open()"
+          >
+            <span>{{ budgetMetaForm.value.lengthTotal }}</span>
+            <mat-select
+              class="select--hidden"
+              #periodTotalSelect
+              formControlName="lengthTotal"
+              style="opacity: 0"
             >
-              <span>{{ budgetMetaForm.value.lengthTotal }}</span>
-              <mat-select
-                class="select--hidden"
-                #periodTotalSelect
-                formControlName="lengthTotal"
-                style="opacity: 0"
+              <mat-option *ngFor="let n of periodTotalOptions" [value]="n"
+                >{{ n }}</mat-option
               >
-                <mat-option *ngFor="let n of periodTotalOptions" [value]="n"
-                  >{{ n }}</mat-option
-                >
-              </mat-select>
-            </button>
+            </mat-select>
+          </button>
 
-            <button
-              mat-button
-              class="variable-container editable"
-              (click)="periodScaleSelect.open()"
+          <button
+            mat-button
+            class="variable-container editable"
+            (click)="periodScaleSelect.open()"
+          >
+            <span>{{ budgetMetaForm.value.lengthScale | translate }}</span>
+            <mat-select
+              class="select--hidden"
+              #periodScaleSelect
+              formControlName="lengthScale"
+              style="opacity: 0"
             >
-              <span>{{ budgetMetaForm.value.lengthScale | translate }}</span>
-              <mat-select
-                class="select--hidden"
-                #periodScaleSelect
-                formControlName="lengthScale"
-                style="opacity: 0"
+              <mat-option
+                *ngFor="let option of periodScaleOptions"
+                [value]="option"
+                >{{ option | translate }}</mat-option
               >
-                <mat-option
-                  *ngFor="let option of periodScaleOptions"
-                  [value]="option"
-                  >{{ option | translate }}</mat-option
-                >
-              </mat-select>
-            </button>
-            <div
-              *ngIf="budgetMetaForm.value.lengthScale === 'months'"
-              class="variable-container"
-            >
-              {{ 'starting in' | translate }}
-            </div>
-            <button
-              mat-button
-              *ngIf="budgetMetaForm.value.lengthScale === 'months'"
-              class="variable-container editable"
-              (click)="periodStartSelect.open()"
-            >
-              <span
-                >{{ periodLabelOptions[budgetMetaForm.value.monthStart - 1] |
-                translate }}</span
-              >
-              <mat-select
-                class="select--hidden"
-                #periodStartSelect
-                formControlName="monthStart"
-                style="opacity: 0"
-              >
-                <mat-option
-                  *ngFor="let option of periodTotalOptions"
-                  [value]="option"
-                  >{{ periodLabelOptions[option - 1] | translate }}</mat-option
-                >
-              </mat-select>
-            </button>
+            </mat-select>
+          </button>
+          <div
+            *ngIf="budgetMetaForm.value.lengthScale === 'months'"
+            class="variable-container"
+          >
+            {{ 'starting in' | translate }}
           </div>
-          <div class="sticky-footer">
-            <button
-              matStepperNext
-              color="primary"
-              mat-raised-button
-              class="footer-button"
+          <button
+            mat-button
+            *ngIf="budgetMetaForm.value.lengthScale === 'months'"
+            class="variable-container editable"
+            (click)="periodStartSelect.open()"
+          >
+            <span
+              >{{ periodLabelOptions[budgetMetaForm.value.monthStart - 1] |
+              translate }}</span
             >
-              {{ 'Next' | translate }}
-              <mat-icon>arrow_forward</mat-icon>
-            </button>
-          </div>
-        </mat-step>
+            <mat-select
+              class="select--hidden"
+              #periodStartSelect
+              formControlName="monthStart"
+              style="opacity: 0"
+            >
+              <mat-option
+                *ngFor="let option of periodTotalOptions"
+                [value]="option"
+                >{{ periodLabelOptions[option - 1] | translate }}</mat-option
+              >
+            </mat-select>
+          </button>
+        </div>
+        <div class="sticky-footer">
+          <button
+            matStepperNext
+            color="primary"
+            mat-raised-button
+            class="footer-button"
+          >
+            {{ 'Next' | translate }}
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </mat-step>
 
-        <!-- Step 3 -->
-        <mat-step>
-          <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
-          <h2>{{ 'Save your budget' | translate }}</h2>
-          <input
-            matInput
-            placeholder="{{ 'Title' | translate }}"
-            formControlName="title"
-          />
-          <textarea
-            matInput
-            placeholder="{{ 'Description (optional)' | translate }}"
-            formControlName="description"
-          ></textarea>
-          <div class="sticky-footer">
-            <button
-              matStepperNext
-              color="primary"
-              mat-raised-button
-              [disabled]="budgetMetaForm.invalid"
-              class="footer-button"
-              (click)="save()"
-            >
-              {{ 'Save' | translate }}
-            </button>
-          </div>
-        </mat-step>
-      </mat-horizontal-stepper>
-    </form>
-  </div>
+      <!-- Step 3 -->
+      <mat-step>
+        <ng-template matStepLabel>{{ 'Save' | translate }}</ng-template>
+        <h2>{{ 'Save your budget' | translate }}</h2>
+        <input
+          matInput
+          placeholder="{{ 'Title' | translate }}"
+          formControlName="title"
+        />
+        <textarea
+          matInput
+          placeholder="{{ 'Description (optional)' | translate }}"
+          formControlName="description"
+        ></textarea>
+        <div class="sticky-footer">
+          <button
+            matStepperNext
+            color="primary"
+            mat-raised-button
+            [disabled]="budgetMetaForm.invalid"
+            class="footer-button"
+            (click)="save()"
+          >
+            {{ 'Save' | translate }}
+          </button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </form>
 </div>
