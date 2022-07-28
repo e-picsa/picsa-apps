@@ -5,21 +5,26 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { BackButton } from './components/back-button.component';
-import {
-  PicsaHeaderComponent,
-  PicsaHeaderInvertedDirective,
-} from './components/picsa-header.component';
+import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
+import { PicsaHeaderComponent } from './components/picsa-header.component';
+import { RouterModule } from '@angular/router';
 
 // import {} from './warning.component';
 const components = [
   BackButton,
+  PicsaBreadcrumbsComponent,
   PicsaHeaderComponent,
-  PicsaHeaderInvertedDirective,
 ];
 
 @NgModule({
   declarations: components,
-  imports: [CommonModule, MatIconModule, MatButtonModule, PicsaTranslateModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    PicsaTranslateModule,
+    RouterModule,
+  ],
   exports: components,
   providers: [],
 })

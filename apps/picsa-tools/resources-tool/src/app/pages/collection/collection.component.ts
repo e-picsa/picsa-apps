@@ -27,10 +27,10 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.componentsService.hideBreadcrumb('/collection');
     this.route.params
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((params) => {
-        console.log('params', params);
         const { collectionId } = params;
         if (collectionId) {
           this.loadCollection(collectionId);
@@ -44,10 +44,13 @@ export class CollectionComponent implements OnInit, OnDestroy {
     const foundCollection = this.store.getResourceById<IResourceCollection>(id);
     if (foundCollection) {
       this.collection = foundCollection;
-      this.componentsService.setHeader({ title: foundCollection.title });
       this.collectionResources = this.collection.childResources.map(
         (resourceId) => this.store.getResourceById(resourceId)
       );
+      // Use set timeout to ensure title changes after other default title change
+      setTimeout(() => {
+        this.componentsService.setHeader({ title: foundCollection.title });
+      }, 0);
     }
   }
 }
