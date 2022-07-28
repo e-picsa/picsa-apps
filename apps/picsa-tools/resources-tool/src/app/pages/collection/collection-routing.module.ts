@@ -5,8 +5,28 @@ import { CollectionComponent } from './collection.component';
 const title = 'Collection';
 
 const routes: Routes = [
-  { path: '', component: CollectionComponent, title },
+  {
+    path: '',
+    component: CollectionComponent,
+    title,
+  },
+  // allow deeply nested collections
   { path: ':collectionId', component: CollectionComponent, title },
+  {
+    path: ':collectionId/:collectionId',
+    component: CollectionComponent,
+    title,
+  },
+  {
+    path: ':collectionId/:collectionId/:collectionId',
+    component: CollectionComponent,
+    title,
+  },
+  {
+    path: ':collectionId/:collectionId/:collectionId/:collectionId',
+    component: CollectionComponent,
+    title,
+  },
 ];
 
 @NgModule({

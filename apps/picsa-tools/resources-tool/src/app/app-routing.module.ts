@@ -17,7 +17,7 @@ export const ROUTES_COMMON: Routes = [
   },
 ];
 /** Routes only registered in standalone mode */
-const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: 'home' }];
+const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
 
 /*******************************************************************
  *  Standalone Version
