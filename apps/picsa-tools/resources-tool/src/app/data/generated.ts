@@ -34,8 +34,9 @@ class MeteoBlueGenerator {
       type: 'collection',
       title: 'MeteoBlue Forecasts',
       description: 'Local forecasts provided by MeteoBlue',
-      image: 'assets/resources/meteoblue-cover.jpg',
+      image: 'assets/resources/covers/meteoblue.jpg',
       childResources: [],
+      parentResource: 'appsAndWebsites',
     };
     this.collections[this.prefix] = parentCollection;
   }
