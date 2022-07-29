@@ -9,7 +9,10 @@ import {
 @Component({
   selector: 'picsa-breadcrumbs',
   template: `
-    <div class="breadcrumbs-container" *ngIf="breadcrumbs.length > 2">
+    <div
+      class="breadcrumbs-container"
+      *ngIf="options.enabled && breadcrumbs.length > 2"
+    >
       <div *ngFor="let breadcrumb of breadcrumbs; last as isLast">
         <button mat-button [routerLink]="breadcrumb.path">
           {{ breadcrumb.label }}
@@ -23,7 +26,7 @@ import {
   styles: [
     `
       .breadcrumbs-container {
-        padding: 1rem;
+        padding: 0 1rem;
         display: flex;
         flex-wrap: wrap;
       }
@@ -33,7 +36,7 @@ import {
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   public breadcrumbs: { label: string; path: string }[] = [];
   private aliases: Map<string, string>;
-  private options: IBreadcrumbOptions = { hideOnPaths: {} };
+  public options: IBreadcrumbOptions = { hideOnPaths: {}, enabled: false };
   private destroyed$ = new Subject<boolean>();
   private rebuild$ = new Subject<boolean>();
   constructor(

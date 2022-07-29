@@ -24,10 +24,17 @@ export class CollectionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
+    this.componentsService.updateBreadcrumbOptions({ enabled: false });
   }
 
   ngOnInit(): void {
-    this.componentsService.hideBreadcrumb('/collection');
+    this.componentsService.updateBreadcrumbOptions({
+      enabled: true,
+      hideOnPaths: {
+        '/collection': true,
+        '/resources/collection': true,
+      },
+    });
     this.route.params
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((params) => {

@@ -6,6 +6,7 @@ interface IHeaderOptions {
   style?: 'inverted' | 'primary';
 }
 export interface IBreadcrumbOptions {
+  enabled?: boolean;
   hideOnPaths?: { [path: string]: true };
 }
 
@@ -19,10 +20,16 @@ export class PicsaCommonComponentsService {
     this.headerOptions$.next(options);
   }
 
-  public hideBreadcrumb(path: string) {
+  public updateBreadcrumbOptions(update: Partial<IBreadcrumbOptions>) {
     const options = this.breadcrumbOptions$.value;
-    options.hideOnPaths ??= {};
-    options.hideOnPaths[path] = true;
-    this.breadcrumbOptions$.next(options);
+    const updated: IBreadcrumbOptions = {
+      ...options,
+      ...update,
+      hideOnPaths: {
+        ...options.hideOnPaths,
+        ...update.hideOnPaths,
+      },
+    };
+    this.breadcrumbOptions$.next(updated);
   }
 }
