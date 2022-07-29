@@ -9,7 +9,6 @@ on:
     types: [labeled, synchronize]
     branches:
       - main
-      - feat/resources-breadcrumbs
 jobs:
   web_preview_resources:
     if: contains(github.event.pull_request.labels.*.name, 'Test - Preview Resources')
