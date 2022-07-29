@@ -126,7 +126,7 @@ class CollectionItemHandler {
     const { route, router } = this.parent;
     // Route from one collection to another
     if (route.snapshot.paramMap.get('collectionId')) {
-      router.navigate(['../', this.resource._key], {
+      router.navigate([this.resource._key], {
         relativeTo: route,
       });
     }

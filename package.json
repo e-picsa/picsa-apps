@@ -7,6 +7,7 @@
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2020 browser module main",
     "start": "nx serve",
     "start:server": "nx run picsa-server-docker:start",
+    "start:resources": "nx run picsa-tools-resources-tool:serve",
     "build": "nx run picsa-apps-extension-app-native:build",
     "test": "nx test",
     "cache:clear": "nx reset"

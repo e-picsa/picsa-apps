@@ -1,1 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+
+// When embedding tools an extra layer of nesting prevents pages children
+// filling full-screen. This workaround helps components like <picsa-budget-tool>
+// appear full sized
+.page > * {
+  display: contents;
+}

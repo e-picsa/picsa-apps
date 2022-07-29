@@ -1,10 +1,4 @@
-import {
-  Component,
-  Directive,
-  HostBinding,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -25,6 +19,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         <span>{{ title | translate }}</span>
       </h1>
     </header>
+    <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
 })
@@ -43,6 +38,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
     this.listenToServiceTitleChanges();
     this.listenToRouteChanges();
   }
+
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
@@ -71,7 +67,6 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
           const snapshot: RouterStateSnapshot =
             this.router.routerState.snapshot;
           let route: ActivatedRouteSnapshot | undefined = snapshot.root;
-
           while (route !== undefined) {
             title = this.titleStrategy.getResolvedTitleForRoute(route) ?? title;
             headerStyle = route.data.headerStyle ?? headerStyle;
@@ -81,7 +76,10 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(({ title, headerStyle }) => {
-        this.componentsService.setHeader({ style: headerStyle as any, title });
+        this.componentsService.setHeader({
+          style: headerStyle as any,
+          title,
+        });
       });
   }
 
@@ -101,12 +99,4 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
         });
       });
   }
-}
-
-@Directive({
-  // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: '[inverted]',
-})
-export class PicsaHeaderInvertedDirective {
-  @HostBinding('class.inverted') inverted = true;
 }

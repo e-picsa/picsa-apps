@@ -11,7 +11,7 @@ const files: { [id: string]: IResourceFile } = {
     subtitle: '',
     filename: 'potential-PICSA-training-schedule.pdf',
     type: 'file',
-    image: 'assets/resources/potential-PICSA-training-schedule-cover.png',
+    image: 'assets/resources/covers/potential-PICSA-training-schedule.png',
     url: 'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fpotential-PICSA-training-schedule.pdf?alt=media&token=618737d1-949b-467a-9f28-1dcc35ce3c8c',
   },
   '4I4F36gD0MUef26HfPZG': {
@@ -63,7 +63,7 @@ const files: { [id: string]: IResourceFile } = {
     subtitle: '',
     filename: 'ram-refresher.mp4',
     type: 'file',
-    image: 'assets/resources/ram-refresher-cover.jpg',
+    image: 'assets/resources/covers/ram-refresher.jpg',
     url: 'https://firebasestorage.googleapis.com/v0/b/extension-toolkit.appspot.com/o/Resources%2Fram-refresher.mp4?alt=media&token=27939a71-0656-440b-8407-24877acaeede',
     // youtubeID: 'Kw5UznKvCN8',
   },
