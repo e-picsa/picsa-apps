@@ -20,7 +20,7 @@ export class SiteSelectPage {
   // main options handled by featuredCountry
   mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
-    src: 'assets/mapTiles/raw/{z}/{x}/{y}.png',
+    src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
   };
 
