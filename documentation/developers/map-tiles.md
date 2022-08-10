@@ -97,7 +97,9 @@ Some preliminary work has been done to include, however on hold until there is g
 This work is split into a few components
 
 1. Source of vector basemaps
-   This could be something such as https://data.maptiler.com/downloads/dataset/osm/#0.22/0/0
+   This could be something such as
+   https://data.maptiler.com/downloads/dataset/osm/#0.22/0/0
+   https://openmaptiles.org/
    NOTE - as well as map server url will also need to take note of `tiles.json` and `style.json` files which contain map definition data
 
 2. Use of QGIS to load vector basemaps. See article below for explanation of how to configure
@@ -119,7 +121,11 @@ Maptiler also has its own plugin to import from their global repositories (searc
    As vectors are encoded using protobuf additional work required to decode either during map render or as a precompile step.
    https://github.com/mapbox/pbf
 
-7. Evaluate space saved / quality gained from method overall
+7. Integrate with leafletjs in frontend,e.g.
+   https://github.com/mapbox/mapbox-gl-leaflet
+   https://github.com/Leaflet/Leaflet.VectorGrid
+
+8. Evaluate space saved / quality gained from method overall
 
 ## Additional Optimisations
 
