@@ -1,13 +1,13 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PicsaDbService } from '@picsa/shared/services/core/db';
-import { DBCacheService } from '@picsa/shared/services/core/db/_cache.db';
-import { DBServerService } from '@picsa/shared/services/core/db/_server.db';
 import { AngularFireModule, FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { ENVIRONMENT } from '@picsa/environments';
-import { DBSyncService } from '@picsa/shared/services/core/db/sync.service';
+import { PicsaDbService } from '../services/core/db';
+import { DBCacheService } from '../services/core/db/_cache.db';
+import { DBServerService } from '../services/core/db/_server.db';
+import { DBSyncService } from '../services/core/db/sync.service';
 
 // initiate db and auth in shared lib to be available throughout app
 @NgModule({

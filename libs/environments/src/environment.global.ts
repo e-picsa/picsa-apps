@@ -3,11 +3,12 @@ import GROUPS from './groups';
 import REGIONS from './regions';
 import FIREBASE_CONFIG from './firebase/config';
 
-const DEFAULT_ENVIRONMENT: IEnvironment = {
+/** Used in main picsa extension app, allows country-change at runtime */
+const GLOBAL_ENVIRONMENT: IEnvironment = {
   firebase: FIREBASE_CONFIG,
-  group: GROUPS.MALAWI,
-  region: REGIONS.MALAWI,
+  group: GROUPS.GLOBAL,
+  region: REGIONS.GLOBAL,
   enableProduction: true,
 };
 
-export default DEFAULT_ENVIRONMENT;
+export default GLOBAL_ENVIRONMENT;
