@@ -1,3 +1,3 @@
-import Malawi from './malawi.topojson';
+import PicsaDefault from './default.geojson.json';
 
-export { Malawi };
+export { PicsaDefault };

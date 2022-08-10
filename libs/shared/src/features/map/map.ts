@@ -123,7 +123,7 @@ export class PicsaMapComponent {
   private _getCountryGeoJson(country: IFeaturedCountry) {
     const mapping: { [country in IFeaturedCountry]: GeoJsonObject } = {
       kenya: null as any,
-      malawi: GEOJSON.Malawi as GeoJsonObject,
+      malawi: GEOJSON.PicsaDefault as GeoJsonObject,
     };
     return mapping[country];
   }
