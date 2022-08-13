@@ -1,5 +1,3 @@
-import { ENVIRONMENT } from '@picsa/environments';
-
 // schemas create indexes on the database
 // as datasets typically quite small these aren't really required, but probably good practice
 export const DEFAULT_STORE_SCHEMA = '_key,_modified';
@@ -26,7 +24,7 @@ const DB_GROUP_SCHEMA = {
 // replace group variable with group code from environment and export collated endpoint schema
 export const DB_SCHEMA = {
   ...DB_COMMON_SCHEMA,
-  ...keyReplace(DB_GROUP_SCHEMA, '${GROUP}', ENVIRONMENT.group.code),
+  // ...keyReplace(DB_GROUP_SCHEMA, '${GROUP}', ENVIRONMENT.group.code),
 };
 
 export type IDBEndpoint = keyof typeof DB_SCHEMA | keyof typeof DB_GROUP_SCHEMA;
@@ -41,7 +39,7 @@ export interface IDBDoc {
 
 // data stored on _appMeta store
 export interface IAppMeta {
-  _key: 'VERSION' | 'USER_ID';
+  _key: 'VERSION' | 'USER_ID' | 'ENVIRONMENT';
   value: string;
 }
 
