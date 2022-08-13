@@ -8,6 +8,7 @@ const DEFAULT_ENVIRONMENT: IEnvironment = {
   group: GROUPS.MALAWI,
   region: REGIONS.MALAWI,
   enableProduction: true,
+  defaultConfiguration: 'malawi',
 };
 
 export default DEFAULT_ENVIRONMENT;

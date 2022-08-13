@@ -9,6 +9,7 @@ const GLOBAL_ENVIRONMENT: IEnvironment = {
   group: GROUPS.GLOBAL,
   region: REGIONS.GLOBAL,
   enableProduction: true,
+  defaultConfiguration: 'global',
 };
 
 export default GLOBAL_ENVIRONMENT;

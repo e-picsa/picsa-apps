@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "components": "libs/components",
+    "configuration": "libs/configuration",
     "environments": "libs/environments",
     "models": "libs/models",
     "picsa-apps-content-dashboard": "apps/picsa-apps/content-dashboard",

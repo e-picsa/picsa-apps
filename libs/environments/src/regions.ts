@@ -12,6 +12,13 @@ const langs: { [key: string]: IRegionLang } = {
 };
 
 const REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
+  GLOBAL: {
+    countryCode: 'gb',
+    languages: [langs.en, langs.ny],
+    currency: '$',
+    currencyBaseValue: 1,
+    subtitle: 'Extension Toolkit',
+  },
   MALAWI: {
     countryCode: 'mw',
     languages: [langs.en, langs.ny],
@@ -19,17 +26,22 @@ const REGIONS: { [variant in IAppVariants]: IRegionSettings } = {
     currencyBaseValue: 10000,
     subtitle: 'Extension Toolkit',
   },
+  ZAMBIA: {
+    countryCode: 'zm',
+    languages: [langs.en],
+    currency: 'ZK',
+    currencyBaseValue: 15,
+    subtitle: 'Extension Toolkit',
+  },
   KENYA: {
     countryCode: 'ke',
     languages: [langs.en, langs.sw],
     currency: 'KSH',
-    currencyBaseValue: 1000,
+    currencyBaseValue: 100,
     subtitle: 'for Financial Service Providers',
   },
   // add support for self-referencing default and dev
-  get DEFAULT() {
-    return this.MALAWI;
-  },
+
   get DEV() {
     return this.MALAWI;
   },
