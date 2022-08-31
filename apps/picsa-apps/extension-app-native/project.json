@@ -13,6 +13,14 @@
         "cwd": "apps/picsa-apps/extension-app-native"
       }
     },
+    "open": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npx cap open android",
+        "cwd": "apps/picsa-apps/extension-app-native"
+      }
+    },
     "cap": {
       "executor": "nx:run-commands",
       "outputs": [],
