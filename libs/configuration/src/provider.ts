@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
+import { BehaviorSubject } from 'rxjs';
 import { CONFIGURATIONS } from './configurations';
 import type { IConfiguration } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
   public activeConfiguration: IConfiguration.Settings;
+
+  /** Change observer */
+  public activeConfiguration$ = new BehaviorSubject<IConfiguration.Settings>(
+    null as any
+  );
+
   public configurationOptions: IConfiguration.Settings[];
 
   private userConfigOverrides = { id: ENVIRONMENT.defaultConfiguration };
@@ -59,6 +66,7 @@ export class ConfigurationService {
     );
     this.configurationOptions = options;
     this.activeConfiguration = selected as any;
+    this.activeConfiguration$.next(this.activeConfiguration);
     console.log('active config', this.activeConfiguration);
   }
 }
