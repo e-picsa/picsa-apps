@@ -16,6 +16,6 @@ const configuration: IConfiguration.Settings = {
       selected: undefined,
     },
   },
-  theme: '',
+  theme: 'picsa-default',
 };
 export default configuration;

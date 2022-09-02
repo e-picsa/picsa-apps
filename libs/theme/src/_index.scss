@@ -4,9 +4,9 @@
 
 // shared variables
 @import 'variables';
-@import 'picsa-mat-theme';
 @import 'fonts';
 @import 'layout';
 @import 'typography';
 
-// create/import other scss files or define as needed...
+@import './themes/picsa-default.scss';
+@import './themes/picsa-zm.scss';

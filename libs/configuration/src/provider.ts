@@ -68,6 +68,12 @@ export class ConfigurationService {
     this.activeConfiguration = selected as any;
     this.activeConfiguration$.next(this.activeConfiguration);
     console.log('active config', this.activeConfiguration);
+    this.hackSetTheme();
+  }
+
+  /** Update theme on config change (better in own service) */
+  private hackSetTheme() {
+    document.body.dataset.theme = this.activeConfiguration.theme;
   }
 }
 

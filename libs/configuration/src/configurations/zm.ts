@@ -13,6 +13,6 @@ const configuration: IConfiguration.Settings = {
       selected: undefined,
     },
   },
-  theme: '',
+  theme: 'picsa-zm',
 };
 export default configuration;
