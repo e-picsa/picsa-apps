@@ -5,7 +5,6 @@ import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { IRegionLang, LanguageCode } from '@picsa/models';
-import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import { toJS } from 'mobx';
 
 @Injectable({
@@ -22,18 +21,15 @@ export class UserStore {
     this.user = { ...this.user, ...patch };
     this.syncUser(this.user);
   }
-  @computed get language() {
-    return this._getLanguage(this.user?.lang);
-  }
 
   constructor(
     private db: PicsaDbService,
-    private fileService: PicsaFileService,
-    private translate: PicsaTranslateService
+    private fileService: PicsaFileService
   ) {
     this.loadUser();
   }
 
+  // TODO - deprecate(???)
   async loadUser() {
     // TODO - generate user id and save to /user/userID - use to allow user syncing
     let user: IUser = await this.db.getDoc('_appMeta', 'CURRENT_USER');
@@ -48,7 +44,6 @@ export class UserStore {
     user._key = user.id;
     console.log('user', user);
     this.setUser(user);
-    this.setLanguage(user.lang);
   }
 
   async createNewUser() {
@@ -94,23 +89,6 @@ export class UserStore {
       return user;
     }
     return null;
-  }
-
-  setLanguage(code: LanguageCode) {
-    this.translate.setLang(code);
-  }
-
-  private _getLanguage(code?: LanguageCode): IRegionLang {
-    const lang = ENVIRONMENT.region.languages[0];
-    if (code) {
-      const foundLanguage = ENVIRONMENT.region.languages.find(
-        (l) => l.code === code
-      );
-      if (foundLanguage) {
-        return foundLanguage;
-      }
-    }
-    return lang;
   }
 
   joinGroup() {

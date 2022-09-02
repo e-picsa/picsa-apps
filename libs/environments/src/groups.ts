@@ -4,10 +4,11 @@ import type { IGroupSettings, IAppVariants } from '@picsa/models';
 // by default
 // note, more groups are created on the live server, these just function for offline purposes
 const groups: { [variant in IAppVariants]: IGroupSettings } = {
-  MALAWI: { code: 'MW', subgroups: ['2019'] },
+  GLOBAL: { code: 'GLOBAL', subgroups: ['MW', 'ZM', 'KE'] },
+  MALAWI: { code: 'MW', subgroups: [] },
+  ZAMBIA: { code: 'ZM', subgroups: [] },
   KENYA: { code: 'KE', subgroups: [] },
-  DEFAULT: { code: 'DEFAULT', subgroups: [] },
-  DEV: { code: '_DEV', subgroups: [] },
+  DEV: { code: '_DEV', subgroups: ['MW', 'ZM', 'KE'] },
 };
 
 export default groups;

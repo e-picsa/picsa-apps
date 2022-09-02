@@ -2,7 +2,6 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { ENVIRONMENT, APP_VERSION } from '@picsa/environments';
 import { UserStore } from '../../store/user.store';
-import { LanguageCode } from '@picsa/models';
 import { PicsaFileService } from '@picsa/shared/services/native';
 import { Platform } from '@ionic/angular';
 
@@ -72,10 +71,6 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.columns = this._calculateColumns(window.innerWidth);
-  }
-  setLanguage(code: LanguageCode) {
-    this.store.updateUser({ lang: code });
-    this.store.setLanguage(code);
   }
   async shareApp() {
     if (this.platform.is('cordova')) {

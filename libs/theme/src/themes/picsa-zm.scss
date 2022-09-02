@@ -1,0 +1,95 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// http://mcg.mbitson.com/#!?mcgpalette0=%23ef7d00&themename=mcgtheme
+$primary: (
+  50: #fdefe0,
+  100: #fad8b3,
+  200: #f7be80,
+  300: #f4a44d,
+  400: #f19126,
+  500: #ef7d00,
+  600: #ed7500,
+  700: #eb6a00,
+  800: #e86000,
+  900: #e44d00,
+  A100: #ffffff,
+  A200: #ffe3d8,
+  A400: #ffbda5,
+  A700: #ffab8b,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #000000,
+    600: #000000,
+    700: #000000,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+$accent: (
+  50: #e5ede4,
+  100: #bfd1bb,
+  200: #95b38e,
+  300: #6a9461,
+  400: #4a7d3f,
+  500: #2a661d,
+  600: #255e1a,
+  700: #1f5315,
+  800: #194911,
+  900: #0f380a,
+  A100: #7dff71,
+  A200: #4eff3e,
+  A400: #1fff0b,
+  A700: #14f100,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$zm-primary: mat.define-palette($primary);
+$zm-accent: mat.define-palette($accent, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$zm-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme-zm: mat.define-light-theme($zm-primary, $zm-accent, $zm-warn);
+
+// .theme-zm {
+//   @include mat.all-component-themes($picsa-zm);
+// }
+body[data-theme='picsa-zm'] {
+  @include mat.all-component-themes($theme-zm);
+
+  --color-primary: #{map-get($zm-primary, 500)};
+  --color-primary-50: #{map-get($zm-primary, 50)};
+  --color-secondary: #{map-get($zm-accent, 50)};
+  --color-black: #1a2138;
+  --color-light: #d8d8d8;
+  --color-white: #ffffff;
+}

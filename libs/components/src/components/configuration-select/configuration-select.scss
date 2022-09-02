@@ -1,0 +1,15 @@
+:host {
+  height: 36px;
+}
+img.language-summary-flag {
+  height: 30px;
+  clip-path: circle(26px at center);
+}
+
+.language-label {
+  color: white;
+  font-size: 18px;
+  margin-left: 0.75rem;
+  font-weight: normal;
+  text-align: center;
+}

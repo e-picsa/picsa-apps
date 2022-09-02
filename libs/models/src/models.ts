@@ -1,4 +1,4 @@
-export type IAppVariants = 'MALAWI' | 'KENYA' | 'DEFAULT' | 'DEV';
+export type IAppVariants = 'MALAWI' | 'ZAMBIA' | 'KENYA' | 'GLOBAL' | 'DEV';
 
 // group settings
 export interface IGroupSettings {
@@ -8,7 +8,7 @@ export interface IGroupSettings {
 }
 
 // region settings
-type CountryCode = 'mw' | 'ke' | 'gb';
+type CountryCode = 'mw' | 'ke' | 'zm' | 'gb';
 export type LanguageCode = 'en' | 'ny' | 'sw';
 export interface IRegionLang {
   label: string;
@@ -45,4 +45,5 @@ export interface IEnvironment {
   firebase: IFirebaseSettings;
   group: IGroupSettings;
   region: IRegionSettings;
+  defaultConfiguration: string;
 }

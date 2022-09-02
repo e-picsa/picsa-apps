@@ -1,19 +1,12 @@
-import { IEnvironment } from '@picsa/models';
-import GROUPS from './groups';
-import REGIONS from './regions';
-import FIREBASE_CONFIG from './firebase/config';
+import type { IEnvironment } from '@picsa/models';
+import GLOBAL_ENVIRONMENT from './environment.global';
 
-const DEFAULT_ENVIRONMENT: IEnvironment = {
-  firebase: FIREBASE_CONFIG,
-  group: GROUPS.DEV,
-  region: REGIONS.DEV,
+/**
+ * Environments specify different build-time settings
+ **/
+const ENVIRONMENT: IEnvironment = {
+  ...GLOBAL_ENVIRONMENT,
   enableProduction: false,
 };
 
-export default DEFAULT_ENVIRONMENT;
-
-// There are 3 different environments to consider: localhost, staging and production
-// There are 2 different project databases: staging (for localhost/staging) and production (for production)
-
-// sharedEnvironment passes process.env variables from the build pipeline, used to provide
-// the production database for production deployments and staging database for all others
+export default ENVIRONMENT;

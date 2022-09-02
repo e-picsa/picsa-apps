@@ -28,7 +28,7 @@ export class PicsaDbService implements AbstractDBService {
   getCollection<IDBDoc>(
     endpoint: IDBEndpoint,
     src: IDBSource = 'cache',
-    newerThan: string = ''
+    newerThan = ''
   ) {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'

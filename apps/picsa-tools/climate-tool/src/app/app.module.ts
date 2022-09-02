@@ -11,7 +11,7 @@ import { PicsaDbModule } from '@picsa/shared/modules/db.module';
 import { MatSliderModule } from '@angular/material/slider';
 // required for material slider
 import 'hammerjs';
-import { PicsaCommonComponentsModule } from '@picsa/components/src';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [

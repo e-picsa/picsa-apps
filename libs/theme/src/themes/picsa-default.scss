@@ -1,0 +1,116 @@
+@use '@angular/material' as mat;
+
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$default-primary: (
+  50: #f1e5e9,
+  100: #dcbec7,
+  200: #c593a2,
+  300: #ad677c,
+  400: #9c4760,
+  500: #8a2644,
+  600: #82223e,
+  700: #771c35,
+  800: #6d172d,
+  900: #5a0d1f,
+  A100: #ff90a5,
+  A200: #ff5d7b,
+  A400: #ff2a52,
+  A700: #ff103d,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+$default-accent: (
+  50: #eceeef,
+  100: #cfd4d7,
+  200: #afb8bd,
+  300: #8e9ca2,
+  400: #76868e,
+  500: #5e717a,
+  600: #566972,
+  700: #4c5e67,
+  800: #42545d,
+  900: #31424a,
+  A100: #9bdeff,
+  A200: #68cdff,
+  A400: #35bcff,
+  A700: #1bb3ff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$picsa-primary: mat.define-palette($picsa-primary);
+$picsa-accent: mat.define-palette($picsa-accent, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$picsa-app-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme-default: mat.define-light-theme(
+  $picsa-primary,
+  $picsa-accent,
+  $picsa-app-warn
+);
+
+@include mat.all-component-themes($theme-default);
+
+:root {
+  --color-primary: #{map-get($picsa-primary, 500)};
+  --color-primary-50: #{map-get($picsa-primary, 50)};
+  --color-secondary: #{map-get($picsa-accent, 50)};
+  --color-black: #1a2138;
+  --color-light: #d8d8d8;
+  --color-white: #ffffff;
+}
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+
+// Can import just for specific components, or theme for all components (larger stylesheet)
+
+// @include mat.all-component-themes($picsa-app-theme);
+
+// @include mat.core-color($picsa-app-theme);
+// @include mat.button-color($picsa-app-theme);
+
+// @include mat.core-color($picsa-app-theme);
+// @include mat.button-color($picsa-app-theme);
+// .theme-default {
+// }
