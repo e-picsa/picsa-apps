@@ -3,10 +3,10 @@ import { ConfigurationService, IConfiguration } from '@picsa/configuration/src';
 
 @Component({
   selector: 'picsa-language-select-dialog',
-  templateUrl: './language-select-dialog.html',
-  styleUrls: ['./language-select-dialog.scss'],
+  templateUrl: './configuration-select-dialog.html',
+  styleUrls: ['./configuration-select-dialog.scss'],
 })
-export class LanguageSelectDialog {
+export class ConfigurationSelectDialog {
   public options: IConfiguration.Localisation[];
   public selected: IConfiguration.Localisation;
 

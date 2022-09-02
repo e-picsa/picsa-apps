@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { LanguageSelectDialog } from './language-select-dialog';
+import { ConfigurationSelectDialog } from './configuration-select-dialog';
 import { ConfigurationService } from '@picsa/configuration/src';
 
 @Component({
-  selector: 'language-select',
-  templateUrl: 'language-select.html',
-  styleUrls: ['./language-select.scss'],
+  selector: 'picsa-configuration-select',
+  templateUrl: 'configuration-select.html',
+  styleUrls: ['./configuration-select.scss'],
 })
-export class LanguageSelectComponent {
+export class ConfigurationSelectComponent {
   constructor(
     private dialog: MatDialog,
     public configurationService: ConfigurationService
@@ -23,6 +23,6 @@ export class LanguageSelectComponent {
   }
 
   async openLanguageSelect() {
-    this.dialog.open(LanguageSelectDialog, {});
+    this.dialog.open(ConfigurationSelectDialog, {});
   }
 }

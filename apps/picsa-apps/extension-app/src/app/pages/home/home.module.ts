@@ -8,6 +8,7 @@ import { MobxAngularModule } from 'mobx-angular';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { ComponentsModule } from '../../components/components.module';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     ComponentsModule,
     ExtensionToolkitMaterialModule,
     PicsaTranslateModule,
+    PicsaCommonComponentsModule,
   ],
   declarations: [HomePage],
 })
