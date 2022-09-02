@@ -80,6 +80,18 @@
       },
       "defaultConfiguration": "production"
     },
+    "deploy": {
+      "executor": "./tools/executors/execa:commandSync",
+      "dependsOn": [
+        {
+          "projects": "self",
+          "target": "build"
+        }
+      ],
+      "options": {
+        "commands": ["firebase deploy --only hosting:extension-toolkit"]
+      }
+    },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {

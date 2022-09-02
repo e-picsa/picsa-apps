@@ -1,6 +1,6 @@
 // import "./node_modules/leaflet/dist/leaflet.css" to add leaflet styles
 // this has to be done in angular.json
-@import '../../../../theme/src/variables';
+
 .countryLabel {
   fill: transparent;
   background: rgba(255, 255, 255, 0);
@@ -27,7 +27,7 @@ button {
 }
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background-color: var(--ion-color-primary);
+  background-color: var(--color-secondary);
 }
 .leaflet-popup-close-button {
   pointer-events: none;
@@ -39,12 +39,12 @@ button {
   // box-sizing: border-box;
 }
 .leaflet-marker-icon {
-  background: map-get($picsa-primary, 500);
+  background: var(--color-secondary);
   border-radius: 4px;
 }
 .number-tooltip {
   background: white;
-  color: map-get($picsa-primary, 500);
+  color: var(--color-secondary);
   font-weight: bold;
   border: none;
   border-radius: 50%;

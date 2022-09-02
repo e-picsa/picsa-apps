@@ -36,20 +36,20 @@ $primary: (
   ),
 );
 $accent: (
-  50: #e5ede4,
-  100: #bfd1bb,
-  200: #95b38e,
-  300: #6a9461,
-  400: #4a7d3f,
-  500: #2a661d,
-  600: #255e1a,
-  700: #1f5315,
-  800: #194911,
-  900: #0f380a,
-  A100: #7dff71,
-  A200: #4eff3e,
-  A400: #1fff0b,
-  A700: #14f100,
+  50: #f8e8e6,
+  100: #edc6c2,
+  200: #e1a099,
+  300: #d57970,
+  400: #cc5d51,
+  500: #c34032,
+  600: #bd3a2d,
+  700: #b53226,
+  800: #ae2a1f,
+  900: #a11c13,
+  A100: #ffd5d3,
+  A200: #ffa5a0,
+  A400: #ff746d,
+  A700: #ff5c53,
   contrast: (
     50: #000000,
     100: #000000,
@@ -71,14 +71,18 @@ $accent: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$zm-primary: mat.define-palette($primary);
-$zm-accent: mat.define-palette($accent, A200, A100, A400);
+$palette-primary: mat.define-palette($primary);
+$palette-accent: mat.define-palette($accent, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$zm-warn: mat.define-palette(mat.$red-palette);
+$palette-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$theme-zm: mat.define-light-theme($zm-primary, $zm-accent, $zm-warn);
+$theme-zm: mat.define-light-theme(
+  $palette-primary,
+  $palette-accent,
+  $palette-warn
+);
 
 // .theme-zm {
 //   @include mat.all-component-themes($picsa-zm);
@@ -86,9 +90,9 @@ $theme-zm: mat.define-light-theme($zm-primary, $zm-accent, $zm-warn);
 body[data-theme='picsa-zm'] {
   @include mat.all-component-themes($theme-zm);
 
-  --color-primary: #{map-get($zm-primary, 500)};
-  --color-primary-50: #{map-get($zm-primary, 50)};
-  --color-secondary: #{map-get($zm-accent, 50)};
+  --color-primary: #{map-get($palette-primary, 500)};
+  --color-primary-50: #{map-get($palette-primary, 50)};
+  --color-secondary: #{map-get($palette-accent, 500)};
   --color-black: #1a2138;
   --color-light: #d8d8d8;
   --color-white: #ffffff;
