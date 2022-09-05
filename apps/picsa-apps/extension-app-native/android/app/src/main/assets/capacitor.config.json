@@ -2,5 +2,9 @@
 	"appId": "io.picsa.extension_toolkit",
 	"appName": "PICSA Extension Toolkit",
 	"webDir": "../../../dist/apps/picsa-apps/extension-app",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": false,
+	"includePlugins": [
+		"@capacitor/browser",
+		"@capacitor/filesystem"
+	]
 }
