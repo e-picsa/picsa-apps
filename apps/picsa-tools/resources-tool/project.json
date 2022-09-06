@@ -15,7 +15,23 @@
         "commands": ["firebase deploy --only hosting:resources-tool"]
       }
     },
+    "preBuild": {
+      "executor": "nx:run-commands",
+      "inputs": ["apps/picsa-tools/resources-tool/src/assets/resources/**"],
+      "outputs": [
+        "apps/picsa-tools/resources-tool/src/assets/resources/contents.json"
+      ],
+      "options": {
+        "command": "yarn ts-node tools/workflows/populateResourceContents.ts"
+      }
+    },
     "build": {
+      "dependsOn": [
+        {
+          "projects": "self",
+          "target": "preBuild"
+        }
+      ],
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
