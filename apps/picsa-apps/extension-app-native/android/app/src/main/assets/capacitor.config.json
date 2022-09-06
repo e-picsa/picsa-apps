@@ -4,7 +4,17 @@
 	"webDir": "../../../dist/apps/picsa-apps/extension-app",
 	"bundledWebRuntime": false,
 	"includePlugins": [
+		"@awesome-cordova-plugins/file-opener",
 		"@capacitor/browser",
-		"@capacitor/filesystem"
-	]
+		"@capacitor/filesystem",
+		"@ionic-native/file",
+		"@ionic-native/file-transfer",
+		"@ionic-native/network",
+		"@ionic-native/social-sharing",
+		"cordova-plugin-codeplay-share-own-apk"
+	],
+	"server": {
+		"url": "http://192.168.0.54:4200",
+		"cleartext": true
+	}
 }

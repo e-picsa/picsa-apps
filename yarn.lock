@@ -3027,18 +3027,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/file-opener@npm:^5.36.0":
-  version: 5.36.0
-  resolution: "@ionic-native/file-opener@npm:5.36.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    "@ionic-native/core": ^5.1.0
-    rxjs: ^5.5.0 || ^6.5.0
-  checksum: 36c11641bda521ec4cd76babe41b3aaec1ab1fda275cb313ab269663bdbe04845fa6ff3edb151ea8324495598201aa25bd374825e438a50714857b42d5e10625
-  languageName: node
-  linkType: hard
-
 "@ionic-native/file-transfer@npm:^5.36.0":
   version: 5.36.0
   resolution: "@ionic-native/file-transfer@npm:5.36.0"
@@ -7297,6 +7285,13 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   checksum: 06cb4fb6fc99a95ccfd3169115ee57f64953e5b4075900fc8faab98b7e7d3fcd6915b125fdb98c919cfd55e581a8444f5c6b9dbb342cbd60b154d8fb3f79f2b9
+  languageName: node
+  linkType: hard
+
+"cordova-plugin-codeplay-share-own-apk@npm:0.0.7":
+  version: 0.0.7
+  resolution: "cordova-plugin-codeplay-share-own-apk@npm:0.0.7"
+  checksum: 832b380d57d55bc8691a4fc77970772e3d09c5b23153a94d4635bc8901e04b14aca4271e0863b2773312af5ce2b80af1bf505efc119b7bb95a81e583f1e47244
   languageName: node
   linkType: hard
 
@@ -14004,7 +13999,6 @@ __metadata:
     "@capacitor/filesystem": ^4.1.0
     "@ionic-native/core": ^5.36.0
     "@ionic-native/file": ^5.36.0
-    "@ionic-native/file-opener": ^5.36.0
     "@ionic-native/file-transfer": ^5.36.0
     "@ionic-native/network": ^5.36.0
     "@ionic-native/social-sharing": ^5.36.0
@@ -14032,6 +14026,7 @@ __metadata:
     "@typescript-eslint/parser": 5.24.0
     autoprefixer: ^10.4.0
     c3: ^0.7.20
+    cordova-plugin-codeplay-share-own-apk: 0.0.7
     cypress: ^9.1.0
     deepmerge: ^4.2.2
     dexie: ^3.2.2

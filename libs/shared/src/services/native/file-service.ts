@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import {
   FileTransfer,
   FileTransferObject,
@@ -77,7 +77,7 @@ export class PicsaFileService {
     console.log('ensuring directory', base, folder);
     try {
       const contents = await this.listDirectory(base, folder);
-      console.log(`[${base}${folder}] contents:`, contents);
+      console.log(`[File Folder Contents] ${base}${folder}:`, contents);
       return contents;
     } catch (error) {
       console.log(`[${base}${folder}] dir does not exists, creating`);
@@ -129,7 +129,7 @@ export class PicsaFileService {
    * @param dir - folder path, can contain subfolders
    */
   async listDirectory(base: IDirectoryBase, dir: string) {
-    console.log(`listing [${dir}]`);
+    console.log(`[File List] ${dir}`);
     // eslint-disable-next-line no-useless-catch
     try {
       const files = await this.file.listDir(this.dir[base], dir);
@@ -203,21 +203,36 @@ export class PicsaFileService {
   /**
    * Experimental method to copy the source app apk for sharing
    * Uses https://www.npmjs.com/package/cordova-plugin-codeplay-share-own-apk
+   *
    */
   async shareAppApk() {
-    const plugins = cordova.plugins as any;
-    plugins.codeplay_shareapk.isSupport(
-      function (success) {
-        console.log('plugin supported', success);
-        plugins.codeplay_shareapk.openShare(
-          'Share the PICSA App',
-          `picsa-app-${APP_VERSION.number}`
-        );
-      },
-      function (fail) {
-        console.log('plugin not supported', fail);
-      }
-    );
+    const plugins = cordova.plugins;
+    if (!plugins.codeplay_shareapk) {
+      console.error('cordova plugin codeplay_shareapk not installed');
+      return;
+    }
+    return new Promise((resolve, reject) => {
+      plugins.codeplay_shareapk.isSupport(
+        (success: boolean) => {
+          console.log('plugin supported', success);
+          plugins.codeplay_shareapk.openShare(
+            'Share the PICSA App',
+            `picsa-app-${APP_VERSION.number}`,
+            (shareSuccess) => {
+              console.log('share success', shareSuccess);
+            },
+            (shareError) => {
+              console.error('share error', shareError);
+            }
+          );
+          resolve(true);
+        },
+        (error: any) => {
+          console.error('codeplay_shareapk plugin not supported', error);
+          reject('plugin not supported');
+        }
+      );
+    });
   }
 
   /**********************************************************************************
