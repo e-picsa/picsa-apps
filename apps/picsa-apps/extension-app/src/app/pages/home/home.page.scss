@@ -53,8 +53,8 @@ footer {
 }
 .version-info {
   color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
   align-self: flex-end;
+  font-size: small;
 }
 
 .nav-icon {
@@ -63,4 +63,7 @@ footer {
 }
 .nav-text {
   height: 1em;
+}
+.share-button {
+  padding: 0;
 }
