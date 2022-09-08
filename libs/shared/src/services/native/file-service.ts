@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import {
   FileTransfer,
   FileTransferObject,
-} from '@ionic-native/file-transfer/ngx';
+} from '@awesome-cordova-plugins/file-transfer/ngx';
 import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
 import { Observable, BehaviorSubject } from 'rxjs';

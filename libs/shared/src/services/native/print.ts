@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { Platform } from '@ionic/angular';
 import { svgAsPngUri } from 'save-svg-as-png';
 import download from 'downloadjs';

@@ -553,6 +553,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@awesome-cordova-plugins/file-transfer@npm:^5.45.0":
+  version: 5.45.0
+  resolution: "@awesome-cordova-plugins/file-transfer@npm:5.45.0"
+  dependencies:
+    "@types/cordova": latest
+  peerDependencies:
+    "@awesome-cordova-plugins/core": ^5.1.0
+    rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
+  checksum: ce34dc8da4d0bbd614c7c27cbc0ee940ee2b5e8873f2311e25be56f2c00064105ea9f959c73d430f35aa649aff14b9a2664876433d532906df170549e90f203d
+  languageName: node
+  linkType: hard
+
+"@awesome-cordova-plugins/file@npm:^5.45.0":
+  version: 5.45.0
+  resolution: "@awesome-cordova-plugins/file@npm:5.45.0"
+  dependencies:
+    "@types/cordova": latest
+  peerDependencies:
+    "@awesome-cordova-plugins/core": ^5.1.0
+    rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
+  checksum: 7331f03162c5b653b6e7c25a70325cb283bfae9351b6b9b63d248a7e252414a707f3bf3694b6d5971485b7c54e7bc47bc53ff95d1f6d02f8a17caf5ef4aa967c
+  languageName: node
+  linkType: hard
+
+"@awesome-cordova-plugins/network@npm:^5.45.0":
+  version: 5.45.0
+  resolution: "@awesome-cordova-plugins/network@npm:5.45.0"
+  dependencies:
+    "@types/cordova": latest
+  peerDependencies:
+    "@awesome-cordova-plugins/core": ^5.1.0
+    rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
+  checksum: b3356ee4be445c2652d2896e810db0798005836d019bd0bde5add9b26dff970de5441f8182fefe8e838a034ab509895540c11d8e851a04c7e9afe805cdda6c02
+  languageName: node
+  linkType: hard
+
+"@awesome-cordova-plugins/social-sharing@npm:^5.45.0":
+  version: 5.45.0
+  resolution: "@awesome-cordova-plugins/social-sharing@npm:5.45.0"
+  dependencies:
+    "@types/cordova": latest
+  peerDependencies:
+    "@awesome-cordova-plugins/core": ^5.1.0
+    rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
+  checksum: 5b133a3fe965c2b31ccb18a4992888deb9ad26d1063e866c0922ca5cf35ebc006ef43eac6fa97ddc379aa310f8b967b311b47575ca725391ba2899e70796e024
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.16.7, @babel/code-frame@npm:^7.8.3":
   version: 7.16.7
   resolution: "@babel/code-frame@npm:7.16.7"
@@ -3033,54 +3081,6 @@ __metadata:
   peerDependencies:
     rxjs: ^5.5.0 || ^6.5.0
   checksum: 3c376ecf98fa9cc8f00a977872afd2e7e7076bfc31779ed0f2246013696b1c2f2c84286b91103f26a5c73611b4f0e385a71fe86f6a977a59e40e6640a5fe8bc6
-  languageName: node
-  linkType: hard
-
-"@ionic-native/file-transfer@npm:^5.36.0":
-  version: 5.36.0
-  resolution: "@ionic-native/file-transfer@npm:5.36.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    "@ionic-native/core": ^5.1.0
-    rxjs: ^5.5.0 || ^6.5.0
-  checksum: a85bdcc68fc1d4ef657ab94d23fe159b4d1578e307c22a6f14f2b8545dd458d99bd079eeebc1ee6a3eafc7999b8a8091bacb820a5feedcd73bfabd76dc4c8bc0
-  languageName: node
-  linkType: hard
-
-"@ionic-native/file@npm:^5.36.0":
-  version: 5.36.0
-  resolution: "@ionic-native/file@npm:5.36.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    "@ionic-native/core": ^5.1.0
-    rxjs: ^5.5.0 || ^6.5.0
-  checksum: 0a8ad695c3ac5a9df0f1e35e821f544985bd1276107c2a5a95b67ee25ca122e89dceee4559b9e5cd084de74caba8761908850c268143ff1ec48079e2d8d75db6
-  languageName: node
-  linkType: hard
-
-"@ionic-native/network@npm:^5.36.0":
-  version: 5.36.0
-  resolution: "@ionic-native/network@npm:5.36.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    "@ionic-native/core": ^5.1.0
-    rxjs: ^5.5.0 || ^6.5.0
-  checksum: e0c4a2db60ba8483af86f31243b278c833d7c080bd16709419d3c74a94cff16fc8ecc29b962e69d5b53a62fec4216ecf05ff67cc2ec6ed933d0dec0bba9ad2e0
-  languageName: node
-  linkType: hard
-
-"@ionic-native/social-sharing@npm:^5.36.0":
-  version: 5.36.0
-  resolution: "@ionic-native/social-sharing@npm:5.36.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    "@ionic-native/core": ^5.1.0
-    rxjs: ^5.5.0 || ^6.5.0
-  checksum: 5eee710dbdd7ac73d0baa26ed9ea6895cfe6c82119c3a34fb0cc3ff898348e40a1e99c30763af28c1f28be341b6980339b22e867e6cffa0be8bae1bfddaab4f9
   languageName: node
   linkType: hard
 
@@ -7308,6 +7308,34 @@ __metadata:
   version: 3.0.5
   resolution: "cordova-plugin-file-opener2@npm:3.0.5"
   checksum: 87a76ad0160ea95f6c202919bf8df9645509bf382dc505953dfc0f9fbdf11d53bc541e59b2f5ff28b2198d75a58d678b4fb91f02c924d71acc8fae06fac02f94
+  languageName: node
+  linkType: hard
+
+"cordova-plugin-file-transfer@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "cordova-plugin-file-transfer@npm:1.7.1"
+  checksum: 2c2e907b7536048b13dc7ea96eb2e20acf9943ad2813c98cff219994c089deb8551714527be2ffa444f06fb65510aa918af9a7b733c03f94a07dddaa2e6d07dd
+  languageName: node
+  linkType: hard
+
+"cordova-plugin-file@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "cordova-plugin-file@npm:7.0.0"
+  checksum: bcf64705b80dea5a0ce598208f75bc080f2909e262e857477d34cbfefa7b60fe93df8a3015b1ea37f31142f3aa225b89591dcdaea54e3ddd6cc8a119ae0f3932
+  languageName: node
+  linkType: hard
+
+"cordova-plugin-network@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "cordova-plugin-network@npm:1.0.1"
+  checksum: 05dac758cbcf311b607d5300a5657c075542c18886523be1f6b30da643d2b5c809730937f6dc8ccd663e7a558b899c5f3aa2cdbf411c820c9b2f728591a58770
+  languageName: node
+  linkType: hard
+
+"cordova-plugin-x-socialsharing@npm:^6.0.4":
+  version: 6.0.4
+  resolution: "cordova-plugin-x-socialsharing@npm:6.0.4"
+  checksum: 98b20f39cf712678e042b39f920a8a1341672abfb7fd5dba97336593f071a6c87be52a55602d8a4e1b359a80789a2c3a5a841f21d41efcdbf40114696519dd6f
   languageName: node
   linkType: hard
 
@@ -14018,7 +14046,11 @@ __metadata:
     "@angular/service-worker": 14.0.2
     "@asymmetrik/ngx-leaflet": ^13.0.2
     "@awesome-cordova-plugins/core": ^5.45.0
+    "@awesome-cordova-plugins/file": ^5.45.0
     "@awesome-cordova-plugins/file-opener": ^5.45.0
+    "@awesome-cordova-plugins/file-transfer": ^5.45.0
+    "@awesome-cordova-plugins/network": ^5.45.0
+    "@awesome-cordova-plugins/social-sharing": ^5.45.0
     "@capacitor/android": ^4.1.0
     "@capacitor/app": ^4.0.1
     "@capacitor/browser": ^4.0.1
@@ -14026,10 +14058,6 @@ __metadata:
     "@capacitor/core": ^4.1.0
     "@capacitor/filesystem": ^4.1.0
     "@ionic-native/core": ^5.36.0
-    "@ionic-native/file": ^5.36.0
-    "@ionic-native/file-transfer": ^5.36.0
-    "@ionic-native/network": ^5.36.0
-    "@ionic-native/social-sharing": ^5.36.0
     "@ionic/angular": 6.1.8
     "@ngx-translate/core": ~14.0.0
     "@ngx-translate/http-loader": ~7.0.0
@@ -14055,7 +14083,11 @@ __metadata:
     autoprefixer: ^10.4.0
     c3: ^0.7.20
     cordova-plugin-codeplay-share-own-apk: 0.0.7
+    cordova-plugin-file: ^7.0.0
     cordova-plugin-file-opener2: ^3.0.5
+    cordova-plugin-file-transfer: ^1.7.1
+    cordova-plugin-network: ^1.0.1
+    cordova-plugin-x-socialsharing: ^6.0.4
     cypress: ^9.1.0
     deepmerge: ^4.2.2
     dexie: ^3.2.2

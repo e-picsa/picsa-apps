@@ -7,10 +7,10 @@ import {
 import { PrintProvider } from '../services/native/print';
 import { NetworkProvider } from '../services/native/network';
 import { PicsaFileService } from '../services/native/file-service';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { File } from '@ionic-native/file/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 @NgModule({
   imports: [],

@@ -8,16 +8,23 @@ const config: CapacitorConfig = {
   // manually include plugins here as top-level package.json not checked correctly
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [
+    // ionic native (migrated)
     '@awesome-cordova-plugins/file-opener',
     'cordova-plugin-file-opener2',
+    '@awesome-cordova-plugins/file',
+    'cordova-plugin-file',
+    '@awesome-cordova-plugins/file-transfer',
+    'cordova-plugin-file-transfer',
+    '@awesome-cordova-plugins/network',
+    'cordova-plugin-network',
+    '@awesome-cordova-plugins/social-sharing',
+    'cordova-plugin-x-socialsharing',
+    // cordova standalone
+    'cordova-plugin-codeplay-share-own-apk',
+    // capacitor
     '@capacitor/app',
     '@capacitor/browser',
     '@capacitor/filesystem',
-    '@ionic-native/file',
-    '@ionic-native/file-transfer',
-    '@ionic-native/network',
-    '@ionic-native/social-sharing',
-    'cordova-plugin-codeplay-share-own-apk',
   ],
   /** uncomment and replace with local ip to serve live-reload  */
   // server: {
