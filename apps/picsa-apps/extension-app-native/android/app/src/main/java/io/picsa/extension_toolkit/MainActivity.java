@@ -1,4 +1,4 @@
-package io.picsa.extension_toolkit;
+package io.picsa.extension;
 
 import com.getcapacitor.BridgeActivity;
 

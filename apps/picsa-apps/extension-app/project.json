@@ -78,7 +78,7 @@
           "namedChunks": true
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "production"
     },
     "deploy": {
       "executor": "./tools/executors/execa:commandSync",

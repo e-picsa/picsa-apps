@@ -14,10 +14,8 @@
       }
     },
     "resources": {
-      "inputs": [],
       "executor": "nx:run-commands",
-      "description": "",
-      "outputs": [],
+      "description": "Populate splash and icon from resources files. NOTE - may have to run manually from directory",
       "options": {
         "command": "npx cordova-res android --skip-config --copy"
       },
