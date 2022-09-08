@@ -2164,6 +2164,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/app@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@capacitor/app@npm:4.0.1"
+  peerDependencies:
+    "@capacitor/core": ^4.0.0
+  checksum: c4004030198852e3e70eca79eb1f473df880726ac79b2f186dbff62eb3185f015893d11b540a2912f234ae237dc291e55baf7b32290465757edc2aae7f8e3c8e
+  languageName: node
+  linkType: hard
+
 "@capacitor/browser@npm:^4.0.1":
   version: 4.0.1
   resolution: "@capacitor/browser@npm:4.0.1"
@@ -7295,6 +7304,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cordova-plugin-file-opener2@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "cordova-plugin-file-opener2@npm:3.0.5"
+  checksum: 87a76ad0160ea95f6c202919bf8df9645509bf382dc505953dfc0f9fbdf11d53bc541e59b2f5ff28b2198d75a58d678b4fb91f02c924d71acc8fae06fac02f94
+  languageName: node
+  linkType: hard
+
 "core-js-compat@npm:^3.21.0, core-js-compat@npm:^3.22.1":
   version: 3.22.8
   resolution: "core-js-compat@npm:3.22.8"
@@ -11754,6 +11770,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jetifier@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "jetifier@npm:2.0.0"
+  bin:
+    jetifier: bin/jetify
+    jetifier-standalone: bin/jetifier-standalone
+    jetify: bin/jetify
+  checksum: 57886c2bb7eddd1c697f0cd8f54162c037a50688d55d994a88918ca2018c3996fe6b5e9a56a57b067348260bb728e71d36e0d28d5dba87316fdb3b227d29af0e
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -13993,6 +14020,7 @@ __metadata:
     "@awesome-cordova-plugins/core": ^5.45.0
     "@awesome-cordova-plugins/file-opener": ^5.45.0
     "@capacitor/android": ^4.1.0
+    "@capacitor/app": ^4.0.1
     "@capacitor/browser": ^4.0.1
     "@capacitor/cli": ^4.1.0
     "@capacitor/core": ^4.1.0
@@ -14027,6 +14055,7 @@ __metadata:
     autoprefixer: ^10.4.0
     c3: ^0.7.20
     cordova-plugin-codeplay-share-own-apk: 0.0.7
+    cordova-plugin-file-opener2: ^3.0.5
     cypress: ^9.1.0
     deepmerge: ^4.2.2
     dexie: ^3.2.2
@@ -14044,6 +14073,7 @@ __metadata:
     html2canvas: ^1.4.1
     jest: 27.5.1
     jest-preset-angular: 12.1.0
+    jetifier: ^2.0.0
     leaflet: ^1.8.0
     mobx: ^6.6.1
     mobx-angular: ^4.6.0

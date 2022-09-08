@@ -13,6 +13,15 @@
         "cwd": "apps/picsa-apps/extension-app-native"
       }
     },
+    "jetify": {
+      "inputs": ["yarn.lock"],
+      "executor": "nx:run-commands",
+      "description": "(currently run as postinstall). TODO - clarify when required (https://stackoverflow.com/questions/40746144/error-with-duplicated-fileprovider-in-manifest-xml-with-cordova/41550634#41550634)",
+      "outputs": [],
+      "options": {
+        "command": "yarn jetify"
+      }
+    },
     "open": {
       "executor": "nx:run-commands",
       "outputs": [],
