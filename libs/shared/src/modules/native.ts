@@ -10,7 +10,6 @@ import { PicsaFileService } from '../services/native/file-service';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 @NgModule({
   imports: [],
@@ -32,8 +31,6 @@ export class PicsaNativeModule {
         PicsaFileService,
         SocialSharing,
         File,
-        FileOpener,
-        FileTransfer,
         FileOpener,
       ],
     };

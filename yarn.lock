@@ -553,18 +553,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/file-transfer@npm:^5.45.0":
-  version: 5.45.0
-  resolution: "@awesome-cordova-plugins/file-transfer@npm:5.45.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    "@awesome-cordova-plugins/core": ^5.1.0
-    rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
-  checksum: ce34dc8da4d0bbd614c7c27cbc0ee940ee2b5e8873f2311e25be56f2c00064105ea9f959c73d430f35aa649aff14b9a2664876433d532906df170549e90f203d
-  languageName: node
-  linkType: hard
-
 "@awesome-cordova-plugins/file@npm:^5.45.0":
   version: 5.45.0
   resolution: "@awesome-cordova-plugins/file@npm:5.45.0"
@@ -7311,13 +7299,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cordova-plugin-file-transfer@npm:^1.7.1":
-  version: 1.7.1
-  resolution: "cordova-plugin-file-transfer@npm:1.7.1"
-  checksum: 2c2e907b7536048b13dc7ea96eb2e20acf9943ad2813c98cff219994c089deb8551714527be2ffa444f06fb65510aa918af9a7b733c03f94a07dddaa2e6d07dd
-  languageName: node
-  linkType: hard
-
 "cordova-plugin-file@npm:^7.0.0":
   version: 7.0.0
   resolution: "cordova-plugin-file@npm:7.0.0"
@@ -14048,7 +14029,6 @@ __metadata:
     "@awesome-cordova-plugins/core": ^5.45.0
     "@awesome-cordova-plugins/file": ^5.45.0
     "@awesome-cordova-plugins/file-opener": ^5.45.0
-    "@awesome-cordova-plugins/file-transfer": ^5.45.0
     "@awesome-cordova-plugins/network": ^5.45.0
     "@awesome-cordova-plugins/social-sharing": ^5.45.0
     "@capacitor/android": ^4.1.0
@@ -14085,7 +14065,6 @@ __metadata:
     cordova-plugin-codeplay-share-own-apk: 0.0.7
     cordova-plugin-file: ^7.0.0
     cordova-plugin-file-opener2: ^3.0.5
-    cordova-plugin-file-transfer: ^1.7.1
     cordova-plugin-network: ^1.0.1
     cordova-plugin-x-socialsharing: ^6.0.4
     cypress: ^9.1.0

@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import {
-  FileTransfer,
-  FileTransferObject,
-} from '@awesome-cordova-plugins/file-transfer/ngx';
+
 import { Platform } from '@ionic/angular';
 import MIMETYPES from '../../data/mimetypes';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { APP_VERSION } from '@picsa/environments';
 
@@ -23,8 +20,7 @@ export class PicsaFileService {
   constructor(
     public platform: Platform,
     private file: File,
-    private fileOpener: FileOpener,
-    private transfer: FileTransfer
+    private fileOpener: FileOpener
   ) {
     this._init();
   }
@@ -96,15 +92,15 @@ export class PicsaFileService {
     folder: IStorageFolder = 'resources',
     filename: string
   ) {
-    const fileTransfer: FileTransferObject = this.transfer.create();
-    return new Observable<ProgressEvent>((observer) => {
-      fileTransfer.onProgress((p) => observer.next(p));
-      fileTransfer
-        .download(url, `${this.dir.storage}${folder}/${filename}`)
-        .then((file) => {
-          observer.complete();
-        });
-    });
+    // const fileTransfer: FileTransferObject = this.transfer.create();
+    // return new Observable<ProgressEvent>((observer) => {
+    //   fileTransfer.onProgress((p) => observer.next(p));
+    //   fileTransfer
+    //     .download(url, `${this.dir.storage}${folder}/${filename}`)
+    //     .then((file) => {
+    //       observer.complete();
+    //     });
+    // });
   }
   /**
    * Copy a file from the android app www/assets folder to corresponding
