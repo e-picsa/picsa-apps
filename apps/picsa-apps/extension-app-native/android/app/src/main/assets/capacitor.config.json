@@ -5,6 +5,8 @@
 	"bundledWebRuntime": false,
 	"includePlugins": [
 		"@awesome-cordova-plugins/file-opener",
+		"cordova-plugin-file-opener2",
+		"@capacitor/app",
 		"@capacitor/browser",
 		"@capacitor/filesystem",
 		"@ionic-native/file",
@@ -12,9 +14,5 @@
 		"@ionic-native/network",
 		"@ionic-native/social-sharing",
 		"cordova-plugin-codeplay-share-own-apk"
-	],
-	"server": {
-		"url": "http://192.168.0.1:4200",
-		"cleartext": true
-	}
+	]
 }

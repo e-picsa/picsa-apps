@@ -9,6 +9,8 @@ const config: CapacitorConfig = {
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [
     '@awesome-cordova-plugins/file-opener',
+    'cordova-plugin-file-opener2',
+    '@capacitor/app',
     '@capacitor/browser',
     '@capacitor/filesystem',
     '@ionic-native/file',
