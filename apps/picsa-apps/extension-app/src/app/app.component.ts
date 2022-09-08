@@ -4,8 +4,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
 import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
-import { Capacitor } from '@capacitor/core';
-import { App as CapacitorApp } from '@capacitor/app';
+import { NativeEventService } from '@picsa/shared/services/native';
 
 @Component({
   selector: 'picsa-root',
@@ -17,18 +16,11 @@ export class AppComponent {
 
   constructor(
     private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private nativeEventService: NativeEventService
   ) {
     this.registerIcons();
-    if (Capacitor.isNativePlatform()) {
-      CapacitorApp.addListener('backButton', ({ canGoBack }) => {
-        if (!canGoBack) {
-          CapacitorApp.exitApp();
-        } else {
-          window.history.back();
-        }
-      });
-    }
+    this.nativeEventService.init();
   }
 
   // Note, any icons registered in child modules will also need to be registered here
