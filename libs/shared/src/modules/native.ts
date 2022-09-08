@@ -9,7 +9,7 @@ import { NetworkProvider } from '../services/native/network';
 import { PicsaFileService } from '../services/native/file-service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { File } from '@ionic-native/file/ngx';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
@@ -34,6 +34,7 @@ export class PicsaNativeModule {
         File,
         FileOpener,
         FileTransfer,
+        FileOpener,
       ],
     };
   }

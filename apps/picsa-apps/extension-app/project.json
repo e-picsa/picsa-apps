@@ -100,6 +100,10 @@
         },
         "development": {
           "browserTarget": "picsa-apps-extension-app:build:development"
+        },
+        "external": {
+          "browserTarget": "picsa-apps-extension-app:build:development",
+          "host": "0.0.0.0"
         }
       },
       "defaultConfiguration": "development"

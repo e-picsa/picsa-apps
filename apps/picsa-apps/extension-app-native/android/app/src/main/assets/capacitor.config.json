@@ -14,7 +14,7 @@
 		"cordova-plugin-codeplay-share-own-apk"
 	],
 	"server": {
-		"url": "http://192.168.0.54:4200",
+		"url": "http://192.168.0.1:4200",
 		"cleartext": true
 	}
 }
