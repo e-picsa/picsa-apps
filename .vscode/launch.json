@@ -7,9 +7,17 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
+      "name": "Localhost Chrome",
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "android-webview",
+      "request": "attach",
+      "name": "Android Emulator Webview",
+      // replace name with attached emulator via `adb devices list`
+      "device": "emulator-5554",
+      "application": "io.picsa.extension_toolkit"
     }
   ]
 }
