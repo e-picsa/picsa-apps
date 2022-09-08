@@ -13,6 +13,16 @@
         "cwd": "apps/picsa-apps/extension-app-native"
       }
     },
+    "resources": {
+      "inputs": [],
+      "executor": "nx:run-commands",
+      "description": "",
+      "outputs": [],
+      "options": {
+        "command": "npx cordova-res android --skip-config --copy"
+      },
+      "cwd": "apps/picsa-apps/extension-app-native"
+    },
     "jetify": {
       "inputs": ["yarn.lock"],
       "executor": "nx:run-commands",
