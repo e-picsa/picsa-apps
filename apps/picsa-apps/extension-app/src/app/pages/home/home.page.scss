@@ -51,11 +51,6 @@ footer {
   left: 0;
   background: var(--color-primary);
 }
-.version-info {
-  color: rgba(255, 255, 255, 0.7);
-  align-self: flex-end;
-  font-size: small;
-}
 
 .nav-icon {
   width: 60px;
@@ -67,10 +62,16 @@ footer {
 .share-button {
   padding: 0;
 }
+.version-info,
 .privacy-policy {
+  color: rgba(255, 255, 255, 0.7);
   position: absolute;
   top: -24px;
+}
+.privacy-policy {
   right: 8px;
-  color: #ffffffd4;
   text-decoration: none;
+}
+.version-info {
+  left: 8px;
 }

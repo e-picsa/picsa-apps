@@ -60,11 +60,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./pages/privacy/privacy.module').then((mod) => mod.PrivacyModule),
   },
-  {
-    path: 'privacy',
-    loadChildren: () =>
-      import('./pages/privacy/privacy.module').then((m) => m.PrivacyModule),
-  },
+
   // { path: '**', redirectTo: '/home' }
   // NOTE - multiple 'catch-all' with sub apps causes issues
 ];
