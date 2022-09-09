@@ -13,6 +13,16 @@
         "cwd": "apps/picsa-apps/extension-app-native"
       }
     },
+    "serve": {
+      "executor": "nx:run-commands",
+      "description": "Serve extension app in external mode to connect. NOTE - need to update capacitor.config.ts before build",
+      "dependsOn": ["build"],
+      "options": {
+        "commands": [
+          "nx run picsa-apps-extension-app:serve --configuration=external"
+        ]
+      }
+    },
     "resources": {
       "executor": "nx:run-commands",
       "description": "Populate splash and icon from resources files. NOTE - may have to run manually from directory",
