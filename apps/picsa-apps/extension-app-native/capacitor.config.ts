@@ -24,7 +24,10 @@ const config: CapacitorConfig = {
     '@capacitor/browser',
     '@capacitor/filesystem',
   ],
-  /** uncomment and replace with local ip to serve live-reload  */
+  /**
+   * uncomment and replace with local ip to serve live-reload
+   * TODO - could create script to automatially toggle when serving native
+   **/
   // server: {
   //   url: 'http://192.168.0.54:4200',
   //   cleartext: true,
