@@ -1,0 +1,23 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Localhost Chrome",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "android-webview",
+      "request": "attach",
+      "name": "Android Emulator Webview",
+      // replace name with attached emulator via `adb devices list`
+      "device": "emulator-5554",
+      "application": "io.picsa.extension"
+    }
+  ]
+}

@@ -75,7 +75,6 @@ export class HomePage implements OnInit {
   async shareApp() {
     if (this.platform.is('cordova')) {
       this.isPreparingShare = true;
-      console.log('sharing the app', this.fileService);
       await this.fileService.shareAppApk();
       this.isPreparingShare = false;
     }
