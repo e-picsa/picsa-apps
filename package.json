@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -10,7 +10,8 @@
     "start:resources": "nx run picsa-tools-resources-tool:serve",
     "build": "nx run picsa-apps-extension-app-native:build",
     "test": "nx test",
-    "cache:clear": "nx reset"
+    "cache:clear": "nx reset",
+    "version": "ts-node ./tools/workflows/version.ts"
   },
   "private": true,
   "dependencies": {
