@@ -41,11 +41,14 @@ export class ResourcesStore {
    *  that should be popluated, and check server for any updates also
    */
   private async init() {
+    console.log('[Resources] init', this.downloadedResources);
     if (this.isNative) {
       await this.storageService.init();
       await this.checkHardcodedData();
       this.downloadedResources = this.checkDownloadedResources();
+      console.log('[Resources] downloaded', this.downloadedResources);
     }
+    console.log('[Resources] init complete');
   }
 
   public getResourceById<T extends IResource>(id: string) {
@@ -127,9 +130,11 @@ export class ResourcesStore {
   // because no keepModified
   private async checkHardcodedData() {
     const contents = await this.storageService.readAssetContents('resources');
+    console.log('[Resources] contents', contents);
     const unCachedFiles = Object.values(contents).filter(
       (entry) => !this.storageService.checkFileCached(entry)
     );
+    console.log('[Resources] caching', unCachedFiles);
     await this.storageService.downloadToCache(
       unCachedFiles.map(({ relativePath }) => ({
         relativePath,

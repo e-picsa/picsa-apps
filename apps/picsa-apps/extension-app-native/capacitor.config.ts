@@ -23,6 +23,7 @@ const config: CapacitorConfig = {
     '@capacitor/app',
     '@capacitor/browser',
     '@capacitor/filesystem',
+    'capacitor-blob-writer',
   ],
   /**
    * uncomment and replace with local ip to serve live-reload

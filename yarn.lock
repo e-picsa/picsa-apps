@@ -6761,6 +6761,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"capacitor-blob-writer@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "capacitor-blob-writer@npm:1.1.3"
+  peerDependencies:
+    "@capacitor/core": ">=3.0.0"
+    "@capacitor/filesystem": ">=1.0.0"
+  checksum: 6e9ba9935a5049083d27aef9ec9b2d3210d2cde28f2878dd20a6d3f5457d3a3fb70ff223c785e73911a910e154f3518648aaf48e30ca42be6ed2d16c5eb881d3
+  languageName: node
+  linkType: hard
+
 "caseless@npm:~0.12.0":
   version: 0.12.0
   resolution: "caseless@npm:0.12.0"
@@ -14062,6 +14072,7 @@ __metadata:
     "@typescript-eslint/parser": 5.24.0
     autoprefixer: ^10.4.0
     c3: ^0.7.20
+    capacitor-blob-writer: ^1.1.3
     cordova-plugin-codeplay-share-own-apk: 0.0.7
     cordova-plugin-file: ^7.0.0
     cordova-plugin-file-opener2: ^3.0.5
