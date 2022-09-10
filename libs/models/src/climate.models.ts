@@ -56,4 +56,4 @@ export interface IChartMeta {
   yMajor: number;
 }
 
-export type IPicsaCountry = 'Malawi';
+export type IPicsaCountry = 'Malawi' | 'Zambia';
