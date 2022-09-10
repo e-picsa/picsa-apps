@@ -6,6 +6,7 @@ import { catchError, debounceTime } from 'rxjs/operators';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { APP_VERSION } from '@picsa/environments';
+import write_blob from 'capacitor-blob-writer';
 
 interface IStorageFileEntry {
   md5Checksum?: string;
@@ -47,11 +48,13 @@ export class NativeStorageService {
     });
     this.basePath = uri;
     await this.ensureCacheDirectory();
+    this.cachedFilesList = await this.loadFileList(Directory.Data);
+    console.log('[Native Storage] cachedFiles', this.cachedFilesList);
     this.cachedFilesUpdated$.pipe(debounceTime(5000)).subscribe(async () => {
       await this.writeCacheListToFile();
     });
-    this.cachedFilesList = await this.loadFileList(Directory.Data);
     this.cachedFilesUpdated$.next(true);
+    console.log('[Native Storage] init complete');
   }
 
   public async openFile(storagePath: string, mimetype: string) {
@@ -133,21 +136,28 @@ export class NativeStorageService {
     const cacheUpdate = {};
     const promises = filesMeta.map((meta) => {
       return new Promise<string>((resolve, reject) => {
-        this.downloadFile(meta.downloadUrl).subscribe({
+        console.log('[Native Stroage] cache', meta);
+        this.downloadFile(meta.downloadUrl, 'blob').subscribe({
           error: (err) => {
+            console.log('[Native Storgage] download error', meta);
             console.error(err);
             reject(err);
           },
           next: async ({ progress, data }) => {
             if (progress === 100 && data) {
-              const res = await Filesystem.writeFile({
+              const res = await write_blob({
                 directory: Directory.Data,
                 path: `${this.cacheName}/${meta.relativePath}`,
-                data,
+                blob: data as Blob,
                 recursive: true,
+                fast_mode: true,
+                on_fallback(error) {
+                  console.error(error);
+                  reject(error);
+                },
               });
               cacheUpdate[meta.relativePath] = true;
-              resolve(res.uri);
+              resolve(res);
             }
           },
         });
@@ -205,12 +215,22 @@ export class NativeStorageService {
    *  Helper methods
    ************************************************************************************/
 
-  private downloadFile(url: string) {
+  private downloadFile(
+    url: string,
+    responseType: 'blob' | 'base64' = 'base64'
+  ) {
     const updates$ = new BehaviorSubject({ progress: 0, data: null as any });
+    // Force read from file and not just return 304 response
+    const headers = {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      Expires: '0',
+    };
     this.http
       .get(url, {
         responseType: 'blob',
         reportProgress: true,
+        headers,
         observe: 'events',
       })
       .subscribe(async (event) => {
@@ -218,8 +238,13 @@ export class NativeStorageService {
           const progress = Math.round((100 * event.loaded) / event.total!);
           updates$.next({ progress, data: null });
         } else if (event.type === HttpEventType.Response) {
-          const base64 = await this.convertBlobToBase64(event.body!);
-          updates$.next({ progress: 100, data: base64 });
+          if (responseType === 'blob') {
+            updates$.next({ progress: 100, data: event.body as Blob });
+          } else {
+            const base64 = await this.convertBlobToBase64(event.body as Blob);
+            updates$.next({ progress: 100, data: base64 });
+          }
+
           updates$.complete();
         }
       });
