@@ -47,4 +47,11 @@ export const STATIONS: IStationMeta[] = [
     longitude: 35.4706477,
     country: 'Malawi',
   },
+  {
+    ...db.meta({ _key: 'chipata', _created }),
+    name: 'Chipata',
+    latitude: -13.3843,
+    longitude: 32.3847,
+    country: 'Zambia',
+  },
 ];
