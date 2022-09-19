@@ -31,11 +31,11 @@ export class MockDB implements AbstractDBService {
     // TODO
   }
   meta(doc: any = {}): IDBDoc {
-    const { _key, _created } = doc;
+    const { _key, _created, _modified } = doc;
     return {
       _key: _key ? _key : this._generateKey(),
-      _created: _created ? _created : new Date().toISOString(),
-      _modified: new Date().toISOString(),
+      _created: _created ?? new Date().toISOString(),
+      _modified: _modified ?? new Date().toISOString(),
     };
   }
 

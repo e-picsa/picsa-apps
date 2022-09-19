@@ -35,11 +35,15 @@ export class PicsaDbService implements AbstractDBService {
       ? this.cache.getCollection<IDBDoc>(endpoint)
       : this.server.getCollection<IDBDoc>(endpoint, newerThan);
   }
-  getDoc<IDBDoc>(endpoint: IDBEndpoint, key: string, src: IDBSource = 'cache') {
+  getDoc<T = IDBDoc>(
+    endpoint: IDBEndpoint,
+    key: string,
+    src: IDBSource = 'cache'
+  ) {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
-      ? this.cache.getDoc<IDBDoc>(endpoint, key)
-      : this.server.getDoc<IDBDoc>(endpoint, key);
+      ? (this.cache.getDoc<T>(endpoint, key) as Promise<T>)
+      : (this.server.getDoc<T>(endpoint, key) as Promise<T>);
   }
   // when setting any doc update meta and return full doc after complete
   // optional sync makes a copy of the document online
