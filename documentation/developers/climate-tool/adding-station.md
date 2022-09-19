@@ -1,0 +1,12 @@
+# Adding Station
+
+0. Ensure the data is processed in a format to match the app data.
+   See examples in `apps\picsa-tools\climate-tool\src\assets\summaries`
+
+1. Create an entry for station in the file  
+   `apps\picsa-tools\climate-tool\src\app\data\stations.ts`
+
+Use https://www.latlong.net/ to pick gps coordinates
+
+2. Populate a csv file matching the station id in  
+   `apps\picsa-tools\climate-tool\src\assets\summaries`
