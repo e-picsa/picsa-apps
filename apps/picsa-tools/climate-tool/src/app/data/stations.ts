@@ -72,17 +72,25 @@ export const STATIONS: IStationMeta[] = [
     country: 'Malawi',
   },
   {
-    ...db.meta({ _key: 'salima', _created }),
+    ...db.meta({
+      _key: 'salima',
+      _created,
+      _modified: new Date('2022-09-19').toISOString(),
+    }),
     name: 'Salima',
-    latitude: -13.781570,
-    longitude: 34.456800,
+    latitude: -13.78157,
+    longitude: 34.4568,
     country: 'Malawi',
   },
   {
-    ...db.meta({ _key: 'kasungu', _created }),
+    ...db.meta({
+      _key: 'kasungu',
+      _created,
+      _modified: new Date('2022-09-19').toISOString(),
+    }),
     name: 'Kasungu',
-    latitude: -13.036810,
-    longitude: 33.481230,
+    latitude: -13.03681,
+    longitude: 33.48123,
     country: 'Malawi',
   },
   {
