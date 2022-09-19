@@ -47,7 +47,13 @@ export const STATIONS: IStationMeta[] = [
     longitude: 35.4706477,
     country: 'Malawi',
   },
-
+  {
+    ...db.meta({ _key: 'salima', _created }),
+    name: 'Salima',
+    latitude: -13.781570,
+    longitude: 34.456800,
+    country: 'Malawi',
+  },
   {
     ...db.meta({ _key: 'nkhotakota', _created }),
     name: 'Nkhotakota',
