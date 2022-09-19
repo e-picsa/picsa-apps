@@ -23,7 +23,9 @@ export namespace IConfiguration {
     meta: { label: string; image: string };
     android: any;
     budgetTool: any;
-    climateTool: any;
+    climateTool: {
+      stationFilter?: (station: any) => boolean;
+    };
     localisation: IConfiguration.Localisation;
     theme: any;
   }

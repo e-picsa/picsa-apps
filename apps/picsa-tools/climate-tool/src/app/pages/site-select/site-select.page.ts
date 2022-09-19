@@ -1,5 +1,5 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
-import { STATIONS } from '@picsa/climate/src/app/data';
+import { HARDCODED_STATIONS } from '@picsa/climate/src/app/data';
 import { IStationMeta } from '@picsa/models';
 import {
   PicsaMapComponent,
@@ -8,6 +8,7 @@ import {
   IMapMarker,
 } from '@picsa/shared/features/map/map';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ConfigurationService } from '@picsa/configuration';
 
 @Component({
   selector: 'climate-site-select',
@@ -27,7 +28,8 @@ export class SiteSelectPage {
   constructor(
     private ngZone: NgZone,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private configurationService: ConfigurationService
   ) {}
 
   // called from html when onMapReady is triggered
@@ -52,7 +54,13 @@ export class SiteSelectPage {
 
   populateSites() {
     const iconUrl = STATION_ICON_WHITE;
-    const markers: IMapMarker[] = STATIONS.map((s) => {
+    let stations = HARDCODED_STATIONS;
+    const filterFn =
+      this.configurationService.activeConfiguration?.climateTool?.stationFilter;
+    if (filterFn) {
+      stations = stations.filter((station) => filterFn(station));
+    }
+    let markers: IMapMarker[] = stations.map((s) => {
       return {
         iconUrl,
         latlng: [s.latitude, s.longitude],

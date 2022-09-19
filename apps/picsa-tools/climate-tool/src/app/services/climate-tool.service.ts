@@ -43,7 +43,7 @@ export class ClimateToolService {
     for (const station of dbData) {
       dbDataHashmap[station._key] = station;
     }
-    for (const station of DATA.STATIONS) {
+    for (const station of DATA.HARDCODED_STATIONS) {
       // compare with existing db, only update if modified date change
       const dbStation = dbDataHashmap[station._key];
       if (dbStation?._modified !== station._modified) {

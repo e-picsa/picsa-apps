@@ -4,7 +4,7 @@ import { MockDB } from '@picsa/shared/mocks';
 const db = new MockDB();
 const _created = new Date('2019-07-23').toISOString();
 
-export const STATIONS: IStationMeta[] = [
+export const HARDCODED_STATIONS: IStationMeta[] = [
   {
     ...db.meta({
       _key: 'chichiri',
@@ -84,17 +84,6 @@ export const STATIONS: IStationMeta[] = [
   },
   {
     ...db.meta({
-      _key: 'kasungu',
-      _created,
-      _modified: new Date('2022-09-19').toISOString(),
-    }),
-    name: 'Kasungu',
-    latitude: -13.03681,
-    longitude: 33.48123,
-    country: 'Malawi',
-  },
-  {
-    ...db.meta({
       _key: 'nkhotakota',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -102,6 +91,17 @@ export const STATIONS: IStationMeta[] = [
     name: 'Nkhotakota',
     latitude: -12.92842,
     longitude: 34.283192,
+    country: 'Malawi',
+  },
+  {
+    ...db.meta({
+      _key: 'kasungu',
+      _created,
+      _modified: new Date('2022-09-19').toISOString(),
+    }),
+    name: 'Kasungu',
+    latitude: -13.03681,
+    longitude: 33.48123,
     country: 'Malawi',
   },
   {
