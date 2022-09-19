@@ -10,3 +10,8 @@ Use https://www.latlong.net/ to pick gps coordinates
 
 2. Populate a csv file matching the station id in  
    `apps\picsa-tools\climate-tool\src\assets\summaries`
+
+# Updating station
+
+1. Update the `_modified` timestamp in the `station.ts` file
+2. Populate the updated csv

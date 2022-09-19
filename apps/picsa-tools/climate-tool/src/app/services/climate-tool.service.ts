@@ -5,6 +5,7 @@ import {
   IStationMeta,
   IChartSummary_V1,
   IChartSummary,
+  IDBDoc,
 } from '@picsa/models';
 import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
@@ -24,10 +25,10 @@ export class ClimateToolService {
   // not strict required, but considered useful to inform components
   // when db has been initialised
   private async init() {
-    const collection = await this.db.getCollection('stationData');
-    if (collection.length === 0) {
-      await this.initialiseHardcodedData();
-    }
+    const dbData = await this.db.getCollection<IStationMeta>('stationData');
+
+    await this.initialiseHardcodedData(dbData);
+
     this.ready$.next(true);
   }
 
@@ -37,14 +38,22 @@ export class ClimateToolService {
   }
 
   // read hardcoded csv data and populate into cacheDB alongside station meta
-  async initialiseHardcodedData() {
-    console.log(`Loading data for [${DATA.STATIONS.length}] stations`);
-    for (const station of DATA.STATIONS) {
-      const data = await this.loadCSV<IChartSummary_V1>(
-        `assets/summaries/${station._key}.csv`
-      );
-      station.summaries = [...data];
-      await this.db.setDoc('stationData', station);
+  async initialiseHardcodedData(dbData: IStationMeta[]) {
+    const dbDataHashmap: { [name: string]: IDBDoc } = {};
+    for (const station of dbData) {
+      dbDataHashmap[station._key] = station;
+    }
+    for (const station of DATA.HARDCODED_STATIONS) {
+      // compare with existing db, only update if modified date change
+      const dbStation = dbDataHashmap[station._key];
+      if (dbStation?._modified !== station._modified) {
+        // load data and update db
+        const data = await this.loadCSV<IChartSummary_V1>(
+          `assets/summaries/${station._key}.csv`
+        );
+        station.summaries = [...data];
+        await this.db.setDoc('stationData', station, false, true);
+      }
     }
   }
 

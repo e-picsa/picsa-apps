@@ -39,7 +39,11 @@ export class ClimateSiteViewPage implements OnInit, OnDestroy {
   async loadSiteData() {
     const siteId = this.route.snapshot.params.siteId;
     this.activeStation = await this.climateService.loadStation(siteId);
-    this.componentsService.setHeader({ title: this.activeStation.name });
+    if (this.activeStation) {
+      this.componentsService.setHeader({ title: this.activeStation.name });
+    } else {
+      this.componentsService.setHeader({ title: 'Not found' });
+    }
   }
   changeSite() {
     this.router.navigate(['../../'], {

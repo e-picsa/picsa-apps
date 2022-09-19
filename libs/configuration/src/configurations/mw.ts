@@ -5,7 +5,9 @@ const configuration: IConfiguration.Settings = {
   meta: { label: 'Malawi', image: 'assets/images/flags/mw.svg' },
   android: {},
   budgetTool: {},
-  climateTool: {},
+  climateTool: {
+    stationFilter: (station: any) => station.country === 'Malawi',
+  },
   localisation: {
     country: { label: 'Malawi', code: 'mw' },
     language: {
