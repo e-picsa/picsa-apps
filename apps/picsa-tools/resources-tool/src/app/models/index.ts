@@ -5,6 +5,7 @@ export interface IResourceItemBase extends IDBDoc {
   description: string;
   type: 'collection' | 'file' | 'youtube' | 'link';
   //
+  priority?: number;
   image?: string;
   subtitle?: string;
   language?: string;
