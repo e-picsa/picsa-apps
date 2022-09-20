@@ -10,7 +10,7 @@ const picsaWorkshops: IResourceCollection = {
   title: 'PICSA Workshops',
   description: 'Materials used in picsa workshops',
   image: 'assets/resources/covers/workshops.png',
-  childResources: ['workshopSalima2022'],
+  childResources: ['workshopSalima2022', 'feedbackform'],
 };
 
 export default { picsaWorkshops, ...mwSalima2022 };
