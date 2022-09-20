@@ -20,7 +20,6 @@ export class PicsaMapComponent {
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
   @Input() mapOptions: L.MapOptions;
-  @Input() featuredCountry: IFeaturedCountry;
   @Input() basemapOptions: IBasemapOptions;
   // make native map element available directly
   public map: L.Map;
@@ -64,13 +63,17 @@ export class PicsaMapComponent {
     });
   }
 
+  /** Calculate a bounding rectangle that covers all points and fit within map */
+  public fitMapToPoints(points: [number, number][]) {
+    const latLngs = points.map((p) => L.latLng(p[0], p[1]));
+    const bounds = new L.LatLngBounds(latLngs as any);
+    this.map.fitBounds(bounds, { maxZoom: 8, padding: [10, 10] });
+  }
+
   // when the map is ready it emits event with map, and also binds map to
   // public api to be accessed by other services
   _onMapReady(map: L.Map) {
     this.map = map;
-    if (this.featuredCountry) {
-      this.addCountryFeatures(this.featuredCountry);
-    }
     this.onMapReady.emit(map);
   }
 
@@ -108,10 +111,6 @@ export class PicsaMapComponent {
     });
     geojsonLayer.addTo(this.map);
     // *** TODO - ADD METHOD TO CALCULATE AND AUTO FIT BOUNDS DEPENDENT ON USER
-    this.map.fitBounds([
-      [-13.7, 34.5],
-      [-15.7, 35.5],
-    ]);
   }
 
   private setFeature(feature: Feature<Geometry, any>, layer: L.Layer) {
@@ -140,8 +139,6 @@ const BASEMAP_DEFAULTS: IBasemapOptions = {
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
   zoom: 5,
-  // NOTE - center will be overridden if using country variants above
-  center: L.latLng(46.879966, -121.726909),
 };
 
 const GEOJSON_STYLE: L.PathOptions = {
@@ -187,51 +184,3 @@ export interface IBasemapOptions extends L.TileLayerOptions {
   src: string;
 }
 export type IMapOptions = L.MapOptions;
-
-/***********************************************************************
- *  Currently deprecated but may want in future
- ***********************************************************************/
-
-// // when adding geoJson features want to set a label in the center of the feature
-// // or possibly different location if not suitable
-
-// addFeatureLabel(feature: Feature<Geometry,any>,layer:L.Layer){
-//   const overrides = {
-//     'TA Kapeni': [-15.60583, 35.00381],
-//     'TA Machinjili': [-15.67858, 35.07111]
-//   };
-//       //automatically bind tooltips to centre of feature, unless want to manually specify from exceptions
-//       if (!overrides[feature.properties.NAME_1]) {
-//         layer.bindTooltip(feature.properties.NAME_1, {
-//           permanent: true,
-//           direction: 'center',
-//           className: 'countryLabel'
-//         });
-//       } else {
-//         const latLon = overrides[feature.properties.NAME_1];
-//         const label = L.marker(latLon, {
-//           icon: L.divIcon({
-//             html: '',
-//             iconSize: [0, 0]
-//           })
-//         }).addTo(this.map);
-//         label.bindTooltip(feature.properties.NAME_1, {
-//           permanent: true,
-//           direction: 'center',
-//           className: 'countryLabel'
-//         });
-//       }
-//     }
-
-/* MARKER Popup
-        // const container = L.DomUtil.create('div');
-      // const btn = L.DomUtil.create('button', '', container);
-      // btn.setAttribute('type', 'button');
-      // btn.innerHTML = `<div class="site-select-button">${site.name} 🡺</div>`;
-      // const popup = L.popup().setContent(btn);
-      // L.DomEvent.on(btn, 'click', btn => {
-      //   this.selectSite(site);
-      // });
-
-
-*/

@@ -75,7 +75,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...db.meta({
       _key: 'salima',
       _created,
-      _modified: new Date('2022-09-19').toISOString(),
+      _modified: new Date('2022-09-20').toISOString(),
     }),
     name: 'Salima',
     latitude: -13.78157,
@@ -86,7 +86,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...db.meta({
       _key: 'nkhotakota',
       _created,
-      _modified: new Date('2022-09-19').toISOString(),
+      _modified: new Date('2022-09-20').toISOString(),
     }),
     name: 'Nkhotakota',
     latitude: -12.92842,
@@ -97,7 +97,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...db.meta({
       _key: 'kasungu',
       _created,
-      _modified: new Date('2022-09-19').toISOString(),
+      _modified: new Date('2022-09-20').toISOString(),
     }),
     name: 'Kasungu',
     latitude: -13.03681,

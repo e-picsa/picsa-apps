@@ -1,4 +1,4 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
+import { Component, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
 import { HARDCODED_STATIONS } from '@picsa/climate/src/app/data';
 import { IStationMeta } from '@picsa/models';
 import {
@@ -17,7 +17,8 @@ import { ConfigurationService } from '@picsa/configuration';
 })
 export class SiteSelectPage {
   activeStation: any;
-  @ViewChild('picsaMap', { static: true }) picsaMap: PicsaMapComponent;
+  // avoid static: true for map as created dynamic
+  @ViewChild('picsaMap') picsaMap: PicsaMapComponent;
   // main options handled by featuredCountry
   mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
@@ -33,9 +34,32 @@ export class SiteSelectPage {
   ) {}
 
   // called from html when onMapReady is triggered
-  onMapReady() {
-    this.populateSites();
+  onMapReady(map: PicsaMapComponent['map']) {
+    // sometimes map ready fires before angular change detection complete and viewchild picked up
+    if (!this.picsaMap) {
+      return setTimeout(() => {
+        this.onMapReady(map);
+      }, 50);
+    }
+    return this.ngZone.run(() => {
+      this.setMapBounds();
+    });
   }
+  private setMapBounds() {
+    const { stations } = this.populateSites();
+    // use stored last bounds if exist (ephemeral only)
+    const lastMapBounds = localStorage.getItem('picsaSiteSelectBounds');
+    if (lastMapBounds) {
+      localStorage.removeItem('picsaSiteSelectBounds');
+      this.picsaMap.map.fitBounds(JSON.parse(lastMapBounds));
+    } else {
+      // otherwise try to fit a bounding box with all stations
+      this.picsaMap.fitMapToPoints(
+        stations.map((s) => [s.latitude, s.longitude])
+      );
+    }
+  }
+
   onMarkerClick(marker: IMapMarker) {
     // linking to callback forces angular outside of usual cdr strategy/zone
     // so have to manually call ngZone.run to detect changes
@@ -45,10 +69,15 @@ export class SiteSelectPage {
   }
 
   goToSite(site: IStationMeta) {
-    this.ngZone.run(() => {
-      this.router.navigate(['./', 'site', site._key], {
-        relativeTo: this.route,
-      });
+    // record current map bound positions for returning back
+    const mapBounds = this.picsaMap.map.getBounds();
+    localStorage.setItem(
+      'picsaSiteSelectBounds',
+      JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()])
+    );
+    // navigate
+    this.router.navigate(['./', 'site', site._key], {
+      relativeTo: this.route,
     });
   }
 
@@ -69,6 +98,7 @@ export class SiteSelectPage {
       };
     });
     this.picsaMap.addMarkers(markers);
+    return { stations, markers };
   }
 }
 
