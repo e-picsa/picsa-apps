@@ -137,7 +137,5 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
         return !this.options.hideOnPaths?.[b.path];
       });
     this.breadcrumbs.unshift({ path: '/', label: this.getAlias('/') || '/' });
-    console.log('breadcrubms', this.breadcrumbs);
-    console.log('options', this.options);
   }
 }

@@ -4,7 +4,10 @@ const configuration: IConfiguration.Settings = {
   id: 'zm',
   meta: { label: 'Zambia', image: 'assets/images/flags/zm.svg' },
   android: {},
-  budgetTool: {},
+  budgetTool: {
+    currency: 'ZMK',
+    currencyBaseValue: 10,
+  },
   climateTool: {
     stationFilter: (station: any) => station.country === 'Zambia',
   },

@@ -70,9 +70,11 @@ export class BudgetViewPage implements OnInit, OnDestroy {
     this.param$ = this.route.queryParams.subscribe((params) => {
       this.isEditorOpen = params.edit;
       this.periodLabel = params.label;
-      const { meta } = this.store.activeBudget;
-      const title = this.isEditorOpen ? `${params.label}` : meta.title;
-      this.componentsService.setHeader({ title });
+      if (this.store.activeBudget) {
+        const { meta } = this.store.activeBudget;
+        const title = this.isEditorOpen ? `${params.label}` : meta.title;
+        this.componentsService.setHeader({ title });
+      }
     });
   }
 }

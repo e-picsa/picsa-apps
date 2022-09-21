@@ -15,13 +15,6 @@ export interface IRegionLang {
   code: LanguageCode;
   country: CountryCode;
 }
-export interface IRegionSettings {
-  countryCode: CountryCode;
-  languages: IRegionLang[];
-  currency: string;
-  currencyBaseValue: number;
-  subtitle: string;
-}
 export interface ICurrencyCounters {
   large: number;
   medium: number;
@@ -44,6 +37,5 @@ export interface IEnvironment {
   enableProduction: boolean;
   firebase: IFirebaseSettings;
   group: IGroupSettings;
-  region: IRegionSettings;
   defaultConfiguration: string;
 }

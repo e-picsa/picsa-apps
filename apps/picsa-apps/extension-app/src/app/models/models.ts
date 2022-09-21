@@ -1,4 +1,4 @@
-import { IDBDoc, LanguageCode } from '@picsa/models';
+import { IDBDoc } from '@picsa/models';
 
 // user doc format stored locally under 'user' key and reflected to firebase
 export interface IUser extends IDBDoc {
@@ -11,7 +11,6 @@ export interface IUser extends IDBDoc {
   submittedForms?: any;
   email?: string;
   verified?: boolean;
-  lang: LanguageCode;
   groups?: string[];
   authenticated?: boolean;
   permissions?: IUserPerimissions;
