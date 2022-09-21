@@ -11,6 +11,8 @@
     "picsa-apps-extension-app": "apps/picsa-apps/extension-app",
     "picsa-apps-extension-app-e2e": "apps/picsa-apps/extension-app-e2e",
     "picsa-apps-extension-app-native": "apps/picsa-apps/extension-app-native",
+    "picsa-apps-farmer-app": "apps/picsa-apps/farmer-app",
+    "picsa-apps-farmer-app-e2e": "apps/picsa-apps/farmer-app-e2e",
     "picsa-server-cloud-functions": "apps/picsa-server/cloud-functions",
     "picsa-server-docker": "apps/picsa-server/docker",
     "picsa-server-scripts": "apps/picsa-server/scripts",
