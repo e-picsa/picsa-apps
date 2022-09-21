@@ -20,6 +20,7 @@
   ></budget-card>
   <budget-card-new
     (cardSaved)="onCardCreated($event)"
+    [type]="type"
     @fadeInOut
   ></budget-card-new>
 </div>

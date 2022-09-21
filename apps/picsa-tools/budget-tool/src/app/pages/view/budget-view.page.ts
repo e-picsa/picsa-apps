@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BudgetStore } from '../../store/budget.store';
 import {
   FadeInOut,
@@ -8,9 +8,10 @@ import {
   ANIMATION_DELAYED,
   ANIMATION_DEFAULTS_Y,
 } from '@picsa/shared/animations';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { IBudgetPeriodData } from '../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-view',
@@ -27,7 +28,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   isEditorOpen = false;
   isSharing = false;
   periodLabel: string;
-  param$: Subscription;
+  componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
@@ -36,12 +37,15 @@ export class BudgetViewPage implements OnInit, OnDestroy {
     private componentsService: PicsaCommonComponentsService
   ) {}
 
-  ngOnInit() {
-    this.loadBudget();
-    this._addRouterSubscription();
+  async ngOnInit() {
+    await this.loadBudget();
+    this.addRouterSubscription();
   }
+
   ngOnDestroy() {
-    this.param$.unsubscribe();
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
+    this.store.activeBudget = undefined as any;
   }
 
   async showShareDialog() {
@@ -61,20 +65,34 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   async loadBudget() {
     const budgetKey = this.route.snapshot.params.budgetKey;
     await this.store.loadBudgetByKey(budgetKey);
-    this.componentsService.setHeader({
-      title: this.store.activeBudget.meta.title,
-    });
   }
 
-  private _addRouterSubscription() {
-    this.param$ = this.route.queryParams.subscribe((params) => {
-      this.isEditorOpen = params.edit;
-      this.periodLabel = params.label;
-      if (this.store.activeBudget) {
-        const { meta } = this.store.activeBudget;
-        const title = this.isEditorOpen ? `${params.label}` : meta.title;
-        this.componentsService.setHeader({ title });
-      }
-    });
+  /** Subscribe to query param changes and update headers as required */
+  private addRouterSubscription() {
+    this.route.queryParams
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((params) => {
+        const { edit, period, label, type } = params;
+        if (period) {
+          this.store.setActivePeriod(Number(period));
+        }
+        if (type) {
+          this.store.setActiveType(type);
+        }
+        this.isEditorOpen = !!edit;
+        this.periodLabel = label;
+        if (this.store.activeBudget) {
+          const { meta } = this.store.activeBudget;
+          let title = meta.title;
+          if (this.isEditorOpen) {
+            title = label;
+            if (type) {
+              const typeLabel = this.store.typeLabels[type];
+              title = `${typeLabel} - ${title}`;
+            }
+          }
+          this.componentsService.setHeader({ title });
+        }
+      });
   }
 }

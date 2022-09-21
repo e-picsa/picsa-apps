@@ -90,7 +90,6 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
       .subscribe(({ title }) => {
         if (title) {
           if (this.getAlias(location.pathname) !== title) {
-            console.log('title changes');
             this.setAlias(location.pathname, title);
             this.rebuild$.next(true);
           }
