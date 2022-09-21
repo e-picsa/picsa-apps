@@ -1,0 +1,93 @@
+{
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-apps/farmer-app/src",
+  "prefix": "picsa",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/picsa-apps/farmer-app",
+        "index": "apps/picsa-apps/farmer-app/src/index.html",
+        "main": "apps/picsa-apps/farmer-app/src/main.ts",
+        "polyfills": "apps/picsa-apps/farmer-app/src/polyfills.ts",
+        "tsConfig": "apps/picsa-apps/farmer-app/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/picsa-apps/farmer-app/src/favicon.ico",
+          "apps/picsa-apps/farmer-app/src/assets"
+        ],
+        "styles": ["apps/picsa-apps/farmer-app/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/picsa-apps/farmer-app/src/environments/environment.ts",
+              "with": "apps/picsa-apps/farmer-app/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "picsa-apps-farmer-app:build:production"
+        },
+        "development": {
+          "browserTarget": "picsa-apps-farmer-app:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "picsa-apps-farmer-app:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/picsa-apps/farmer-app/**/*.ts",
+          "apps/picsa-apps/farmer-app/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/picsa-apps/farmer-app"],
+      "options": {
+        "jestConfig": "apps/picsa-apps/farmer-app/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
