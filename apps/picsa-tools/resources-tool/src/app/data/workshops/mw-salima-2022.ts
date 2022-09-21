@@ -117,8 +117,7 @@ const files: { [id: string]: IResourceFile } = {
     description: 'Nkhotakota',
     subtitle: '',
     folder: 'workshop-salima-2022',
-    filename:
-      'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/workshop-salima-2022%2FNKHOTAKOTA%20Crop%20Information%20Sheet.pdf?alt=media&token=a200f210-1ab5-45e5-9a94-753d2c225f8f',
+    filename: 'NKHOTAKOTA Crop Information Sheet.pdf',
     type: 'file',
     image: '',
     url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/workshop-salima-2022%2FNKHOTAKOTA%20Crop%20Information%20Sheet.pdf?alt=media&token=a200f210-1ab5-45e5-9a94-753d2c225f8f',
