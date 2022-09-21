@@ -17,6 +17,7 @@ export interface IResourceFile extends IResourceItemBase {
   filename: string;
   mimetype: 'application/pdf';
   url: string;
+  folder?: string;
   // TODO - legacy types
   viewableBy?: string[];
   filepath?: string;
