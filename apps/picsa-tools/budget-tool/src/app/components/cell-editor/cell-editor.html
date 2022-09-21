@@ -1,14 +1,17 @@
 <div class="page-content" style="height: calc(100% - 50px)">
   <!-- Optional [@.disabled]="false" to disable animations (note persists through all children elements) -->
-  <mat-horizontal-stepper
+  <mat-stepper
     #stepper
+    [orientation]="(stepperOrientation | async)!"
     style="overflow: auto; margin-bottom: 20px; flex: 1"
     (selectionChange)="stepChange($event)"
+    (animationDone)="scrollToStepTop()"
   >
     <!-- Activities -->
-    <mat-step>
+    <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Activities' | translate }}</ng-template>
       <budget-cell-editor-card-select
+        type="activities"
         [values]="data.activities"
         [cards]="store.budgetCardsByType.activities"
         (valueChanged)="onEditorChange($event, 'activities')"
@@ -17,12 +20,13 @@
       <next-button></next-button>
     </mat-step>
     <!-- Inputs -->
-    <mat-step>
+    <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Inputs' | translate }}</ng-template>
       <mat-horizontal-stepper #subStepper>
         <mat-step aria-label="Select">
           <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
           <budget-cell-editor-card-select
+            type="inputs"
             [values]="data.inputs"
             [cards]="store.budgetCardsByType.inputs"
             (valueChanged)="onEditorChange($event, 'inputs')"
@@ -43,7 +47,7 @@
     </mat-step>
 
     <!-- Family Labour -->
-    <mat-step>
+    <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Family' | translate }}</ng-template>
       <budget-cell-editor-family-labour
         [values]="data.familyLabour"
@@ -52,12 +56,13 @@
       <next-button></next-button>
     </mat-step>
     <!-- Outputs -->
-    <mat-step>
+    <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Outputs' | translate }}</ng-template>
       <mat-horizontal-stepper #subStepper>
         <mat-step>
           <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
           <budget-cell-editor-card-select
+            type="outputs"
             [values]="data.outputs"
             [cards]="store.budgetCardsByType.outputs"
             (valueChanged)="onEditorChange($event, 'outputs')"
@@ -77,12 +82,13 @@
       </mat-horizontal-stepper>
     </mat-step>
     <!-- Consumed -->
-    <mat-step>
+    <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Consumed' | translate }}</ng-template>
       <mat-horizontal-stepper #subStepper>
         <mat-step>
           <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
           <budget-cell-editor-card-select
+            type="produceConsumed"
             [values]="data.produceConsumed"
             [cards]="store.budgetCardsByType.outputs"
             (valueChanged)="onEditorChange($event, 'produceConsumed')"
@@ -102,12 +108,14 @@
       </mat-horizontal-stepper>
       <!-- ------------------------------------------------------------------- -->
     </mat-step>
-    <mat-step>
+    <!-- Summary -->
+    <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Summary' | translate }}</ng-template>
       <budget-period-summary
         [periodIndex]="store.activePeriod"
       ></budget-period-summary>
-      <next-button (click)="goToNextPeriod()"></next-button>
+
+      <next-button (click)="closeEditor()"></next-button>
     </mat-step>
-  </mat-horizontal-stepper>
+  </mat-stepper>
 </div>

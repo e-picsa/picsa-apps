@@ -49,7 +49,6 @@ export class UserStore {
   async createNewUser() {
     const meta = generateDBMeta();
     const user: IUser = {
-      lang: ENVIRONMENT.region.languages[0].code,
       // keep id as well as key so can persist within appMeta in different key
       id: meta._key,
       ...meta,
@@ -73,7 +72,7 @@ export class UserStore {
     await this.fileService.writeFile(
       'public',
       'picsa',
-      `picsaUserBackup_${ENVIRONMENT.region.countryCode}.txt`,
+      `picsaUserBackup.txt`,
       toJS(this.user)
     );
     return;
@@ -81,7 +80,7 @@ export class UserStore {
 
   private async _loadUserBackup() {
     const fileTxt = await this.fileService.readTextFile(
-      `picsaUserBackup_${ENVIRONMENT.region.countryCode}.txt`,
+      `picsaUserBackup.txt`,
       true
     );
     if (fileTxt) {

@@ -14,7 +14,7 @@ export class HomePage implements OnInit {
   links: ILink[];
   name: string;
   version = APP_VERSION;
-  subtitle: string = ENVIRONMENT.region.subtitle;
+  subtitle: string = 'Extension';
   columns: number;
   isPreparingShare = false;
 

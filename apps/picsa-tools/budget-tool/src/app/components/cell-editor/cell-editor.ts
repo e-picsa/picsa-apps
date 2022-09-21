@@ -7,8 +7,13 @@ import {
 } from '../../models/budget-tool.models';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 import { MatStepper } from '@angular/material/stepper';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import {
+  StepperSelectionEvent,
+  StepperOrientation,
+} from '@angular/cdk/stepper';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Router, ActivatedRoute } from '@angular/router';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'budget-cell-editor',
@@ -21,17 +26,29 @@ import { Router, ActivatedRoute } from '@angular/router';
  */
 export class BudgetCellEditorComponent {
   steps = EDITOR_STEPS;
-  @Input() data: IBudgetPeriodData;
+  stepperOrientation: Observable<StepperOrientation>;
+  data: IBudgetPeriodData;
   @Input() set activeType(type: IBudgetPeriodType) {
     this.setActiveStep(type);
   }
+  @Input() set activePeriod(index: number) {
+    this.data = this.store.activeBudget.data[index];
+  }
+
+  @Input() isOpen = false;
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   @ViewChild('subStepper', { static: true }) subStepper: MatStepper;
   constructor(
     public store: BudgetStore,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    breakpointObserver: BreakpointObserver
+  ) {
+    // Make stepper orientation responsive depending on device size
+    this.stepperOrientation = breakpointObserver
+      .observe('(min-width: 768px)')
+      .pipe(map(({ matches }) => (matches ? 'horizontal' : 'vertical')));
+  }
 
   ngAfterViewInit(): void {
     // ignore icons and just display number
@@ -63,28 +80,30 @@ export class BudgetCellEditorComponent {
       queryParamsHandling: 'merge',
     });
   }
-
-  // TODO - could be moved to store along with budget-table similar code
-  goToNextPeriod() {
-    const period = this.store.activePeriod;
-    const totalPeriods = this.store.activeBudget.meta.lengthTotal;
-    this.stepper.reset();
-    this.subStepper.reset();
-    if (period < totalPeriods) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: {
-          period: period + 1,
-          type: 'activities',
-          label: this.store.budgetPeriodLabels[period + 1],
-        },
-        queryParamsHandling: 'merge',
-      });
-    } else {
-      this.router.navigate([], {
-        relativeTo: this.route,
-      });
+  /**
+   * Scroll to top on after step content changed (particularly if using vertical stepper)
+   *
+   * TODO - a little jerky, might work better with fade and animation host listener
+   * https://github.com/angular/components/issues/8881
+   */
+  public scrollToStepTop() {
+    if (this.isOpen && this.stepper.orientation === 'vertical') {
+      const stepId = this.stepper._getStepLabelId(this.stepper.selectedIndex);
+      const stepElement = document.getElementById(stepId);
+      if (stepElement) {
+        stepElement.scrollIntoView({
+          block: 'start',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      }
     }
+  }
+
+  closeEditor() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+    });
   }
 
   // use trackby on inputs as otherwise each one changing would re-render all others

@@ -3,7 +3,7 @@ import {
   state,
   style,
   animate,
-  transition
+  transition,
 } from '@angular/animations';
 // NOTE - AOT very temperamental with animations, see guidance here:
 // https://blog.angularindepth.com/total-guide-to-dynamic-angular-animations-that-can-be-toggled-at-runtime-be5bb6778a0a
@@ -13,18 +13,18 @@ export const OpenClosed = trigger('openClosed', [
     'open',
     style({
       height: '*',
-      opacity: 1
+      opacity: 1,
     })
   ),
   state(
     'closed',
     style({
       height: '0',
-      opacity: 0
+      opacity: 0,
     })
   ),
   transition('open => closed', [animate('0.2s')]),
-  transition('closed => open', [animate('0.2s')])
+  transition('closed => open', [animate('0.2s')]),
 ]);
 
 // function to generate custom fade transition
@@ -33,13 +33,13 @@ export function FadeInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
     state(
       'in',
       style({
-        opacity: 1
+        opacity: 1,
       })
     ),
     state(
       'out',
       style({
-        opacity: 0
+        opacity: 0,
       })
     ),
     // state transitions don't pick up well when coming from void state
@@ -49,14 +49,14 @@ export function FadeInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
       animate(
         c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing,
         style({ opacity: 1 })
-      )
+      ),
     ]),
     transition('* => in', [
-      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing),
     ]),
     transition('in => out', [
-      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing)
-    ])
+      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
+    ]),
   ]);
 }
 
@@ -66,18 +66,18 @@ export function FlyInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
     state('out', style({ transform: 'translate' + c.axis + '(100%)' })),
     transition('void => in', [
       style({ transform: 'translate' + c.axis + '(0)' }),
-      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing),
     ]),
     transition('* => void', [
       animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
-      style({ transform: 'translate' + c.axis + '(100%)' })
+      style({ transform: 'translate' + c.axis + '(100%)' }),
     ]),
     transition('out => in', [
-      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing),
     ]),
     transition('in => out', [
-      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing)
-    ])
+      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
+    ]),
   ]);
 }
 
@@ -89,7 +89,7 @@ export function getAnimationTimings(
 ) {
   const c = {
     ...ANIMATION_DEFAULTS,
-    ...config
+    ...config,
   };
   return direction === 'in'
     ? c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing
@@ -108,7 +108,7 @@ export const ANIMATION_DEFAULTS: IAnimationConfig = {
   outSpeed: 150,
   outDelay: 0,
   outEasing: 'ease-out',
-  axis: 'X'
+  axis: 'X',
 };
 export const ANIMATION_DEFAULTS_Y: IAnimationConfig = {
   inSpeed: 250,
@@ -117,7 +117,7 @@ export const ANIMATION_DEFAULTS_Y: IAnimationConfig = {
   outSpeed: 300,
   outDelay: 0,
   outEasing: 'ease-out',
-  axis: 'Y'
+  axis: 'Y',
 };
 
 export const ANIMATION_DELAYED: IAnimationConfig = {
@@ -127,7 +127,7 @@ export const ANIMATION_DELAYED: IAnimationConfig = {
   outDelay: 0,
   inEasing: 'ease-in',
   outEasing: 'ease-out',
-  axis: 'X'
+  axis: 'X',
 };
 
 interface IAnimationConfig {

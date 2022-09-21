@@ -22,12 +22,18 @@ export namespace IConfiguration {
     id: string;
     meta: { label: string; image: string };
     android: any;
-    budgetTool: any;
+    budgetTool: IBudgetToolSettings;
     climateTool: {
       stationFilter?: (station: any) => boolean;
     };
     localisation: IConfiguration.Localisation;
     theme: any;
+  }
+  export interface IBudgetToolSettings {
+    /** Label assigned to currency value */
+    currency: string;
+    /** Unit represented by a single dot, should be power of 10 closest to $1 equivalent (e.g. MK 1000, ZMK 10, GBP 1) */
+    currencyBaseValue: number;
   }
 
   /** User settings replace any options above with selected id */

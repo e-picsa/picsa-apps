@@ -4,7 +4,10 @@ const configuration: IConfiguration.Settings = {
   id: '',
   meta: { label: '', image: '' },
   android: {},
-  budgetTool: {},
+  budgetTool: {
+    currency: '$',
+    currencyBaseValue: 1,
+  },
   climateTool: {},
   localisation: {
     country: { label: '', code: '' },

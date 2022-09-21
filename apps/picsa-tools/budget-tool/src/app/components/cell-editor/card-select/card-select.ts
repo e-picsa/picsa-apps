@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
   IBudgetCardWithValues,
   IBudgetCard,
+  IBudgetCardType,
 } from '../../../models/budget-tool.models';
 import { BudgetStore } from '../../../store/budget.store';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
@@ -19,6 +20,7 @@ export class BudgetCellEditorCardSelectComponent {
   @Input() set cards(cards: IBudgetCard[]) {
     this.filterCards(cards);
   }
+  @Input() type: IBudgetCardType;
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
   enterpriseCards: IBudgetCard[];

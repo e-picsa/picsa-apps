@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
-import { ENVIRONMENT } from '@picsa/environments';
+import { BudgetStore } from '../../../store/budget.store';
 
 @Component({
   selector: 'budget-cell-editor-input-values',
@@ -13,8 +13,11 @@ import { ENVIRONMENT } from '@picsa/environments';
 export class BudgetCellEditorInputValuesComponent {
   @Input() cards: IBudgetCardWithValues[];
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
-  currency = ENVIRONMENT.region.currency;
+  currency: string;
 
+  constructor(store: BudgetStore) {
+    this.currency = store.settings.currency;
+  }
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
   setValue(e: Event, key: 'quantity' | 'cost', cardIndex: number) {
     const card = this.cards[cardIndex];

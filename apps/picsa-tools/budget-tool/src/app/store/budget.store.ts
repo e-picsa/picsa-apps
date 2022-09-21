@@ -13,7 +13,6 @@ import {
   IBudgetValueScale,
   IBudgetValueCounters,
   IBudgetBalance,
-  IBudgetQueryParams,
   IBudgetPeriodType,
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
@@ -21,14 +20,38 @@ import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
 import CARDS from '../data/cards';
 import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 import { IAppMeta } from '@picsa/models';
-import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
-import { BehaviorSubject } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { APP_VERSION } from '@picsa/environments';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { ConfigurationService, IConfiguration } from '@picsa/configuration';
+const TYPE_CARDS_BASE: {
+  [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
+} = {
+  activities: [],
+  familyLabour: [],
+  inputs: [],
+  outputs: [],
+  produceConsumed: [],
+  enterprise: [],
+  other: [],
+};
+const TYPE_LABELS: { [key in IBudgetPeriodType | 'summary']: string } = {
+  activities: 'Activities',
+  familyLabour: 'Family Labour',
+  inputs: 'Inputs',
+  outputs: 'Outputs',
+  produceConsumed: 'Produce Consumed',
+  summary: 'Summary',
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class BudgetStore implements OnDestroy {
   changes = new BehaviorSubject<[number, string]>([null, null] as any);
+  public settings: IConfiguration.IBudgetToolSettings;
+  private destroyed$ = new Subject<boolean>();
+  public typeLabels = TYPE_LABELS;
+
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
@@ -45,32 +68,10 @@ export class BudgetStore implements OnDestroy {
     );
     return this._createCardGroupCards(enterpriseCards);
   }
-  @computed get budgetCardsByType() {
-    console.log('getting budget cards by type');
-    const typeCards: {
-      [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
-    } = {
-      activities: [],
-      familyLabour: [],
-      inputs: [],
-      outputs: [],
-      produceConsumed: [],
-      enterprise: [],
-      other: [],
-    };
-    this.budgetCards.forEach((card) => {
-      if (!typeCards[card.type]) {
-        typeCards[card.type] = [];
-      }
-      typeCards[card.type].push(card);
-    });
-    return typeCards;
-  }
+  @observable budgetCardsByType = TYPE_CARDS_BASE;
+
   @computed get budgetPeriodLabels(): string[] {
     return this._generateLabels(this.activeBudget.meta);
-  }
-  @computed get budgetPeriodData() {
-    return this.activeBudget.data[this.activePeriod];
   }
 
   @action setActiveBudget(budget: IBudget) {
@@ -78,7 +79,12 @@ export class BudgetStore implements OnDestroy {
   }
   @action calculateBalance() {
     this.balance = this._calculateBalance(this.activeBudget);
-    console.log('balance', toJS(this.balance));
+  }
+  @action setActivePeriod(index: number) {
+    this.activePeriod = index;
+  }
+  @action setActiveType(activeType: IBudgetPeriodType) {
+    this.activeType = activeType;
   }
   get activeBudgetValue() {
     return toJS(this.activeBudget);
@@ -89,9 +95,21 @@ export class BudgetStore implements OnDestroy {
     return this.activeBudget.meta.enterprise.groupings![0];
   }
 
-  constructor(private db: PicsaDbService, private route: ActivatedRoute) {}
+  constructor(
+    private db: PicsaDbService,
+    private configurationService: ConfigurationService
+  ) {
+    // TODO store never destroyed so would be good to limit listeners
+    this.configurationService.activeConfiguration$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((v) => {
+        this.settings =
+          this.configurationService.activeConfiguration.budgetTool;
+      });
+  }
   ngOnDestroy(): void {
-    console.log('TODO - REMOVE SUBSCRIPTIONS');
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   /**************************************************************************
@@ -118,12 +136,14 @@ export class BudgetStore implements OnDestroy {
   }
   // populate correct budget data based on editor data and current active cell
   saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
-    const d = this.activeBudget.data;
-    d[this.activePeriod][type] = data;
-    this.patchBudget({ data: d });
+    const period = this.activePeriod;
+    // ensure clean write by cloning existing budget before updating deeply nested property
+    const budgetData = JSON.parse(JSON.stringify(this.activeBudget.data));
+    budgetData[period][type] = data;
+    this.patchBudget({ data: budgetData });
+    console.log('emit change', { period, type, data });
     // use behaviour subject to provide better change detection binding on changes
-    console.log('emit change', this.activePeriod, type);
-    this.changes.next([this.activePeriod, type]);
+    this.changes.next([period, type]);
     this.calculateBalance();
   }
 
@@ -208,21 +228,7 @@ export class BudgetStore implements OnDestroy {
     this.loadSavedBudgets();
     await this.checkForUpdates();
     await this.preloadData();
-    this._subscribeToRouteChanges();
     this.storeReady = true;
-  }
-  _subscribeToRouteChanges() {
-    this.route.queryParams.subscribe((params) =>
-      this.routeParamsChanged(params as IBudgetQueryParams)
-    );
-  }
-  @action
-  private routeParamsChanged(params: IBudgetQueryParams) {
-    if (params.period && params.type) {
-      this.activePeriod = Number(params.period);
-      this.activeType = params.type;
-    }
-    console.log('active period', toJS(this.activePeriod));
   }
 
   // load the corresponding values into the budgetMeta observable
@@ -230,6 +236,13 @@ export class BudgetStore implements OnDestroy {
   private async preloadData() {
     const endpoint = 'budgetTool/_all/cards';
     this.budgetCards = await this.db.getCollection<IBudgetCard>(endpoint);
+    this.budgetCards.forEach((card) => {
+      if (!this.budgetCardsByType[card.type]) {
+        console.log('missing budget card type', card.type);
+        this.budgetCardsByType[card.type] = [];
+      }
+      this.budgetCardsByType[card.type].push(card);
+    });
   }
   // check for latest app version initialised. If this one is different then
   // attempt to reload any hardcoded data present in the app
@@ -348,7 +361,8 @@ export class BudgetStore implements OnDestroy {
   private _generateValueCounters(budget: IBudget) {
     const scale = budget.meta.valueScale;
     // use rounding to avoid annoying precious errors
-    const b = Math.round(ENVIRONMENT.region.currencyBaseValue * scale);
+    const { currencyBaseValue } = this.settings;
+    const b = Math.round(currencyBaseValue * scale);
     // return as arrays to ensure order retained if iterating over
     const counters: IBudgetValueCounters = [
       ['large', 'large-half', 'medium', 'medium-half', 'small', 'small-half'],

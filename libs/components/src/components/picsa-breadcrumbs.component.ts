@@ -90,7 +90,6 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
       .subscribe(({ title }) => {
         if (title) {
           if (this.getAlias(location.pathname) !== title) {
-            console.log('title changes');
             this.setAlias(location.pathname, title);
             this.rebuild$.next(true);
           }
@@ -137,7 +136,5 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
         return !this.options.hideOnPaths?.[b.path];
       });
     this.breadcrumbs.unshift({ path: '/', label: this.getAlias('/') || '/' });
-    console.log('breadcrubms', this.breadcrumbs);
-    console.log('options', this.options);
   }
 }

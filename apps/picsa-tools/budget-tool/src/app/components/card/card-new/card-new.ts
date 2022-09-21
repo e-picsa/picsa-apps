@@ -26,15 +26,13 @@ export class BudgetCardNew {
   constructor(public dialog: MatDialog, public store: BudgetStore) {}
 
   showCardDialog() {
-    // type passed for enterprise select but otherwise can pick from store
-    const type = this.type ? this.type : this.store.activeType;
     // groupings should match the current enterprise unless otherwise specified
     const groupings = this.groupings
       ? this.groupings
       : toJS(this.store.activeBudget.meta.enterprise.groupings);
     const card: IBudgetCard = {
       ...NEW_CARD,
-      type,
+      type: this.type,
       groupings,
     };
     console.log('card', card);
