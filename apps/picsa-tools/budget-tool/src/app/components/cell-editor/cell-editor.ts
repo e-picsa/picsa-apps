@@ -27,10 +27,14 @@ import { map, Observable } from 'rxjs';
 export class BudgetCellEditorComponent {
   steps = EDITOR_STEPS;
   stepperOrientation: Observable<StepperOrientation>;
-  @Input() data: IBudgetPeriodData;
+  data: IBudgetPeriodData;
   @Input() set activeType(type: IBudgetPeriodType) {
     this.setActiveStep(type);
   }
+  @Input() set activePeriod(index: number) {
+    this.data = this.store.activeBudget.data[index];
+  }
+
   @Input() isOpen = false;
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   @ViewChild('subStepper', { static: true }) subStepper: MatStepper;

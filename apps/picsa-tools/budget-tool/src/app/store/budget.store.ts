@@ -13,7 +13,6 @@ import {
   IBudgetValueScale,
   IBudgetValueCounters,
   IBudgetBalance,
-  IBudgetQueryParams,
   IBudgetPeriodType,
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
@@ -23,7 +22,6 @@ import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 import { IAppMeta } from '@picsa/models';
 import { APP_VERSION } from '@picsa/environments';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
 const TYPE_CARDS_BASE: {
   [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
@@ -75,9 +73,6 @@ export class BudgetStore implements OnDestroy {
   @computed get budgetPeriodLabels(): string[] {
     return this._generateLabels(this.activeBudget.meta);
   }
-  @computed get budgetPeriodData() {
-    return this.activeBudget.data[this.activePeriod];
-  }
 
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
@@ -102,7 +97,6 @@ export class BudgetStore implements OnDestroy {
 
   constructor(
     private db: PicsaDbService,
-    private route: ActivatedRoute,
     private configurationService: ConfigurationService
   ) {
     // TODO store never destroyed so would be good to limit listeners
@@ -143,9 +137,10 @@ export class BudgetStore implements OnDestroy {
   // populate correct budget data based on editor data and current active cell
   saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
     const period = this.activePeriod;
-    const d = this.activeBudget.data;
-    d[period][type] = data;
-    this.patchBudget({ data: d });
+    // ensure clean write by cloning existing budget before updating deeply nested property
+    const budgetData = JSON.parse(JSON.stringify(this.activeBudget.data));
+    budgetData[period][type] = data;
+    this.patchBudget({ data: budgetData });
     console.log('emit change', { period, type, data });
     // use behaviour subject to provide better change detection binding on changes
     this.changes.next([period, type]);

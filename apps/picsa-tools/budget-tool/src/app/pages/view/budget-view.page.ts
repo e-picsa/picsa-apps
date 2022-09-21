@@ -11,7 +11,6 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { IBudgetPeriodData } from '../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-view',
