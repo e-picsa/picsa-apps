@@ -13,49 +13,16 @@ import {
 } from '@picsa/shared/modules';
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-//Sentry imports
-import * as Sentry from '@sentry/capacitor';
-import * as SentryAngular from '@sentry/angular';
-import { SENTRY_CONFIG } from '@picsa/environments/src/sentry';
 
 // NOTE - climate slider requires import into main modules
 import { MatSliderModule } from '@angular/material/slider';
 import 'hammerjs';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { ENVIRONMENT } from '@picsa/environments';
-
-// Sentry error reporting
-Sentry.init(
-  {
-    ...SENTRY_CONFIG,
-    // TODO - not currently working with capacitor 4 (despite issue closed)
-    // Should consider using firebase crashlytics instead or waiting for update
-    // https://github.com/getsentry/sentry-capacitor/issues/211
-    enableNative: false,
-    enabled: ENVIRONMENT.production,
-  },
-  SentryAngular.init
-);
-
-export class SentryErrorHandler implements ErrorHandler {
-  handleError(error) {
-    Sentry.captureException(error.originalError || error);
-    throw error;
-  }
-}
+import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 
 @NgModule({
   declarations: [AppComponent],
-  providers: [
-    {
-      provide: ErrorHandler,
-      useValue: SentryAngular.createErrorHandler({
-        logErrors: true,
-        showDialog: false,
-      }),
-      useClass: SentryErrorHandler,
-    },
-  ],
+  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -71,7 +38,6 @@ export class SentryErrorHandler implements ErrorHandler {
     AppRoutingModule,
     IonicModule.forRoot(),
   ],
-  // providers: [{ provide: ErrorHandler, useClass: SentryIonicErrorHandler }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

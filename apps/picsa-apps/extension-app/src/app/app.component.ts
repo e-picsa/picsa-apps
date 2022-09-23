@@ -7,6 +7,8 @@ import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
+import { CrashlyticsService } from '@picsa/shared/services/native/crashlytics.service';
 
 @Component({
   selector: 'picsa-root',
@@ -20,11 +22,15 @@ export class AppComponent {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     analyticsService: AnalyticsService,
-    router: Router
+    router: Router,
+    crashlyticsService: CrashlyticsService
   ) {
     this.registerIcons();
     if (ENVIRONMENT.production) {
       analyticsService.init(router);
+    }
+    if (Capacitor.isNativePlatform()) {
+      crashlyticsService.init();
     }
   }
 
