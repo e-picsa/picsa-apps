@@ -35,7 +35,7 @@ export interface IFirebaseConfig {
 
 // combined settings
 export interface IEnvironment {
-  isProduction: boolean;
+  production: boolean;
   firebase: IFirebaseConfig;
   group: IGroupSettings;
   defaultConfiguration: string;

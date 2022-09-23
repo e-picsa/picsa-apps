@@ -6,7 +6,7 @@ import { FirebaseConfig } from './firebase/config';
 const productionEnvironment: IEnvironment = {
   firebase: FirebaseConfig,
   group: GROUPS.GLOBAL,
-  isProduction: true,
+  production: true,
   defaultConfiguration: 'global',
 };
 

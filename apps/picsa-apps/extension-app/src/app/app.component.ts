@@ -23,7 +23,7 @@ export class AppComponent {
     router: Router
   ) {
     this.registerIcons();
-    if (ENVIRONMENT.isProduction) {
+    if (ENVIRONMENT.production) {
       analyticsService.init(router);
     }
   }

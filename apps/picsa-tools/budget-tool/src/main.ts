@@ -5,7 +5,7 @@ import { AppModule } from './app/app.module';
 import { ENVIRONMENT } from '@picsa/environments';
 import 'hammerjs';
 
-if (ENVIRONMENT.isProduction) {
+if (ENVIRONMENT.production) {
   enableProdMode();
 }
 

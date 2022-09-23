@@ -6,7 +6,7 @@ import PRODUCTION_ENVIRONMENT from './environment.prod';
  **/
 const ENVIRONMENT: IEnvironment = {
   ...PRODUCTION_ENVIRONMENT,
-  isProduction: false,
+  production: false,
 };
 
 export default ENVIRONMENT;

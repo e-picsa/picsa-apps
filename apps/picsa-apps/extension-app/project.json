@@ -68,8 +68,8 @@
           ],
           "fileReplacements": [
             {
-              "replace": "libs/environments/environment.ts",
-              "with": "libs/environments/environment.production.ts"
+              "replace": "libs/environments/src/environment.ts",
+              "with": "libs/environments/src/environment.prod.ts"
             }
           ],
           "outputHashing": "all"
