@@ -13,3 +13,6 @@ project(':capacitor-filesystem').projectDir = new File('../../../../node_modules
 
 include ':capacitor-blob-writer'
 project(':capacitor-blob-writer').projectDir = new File('../../../../node_modules/capacitor-blob-writer/android')
+
+include ':capacitor-community-firebase-analytics'
+project(':capacitor-community-firebase-analytics').projectDir = new File('../../../../node_modules/@capacitor-community/firebase-analytics/android')
