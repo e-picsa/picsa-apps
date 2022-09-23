@@ -24,6 +24,7 @@ const config: CapacitorConfig = {
     '@capacitor/browser',
     '@capacitor/filesystem',
     'capacitor-blob-writer',
+    '@capacitor-community/firebase-analytics',
   ],
   /**
    * uncomment and replace with local ip to serve live-reload

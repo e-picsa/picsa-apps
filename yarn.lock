@@ -2191,6 +2191,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor-community/firebase-analytics@npm:latest":
+  version: 1.0.1
+  resolution: "@capacitor-community/firebase-analytics@npm:1.0.1"
+  dependencies:
+    "@capacitor/core": ^3.0.0
+  checksum: b5ed3ea847663d33d64ac10f1b2917daafaed39323c7c4d4aa2b9ce471fae6c445b9988e13cf1b2629cf4f322a275cf95bcafa93e6aa5ee811e37c9633157773
+  languageName: node
+  linkType: hard
+
 "@capacitor/android@npm:^4.1.0":
   version: 4.1.0
   resolution: "@capacitor/android@npm:4.1.0"
@@ -2243,6 +2252,15 @@ __metadata:
     cap: bin/capacitor
     capacitor: bin/capacitor
   checksum: 86b02df00f57d0568923df481f0c79251baa2c6c0692c95559013dd7066e51de3d0ae9ea3f804945eb997d635cb5b8861c8de5e76cbf8a39a50721b1f973e097
+  languageName: node
+  linkType: hard
+
+"@capacitor/core@npm:^3.0.0":
+  version: 3.8.0
+  resolution: "@capacitor/core@npm:3.8.0"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 6d219d959001dd1dbe0529716b18e74c8b44048b2dd5384278171d5ebe160eb5059c279815cc407be127caaead4d5bc186708a7df601415ac92ed475fbb552d3
   languageName: node
   linkType: hard
 
@@ -14041,6 +14059,7 @@ __metadata:
     "@awesome-cordova-plugins/file-opener": ^5.45.0
     "@awesome-cordova-plugins/network": ^5.45.0
     "@awesome-cordova-plugins/social-sharing": ^5.45.0
+    "@capacitor-community/firebase-analytics": latest
     "@capacitor/android": ^4.1.0
     "@capacitor/app": ^4.0.1
     "@capacitor/browser": ^4.0.1

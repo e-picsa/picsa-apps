@@ -22,7 +22,7 @@ export interface ICurrencyCounters {
   half: number;
 }
 // firebase
-export interface IFirebaseSettings {
+export interface IFirebaseConfig {
   apiKey: string;
   authDomain: string;
   databaseURL: string;
@@ -30,12 +30,13 @@ export interface IFirebaseSettings {
   storageBucket: string;
   messagingSenderId: string;
   appId: string;
+  measurementId: string;
 }
 
 // combined settings
 export interface IEnvironment {
-  enableProduction: boolean;
-  firebase: IFirebaseSettings;
+  isProduction: boolean;
+  firebase: IFirebaseConfig;
   group: IGroupSettings;
   defaultConfiguration: string;
 }

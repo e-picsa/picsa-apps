@@ -33,6 +33,7 @@
     "@awesome-cordova-plugins/file-opener": "^5.45.0",
     "@awesome-cordova-plugins/network": "^5.45.0",
     "@awesome-cordova-plugins/social-sharing": "^5.45.0",
+    "@capacitor-community/firebase-analytics": "latest",
     "@capacitor/app": "^4.0.1",
     "@capacitor/browser": "^4.0.1",
     "@capacitor/core": "^4.1.0",
