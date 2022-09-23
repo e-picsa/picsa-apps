@@ -62,7 +62,8 @@ captures/
 .cxx/
 
 # Google Services (e.g. APIs or Firebase)
-# google-services.json
+# NOTE - currently placed in both current and app folders (sentry + firebase analytics)
+google-services.json
 
 # Freeline
 freeline.py

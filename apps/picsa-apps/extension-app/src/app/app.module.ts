@@ -22,9 +22,20 @@ import { SENTRY_CONFIG } from '@picsa/environments/src/sentry';
 import { MatSliderModule } from '@angular/material/slider';
 import 'hammerjs';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { ENVIRONMENT } from '@picsa/environments';
 
 // Sentry error reporting
-Sentry.init(SENTRY_CONFIG, SentryAngular.init);
+Sentry.init(
+  {
+    ...SENTRY_CONFIG,
+    // TODO - not currently working with capacitor 4 (despite issue closed)
+    // Should consider using firebase crashlytics instead or waiting for update
+    // https://github.com/getsentry/sentry-capacitor/issues/211
+    enableNative: false,
+    enabled: ENVIRONMENT.production,
+  },
+  SentryAngular.init
+);
 
 export class SentryErrorHandler implements ErrorHandler {
   handleError(error) {
