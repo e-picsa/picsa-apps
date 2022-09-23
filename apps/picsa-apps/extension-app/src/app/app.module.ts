@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
+
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -13,10 +14,26 @@ import {
 } from '@picsa/shared/modules';
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+//Sentry imports
+import * as Sentry from '@sentry/capacitor'
+import * as SentryAngular from '@sentry/angular'
+import { SENTRY_CONFIG } from '@picsa/environments/src/sentry';
+
+
 // NOTE - climate slider requires import into main modules
 import { MatSliderModule } from '@angular/material/slider';
 import 'hammerjs';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+
+// Sentry error reporting
+Sentry.init(SENTRY_CONFIG, SentryAngular.init);
+
+export class SentryErrorHandler implements ErrorHandler {
+  handleError(error) {
+    Sentry.captureException(error.originalError || error);
+    throw error;
+  }
+}
 /**************************************************************
  *  Sentry error handler
  * ***************************************************************/
@@ -34,8 +51,18 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 //   }
 // }
 
+
+
 @NgModule({
   declarations: [AppComponent],
+  providers: [
+     { 
+      provide: ErrorHandler, 
+      useValue: SentryAngular.createErrorHandler({logErrors:true,showDialog:false}),
+      useClass: SentryErrorHandler 
+    },
+
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
