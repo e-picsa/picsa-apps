@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
-import { ENVIRONMENT } from '@picsa/environments';
+import { ENVIRONMENT, APP_VERSION } from '@picsa/environments';
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -26,7 +26,7 @@ export class AnalyticsService {
         this.firebaseAnalytics.setScreenName({ screenName: location.pathname });
         this.firebaseAnalytics.logEvent({
           name: 'screen_view',
-          params: { screen_name: location.pathname },
+          params: { screen_name: location.pathname, app_version: APP_VERSION },
         });
       }
     });
