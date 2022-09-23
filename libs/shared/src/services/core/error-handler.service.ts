@@ -18,7 +18,7 @@ export class ErrorHandlerService extends ErrorHandler {
    * (console logs and modal in dev mode, ignored in production), on android
    * this logs to firebase crashlytics
    */
-  handleError(error: Error) {
+  override handleError(error: Error) {
     if (Capacitor.isNativePlatform()) {
       return this.logToCrashlytics(error);
     } else {
