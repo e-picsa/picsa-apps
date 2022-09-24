@@ -16,3 +16,6 @@ project(':capacitor-blob-writer').projectDir = new File('../../../../node_module
 
 include ':capacitor-community-firebase-analytics'
 project(':capacitor-community-firebase-analytics').projectDir = new File('../../../../node_modules/@capacitor-community/firebase-analytics/android')
+
+include ':capacitor-community-firebase-crashlytics'
+project(':capacitor-community-firebase-crashlytics').projectDir = new File('../../../../node_modules/@capacitor-community/firebase-crashlytics/android')
