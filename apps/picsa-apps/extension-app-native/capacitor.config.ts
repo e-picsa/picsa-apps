@@ -22,6 +22,7 @@ const config: CapacitorConfig = {
     // capacitor
     '@capacitor/app',
     '@capacitor/browser',
+    '@capacitor/device',
     '@capacitor/filesystem',
     'capacitor-blob-writer',
     '@capacitor-community/firebase-analytics',
