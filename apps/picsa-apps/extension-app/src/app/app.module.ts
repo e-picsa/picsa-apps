@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -13,29 +13,16 @@ import {
 } from '@picsa/shared/modules';
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
 // NOTE - climate slider requires import into main modules
 import { MatSliderModule } from '@angular/material/slider';
 import 'hammerjs';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-/**************************************************************
- *  Sentry error handler
- * ***************************************************************/
-// import * as Sentry from 'sentry-cordova';
-// import { SENTRY_CONFIG } from '@picsa/environments/sentry';
-// Sentry.init(SENTRY_CONFIG);
-// export class SentryIonicErrorHandler extends ErrorHandler {
-//   override handleError(error) {
-//     super.handleError(error);
-//     try {
-//       Sentry.captureException(error.originalError || error);
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   }
-// }
+import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 
 @NgModule({
   declarations: [AppComponent],
+  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -51,7 +38,6 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     AppRoutingModule,
     IonicModule.forRoot(),
   ],
-  // providers: [{ provide: ErrorHandler, useClass: SentryIonicErrorHandler }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

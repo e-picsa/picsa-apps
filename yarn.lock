@@ -2191,6 +2191,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor-community/firebase-analytics@npm:^2.0.0-1":
+  version: 2.0.0-1
+  resolution: "@capacitor-community/firebase-analytics@npm:2.0.0-1"
+  dependencies:
+    "@capacitor/core": ^4.0.1
+  checksum: a7bd2c51298a7d451b286fb0eb88526b84449e1ec8e1ae4f5c36b8bf179f2b13713d5f6910ce5d5e8933cf7a94753c2cc6268e729d4e1d824dae2786c8ddcb46
+  languageName: node
+  linkType: hard
+
+"@capacitor-community/firebase-crashlytics@npm:^2.0.0-1":
+  version: 2.0.0-1
+  resolution: "@capacitor-community/firebase-crashlytics@npm:2.0.0-1"
+  peerDependencies:
+    "@capacitor/core": ^4.0.1
+  checksum: 19ad6e177181c33fa8db4841574f61b564ec94b557ce0313e1560112f7f16a0d725f149636ace1cb6b0891f506efab1d19a1b677c08387b74a3b073d867a3272
+  languageName: node
+  linkType: hard
+
 "@capacitor/android@npm:^4.1.0":
   version: 4.1.0
   resolution: "@capacitor/android@npm:4.1.0"
@@ -2246,12 +2264,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/core@npm:^4.0.1":
+  version: 4.3.0
+  resolution: "@capacitor/core@npm:4.3.0"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 63977a7ec172e98e6acb8ba6b239b70d565e08e3d72e2ed6e08df95a006142f2da002cd937ee0d40de20c39773958b13f4296492a197b9df9a5e3f28b94ca6a6
+  languageName: node
+  linkType: hard
+
 "@capacitor/core@npm:^4.1.0":
   version: 4.1.0
   resolution: "@capacitor/core@npm:4.1.0"
   dependencies:
     tslib: ^2.1.0
   checksum: 7c374a22e3e308b210aece0b28eff6fedcf9e6892a9162de6a31a82a4786e288adaa8775c8895f63820a943fa4a95e646b935d2cf9e0d08ac816fb75d885b164
+  languageName: node
+  linkType: hard
+
+"@capacitor/device@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@capacitor/device@npm:4.0.1"
+  peerDependencies:
+    "@capacitor/core": ^4.0.0
+  checksum: 6ea457dac9ccc00cf28999bbee5bd88f3553c7818a1ba3f29f1cc79c43986aa1dfd5856d33c548a17b7764dbe1fd088799dd2707513b8228832fa7029f0a2a00
   languageName: node
   linkType: hard
 
@@ -14041,11 +14077,14 @@ __metadata:
     "@awesome-cordova-plugins/file-opener": ^5.45.0
     "@awesome-cordova-plugins/network": ^5.45.0
     "@awesome-cordova-plugins/social-sharing": ^5.45.0
+    "@capacitor-community/firebase-analytics": ^2.0.0-1
+    "@capacitor-community/firebase-crashlytics": ^2.0.0-1
     "@capacitor/android": ^4.1.0
     "@capacitor/app": ^4.0.1
     "@capacitor/browser": ^4.0.1
     "@capacitor/cli": ^4.1.0
     "@capacitor/core": ^4.1.0
+    "@capacitor/device": ^4.0.1
     "@capacitor/filesystem": ^4.1.0
     "@ionic-native/core": ^5.36.0
     "@ionic/angular": 6.1.8
@@ -14115,6 +14154,7 @@ __metadata:
     rxjs: ~7.5.5
     save-svg-as-png: ^1.4.17
     sharp: ^0.30.7
+    stacktrace-js: ^2.0.2
     survey-angular: ^1.9.33
     tailwindcss: ^3.0.2
     ts-jest: 27.1.4
@@ -16488,6 +16528,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"source-map@npm:0.5.6":
+  version: 0.5.6
+  resolution: "source-map@npm:0.5.6"
+  checksum: 390b3f5165c9631a74fb6fb55ba61e62a7f9b7d4026ae0e2bfc2899c241d71c1bccb8731c496dc7f7cb79a5f523406eb03d8c5bebe8448ee3fc38168e2d209c8
+  languageName: node
+  linkType: hard
+
 "source-map@npm:0.6.1, source-map@npm:^0.6.0, source-map@npm:^0.6.1, source-map@npm:~0.6.0, source-map@npm:~0.6.1":
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
@@ -16639,6 +16686,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stack-generator@npm:^2.0.5":
+  version: 2.0.10
+  resolution: "stack-generator@npm:2.0.10"
+  dependencies:
+    stackframe: ^1.3.4
+  checksum: 4fc3978a934424218a0aa9f398034e1f78153d5ff4f4ff9c62478c672debb47dd58de05b09fc3900530cbb526d72c93a6e6c9353bacc698e3b1c00ca3dda0c47
+  languageName: node
+  linkType: hard
+
 "stack-trace@npm:0.0.x":
   version: 0.0.10
   resolution: "stack-trace@npm:0.0.10"
@@ -16659,6 +16715,27 @@ __metadata:
   version: 1.3.4
   resolution: "stackframe@npm:1.3.4"
   checksum: bae1596873595c4610993fa84f86a3387d67586401c1816ea048c0196800c0646c4d2da98c2ee80557fd9eff05877efe33b91ba6cd052658ed96ddc85d19067d
+  languageName: node
+  linkType: hard
+
+"stacktrace-gps@npm:^3.0.4":
+  version: 3.1.2
+  resolution: "stacktrace-gps@npm:3.1.2"
+  dependencies:
+    source-map: 0.5.6
+    stackframe: ^1.3.4
+  checksum: 85daa232d138239b6ae0f4bcdd87d15d302a045d93625db17614030945b5314e204b5fbcf9bee5b6f4f9e6af5fca05f65c27fe910894b861ef6853b99470aa1c
+  languageName: node
+  linkType: hard
+
+"stacktrace-js@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "stacktrace-js@npm:2.0.2"
+  dependencies:
+    error-stack-parser: ^2.0.6
+    stack-generator: ^2.0.5
+    stacktrace-gps: ^3.0.4
+  checksum: 081e786d56188ac04ac6604c09cd863b3ca2b4300ec061366cf68c3e4ad9edaa34fb40deea03cc23a05f442aa341e9171f47313f19bd588f9bec6c505a396286
   languageName: node
   linkType: hard
 

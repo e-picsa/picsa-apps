@@ -1,13 +1,12 @@
-import type { IFirebaseSettings } from '@picsa/models';
+import type { IFirebaseConfig } from '@picsa/models';
 
-const config: IFirebaseSettings = {
-  apiKey: 'AIzaSyCjVzdn5WTQKSDqGw9F0nNbhtdCDcPYP3I',
-  authDomain: 'extension-toolkit-staging.firebaseapp.com',
-  databaseURL: 'https://extension-toolkit-staging.firebaseio.com',
-  projectId: 'extension-toolkit-staging',
-  storageBucket: 'extension-toolkit-staging.appspot.com',
-  messagingSenderId: '621985864882',
-  appId: '1:621985864882:web:a19ebe2425f632b6',
+export const FirebaseConfig: IFirebaseConfig = {
+  apiKey: 'AIzaSyBuEu95p5xS2PHRH3miUEm9I3SZ2ufCHV4',
+  authDomain: 'picsa-apps.firebaseapp.com',
+  databaseURL: 'https://picsa-apps.firebaseio.com',
+  projectId: 'picsa-apps',
+  storageBucket: 'picsa-apps.appspot.com',
+  messagingSenderId: '78373580660',
+  appId: '1:78373580660:web:a16e594eb01028dc',
+  measurementId: 'G-CF4E23NMGB',
 };
-
-export default config;

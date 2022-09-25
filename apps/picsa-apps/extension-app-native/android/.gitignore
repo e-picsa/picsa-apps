@@ -62,7 +62,8 @@ captures/
 .cxx/
 
 # Google Services (e.g. APIs or Firebase)
-# google-services.json
+# NOTE - currently placed app folder (firebase analytics)
+app/google-services.json
 
 # Freeline
 freeline.py

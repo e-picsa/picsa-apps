@@ -4,6 +4,11 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
 import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
+import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
+import { ENVIRONMENT } from '@picsa/environments';
+import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
+import { CrashlyticsService } from '@picsa/shared/services/native/crashlytics.service';
 
 @Component({
   selector: 'picsa-root',
@@ -15,9 +20,18 @@ export class AppComponent {
 
   constructor(
     private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    analyticsService: AnalyticsService,
+    router: Router,
+    crashlyticsService: CrashlyticsService
   ) {
     this.registerIcons();
+    if (ENVIRONMENT.production) {
+      analyticsService.init(router);
+    }
+    if (Capacitor.isNativePlatform()) {
+      crashlyticsService.init();
+    }
   }
 
   // Note, any icons registered in child modules will also need to be registered here

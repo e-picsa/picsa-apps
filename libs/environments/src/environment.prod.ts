@@ -1,13 +1,13 @@
 import type { IEnvironment } from '@picsa/models';
 import GROUPS from './groups';
-import FIREBASE_CONFIG from './firebase/config';
+import { FirebaseConfig } from './firebase/config';
 
 /** Used in main picsa extension app, allows country-change at runtime */
-const GLOBAL_ENVIRONMENT: IEnvironment = {
-  firebase: FIREBASE_CONFIG,
+const productionEnvironment: IEnvironment = {
+  firebase: FirebaseConfig,
   group: GROUPS.GLOBAL,
-  enableProduction: true,
+  production: true,
   defaultConfiguration: 'global',
 };
 
-export default GLOBAL_ENVIRONMENT;
+export default productionEnvironment;

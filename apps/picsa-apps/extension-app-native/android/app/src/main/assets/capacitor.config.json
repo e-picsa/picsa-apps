@@ -16,6 +16,8 @@
 		"@capacitor/app",
 		"@capacitor/browser",
 		"@capacitor/filesystem",
-		"capacitor-blob-writer"
+		"capacitor-blob-writer",
+		"@capacitor-community/firebase-analytics",
+		"@capacitor-community/firebase-crashlytics"
 	]
 }

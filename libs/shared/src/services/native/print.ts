@@ -4,9 +4,7 @@ import { Platform } from '@ionic/angular';
 import { svgAsPngUri } from 'save-svg-as-png';
 import download from 'downloadjs';
 
-// note, import not working so loading from assets in index.html
-// import * as html2canvas from "html2canvas";
-declare var html2canvas: any;
+import html2canvas from 'html2canvas';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
