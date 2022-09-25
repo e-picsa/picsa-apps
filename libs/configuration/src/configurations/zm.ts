@@ -14,7 +14,10 @@ const configuration: IConfiguration.Settings = {
   localisation: {
     country: { label: 'Zambia', code: 'zm' },
     language: {
-      options: [{ id: 'en', label: 'English', code: 'en' }],
+      options: [
+        { id: 'en', label: 'English', code: 'en' },
+        { id: 'ny', label: 'Chichewa', code: 'ny' },
+      ],
       selected: undefined,
     },
   },

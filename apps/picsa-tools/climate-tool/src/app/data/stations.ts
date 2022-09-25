@@ -104,15 +104,27 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     longitude: 33.48123,
     country: 'Malawi',
   },
+  // Zambia
   {
     ...db.meta({
       _key: 'chipata',
       _created,
-      _modified: new Date('2022-09-19').toISOString(),
+      _modified: new Date('2022-09-25').toISOString(),
     }),
     name: 'Chipata',
     latitude: -13.3843,
     longitude: 32.3847,
+    country: 'Zambia',
+  },
+  {
+    ...db.meta({
+      _key: 'petauke',
+      _created,
+      _modified: new Date('2022-09-25').toISOString(),
+    }),
+    name: 'Petauke',
+    latitude: -14.24474,
+    longitude: 31.327641,
     country: 'Zambia',
   },
 ];
