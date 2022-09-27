@@ -32,7 +32,8 @@ export class BudgetCellEditorComponent {
     this.setActiveStep(type);
   }
   @Input() set activePeriod(index: number) {
-    this.data = this.store.activeBudget.data[index];
+    // create copy of data to avoid first input populating multiple activities
+    this.data = JSON.parse(JSON.stringify(this.store.activeBudget.data[index]));
   }
 
   @Input() isOpen = false;
