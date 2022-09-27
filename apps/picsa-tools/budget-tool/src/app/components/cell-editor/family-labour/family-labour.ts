@@ -1,6 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 
+const FAMILY_MEMBERS = [
+  { id: 'adultMale', label: 'Male' },
+  { id: 'adultFemale', label: 'Female' },
+];
+
 @Component({
   selector: 'budget-cell-editor-family-labour',
   templateUrl: './family-labour.html',
@@ -10,11 +15,22 @@ export class BudgetCellEditorFamilyLabourComponent {
   @Input() values: IBudgetCardWithValues[];
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
   totalPeople: number;
-  familyCard = FAMILY_MEMBER_CARD;
-  ngOnInit(): void {}
 
-  addMember() {
-    this.values.push(FAMILY_MEMBER_CARD);
+  memberTypes = FAMILY_MEMBERS;
+
+  addMemberCards: IBudgetCardWithValues[] = [];
+
+  constructor() {
+    for (const { id } of FAMILY_MEMBERS) {
+      const memberCard = this.createFamilyCard(id);
+      this.addMemberCards.push(memberCard);
+    }
+  }
+
+  addMember(memberType: string) {
+    // take a copy of the
+    const valueCard = this.createFamilyCard(memberType);
+    this.values.push(valueCard);
     this.valueChanged.emit(this.values);
   }
   removeMember(i: number) {
@@ -25,20 +41,24 @@ export class BudgetCellEditorFamilyLabourComponent {
   // NOTE - to maintain array format family labour simply populates a basic card for every member
   // of family labour indicated. In future this might contain more meta info
   setValue(e: Event, cardIndex: number) {
-    console.log('set card', cardIndex);
     const target = e.target as HTMLInputElement;
     this.values[cardIndex].values.quantity = Number(target.value);
     this.valueChanged.emit(this.values);
   }
+
+  createFamilyCard(memberType: string) {
+    const card: IBudgetCardWithValues = {
+      id: memberType,
+      label: 'family member',
+      type: 'familyLabour',
+      imgId: `family-labour_${memberType}`,
+      imgType: 'svg',
+      values: {
+        quantity: null as any,
+        cost: 0,
+        total: 0,
+      },
+    };
+    return card;
+  }
 }
-const FAMILY_MEMBER_CARD: IBudgetCardWithValues = {
-  id: 'family-member',
-  label: 'family member',
-  type: 'familyLabour',
-  imgType: 'svg',
-  values: {
-    quantity: null as any,
-    cost: 0,
-    total: 0,
-  },
-};

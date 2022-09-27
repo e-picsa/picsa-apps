@@ -44,7 +44,8 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   }
 
   private async loadImageFromFile() {
-    const imgBlob = await this.getCardImg(this.card.id, this.card.imgType);
+    const imageId = this.card.imgId ?? this.card.id;
+    const imgBlob = await this.getCardImg(imageId, this.card.imgType);
     if (imgBlob) {
       this.objUrl = URL.createObjectURL(imgBlob);
       this.imgUrl = this.sanitizer.bypassSecurityTrustUrl(this.objUrl);

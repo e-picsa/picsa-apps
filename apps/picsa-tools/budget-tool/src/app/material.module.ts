@@ -1,18 +1,19 @@
 import { NgModule } from '@angular/core';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatRippleModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
@@ -20,6 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatBadgeModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatRippleModule,
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
@@ -29,12 +31,13 @@ import { MatMenuModule } from '@angular/material/menu';
     MatListModule,
     MatCardModule,
     MatDialogModule,
-    MatMenuModule
+    MatMenuModule,
   ],
   exports: [
     MatBadgeModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatRippleModule,
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
@@ -44,7 +47,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatListModule,
     MatCardModule,
     MatDialogModule,
-    MatMenuModule
-  ]
+    MatMenuModule,
+  ],
 })
 export class BudgetMaterialModule {}

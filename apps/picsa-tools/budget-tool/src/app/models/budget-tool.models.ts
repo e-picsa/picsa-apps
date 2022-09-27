@@ -59,6 +59,8 @@ export interface IBudgetCard {
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
   imgType?: 'svg' | 'png';
+  /** Optional image overide (default used card id) */
+  imgId?: string;
   _deleted?: boolean;
 }
 export type IBudgetCardDB = IBudgetCard & IDBDoc;
