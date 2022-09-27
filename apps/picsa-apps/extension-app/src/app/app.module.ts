@@ -1,4 +1,9 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  HammerGestureConfig,
+  HammerModule,
+  HAMMER_GESTURE_CONFIG,
+} from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 
 import { AppComponent } from './app.component';
@@ -14,19 +19,19 @@ import {
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-// NOTE - climate slider requires import into main modules
-import { MatSliderModule } from '@angular/material/slider';
-import 'hammerjs';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 
 @NgModule({
   declarations: [AppComponent],
-  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }],
+  providers: [
+    { provide: ErrorHandler, useClass: ErrorHandlerService },
+    // required to recognize touch actions on climate tool mat-slider
+    { provide: HAMMER_GESTURE_CONFIG, useClass: HammerGestureConfig },
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatSliderModule,
     HttpClientModule,
     MobxAngularModule,
     PicsaDbModule.forRoot(),
@@ -37,6 +42,8 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
     HttpClientModule,
     AppRoutingModule,
     IonicModule.forRoot(),
+    // required to recognize touch actions on climate tool mat-slider
+    HammerModule,
   ],
   bootstrap: [AppComponent],
 })

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
+import { Capacitor } from '@capacitor/core';
 import { ENVIRONMENT, APP_VERSION } from '@picsa/environments';
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +13,10 @@ export class AnalyticsService {
   public firebaseAnalytics = FirebaseAnalytics;
 
   public init(router: Router) {
-    FirebaseAnalytics.initializeFirebase(ENVIRONMENT.firebase);
+    if (!Capacitor.isNativePlatform()) {
+      // initialise for web (not required on android)
+      FirebaseAnalytics.initializeFirebase(ENVIRONMENT.firebase);
+    }
     this.trackScreenView(router);
   }
   /**

@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.6.0",
+  "version": "3.6.5",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -94,6 +94,7 @@
     "@nrwl/nx-cloud": "14.1.2",
     "@nrwl/workspace": "14.3.6",
     "@types/c3": "^0.7.8",
+    "@types/hammerjs": "^2.0.41",
     "@types/jest": "27.4.1",
     "@types/leaflet": "^1.8.0",
     "@types/node": "16.11.7",

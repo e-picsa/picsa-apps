@@ -1,4 +1,9 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  HammerGestureConfig,
+  HammerModule,
+  HAMMER_GESTURE_CONFIG,
+} from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
@@ -8,9 +13,6 @@ import {
   PicsaTranslateService,
 } from '@picsa/shared/modules/translate';
 import { PicsaDbModule } from '@picsa/shared/modules/db.module';
-import { MatSliderModule } from '@angular/material/slider';
-// required for material slider
-import 'hammerjs';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 
 /** Core imports only required when running standalone */
@@ -18,11 +20,12 @@ const StandaloneImports = [
   BrowserModule,
   BrowserAnimationsModule,
   AppRoutingModule,
+  // required to recognize touch actions on climate tool mat-slider
+  HammerModule,
 ];
 
 /** Common imports used in both standalone and embedded formats */
 export const APP_COMMON_IMPORTS = [
-  MatSliderModule,
   PicsaTranslateModule.forRoot(),
   PicsaDbModule.forRoot(),
   PicsaCommonComponentsModule,
@@ -35,6 +38,10 @@ export const APP_COMMON_IMPORTS = [
   declarations: [AppComponent],
   imports: [...StandaloneImports, ...APP_COMMON_IMPORTS],
   bootstrap: [AppComponent],
+  providers: [
+    // required to recognize touch actions on climate tool mat-slider
+    { provide: HAMMER_GESTURE_CONFIG, useClass: HammerGestureConfig },
+  ],
 })
 export class AppModule {
   // ensure translate service initialised

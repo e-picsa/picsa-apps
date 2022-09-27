@@ -9,7 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
-// NOTE - slide module requires import 'hammerjs' in app.module.ts;
 // also other deps from: https://material.angular.io/guide/getting-started
 // https://github.com/angular/components/issues/4278 and also load in app.module.ts
 
@@ -23,7 +22,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
     MatButtonToggleModule,
     MatMenuModule,
     MatDialogModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
   ],
   exports: [
     MatButtonModule,
@@ -34,7 +33,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
     MatButtonToggleModule,
     MatMenuModule,
     MatDialogModule,
-    MatBottomSheetModule
-  ]
+    MatBottomSheetModule,
+  ],
 })
 export class ClimateMaterialModule {}
