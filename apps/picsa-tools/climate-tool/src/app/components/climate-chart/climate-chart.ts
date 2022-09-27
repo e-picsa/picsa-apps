@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, Input, NgZone, OnChanges, ViewChild } from '@angular/core';
 import { PicsaDialogService } from '@picsa/shared/features/dialog';
 import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import {
@@ -27,7 +27,7 @@ export class ClimateChartComponent implements OnChanges {
   @Input() chartMeta: IChartMeta & IClimateView;
   @Input() chartData: IChartSummary[];
   @Input() stationMeta: IStationMeta;
-  @ViewChild('picsaChart', { static: true }) picsaChart: PicsaChartComponent;
+  @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
   chartConfig: IChartConfig;
   chartRendered$ = new Subject<void>();
   lineToolValue: number | undefined;
@@ -38,7 +38,8 @@ export class ClimateChartComponent implements OnChanges {
   constructor(
     private translateService: PicsaTranslateService,
     private dialog: PicsaDialogService,
-    private bottomSheet: MatBottomSheet
+    private bottomSheet: MatBottomSheet,
+    private ngZone: NgZone
   ) {}
 
   // use ngOnchanges so that chartMeta can be changed directly from parent and update
@@ -74,17 +75,19 @@ export class ClimateChartComponent implements OnChanges {
   }
 
   setLineToolValue(value: number) {
-    if (value === this.ranges.yMin) {
-      this.lineToolValue = undefined;
-      return this.picsaChart.chart.unload({ ids: ['LineTool'] });
-    }
-    const lineArray = Array(this.chartData.length).fill(value);
-    lineArray.unshift('LineTool');
-    this.picsaChart.chart.load({
-      columns: [lineArray as any],
-      classes: { LineTool: 'LineTool' },
+    this.ngZone.run(() => {
+      if (value === this.ranges.yMin) {
+        this.lineToolValue = undefined;
+        return this.picsaChart.chart.unload({ ids: ['LineTool'] });
+      }
+      const lineArray = Array(this.chartData.length).fill(value);
+      lineArray.unshift('LineTool');
+      this.picsaChart.chart.load({
+        columns: [lineArray as any],
+        classes: { LineTool: 'LineTool' },
+      });
+      this.picsaChart.chart.show('LineTool');
     });
-    this.picsaChart.chart.show('LineTool');
   }
   // TODO - can't display dates nice on tooltip so just return empty string
   formatLineToolValue = (v: number) => {

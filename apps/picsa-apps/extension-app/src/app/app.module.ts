@@ -1,4 +1,9 @@
-import { BrowserModule, HammerModule } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  HammerGestureConfig,
+  HammerModule,
+  HAMMER_GESTURE_CONFIG,
+} from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 
 import { AppComponent } from './app.component';
@@ -19,7 +24,11 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
 
 @NgModule({
   declarations: [AppComponent],
-  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }],
+  providers: [
+    { provide: ErrorHandler, useClass: ErrorHandlerService },
+    // required to recognize touch actions on climate tool mat-slider
+    { provide: HAMMER_GESTURE_CONFIG, useClass: HammerGestureConfig },
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -33,6 +42,7 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
     HttpClientModule,
     AppRoutingModule,
     IonicModule.forRoot(),
+    // required to recognize touch actions on climate tool mat-slider
     HammerModule,
   ],
   bootstrap: [AppComponent],
