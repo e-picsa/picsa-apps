@@ -12,7 +12,10 @@
   </div>
 
   <!-- hide overflow so that editor can be stored outside bottom of page -->
-  <div class="page-content" style="overflow-y: hidden; overflow-x: auto">
+  <div
+    class="page-content"
+    style="overflow-y: hidden; overflow-x: auto; padding: 0"
+  >
     <budget-table
       *ngIf="store.activeBudget"
       [budget]="store.activeBudget"

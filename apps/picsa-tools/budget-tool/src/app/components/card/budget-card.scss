@@ -9,7 +9,7 @@
 }
 
 mat-card.budget-card {
-  width: 130px;
+  width: 110px;
   padding: 0;
 }
 .delete-button {
@@ -28,4 +28,5 @@ mat-card.budget-card {
   height: 2.5em;
   padding: 5px;
   background: #dcdcdc;
+  overflow: auto;
 }
