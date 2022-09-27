@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { NgModule, ErrorHandler } from '@angular/core';
 
 import { AppComponent } from './app.component';
@@ -14,8 +14,6 @@ import {
 import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-// NOTE - climate slider requires import into main modules
-import { MatSliderModule } from '@angular/material/slider';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 
@@ -25,7 +23,6 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatSliderModule,
     HttpClientModule,
     MobxAngularModule,
     PicsaDbModule.forRoot(),
@@ -36,6 +33,7 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
     HttpClientModule,
     AppRoutingModule,
     IonicModule.forRoot(),
+    HammerModule,
   ],
   bootstrap: [AppComponent],
 })

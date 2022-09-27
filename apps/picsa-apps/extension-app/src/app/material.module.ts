@@ -15,14 +15,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatCardModule,
     MatGridListModule,
     MatProgressBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatButtonModule,
     MatIconModule,
     MatCardModule,
     MatGridListModule,
-    MatProgressBarModule
-  ]
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+  ],
 })
 export class ExtensionToolkitMaterialModule {}
