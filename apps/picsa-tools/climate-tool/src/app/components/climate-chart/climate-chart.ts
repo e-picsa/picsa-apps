@@ -191,6 +191,9 @@ export class ClimateChartComponent implements OnChanges {
       },
       point: {
         r: (d) => (d.id === 'LineTool' ? 0 : 8),
+        // make it easier to select points when tapping outside
+        // TODO - could vary depending on screen size
+        sensitivity: 16,
       },
       onrendered: () => {
         console.log('rendered');

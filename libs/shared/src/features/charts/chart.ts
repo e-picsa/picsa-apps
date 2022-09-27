@@ -4,7 +4,6 @@ import {
   Input,
   ElementRef,
   SimpleChanges,
-  OnInit,
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
@@ -21,7 +20,7 @@ import { PrintProvider } from '../../services/native';
     see https://github.com/emn178/angular2-chartjs/blob/master/src/chart.component.ts
     for similar implementation on chartjs lib
 */
-export class PicsaChartComponent implements OnInit {
+export class PicsaChartComponent {
   public chart: c3.ChartAPI;
   private container: HTMLDivElement;
   constructor(
@@ -40,11 +39,6 @@ export class PicsaChartComponent implements OnInit {
    *  exists by simply accessing the api methods on this.chart, such as load() or unload()
    **********************************************************************************/
 
-  ngOnInit() {
-    // create chart on init, even if no data present so empty chart can be seen
-    // NOTE - removed as causes duplicate creation
-    // this.create();
-  }
   // note, only detects object change, not content (so array push ignored)
   // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
   ngOnChanges(changes: SimpleChanges) {
@@ -54,7 +48,6 @@ export class PicsaChartComponent implements OnInit {
           // handle core changes which require chart rebuild
           this.create();
         } else if (changes['data']) {
-          console.log('data changed', changes.data);
           // difficult to detect full changes (ids as well as if values changed within)
           // therefore just unload all data and load all new
           this.chart.unload();
