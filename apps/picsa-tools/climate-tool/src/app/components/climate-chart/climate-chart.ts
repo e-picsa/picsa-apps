@@ -196,7 +196,6 @@ export class ClimateChartComponent implements OnChanges {
         sensitivity: 16,
       },
       onrendered: () => {
-        console.log('rendered');
         this.chartRendered$.next();
       },
     };
