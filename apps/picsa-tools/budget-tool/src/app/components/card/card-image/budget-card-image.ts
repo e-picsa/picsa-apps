@@ -59,8 +59,8 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
     imageType: 'svg' | 'png' = 'png'
   ): Promise<Blob | null> {
     // first see if svg exists
-    const targetImg = `assets/images/${imageId}.${imageType}`;
-    const fallbackImg = 'assets/images/no-image.png';
+    const targetImg = `assets/budget-cards/${imageId}.${imageType}`;
+    const fallbackImg = 'assets/budget-cards/no-image.png';
     const imgData = await firstValueFrom(
       this.http.get(targetImg, { responseType: 'blob' }).pipe(
         // send fallback image on error
