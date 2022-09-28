@@ -217,7 +217,7 @@ const CARDS: IBudgetCard[] = [
     label: 'apply pesticide',
     id: 'apply-pesticide',
     groupings: ['crop'],
-    imgType: 'png',
+    imgType: 'svg',
   },
   {
     type: 'activities',
@@ -504,7 +504,7 @@ const CARDS: IBudgetCard[] = [
     label: 'transportation hire',
     id: 'transportation-hire',
     groupings: ['crop', 'livestock'],
-    imgType: 'png',
+    imgType: 'svg',
   },
   {
     type: 'inputs',
