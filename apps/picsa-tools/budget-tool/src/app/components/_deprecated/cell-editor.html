@@ -17,7 +17,7 @@
         (valueChanged)="onEditorChange($event, 'activities')"
       >
       </budget-cell-editor-card-select>
-      <next-button></next-button>
+      <!-- <next-button></next-button> -->
     </mat-step>
     <!-- Inputs -->
     <mat-step matStepContent>
@@ -32,7 +32,7 @@
             (valueChanged)="onEditorChange($event, 'inputs')"
           >
           </budget-cell-editor-card-select>
-          <next-button></next-button>
+          <!-- <next-button></next-button> -->
         </mat-step>
         <!-- Input Values -->
         <mat-step aria-label="Values">
@@ -41,7 +41,7 @@
             [cards]="data.inputs"
             (valueChanged)="onEditorChange($event, 'inputs')"
           ></budget-cell-editor-input-values>
-          <next-button (click)="stepper.next()"></next-button>
+          <!-- <next-button (click)="stepper.next()"></next-button> -->
         </mat-step>
       </mat-horizontal-stepper>
     </mat-step>
@@ -53,7 +53,7 @@
         [values]="data.familyLabour"
         (valueChanged)="onEditorChange($event, 'familyLabour')"
       ></budget-cell-editor-family-labour>
-      <next-button></next-button>
+      <!-- <next-button></next-button> -->
     </mat-step>
     <!-- Outputs -->
     <mat-step matStepContent>
@@ -68,7 +68,7 @@
             (valueChanged)="onEditorChange($event, 'outputs')"
           >
           </budget-cell-editor-card-select>
-          <next-button></next-button>
+          <!-- <next-button></next-button> -->
         </mat-step>
         <!-- Output Values -->
         <mat-step>
@@ -77,8 +77,9 @@
             [cards]="data.outputs"
             (valueChanged)="onEditorChange($event, 'outputs')"
           ></budget-cell-editor-input-values>
-          <next-button (click)="stepper.next()"></next-button
-        ></mat-step>
+          <!-- <next-button (click)="stepper.next()"></next-button -->
+          ></mat-step
+        >
       </mat-horizontal-stepper>
     </mat-step>
     <!-- Consumed -->
@@ -94,7 +95,7 @@
             (valueChanged)="onEditorChange($event, 'produceConsumed')"
           >
           </budget-cell-editor-card-select>
-          <next-button></next-button>
+          <!-- <next-button></next-button> -->
         </mat-step>
         <!-- Consumed Values -->
         <mat-step>
@@ -103,8 +104,9 @@
             [cards]="data.produceConsumed"
             (valueChanged)="onEditorChange($event, 'produceConsumed')"
           ></budget-cell-editor-produce-consumed>
-          <next-button (click)="stepper.next()"></next-button
-        ></mat-step>
+          <!-- <next-button (click)="stepper.next()"></next-button -->
+          ></mat-step
+        >
       </mat-horizontal-stepper>
       <!-- ------------------------------------------------------------------- -->
     </mat-step>
@@ -114,8 +116,7 @@
       <budget-period-summary
         [periodIndex]="store.activePeriod"
       ></budget-period-summary>
-
-      <next-button (click)="closeEditor()"></next-button>
+      <!-- <next-button (click)="closeEditor()"></next-button> -->
     </mat-step>
   </mat-stepper>
 </div>

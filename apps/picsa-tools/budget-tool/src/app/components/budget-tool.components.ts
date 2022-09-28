@@ -14,7 +14,8 @@ import {
   BudgetListItemRenameDialog,
 } from './list-item/budget-list-item';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
-import { BudgetCellEditorComponent } from './cell-editor/cell-editor';
+import { BudgetCellEditorComponent } from './_deprecated/cell-editor';
+import { NextButton } from './_deprecated/next-button';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaDbModule } from '@picsa/shared/modules';
 import {
@@ -28,10 +29,10 @@ import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-
 import { BudgetCardNew, BudgetCardNewDialog } from './card/card-new/card-new';
 import { RouterModule } from '@angular/router';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
-import { NextButton } from './general/next-button';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { PicsaDialogsModule } from '@picsa/shared/features';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { BudgetCellInlineEditorComponent } from './cell-inline-editor/cell-inline-editor.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
+    BudgetCellInlineEditorComponent,
     BudgetCellLabourComponent,
     BudgetCardNew,
     BudgetCardNewDialog,
@@ -79,6 +81,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
     BudgetCellEditorInputValuesComponent,
     BudgetCellEditorFamilyLabourComponent,
     BudgetCellEditorProduceConsumedComponent,
+    BudgetCellInlineEditorComponent,
     BudgetCellLabourComponent,
     BudgetListItemComponent,
     BudgetCardNew,

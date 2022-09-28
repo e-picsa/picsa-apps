@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChildren,
+  QueryList,
+} from '@angular/core';
+import { MatInput } from '@angular/material/input';
 import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 
 const FAMILY_MEMBERS = [
@@ -14,6 +22,7 @@ const FAMILY_MEMBERS = [
 export class BudgetCellEditorFamilyLabourComponent {
   @Input() values: IBudgetCardWithValues[];
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
+  @ViewChildren(MatInput) childInputs: QueryList<MatInput>;
   totalPeople: number;
 
   memberTypes = FAMILY_MEMBERS;
@@ -32,6 +41,13 @@ export class BudgetCellEditorFamilyLabourComponent {
     const valueCard = this.createFamilyCard(memberType);
     this.values.push(valueCard);
     this.valueChanged.emit(this.values);
+    // Focus input after render
+    setTimeout(() => {
+      const lastEl = this.childInputs.get(this.values.length - 1);
+      if (lastEl) {
+        lastEl.focus();
+      }
+    }, 200);
   }
   removeMember(i: number) {
     this.values.splice(i, 1);
