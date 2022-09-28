@@ -12,7 +12,10 @@
   </div>
 
   <!-- hide overflow so that editor can be stored outside bottom of page -->
-  <div class="page-content" style="overflow-y: hidden; overflow-x: auto">
+  <div
+    class="page-content"
+    style="overflow-y: hidden; overflow-x: auto; padding: 0"
+  >
     <budget-table
       *ngIf="store.activeBudget"
       [budget]="store.activeBudget"
@@ -25,6 +28,14 @@
       [isOpen]="isEditorOpen"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
     ></budget-cell-editor>
+    <!-- WiP Updated editor (replaces ABOVE) -->
+    <!-- <budget-cell-inline-editor
+      *ngIf="store.activeType && store.activeBudget"
+      [activePeriod]="store.activePeriod"
+      [activeType]="store.activeType"
+      [isOpen]="isEditorOpen"
+      [@flyInOut]="isEditorOpen ? 'in' : 'out'"
+    ></budget-cell-inline-editor> -->
   </div>
 
   <!-- Header Menu -->

@@ -2,11 +2,41 @@
   width: 100%;
   margin: 10px 0;
   height: 70px;
-  outline: 1px dashed var(--color-primary);
 }
 .member-card {
-  margin-bottom: 10px;
   display: flex;
-  justify-content: space-between;
-  width: 300px;
+  padding: 1rem;
+  align-items: center;
+  position: relative;
+  padding-right: 2rem;
+}
+.member-card.placeholder {
+  border: 1px dashed var(--color-primary);
+  padding-right: 1rem;
+  min-height: 48px;
+  cursor: pointer;
+}
+.member-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
+}
+.member-delete-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: unset;
+  width: 36px;
+  padding: 0;
+}
+.member-input {
+  flex: 1;
+  margin: 0 1rem;
+  overflow: hidden;
+}
+.member-add-container {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
 }
