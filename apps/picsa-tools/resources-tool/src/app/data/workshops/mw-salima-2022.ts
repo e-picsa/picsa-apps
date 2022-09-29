@@ -13,6 +13,7 @@ const collections: { [id: string]: IResourceCollection } = {
     title: 'Salima 2022',
     description: 'Materials used in Salima picsa workshop 2022',
     image: 'assets/resources/covers/workshop-salima-2022.jpg',
+    imageFit: 'cover',
     childResources: [
       'ag_bulletin',
       'mw_seasonal_forecast_2022',

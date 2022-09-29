@@ -41,7 +41,6 @@ export class ResourcesStore {
    *  that should be popluated, and check server for any updates also
    */
   private async init() {
-    console.log('[Resources] init', this.downloadedResources);
     if (this.isNative) {
       await this.storageService.init();
       await this.checkHardcodedData();
@@ -77,8 +76,8 @@ export class ResourcesStore {
     }
   }
 
-  async openLinkresource(resource: IResourceLink) {
-    return Browser.open({ url: resource.url });
+  async openBrowserLink(url: string) {
+    return Browser.open({ url: url });
   }
 
   // create an observable that stream progress snapshots and completes when file downloaded
