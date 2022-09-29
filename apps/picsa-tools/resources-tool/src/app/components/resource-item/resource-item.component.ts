@@ -3,14 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import {
   IResource,
+  IResourceApp,
   IResourceCollection,
   IResourceFile,
   IResourceLink,
+  IResourceType,
 } from '../../models';
 import { ResourcesStore } from '../../stores';
 
 type IResourceClickHandlers = {
-  [type in IResource['type']]: (resource: any) => void;
+  [type in IResourceType]: (resource: any) => void;
 };
 
 @Component({
@@ -33,6 +35,7 @@ export class ResourceItemComponent implements OnInit {
     file: () => new FileItemHandler(this),
     youtube: () => null,
     link: () => new LinkItemHandler(this),
+    app: () => new AppItemHandler(this),
   };
 
   public handleResourceClick: (e: Event) => void = (e) => e.stopPropagation();
@@ -65,8 +68,7 @@ class LinkItemHandler {
 
   private handleClick(e: Event) {
     e.stopPropagation();
-    console.log('open resource', this.resource);
-    this.parent.store.openLinkresource(this.resource);
+    this.parent.store.openBrowserLink(this.resource.url);
   }
 }
 
@@ -136,5 +138,26 @@ class CollectionItemHandler {
         relativeTo: route,
       });
     }
+  }
+}
+
+class AppItemHandler {
+  resource: IResourceApp;
+  constructor(private parent: ResourceItemComponent) {
+    this.resource = parent.resource as IResourceApp;
+    parent.handleResourceClick = (e) => this.handleClick(e);
+    this.handleOverrides();
+  }
+  private async handleOverrides() {
+    this.parent.actionButtonIcon = 'open_in_new';
+  }
+
+  private handleClick(e: Event) {
+    e.stopPropagation();
+    console.log('handle click', this.resource);
+    const { appId } = this.resource;
+    this.parent.store.openBrowserLink(
+      `https://play.google.com/store/apps/details?id=${appId}`
+    );
   }
 }
