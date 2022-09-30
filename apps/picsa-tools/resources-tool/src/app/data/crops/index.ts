@@ -51,11 +51,17 @@ const cropResources: IResourceCollection = {
   _modified: '2019-05-27T11:00:01.000Z',
   _key: 'cropResources',
   type: 'collection',
-  title: 'Crop Pest & Disease',
+  title: 'Crop, Pest & Disease',
   description: 'Resources to help care for crops',
   image: 'assets/resources/covers/crops.svg',
   priority: 7,
-  childResources: [...Object.keys(links), ...Object.keys(apps)],
+  childResources: [
+    // TODO - cropInfoSheets used in ZM workshop but wanted displayed here
+    // should tidy up
+    'cropInfoSheets',
+    ...Object.keys(links),
+    ...Object.keys(apps),
+  ],
 };
 
 export default {

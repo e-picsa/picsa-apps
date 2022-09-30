@@ -25,7 +25,7 @@ const weatherResources: IResourceCollection = {
   title: 'Weather Resources',
   description: 'Local forecasts and meterological services',
   image: 'assets/resources/covers/weather.svg',
-  priority: 8,
+  priority: 6,
   childResources: WEATHER_LOCATIONS.map(
     (location) => `weatherResources_${location.id}`
   ),
