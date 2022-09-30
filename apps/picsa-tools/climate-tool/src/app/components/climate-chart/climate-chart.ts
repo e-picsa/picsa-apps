@@ -340,22 +340,22 @@ export class ClimateChartComponent implements OnChanges {
     const { yMajor } = meta;
     const monthNames: string[] = this.translateService.monthNames;
     let label: string;
+
     switch (meta.yFormat) {
       case 'date-from-July': {
         // previously 181 based on local met +182 and -1 for index starting at 0
         // now simply half of standard year 365 + 1 for index
         const dayNumber = (value + 183) % 366;
         if (isAxisLabel) {
+          const monthNumber = Math.round(dayNumber / yMajor) % 12;
           // just want nearest month name
-          label = monthNames[Math.round(dayNumber / yMajor) % 12].substring(
-            0,
-            3
-          );
+          label = monthNames[monthNumber].substring(0, 3);
         } else {
           //simply converts number to day rough date value (same method as local met office)
           //initialise year from a year with 365 days
           const d = new Date(2015, 0);
           d.setDate(dayNumber);
+
           // just take first 3 letters
           label = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(
             0,
@@ -376,7 +376,7 @@ export class ClimateChartComponent implements OnChanges {
     if (meta.yFormat == 'value') {
       return `${Math.round(value).toString()} ${meta.units}`;
     } else {
-      return `${this._formatYAxis(value, meta)} ${meta.units}`;
+      return `${this._formatYAxis(value, meta, false)} ${meta.units}`;
     }
   }
 }
