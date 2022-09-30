@@ -7,8 +7,8 @@ export class LinksGenerator extends ResourcesGenerator {
   }
 
   public override generate() {
-    const { country } = this.location;
-    if (country === 'Zambia') {
+    const { countryCode } = this.location;
+    if (countryCode === 'zm') {
       this.links.zmdFacebook = {
         _created: '',
         _key: 'zmdFacebook',
@@ -20,7 +20,7 @@ export class LinksGenerator extends ResourcesGenerator {
         image: 'assets/resources/covers/facebook.svg',
       };
     }
-    if (country === 'Malawi') {
+    if (countryCode === 'mw') {
       this.links.dccms_twitter = {
         _key: 'dccms_twitter',
         _created: '2019-09-25T10:00:04.000Z',

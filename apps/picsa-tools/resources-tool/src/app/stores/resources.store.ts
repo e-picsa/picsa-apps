@@ -7,7 +7,13 @@ import {
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import RESOURCES from '../data';
-import { IResource, IResourceFile, IResourceLink } from '../models';
+import {
+  IResource,
+  IResourceFile,
+  IResourceCollection,
+  IResourceItemBase,
+} from '../models';
+import { ConfigurationService } from '@picsa/configuration';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -16,21 +22,18 @@ import { IResource, IResourceFile, IResourceLink } from '../models';
   providedIn: 'root',
 })
 export class ResourcesStore {
-  @observable resources: IResource[] = [];
   isNative = Capacitor.isNativePlatform();
-  constructor(private storageService: NativeStorageService) {
+  /** Country code from app configuration used to filter resources */
+  private appConfigCountryCode: string;
+  constructor(
+    private storageService: NativeStorageService,
+    private configurationService: ConfigurationService
+  ) {
     this.init();
   }
-  resourcesById = RESOURCES.byId;
-  @observable collections = RESOURCES.collection.filter(
-    (c) => !c.parentResource
-  );
-
-  @computed get sortedResources() {
-    return [...this.resources].sort((a, b) => {
-      return a._created > b._created ? 1 : -1;
-    });
-  }
+  resourcesById: { [id: string]: IResource } = {};
+  /** Parent collections */
+  collections: IResourceCollection[];
 
   public downloadedResources: IStorageFilesHashmap = {};
 
@@ -41,6 +44,7 @@ export class ResourcesStore {
    *  that should be popluated, and check server for any updates also
    */
   private async init() {
+    this.listenToConfigurationChanges();
     if (this.isNative) {
       await this.storageService.init();
       await this.checkHardcodedData();
@@ -48,6 +52,75 @@ export class ResourcesStore {
       console.log('[Resources] downloaded', this.downloadedResources);
     }
     console.log('[Resources] init complete');
+  }
+  private listenToConfigurationChanges() {
+    this.configurationService.activeConfiguration$.subscribe((config) => {
+      const { code } = config.localisation.country;
+      if (code !== this.appConfigCountryCode) {
+        this.appConfigCountryCode = code;
+        this.populateCountryResources(this.appConfigCountryCode);
+      }
+    });
+  }
+
+  private sortResources<T extends IResourceItemBase>(resources: T[]) {
+    return resources.sort(
+      (a: IResourceItemBase, b: IResourceItemBase) =>
+        (b.priority ?? -99) - (a.priority ?? -99)
+    );
+  }
+
+  /**
+   * Populate resources for current country code
+   * TODO - would be cleaner if implementing more like a tree/graph
+   */
+  private populateCountryResources(countryCode: string) {
+    // take a copy of all resources to preserve original
+    const resourcesById: { [id: string]: IResource } = JSON.parse(
+      JSON.stringify(RESOURCES.byId)
+    );
+    // Remove any collections with country filters
+    Object.entries(resourcesById).forEach(([key, resource]) => {
+      if (
+        resource.appCountries &&
+        !resource.appCountries.includes(countryCode)
+      ) {
+        delete resourcesById[key];
+        if (resource.type === 'collection') {
+          const collection = resource as IResourceCollection;
+          // remove collection children
+          collection.childResources.forEach((childKey) => {
+            delete resourcesById[childKey];
+          });
+        }
+      }
+    });
+    this.resourcesById = resourcesById;
+    this.populateCountryCollections(resourcesById);
+  }
+  /**
+   * Once resources have been filtered by country reassign collections to only include
+   * child resources that still exist.
+   */
+  private populateCountryCollections(resourcesById: {
+    [id: string]: IResource;
+  }) {
+    // Reassign collection children
+    const allCollections = Object.values(resourcesById)
+      .filter((r) => r.type === 'collection')
+      .map((r) => {
+        const collection = r as IResourceCollection;
+        collection.childResources = collection.childResources.filter(
+          (childKey) => resourcesById.hasOwnProperty(childKey)
+        );
+        // also update main list
+        resourcesById[collection._key] = collection;
+        return collection;
+      })
+      // remove empty collections
+      .filter((r) => r.childResources.length > 0);
+    const mainCollections = allCollections.filter((c) => !c.parentResource);
+    this.collections = this.sortResources(mainCollections);
   }
 
   public getResourceById<T extends IResource>(id: string) {

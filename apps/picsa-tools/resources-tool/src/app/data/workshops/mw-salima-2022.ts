@@ -23,6 +23,7 @@ const collections: { [id: string]: IResourceCollection } = {
       'crop_info_nkhotakota',
     ],
     parentResource: 'picsaWorkshops',
+    appCountries: ['mw'],
   },
 };
 const links: { [id: string]: IResourceLink } = {

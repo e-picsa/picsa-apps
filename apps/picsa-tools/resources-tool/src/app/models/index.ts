@@ -6,7 +6,9 @@ export interface IResourceItemBase extends IDBDoc {
   title: string;
   description: string;
   type: IResourceType;
-  //
+  /** List of app configuration countries where resource shown (default all) */
+  appCountries?: string[];
+  /** Order of priority when shown in list (highest numbers shown first) */
   priority?: number;
   image?: string;
   /** Specify if resource image should be contained (default) or stretched to cover */
