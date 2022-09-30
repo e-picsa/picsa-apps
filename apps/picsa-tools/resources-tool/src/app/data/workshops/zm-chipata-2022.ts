@@ -13,7 +13,7 @@ const files: { [id: string]: IResourceFile } = {
     filename: 'crop-info-chipata.pdf',
     type: 'file',
     image: '',
-    url: 'https://picsa.app/assets/resources/crop-info-chipata.pdf',
+    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-chipata.pdf?alt=media&token=d6637831-4fe5-4c92-9004-2bfae4aefd7a',
     appCountries: ['zm'],
   },
   crop_info_petauke: {
@@ -28,7 +28,7 @@ const files: { [id: string]: IResourceFile } = {
     filename: 'crop-info-petauke.pdf',
     type: 'file',
     image: '',
-    url: 'https://picsa.app/assets/resources/crop-info-petauke.pdf',
+    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-petauke.pdf?alt=media&token=793e9beb-9776-45bf-a094-e26bfa35e6b5',
     appCountries: ['zm'],
   },
 };

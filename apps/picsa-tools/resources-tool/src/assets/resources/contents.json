@@ -65,6 +65,12 @@
     "md5Checksum": "734268671d638845038a720927c8c3e0",
     "modifiedTime": "2022-09-08T10:31:19.008Z"
   },
+  "covers/spreadsheet.svg": {
+    "relativePath": "covers/spreadsheet.svg",
+    "size_kb": 2.8,
+    "md5Checksum": "a03a4bfb0a1791fda8e232a8b032715b",
+    "modifiedTime": "2022-09-30T09:35:53.529Z"
+  },
   "covers/twitter.png": {
     "relativePath": "covers/twitter.png",
     "size_kb": 2,
@@ -100,6 +106,18 @@
     "size_kb": 179.8,
     "md5Checksum": "ae130f76d6498a96798323432125216f",
     "modifiedTime": "2022-09-21T12:19:51.032Z"
+  },
+  "crop-info-chipata.pdf": {
+    "relativePath": "crop-info-chipata.pdf",
+    "size_kb": 139.7,
+    "md5Checksum": "89c26a2987e6e5688431c5c04eb17c25",
+    "modifiedTime": "2022-09-30T09:15:38.622Z"
+  },
+  "crop-info-petauke.pdf": {
+    "relativePath": "crop-info-petauke.pdf",
+    "size_kb": 140.1,
+    "md5Checksum": "b58f4cdf1c67f97c999b32abec8e3ee3",
+    "modifiedTime": "2022-09-30T09:15:14.200Z"
   },
   "crop-info-sheet-chileka-cover.png": {
     "relativePath": "crop-info-sheet-chileka-cover.png",
