@@ -73,6 +73,7 @@ export class ResourcesStore {
   /**
    * Populate resources for current country code
    * TODO - would be cleaner if implementing more like a tree/graph
+   * https://github.com/joaonuno/tree-model-js OR https://github.com/dagrejs/graphlib
    */
   private populateCountryResources(countryCode: string) {
     // take a copy of all resources to preserve original

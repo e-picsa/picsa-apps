@@ -4,5 +4,5 @@ import packageJson from '../../../package.json';
 
 export const APP_VERSION = {
   number: packageJson.version,
-  date: '2022-09-28',
+  date: '2022-09-30',
 };
