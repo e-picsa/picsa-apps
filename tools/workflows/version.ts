@@ -21,6 +21,7 @@ async function version() {
   const newVersion = await promptNewVersion(oldVersion);
   updatePackageJson(newVersion);
   updateGradleBuild(newVersion);
+  updateLibEnvVersion();
 }
 
 function updateGradleBuild(newVersionName: string) {
@@ -45,6 +46,24 @@ async function updatePackageJson(newVersion: string) {
   const packageJson = fs.readJSONSync(MAIN_PACKAGE_PATH);
   packageJson.version = newVersion;
   fs.writeJSONSync(MAIN_PACKAGE_PATH, packageJson, { spaces: 2 });
+}
+
+/**
+ * Update the environments lib which also tracks version from package.json
+ * alongside the date the update was published (used when setting db hardcoded data)
+ */
+async function updateLibEnvVersion() {
+  const versionFilePath = resolve(
+    PATHS.rootDir,
+    'libs/environments/src/version.ts'
+  );
+  const versionFileTxt = fs.readFileSync(versionFilePath, {
+    encoding: 'utf-8',
+  });
+  const regex = /date: '([0-9-]+)'/;
+  const versionDate = new Date().toISOString().substring(0, 10);
+  const update = versionFileTxt.replace(regex, `date: '${versionDate}'`);
+  fs.writeFileSync(versionFilePath, update, { encoding: 'utf-8' });
 }
 
 async function promptNewVersion(currentVersion: string) {

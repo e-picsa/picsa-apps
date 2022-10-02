@@ -8,15 +8,15 @@ import {
 } from '../models';
 import COLLECTIONS from './collections';
 import FILES from './files';
-import GENERATED from './generated';
-import LINKS from './links';
+import CROPS from './crops';
+import WEATHER from './weather';
 import WORKSHOPS from './workshops';
 
 const byId: { [id: string]: IResource } = {
   ...COLLECTIONS,
   ...FILES,
-  ...GENERATED(),
-  ...LINKS,
+  ...CROPS,
+  ...WEATHER,
   ...WORKSHOPS,
 };
 
@@ -26,6 +26,7 @@ const emptyTypes: () => { [type in IResource['type']]: [] } = () => ({
   file: [],
   link: [],
   youtube: [],
+  app: [],
 });
 
 const typeExports: {

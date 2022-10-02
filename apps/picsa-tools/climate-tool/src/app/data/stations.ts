@@ -1,4 +1,4 @@
-import { IStationMeta } from '@picsa/models';
+import type { IStationMeta } from '@picsa/models';
 import { MockDB } from '@picsa/shared/mocks';
 
 const db = new MockDB();

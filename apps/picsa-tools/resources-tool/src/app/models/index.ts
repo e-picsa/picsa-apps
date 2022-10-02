@@ -1,12 +1,18 @@
 import type { IDBDoc } from '@picsa/models';
 
+export type IResourceType = 'collection' | 'file' | 'youtube' | 'link' | 'app';
+
 export interface IResourceItemBase extends IDBDoc {
   title: string;
   description: string;
-  type: 'collection' | 'file' | 'youtube' | 'link';
-  //
+  type: IResourceType;
+  /** List of app configuration countries where resource shown (default all) */
+  appCountries?: string[];
+  /** Order of priority when shown in list (highest numbers shown first) */
   priority?: number;
   image?: string;
+  /** Specify if resource image should be contained (default) or stretched to cover */
+  imageFit?: 'contain' | 'cover';
   subtitle?: string;
   language?: string;
 }
@@ -35,9 +41,13 @@ export interface IResourceCollection extends IResourceItemBase {
 export interface IResourceLink extends IResourceItemBase {
   url: string;
 }
+export interface IResourceApp extends IResourceItemBase {
+  appId: string;
+}
 
 export type IResource =
   | IResourceFile
   | IResourceYoutube
   | IResourceCollection
-  | IResourceLink;
+  | IResourceLink
+  | IResourceApp;

@@ -30,7 +30,7 @@ export class AppComponent {
           `picsa_${key}`,
           this.domSanitizer.bypassSecurityTrustResourceUrl(
             // NOTE - svgs are imported from shared lib (see angular.json for config)
-            `assets/images/${value}.svg`
+            `assets/budget-cards/${value}.svg`
           )
         );
       }
