@@ -1,7 +1,19 @@
 import { createHash } from 'crypto';
-import { readFileSync } from 'fs';
-import { statSync, readdirSync, writeFileSync, existsSync } from 'fs-extra';
+import {
+  statSync,
+  readdirSync,
+  writeFileSync,
+  existsSync,
+  readJsonSync,
+  utimesSync,
+  readFileSync,
+} from 'fs-extra';
 import { resolve, sep, relative, join } from 'path';
+
+const resourcesDir = resolve(
+  __dirname,
+  '../../apps/picsa-tools/resources-tool/src/assets/resources'
+);
 
 /**
  * Create a contents file listing all assets in the app
@@ -9,16 +21,18 @@ import { resolve, sep, relative, join } from 'path';
  *
  */
 function populateResourceContents() {
-  const buildAssetsDir = resolve(
-    __dirname,
-    '../../apps/picsa-tools/resources-tool/src/assets/resources'
-  );
-  const outputPath = join(buildAssetsDir, 'contents.json');
+  const outputPath = join(resourcesDir, 'contents.json');
 
-  const contents = generateFolderFlatMap(
-    buildAssetsDir,
+  let contents = generateFolderFlatMap(
+    resourcesDir,
     (p) => p !== 'contents.json'
   );
+
+  if (existsSync(outputPath)) {
+    const fileContents = readJsonSync(outputPath);
+    contents = updateContentMtimes(fileContents, contents);
+  }
+
   const contentsString = JSON.stringify(contents, null, 2);
   const contentsMd5 = getStringMD5Checksum(contentsString);
   // ignore write if contents unchanged
@@ -29,8 +43,32 @@ function populateResourceContents() {
   writeFileSync(outputPath, contentsString);
 }
 
-if (require.main === module) {
-  populateResourceContents();
+/**
+ * When checking out resources from git the modified time will be assigned as
+ * local time of checkout, and therefore be different for every user
+ * Update local mtimes to reflect the time when the resource was first checked in
+ * @param fileContents - contents hashmap as read from local contents.json file
+ * @param localContents - contents hashmap as read from local disk
+ */
+function updateContentMtimes(
+  fileContents: Record<string, IContentsEntry>,
+  localContents: Record<string, IContentsEntry>
+) {
+  Object.entries(localContents).forEach(([key, entry]) => {
+    const { md5Checksum, modifiedTime, relativePath } = entry;
+    const existingEntry = fileContents[key];
+    // if md5 checksums same ensure modified times also same
+    if (existingEntry?.md5Checksum === md5Checksum) {
+      if (existingEntry?.modifiedTime !== modifiedTime) {
+        const filePath = resolve(resourcesDir, relativePath);
+        // update both contents and the file itself
+        localContents[key].modifiedTime = existingEntry.modifiedTime;
+        const mtime = new Date(localContents[key].modifiedTime);
+        utimesSync(filePath, mtime, mtime);
+      }
+    }
+  });
+  return localContents;
 }
 
 /**
@@ -53,9 +91,7 @@ function generateFolderFlatMap(
 ) {
   const allFiles = recursiveFindByExtension(folderPath);
   // const relativeFiles = allFiles.map(filepath => path.relative(folderPath, filepath))
-  let flatMap: {
-    [relativePath: string]: boolean | IContentsEntry;
-  } = {};
+  let flatMap: Record<string, IContentsEntry> = {};
   for (const filePath of allFiles) {
     const relativePath = relative(folderPath, filePath).split(sep).join('/');
     const shouldInclude = filterFn(relativePath);
@@ -126,4 +162,8 @@ export function getFileMD5Checksum(filePath: string) {
 
 export function getStringMD5Checksum(str: string) {
   return createHash('md5', {}).update(str).digest('hex');
+}
+
+if (require.main === module) {
+  populateResourceContents();
 }
