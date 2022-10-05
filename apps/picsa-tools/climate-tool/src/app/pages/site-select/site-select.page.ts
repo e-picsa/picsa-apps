@@ -84,10 +84,15 @@ export class SiteSelectPage {
   populateSites() {
     const iconUrl = STATION_ICON_WHITE;
     let stations = HARDCODED_STATIONS;
-    const filterFn =
-      this.configurationService.activeConfiguration?.climateTool?.stationFilter;
+    const { climateTool, localisation } =
+      this.configurationService.activeConfiguration;
+    const filterFn = climateTool?.stationFilter;
     if (filterFn) {
       stations = stations.filter((station) => filterFn(station));
+    } else {
+      stations = stations.filter(
+        (station) => station.countryCode === localisation.country.code
+      );
     }
     let markers: IMapMarker[] = stations.map((s) => {
       return {

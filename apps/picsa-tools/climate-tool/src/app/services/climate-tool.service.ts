@@ -68,8 +68,8 @@ export class ClimateToolService {
           resolve(res.data as T[]);
         }.bind(this),
         error: function (err) {
-          console.error('err', err);
-          reject(err);
+          console.error('Could not parse CSV', filePath, err.message);
+          resolve([]);
         },
       });
     });

@@ -16,7 +16,7 @@ export interface IStationMeta extends IDBDoc {
   name: string;
   latitude: number;
   longitude: number;
-  country: IPicsaCountry;
+  countryCode: string;
   summaries?: IChartSummary_V1[] | IChartSummary_V2[];
 }
 
@@ -55,5 +55,3 @@ export interface IChartMeta {
   yMinor: number;
   yMajor: number;
 }
-
-export type IPicsaCountry = 'Malawi' | 'Zambia';

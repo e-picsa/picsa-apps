@@ -330,9 +330,9 @@ export class ClimateChartComponent implements OnChanges {
 
   // now all ticks are displayed we only want values for every 5
   private _formatXAxis(value: number, stationMeta: IStationMeta): string {
-    if (stationMeta.country === 'Malawi') {
-      return `${value} - ${(value + 1).toString().substring(2, 4)}`;
-    }
+    // if (stationMeta.countryCode === 'mw') {
+    return `${value} - ${(value + 1).toString().substring(2, 4)}`;
+    // }
     return `${value}`;
   }
 

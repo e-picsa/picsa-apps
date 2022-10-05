@@ -8,9 +8,7 @@ const configuration: IConfiguration.Settings = {
     currency: 'TJS',
     currencyBaseValue: 10,
   },
-  climateTool: {
-    stationFilter: (station: any) => station.country === 'Tajikistan',
-  },
+  climateTool: {},
   localisation: {
     country: { label: 'Tajikistan', code: 'tj' },
     language: {
