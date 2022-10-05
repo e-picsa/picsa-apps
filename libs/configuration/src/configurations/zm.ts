@@ -8,9 +8,7 @@ const configuration: IConfiguration.Settings = {
     currency: 'ZMK',
     currencyBaseValue: 10,
   },
-  climateTool: {
-    stationFilter: (station: any) => station.country === 'Zambia',
-  },
+  climateTool: {},
   localisation: {
     country: { label: 'Zambia', code: 'zm' },
     language: {

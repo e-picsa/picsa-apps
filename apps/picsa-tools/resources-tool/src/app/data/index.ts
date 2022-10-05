@@ -11,6 +11,7 @@ import FILES from './files';
 import CROPS from './crops';
 import WEATHER from './weather';
 import WORKSHOPS from './workshops';
+import PICSA_RESOURCES from './picsa';
 
 const byId: { [id: string]: IResource } = {
   ...COLLECTIONS,
@@ -18,6 +19,7 @@ const byId: { [id: string]: IResource } = {
   ...CROPS,
   ...WEATHER,
   ...WORKSHOPS,
+  ...PICSA_RESOURCES,
 };
 
 /** Base generator to ensure any created types appear in final export */

@@ -25,6 +25,8 @@ Once downloaded it should be processed using QGIS (or similar) to remove feature
 For example, see the screenshot below to filter to only include a small number of countries
 ![](./images/map-tiles-filter.png)
 
+**NOTE** - if using countries that do not border it is best to separate as multiple layers
+
 ## Frontend integration
 
 The frontend is map is built with leaflet JS. CSS will need to be included either via a scss import statement or bundled into the build, e.g.
