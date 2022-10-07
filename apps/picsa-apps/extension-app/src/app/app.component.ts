@@ -9,6 +9,7 @@ import { ENVIRONMENT } from '@picsa/environments';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { CrashlyticsService } from '@picsa/shared/services/native/crashlytics.service';
+import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 
 @Component({
   selector: 'picsa-root',
@@ -23,9 +24,11 @@ export class AppComponent {
     private domSanitizer: DomSanitizer,
     analyticsService: AnalyticsService,
     router: Router,
-    crashlyticsService: CrashlyticsService
+    crashlyticsService: CrashlyticsService,
+    performanceService: PerformanceService
   ) {
     this.registerIcons();
+    performanceService.setEnabled({ enabled: ENVIRONMENT.production });
     if (ENVIRONMENT.production) {
       analyticsService.init(router);
     }

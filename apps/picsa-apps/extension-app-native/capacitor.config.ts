@@ -27,6 +27,7 @@ const config: CapacitorConfig = {
     'capacitor-blob-writer',
     '@capacitor-community/firebase-analytics',
     '@capacitor-community/firebase-crashlytics',
+    '@capacitor-firebase/performance',
   ],
   /**
    * uncomment and replace with local ip to serve live-reload

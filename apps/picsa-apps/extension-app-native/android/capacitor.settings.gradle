@@ -22,3 +22,6 @@ project(':capacitor-community-firebase-analytics').projectDir = new File('../../
 
 include ':capacitor-community-firebase-crashlytics'
 project(':capacitor-community-firebase-crashlytics').projectDir = new File('../../../../node_modules/@capacitor-community/firebase-crashlytics/android')
+
+include ':capacitor-firebase-performance'
+project(':capacitor-firebase-performance').projectDir = new File('../../../../node_modules/@capacitor-firebase/performance/android')
