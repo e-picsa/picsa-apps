@@ -2209,6 +2209,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor-firebase/performance@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@capacitor-firebase/performance@npm:1.1.0"
+  peerDependencies:
+    "@capacitor/core": ^4.0.0
+    firebase: ^9.0.0
+  checksum: f72b97cc0fe92930cdac8024124d303b5ba648292bab435e85ce63137c3d910a21b7817bca2021f9831d010a242d8133b61f41a05ceec04fedb47c4c6646848e
+  languageName: node
+  linkType: hard
+
 "@capacitor/android@npm:^4.1.0":
   version: 4.1.0
   resolution: "@capacitor/android@npm:4.1.0"
@@ -14086,6 +14096,7 @@ __metadata:
     "@awesome-cordova-plugins/social-sharing": ^5.45.0
     "@capacitor-community/firebase-analytics": ^2.0.0-1
     "@capacitor-community/firebase-crashlytics": ^2.0.0-1
+    "@capacitor-firebase/performance": ^1.1.0
     "@capacitor/android": ^4.1.0
     "@capacitor/app": ^4.0.1
     "@capacitor/browser": ^4.0.1

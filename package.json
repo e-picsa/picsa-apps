@@ -35,6 +35,7 @@
     "@awesome-cordova-plugins/social-sharing": "^5.45.0",
     "@capacitor-community/firebase-analytics": "^2.0.0-1",
     "@capacitor-community/firebase-crashlytics": "^2.0.0-1",
+    "@capacitor-firebase/performance": "^1.1.0",
     "@capacitor/app": "^4.0.1",
     "@capacitor/browser": "^4.0.1",
     "@capacitor/core": "^4.1.0",
