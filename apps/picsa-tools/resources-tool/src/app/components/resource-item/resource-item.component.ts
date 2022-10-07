@@ -86,24 +86,36 @@ class FileItemHandler {
       : 'file_download';
   }
 
-  private handleClick(e: Event) {
+  private async handleClick(e: Event) {
     e.stopPropagation();
-    this.parent.store.openFileResource(this.resource);
-    //   this.store.openResource(this.resource);
-    // } else {
-    //   this.isDownloading = true;
-    //   this.store.downloadResource(this.resource).subscribe(
-    //     (progress) => {
-    //       console.log('progress', progress);
-    //       this.progress = progress;
-    //     },
-    //     (err) => {
-    //       this.isDownloading = false;
-    //       throw err;
-    //     },
-    //     () => (this.isDownloading = false)
-    //   );
+    const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
+    if (!isDownloaded) {
+      this.handleResourceDownload();
+      // TODO promisify and open after download
+      // TODO show file download size
+      // TODO move files from extension-toolkit storage bucket to picsa-apps
+    } else {
+      this.parent.store.openFileResource(this.resource);
+    }
     // }
+  }
+  private handleResourceDownload() {
+    this.parent.store.downloadResource(this.resource).subscribe({
+      // TODO - update UI on download progress and complete
+      next: (progress) => {
+        console.log('progress', progress);
+        // this.progress = progress;
+      },
+      error: (err) => {
+        console.error(err);
+        // this.isDownloading = false;
+        throw err;
+      },
+      complete: () => {
+        console.log('download complete');
+        // (this.isDownloading = false)
+      },
+    });
   }
 }
 

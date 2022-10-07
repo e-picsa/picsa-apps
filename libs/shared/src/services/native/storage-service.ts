@@ -3,7 +3,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 import { catchError, debounceTime } from 'rxjs/operators';
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { APP_VERSION } from '@picsa/environments';
 import write_blob from 'capacitor-blob-writer';
@@ -132,42 +132,50 @@ export class NativeStorageService {
   }
 
   /** Download from a url and store in cache */
-  public async downloadToCache(filesMeta: IDownloadEntry[]) {
+  public downloadToCache(fileMeta: IDownloadEntry) {
     const cacheUpdate = {};
-    const promises = filesMeta.map((meta) => {
-      return new Promise<string>((resolve, reject) => {
-        console.log('[Native Stroage] cache', meta);
-        this.downloadFile(meta.downloadUrl, 'blob').subscribe({
-          error: (err) => {
-            console.log('[Native Storgage] download error', meta);
-            console.error(err);
-            reject(err);
-          },
-          next: async ({ progress, data }) => {
-            if (progress === 100 && data) {
-              const res = await write_blob({
-                directory: Directory.Data,
-                path: `${this.cacheName}/${meta.relativePath}`,
-                blob: data as Blob,
-                recursive: true,
-                fast_mode: true,
-                on_fallback(error) {
-                  console.error(error);
-                  reject(error);
-                },
-              });
-              cacheUpdate[meta.relativePath] = true;
-              resolve(res);
-            }
-          },
-        });
+    const progress$ = new Observable<{
+      progress: number;
+      meta?: any;
+      error?: any;
+    }>((observer) => {
+      this.downloadFile(fileMeta.downloadUrl, 'blob').subscribe({
+        error: (err) => {
+          console.log('[Native Storgage] download error', fileMeta);
+          console.error(err);
+          observer.error(err);
+          observer.complete();
+        },
+        next: async ({ progress, data }) => {
+          observer.next({ progress });
+          if (progress === 100 && data) {
+            const meta = await write_blob({
+              directory: Directory.Data,
+              path: `${this.cacheName}/${fileMeta.relativePath}`,
+              blob: data as Blob,
+              recursive: true,
+              fast_mode: true,
+              on_fallback(error) {
+                console.error(error);
+                observer.error(error);
+                observer.next({ progress, meta, error });
+                observer.complete();
+              },
+            });
+            cacheUpdate[fileMeta.relativePath] = true;
+            this.cachedFilesList = {
+              ...this.cachedFilesList,
+              ...cacheUpdate,
+            };
+            this.cachedFilesUpdated$.next(true);
+            observer.next({ progress, meta });
+            observer.complete();
+          }
+        },
       });
     });
-    const urls = await Promise.all(promises);
-    // update cache using behaviour subject
-    this.cachedFilesList = { ...this.cachedFilesList, ...cacheUpdate };
-    this.cachedFilesUpdated$.next(true);
-    return urls;
+
+    return progress$;
   }
 
   private async loadFileList(
@@ -217,15 +225,19 @@ export class NativeStorageService {
 
   private downloadFile(
     url: string,
-    responseType: 'blob' | 'base64' = 'base64'
+    responseType: 'blob' | 'base64' = 'base64',
+    headers = {}
   ) {
     const updates$ = new BehaviorSubject({ progress: 0, data: null as any });
-    // Force read from file and not just return 304 response
-    const headers = {
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache',
-      Expires: '0',
-    };
+    // If downloading from local assets ignore cache
+    if (!url.startsWith('http')) {
+      headers = {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
+        ...headers,
+      };
+    }
     this.http
       .get(url, {
         responseType: 'blob',
@@ -239,12 +251,12 @@ export class NativeStorageService {
           updates$.next({ progress, data: null });
         } else if (event.type === HttpEventType.Response) {
           if (responseType === 'blob') {
+            console.log('[Download Files] success', url);
             updates$.next({ progress: 100, data: event.body as Blob });
           } else {
             const base64 = await this.convertBlobToBase64(event.body as Blob);
             updates$.next({ progress: 100, data: base64 });
           }
-
           updates$.complete();
         }
       });
