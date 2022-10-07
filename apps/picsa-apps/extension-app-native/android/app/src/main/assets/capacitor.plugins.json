@@ -26,5 +26,9 @@
 	{
 		"pkg": "@capacitor-community/firebase-crashlytics",
 		"classpath": "com.getcapacitor.community.firebasecrashlytics.FirebaseCrashlyticsPlugin"
+	},
+	{
+		"pkg": "@capacitor-firebase/performance",
+		"classpath": "io.capawesome.capacitorjs.plugins.firebase.performance.FirebasePerformancePlugin"
 	}
 ]
