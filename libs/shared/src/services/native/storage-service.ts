@@ -3,7 +3,13 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 import { catchError, debounceTime } from 'rxjs/operators';
-import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  firstValueFrom,
+  of,
+  Subject,
+  Subscription,
+} from 'rxjs';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { APP_VERSION } from '@picsa/environments';
 import write_blob from 'capacitor-blob-writer';
@@ -120,7 +126,9 @@ export class NativeStorageService {
    ************************************************************************************/
 
   /** TODO - include/separate out method to remove any old caches*/
-  public async clearCache(): Promise<void> {}
+  public async clearCache(): Promise<void> {
+    // TODO
+  }
 
   public checkFileCached(entry: IStorageFileEntry) {
     const cachedEntry = this.cachedFilesList[entry.relativePath];
@@ -134,48 +142,51 @@ export class NativeStorageService {
   /** Download from a url and store in cache */
   public downloadToCache(fileMeta: IDownloadEntry) {
     const cacheUpdate = {};
-    const progress$ = new Observable<{
+    let data: Blob;
+    let subscription: Subscription;
+    let progress: number;
+    // create a new subject to subscribe from inner observable
+    const updates$ = new Subject<{
       progress: number;
-      meta?: any;
-      error?: any;
-    }>((observer) => {
-      this.downloadFile(fileMeta.downloadUrl, 'blob').subscribe({
-        error: (err) => {
-          console.log('[Native Storgage] download error', fileMeta);
-          console.error(err);
-          observer.error(err);
-          observer.complete();
-        },
-        next: async ({ progress, data }) => {
-          observer.next({ progress });
-          if (progress === 100 && data) {
-            const meta = await write_blob({
-              directory: Directory.Data,
-              path: `${this.cacheName}/${fileMeta.relativePath}`,
-              blob: data as Blob,
-              recursive: true,
-              fast_mode: true,
-              on_fallback(error) {
-                console.error(error);
-                observer.error(error);
-                observer.next({ progress, meta, error });
-                observer.complete();
-              },
-            });
-            cacheUpdate[fileMeta.relativePath] = true;
-            this.cachedFilesList = {
-              ...this.cachedFilesList,
-              ...cacheUpdate,
-            };
-            this.cachedFilesUpdated$.next(true);
-            observer.next({ progress, meta });
-            observer.complete();
-          }
-        },
-      });
+      subscription: Subscription;
+      cachePath?: string;
+    }>();
+    // call file download subscription, passing values to top observable
+    // TODO - might be tidier way to manage nested observables (e.g. map/switchmap/mergemap op)
+    this.downloadFile(fileMeta.downloadUrl, 'blob').subscribe({
+      error: (err) => updates$.error(err),
+      next: async (res) => {
+        data = res.data as Blob;
+        subscription = res.subscription;
+        progress = res.progress;
+        updates$.next({ progress, subscription });
+      },
+      complete: async () => {
+        console.log('download to cache completed');
+        if (data) {
+          const cachePath = await write_blob({
+            directory: Directory.Data,
+            path: `${this.cacheName}/${fileMeta.relativePath}`,
+            blob: data as Blob,
+            recursive: true,
+            fast_mode: true,
+            on_fallback(error) {
+              console.error(error);
+              throw error;
+            },
+          });
+          cacheUpdate[fileMeta.relativePath] = true;
+          this.cachedFilesList = {
+            ...this.cachedFilesList,
+            ...cacheUpdate,
+          };
+          this.cachedFilesUpdated$.next(true);
+          updates$.next({ progress, subscription, cachePath });
+          updates$.complete();
+        }
+      },
     });
-
-    return progress$;
+    return updates$;
   }
 
   private async loadFileList(
@@ -228,7 +239,6 @@ export class NativeStorageService {
     responseType: 'blob' | 'base64' = 'base64',
     headers = {}
   ) {
-    const updates$ = new BehaviorSubject({ progress: 0, data: null as any });
     // If downloading from local assets ignore cache
     if (!url.startsWith('http')) {
       headers = {
@@ -238,27 +248,48 @@ export class NativeStorageService {
         ...headers,
       };
     }
-    this.http
+
+    // subscribe and share updates
+    let subscription = new Subscription();
+    let progress = 0;
+    let data: Blob | string;
+
+    // share initial update with request and subscription objects to allow dl interrupt via unsubscribe method
+    const updates$ = new BehaviorSubject<{
+      progress: number;
+      subscription: Subscription;
+      data?: Blob | string;
+    }>({ progress, subscription });
+
+    subscription = this.http
       .get(url, {
         responseType: 'blob',
         reportProgress: true,
         headers,
         observe: 'events',
       })
-      .subscribe(async (event) => {
-        if (event.type === HttpEventType.DownloadProgress) {
-          const progress = Math.round((100 * event.loaded) / event.total!);
-          updates$.next({ progress, data: null });
-        } else if (event.type === HttpEventType.Response) {
-          if (responseType === 'blob') {
-            console.log('[Download Files] success', url);
-            updates$.next({ progress: 100, data: event.body as Blob });
-          } else {
-            const base64 = await this.convertBlobToBase64(event.body as Blob);
-            updates$.next({ progress: 100, data: base64 });
+      .subscribe({
+        error: (err) => updates$.error(err),
+        next: async (event) => {
+          // handle progress update
+          if (event.type === HttpEventType.DownloadProgress) {
+            if (event.total) {
+              progress = Math.round((100 * event.loaded) / event.total);
+            }
           }
+          // handle full response received
+          if (event.type === HttpEventType.Response) {
+            data = event.body as Blob;
+          }
+          updates$.next({ progress, subscription, data });
+        },
+        complete: async () => {
+          if (responseType === 'base64') {
+            data = await this.convertBlobToBase64(data as Blob);
+          }
+          updates$.next({ progress: 100, data, subscription });
           updates$.complete();
-        }
+        },
       });
     return updates$;
   }
