@@ -1,15 +1,12 @@
 name: 'Download Universal APK from Google Play'
 description: 'An action to download the created universal apk following upload to Google Play Developer Console'
 author: 'chrismclarke'
-branding:
-  icon: 'truck'
-  color: 'orange'
 inputs:
   serviceAccountJson:
     description: 'The service account json private key file to authorize the upload request'
     required: false
-   serviceAccountJsonPlainText:
-    description: "The raw json text of the service account private key to authorize the upload request"
+  serviceAccountJsonPlainText:
+    description: 'The raw json text of the service account private key to authorize the upload request'
     required: false
   packageName:
     description: 'The package name, or Application Id, of the app you are uploading'
