@@ -17,7 +17,7 @@ export async function apkDownload(
 ): Promise<string | void> {
   // Check the 'track' for 'internalsharing', if so switch to a non-track api
 
-  const res = await androidPublisher.edits.apks.list({
+  const res = await androidPublisher.generatedapks.list({
     auth: options.auth,
     packageName: options.applicationId,
   });
