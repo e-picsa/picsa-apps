@@ -17,12 +17,14 @@ async function run() {
       required: false,
     });
     const packageName = core.getInput('packageName', { required: true });
+    const versionCode = core.getInput('versionCode', { required: true });
     await validateServiceAccountJson(serviceAccountJsonRaw, serviceAccountJson);
     const authClient = await auth.getClient();
 
     const result = await apkDownload({
       auth: authClient,
       applicationId: packageName,
+      versionCode: +versionCode,
     });
 
     if (result) {

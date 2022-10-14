@@ -10,6 +10,7 @@ const androidPublisher: AndroidPublisher = google.androidpublisher('v3');
 export interface EditOptions {
   auth: Compute | JSONClient;
   applicationId: string;
+  versionCode: number;
 }
 
 export async function apkDownload(
@@ -20,6 +21,7 @@ export async function apkDownload(
   const res = await androidPublisher.generatedapks.list({
     auth: options.auth,
     packageName: options.applicationId,
+    versionCode: options.versionCode,
   });
   console.log(res);
   return res.statusText;
