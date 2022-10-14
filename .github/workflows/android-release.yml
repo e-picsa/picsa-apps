@@ -1,5 +1,4 @@
-# When creating a release in GitHub, create android release AAB and debug APK
-# files and upload to release files
+# Create android release AAB and upload play store
 
 # Required Secrets
 # - ANDROID_KEY_ALIAS
@@ -14,10 +13,6 @@ on:
   push:
     branches:
       - main
-      - feat/play-store-automation
-  # release:
-  #   types: [published]
-  # workflow_dispatch:
 jobs:
   android_release:
     runs-on: ubuntu-latest
