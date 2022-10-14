@@ -19,7 +19,7 @@ on:
   #   types: [published]
   # workflow_dispatch:
 jobs:
-  build:
+  android_release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -61,9 +61,9 @@ jobs:
           cache: 'gradle'
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
-      - name: Build Android Debug APK
-        working-directory: apps/picsa-apps/extension-app-native/android
-        run: ./gradlew :app:assembleDebug
+      # - name: Build Android Debug APK
+      #   working-directory: apps/picsa-apps/extension-app-native/android
+      #   run: ./gradlew :app:assembleDebug
       - name: Build Android Release Bundle
         working-directory: apps/picsa-apps/extension-app-native/android
         run: ./gradlew :app:bundleRelease
@@ -80,7 +80,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1.0.15
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: ${{github.event.inputs.app_id}}
+          packageName: io.picsa.extension
           releaseFile: ${{ env.SIGNED_RELEASE_FILE}}
           track: internal
         env:
