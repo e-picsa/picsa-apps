@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { observable, action, computed } from 'mobx-angular';
+import { action } from 'mobx-angular';
 import {
   IStorageFilesHashmap,
   NativeStorageService,
@@ -14,6 +14,7 @@ import {
   IResourceItemBase,
 } from '../models';
 import { ConfigurationService } from '@picsa/configuration';
+import { lastValueFrom } from 'rxjs';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.
@@ -48,8 +49,11 @@ export class ResourcesStore {
     if (this.isNative) {
       await this.storageService.init();
       await this.checkHardcodedData();
-      this.downloadedResources = this.checkDownloadedResources();
-      console.log('[Resources] downloaded', this.downloadedResources);
+      // subscribe to cached files updates
+      this.storageService.cachedFilesUpdated$.subscribe(() => {
+        const downloaded = this.storageService.getCacheFilesByPath('resources');
+        this.downloadedResources = downloaded;
+      });
     }
     console.log('[Resources] init complete');
   }
@@ -155,47 +159,13 @@ export class ResourcesStore {
   }
 
   // create an observable that stream progress snapshots and completes when file downloaded
-  public async downloadResource(resource: IResourceFile) {
-    // console.log('downloading resource', resource.url);
-    // // only download on cordova
-    // return new Observable<number>((observer) => {
-    //   if (this.platform.is('cordova')) {
-    //     // double check not already downloaded
-    //     if (!this.downloadResource[resource.filename]) {
-    //       this.fileService
-    //         .downloadToStorage(resource.url, 'resources', resource.filename)
-    //         .subscribe(
-    //           (progress) => {
-    //             const p = Math.round((progress.loaded / progress.total) * 100);
-    //             observer.next(p);
-    //           },
-    //           (err) => {
-    //             throw err;
-    //           },
-    //           () =>
-    //             this.updateCachedResource(resource, {
-    //               // _isDownloaded: true,
-    //             }).then(() => observer.complete())
-    //         );
-    //     }
-    //   } else {
-    //     this.updateCachedResource(resource, {
-    //       //  _isDownloaded: true
-    //     }).then(() => observer.complete());
-    //   }
-    // });
-  }
-
-  private async checkServerUpdates(cached: IResource[]) {
-    // const latest = cached
-    //   .map((r) => r._modified)
-    //   .sort()
-    //   .reverse()[0];
-    // const updates = await this.db.getCollection('resources', 'server', latest);
-    // if (updates.length > 0) {
-    //   await this.db.setDocs('resources', updates);
-    //   await this.resourceInit(false);
-    // }
+  public downloadResource(resource: IResourceFile) {
+    console.log('[Resource] download', resource);
+    return this.storageService.downloadToCache({
+      downloadUrl: resource.url,
+      // TODO - add support for downloading to nested folder
+      relativePath: `resources/${resource.filename}`,
+    });
   }
 
   // TODO - code similar to budget store, should find way to combine
@@ -208,16 +178,14 @@ export class ResourcesStore {
       (entry) => !this.storageService.checkFileCached(entry)
     );
     console.log('[Resources] caching', unCachedFiles);
-    await this.storageService.downloadToCache(
-      unCachedFiles.map(({ relativePath }) => ({
+    const promises = unCachedFiles.map(async ({ relativePath }) => {
+      const dl$ = this.storageService.downloadToCache({
         relativePath,
         downloadUrl: `assets/${relativePath}`,
-      }))
-    );
-  }
-
-  private checkDownloadedResources() {
-    const cachedFiles = this.storageService.getCacheFilesByPath('resources');
-    return cachedFiles;
+      });
+      return lastValueFrom(dl$);
+    });
+    const res = await Promise.all(promises);
+    console.log('[Resources] cached', res);
   }
 }

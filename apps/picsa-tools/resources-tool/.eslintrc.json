@@ -24,7 +24,8 @@
             "prefix": "picsa",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "no-prototype-builtins": "off"
       }
     },
     {

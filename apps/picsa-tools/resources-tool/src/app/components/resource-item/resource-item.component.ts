@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
+import { Subscription } from 'rxjs';
 import {
   IResource,
   IResourceApp,
@@ -24,9 +25,8 @@ export class ResourceItemComponent implements OnInit {
   @Input() viewStyle: 'expanded' | 'default' = 'default';
   @Input() resource: IResource;
 
-  actionButtonIcon: string;
-  // isDownloading = false;
-  // progress = 0;
+  public actionButtonIcon?: 'open_in_new' | 'file_download';
+  public downloadProgress?: number;
 
   public subtitle = '';
 
@@ -73,6 +73,7 @@ class LinkItemHandler {
 }
 
 class FileItemHandler {
+  private download$?: Subscription;
   resource: IResourceFile;
   constructor(private parent: ResourceItemComponent) {
     this.resource = parent.resource as IResourceFile;
@@ -83,27 +84,52 @@ class FileItemHandler {
     const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
     this.parent.actionButtonIcon = isDownloaded
       ? 'open_in_new'
-      : 'file_download';
+      : 'file_download'; // TODO show file download size alongside download icon
   }
 
-  private handleClick(e: Event) {
+  private async handleClick(e: Event) {
     e.stopPropagation();
-    this.parent.store.openFileResource(this.resource);
-    //   this.store.openResource(this.resource);
-    // } else {
-    //   this.isDownloading = true;
-    //   this.store.downloadResource(this.resource).subscribe(
-    //     (progress) => {
-    //       console.log('progress', progress);
-    //       this.progress = progress;
-    //     },
-    //     (err) => {
-    //       this.isDownloading = false;
-    //       throw err;
-    //     },
-    //     () => (this.isDownloading = false)
-    //   );
-    // }
+    if (this.download$) {
+      return this.cancelDownload();
+    }
+    const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
+    if (!isDownloaded) {
+      this.handleResourceDownload();
+    } else {
+      this.parent.store.openFileResource(this.resource);
+    }
+  }
+  /** Cancel ongoing download */
+  private cancelDownload() {
+    if (this.download$) {
+      this.download$.unsubscribe();
+      this.download$ = undefined;
+      this.parent.downloadProgress = undefined;
+      this.parent.actionButtonIcon = 'file_download';
+    }
+  }
+
+  private handleResourceDownload() {
+    this.parent.actionButtonIcon = undefined;
+    this.parent.downloadProgress = 0;
+    this.parent.store.downloadResource(this.resource).subscribe({
+      next: ({ progress, subscription }) => {
+        this.download$ = subscription;
+        this.parent.downloadProgress = progress;
+      },
+      error: (err) => {
+        console.error(err);
+        this.parent.downloadProgress = undefined;
+        this.parent.actionButtonIcon = 'file_download';
+        // TODO - show error message
+        throw err;
+      },
+      complete: () => {
+        this.parent.downloadProgress = undefined;
+        this.parent.actionButtonIcon = 'open_in_new';
+        this.parent.store.openFileResource(this.resource);
+      },
+    });
   }
 }
 
