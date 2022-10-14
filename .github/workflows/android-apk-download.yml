@@ -15,7 +15,7 @@ jobs:
   android_apk_export:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           lfs: true
           ref: '${{github.event.inputs.build_branch}}'
