@@ -23,7 +23,21 @@ export async function apkDownload(
     packageName: options.applicationId,
     versionCode: options.versionCode,
   });
-  const apks = res.data.generatedApks;
-  console.log(apks);
+  const apksByKey = res.data.generatedApks || [];
+  console.log(`apks found for ${apksByKey.length} keys`);
+  if (apksByKey[0]) {
+    const { generatedUniversalApk } = apksByKey[0];
+    console.log(generatedUniversalApk);
+    if (generatedUniversalApk) {
+      const dl = await androidPublisher.generatedapks.download({
+        auth: options.auth,
+        packageName: options.applicationId,
+        versionCode: options.versionCode,
+        downloadId: generatedUniversalApk.downloadId as string,
+      });
+      console.log(dl);
+    }
+  }
+
   return res.statusText;
 }
