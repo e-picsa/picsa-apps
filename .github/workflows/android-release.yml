@@ -59,10 +59,10 @@ jobs:
         uses: android-actions/setup-android@v2
       - name: Build Android Debug APK
         working-directory: android
-        run: ./gradlew :app:assembleDebug
+        run: ./apps/picsa-apps/extension-app-native/gradlew :app:assembleDebug
       - name: Build Android Release Bundle
         working-directory: android
-        run: ./gradlew :app:bundleRelease
+        run: ./apps/picsa-apps/extension-app-native/gradlew :app:bundleRelease
       - name: Sign Android Release
         id: sign_aab
         uses: r0adkll/sign-android-release@v1
