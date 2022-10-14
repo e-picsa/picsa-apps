@@ -11,6 +11,9 @@ inputs:
   packageName:
     description: 'The package name, or Application Id, of the app you are uploading'
     required: true
+  versionCode:
+    description: 'The application version code (number) of the apk to be exported'
+    required: true
 outputs:
   apkFile:
     description: 'Exported apk file'
