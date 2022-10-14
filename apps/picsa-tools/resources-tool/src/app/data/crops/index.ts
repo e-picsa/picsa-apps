@@ -56,9 +56,8 @@ const cropResources: IResourceCollection = {
   image: 'assets/resources/covers/crops.svg',
   priority: 7,
   childResources: [
-    // TODO - cropInfoSheets used in ZM workshop but wanted displayed here
-    // should tidy up
-    'cropInfoSheets',
+    // TODO - cropInfoCollection in Picsa Resources
+    'cropInfoCollection',
     ...Object.keys(links),
     ...Object.keys(apps),
   ],

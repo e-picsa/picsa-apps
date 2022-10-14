@@ -21,7 +21,7 @@ export interface IResourceFile extends IResourceItemBase {
   // Core DB type
   type: 'file';
   filename: string;
-  mimetype: 'application/pdf';
+  mimetype: 'application/pdf' | 'video/mp4';
   url: string;
   folder?: string;
   // TODO - legacy types
