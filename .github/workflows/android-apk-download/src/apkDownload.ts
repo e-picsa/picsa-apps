@@ -5,6 +5,7 @@ import AndroidPublisher = androidpublisher_v3.Androidpublisher;
 import { Compute } from 'google-auth-library/build/src/auth/computeclient';
 import { JSONClient } from 'google-auth-library/build/src/auth/googleauth';
 import { createWriteStream, statSync } from 'fs';
+import { exportVariable, setOutput } from '@actions/core';
 
 const androidPublisher: AndroidPublisher = google.androidpublisher('v3');
 
@@ -62,7 +63,10 @@ function downloadApk(options: EditOptions, downloadId: string) {
           res!.data
             .on('end', function () {
               console.log('Done');
-              statSync(filePath);
+              const stats = statSync(filePath);
+              console.log(stats);
+              exportVariable(`APK_FILE`, filePath);
+              setOutput(`apkFile`, filePath);
               resolve(true);
             })
             .on('error', function (err) {

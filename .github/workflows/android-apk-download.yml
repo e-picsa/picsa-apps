@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: '16'
       - name: Download android apk
+        id: download
         uses: ./.github/workflows/android-apk-download # Uses an action in the root directory
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
@@ -31,3 +32,8 @@ jobs:
           versionCode: 3010000
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: ${{ steps.download.outputs.apkFile }}
