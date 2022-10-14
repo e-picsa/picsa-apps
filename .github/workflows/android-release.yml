@@ -10,9 +10,12 @@
 
 name: Android - Release to Google Play
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 jobs:
   android_release:
     runs-on: ubuntu-latest

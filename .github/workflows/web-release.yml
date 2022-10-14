@@ -5,9 +5,12 @@
 
 name: Web Release
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 jobs:
   web_release:
     runs-on: ubuntu-latest
