@@ -16,8 +16,7 @@ export interface EditOptions {
 export async function apkDownload(
   options: EditOptions
 ): Promise<string | void> {
-  // Check the 'track' for 'internalsharing', if so switch to a non-track api
-
+  // Get a list of available apks for version code
   const res = await androidPublisher.generatedapks.list({
     auth: options.auth,
     packageName: options.applicationId,
@@ -26,16 +25,18 @@ export async function apkDownload(
   const apksByKey = res.data.generatedApks || [];
   console.log(`apks found for ${apksByKey.length} keys`);
   if (apksByKey[0]) {
+    // Get id for universal apk and download
     const { generatedUniversalApk } = apksByKey[0];
     console.log(generatedUniversalApk);
     if (generatedUniversalApk) {
-      const dl = await androidPublisher.generatedapks.download({
+      const dlRes = await androidPublisher.generatedapks.download({
         auth: options.auth,
         packageName: options.applicationId,
         versionCode: options.versionCode,
         downloadId: generatedUniversalApk.downloadId as string,
+        alt: 'media',
       });
-      console.log(dl);
+      console.log(dlRes.data);
     }
   }
 
