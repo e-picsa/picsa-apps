@@ -4,7 +4,7 @@ import { androidpublisher_v3 } from '@googleapis/androidpublisher';
 import AndroidPublisher = androidpublisher_v3.Androidpublisher;
 import { Compute } from 'google-auth-library/build/src/auth/computeclient';
 import { JSONClient } from 'google-auth-library/build/src/auth/googleauth';
-import { createWriteStream, statSync, writeFileSync } from 'fs';
+import { createWriteStream, statSync } from 'fs';
 
 const androidPublisher: AndroidPublisher = google.androidpublisher('v3');
 
@@ -43,6 +43,7 @@ function downloadApk(options: EditOptions, downloadId: string) {
   const { auth, versionCode } = options;
   const fileName = `${versionCode}.apk`;
   const filePath = `./${fileName}`;
+  console.log('downloading apk', downloadId);
   return new Promise((resolve, reject) => {
     androidPublisher.generatedapks.download(
       {
@@ -55,6 +56,7 @@ function downloadApk(options: EditOptions, downloadId: string) {
       { responseType: 'stream' },
       (err, res) => {
         if (err) {
+          console.error('dl fail', err);
           reject(err);
         } else {
           res!.data
