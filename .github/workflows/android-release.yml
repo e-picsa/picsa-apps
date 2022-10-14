@@ -48,9 +48,13 @@ jobs:
         run: yarn install
       - name: Build Extension App
         run: yarn nx run picsa-apps-extension-app-native:build
+        # Re-sync as remote cache won't populate files during nx build command
+      - name: Sync Capacitor
+        run: npx cap sync
+        working-directory:   
       - name: Set up JDK 11
         uses: actions/setup-java@v2
-        with:
+        with: apps/picsa-apps/extension-app-native
           distribution: 'zulu'
           java-version: '11'
           java-package: jdk
@@ -66,8 +70,9 @@ jobs:
       - name: Sign Android Release
         id: sign_aab
         uses: r0adkll/sign-android-release@v1
+        working-directory: apps/picsa-apps/extension-app-native/android
         with:
-          releaseDirectory: apps/picsa-apps/extension-app-native/android/app/build/outputs/bundle/release
+          releaseDirectory: app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY_B64 }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
