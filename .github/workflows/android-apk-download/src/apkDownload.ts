@@ -23,6 +23,7 @@ export async function apkDownload(
     packageName: options.applicationId,
     versionCode: options.versionCode,
   });
-  console.log(res);
+  const apks = res.data.generatedApks;
+  console.log(apks);
   return res.statusText;
 }
