@@ -51,10 +51,10 @@ jobs:
         # Re-sync as remote cache won't populate files during nx build command
       - name: Sync Capacitor
         run: npx cap sync
-        working-directory:   
+        working-directory: apps/picsa-apps/extension-app-native
       - name: Set up JDK 11
         uses: actions/setup-java@v2
-        with: apps/picsa-apps/extension-app-native
+        with:
           distribution: 'zulu'
           java-version: '11'
           java-package: jdk
