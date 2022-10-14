@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: '16'
       - name: Download android apk
-        uses: ./ # Uses an action in the root directory
+        uses: ./.github/workflows/android-apk-download # Uses an action in the root directory
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: io.picsa.extension
