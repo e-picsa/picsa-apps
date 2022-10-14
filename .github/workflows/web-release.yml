@@ -10,7 +10,7 @@ on:
       - main
       - feat/play-store-automation
 jobs:
-  web_preview_resources:
+  web_release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -33,3 +33,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           projectId: picsa-apps
           target: extension-toolkit
+          channelId: live
