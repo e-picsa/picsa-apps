@@ -70,9 +70,8 @@ jobs:
       - name: Sign Android Release
         id: sign_aab
         uses: r0adkll/sign-android-release@v1
-        working-directory: apps/picsa-apps/extension-app-native/android
         with:
-          releaseDirectory: app/build/outputs/bundle/release
+          releaseDirectory: apps/picsa-apps/extension-app-native/android/app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY_B64 }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
