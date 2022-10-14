@@ -58,11 +58,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       - name: Build Android Debug APK
-        working-directory: android
-        run: ./apps/picsa-apps/extension-app-native/gradlew :app:assembleDebug
+        working-directory: apps/picsa-apps/extension-app-native
+        run: ./gradlew :app:assembleDebug
       - name: Build Android Release Bundle
-        working-directory: android
-        run: ./apps/picsa-apps/extension-app-native/gradlew :app:bundleRelease
+        working-directory: apps/picsa-apps/extension-app-native
+        run: ./gradlew :app:bundleRelease
       - name: Sign Android Release
         id: sign_aab
         uses: r0adkll/sign-android-release@v1
