@@ -49,8 +49,11 @@ export class ResourcesStore {
     if (this.isNative) {
       await this.storageService.init();
       await this.checkHardcodedData();
-      this.downloadedResources = this.checkDownloadedResources();
-      console.log('[Resources] downloaded', this.downloadedResources);
+      // subscribe to cached files updates
+      this.storageService.cachedFilesUpdated$.subscribe(() => {
+        const downloaded = this.storageService.getCacheFilesByPath('resources');
+        this.downloadedResources = downloaded;
+      });
     }
     console.log('[Resources] init complete');
   }
@@ -184,10 +187,5 @@ export class ResourcesStore {
     });
     const res = await Promise.all(promises);
     console.log('[Resources] cached', res);
-  }
-
-  private checkDownloadedResources() {
-    const cachedFiles = this.storageService.getCacheFilesByPath('resources');
-    return cachedFiles;
   }
 }

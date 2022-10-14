@@ -84,7 +84,7 @@ class FileItemHandler {
     const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
     this.parent.actionButtonIcon = isDownloaded
       ? 'open_in_new'
-      : 'file_download';
+      : 'file_download'; // TODO show file download size alongside download icon
   }
 
   private async handleClick(e: Event) {
@@ -92,12 +92,9 @@ class FileItemHandler {
     if (this.download$) {
       return this.cancelDownload();
     }
-    const isDownloaded = !this.parent.store.isFileDownloaded(this.resource);
+    const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
     if (!isDownloaded) {
       this.handleResourceDownload();
-      // TODO promisify and open after download
-      // TODO show file download size
-      // TODO move files from extension-toolkit storage bucket to picsa-apps
     } else {
       this.parent.store.openFileResource(this.resource);
     }
@@ -128,9 +125,9 @@ class FileItemHandler {
         throw err;
       },
       complete: () => {
-        console.log('download complete');
         this.parent.downloadProgress = undefined;
         this.parent.actionButtonIcon = 'open_in_new';
+        this.parent.store.openFileResource(this.resource);
       },
     });
   }

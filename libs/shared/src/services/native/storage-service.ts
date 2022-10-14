@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import {
+  Filesystem,
+  Directory,
+  Encoding,
+  FileInfo,
+  StatResult,
+} from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 import { catchError, debounceTime } from 'rxjs/operators';
 import {
@@ -42,7 +48,7 @@ export class NativeStorageService {
     _version: APP_VERSION as any,
   };
   // use subject to debounce writes to file that keeps log of cached files
-  private cachedFilesUpdated$: BehaviorSubject<any> = new BehaviorSubject(true);
+  public cachedFilesUpdated$: BehaviorSubject<any> = new BehaviorSubject(true);
 
   constructor(private fileOpener: FileOpener, private http: HttpClient) {}
 
@@ -53,13 +59,10 @@ export class NativeStorageService {
       path: this.cacheName,
     });
     this.basePath = uri;
-    await this.ensureCacheDirectory();
-    this.cachedFilesList = await this.loadFileList(Directory.Data);
-    console.log('[Native Storage] cachedFiles', this.cachedFilesList);
     this.cachedFilesUpdated$.pipe(debounceTime(5000)).subscribe(async () => {
       await this.writeCacheListToFile();
     });
-    this.cachedFilesUpdated$.next(true);
+    await this.refreshCache();
     console.log('[Native Storage] init complete');
   }
 
@@ -130,18 +133,27 @@ export class NativeStorageService {
     // TODO
   }
 
+  /** Check all files */
+  public async refreshCache() {
+    await this.ensureCacheDirectory();
+    this.cachedFilesList = await this.loadFileList(Directory.Data);
+    console.log('[Native Storage] cachedFiles', this.cachedFilesList);
+    this.cachedFilesUpdated$.next(true);
+  }
+
   public checkFileCached(entry: IStorageFileEntry) {
     const cachedEntry = this.cachedFilesList[entry.relativePath];
+    console.log('check file cached', entry.relativePath);
     if (!cachedEntry) {
       return false;
     }
+    console.log(entry.relativePath, cachedEntry.size_kb === entry.size_kb);
     // assume same if names same and file same (no easy way to check md5 of local)
     return cachedEntry.size_kb === entry.size_kb;
   }
 
   /** Download from a url and store in cache */
   public downloadToCache(fileMeta: IDownloadEntry) {
-    const cacheUpdate = {};
     let data: Blob;
     let subscription: Subscription;
     let progress: number;
@@ -164,9 +176,12 @@ export class NativeStorageService {
       complete: async () => {
         console.log('download to cache completed');
         if (data) {
+          const directory = Directory.Data;
+          const { relativePath } = fileMeta;
+          const path = `${this.cacheName}/${relativePath}`;
           const cachePath = await write_blob({
-            directory: Directory.Data,
-            path: `${this.cacheName}/${fileMeta.relativePath}`,
+            directory,
+            path,
             blob: data as Blob,
             recursive: true,
             fast_mode: true,
@@ -175,11 +190,11 @@ export class NativeStorageService {
               throw error;
             },
           });
-          cacheUpdate[fileMeta.relativePath] = true;
-          this.cachedFilesList = {
-            ...this.cachedFilesList,
-            ...cacheUpdate,
-          };
+          const FileInfo = await Filesystem.stat({ path, directory });
+          this.cachedFilesList[relativePath] = this.createFileCacheEntry(
+            FileInfo,
+            relativePath
+          );
           this.cachedFilesUpdated$.next(true);
           updates$.next({ progress, subscription, cachePath });
           updates$.complete();
@@ -187,6 +202,18 @@ export class NativeStorageService {
       },
     });
     return updates$;
+  }
+  private createFileCacheEntry(
+    file: FileInfo | StatResult,
+    relativePath: string
+  ) {
+    const { mtime, size } = file;
+    const entry: IStorageFileEntry = {
+      modifiedTime: new Date(mtime).toISOString(),
+      relativePath,
+      size_kb: Math.round(size / 102.4) / 10,
+    };
+    return entry;
   }
 
   private async loadFileList(
@@ -200,7 +227,7 @@ export class NativeStorageService {
       path: cacheFolderPath,
     });
     for (const file of files) {
-      const { mtime, name, size, type, uri } = file;
+      const { name, type } = file;
       const relativePath: string = path ? `${path}/${name}` : name;
       if (type === 'directory') {
         filesHashmap = await this.loadFileList(
@@ -209,12 +236,8 @@ export class NativeStorageService {
           filesHashmap
         );
       } else {
-        const entry: IStorageFileEntry = {
-          modifiedTime: new Date(mtime).toISOString(),
-          relativePath,
-          size_kb: Math.round(size / 102.4) / 10,
-        };
-        filesHashmap[relativePath] = entry;
+        const entry = this.createFileCacheEntry(file, relativePath);
+        filesHashmap[entry.relativePath] = entry;
       }
     }
     return filesHashmap;
