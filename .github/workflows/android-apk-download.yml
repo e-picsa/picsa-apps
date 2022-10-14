@@ -1,0 +1,32 @@
+# Create android release AAB and upload play store
+
+# Required Secrets
+# - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON
+
+name: Android - Release to Google Play
+on:
+  # release:
+  #   types: [published]
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/apk-download
+jobs:
+  android_apk_export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          ref: '${{github.event.inputs.build_branch}}'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16'
+      - name: Download android apk
+        uses: ./android-api-download
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: io.picsa.extension
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
