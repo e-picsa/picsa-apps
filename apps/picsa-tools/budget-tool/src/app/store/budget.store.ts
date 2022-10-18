@@ -194,6 +194,8 @@ export class BudgetStore implements OnDestroy {
       const budget = this.savedBudgets.find((b) => b._key === key);
       if (budget) {
         this.loadBudget(toJS(budget));
+      } else {
+        await this.importBudget(key);
       }
     }
   }
@@ -217,6 +219,21 @@ export class BudgetStore implements OnDestroy {
   async deleteBudget(budget: IBudget) {
     await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
     this.loadSavedBudgets();
+  }
+
+  /** Duplicate a server budget and save locally */
+  async importBudget(id: string) {
+    const budget: IBudget = await this.db.getDoc(
+      'budgetTool/${GROUP}/budgets',
+      id,
+      'server'
+    );
+    if (budget) {
+      // append additional key to keep reference from parent to derived budgets
+      const { _key } = generateDBMeta();
+      budget._key += `_${_key}`;
+      this.activeBudget = budget;
+    }
   }
 
   /**************************************************************************
