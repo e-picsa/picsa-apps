@@ -6,7 +6,8 @@
 :host(.negative) {
   filter: hue-rotate(200deg);
 }
-img {
-  width: 10px;
-  height: 10px;
+.dot-value-image {
+  width: 14px;
+  height: 12px;
+  display: inline-flex;
 }
