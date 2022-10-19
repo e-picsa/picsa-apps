@@ -1,33 +1,34 @@
 import { IDBEndpoint, IDBDoc } from '@picsa/models';
+import { _wait } from '@picsa/utils';
 import { AbstractDBService } from '../services/core/db/abstract.db';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
 export class MockDB implements AbstractDBService {
   async getCollection(endpoint: IDBEndpoint) {
-    await this._wait();
+    await _wait();
     // TODO - load mock data here
     return [];
   }
   async getDoc<T>(endpoint: IDBEndpoint, key: string) {
-    await this._wait();
+    await _wait();
     // TODO - load mock data here
     return this.meta() as T & IDBDoc;
   }
   async setDoc<T>(endpoint: IDBEndpoint, doc: T) {
-    await this._wait();
+    await _wait();
     // TODO - some sort of data check here
     return { ...doc, ...this.meta() };
   }
   async setDocs<T>(endpoint: IDBEndpoint, docs: T[]) {
-    await this._wait();
+    await _wait();
     // TODO - some sort of data check here
     return docs.map((d) => {
       return { ...d, ...this.meta() };
     });
   }
   async deleteDocs(endpoint: IDBEndpoint, keys: string[]) {
-    await this._wait();
+    await _wait();
     // TODO
   }
   meta(doc: any = {}): IDBDoc {
@@ -44,8 +45,4 @@ export class MockDB implements AbstractDBService {
     console.log('key', key);
     return key;
   };
-
-  private _wait(ms: number = Math.random() * 5000) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 }

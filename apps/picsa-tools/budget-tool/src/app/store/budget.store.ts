@@ -14,6 +14,7 @@ import {
   IBudgetValueCounters,
   IBudgetBalance,
   IBudgetPeriodType,
+  IBudgetCodeDoc,
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
@@ -25,6 +26,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 const TYPE_CARDS_BASE: {
   [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
 } = {
@@ -252,6 +254,17 @@ export class BudgetStore implements OnDestroy {
       }
     }
   }
+  async loadBudgetByShareCode(code: string) {
+    const codeDoc = await this.db.getDoc<{ budget_key: string }>(
+      'budgetTool/default/shareCodes',
+      code,
+      'server'
+    );
+    if (codeDoc) {
+      return this.importBudget(codeDoc.budget_key);
+    }
+    return undefined;
+  }
   async loadBudget(budget: IBudget) {
     console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
@@ -271,22 +284,33 @@ export class BudgetStore implements OnDestroy {
 
   async deleteBudget(budget: IBudget) {
     await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
+    if (budget.shareCode) {
+      await this.db.deleteDocs('budgetTool/default/shareCodes', [
+        budget.shareCode,
+      ]);
+    }
     this.loadSavedBudgets();
   }
 
   /** Duplicate a server budget and save locally */
-  async importBudget(id: string) {
+  async importBudget(id: string): Promise<IBudget | undefined> {
     const budget: IBudget = await this.db.getDoc(
       'budgetTool/${GROUP}/budgets',
       id,
       'server'
     );
     if (budget) {
+      // remove previous share code to allow re-share as new budget
+      if (budget.shareCode) {
+        delete budget.shareCode;
+      }
       // append additional key to keep reference from parent to derived budgets
       const { _key } = generateDBMeta();
       budget._key += `_${_key}`;
       this.activeBudget = budget;
+      this.saveBudget();
     }
+    return budget;
   }
 
   public async shareAsImage() {
@@ -294,6 +318,27 @@ export class BudgetStore implements OnDestroy {
       '#budget',
       this.activeBudget.meta.title
     );
+  }
+
+  public async shareAsLink() {
+    const { shareCode } = this.activeBudget;
+    if (!shareCode) {
+      const code = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+      // TODO ensure share code doesn't already exist
+      const budgetCodeDoc: IBudgetCodeDoc = {
+        ...generateDBMeta(),
+        _key: code,
+        budget_key: this.activeBudget._key,
+      };
+      await this.db.setDoc(
+        'budgetTool/default/shareCodes',
+        budgetCodeDoc,
+        true
+      );
+      this.activeBudget.shareCode = code;
+    }
+    await this.saveBudget();
+    return this.activeBudget.shareCode as string;
   }
 
   /**************************************************************************

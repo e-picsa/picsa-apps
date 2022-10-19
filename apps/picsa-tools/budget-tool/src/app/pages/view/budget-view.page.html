@@ -5,7 +5,6 @@
       *ngIf="!isEditorOpen"
       aria-label="Share"
       (click)="showShareDialog()"
-      [disabled]="isSharing"
     >
       <mat-icon>share</mat-icon>Share
     </button>
@@ -22,7 +21,7 @@
       @fadeInOut
     ></budget-table>
     <budget-cell-editor
-      *ngIf="store.activeType && store.activeBudget"
+      *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
       [isOpen]="isEditorOpen"
@@ -30,7 +29,7 @@
     ></budget-cell-editor>
     <!-- WiP Updated editor (replaces ABOVE) -->
     <!-- <budget-cell-inline-editor
-      *ngIf="store.activeType && store.activeBudget"
+       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
       [isOpen]="isEditorOpen"

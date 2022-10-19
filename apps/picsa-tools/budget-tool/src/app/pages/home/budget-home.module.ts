@@ -7,6 +7,7 @@ import { BudgetMaterialModule } from '../../material.module';
 import { MobxAngularModule } from 'mobx-angular';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { PicsaDialogsModule } from '@picsa/shared/features';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
+    FormsModule,
     PicsaTranslateModule,
     PicsaDialogsModule,
     BudgetMaterialModule,

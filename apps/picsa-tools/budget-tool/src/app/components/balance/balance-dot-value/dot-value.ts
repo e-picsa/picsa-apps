@@ -38,6 +38,8 @@ export class BudgetBalanceDotValueComponent {
       const val = this._value;
       let allocation: ICounterAllocation[] = [];
       // keep track of how many times each value is multiplied by to make total
+      // TODO - rendering would be more efficient if a single svg rendered, and <use> tag to re-use paths
+      // instead of rendering multiple svgs (would need to handle overflow/scroll however)
       let toAllocate = Math.abs(val);
       divisors.forEach((divisor, i) => {
         const multiples = Math.floor(toAllocate / divisor);
