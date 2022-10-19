@@ -4,6 +4,7 @@ export interface IBudget extends IDBDoc {
   data: IBudgetPeriodData[];
   meta: IBudgetMeta;
   apiVersion: number;
+  shareCode?: string;
   _appVersion: string;
 }
 
@@ -92,4 +93,8 @@ export type IBudgetBalance = IBudgetPeriodBalance[];
 interface IBudgetPeriodBalance {
   period: number;
   running: number;
+}
+
+export interface IBudgetCodeDoc extends IDBDoc {
+  budget_key: string;
 }

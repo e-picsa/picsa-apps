@@ -1,8 +1,14 @@
 <div class="page-content">
-  <button mat-stroked-button color="primary" (click)="createClicked()">
-    <mat-icon>add</mat-icon>
-    {{ 'Create New Budget' | translate }}
-  </button>
+  <div class="button-grid">
+    <button mat-stroked-button color="primary" (click)="createClicked()">
+      <div>{{ 'Create New Budget' | translate }}</div>
+      <img src="assets/budget-icons/budget-create.svg" />
+    </button>
+    <button mat-stroked-button color="primary" (click)="importBudgetCode()">
+      <div>{{ 'Import Budget Code' | translate }}</div>
+      <img src="assets/budget-icons/budget-import.svg" />
+    </button>
+  </div>
 
   <h2>{{ 'Saved Budgets' | translate }}</h2>
   <div *mobxAutorun>

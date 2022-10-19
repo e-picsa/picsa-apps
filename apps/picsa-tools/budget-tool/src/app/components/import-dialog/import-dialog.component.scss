@@ -1,0 +1,25 @@
+.input-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+}
+mat-form-field.input-field {
+  width: 55px;
+}
+mat-form-field.input-field .mat-form-field-wrapper {
+  padding-bottom: 0;
+  background-color: yellow;
+}
+input {
+  font-size: 32px;
+}
+
+.status-message {
+  height: 1em;
+  line-height: 1em;
+  text-align: center;
+  color: var(--color-primary);
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: -12px;
+}

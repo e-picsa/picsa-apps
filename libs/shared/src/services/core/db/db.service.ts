@@ -150,7 +150,7 @@ export const generateDBMeta = (
 ): IDBDoc => {
   const { _key, _created, _modified } = doc;
   return {
-    _key: _key ? _key : _generateID(),
+    _key: _key ? _key : generateID(),
     _created: _created ? _created : new Date().toISOString(),
     _modified: keepModified && _modified ? _modified : new Date().toISOString(),
   };
@@ -158,12 +158,12 @@ export const generateDBMeta = (
 
 // taken from firestore generation methods
 // https://github.com/firebase/firebase-js-sdk/blob/73a586c92afe3f39a844b2be86086fddb6877bb7/packages/firestore/src/util/misc.ts#L36
-function _generateID() {
-  // Alphanumeric characters
-  const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+export function generateID(
+  length = 20,
+  chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+) {
   let autoId = '';
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < length; i++) {
     autoId += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return autoId;

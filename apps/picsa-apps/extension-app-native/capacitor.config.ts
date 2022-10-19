@@ -34,7 +34,7 @@ const config: CapacitorConfig = {
    * TODO - could create script to automatially toggle when serving native
    **/
   // server: {
-  //   url: 'http://192.168.0.54:4200',
+  //   url: 'http://192.168.50.67:4200',
   //   cleartext: true,
   // },
 };

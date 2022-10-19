@@ -1,4 +1,5 @@
-<img
+<div
+  class="dot-value-image"
   *ngFor="let counter of counterAllocation"
-  [src]="'assets/budget-icons/' + counter.img + '.png'"
-/>
+  [innerHtml]="svgIcons[counter.icon]"
+></div>

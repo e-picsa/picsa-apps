@@ -4,10 +4,10 @@
 <div style="margin: 10px 0 0 5px">
   <div *ngFor="let label of labels; let i = index">
     <div style="display: flex; font-size: small">
-      <div>
+      <div style="width: 20px; height: 20px">
         <img
           class="dot-value-image"
-          [src]="'assets/budget-icons/dot-' + label + '.png'"
+          [src]="'assets/budget-icons/dot-' + label + '.svg'"
         />
       </div>
       <div>= {{ values[i] | number: '.0' }}</div>

@@ -2,7 +2,7 @@
 // as datasets typically quite small these aren't really required, but probably good practice
 export const DEFAULT_STORE_SCHEMA = '_key,_modified';
 
-export const DB_VERSION = 3;
+export const DB_VERSION = 20221018.2;
 // NOTE - changes to list of tables requires update db version
 // changes within table schema (including fields) require upgrade function
 
@@ -11,6 +11,7 @@ const DB_COMMON_SCHEMA = {
   _appMeta: '_key',
   budgetTool: '_key',
   'budgetTool/_all/cards': '_key',
+  'budgetTool/default/shareCodes': '_key,budget_key',
   climateTool: DEFAULT_STORE_SCHEMA,
   forms: DEFAULT_STORE_SCHEMA,
   stationData: DEFAULT_STORE_SCHEMA,
@@ -18,6 +19,7 @@ const DB_COMMON_SCHEMA = {
 };
 const DB_GROUP_SCHEMA = {
   'budgetTool/${GROUP}/budgets': DEFAULT_STORE_SCHEMA,
+
   'users/${GROUP}/users': DEFAULT_STORE_SCHEMA,
 };
 

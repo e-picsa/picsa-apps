@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BudgetStore } from '../../store/budget.store';
 import {
@@ -9,8 +9,9 @@ import {
   ANIMATION_DEFAULTS_Y,
 } from '@picsa/shared/animations';
 import { Subject, takeUntil } from 'rxjs';
-import { PrintProvider } from '@picsa/shared/services/native/print';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { MatDialog } from '@angular/material/dialog';
+import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 
 @Component({
   selector: 'budget-view',
@@ -25,15 +26,14 @@ import { PicsaCommonComponentsService } from '@picsa/components/src';
 export class BudgetViewPage implements OnInit, OnDestroy {
   loader: HTMLIonLoadingElement;
   isEditorOpen = false;
-  isSharing = false;
   periodLabel: string;
   componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
     public store: BudgetStore,
-    private printPrvdr: PrintProvider,
-    private componentsService: PicsaCommonComponentsService
+    private componentsService: PicsaCommonComponentsService,
+    private dialog: MatDialog
   ) {}
 
   async ngOnInit() {
@@ -48,17 +48,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   }
 
   async showShareDialog() {
-    try {
-      this.isSharing = true;
-      await this.printPrvdr.socialShareBudget(
-        '#budget',
-        this.store.activeBudget.meta.title
-      );
-      this.isSharing = false;
-    } catch (error) {
-      console.error(error);
-      this.isSharing = false;
-    }
+    this.dialog.open(BudgetShareDialogComponent, { disableClose: true });
   }
 
   async loadBudget() {

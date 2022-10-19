@@ -27,7 +27,7 @@
     "@angular-redux/router": "^10.0.0",
     "@angular-redux/store": "^10.0.0",
     "@ionic/storage": "^2.2.0",
-    "canvg": "^2.0.0",
+    "canvg": "^4.0.1",
     "deepmerge": "^4.0.0",
     "dexie": "^2.0.4",
     "file-saver": "^2.0.2",
