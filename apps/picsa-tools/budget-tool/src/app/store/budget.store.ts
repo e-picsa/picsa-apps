@@ -255,15 +255,17 @@ export class BudgetStore implements OnDestroy {
     }
   }
   async loadBudgetByShareCode(code: string) {
-    const codeDoc = await this.db.getDoc<{ budget_key: string }>(
+    const codeDoc = await this.db.getDoc<IBudgetCodeDoc>(
       'budgetTool/default/shareCodes',
       code,
       'server'
     );
     if (codeDoc) {
       return this.importBudget(codeDoc.budget_key);
+    } else {
+      console.warn('No budget share code found for code:', code);
+      return undefined;
     }
-    return undefined;
   }
   async loadBudget(budget: IBudget) {
     console.log('loading budget', budget);
@@ -293,10 +295,10 @@ export class BudgetStore implements OnDestroy {
   }
 
   /** Duplicate a server budget and save locally */
-  async importBudget(id: string): Promise<IBudget | undefined> {
+  private async importBudget(key: string): Promise<IBudget | undefined> {
     const budget: IBudget = await this.db.getDoc(
       'budgetTool/${GROUP}/budgets',
-      id,
+      key,
       'server'
     );
     if (budget) {
@@ -309,6 +311,8 @@ export class BudgetStore implements OnDestroy {
       budget._key += `_${_key}`;
       this.activeBudget = budget;
       this.saveBudget();
+    } else {
+      console.warn('No budget doc found for key:', key);
     }
     return budget;
   }
