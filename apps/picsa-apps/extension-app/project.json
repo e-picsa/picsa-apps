@@ -18,8 +18,8 @@
           "apps/picsa-apps/extension-app/src/assets",
           {
             "glob": "**/*",
-            "input": "src/.well-known",
-            "output": ".well-known/"
+            "input": "apps/picsa-apps/extension-app/src/static",
+            "output": "/"
           },
           {
             "glob": "**/*",
