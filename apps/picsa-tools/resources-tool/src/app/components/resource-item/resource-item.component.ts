@@ -25,7 +25,11 @@ export class ResourceItemComponent implements OnInit {
   @Input() viewStyle: 'expanded' | 'default' = 'default';
   @Input() resource: IResource;
 
-  public actionButtonIcon?: 'open_in_new' | 'file_download';
+  public actionButtonIcon?:
+    | 'open_in_new'
+    | 'file_download'
+    | 'smartphone'
+    | 'tab';
   public downloadProgress?: number;
 
   public subtitle = '';
@@ -63,7 +67,7 @@ class LinkItemHandler {
     this.handleOverrides();
   }
   private async handleOverrides() {
-    this.parent.actionButtonIcon = 'open_in_new';
+    this.parent.actionButtonIcon = (this.resource.icon as any) || 'tab';
   }
 
   private handleClick(e: Event) {
@@ -175,7 +179,7 @@ class AppItemHandler {
     this.handleOverrides();
   }
   private async handleOverrides() {
-    this.parent.actionButtonIcon = 'open_in_new';
+    this.parent.actionButtonIcon = 'smartphone';
   }
 
   private handleClick(e: Event) {
