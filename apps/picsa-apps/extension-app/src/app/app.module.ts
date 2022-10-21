@@ -13,6 +13,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { MobxAngularModule } from 'mobx-angular';
 import {
   PicsaDbModule,
+  PicsaDeepLinksModule,
   PicsaNativeModule,
   PicsaTranslateModule,
 } from '@picsa/shared/modules';
@@ -37,6 +38,10 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
     PicsaDbModule.forRoot(),
     PicsaNativeModule.forRoot(),
     PicsaTranslateModule.forRoot(),
+    PicsaDeepLinksModule.forRoot({
+      baseUrl: 'https://picsa.app',
+      appDynamicLink: 'https://picsa.page.link/dynamic',
+    }),
     PicsaTranslateModule,
     PicsaCommonComponentsModule,
     HttpClientModule,

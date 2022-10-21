@@ -18,6 +18,11 @@
           "apps/picsa-apps/extension-app/src/assets",
           {
             "glob": "**/*",
+            "input": "apps/picsa-apps/extension-app/src/static",
+            "output": "/"
+          },
+          {
+            "glob": "**/*",
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
