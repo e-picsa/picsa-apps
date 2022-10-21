@@ -42,6 +42,8 @@ export interface IResourceCollection extends IResourceItemBase {
 export interface IResourceLink extends IResourceItemBase {
   type: 'link';
   url: string;
+  /** material icon to display with link */
+  icon?: string;
 }
 export interface IResourceApp extends IResourceItemBase {
   type: 'app';
