@@ -18,6 +18,11 @@
           "apps/picsa-apps/extension-app/src/assets",
           {
             "glob": "**/*",
+            "input": "src/.well-known",
+            "output": ".well-known/"
+          },
+          {
+            "glob": "**/*",
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
