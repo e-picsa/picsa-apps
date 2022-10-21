@@ -15,6 +15,7 @@ export interface IResourceItemBase extends IDBDoc {
   imageFit?: 'contain' | 'cover';
   subtitle?: string;
   language?: string;
+  meta?: any;
 }
 //
 export interface IResourceFile extends IResourceItemBase {
@@ -39,9 +40,11 @@ export interface IResourceCollection extends IResourceItemBase {
   childResources: string[];
 }
 export interface IResourceLink extends IResourceItemBase {
+  type: 'link';
   url: string;
 }
 export interface IResourceApp extends IResourceItemBase {
+  type: 'app';
   appId: string;
 }
 
