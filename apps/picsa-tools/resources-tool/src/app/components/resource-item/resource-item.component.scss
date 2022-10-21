@@ -32,6 +32,9 @@
   &:hover {
     background: unset;
   }
+  & > .resource-item-contents {
+    flex-wrap: wrap;
+  }
 }
 .language-code {
   background: var(--color-secondary);
