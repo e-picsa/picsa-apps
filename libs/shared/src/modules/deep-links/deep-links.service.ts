@@ -38,7 +38,10 @@ export class DeepLinksService {
       });
     } else {
       if (this.isMobile()) {
-        this.toggleAppOpenTargetSheet();
+        // open prompt after slight delay to allow time for app to render
+        setTimeout(() => {
+          this.toggleAppOpenTargetSheet();
+        }, 2500);
       }
     }
   }
