@@ -21,5 +21,8 @@
 		"@capacitor-community/firebase-analytics",
 		"@capacitor-community/firebase-crashlytics",
 		"@capacitor-firebase/performance"
-	]
+	],
+	"server": {
+		"cleartext": true
+	}
 }
