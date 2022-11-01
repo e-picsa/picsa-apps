@@ -1,0 +1,33 @@
+<form class="input-container">
+  <mat-form-field
+    class="input-field"
+    *ngFor="let char of importCode; let i = index"
+    appearance="outline"
+  >
+    <input
+      matInput
+      [(ngModel)]="char.value"
+      [id]="char.name"
+      [name]="char.name"
+      class="input"
+      maxlength="1"
+      minlength="1"
+      oninput="this.value = this.value.toUpperCase()"
+      (keyup)="handleKeyup($event, i)"
+      (keydown)="handleKeydown($event, i)"
+      (paste)="handlePaste($event)"
+    />
+  </mat-form-field>
+</form>
+<div class="status-message">{{ status }}</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>
+  <button
+    mat-button
+    (click)="handleImport()"
+    [disabled]="importValue.length !== 4 || disabled"
+  >
+    Import
+  </button>
+</div>

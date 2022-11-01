@@ -15,13 +15,14 @@ export interface IResourceItemBase extends IDBDoc {
   imageFit?: 'contain' | 'cover';
   subtitle?: string;
   language?: string;
+  meta?: any;
 }
 //
 export interface IResourceFile extends IResourceItemBase {
   // Core DB type
   type: 'file';
   filename: string;
-  mimetype: 'application/pdf';
+  mimetype: 'application/pdf' | 'video/mp4';
   url: string;
   folder?: string;
   // TODO - legacy types
@@ -39,9 +40,13 @@ export interface IResourceCollection extends IResourceItemBase {
   childResources: string[];
 }
 export interface IResourceLink extends IResourceItemBase {
+  type: 'link';
   url: string;
+  /** material icon to display with link */
+  icon?: string;
 }
 export interface IResourceApp extends IResourceItemBase {
+  type: 'app';
   appId: string;
 }
 

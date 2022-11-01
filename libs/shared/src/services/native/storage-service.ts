@@ -1,9 +1,21 @@
 import { Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import {
+  Filesystem,
+  Directory,
+  Encoding,
+  FileInfo,
+  StatResult,
+} from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 import { catchError, debounceTime } from 'rxjs/operators';
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  firstValueFrom,
+  of,
+  Subject,
+  Subscription,
+} from 'rxjs';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { APP_VERSION } from '@picsa/environments';
 import write_blob from 'capacitor-blob-writer';
@@ -36,7 +48,7 @@ export class NativeStorageService {
     _version: APP_VERSION as any,
   };
   // use subject to debounce writes to file that keeps log of cached files
-  private cachedFilesUpdated$: BehaviorSubject<any> = new BehaviorSubject(true);
+  public cachedFilesUpdated$: BehaviorSubject<any> = new BehaviorSubject(true);
 
   constructor(private fileOpener: FileOpener, private http: HttpClient) {}
 
@@ -47,13 +59,10 @@ export class NativeStorageService {
       path: this.cacheName,
     });
     this.basePath = uri;
-    await this.ensureCacheDirectory();
-    this.cachedFilesList = await this.loadFileList(Directory.Data);
-    console.log('[Native Storage] cachedFiles', this.cachedFilesList);
     this.cachedFilesUpdated$.pipe(debounceTime(5000)).subscribe(async () => {
       await this.writeCacheListToFile();
     });
-    this.cachedFilesUpdated$.next(true);
+    await this.refreshCache();
     console.log('[Native Storage] init complete');
   }
 
@@ -120,54 +129,91 @@ export class NativeStorageService {
    ************************************************************************************/
 
   /** TODO - include/separate out method to remove any old caches*/
-  public async clearCache(): Promise<void> {}
+  public async clearCache(): Promise<void> {
+    // TODO
+  }
+
+  /** Check all files */
+  public async refreshCache() {
+    await this.ensureCacheDirectory();
+    this.cachedFilesList = await this.loadFileList(Directory.Data);
+    console.log('[Native Storage] cachedFiles', this.cachedFilesList);
+    this.cachedFilesUpdated$.next(true);
+  }
 
   public checkFileCached(entry: IStorageFileEntry) {
     const cachedEntry = this.cachedFilesList[entry.relativePath];
+    console.log('check file cached', entry.relativePath);
     if (!cachedEntry) {
       return false;
     }
+    console.log(entry.relativePath, cachedEntry.size_kb === entry.size_kb);
     // assume same if names same and file same (no easy way to check md5 of local)
     return cachedEntry.size_kb === entry.size_kb;
   }
 
   /** Download from a url and store in cache */
-  public async downloadToCache(filesMeta: IDownloadEntry[]) {
-    const cacheUpdate = {};
-    const promises = filesMeta.map((meta) => {
-      return new Promise<string>((resolve, reject) => {
-        console.log('[Native Stroage] cache', meta);
-        this.downloadFile(meta.downloadUrl, 'blob').subscribe({
-          error: (err) => {
-            console.log('[Native Storgage] download error', meta);
-            console.error(err);
-            reject(err);
-          },
-          next: async ({ progress, data }) => {
-            if (progress === 100 && data) {
-              const res = await write_blob({
-                directory: Directory.Data,
-                path: `${this.cacheName}/${meta.relativePath}`,
-                blob: data as Blob,
-                recursive: true,
-                fast_mode: true,
-                on_fallback(error) {
-                  console.error(error);
-                  reject(error);
-                },
-              });
-              cacheUpdate[meta.relativePath] = true;
-              resolve(res);
-            }
-          },
-        });
-      });
+  public downloadToCache(fileMeta: IDownloadEntry) {
+    let data: Blob;
+    let subscription: Subscription;
+    let progress: number;
+    // create a new subject to subscribe from inner observable
+    const updates$ = new Subject<{
+      progress: number;
+      subscription: Subscription;
+      cachePath?: string;
+    }>();
+    // call file download subscription, passing values to top observable
+    // TODO - might be tidier way to manage nested observables (e.g. map/switchmap/mergemap op)
+    this.downloadFile(fileMeta.downloadUrl, 'blob').subscribe({
+      error: (err) => updates$.error(err),
+      next: async (res) => {
+        data = res.data as Blob;
+        subscription = res.subscription;
+        progress = res.progress;
+        updates$.next({ progress, subscription });
+      },
+      complete: async () => {
+        console.log('download to cache completed');
+        if (data) {
+          const directory = Directory.Data;
+          const { relativePath } = fileMeta;
+          const path = `${this.cacheName}/${relativePath}`;
+          const cachePath = await write_blob({
+            directory,
+            path,
+            blob: data as Blob,
+            recursive: true,
+            fast_mode: true,
+            on_fallback(error) {
+              console.error(error);
+              throw error;
+            },
+          });
+          const FileInfo = await Filesystem.stat({ path, directory });
+          this.cachedFilesList[relativePath] = this.createFileCacheEntry(
+            FileInfo,
+            relativePath
+          );
+          this.cachedFilesUpdated$.next(true);
+          updates$.next({ progress, subscription, cachePath });
+          updates$.complete();
+        }
+      },
     });
-    const urls = await Promise.all(promises);
-    // update cache using behaviour subject
-    this.cachedFilesList = { ...this.cachedFilesList, ...cacheUpdate };
-    this.cachedFilesUpdated$.next(true);
-    return urls;
+    return updates$;
+  }
+  private createFileCacheEntry(
+    file: FileInfo | StatResult,
+    relativePath: string
+  ) {
+    const { mtime, size } = file;
+    const entry: IStorageFileEntry = {
+      modifiedTime: new Date(mtime).toISOString(),
+      relativePath,
+      size_kb: Math.round(size / 102.4) / 10,
+    };
+    return entry;
   }
 
   private async loadFileList(
@@ -181,7 +227,7 @@ export class NativeStorageService {
       path: cacheFolderPath,
     });
     for (const file of files) {
-      const { mtime, name, size, type, uri } = file;
+      const { name, type } = file;
       const relativePath: string = path ? `${path}/${name}` : name;
       if (type === 'directory') {
         filesHashmap = await this.loadFileList(
@@ -190,12 +236,8 @@ export class NativeStorageService {
           filesHashmap
         );
       } else {
-        const entry: IStorageFileEntry = {
-          modifiedTime: new Date(mtime).toISOString(),
-          relativePath,
-          size_kb: Math.round(size / 102.4) / 10,
-        };
-        filesHashmap[relativePath] = entry;
+        const entry = this.createFileCacheEntry(file, relativePath);
+        filesHashmap[entry.relativePath] = entry;
       }
     }
     return filesHashmap;
@@ -217,36 +259,60 @@ export class NativeStorageService {
 
   private downloadFile(
     url: string,
-    responseType: 'blob' | 'base64' = 'base64'
+    responseType: 'blob' | 'base64' = 'base64',
+    headers = {}
   ) {
-    const updates$ = new BehaviorSubject({ progress: 0, data: null as any });
-    // Force read from file and not just return 304 response
-    const headers = {
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache',
-      Expires: '0',
-    };
-    this.http
+    // If downloading from local assets ignore cache
+    if (!url.startsWith('http')) {
+      headers = {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
+        ...headers,
+      };
+    }
+
+    // subscribe and share updates
+    let subscription = new Subscription();
+    let progress = 0;
+    let data: Blob | string;
+
+    // share initial update with request and subscription objects to allow dl interrupt via unsubscribe method
+    const updates$ = new BehaviorSubject<{
+      progress: number;
+      subscription: Subscription;
+      data?: Blob | string;
+    }>({ progress, subscription });
+
+    subscription = this.http
       .get(url, {
         responseType: 'blob',
         reportProgress: true,
         headers,
         observe: 'events',
       })
-      .subscribe(async (event) => {
-        if (event.type === HttpEventType.DownloadProgress) {
-          const progress = Math.round((100 * event.loaded) / event.total!);
-          updates$.next({ progress, data: null });
-        } else if (event.type === HttpEventType.Response) {
-          if (responseType === 'blob') {
-            updates$.next({ progress: 100, data: event.body as Blob });
-          } else {
-            const base64 = await this.convertBlobToBase64(event.body as Blob);
-            updates$.next({ progress: 100, data: base64 });
+      .subscribe({
+        error: (err) => updates$.error(err),
+        next: async (event) => {
+          // handle progress update
+          if (event.type === HttpEventType.DownloadProgress) {
+            if (event.total) {
+              progress = Math.round((100 * event.loaded) / event.total);
+            }
           }
-
+          // handle full response received
+          if (event.type === HttpEventType.Response) {
+            data = event.body as Blob;
+          }
+          updates$.next({ progress, subscription, data });
+        },
+        complete: async () => {
+          if (responseType === 'base64') {
+            data = await this.convertBlobToBase64(data as Blob);
+          }
+          updates$.next({ progress: 100, data, subscription });
           updates$.complete();
-        }
+        },
       });
     return updates$;
   }

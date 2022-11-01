@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { IBudget } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 import { Router, ActivatedRoute } from '@angular/router';
-import { PrintProvider } from '@picsa/shared/services/native/print';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { BudgetImportDialogComponent } from '../../components/import-dialog/import-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'budget-home',
   templateUrl: './budget-home.page.html',
@@ -13,11 +14,11 @@ export class BudgetHomePage {
   sharedDisabled: boolean;
   budgetDownloadMessage: string;
   constructor(
-    private printPrvdr: PrintProvider,
     public store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: PicsaDialogService
+    private dialog: PicsaDialogService,
+    private matDialog: MatDialog
   ) {}
 
   createClicked() {
@@ -30,6 +31,9 @@ export class BudgetHomePage {
         this.deleteBudget(budget);
       }
     });
+  }
+  public importBudgetCode() {
+    this.matDialog.open(BudgetImportDialogComponent);
   }
 
   async deleteBudget(budget: IBudget) {

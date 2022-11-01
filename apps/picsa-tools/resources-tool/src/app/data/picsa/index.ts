@@ -1,3 +1,5 @@
-import MANUALS from './manuals';
+import cropInfo from './cropInfo';
+import manuals from './manuals';
+import videos from './videos';
 
-export default { ...MANUALS };
+export default { ...cropInfo, ...manuals, ...videos };

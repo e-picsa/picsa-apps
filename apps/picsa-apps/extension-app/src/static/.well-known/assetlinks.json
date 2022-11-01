@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.picsa.extension",
+      "sha256_cert_fingerprints": [
+        "E8:13:EC:21:32:37:45:EA:08:2D:E3:1C:D0:B4:91:05:07:9E:E9:E0:55:BE:4B:75:DC:4C:BB:44:82:C6:3C:4E",
+        "89:A0:8E:EB:74:40:5B:AB:DA:19:F8:4D:02:D4:A0:BB:C3:90:71:3D:76:B5:55:12:0A:68:D4:12:61:7C:34:F6"
+      ]
+    }
+  }
+]

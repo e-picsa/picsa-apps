@@ -6,21 +6,20 @@ import {
   IResourceLink,
   IResourceYoutube,
 } from '../models';
-import COLLECTIONS from './collections';
-import FILES from './files';
 import CROPS from './crops';
 import WEATHER from './weather';
 import WORKSHOPS from './workshops';
 import PICSA_RESOURCES from './picsa';
+import { GENDER_RESOURCES } from './gender';
 
 const byId: { [id: string]: IResource } = {
-  ...COLLECTIONS,
-  ...FILES,
   ...CROPS,
+  ...GENDER_RESOURCES,
   ...WEATHER,
   ...WORKSHOPS,
   ...PICSA_RESOURCES,
 };
+console.log({ PICSA_RESOURCES });
 
 /** Base generator to ensure any created types appear in final export */
 const emptyTypes: () => { [type in IResource['type']]: [] } = () => ({

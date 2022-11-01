@@ -25,24 +25,24 @@ const apps: { [key: string]: IResourceApp } = {
     _modified: '2019-09-27T11:00:01.000Z',
     title: 'Plantwise Factsheets Library',
     description:
-      'library of clear, practical and safe advice for tackling crop problems',
+      'Library of clear, practical and safe advice for tackling crop problems',
     subtitle: '',
     type: 'app',
     image: 'assets/resources/covers/plantwise.webp',
     appId: 'org.cabi.pfff',
   },
-  // zaulimi: {
-  //   _key: 'zaulimi',
-  //   _created: '2019-09-25T10:00:04.000Z',
-  //   _modified: '2019-09-27T11:00:01.000Z',
-  // title: 'Plantwise Factsheets Library',
-  // description:
-  //   'library of clear, practical and safe advice for tackling crop problems',
-  // subtitle: '',
-  // type: 'app',
-  // image: 'assets/resources/covers/plantwise.webp',
-  // appId: 'org.cabi.pfff',
-  //   },
+  zaulimi: {
+    _key: 'zaulimi',
+    _created: '2022-10-21T10:00:04.000Z',
+    _modified: '2022-10-21T10:00:04.000Z',
+    title: 'Zaulimi',
+    description:
+      'Essential production and marketing information for selected crops, livestock and baobab.',
+    subtitle: '',
+    type: 'app',
+    image: 'assets/resources/covers/zaulimi.webp',
+    appId: 'mw.glide.zaulimi',
+  },
 };
 
 /** Main collection that hosts child resources */
@@ -56,9 +56,8 @@ const cropResources: IResourceCollection = {
   image: 'assets/resources/covers/crops.svg',
   priority: 7,
   childResources: [
-    // TODO - cropInfoSheets used in ZM workshop but wanted displayed here
-    // should tidy up
-    'cropInfoSheets',
+    // TODO - cropInfoCollection in Picsa Resources
+    'cropInfoCollection',
     ...Object.keys(links),
     ...Object.keys(apps),
   ],
