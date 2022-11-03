@@ -3,3 +3,25 @@
 ```
 npx jetify
 ```
+
+- `Error: leaflet-draw@github:enketo/Leaflet.draw#ff73078: Couldn't resolve "ff73078"`
+  This is because yarn can't resolve short commits used in enketo-core. Manually add resolution to yarn.lock
+
+```
+"leaflet-draw@github:enketo/Leaflet.draw#ff73078":
+  version: 1.0.4
+  resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
+  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
+  languageName: node
+  linkType: hard
+```
+
+### Cannot run jest tests against monitoring-tool
+
+Known issue, related to how jest will attempt to recompile prior to running. Have tried many workarounds, but to no success
+
+- https://github.com/thymikee/jest-preset-angular/issues/1625
+- https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object
+- https://github.com/thymikee/jest-preset-angular/issues/1648
+
+Will likely need to fork and rebuild repo to add better support (assuming esm module syntax)
