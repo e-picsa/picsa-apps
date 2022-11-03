@@ -19,7 +19,7 @@
         ],
         "styles": [
           "apps/picsa-tools/monitoring-tool/src/styles.scss",
-          "node_modules/enketo-core/src/sass/grid/grid.scss"
+          "libs/theme/src/_index.scss"
         ],
         "scripts": []
       },
