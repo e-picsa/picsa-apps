@@ -25,7 +25,9 @@
     "picsa-tools-monitoring-tool-e2e": "apps/picsa-tools/monitoring-tool-e2e",
     "picsa-tools-resources-tool": "apps/picsa-tools/resources-tool",
     "picsa-tools-resources-tool-e2e": "apps/picsa-tools/resources-tool-e2e",
+    "picsa-webcomponents": "libs/webcomponents",
     "shared": "libs/shared",
-    "theme": "libs/theme"
+    "theme": "libs/theme",
+    "webcomponents-ngx": "libs/webcomponents-ngx"
   }
 }
