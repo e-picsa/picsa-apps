@@ -18,13 +18,16 @@
           }
         ],
         "@angular-eslint/component-selector": [
-          "error",
+          "warn",
           {
             "type": "element",
             "prefix": "picsa",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@angular-eslint/no-inputs-metadata-property": "off",
+        "@angular-eslint/component-class-suffix": "warn",
+        "@typescript-eslint/no-empty-interface": "off"
       }
     },
     {
