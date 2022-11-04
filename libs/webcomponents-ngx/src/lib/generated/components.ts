@@ -12,13 +12,13 @@ export declare interface EnketoWebform extends Components.EnketoWebform {}
 
 @ProxyCmp({
   defineCustomElementFn: undefined,
-  inputs: ['first', 'last', 'middle']
+  inputs: ['form', 'model']
 })
 @Component({
   selector: 'enketo-webform',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
-  inputs: ['first', 'last', 'middle']
+  inputs: ['form', 'model']
 })
 export class EnketoWebform {
   protected el: HTMLElement;
