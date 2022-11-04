@@ -75,7 +75,6 @@
     "save-svg-as-png": "^1.4.17",
     "sharp": "^0.30.7",
     "stacktrace-js": "^2.0.2",
-    "survey-angular": "^1.9.33",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },

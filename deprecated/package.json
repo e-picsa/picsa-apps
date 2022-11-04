@@ -35,7 +35,6 @@
     "redux": "^4.0.1",
     "redux-observable": "^1.1.0",
     "sentry-cordova": "^0.16.0",
-    "survey-angular": "^1.1.5",
     "topojson": "^3.0.2",
     "typeorm": "^0.2.9"
   },

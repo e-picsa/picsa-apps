@@ -14383,7 +14383,6 @@ __metadata:
     save-svg-as-png: ^1.4.17
     sharp: ^0.30.7
     stacktrace-js: ^2.0.2
-    survey-angular: ^1.9.33
     tailwindcss: ^3.0.2
     ts-jest: 27.1.4
     ts-node: 10.8.1
@@ -17289,13 +17288,6 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 53b1e247e68e05db7b3808b99b892bd36fb096e6fba213a06da7fab22045e97597db425c724f2bbd6c99a3c295e1e73f3e4de78592289f38431049e1277ca0ae
-  languageName: node
-  linkType: hard
-
-"survey-angular@npm:^1.9.33":
-  version: 1.9.35
-  resolution: "survey-angular@npm:1.9.35"
-  checksum: bb159fb0a5968eb56084abe4b2878dd1adaaf773216a314bed3ab538d50e84b1701c4c4a102901f2d3883627fa1c3ba98024149054475c56141714a2465219fa
   languageName: node
   linkType: hard
 
