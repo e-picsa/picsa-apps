@@ -58,11 +58,7 @@ const routes: Routes = [
       ),
     title: 'Discussions',
   },
-  {
-    path: 'data',
-    loadChildren: () =>
-      import('./pages/data/data.module').then((mod) => mod.DataPageModule),
-  },
+
   {
     path: 'privacy',
     loadChildren: () =>
