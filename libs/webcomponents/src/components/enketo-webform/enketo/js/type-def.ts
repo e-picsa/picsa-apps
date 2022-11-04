@@ -1,9 +1,9 @@
-type ExternalInstance = {
+export type ExternalInstance = {
   id: string;
   src: string;
   xml: string | Document;
 };
-type FormDataObj = {
+export type FormDataObj = {
   /**
    * -  XML Model as string
    */
@@ -29,5 +29,5 @@ type FormDataObj = {
    */
   xmlStr?: string | undefined;
 };
-type UpdatedDataNodes = any;
-type jQuery = object;
+export type UpdatedDataNodes = any;
+export type jQuery = object;
