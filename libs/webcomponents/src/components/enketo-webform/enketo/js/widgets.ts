@@ -8,7 +8,8 @@ import a from '../widget/note/notewidget';
 import b from '../widget/select-desktop/selectpicker';
 import c from '../widget/select-mobile/selectpicker';
 import e from '../widget/select-autocomplete/autocomplete';
-import f from '../widget/geo/geopicker';
+// HACK - Omit geopicker to avoid leaflet import
+// import f from '../widget/geo/geopicker';
 import g from '../widget/textarea/textarea';
 import h from '../widget/table/tablewidget';
 import i from '../widget/radio/radiopicker';
@@ -37,34 +38,34 @@ import ae from '../widget/thousands-sep/thousands-sep';
 // import zz from '../widget/example/my-widget';
 
 export default [
-    a,
-    b,
-    c,
-    e,
-    f,
-    g,
-    h,
-    i,
-    j,
-    k,
-    l,
-    m,
-    n,
-    o,
-    p,
-    q,
-    r,
-    s,
-    t,
-    u,
-    v,
-    w,
-    x,
-    y,
-    z,
-    aa,
-    ab,
-    ac,
-    ad,
-    ae,
+  a,
+  b,
+  c,
+  e,
+  // f,
+  g,
+  h,
+  i,
+  j,
+  k,
+  l,
+  m,
+  n,
+  o,
+  p,
+  q,
+  r,
+  s,
+  t,
+  u,
+  v,
+  w,
+  x,
+  y,
+  z,
+  aa,
+  ab,
+  ac,
+  ad,
+  ae,
 ];

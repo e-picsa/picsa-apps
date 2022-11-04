@@ -2,6 +2,15 @@ import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
 import { angularOutputTarget } from '@stencil/angular-output-target';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
+import { visualizer } from 'rollup-plugin-visualizer';
+
+let afterPlugins: any[] = [nodePolyfills()];
+
+// TODO - want to avoid in server but show in prod build
+let useVisualiser = false;
+if (useVisualiser) {
+  afterPlugins.push(visualizer({ open: true, emitFile: false }));
+}
 
 export const config: Config = {
   namespace: 'picsa-webcomponents',
@@ -12,7 +21,7 @@ export const config: Config = {
     preferBuiltins: true,
   },
   rollupPlugins: {
-    after: [nodePolyfills()],
+    after: afterPlugins,
   },
   outputTargets: [
     angularOutputTarget({
