@@ -1,18 +1,24 @@
-import { Config } from '@stencil/core';
+import type { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
 import { angularOutputTarget } from '@stencil/angular-output-target';
+import fs from 'fs';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import { visualizer } from 'rollup-plugin-visualizer';
-
-let afterPlugins: any[] = [nodePolyfills()];
+import { resolve } from 'path';
 
 // TODO - want to avoid in server but show in prod build
 let useVisualiser = false;
-if (useVisualiser) {
-  afterPlugins.push(visualizer({ open: true, emitFile: false }));
-}
+let createBuildPackageJson = true;
+// plugins target before node-resolve or after commonjs transform
+const rollupPlugins: Config['rollupPlugins'] = {
+  before: [],
+  after: [nodePolyfills()],
+};
+
+setupBuild();
 
 export const config: Config = {
+  // use altered package.json to support monorepo builds
   namespace: 'picsa-webcomponents',
   taskQueue: 'async',
   // https://github.com/ionic-team/stencil/issues/2332
@@ -20,9 +26,7 @@ export const config: Config = {
     browser: true,
     preferBuiltins: true,
   },
-  rollupPlugins: {
-    after: afterPlugins,
-  },
+  rollupPlugins,
   outputTargets: [
     angularOutputTarget({
       // should match tsconfig path to webcomponents dist
@@ -56,3 +60,34 @@ export const config: Config = {
     browserHeadless: false,
   },
 };
+
+function setupBuild() {
+  // visualiser
+  if (useVisualiser) {
+    rollupPlugins.after.push(visualizer({ open: true, emitFile: false }));
+  }
+
+  // HACK - when building stencil expects relative paths from root dir, so
+  // temporarily rewrite paths and then revert to relative from workspace
+  if (createBuildPackageJson) {
+    // copy existing package to tmp
+    const pkgPath = resolve(__dirname, 'package.json');
+    // rewrite pkgJson paths
+    const pkgContents = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+    const modifiedContents = { ...pkgContents };
+    Object.entries(pkgContents).forEach(([key, value]) => {
+      const monorepoPrefix = '../../dist/libs/webcomponents/';
+      if (typeof value === 'string' && value.startsWith(monorepoPrefix)) {
+        modifiedContents[key] = value.replace(monorepoPrefix, './');
+      }
+    });
+    fs.writeFileSync(pkgPath, JSON.stringify(modifiedContents, null, 2));
+    // revert changes on end
+    const cleanUp = () =>
+      fs.writeFileSync(pkgPath, JSON.stringify(pkgContents, null, 2) + '\n');
+    process.on('SIGINT', () => cleanUp());
+    process.on('exit', () => cleanUp());
+    process.on('uncaughtException', () => cleanUp());
+  }
+  return rollupPlugins;
+}
