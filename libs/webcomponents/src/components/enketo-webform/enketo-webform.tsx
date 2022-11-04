@@ -12,9 +12,10 @@ import { Form } from './enketo/js/form';
  * NOTE -  this uses a very hacky port of enketo-core as failed to find ways to import
  * from the IIFE default build populated in node_modules.
  * This mostly involved renaming some .js -> .ts and fixing imports (to allow form.js import)
+ * Related issue: https://github.com/enketo/enketo-core/issues/898
+ *
  * In future suggest creating standalone repo, using ts refs for enketo/... imports
  * Assume still required to install as it still uses imports from enketo-core deps
- *
  * https://enketo.org/develop/
  */
 export class EnketoWebform {
