@@ -1,6 +1,19 @@
+@import 'enketo/sass/grid/grid.scss';
 :host {
   display: block;
+  position: relative;
 }
-h3 {
+#form-title {
   margin: 0;
+}
+
+.enketo-logo-container {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-bottom: -25px;
+  font-size: 18px;
+}
+.enketo-logo {
+  height: 25px;
 }

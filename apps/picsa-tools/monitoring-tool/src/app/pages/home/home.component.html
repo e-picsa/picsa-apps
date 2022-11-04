@@ -1,3 +1,6 @@
-<!-- <picsa-survey-form></picsa-survey-form> -->
-<enketo-webform></enketo-webform>
-<button mat-stroked-button color="primary">Submit</button>
+<div class="page-content">
+  <ng-container *ngIf="showForm">
+    <enketo-webform [form]="formHtml" [model]="formXml"></enketo-webform>
+    <button mat-stroked-button color="primary">Submit</button>
+  </ng-container>
+</div>

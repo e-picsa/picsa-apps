@@ -1,8 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { EnketoWebform } from './enketo-webform';
 
+/**
+ * NOTE - compile wil fail trying to bundle files - prefer e2e tests instead
+ */
 describe('enketo-webform', () => {
-  it('renders', async () => {
+  it.skip('renders', async () => {
     const { root } = await newSpecPage({
       components: [EnketoWebform],
       html: '<enketo-webform></enketo-webform>',
@@ -18,7 +21,7 @@ describe('enketo-webform', () => {
     `);
   });
 
-  it('renders with values', async () => {
+  it.skip('renders with values', async () => {
     const { root } = await newSpecPage({
       components: [EnketoWebform],
       html: `<enketo-webform first="Stencil" last="'Don't call me a framework' JS"></enketo-webform>`,

@@ -112,8 +112,7 @@ function _instantiate(Widget, group) {
   const opts = {};
 
   if (!Widget.name) {
-    console.log('no widget name', Widget.name);
-    // return console.error("widget doesn't have a name");
+    return; // console.error("widget doesn't have a name");
   }
 
   if (Widget.helpersRequired && Widget.helpersRequired.length > 0) {
