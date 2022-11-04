@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { ENVIRONMENT, APP_VERSION } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments';
 import { UserStore } from '../../store/user.store';
 import { PicsaFileService } from '@picsa/shared/services/native';
 import { Platform } from '@ionic/angular';
@@ -14,7 +14,7 @@ export class HomePage implements OnInit {
   links: ILink[];
   name: string;
   version = APP_VERSION;
-  subtitle: string = 'Extension';
+  subtitle = 'Extension';
   columns: number;
   isPreparingShare = false;
 
@@ -46,16 +46,17 @@ export class HomePage implements OnInit {
       },
       {
         ...LINK_DEFAULTS,
+        name: 'Monitoring',
+        icon: 'picsa_data-collection',
+        url: '/monitoring',
+      },
+      {
+        ...LINK_DEFAULTS,
         name: 'Discussions',
         icon: 'picsa_discussions',
         url: '/discussions',
       },
-      // {
-      //   ...LINK_DEFAULTS,
-      //   name: 'Data Collection',
-      //   icon: 'picsa_data-collection',
-      //   url: '/data/record'
-      // },
+
       // {
       //   ...LINK_DEFAULTS,
       //   name: 'Settings',

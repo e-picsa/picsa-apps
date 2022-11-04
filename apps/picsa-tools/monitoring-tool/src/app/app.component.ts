@@ -6,5 +6,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'picsa-monitoring-tool';
+  title = 'picsa-monitoring';
 }
+
+@Component({
+  // tslint:disable component-selector
+  selector: 'picsa-monitoring-tool',
+  template: '',
+})
+// eslint-disable-next-line @angular-eslint/component-class-suffix
+export class AppComponentEmbedded extends AppComponent {}
