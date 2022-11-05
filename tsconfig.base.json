@@ -37,8 +37,8 @@
       "@picsa/shared/*": ["libs/shared/src/*"],
       "@picsa/theme": ["libs/theme/src/index.ts"],
       "@picsa/webcomponents": ["libs/webcomponents"],
-      "@picsa/webcomponents/*": ["libs/webcomponents/*"],
       "@picsa/webcomponents-ngx": ["libs/webcomponents-ngx/src/index.ts"],
+      "@picsa/webcomponents/*": ["libs/webcomponents/*"],
       "@picsa/webcomponents/loader": ["dist/libs/webcomponents/loader"]
     }
   },

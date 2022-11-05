@@ -6,7 +6,16 @@ export const ROUTES_COMMON: Routes = [
     path: '',
     loadChildren: () =>
       import('./pages/home/home.module').then((m) => m.HomeModule),
-    title: 'Home',
+    title: 'Monitoring',
+  },
+
+  {
+    path: 'view',
+    loadChildren: () =>
+      import('./pages/form-view/form-view.module').then(
+        (m) => m.FormViewModule
+      ),
+    title: 'Monitoring',
   },
 ];
 /** Routes only registered in standalone mode */

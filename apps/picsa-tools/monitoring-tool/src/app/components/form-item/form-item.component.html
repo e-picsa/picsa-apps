@@ -1,0 +1,12 @@
+<mat-card class="resource-card" [routerLink]="['view', form.enketoId]">
+  <!-- Header -->
+  <mat-card-header>
+    <mat-card-title style="margin-top: 12px">
+      {{ form.title | translate }}
+    </mat-card-title>
+  </mat-card-header>
+  <!-- Contents -->
+  <mat-card-content style="margin-left: 16px">
+    {{ form.description }}
+  </mat-card-content>
+</mat-card>

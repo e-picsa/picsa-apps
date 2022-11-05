@@ -13,7 +13,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "picsa",
+            "prefix": "monitoring",
             "style": "camelCase"
           }
         ],
@@ -21,7 +21,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "picsa",
+            "prefix": "monitoring",
             "style": "kebab-case"
           }
         ],
