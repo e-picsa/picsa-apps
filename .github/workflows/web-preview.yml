@@ -23,9 +23,9 @@ jobs:
         with:
           path: ./.yarn/cache
           # If cachebusting required (e.g. breaking yarn changes on update) change `v1` to another number
-          key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node-modules-yarn-v20221105-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-v1-
+            ${{ runner.os }}-yarn-v20221105-
       - run: yarn install
       - run: yarn nx run picsa-tools-resources-tool:build
       - uses: FirebaseExtended/action-hosting-deploy@v0
