@@ -25,3 +25,15 @@ Known issue, related to how jest will attempt to recompile prior to running. Hav
 - https://github.com/thymikee/jest-preset-angular/issues/1648
 
 Will likely need to fork and rebuild repo to add better support (assuming esm module syntax)
+
+### Play store rejected - sensitive permissions (REQUEST_INSTALL_PACKAGES )
+
+Update `apps\picsa-apps\extension-app-native\android\app\src\main\AndroidManifest.xml` to remove permission
+
+```
+<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove"/>
+```
+
+This will also require adding `xmlns:tools="http://schemas.android.com/tools"` in manifest tag
+
+See notes in https://github.com/pwlin/cordova-plugin-file-opener2/issues/329
