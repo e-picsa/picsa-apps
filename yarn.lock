@@ -12330,7 +12330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"leaflet-draw@github:enketo/Leaflet.draw#ff73078":
+"leaflet-draw@github:enketo/Leaflet.draw#ff73078, leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
   checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
@@ -14360,6 +14360,7 @@ __metadata:
     jest-preset-angular: 12.1.0
     jetifier: ^2.0.0
     leaflet: ^1.8.0
+    leaflet-draw: "github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617"
     mobx: ^6.6.1
     mobx-angular: ^4.6.0
     ng-packagr: 14.0.2
