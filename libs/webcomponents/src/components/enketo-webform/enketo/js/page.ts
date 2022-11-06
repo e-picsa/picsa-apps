@@ -34,7 +34,13 @@ export default {
         'Repeats module not correctly instantiated with form property.'
       );
     }
+    console.log(
+      'init form pages',
+      this.form.view.html,
+      this.form.view.html.classList.contains('pages')
+    );
     if (this.form.view.html.classList.contains('pages')) {
+      console.log('process pages');
       const allPages = [
         ...this.form.view.html.querySelectorAll(
           '.question, .or-appearance-field-list'
@@ -169,7 +175,7 @@ export default {
       swipeRight() {
         that.$btnPrev.click();
       },
-      swipeStatus(evt, phase) {
+      swipeStatus(_evt, phase) {
         if (phase === 'start') {
           /*
            * Triggering blur will fire a change event on the currently focused form control
@@ -475,7 +481,7 @@ export default {
   _pauseMultimedia(pageEl) {
     $(pageEl)
       .find('audio, video')
-      .each((idx, element) => element.pause());
+      .each((_idx, element) => element.pause());
   },
   /**
    * Updates Table of Contents

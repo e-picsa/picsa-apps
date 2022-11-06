@@ -17,3 +17,7 @@
 .enketo-logo {
   height: 25px;
 }
+// HACK - show all form sections (need to add buttons for page nave)
+.pages.or .or-group-data {
+  display: block !important;
+}

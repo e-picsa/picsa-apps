@@ -19,7 +19,7 @@ import { Form } from './enketo/js/form';
  * https://enketo.org/develop/
  */
 export class EnketoWebform {
-  private formEl: HTMLDivElement;
+  private formContainerEl: HTMLDivElement;
   private enketoForm: Form;
 
   /** HTML form template */
@@ -36,7 +36,7 @@ export class EnketoWebform {
     return (
       <Fragment>
         <this.EnketoLogo />
-        <div ref={(el) => (this.formEl = el as HTMLDivElement)} />
+        <div ref={(el) => (this.formContainerEl = el as HTMLDivElement)} />
       </Fragment>
     );
   }
@@ -53,18 +53,23 @@ export class EnketoWebform {
    * https://enketo.github.io/enketo-core/tutorial-00-getting-started.html
    */
   private loadForm() {
-    const { form, model, formEl } = this;
-    if (form && model && formEl) {
-      this.formEl.innerHTML = this.form;
-      this.enketoForm = new Form(this.formEl, this.model, {});
-      // Initialize the form and capture any load errors
-      let loadErrors = this.enketoForm.init();
-      if (loadErrors.length > 0) {
-        console.error(loadErrors);
+    const { form, model, formContainerEl } = this;
+    if (form && model && formContainerEl) {
+      this.formContainerEl.innerHTML = this.form;
+      const formEl = this.formContainerEl.querySelector('form');
+      if (formEl) {
+        this.enketoForm = new Form(formEl, this.model, {});
+        // Initialize the form and capture any load errors
+        let loadErrors = this.enketoForm.init();
+        if (loadErrors.length > 0) {
+          console.error(loadErrors);
+        }
+        // If desired, scroll to a specific question with any XPath location expression,
+        // and aggregate any loadErrors.
+        loadErrors = loadErrors.concat(
+          this.enketoForm.goTo('//repeat[3]/node')
+        );
       }
-      // If desired, scroll to a specific question with any XPath location expression,
-      // and aggregate any loadErrors.
-      loadErrors = loadErrors.concat(this.enketoForm.goTo('//repeat[3]/node'));
     }
   }
 

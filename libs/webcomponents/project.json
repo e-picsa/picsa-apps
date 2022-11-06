@@ -52,7 +52,8 @@
         "projectType": "library",
         "tsConfig": "libs/webcomponents/tsconfig.lib.json",
         "configPath": "libs/webcomponents/stencil.config.ts",
-        "outputPath": "dist/libs/webcomponents"
+        "outputPath": "dist/libs/webcomponents",
+        "watch": "true"
       }
     },
     "lint": {
