@@ -11,11 +11,6 @@
     <param name="onload" value="true"/>
   </feature>
 
-  <feature name="NetworkPlugin">
-    <param name="android-package" value="com.fytoro.network.NetworkPlugin"/>
-    <param name="onload" value="true"/>
-  </feature>
-
   <feature name="SocialSharing">
     <param name="android-package" value="nl.xservices.plugins.SocialSharing"/>
   </feature>

@@ -13,8 +13,6 @@ const config: CapacitorConfig = {
     'cordova-plugin-file-opener2',
     '@awesome-cordova-plugins/file',
     'cordova-plugin-file',
-    '@awesome-cordova-plugins/network',
-    'cordova-plugin-network',
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
     // cordova standalone
