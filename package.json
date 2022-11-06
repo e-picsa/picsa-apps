@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.13.1",
+  "version": "3.13.2",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -52,7 +52,6 @@
     "cordova-plugin-codeplay-share-own-apk": "0.0.7",
     "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-file-opener2": "^3.0.5",
-    "cordova-plugin-network": "^1.0.1",
     "cordova-plugin-x-socialsharing": "^6.0.4",
     "deepmerge": "^4.2.2",
     "dexie": "^3.2.2",

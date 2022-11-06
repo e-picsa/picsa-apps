@@ -1,21 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Network } from '@awesome-cordova-plugins/network/ngx';
+
+/**
+ * TODO - cordova network plugin uses vpn which requires extra permissions
+ * Should refactor if required to use capacitor netowrk
+ */
+// import { Network } from '@awesome-cordova-plugins/network/ngx';
+
 import { Platform } from '@ionic/angular';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkProvider {
-  online = false;
+  private online = false;
 
-  constructor(private network: Network, private platform: Platform) {
+  private network: any;
+  // private network: Network
+
+  constructor(private platform: Platform) {
     console.log('Hello NetworkProvider Provider');
   }
-  init() {
-    this.online = this.getNetworkStatus();
-    console.log('online?', this.online);
-    this.subscribeToNetworkChanges();
+  private init() {
+    console.error('Network not currently supported');
+    return;
+    // this.online = this.getNetworkStatus();
+    // console.log('online?', this.online);
+    // this.subscribeToNetworkChanges();
   }
 
-  getNetworkStatus() {
+  private getNetworkStatus() {
     if (this.platform.is('cordova')) {
       return this.network.type != 'none';
     } else {
@@ -23,7 +34,7 @@ export class NetworkProvider {
     }
   }
 
-  subscribeToNetworkChanges() {
+  private subscribeToNetworkChanges() {
     console.log('subscribing to network changes');
     if (this.platform.is('cordova')) {
       this.network.onDisconnect().subscribe(() => {
@@ -43,6 +54,4 @@ export class NetworkProvider {
   updateOfflineStatus(e) {
     this.online = false;
   }
-
-  updateReduxOnlineStatus() {}
 }
