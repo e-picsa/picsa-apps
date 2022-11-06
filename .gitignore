@@ -58,6 +58,8 @@ libs/**/*.ngsummary.json
 libs/environments/environment.prod.ts
 libs/environments/firebase/config.prod.ts
 
+!libs/webcomponents/**
+
 # map tiles   
 libs/features/map/tiles/assets-for-copy   
 libs/features/map/tiles/**/*.png

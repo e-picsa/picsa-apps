@@ -1,0 +1,23 @@
+@import 'enketo/sass/grid/grid.scss';
+:host {
+  display: block;
+  position: relative;
+}
+#form-title {
+  margin: 0;
+}
+
+.enketo-logo-container {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-bottom: -25px;
+  font-size: 18px;
+}
+.enketo-logo {
+  height: 25px;
+}
+// HACK - show all form sections (need to add buttons for page nave)
+.pages.or .or-group-data {
+  display: block !important;
+}

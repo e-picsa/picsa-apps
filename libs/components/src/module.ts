@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { BackButton } from './components/back-button.component';
 import { ConfigurationSelectComponent } from './components/configuration-select/configuration-select';
 import { ConfigurationSelectDialog } from './components/configuration-select/configuration-select-dialog';
@@ -13,6 +15,7 @@ import { RouterModule } from '@angular/router';
 
 // import {} from './warning.component';
 const components = [
+  AlertBoxComponent,
   BackButton,
   ConfigurationSelectComponent,
   ConfigurationSelectDialog,
@@ -26,6 +29,7 @@ const components = [
     CommonModule,
     MatIconModule,
     MatButtonModule,
+    MatCardModule,
     PicsaTranslateModule,
     RouterModule,
   ],
