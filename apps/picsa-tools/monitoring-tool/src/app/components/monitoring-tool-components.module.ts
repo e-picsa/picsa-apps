@@ -5,6 +5,7 @@ import { FormItemComponent } from './form-item/form-item.component';
 import { MonitoringMaterialModule } from './material.module';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { RouterModule } from '@angular/router';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 const Components = [FormItemComponent];
 
@@ -15,8 +16,14 @@ const Components = [FormItemComponent];
     MonitoringMaterialModule,
     PicsaTranslateModule,
     RouterModule,
+    PicsaCommonComponentsModule,
   ],
-  exports: [WebcomponentsNgxModule, MonitoringMaterialModule, ...Components],
+  exports: [
+    WebcomponentsNgxModule,
+    MonitoringMaterialModule,
+    PicsaCommonComponentsModule,
+    ...Components,
+  ],
   declarations: [Components],
   providers: [],
 })
