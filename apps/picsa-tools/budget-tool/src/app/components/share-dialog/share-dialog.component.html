@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>{{ 'Share Budget' | translate }}</h1>
+<div mat-dialog-content>
+  <div class="button-grid">
+    <button
+      mat-button
+      (click)="sharePicture()"
+      [disabled]="disabled"
+      style="margin-right: 4px"
+    >
+      <div style="margin-top: 8px">
+        <img
+          src="assets/budget-icons/share-image.svg"
+          style="height: 100px"
+          [attr.data-disabled]="disabled || null"
+        />
+        <div>Share as Picture</div>
+      </div>
+    </button>
+    <button
+      mat-button
+      (click)="shareLink()"
+      [disabled]="disabled"
+      style="margin-left: 4px"
+    >
+      <div style="margin-top: 8px">
+        <img
+          src="assets/budget-icons/share-mobile.svg"
+          style="height: 100px"
+          [attr.data-disabled]="disabled || null"
+        />
+        <div>Share App Link</div>
+      </div>
+    </button>
+  </div>
+</div>
+<div class="share-code-box" *ngIf="shareCode">
+  <h4>Share Code</h4>
+  <h2>{{ shareCode }}</h2>
+</div>
+<div class="status-message">{{ status }}</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>
+</div>

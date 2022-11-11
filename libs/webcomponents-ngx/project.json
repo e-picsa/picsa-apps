@@ -1,0 +1,25 @@
+{
+  "projectType": "library",
+  "sourceRoot": "libs/webcomponents-ngx/src",
+  "prefix": "picsa",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/webcomponents-ngx"],
+      "options": {
+        "jestConfig": "libs/webcomponents-ngx/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/webcomponents-ngx/**/*.ts",
+          "libs/webcomponents-ngx/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

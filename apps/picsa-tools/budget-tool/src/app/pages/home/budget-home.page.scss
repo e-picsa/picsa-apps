@@ -9,3 +9,12 @@
 button.nav-icon[disabled] {
   opacity: 0;
 }
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.button-grid img {
+  height: 100px;
+  margin-bottom: 8px;
+}

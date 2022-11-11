@@ -12,7 +12,9 @@ export class ResourcesGenerator {
   public files: { [key: string]: IResourceFile } = {};
   public youtube: { [key: string]: IResourceYoutube } = {};
 
-  public generate() {}
+  public generate() {
+    //
+  }
 
   public get resources() {
     this.generate();

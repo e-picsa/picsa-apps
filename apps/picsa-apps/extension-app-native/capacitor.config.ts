@@ -13,8 +13,6 @@ const config: CapacitorConfig = {
     'cordova-plugin-file-opener2',
     '@awesome-cordova-plugins/file',
     'cordova-plugin-file',
-    '@awesome-cordova-plugins/network',
-    'cordova-plugin-network',
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
     // cordova standalone
@@ -29,14 +27,17 @@ const config: CapacitorConfig = {
     '@capacitor-community/firebase-crashlytics',
     '@capacitor-firebase/performance',
   ],
-  /**
-   * uncomment and replace with local ip to serve live-reload
-   * TODO - could create script to automatially toggle when serving native
-   **/
-  // server: {
-  //   url: 'http://192.168.0.54:4200',
-  //   cleartext: true,
-  // },
+  server: {
+    /** Uncomment and replace with local ip to serve live-reload */
+
+    // url: 'http://192.168.50.67:4200',
+
+    /**
+     * NOTE - cleartext still required for caching fetch requests even when not serving locally
+     * https://stackoverflow.com/questions/60906953/ionic-5-capacitor-err-cleartext-not-permitted-in-android
+     */
+    cleartext: true,
+  },
 };
 
 export default config;

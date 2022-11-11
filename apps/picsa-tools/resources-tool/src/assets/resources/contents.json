@@ -35,6 +35,24 @@
     "md5Checksum": "8626bc9119bd6b8bc0fa04e8a20b6e74",
     "modifiedTime": "2022-09-28T20:19:52.986Z"
   },
+  "covers/gender-equality-1.svg": {
+    "relativePath": "covers/gender-equality-1.svg",
+    "size_kb": 3.3,
+    "md5Checksum": "4c002708c0acbbf4bb0dd5d04b5aa1f8",
+    "modifiedTime": "2022-10-21T20:33:49.464Z"
+  },
+  "covers/gender-equality.svg": {
+    "relativePath": "covers/gender-equality.svg",
+    "size_kb": 5.5,
+    "md5Checksum": "0b6599c4d8b3a87b787910b18a9d8851",
+    "modifiedTime": "2022-11-01T20:27:18.286Z"
+  },
+  "covers/gras-nelk.jpg": {
+    "relativePath": "covers/gras-nelk.jpg",
+    "size_kb": 7.3,
+    "md5Checksum": "cd07c6bbc1a20c655bb02f0c6d69b7c9",
+    "modifiedTime": "2022-10-21T20:16:26.086Z"
+  },
   "covers/meteoblue.jpg": {
     "relativePath": "covers/meteoblue.jpg",
     "size_kb": 4.3,
@@ -77,6 +95,12 @@
     "md5Checksum": "db07c7d20d9520124c251c810c5817fd",
     "modifiedTime": "2022-09-28T19:22:58.064Z"
   },
+  "covers/whatsapp.svg": {
+    "relativePath": "covers/whatsapp.svg",
+    "size_kb": 0.7,
+    "md5Checksum": "be6dbdc8cddbb81a94f2de2544fac470",
+    "modifiedTime": "2022-10-21T20:47:24.663Z"
+  },
   "covers/wmo.png": {
     "relativePath": "covers/wmo.png",
     "size_kb": 69.9,
@@ -94,6 +118,12 @@
     "size_kb": 11.2,
     "md5Checksum": "3fddfaa6aa5d40e2bd87edc834f9a63b",
     "modifiedTime": "2022-09-21T08:51:57.474Z"
+  },
+  "covers/zaulimi.webp": {
+    "relativePath": "covers/zaulimi.webp",
+    "size_kb": 2.9,
+    "md5Checksum": "bbb95cbbd8fa74e009e0c911138db540",
+    "modifiedTime": "2022-10-21T22:29:22.638Z"
   },
   "crop-info-chipata.pdf": {
     "relativePath": "crop-info-chipata.pdf",

@@ -1,23 +1,17 @@
 import { Injectable } from '@angular/core';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { Platform } from '@ionic/angular';
 import { svgAsPngUri } from 'save-svg-as-png';
 import download from 'downloadjs';
 
 import html2canvas from 'html2canvas';
+import { Capacitor } from '@capacitor/core';
+import { _wait } from '@picsa/utils';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
-  constructor(
-    private platform: Platform,
-    private socialSharing: SocialSharing
-  ) {}
+  constructor(private socialSharing: SocialSharing) {}
 
-  async socialShareBudget(domSelector: string, title: string) {
-    return this.shareHtmlDom(domSelector, title);
-  }
-
-  async shareHtmlDom(domSelector: string, title: string) {
+  public async shareHtmlDom(domSelector: string, title: string) {
     const domEl = document.querySelector(domSelector) as HTMLElement;
     const clone = domEl.cloneNode(true) as HTMLElement;
     clone.classList.toggle('print-mode');
@@ -32,11 +26,10 @@ export class PrintProvider {
     const canvasElm = await html2canvas(clone, { allowTaint: true });
     // use set timeout to ensure resizing complete
     // TODO - check if required or if better solution could exist
-    setTimeout(async () => {
-      const base64 = canvasElm.toDataURL();
-      await this.shareDataImage(base64, title);
-      body.removeChild(clone);
-    }, 200);
+    await _wait(200);
+    const base64 = canvasElm.toDataURL();
+    body.removeChild(clone);
+    return this.shareDataImage(base64, title);
   }
 
   async shareSVG(svgDomSelector: string, title: string) {
@@ -69,11 +62,8 @@ export class PrintProvider {
   }
 
   private async shareDataImage(base64Img: string, title: string) {
-    if (this.platform.is('cordova')) {
-      return this.socialSharing.share('', title, base64Img).then(
-        (res: any) => console.log(res),
-        (err: any) => console.error(err)
-      );
+    if (Capacitor.isNativePlatform()) {
+      return this.socialSharing.share('', title, base64Img);
     } else {
       return download(base64Img, title + '.png', 'image/png');
     }

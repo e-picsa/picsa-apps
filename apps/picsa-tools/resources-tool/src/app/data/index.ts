@@ -10,9 +10,11 @@ import CROPS from './crops';
 import WEATHER from './weather';
 import WORKSHOPS from './workshops';
 import PICSA_RESOURCES from './picsa';
+import { GENDER_RESOURCES } from './gender';
 
 const byId: { [id: string]: IResource } = {
   ...CROPS,
+  ...GENDER_RESOURCES,
   ...WEATHER,
   ...WORKSHOPS,
   ...PICSA_RESOURCES,

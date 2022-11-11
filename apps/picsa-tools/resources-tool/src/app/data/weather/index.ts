@@ -1,5 +1,7 @@
 import type { IResourceCollection } from '../../models';
-import { LinksGenerator } from './links';
+import { filterHashmap } from '../../utils/data.utils';
+import { DOWNSCALED_FORECASTS } from './files';
+import { WEATHER_LINKS } from './links';
 import { IWeatherLocation, WEATHER_LOCATIONS } from './locations';
 import { MeteoBlueGenerator } from './meteoBlue';
 import { WMOGenerator } from './wmo';
@@ -26,14 +28,18 @@ const weatherResources: IResourceCollection = {
   description: 'Local forecasts and meterological services',
   image: 'assets/resources/covers/weather.svg',
   priority: 6,
-  childResources: WEATHER_LOCATIONS.map(
-    (location) => `weatherResources_${location.id}`
-  ),
+  childResources: [
+    ...WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
+    ...Object.keys(WEATHER_LINKS),
+  ],
 };
 
 function generateLocationResources(location: IWeatherLocation) {
   const locationResources = {
-    ...new LinksGenerator(location).resources,
+    ...filterHashmap(
+      DOWNSCALED_FORECASTS,
+      (r) => r.meta.location_id === location.id
+    ),
     ...new WMOGenerator(location).resources,
     ...new MeteoBlueGenerator(location).resources,
   };
@@ -53,10 +59,13 @@ function generateLocationResources(location: IWeatherLocation) {
   return {
     [collection._key]: collection,
     ...locationResources,
+    ...DOWNSCALED_FORECASTS,
   };
 }
 
 export default {
   weatherResources,
   ...allResources,
+  ...WEATHER_LINKS,
+  ...DOWNSCALED_FORECASTS,
 };

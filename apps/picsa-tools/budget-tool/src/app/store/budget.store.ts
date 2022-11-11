@@ -14,6 +14,7 @@ import {
   IBudgetValueCounters,
   IBudgetBalance,
   IBudgetPeriodType,
+  IBudgetCodeDoc,
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
@@ -23,6 +24,9 @@ import { IAppMeta } from '@picsa/models';
 import { APP_VERSION } from '@picsa/environments';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
+import { PrintProvider } from '@picsa/shared/services/native/print';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 const TYPE_CARDS_BASE: {
   [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
 } = {
@@ -42,6 +46,14 @@ const TYPE_LABELS: { [key in IBudgetPeriodType | 'summary']: string } = {
   produceConsumed: 'Produce Consumed',
   summary: 'Summary',
 };
+type IBudgetCounter =
+  | 'large'
+  | 'large-half'
+  | 'medium'
+  | 'medium-half'
+  | 'small'
+  | 'small-half';
+export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +63,7 @@ export class BudgetStore implements OnDestroy {
   public settings: IConfiguration.IBudgetToolSettings;
   private destroyed$ = new Subject<boolean>();
   public typeLabels = TYPE_LABELS;
+  public counterSVGIcons: IBudgetCounterSVGIcons;
 
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
@@ -97,8 +110,11 @@ export class BudgetStore implements OnDestroy {
 
   constructor(
     private db: PicsaDbService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private printPrvdr: PrintProvider,
+    private sanitizer: DomSanitizer
   ) {
+    this.counterSVGIcons = this.createBudgetCounterSVGs();
     // TODO store never destroyed so would be good to limit listeners
     this.configurationService.activeConfiguration$
       .pipe(takeUntil(this.destroyed$))
@@ -167,6 +183,45 @@ export class BudgetStore implements OnDestroy {
     return this.db.deleteDocs('budgetTool/_all/cards', [card._key]);
   }
 
+  /**
+   * Create inline SVGs for the default budget icons for faster load
+   * (also available in assets for reference)
+   */
+  private createBudgetCounterSVGs() {
+    const svgs: IBudgetCounterSVGIcons = {} as any;
+    // Create svgs based on the following paths (adapted from .svg file)
+    const svgPaths = {
+      large:
+        'M479.99952 480.00078c-149.33319.00002-298.66639.00002-447.999582 0C106.66653 330.6673 181.33313 181.33382 255.99974 32.00035c74.66661 149.33347 149.3332 298.66695 223.99978 448.00043Z',
+      medium:
+        'M41.695065 41.695068H470.30496c-.00001 142.869952 0 285.739912 0 428.609862H41.695065V41.695068z',
+      small:
+        'M460.09621 256c5.02545 132.35505-139.57369 238.73445-264.41078 194.98057C67.841246 416.64296 8.7177668 247.12958 87.552104 140.7586 158.13858 28.727575 337.53963 22.374453 415.87405 129.13175 444.36362 164.8484 460.20746 210.31914 460.09621 256Z',
+    };
+    for (const [name, path] of Object.entries(svgPaths)) {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 512 512');
+      const iconPath = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
+      iconPath.setAttribute('d', path);
+      iconPath.setAttribute('fill', '#c5ceb2');
+      iconPath.setAttribute('stroke', '#77933c');
+      iconPath.setAttribute('stroke-width', '100');
+      iconPath.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(iconPath);
+      svgs[`${name}`] = this.sanitizer.bypassSecurityTrustHtml(svg.outerHTML);
+      // Create a half-style el where viewbox cuts off half of element
+      const halfEl = svg.cloneNode(true) as SVGElement;
+      halfEl.setAttribute('viewBox', '0 0 256 512');
+      svgs[`${name}-half`] = this.sanitizer.bypassSecurityTrustHtml(
+        halfEl.outerHTML
+      );
+    }
+    return svgs;
+  }
+
   /**************************************************************************
    *            Budget Create/Save/Load
    *
@@ -194,7 +249,22 @@ export class BudgetStore implements OnDestroy {
       const budget = this.savedBudgets.find((b) => b._key === key);
       if (budget) {
         this.loadBudget(toJS(budget));
+      } else {
+        await this.importBudget(key);
       }
+    }
+  }
+  async loadBudgetByShareCode(code: string) {
+    const codeDoc = await this.db.getDoc<IBudgetCodeDoc>(
+      'budgetTool/default/shareCodes',
+      code,
+      'server'
+    );
+    if (codeDoc) {
+      return this.importBudget(codeDoc.budget_key);
+    } else {
+      console.warn('No budget share code found for code:', code);
+      return undefined;
     }
   }
   async loadBudget(budget: IBudget) {
@@ -216,7 +286,63 @@ export class BudgetStore implements OnDestroy {
 
   async deleteBudget(budget: IBudget) {
     await this.db.deleteDocs('budgetTool/${GROUP}/budgets', [budget._key]);
+    if (budget.shareCode) {
+      await this.db.deleteDocs('budgetTool/default/shareCodes', [
+        budget.shareCode,
+      ]);
+    }
     this.loadSavedBudgets();
+  }
+
+  /** Duplicate a server budget and save locally */
+  private async importBudget(key: string): Promise<IBudget | undefined> {
+    const budget: IBudget = await this.db.getDoc(
+      'budgetTool/${GROUP}/budgets',
+      key,
+      'server'
+    );
+    if (budget) {
+      // remove previous share code to allow re-share as new budget
+      if (budget.shareCode) {
+        delete budget.shareCode;
+      }
+      // append additional key to keep reference from parent to derived budgets
+      const { _key } = generateDBMeta();
+      budget._key += `_${_key}`;
+      this.activeBudget = budget;
+      this.saveBudget();
+    } else {
+      console.warn('No budget doc found for key:', key);
+    }
+    return budget;
+  }
+
+  public async shareAsImage() {
+    return this.printPrvdr.shareHtmlDom(
+      '#budget',
+      this.activeBudget.meta.title
+    );
+  }
+
+  public async shareAsLink() {
+    const { shareCode } = this.activeBudget;
+    if (!shareCode) {
+      const code = generateID(4, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+      // TODO ensure share code doesn't already exist
+      const budgetCodeDoc: IBudgetCodeDoc = {
+        ...generateDBMeta(),
+        _key: code,
+        budget_key: this.activeBudget._key,
+      };
+      await this.db.setDoc(
+        'budgetTool/default/shareCodes',
+        budgetCodeDoc,
+        true
+      );
+      this.activeBudget.shareCode = code;
+    }
+    await this.saveBudget();
+    return this.activeBudget.shareCode as string;
   }
 
   /**************************************************************************

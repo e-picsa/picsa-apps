@@ -32,6 +32,9 @@
   &:hover {
     background: unset;
   }
+  & > .resource-item-contents {
+    flex-wrap: wrap;
+  }
 }
 .language-code {
   background: var(--color-secondary);
@@ -44,4 +47,8 @@
 .download-progress {
   margin: auto 8px;
   position: relative;
+}
+.resource-item-contents {
+  display: flex;
+  height: 100%;
 }

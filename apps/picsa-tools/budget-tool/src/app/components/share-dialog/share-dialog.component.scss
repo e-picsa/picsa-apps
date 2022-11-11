@@ -1,0 +1,24 @@
+img[data-disabled] {
+  filter: grayscale(1);
+}
+
+.status-message {
+  height: 1em;
+  line-height: 1em;
+  text-align: center;
+  color: var(--color-primary);
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: -12px;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 280px;
+}
+
+.share-code-box {
+  border: 2px dashed;
+  text-align: center;
+}

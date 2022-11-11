@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
+import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
 
 const routes: Routes = [
@@ -20,6 +21,13 @@ const routes: Routes = [
     loadChildren: () =>
       import('@picsa/climate/src/app/app.module-embedded').then(
         (mod) => mod.ClimateToolModule
+      ),
+  },
+  {
+    path: 'monitoring',
+    loadChildren: () =>
+      import('@picsa/monitoring/src/app/app.module-embedded').then(
+        (mod) => mod.MonitoringToolModule
       ),
   },
   {
@@ -50,11 +58,7 @@ const routes: Routes = [
       ),
     title: 'Discussions',
   },
-  {
-    path: 'data',
-    loadChildren: () =>
-      import('./pages/data/data.module').then((mod) => mod.DataPageModule),
-  },
+
   {
     path: 'privacy',
     loadChildren: () =>
@@ -70,6 +74,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
+    MonitoringToolModule.forRoot({ urlPrefix: 'monitoring' }),
     ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
   ],
   exports: [RouterModule],
