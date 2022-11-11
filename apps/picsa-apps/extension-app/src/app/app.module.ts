@@ -22,6 +22,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
+import { PicsaAnimationsModule } from '@picsa/shared/features';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,6 +44,7 @@ import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.s
       appDynamicLink: 'https://picsa.page.link/dynamic',
     }),
     PicsaTranslateModule,
+    PicsaAnimationsModule.forRoot(),
     PicsaCommonComponentsModule,
     HttpClientModule,
     AppRoutingModule,
