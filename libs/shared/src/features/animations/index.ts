@@ -19,7 +19,6 @@ import { PicsaAnimationComponent } from './animation.component';
  */
 export class PicsaAnimationsModule {
   static forRoot(): ModuleWithProviders<PicsaAnimationsModule> {
-    console.log('register picsa animations module');
     return {
       ngModule: PicsaAnimationsModule,
       providers: [
