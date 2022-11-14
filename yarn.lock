@@ -4462,6 +4462,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@scarf/scarf@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@scarf/scarf@npm:1.1.1"
+  checksum: f3205e7a76fed1ec3328643a5f276f4aab5c67d0e17ca0a414755aacae529f4a3492b44607f9ad066470ecb3ee003e72b3d9581f58dc6c507c18180611ff113e
+  languageName: node
+  linkType: hard
+
 "@schematics/angular@npm:14.0.2, @schematics/angular@npm:^12.0.0 || ^13.0.0 || ^14.0.0, @schematics/angular@npm:~14.0.0":
   version: 14.0.2
   resolution: "@schematics/angular@npm:14.0.2"
@@ -12703,6 +12710,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lottie-web@npm:^5.9.6":
+  version: 5.9.6
+  resolution: "lottie-web@npm:5.9.6"
+  checksum: aed6a1d0c24eefb6c42a42aae18f29737746551cfdc86319f1b9675f5bc276ba26971e8d2b0e1498df880571fe4bfe2fc87885a1d4f8a318d5e4e5b939b7a474
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^6.0.0":
   version: 6.0.0
   resolution: "lru-cache@npm:6.0.0"
@@ -13410,6 +13424,19 @@ __metadata:
     "@angular/common": ">=13.0.0"
     "@angular/core": ">=13.0.0"
   checksum: caed0f9347af8935ceacaa0871e6b9792f3db28e708e08152765629a86c7a0b57b5a81810db75b8b8e72135672b9f55c1306aa4d5476d4653b9da6afe3b496b2
+  languageName: node
+  linkType: hard
+
+"ngx-lottie@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "ngx-lottie@npm:9.1.0"
+  dependencies:
+    "@scarf/scarf": ^1.1.1
+    tslib: ^2.3.0
+  peerDependencies:
+    "@angular/core": ">=14"
+    lottie-web: ">=5.9.2"
+  checksum: e47cb8a57489fe97d2c1056daa7f65d721063b817920c3e7c8967aa0eb855ec0642c02cd6a33feba4b0cea95c0b96cdcddf02b9f806c0830b0293134a6519a6c
   languageName: node
   linkType: hard
 
@@ -14353,11 +14380,13 @@ __metadata:
     jetifier: ^2.0.0
     leaflet: ^1.8.0
     leaflet-draw: "github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617"
+    lottie-web: ^5.9.6
     mobx: ^6.6.1
     mobx-angular: ^4.6.0
     ng-packagr: 14.0.2
     ng2-canvas-whiteboard: ^4.0.2
     ngx-file-drop: 13.0.0
+    ngx-lottie: ^9.1.0
     ngx-youtube-player: ^12.0.1
     nx: 14.3.6
     papaparse: ^5.3.2
