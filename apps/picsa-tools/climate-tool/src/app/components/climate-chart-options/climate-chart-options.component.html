@@ -1,4 +1,9 @@
-<climate-view-select (viewSelected)="setView($event)"></climate-view-select>
+<h3>{{ 'Chart' | translate }}</h3>
+<climate-view-select></climate-view-select>
+<mat-divider></mat-divider>
+<h3>{{ 'Tools' | translate }}</h3>
+<mat-divider></mat-divider>
+<h3>{{ 'Share' | translate }}</h3>
 
 <button mat-button [disabled]="isExporting">
   <mat-icon>share</mat-icon>{{ 'Share' | translate }}
@@ -6,3 +11,7 @@
 <div>
   {{ isExporting ? 'Preparing...' : ('Options' | translate) }}
 </div>
+<mat-divider></mat-divider>
+<details>
+  <summary>{{ 'Advanced' | translate }}</summary>
+</details>

@@ -1,4 +1,5 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
+import { IsActiveMatchOptions } from '@angular/router';
 import * as DATA from '../../data';
 
 @Component({
@@ -7,11 +8,14 @@ import * as DATA from '../../data';
   styleUrls: ['./view-select.scss'],
 })
 export class ViewSelectComponent {
-  @Output() viewSelected = new EventEmitter<string>();
+  // TODO - can come from service
   availableCharts = DATA.CHART_TYPES;
   availableReports = DATA.REPORT_TYPES;
 
-  setView(viewID: string) {
-    this.viewSelected.emit(viewID);
-  }
+  routerLinkActiveOptions: IsActiveMatchOptions = {
+    paths: 'subset',
+    fragment: 'ignored',
+    matrixParams: 'ignored',
+    queryParams: 'exact',
+  };
 }

@@ -13,13 +13,16 @@
       [config]="chartConfig"
       [data]="$any(data)"
     ></picsa-chart>
+    <div class="chart-definition" #chartDefinition>
+      {{definition.definition | translate}}
+    </div>
   </div>
+  <!-- probability tool -->
+  <climate-probability-tool
+    *ngIf="lineTool.value"
+    [x]="lineTool.value"
+    [values]="y1Values"
+    [chartName]="definition.name"
+    [reverseProbabilities]="reverseLineTool"
+  ></climate-probability-tool>
 </div>
-<!-- probability tool -->
-<climate-probability-tool
-  *ngIf="lineTool.value"
-  [x]="lineTool.value"
-  [values]="y1Values"
-  [chartName]="definition.name"
-  [reverseProbabilities]="reverseLineTool"
-></climate-probability-tool>

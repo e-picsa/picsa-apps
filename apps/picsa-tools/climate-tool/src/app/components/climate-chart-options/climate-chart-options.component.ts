@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { delay, take } from 'rxjs/operators';
 
 import { PicsaTranslateService } from '@picsa/shared/modules';
@@ -17,28 +16,11 @@ export class ClimateChartOptionsComponent {
   /** Track whether chart is currently being exported or not */
   public isExporting = false;
 
-  // TODO - refactor to service
-  // private stationMeta: any;
-  // private chartMeta: any;
-  // private picsaChart: any;
-  // private chartConfig: any;
-  // private chartData: any;
-
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
     private translateService: PicsaTranslateService,
     private chartService: ClimateChartService,
     private printProvider: PrintProvider
   ) {}
-
-  public setView(view: string) {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { view: view },
-    });
-    // this.activeChart = view as IChartMeta;
-  }
 
   /*****************************************************************************
    *   Download and Share

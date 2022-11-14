@@ -41,6 +41,7 @@ export type IChartConfig = Partial<c3.ChartConfiguration>;
 
 export interface IChartMeta {
   name: string;
+  shortname: string;
   image: string;
   keys: (keyof IChartSummary)[];
   yFormat: 'value' | 'date' | 'date-from-July';
