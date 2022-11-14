@@ -8,6 +8,7 @@
     [queryParams]="{view:chart._viewID}"
     routerLinkActive="chart-active"
     [routerLinkActiveOptions]="routerLinkActiveOptions"
+    [replaceUrl]="true"
   >
     <div class="chart-name">{{ chart.shortname | translate }}</div>
     <div class="chart-image-container">

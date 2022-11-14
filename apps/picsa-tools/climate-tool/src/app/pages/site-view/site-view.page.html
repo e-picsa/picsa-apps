@@ -1,24 +1,29 @@
+<div #optionsToggleButton (click)="snav.toggle()">
+  <button mat-button>
+    <span style="margin-right: 8px">
+      <span *ngIf="snav.opened">{{'Hide Tool Options' | translate}}</span>
+      <span *ngIf="!snav.opened">{{'Show Tool Options' | translate}}</span>
+    </span>
+    <mat-icon>menu</mat-icon>
+  </button>
+</div>
+
 <div class="page-content">
   <mat-sidenav-container
     style="flex: 1"
     [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
   >
     <!-- Options sidebar -->
-    <!-- <mat-sidenav
+    <!-- TODO - could be refactored to inject directly into app container instead of page -->
+    <mat-sidenav
       #snav
       [mode]="mobileQuery.matches ? 'over' : 'side'"
       [fixedInViewport]="mobileQuery.matches"
       fixedTopGap="56"
       position="end"
-    > -->
-    <mat-sidenav
-      #snav
-      mode="side"
-      [fixedInViewport]="mobileQuery.matches"
-      fixedTopGap="56"
-      position="end"
       style="width: 300px"
       [opened]="true"
+      (openedChange)="handleSidenavChange()"
     >
       <climate-chart-options style="padding: 8px"></climate-chart-options>
     </mat-sidenav>

@@ -1,3 +1,4 @@
+import { Portal } from '@angular/cdk/portal';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -18,6 +19,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       <h1>
         <span>{{ title | translate }}</span>
       </h1>
+      <ng-template [cdkPortalOutlet]="endPortal"></ng-template>
     </header>
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
@@ -27,6 +29,8 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   public title = '';
   public style: 'primary' | 'inverted' = 'primary';
   private destroyed$ = new Subject<boolean>();
+  /** Inject dynamic content into end slot of header using angular cdk portal */
+  public endPortal?: Portal<any>;
   constructor(
     private componentsService: PicsaCommonComponentsService,
     private router: Router,
@@ -76,7 +80,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(({ title, headerStyle }) => {
-        this.componentsService.setHeader({
+        this.componentsService.patchHeader({
           style: headerStyle as any,
           title,
         });
@@ -87,7 +91,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private listenToServiceTitleChanges() {
     this.componentsService.headerOptions$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ title, style }) => {
+      .subscribe(({ title, style, endContent }) => {
         requestAnimationFrame(() => {
           if (title) {
             this.title = title;
@@ -96,6 +100,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
           if (style) {
             this.style = style;
           }
+          this.endPortal = endContent;
         });
       });
   }

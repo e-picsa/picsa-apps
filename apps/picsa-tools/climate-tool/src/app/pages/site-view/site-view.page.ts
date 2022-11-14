@@ -1,17 +1,28 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { ClimateChartService } from '../../services/climate-chart.service';
+import { DomPortal } from '@angular/cdk/portal';
 
 @Component({
   selector: 'climate-site-view',
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
 })
-export class ClimateSiteViewComponent implements OnInit, OnDestroy {
+export class ClimateSiteViewComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   private destroyed$: Subject<boolean> = new Subject();
 
   activeView: string | undefined;
@@ -19,6 +30,8 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
   public showRotateAnimation = false;
   public mobileQuery: MediaQueryList;
   private _mobileQueryListener: () => void;
+  @ViewChild('optionsToggleButton')
+  optionsToggleButton: ElementRef<HTMLElement>;
 
   constructor(
     public chartService: ClimateChartService,
@@ -35,18 +48,29 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
     this.subscribeToParamChanges();
     this.promptScreenRotate();
   }
+  ngAfterViewInit() {
+    this.componentsService.patchHeader({
+      endContent: new DomPortal(this.optionsToggleButton),
+    });
+  }
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
     this.chartService.setStation(undefined);
     this.chartService.setChart(undefined);
+    this.componentsService.patchHeader({ endContent: undefined });
+  }
+
+  /** when toggling sidebar also trigger resize event to ensure chart resizes */
+  public handleSidenavChange() {
+    window.dispatchEvent(new Event('resize'));
   }
 
   private async setStationFromParams() {
     const siteId = this.route.snapshot.params.siteId;
     const stationMeta = await this.chartService.setStation(siteId);
     const title = stationMeta?.name || `${siteId} no data`;
-    this.componentsService.setHeader({ title });
+    this.componentsService.patchHeader({ title });
   }
 
   private promptScreenRotate() {
@@ -56,7 +80,7 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToLayoutChanges() {
-    this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
+    this.mobileQuery = this.media.matchMedia('(max-width: 768px)');
     this._mobileQueryListener = () => this.cdr.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
