@@ -19,12 +19,21 @@
       #snav
       [mode]="mobileQuery.matches ? 'over' : 'side'"
       [fixedInViewport]="mobileQuery.matches"
-      fixedTopGap="56"
       position="end"
       style="width: 300px"
       [opened]="true"
+      [fixedTopGap]="0"
       (openedChange)="handleSidenavChange()"
+      (swipeRight)="snav.toggle()"
     >
+      <button
+        *ngIf="mobileQuery.matches"
+        mat-icon-button
+        (click)="snav.toggle()"
+        class="sidenav-close-mobile"
+      >
+        <mat-icon color="primary">close</mat-icon>
+      </button>
       <climate-chart-options style="padding: 8px"></climate-chart-options>
     </mat-sidenav>
     <!-- Main content -->

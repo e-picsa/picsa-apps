@@ -17,18 +17,15 @@ import {
 import { ClimateDataService } from './climate-data.service';
 
 import * as DATA from '../data';
+import { DataPoint } from 'c3';
 const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
 
 @Injectable({ providedIn: 'root' })
 export class ClimateChartService {
   /** Observable property trigger each time chart is rendered */
   public chartRendered$ = new Subject<void>();
-
   public chartDefinition?: IChartMeta & IClimateView;
   public station?: IStationMeta;
-
-  // TODO - handle population
-  public chartMeta: any;
 
   constructor(
     private translateService: PicsaTranslateService,
@@ -54,13 +51,6 @@ export class ClimateChartService {
     this.chartDefinition = chart as IChartMeta & IClimateView;
   }
 
-  async prepareChart() {
-    // handle translations
-    // this.chartMeta.name = await this.translateService.translateText(
-    //   this.chartMeta.name
-    // );
-  }
-
   /*****************************************************************************
    *   Chart Config
    ****************************************************************************/
@@ -68,7 +58,6 @@ export class ClimateChartService {
   // create chart given columns of data and a particular key to make visible
   public generateChartConfig(data: IChartSummary[], definition: IChartMeta) {
     // configure major and minor ticks, labels and gridlines
-    console.log('calculate grid meta', this);
     const ranges = this.calculateDataRanges(data, definition);
     const gridMeta = this.calculateGridMeta(definition, ranges);
     // configure chart
@@ -85,7 +74,9 @@ export class ClimateChartService {
         },
         x: 'Year',
         classes: { LineTool: 'LineTool' },
-        color: (_, d) => this._getPointColour(d),
+        color: (_, d) =>
+          this.getPointColour(d as DataPoint) ||
+          seriesColors[(d as DataPoint).id],
       },
       ['title' as any]: {
         text: `${this.station?.name} | ${definition.name}`,
@@ -172,24 +163,9 @@ export class ClimateChartService {
    *   Styles and Formatting
    ****************************************************************************/
 
-  _getPointColour(d: any): string {
-    // reverse colours for start of seasion chart
-
-    // TODO - add way to set point color function
-
-    // const colours = this.reverseLineTool
-    //   ? ['#BF7720', '#739B65']
-    //   : ['#739B65', '#BF7720'];
-    // if (this.lineToolValue) {
-    //   if (d.value >= this.lineToolValue) {
-    //     return colours[0];
-    //   }
-    //   if (d.value < this.lineToolValue) {
-    //     return colours[1];
-    //   }
-    // }
-    // default return color for series key, attached to d.id
-    return seriesColors[d.id];
+  public getPointColour(d: DataPoint): string | undefined {
+    // default will return color for series key, attached to d.id
+    return;
   }
 
   // iterate over data and calculate min/max values for xVar and multiple yVars

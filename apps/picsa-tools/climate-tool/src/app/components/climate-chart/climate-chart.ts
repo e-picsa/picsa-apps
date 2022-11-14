@@ -18,9 +18,8 @@ export class ClimateChartComponent implements OnChanges {
   @Input() definition: IChartMeta & IClimateView;
   @Input() data: IChartSummary[];
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
-  chartConfig: IChartConfig;
 
-  reverseLineTool: boolean;
+  public chartConfig: IChartConfig;
 
   y1Values: number[];
 
@@ -30,7 +29,6 @@ export class ClimateChartComponent implements OnChanges {
   ) {}
 
   public handleLineToolChange(value?: number) {
-    console.log('line tool value changes', value);
     this.ngZone.run(() => {
       if (!value) {
         return this.picsaChart.chart.unload({ ids: ['LineTool'] });
@@ -52,8 +50,6 @@ export class ClimateChartComponent implements OnChanges {
       data: this.data,
     });
 
-    // use reverse line tool for start of season chart
-    this.reverseLineTool = this.definition._viewID === 'start';
     const chartConfig = this.chartService.generateChartConfig(
       this.data,
       this.definition

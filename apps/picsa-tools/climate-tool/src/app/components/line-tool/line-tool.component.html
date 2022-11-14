@@ -1,8 +1,8 @@
 <div class="slider-container">
   <mat-slider
     *ngIf="ranges"
-    [min]="ranges.yMin"
-    [max]="ranges.yMax"
+    [min]="ranges.min"
+    [max]="ranges.max"
     [step]="step"
     vertical
     thumbLabel
@@ -14,7 +14,7 @@
 
   <mat-form-field
     id="lineToolInputField"
-    [style.visibility]="display === 'number' ? 'visible' : 'hidden'"
+    [style.visibility]="showNumberInput ? 'visible' : 'hidden'"
   >
     <input
       matInput

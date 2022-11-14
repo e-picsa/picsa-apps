@@ -55,4 +55,7 @@ export interface IChartMeta {
   xMajor: number;
   yMinor: number;
   yMajor: number;
+  linetool?: {
+    reverse?: boolean;
+  };
 }
