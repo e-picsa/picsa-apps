@@ -1,0 +1,8 @@
+<climate-view-select (viewSelected)="setView($event)"></climate-view-select>
+
+<button mat-button [disabled]="isExporting">
+  <mat-icon>share</mat-icon>{{ 'Share' | translate }}
+</button>
+<div>
+  {{ isExporting ? 'Preparing...' : ('Options' | translate) }}
+</div>

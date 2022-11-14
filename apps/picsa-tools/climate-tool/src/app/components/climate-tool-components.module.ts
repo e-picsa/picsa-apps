@@ -1,43 +1,47 @@
-import { NgModule } from '@angular/core';
-import { ClimateChartComponent } from './climate-chart/climate-chart';
-import { CombinedProbabilityComponent } from './combined-probability/combined-probability';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ViewSelectComponent } from './view-select/view-select';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
-import { ClimateMaterialModule } from '../material.module';
-import { ProbabilityToolComponent } from './probability-tool/probability-tool';
-import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
-import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/shared/features';
-import { ChartOptionsComponent } from './chart-options/chart-options';
+
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/shared/features';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+
+import { PicsaClimateMaterialModule } from './material.module';
+
+import { ClimateChartComponent } from './climate-chart/climate-chart';
+import { ClimateChartOptionsComponent } from './climate-chart-options/climate-chart-options.component';
+import { CombinedProbabilityComponent } from './combined-probability/combined-probability';
+import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
+import { LineToolComponent } from './line-tool/line-tool.component';
+import { ProbabilityToolComponent } from './probability-tool/probability-tool';
+import { ViewSelectComponent } from './view-select/view-select';
+
+const Components = [
+  ClimateChartComponent,
+  ClimateChartOptionsComponent,
+  CombinedProbabilityComponent,
+  CropAnalysisComponent,
+  LineToolComponent,
+  ProbabilityToolComponent,
+  ViewSelectComponent,
+];
 
 @NgModule({
-  declarations: [
-    ClimateChartComponent,
-    CombinedProbabilityComponent,
-    ViewSelectComponent,
-    ProbabilityToolComponent,
-    CropAnalysisComponent,
-    ChartOptionsComponent,
-  ],
+  declarations: Components,
   imports: [
+    PicsaClimateMaterialModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     PicsaTranslateModule,
     PicsaCommonComponentsModule,
-    ClimateMaterialModule,
     PicsaChartsModule,
     PicsaDialogsModule,
+    ReactiveFormsModule,
   ],
   exports: [
-    ClimateChartComponent,
-    CombinedProbabilityComponent,
-    ViewSelectComponent,
-    ProbabilityToolComponent,
-    CropAnalysisComponent,
+    ...Components,
     PicsaCommonComponentsModule,
+    PicsaClimateMaterialModule,
   ],
 })
 export class ClimateToolComponentsModule {}

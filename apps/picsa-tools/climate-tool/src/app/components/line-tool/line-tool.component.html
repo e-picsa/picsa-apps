@@ -1,0 +1,27 @@
+<div class="slider-container">
+  <mat-slider
+    *ngIf="ranges"
+    [min]="ranges.yMin"
+    [max]="ranges.yMax"
+    [step]="step"
+    vertical
+    thumbLabel
+    [displayWith]="formatThumbValue"
+    id="lineToolSlider"
+    [(ngModel)]="value"
+    (ngModelChange)="setLineToolValue($event)"
+  ></mat-slider>
+
+  <mat-form-field
+    id="lineToolInputField"
+    [style.visibility]="display === 'number' ? 'visible' : 'hidden'"
+  >
+    <input
+      matInput
+      id="lineToolInput"
+      placeholder="Line"
+      [(ngModel)]="value"
+      (ngModelChange)="setLineToolValue($event)"
+    />
+  </mat-form-field>
+</div>

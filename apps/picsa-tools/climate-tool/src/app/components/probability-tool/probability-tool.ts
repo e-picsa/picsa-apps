@@ -1,14 +1,14 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
-import { IProbabilities } from '@picsa/climate/src/app/models';
+import { Component, Input, OnChanges } from '@angular/core';
+import { IProbabilities } from '../../models';
 
 @Component({
   selector: 'climate-probability-tool',
   templateUrl: './probability-tool.html',
-  styleUrls: ['./probability-tool.scss']
+  styleUrls: ['./probability-tool.scss'],
 })
 
 // take an array of numbers (values) and number to test (x), and display metrics
-export class ProbabilityToolComponent {
+export class ProbabilityToolComponent implements OnChanges {
   @Input() values: number[];
   @Input() x: number;
   @Input() chartName: string;
@@ -16,7 +16,7 @@ export class ProbabilityToolComponent {
   @Input() reverseProbabilities: boolean;
   probabilities = DEFAULT_PROBABILITIES;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     const p = this.calculateProbabilities();
     this.probabilities = this.reverseProbabilities
       ? this._swapValues(p, 'above', 'below')
@@ -45,14 +45,14 @@ export class ProbabilityToolComponent {
       above: {
         count: totalAbove,
         pct: Math.round((totalAbove / total) * 100),
-        inTen: Math.round((totalAbove / total) * 10)
+        inTen: Math.round((totalAbove / total) * 10),
       },
       below: {
         count: totalBelow,
         pct: 100 - Math.round((totalAbove / total) * 100),
-        inTen: 10 - Math.round((totalAbove / total) * 10)
+        inTen: 10 - Math.round((totalAbove / total) * 10),
       },
-      total
+      total,
     };
   }
 
@@ -66,7 +66,7 @@ export class ProbabilityToolComponent {
     return {
       ...obj,
       [key1]: obj[key2],
-      [key2]: obj[key1]
+      [key2]: obj[key1],
     };
   }
 }
@@ -75,13 +75,13 @@ const DEFAULT_PROBABILITIES = {
   above: {
     count: 0,
     pct: 0,
-    inTen: 0
+    inTen: 0,
   },
   below: {
     count: 0,
     pct: 0,
-    inTen: 0
+    inTen: 0,
   },
   total: 0,
-  ratio: [0, 0]
+  ratio: [0, 0],
 };

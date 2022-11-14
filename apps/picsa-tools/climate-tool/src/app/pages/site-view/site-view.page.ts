@@ -1,77 +1,72 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IChartMeta, IStationMeta } from '@picsa/models';
-import * as DATA from '../../data';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { ClimateToolService } from '../../services/climate-tool.service';
-import { IClimateView } from '../../models';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { ClimateChartService } from '../../services/climate-chart.service';
 
 @Component({
   selector: 'climate-site-view',
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
 })
-export class ClimateSiteViewPage implements OnInit, OnDestroy {
-  destroyed$: Subject<boolean> = new Subject();
-  activeStation: IStationMeta;
-  activeChart: (IChartMeta & IClimateView) | undefined;
-  availableViews = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
+export class ClimateSiteViewComponent implements OnInit, OnDestroy {
+  private destroyed$: Subject<boolean> = new Subject();
+
   activeView: string | undefined;
-  availableCharts: IChartMeta[] = DATA.CHART_TYPES;
+
+  public showRotateAnimation = false;
+  public mobileQuery: MediaQueryList;
+  private _mobileQueryListener: () => void;
 
   constructor(
+    public chartService: ClimateChartService,
+
+    private media: MediaMatcher,
+    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router,
-    private climateService: ClimateToolService,
     private componentsService: PicsaCommonComponentsService
   ) {}
-  ngOnInit(): void {
-    // readily subscribe to view changes to avoid flash of site-select page
-    this._subscribeToViewChanges();
-    this.loadSiteData();
+
+  async ngOnInit() {
+    this.subscribeToLayoutChanges();
+    await this.setStationFromParams();
+    this.subscribeToParamChanges();
+    this.promptScreenRotate();
   }
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+    this.chartService.setStation(undefined);
+    this.chartService.setChart(undefined);
   }
-  async loadSiteData() {
+
+  private async setStationFromParams() {
     const siteId = this.route.snapshot.params.siteId;
-    this.activeStation = await this.climateService.loadStation(siteId);
-    if (this.activeStation) {
-      this.componentsService.setHeader({ title: this.activeStation.name });
-    } else {
-      this.componentsService.setHeader({ title: 'Not found' });
+    const stationMeta = await this.chartService.setStation(siteId);
+    const title = stationMeta?.name || `${siteId} no data`;
+    this.componentsService.setHeader({ title });
+  }
+
+  private promptScreenRotate() {
+    if (window.innerHeight > window.innerWidth) {
+      this.showRotateAnimation = true;
     }
   }
-  changeSite() {
-    this.router.navigate(['../../'], {
-      relativeTo: this.route,
-      replaceUrl: true,
-    });
+
+  private subscribeToLayoutChanges() {
+    this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => this.cdr.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  setView(view: string) {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { view: view },
-    });
-    // this.activeChart = view as IChartMeta;
-  }
-
-  private _subscribeToViewChanges() {
+  private subscribeToParamChanges() {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((params) => {
-        const view = this.availableViews.find(
-          (v) => v._viewID === params.get('view')
-        );
-        this.activeView = view ? view._viewID : undefined;
-        this.activeChart =
-          view && view._viewType === 'chart'
-            ? (view as IChartMeta & IClimateView)
-            : undefined;
+      .subscribe(async (params) => {
+        const viewId = params.get('view');
+        await this.chartService.setChart(viewId || undefined);
       });
   }
 }

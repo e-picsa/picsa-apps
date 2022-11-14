@@ -4,14 +4,14 @@ import {
   Input,
   ElementRef,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
-import { PrintProvider } from '../../services/native';
 
 @Component({
   selector: 'picsa-chart',
-  template: ``,
+  template: `<div #chart></div>`,
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
   encapsulation: ViewEncapsulation.None,
@@ -22,11 +22,9 @@ import { PrintProvider } from '../../services/native';
 */
 export class PicsaChartComponent {
   public chart: c3.ChartAPI;
-  private container: HTMLDivElement;
-  constructor(
-    private elementRef: ElementRef,
-    private printPrvdr: PrintProvider
-  ) {}
+
+  @ViewChild('chart', { static: true })
+  chartContainer: ElementRef<HTMLDivElement>;
 
   @Input() data: c3.Data = {
     columns: [],
@@ -64,54 +62,13 @@ export class PicsaChartComponent {
 
   // use create method to populate div which will also be available before viewInit
   private create() {
-    // run outside of angular change detection
-    // this.ngZone.runOutsideAngular(() => {
-    if (this.container) {
-      this.elementRef.nativeElement.removeChild(this.container);
-    }
-    this.container = document.createElement('div');
-    this.container.setAttribute('id', 'chart');
-    this.elementRef.nativeElement.appendChild(this.container);
     this.chart = this.chart = c3.generate({
       ...this.config,
-      bindto: this.container,
+      bindto: this.chartContainer.nativeElement,
       data: this.config.data ? this.config.data : this.data,
-      oninit: function () {
-        this.svg.attr('id', 'chart_svg');
-        // const svg = document.getElementById('chart_svg');
-        // svg.style.backgroundColor = 'green';
-      },
     });
-    // });
-  }
-
-  // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
-  // https://github.com/exupero/saveSvgAsPng
-  // https://github.com/exupero/saveSvgAsPng/issues/186
-  public async generatePng(title = 'chart') {
-    await this.printPrvdr.shareSVG('chart_svg', title);
   }
 }
 
 export type c3ChartAPI = c3.ChartAPI;
 export type c3ChartConfiguration = c3.ChartConfiguration;
-
-/****************************************************************************
- *  Deprecated / Unused
- **************************************************************************/
-
-// method to extract the ids from data supplied to the chart
-// note - not currently used as even when one can identify which ids have
-// been added/removed we don't know whether existing id has changed data
-// private _getDataIDs(data: c3.Data): string[] {
-//   if (data.columns) {
-//     return data.columns.map(c => c[0] as string);
-//   }
-//   if (data.rows) {
-//     return data.rows[0] as string[];
-//   }
-//   if (data.json) {
-//     return Object.keys(data.json[0]);
-//   }
-//   return [];
-// }
