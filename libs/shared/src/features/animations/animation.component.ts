@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
+import { _wait } from '@picsa/utils';
 import { AnimationOptions, BMCompleteLoopEvent } from 'ngx-lottie';
 import type { IAvailableAnimations } from './models';
 
@@ -20,13 +21,15 @@ import type { IAvailableAnimations } from './models';
 })
 export class PicsaAnimationComponent implements OnInit {
   /** Name of animation file to display */
-  @Input() animation: IAvailableAnimations;
+  @Input() name: IAvailableAnimations;
   /** Duration in ms to show animation for */
   @Input() duration?: number;
   /** Number of loops to show animation for */
   @Input() loops?: number;
   /** Apply absolute positioning to float in center (default inline) */
   @Input() position?: 'inline' | 'float' = 'inline';
+  /** Delay display of animation by set number of ms */
+  @Input() delay?: number;
 
   public options: AnimationOptions;
 
@@ -36,17 +39,25 @@ export class PicsaAnimationComponent implements OnInit {
     this.host.nativeElement.remove();
   }
 
-  ngOnInit() {
-    requestAnimationFrame(() => {
-      this.options = {
-        path: `assets/animations/${this.animation}.json`,
-      };
-    });
+  async ngOnInit() {
+    if (this.delay) {
+      await _wait(this.delay);
+    }
+    this.loadAnimation(this.name);
   }
+
   /** Track number of times animation has looped, destroy if loops limit provided */
   loopComplete(e: BMCompleteLoopEvent) {
     if (this.loops && e.currentLoop >= this.loops) {
       this.selfDestruct();
     }
+  }
+
+  private loadAnimation(name: string) {
+    requestAnimationFrame(() => {
+      this.options = {
+        path: `assets/animations/${name}.json`,
+      };
+    });
   }
 }
