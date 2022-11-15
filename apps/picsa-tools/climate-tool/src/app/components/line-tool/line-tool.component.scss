@@ -1,17 +1,14 @@
 :host {
-  display: contents;
-}
-.slider-container {
-  margin-bottom: 68px; // offset chart title
-  margin-top: 30px; // offset chart label padding
   width: 60px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
 }
-#lineToolInputField {
+
+#lineToolSlider {
+  flex: 1;
+  padding: 0;
+}
+.lineToolInputField {
   width: 100%;
   text-align: center;
-}
-#lineToolSlider {
-  height: 100%;
-  padding: 0;
 }
