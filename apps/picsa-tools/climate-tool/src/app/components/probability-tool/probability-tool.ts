@@ -10,24 +10,27 @@ import { IProbabilities } from '../../models';
 // take an array of numbers (values) and number to test (x), and display metrics
 export class ProbabilityToolComponent implements OnChanges {
   @Input() values: number[];
-  @Input() x: number;
+  @Input() x?: number;
   @Input() chartName: string;
   // for start of seasion need to reverse
   @Input() reverseProbabilities: boolean;
   probabilities = DEFAULT_PROBABILITIES;
 
   ngOnChanges(): void {
-    const p = this.calculateProbabilities();
-    this.probabilities = this.reverseProbabilities
-      ? this._swapValues(p, 'above', 'below')
-      : p;
+    if (this.x) {
+      const p = this.calculateProbabilities(this.x);
+      this.probabilities = this.reverseProbabilities
+        ? this._swapValues(p, 'above', 'below')
+        : p;
+    } else {
+      this.probabilities = DEFAULT_PROBABILITIES;
+    }
   }
 
   // given a line tool value lookup the existing values and return probability information
   // based on how many points are above and below the given value
   // various outputs used to assist rendering graphics (e.g. number arrays and reverse %)
-  calculateProbabilities(): IProbabilities {
-    const x = this.x;
+  calculateProbabilities(x: number): IProbabilities {
     const points = this.values;
     let totalAbove = 0;
     let totalBelow = 0;

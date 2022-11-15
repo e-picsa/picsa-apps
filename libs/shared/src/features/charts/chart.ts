@@ -5,13 +5,18 @@ import {
   ElementRef,
   SimpleChanges,
   ViewChild,
+  HostListener,
 } from '@angular/core';
 import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
 
 @Component({
   selector: 'picsa-chart',
-  template: `<div #chart></div>`,
+  template: `<div
+    data-cy="chart-container"
+    #chart
+    class="chart-container"
+  ></div>`,
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
   encapsulation: ViewEncapsulation.None,
@@ -30,6 +35,17 @@ export class PicsaChartComponent {
     columns: [],
   };
   @Input() config: IChartConfig = {};
+
+  // dispatch resize event to trigger chart resize on orientation change
+  @HostListener('window:orientationchange', ['$event'])
+  onOrientationChange() {
+    if (this.chart) {
+      setTimeout(() => {
+        this.create();
+      }, 200);
+    }
+  }
+  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
 
   /**********************************************************************************
    *  Custom creation and change event handling
@@ -62,10 +78,16 @@ export class PicsaChartComponent {
 
   // use create method to populate div which will also be available before viewInit
   private create() {
+    const { clientHeight, offsetHeight, scrollHeight } =
+      this.elementRef.nativeElement;
+    console.log({ clientHeight, offsetHeight, scrollHeight });
     this.chart = this.chart = c3.generate({
       ...this.config,
       bindto: this.chartContainer.nativeElement,
       data: this.config.data ? this.config.data : this.data,
+      size: {
+        height: this.elementRef.nativeElement.offsetHeight - 32, // include extra pxs for labels
+      },
     });
   }
 }

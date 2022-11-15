@@ -1,4 +1,4 @@
-<div style="display: flex; margin-bottom: 2em">
+<div class="chart-tool-container">
   <!-- line tool -->
   <climate-line-tool
     #lineTool
@@ -6,21 +6,19 @@
     [chartConfig]="chartConfig"
     (valueChange)="handleLineToolChange($event)"
   ></climate-line-tool>
-  <div class="chart-container">
-    <!-- chart -->
-    <picsa-chart
-      #picsaChart
-      [config]="chartConfig"
-      [data]="$any(data)"
-    ></picsa-chart>
-  </div>
+  <!-- chart -->
+  <picsa-chart
+    #picsaChart
+    [config]="chartConfig"
+    [data]="$any(data)"
+  ></picsa-chart>
 </div>
 <div class="chart-definition" #chartDefinition>
   {{definition.definition | translate}}
 </div>
 <!-- probability tool -->
 <climate-probability-tool
-  *ngIf="lineTool.value"
+  style="height: 140px"
   [x]="lineTool.value"
   [values]="y1Values"
   [chartName]="definition.name"

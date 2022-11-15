@@ -37,25 +37,23 @@
       <climate-chart-options style="padding: 8px"></climate-chart-options>
     </mat-sidenav>
     <!-- Main content -->
-    <mat-sidenav-content class="page-content">
-      <!-- export menu -->
-
-      <!-- charts -->
-
+    <mat-sidenav-content>
       <div
-        *ngIf="chartService.chartDefinition && chartService.station"
-        style="flex: 1"
+        class="page-content"
+        style="height: calc(100vh - 120px); overflow: auto"
       >
         <climate-chart
+          *ngIf="chartService.chartDefinition && chartService.station"
+          style="flex: 1"
           [definition]="chartService.chartDefinition"
           [data]="$any(chartService.station.summaries)"
         ></climate-chart>
       </div>
 
       <!-- reports -->
-      <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
+      <!-- <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
         <climate-crop-analysis></climate-crop-analysis>
-      </div>
+      </div> -->
       <!-- <climate-combined-probability></climate-combined-probability> -->
     </mat-sidenav-content>
   </mat-sidenav-container>

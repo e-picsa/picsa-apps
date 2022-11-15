@@ -2,8 +2,8 @@
   display: contents;
 }
 .slider-container {
-  padding-bottom: 51px;
-  padding-top: 29px;
+  margin-bottom: 68px; // offset chart title
+  margin-top: 30px; // offset chart label padding
   width: 60px;
   text-align: center;
 }

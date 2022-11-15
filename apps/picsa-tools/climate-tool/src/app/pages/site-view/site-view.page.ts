@@ -6,6 +6,8 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  HostListener,
+  NgZone,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -35,7 +37,6 @@ export class ClimateSiteViewComponent
 
   constructor(
     public chartService: ClimateChartService,
-
     private media: MediaMatcher,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -63,7 +64,9 @@ export class ClimateSiteViewComponent
 
   /** when toggling sidebar also trigger resize event to ensure chart resizes */
   public handleSidenavChange() {
-    window.dispatchEvent(new Event('resize'));
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
   }
 
   private async setStationFromParams() {

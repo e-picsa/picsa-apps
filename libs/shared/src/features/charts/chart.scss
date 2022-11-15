@@ -1,10 +1,12 @@
 @import '~c3/c3.min';
+// use component selector name as not encapsulated
+picsa-chart {
+  display: block;
+}
 
-#chart {
-  height: calc(100% - 220px);
-  width: calc(100% - 20px);
-  min-height: 320px;
-  min-width: 800px;
+.chart-container {
+  height: 100%;
+  width: 100%;
 }
 
 .c3-line {
