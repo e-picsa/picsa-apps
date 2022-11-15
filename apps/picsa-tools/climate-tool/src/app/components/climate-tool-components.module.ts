@@ -9,7 +9,7 @@ import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 import { PicsaClimateMaterialModule } from './material.module';
 
-import { ClimateChartComponent } from './climate-chart/climate-chart';
+import { ClimateChartLayoutComponent } from './chart-layout/chart-layout';
 import { ClimateChartOptionsComponent } from './climate-chart-options/climate-chart-options.component';
 import { CombinedProbabilityComponent } from './combined-probability/combined-probability';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
@@ -18,7 +18,7 @@ import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { ViewSelectComponent } from './view-select/view-select';
 
 const Components = [
-  ClimateChartComponent,
+  ClimateChartLayoutComponent,
   ClimateChartOptionsComponent,
   CombinedProbabilityComponent,
   CropAnalysisComponent,

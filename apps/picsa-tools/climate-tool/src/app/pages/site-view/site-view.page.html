@@ -42,12 +42,12 @@
         class="page-content"
         style="height: calc(100vh - 120px); overflow: auto"
       >
-        <climate-chart
+        <climate-chart-layout
           *ngIf="chartService.chartDefinition && chartService.station"
           style="flex: 1"
           [definition]="chartService.chartDefinition"
           [data]="$any(chartService.station.summaries)"
-        ></climate-chart>
+        ></climate-chart-layout>
       </div>
 
       <!-- reports -->

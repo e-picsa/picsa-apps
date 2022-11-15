@@ -10,11 +10,11 @@ import { ClimateChartService } from '../../services/climate-chart.service';
  * data passing up and down)
  *****************************************************************/
 @Component({
-  selector: 'climate-chart',
-  templateUrl: 'climate-chart.html',
-  styleUrls: ['climate-chart.scss'],
+  selector: 'climate-chart-layout',
+  templateUrl: 'chart-layout.html',
+  styleUrls: ['chart-layout.scss'],
 })
-export class ClimateChartComponent implements OnChanges {
+export class ClimateChartLayoutComponent implements OnChanges {
   @Input() definition: IChartMeta & IClimateView;
   @Input() data: IChartSummary[];
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;

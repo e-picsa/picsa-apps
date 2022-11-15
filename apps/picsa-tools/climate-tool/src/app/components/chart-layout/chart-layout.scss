@@ -1,0 +1,33 @@
+:host {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  grid-template-areas:
+    'line chart'
+    'line chart'
+    '...  desc'
+    'prob prob';
+}
+
+climate-line-tool {
+  grid-area: line;
+}
+
+picsa-chart {
+  grid-area: chart;
+  margin-right: 3rem;
+  flex: 1;
+  overflow: auto;
+  min-width: 500px;
+  min-height: 400px;
+}
+
+.chart-definition {
+  grid-area: desc;
+  font-size: small;
+  font-style: italic;
+  margin: 1rem 2rem;
+  text-align: center;
+}
+climate-probability-tool {
+  grid-area: prob;
+}
