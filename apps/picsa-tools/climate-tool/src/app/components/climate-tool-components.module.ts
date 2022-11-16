@@ -14,6 +14,8 @@ import { ClimateChartOptionsComponent } from './climate-chart-options/climate-ch
 import { CombinedProbabilityComponent } from './combined-probability/combined-probability';
 import { CropAnalysisComponent } from './crop-analysis/crop-analysis';
 import { LineToolComponent } from './line-tool/line-tool.component';
+import { LineDatePickerHeaderComponent } from './line-tool/line-date-picker-header';
+
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
 import { ViewSelectComponent } from './view-select/view-select';
 
@@ -23,6 +25,7 @@ const Components = [
   CombinedProbabilityComponent,
   CropAnalysisComponent,
   LineToolComponent,
+  LineDatePickerHeaderComponent,
   ProbabilityToolComponent,
   ViewSelectComponent,
 ];

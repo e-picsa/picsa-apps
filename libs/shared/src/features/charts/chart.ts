@@ -78,9 +78,6 @@ export class PicsaChartComponent {
 
   // use create method to populate div which will also be available before viewInit
   private create() {
-    const { clientHeight, offsetHeight, scrollHeight } =
-      this.elementRef.nativeElement;
-    console.log({ clientHeight, offsetHeight, scrollHeight });
     this.chart = this.chart = c3.generate({
       ...this.config,
       bindto: this.chartContainer.nativeElement,

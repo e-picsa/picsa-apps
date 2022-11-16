@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { getDayOfYear } from 'date-fns';
+
 import type {
   IChartConfig,
   IChartMeta,
@@ -6,7 +9,6 @@ import type {
   IStationMeta,
 } from '@picsa/models';
 import { PicsaTranslateService } from '@picsa/shared/modules';
-import { Subject } from 'rxjs';
 import { IClimateView } from '../models';
 import {
   DATA_RANGES_DEFAULT,
@@ -166,6 +168,14 @@ export class ClimateChartService {
   public getPointColour(d: DataPoint): string | undefined {
     // default will return color for series key, attached to d.id
     return;
+  }
+
+  public convertDateToDayNumber(d: Date) {
+    const dayNumber = getDayOfYear(d);
+    if (this.chartDefinition?.yFormat === 'date-from-July') {
+      return dayNumber - 183;
+    }
+    return dayNumber;
   }
 
   // iterate over data and calculate min/max values for xVar and multiple yVars

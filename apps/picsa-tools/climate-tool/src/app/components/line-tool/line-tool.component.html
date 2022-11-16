@@ -1,27 +1,65 @@
-<div class="slider-container">
-  <mat-slider
-    *ngIf="ranges"
-    [min]="ranges.min"
-    [max]="ranges.max"
-    [step]="step"
-    vertical
-    thumbLabel
-    [displayWith]="formatThumbValue"
-    id="lineToolSlider"
+<mat-slider
+  *ngIf="ranges"
+  [min]="ranges.min"
+  [max]="ranges.max"
+  [step]="step"
+  vertical
+  thumbLabel
+  [displayWith]="formatThumbValue"
+  id="lineToolSlider"
+  [(ngModel)]="value"
+  (ngModelChange)="setLineToolValue($event)"
+></mat-slider>
+<mat-form-field class="lineToolInputField" *ngIf="inputType === 'number'">
+  <input
+    matInput
+    class="lineToolInput"
+    placeholder="Line"
     [(ngModel)]="value"
     (ngModelChange)="setLineToolValue($event)"
-  ></mat-slider>
+  />
+</mat-form-field>
 
-  <mat-form-field
-    id="lineToolInputField"
-    [style.visibility]="showNumberInput ? 'visible' : 'hidden'"
-  >
+<mat-form-field class="lineToolInputField" *ngIf="inputType === 'date'">
+  <mat-label style="display: none"></mat-label>
+  <input
+    matInput
+    [matDatepicker]="picker"
+    (dateChange)="setLineToolFromDate($event.target.value)"
+    style="display: none"
+  />
+  <mat-datepicker
+    #picker
+    touchUi
+    [calendarHeaderComponent]="datePickerHeader"
+  ></mat-datepicker>
+  <button mat-icon-button (click)="picker.open()">
+    <mat-icon>calendar_month</mat-icon>
+  </button>
+</mat-form-field>
+
+<!-- Deprecated - Retained for future ref
+     Datepicker with custom formatter to select full week instead of single day
+  
+  <mat-form-field class="lineToolInputField" *ngIf="inputType === 'date'">
+  <mat-label style="display: none"></mat-label>
+  <mat-date-range-input [rangePicker]="picker" style="display: none">
     <input
-      matInput
-      id="lineToolInput"
-      placeholder="Line"
-      [(ngModel)]="value"
-      (ngModelChange)="setLineToolValue($event)"
+      matStartDate
+      placeholder="Start date"
+      (dateChange)="setLineToolFromDate(picker)"
     />
-  </mat-form-field>
-</div>
+    <input matEndDate placeholder="End date" />
+  </mat-date-range-input>
+  <mat-date-range-picker
+    touchUi
+    #picker
+    style="display: none"
+    [calendarHeaderComponent]="datePickerHeader"
+  ></mat-date-range-picker>
+  <button mat-icon-button (click)="picker.open()">
+    <mat-icon>calendar_month</mat-icon>
+  </button>
+</mat-form-field> 
+
+-->

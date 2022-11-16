@@ -1,17 +1,28 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
 import { ClimateChartService } from '../../services/climate-chart.service';
+import { LineDatePickerSelectionStrategy } from './line-date-picker';
+import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
 @Component({
   selector: 'climate-line-tool',
   templateUrl: './line-tool.component.html',
   styleUrls: ['./line-tool.component.scss'],
+  providers: [
+    {
+      provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
+      useClass: LineDatePickerSelectionStrategy,
+    },
+  ],
 })
 export class LineToolComponent {
   public value?: number;
   public ranges: { min: number; max: number };
   public step: number;
-  public showNumberInput = false;
+
+  public inputType?: 'number' | 'date';
+  public datePickerHeader = LineDatePickerHeaderComponent;
 
   constructor(private climateService: ClimateChartService) {}
 
@@ -30,17 +41,26 @@ export class LineToolComponent {
     if (definition) {
       this.step = definition.yMinor;
       if (definition.yFormat === 'value') {
-        this.showNumberInput = true;
+        this.inputType = 'number';
         this.formatThumbValue = (v) => v;
       } else {
+        this.inputType = 'date';
         this.formatThumbValue = () => '';
       }
     }
     this.value = undefined;
   }
 
+  /** Specify how to format number that appears in slider thumb */
   public formatThumbValue(v: number): string | number {
     return '';
+  }
+
+  public setLineToolFromDate(datestring: string) {
+    const d = new Date(datestring);
+    const dateDayNumber = this.climateService.convertDateToDayNumber(d);
+    this.value = dateDayNumber;
+    return this.setLineToolValue(dateDayNumber);
   }
 
   /**
