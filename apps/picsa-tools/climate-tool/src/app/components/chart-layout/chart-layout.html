@@ -2,13 +2,13 @@
 <climate-line-tool
   #lineTool
   [definition]="definition"
-  [chartConfig]="chartConfig"
+  [chartConfig]="chartService.chartConfig"
   (valueChange)="handleLineToolChange($event)"
 ></climate-line-tool>
 <!-- chart -->
 <picsa-chart
   #picsaChart
-  [config]="chartConfig"
+  [config]="chartService.chartConfig"
   [data]="$any(data)"
 ></picsa-chart>
 <!-- definition -->

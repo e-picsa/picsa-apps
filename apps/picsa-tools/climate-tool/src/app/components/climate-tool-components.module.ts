@@ -17,11 +17,15 @@ import { LineToolComponent } from './line-tool/line-tool.component';
 import { LineDatePickerHeaderComponent } from './line-tool/line-date-picker-header';
 
 import { ProbabilityToolComponent } from './probability-tool/probability-tool';
+import { ClimateShareDialogComponent } from './share-dialog/share-dialog.component';
 import { ViewSelectComponent } from './view-select/view-select';
+import { ClimatePrintLayoutComponent } from './print-layout/print-layout.component';
 
 const Components = [
   ClimateChartLayoutComponent,
   ClimateChartOptionsComponent,
+  ClimatePrintLayoutComponent,
+  ClimateShareDialogComponent,
   CombinedProbabilityComponent,
   CropAnalysisComponent,
   LineToolComponent,

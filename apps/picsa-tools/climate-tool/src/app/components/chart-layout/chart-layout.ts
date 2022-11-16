@@ -19,13 +19,11 @@ export class ClimateChartLayoutComponent implements OnChanges {
   @Input() data: IChartSummary[];
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
 
-  public chartConfig: IChartConfig;
-
   y1Values: number[];
 
   constructor(
     private ngZone: NgZone,
-    private chartService: ClimateChartService
+    public chartService: ClimateChartService
   ) {}
 
   public handleLineToolChange(value?: number) {
@@ -45,11 +43,7 @@ export class ClimateChartLayoutComponent implements OnChanges {
 
   // use ngOnchanges so that chartMeta can be changed directly from parent and update
   ngOnChanges() {
-    const chartConfig = this.chartService.generateChartConfig(
-      this.data,
-      this.definition
-    );
-    this.chartConfig = chartConfig;
+    this.chartService.generateChartConfig(this.data);
     this.y1Values = this.data.map((v) => v[this.definition.keys[0]] as number);
   }
 }
