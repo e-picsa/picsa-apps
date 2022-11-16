@@ -11,17 +11,24 @@ import { _wait } from '@picsa/utils';
 export class PrintProvider {
   constructor(private socialSharing: SocialSharing) {}
 
-  public async shareHtmlDom(domSelector: string, title: string) {
+  public async shareHtmlDom(
+    domSelector: string,
+    filename: string,
+    title?: string
+  ) {
     const domEl = document.querySelector(domSelector) as HTMLElement;
     const clone = domEl.cloneNode(true) as HTMLElement;
     clone.classList.toggle('print-mode');
     // add title
-    const titleEl = document.createElement('h1');
-    titleEl.textContent = title;
-    clone.prepend(titleEl);
+    if (title) {
+      const titleEl = document.createElement('h1');
+      titleEl.textContent = title;
+      clone.prepend(titleEl);
+    }
+
     // attach clone, generate svg and export
     const body = document.querySelector('body') as HTMLBodyElement;
-    body.prepend(clone);
+    body.append(clone);
     // allow taint for rendering svgs, see https://github.com/niklasvh/html2canvas/issues/95
     const canvasElm = await html2canvas(clone, { allowTaint: true });
     // use set timeout to ensure resizing complete
@@ -29,10 +36,14 @@ export class PrintProvider {
     await _wait(200);
     const base64 = canvasElm.toDataURL();
     body.removeChild(clone);
-    return this.shareDataImage(base64, title);
+    return this.shareDataImage(base64, filename);
   }
 
-  async shareSVG(svgDomSelector: string, title: string) {
+  async sharePNGImage(pngUri: string, title: string) {
+    await this.shareDataImage(pngUri, title);
+  }
+
+  async convertC3ChartToPNG(svgDomSelector: string) {
     const svg = document.getElementById(svgDomSelector) as HTMLElement;
     const options = {
       // remove canvg as doesn't support background colours
@@ -54,11 +65,8 @@ export class PrintProvider {
         return s + '{' + p + '}';
       },
     };
-    const pngUri = await svgAsPngUri(svg, options);
-    // const imgEl = document.createElement('img');
-    // imgEl.src = pngUri;
-    // document.querySelector('body').prepend(imgEl);
-    await this.shareDataImage(pngUri, title);
+    const pngUri: string = await svgAsPngUri(svg, options);
+    return pngUri;
   }
 
   private async shareDataImage(base64Img: string, title: string) {

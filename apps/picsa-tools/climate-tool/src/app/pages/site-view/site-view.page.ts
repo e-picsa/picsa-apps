@@ -1,3 +1,5 @@
+import { DomPortal, Portal } from '@angular/cdk/portal';
+import { MediaMatcher } from '@angular/cdk/layout';
 import {
   Component,
   OnInit,
@@ -6,16 +8,16 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
-  HostListener,
-  NgZone,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { MediaMatcher } from '@angular/cdk/layout';
+
 import { ClimateChartService } from '../../services/climate-chart.service';
-import { DomPortal } from '@angular/cdk/portal';
+import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 
 @Component({
   selector: 'climate-site-view',
@@ -32,15 +34,16 @@ export class ClimateSiteViewComponent
   public showRotateAnimation = false;
   public mobileQuery: MediaQueryList;
   private _mobileQueryListener: () => void;
-  @ViewChild('optionsToggleButton')
-  optionsToggleButton: ElementRef<HTMLElement>;
+  @ViewChild('headerContent')
+  headerContent: ElementRef<HTMLElement>;
 
   constructor(
     public chartService: ClimateChartService,
     private media: MediaMatcher,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private componentsService: PicsaCommonComponentsService
+    private componentsService: PicsaCommonComponentsService,
+    private dialog: MatDialog
   ) {}
 
   async ngOnInit() {
@@ -51,7 +54,7 @@ export class ClimateSiteViewComponent
   }
   ngAfterViewInit() {
     this.componentsService.patchHeader({
-      endContent: new DomPortal(this.optionsToggleButton),
+      endContent: new DomPortal(this.headerContent),
     });
   }
   ngOnDestroy() {
@@ -66,6 +69,9 @@ export class ClimateSiteViewComponent
     requestAnimationFrame(() => {
       window.dispatchEvent(new Event('resize'));
     });
+  }
+  async showShareDialog() {
+    this.dialog.open(ClimateShareDialogComponent, { disableClose: true });
   }
 
   private async setStationFromParams() {

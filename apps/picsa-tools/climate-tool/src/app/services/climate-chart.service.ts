@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { DataPoint } from 'c3';
+
 import { getDayOfYear } from 'date-fns';
+import { firstValueFrom, Subject } from 'rxjs';
 
 import type {
   IChartConfig,
@@ -9,6 +12,9 @@ import type {
   IStationMeta,
 } from '@picsa/models';
 import { PicsaTranslateService } from '@picsa/shared/modules';
+import { PrintProvider } from '@picsa/shared/services/native';
+import { _wait } from '@picsa/utils';
+
 import { IClimateView } from '../models';
 import {
   DATA_RANGES_DEFAULT,
@@ -17,9 +23,8 @@ import {
   seriesColors,
 } from '../models/chart-data.models';
 import { ClimateDataService } from './climate-data.service';
-
 import * as DATA from '../data';
-import { DataPoint } from 'c3';
+
 const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
 
 @Injectable({ providedIn: 'root' })
@@ -29,9 +34,19 @@ export class ClimateChartService {
   public chartDefinition?: IChartMeta & IClimateView;
   public station?: IStationMeta;
 
+  /** Config of current displayed chart */
+  public chartConfig: IChartConfig;
+
+  /** Png version of chart converted from SVG */
+  public chartPng?: string;
+
+  /** Track whether print mode has been toggled */
+  private isPrintVersion = false;
+
   constructor(
     private translateService: PicsaTranslateService,
-    private dataService: ClimateDataService
+    private dataService: ClimateDataService,
+    private printProvider: PrintProvider
   ) {}
 
   public async clearChartData() {
@@ -64,12 +79,13 @@ export class ClimateChartService {
    ****************************************************************************/
 
   // create chart given columns of data and a particular key to make visible
-  public generateChartConfig(data: IChartSummary[], definition: IChartMeta) {
+  public generateChartConfig(data: IChartSummary[]) {
+    const definition = this.chartDefinition as IChartMeta & IClimateView;
     // configure major and minor ticks, labels and gridlines
     const ranges = this.calculateDataRanges(data, definition);
     const gridMeta = this.calculateGridMeta(definition, ranges);
     // configure chart
-    const config: IChartConfig = {
+    this.chartConfig = {
       // ensure axis labels fit
       padding: {
         right: 10,
@@ -164,15 +180,64 @@ export class ClimateChartService {
         this.chartRendered$.next();
       },
     };
-    return config;
   }
 
   /*****************************************************************************
    *   Styles and Formatting
    ****************************************************************************/
 
+  /**
+   * Update styles and when rendered save as png
+   * slightly messy - want to update chart config for print format, and wait until render
+   * complete before downloading and reverting back
+   *
+   * https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
+   * https://github.com/exupero/saveSvgAsPng
+   * https://github.com/exupero/saveSvgAsPng/issues/186
+   */
+  public async generatePrintVersion() {
+    const { station, chartDefinition } = this;
+    const filename = `${station?.name} - ${chartDefinition!.name}`;
+    // TODO - translate and add language suffix
+
+    await this.togglePrintVersion();
+    const png = await this.printProvider.convertC3ChartToPNG('picsa_chart_svg');
+    this.chartPng = png;
+    await _wait(200);
+    await this.printProvider.shareHtmlDom('#picsaClimatePrintLayout', filename);
+    this.chartPng = undefined;
+    await this.togglePrintVersion();
+  }
+
+  /**
+   * When printing reduce the size of points and fix the chart size
+   * Uses cache to revert back to original after print complete
+   */
+  private async togglePrintVersion() {
+    this.isPrintVersion = !this.isPrintVersion;
+    console.log('isPrintVersion', this.isPrintVersion);
+    // if cache config exists revert back
+    if (this.isPrintVersion) {
+      this.chartConfig.size = { width: 900, height: 500 };
+      this.chartConfig.point!.r = (d) => (d.id === 'LineTool' ? 0 : 3);
+      this.chartConfig.title!.text = '';
+    } else {
+      this.chartConfig.size = undefined;
+      this.chartConfig.point!.r = (d) => (d.id === 'LineTool' ? 0 : 8);
+      const title = `${this.station?.name} | ${this.chartDefinition!.name}`;
+      this.chartConfig.title!.text = title;
+    }
+    window.dispatchEvent(new CustomEvent('picsaChartRerender'));
+    // Ensure graphics updated by waiting for chart render notification and timeout
+    await firstValueFrom(this.chartRendered$);
+    await _wait(200);
+  }
+
+  /**
+   * Overridable function for point colour setting (e.g. line tool supplies custom)
+   * @return hex colour code string or undefined for default colour
+   * */
   public getPointColour(d: DataPoint): string | undefined {
-    // default will return color for series key, attached to d.id
     return;
   }
 

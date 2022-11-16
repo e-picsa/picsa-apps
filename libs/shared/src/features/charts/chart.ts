@@ -45,6 +45,15 @@ export class PicsaChartComponent {
       }, 200);
     }
   }
+  /** Custom event to force rerender (e.g. deep config changes not picked uo) */
+  @HostListener('window:picsaChartRerender', [])
+  chartRerender() {
+    if (this.chart) {
+      setTimeout(() => {
+        this.create();
+      }, 200);
+    }
+  }
   constructor(private elementRef: ElementRef<HTMLDivElement>) {}
 
   /**********************************************************************************
@@ -82,8 +91,11 @@ export class PicsaChartComponent {
       ...this.config,
       bindto: this.chartContainer.nativeElement,
       data: this.config.data ? this.config.data : this.data,
-      size: {
+      size: this.config.size || {
         height: this.elementRef.nativeElement.offsetHeight - 32, // include extra pxs for labels
+      },
+      oninit: function () {
+        this.svg.attr('id', 'picsa_chart_svg');
       },
     });
   }
