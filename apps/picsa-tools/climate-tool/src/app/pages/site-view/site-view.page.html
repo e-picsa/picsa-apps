@@ -1,5 +1,5 @@
 <div #headerContent>
-  <button mat-button (click)="showShareDialog()">
+  <button *ngIf="!mobileQuery.matches" mat-button (click)="showShareDialog()">
     <mat-icon>share</mat-icon>{{ 'Share' | translate }}
   </button>
   <button mat-button #optionsToggleButton (click)="snav.toggle()">
@@ -34,14 +34,25 @@
       (openedChange)="handleSidenavChange()"
       (swipeRight)="snav.toggle()"
     >
-      <button
-        *ngIf="mobileQuery.matches"
-        mat-icon-button
-        (click)="snav.toggle()"
-        class="sidenav-close-mobile"
-      >
-        <mat-icon color="primary">close</mat-icon>
-      </button>
+      <div class="sidenav-buttons">
+        <button
+          *ngIf="mobileQuery.matches"
+          mat-icon-button
+          color="primary"
+          (click)="snav.toggle()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        <button
+          *ngIf="mobileQuery.matches"
+          mat-button
+          color="primary"
+          (click)="showShareDialog()"
+        >
+          <mat-icon>share</mat-icon>{{ 'Share' | translate }}
+        </button>
+      </div>
+
       <climate-chart-options style="padding: 8px"></climate-chart-options>
     </mat-sidenav>
     <!-- Main content -->
