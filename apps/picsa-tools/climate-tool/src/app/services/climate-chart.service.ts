@@ -34,6 +34,12 @@ export class ClimateChartService {
     private dataService: ClimateDataService
   ) {}
 
+  public async clearChartData() {
+    this.chartDefinition = undefined;
+    this.station = undefined;
+    this.getPointColour = () => undefined;
+  }
+
   public async setStation(id?: string) {
     if (!id) {
       this.station = undefined;

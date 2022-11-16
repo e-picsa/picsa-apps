@@ -78,6 +78,9 @@ export class SiteSelectPage {
     // navigate
     this.router.navigate(['./', 'site', site._key], {
       relativeTo: this.route,
+      queryParams: {
+        view: 'rainfall',
+      },
     });
   }
 

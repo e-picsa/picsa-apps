@@ -57,8 +57,7 @@ export class ClimateSiteViewComponent
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
-    this.chartService.setStation(undefined);
-    this.chartService.setChart(undefined);
+    this.chartService.clearChartData();
     this.componentsService.patchHeader({ endContent: undefined });
   }
 
