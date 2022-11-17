@@ -8,7 +8,7 @@ import { firstValueFrom, Subject } from 'rxjs';
 import type {
   IChartConfig,
   IChartMeta,
-  IChartSummary,
+  IStationData,
   IStationMeta,
 } from '@picsa/models';
 import { PicsaTranslateService } from '@picsa/shared/modules';
@@ -24,6 +24,7 @@ import {
 } from '../models/chart-data.models';
 import { ClimateDataService } from './climate-data.service';
 import * as DATA from '../data';
+import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 
 const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
 
@@ -31,8 +32,14 @@ const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
 export class ClimateChartService {
   /** Observable property trigger each time chart is rendered */
   public chartRendered$ = new Subject<void>();
+
   public chartDefinition?: IChartMeta & IClimateView;
+
+  public chartComponent: PicsaChartComponent;
+
   public station?: IStationMeta;
+
+  public stationData: IStationData[];
 
   /** Config of current displayed chart */
   public chartConfig: IChartConfig;
@@ -55,23 +62,28 @@ export class ClimateChartService {
     this.getPointColour = () => undefined;
   }
 
+  /** Provide access to the current chart for use in tools */
+  public registerChartComponent(chart: PicsaChartComponent) {
+    this.chartComponent = chart;
+  }
+
   public async setStation(id?: string) {
+    console.log('[Climate] set station', id);
     if (!id) {
       this.station = undefined;
       return;
     }
     await this.dataService.ready();
     this.station = await this.dataService.getStationMeta(id);
+    this.stationData = this.station.summaries as IStationData[];
     return this.station;
   }
 
   public async setChart(id?: string) {
+    console.log('[Climate] set chart', id);
     const chart = id ? CHART_VIEWS.find((v) => v._viewID === id) : undefined;
-    if (chart?._viewType === 'report') {
-      // TODO - handle legacy reports
-      return;
-    }
     this.chartDefinition = chart as IChartMeta & IClimateView;
+    this.generateChartConfig();
   }
 
   /*****************************************************************************
@@ -79,7 +91,9 @@ export class ClimateChartService {
    ****************************************************************************/
 
   // create chart given columns of data and a particular key to make visible
-  public generateChartConfig(data: IChartSummary[]) {
+  public generateChartConfig() {
+    const data = this.stationData;
+    console.count('Generate chart');
     const definition = this.chartDefinition as IChartMeta & IClimateView;
     // configure major and minor ticks, labels and gridlines
     const ranges = this.calculateDataRanges(data, definition);
@@ -250,7 +264,7 @@ export class ClimateChartService {
   }
 
   // iterate over data and calculate min/max values for xVar and multiple yVars
-  private calculateDataRanges(data: IChartSummary[], definition: IChartMeta) {
+  private calculateDataRanges(data: IStationData[], definition: IChartMeta) {
     let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
     const { xMajor, yMajor } = definition;
     data.forEach((d) => {

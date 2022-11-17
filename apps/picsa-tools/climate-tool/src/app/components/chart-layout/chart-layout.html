@@ -3,13 +3,12 @@
   #lineTool
   [definition]="definition"
   [chartConfig]="chartService.chartConfig"
-  (valueChange)="handleLineToolChange($event)"
 ></climate-line-tool>
 <!-- chart -->
 <picsa-chart
   #picsaChart
   [config]="chartService.chartConfig"
-  [data]="$any(data)"
+  [data]="$any(chartService.stationData)"
 ></picsa-chart>
 <!-- definition -->
 <div class="chart-definition" #chartDefinition>

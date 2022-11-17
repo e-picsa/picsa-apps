@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -24,10 +24,10 @@ export class LineToolComponent {
   public inputType?: 'number' | 'date';
   public datePickerHeader = LineDatePickerHeaderComponent;
 
-  constructor(private climateService: ClimateChartService) {}
+  constructor(private chartService: ClimateChartService) {}
 
   @Input() set chartConfig(chartConfig: IChartConfig) {
-    if (chartConfig.axis?.y) {
+    if (chartConfig?.axis?.y) {
       this.ranges = {
         min: chartConfig.axis?.y?.min || 0,
         max: chartConfig.axis?.y?.max || 0,
@@ -35,7 +35,6 @@ export class LineToolComponent {
     }
     this.value = undefined;
   }
-  @Output() valueChange = new EventEmitter<number | undefined>();
 
   @Input() set definition(definition: IChartMeta) {
     if (definition) {
@@ -58,7 +57,7 @@ export class LineToolComponent {
 
   public setLineToolFromDate(datestring: string) {
     const d = new Date(datestring);
-    const dateDayNumber = this.climateService.convertDateToDayNumber(d);
+    const dateDayNumber = this.chartService.convertDateToDayNumber(d);
     this.value = dateDayNumber;
     return this.setLineToolValue(dateDayNumber);
   }
@@ -68,7 +67,7 @@ export class LineToolComponent {
    * and trigger event emitter to handle line load/unload and chart refresh
    */
   public setLineToolValue(value: number) {
-    if (value < (this.ranges?.min as number)) {
+    if (value <= (this.ranges?.min as number)) {
       this.value = undefined;
     }
     const colours = this.definition?.linetool?.reverse
@@ -78,7 +77,27 @@ export class LineToolComponent {
       if (!this.value) return;
       return d.value >= this.value ? colours[0] : colours[1];
     };
-    this.climateService.getPointColour = pointFormatter;
-    this.valueChange.next(value);
+    this.chartService.getPointColour = pointFormatter;
+    this.updateChart(this.value);
+  }
+
+  /** Load or unload the linetool value as a line on the cchart */
+  private updateChart(value?: number) {
+    const { chart } = this.chartService.chartComponent;
+    if (value) {
+      const lineArray = new Array(this.chartService.stationData.length).fill(
+        value
+      );
+      lineArray.unshift('LineTool');
+      chart.load({
+        columns: [lineArray as any],
+        classes: { LineTool: 'LineTool' },
+      });
+      chart.show('LineTool');
+    } else {
+      chart.unload({
+        ids: ['LineTool'],
+      });
+    }
   }
 }

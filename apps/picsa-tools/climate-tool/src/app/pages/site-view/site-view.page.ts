@@ -87,12 +87,14 @@ export class ClimateSiteViewComponent
     }
   }
 
+  /** Use media queries to handle sidenav */
   private subscribeToLayoutChanges() {
     this.mobileQuery = this.media.matchMedia('(max-width: 768px)');
     this._mobileQueryListener = () => this.cdr.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
+  /** Set chart in climate service by params */
   private subscribeToParamChanges() {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroyed$))

@@ -22,7 +22,6 @@ export class ClimateDataService extends PicsaAsyncService {
   }
 
   public override async init() {
-    console.log('[Climate Data] init');
     const dbData = await this.db.getCollection<IStationMeta>('stationData');
     await this.initialiseHardcodedData(dbData);
   }

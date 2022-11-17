@@ -1,5 +1,11 @@
-import { Component, Input, NgZone, OnChanges, ViewChild } from '@angular/core';
-import { IChartMeta, IChartSummary, IChartConfig } from '@picsa/models';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnChanges,
+  ViewChild,
+} from '@angular/core';
+import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { IClimateView } from '../../models';
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -14,37 +20,26 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   templateUrl: 'chart-layout.html',
   styleUrls: ['chart-layout.scss'],
 })
-export class ClimateChartLayoutComponent implements OnChanges {
+export class ClimateChartLayoutComponent implements OnChanges, AfterViewInit {
   @Input() definition: IChartMeta & IClimateView;
-  @Input() data: IChartSummary[];
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
 
-  y1Values: number[];
+  constructor(public chartService: ClimateChartService) {}
 
-  constructor(
-    private ngZone: NgZone,
-    public chartService: ClimateChartService
-  ) {}
+  ngAfterViewInit() {
+    this.chartService.registerChartComponent(this.picsaChart);
+  }
 
-  public handleLineToolChange(value?: number) {
-    this.ngZone.run(() => {
-      if (!value) {
-        return this.picsaChart.chart.unload({ ids: ['LineTool'] });
-      }
-      const lineArray = Array(this.data.length).fill(value);
-      lineArray.unshift('LineTool');
-      this.picsaChart.chart.load({
-        columns: [lineArray as any],
-        classes: { LineTool: 'LineTool' },
-      });
-      this.picsaChart.chart.show('LineTool');
-    });
+  public get y1Values() {
+    return this.chartService.stationData.map(
+      (v) => v[this.definition.keys[0]] as number
+    );
   }
 
   // use ngOnchanges so that chartMeta can be changed directly from parent and update
   ngOnChanges() {
-    this.chartService.generateChartConfig(this.data);
-    this.y1Values = this.data.map((v) => v[this.definition.keys[0]] as number);
+    console.log('changes');
+    // this.chartService.generateChartConfig();
   }
 }
 

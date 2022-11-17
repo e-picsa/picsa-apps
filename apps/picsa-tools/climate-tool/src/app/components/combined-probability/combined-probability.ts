@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IChartSummary } from '@picsa/models';
+import { IStationData } from '@picsa/models';
 import { ClimateDataService } from '../../services/climate-data.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { ClimateDataService } from '../../services/climate-data.service';
   templateUrl: 'combined-probability.html',
 })
 export class CombinedProbabilityComponent {
-  @Input() data: IChartSummary[];
+  @Input() data: IStationData[];
 
   plantDate: any;
   labels: any;
@@ -67,7 +67,7 @@ export class CombinedProbabilityComponent {
    *****************************************************************************/
   // used by combined probabilty component (not currently in use)
   private calculateCombinedProbability(
-    data?: IChartSummary[],
+    data?: IStationData[],
     conditions: { key: string; value: any; operator: '>=' | '<=' }[] = []
   ) {
     // //conditions are defined in format {key1:valueToTest1, key2:valueToTest2...}
