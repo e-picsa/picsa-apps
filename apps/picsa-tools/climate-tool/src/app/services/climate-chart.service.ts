@@ -35,7 +35,11 @@ export class ClimateChartService {
 
   public chartDefinition?: IChartMeta & IClimateView;
 
-  public chartComponent: PicsaChartComponent;
+  /** Binding for active rendered chart component */
+  public chartComponent?: PicsaChartComponent;
+
+  /** Datapoints of the current rendered chart */
+  public chartSeriesData: number[];
 
   public station?: IStationMeta;
 
@@ -49,6 +53,8 @@ export class ClimateChartService {
 
   /** Track whether print mode has been toggled */
   private isPrintVersion = false;
+
+  private pointRadius = 8;
 
   constructor(
     private translateService: PicsaTranslateService,
@@ -84,14 +90,20 @@ export class ClimateChartService {
     const chart = id ? CHART_VIEWS.find((v) => v._viewID === id) : undefined;
     this.chartDefinition = chart as IChartMeta & IClimateView;
     this.generateChartConfig();
+    this.chartSeriesData = this.stationData.map(
+      (v) => v[this.chartDefinition!.keys[0]] as number
+    );
   }
 
   /*****************************************************************************
    *   Chart Config
    ****************************************************************************/
 
-  // create chart given columns of data and a particular key to make visible
-  public generateChartConfig() {
+  /**
+   * Generate a c3 chart config with series loaded for all station data, and
+   * active definition series displayed
+   */
+  private generateChartConfig() {
     const data = this.stationData;
     console.count('Generate chart');
     const definition = this.chartDefinition as IChartMeta & IClimateView;
@@ -185,7 +197,11 @@ export class ClimateChartService {
         show: false,
       },
       point: {
-        r: (d) => (d.id === 'LineTool' ? 0 : 8),
+        r: (d) => {
+          return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id)
+            ? 0
+            : this.pointRadius;
+        },
         // make it easier to select points when tapping outside
         // TODO - could vary depending on screen size
         sensitivity: 16,
@@ -194,6 +210,31 @@ export class ClimateChartService {
         this.chartRendered$.next();
       },
     };
+  }
+
+  /*****************************************************************************
+   *   Chart additions
+   ****************************************************************************/
+  /**
+   * Add a horizontal line to the chart at a specific value.
+   * NOTE - to remove the points the chart config also needs to be included in hardcoded config
+   */
+  public addFixedLineToChart(value: number, id: string) {
+    const chart = this.chartComponent?.chart;
+    if (!chart) return;
+    if (value) {
+      const lineArray = new Array(this.stationData.length).fill(value);
+      lineArray.unshift(id);
+      chart.load({ columns: [lineArray as any], classes: { id } });
+      chart.show(id);
+    } else {
+      chart.unload({ ids: [id] });
+    }
+  }
+  public removeSeriesFromChart(id: string) {
+    const chart = this.chartComponent?.chart;
+    if (!chart) return;
+    chart.unload({ ids: [id] });
   }
 
   /*****************************************************************************
@@ -233,11 +274,11 @@ export class ClimateChartService {
     // if cache config exists revert back
     if (this.isPrintVersion) {
       this.chartConfig.size = { width: 900, height: 500 };
-      this.chartConfig.point!.r = (d) => (d.id === 'LineTool' ? 0 : 3);
+      this.pointRadius = 3;
       this.chartConfig.title!.text = '';
     } else {
       this.chartConfig.size = undefined;
-      this.chartConfig.point!.r = (d) => (d.id === 'LineTool' ? 0 : 8);
+      this.pointRadius = 8;
       const title = `${this.station?.name} | ${this.chartDefinition!.name}`;
       this.chartConfig.title!.text = title;
     }

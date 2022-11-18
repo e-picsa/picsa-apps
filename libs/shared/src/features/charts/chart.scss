@@ -16,6 +16,12 @@ picsa-chart {
   stroke-width: 3px !important;
   stroke: black !important;
 }
+.c3-line-upperTercile,
+.c3-line-lowerTercile {
+  stroke-width: 3px !important;
+  stroke-dasharray: 6px;
+  stroke: #aa1818 !important;
+}
 
 /*expanded circle fill, outline (stroke) and outline width*/
 .c3-circle._expanded_ {
