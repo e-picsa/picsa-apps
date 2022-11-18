@@ -18,7 +18,11 @@
 <climate-probability-tool
   style="height: 140px"
   [x]="lineTool.value"
-  [values]="y1Values"
+  [values]="chartService.chartSeriesData"
   [chartName]="definition.name"
   [reverseProbabilities]="definition.linetool?.reverse ? true : false"
 ></climate-probability-tool>
+<!-- terciles tool -->
+<climate-terciles-tool
+  [values]="chartService.chartSeriesData"
+></climate-terciles-tool>

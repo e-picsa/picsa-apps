@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { IProbabilities } from '../../models';
+import { IProbabilities } from '../../../models';
 
 @Component({
   selector: 'climate-probability-tool',

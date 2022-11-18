@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnChanges,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { IClimateView } from '../../models';
@@ -20,26 +14,15 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   templateUrl: 'chart-layout.html',
   styleUrls: ['chart-layout.scss'],
 })
-export class ClimateChartLayoutComponent implements OnChanges, AfterViewInit {
+export class ClimateChartLayoutComponent implements AfterViewInit {
   @Input() definition: IChartMeta & IClimateView;
+
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
 
   constructor(public chartService: ClimateChartService) {}
 
   ngAfterViewInit() {
     this.chartService.registerChartComponent(this.picsaChart);
-  }
-
-  public get y1Values() {
-    return this.chartService.stationData.map(
-      (v) => v[this.definition.keys[0]] as number
-    );
-  }
-
-  // use ngOnchanges so that chartMeta can be changed directly from parent and update
-  ngOnChanges() {
-    console.log('changes');
-    // this.chartService.generateChartConfig();
   }
 }
 

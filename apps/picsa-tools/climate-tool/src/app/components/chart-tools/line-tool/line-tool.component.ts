@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
-import { ClimateChartService } from '../../services/climate-chart.service';
+import { ClimateChartService } from '../../../services/climate-chart.service';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
@@ -83,21 +83,11 @@ export class LineToolComponent {
 
   /** Load or unload the linetool value as a line on the cchart */
   private updateChart(value?: number) {
-    const { chart } = this.chartService.chartComponent;
+    const id = 'LineTool';
     if (value) {
-      const lineArray = new Array(this.chartService.stationData.length).fill(
-        value
-      );
-      lineArray.unshift('LineTool');
-      chart.load({
-        columns: [lineArray as any],
-        classes: { LineTool: 'LineTool' },
-      });
-      chart.show('LineTool');
+      this.chartService.addFixedLineToChart(value, id);
     } else {
-      chart.unload({
-        ids: ['LineTool'],
-      });
+      this.chartService.removeSeriesFromChart(id);
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { IStationData } from '@picsa/models';
-import { ClimateDataService } from '../../services/climate-data.service';
+import { ClimateDataService } from '../../../services/climate-data.service';
 
 @Component({
   selector: 'climate-combined-probability',
