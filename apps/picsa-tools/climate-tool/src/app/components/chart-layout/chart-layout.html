@@ -3,6 +3,7 @@
   #lineTool
   [definition]="definition"
   [chartConfig]="chartService.chartConfig"
+  *ngIf="toolService.enabled['line']"
 ></climate-line-tool>
 <!-- chart -->
 <picsa-chart
@@ -16,13 +17,15 @@
 </div>
 <!-- probability tool -->
 <climate-probability-tool
+  *ngIf="toolService.enabled['line']"
   style="height: 140px"
-  [x]="lineTool.value"
+  [x]="$any(toolService.tools['line'].value)"
   [values]="chartService.chartSeriesData"
   [chartName]="definition.name"
   [reverseProbabilities]="definition.linetool?.reverse ? true : false"
 ></climate-probability-tool>
 <!-- terciles tool -->
 <climate-terciles-tool
+  *ngIf="toolService.enabled['terciles']"
   [values]="chartService.chartSeriesData"
 ></climate-terciles-tool>

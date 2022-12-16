@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { PicsaSharedPipesModule } from '@picsa/shared/pipes';
 
 import { PicsaClimateMaterialModule } from './material.module';
 
@@ -15,6 +16,7 @@ import { LineDatePickerHeaderComponent } from './chart-tools/line-tool/line-date
 import { LineToolComponent } from './chart-tools/line-tool/line-tool.component';
 import { ProbabilityToolComponent } from './chart-tools/probability-tool/probability-tool';
 import { TercilesToolComponent } from './chart-tools/terciles-tool/terciles-tool.component';
+import { ToolSelectComponent } from './chart-tools/tool-select/tool-select.component';
 
 import { ClimateChartLayoutComponent } from './chart-layout/chart-layout';
 import { ClimateChartOptionsComponent } from './climate-chart-options/climate-chart-options.component';
@@ -34,6 +36,7 @@ const Components = [
   ProbabilityToolComponent,
   TercilesToolComponent,
   ViewSelectComponent,
+  ToolSelectComponent,
 ];
 
 @NgModule({
@@ -46,6 +49,7 @@ const Components = [
     PicsaCommonComponentsModule,
     PicsaChartsModule,
     PicsaDialogsModule,
+    PicsaSharedPipesModule,
     ReactiveFormsModule,
     RouterModule,
   ],

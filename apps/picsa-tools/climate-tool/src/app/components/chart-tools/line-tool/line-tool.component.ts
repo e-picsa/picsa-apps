@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
 import { ClimateChartService } from '../../../services/climate-chart.service';
+import { ClimateToolService } from '../../../services/climate-tool.service';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
@@ -16,7 +17,7 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
     },
   ],
 })
-export class LineToolComponent {
+export class LineToolComponent implements OnDestroy {
   public value?: number;
   public ranges: { min: number; max: number };
   public step: number;
@@ -24,7 +25,10 @@ export class LineToolComponent {
   public inputType?: 'number' | 'date';
   public datePickerHeader = LineDatePickerHeaderComponent;
 
-  constructor(private chartService: ClimateChartService) {}
+  constructor(
+    private chartService: ClimateChartService,
+    private toolService: ClimateToolService
+  ) {}
 
   @Input() set chartConfig(chartConfig: IChartConfig) {
     if (chartConfig?.axis?.y) {
@@ -48,6 +52,11 @@ export class LineToolComponent {
       }
     }
     this.value = undefined;
+  }
+
+  ngOnDestroy() {
+    // when tool is toggle off also remove from the graph
+    this.setLineToolValue(0);
   }
 
   /** Specify how to format number that appears in slider thumb */
@@ -79,6 +88,8 @@ export class LineToolComponent {
     };
     this.chartService.getPointColour = pointFormatter;
     this.updateChart(this.value);
+    // also inform tool service of value changes so that probability tool can update
+    this.toolService.setValue('line', this.value);
   }
 
   /** Load or unload the linetool value as a line on the cchart */
@@ -87,7 +98,7 @@ export class LineToolComponent {
     if (value) {
       this.chartService.addFixedLineToChart(value, id);
     } else {
-      this.chartService.removeSeriesFromChart(id);
+      this.chartService.removeSeriesFromChart([id]);
     }
   }
 }

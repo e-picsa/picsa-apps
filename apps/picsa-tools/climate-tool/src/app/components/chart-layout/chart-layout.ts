@@ -3,6 +3,7 @@ import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { IClimateView } from '../../models';
 import { ClimateChartService } from '../../services/climate-chart.service';
+import { ClimateToolService } from '../../services/climate-tool.service';
 
 /******************************************************************
  * Component to display highly customised charts for climate data
@@ -19,7 +20,10 @@ export class ClimateChartLayoutComponent implements AfterViewInit {
 
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
 
-  constructor(public chartService: ClimateChartService) {}
+  constructor(
+    public chartService: ClimateChartService,
+    public toolService: ClimateToolService
+  ) {}
 
   ngAfterViewInit() {
     this.chartService.registerChartComponent(this.picsaChart);

@@ -214,7 +214,8 @@ export class ClimateChartService {
 
   /*****************************************************************************
    *   Chart additions
-   ****************************************************************************/
+   ****************************************************************************
+
   /**
    * Add a horizontal line to the chart at a specific value.
    * NOTE - to remove the points the chart config also needs to be included in hardcoded config
@@ -231,10 +232,10 @@ export class ClimateChartService {
       chart.unload({ ids: [id] });
     }
   }
-  public removeSeriesFromChart(id: string) {
+  public removeSeriesFromChart(ids: string[]) {
     const chart = this.chartComponent?.chart;
     if (!chart) return;
-    chart.unload({ ids: [id] });
+    chart.unload({ ids });
   }
 
   /*****************************************************************************

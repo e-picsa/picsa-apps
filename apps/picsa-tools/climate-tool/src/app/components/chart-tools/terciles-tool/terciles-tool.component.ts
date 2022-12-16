@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ClimateChartService } from '../../../services/climate-chart.service';
 
 interface ITercile {
@@ -11,7 +11,7 @@ interface ITercile {
   templateUrl: './terciles-tool.component.html',
   styleUrls: ['./terciles-tool.component.scss'],
 })
-export class TercilesToolComponent {
+export class TercilesToolComponent implements OnDestroy {
   /** Value of current series data displayed */
   @Input() set values(values: number[]) {
     setTimeout(() => {
@@ -20,7 +20,13 @@ export class TercilesToolComponent {
   }
 
   terciles: { upper?: ITercile; lower?: ITercile } = {};
+
   constructor(private chartService: ClimateChartService) {}
+
+  ngOnDestroy() {
+    // when tool is toggle off also remove from the graph
+    this.generateTerciles([]);
+  }
 
   private generateTerciles(values?: number[]) {
     if (values && values.length > 0) {
@@ -30,6 +36,8 @@ export class TercilesToolComponent {
       this.updateChart('upper', Math.round(terciles[1]));
     } else {
       this.terciles = {};
+      this.updateChart('lower', 0);
+      this.updateChart('upper', 0);
     }
   }
   private updateChart(tercile: 'lower' | 'upper', value: number) {
@@ -40,7 +48,7 @@ export class TercilesToolComponent {
         this.terciles[tercile] = { value, labelPosition };
       }, 500);
     } else {
-      this.chartService.removeSeriesFromChart(tercile);
+      this.chartService.removeSeriesFromChart([`${tercile}Tercile`]);
     }
   }
   /**
