@@ -1,77 +1,106 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IChartMeta, IStationMeta } from '@picsa/models';
-import * as DATA from '../../data';
-import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { DomPortal, Portal } from '@angular/cdk/portal';
+import { MediaMatcher } from '@angular/cdk/layout';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { ClimateToolService } from '../../services/climate-tool.service';
-import { IClimateView } from '../../models';
+import { takeUntil } from 'rxjs/operators';
+
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+
+import { ClimateChartService } from '../../services/climate-chart.service';
+import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 
 @Component({
   selector: 'climate-site-view',
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
 })
-export class ClimateSiteViewPage implements OnInit, OnDestroy {
-  destroyed$: Subject<boolean> = new Subject();
-  activeStation: IStationMeta;
-  activeChart: (IChartMeta & IClimateView) | undefined;
-  availableViews = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
+export class ClimateSiteViewComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
+  private destroyed$: Subject<boolean> = new Subject();
+
   activeView: string | undefined;
-  availableCharts: IChartMeta[] = DATA.CHART_TYPES;
+
+  public showRotateAnimation = false;
+  public mobileQuery: MediaQueryList;
+  private _mobileQueryListener: () => void;
+  @ViewChild('headerContent')
+  headerContent: ElementRef<HTMLElement>;
 
   constructor(
+    public chartService: ClimateChartService,
+    private media: MediaMatcher,
+    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router,
-    private climateService: ClimateToolService,
-    private componentsService: PicsaCommonComponentsService
+    private componentsService: PicsaCommonComponentsService,
+    private dialog: MatDialog
   ) {}
-  ngOnInit(): void {
-    // readily subscribe to view changes to avoid flash of site-select page
-    this._subscribeToViewChanges();
-    this.loadSiteData();
+
+  async ngOnInit() {
+    this.subscribeToLayoutChanges();
+    await this.setStationFromParams();
+    this.subscribeToParamChanges();
+    this.promptScreenRotate();
+  }
+  ngAfterViewInit() {
+    this.componentsService.patchHeader({
+      endContent: new DomPortal(this.headerContent),
+    });
   }
   ngOnDestroy() {
     this.destroyed$.next(true);
     this.destroyed$.complete();
+    this.chartService.clearChartData();
+    this.componentsService.patchHeader({ endContent: undefined });
   }
-  async loadSiteData() {
+
+  /** when toggling sidebar also trigger resize event to ensure chart resizes */
+  public handleSidenavChange() {
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+  async showShareDialog() {
+    this.dialog.open(ClimateShareDialogComponent, { disableClose: true });
+  }
+
+  private async setStationFromParams() {
     const siteId = this.route.snapshot.params.siteId;
-    this.activeStation = await this.climateService.loadStation(siteId);
-    if (this.activeStation) {
-      this.componentsService.setHeader({ title: this.activeStation.name });
-    } else {
-      this.componentsService.setHeader({ title: 'Not found' });
+    const stationMeta = await this.chartService.setStation(siteId);
+    const title = stationMeta?.name || `${siteId} no data`;
+    this.componentsService.patchHeader({ title });
+  }
+
+  private promptScreenRotate() {
+    if (window.innerHeight > window.innerWidth) {
+      this.showRotateAnimation = true;
     }
   }
-  changeSite() {
-    this.router.navigate(['../../'], {
-      relativeTo: this.route,
-      replaceUrl: true,
-    });
+
+  /** Use media queries to handle sidenav */
+  private subscribeToLayoutChanges() {
+    this.mobileQuery = this.media.matchMedia('(max-width: 768px)');
+    this._mobileQueryListener = () => this.cdr.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
-  setView(view: string) {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { view: view },
-    });
-    // this.activeChart = view as IChartMeta;
-  }
-
-  private _subscribeToViewChanges() {
+  /** Set chart in climate service by params */
+  private subscribeToParamChanges() {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((params) => {
-        const view = this.availableViews.find(
-          (v) => v._viewID === params.get('view')
-        );
-        this.activeView = view ? view._viewID : undefined;
-        this.activeChart =
-          view && view._viewType === 'chart'
-            ? (view as IChartMeta & IClimateView)
-            : undefined;
+      .subscribe(async (params) => {
+        const viewId = params.get('view');
+        await this.chartService.setChart(viewId || undefined);
       });
   }
 }

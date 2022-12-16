@@ -1,0 +1,15 @@
+:host {
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+#lineToolSlider {
+  flex: 1;
+  padding: 0;
+}
+.lineToolInputField {
+  width: 100%;
+  text-align: center;
+  height: 64px;
+}

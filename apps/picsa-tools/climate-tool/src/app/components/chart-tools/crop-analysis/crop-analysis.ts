@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ICropRequirement } from '@picsa/models';
-import * as DATA from '../../data';
+import * as DATA from '../../../data';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({

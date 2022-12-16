@@ -1,22 +1,22 @@
-<h2>{{ 'Select a chart' | translate }}</h2>
-<div style="display: flex; flex-wrap: wrap">
+<div class="chart-select-container">
   <mat-card
     *ngFor="let chart of availableCharts"
     class="mat-elevation-z8 chart-card"
-    (click)="setView(chart._viewID)"
+    [attr.data-id]="chart._viewID"
+    [attr.data-active]=""
+    [routerLink]="[]"
+    [queryParams]="{view:chart._viewID}"
+    routerLinkActive="chart-active"
+    [routerLinkActiveOptions]="routerLinkActiveOptions"
+    [replaceUrl]="true"
   >
-    <mat-card-title class="chart-name" [attr.data-id]="chart._viewID">
-      {{ chart.name | translate }}
-    </mat-card-title>
-    <mat-card-content style="display: flex">
-      <div>
-        <img src="{{ chart.image }}" class="chart-image" />
-      </div>
-      <div class="chart-definition">{{ chart.definition | translate }}</div>
-    </mat-card-content>
+    <div class="chart-name">{{ chart.shortname | translate }}</div>
+    <div class="chart-image-container">
+      <img src="{{ chart.image }}" class="chart-image" />
+    </div>
   </mat-card>
 </div>
-<h2 *ngIf="availableReports.length>0">{{ 'Or a report' | translate }}</h2>
+<!-- <h2 *ngIf="availableReports.length>0">{{ 'Or a report' | translate }}</h2>
 <div style="display: flex; flex-wrap: wrap">
   <mat-card
     *ngFor="let report of availableReports"
@@ -30,7 +30,6 @@
       <div>
         <img src="{{ report.image }}" class="chart-image" />
       </div>
-      <div class="chart-definition">{{ report.description | translate }}</div>
     </mat-card-content>
   </mat-card>
-</div>
+</div> -->

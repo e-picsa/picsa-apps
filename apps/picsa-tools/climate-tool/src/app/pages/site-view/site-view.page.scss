@@ -31,3 +31,18 @@
 .chart-thumb-card.active {
   transform: scale(1.05);
 }
+.sidenav-buttons {
+  margin-bottom: -2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+mat-sidenav-content.page-content {
+  display: flex;
+  flex-direction: column;
+}
+mat-sidenav-container {
+  margin-top: 0 !important;
+}

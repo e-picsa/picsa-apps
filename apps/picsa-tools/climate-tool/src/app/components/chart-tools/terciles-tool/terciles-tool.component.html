@@ -1,0 +1,16 @@
+<div
+  *ngIf="terciles.lower as tercile"
+  class="label"
+  id="lowerTercile"
+  [ngStyle]="{ left: tercile.labelPosition.x, top: tercile.labelPosition.y }"
+>
+  Lower = {{ tercile.value }}
+</div>
+<div
+  *ngIf="terciles.upper as tercile"
+  class="label"
+  id="upperTercile"
+  [ngStyle]="{ left: tercile.labelPosition.x, top: tercile.labelPosition.y }"
+>
+  Upper = {{ tercile.value }}
+</div>

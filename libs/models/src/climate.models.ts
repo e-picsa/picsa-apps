@@ -35,17 +35,18 @@ export interface IChartSummary_V2 {
   Rainfall: number;
 }
 // merged old and new formats for use when not sure type
-export type IChartSummary = IChartSummary_V1 & IChartSummary_V2;
+export type IStationData = IChartSummary_V1 & IChartSummary_V2;
 
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
 export interface IChartMeta {
   name: string;
+  shortname: string;
   image: string;
-  keys: (keyof IChartSummary)[];
+  keys: (keyof IStationData)[];
   yFormat: 'value' | 'date' | 'date-from-July';
   yLabel: string;
-  xVar: keyof IChartSummary;
+  xVar: keyof IStationData;
   xLabel: string;
   tools: { line: boolean };
   units: string;
@@ -54,4 +55,7 @@ export interface IChartMeta {
   xMajor: number;
   yMinor: number;
   yMajor: number;
+  linetool?: {
+    reverse?: boolean;
+  };
 }

@@ -320,6 +320,7 @@ export class BudgetStore implements OnDestroy {
   public async shareAsImage() {
     return this.printPrvdr.shareHtmlDom(
       '#budget',
+      this.activeBudget.meta.title,
       this.activeBudget.meta.title
     );
   }

@@ -435,20 +435,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/material@npm:14.0.2":
-  version: 14.0.2
-  resolution: "@angular/material@npm:14.0.2"
+"@angular/material@npm:14.2.7":
+  version: 14.2.7
+  resolution: "@angular/material@npm:14.2.7"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
     "@angular/animations": ^14.0.0 || ^15.0.0
-    "@angular/cdk": 14.0.2
+    "@angular/cdk": 14.2.7
     "@angular/common": ^14.0.0 || ^15.0.0
     "@angular/core": ^14.0.0 || ^15.0.0
     "@angular/forms": ^14.0.0 || ^15.0.0
     "@angular/platform-browser": ^14.0.0 || ^15.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 6279141d2b6c67cc500986181894b3aec7643468f61ad6deb082584912e80ba87f42c3a5a82d9048e63e2c0aedc981e572f450c355408e3430d546b9edd2748f
+  checksum: 078e944fb852b7d727a879c7fb5a9914f12447dbb4686444405565ea4aa40b076a60624c9bf2b3d9bc568ac6a50026b8a5ca614494253328421f8d14adb4afde
   languageName: node
   linkType: hard
 
@@ -8292,6 +8292,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:^2.29.3":
+  version: 2.29.3
+  resolution: "date-fns@npm:2.29.3"
+  checksum: e01cf5b62af04e05dfff921bb9c9933310ed0e1ae9a81eb8653452e64dc841acf7f6e01e1a5ae5644d0337e9a7f936175fd2cb6819dc122fdd9c5e86c56be484
+  languageName: node
+  linkType: hard
+
 "dayjs@npm:^1.10.4":
   version: 1.11.2
   resolution: "dayjs@npm:1.11.2"
@@ -14303,7 +14310,7 @@ __metadata:
     "@angular/fire": ^7.3.0
     "@angular/forms": 14.0.2
     "@angular/language-service": 14.0.2
-    "@angular/material": 14.0.2
+    "@angular/material": 14.2.7
     "@angular/platform-browser": 14.0.2
     "@angular/platform-browser-dynamic": 14.0.2
     "@angular/router": 14.0.2
@@ -14360,6 +14367,7 @@ __metadata:
     cordova-plugin-file-opener2: ^3.0.5
     cordova-plugin-x-socialsharing: ^6.0.4
     cypress: ^9.1.0
+    date-fns: ^2.29.3
     deepmerge: ^4.2.2
     dexie: ^3.2.2
     dotenv: ^16.0.1

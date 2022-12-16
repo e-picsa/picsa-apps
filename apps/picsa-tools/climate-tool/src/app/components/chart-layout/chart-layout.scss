@@ -1,0 +1,36 @@
+:host {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  // fit the chart to aline line-tool with chart, description underneat and probability tools
+  grid-template-areas:
+    'line chart'
+    'blank  desc'
+    'prob prob';
+  // ensure the chart fits a minimum of 400px, with a target height of 60vh
+  grid-template-rows: minmax(400px, 60vh) auto auto;
+}
+
+climate-line-tool {
+  grid-area: line;
+  // offset chart title/dates with padding to line up
+  padding-top: 29px;
+  padding-bottom: 17px;
+}
+
+picsa-chart {
+  grid-area: chart;
+  margin-right: 3rem;
+  overflow: auto;
+  min-width: 500px;
+}
+
+.chart-definition {
+  grid-area: desc;
+  font-size: small;
+  font-style: italic;
+  margin: 1rem 2rem;
+  text-align: center;
+}
+climate-probability-tool {
+  grid-area: prob;
+}

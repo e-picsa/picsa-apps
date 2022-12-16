@@ -1,0 +1,11 @@
+<div class="tool-select-container">
+  <mat-card
+    class="tool-card"
+    *ngFor="let tool of toolService.tools | objectValues"
+    [attr.data-enabled]="toolService.enabled[tool.name] || null"
+    (click)="toolService.toggleEnabled(tool.name)"
+  >
+    <div class="tool-label">{{ tool.label }}</div>
+    <img class="tool-image" [src]="tool.icon" />
+  </mat-card>
+</div>

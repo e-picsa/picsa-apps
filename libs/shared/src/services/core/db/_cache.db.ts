@@ -24,7 +24,7 @@ export class DBCacheService implements AbstractDBService {
     // if no data will throw error
     try {
       const collection = await db.table<T>(endpoint).toArray();
-      console.log(endpoint, collection);
+      // console.log(endpoint, collection);
       return collection;
     } catch (error) {
       return [];

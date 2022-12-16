@@ -1,38 +1,86 @@
-<div class="chart-select-container">
-  <div *ngIf="activeView" style="padding: 8px">
-    <mat-card
-      class="chart-thumb-card"
-      *ngFor="let view of availableViews"
-      (click)="setView(view._viewID)"
-      [class.active]="view._viewID === activeView"
-    >
-      <img
-        src="{{ view.image }}"
-        class="chart-thumb-img"
-        [class.active]="view._viewID === activeView"
-      />
-    </mat-card>
-  </div>
+<div #headerContent>
+  <button *ngIf="!mobileQuery.matches" mat-button (click)="showShareDialog()">
+    <mat-icon>share</mat-icon>{{ 'Share' | translate }}
+  </button>
+  <button mat-button #optionsToggleButton (click)="snav.toggle()">
+    <span style="margin-right: 8px">
+      <span *ngIf="snav.opened">{{'Hide Tool Options' | translate}}</span>
+      <span *ngIf="!snav.opened">{{'Show Tool Options' | translate}}</span>
+    </span>
+    <mat-icon>menu</mat-icon>
+  </button>
 </div>
 
-<!-- content -->
+<climate-print-layout
+  *ngIf="chartService.chartPng"
+  [chartPng]="chartService.chartPng"
+></climate-print-layout>
+
 <div class="page-content">
-  <div style="margin-top: 2.5rem" *ngIf="activeChart"></div>
-  <climate-view-select
-    (onViewSelected)="setView($event)"
-    *ngIf="!activeView"
-  ></climate-view-select>
-  <!-- charts -->
-  <div *ngIf="activeChart && activeStation" style="flex: 1">
-    <climate-chart
-      [chartMeta]="activeChart"
-      [chartData]="$any(activeStation.summaries)"
-      [stationMeta]="activeStation"
-    ></climate-chart>
-  </div>
-  <!-- reports -->
-  <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
-    <climate-crop-analysis></climate-crop-analysis>
-  </div>
-  <!-- <combined-probability></combined-probability> -->
+  <mat-sidenav-container
+    style="flex: 1"
+    [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
+  >
+    <!-- Options sidebar -->
+    <!-- TODO - could be refactored to inject directly into app container instead of page -->
+    <mat-sidenav
+      #snav
+      [mode]="mobileQuery.matches ? 'over' : 'side'"
+      [fixedInViewport]="mobileQuery.matches"
+      position="end"
+      style="width: 300px"
+      [opened]="true"
+      [fixedTopGap]="0"
+      (openedChange)="handleSidenavChange()"
+      (swipeRight)="snav.toggle()"
+    >
+      <div class="sidenav-buttons">
+        <button
+          *ngIf="mobileQuery.matches"
+          mat-icon-button
+          color="primary"
+          (click)="snav.toggle()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        <button
+          *ngIf="mobileQuery.matches"
+          mat-button
+          color="primary"
+          (click)="showShareDialog()"
+        >
+          <mat-icon>share</mat-icon>{{ 'Share' | translate }}
+        </button>
+      </div>
+
+      <climate-chart-options style="padding: 8px"></climate-chart-options>
+    </mat-sidenav>
+    <!-- Main content -->
+    <mat-sidenav-content>
+      <div
+        class="page-content"
+        style="height: calc(100vh - 120px); overflow: auto"
+      >
+        <climate-chart-layout
+          *ngIf="chartService.chartDefinition && chartService.station"
+          style="flex: 1"
+          [definition]="chartService.chartDefinition"
+        ></climate-chart-layout>
+      </div>
+
+      <!-- reports -->
+      <!-- <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
+        <climate-crop-analysis></climate-crop-analysis>
+      </div> -->
+      <!-- <climate-combined-probability></climate-combined-probability> -->
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
+
+<picsa-animation
+  name="rotate-phone"
+  *ngIf="showRotateAnimation"
+  [loops]="2"
+  position="float"
+  [delay]="2000"
+></picsa-animation>

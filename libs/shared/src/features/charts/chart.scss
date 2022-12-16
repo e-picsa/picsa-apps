@@ -1,10 +1,12 @@
 @import '~c3/c3.min';
+// use component selector name as not encapsulated
+picsa-chart {
+  display: block;
+}
 
-#chart {
-  height: calc(100% - 220px);
-  width: calc(100% - 20px);
-  min-height: 320px;
-  min-width: 800px;
+.chart-container {
+  height: 100%;
+  width: 100%;
 }
 
 .c3-line {
@@ -13,6 +15,12 @@
 .c3-line-LineTool {
   stroke-width: 3px !important;
   stroke: black !important;
+}
+.c3-line-upperTercile,
+.c3-line-lowerTercile {
+  stroke-width: 3px !important;
+  stroke-dasharray: 6px;
+  stroke: #aa1818 !important;
 }
 
 /*expanded circle fill, outline (stroke) and outline width*/

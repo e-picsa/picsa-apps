@@ -1,0 +1,15 @@
+// Line colour as set in libs/shared/src/features/charts/chart.scss
+$chartTercileColor: #aa1818;
+
+:host {
+  display: contents;
+}
+.label {
+  position: fixed;
+  padding: 5px;
+  border: 2px solid $chartTercileColor;
+  background: white;
+  z-index: 2;
+  font-size: 16px;
+  color: black;
+}

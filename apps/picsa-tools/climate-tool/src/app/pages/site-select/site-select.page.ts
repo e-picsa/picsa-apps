@@ -1,5 +1,5 @@
-import { Component, ViewChild, NgZone, ChangeDetectorRef } from '@angular/core';
-import { HARDCODED_STATIONS } from '@picsa/climate/src/app/data';
+import { Component, ViewChild, NgZone } from '@angular/core';
+import { HARDCODED_STATIONS } from '../../data';
 import { IStationMeta } from '@picsa/models';
 import {
   PicsaMapComponent,
@@ -78,6 +78,9 @@ export class SiteSelectPage {
     // navigate
     this.router.navigate(['./', 'site', site._key], {
       relativeTo: this.route,
+      queryParams: {
+        view: 'rainfall',
+      },
     });
   }
 
@@ -94,7 +97,7 @@ export class SiteSelectPage {
         (station) => station.countryCode === localisation.country.code
       );
     }
-    let markers: IMapMarker[] = stations.map((s) => {
+    const markers: IMapMarker[] = stations.map((s) => {
       return {
         iconUrl,
         latlng: [s.latitude, s.longitude],

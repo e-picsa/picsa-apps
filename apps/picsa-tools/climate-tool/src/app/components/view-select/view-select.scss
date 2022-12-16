@@ -1,38 +1,68 @@
-@import '../../../styles.scss';
-.chart-card {
-  margin: 10px;
-  max-width: 340px;
-  width: 100%;
-  cursor: pointer;
-}
-mat-card.chart-card {
-  padding: 0;
+$chart-Rainfall: #377eb8;
+$chart-Length: #4daf4a;
+$chart-Start: #e41a1c;
+$chart-End: #984ea3;
+
+.chart-image-container {
+  background: white;
+  padding: 4px;
 }
 .chart-image {
-  padding: 10px;
-  height: 100px;
-  width: 100px;
+  height: 50px;
+  width: 50px;
 }
-.chart-definition {
-  text-align: left;
-  padding: 10px;
-}
+
 .chart-name {
-  text-align: center;
   font-weight: bold;
-  padding: 5px;
+  padding: 4px;
+}
+.chart-select-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+mat-card.chart-card {
+  padding: 0;
+  border-width: 2px;
+  border-style: solid;
+  width: 100%;
+  max-width: 80px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: none;
+}
+.chart-card.chart-active {
   color: white;
-  background: var(--color-black);
+  box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%),
+    0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+  &[data-id='rainfall'] {
+    background: $chart-Rainfall;
+  }
+  &[data-id='end'] {
+    background: $chart-End;
+  }
+  &[data-id='length'] {
+    background: $chart-Length;
+  }
+  &[data-id='start'] {
+    background: $chart-Start;
+  }
 }
-.chart-name[data-id='rainfall'] {
-  background: $chart-Rainfall;
+
+[data-id='rainfall'] {
+  color: $chart-Rainfall;
+  border-color: $chart-Rainfall;
 }
-.chart-name[data-id='end'] {
-  background: $chart-End;
+[data-id='end'] {
+  color: $chart-End;
+  border-color: $chart-End;
 }
-.chart-name[data-id='length'] {
-  background: $chart-Length;
+[data-id='length'] {
+  color: $chart-Length;
+  border-color: $chart-Length;
 }
-.chart-name[data-id='start'] {
-  background: $chart-Start;
+[data-id='start'] {
+  color: $chart-Start;
+  border-color: $chart-Start;
 }
