@@ -5,6 +5,7 @@ type IToolName = 'line' | 'terciles';
 interface IClimateTool {
   name: IToolName;
   label: string;
+  icon: string;
   /** Optionally shared value if required by other tools */
   value?: any;
 }
@@ -13,11 +14,13 @@ const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
   line: {
     name: 'line',
     label: 'Line',
+    icon: 'assets/climate-tools/line-tool.svg',
     value: 0,
   },
   terciles: {
     name: 'terciles',
     label: 'Terciles',
+    icon: 'assets/climate-tools/tercile-tool.svg',
   },
 };
 

@@ -1,0 +1,25 @@
+.tool-select-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+mat-card.tool-card {
+  padding: 0;
+  border-width: 2px;
+  border-style: solid;
+  width: 100%;
+  max-width: 80px;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: none;
+  opacity: 0.5;
+}
+mat-card.tool-card[data-enabled='true'] {
+  opacity: 1;
+}
+
+.tool-image {
+  height: 60px;
+  width: 60px;
+}
