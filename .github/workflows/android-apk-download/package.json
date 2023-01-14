@@ -1,0 +1,30 @@
+{
+  "name": "google-play-apk",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Download a published apk from google play",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "ncc build src/main.ts -m -o lib/",
+    "test": "jest"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup"
+  ],
+  "author": "r0adkll",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@googleapis/androidpublisher": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.16",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "@vercel/ncc": "^0.34.0",
+    "eslint": "^8.23.0",
+    "typescript": "^4.8.3"
+  }
+}

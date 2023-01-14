@@ -1,0 +1,22 @@
+name: 'Download Universal APK from Google Play'
+description: 'An action to download the created universal apk following upload to Google Play Developer Console'
+author: 'chrismclarke'
+inputs:
+  serviceAccountJson:
+    description: 'The service account json private key file to authorize the upload request'
+    required: false
+  serviceAccountJsonPlainText:
+    description: 'The raw json text of the service account private key to authorize the upload request'
+    required: false
+  packageName:
+    description: 'The package name, or Application Id, of the app you are uploading'
+    required: true
+  versionCode:
+    description: 'The application version code (number) of the apk to be exported'
+    required: true
+outputs:
+  apkFile:
+    description: 'Exported apk file'
+runs:
+  using: 'node16'
+  main: 'lib/index.js'
