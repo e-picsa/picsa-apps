@@ -11,7 +11,10 @@
     "build": "nx run picsa-apps-extension-app-native:build",
     "test": "nx test",
     "cache:clear": "nx reset",
-    "version": "ts-node ./tools/workflows/version.ts"
+    "version": "ts-node ./tools/workflows/version.ts",
+    "webdocs:dev": "next dev",
+    "webdocs:build": "next build",
+    "webdocs:start": "next start"
   },
   "private": true,
   "dependencies": {
@@ -67,12 +70,17 @@
     "lottie-web": "^5.9.6",
     "mobx": "^6.6.1",
     "mobx-angular": "^4.6.0",
+    "next": "^13.1.5",
+    "nextra": "^2.2.13",
+    "nextra-theme-docs": "^2.2.13",
     "ng2-canvas-whiteboard": "^4.0.2",
     "ngx-file-drop": "13.0.0",
     "ngx-lottie": "^9.1.0",
     "ngx-youtube-player": "^12.0.1",
     "papaparse": "^5.3.2",
     "parse": "3.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rxjs": "~7.5.5",
     "save-svg-as-png": "^1.4.17",
     "sharp": "^0.30.7",
@@ -141,5 +149,8 @@
     "ts-node": "10.8.1",
     "typescript": "4.7.4"
   },
-  "packageManager": "yarn@3.2.1"
+  "packageManager": "yarn@3.2.1",
+  "engines": {
+    "node": ">=16.x <=18.x"
+  }
 }
