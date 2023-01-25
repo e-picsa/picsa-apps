@@ -1,0 +1,24 @@
+{
+    "index": "Introduction",
+    "start": "Getting Started",
+    "structure":"Folder Structure",
+    "applications": "Applications",
+    "design": "Design Manual",
+    "manual": "Development Manual",
+    "testing": "Device Testing",
+    "bundling": "Bundling the Applications",
+    "updating": "Updating Packages",
+    "troubleshooting": "Troubleshooting",
+    "discussions": {
+        "title": "Discussions",
+        "type": "page",
+        "href": "https://picsa.app",
+        "newWindow": true
+    },
+    "contact": {
+        "title": "Contact ↗",
+        "type": "page",
+        "href": "https://picsa.app",
+        "newWindow": true
+    }
+}
