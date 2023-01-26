@@ -4,10 +4,10 @@ import {
   IBudgetCardType,
 } from '../../../models/budget-tool.models';
 import {
-  MatLegacyDialogRef as MatDialogRef,
-  MatLegacyDialog as MatDialog,
-  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-} from '@angular/material/legacy-dialog';
+  MatDialogRef,
+  MatDialog,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 import { BudgetStore } from '../../../store/budget.store';
 import { toJS } from 'mobx';

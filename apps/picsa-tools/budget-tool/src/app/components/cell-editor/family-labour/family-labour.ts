@@ -6,7 +6,7 @@ import {
   ViewChildren,
   QueryList,
 } from '@angular/core';
-import { MatLegacyInput as MatInput } from '@angular/material/legacy-input';
+import { MatInput } from '@angular/material/input';
 import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 
 const FAMILY_MEMBERS = [

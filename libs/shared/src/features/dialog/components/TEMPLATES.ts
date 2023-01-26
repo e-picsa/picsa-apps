@@ -1,5 +1,5 @@
 import { IPicsaDialogData, IPicsaDialogConfig } from '../dialog.models';
-import { MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { TemplateRef } from '@angular/core';
 import {
   PicsaActionDialog,

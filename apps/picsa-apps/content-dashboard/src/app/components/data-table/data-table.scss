@@ -1,6 +1,6 @@
 // use deep selectors for generated content
-::ng-deep th.mat-header-cell,
-::ng-deep td.mat-cell {
+::ng-deep th.mat-mdc-header-cell,
+::ng-deep td.mat-mdc-cell {
   padding-right: 20px !important;
 }
 // or class selectors for added classes

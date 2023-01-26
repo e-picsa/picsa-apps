@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 const Modules = [MatButtonModule, MatCardModule];
 @NgModule({

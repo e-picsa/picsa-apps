@@ -25,12 +25,12 @@ import {
   `,
   styles: [
     `
-      .breadcrumbs-container {
-        padding: 0 1rem;
-        display: flex;
-        flex-wrap: wrap;
-      }
-    `,
+           .breadcrumbs-container {
+             padding: 0 1rem;
+             display: flex;
+             flex-wrap: wrap;
+           }
+         `,
   ],
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { PortalModule } from '@angular/cdk/portal';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ConfigurationSelectDialog } from './configuration-select-dialog';
 import { ConfigurationService } from '@picsa/configuration/src';
 

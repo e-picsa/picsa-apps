@@ -4,7 +4,7 @@ import { BudgetStore } from '../../store/budget.store';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { BudgetImportDialogComponent } from '../../components/import-dialog/import-dialog.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'budget-home',
   templateUrl: './budget-home.page.html',

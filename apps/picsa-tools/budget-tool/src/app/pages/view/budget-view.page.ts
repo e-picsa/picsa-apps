@@ -10,7 +10,7 @@ import {
 } from '@picsa/shared/animations';
 import { Subject, takeUntil } from 'rxjs';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 
 @Component({

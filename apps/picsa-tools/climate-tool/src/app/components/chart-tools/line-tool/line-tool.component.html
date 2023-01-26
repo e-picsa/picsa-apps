@@ -1,15 +1,15 @@
+<!-- TODO: The 'vertical' property no longer exists -->
 <mat-slider
   *ngIf="ranges"
   [min]="ranges.min"
   [max]="ranges.max"
   [step]="step"
-  vertical
   thumbLabel
   [displayWith]="formatThumbValue"
   id="lineToolSlider"
   [(ngModel)]="value"
   (ngModelChange)="setLineToolValue($event)"
-></mat-slider>
+><input matSliderThumb /></mat-slider>
 <mat-form-field class="lineToolInputField" *ngIf="inputType === 'number'">
   <input
     matInput

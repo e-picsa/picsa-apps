@@ -27,44 +27,44 @@ import { DeepLinksService } from './deep-links.service';
   `,
   styles: [
     `
-      .picsa-app-icon {
-        background: #8a2644;
-        border-radius: 10px;
-        color: white;
-        padding: 4px;
-        line-height: 48px;
-        height: 48px;
-        width: 48px;
-        text-align: center;
-        font-size: 16px;
-      }
-      .open-option {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-      h3 {
-        flex: 1;
-        text-align: left;
-        margin-left: 1rem;
-      }
-      a {
-        text-decoration: none;
-        color: unset;
-      }
-      button {
-        width: 90px;
-      }
-      .open-icon {
-        font-size: 48px;
-        height: 48px;
-        width: 48px;
-        padding: 4px;
-      }
-      .spacer {
-        height: 1rem;
-      }
-    `,
+           .picsa-app-icon {
+             background: #8a2644;
+             border-radius: 10px;
+             color: white;
+             padding: 4px;
+             line-height: 48px;
+             height: 48px;
+             width: 48px;
+             text-align: center;
+             font-size: 16px;
+           }
+           .open-option {
+             display: flex;
+             align-items: center;
+             margin-bottom: 1rem;
+           }
+           h3 {
+             flex: 1;
+             text-align: left;
+             margin-left: 1rem;
+           }
+           a {
+             text-decoration: none;
+             color: unset;
+           }
+           button {
+             width: 90px;
+           }
+           .open-icon {
+             font-size: 48px;
+             height: 48px;
+             width: 48px;
+             padding: 4px;
+           }
+           .spacer {
+             height: 1rem;
+           }
+         `,
   ],
 })
 export class AppOpenPromptComponent {

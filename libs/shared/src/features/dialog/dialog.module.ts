@@ -4,11 +4,11 @@ import {
   PicsaActionDialog,
   PicsaSelectDialog,
 } from './components/dialog';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { PicsaDialogService } from './dialog.service';
 import { PicsaLoadingModule } from '../loading';
 import { CommonModule } from '@angular/common';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatButtonModule } from '@angular/material/button';
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatIconModule } from '@angular/material/icon';
 
