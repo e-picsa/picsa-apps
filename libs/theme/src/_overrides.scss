@@ -1,0 +1,22 @@
+$fontFamily: Roboto, 'Helvetica Neue', sans-serif;
+
+// Revert changes appliec md14 -> md15
+button.mdc-button {
+  font-size: 14px;
+  font-weight: 500;
+  font-family: $fontFamily;
+}
+button.mat-mdc-button > .mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+/*******************************************************************
+      Inputs
+******************************************************************/
+// TODO - check
+.mat-input-element.input-editable {
+  font-size: 30px;
+  color: var(--color-primary);
+}
