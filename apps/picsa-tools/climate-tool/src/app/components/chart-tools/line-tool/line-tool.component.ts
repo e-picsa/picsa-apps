@@ -2,14 +2,17 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
 import { ClimateChartService } from '../../../services/climate-chart.service';
-import { ClimateToolService } from '../../../services/climate-tool.service';
+import {
+  calcPercentile,
+  ClimateToolService,
+} from '../../../services/climate-tool.service';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
 @Component({
   selector: 'climate-line-tool',
   templateUrl: './line-tool.component.html',
-  styleUrls: ['./line-tool.component.scss'],
+  styleUrls: ['./line-tool.component.scss', './vertical-slider.scss'],
   providers: [
     {
       provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
@@ -37,37 +40,39 @@ export class LineToolComponent implements OnDestroy {
         max: chartConfig.axis?.y?.max || 0,
       };
     }
-    this.value = undefined;
+    if (chartConfig) {
+      this.setDefaultLineValue();
+    }
   }
 
   @Input() set definition(definition: IChartMeta) {
+    console.log('set definition', definition);
     if (definition) {
       this.step = definition.yMinor;
       if (definition.yFormat === 'value') {
         this.inputType = 'number';
-        this.formatThumbValue = (v) => v;
+        this.formatThumbValue = (v) => `${v}`;
       } else {
         this.inputType = 'date';
         this.formatThumbValue = () => '';
       }
+      this.setDefaultLineValue();
     }
-    this.value = undefined;
   }
 
   ngOnDestroy() {
     // when tool is toggle off also remove from the graph
-    this.setLineToolValue(0);
+    this.updateChartPointColours(undefined);
   }
 
   /** Specify how to format number that appears in slider thumb */
-  public formatThumbValue(v: number): string | number {
+  public formatThumbValue(v: number): string {
     return '';
   }
 
   public setLineToolFromDate(datestring: string) {
     const d = new Date(datestring);
     const dateDayNumber = this.chartService.convertDateToDayNumber(d);
-    this.value = dateDayNumber;
     return this.setLineToolValue(dateDayNumber);
   }
 
@@ -76,20 +81,37 @@ export class LineToolComponent implements OnDestroy {
    * and trigger event emitter to handle line load/unload and chart refresh
    */
   public setLineToolValue(value: number) {
+    // disable line tool if slider brought to base
     if (value <= (this.ranges?.min as number)) {
-      this.value = undefined;
+      value = undefined as any;
+      // return setTimeout(() => {
+      //   this.toolService.enabled.line = false;
+      // }, 750);
     }
+    this.value = value;
+    this.updateChartPointColours(value);
+    // also inform tool service of value changes so that probability tool can update
+    return this.toolService.setValue('line', value);
+  }
+
+  private updateChartPointColours(value: number | undefined) {
     const colours = this.definition?.linetool?.reverse
       ? ['#BF7720', '#739B65']
       : ['#739B65', '#BF7720'];
     const pointFormatter = (d: { value: number }) => {
-      if (!this.value) return;
-      return d.value >= this.value ? colours[0] : colours[1];
+      if (!value) return;
+      return d.value >= value ? colours[0] : colours[1];
     };
     this.chartService.getPointColour = pointFormatter;
-    this.updateChart(this.value);
-    // also inform tool service of value changes so that probability tool can update
-    this.toolService.setValue('line', this.value);
+    this.updateChart(value);
+  }
+
+  private setDefaultLineValue() {
+    // if no initial value provided calculate median and plot
+    const median = calcPercentile(this.chartService.chartSeriesData, 0.5);
+    const rounded = Math.round(median / this.step) * this.step;
+    this.value = rounded;
+    this.setLineToolValue(rounded);
   }
 
   /** Load or unload the linetool value as a line on the cchart */
