@@ -1,5 +1,5 @@
 import { IPicsaLoaders } from '../loading/loading';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 
 export interface IPicsaDialogButtons {
   text?: string;

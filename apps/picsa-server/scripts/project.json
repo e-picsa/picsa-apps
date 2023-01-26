@@ -1,4 +1,5 @@
 {
+  "name": "picsa-server-scripts",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "apps/picsa-server/scripts",
@@ -19,7 +20,7 @@
           "target": "build"
         }
       ],
-      "outputs": ["apps/picsa-server/docker/cloud-functions"],
+      "outputs": ["{workspaceRoot}/apps/picsa-server/docker/cloud-functions"],
       "options": {
         "commands": ["ts-node apps/picsa-server/scripts/docker-prepare.ts"]
       }

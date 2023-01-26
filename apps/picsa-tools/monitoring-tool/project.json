@@ -1,4 +1,5 @@
 {
+  "name": "picsa-tools-monitoring-tool",
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/monitoring-tool/src",
   "prefix": "picsa",
@@ -85,7 +86,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/picsa-tools/monitoring-tool"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/monitoring-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts",
         "passWithNoTests": true

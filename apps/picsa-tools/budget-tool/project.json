@@ -1,4 +1,5 @@
 {
+  "name": "picsa-tools-budget-tool",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/budget-tool/src",
@@ -81,7 +82,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/picsa-tools/budget-tool"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/budget-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/budget-tool/jest.config.ts",
         "passWithNoTests": true

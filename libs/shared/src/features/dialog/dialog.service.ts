@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
 import { IPicsaDialogData, IPicsaDialogConfig } from './dialog.models';
 
