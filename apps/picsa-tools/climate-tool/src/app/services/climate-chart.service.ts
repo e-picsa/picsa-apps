@@ -300,7 +300,7 @@ export class ClimateChartService {
   public convertDateToDayNumber(d: Date) {
     const dayNumber = getDayOfYear(d);
     if (this.chartDefinition?.yFormat === 'date-from-July') {
-      return dayNumber - 183;
+      return dayNumber > 183 ? dayNumber - 183 : dayNumber + 183;
     }
     return dayNumber;
   }
