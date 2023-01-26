@@ -9,7 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'back-button',
   template: `
-    <button *ngIf="showButton" mat-button (click)="back()">
+    <button *ngIf="showButton" mat-button (click)="back()" color="white">
       <mat-icon>arrow_back</mat-icon>Back
     </button>
   `,
