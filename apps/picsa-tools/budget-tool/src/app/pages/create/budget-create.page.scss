@@ -29,21 +29,3 @@ textarea {
   height: 100%;
   min-width: 100px;
 }
-
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-mat-select.select--hidden {
-  height: 0;
-  /* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-  :host-context(.mat-select-value) {
-    color: blue !important;
-  }
-}
-
-.mat-mdc-selected {
-  color: green !important;
-}
-
-button.button--next[disabled] {
-  background: white;
-}
