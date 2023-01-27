@@ -15,19 +15,14 @@ jobs:
   web_release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
         with:
-          node-version: 16.x
-      - name: Cache node modules
-        uses: actions/cache@v2
+          lfs: true
+      - uses: actions/setup-node@v3
         with:
-          path: ./.yarn/cache
-          # If cachebusting required (e.g. breaking yarn changes on update) change `v1` to another number
-          key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-v1-
-      - run: yarn install
+          node-version: '18'
+          cache: 'yarn'
+      - run: yarn install --immutable
       - run: yarn nx run picsa-apps-extension-app:build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
