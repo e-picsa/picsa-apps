@@ -1,7 +1,7 @@
 import { fieldVisit } from './field-visit';
 import { registration } from './registration';
-import { test } from './test';
+import { testForm } from './testForm';
 
-const FORMS = [registration, fieldVisit, test];
+const FORMS = [registration, fieldVisit, testForm];
 
 export default FORMS;
