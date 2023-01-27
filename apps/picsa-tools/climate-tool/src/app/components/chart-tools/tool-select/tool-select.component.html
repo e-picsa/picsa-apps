@@ -1,5 +1,6 @@
 <div class="tool-select-container">
   <mat-card
+    appearance="outlined"
     class="tool-card"
     *ngFor="let tool of toolService.tools | objectValues"
     [attr.data-enabled]="toolService.enabled[tool.name] || null"

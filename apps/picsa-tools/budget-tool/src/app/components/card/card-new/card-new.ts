@@ -1,16 +1,13 @@
-import { Component, Input, Inject, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
   IBudgetCard,
   IBudgetCardType,
 } from '../../../models/budget-tool.models';
-import {
-  MatDialogRef,
-  MatDialog,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 import { BudgetStore } from '../../../store/budget.store';
 import { toJS } from 'mobx';
+import { BudgetCardNewDialog } from './card-new-dialog';
 
 @Component({
   selector: 'budget-card-new',
@@ -45,52 +42,6 @@ export class BudgetCardNew {
       await this.store.saveCustomCard(data);
       this.cardSaved.emit(data);
     });
-  }
-}
-
-// Dialog
-@Component({
-  selector: 'budget-card-new-dialog',
-  templateUrl: './card-new-dialog.html',
-  styleUrls: ['./card-new.scss', '../budget-card.scss'],
-})
-export class BudgetCardNewDialog {
-  public card: IBudgetCard;
-  constructor(
-    public dialogRef: MatDialogRef<BudgetCardNewDialog>,
-    @Inject(MAT_DIALOG_DATA) card: IBudgetCard
-  ) {
-    this.card = card;
-  }
-  save() {
-    this.card.id = this.card.label.replace(/\s+/g, '-').toLowerCase();
-    this.card.customMeta = {
-      imgData: this.generateImage(this.card.label),
-      dateCreated: new Date().toISOString(),
-      createdBy: '',
-    };
-    this.dialogRef.close(this.card);
-  }
-
-  // return an svg circle with text in the middle
-  // text is either first 2 initials (if multiple words) or first 2 letters (if one word)
-  generateImage(text: string) {
-    const byWord = text.split(' ');
-    const abbr =
-      byWord.length > 1
-        ? `${byWord[0].charAt(0)}.${byWord[1].charAt(0)}`
-        : text.substr(0, 2);
-    return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-    viewBox="0 0 100 100">
-      <g id="UrTavla">
-        <circle style="fill:url(#toning);stroke:#adadad;stroke-width:3;stroke-miterlimit:10;" cx="50" cy="50" r="40">
-        </circle>
-        <text font-family="Super Sans" letter-spacing="2" x="50%" y="50%" text-anchor="middle" stroke="#adadad" fill="#adadad" font-size="35" stroke-width="2px" dy=".3em">
-        ${abbr}
-        </text>
-      </g>
-    </svg>
-    `;
   }
 }
 

@@ -22,7 +22,8 @@ import {
 } from './balance/balance-legend/balance-legend';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
-import { BudgetCardNew, BudgetCardNewDialog } from './card/card-new/card-new';
+import { BudgetCardNew } from './card/card-new/card-new';
+import { BudgetCardNewDialog } from './card/card-new/card-new-dialog';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';

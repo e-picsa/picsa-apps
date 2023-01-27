@@ -1,0 +1,50 @@
+$fontFamily: Roboto, 'Helvetica Neue', sans-serif;
+
+// Revert changes appliec md14 -> md15
+button.mdc-button {
+  font-size: 14px;
+  font-weight: 500;
+  font-family: $fontFamily;
+}
+button.mat-mdc-button > .mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+mat-card.link {
+  cursor: pointer;
+  &:hover {
+    background: var(--color-primary-50);
+  }
+}
+mat-card-title.mat-mdc-card-title {
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 500;
+}
+mat-card-content.mat-mdc-card-content {
+  font-size: 14px;
+}
+// Add padding to all dialogs
+.mat-mdc-dialog-surface {
+  padding: 24px;
+}
+// Remove padding from dialog action buttons
+div.mdc-dialog__actions {
+  padding-left: 0;
+  padding-right: 0;
+}
+// Increase size and set primary colour for text inputs
+input.mat-mdc-input-element.mdc-text-field__input {
+  font-size: 30px;
+  color: var(--color-primary) !important;
+}
+// Reduce placeholder font size (inherited above)
+.mdc-text-field__input::placeholder {
+  font-size: 20px;
+}
+// Add margin after input with prefix
+.mat-mdc-form-field-infix {
+  margin-left: 4px;
+}

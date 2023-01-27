@@ -1,4 +1,5 @@
 {
+  "name": "picsa-apps-farmer-app",
   "projectType": "application",
   "sourceRoot": "apps/picsa-apps/farmer-app/src",
   "prefix": "picsa",
@@ -82,7 +83,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/picsa-apps/farmer-app"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/farmer-app"],
       "options": {
         "jestConfig": "apps/picsa-apps/farmer-app/jest.config.ts",
         "passWithNoTests": true

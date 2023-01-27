@@ -22,9 +22,7 @@ export class PicsaDbService implements AbstractDBService {
     private cache: DBCacheService,
     private server: DBServerService,
     private sync: DBSyncService
-  ) {
-    console.log('picsa DB service ready');
-  }
+  ) {}
   getCollection<IDBDoc>(
     endpoint: IDBEndpoint,
     src: IDBSource = 'cache',

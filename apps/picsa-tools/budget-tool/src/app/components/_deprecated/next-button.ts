@@ -20,18 +20,18 @@ const styles = {
   `,
   styles: [
     `
-      :host {
-        position: absolute;
-        top: calc(100vh - 130px);
-        width: 100%;
-        left: 0;
-      }
-      @media only screen and (min-width: 601px) {
-        button {
-          bottom: 1em;
-        }
-      }
-    `
+           :host {
+             position: absolute;
+             top: calc(100vh - 130px);
+             width: 100%;
+             left: 0;
+           }
+           @media only screen and (min-width: 601px) {
+             button {
+               bottom: 1em;
+             }
+           }
+         `
   ]
 })
 export class NextButton {}

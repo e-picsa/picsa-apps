@@ -1,5 +1,7 @@
+$fontFamily: Roboto, 'Helvetica Neue', sans-serif;
+
 body {
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: $fontFamily;
 }
 
 h1 {
@@ -8,12 +10,4 @@ h1 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/*******************************************************************
-      Inputs
-******************************************************************/
-.mat-input-element.input-editable {
-  font-size: 30px;
-  color: var(--color-primary);
 }

@@ -46,13 +46,12 @@ export class DBSyncService {
           p.doc = doc;
         }
         // batch write docs
-        console.log(`writing [${pending.length}] docs`);
         await this.server.setMultiple(pending as IBatchRef[]);
-        console.log(`[${pending.length}] docs written`);
+
         // retrieve full doc again to check hasn't been updated
         // if no updates remove from pending writes
         const deletableKeys: string[] = [];
-        for (let p of pending) {
+        for (const p of pending) {
           const latest = await this.getDoc('_pendingWrites', p._key);
           if (latest?.['_random'] === p._random) {
             deletableKeys.push(p._key);

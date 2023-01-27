@@ -65,16 +65,13 @@ export class BudgetListItemComponent {
   selector: 'budget-list-item-rename-dialog',
   template: `
     <mat-form-field>
-      <input
-        matInput
-        placeholder="title"
-        [(ngModel)]="editableBudget.meta.title"
-      />
+      <mat-label>{{ 'title' | translate }}</mat-label>
+      <input matInput [(ngModel)]="editableBudget.meta.title" />
     </mat-form-field>
     <mat-form-field>
+      <mat-label>{{ 'description' | translate }}</mat-label>
       <textarea
         matInput
-        placeholder="description"
         [(ngModel)]="editableBudget.meta.description"
       ></textarea>
     </mat-form-field>

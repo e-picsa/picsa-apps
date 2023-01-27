@@ -1,0 +1,15 @@
+input[type='range'][orient='vertical'] {
+  writing-mode: bt-lr;
+  appearance: slider-vertical;
+}
+
+// custom slider styling
+// https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
+// https://www.cssportal.com/style-input-range/
+
+// CC NOTE - for testing in browser dev tools will need 'show user agent shadow dom'
+// https://css-tricks.com/sliding-nightmare-understanding-range-input/
+
+// However, thumb styles do not work in chrome and are inconsistent in firefox, so
+// likely better to use default styling (replace with custom element in future if required)
+// https://bugs.chromium.org/p/chromium/issues/detail?id=341071

@@ -1,14 +1,15 @@
 <mat-card
+  appearance="outlined"
   *ngFor="let card of cards; let i = index"
-  style="display: flex; margin-bottom: 10px"
+  style="display: flex; margin-bottom: 10px; flex-direction: row; padding: 16px"
 >
   <budget-card [card]="card"></budget-card>
   <div class="input-values-container">
     <mat-form-field class="card-input-field quantity">
+      <mat-label>{{'Quantity' | translate}}</mat-label>
       <input
         matInput
         class="input-editable"
-        [placeholder]="'Quantity' | translate"
         [value]="card.quantity"
         type="number"
         (change)="setValue($event, 'quantity', i)"

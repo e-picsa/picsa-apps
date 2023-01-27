@@ -40,12 +40,12 @@
     <!-- text -->
     <div class="probability-info">
       <div style="display: flex; margin-top:1em">
-        <mat-card mat-elevation-z4 id="probabilityCount">
+        <mat-card appearance="outlined" mat-elevation-z4 id="probabilityCount">
           <span>{{ probabilities.above.count }}</span>
           {{ 'out of' | translate }} {{ probabilities.total }}
           {{ 'satisfy' | translate }}
         </mat-card>
-        <mat-card mat-elevation-z4 style="flex:1; text-align:center">
+        <mat-card appearance="outlined" mat-elevation-z4 style="flex:1; text-align:center">
           {{ 'On average' | translate }},
           <span class="variable">
             {{ probabilities.above.inTen }}

@@ -18,23 +18,23 @@ import { Subject, takeUntil } from 'rxjs';
   selector: 'climte-line-date-picker-header',
   styles: [
     `
-      .line-date-picker-header {
-        display: flex;
-        align-items: center;
-        padding: 0.5em;
-      }
-
-      .line-date-picker-header-label {
-        flex: 1;
-        height: 1em;
-        font-weight: 500;
-        text-align: center;
-      }
-
-      .example-double-arrow .mat-icon {
-        margin: -22%;
-      }
-    `,
+           .line-date-picker-header {
+             display: flex;
+             align-items: center;
+             padding: 0.5em;
+           }
+     
+           .line-date-picker-header-label {
+             flex: 1;
+             height: 1em;
+             font-weight: 500;
+             text-align: center;
+           }
+     
+           .example-double-arrow .mat-icon {
+             margin: -22%;
+           }
+         `,
   ],
   template: `
     <div class="line-date-picker-header">

@@ -1,5 +1,6 @@
 <div class="member-card-container">
   <mat-card
+    appearance="outlined"
     class="member-card"
     *ngFor="let familyCard of values; let i = index"
   >
@@ -12,10 +13,10 @@
     </div>
 
     <mat-form-field class="card-input-field quantity member-input">
+      <mat-label>{{'Days' | translate}}</mat-label>
       <input
         matInput
         class="input-editable"
-        [placeholder]="'Days' | translate"
         [value]="familyCard.values ? familyCard.values.quantity : null"
         type="number"
         (change)="setValue($event, i)"

@@ -1,4 +1,5 @@
 {
+  "name": "picsa-tools-resources-tool",
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/resources-tool/src",
   "prefix": "picsa",
@@ -18,9 +19,7 @@
     "preBuild": {
       "executor": "nx:run-commands",
       "inputs": ["apps/picsa-tools/resources-tool/src/assets/resources/**"],
-      "outputs": [
-        "apps/picsa-tools/resources-tool/src/assets/resources/contents.json"
-      ],
+      "outputs": ["{projectRoot}/src/assets/resources/contents.json"],
       "options": {
         "command": "yarn ts-node tools/workflows/populateResourceContents.ts"
       }
@@ -116,7 +115,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/picsa-tools/resources-tool"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/resources-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/resources-tool/jest.config.ts",
         "passWithNoTests": true

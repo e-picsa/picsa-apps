@@ -11,7 +11,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatSliderModule } from '@angular/material/slider';
 
 // also other deps from: https://material.angular.io/guide/getting-started
 // https://github.com/angular/components/issues/4278 and also load in app.module.ts
@@ -29,7 +28,6 @@ const modules = [
   MatMenuModule,
   MatNativeDateModule,
   MatSidenavModule,
-  MatSliderModule,
 ];
 
 @NgModule({

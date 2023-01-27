@@ -28,6 +28,13 @@
   bottom: -14px;
   color: rgba(255, 255, 255, 0.95);
 }
+.badge > .mat-badge-content {
+  padding: 2px;
+  border-radius: 8px;
+  min-width: 22px;
+  width: unset;
+  font-variant-numeric: proportional-nums;
+}
 .badge.input-badge > .mat-badge-content {
   background-color: #bc89d8;
 }
@@ -38,9 +45,17 @@
   background-color: #d8d8d8;
   color: rgba(0, 0, 0, 0.8);
 }
-.badge.family-badge > .mat-badge-content {
-  background-color: #d8d8d8;
-  color: rgba(0, 0, 0, 0.8);
+.badge.family-badge.adultFemale > .mat-badge-content {
+  background-color: #ffffff;
+  border: 1px solid #800080;
+  color: #800080;
+  padding: 1px;
+}
+.badge.family-badge.adultMale > .mat-badge-content {
+  background-color: #ffffff;
+  border: 1px solid #008066;
+  color: #008066;
+  padding: 1px;
 }
 .cell-values-row {
   min-height: 60px;
