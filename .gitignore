@@ -72,6 +72,3 @@ apps/extension-toolkit/www_sourcemaps
 *.apk
 .firebase
 .log
-
-# Next.js
-.next
