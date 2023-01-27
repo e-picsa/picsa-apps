@@ -66,7 +66,6 @@ export class HomePage implements OnInit {
     ];
   }
   linkClicked(link: ILink) {
-    console.log('link clicked', link);
     this.router.navigate([link.url]);
   }
 

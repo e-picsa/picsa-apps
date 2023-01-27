@@ -50,7 +50,6 @@ export class PicsaFileService {
    * and inform subscription function
    */
   private _init() {
-    console.log('file service init');
     this.platform.ready().then(() => {
       if (this.platform.is('cordova')) {
         this.dir = {
