@@ -19,12 +19,8 @@
 }
 .resource-card {
   padding: 0;
-  cursor: pointer;
   min-height: 100px;
   position: relative;
-}
-.resource-card:hover {
-  background: var(--color-primary-50);
 }
 .resource-card[data-viewStyle='expanded'] {
   cursor: unset;

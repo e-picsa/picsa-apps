@@ -1,6 +1,6 @@
 <mat-card
-  appearance="outlined"
-  class="resource-card"
+  appearance="raised"
+  class="resource-card link"
   [attr.data-viewStyle]="viewStyle"
   (click)="handleResourceClick($event)"
   [attr.data-resourceType]="resource.type"
@@ -31,7 +31,7 @@
         </mat-card-subtitle>
       </mat-card-header>
       <!-- Contents -->
-      <mat-card-content style="margin-left: 16px">
+      <mat-card-content>
         <p *ngIf="resource.description">
           {{ resource.description | translate }}
         </p>

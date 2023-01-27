@@ -12,6 +12,21 @@ button.mat-mdc-button > .mat-icon {
   height: 24px;
 }
 
+mat-card.link {
+  cursor: pointer;
+  &:hover {
+    background: var(--color-primary-50);
+  }
+}
+mat-card-title.mat-mdc-card-title {
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 500;
+}
+mat-card-content.mat-mdc-card-content {
+  font-size: 14px;
+}
+
 /*******************************************************************
       Inputs
 ******************************************************************/
