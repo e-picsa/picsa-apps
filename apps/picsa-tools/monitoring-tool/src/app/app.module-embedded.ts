@@ -40,7 +40,6 @@ export class BaseModule {
 @NgModule()
 export class MonitoringToolModule {
   static forRoot(config: EmbeddedConfig): ModuleWithProviders<BaseModule> {
-    console.log('Monitoring module forRoot', config);
     return {
       ngModule: BaseModule,
       providers: [

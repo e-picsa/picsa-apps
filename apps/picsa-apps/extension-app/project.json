@@ -1,4 +1,5 @@
 {
+  "name": "picsa-apps-extension-app",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/picsa-apps/extension-app/src",
@@ -139,7 +140,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/picsa-apps/extension-app"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/extension-app"],
       "options": {
         "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts",
         "passWithNoTests": true

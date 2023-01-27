@@ -16,5 +16,8 @@ button.nav-icon[disabled] {
 }
 .button-grid img {
   height: 100px;
-  margin-bottom: 8px;
+}
+.button-grid > button {
+  height: auto;
+  padding: 8px;
 }

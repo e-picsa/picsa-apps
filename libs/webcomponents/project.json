@@ -1,4 +1,5 @@
 {
+  "name": "picsa-webcomponents",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "sourceRoot": "libs/webcomponents/src",
   "projectType": "library",

@@ -1,49 +1,43 @@
 <mat-card
   *ngFor="let card of cards; let i = index"
-  style="display: flex; margin-bottom: 10px"
+  style="display: flex; flex-direction: row; margin-bottom: 10px; padding: 16px"
 >
   <!-- NOTE - difficult and expensive to use ngModels in ngFor so use manual bindings -->
   <budget-card [card]="card"></budget-card>
-  <div>
-    <div>
-      <mat-form-field class="card-input-field quantity">
-        <input
-          matInput
-          class="input-editable"
-          [placeholder]="'Quantity' | translate"
-          [value]="card.values.quantity"
-          type="number"
-          (change)="setValue($event, 'quantity', i)"
-        />
-      </mat-form-field>
-      <mat-form-field class="card-input-field cost">
-        <span matPrefix>{{ currency }} &nbsp;</span>
-        <input
-          matInput
-          class="input-editable"
-          [placeholder]="'Cost' | translate"
-          [value]="card.values.cost"
-          type="number"
-          (change)="setValue($event, 'cost', i)"
-        />
-      </mat-form-field>
-    </div>
-    <div>
-      <div class="card-input-field">
-        <div
-          style="display: flex; align-items: flex-end; box-sizing: border-box"
-        >
-          <div style="margin-right:10px">
-            <span>{{ currency }}</span>
-          </div>
-          <div style="color:rgba(0, 0, 0, 0.38)">
-            <div style="font-size: 0.75em">{{ 'Total' | translate }}</div>
-            <div>{{ card.values.total | number: '.0' }}</div>
-          </div>
-        </div>
-        <div class="underline"></div>
+  <div class="input-details">
+    <mat-form-field class="card-input-field quantity">
+      <mat-label>{{'Quantity' | translate}}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values.quantity"
+        type="number"
+        (change)="setValue($event, 'quantity', i)"
+      />
+    </mat-form-field>
+    <mat-form-field class="card-input-field cost">
+      <mat-label>{{'Cost' | translate}}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values.cost"
+        type="number"
+        (change)="setValue($event, 'cost', i)"
+      />
+      <span matTextPrefix>{{ currency }} &nbsp;</span>
+    </mat-form-field>
+    <div style="display: flex; align-items: flex-end; box-sizing: border-box">
+      <div style="margin-right: 10px">
+        <span>{{ currency }}</span>
+      </div>
+      <div style="color: rgba(0, 0, 0, 0.38)">
+        <div style="font-size: 0.75em">{{ 'Total' | translate }}</div>
+        <div>{{ card.values.total | number: '.0' }}</div>
       </div>
     </div>
+    <div class="underline"></div>
   </div>
 </mat-card>
-<div *ngIf="cards.length===0" style="margin:1em 0 2em 0">You have not selected any cards</div>
+<div *ngIf="cards.length===0" style="margin: 1em 0 2em 0">
+  You have not selected any cards
+</div>

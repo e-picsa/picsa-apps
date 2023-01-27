@@ -8,12 +8,12 @@ textarea {
 }
 
 .variable-container {
-  min-width: 80px;
-  font-size: 30px;
-  height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 80px;
+  font-size: 30px;
+  height: 80px;
   margin: 0 20px 20px 0;
 }
 
@@ -22,19 +22,10 @@ textarea {
   outline: 2px solid var(--ion-color-primary);
   font-weight: bold;
 }
-
-mat-select.select--hidden {
-  height: 0;
-
-  :host-context(.mat-select-value) {
-    color: blue !important;
-  }
-}
-
-.mat-selected {
-  color: green !important;
-}
-
-button.button--next[disabled] {
-  background: white;
+.variable-value {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  min-width: 100px;
 }

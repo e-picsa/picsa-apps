@@ -1,15 +1,15 @@
-<mat-slider
-  *ngIf="ranges"
+<input
+  id="lineToolSlider"
+  type="range"
   [min]="ranges.min"
   [max]="ranges.max"
   [step]="step"
-  vertical
-  thumbLabel
-  [displayWith]="formatThumbValue"
-  id="lineToolSlider"
   [(ngModel)]="value"
   (ngModelChange)="setLineToolValue($event)"
-></mat-slider>
+  [step]="step"
+  orient="vertical"
+/>
+
 <mat-form-field class="lineToolInputField" *ngIf="inputType === 'number'">
   <input
     matInput
@@ -33,7 +33,11 @@
     touchUi
     [calendarHeaderComponent]="datePickerHeader"
   ></mat-datepicker>
-  <button mat-icon-button (click)="picker.open()">
+  <button
+    mat-icon-button
+    (click)="picker.open()"
+    class="calendar-picker-button"
+  >
     <mat-icon>calendar_month</mat-icon>
   </button>
 </mat-form-field>

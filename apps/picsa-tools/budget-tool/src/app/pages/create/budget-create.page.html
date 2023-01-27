@@ -20,10 +20,10 @@
             color="primary"
             mat-raised-button
             class="footer-button"
-            [disabled]="!budgetMetaForm.value.enterprise.type"
+            [disabled]="!budgetMetaForm.value.enterprise || !budgetMetaForm.value.enterprise.type"
           >
             {{ 'Next' | translate }}
-            <mat-icon>arrow_forward</mat-icon>
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
           </button>
         </div>
       </mat-step>
@@ -57,7 +57,7 @@
             [disabled]="!budgetMetaForm.value.enterprise.id"
           >
             {{ 'Next' | translate }}
-            <mat-icon>arrow_forward</mat-icon>
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
           </button>
         </div>
       </mat-step>
@@ -72,7 +72,9 @@
             class="variable-container editable"
             (click)="periodTotalSelect.open()"
           >
-            <span>{{ budgetMetaForm.value.lengthTotal }}</span>
+            <span class="variable-value"
+              >{{ budgetMetaForm.value.lengthTotal }}</span
+            >
             <mat-select
               class="select--hidden"
               #periodTotalSelect
@@ -90,7 +92,9 @@
             class="variable-container editable"
             (click)="periodScaleSelect.open()"
           >
-            <span>{{ budgetMetaForm.value.lengthScale | translate }}</span>
+            <span class="variable-value"
+              >{{ budgetMetaForm.value.lengthScale | translate }}</span
+            >
             <mat-select
               class="select--hidden"
               #periodScaleSelect
@@ -116,7 +120,7 @@
             class="variable-container editable"
             (click)="periodStartSelect.open()"
           >
-            <span
+            <span class="variable-value"
               >{{ periodLabelOptions[budgetMetaForm.value.monthStart - 1] |
               translate }}</span
             >
@@ -142,7 +146,7 @@
             class="footer-button"
           >
             {{ 'Next' | translate }}
-            <mat-icon>arrow_forward</mat-icon>
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
           </button>
         </div>
       </mat-step>
@@ -153,12 +157,12 @@
         <h2>{{ 'Save your budget' | translate }}</h2>
         <input
           matInput
-          placeholder="{{ 'Title' | translate }}"
+          [placeholder]="'Title' | translate"
           formControlName="title"
         />
         <textarea
           matInput
-          placeholder="{{ 'Description (optional)' | translate }}"
+          [placeholder]="'Description (optional)' | translate"
           formControlName="description"
         ></textarea>
         <div class="sticky-footer">
