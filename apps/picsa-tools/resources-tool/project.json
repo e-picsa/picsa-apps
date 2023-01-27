@@ -18,7 +18,7 @@
     },
     "preBuild": {
       "executor": "nx:run-commands",
-      "inputs": ["apps/picsa-tools/resources-tool/src/assets/resources/**"],
+      "inputs": ["{projectRoot}/src/assets/resources/**"],
       "outputs": ["{projectRoot}/src/assets/resources/contents.json"],
       "options": {
         "command": "yarn ts-node tools/workflows/populateResourceContents.ts"
