@@ -8,8 +8,8 @@
 <button
   mat-stroked-button
   (click)="save()"
-  [disabled]="card.label == ''"
-  style="margin-top: 1em; width:70%"
+  [disabled]="card.label === ''"
+  style="margin-top: 1em; width: 70%"
 >
   <mat-icon>check</mat-icon>{{ 'Save' | translate }}
 </button>

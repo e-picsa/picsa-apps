@@ -27,7 +27,7 @@ $footer-height: 5em;
   align-items: center;
 }
 
-.footer-button {
+button.footer-button.mat-mdc-button-base {
   width: 60%;
   left: 20%;
   height: calc(#{$footer-height} - 10px);
