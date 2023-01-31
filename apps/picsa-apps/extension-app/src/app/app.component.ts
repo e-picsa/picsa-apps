@@ -49,6 +49,7 @@ export class AppComponent {
       'budget-tool': 'budget-tool',
       'climate-tool': 'climate-tool',
       whatsapp: 'whatsapp',
+      play_store: 'play_store',
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(

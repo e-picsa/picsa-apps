@@ -37,8 +37,30 @@
   padding: 4px;
   color: white;
 }
+.resource-item-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.resource-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 .action-button {
   margin: auto 8px;
+}
+.action-button.google-play {
+  padding: 0;
+  margin: 16px 0 0 0;
+  width: 100%;
+  max-width: 160px;
+}
+.action-button.google-play > mat-icon {
+  margin: 0;
+  width: 100%;
+  height: auto;
 }
 .download-progress {
   margin: auto 8px;
