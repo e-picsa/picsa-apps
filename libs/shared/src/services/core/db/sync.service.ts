@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IDBDoc, IDBEndpoint } from '@picsa/models';
 import { DBCacheService } from './_cache.db';
-import { DBServerService } from './_server.db';
+import { DBServerService, IServerWriteBatchEntry } from './_server.db';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -40,13 +40,17 @@ export class DBSyncService {
       this._isSyncing = true;
       const pending = await this.getPendingWrites();
       if (pending.length > 0) {
+        const writeEntries: IServerWriteBatchEntry[] = [];
         // retrieve full docs from db
-        for (let p of pending) {
+        for (const p of pending) {
           const doc = await this.getDoc(p.endpoint, p._key);
-          p.doc = doc;
+          if (doc) {
+            writeEntries.push({ endpoint: p.endpoint, data: doc });
+          }
         }
         // batch write docs
-        await this.server.setMultiple(pending as IBatchRef[]);
+
+        await this.server.setMultiple(writeEntries);
 
         // retrieve full doc again to check hasn't been updated
         // if no updates remove from pending writes
