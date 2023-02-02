@@ -79,7 +79,8 @@ export class DBServerService implements AbstractDBService {
    ***********************************************************************/
 
   // similar to setDocs above but allow for multiple different endpoints (useful for sync methods)
-  public async setMultiple(refs: { endpoint: IDBEndpoint; data: IDBDoc }[]) {
+
+  public async setMultiple(refs: IServerWriteBatchEntry[]) {
     const batch = writeBatch(this.firestore);
     // TODO - limit batch methods to process chunks of 500
     for (const r of refs) {
@@ -106,3 +107,7 @@ export class DBServerService implements AbstractDBService {
   // }
 }
 // export default DBServerService;
+export interface IServerWriteBatchEntry {
+  endpoint: IDBEndpoint;
+  data: IDBDoc;
+}
