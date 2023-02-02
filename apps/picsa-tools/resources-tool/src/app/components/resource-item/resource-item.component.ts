@@ -15,6 +15,11 @@ import { ResourcesStore } from '../../stores';
 type IResourceClickHandlers = {
   [type in IResourceType]: (resource: any) => void;
 };
+interface IActionButton {
+  icon: 'open_in_new' | 'file_download' | 'tab' | 'picsa_play_store';
+  /** Specify TRUE if using custom registered icon */
+  svgIcon?: boolean;
+}
 
 @Component({
   selector: 'picsa-resource-item',
@@ -25,11 +30,7 @@ export class ResourceItemComponent implements OnInit {
   @Input() viewStyle: 'expanded' | 'default' = 'default';
   @Input() resource: IResource;
 
-  public actionButtonIcon?:
-    | 'open_in_new'
-    | 'file_download'
-    | 'smartphone'
-    | 'tab';
+  public actionButton?: IActionButton;
   public downloadProgress?: number;
 
   public subtitle = '';
@@ -56,6 +57,7 @@ export class ResourceItemComponent implements OnInit {
     if (inputHandler) {
       inputHandler(this.resource);
     }
+    console.log('resource', this.resource);
   }
 }
 
@@ -67,7 +69,9 @@ class LinkItemHandler {
     this.handleOverrides();
   }
   private async handleOverrides() {
-    this.parent.actionButtonIcon = (this.resource.icon as any) || 'tab';
+    this.parent.actionButton = {
+      icon: (this.resource.icon as any) || 'tab',
+    };
   }
 
   private handleClick(e: Event) {
@@ -86,9 +90,9 @@ class FileItemHandler {
   }
   private async handleOverrides() {
     const isDownloaded = this.parent.store.isFileDownloaded(this.resource);
-    this.parent.actionButtonIcon = isDownloaded
-      ? 'open_in_new'
-      : 'file_download'; // TODO show file download size alongside download icon
+    this.parent.actionButton = {
+      icon: isDownloaded ? 'open_in_new' : 'file_download',
+    }; // TODO show file download size alongside download icon
   }
 
   private async handleClick(e: Event) {
@@ -109,12 +113,12 @@ class FileItemHandler {
       this.download$.unsubscribe();
       this.download$ = undefined;
       this.parent.downloadProgress = undefined;
-      this.parent.actionButtonIcon = 'file_download';
+      this.parent.actionButton = { icon: 'file_download' };
     }
   }
 
   private handleResourceDownload() {
-    this.parent.actionButtonIcon = undefined;
+    this.parent.actionButton = undefined;
     this.parent.downloadProgress = 0;
     this.parent.store.downloadResource(this.resource).subscribe({
       next: ({ progress, subscription }) => {
@@ -124,13 +128,13 @@ class FileItemHandler {
       error: (err) => {
         console.error(err);
         this.parent.downloadProgress = undefined;
-        this.parent.actionButtonIcon = 'file_download';
+        this.parent.actionButton = { icon: 'file_download' };
         // TODO - show error message
         throw err;
       },
       complete: () => {
         this.parent.downloadProgress = undefined;
-        this.parent.actionButtonIcon = 'open_in_new';
+        this.parent.actionButton = { icon: 'open_in_new' };
         this.parent.store.openFileResource(this.resource);
       },
     });
@@ -179,12 +183,12 @@ class AppItemHandler {
     this.handleOverrides();
   }
   private async handleOverrides() {
-    this.parent.actionButtonIcon = 'smartphone';
+    this.parent.actionButton = { icon: 'picsa_play_store', svgIcon: true };
+    console.log('app item', this.parent);
   }
 
   private handleClick(e: Event) {
     e.stopPropagation();
-    console.log('handle click', this.resource);
     const { appId } = this.resource;
     this.parent.store.openBrowserLink(
       `https://play.google.com/store/apps/details?id=${appId}`
