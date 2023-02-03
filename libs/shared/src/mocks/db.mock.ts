@@ -1,8 +1,6 @@
 import { IDBEndpoint, IDBDoc } from '@picsa/models';
 import { _wait } from '@picsa/utils';
 import { AbstractDBService } from '../services/core/db/abstract.db';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
 
 export class MockDB implements AbstractDBService {
   async getCollection(endpoint: IDBEndpoint) {
@@ -34,15 +32,13 @@ export class MockDB implements AbstractDBService {
   meta(doc: any = {}): IDBDoc {
     const { _key, _created, _modified } = doc;
     return {
-      _key: _key ? _key : this._generateKey(),
+      _key: _key ? _key : this.randomKey(),
       _created: _created ?? new Date().toISOString(),
       _modified: _modified ?? new Date().toISOString(),
     };
   }
 
-  private _generateKey = () => {
-    const key = firebase.firestore().collection('_').doc().id;
-    console.log('key', key);
-    return key;
+  private randomKey = () => {
+    return Math.random().toString(36).substring(2, 15);
   };
 }
