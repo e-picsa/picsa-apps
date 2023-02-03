@@ -14,6 +14,7 @@
     "build": "nx run picsa-apps-extension-app-native:build",
     "build:webcomponents": "yarn nx build picsa-webcomponents",
     "test": "nx test",
+    "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
     "cache:clear": "nx reset",
     "version": "ts-node ./tools/workflows/version.ts"

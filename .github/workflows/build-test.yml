@@ -17,7 +17,8 @@ jobs:
           node-version: '18'
           cache: 'yarn'
       - run: yarn install --immutable
-      # TODO - Ensure tests pass
+      # TODO - Ensure lint and tests pass
+      # - run: yarn lint
       # - run: yarn nx test
       # Ensure can also build
       - run: yarn nx build
