@@ -14,6 +14,7 @@
     "build": "nx run picsa-apps-extension-app-native:build",
     "build:webcomponents": "yarn nx build picsa-webcomponents",
     "test": "nx test",
+    "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
     "cache:clear": "nx reset",
     "version": "ts-node ./tools/workflows/version.ts"
@@ -127,6 +128,7 @@
     "execa": "^5.1.1",
     "fs-extra": "^10.1.0",
     "jest": "28.1.1",
+    "jest-environment-jsdom": "28.1.1",
     "jest-preset-angular": "12.2.3",
     "jetifier": "^2.0.0",
     "ng-packagr": "15.1.1",
