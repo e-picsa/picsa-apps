@@ -113,7 +113,12 @@ export class PicsaDbService implements AbstractDBService {
   private async syncDoc<T>(endpoint: IDBEndpoint, key: string) {
     // TODO - add retrieval of latest doc and just query after
     const doc = await this.server.getDoc<T>(endpoint, key);
-    return this.cache.setDoc<T>(endpoint, doc);
+    if (doc) {
+      return this.cache.setDoc<T>(endpoint, doc);
+    } else {
+      // TODO - delete local
+      return;
+    }
   }
 
   /************************************************************************
