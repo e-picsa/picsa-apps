@@ -4,9 +4,13 @@
   "overrides": [
     {
       "files": ["*.ts"],
+      "extends": [
+        "plugin:@nrwl/nx/angular",
+        "plugin:@angular-eslint/template/process-inline-templates"
+      ],
       "rules": {
         "@angular-eslint/directive-selector": [
-          "error",
+          "warn",
           {
             "type": "attribute",
             "prefix": "picsa",
@@ -14,23 +18,20 @@
           }
         ],
         "@angular-eslint/component-selector": [
-          "error",
+          "warn",
           {
             "type": "element",
-            "prefix": "picsa",
+            "prefix": "option",
             "style": "kebab-case"
           }
-        ]
-      },
-      "extends": [
-        "plugin:@nrwl/nx/angular",
-        "plugin:@angular-eslint/template/process-inline-templates"
-      ]
+        ],
+        "@angular-eslint/component-class-suffix": ["warn"],
+        "sort-imports": ["warn", { "allowSeparatedGroups": true }]
+      }
     },
     {
       "files": ["*.html"],
-      "extends": ["plugin:@nrwl/nx/angular-template"],
-      "rules": {}
+      "extends": ["plugin:@nrwl/nx/angular-template"]
     }
   ]
 }

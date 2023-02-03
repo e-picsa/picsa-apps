@@ -19,7 +19,10 @@
           "apps/picsa-tools/option-tool/src/favicon.ico",
           "apps/picsa-tools/option-tool/src/assets"
         ],
-        "styles": ["apps/picsa-tools/option-tool/src/styles.scss"],
+        "styles": [
+          "apps/picsa-tools/option-tool/src/styles.scss",
+          "libs/theme/src/_index.scss"
+        ],
         "scripts": []
       },
       "configurations": {
