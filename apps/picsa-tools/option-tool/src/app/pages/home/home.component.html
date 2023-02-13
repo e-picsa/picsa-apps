@@ -2,29 +2,76 @@
   <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
-  <!-- Position Column -->
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef>No.</th>
-    <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+  <!-- Practice Column -->
+  <ng-container matColumnDef="practice">
+    <th mat-header-cell *matHeaderCellDef>Practice</th>
+    <td mat-cell *matCellDef="let element">{{ element.practice }}</td>
   </ng-container>
 
-  <!-- Name Column -->
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+  <!-- gender Column -->
+  <ng-container matColumnDef="gender">
+    <th mat-header-cell *matHeaderCellDef>Who does it</th>
+    <td mat-cell *matCellDef="let element">{{ element.gender.join(',') }}</td>
   </ng-container>
 
-  <!-- Weight Column -->
-  <ng-container matColumnDef="weight">
-    <th mat-header-cell *matHeaderCellDef>Weight</th>
-    <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
+  <!-- Benefits Column -->
+  <ng-container matColumnDef="benefits">
+    <th mat-header-cell *matHeaderCellDef>Benefits and who</th>
+    <td mat-cell *matCellDef="let element">
+      <ol *ngFor="let benefit of element.benefits; index as i">
+        <li>
+        {{benefit.benefit}} 
+        <div>{{benefit.beneficiary.join(',')}}</div>
+        </li>
+      </ol>
+    </td>
   </ng-container>
 
-  <!-- Symbol Column -->
-  <ng-container matColumnDef="symbol">
-    <th mat-header-cell *matHeaderCellDef>Symbol</th>
-    <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
+  <!-- Perfomence Column -->
+  <ng-container matColumnDef="performance">
+    <th mat-header-cell *matHeaderCellDef>Perfomence</th>
+    <td mat-cell *matCellDef="let element">
+      <ol style="display: flex; flex-direction: column; gap:3px">
+        <li>
+          High(Rf):  {{ element.performance.highRf }}
+        </li>
+        <li>
+          Mid(Rf):  {{ element.performance.midRf }}
+        </li>
+        <li>
+          low(Rf): {{ element.performance.lowRf }}
+        </li>
+      </ol>
+    </td>
   </ng-container>
+
+  <!-- Investment Column -->
+  <ng-container matColumnDef="investment">
+    <th mat-header-cell *matHeaderCellDef>Investment</th>
+    <td mat-cell *matCellDef="let element">
+      <ol style="display: flex; flex-direction: column; gap:3px">
+        <li>
+          Money:  {{ element.investment.money }}
+        </li>
+        <li>
+          Time:  {{ element.investment.time }}
+        </li>
+      </ol>
+    
+    </td>
+  </ng-container>
+
+   <!-- Time Column -->
+   <ng-container matColumnDef="time">
+    <th mat-header-cell *matHeaderCellDef>Time</th>
+    <td mat-cell *matCellDef="let element">{{ element.time }}</td>
+  </ng-container>
+
+    <!-- Risks Column -->
+    <ng-container matColumnDef="risk">
+      <th mat-header-cell *matHeaderCellDef>Risks</th>
+      <td mat-cell *matCellDef="let element">{{ element.risk }}</td>
+    </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
