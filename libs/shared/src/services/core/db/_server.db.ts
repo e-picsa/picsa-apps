@@ -38,7 +38,7 @@ export class DBServerService implements AbstractDBService {
     const ref = doc(this.firestore, `${endpoint}/${key}`);
     const snapshot = await firebaseGetDoc(ref);
     if (snapshot.exists()) {
-      return snapshot.data as T & IDBDoc;
+      return snapshot.data() as T & IDBDoc;
     }
     return undefined;
   }
