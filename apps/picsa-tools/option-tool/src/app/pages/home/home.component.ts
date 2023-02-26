@@ -1,27 +1,9 @@
 import { Component } from '@angular/core';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
 import { EditorComponent } from '../../components/editor/editor.component';
+import { MatDialog} from '@angular/material/dialog';
 
-const COLUMNS = [
-  {
-    name: 'practice',
-    label: 'Practice',
-  },
-  {
-    name: 'who',
-    label: 'Who Does it',
-  },
-  {
-    name: 'benefits',
-    label: 'Benefits and Who Benefits',
-  },
-  {
-    name: 'performance',
-    label: 'Performance',
-  },
-];
+
+
 export interface IOptionData {
   practice: string;
   gender: string [];
@@ -31,21 +13,21 @@ export interface IOptionData {
   time: string;
   risk: string;
 }
-let ELEMENT_DATA: IOptionData[] = [
-  { 
-  practice:'ridges', 
-  gender:['female'],
-  benefits: [{
-    benefit:" alot of cash", beneficiary:['male']
-  }, {
-    benefit:" alot of cash", beneficiary:['male', 'female']
-  }
-],
-  performance:{lowRf:"ok", midRf:"ok",  highRf:"ok"},
-  investment:{money:"high", time:"low"},
-  time:'2', 
-  risk:'expensive' },
-];
+// let ELEMENT_DATA: IOptionData[] = [
+//   { 
+//   practice:'ridges', 
+//   gender:['female'],
+//   benefits: [{
+//     benefit:" alot of cash", beneficiary:['male']
+//   }, {
+//     benefit:" alot of cash", beneficiary:['male', 'female']
+//   }
+// ],
+//   performance:{lowRf:"ok", midRf:"ok",  highRf:"ok"},
+//   investment:{money:"high", time:"low"},
+//   time:'2', 
+//   risk:'expensive' },
+// ];
 
 @Component({
   selector: 'option-home',
@@ -53,7 +35,7 @@ let ELEMENT_DATA: IOptionData[] = [
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
-  public dataSource: any = [];
+  public dataSource: IOptionData[]  = [];
   public displayedColumns: string[] = ['practice', 'gender', 'benefits', 
   'performance','investment','time','risk' ];
 

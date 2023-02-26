@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -9,8 +8,6 @@ const COMPONENTS = [
   MatButtonModule,
   MatDialogModule,
   MatTableModule,
-  FormsModule,
-  ReactiveFormsModule,
 ];
 
 // use custom module to make it easier to control what is available through app

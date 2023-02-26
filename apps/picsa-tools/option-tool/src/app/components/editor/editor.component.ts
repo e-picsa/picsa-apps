@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog'
 
 @Component({
   selector: 'option-editor',
@@ -20,7 +20,7 @@ export class EditorComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<EditorComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data
   ) { }
   ngOnInit(): void {
     this.stepCounter = 1;
@@ -45,7 +45,7 @@ export class EditorComponent implements OnInit {
     if(!this.gender.includes(gender)){
       this.gender.push(gender)
     }else{
-      let index = this.gender.indexOf(gender)
+     const index = this.gender.indexOf(gender)
      this.gender.splice(index, 1);
     }
   }
@@ -53,7 +53,7 @@ export class EditorComponent implements OnInit {
     if(!this.benefits[index].beneficiary.includes(gender)){
       this.benefits[index].beneficiary.push(gender)
     }else{
-      let itemIndex = this.benefits[index].beneficiary.indexOf(gender)
+      const itemIndex = this.benefits[index].beneficiary.indexOf(gender)
       this.benefits[index].beneficiary.splice(itemIndex, 1);
     }
   }
