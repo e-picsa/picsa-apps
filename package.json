@@ -13,6 +13,8 @@
     "start:resources": "nx run picsa-tools-resources-tool:serve",
     "build": "nx run picsa-apps-extension-app-native:build",
     "build:webcomponents": "yarn nx build picsa-webcomponents",
+    "docs": "cd ../docs && yarn start",
+    "docs:edit": "cd ../docs && code .",
     "test": "nx test",
     "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
