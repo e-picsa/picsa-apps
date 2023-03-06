@@ -1,0 +1,62 @@
+
+.mat-stepper-horizontal {
+    margin-top: 8px;
+  }
+  
+  .mat-mdc-form-field {
+    margin-top: 16px;
+  }
+  .dialog-content{
+    min-height: 15rem;
+    width: 25rem;
+    .StepTitle{
+      display: flex;
+      justify-content: center;
+      font-size: medium;
+      font-weight: bold;
+    }
+    .StepContent{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      .form-group {
+        // width: 500px;
+        padding: 20px;
+      }
+      label {
+        font-size: 14px;
+        font-weight: 400;
+        margin-right: 10px;
+      }
+      input.form-control {
+        font-size: 16px;
+        outline-color: #8a2644;
+        padding: 10px;
+        width: 90%;
+      }
+      .ButtonSection{
+        width: 70%;
+      }
+    }
+    .genderDiv{
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      flex-direction: row;
+    }
+    .genderType{
+      width: 5rem;
+      height: 5rem;
+      font-weight: 700;
+      display: flex;
+      border-radius: 5px;
+      margin: 2px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+  }
