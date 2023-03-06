@@ -1,45 +1,59 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import {
+  getFirestore,
+  Firestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  setDoc as firebaseSetDoc,
+  doc,
+  getDoc as firebaseGetDoc,
+  writeBatch,
+} from 'firebase/firestore';
+
 import type { IDBEndpoint, IDBDoc } from '@picsa/models';
 import { AbstractDBService } from './abstract.db';
+import { PicsaFirebaseService } from '../firebase.service';
 
 @Injectable({ providedIn: 'root' })
 export class DBServerService implements AbstractDBService {
-  constructor(private afs: AngularFirestore) {}
+  private firestore: Firestore;
+  constructor(firebaseService: PicsaFirebaseService) {
+    this.firestore = getFirestore(firebaseService.app);
+  }
 
   /************************************************************************
    *  Main Methods - taken from abstract class
    ***********************************************************************/
 
   public async getCollection<T>(endpoint: IDBEndpoint, newerThan = '') {
-    const snapshot = await this.afs
-      .collection<T>(endpoint, (ref) => ref.where('_modified', '>', newerThan))
-      .get()
-      .toPromise();
-    return snapshot
-      ? (snapshot.docs.map((d) => d.data()) as (T & IDBDoc)[])
-      : [];
+    const ref = collection(this.firestore, endpoint);
+    const q = query(ref, where('_modified', '>', newerThan));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((d) => d.data()) as (T & IDBDoc)[];
   }
 
   public async getDoc<T>(endpoint: IDBEndpoint, key: string) {
-    const snapshot = await this.afs
-      .doc<T & IDBDoc>(`${endpoint}/${key}`)
-      .get()
-      .toPromise();
-    return snapshot ? (snapshot.data() as T & IDBDoc) : (null as any);
+    const ref = doc(this.firestore, `${endpoint}/${key}`);
+    const snapshot = await firebaseGetDoc(ref);
+    if (snapshot.exists()) {
+      return snapshot.data() as T & IDBDoc;
+    }
+    return undefined;
   }
 
-  public async setDoc<T>(endpoint: IDBEndpoint, doc: T & IDBDoc) {
-    this.afs.firestore.doc(`${endpoint}/${doc._key}`).set(doc);
-    await this.afs.firestore.doc(`${endpoint}/${doc._key}`).set(doc);
-    return doc;
+  public async setDoc<T>(endpoint: IDBEndpoint, data: T & IDBDoc) {
+    const ref = doc(this.firestore, `${endpoint}/${data._key}`);
+    await firebaseSetDoc(ref, data);
+    return data;
   }
 
   public async setDocs<T>(endpoint: IDBEndpoint, docs: (T & IDBDoc)[]) {
-    const batch = this.afs.firestore.batch();
-    for (let doc of docs) {
-      const ref = this.afs.firestore.collection(endpoint).doc(doc._key);
-      batch.set(ref, doc);
+    const batch = writeBatch(this.firestore);
+    for (const data of docs) {
+      const ref = doc(this.firestore, endpoint, data._key);
+      batch.set(ref, data);
     }
     await batch.commit();
     return docs;
@@ -52,9 +66,9 @@ export class DBServerService implements AbstractDBService {
     keys: string[],
     subcollection?: string
   ) {
-    const batch = this.afs.firestore.batch();
-    for (let key of keys) {
-      const ref = this.afs.firestore.collection(endpoint).doc(key);
+    const batch = writeBatch(this.firestore);
+    for (const key of keys) {
+      const ref = doc(this.firestore, endpoint, key);
       batch.delete(ref);
     }
     return batch.commit();
@@ -65,12 +79,14 @@ export class DBServerService implements AbstractDBService {
    ***********************************************************************/
 
   // similar to setDocs above but allow for multiple different endpoints (useful for sync methods)
-  public async setMultiple(refs: { endpoint: IDBEndpoint; doc: IDBDoc }[]) {
-    const batch = this.afs.firestore.batch();
+
+  public async setMultiple(refs: IServerWriteBatchEntry[]) {
+    const batch = writeBatch(this.firestore);
     // TODO - limit batch methods to process chunks of 500
-    for (let r of refs) {
-      const ref = this.afs.firestore.collection(r.endpoint).doc(r.doc._key);
-      batch.set(ref, r.doc);
+    for (const r of refs) {
+      const { endpoint, data } = r;
+      const ref = doc(this.firestore, endpoint, data._key);
+      batch.set(ref, data);
     }
     await batch.commit();
     return refs;
@@ -91,3 +107,7 @@ export class DBServerService implements AbstractDBService {
   // }
 }
 // export default DBServerService;
+export interface IServerWriteBatchEntry {
+  endpoint: IDBEndpoint;
+  data: IDBDoc;
+}

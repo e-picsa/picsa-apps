@@ -23,11 +23,14 @@
     "picsa-tools-climate-tool-e2e": "apps/picsa-tools/climate-tool-e2e",
     "picsa-tools-monitoring-tool": "apps/picsa-tools/monitoring-tool",
     "picsa-tools-monitoring-tool-e2e": "apps/picsa-tools/monitoring-tool-e2e",
+    "picsa-tools-option-tool": "apps/picsa-tools/option-tool",
+    "picsa-tools-option-tool-e2e": "apps/picsa-tools/option-tool-e2e",
     "picsa-tools-resources-tool": "apps/picsa-tools/resources-tool",
     "picsa-tools-resources-tool-e2e": "apps/picsa-tools/resources-tool-e2e",
     "picsa-webcomponents": "libs/webcomponents",
     "shared": "libs/shared",
     "theme": "libs/theme",
     "webcomponents-ngx": "libs/webcomponents-ngx"
-  }
+  },
+  "defaultProject": "picsa-apps-extension-app"
 }
