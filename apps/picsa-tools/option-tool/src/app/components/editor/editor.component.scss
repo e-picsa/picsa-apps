@@ -6,15 +6,28 @@
   .mat-mdc-form-field {
     margin-top: 16px;
   }
+
+  .warningText{
+    text-align: center;
+    color: red;
+    font-size: 12px;
+  }
+
   .dialog-content{
-    min-height: 15rem;
-    width: 25rem;
+    
     .StepTitle{
       display: flex;
       justify-content: center;
       font-size: medium;
       font-weight: bold;
     }
+    .StepContainer{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 50%;
+      gap: .4rem;
+    
     .StepContent{
       display: flex;
       align-items: center;
@@ -22,7 +35,8 @@
       flex-direction: column;
       .form-group {
         // width: 500px;
-        padding: 20px;
+         padding-top: 10px;
+         padding-bottom: 20px;
       }
       label {
         font-size: 14px;
@@ -36,15 +50,17 @@
         width: 90%;
       }
       .ButtonSection{
-        width: 70%;
+        width: 15rem;
+
       }
+    }
     }
     .genderDiv{
       display: flex;
       align-items: center;
       gap: 5px;
       margin-top: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       flex-direction: row;
     }
     .genderType{

@@ -5,3 +5,34 @@ th {
   border: 1px solid black;
   padding: 8px;
 }
+.HomeContainer{
+  height: 100vh;
+}
+
+.container {
+  position: relative;
+  height: 100vh;
+  background-color: #fff;
+  width: 100%;
+  z-index: 20;
+  justify-content: center;
+  display: flex;
+  padding-top: 2rem;
+  top: 0;
+  right: 0;
+ 
+}
+.buttonposition{
+  position: absolute;
+  right: 20px;
+  top:20px
+}
+.slide-in {
+  position: absolute;
+  bottom: 0;
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100%);
+}
+.slide-in.active {
+  transform: translateY(0);
+}

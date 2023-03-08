@@ -2,11 +2,15 @@ import { NgModule } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
+
+
 
 const COMPONENTS = [
   MatButtonModule,
   MatDialogModule,
+  MatStepperModule,
   MatTableModule,
 ];
 
