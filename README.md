@@ -1,5 +1,7 @@
 # Picsa Apps
 
+[Developer Documentation](https://docs.picsa.app)
+
 ## Prerequisites
 
 1. Download and install [Git](https://git-scm.com/downloads)  
