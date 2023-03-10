@@ -19,7 +19,10 @@
           "apps/picsa-tools/crop-probability-tool/src/favicon.ico",
           "apps/picsa-tools/crop-probability-tool/src/assets"
         ],
-        "styles": ["apps/picsa-tools/crop-probability-tool/src/styles.scss"],
+        "styles": [
+          "apps/picsa-tools/crop-probability-tool/src/styles.scss",
+          "libs/theme/src/_index.scss"
+        ],
         "scripts": []
       },
       "configurations": {
