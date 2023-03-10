@@ -1,0 +1,634 @@
+[
+  {
+    "text": "purchase",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "value addition",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "marketing and selling",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "weeding",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "watering",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "transport",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "threshing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "storage",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "sowing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "shelling",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "post-harvest handling",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "ploughing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "mulching",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "land clearing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "harvesting",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "compost manure making",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "banding",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "bagging",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "apply pesticide",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "apply fertiliser",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "vaccinate",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "transport livestock",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "relocation",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "provide water",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "provide supplements",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "feeding livestock",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "dipping",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "build housing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "afforestation",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "tomatoes",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sweet potatoes",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "soya beans",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sorghum",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "rice",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "pigeon peas",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "onions",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "maize",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "groundnuts",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "cowpeas",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "fish",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "watermelon",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "paw-paw",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "mixed",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sheep",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "pigs",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "guinea fowl",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "goats",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "ducks",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "chicken",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "cattle",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "labour - paid",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "money",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "transportation hire",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "wood",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "tractor hire",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "tools",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "sheller hire",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "seeds",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "protective equipment",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "pot for storage",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "ox cart",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "manure wheelbarrows",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "manure sacks",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "fertiliser",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "chemicals",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "bags",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "vaccine",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "supplements",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "housing",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "feed",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "family labour",
+    "tool": "budget",
+    "context": "other"
+  },
+  {
+    "text": "add custom",
+    "tool": "budget",
+    "context": "other"
+  },
+  {
+    "text": "money",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "wood",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "crop",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "milk",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "meat",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "manure for compost",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "fodder for livestock",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "eggs",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "title",
+    "tool": "budget"
+  },
+  {
+    "text": "starting in",
+    "tool": "budget"
+  },
+  {
+    "text": "description",
+    "tool": "budget"
+  },
+  {
+    "text": "What is your type of enterprise?",
+    "tool": "budget"
+  },
+  {
+    "text": "Values",
+    "tool": "budget"
+  },
+  {
+    "text": "Total",
+    "tool": "budget"
+  },
+  {
+    "text": "Title",
+    "tool": "budget"
+  },
+  {
+    "text": "Summary",
+    "tool": "budget"
+  },
+  {
+    "text": "Show More",
+    "tool": "budget"
+  },
+  {
+    "text": "Share as Picture",
+    "tool": "budget"
+  },
+  {
+    "text": "Share Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Share App Link",
+    "tool": "budget"
+  },
+  {
+    "text": "Select Enterprise",
+    "tool": "budget"
+  },
+  {
+    "text": "Select",
+    "tool": "budget"
+  },
+  {
+    "text": "Saved Budgets",
+    "tool": "budget"
+  },
+  {
+    "text": "Save your budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Save",
+    "tool": "budget"
+  },
+  {
+    "text": "Quantity",
+    "tool": "budget"
+  },
+  {
+    "text": "Outputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Next",
+    "tool": "budget"
+  },
+  {
+    "text": "Length",
+    "tool": "budget"
+  },
+  {
+    "text": "Inputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Increase Scale",
+    "tool": "budget"
+  },
+  {
+    "text": "Import Budget Code",
+    "tool": "budget"
+  },
+  {
+    "text": "How long is your budget for?",
+    "tool": "budget"
+  },
+  {
+    "text": "Family",
+    "tool": "budget"
+  },
+  {
+    "text": "Enterprise",
+    "tool": "budget"
+  },
+  {
+    "text": "Description (optional)",
+    "tool": "budget"
+  },
+  {
+    "text": "Decrease Scale",
+    "tool": "budget"
+  },
+  {
+    "text": "Days",
+    "tool": "budget"
+  },
+  {
+    "text": "Create New Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Cost",
+    "tool": "budget"
+  },
+  {
+    "text": "Consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "Close",
+    "tool": "budget"
+  },
+  {
+    "text": "Balance",
+    "tool": "budget"
+  },
+  {
+    "text": "Add Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Activities",
+    "tool": "budget"
+  },
+  {
+    "text": "years out of every 10",
+    "tool": "climate"
+  },
+  {
+    "text": "satisfy",
+    "tool": "climate"
+  },
+  {
+    "text": "out of",
+    "tool": "climate"
+  },
+  {
+    "text": "Year",
+    "tool": "climate"
+  },
+  {
+    "text": "Tools",
+    "tool": "climate"
+  },
+  {
+    "text": "Station",
+    "tool": "climate"
+  },
+  {
+    "text": "Show Tool Options",
+    "tool": "climate"
+  },
+  {
+    "text": "Share Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Share App Link",
+    "tool": "climate"
+  },
+  {
+    "text": "Share",
+    "tool": "climate"
+  },
+  {
+    "text": "Seasonal Total Rainfall",
+    "tool": "climate"
+  },
+  {
+    "text": "Print Version",
+    "tool": "climate"
+  },
+  {
+    "text": "On average",
+    "tool": "climate"
+  },
+  {
+    "text": "Hide Tool Options",
+    "tool": "climate"
+  },
+  {
+    "text": "Definition",
+    "tool": "climate"
+  },
+  {
+    "text": "Close",
+    "tool": "climate"
+  },
+  {
+    "text": "Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Analyse",
+    "tool": "climate"
+  },
+  {
+    "text": "Forms",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Resources",
+    "tool": "resources"
+  },
+  {
+    "text": "Collection not found",
+    "tool": "resources"
+  }
+]
