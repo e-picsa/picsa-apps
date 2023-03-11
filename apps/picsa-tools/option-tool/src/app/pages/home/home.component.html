@@ -1,3 +1,5 @@
+<div class="HomeContainer">
+<div>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -79,3 +81,11 @@
 <button (click)="openDialog()" mat-button mat-raised-button color="primary">
   Add New Option
 </button>
+</div>
+<div  class="slide-in container" [class.active]="matStepperOpen">
+  <div>
+   <option-editor (dataTransfer)="onDataTransfer($event)"></option-editor>
+</div>
+  <button class="buttonposition" mat-button mat-raised-button (click)="closeDialog()" color="primary">Close</button>
+</div>
+</div>
