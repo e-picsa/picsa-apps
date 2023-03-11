@@ -11,6 +11,7 @@
     "start:climate": "nx run picsa-tools-climate-tool:serve",
     "start:crop-probability": "nx run picsa-tools-crop-probability-tool:serve",
     "start:monitoring": "nx run picsa-tools-monitoring-tool:serve",
+    "start:option": "nx run picsa-tools-option-tool:serve",
     "start:resources": "nx run picsa-tools-resources-tool:serve",
     "build": "nx run picsa-apps-extension-app-native:build",
     "build:webcomponents": "yarn nx build picsa-webcomponents",
