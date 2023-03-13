@@ -139,7 +139,19 @@
   "out of": "kuchokera",
   "satisfy": "khutitsa",
   "years out of every 10": "zaka 10 zilizonse",
+  "Budget Tool": "chida cha kayendetsedwe ka chuma",
+  "Click on the button below to retry": "dinani pa batani pansipa kuti muyesenso",
+  "Climate Tool": "chida chounikira nyengo",
+  "Discussions": "zokambirana",
+  "Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in": "pa whatsapp group ya alangizi pamakhala zokambilana. ngati mukufuna kulowanawo gululi, ndinu olandilidwa ndipo tsatilani link pansipa",
+  "Join": "lowani",
+  "Joined": "jul",
+  "Monitoring": "miyezi",
+  "Reload": "bwezeraninso",
+  "Resources": "zipangizo",
+  "Settings": "makhalidwe",
+  "Share App": "gawani monga chithunzi",
+  "Something went wrong...": "chinachake chinalakwika ...",
   "Forms": "nyengere",
-  "Collection not found": "kutolera sikupezeka",
-  "Resources": "zipangizo"
+  "Collection not found": "kutolera sikupezeka"
 }

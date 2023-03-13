@@ -3125,6 +3125,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@biesbjerg/ngx-translate-extract-marker@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@biesbjerg/ngx-translate-extract-marker@npm:1.0.0"
+  dependencies:
+    tslib: ^1.9.0
+  checksum: d8a5c171e077467fed10a6d90914f40c91939db854cf5ea966eaf8ec25e6ec68c034d2ad32683a7b0bf12dd165771c76bf39cef83426c1d5c0332d798a2db58e
+  languageName: node
+  linkType: hard
+
 "@capacitor-community/firebase-analytics@npm:^4.0.0":
   version: 4.0.0
   resolution: "@capacitor-community/firebase-analytics@npm:4.0.0"
@@ -16122,6 +16131,7 @@ __metadata:
     "@awesome-cordova-plugins/file-opener": ^6.3.0
     "@awesome-cordova-plugins/network": ^6.3.0
     "@awesome-cordova-plugins/social-sharing": ^6.3.0
+    "@biesbjerg/ngx-translate-extract-marker": ^1.0.0
     "@capacitor-community/firebase-analytics": ^4.0.0
     "@capacitor-community/firebase-crashlytics": ^2.0.0-1
     "@capacitor-firebase/performance": ^1.3.0

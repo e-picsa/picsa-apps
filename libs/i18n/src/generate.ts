@@ -13,7 +13,7 @@ import {
 } from 'fs-extra';
 import { tmpdir } from 'os';
 import { resolve } from 'path';
-import { HARDCODED_DATA } from './hardcoded';
+import { HARDCODED_DATA, EXTRACTED_PROJECTS } from './hardcoded';
 import { ITranslationEntry } from './types';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -23,15 +23,6 @@ const SOURCE_STRINGS_DIR = resolve(I18N_DIR, 'source');
 const GENERATED_ASSETS_DIR = resolve(I18N_DIR, 'assets');
 const GENERATED_TEMPLATES_DIR = resolve(I18N_DIR, 'templates');
 const TEMPLATE_PATH = resolve(GENERATED_TEMPLATES_DIR, `_template.json`);
-
-/** List of tool names which to extract from the picsa-tools workspace */
-const EXTRACTED_TOOLS = [
-  'budget',
-  'climate',
-  'monitoring',
-  'option',
-  'resources',
-] as const;
 
 /**
  * Generate a list of strings for translation, as identified in the app through ngx-translate
@@ -56,18 +47,14 @@ function setupFolders() {
  * Create json and csv lists of unique entry templates for translation
  */
 function generateTranslationTemplates() {
+  // Process hardcoded entries
   const entries: ITranslationEntry[] = HARDCODED_DATA;
-  for (const name of EXTRACTED_TOOLS) {
-    const extracted = generateNGXTranslateStrings(
-      resolve(PROJECT_ROOT, `apps/picsa-tools/${name}-tool`)
-    );
+  // Process ngx-translate extraction
+  for (const { name, path } of EXTRACTED_PROJECTS) {
+    const extracted = generateNGXTranslateStrings(resolve(PROJECT_ROOT, path));
     for (const key of Object.keys(extracted)) {
       entries.push(stringToTranslationEntry(key, name));
     }
-  }
-  const common = generateNGXTranslateStrings('libs');
-  for (const key of Object.keys(common)) {
-    entries.push(stringToTranslationEntry(key, 'common'));
   }
   // sort and remove duplicates
   const unique = Object.values(arrayToHashmap(entries, 'text'));

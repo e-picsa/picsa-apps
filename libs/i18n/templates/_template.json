@@ -647,15 +647,63 @@
     "tool": "climate"
   },
   {
+    "text": "Budget Tool",
+    "tool": "extension"
+  },
+  {
+    "text": "Click on the button below to retry",
+    "tool": "extension"
+  },
+  {
+    "text": "Climate Tool",
+    "tool": "extension"
+  },
+  {
+    "text": "Discussions",
+    "tool": "extension"
+  },
+  {
+    "text": "Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in",
+    "tool": "extension"
+  },
+  {
+    "text": "Join",
+    "tool": "extension"
+  },
+  {
+    "text": "Joined",
+    "tool": "extension"
+  },
+  {
+    "text": "Monitoring",
+    "tool": "extension"
+  },
+  {
+    "text": "Reload",
+    "tool": "extension"
+  },
+  {
+    "text": "Resources",
+    "tool": "extension"
+  },
+  {
+    "text": "Settings",
+    "tool": "extension"
+  },
+  {
+    "text": "Share App",
+    "tool": "extension"
+  },
+  {
+    "text": "Something went wrong...",
+    "tool": "extension"
+  },
+  {
     "text": "Forms",
     "tool": "monitoring"
   },
   {
     "text": "Collection not found",
-    "tool": "resources"
-  },
-  {
-    "text": "Resources",
     "tool": "resources"
   }
 ]
