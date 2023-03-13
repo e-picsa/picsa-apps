@@ -13,10 +13,12 @@ import { tmpdir } from 'os';
 import { resolve } from 'path';
 import * as DATA from './hardcoded';
 import { ITranslationEntry } from './types';
+import { arrayToHashmap } from '@picsa/utils';
 
 const I18N_DIR = resolve(__dirname, '../');
 const PROJECT_ROOT = resolve(I18N_DIR, '../../');
-const TEMPLATE_PATH = resolve(I18N_DIR, 'generated', `_template.json`);
+const GENERATED_DIR = resolve(I18N_DIR, 'generated');
+const TEMPLATE_PATH = resolve(GENERATED_DIR, `_template.json`);
 
 /** List of tool names which to extract from the picsa-tools workspace */
 const EXTRACTED_TOOLS = [
@@ -55,13 +57,16 @@ function generateTranslationTemplates() {
   for (const key of Object.keys(common)) {
     entries.push(stringToTranslationEntry(key, 'common'));
   }
-
-  const sorted = entries.sort((a, b) => {
-    if (a.tool === b.tool) return `${a.context}` > `${b.context}` ? 1 : -1;
-    return a.tool > b.tool ? 1 : -1;
+  // sort and remove duplicates
+  const unique = Object.values(arrayToHashmap(entries, 'text'));
+  const sorted = unique.sort((a, b) => {
+    const comparator =
+      `${a.tool}-${a.context}-${a.text}` > `${b.tool}-${b.context}-${b.text}`;
+    return comparator ? 1 : -1;
   });
   writeOutputJson(sorted);
   writeOutputCSV(sorted);
+  console.log('Translations generated', GENERATED_DIR);
 }
 
 function generateLanguageFiles() {
