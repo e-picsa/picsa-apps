@@ -545,11 +545,6 @@
     "context": "chart"
   },
   {
-    "text": "Length of season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
     "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
     "tool": "climate",
     "context": "chart"
