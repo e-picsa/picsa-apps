@@ -1,3 +1,3 @@
 # i18n
 
-See documentation
+See [documentation](https://docs.picsa.app/translations)
