@@ -2,6 +2,8 @@ import { spawnSync } from 'child_process';
 
 // import { spawnSync } from 'child_process';
 import {
+  emptyDirSync,
+  ensureDirSync,
   existsSync,
   readJSONSync,
   readJsonSync,
@@ -11,14 +13,16 @@ import {
 } from 'fs-extra';
 import { tmpdir } from 'os';
 import { resolve } from 'path';
-import * as DATA from './hardcoded';
+import { HARDCODED_DATA } from './hardcoded';
 import { ITranslationEntry } from './types';
 import { arrayToHashmap } from '@picsa/utils';
 
 const I18N_DIR = resolve(__dirname, '../');
 const PROJECT_ROOT = resolve(I18N_DIR, '../../');
-const GENERATED_DIR = resolve(I18N_DIR, 'generated');
-const TEMPLATE_PATH = resolve(GENERATED_DIR, `_template.json`);
+const SOURCE_STRINGS_DIR = resolve(I18N_DIR, 'source');
+const GENERATED_ASSETS_DIR = resolve(I18N_DIR, 'assets');
+const GENERATED_TEMPLATES_DIR = resolve(I18N_DIR, 'templates');
+const TEMPLATE_PATH = resolve(GENERATED_TEMPLATES_DIR, `_template.json`);
 
 /** List of tool names which to extract from the picsa-tools workspace */
 const EXTRACTED_TOOLS = [
@@ -35,16 +39,24 @@ const EXTRACTED_TOOLS = [
  * Create language-specific translation sheets by mapping source translations with template
  * */
 function main() {
+  setupFolders();
   generateTranslationTemplates();
-  generateLanguageFiles();
+  generateAppLanguageAssets();
 }
 
+function setupFolders() {
+  ensureDirSync(GENERATED_ASSETS_DIR);
+  emptyDirSync(GENERATED_ASSETS_DIR);
+  ensureDirSync(GENERATED_TEMPLATES_DIR);
+  emptyDirSync(GENERATED_TEMPLATES_DIR);
+}
+
+/**
+ * Extract all available strings from both ngx-translate methods and hardcoded data
+ * Create json and csv lists of unique entry templates for translation
+ */
 function generateTranslationTemplates() {
-  const entries: ITranslationEntry[] = [
-    ...DATA.BUDGET_ENTRIES,
-    ...DATA.CLIMATE_ENTRIES,
-    // TODO - resources, monitoring etc.
-  ];
+  const entries: ITranslationEntry[] = HARDCODED_DATA;
   for (const name of EXTRACTED_TOOLS) {
     const extracted = generateNGXTranslateStrings(
       resolve(PROJECT_ROOT, `apps/picsa-tools/${name}-tool`)
@@ -60,24 +72,29 @@ function generateTranslationTemplates() {
   // sort and remove duplicates
   const unique = Object.values(arrayToHashmap(entries, 'text'));
   const sorted = unique.sort((a, b) => {
+    // sort empty strings to top, then by tool-context-text
+    if (a.text === '' || b.text === '') return a.text > b.text ? 1 : -1;
     const comparator =
       `${a.tool}-${a.context}-${a.text}` > `${b.tool}-${b.context}-${b.text}`;
     return comparator ? 1 : -1;
   });
   writeOutputJson(sorted);
   writeOutputCSV(sorted);
-  console.log('Translations generated', GENERATED_DIR);
+  console.log('Templates generated', GENERATED_TEMPLATES_DIR);
+  console.log('Assets generated', GENERATED_ASSETS_DIR);
 }
 
-function generateLanguageFiles() {
+/**
+ * Check source strings dir. For every set of language translations merge with
+ * template translations list to produce a single [lang].json file ready for
+ * import into translation assets
+ */
+function generateAppLanguageAssets() {
   const entries: ITranslationEntry[] = readJsonSync(TEMPLATE_PATH);
-
-  const translationsDir = resolve(I18N_DIR, 'translations');
-  const translatedFiles = readdirSync(translationsDir).map((name) => ({
-    filePath: resolve(translationsDir, name),
+  const translatedFiles = readdirSync(SOURCE_STRINGS_DIR).map((name) => ({
+    filePath: resolve(SOURCE_STRINGS_DIR, name),
     code: name.split('.')[0],
   }));
-
   for (const { filePath, code } of translatedFiles) {
     const translated: Record<string, string> = {};
     const untranslated: Record<string, string> = {};
@@ -90,7 +107,7 @@ function generateLanguageFiles() {
         untranslated[text] = '';
       }
     }
-    const outputTarget = resolve(I18N_DIR, 'generated', `${code}.json`);
+    const outputTarget = resolve(GENERATED_ASSETS_DIR, `${code}.json`);
     const outputTranslations = {
       ...sortJsonByKey(untranslated),
       ...sortJsonByKey(translated),
@@ -114,11 +131,18 @@ function stringToTranslationEntry(
 
 function writeOutputJson(entries: ITranslationEntry[]) {
   writeFileSync(TEMPLATE_PATH, JSON.stringify(entries, null, 2));
+  // write additional en version where key just matches value
+  const enJson = {};
+  const enJsonPath = resolve(GENERATED_ASSETS_DIR, 'en.json');
+  for (const { text } of Object.values(entries)) {
+    enJson[text] = text;
+  }
+  writeFileSync(enJsonPath, JSON.stringify(enJson, null, 2));
 }
 
 /** Convert json to csv and output (adapted from https://stackoverflow.com/a/31536517) */
 function writeOutputCSV(entries: ITranslationEntry[]) {
-  const target = resolve(I18N_DIR, 'generated', `_template.csv`);
+  const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
   const replacer = (key: string, value: string) =>
     value === null ? '' : value; // specify how you want to handle null values here
   const header: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
