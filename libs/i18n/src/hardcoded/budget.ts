@@ -1,4 +1,4 @@
-import BUDGET_CARDS from '../../../apps/picsa-tools/budget-tool/src/app/data/cards';
+import { BUDGET_CARDS } from '@picsa/budget/src/app/data';
 import type { ITranslationEntry } from '../types';
 
 export const BUDGET_ENTRIES = BUDGET_CARDS.map((c) => {

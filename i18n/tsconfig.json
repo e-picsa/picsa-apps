@@ -1,9 +1,0 @@
-{
-  "extends": "../tsconfig.base.json",
-  "compilerOptions": {
-    "strict": true,
-    "module": "CommonJS"
-  },
-
-  "files": ["src/generate.ts", "src/process.ts"]
-}

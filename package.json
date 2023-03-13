@@ -20,7 +20,7 @@
     "graph": "yarn nx graph",
     "cache:clear": "nx reset",
     "version": "ts-node ./tools/workflows/version.ts",
-    "i18n:gen": "ts-node ./i18n/src/generate.ts"
+    "i18n": "nx run i18n:build"
   },
   "private": true,
   "dependencies": {

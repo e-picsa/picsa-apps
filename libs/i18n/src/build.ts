@@ -1,4 +1,6 @@
 import { spawnSync } from 'child_process';
+
+// import { spawnSync } from 'child_process';
 import {
   existsSync,
   readJSONSync,
@@ -13,7 +15,7 @@ import * as DATA from './hardcoded';
 import { ITranslationEntry } from './types';
 
 const I18N_DIR = resolve(__dirname, '../');
-const PROJECT_ROOT = resolve(__dirname, '../..');
+const PROJECT_ROOT = resolve(I18N_DIR, '../../');
 const TEMPLATE_PATH = resolve(I18N_DIR, 'generated', `_template.json`);
 
 /** List of tool names which to extract from the picsa-tools workspace */
@@ -43,7 +45,7 @@ function generateTranslationTemplates() {
   ];
   for (const name of EXTRACTED_TOOLS) {
     const extracted = generateNGXTranslateStrings(
-      `./apps/picsa-tools/${name}-tool`
+      resolve(PROJECT_ROOT, `apps/picsa-tools/${name}-tool`)
     );
     for (const key of Object.keys(extracted)) {
       entries.push(stringToTranslationEntry(key, name));
@@ -137,10 +139,8 @@ function generateNGXTranslateStrings(input: string): Record<string, string> {
   );
   const tmpTarget = resolve(tmpdir(), 'ngx-extract.json');
   if (existsSync(tmpTarget)) rmSync(tmpTarget);
-
   const cmd = `${binPath} --input ${input} --output ${tmpTarget} --clean --sort --replace --format json`;
   spawnSync(cmd, { shell: true, stdio: 'inherit' });
-
   const extracted = readJSONSync(tmpTarget);
   rmSync(tmpTarget);
   return extracted;

@@ -1,4 +1,4 @@
-import { CHART_TYPES } from '../../../apps/picsa-tools/climate-tool/src/app/data';
+import { CHART_TYPES } from '@picsa/climate/src/app/data';
 import type { ITranslationEntry } from '../types';
 
 const entries: ITranslationEntry[] = [];
