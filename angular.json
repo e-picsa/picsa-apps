@@ -5,6 +5,7 @@
     "components": "libs/components",
     "configuration": "libs/configuration",
     "environments": "libs/environments",
+    "i18n": "libs/i18n",
     "models": "libs/models",
     "picsa-apps-content-dashboard": "apps/picsa-apps/content-dashboard",
     "picsa-apps-content-dashboard-e2e": "apps/picsa-apps/content-dashboard-e2e",
