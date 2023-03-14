@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const ROUTES_COMMON: Routes = [
   {
@@ -8,7 +9,7 @@ export const ROUTES_COMMON: Routes = [
       import('./pages/site-select/site-select.module').then(
         (mod) => mod.ClimateSiteSelectPageModule
       ),
-    title: 'Select a site',
+    title: translateMarker('Select a site'),
   },
   {
     path: 'site/:siteId',

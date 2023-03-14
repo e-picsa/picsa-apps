@@ -530,6 +530,11 @@
     "tool": "budget"
   },
   {
+    "text": "End",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
     "text": "End of Season",
     "tool": "climate",
     "context": "chart"
@@ -550,6 +555,11 @@
     "context": "chart"
   },
   {
+    "text": "Rain",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
     "text": "Seasonal Rainfall",
     "tool": "climate",
     "context": "chart"
@@ -561,6 +571,11 @@
   },
   {
     "text": "Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Start",
     "tool": "climate",
     "context": "chart"
   },
@@ -595,6 +610,10 @@
     "tool": "climate"
   },
   {
+    "text": "Line",
+    "tool": "climate"
+  },
+  {
     "text": "On average",
     "tool": "climate"
   },
@@ -604,6 +623,10 @@
   },
   {
     "text": "Seasonal Total Rainfall",
+    "tool": "climate"
+  },
+  {
+    "text": "Select a site",
     "tool": "climate"
   },
   {
@@ -624,6 +647,10 @@
   },
   {
     "text": "Station",
+    "tool": "climate"
+  },
+  {
+    "text": "Terciles",
     "tool": "climate"
   },
   {
@@ -676,6 +703,10 @@
   },
   {
     "text": "Monitoring",
+    "tool": "extension"
+  },
+  {
+    "text": "Privacy Policy",
     "tool": "extension"
   },
   {

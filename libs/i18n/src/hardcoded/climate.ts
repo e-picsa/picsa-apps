@@ -5,6 +5,7 @@ const entries: ITranslationEntry[] = [];
 
 for (const el of CHART_TYPES) {
   entries.push({ text: el.name, tool: 'climate', context: 'chart' });
+  entries.push({ text: el.shortname, tool: 'climate', context: 'chart' });
   entries.push({ text: el.yLabel, tool: 'climate', context: 'chart' });
   entries.push({ text: el.definition, tool: 'climate', context: 'chart' });
 }
