@@ -71,7 +71,7 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     image: 'assets/images/season-length.png',
     keys: ['Length'],
     yFormat: 'value',
-    yLabel: 'Length of season',
+    yLabel: 'Length of Season',
     xLabel: '',
     xVar: 'Year',
     xMinor: 1,

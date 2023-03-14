@@ -1,7 +1,7 @@
-import { IBudgetCard } from '../models/budget-tool.models';
+import type { IBudgetCard } from '../models/budget-tool.models';
 
 // This data is automatically populated on first load and update from live when available
-const CARDS: IBudgetCard[] = [
+export const BUDGET_CARDS: IBudgetCard[] = [
   {
     type: 'activities',
     label: 'build housing',
@@ -563,4 +563,3 @@ const CARDS: IBudgetCard[] = [
     imgType: 'svg',
   },
 ];
-export default CARDS;

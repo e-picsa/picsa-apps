@@ -89,7 +89,7 @@ export class ClimateChartService {
     console.log('[Climate] set chart', id);
     const chart = id ? CHART_VIEWS.find((v) => v._viewID === id) : undefined;
     this.chartDefinition = chart as IChartMeta & IClimateView;
-    this.generateChartConfig();
+    await this.generateChartConfig();
     this.chartSeriesData = this.stationData.map(
       (v) => v[this.chartDefinition!.keys[0]] as number
     );
@@ -103,13 +103,16 @@ export class ClimateChartService {
    * Generate a c3 chart config with series loaded for all station data, and
    * active definition series displayed
    */
-  private generateChartConfig() {
+  private async generateChartConfig() {
     const data = this.stationData;
     console.count('Generate chart');
     const definition = this.chartDefinition as IChartMeta & IClimateView;
     // configure major and minor ticks, labels and gridlines
     const ranges = this.calculateDataRanges(data, definition);
     const gridMeta = this.calculateGridMeta(definition, ranges);
+    const chartName = await this.translateService.translateText(
+      definition.name
+    );
     // configure chart
     this.chartConfig = {
       // ensure axis labels fit
@@ -129,7 +132,7 @@ export class ClimateChartService {
           seriesColors[(d as DataPoint).id],
       },
       ['title' as any]: {
-        text: `${this.station?.name} | ${definition.name}`,
+        text: `${this.station?.name} | ${chartName}`,
       },
       tooltip: {
         grouped: false,

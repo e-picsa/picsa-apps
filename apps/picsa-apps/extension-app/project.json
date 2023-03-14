@@ -33,6 +33,11 @@
             "output": "assets"
           },
           {
+            "glob": "*.json",
+            "input": "libs/i18n/assets",
+            "output": "assets/i18n"
+          },
+          {
             "glob": "**/*",
             "input": "apps/picsa-tools/budget-tool/src/assets",
             "output": "assets"

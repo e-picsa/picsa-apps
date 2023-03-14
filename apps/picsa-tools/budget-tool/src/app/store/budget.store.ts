@@ -18,7 +18,7 @@ import {
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { NEW_BUDGET_TEMPLATE, MONTHS } from './templates';
-import CARDS from '../data/cards';
+import { BUDGET_CARDS } from '../data';
 import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
 import { IAppMeta } from '@picsa/models';
 import { APP_VERSION } from '@picsa/environments';
@@ -385,7 +385,7 @@ export class BudgetStore implements OnDestroy {
 
   private async setHardcodedData() {
     const endpoint = 'budgetTool/_all/cards';
-    const docs: IBudgetCardDB[] = CARDS.map((card) => {
+    const docs: IBudgetCardDB[] = BUDGET_CARDS.map((card) => {
       return {
         ...card,
         // add doc metadata - this would be auto populated however want to keep
