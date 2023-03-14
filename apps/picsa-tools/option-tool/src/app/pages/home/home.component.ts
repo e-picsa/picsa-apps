@@ -1,8 +1,4 @@
-import { Component } from '@angular/core';
-import { EditorComponent } from '../../components/editor/editor.component';
-import { MatDialog} from '@angular/material/dialog';
-
-
+import { Component  } from '@angular/core';
 
 export interface IOptionData {
   practice: string;
@@ -13,48 +9,31 @@ export interface IOptionData {
   time: string;
   risk: string;
 }
-// let ELEMENT_DATA: IOptionData[] = [
-//   { 
-//   practice:'ridges', 
-//   gender:['female'],
-//   benefits: [{
-//     benefit:" alot of cash", beneficiary:['male']
-//   }, {
-//     benefit:" alot of cash", beneficiary:['male', 'female']
-//   }
-// ],
-//   performance:{lowRf:"ok", midRf:"ok",  highRf:"ok"},
-//   investment:{money:"high", time:"low"},
-//   time:'2', 
-//   risk:'expensive' },
-// ];
 
 @Component({
   selector: 'option-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  
 })
 export class HomeComponent {
   public dataSource: IOptionData[]  = [];
   public displayedColumns: string[] = ['practice', 'gender', 'benefits', 
   'performance','investment','time','risk' ];
-
-  constructor(public dialog: MatDialog) {
-
-  }
+    
+  matStepperOpen = false;
 
   public openDialog() {
-
-    const dialogRef = this.dialog.open(EditorComponent, {
-      data: {},
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result.event==='Add') {
-        //add to options list
-        this.dataSource = [...this.dataSource, result.data];
-      }
-    });
+    this.matStepperOpen = true
+  }
+  public closeDialog(){
+    this.matStepperOpen = false
+  }
+  onDataTransfer(data: IOptionData) {
+    console.log('Received data from editor:', data);
+    // close the child component
+    this.dataSource = [...this.dataSource, data];
+    this.matStepperOpen = false;
   }
 
 }

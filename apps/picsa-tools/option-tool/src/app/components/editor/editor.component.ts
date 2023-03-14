@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog'
+import {Component,EventEmitter, OnInit, Output ,ViewChild} from '@angular/core';
+import { MatStepper } from '@angular/material/stepper'
 
 @Component({
   selector: 'option-editor',
@@ -7,7 +7,8 @@ import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog'
   styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent implements OnInit {
-  stepCounter: number;
+  // stepCounter: number;
+  warningText: string;
   practiceEntry: string;
   gender: string [];
   benefits: {benefit:string, beneficiary:string[]} [];
@@ -17,13 +18,14 @@ export class EditorComponent implements OnInit {
   investmentOptions: string[]=['high','mid','low']
   benefitsStartTime: string;
   risk:string;
+  isLinear = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<EditorComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
-  ) { }
+  @ViewChild(MatStepper) stepper: MatStepper;
+
+  @Output() dataTransfer = new EventEmitter();
+
   ngOnInit(): void {
-    this.stepCounter = 1;
+    // this.stepCounter = 1;
     this.gender=[],
     this.benefits=[{
       benefit:'',
@@ -32,15 +34,15 @@ export class EditorComponent implements OnInit {
   ]
   this.perfomanceValues = { lowRf:"ok",midRf:"ok",highRf:"ok"}
   this.investmentValues = {money:'high', time:'high'}
+  this.warningText='';
+  this.practiceEntry='';
+  this.gender= [];
+  this.perfomanceValues= {lowRf:"", midRf:"",  highRf:""};  
+  this.investmentValues={money:"", time:""};  
+  this.benefitsStartTime ="";
+  this.risk="" 
   }
-  handlePracticeEntryNext(){
-    this.stepCounter +=1; 
-  }
-  handlePrevious(){
-    if((this.stepCounter-1) > 0){
-      this.stepCounter -=1;
-    }
-  }
+  
   handleGender(gender:string){
     if(!this.gender.includes(gender)){
       this.gender.push(gender)
@@ -76,6 +78,10 @@ export class EditorComponent implements OnInit {
 
   async finishProcess  (){
     //compile collected data
+    if(this.practiceEntry &&
+      this.gender.length > 0 &&
+      this.benefitsStartTime &&
+      this.risk){
     const finalObject = {
       practice:this.practiceEntry,
       gender: this.gender,
@@ -85,7 +91,40 @@ export class EditorComponent implements OnInit {
       time:this.benefitsStartTime,
       risk:this.risk
     }
-    this.dialogRef.close({event:'Add',data:finalObject});
+    this.dataTransfer.emit(finalObject);
+     this.resetVariables()
+     this.resetStepper()
+    }else{
+      this.warningText = "Please fill all the fields"
+    }
   }
+  resetVariables(){
+    // Reset variables when the component is destroyed.
+    this.gender=[],
+    this.benefits=[{
+      benefit:'',
+      beneficiary:[]
+    },
+  ]
+  this.perfomanceValues = { lowRf:"ok",midRf:"ok",highRf:"ok"}
+  this.investmentValues = {money:'high', time:'high'}
+  this.warningText='';
+  this.practiceEntry='';
+  this.gender= [];
+  this.perfomanceValues= {lowRf:"", midRf:"",  highRf:""};  
+  this.investmentValues={money:"", time:""};  
+  this.benefitsStartTime ="";
+  this.risk=""
+  }
+  resetStepper(): void {
+    this.stepper.reset();
+  }
+  submitForm() {
+    console.log('Form submitted!');
+  }
+  // ngOnDestroy() {
+  //   // Reset variables when the component is destroyed.
+   
+  // }
 
 }
