@@ -22,4 +22,10 @@ export interface IReportMeta extends IClimateView {
   description: string;
 }
 
-type ClimateViewID = 'cropAnalysis' | 'start' | 'end' | 'length' | 'rainfall';
+type ClimateViewID =
+  | 'cropAnalysis'
+  | 'start'
+  | 'end'
+  | 'length'
+  | 'rainfall'
+  | 'temp-annual-mean';

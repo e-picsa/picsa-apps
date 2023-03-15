@@ -83,6 +83,25 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     definition:
       'Length of season is defined as the total days from the start of the season until the end of the season as defined',
   },
+  {
+    _viewID: 'temp-annual-mean',
+    _viewType: 'chart',
+    name: 'Annual Mean Temperature',
+    shortname: 'Temp',
+    image: 'assets/images/temp.svg',
+    keys: ['Length'],
+    yFormat: 'value',
+    yLabel: 'Annual Mean Temperature',
+    xLabel: '',
+    xVar: 'Year',
+    xMinor: 1,
+    xMajor: 2,
+    yMinor: 1,
+    yMajor: 5,
+    tools: { line: false },
+    units: 'days',
+    definition: '',
+  },
   // {name: "Combined Probability", image: "assets/images/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
 ];
 

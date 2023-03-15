@@ -24,6 +24,7 @@ export class SiteSelectPage {
   basemapOptions: IBasemapOptions = {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
+    noWrap: true,
   };
 
   constructor(
@@ -47,6 +48,11 @@ export class SiteSelectPage {
   }
   private setMapBounds() {
     const { stations } = this.populateSites();
+    console.log('stations', stations);
+    if (stations.length === 0) {
+      this.picsaMap.map.setView([0, 0], 0);
+      return;
+    }
     // use stored last bounds if exist (ephemeral only)
     const lastMapBounds = localStorage.getItem('picsaSiteSelectBounds');
     if (lastMapBounds) {

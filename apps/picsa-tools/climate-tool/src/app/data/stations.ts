@@ -137,4 +137,15 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     longitude: 68.775917,
     countryCode: 'tj',
   },
+  {
+    ...generateMockDBMeta({
+      _key: 'demo',
+      _created,
+      _modified: new Date('2022-10-05').toISOString(),
+    }),
+    name: 'Demo',
+    latitude: 51.509865,
+    longitude: 0.1276,
+    countryCode: 'demo',
+  },
 ];
