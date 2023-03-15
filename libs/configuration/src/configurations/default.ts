@@ -2,7 +2,6 @@ import { IConfiguration } from '../types';
 
 const configuration: IConfiguration.Settings = {
   id: '',
-  meta: { label: '', image: '' },
   android: {},
   budgetTool: {
     currency: '$',
@@ -10,7 +9,7 @@ const configuration: IConfiguration.Settings = {
   },
   climateTool: {},
   localisation: {
-    country: { label: '', code: '' },
+    country: { label: '', code: '', image: '' },
     language: {
       options: [],
       selected: undefined,

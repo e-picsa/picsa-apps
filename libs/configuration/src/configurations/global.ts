@@ -1,27 +1,32 @@
 import { IConfiguration } from '../types';
 
 const configuration: IConfiguration.Settings = {
-  id: 'zm',
+  id: 'demo',
   android: {},
   budgetTool: {
-    currency: 'ZMK',
-    currencyBaseValue: 10,
+    currency: '$',
+    currencyBaseValue: 1,
   },
-  climateTool: {},
+  climateTool: {
+    // include all stations
+    stationFilter: () => true,
+  },
+
   localisation: {
     country: {
-      label: 'Zambia',
-      code: 'zm',
-      image: 'assets/images/flags/zm.svg',
+      label: 'Global',
+      code: '',
+      image: 'assets/images/flags/global.svg',
     },
     language: {
       options: [
         { id: 'en', label: 'English', code: 'en' },
         { id: 'ny', label: 'Chichewa', code: 'ny' },
+        { id: 'tg', label: 'Тоҷикӣ', code: 'tg' },
       ],
       selected: undefined,
     },
   },
-  theme: 'picsa-zm',
+  theme: 'picsa-global',
 };
 export default configuration;
