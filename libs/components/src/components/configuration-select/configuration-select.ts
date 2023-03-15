@@ -14,7 +14,8 @@ export class ConfigurationSelectComponent {
     public configurationService: ConfigurationService
   ) {}
   get image() {
-    return this.configurationService.activeConfiguration.meta.image;
+    return this.configurationService.activeConfiguration.localisation.country
+      .image;
   }
   get label() {
     const { country, language } =

@@ -84,9 +84,10 @@ export class ResourcesStore {
     const resourcesById: { [id: string]: IResource } = JSON.parse(
       JSON.stringify(RESOURCES.byId)
     );
-    // Remove any collections with country filters
+    // Remove any collections with country filters (include all resources if no countryCode provided)
     Object.entries(resourcesById).forEach(([key, resource]) => {
       if (
+        countryCode &&
         resource.appCountries &&
         !resource.appCountries.includes(countryCode)
       ) {
