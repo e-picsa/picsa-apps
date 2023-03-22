@@ -45,6 +45,13 @@
         style="display: contents"
       ></budget-card-image>
     </div>
-    <div style="flex: 1; margin-left: 1rem">{{ 'Add Member' | translate }}</div>
+    <div style="flex: 1; margin-left: 1rem">
+      <span *ngIf="memberCard.id==='adultMale'"
+        >{{ 'Add Male Member' | translate }}</span
+      >
+      <span *ngIf="memberCard.id==='adultFemale'">
+        {{ 'Add Female Member' | translate }}</span
+      >
+    </div>
   </div>
 </div>
