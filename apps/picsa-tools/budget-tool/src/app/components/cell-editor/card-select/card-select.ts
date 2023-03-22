@@ -47,6 +47,10 @@ export class BudgetCellEditorCardSelectComponent {
     });
     this.enterpriseCards = this._sortAZ(enterpriseCards);
     this.otherCards = this._sortAZ(otherCards);
+    // Default show all cards if none available for specific enterprise
+    if (enterpriseCards.length === 0) {
+      this.showAllCards = true;
+    }
   }
 
   setValues(values: IBudgetCardWithValues[] = []) {
