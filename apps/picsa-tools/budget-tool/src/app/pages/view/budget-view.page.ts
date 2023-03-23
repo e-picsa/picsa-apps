@@ -12,6 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { MatDialog } from '@angular/material/dialog';
 import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
+import { PicsaTranslateService } from '@picsa/shared/modules';
 
 @Component({
   selector: 'budget-view',
@@ -33,7 +34,8 @@ export class BudgetViewPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public store: BudgetStore,
     private componentsService: PicsaCommonComponentsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translateService: PicsaTranslateService
   ) {}
 
   async ngOnInit() {
@@ -60,7 +62,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   private addRouterSubscription() {
     this.route.queryParams
       .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((params) => {
+      .subscribe(async (params) => {
         const { edit, period, label, type } = params;
         if (period) {
           this.store.setActivePeriod(Number(period));
@@ -74,11 +76,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
           const { meta } = this.store.activeBudget;
           let title = meta.title;
           if (this.isEditorOpen) {
-            title = label;
-            if (type) {
-              const typeLabel = this.store.typeLabels[type];
-              title = `${typeLabel} - ${title}`;
-            }
+            title = await this.translateService.translateText(label);
           }
           this.componentsService.setHeader({ title });
         }
