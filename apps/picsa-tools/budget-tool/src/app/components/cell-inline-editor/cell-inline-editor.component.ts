@@ -1,7 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 import {
+  FadeInOut,
+  ANIMATION_DELAYED,
+  FlyInOut,
+} from '@picsa/shared/animations';
+import {
+  IBudgetCard,
   IBudgetCardWithValues,
   IBudgetPeriodData,
   IBudgetPeriodType,
@@ -12,14 +16,17 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-cell-inline-editor',
   templateUrl: './cell-inline-editor.component.html',
   styleUrls: ['./cell-inline-editor.component.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED)],
+  animations: [FadeInOut(ANIMATION_DELAYED), FlyInOut({ axis: 'Y' })],
 })
 export class BudgetCellInlineEditorComponent {
   // steps = EDITOR_STEPS;
-  data: IBudgetPeriodData;
-  selected: IBudgetCardWithValues[] = [];
+  public data: IBudgetPeriodData;
+  public selected: IBudgetCardWithValues[] = [];
   public _activeType: IBudgetPeriodType;
   public _activePeriod: number;
+
+  public showCardsList = false;
+
   @Input() set activeType(activeType: IBudgetPeriodType) {
     this._activeType = activeType;
     this.loadEditorData();
@@ -30,11 +37,9 @@ export class BudgetCellInlineEditorComponent {
   }
 
   @Input() isOpen = false;
-  constructor(
-    public store: BudgetStore,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
+  constructor(public store: BudgetStore) {}
+
+  public toggleCardList() {}
 
   private loadEditorData() {
     if (this._activePeriod !== undefined && this._activeType !== undefined) {
@@ -44,6 +49,20 @@ export class BudgetCellInlineEditorComponent {
       );
       this.data = data;
       this.selected = data[this._activeType] || [];
+    }
+  }
+
+  public trackByFn(index: number, item: IBudgetCard) {
+    return item.id;
+  }
+
+  public removeSelectedCard(index: number) {
+    if (this.data[this._activeType][index]) {
+      const values = [...this.data[this._activeType]];
+      values.splice(index, 1);
+
+      this.onEditorChange(values, this._activeType);
+      this.loadEditorData();
     }
   }
 
@@ -78,12 +97,6 @@ export class BudgetCellInlineEditorComponent {
   //     relativeTo: this.route,
   //   });
   // }
-
-  // use trackby on inputs as otherwise each one changing would re-render all others
-  // (updating any input re-renders all others)
-  trackByIndex(index: number, obj: any): any {
-    return index;
-  }
 }
 
 // const EDITOR_STEPS: (IBudgetPeriodType | 'summary')[] = [

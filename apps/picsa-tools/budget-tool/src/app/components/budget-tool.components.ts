@@ -24,6 +24,7 @@ import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardNew } from './card/card-new/card-new';
 import { BudgetCardNewDialog } from './card/card-new/card-new-dialog';
+import { BudgetCardPlaceholderComponent } from './card/card-placeholder/card-placeholder.component';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
@@ -46,6 +47,7 @@ const components = [
   BudgetBalanceEditorComponent,
   BudgetCardComponent,
   BudgetCardImageComponent,
+  BudgetCardPlaceholderComponent,
   BudgetCellComponent,
   BudgetCellEditorComponent,
   BudgetCellEditorCardSelectComponent,

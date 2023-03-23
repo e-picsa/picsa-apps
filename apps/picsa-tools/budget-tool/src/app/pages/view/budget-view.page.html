@@ -20,21 +20,21 @@
       [budget]="store.activeBudget"
       @fadeInOut
     ></budget-table>
-    <budget-cell-editor
+    <!-- <budget-cell-editor
       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
       [isOpen]="isEditorOpen"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
-    ></budget-cell-editor>
+    ></budget-cell-editor> -->
     <!-- WiP Updated editor (replaces ABOVE) -->
-    <!-- <budget-cell-inline-editor
-       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
+    <budget-cell-inline-editor
+      *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
       [isOpen]="isEditorOpen"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
-    ></budget-cell-inline-editor> -->
+    ></budget-cell-inline-editor>
   </div>
 
   <!-- Header Menu -->

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { IBudgetCard, IBudgetCardDB } from '../../models/budget-tool.models';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { BudgetStore } from '../../store/budget.store';
@@ -15,6 +21,9 @@ export class BudgetCardComponent {
   // use partial as not sure whether will be budget card or custom budget card
   @Input() card: IBudgetCard;
   @Input() selected: boolean;
+
+  @Input() showDeleteButton = false;
+  @Output() deleteClicked = new EventEmitter<IBudgetCard>();
 
   constructor(private dialog: PicsaDialogService, public store: BudgetStore) {}
 

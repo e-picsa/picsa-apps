@@ -60,7 +60,17 @@ export function FadeInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
   ]);
 }
 
-export function FlyInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
+/**
+ * Use translation animation to fly an element in or out of the screen along
+ * the translation axis
+ *
+ * @example Toggling a `shouldShow` variable will transition in and out
+ * ```html
+ * <div [@flyInOut]="shouldShow ? 'in' : 'out'"></div>
+ * ```
+ * */
+export function FlyInOut(config?: Partial<IAnimationConfig>) {
+  const c = { ...ANIMATION_DEFAULTS, ...config };
   return trigger('flyInOut', [
     state('in', style({ transform: 'translate' + c.axis + '(0)' })),
     state('out', style({ transform: 'translate' + c.axis + '(100%)' })),

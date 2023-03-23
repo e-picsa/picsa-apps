@@ -1,11 +1,24 @@
-<div
-  class="page-content"
-  style="height: calc(100% - 50px); padding: 0; overflow: auto"
->
-  <!-- Selected Cards -->
-  <div style="display: flex; flex-wrap: wrap">
-    <budget-card *ngFor="let card of selected" [card]="card"></budget-card>
+<!-- Selected Cards -->
+<h2>{{ _activeType | translate | titlecase }}</h2>
+<div class="selected-summary">
+  <p *ngIf="selected.length === 0">
+    <span>{{ 'Select from list below' | translate }}</span>
+  </p>
+  <div style="display: flex; overflow-x: scroll; width: 100%">
+    <budget-card
+      *ngFor="let card of selected; index as i; trackBy: trackByFn"
+      [card]="card"
+      [showDeleteButton]="true"
+      (deleteClicked)="removeSelectedCard(i)"
+      @fadeInOut
+    ></budget-card>
+    <budget-card-placeholder
+      (click)="showCardsList = true"
+    ></budget-card-placeholder>
   </div>
+</div>
+<hr style="width: 100%" />
+<div class="cardsList" [@flyInOut]="showCardsList ? 'in' : 'out'">
   <!-- Activities -->
   <budget-cell-editor-card-select
     @fadeInOut
@@ -76,8 +89,11 @@
     [cards]="data.produceConsumed"
     (valueChanged)="onEditorChange($event, 'produceConsumed')"
   ></budget-cell-editor-produce-consumed>
-  <!-- Summary -->
-  <!-- <budget-period-summary
+</div>
+
+<!-- Summary -->
+
+<button mat-button>Next</button>
+<!-- <budget-period-summary
     [periodIndex]="store.activePeriod"
   ></budget-period-summary> -->
-</div>

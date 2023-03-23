@@ -1,11 +1,11 @@
 :host {
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin: 10px;
   display: inline-block;
   cursor: pointer;
   text-align: center;
   // prevent strange offset
   vertical-align: bottom;
+  position: relative;
 }
 
 mat-card.budget-card {
@@ -14,10 +14,20 @@ mat-card.budget-card {
 }
 .delete-button {
   position: absolute;
-  right: 0;
-  min-width: 24px;
-  padding: 0 4px;
+  right: -16px;
+  top: -10px;
+  height: 36px;
+  width: 36px;
+  min-width: 36px;
+  padding: 4px;
+  font-size: 36px;
   color: var(--color-light);
+  border: 1px solid var(--color-light);
+  border-radius: 50%;
+  background: white;
+}
+.delete-button-icon {
+  margin: 0;
 }
 
 .budget-card[selected='true'] {
