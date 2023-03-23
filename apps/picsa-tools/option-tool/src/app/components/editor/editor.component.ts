@@ -1,6 +1,15 @@
 import {Component,EventEmitter, OnInit, Output ,ViewChild} from '@angular/core';
 import { MatStepper } from '@angular/material/stepper'
 
+export interface IOptionData {
+  practice: string;
+  gender: string [];
+  benefits: {benefit:string, beneficiary:string[]} [];
+  performance:{lowRf:string, midRf:string,  highRf:string};
+  investment: {money:string, time:string};
+  time: string;
+  risk: string;
+}
 @Component({
   selector: 'option-editor',
   templateUrl: './editor.component.html',
@@ -19,6 +28,8 @@ export class EditorComponent implements OnInit {
   benefitsStartTime: string;
   risk:string;
   isLinear = false;
+  editMode= false
+  editIndex:number;
 
   @ViewChild(MatStepper) stepper: MatStepper;
 
@@ -40,7 +51,9 @@ export class EditorComponent implements OnInit {
   this.perfomanceValues= {lowRf:"", midRf:"",  highRf:""};  
   this.investmentValues={money:"", time:""};  
   this.benefitsStartTime ="";
-  this.risk="" 
+  this.risk="";
+  this.editIndex = -1;
+  
   }
   
   handleGender(gender:string){
@@ -68,6 +81,7 @@ export class EditorComponent implements OnInit {
       beneficiary:[]
     })
   }
+
   onlyNumbers(event): boolean {
     const charCode = (event.which) ? event.which : event.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -76,13 +90,14 @@ export class EditorComponent implements OnInit {
     return true;
   }
 
-  async finishProcess  (){
+  async submitForm  (){
     //compile collected data
     if(this.practiceEntry &&
       this.gender.length > 0 &&
       this.benefitsStartTime &&
       this.risk){
     const finalObject = {
+      data:{
       practice:this.practiceEntry,
       gender: this.gender,
       benefits:this.benefits,
@@ -90,8 +105,10 @@ export class EditorComponent implements OnInit {
       investment:this.investmentValues,
       time:this.benefitsStartTime,
       risk:this.risk
-    }
-    this.dataTransfer.emit(finalObject);
+    },
+    index:this.editIndex
+  }
+     this.dataTransfer.emit(finalObject);
      this.resetVariables()
      this.resetStepper()
     }else{
@@ -115,16 +132,26 @@ export class EditorComponent implements OnInit {
   this.investmentValues={money:"", time:""};  
   this.benefitsStartTime ="";
   this.risk=""
+  this.editIndex=-1
+  this.editMode=false
+  }
+  //incase of edits
+  presetVariables(rowData:IOptionData,index:number){
+  //remove all warinings 
+  this.warningText='';
+  //editor
+  this.editMode =true;
+  this.editIndex =index;
+
+  this.benefits= rowData.benefits
+  this.perfomanceValues = rowData.performance
+  this.investmentValues = rowData.investment
+  this.practiceEntry=rowData.practice
+  this.gender= rowData.gender;  
+  this.benefitsStartTime =rowData.time
+  this.risk=rowData.risk
   }
   resetStepper(): void {
     this.stepper.reset();
   }
-  submitForm() {
-    console.log('Form submitted!');
-  }
-  // ngOnDestroy() {
-  //   // Reset variables when the component is destroyed.
-   
-  // }
-
 }
