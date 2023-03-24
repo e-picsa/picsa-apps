@@ -1,9 +1,12 @@
-import { Component, Input } from '@angular/core';
 import {
-  FadeInOut,
-  ANIMATION_DELAYED,
-  FlyInOut,
-} from '@picsa/shared/animations';
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 import {
   IBudgetCard,
   IBudgetCardWithValues,
@@ -11,44 +14,72 @@ import {
   IBudgetPeriodType,
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
+import { MatDialog } from '@angular/material/dialog';
+import { _wait } from '@picsa/utils';
+
+const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
+  { type: 'activities', label: 'Activities' },
+  { type: 'inputs', label: 'Inputs' },
+  { type: 'familyLabour', label: 'Family Labour' },
+  { type: 'outputs', label: 'Outputs' },
+  { type: 'produceConsumed', label: 'Produce Consumed' },
+];
 
 @Component({
   selector: 'budget-cell-inline-editor',
   templateUrl: './cell-inline-editor.component.html',
   styleUrls: ['./cell-inline-editor.component.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED), FlyInOut({ axis: 'Y' })],
+  animations: [FadeInOut(ANIMATION_DELAYED)],
 })
 export class BudgetCellInlineEditorComponent {
-  // steps = EDITOR_STEPS;
-  public data: IBudgetPeriodData;
-  public selected: IBudgetCardWithValues[] = [];
-  public _activeType: IBudgetPeriodType;
-  public _activePeriod: number;
+  /** View reference to ng-template content shown in dialog */
+  @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
 
-  public showCardsList = false;
+  public data: IBudgetPeriodData;
+  public _activePeriod: number;
+  public editorSteps = EDITOR_STEPS;
+
+  /** Budget period type to display cards list for */
+  public cardsListType: IBudgetPeriodType;
 
   @Input() set activeType(activeType: IBudgetPeriodType) {
-    this._activeType = activeType;
-    this.loadEditorData();
+    this.scrollToType(activeType);
   }
   @Input() set activePeriod(activePeriod: number) {
     this._activePeriod = activePeriod;
     this.loadEditorData();
   }
+  @Output() handleNextClick = new EventEmitter();
 
-  @Input() isOpen = false;
-  constructor(public store: BudgetStore) {}
+  constructor(public store: BudgetStore, private dialog: MatDialog) {}
 
-  public toggleCardList() {}
+  public showCardsList(type: IBudgetPeriodType) {
+    this.cardsListType = type;
+    this.dialog.open(this.cardsListDialog, {
+      width: '90vw',
+      height: '90vh',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      panelClass: 'no-padding',
+    });
+  }
+
+  private async scrollToType(type: IBudgetPeriodType) {
+    const scrollContainer = document.getElementById('editorContainer');
+    const scrollTarget = document.getElementById(`edit-${type}`);
+    await _wait(100);
+    if (scrollContainer && scrollTarget) {
+      scrollTarget?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   private loadEditorData() {
-    if (this._activePeriod !== undefined && this._activeType !== undefined) {
-      // create copy of data to avoid first input populating multiple activities
-      const data: IBudgetPeriodData = JSON.parse(
-        JSON.stringify(this.store.activeBudget.data[this._activePeriod])
-      );
-      this.data = data;
-      this.selected = data[this._activeType] || [];
+    if (this._activePeriod !== undefined) {
+      const activeData = this.store.activeBudget.data[this._activePeriod];
+      if (activeData) {
+        // create copy of data to avoid first input populating multiple activities
+        this.data = JSON.parse(JSON.stringify(activeData));
+      }
     }
   }
 
@@ -56,54 +87,19 @@ export class BudgetCellInlineEditorComponent {
     return item.id;
   }
 
-  public removeSelectedCard(index: number) {
-    if (this.data[this._activeType][index]) {
-      const values = [...this.data[this._activeType]];
+  public removeSelectedCard(type: IBudgetPeriodType, index: number) {
+    if (this.data[type][index]) {
+      const values = [...this.data[type]];
       values.splice(index, 1);
 
-      this.onEditorChange(values, this._activeType);
+      this.onEditorChange(values, type);
       this.loadEditorData();
     }
   }
-
-  // setActiveStep(type: IBudgetPeriodType) {
-  //   const index = EDITOR_STEPS.indexOf(type);
-  //   // this.stepper.selectedIndex = index;
-  // }
 
   // the store already knows what period and type it is, so just pass the updated values
   // back up to save
   onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
     this.store.saveEditor(values, type);
   }
-
-  // // as can't easily prevent default step click behaviour, instead add extra call to update
-  // // query params after
-  // stepChange(e: StepperSelectionEvent) {
-  //   const step = EDITOR_STEPS[e.selectedIndex];
-  //   // as can't disable stepper slide animation use timeout to delay other animations
-  //   this.router.navigate([], {
-  //     relativeTo: this.route,
-  //     queryParams: {
-  //       type: step,
-  //     },
-  //     replaceUrl: true,
-  //     queryParamsHandling: 'merge',
-  //   });
-  // }
-
-  // closeEditor() {
-  //   this.router.navigate([], {
-  //     relativeTo: this.route,
-  //   });
-  // }
 }
-
-// const EDITOR_STEPS: (IBudgetPeriodType | 'summary')[] = [
-//   'activities',
-//   'inputs',
-//   'familyLabour',
-//   'outputs',
-//   'produceConsumed',
-//   'summary',
-// ];

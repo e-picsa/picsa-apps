@@ -7,6 +7,7 @@ interface IHeaderOptions {
   style?: 'inverted' | 'primary';
   /** Use angular portal cdk to inject component into header slot */
   endContent?: Portal<any>;
+  hideBackButton?: boolean;
 }
 export interface IBreadcrumbOptions {
   enabled?: boolean;

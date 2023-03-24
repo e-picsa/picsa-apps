@@ -26,10 +26,17 @@ mat-card-title.mat-mdc-card-title {
 mat-card-content.mat-mdc-card-content {
   font-size: 14px;
 }
-// Add padding to all dialogs
+// Add padding to all dialogs by default
 .mat-mdc-dialog-surface {
   padding: 24px;
 }
+// Add override to remove dialog padding
+.cdk-overlay-pane.no-padding {
+  .mat-mdc-dialog-surface {
+    padding: 0;
+  }
+}
+
 // Remove padding from dialog action buttons
 div.mdc-dialog__actions {
   padding-left: 0;

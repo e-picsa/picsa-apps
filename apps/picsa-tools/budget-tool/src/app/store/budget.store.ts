@@ -157,7 +157,6 @@ export class BudgetStore implements OnDestroy {
     const budgetData = JSON.parse(JSON.stringify(this.activeBudget.data));
     budgetData[period][type] = data;
     this.patchBudget({ data: budgetData });
-    console.log('emit change', { period, type, data });
     // use behaviour subject to provide better change detection binding on changes
     this.changes.next([period, type]);
     this.calculateBalance();

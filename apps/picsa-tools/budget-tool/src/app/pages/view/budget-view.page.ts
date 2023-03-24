@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BudgetStore } from '../../store/budget.store';
 import {
   FadeInOut,
@@ -19,7 +19,7 @@ import { PicsaTranslateService } from '@picsa/shared/modules';
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
   animations: [
-    FadeInOut(ANIMATION_DELAYED),
+    FadeInOut({ inDelay: 200 }),
     OpenClosed,
     FlyInOut(ANIMATION_DEFAULTS_Y),
   ],
@@ -32,6 +32,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     public store: BudgetStore,
     private componentsService: PicsaCommonComponentsService,
     private dialog: MatDialog,
@@ -56,6 +57,14 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   async loadBudget() {
     const budgetKey = this.route.snapshot.params.budgetKey;
     await this.store.loadBudgetByKey(budgetKey);
+  }
+
+  public async handleEditorNext() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { edit: undefined },
+      queryParamsHandling: 'merge',
+    });
   }
 
   /** Subscribe to query param changes and update headers as required */

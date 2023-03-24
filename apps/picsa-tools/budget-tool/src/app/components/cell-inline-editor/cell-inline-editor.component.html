@@ -1,99 +1,127 @@
-<!-- Selected Cards -->
-<h2>{{ _activeType | translate | titlecase }}</h2>
-<div class="selected-summary">
-  <p *ngIf="selected.length === 0">
-    <span>{{ 'Select from list below' | translate }}</span>
-  </p>
-  <div style="display: flex; overflow-x: scroll; width: 100%">
-    <budget-card
-      *ngFor="let card of selected; index as i; trackBy: trackByFn"
-      [card]="card"
-      [showDeleteButton]="true"
-      (deleteClicked)="removeSelectedCard(i)"
-      @fadeInOut
-    ></budget-card>
-    <budget-card-placeholder
-      (click)="showCardsList = true"
-    ></budget-card-placeholder>
+<!-- Editor -->
+<div id="editorContainer">
+  <div
+    *ngFor="let editorStep of editorSteps"
+    class="type-row"
+    [id]="'edit-' + editorStep.type"
+  >
+    <div class="type-label">{{ editorStep.label | translate }}</div>
+    <div class="selected-summary" *ngIf="data[editorStep.type] as selected">
+      <div class="selected-cards-container">
+        <budget-card
+          *ngFor="let card of selected; index as i; trackBy: trackByFn"
+          [card]="card"
+          [showDeleteButton]="true"
+          (deleteClicked)="removeSelectedCard(editorStep.type, i)"
+          @fadeInOut
+        ></budget-card>
+        <budget-card-placeholder
+          (click)="showCardsList(editorStep.type)"
+        ></budget-card-placeholder>
+      </div>
+    </div>
   </div>
 </div>
-<hr style="width: 100%" />
-<div class="cardsList" [@flyInOut]="showCardsList ? 'in' : 'out'">
-  <!-- Activities -->
-  <budget-cell-editor-card-select
-    @fadeInOut
-    *ngIf="_activeType === 'activities'"
-    type="activities"
-    [values]="data.activities"
-    [cards]="store.budgetCardsByType.activities"
-    (valueChanged)="onEditorChange($event, 'activities')"
-  >
-  </budget-cell-editor-card-select>
-  <!-- Inputs -->
-  <budget-cell-editor-card-select
-    @fadeInOut
-    *ngIf="_activeType === 'inputs'"
-    type="inputs"
-    [values]="data.inputs"
-    [cards]="store.budgetCardsByType.inputs"
-    (valueChanged)="onEditorChange($event, 'inputs')"
-  >
-  </budget-cell-editor-card-select>
+<!-- Footer Next Button -->
+<button
+  mat-raised-button
+  color="primary"
+  class="footer-button"
+  style="margin: 1rem"
+  (click)="handleNextClick.emit()"
+>
+  Next
+</button>
 
-  <!-- Input Values -->
-  <budget-cell-editor-input-values
-    @fadeInOut
-    *ngIf="_activeType === 'inputs'"
-    [cards]="data.inputs"
-    (valueChanged)="onEditorChange($event, 'inputs')"
-  ></budget-cell-editor-input-values>
-  <!-- Family Labour -->
-  <budget-cell-editor-family-labour
-    @fadeInOut
-    *ngIf="_activeType === 'familyLabour'"
-    [values]="data.familyLabour"
-    (valueChanged)="onEditorChange($event, 'familyLabour')"
-  ></budget-cell-editor-family-labour>
-  <!-- Outputs -->
-  <budget-cell-editor-card-select
-    @fadeInOut
-    *ngIf="_activeType === 'outputs'"
-    type="outputs"
-    [values]="data.outputs"
-    [cards]="store.budgetCardsByType.outputs"
-    (valueChanged)="onEditorChange($event, 'outputs')"
-  >
-  </budget-cell-editor-card-select>
+<!-- Dialog -->
+<ng-template #cardsListDialog>
+  <div id="cardsList" *ngIf="data && cardsListType && store.budgetCardsByType">
+    <div style="flex: 1; overflow: auto">
+      <!-- Activities -->
+      <budget-cell-editor-card-select
+        @fadeInOut
+        *ngIf="cardsListType === 'activities'"
+        type="activities"
+        [values]="data.activities"
+        [cards]="store.budgetCardsByType.activities"
+        (valueChanged)="onEditorChange($event, 'activities')"
+      >
+      </budget-cell-editor-card-select>
+      <!-- Inputs -->
+      <budget-cell-editor-card-select
+        @fadeInOut
+        *ngIf="cardsListType === 'inputs'"
+        type="inputs"
+        [values]="data.inputs"
+        [cards]="store.budgetCardsByType.inputs"
+        (valueChanged)="onEditorChange($event, 'inputs')"
+      >
+      </budget-cell-editor-card-select>
 
-  <budget-cell-editor-input-values
-    @fadeInOut
-    *ngIf="_activeType === 'outputs'"
-    [cards]="data.outputs"
-    (valueChanged)="onEditorChange($event, 'outputs')"
-  ></budget-cell-editor-input-values>
-  <!-- Consumed -->
-  <budget-cell-editor-card-select
-    @fadeInOut
-    *ngIf="_activeType === 'produceConsumed'"
-    type="produceConsumed"
-    [values]="data.produceConsumed"
-    [cards]="store.budgetCardsByType.outputs"
-    (valueChanged)="onEditorChange($event, 'produceConsumed')"
-  >
-  </budget-cell-editor-card-select>
+      <!-- Input Values -->
+      <budget-cell-editor-input-values
+        @fadeInOut
+        *ngIf="cardsListType === 'inputs'"
+        [cards]="data.inputs"
+        (valueChanged)="onEditorChange($event, 'inputs')"
+      ></budget-cell-editor-input-values>
+      <!-- Family Labour -->
+      <budget-cell-editor-family-labour
+        @fadeInOut
+        *ngIf="cardsListType === 'familyLabour'"
+        [values]="data.familyLabour"
+        (valueChanged)="onEditorChange($event, 'familyLabour')"
+      ></budget-cell-editor-family-labour>
+      <!-- Outputs -->
+      <budget-cell-editor-card-select
+        @fadeInOut
+        *ngIf="cardsListType === 'outputs'"
+        type="outputs"
+        [values]="data.outputs"
+        [cards]="store.budgetCardsByType.outputs"
+        (valueChanged)="onEditorChange($event, 'outputs')"
+      >
+      </budget-cell-editor-card-select>
 
-  <!-- Consumed Values -->
-  <budget-cell-editor-produce-consumed
-    @fadeInOut
-    *ngIf="_activeType === 'produceConsumed'"
-    [cards]="data.produceConsumed"
-    (valueChanged)="onEditorChange($event, 'produceConsumed')"
-  ></budget-cell-editor-produce-consumed>
-</div>
+      <budget-cell-editor-input-values
+        @fadeInOut
+        *ngIf="cardsListType === 'outputs'"
+        [cards]="data.outputs"
+        (valueChanged)="onEditorChange($event, 'outputs')"
+      ></budget-cell-editor-input-values>
+      <!-- Consumed -->
+      <budget-cell-editor-card-select
+        @fadeInOut
+        *ngIf="cardsListType === 'produceConsumed'"
+        type="produceConsumed"
+        [values]="data.produceConsumed"
+        [cards]="store.budgetCardsByType.outputs"
+        (valueChanged)="onEditorChange($event, 'produceConsumed')"
+      >
+      </budget-cell-editor-card-select>
+
+      <!-- Consumed Values -->
+      <budget-cell-editor-produce-consumed
+        @fadeInOut
+        *ngIf="cardsListType === 'produceConsumed'"
+        [cards]="data.produceConsumed"
+        (valueChanged)="onEditorChange($event, 'produceConsumed')"
+      ></budget-cell-editor-produce-consumed>
+    </div>
+    <button
+      mat-raised-button
+      color="primary"
+      class="footer-button"
+      style="margin: 1rem"
+      mat-dialog-close
+    >
+      Next
+    </button>
+  </div>
+</ng-template>
 
 <!-- Summary -->
 
-<button mat-button>Next</button>
 <!-- <budget-period-summary
     [periodIndex]="store.activePeriod"
   ></budget-period-summary> -->

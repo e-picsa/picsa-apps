@@ -28,18 +28,21 @@ export const OpenClosed = trigger('openClosed', [
 ]);
 
 // function to generate custom fade transition
-export function FadeInOut(c: IAnimationConfig = ANIMATION_DEFAULTS) {
+export function FadeInOut(config: Partial<IAnimationConfig> = {}) {
+  const c = { ...ANIMATION_DEFAULTS, ...config };
   return trigger('fadeInOut', [
     state(
       'in',
       style({
         opacity: 1,
+        ...c.inStyle,
       })
     ),
     state(
       'out',
       style({
         opacity: 0,
+        ...c.outStyle,
       })
     ),
     // state transitions don't pick up well when coming from void state
@@ -119,6 +122,8 @@ export const ANIMATION_DEFAULTS: IAnimationConfig = {
   outDelay: 0,
   outEasing: 'ease-out',
   axis: 'X',
+  inStyle: {},
+  outStyle: {},
 };
 export const ANIMATION_DEFAULTS_Y: IAnimationConfig = {
   inSpeed: 250,
@@ -128,6 +133,8 @@ export const ANIMATION_DEFAULTS_Y: IAnimationConfig = {
   outDelay: 0,
   outEasing: 'ease-out',
   axis: 'Y',
+  inStyle: {},
+  outStyle: {},
 };
 
 export const ANIMATION_DELAYED: IAnimationConfig = {
@@ -138,6 +145,8 @@ export const ANIMATION_DELAYED: IAnimationConfig = {
   inEasing: 'ease-in',
   outEasing: 'ease-out',
   axis: 'X',
+  inStyle: {},
+  outStyle: {},
 };
 
 interface IAnimationConfig {
@@ -148,4 +157,8 @@ interface IAnimationConfig {
   outDelay: number;
   outEasing: string;
   axis: 'X' | 'Y';
+  /** Additional styles to apply to in-state */
+  inStyle: any;
+  /** Additional styles to apply to out-state */
+  outStyle: any;
 }
