@@ -1,198 +1,199 @@
- 
-<div class="dialog-content"> 
-      <div class="warningText">{{warningText}}</div>
-      <button *ngIf="editMode" class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">Save Changes</button>
-    <mat-stepper [linear]="isLinear" #stepper>
-      <mat-step matStepContent>
-          <ng-template matStepLabel>Practice</ng-template>
-          <div class="StepContainer">
-            <div class="StepTitle">Enter the practice for this option</div>
-            <div class="StepContent">
-              <div class="form-group">
-                <label>Practice Name</label>
-                <input [(ngModel)]="practiceEntry" class="form-control">
+<div class="dialog-content">
+  <div class="warningText">{{warningText}}</div>
+  <button *ngIf="editMode" class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()"
+    color="primary">Save Changes</button>
+  <mat-stepper [linear]="isLinear" #stepper>
+    <mat-step matStepContent>
+      <ng-template matStepLabel>Practice</ng-template>
+      <div class="StepContainer">
+        <div class="StepTitle">Enter the practice for this option</div>
+        <div class="StepContent">
+          <div class="form-group">
+            <label>Practice Name</label>
+            <input [(ngModel)]="practiceEntry" class="form-control">
+          </div>
+        </div>
+        <div>
+          <button [style.opacity]="practiceEntry ? 1 : 0.5" [disabled]="!practiceEntry" style="background-color: #ccc;"
+            mat-button mat-button matStepperNext>Next</button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step matStepContent label="Gender ">
+      <div class="StepContainer">
+        <div class="StepTitle">Who does the practice?</div>
+        <div class="StepContent">
+          <div class="genderDiv">
+            <div class="genderType" style="color: #800080;" (click)="handleGender('female')"
+              [ngStyle]="{'background-color': gender.includes('female') ? 'pink' : 'lightgray'}">Female <img
+                *ngIf="femaleIcon" [src]="femaleIcon" /></div>
+            <div class="genderType" (click)="handleGender('male')" style="color: #008066;"
+              [ngStyle]="{'background-color': gender.includes('male') ? 'pink' : 'lightgray'}">Male
+              <img *ngIf="maleIcon" [src]="maleIcon" />
+            </div>
+          </div>
+          <div style="height: 1rem;"> {{gender.length>1 ? gender.join(" and "): gender[0]}} </div>
+        </div>
+        <div class="ButtonSection">
+          <button style="background-color: #ccc;" mat-button matStepperPrevious>Back</button>
+          <button [style.opacity]="(gender.length>0) ? 1 : 0.5" [disabled]="!(gender.length>0)"
+            style="background-color: #ccc; margin-left: 2rem;" mat-button matStepperNext>Next</button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step matStepContent label="Benefits ">
+      <div class="StepContainer">
+        <div class="StepTitle">Benefits and who?</div>
+        <div class="StepContent">
+          <div style="margin-bottom: 1.5rem; padding: 2px; margin-top: 2rem;">
+            <div *ngFor="let benefit of benefits; index as i ">
+              <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px;">
+                <textarea [(ngModel)]="benefit.benefit" class="form-control" ></textarea>
+                <div class="genderType" style="color: #800080; padding: 3px; height: 6rem;  "
+                  (click)="handleBenficiaryGender(i,'female')"
+                  [ngStyle]="{'background-color': benefit.beneficiary.includes('female') ? 'pink' : 'lightgray'}">Female
+                  <img *ngIf="femaleIcon" [src]="femaleIcon" /></div>
+                <div class="genderType" (click)="handleBenficiaryGender(i,'male')"
+                  style="color: #008066; padding: 3px;  height: 6rem;"
+                  [ngStyle]="{'background-color': benefit.beneficiary.includes('male') ? 'pink' : 'lightgray'}">Male<img
+                    *ngIf="maleIcon" [src]="maleIcon" /></div>
+                <div class="delete-button" (click)="handleRemovingBenefits(i)" mat-button>Delete <mat-icon>delete</mat-icon></div>
               </div>
-            </div> 
-          <div>
-            <button 
-            [style.opacity]="practiceEntry ? 1 : 0.5" 
-            [disabled]="!practiceEntry"  
-             style="background-color: #ccc;" mat-button
-            mat-button 
-            matStepperNext>Next</button>
-          </div>
-        </div>
-      </mat-step>
-
-      <mat-step matStepContent label="Gender ">  
-    <div class="StepContainer" >
-    <div class="StepTitle">Who does the practice?</div>
-    <div class="StepContent">
-      <div class="genderDiv"> 
-        <div class="genderType" style="color: #800080;"
-        (click)="handleGender('female')"
-         [ngStyle]="{'background-color': gender.includes('female') ? 'pink' : 'lightgray'}"
-          >Female</div>
-        <div class="genderType" (click)="handleGender('male')" style="color: blue;" 
-        [ngStyle]="{'background-color': gender.includes('male') ? 'pink' : 'lightgray'}" >Male</div>
-      </div>
-      <div style="height: 1rem;"> {{gender.length>1 ? gender.join(" and "): gender[0]}} </div>
-     </div>
-          <div class="ButtonSection">
-            <button 
-            style="background-color: #ccc;"
-            mat-button matStepperPrevious>Back</button>
-            <button 
-            [style.opacity]="(gender.length>0) ? 1 : 0.5" 
-        [disabled]="!(gender.length>0)" 
-            style="background-color: #ccc; margin-left: 2rem;"
-            mat-button matStepperNext>Next</button>
-          </div>
-        </div>
-      </mat-step>
-
-      <mat-step matStepContent label="Benefits ">
-       <div class="StepContainer">
-    <div class="StepTitle">Benefits and who?</div>
-    <div class="StepContent">
-       <div style="margin-bottom: 1.5rem; margin-top: 2rem;" >
-        <div  *ngFor="let benefit of benefits; index as i ">
-          <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px;"> 
-          <input [(ngModel)]="benefit.benefit" class="form-control"> 
-            <div class="genderType" style="color: #800080; height: 2rem;  "
-            (click)="handleBenficiaryGender(i,'female')"
-             [ngStyle]="{'background-color': benefit.beneficiary.includes('female') ? 'pink' : 'lightgray'}"
-              >Female</div>
-            <div class="genderType" (click)="handleBenficiaryGender(i,'male')" style="color: blue; width: 4rem; height: 2rem;" 
-            [ngStyle]="{'background-color': benefit.beneficiary.includes('male') ? 'pink' : 'lightgray'}" >Male</div>
-            <button  style="background-color: red;" (click)="handleRemovingBenefits(i)" mat-button>delete</button>
-          </div>
-        </div>
-        <button  style="background-color: #ccc; float: left; margin-top: 7px;" (click)="handleMoreBenefits()" mat-button>+ Add benefit </button>
-       </div>
-    </div>
-    <div class="ButtonSection">
-      <button  style="background-color: #ccc;" matStepperPrevious mat-button>Back</button>
-      <button [style.opacity]="(benefits.length>0) ? 1 : 0.5" 
-      [disabled]="!(benefits.length>0)"  
-      style="background-color: #ccc; margin-left: 2rem;"
-      mat-button matStepperNext>Next</button>
-    </div>
-  </div> 
-        </mat-step>
-
-        <mat-step matStepContent label="Perfomence">
-          <div class="StepContainer">
-            <div class="StepTitle">Performence in high, mid and low RF (rainfall)?</div>
-            <div class="StepContent">
-               <div style="display: flex; gap: 1rem; justify-content: space-evenly; width: 100%; flex-direction: row; margin-bottom: 1.5rem; margin-top: 2rem;">
-                <div class="performenceItem">
-                  <div style="font-weight: 700;  ">High RF</div>
-                  <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"  [(ngModel)]="perfomanceValues.highRf">
-                    <option *ngFor="let option of performanceOptions" [value]="option">
-                      {{ option }}
-                    </option>
-                  </select>
-                </div>
-                <div class="performenceItem">
-                  <div style="font-weight: 700; ">Mid RF</div>
-                  <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"  [(ngModel)]="perfomanceValues.midRf">
-                    <option *ngFor="let option of performanceOptions" [value]="option">
-                      {{ option }}
-                    </option>
-                  </select>
-                </div>
-                <div class="performenceItem">
-                  <div style="font-weight: 700; ">Low RF</div>
-                  <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"  [(ngModel)]="perfomanceValues.lowRf">
-                    <option *ngFor="let option of performanceOptions" [value]="option">
-                      {{ option }}
-                    </option>
-                  </select>
-                </div>
-               </div>
             </div>
-            <div class="ButtonSection">
-              <button  style="background-color: #ccc;" mat-button matStepperPrevious>Back</button>
-              <button [style.opacity]="(perfomanceValues.lowRf && perfomanceValues.midRf && perfomanceValues.highRf) ? 1 : 0.5" 
-              [disabled]="!(perfomanceValues.lowRf && perfomanceValues.midRf && perfomanceValues.highRf)" 
-              style="background-color: #ccc; margin-left: 2rem;" matStepperNext mat-button>Next</button>
+            <button style="background-color: #ccc; float: left; margin-top: 7px;" (click)="handleMoreBenefits()"
+              mat-button>+ Add benefit </button>
+          </div>
+        </div>
+        <div class="ButtonSection">
+          <button style="background-color: #ccc;" matStepperPrevious mat-button>Back</button>
+          <button [style.opacity]="(benefits.length>0) ? 1 : 0.5" [disabled]="!(benefits.length>0)"
+            style="background-color: #ccc; margin-left: 2rem;" mat-button matStepperNext>Next</button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step matStepContent label="Perfomence">
+      <div class="StepContainer">
+        <div class="StepTitle">Performence in high, mid and low RF (rainfall)?</div>
+        <div class="StepContent">
+          <mat-icon style="color:  #4FC3F7; font-size: 27px;" >water_drop</mat-icon>
+          <div
+            style="display: flex; gap: 1rem; justify-content: space-evenly; width: 100%; flex-direction: row; margin-bottom: 1.5rem; margin-top: 2rem;">
+            <div class="performenceItem">
+              <div style="font-weight: 700;  ">High RF</div>
+              <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"
+                [(ngModel)]="perfomanceValues.highRf">
+                <option *ngFor="let option of performanceOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
             </div>
-          </div> 
-        </mat-step>
-
-        <mat-step matStepContent label="Investment">
-          <div class="StepContainer">
-    <div class="StepTitle">Investment in terms of money and time?</div>
-    <div class="StepContent">
-       <div style="display: flex; justify-content: space-evenly; gap: 1rem; width: 100%; flex-direction: row; margin-bottom: 1.5rem; margin-top: 2rem;">
-        <div class="performenceItem">
-          <div style="font-weight: 700;  ">Money</div>
-          <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"  [(ngModel)]="investmentValues.money">
-            <option *ngFor="let option of investmentOptions" [value]="option">
-              {{ option }}
-            </option>
-          </select>
+            <div class="performenceItem">
+              <div style="font-weight: 700; ">Mid RF</div>
+              <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"
+                [(ngModel)]="perfomanceValues.midRf">
+                <option *ngFor="let option of performanceOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+            <div class="performenceItem">
+              <div style="font-weight: 700; ">Low RF</div>
+              <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"
+                [(ngModel)]="perfomanceValues.lowRf">
+                <option *ngFor="let option of performanceOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="performenceItem">
-          <div style="font-weight: 700; ">Time</div>
-          <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 5px; outline-color:#8a2644"  [(ngModel)]="investmentValues.time">
-            <option *ngFor="let option of investmentOptions" [value]="option">
-              {{ option }}
-            </option>
-          </select>
+        <div class="ButtonSection">
+          <button style="background-color: #ccc;" mat-button matStepperPrevious>Back</button>
+          <button
+            [style.opacity]="(perfomanceValues.lowRf && perfomanceValues.midRf && perfomanceValues.highRf) ? 1 : 0.5"
+            [disabled]="!(perfomanceValues.lowRf && perfomanceValues.midRf && perfomanceValues.highRf)"
+            style="background-color: #ccc; margin-left: 2rem;" matStepperNext mat-button>Next</button>
         </div>
-       </div>
-    </div>
-    <div class="ButtonSection">
-      <button  style="background-color: #ccc;"  mat-button matStepperPrevious>Back</button>
-      <button [style.opacity]="(investmentValues.money && investmentValues.time) ? 1 : 0.5" 
-      [disabled]="!(investmentValues.money && investmentValues.time)"  
-      style="background-color: #ccc; margin-left: 2rem;" mat-button matStepperNext>Next</button>
-    </div>
-  </div> 
-        </mat-step>
-
-        <mat-step matStepContent label="Time">
-          <div class="StepContainer">
-      <div class="StepTitle">Time to start benefiting</div>
-      <div class="StepContent">
-        <div class="form-group">
-          <label>Time (months)</label>
-          <input [(ngModel)]="benefitsStartTime" (keypress)="onlyNumbers($event)" class="form-control">
-        </div>
-        
       </div>
-      <div class="ButtonSection">
-        <button  style="background-color: #ccc; " matStepperPrevious  mat-button>Back</button>
-        <button [style.opacity]="benefitsStartTime ? 1 : 0.5" 
-        [disabled]="!benefitsStartTime" 
-        style="background-color: #ccc; margin-left: 2rem;" matStepperNext mat-button>Next</button>
-      </div>
-    </div> 
-        </mat-step>
+    </mat-step>
 
-      <mat-step matStepContent label="Time">
+    <mat-step matStepContent label="Investment">
+      <div class="StepContainer">
+        <div class="StepTitle">Investment in terms of money and time?</div>
+        <div class="StepContent">
+          <div
+            style="display: flex; justify-content: space-evenly; gap: 1rem; width: 100%; flex-direction: row; margin-bottom: 1.5rem; margin-top: 2rem;">
+            <div class="performenceItem">
+              <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between;">Money <mat-icon style="color:#8a2644; font-size: 20px;">attach_money</mat-icon></div>
+              <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 9px; outline-color:#8a2644"
+                [(ngModel)]="investmentValues.money">
+                <option *ngFor="let option of investmentOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+            <div class="performenceItem">
+              <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between;">Time  <mat-icon style="color:#8a2644; font-size: 20px;">access_time</mat-icon></div>
+              <select style="width: 5rem; height: 2rem; font-size:14px; margin-top: 9px; outline-color:#8a2644"
+                [(ngModel)]="investmentValues.time">
+                <option *ngFor="let option of investmentOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="ButtonSection">
+          <button style="background-color: #ccc;" mat-button matStepperPrevious>Back</button>
+          <button [style.opacity]="(investmentValues.money && investmentValues.time) ? 1 : 0.5"
+            [disabled]="!(investmentValues.money && investmentValues.time)"
+            style="background-color: #ccc; margin-left: 2rem;" mat-button matStepperNext>Next</button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step matStepContent label="Time">
+      <div class="StepContainer">
+        <div class="StepTitle">Time to start benefiting</div>
+        <div class="StepContent">
           
-         <div class="StepContainer">
-      <div class="StepTitle">Risk of practice disadvantage</div>
-      <div class="StepContent">
-        <div class="form-group">
-          <label>Disadvantage</label>
-          <input style="margin-left: 4px;" [(ngModel)]="risk"  class="form-control">
+          <div class="form-group">
+            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between;">Time (months) <mat-icon style="color:#8a2644; font-size: 20px;" >date_range</mat-icon></label>
+            <input [(ngModel)]="benefitsStartTime" (keypress)="onlyNumbers($event)" class="form-control">
+          </div>
+
         </div>
-      
+        <div class="ButtonSection">
+          <button style="background-color: #ccc; " matStepperPrevious mat-button>Back</button>
+          <button [style.opacity]="benefitsStartTime ? 1 : 0.5" [disabled]="!benefitsStartTime"
+            style="background-color: #ccc; margin-left: 2rem;" matStepperNext mat-button>Next</button>
+        </div>
       </div>
-      <div class="ButtonSection">
-        <button  style="background-color: #ccc;" matStepperPrevious mat-button>Back</button>
-        <button style="background-color: #ccc; margin-left: 1rem;" mat-button (click)="stepper.reset()">Reset</button>
-        <button [style.opacity]="risk ? 1 : 0.5" 
-        [disabled]="!risk" (click)="submitForm()" 
-        style="background-color: #ccc; margin-left: 1rem;" mat-button>finish</button>
-        
+    </mat-step>
+
+    <mat-step matStepContent label="Risk">
+
+      <div class="StepContainer">
+        <div class="StepTitle">Risk of practice (disadvantage)</div>
+        <div class="StepContent">
+          <div class="form-group">
+            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between;">Risk<mat-icon style="color:#e71236; font-size: 20px;" >warning</mat-icon></label>
+            <input style="margin-left: 4px;" [(ngModel)]="risk" class="form-control">
+          </div>
+
+        </div>
+        <div class="ButtonSection">
+          <button style="background-color: #ccc;" matStepperPrevious mat-button>Back</button>
+          <button style="background-color: #ccc; margin-left: 1rem;" mat-button (click)="stepper.reset()">Reset</button>
+          <button [style.opacity]="risk ? 1 : 0.5" [disabled]="!risk" (click)="submitForm()"
+            style="background-color: #ccc; margin-left: 1rem;" mat-button>finish</button>
+
+        </div>
       </div>
-    </div>
-      </mat-step>
-  
-    </mat-stepper>
+    </mat-step>
+
+  </mat-stepper>
 </div>
