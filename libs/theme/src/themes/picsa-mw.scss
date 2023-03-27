@@ -1,0 +1,99 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// http://mcg.mbitson.com/#!?mcgpalette0=%23ef7d00&themename=mcgtheme
+$primary: (
+  50: #f4e3e4,
+  100: #e3b8bd,
+  200: #d08991,
+  300: #bd5964,
+  400: #ae3643,
+  500: #a01222,
+  600: #98101e,
+  700: #8e0d19,
+  800: #840a14,
+  900: #73050c,
+  A100: #ffa2a5,
+  A200: #ff6f74,
+  A400: #ff3c42,
+  A700: #ff2329,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+$accent: (
+  50: #f8e8e6,
+  100: #edc6c2,
+  200: #e1a099,
+  300: #d57970,
+  400: #cc5d51,
+  500: #c34032,
+  600: #bd3a2d,
+  700: #b53226,
+  800: #ae2a1f,
+  900: #a11c13,
+  A100: #ffd5d3,
+  A200: #ffa5a0,
+  A400: #ff746d,
+  A700: #ff5c53,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$palette-primary: mat.define-palette($primary);
+$palette-accent: mat.define-palette($accent, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$palette-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme-mw: mat.define-light-theme(
+  $palette-primary,
+  $palette-accent,
+  $palette-warn
+);
+
+// .theme-mw {
+//   @include mat.all-component-themes($picsa-mw);
+// }
+body[data-theme='picsa-mw'] {
+  @include mat.all-component-themes($theme-mw);
+
+  --color-primary: #{map-get($palette-primary, 500)};
+  --color-primary-50: #{map-get($palette-primary, 50)};
+  --color-secondary: #{map-get($palette-accent, 500)};
+  --color-black: #1a2138;
+  --color-light: #d8d8d8;
+  --color-white: #ffffff;
+}

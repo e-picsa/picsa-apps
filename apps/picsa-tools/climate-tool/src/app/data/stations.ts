@@ -1,12 +1,11 @@
 import type { IStationMeta } from '@picsa/models';
-import { MockDB } from '@picsa/shared/mocks';
+import { generateMockDBMeta } from '@picsa/utils';
 
-const db = new MockDB();
 const _created = new Date('2019-07-23').toISOString();
 
 export const HARDCODED_STATIONS: IStationMeta[] = [
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'chichiri',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -17,7 +16,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'chileka',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -28,7 +27,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'makanjira',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -39,7 +38,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'mangochi',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -50,7 +49,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'monkeybay',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -61,7 +60,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'namwera',
       _created,
       _modified: new Date('2022-09-19').toISOString(),
@@ -72,7 +71,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'salima',
       _created,
       _modified: new Date('2022-09-20').toISOString(),
@@ -83,7 +82,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'nkhotakota',
       _created,
       _modified: new Date('2022-09-20').toISOString(),
@@ -94,7 +93,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'mw',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'kasungu',
       _created,
       _modified: new Date('2022-09-20').toISOString(),
@@ -106,7 +105,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
   },
   // Zambia
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'chipata',
       _created,
       _modified: new Date('2022-09-25').toISOString(),
@@ -117,7 +116,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'zm',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'petauke',
       _created,
       _modified: new Date('2022-09-25').toISOString(),
@@ -128,7 +127,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     countryCode: 'zm',
   },
   {
-    ...db.meta({
+    ...generateMockDBMeta({
       _key: 'Dushanbe',
       _created,
       _modified: new Date('2022-10-05').toISOString(),

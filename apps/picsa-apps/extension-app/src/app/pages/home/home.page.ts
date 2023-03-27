@@ -1,5 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+
 import { APP_VERSION } from '@picsa/environments';
 import { UserStore } from '../../store/user.store';
 import { PicsaFileService } from '@picsa/shared/services/native';
@@ -28,31 +30,31 @@ export class HomePage implements OnInit {
     this.links = [
       {
         ...LINK_DEFAULTS,
-        name: 'Climate Tool',
+        name: translateMarker('Climate Tool'),
         icon: 'picsa_climate-tool',
         url: '/climate',
       },
       {
         ...LINK_DEFAULTS,
-        name: 'Budget Tool',
+        name: translateMarker('Budget Tool'),
         icon: 'picsa_budget-tool',
         url: '/budget',
       },
       {
         ...LINK_DEFAULTS,
-        name: 'Resources',
+        name: translateMarker('Resources'),
         icon: 'picsa_resources',
         url: '/resources',
       },
       {
         ...LINK_DEFAULTS,
-        name: 'Monitoring',
+        name: translateMarker('Monitoring'),
         icon: 'picsa_data-collection',
         url: '/monitoring',
       },
       {
         ...LINK_DEFAULTS,
-        name: 'Discussions',
+        name: translateMarker('Discussions'),
         icon: 'picsa_discussions',
         url: '/discussions',
       },

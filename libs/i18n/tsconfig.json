@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "target": "es2020",
+    "module": "commonjs"
+  },
+  "ts-node": {
+    // Ensure ts-node picks parent paths for imports
+    // https://stackoverflow.com/a/72622089`
+    "require": ["tsconfig-paths/register"]
+  }
+}

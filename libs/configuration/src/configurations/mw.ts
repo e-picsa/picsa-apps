@@ -2,7 +2,6 @@ import { IConfiguration } from '../types';
 
 const configuration: IConfiguration.Settings = {
   id: 'mw',
-  meta: { label: 'Malawi', image: 'assets/images/flags/mw.svg' },
   android: {},
   budgetTool: {
     currency: 'MK',
@@ -10,7 +9,11 @@ const configuration: IConfiguration.Settings = {
   },
   climateTool: {},
   localisation: {
-    country: { label: 'Malawi', code: 'mw' },
+    country: {
+      label: 'Malawi',
+      code: 'mw',
+      image: 'assets/images/flags/mw.svg',
+    },
     language: {
       options: [
         { id: 'en', label: 'English', code: 'en' },
@@ -19,6 +22,6 @@ const configuration: IConfiguration.Settings = {
       selected: undefined,
     },
   },
-  theme: 'picsa-default',
+  theme: 'picsa-mw',
 };
 export default configuration;

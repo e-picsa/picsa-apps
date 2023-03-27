@@ -16,7 +16,9 @@
   </mat-grid-list>
   <footer>
     <div class="version-info">v{{ version.number }}</div>
-    <a routerLink="privacy" class="privacy-policy">Privacy Policy</a>
+    <a routerLink="privacy" class="privacy-policy"
+      >{{'Privacy Policy' | translate}}</a
+    >
     <picsa-configuration-select></picsa-configuration-select>
     <button
       mat-flat-button
