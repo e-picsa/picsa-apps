@@ -2,7 +2,6 @@ import { IConfiguration } from '../types';
 
 const configuration: IConfiguration.Settings = {
   id: 'tj',
-  meta: { label: 'Tajikistan', image: 'assets/images/flags/tj.svg' },
   android: {},
   budgetTool: {
     currency: 'TJS',
@@ -10,7 +9,11 @@ const configuration: IConfiguration.Settings = {
   },
   climateTool: {},
   localisation: {
-    country: { label: 'Tajikistan', code: 'tj' },
+    country: {
+      label: 'Tajikistan',
+      code: 'tj',
+      image: 'assets/images/flags/tj.svg',
+    },
     language: {
       options: [
         { id: 'en', label: 'English', code: 'en' },

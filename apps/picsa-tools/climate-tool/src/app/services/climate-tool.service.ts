@@ -1,3 +1,4 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Injectable } from '@angular/core';
 
 type IToolName = 'line' | 'terciles';
@@ -13,13 +14,13 @@ interface IClimateTool {
 const TOOL_DEFAULTS: { [key in IToolName]: IClimateTool } = {
   line: {
     name: 'line',
-    label: 'Line',
+    label: translateMarker('Line'),
     icon: 'assets/climate-tools/line-tool.svg',
     value: 0,
   },
   terciles: {
     name: 'terciles',
-    label: 'Terciles',
+    label: translateMarker('Terciles'),
     icon: 'assets/climate-tools/tercile-tool.svg',
   },
 };

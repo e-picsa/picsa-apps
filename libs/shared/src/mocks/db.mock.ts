@@ -1,8 +1,10 @@
 import { IDBEndpoint, IDBDoc } from '@picsa/models';
-import { _wait } from '@picsa/utils';
+import { _wait, generateDBMeta } from '@picsa/utils';
 import { AbstractDBService } from '../services/core/db/abstract.db';
 
 export class MockDB implements AbstractDBService {
+  meta = generateDBMeta;
+
   async getCollection(endpoint: IDBEndpoint) {
     await _wait();
     // TODO - load mock data here
@@ -29,16 +31,4 @@ export class MockDB implements AbstractDBService {
     await _wait();
     // TODO
   }
-  meta(doc: any = {}): IDBDoc {
-    const { _key, _created, _modified } = doc;
-    return {
-      _key: _key ? _key : this.randomKey(),
-      _created: _created ?? new Date().toISOString(),
-      _modified: _modified ?? new Date().toISOString(),
-    };
-  }
-
-  private randomKey = () => {
-    return Math.random().toString(36).substring(2, 15);
-  };
 }

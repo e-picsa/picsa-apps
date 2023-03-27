@@ -2,7 +2,6 @@ import { IConfiguration } from '../types';
 
 const configuration: IConfiguration.Settings = {
   id: 'zm',
-  meta: { label: 'Zambia', image: 'assets/images/flags/zm.svg' },
   android: {},
   budgetTool: {
     currency: 'ZMK',
@@ -10,7 +9,11 @@ const configuration: IConfiguration.Settings = {
   },
   climateTool: {},
   localisation: {
-    country: { label: 'Zambia', code: 'zm' },
+    country: {
+      label: 'Zambia',
+      code: 'zm',
+      image: 'assets/images/flags/zm.svg',
+    },
     language: {
       options: [
         { id: 'en', label: 'English', code: 'en' },
