@@ -76,15 +76,15 @@
     </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; index as i; columns: displayedColumns"  (click)="onRowClicked(row, i)" ></tr>
 </table>
-<button (click)="openDialog()" mat-button mat-raised-button color="primary">
+<button (click)="openNewDialog()" mat-button mat-raised-button color="primary">
   Add New Option
 </button>
 </div>
 <div  class="slide-in container" [class.active]="matStepperOpen">
   <div>
-   <option-editor (dataTransfer)="onDataTransfer($event)"></option-editor>
+   <option-editor  (dataTransfer)="onDataTransfer($event)"></option-editor>
 </div>
   <button class="buttonposition" mat-button mat-raised-button (click)="closeDialog()" color="primary">Close</button>
 </div>
