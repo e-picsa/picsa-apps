@@ -1,0 +1,17 @@
+.header-table{
+    border: 1px solid #cec3c3;
+    width: 100%;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    .header-title{
+        text-align: left;
+        font-size: 20px;
+    }
+    .right-cells th{
+        border: 1px solid red;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    th.font-weight-700{
+        font-weight: 700;
+    }
+}
