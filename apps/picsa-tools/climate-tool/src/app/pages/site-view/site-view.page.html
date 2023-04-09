@@ -5,7 +5,7 @@
     color="primary"
     (click)="showShareDialog()"
   >
-    <mat-icon [inline]="true">share</mat-icon>{{ 'Share' | translate }}
+    <mat-icon>share</mat-icon>{{ 'Share' | translate }}
   </button>
   <button
     mat-button
@@ -44,21 +44,11 @@
       (openedChange)="handleSidenavChange()"
       (swipeRight)="snav.toggle()"
     >
-      <div class="sidenav-buttons">
-        <button
-          *ngIf="mobileQuery.matches"
-          mat-icon-button
-          color="primary"
-          (click)="snav.toggle()"
-        >
+      <div class="sidenav-buttons" *ngIf="mobileQuery.matches">
+        <button mat-icon-button color="primary" (click)="snav.toggle()">
           <mat-icon>close</mat-icon>
         </button>
-        <button
-          *ngIf="mobileQuery.matches"
-          mat-button
-          color="primary"
-          (click)="showShareDialog()"
-        >
+        <button mat-button color="primary" (click)="showShareDialog()">
           <mat-icon>share</mat-icon>{{ 'Share' | translate }}
         </button>
       </div>

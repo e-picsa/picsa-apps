@@ -1,4 +1,4 @@
-<h2 style="margin-top: 0">Select Country</h2>
+<h2 style="margin-top: 0">{{'Select Country' | translate}}</h2>
 <div class="country-select-container">
   <div
     *ngFor="let option of options"
@@ -6,10 +6,7 @@
     [class.selected]="option.country.code===selected.country.code ? true : undefined"
     (click)="setLocalisation(option)"
   >
-    <img
-      [src]="'assets/images/flags/' + option.country.code + '.svg'"
-      class="language-select-flag"
-    />
+    <img [src]="option.country.image" class="language-select-flag" />
     <div style="text-align: center">{{ option.country.label }}</div>
   </div>
 </div>

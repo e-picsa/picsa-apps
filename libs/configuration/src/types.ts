@@ -11,7 +11,7 @@ export namespace IConfiguration {
   }
 
   export interface Localisation {
-    country: { label: string; code: string };
+    country: { label: string; code: string; image: string };
     language: {
       options: IConfiguration.LanguageOption[];
       selected?: LanguageOption;
@@ -20,12 +20,12 @@ export namespace IConfiguration {
 
   export interface Settings {
     id: string;
-    meta: { label: string; image: string };
     android: any;
     budgetTool: IBudgetToolSettings;
     climateTool: {
       stationFilter?: (station: any) => boolean;
     };
+    resourcesTool?: {};
     localisation: IConfiguration.Localisation;
     theme: any;
   }

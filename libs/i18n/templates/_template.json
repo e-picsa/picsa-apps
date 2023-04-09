@@ -1,0 +1,740 @@
+[
+  {
+    "text": "apply fertiliser",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "apply pesticide",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "bagging",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "banding",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "build housing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "compost manure making",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "dipping",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "feeding livestock",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "harvesting",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "land clearing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "marketing and selling",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "mulching",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "ploughing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "post-harvest handling",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "provide supplements",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "provide water",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "purchase",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "relocation",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "shelling",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "sowing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "storage",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "threshing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "transport",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "transport livestock",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "vaccinate",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "value addition",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "watering",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "weeding",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "afforestation",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "cattle",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "chicken",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "cowpeas",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "ducks",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "fish",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "goats",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "groundnuts",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "guinea fowl",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "maize",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "mixed",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "onions",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "paw-paw",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "pigeon peas",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "pigs",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "rice",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sheep",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sorghum",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "soya beans",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sweet potatoes",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "tomatoes",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "watermelon",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "bags",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "chemicals",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "feed",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "fertiliser",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "housing",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "labour - paid",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "manure sacks",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "manure wheelbarrows",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "ox cart",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "pot for storage",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "protective equipment",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "seeds",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "sheller hire",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "supplements",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "tools",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "tractor hire",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "transportation hire",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "vaccine",
+    "tool": "budget",
+    "context": "inputs"
+  },
+  {
+    "text": "add custom",
+    "tool": "budget",
+    "context": "other"
+  },
+  {
+    "text": "family labour",
+    "tool": "budget",
+    "context": "other"
+  },
+  {
+    "text": "crop",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "eggs",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "fodder for livestock",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "manure for compost",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "meat",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "milk",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "money",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "wood",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "Activities",
+    "tool": "budget"
+  },
+  {
+    "text": "Add Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Balance",
+    "tool": "budget"
+  },
+  {
+    "text": "Consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "Cost",
+    "tool": "budget"
+  },
+  {
+    "text": "Create New Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Days",
+    "tool": "budget"
+  },
+  {
+    "text": "Decrease Scale",
+    "tool": "budget"
+  },
+  {
+    "text": "Description (optional)",
+    "tool": "budget"
+  },
+  {
+    "text": "Enterprise",
+    "tool": "budget"
+  },
+  {
+    "text": "Family",
+    "tool": "budget"
+  },
+  {
+    "text": "How long is your budget for?",
+    "tool": "budget"
+  },
+  {
+    "text": "Import Budget Code",
+    "tool": "budget"
+  },
+  {
+    "text": "Increase Scale",
+    "tool": "budget"
+  },
+  {
+    "text": "Inputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Length",
+    "tool": "budget"
+  },
+  {
+    "text": "Next",
+    "tool": "budget"
+  },
+  {
+    "text": "Outputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Quantity",
+    "tool": "budget"
+  },
+  {
+    "text": "Save",
+    "tool": "budget"
+  },
+  {
+    "text": "Save your budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Saved Budgets",
+    "tool": "budget"
+  },
+  {
+    "text": "Select",
+    "tool": "budget"
+  },
+  {
+    "text": "Select Enterprise",
+    "tool": "budget"
+  },
+  {
+    "text": "Share Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Share as Picture",
+    "tool": "budget"
+  },
+  {
+    "text": "Show More",
+    "tool": "budget"
+  },
+  {
+    "text": "Summary",
+    "tool": "budget"
+  },
+  {
+    "text": "Title",
+    "tool": "budget"
+  },
+  {
+    "text": "Total",
+    "tool": "budget"
+  },
+  {
+    "text": "Values",
+    "tool": "budget"
+  },
+  {
+    "text": "What is your type of enterprise?",
+    "tool": "budget"
+  },
+  {
+    "text": "description",
+    "tool": "budget"
+  },
+  {
+    "text": "starting in",
+    "tool": "budget"
+  },
+  {
+    "text": "title",
+    "tool": "budget"
+  },
+  {
+    "text": "End",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "End of Season",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Length of Season",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Rain",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Seasonal Rainfall",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Seasonal Total Rainfall (mm)",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Start",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Start of Season",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Analyse",
+    "tool": "climate"
+  },
+  {
+    "text": "Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Close",
+    "tool": "climate"
+  },
+  {
+    "text": "Definition",
+    "tool": "climate"
+  },
+  {
+    "text": "Hide Tool Options",
+    "tool": "climate"
+  },
+  {
+    "text": "Line",
+    "tool": "climate"
+  },
+  {
+    "text": "On average",
+    "tool": "climate"
+  },
+  {
+    "text": "Print Version",
+    "tool": "climate"
+  },
+  {
+    "text": "Seasonal Total Rainfall",
+    "tool": "climate"
+  },
+  {
+    "text": "Select a site",
+    "tool": "climate"
+  },
+  {
+    "text": "Share",
+    "tool": "climate"
+  },
+  {
+    "text": "Share App Link",
+    "tool": "climate"
+  },
+  {
+    "text": "Share Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Show Tool Options",
+    "tool": "climate"
+  },
+  {
+    "text": "Station",
+    "tool": "climate"
+  },
+  {
+    "text": "Terciles",
+    "tool": "climate"
+  },
+  {
+    "text": "Tools",
+    "tool": "climate"
+  },
+  {
+    "text": "Year",
+    "tool": "climate"
+  },
+  {
+    "text": "out of",
+    "tool": "climate"
+  },
+  {
+    "text": "satisfy",
+    "tool": "climate"
+  },
+  {
+    "text": "years out of every 10",
+    "tool": "climate"
+  },
+  {
+    "text": "Budget Tool",
+    "tool": "extension"
+  },
+  {
+    "text": "Click on the button below to retry",
+    "tool": "extension"
+  },
+  {
+    "text": "Climate Tool",
+    "tool": "extension"
+  },
+  {
+    "text": "Discussions",
+    "tool": "extension"
+  },
+  {
+    "text": "Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in",
+    "tool": "extension"
+  },
+  {
+    "text": "Join",
+    "tool": "extension"
+  },
+  {
+    "text": "Joined",
+    "tool": "extension"
+  },
+  {
+    "text": "Monitoring",
+    "tool": "extension"
+  },
+  {
+    "text": "Privacy Policy",
+    "tool": "extension"
+  },
+  {
+    "text": "Reload",
+    "tool": "extension"
+  },
+  {
+    "text": "Resources",
+    "tool": "extension"
+  },
+  {
+    "text": "Settings",
+    "tool": "extension"
+  },
+  {
+    "text": "Share App",
+    "tool": "extension"
+  },
+  {
+    "text": "Something went wrong...",
+    "tool": "extension"
+  },
+  {
+    "text": "Forms",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Collection not found",
+    "tool": "resources"
+  }
+]

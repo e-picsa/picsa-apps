@@ -1,0 +1,43 @@
+<button
+  mat-icon-button
+  color="accent"
+  aria-label="Example icon button with a menu icon"
+>
+  <mat-icon>menu</mat-icon>
+</button>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <ng-container matColumnDef="crop">
+    <th mat-header-cell *matHeaderCellDef>Crop</th>
+    <td mat-cell *matCellDef="let element">{{ element.crop }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="variety">
+    <th mat-header-cell *matHeaderCellDef>Variety</th>
+    <td mat-cell *matCellDef="let element">{{ element.variety }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="days">
+    <th mat-header-cell *matHeaderCellDef>Days</th>
+    <td mat-cell *matCellDef="let element">{{ element.days }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="water">
+    <th mat-header-cell *matHeaderCellDef>Water</th>
+    <td mat-cell *matCellDef="let element">{{ element.water }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="probabilities">
+    <th mat-header-cell *matHeaderCellDef>Probabilities</th>
+    <td mat-cell *matCellDef="let element">
+      <div *ngFor="let probability of element.probabilities">
+        {{ probability }}
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
