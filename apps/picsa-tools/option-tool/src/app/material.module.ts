@@ -6,9 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 
-
-
-
 const COMPONENTS = [
   MatButtonModule,
   MatDialogModule,

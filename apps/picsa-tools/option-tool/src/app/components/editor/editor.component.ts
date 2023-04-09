@@ -30,10 +30,6 @@ export class EditorComponent implements OnInit {
   isLinear = false;
   editMode= false
   editIndex:number;
-  // images
-  femaleIcon = `assets/svgs/female.svg`
-  maleIcon = `assets/svgs/male.svg`
-  // deleteIcon = `assets/svgs/delete-icon.svg`
 
   @ViewChild(MatStepper) stepper: MatStepper;
 

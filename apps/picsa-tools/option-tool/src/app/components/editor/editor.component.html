@@ -26,11 +26,15 @@
         <div class="StepContent">
           <div class="genderDiv">
             <div class="genderType" style="color: #800080;" (click)="handleGender('female')"
-              [ngStyle]="{'background-color': gender.includes('female') ? 'pink' : 'lightgray'}">Female <img
-                *ngIf="femaleIcon" [src]="femaleIcon" /></div>
+              [ngStyle]="{'background-color': gender.includes('female') ? 'pink' : 'lightgray'}">Female 
+              <!-- <img
+                *ngIf="femaleIcon" [src]="femaleIcon" /> -->
+                <mat-icon svgIcon="picsa_options_female"></mat-icon>
+              </div>
             <div class="genderType" (click)="handleGender('male')" style="color: #008066;"
               [ngStyle]="{'background-color': gender.includes('male') ? 'pink' : 'lightgray'}">Male
-              <img *ngIf="maleIcon" [src]="maleIcon" />
+              <!-- <img *ngIf="maleIcon" [src]="maleIcon" /> -->
+              <mat-icon svgIcon="picsa_options_male"></mat-icon>
             </div>
           </div>
           <div style="height: 1rem;"> {{gender.length>1 ? gender.join(" and "): gender[0]}} </div>
@@ -54,11 +58,16 @@
                 <div class="genderType" style="color: #800080; padding: 3px; height: 6rem;  "
                   (click)="handleBenficiaryGender(i,'female')"
                   [ngStyle]="{'background-color': benefit.beneficiary.includes('female') ? 'pink' : 'lightgray'}">Female
-                  <img *ngIf="femaleIcon" [src]="femaleIcon" /></div>
+                  <!-- <img *ngIf="femaleIcon" [src]="femaleIcon" /> -->
+                  <mat-icon svgIcon="picsa_options_female"></mat-icon>
+                </div>
                 <div class="genderType" (click)="handleBenficiaryGender(i,'male')"
                   style="color: #008066; padding: 3px;  height: 6rem;"
-                  [ngStyle]="{'background-color': benefit.beneficiary.includes('male') ? 'pink' : 'lightgray'}">Male<img
-                    *ngIf="maleIcon" [src]="maleIcon" /></div>
+                  [ngStyle]="{'background-color': benefit.beneficiary.includes('male') ? 'pink' : 'lightgray'}">Male
+                  <!-- <img
+                    *ngIf="maleIcon" [src]="maleIcon" /> -->
+                    <mat-icon svgIcon="picsa_options_male"></mat-icon>
+                  </div>
                 <div class="delete-button" (click)="handleRemovingBenefits(i)" mat-button>Delete <mat-icon>delete</mat-icon></div>
               </div>
             </div>
