@@ -13,6 +13,7 @@
           [card]="card"
           [showDeleteButton]="true"
           (deleteClicked)="removeSelectedCard(editorStep.type, i)"
+          (click)="showCardsList(editorStep.type)"
           @fadeInOut
         ></budget-card>
         <budget-card-placeholder

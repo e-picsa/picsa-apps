@@ -67,9 +67,17 @@ export class BudgetCellInlineEditorComponent {
   private async scrollToType(type: IBudgetPeriodType) {
     const scrollContainer = document.getElementById('editorContainer');
     const scrollTarget = document.getElementById(`edit-${type}`);
-    await _wait(100);
+    // provide delay whilst editor flying in
+    await _wait(200);
     if (scrollContainer && scrollTarget) {
-      scrollTarget?.scrollIntoView({ behavior: 'smooth' });
+      // calculate relative element offset instead of using scrollIntoView
+      // as seems to perform more consistently whilst flyInOut animation occuring
+      // include additional offset just to keep obvious there's scrollable content above
+      const elementPosition = Math.max(scrollTarget.offsetTop - 16, 0);
+      scrollContainer.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth',
+      });
     }
   }
 

@@ -5,7 +5,6 @@ import {
   FadeInOut,
   OpenClosed,
   FlyInOut,
-  ANIMATION_DELAYED,
   ANIMATION_DEFAULTS_Y,
 } from '@picsa/shared/animations';
 import { Subject, takeUntil } from 'rxjs';
