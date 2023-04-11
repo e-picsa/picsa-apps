@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
+import { IBudgetCardWithValues } from '../../../../models/budget-tool.models';
 
 const LABELS: { [id: string]: string } = {
   adultMale: translateMarker('Male Family Member'),

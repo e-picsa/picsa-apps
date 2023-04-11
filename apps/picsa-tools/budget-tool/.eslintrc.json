@@ -13,7 +13,7 @@
           "warn",
           {
             "type": "attribute",
-            "prefix": "picsa",
+            "prefix": "budget",
             "style": "camelCase"
           }
         ],
@@ -21,7 +21,7 @@
           "warn",
           {
             "type": "element",
-            "prefix": "picsa",
+            "prefix": "budget",
             "style": "kebab-case"
           }
         ],

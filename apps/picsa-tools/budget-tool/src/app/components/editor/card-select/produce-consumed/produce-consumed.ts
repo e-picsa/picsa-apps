@@ -1,33 +1,30 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
-import { BudgetStore } from '../../../store/budget.store';
+import { IBudgetCardWithValues } from '../../../../models/budget-tool.models';
 
 @Component({
-  selector: 'budget-cell-editor-input-values',
-  templateUrl: './input-values.html',
-  styleUrls: ['./input-values.scss'],
+  selector: 'budget-cell-editor-produce-consumed',
+  templateUrl: './produce-consumed.html',
+  styleUrls: ['./produce-consumed.scss'],
 })
 
 /*  The budget cell editor sits on top of the budget table, so that when opened covers the table
  */
-export class BudgetCellEditorInputValuesComponent {
-  @Input() cards: IBudgetCardWithValues[];
+export class BudgetCellEditorProduceConsumedComponent {
+  @Input() cards: IBudgetCardWithValues[] = [];
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues[]>();
-  currency: string;
 
-  constructor(store: BudgetStore) {
-    this.currency = store.settings.currency;
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    console.log('cards', this.cards);
   }
+
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
   setValue(e: Event, key: 'quantity' | 'cost', cardIndex: number) {
     const card = this.cards[cardIndex];
     const target = e.target as HTMLInputElement;
     card.values[key] = Number(target.value);
-    if (card.values.quantity && card.values.cost) {
-      card.values.total = card.values.quantity * card.values.cost;
-    }
     this.cards[cardIndex] = card;
-    console.log('cards', this.cards);
     this.valueChanged.emit(this.cards);
   }
 }

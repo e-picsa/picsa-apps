@@ -27,10 +27,10 @@ import { BudgetCardNewDialog } from './card/card-new/card-new-dialog';
 import { BudgetCardPlaceholderComponent } from './card/card-placeholder/card-placeholder.component';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
-import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
-import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
-import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
-import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
+import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-select';
+import { BudgetCellEditorInputValuesComponent } from './editor/card-select/input-values/input-values';
+import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
+import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
 import { BudgeEditorComponent } from './editor/editor.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
 import {
