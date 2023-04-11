@@ -28,13 +28,13 @@
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
     ></budget-cell-editor> -->
     <!-- WiP Updated editor (replaces ABOVE) -->
-    <budget-cell-inline-editor
+    <budget-editor
       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
       (handleNextClick)="handleEditorNext()"
-    ></budget-cell-inline-editor>
+    ></budget-editor>
   </div>
 
   <!-- Header Menu -->

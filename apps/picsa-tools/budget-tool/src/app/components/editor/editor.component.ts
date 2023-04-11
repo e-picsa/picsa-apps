@@ -26,12 +26,12 @@ const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
 ];
 
 @Component({
-  selector: 'budget-cell-inline-editor',
-  templateUrl: './cell-inline-editor.component.html',
-  styleUrls: ['./cell-inline-editor.component.scss'],
+  selector: 'budget-editor',
+  templateUrl: './editor.component.html',
+  styleUrls: ['./editor.component.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
 })
-export class BudgetCellInlineEditorComponent {
+export class BudgeEditorComponent {
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
 

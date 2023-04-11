@@ -7,12 +7,17 @@ import {
   QueryList,
 } from '@angular/core';
 import { MatInput } from '@angular/material/input';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
 
-const FAMILY_MEMBERS = [
-  { id: 'adultMale', label: 'Male' },
-  { id: 'adultFemale', label: 'Female' },
-];
+const LABELS: { [id: string]: string } = {
+  adultMale: translateMarker('Male Family Member'),
+  adultFemale: translateMarker('Female Family Member'),
+};
+const MEMBERS = Object.entries(LABELS).map(([id, label]) => ({
+  id,
+  label,
+}));
 
 @Component({
   selector: 'budget-cell-editor-family-labour',
@@ -25,12 +30,12 @@ export class BudgetCellEditorFamilyLabourComponent {
   @ViewChildren(MatInput) childInputs: QueryList<MatInput>;
   totalPeople: number;
 
-  memberTypes = FAMILY_MEMBERS;
+  memberTypes = MEMBERS;
 
   addMemberCards: IBudgetCardWithValues[] = [];
 
   constructor() {
-    for (const { id } of FAMILY_MEMBERS) {
+    for (const { id } of MEMBERS) {
       const memberCard = this.createFamilyCard(id);
       this.addMemberCards.push(memberCard);
     }
@@ -63,9 +68,10 @@ export class BudgetCellEditorFamilyLabourComponent {
   }
 
   createFamilyCard(memberType: string) {
+    const label = LABELS[memberType];
     const card: IBudgetCardWithValues = {
       id: memberType,
-      label: 'family member',
+      label: label,
       type: 'familyLabour',
       imgId: `family-labour_${memberType}`,
       imgType: 'svg',

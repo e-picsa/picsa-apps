@@ -1,0 +1,82 @@
+<!-- Editor -->
+<div id="editorContainer">
+  <div
+    *ngFor="let editorStep of editorSteps"
+    class="type-row"
+    [id]="'edit-' + editorStep.type"
+  >
+    <div class="type-label">{{ editorStep.label | translate }}</div>
+    <div class="selected-summary" *ngIf="data[editorStep.type] as selected">
+      <div class="selected-cards-container" [ngSwitch]="editorStep.type">
+        <!-- TODO - create editor summary -->
+        <budget-card
+          *ngFor="let card of selected; index as i; trackBy: trackByFn"
+          [card]="card"
+          [showDeleteButton]="true"
+          (deleteClicked)="removeSelectedCard(editorStep.type, i)"
+          (click)="showCardsList(editorStep.type)"
+          @fadeInOut
+        ></budget-card>
+        <budget-card-placeholder
+          (click)="showCardsList(editorStep.type)"
+        ></budget-card-placeholder>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Footer Next Button -->
+<button
+  mat-raised-button
+  color="primary"
+  class="footer-button"
+  style="margin: 1rem"
+  (click)="handleNextClick.emit()"
+>
+  Next
+</button>
+
+<!-- Dialog -->
+<ng-template #cardsListDialog>
+  <div id="cardsList" *ngIf="data && cardsListType && store.budgetCardsByType">
+    <div style="flex: 1; overflow: auto" [ngSwitch]="cardsListType">
+      <!-- Family Labour -->
+      <budget-cell-editor-family-labour
+        *ngSwitchCase="'familyLabour'"
+        @fadeInOut
+        [values]="data.familyLabour"
+        (valueChanged)="onEditorChange($event, 'familyLabour')"
+      ></budget-cell-editor-family-labour>
+      <!-- Produce Consumed -->
+      <budget-cell-editor-produce-consumed
+        *ngSwitchCase="'produceConsumed'"
+        @fadeInOut
+        [cards]="data.produceConsumed"
+        (valueChanged)="onEditorChange($event, 'produceConsumed')"
+      ></budget-cell-editor-produce-consumed>
+      <!-- Default Editor -->
+      <budget-cell-editor-card-select
+        *ngSwitchDefault
+        [type]="cardsListType"
+        [values]="data[cardsListType]"
+        [cards]="store.budgetCardsByType[cardsListType]"
+        (valueChanged)="onEditorChange($event, cardsListType)"
+      >
+      </budget-cell-editor-card-select>
+    </div>
+    <button
+      mat-raised-button
+      color="primary"
+      class="footer-button"
+      style="margin: 1rem"
+      mat-dialog-close
+    >
+      Next
+    </button>
+  </div>
+</ng-template>
+
+<!-- Summary -->
+
+<!-- <budget-period-summary
+    [periodIndex]="store.activePeriod"
+  ></budget-period-summary> -->
