@@ -31,7 +31,7 @@ const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
   styleUrls: ['./editor.component.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
 })
-export class BudgeEditorComponent {
+export class BudgetEditorComponent {
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
 

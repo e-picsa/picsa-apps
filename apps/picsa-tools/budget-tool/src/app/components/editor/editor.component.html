@@ -7,16 +7,15 @@
   >
     <div class="type-label">{{ editorStep.label | translate }}</div>
     <div class="selected-summary" *ngIf="data[editorStep.type] as selected">
-      <div class="selected-cards-container" [ngSwitch]="editorStep.type">
-        <!-- TODO - create editor summary -->
-        <budget-card
+      <div class="selected-cards-container" [attr.data-type]="editorStep.type">
+        <budget-card-editor
           *ngFor="let card of selected; index as i; trackBy: trackByFn"
           [card]="card"
-          [showDeleteButton]="true"
           (deleteClicked)="removeSelectedCard(editorStep.type, i)"
-          (click)="showCardsList(editorStep.type)"
           @fadeInOut
-        ></budget-card>
+        >
+        </budget-card-editor>
+
         <budget-card-placeholder
           (click)="showCardsList(editorStep.type)"
         ></budget-card-placeholder>

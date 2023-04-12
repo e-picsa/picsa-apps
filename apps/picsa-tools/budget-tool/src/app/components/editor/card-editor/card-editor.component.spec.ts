@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BudgetEditorComponent } from './editor.component';
+import { CardEditorComponent } from './card-editor.component';
 
-describe('BudgetEditorComponent', () => {
-  let component: BudgetEditorComponent;
-  let fixture: ComponentFixture<BudgetEditorComponent>;
+describe('CardEditorComponent', () => {
+  let component: CardEditorComponent;
+  let fixture: ComponentFixture<CardEditorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BudgetEditorComponent],
+      declarations: [CardEditorComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BudgetEditorComponent);
+    fixture = TestBed.createComponent(CardEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -41,7 +41,26 @@
   min-height: 140px;
 }
 .selected-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 8px;
+  display: grid;
+  padding: 10px;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, 128px);
+  // arrange input and output into larger grid for values editor
+  &[data-type='inputs'],
+  &[data-type='outputs'] {
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 16px;
+
+    @media only screen and (max-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    @media only screen and (max-width: 500px) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    // add item separator for larger grid format
+    & > budget-card-editor {
+      border-bottom: 1px solid var(--color-light);
+      padding: 16px 0;
+    }
+  }
 }
