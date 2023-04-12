@@ -24,7 +24,6 @@ export class BudgetCardEditorComponent {
 
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
   setValue(e: Event, key: 'quantity' | 'cost') {
-    console.log('setting value');
     const target = e.target as HTMLInputElement;
     this.card.values[key] = Number(target.value);
     if (this.card.values.quantity && this.card.values.cost) {

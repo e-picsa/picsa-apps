@@ -12,6 +12,7 @@
           *ngFor="let card of selected; index as i; trackBy: trackByFn"
           [card]="card"
           (deleteClicked)="removeSelectedCard(editorStep.type, i)"
+          (valueChanged)="updateCardValue(editorStep.type, i, $event)"
           @fadeInOut
         >
         </budget-card-editor>

@@ -105,6 +105,17 @@ export class BudgetEditorComponent {
     }
   }
 
+  public updateCardValue(
+    type: IBudgetPeriodType,
+    index: number,
+    card: IBudgetCardWithValues
+  ) {
+    const values = [...this.data[type]];
+    values[index] = card;
+    this.onEditorChange(values, type);
+    this.loadEditorData();
+  }
+
   // the store already knows what period and type it is, so just pass the updated values
   // back up to save
   onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
