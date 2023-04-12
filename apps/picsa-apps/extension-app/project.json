@@ -51,6 +51,11 @@
             "glob": "**/*",
             "input": "apps/picsa-tools/resources-tool/src/assets",
             "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/option-tool/src/assets",
+            "output": "assets"
           }
         ],
         "styles": [
