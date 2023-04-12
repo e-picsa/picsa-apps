@@ -39,7 +39,6 @@ export class OptionMaterialModule {
       const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
         `assets/svgs/${value}.svg`
       );
-      console.log('register', { iconName, iconUrl });
       this.matIconRegistry.addSvgIcon(iconName, iconUrl);
     }
   }
