@@ -27,11 +27,14 @@ import { BudgetCardNewDialog } from './card/card-new/card-new-dialog';
 import { BudgetCardPlaceholderComponent } from './card/card-placeholder/card-placeholder.component';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
+
+import { BudgetCardEditorComponent } from './editor/card-editor/card-editor.component';
 import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-select';
-import { BudgetCellEditorInputValuesComponent } from './editor/card-select/input-values/input-values';
+import { BudgetCellEditorInputValuesComponent } from './_deprecated/input-values/input-values';
 import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
-import { BudgeEditorComponent } from './editor/editor.component';
+import { BudgetEditorComponent } from './editor/editor.component';
+
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
 import {
   BudgetListItemComponent,
@@ -46,6 +49,7 @@ const components = [
   BudgetBalanceDotValueComponent,
   BudgetBalanceEditorComponent,
   BudgetCardComponent,
+  BudgetCardEditorComponent,
   BudgetCardImageComponent,
   BudgetCardPlaceholderComponent,
   BudgetCellComponent,
@@ -54,7 +58,7 @@ const components = [
   BudgetCellEditorInputValuesComponent,
   BudgetCellEditorFamilyLabourComponent,
   BudgetCellEditorProduceConsumedComponent,
-  BudgeEditorComponent,
+  BudgetEditorComponent,
   BudgetCellLabourComponent,
   BudgetCardNew,
   BudgetCardNewDialog,

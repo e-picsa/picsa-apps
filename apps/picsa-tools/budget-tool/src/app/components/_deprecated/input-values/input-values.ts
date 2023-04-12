@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IBudgetCardWithValues } from '../../../../models/budget-tool.models';
-import { BudgetStore } from '../../../../store/budget.store';
+import { IBudgetCardWithValues } from '../../../models/budget-tool.models';
+import { BudgetStore } from '../../../store/budget.store';
 
 @Component({
   selector: 'budget-cell-editor-input-values',

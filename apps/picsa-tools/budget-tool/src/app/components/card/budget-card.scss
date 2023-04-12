@@ -12,23 +12,6 @@ mat-card.budget-card {
   width: 110px;
   padding: 0;
 }
-.delete-button {
-  position: absolute;
-  right: -16px;
-  top: -10px;
-  height: 36px;
-  width: 36px;
-  min-width: 36px;
-  padding: 4px;
-  font-size: 36px;
-  color: var(--color-light);
-  border: 1px solid var(--color-light);
-  border-radius: 50%;
-  background: white;
-}
-.delete-button-icon {
-  margin: 0;
-}
 
 .budget-card[selected='true'] {
   font-weight: bold;

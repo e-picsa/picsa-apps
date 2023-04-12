@@ -5,26 +5,6 @@
   [attr.selected]="selected"
   *ngIf="!card._deleted"
 >
-  <!-- TODO - add custom card delete bindings -->
-  <!-- <button
-    mat-button
-    *ngIf="card.customMeta && !selected"
-    class="delete-button"
-    (click)="promptCustomDelete($event)"
-  >
-    <mat-icon svgIcon="picsa_delete"></mat-icon>
-  </button> -->
-
   <budget-card-image [card]="card"></budget-card-image>
   <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
 </mat-card>
-
-<button
-  mat-stroked-button
-  color="primary"
-  *ngIf="showDeleteButton"
-  class="delete-button"
-  (click)="deleteClicked.emit(card)"
->
-  <mat-icon class="delete-button-icon">close</mat-icon>
-</button>
