@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';  
 
-const MODULES = [MatButtonModule, MatIconModule, MatTableModule];
+const MODULES = [MatButtonModule, MatTableModule, MatFormFieldModule];
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
