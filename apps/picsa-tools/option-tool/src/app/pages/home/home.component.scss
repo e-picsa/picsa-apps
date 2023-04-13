@@ -12,6 +12,7 @@ th {
 .container {
   position: relative;
   height: 100vh;
+  overflow: auto;
   background-color: #fff;
   width: 100%;
   z-index: 20;
@@ -20,7 +21,7 @@ th {
   padding-top: 2rem;
   top: 0;
   right: 0;
- 
+  
 }
 .buttonposition{
   position: absolute;
