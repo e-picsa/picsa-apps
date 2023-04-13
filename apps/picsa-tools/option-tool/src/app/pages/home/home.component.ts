@@ -33,9 +33,10 @@ export class HomeComponent {
   public closeDialog(){
     this.matStepperOpen = false
   }
-  onDataTransfer(data:{data:IOptionData,index:number}) {
+  onDataTransfer(data:{data:IOptionData, index:number} | null ) {
     console.log('Received data from editor:', data);
     // close the child component
+    if(data){
     if(data.index > -1){
     this.dataSource[data.index]=data.data
     //invoke change detaction
@@ -43,8 +44,11 @@ export class HomeComponent {
     }else{
     this.dataSource = [...this.dataSource, data.data];
     }
-    //detect change for the case of editing a raw
-    this.matStepperOpen = false;
+    this.closeDialog()
+    }else {
+      this.closeDialog()
+    }
+
   }
   openNewDialog(){
     this.editorComponent.resetVariables();

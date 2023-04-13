@@ -1,7 +1,13 @@
 <div class="dialog-content">
   <div class="warningText">{{warningText}}</div>
-  <button *ngIf="editMode" class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()"
+  <button *ngIf="editMode" class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm('save')"
     color="primary">Save Changes</button>
+  <div class="closeButtonsPosition" >
+  <button *ngIf="!editMode"  mat-button mat-raised-button (click)="submitForm('save')"
+    color="primary">Save & Close</button>
+  <button  mat-button mat-raised-button (click)="submitForm('exit')"
+    color="primary">Cancel</button>
+  </div>
   <mat-stepper [linear]="isLinear" #stepper>
     <mat-step matStepContent>
       <ng-template matStepLabel>Practice</ng-template>
@@ -197,9 +203,8 @@
         <div class="ButtonSection">
           <button style="background-color: #ccc;" matStepperPrevious mat-button>Back</button>
           <button style="background-color: #ccc; margin-left: 1rem;" mat-button (click)="stepper.reset()">Reset</button>
-          <button [style.opacity]="risk ? 1 : 0.5" [disabled]="!risk" (click)="submitForm()"
-            style="background-color: #ccc; margin-left: 1rem;" mat-button>finish</button>
-
+          <!-- <button [style.opacity]="risk ? 1 : 0.5" [disabled]="!risk" (click)="submitForm('save')"
+            style="background-color: #ccc; margin-left: 1rem;" mat-button>finish</button> -->
         </div>
       </div>
     </mat-step>

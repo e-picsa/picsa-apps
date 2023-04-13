@@ -1,5 +1,5 @@
 .mat-stepper-horizontal {
-  margin-top: 8px;
+  margin-top: 27px;
 }
 
 .mat-mdc-form-field {
@@ -18,7 +18,17 @@
   .saveButtonPosition {
     position: absolute;
     left: 20px;
-    top: 20px
+    top: 20px;
+  }
+  .closeButtonsPosition{
+    position: absolute;
+    right:20px;
+    top: 20px;
+    display: flex;
+    flex-direction: row;
+    
+    gap: 3rem;
+    justify-content: flex-end;
   }
 
   .StepTitle {
