@@ -73,7 +73,7 @@ export class ConfigurationService {
 
   /** Update theme on config change (better in own service) */
   private hackSetTheme() {
-    document.body.dataset.theme = this.activeConfiguration.theme;
+    document.body.dataset['theme'] = this.activeConfiguration.theme;
   }
 }
 
