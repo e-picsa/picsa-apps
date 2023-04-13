@@ -51,6 +51,18 @@
   </div>
 
   <!-- Family Labor Editor -->
+  <div class="input-values" *ngIf="card.type === 'familyLabour'">
+    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+      <mat-label>{{ 'Days' | translate }}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values ? card.values.quantity : null"
+        type="number"
+        (change)="setValue($event, 'quantity')"
+      />
+    </mat-form-field>
+  </div>
 </div>
 
 <!-- TODO - add custom card delete bindings -->

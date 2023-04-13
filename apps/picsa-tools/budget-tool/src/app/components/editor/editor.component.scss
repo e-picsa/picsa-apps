@@ -63,4 +63,9 @@
       padding: 16px 0;
     }
   }
+  // family labour
+  &[data-type='familyLabour'] {
+    grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+    gap: 16px;
+  }
 }

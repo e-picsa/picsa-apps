@@ -11,8 +11,8 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { IBudgetCardWithValues } from '../../../../models/budget-tool.models';
 
 const LABELS: { [id: string]: string } = {
-  adultMale: translateMarker('Male Family Member'),
-  adultFemale: translateMarker('Female Family Member'),
+  adultMale: translateMarker('Male Member'),
+  adultFemale: translateMarker('Female Member'),
 };
 const MEMBERS = Object.entries(LABELS).map(([id, label]) => ({
   id,
