@@ -73,7 +73,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
           let route: ActivatedRouteSnapshot | undefined = snapshot.root;
           while (route !== undefined) {
             title = this.titleStrategy.getResolvedTitleForRoute(route) ?? title;
-            headerStyle = route.data.headerStyle ?? headerStyle;
+            headerStyle = route.data['headerStyle'] ?? headerStyle;
             route = route.children.find((child) => child.outlet === 'primary');
           }
           return { title, headerStyle };

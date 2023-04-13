@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'picsa-monitoring-tool',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -10,7 +11,7 @@ export class AppComponent {
 }
 
 @Component({
-  // tslint:disable component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'picsa-monitoring-tool',
   template: '',
 })
