@@ -1,5 +1,4 @@
 .header-table{
-    border: 1px solid #cec3c3;
     width: 100%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     .header-title{
@@ -7,11 +6,17 @@
         font-size: 20px;
     }
     .right-cells th{
-        border: 1px solid red;
         font-size: 14px;
         font-weight: 500;
+        border: 1px solid #cec3c3 ;
     }
     th.font-weight-700{
         font-weight: 700;
+    }
+    .fixed-width th{
+        width: 100px;
+    }
+    .fixed-header th{
+        width: 800px;
     }
 }
