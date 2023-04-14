@@ -26,6 +26,7 @@
       "@picsa/climate/*": ["apps/picsa-tools/climate-tool/*"],
       "@picsa/components": ["libs/components/src/index.ts"],
       "@picsa/configuration": ["libs/configuration/src/index.ts"],
+      "@picsa/crop-probability/*": ["apps/picsa-tools/crop-probability-tool/*"],
       "@picsa/dashboard/*": ["apps/sites/dashboard/*"],
       "@picsa/environments": ["libs/environments/src/index.ts"],
       "@picsa/extension/*": ["apps/native/extension-toolkit/*"],

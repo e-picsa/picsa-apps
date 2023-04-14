@@ -1,27 +1,50 @@
-import { NgModule } from '@angular/core';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+
+import {
+  PicsaDbModule,
+  PicsaTranslateModule,
+  PicsaTranslateService,
+} from '@picsa/shared/modules';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 
 import { AppComponent } from './app.component';
-import { RouterModule } from '@angular/router';
-import { appRoutes } from './app.routes';
-import { CropProbabilityTableComponent } from './components/crop-probability-table/crop-probability-table.component';
+import { AppRoutingModule } from './app-routing.module';
 import { CropProbabilityMaterialModule } from './components/material.module';
-import { CropProbabilityTableHeaderComponent } from './components/crop-probability-table-header/crop-probability-table-header.component';
 
+/** Core imports only required when running standalone */
+const StandaloneImports = [
+  AppRoutingModule,
+  BrowserModule,
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+  PicsaTranslateModule.forRoot(),
+];
+
+/** Common imports used in both standalone and embedded formats */
+export const APP_COMMON_IMPORTS = [
+  HttpClientModule,
+  CropProbabilityMaterialModule,
+  PicsaTranslateModule,
+  PicsaDbModule.forRoot(),
+  PicsaCommonComponentsModule,
+];
+
+/*******************************************************************
+ *  Standalone Version
+ ******************************************************************/
 @NgModule({
-  declarations: [
-    AppComponent,
-    CropProbabilityTableComponent,
-    CropProbabilityTableHeaderComponent,
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
-    CropProbabilityMaterialModule,
-  ],
-  providers: [],
+  declarations: [AppComponent],
+  imports: [...StandaloneImports, ...APP_COMMON_IMPORTS],
   bootstrap: [AppComponent],
+  schemas: [],
 })
-export class AppModule {}
+export class AppModule {
+  // ensure translate service initialised
+  constructor(public translate: PicsaTranslateService) {}
+}
