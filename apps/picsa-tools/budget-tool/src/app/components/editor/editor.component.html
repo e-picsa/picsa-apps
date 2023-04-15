@@ -1,10 +1,6 @@
 <!-- Editor -->
 <div id="editorContainer">
-  <div
-    *ngFor="let editorStep of editorSteps"
-    class="type-row"
-    [id]="'edit-' + editorStep.type"
-  >
+  <div *ngFor="let editorStep of editorSteps" class="type-row" [id]="'edit-' + editorStep.type">
     <div class="type-label">{{ editorStep.label | translate }}</div>
     <div class="selected-summary" *ngIf="data[editorStep.type] as selected">
       <div class="selected-cards-container" [attr.data-type]="editorStep.type">
@@ -17,28 +13,20 @@
         >
         </budget-card-editor>
 
-        <budget-card-placeholder
-          (click)="showCardsList(editorStep.type)"
-        ></budget-card-placeholder>
+        <budget-card-placeholder (click)="showCardsList(editorStep.type)"></budget-card-placeholder>
       </div>
     </div>
   </div>
 </div>
 <!-- Footer Next Button -->
-<button
-  mat-raised-button
-  color="primary"
-  class="footer-button"
-  style="margin: 1rem"
-  (click)="handleNextClick.emit()"
->
+<button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" (click)="handleNextClick.emit()">
   Next
 </button>
 
 <!-- Dialog -->
 <ng-template #cardsListDialog>
   <div id="cardsList" *ngIf="data && cardsListType && store.budgetCardsByType">
-    <div style="flex: 1; overflow: auto" [ngSwitch]="cardsListType">
+    <div #cardScroller style="flex: 1; overflow: auto" [ngSwitch]="cardsListType">
       <!-- Family Labour -->
       <budget-cell-editor-family-labour
         *ngSwitchCase="'familyLabour'"
@@ -63,15 +51,7 @@
       >
       </budget-cell-editor-card-select>
     </div>
-    <button
-      mat-raised-button
-      color="primary"
-      class="footer-button"
-      style="margin: 1rem"
-      mat-dialog-close
-    >
-      Next
-    </button>
+    <button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" mat-dialog-close>Next</button>
   </div>
 </ng-template>
 

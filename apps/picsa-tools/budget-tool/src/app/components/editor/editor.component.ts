@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 import {
   IBudgetCard,
@@ -34,6 +27,7 @@ const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
 export class BudgetEditorComponent {
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
+  @ViewChild('cardScroller', { static: false }) cardScroller: ElementRef<HTMLDivElement>;
 
   public data: IBudgetPeriodData;
   public _activePeriod: number;
@@ -62,6 +56,10 @@ export class BudgetEditorComponent {
       maxHeight: '90vh',
       panelClass: 'no-padding',
     });
+    // scroll existing dialog to top if exists as dialog opens
+    setTimeout(() => {
+      this.cardScroller?.nativeElement?.scrollTo(0, 0);
+    }, 200);
   }
 
   private async scrollToType(type: IBudgetPeriodType) {
@@ -105,11 +103,7 @@ export class BudgetEditorComponent {
     }
   }
 
-  public updateCardValue(
-    type: IBudgetPeriodType,
-    index: number,
-    card: IBudgetCardWithValues
-  ) {
+  public updateCardValue(type: IBudgetPeriodType, index: number, card: IBudgetCardWithValues) {
     const values = [...this.data[type]];
     values[index] = card;
     this.onEditorChange(values, type);

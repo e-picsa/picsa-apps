@@ -1,9 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {
-  IBudgetCardWithValues,
-  IBudgetCard,
-  IBudgetCardType,
-} from '../../../models/budget-tool.models';
+import { IBudgetCardWithValues, IBudgetCard, IBudgetCardType } from '../../../models/budget-tool.models';
 import { BudgetStore } from '../../../store/budget.store';
 import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 
@@ -36,10 +32,7 @@ export class BudgetCellEditorCardSelectComponent {
     const enterpriseCards: IBudgetCard[] = [];
     const otherCards: IBudgetCard[] = [];
     cards.forEach((c) => {
-      if (
-        c.groupings?.includes(enterpriseGroup) ||
-        c.groupings?.includes('*')
-      ) {
+      if (c.groupings?.includes(enterpriseGroup) || c.groupings?.includes('*')) {
         enterpriseCards.push(c);
       } else {
         otherCards.push(c);
