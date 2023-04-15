@@ -1,12 +1,13 @@
-import {Component,EventEmitter, OnInit, Output ,ViewChild} from '@angular/core';
-import { MatStepper } from '@angular/material/stepper'
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { MatStepper } from '@angular/material/stepper';
+import { PicsaDialogService } from '@picsa/shared/features';
 
 export interface IOptionData {
   practice: string;
-  gender: string [];
-  benefits: {benefit:string, beneficiary:string[]} [];
-  performance:{lowRf:string, midRf:string,  highRf:string};
-  investment: {money:string, time:string};
+  gender: string[];
+  benefits: { benefit: string; beneficiary: string[] }[];
+  performance: { lowRf: string; midRf: string; highRf: string };
+  investment: { money: string; time: string };
   time: string;
   risk: string;
 }
@@ -16,142 +17,131 @@ export interface IOptionData {
   styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent implements OnInit {
-  // stepCounter: number;
-  warningText: string;
   practiceEntry: string;
-  gender: string [];
-  benefits: {benefit:string, beneficiary:string[]} [];
-  perfomanceValues: {lowRf:string, midRf:string,  highRf:string};  
-  performanceOptions: string[]=['good','ok','bad']
-  investmentValues: {money:string, time:string};  
-  investmentOptions: string[]=['high','mid','low']
+  gender: string[];
+  benefits: { benefit: string; beneficiary: string[] }[];
+  perfomanceValues: { lowRf: string; midRf: string; highRf: string };
+  performanceOptions: string[] = ['good', 'ok', 'bad'];
+  investmentValues: { money: string; time: string };
+  investmentOptions: string[] = ['high', 'mid', 'low'];
   benefitsStartTime: string;
-  risk:string;
+  risk: string;
   isLinear = false;
-  editMode= false
-  editIndex:number;
 
   @ViewChild(MatStepper) stepper: MatStepper;
+  @Output() dataTransfer = new EventEmitter<IOptionData | null>();
 
-  @Output() dataTransfer = new EventEmitter();
+  constructor(private dialog: PicsaDialogService) {}
 
   ngOnInit(): void {
-    // this.stepCounter = 1;
-    this.gender=[],
-    this.benefits=[{
-      benefit:'',
-      beneficiary:[]
-    },
-  ]
-  this.perfomanceValues = { lowRf:"ok",midRf:"ok",highRf:"ok"}
-  this.investmentValues = {money:'high', time:'high'}
-  this.warningText='';
-  this.practiceEntry='';
-  this.gender= [];
-  this.perfomanceValues= {lowRf:"", midRf:"",  highRf:""};  
-  this.investmentValues={money:"", time:""};  
-  this.benefitsStartTime ="";
-  this.risk="";
-  this.editIndex = -1;
-  
+    this.gender = [];
+    this.benefits = [
+      {
+        benefit: '',
+        beneficiary: [],
+      },
+    ];
+    this.perfomanceValues = { lowRf: 'ok', midRf: 'ok', highRf: 'ok' };
+    this.investmentValues = { money: 'high', time: 'high' };
+    this.practiceEntry = '';
+    this.gender = [];
+    this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
+    this.investmentValues = { money: '', time: '' };
+    this.benefitsStartTime = '';
+    this.risk = '';
   }
-  
-  handleGender(gender:string){
-    if(!this.gender.includes(gender)){
-      this.gender.push(gender)
-    }else{
-     const index = this.gender.indexOf(gender)
-     this.gender.splice(index, 1);
+
+  handleGender(gender: string) {
+    if (!this.gender.includes(gender)) {
+      this.gender.push(gender);
+    } else {
+      const index = this.gender.indexOf(gender);
+      this.gender.splice(index, 1);
     }
   }
-  handleBenficiaryGender(index:number, gender:string){
-    if(!this.benefits[index].beneficiary.includes(gender)){
-      this.benefits[index].beneficiary.push(gender)
-    }else{
-      const itemIndex = this.benefits[index].beneficiary.indexOf(gender)
+  handleBenficiaryGender(index: number, gender: string) {
+    if (!this.benefits[index].beneficiary.includes(gender)) {
+      this.benefits[index].beneficiary.push(gender);
+    } else {
+      const itemIndex = this.benefits[index].beneficiary.indexOf(gender);
       this.benefits[index].beneficiary.splice(itemIndex, 1);
     }
   }
-  handleRemovingBenefits(index:number){
+  handleRemovingBenefits(index: number) {
     this.benefits.splice(index, 1);
   }
-  handleMoreBenefits(){
+  handleMoreBenefits() {
     this.benefits.push({
-      benefit:'',
-      beneficiary:[]
-    })
+      benefit: '',
+      beneficiary: [],
+    });
   }
 
   onlyNumbers(event): boolean {
-    const charCode = (event.which) ? event.which : event.keyCode;
+    const charCode = event.which ? event.which : event.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
       return false;
     }
     return true;
   }
 
-  async submitForm  (){
-    //compile collected data
-    if(this.practiceEntry &&
-      this.gender.length > 0 &&
-      this.benefitsStartTime &&
-      this.risk){
-    const finalObject = {
-      data:{
-      practice:this.practiceEntry,
-      gender: this.gender,
-      benefits:this.benefits,
-      performance:this.perfomanceValues,
-      investment:this.investmentValues,
-      time:this.benefitsStartTime,
-      risk:this.risk
-    },
-    index:this.editIndex
-  }
-     this.dataTransfer.emit(finalObject);
-     this.resetVariables()
-     this.resetStepper()
-    }else{
-      this.warningText = "Please fill all the fields"
+  async submitForm() {
+    // minimum for auto save should be at least a name
+    if (!this.practiceEntry) {
+      this.dataTransfer.emit(null);
+      return;
     }
+    const data: IOptionData = {
+      practice: this.practiceEntry,
+      gender: this.gender,
+      benefits: this.benefits,
+      performance: this.perfomanceValues,
+      investment: this.investmentValues,
+      time: this.benefitsStartTime,
+      risk: this.risk,
+    };
+    this.dataTransfer.emit(data);
+    this.resetVariables();
+    this.resetStepper();
   }
-  resetVariables(){
+  resetVariables() {
     // Reset variables when the component is destroyed.
-    this.gender=[],
-    this.benefits=[{
-      benefit:'',
-      beneficiary:[]
-    },
-  ]
-  this.perfomanceValues = { lowRf:"ok",midRf:"ok",highRf:"ok"}
-  this.investmentValues = {money:'high', time:'high'}
-  this.warningText='';
-  this.practiceEntry='';
-  this.gender= [];
-  this.perfomanceValues= {lowRf:"", midRf:"",  highRf:""};  
-  this.investmentValues={money:"", time:""};  
-  this.benefitsStartTime ="";
-  this.risk=""
-  this.editIndex=-1
-  this.editMode=false
+    this.gender = [];
+    this.benefits = [
+      {
+        benefit: '',
+        beneficiary: [],
+      },
+    ];
+    this.perfomanceValues = { lowRf: 'ok', midRf: 'ok', highRf: 'ok' };
+    this.investmentValues = { money: 'high', time: 'high' };
+    this.practiceEntry = '';
+    this.gender = [];
+    this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
+    this.investmentValues = { money: '', time: '' };
+    this.benefitsStartTime = '';
+    this.risk = '';
   }
   //incase of edits
-  presetVariables(rowData:IOptionData,index:number){
-  //remove all warinings 
-  this.warningText='';
-  //editor
-  this.editMode =true;
-  this.editIndex =index;
-
-  this.benefits= rowData.benefits
-  this.perfomanceValues = rowData.performance
-  this.investmentValues = rowData.investment
-  this.practiceEntry=rowData.practice
-  this.gender= rowData.gender;  
-  this.benefitsStartTime =rowData.time
-  this.risk=rowData.risk
+  presetVariables(rowData: IOptionData) {
+    this.benefits = rowData.benefits;
+    this.perfomanceValues = rowData.performance;
+    this.investmentValues = rowData.investment;
+    this.practiceEntry = rowData.practice;
+    this.gender = rowData.gender;
+    this.benefitsStartTime = rowData.time;
+    this.risk = rowData.risk;
   }
   resetStepper(): void {
     this.stepper.reset();
+  }
+
+  async promptDelete() {
+    const dialogRef = await this.dialog.open('delete');
+    dialogRef.afterClosed().subscribe((shouldDelete) => {
+      if (shouldDelete) {
+        this.dataTransfer.emit(null);
+      }
+    });
   }
 }

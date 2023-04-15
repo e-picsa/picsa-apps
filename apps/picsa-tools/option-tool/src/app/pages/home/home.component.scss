@@ -31,9 +31,11 @@ th {
 .slide-in {
   position: absolute;
   bottom: 0;
+  display: none;
   transition: transform 0.3s ease-in-out;
   transform: translateY(100%);
 }
 .slide-in.active {
   transform: translateY(0);
+  display: block;
 }
