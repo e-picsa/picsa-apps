@@ -1,25 +1,13 @@
 <div class="page-content" *mobxAutorun>
   <div class="header-buttons">
-    <button
-      mat-button
-      *ngIf="!isEditorOpen"
-      aria-label="Share"
-      (click)="showShareDialog()"
-    >
-      <mat-icon>share</mat-icon>Share
+    <button mat-button *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
+      <mat-icon>share</mat-icon>{{'Share' | translate }}
     </button>
   </div>
 
   <!-- hide overflow so that editor can be stored outside bottom of page -->
-  <div
-    class="page-content"
-    style="overflow-y: hidden; overflow-x: auto; padding: 0"
-  >
-    <budget-table
-      *ngIf="store.activeBudget"
-      [budget]="store.activeBudget"
-      @fadeInOut
-    ></budget-table>
+  <div class="page-content" style="overflow-y: hidden; overflow-x: auto; padding: 0">
+    <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
     <!-- <budget-cell-editor
       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
