@@ -1,12 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { BudgetStore } from '../../store/budget.store';
-import {
-  FadeInOut,
-  OpenClosed,
-  FlyInOut,
-  ANIMATION_DEFAULTS_Y,
-} from '@picsa/shared/animations';
+import { FadeInOut, OpenClosed, FlyInOut, ANIMATION_DEFAULTS_Y } from '@picsa/shared/animations';
 import { Subject, takeUntil } from 'rxjs';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,11 +13,7 @@ import { PicsaTranslateService } from '@picsa/shared/modules';
   selector: 'budget-view',
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
-  animations: [
-    FadeInOut({ inDelay: 200 }),
-    OpenClosed,
-    FlyInOut(ANIMATION_DEFAULTS_Y),
-  ],
+  animations: [FadeInOut({ inDelay: 200 }), OpenClosed, FlyInOut(ANIMATION_DEFAULTS_Y)],
 })
 export class BudgetViewPage implements OnInit, OnDestroy {
   loader: HTMLIonLoadingElement;
@@ -31,7 +23,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private location: Location,
     public store: BudgetStore,
     private componentsService: PicsaCommonComponentsService,
     private dialog: MatDialog,
@@ -59,35 +51,30 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   }
 
   public async handleEditorNext() {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { edit: undefined },
-      queryParamsHandling: 'merge',
-    });
+    // use back-navigation to return to budget view without editor open
+    this.location.back();
   }
 
   /** Subscribe to query param changes and update headers as required */
   private addRouterSubscription() {
-    this.route.queryParams
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe(async (params) => {
-        const { edit, period, label, type } = params;
-        if (period) {
-          this.store.setActivePeriod(Number(period));
+    this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(async (params) => {
+      const { edit, period, label, type } = params;
+      if (period) {
+        this.store.setActivePeriod(Number(period));
+      }
+      if (type) {
+        this.store.setActiveType(type);
+      }
+      this.isEditorOpen = !!edit;
+      this.periodLabel = label;
+      if (this.store.activeBudget) {
+        const { meta } = this.store.activeBudget;
+        let title = meta.title;
+        if (this.isEditorOpen) {
+          title = await this.translateService.translateText(label);
         }
-        if (type) {
-          this.store.setActiveType(type);
-        }
-        this.isEditorOpen = !!edit;
-        this.periodLabel = label;
-        if (this.store.activeBudget) {
-          const { meta } = this.store.activeBudget;
-          let title = meta.title;
-          if (this.isEditorOpen) {
-            title = await this.translateService.translateText(label);
-          }
-          this.componentsService.setHeader({ title });
-        }
-      });
+        this.componentsService.setHeader({ title });
+      }
+    });
   }
 }
