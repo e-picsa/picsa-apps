@@ -1,3 +1,59 @@
-table {
+table{
   width: 100%;
 }
+.mat-mdc-table {
+  height: 100vh;
+  max-height: 550px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  overflow: auto;
+  padding: 0 20px;
+  padding-bottom: 10px;
+  color: black;
+  .title-cell{
+    text-transform: capitalize;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .crop-title{
+    text-transform: capitalize;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .table-row{
+    padding:15px 10px;
+  }
+  .padded-span{
+    padding:0 10px;
+    width: 75px;
+  }
+  .font-12{
+    font-size: 12px;
+  }
+  .probability{
+    width: 520px;
+    
+    .prob-row-wrapper{
+      display: flex;
+    }
+  }
+  .fixed-width{
+    width: 180px;
+  }
+}
+.mat-mdc-table-sticky-border-elem-left {
+  border-right: 1px solid #e0e0e0;
+}
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+.table-filter{
+  border:1px solid red;
+}
+.disclaimer{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 12px;
+}
+

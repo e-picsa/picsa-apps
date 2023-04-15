@@ -4,7 +4,7 @@ import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
 import { IPicsaDialogData, IPicsaDialogConfig } from './dialog.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PicsaDialogService {
   constructor(private dialog: MatDialog) {}
@@ -23,10 +23,9 @@ export class PicsaDialogService {
     const config = {
       ...templateConfig,
       ...customConfig,
-      data: { ...templateConfig.data, ...customData }
+      data: { ...templateConfig.data, ...customData },
     };
     const dialogRef = this.dialog.open(config.component, config);
-    dialogRef.afterClosed().subscribe(v => {});
     return dialogRef;
   }
 

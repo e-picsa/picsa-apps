@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace IConfiguration {
   /** When storing as a user option ensure id field used so user setting can save selected */
   export interface UserOption {
@@ -25,7 +26,7 @@ export namespace IConfiguration {
     climateTool: {
       stationFilter?: (station: any) => boolean;
     };
-    resourcesTool?: {};
+    resourcesTool?: any;
     localisation: IConfiguration.Localisation;
     theme: any;
   }

@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
+import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
 import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
 
 const routes: Routes = [
@@ -28,6 +29,13 @@ const routes: Routes = [
     loadChildren: () =>
       import('@picsa/monitoring/src/app/app.module-embedded').then(
         (mod) => mod.MonitoringToolModule
+      ),
+  },
+  {
+    path: 'option',
+    loadChildren: () =>
+      import('@picsa/option/src/app/app.module-embedded').then(
+        (mod) => mod.OptionsToolModule
       ),
   },
   {
@@ -75,6 +83,7 @@ const routes: Routes = [
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
     MonitoringToolModule.forRoot({ urlPrefix: 'monitoring' }),
+    OptionsToolModule.forRoot({ urlPrefix: 'option' }),
     ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
   ],
   exports: [RouterModule],

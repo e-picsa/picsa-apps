@@ -61,7 +61,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": "libs/webcomponents/**/*.{ts,tsx}"
+        "lintFilePatterns": ["libs/webcomponents/**/*.tsx"]
       }
     }
   }

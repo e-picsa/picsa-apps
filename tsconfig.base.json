@@ -32,6 +32,7 @@
       "@picsa/i18n": ["libs/i18n/src/index.ts"],
       "@picsa/models": ["libs/models/src/index.ts"],
       "@picsa/monitoring/*": ["apps/picsa-tools/monitoring-tool/*"],
+      "@picsa/option/*": ["apps/picsa-tools/option-tool/*"],
       "@picsa/resources/*": ["apps/picsa-tools/resources-tool/*"],
       "@picsa/scripts": ["apps/picsa-server/scripts/index.ts"],
       "@picsa/shared": ["libs/shared/src/index.ts"],

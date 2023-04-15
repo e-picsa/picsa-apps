@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { CHART_TYPES } from '@picsa/climate/src/app/data';
 import type { ITranslationEntry } from '../types';
 

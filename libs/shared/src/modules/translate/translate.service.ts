@@ -8,7 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class PicsaTranslateService implements OnDestroy {
   loader: HTMLIonLoadingElement;
   monthNames: string[] = MONTHS;
-  public language: string = 'en';
+  public language = 'en';
   private destroyed$ = new Subject<boolean>();
   constructor(
     public toastCtrl: ToastController,
@@ -25,16 +25,14 @@ export class PicsaTranslateService implements OnDestroy {
   }
 
   private subscribeToConfigLanguageChanges() {
-    this.configurationService.activeConfiguration$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((config) => {
-        const language = config.localisation.language.selected?.code;
-        if (language && language !== this.language) {
-          this.language = language;
-          this.prepareStaticTranslations();
-          this.ngxTranslate.use(language);
-        }
-      });
+    this.configurationService.activeConfiguration$.pipe(takeUntil(this.destroyed$)).subscribe((config) => {
+      const language = config.localisation.language.selected?.code;
+      if (language && language !== this.language) {
+        this.language = language;
+        this.prepareStaticTranslations();
+        this.ngxTranslate.use(language);
+      }
+    });
   }
 
   // use translate service to translate strings that will be displayed
@@ -72,12 +70,4 @@ export const MONTHS = [
   'December',
 ];
 
-export const DAYS = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
+export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
