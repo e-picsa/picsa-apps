@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./whatsapp-group.scss'],
 })
 export class WhatsappGroupComponent {
-  @Input('group') group: IWhatsAppGroup;
+  @Input() group: IWhatsAppGroup;
 }
 
 export interface IWhatsAppGroup {

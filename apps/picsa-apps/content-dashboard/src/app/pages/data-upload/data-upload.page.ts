@@ -10,6 +10,7 @@ import { IChartSummary_V2 } from '@picsa/models';
   templateUrl: './data-upload.page.html',
   styleUrls: ['./data-upload.page.scss'],
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class DataUpload {
   files: NgxFileDropEntry[];
   csvFile: File;

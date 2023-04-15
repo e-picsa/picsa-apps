@@ -29,7 +29,7 @@ export class PicsaLoadingComponent {
   // method taken from http://yoksel.github.io/url-encoder/
   // applies selective replacement of uri characters
   private _encodeSVG(data: string): string {
-    const symbols = /[\r\n%#()<>?\[\\\]^`{|}]/g;
+    const symbols = /[\r\n%#()<>?[\\\]^`{|}]/g;
     data = data.replace(/"/g, "'");
     data = data.replace(/>\s{1,}</g, '><');
     data = data.replace(/\s{2,}/g, ' ');

@@ -6,6 +6,7 @@ import { ConfigurationService, IConfiguration } from '@picsa/configuration/src';
   templateUrl: './configuration-select-dialog.html',
   styleUrls: ['./configuration-select-dialog.scss'],
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class ConfigurationSelectDialog {
   public options: IConfiguration.Localisation[];
   public selected: IConfiguration.Localisation;
@@ -28,14 +29,9 @@ export class ConfigurationSelectDialog {
     this.loadConfigurationOptions();
   }
 
-  public setLanguage(
-    option: IConfiguration.Localisation['language']['selected']
-  ) {
+  public setLanguage(option: IConfiguration.Localisation['language']['selected']) {
     this.selected.language.selected = option;
-    this.configurationService.updateUserConfiguration(
-      'localisation',
-      this.selected
-    );
+    this.configurationService.updateUserConfiguration('localisation', this.selected);
     // TODO - also update translations
     // this.store.updateUser({ lang: code });
     // this.store.setLanguage(code);

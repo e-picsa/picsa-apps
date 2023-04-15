@@ -6,6 +6,7 @@ import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class HomePage implements AfterViewInit {
   @ViewChild('chart', { static: true }) chart: PicsaChartComponent;
   sampleData = {
