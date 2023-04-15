@@ -19,19 +19,20 @@
             ]
           }
         ],
-        "@typescript-eslint/no-non-null-assertion": "warn",
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["warn"],
-        "no-loss-of-precision": "off",
-        "@typescript-eslint/no-loss-of-precision": ["warn"],
         "@angular-eslint/component-selector": ["warn"],
         "@angular-eslint/component-class-suffix": ["warn"],
-        "no-prototype-builtins": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-loss-of-precision": ["warn"],
+        "@typescript-eslint/no-non-null-assertion": "warn",
+        "@typescript-eslint/no-unused-vars": ["warn"],
+        "no-loss-of-precision": "off",
+        "no-prototype-builtins": "off",
+        "no-unused-vars": "off"
       }
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "extends": ["plugin:@nrwl/nx/typescript", "prettier"],
       "rules": {}
     },
     {

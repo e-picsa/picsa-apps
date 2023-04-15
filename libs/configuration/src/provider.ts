@@ -9,9 +9,7 @@ export class ConfigurationService {
   public activeConfiguration: IConfiguration.Settings;
 
   /** Change observer */
-  public activeConfiguration$ = new BehaviorSubject<IConfiguration.Settings>(
-    null as any
-  );
+  public activeConfiguration$ = new BehaviorSubject<IConfiguration.Settings>(null as any);
 
   public configurationOptions: IConfiguration.Settings[];
 
@@ -32,10 +30,7 @@ export class ConfigurationService {
     }
   }
 
-  public updateUserConfiguration(
-    setting: keyof IConfiguration.Settings,
-    value: any
-  ) {
+  public updateUserConfiguration(setting: keyof IConfiguration.Settings, value: any) {
     const extracted = extractSelectedOptions(value);
     if (extracted) {
       this.userConfigOverrides[setting] = extracted;
@@ -52,13 +47,13 @@ export class ConfigurationService {
 
   private loadActiveConfig() {
     try {
-      const storedConfig = JSON.parse(
-        localStorage.getItem('picsa_userConfig') as any
-      );
+      const storedConfig = JSON.parse(localStorage.getItem('picsa_userConfig') as any);
       if (storedConfig && storedConfig.id) {
         this.userConfigOverrides = storedConfig;
       }
-    } catch (error) {}
+    } catch (error) {
+      //
+    }
 
     const { selected, options } = populateSelectedOptions(
       { options: CONFIGURATIONS, selected: undefined },
@@ -95,9 +90,7 @@ function populateSelectedOptions<T extends { options?: any[]; selected?: any }>(
     // Second pass - replace selected
     if (data.options) {
       data.selected = data.options![0];
-      const foundOption = data.options!.find(
-        (option: any) => option.id === userData.id
-      );
+      const foundOption = data.options!.find((option: any) => option.id === userData.id);
       if (foundOption !== undefined) {
         data.selected = foundOption;
       }
