@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import SVGS from './svgs';
 
 @Component({
   selector: 'picsa-loading',
   templateUrl: './loading.html',
-  styleUrls: ['./loading.scss']
+  styleUrls: ['./loading.scss'],
 })
-export class PicsaLoadingComponent implements OnInit {
+export class PicsaLoadingComponent {
   @Input() set name(name: IPicsaLoaders) {
     // select svg by name (or use default bars)
     const svg = name && SVGS[name] ? SVGS[name] : SVGS.BARS;
@@ -15,8 +15,6 @@ export class PicsaLoadingComponent implements OnInit {
   }
   loaderHtml: SafeHtml;
   constructor(private sanitizer: DomSanitizer) {}
-
-  ngOnInit(): void {}
 
   /**********************************************************************
    *  Helper Methods

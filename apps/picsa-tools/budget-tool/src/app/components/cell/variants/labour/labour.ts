@@ -19,8 +19,6 @@ export class BudgetCellLabourComponent {
   _people: number;
   daysArray: number[][];
 
-  constructor() {}
-
   // given updates to people or days split the total into components of the large, medium, small and half values
   // map these values to directed arrays to populate images in the pictorial representation
   generateRepresentation() {
