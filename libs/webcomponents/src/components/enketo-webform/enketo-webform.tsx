@@ -66,9 +66,7 @@ export class EnketoWebform {
         }
         // If desired, scroll to a specific question with any XPath location expression,
         // and aggregate any loadErrors.
-        loadErrors = loadErrors.concat(
-          this.enketoForm.goTo('//repeat[3]/node')
-        );
+        loadErrors = loadErrors.concat(this.enketoForm.goTo('//repeat[3]/node'));
       }
     }
   }
