@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { SwUpdate } from '@angular/service-worker';
-import { PicsaTranslateService } from '@picsa/shared/modules/translate';
+import { PicsaTranslateService } from '../../modules';
 
 @Injectable({
   providedIn: 'root',

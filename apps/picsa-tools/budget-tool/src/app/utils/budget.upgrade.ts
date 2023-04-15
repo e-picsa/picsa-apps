@@ -37,6 +37,7 @@ export const upgradeBudget = (budget: IBudget) => {
 // as budget type might have changed need to also type as any
 const v1Upgrade = (budget: IBudget | any) => {
   try {
+    //
   } catch (error) {
     budget.apiVersion = -1;
   }
@@ -50,8 +51,7 @@ const v2Upgrade = (budget: IBudget | any) => {
     if (budget.periods && budget.periods.total) {
       budget.periods.total = Number(budget.periods.total);
       const lowerScale: string = budget.periods.scale;
-      const upperSacle: string =
-        lowerScale.charAt(0).toUpperCase() + lowerScale.substring(1);
+      const upperSacle: string = lowerScale.charAt(0).toUpperCase() + lowerScale.substring(1);
       budget.periods.scale = upperSacle;
     }
     budget.apiVersion = 3;
@@ -64,6 +64,7 @@ const v2Upgrade = (budget: IBudget | any) => {
 
 const v3Upgrade = (budget: IV3Budget) => {
   try {
+    //
   } catch (error) {
     // TODO
     // log error and show error message (unable to upgrade or similar)
