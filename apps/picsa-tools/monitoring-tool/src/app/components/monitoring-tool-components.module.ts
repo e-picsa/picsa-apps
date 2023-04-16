@@ -1,11 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
-import { FormItemComponent } from './form-item/form-item.component';
-import { MonitoringMaterialModule } from './material.module';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
+
+import { FormItemComponent } from './form-item/form-item.component';
+import { MonitoringMaterialModule } from './material.module';
 
 const Components = [FormItemComponent];
 
@@ -18,12 +19,7 @@ const Components = [FormItemComponent];
     RouterModule,
     PicsaCommonComponentsModule,
   ],
-  exports: [
-    WebcomponentsNgxModule,
-    MonitoringMaterialModule,
-    PicsaCommonComponentsModule,
-    ...Components,
-  ],
+  exports: [WebcomponentsNgxModule, MonitoringMaterialModule, PicsaCommonComponentsModule, ...Components],
   declarations: [Components],
   providers: [],
 })

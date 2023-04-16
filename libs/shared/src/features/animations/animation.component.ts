@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { _wait } from '@picsa/utils';
 import { AnimationOptions, BMCompleteLoopEvent } from 'ngx-lottie';
+
 import type { IAvailableAnimations } from './models';
 
 @Component({

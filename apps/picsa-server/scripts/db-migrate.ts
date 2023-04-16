@@ -1,10 +1,10 @@
 import { readdirSync } from 'fs';
-import path from 'path';
 import Parse from 'parse/node';
+import path from 'path';
 import prompts from 'prompts';
+
 import { ClassLevelPermissions, IMigration } from '../models';
 import { PATHS } from './paths';
-
 import { typeDefinitionsGenerate } from './type-definitions-generate';
 import { initializeParseServer } from './utils';
 
@@ -51,9 +51,7 @@ class DBMigrate {
         console.log('skip', migrationFile);
       } else {
         console.log('migrate', migrationFile);
-        const ts = await import(
-          path.resolve(PATHS.migrationsDir, migrationFile)
-        );
+        const ts = await import(path.resolve(PATHS.migrationsDir, migrationFile));
         const migration = ts.default as IMigration;
         await this.processMigration(migration);
         await this.saveMigrationRecord(migrationFile);
@@ -63,9 +61,7 @@ class DBMigrate {
   private async handleDownMigration() {
     const migrationFiles = readdirSync(PATHS.migrationsDir);
     const processedMigrations = await this.getProcessedMigrations();
-    const targets = migrationFiles
-      .reverse()
-      .filter((m) => processedMigrations.includes(m));
+    const targets = migrationFiles.reverse().filter((m) => processedMigrations.includes(m));
     if (targets.length === 0) {
       console.log('No downgrades possible');
       return;
@@ -113,14 +109,10 @@ class DBMigrate {
       fileName: '000-initial-bootstrap',
     });
     const schema = await Parse.Schema.all();
-    const schemaExists = schema.find(
-      (s) => s.className === initialMigration.className
-    );
+    const schemaExists = schema.find((s) => s.className === initialMigration.className);
     if (!schemaExists) {
       await initialMigration.save();
-      new Parse.Schema(initialMigration.className).setCLP(
-        ClassLevelPermissions.serverOnly
-      );
+      new Parse.Schema(initialMigration.className).setCLP(ClassLevelPermissions.serverOnly);
     }
     const query = new Parse.Query(Migration);
     query.distinct('fileName');

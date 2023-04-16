@@ -4,18 +4,12 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./pages/home/budget-home.module').then(
-        (mod) => mod.BudgetHomePageModule
-      ),
+    loadChildren: () => import('./pages/home/budget-home.module').then((mod) => mod.BudgetHomePageModule),
     title: 'Budget Tool',
   },
   {
     path: 'create',
-    loadChildren: () =>
-      import('./pages/create/budget-create.module').then(
-        (mod) => mod.BudgetCreatePageModule
-      ),
+    loadChildren: () => import('./pages/create/budget-create.module').then((mod) => mod.BudgetCreatePageModule),
     title: 'New Budget',
   },
   {
@@ -25,10 +19,7 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: 'view/:budgetKey',
-    loadChildren: () =>
-      import('./pages/view/budget-view.module').then(
-        (mod) => mod.BudgetViewPageModule
-      ),
+    loadChildren: () => import('./pages/view/budget-view.module').then((mod) => mod.BudgetViewPageModule),
     data: {
       headerStyle: 'inverted',
     },

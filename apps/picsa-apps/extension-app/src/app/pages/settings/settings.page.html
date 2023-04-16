@@ -18,11 +18,7 @@
         <div class="flex-basis-100 list-title">
           Name:
           <span class="list-value" *ngIf="user.name">{{ user.name }}</span>
-          <ion-button
-            fill="outline"
-            *ngIf="!user.name"
-            (click)="userEdit('name')"
-          >
+          <ion-button fill="outline" *ngIf="!user.name" (click)="userEdit('name')">
             <ion-icon name="add" slot="start"></ion-icon>Set user name
           </ion-button>
         </div>

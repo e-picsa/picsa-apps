@@ -28,16 +28,8 @@
     (dateChange)="setLineToolFromDate($event.target.value)"
     style="display: none"
   />
-  <mat-datepicker
-    #picker
-    touchUi
-    [calendarHeaderComponent]="datePickerHeader"
-  ></mat-datepicker>
-  <button
-    mat-icon-button
-    (click)="picker.open()"
-    class="calendar-picker-button"
-  >
+  <mat-datepicker #picker touchUi [calendarHeaderComponent]="datePickerHeader"></mat-datepicker>
+  <button mat-icon-button (click)="picker.open()" class="calendar-picker-button">
     <mat-icon>calendar_month</mat-icon>
   </button>
 </mat-form-field>

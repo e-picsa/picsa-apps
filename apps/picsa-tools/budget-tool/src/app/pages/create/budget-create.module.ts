@@ -1,13 +1,13 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule } from '@angular/router';
-
-import { BudgetCreatePage } from './budget-create.page';
-import { BudgetMaterialModule } from '../../material.module';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MobxAngularModule } from 'mobx-angular';
-import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
+import { RouterModule, Routes } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { MobxAngularModule } from 'mobx-angular';
+
+import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
+import { BudgetMaterialModule } from '../../material.module';
+import { BudgetCreatePage } from './budget-create.page';
 
 const routes: Routes = [
   {

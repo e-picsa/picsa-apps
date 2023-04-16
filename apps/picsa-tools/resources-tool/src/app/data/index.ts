@@ -7,10 +7,10 @@ import {
   IResourceYoutube,
 } from '../models';
 import CROPS from './crops';
+import { GENDER_RESOURCES } from './gender';
+import PICSA_RESOURCES from './picsa';
 import WEATHER from './weather';
 import WORKSHOPS from './workshops';
-import PICSA_RESOURCES from './picsa';
-import { GENDER_RESOURCES } from './gender';
 
 const byId: { [id: string]: IResource } = {
   ...CROPS,
@@ -45,8 +45,7 @@ for (const resource of Object.values(byId)) {
 // sort types
 for (const [key, resources] of Object.entries(typeExports)) {
   typeExports[key] = resources.sort(
-    (a: IResourceItemBase, b: IResourceItemBase) =>
-      (b.priority ?? -99) - (a.priority ?? -99)
+    (a: IResourceItemBase, b: IResourceItemBase) => (b.priority ?? -99) - (a.priority ?? -99)
   );
 }
 

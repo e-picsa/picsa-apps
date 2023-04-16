@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 import { IBudgetCard } from '../../../models/budget-tool.models';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // Dialog
 @Component({
@@ -10,10 +11,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class BudgetCardNewDialog {
   public card: IBudgetCard;
-  constructor(
-    public dialogRef: MatDialogRef<BudgetCardNewDialog>,
-    @Inject(MAT_DIALOG_DATA) card: IBudgetCard
-  ) {
+  constructor(public dialogRef: MatDialogRef<BudgetCardNewDialog>, @Inject(MAT_DIALOG_DATA) card: IBudgetCard) {
     this.card = card;
   }
   save() {
@@ -30,10 +28,7 @@ export class BudgetCardNewDialog {
   // text is either first 2 initials (if multiple words) or first 2 letters (if one word)
   generateImage(text: string) {
     const byWord = text.split(' ');
-    const abbr =
-      byWord.length > 1
-        ? `${byWord[0].charAt(0)}.${byWord[1].charAt(0)}`
-        : text.substring(0, 2);
+    const abbr = byWord.length > 1 ? `${byWord[0].charAt(0)}.${byWord[1].charAt(0)}` : text.substring(0, 2);
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
     viewBox="0 0 100 100">
       <g id="UrTavla">

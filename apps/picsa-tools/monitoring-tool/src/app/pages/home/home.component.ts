@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { MonitoringToolService } from '../../services/monitoring-tool.service';
 
 @Component({

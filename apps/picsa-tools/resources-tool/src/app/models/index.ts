@@ -50,9 +50,4 @@ export interface IResourceApp extends IResourceItemBase {
   appId: string;
 }
 
-export type IResource =
-  | IResourceFile
-  | IResourceYoutube
-  | IResourceCollection
-  | IResourceLink
-  | IResourceApp;
+export type IResource = IResourceFile | IResourceYoutube | IResourceCollection | IResourceLink | IResourceApp;

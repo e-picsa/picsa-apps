@@ -1,5 +1,6 @@
-import { IDBDoc } from './db.models';
 import * as c3 from 'c3';
+
+import { IDBDoc } from './db.models';
 
 export interface ICropRequirement {
   crop: string;

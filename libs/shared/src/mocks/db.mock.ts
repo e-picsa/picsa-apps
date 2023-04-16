@@ -1,5 +1,6 @@
-import { IDBEndpoint, IDBDoc } from '@picsa/models';
+import { IDBDoc,IDBEndpoint } from '@picsa/models';
 import { _wait, generateDBMeta } from '@picsa/utils';
+
 import { AbstractDBService } from '../services/core/db/abstract.db';
 
 export class MockDB implements AbstractDBService {

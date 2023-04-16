@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+
 import { IProbabilities } from '../../../models';
 
 @Component({
@@ -19,9 +20,7 @@ export class ProbabilityToolComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.x) {
       const p = this.calculateProbabilities(this.x);
-      this.probabilities = this.reverseProbabilities
-        ? this._swapValues(p, 'above', 'below')
-        : p;
+      this.probabilities = this.reverseProbabilities ? this._swapValues(p, 'above', 'below') : p;
     } else {
       this.probabilities = DEFAULT_PROBABILITIES;
     }

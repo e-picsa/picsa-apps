@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+
 import { MonitoringToolService } from '../../services/monitoring-tool.service';
 
 @Component({
@@ -15,10 +16,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
   private componentDestroyed$ = new Subject<boolean>();
 
-  constructor(
-    private route: ActivatedRoute,
-    private monitoringService: MonitoringToolService
-  ) {}
+  constructor(private route: ActivatedRoute, private monitoringService: MonitoringToolService) {}
 
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
@@ -38,14 +36,12 @@ export class FormViewComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToRouteChanges() {
-    this.route.params
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((params) => {
-        console.log('params', params);
-        const { formId } = params;
-        if (formId) {
-          this.loadForm(formId);
-        }
-      });
+    this.route.params.pipe(takeUntil(this.componentDestroyed$)).subscribe((params) => {
+      console.log('params', params);
+      const { formId } = params;
+      if (formId) {
+        this.loadForm(formId);
+      }
+    });
   }
 }

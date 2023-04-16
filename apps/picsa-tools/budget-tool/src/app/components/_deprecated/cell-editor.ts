@@ -1,19 +1,13 @@
-import { Component, ViewChild, Input } from '@angular/core';
-import { BudgetStore } from '../../store/budget.store';
-import {
-  IBudgetCardWithValues,
-  IBudgetPeriodType,
-  IBudgetPeriodData,
-} from '../../models/budget-tool.models';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
-import { MatStepper } from '@angular/material/stepper';
-import {
-  StepperSelectionEvent,
-  StepperOrientation,
-} from '@angular/cdk/stepper';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Router, ActivatedRoute } from '@angular/router';
+import { StepperOrientation, StepperSelectionEvent } from '@angular/cdk/stepper';
+import { Component, Input, ViewChild } from '@angular/core';
+import { MatStepper } from '@angular/material/stepper';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 import { map, Observable } from 'rxjs';
+
+import { IBudgetCardWithValues, IBudgetPeriodData, IBudgetPeriodType } from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'budget-cell-editor',

@@ -1,63 +1,37 @@
-<div
-  id="budget"
-  *mobxAutorun
-  style="height: 100%; display: flex; flex-direction: column"
->
+<div id="budget" *mobxAutorun style="height: 100%; display: flex; flex-direction: column">
   <!-- parent budget div used so additional h1 can be added here on print -->
   <div class="budget-container">
     <!-- First column -->
     <div class="time-period">
       <div class="time-period-title cell top-row"></div>
-      <div class="cell row-title" *ngFor="let row of rows">
-        {{ row.label | translate }}
-      </div>
+      <div class="cell row-title" *ngFor="let row of rows">{{ row.label | translate }}</div>
       <!-- cash balance legend -->
       <div class="cell row-title">
         <div>
           <div>{{ 'Balance' | translate }}</div>
-          <budget-balance-legend
-            [valueCounters]="store.valueCounters"
-          ></budget-balance-legend>
+          <budget-balance-legend [valueCounters]="store.valueCounters"></budget-balance-legend>
         </div>
       </div>
     </div>
 
     <!-- Time periods calculated Vertically -->
-    <div
-      class="time-period"
-      *ngFor="let column of store.activeBudget.data; let columnIndex = index"
-    >
-      <div class="time-period-title cell top-row">
-        {{ periodLabels[columnIndex] | translate }}
-      </div>
+    <div class="time-period" *ngFor="let column of store.activeBudget.data; let columnIndex = index">
+      <div class="time-period-title cell top-row">{{ periodLabels[columnIndex] | translate }}</div>
       <!-- period rows -->
       <div *ngFor="let row of rows" class="cell">
-        <budget-cell
-          [periodIndex]="columnIndex"
-          [type]="row.key"
-          (click)="onCellClick(columnIndex, row)"
-        ></budget-cell>
+        <budget-cell [periodIndex]="columnIndex" [type]="row.key" (click)="onCellClick(columnIndex, row)"></budget-cell>
       </div>
       <!-- Cash Balance -->
       <div class="cell">
-        <div
-          *ngIf="store.balance && store.balance[columnIndex]"
-          class="balance-cell-contents"
-        >
+        <div *ngIf="store.balance && store.balance[columnIndex]" class="balance-cell-contents">
           <div class="balance-value-container">
-            <div class="balance-label">
-              {{ periodLabels[columnIndex] | translate }}
-            </div>
-            <div class="balance-value">
-              {{ store.balance[columnIndex].period | number: '.0' }}
-            </div>
+            <div class="balance-label">{{ periodLabels[columnIndex] | translate }}</div>
+            <div class="balance-value">{{ store.balance[columnIndex].period | number: '.0' }}</div>
           </div>
           <hr />
           <div class="balance-value-container">
             <div class="balance-label">{{ 'Total' | translate }}</div>
-            <div class="balance-value">
-              {{ store.balance[columnIndex].running | number: '.0' }}
-            </div>
+            <div class="balance-value">{{ store.balance[columnIndex].running | number: '.0' }}</div>
           </div>
         </div>
       </div>

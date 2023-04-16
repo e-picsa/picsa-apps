@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DIRECTIVES } from './generated';
-
+import { NgModule } from '@angular/core';
 // Import and register all custom elements for the module
 import { defineCustomElements } from '@picsa/webcomponents/loader';
+
+import { DIRECTIVES } from './generated';
 
 defineCustomElements(window);
 

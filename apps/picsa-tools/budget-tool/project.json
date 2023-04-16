@@ -15,14 +15,8 @@
         "polyfills": "apps/picsa-tools/budget-tool/src/polyfills.ts",
         "tsConfig": "apps/picsa-tools/budget-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/picsa-tools/budget-tool/src/favicon.ico",
-          "apps/picsa-tools/budget-tool/src/assets"
-        ],
-        "styles": [
-          "apps/picsa-tools/budget-tool/src/styles.scss",
-          "libs/theme/src/_index.scss"
-        ],
+        "assets": ["apps/picsa-tools/budget-tool/src/favicon.ico", "apps/picsa-tools/budget-tool/src/assets"],
+        "styles": ["apps/picsa-tools/budget-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
       },
       "configurations": {
@@ -74,10 +68,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/budget-tool/**/*.ts",
-          "apps/picsa-tools/budget-tool/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/picsa-tools/budget-tool/**/*.ts", "apps/picsa-tools/budget-tool/**/*.html"]
       }
     },
     "test": {

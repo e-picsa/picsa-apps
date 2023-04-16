@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { observable, action, computed } from 'mobx-angular';
-import { IUser } from '../models/models';
-import { PicsaDbService, generateDBMeta } from '@picsa/shared/services/core/db';
-import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { ENVIRONMENT } from '@picsa/environments';
 import { IRegionLang, LanguageCode } from '@picsa/models';
+import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
+import { PicsaFileService } from '@picsa/shared/services/native/file-service';
 import { toJS } from 'mobx';
+import { action, computed, observable } from 'mobx-angular';
+
+import { IUser } from '../models/models';
 
 @Injectable({
   providedIn: 'root',
@@ -22,10 +23,7 @@ export class UserStore {
     this.syncUser(this.user);
   }
 
-  constructor(
-    private db: PicsaDbService,
-    private fileService: PicsaFileService
-  ) {
+  constructor(private db: PicsaDbService, private fileService: PicsaFileService) {
     this.loadUser();
   }
 
@@ -69,20 +67,12 @@ export class UserStore {
   }
 
   private async _backupUserToDisk() {
-    await this.fileService.writeFile(
-      'public',
-      'picsa',
-      `picsaUserBackup.txt`,
-      toJS(this.user)
-    );
+    await this.fileService.writeFile('public', 'picsa', `picsaUserBackup.txt`, toJS(this.user));
     return;
   }
 
   private async _loadUserBackup() {
-    const fileTxt = await this.fileService.readTextFile(
-      `picsaUserBackup.txt`,
-      true
-    );
+    const fileTxt = await this.fileService.readTextFile(`picsaUserBackup.txt`, true);
     if (fileTxt) {
       const user: IUser = JSON.parse(fileTxt);
       return user;

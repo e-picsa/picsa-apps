@@ -1,4 +1,4 @@
-export * from './map';
+export * from './animations';
 export * from './charts';
 export * from './dialog';
-export * from './animations';
+export * from './map';

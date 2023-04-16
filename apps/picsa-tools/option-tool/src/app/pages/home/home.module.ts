@@ -1,11 +1,10 @@
-import { Route, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-
+import { Route, RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
-import { HomeComponent } from './home.component';
 import { OptionToolComponentsModule } from '../../components/components.module';
+import { HomeComponent } from './home.component';
 
 const routes: Route[] = [
   {
@@ -16,11 +15,6 @@ const routes: Route[] = [
 
 @NgModule({
   declarations: [HomeComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    OptionToolComponentsModule,
-    PicsaTranslateModule,
-  ],
+  imports: [CommonModule, RouterModule.forChild(routes), OptionToolComponentsModule, PicsaTranslateModule],
 })
 export class HomeModule {}

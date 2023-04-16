@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { IDBDoc, IDBEndpoint } from '@picsa/models';
+import { BehaviorSubject } from 'rxjs';
+
 import { DBCacheService } from './_cache.db';
 import { DBServerService, IServerWriteBatchEntry } from './_server.db';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DBSyncService {

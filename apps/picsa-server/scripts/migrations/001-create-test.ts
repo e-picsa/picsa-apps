@@ -1,9 +1,4 @@
-import {
-  ClassLevelPermissions,
-  createSchema,
-  deleteSchema,
-  IMigration,
-} from '../../models';
+import { ClassLevelPermissions, createSchema, deleteSchema, IMigration } from '../../models';
 
 const migration: IMigration = {
   async up() {

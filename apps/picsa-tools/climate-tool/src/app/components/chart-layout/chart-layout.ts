@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
+
 import { IClimateView } from '../../models';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
@@ -20,10 +21,7 @@ export class ClimateChartLayoutComponent implements AfterViewInit {
 
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
 
-  constructor(
-    public chartService: ClimateChartService,
-    public toolService: ClimateToolService
-  ) {}
+  constructor(public chartService: ClimateChartService, public toolService: ClimateToolService) {}
 
   ngAfterViewInit() {
     this.chartService.registerChartComponent(this.picsaChart);

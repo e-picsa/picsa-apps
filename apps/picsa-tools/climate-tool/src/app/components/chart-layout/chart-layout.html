@@ -6,15 +6,9 @@
   *ngIf="toolService.enabled['line']"
 ></climate-line-tool>
 <!-- chart -->
-<picsa-chart
-  #picsaChart
-  [config]="chartService.chartConfig"
-  [data]="$any(chartService.stationData)"
-></picsa-chart>
+<picsa-chart #picsaChart [config]="chartService.chartConfig" [data]="$any(chartService.stationData)"></picsa-chart>
 <!-- definition -->
-<div class="chart-definition" #chartDefinition>
-  {{definition.definition | translate}}
-</div>
+<div class="chart-definition" #chartDefinition>{{definition.definition | translate}}</div>
 <!-- probability tool -->
 <climate-probability-tool
   *ngIf="toolService.enabled['line']"

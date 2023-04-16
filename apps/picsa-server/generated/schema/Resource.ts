@@ -21,10 +21,8 @@ export interface ResourceAttributes {
 }
 
 export class Resource extends Parse.Object<ResourceAttributes> {
-  public static register = () =>
-    Parse.Object.registerSubclass('Resource', Resource);
-  public static unregister = () =>
-    (Parse.Object as any).unregisterSubclass('Resource', Resource);
+  public static register = () => Parse.Object.registerSubclass('Resource', Resource);
+  public static unregister = () => (Parse.Object as any).unregisterSubclass('Resource', Resource);
 
   constructor(data?: Partial<ResourceAttributes>) {
     super('Resource', data as ResourceAttributes);

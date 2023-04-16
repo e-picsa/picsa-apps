@@ -13,10 +13,8 @@ export interface MigrationAttributes {
 }
 
 export class Migration extends Parse.Object<MigrationAttributes> {
-  public static register = () =>
-    Parse.Object.registerSubclass('Migration', Migration);
-  public static unregister = () =>
-    (Parse.Object as any).unregisterSubclass('Migration', Migration);
+  public static register = () => Parse.Object.registerSubclass('Migration', Migration);
+  public static unregister = () => (Parse.Object as any).unregisterSubclass('Migration', Migration);
 
   constructor(data?: Partial<MigrationAttributes>) {
     super('Migration', data as MigrationAttributes);

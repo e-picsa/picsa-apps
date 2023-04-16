@@ -2,6 +2,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
 import { AppOpenPromptComponent } from './app-open-prompt.component';
 import { DeepLinksService, DeepLinksServiceConfig } from './deep-links.service';
 

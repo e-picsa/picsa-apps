@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IsActiveMatchOptions } from '@angular/router';
+
 import * as DATA from '../../data';
 
 @Component({

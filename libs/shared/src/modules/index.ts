@@ -1,12 +1,12 @@
-import { PicsaNativeModule } from './native';
 import { PicsaDbModule } from './db.module';
-import { PicsaTranslateModule, PicsaTranslateService } from './translate';
 import { PicsaDeepLinksModule } from './deep-links/deep-links.module';
+import { PicsaNativeModule } from './native';
+import { PicsaTranslateModule, PicsaTranslateService } from './translate';
 
 export {
-  PicsaNativeModule,
   PicsaDbModule,
+  PicsaDeepLinksModule,
+  PicsaNativeModule,
   PicsaTranslateModule,
   PicsaTranslateService,
-  PicsaDeepLinksModule,
 };

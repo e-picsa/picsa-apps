@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Subject } from 'rxjs';
+
 import { IUser, IUserGroup } from '../../models/models';
 import { UserStore } from '../../store/user.store';
 
@@ -14,10 +15,7 @@ export class UserGroupComponent implements OnDestroy {
   user: IUser;
   joined: boolean;
 
-  constructor(
-    private alertCtrl: AlertController,
-    private userStore: UserStore
-  ) {}
+  constructor(private alertCtrl: AlertController, private userStore: UserStore) {}
 
   ngOnDestroy() {
     this.componentDestroyed.next(true);
@@ -26,10 +24,7 @@ export class UserGroupComponent implements OnDestroy {
 
   userUpdate(user: IUser) {
     // set joined status
-    this.joined =
-      user && user.groups && user.groups.includes(this.group._key)
-        ? true
-        : false;
+    this.joined = user && user.groups && user.groups.includes(this.group._key) ? true : false;
     console.log('user updated', user);
     this.user = user;
   }

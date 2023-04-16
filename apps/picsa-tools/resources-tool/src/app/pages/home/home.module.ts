@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { HomeRoutingModule } from './home-routing.module';
-import { HomeComponent } from './home.component';
+import { NgModule } from '@angular/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { ResourcesComponentsModule } from '../../components/components.module';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
+
+import { ResourcesComponentsModule } from '../../components/components.module';
+import { HomeComponent } from './home.component';
+import { HomeRoutingModule } from './home-routing.module';
 
 @NgModule({
   declarations: [HomeComponent],

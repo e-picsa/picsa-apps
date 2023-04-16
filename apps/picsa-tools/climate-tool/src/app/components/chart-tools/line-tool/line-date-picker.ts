@@ -1,14 +1,9 @@
 import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
-import {
-  MatDateRangeSelectionStrategy,
-  DateRange,
-} from '@angular/material/datepicker';
+import { DateRange, MatDateRangeSelectionStrategy } from '@angular/material/datepicker';
 
 @Injectable()
-export class LineDatePickerSelectionStrategy<D>
-  implements MatDateRangeSelectionStrategy<D>
-{
+export class LineDatePickerSelectionStrategy<D> implements MatDateRangeSelectionStrategy<D> {
   constructor(private _dateAdapter: DateAdapter<D>) {}
 
   selectionFinished(date: D | null): DateRange<D> {

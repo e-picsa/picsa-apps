@@ -1,18 +1,18 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
 import { MapPage } from './map.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: MapPage
-  }
+    component: MapPage,
+  },
 ];
 
 @NgModule({
   imports: [CommonModule, RouterModule.forChild(routes)],
-  declarations: [MapPage]
+  declarations: [MapPage],
 })
 export class MapPageModule {}

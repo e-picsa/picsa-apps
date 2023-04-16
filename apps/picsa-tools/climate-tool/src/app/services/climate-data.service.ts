@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
-import * as Papa from 'papaparse';
-import {
-  IChartMeta,
-  IStationMeta,
-  IChartSummary_V1,
-  IDBDoc,
-} from '@picsa/models';
-import * as DATA from '../data';
-import { PicsaDbService } from '@picsa/shared/services/core/db';
+import { IChartMeta, IChartSummary_V1, IDBDoc, IStationMeta } from '@picsa/models';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { PicsaDbService } from '@picsa/shared/services/core/db';
+import * as Papa from 'papaparse';
+
+import * as DATA from '../data';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateDataService extends PicsaAsyncService {
@@ -42,9 +38,7 @@ export class ClimateDataService extends PicsaAsyncService {
       const dbStation = dbDataHashmap[station._key];
       if (dbStation?._modified !== station._modified) {
         // load data and update db
-        const data = await this.loadCSV<IChartSummary_V1>(
-          `assets/summaries/${station._key}.csv`
-        );
+        const data = await this.loadCSV<IChartSummary_V1>(`assets/summaries/${station._key}.csv`);
         station.summaries = [...data];
         await this.db.setDoc('stationData', station, false, true);
       }

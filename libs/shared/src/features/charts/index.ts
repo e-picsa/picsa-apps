@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+
 import { PicsaChartComponent } from './chart';
 
 @NgModule({

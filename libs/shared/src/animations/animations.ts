@@ -1,9 +1,9 @@
 import {
-  trigger,
+  animate,
   state,
   style,
-  animate,
   transition,
+  trigger,
 } from '@angular/animations';
 // NOTE - AOT very temperamental with animations, see guidance here:
 // https://blog.angularindepth.com/total-guide-to-dynamic-angular-animations-that-can-be-toggled-at-runtime-be5bb6778a0a

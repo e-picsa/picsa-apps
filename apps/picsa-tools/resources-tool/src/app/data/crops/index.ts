@@ -1,8 +1,4 @@
-import type {
-  IResourceApp,
-  IResourceCollection,
-  IResourceLink,
-} from '../../models';
+import type { IResourceApp, IResourceCollection, IResourceLink } from '../../models';
 
 const links: { [key: string]: IResourceLink } = {
   accessAg: {
@@ -24,8 +20,7 @@ const apps: { [key: string]: IResourceApp } = {
     _created: '2019-09-25T10:00:04.000Z',
     _modified: '2019-09-27T11:00:01.000Z',
     title: 'Plantwise Factsheets Library',
-    description:
-      'Library of clear, practical and safe advice for tackling crop problems',
+    description: 'Library of clear, practical and safe advice for tackling crop problems',
     subtitle: '',
     type: 'app',
     image: 'assets/resources/covers/plantwise.webp',
@@ -36,8 +31,7 @@ const apps: { [key: string]: IResourceApp } = {
     _created: '2022-10-21T10:00:04.000Z',
     _modified: '2022-10-21T10:00:04.000Z',
     title: 'Zaulimi',
-    description:
-      'Essential production and marketing information for selected crops, livestock and baobab.',
+    description: 'Essential production and marketing information for selected crops, livestock and baobab.',
     subtitle: '',
     type: 'app',
     image: 'assets/resources/covers/zaulimi.webp',

@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { CropProbabilityToolComponentsModule } from '../../components/components.module';
 import { HomeComponent } from './home.component';
-import { CommonModule } from '@angular/common';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 const routes: Route[] = [
   {
@@ -14,12 +14,7 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    CropProbabilityToolComponentsModule,
-    RouterModule.forChild(routes),
-    PicsaTranslateModule,
-  ],
+  imports: [CommonModule, CropProbabilityToolComponentsModule, RouterModule.forChild(routes), PicsaTranslateModule],
   exports: [],
   declarations: [HomeComponent],
   providers: [],

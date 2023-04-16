@@ -1,8 +1,4 @@
-import {
-  IResourceCollection,
-  IResourceFile,
-  IResourceLink,
-} from '../../models';
+import { IResourceCollection, IResourceFile, IResourceLink } from '../../models';
 
 const collections: { [id: string]: IResourceCollection } = {
   workshopSalima2022: {
@@ -88,8 +84,7 @@ const files: { [id: string]: IResourceFile } = {
     description: '4th September 2022',
     subtitle: '4th September 2022',
     folder: 'workshop-salima-2022',
-    filename:
-      'WEATHER FORECAST FOR TONIGHT AND TOMORROW_4TH SEPTEMBER 2022.pdf',
+    filename: 'WEATHER FORECAST FOR TONIGHT AND TOMORROW_4TH SEPTEMBER 2022.pdf',
     type: 'file',
     image: '',
     url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/workshop-salima-2022%2FWEATHER%20FORECAST%20FOR%20TONIGHT%20AND%20TOMORROW_4TH%20SEPTEMBER%202022.pdf?alt=media&token=df20b361-0d14-4d69-82b4-8ca49d42d5aa',

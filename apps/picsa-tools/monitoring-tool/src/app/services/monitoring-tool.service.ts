@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { MOCK_FORMS } from '../../../data/forms.mock';
 import { arrayToHashmap } from '@picsa/utils';
+
+import { MOCK_FORMS } from '../../../data/forms.mock';
 
 @Injectable({ providedIn: 'root' })
 export class MonitoringToolService {

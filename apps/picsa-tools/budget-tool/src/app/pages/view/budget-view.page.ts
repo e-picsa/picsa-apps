@@ -1,13 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { BudgetStore } from '../../store/budget.store';
-import { FadeInOut, OpenClosed, FlyInOut, ANIMATION_DEFAULTS_Y } from '@picsa/shared/animations';
-import { Subject, takeUntil } from 'rxjs';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
+import { ActivatedRoute } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { ANIMATION_DEFAULTS_Y, FadeInOut, FlyInOut, OpenClosed } from '@picsa/shared/animations';
 import { PicsaTranslateService } from '@picsa/shared/modules';
+import { Subject, takeUntil } from 'rxjs';
+
+import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
+import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'budget-view',

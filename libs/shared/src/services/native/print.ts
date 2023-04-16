@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { svgAsPngUri } from 'save-svg-as-png';
-import download from 'downloadjs';
-
-import html2canvas from 'html2canvas';
 import { Capacitor } from '@capacitor/core';
 import { _wait } from '@picsa/utils';
+import download from 'downloadjs';
+import html2canvas from 'html2canvas';
+import { svgAsPngUri } from 'save-svg-as-png';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {

@@ -1,9 +1,10 @@
-import { NgModule } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { IonicModule } from '@ionic/angular';
 import { PicsaDialogsModule } from '@picsa/shared/features';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+
 import { ExtensionToolkitMaterialModule } from '../material.module';
 import { UserGroupComponent } from './user-group/user-group';
 import { WhatsappGroupComponent } from './whatsapp-group/whatsapp-group';

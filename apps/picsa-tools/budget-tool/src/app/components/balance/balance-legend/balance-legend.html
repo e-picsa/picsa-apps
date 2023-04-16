@@ -5,10 +5,7 @@
   <div *ngFor="let label of labels; let i = index">
     <div style="display: flex; font-size: small">
       <div style="width: 20px; height: 20px">
-        <img
-          class="dot-value-image"
-          [src]="'assets/budget-icons/dot-' + label + '.svg'"
-        />
+        <img class="dot-value-image" [src]="'assets/budget-icons/dot-' + label + '.svg'" />
       </div>
       <div>= {{ values[i] | number: '.0' }}</div>
     </div>

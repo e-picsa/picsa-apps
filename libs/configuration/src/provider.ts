@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { BehaviorSubject } from 'rxjs';
+
 import { CONFIGURATIONS } from './configurations';
 import type { IConfiguration } from './types';
 

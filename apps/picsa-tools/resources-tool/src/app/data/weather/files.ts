@@ -56,8 +56,7 @@ export const DOWNSCALED_FORECASTS: Record<string, IResourceFile> = {
     description: '',
     filename: 'forecast-nkhotakota-chichewa.pdf',
     mimetype: 'application/pdf',
-    title:
-      'ULOSI WA KAGWEDWE KA MVULA M’BOMA LA NKHOTAKOTA M’DZINJA LA 2022-2023',
+    title: 'ULOSI WA KAGWEDWE KA MVULA M’BOMA LA NKHOTAKOTA M’DZINJA LA 2022-2023',
     type: 'file',
     url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/weather%2Fforecast-nkhotakota-chichewa.pdf?alt=media&token=04b95abf-a78c-4752-b2b7-a6f42149b492',
     appCountries: ['mw'],

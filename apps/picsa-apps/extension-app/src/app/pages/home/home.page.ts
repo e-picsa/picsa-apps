@@ -1,11 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-
-import { APP_VERSION } from '@picsa/environments';
-import { UserStore } from '../../store/user.store';
-import { PicsaFileService } from '@picsa/shared/services/native';
 import { Platform } from '@ionic/angular';
+import { APP_VERSION } from '@picsa/environments';
+import { PicsaFileService } from '@picsa/shared/services/native';
+
+import { UserStore } from '../../store/user.store';
 
 @Component({
   selector: 'app-home',

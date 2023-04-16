@@ -1,7 +1,4 @@
-export function filterHashmap<T>(
-  hashmap: Record<string, T>,
-  filterFn: (data: T) => boolean
-) {
+export function filterHashmap<T>(hashmap: Record<string, T>, filterFn: (data: T) => boolean) {
   const filtered: Record<string, T> = {};
   for (const [key, value] of Object.entries(hashmap)) {
     if (filterFn(value)) {
@@ -14,8 +11,6 @@ export function filterHashmap<T>(
 
 export function addHashmapPrefix<T>(data: Record<string, T>, prefix: string) {
   const prefixed: Record<string, T> = {};
-  Object.entries(data).forEach(
-    ([key, value]) => (prefixed[`${prefix}${key}`] = value)
-  );
+  Object.entries(data).forEach(([key, value]) => (prefixed[`${prefix}${key}`] = value));
   return prefixed;
 }

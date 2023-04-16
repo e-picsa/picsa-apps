@@ -1,4 +1,4 @@
-table{
+table {
   width: 100%;
 }
 .mat-mdc-table {
@@ -9,34 +9,34 @@ table{
   padding: 0 20px;
   padding-bottom: 10px;
   color: black;
-  .title-cell{
+  .title-cell {
     text-transform: capitalize;
     font-weight: 800;
     font-size: 15px;
   }
-  .crop-title{
+  .crop-title {
     text-transform: capitalize;
     font-weight: 700;
     font-size: 13px;
   }
-  .table-row{
-    padding:15px 10px;
+  .table-row {
+    padding: 15px 10px;
   }
-  .padded-span{
-    padding:0 10px;
+  .padded-span {
+    padding: 0 10px;
     width: 75px;
   }
-  .font-12{
+  .font-12 {
     font-size: 12px;
   }
-  .probability{
+  .probability {
     width: 520px;
-    
-    .prob-row-wrapper{
+
+    .prob-row-wrapper {
       display: flex;
     }
   }
-  .fixed-width{
+  .fixed-width {
     width: 180px;
   }
 }
@@ -47,13 +47,12 @@ table{
   font-size: 14px;
   width: 100%;
 }
-.table-filter{
-  border:1px solid red;
+.table-filter {
+  border: 1px solid red;
 }
-.disclaimer{
+.disclaimer {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 12px;
   font-style: italic;
   margin-top: 12px;
 }
-

@@ -2,10 +2,7 @@
 <mat-card appearance="outlined" mat-elevation-z8 class="crop-group" *ngFor="let group of cropGroups">
   <div class="crop-group-info">
     <div class="crop-name">{{ group.crop }}</div>
-    <img
-      [src]="'assets/images/crops/' + group.image + '.svg'"
-      class="crop-image"
-    />
+    <img [src]="'assets/images/crops/' + group.image + '.svg'" class="crop-image" />
   </div>
   <div style="display: flex; flex-wrap: wrap">
     <button
@@ -34,13 +31,7 @@
     </button>
   </div>
 </mat-card>
-<button
-  mat-raised-button
-  color="primary"
-  class="continue-button"
-  *ngIf="totalSelected > 0"
-  (click)="goToAnalysis()"
->
+<button mat-raised-button color="primary" class="continue-button" *ngIf="totalSelected > 0" (click)="goToAnalysis()">
   <mat-icon>arrow_forward</mat-icon>
   <span class="continue-button-text">{{ 'Analyse' | translate }}</span>
 </button>

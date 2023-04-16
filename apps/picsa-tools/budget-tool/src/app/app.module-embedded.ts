@@ -2,9 +2,10 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { registerEmbeddedRoutes } from '@picsa/utils';
-import { ROUTES_COMMON } from './app-routing.module';
+
 import { AppComponentEmbedded } from './app.component';
 import { APP_COMMON_IMPORTS } from './app.module';
+import { ROUTES_COMMON } from './app-routing.module';
 import { BudgetStore } from './store/budget.store';
 
 export class EmbeddedConfig {
@@ -34,10 +35,7 @@ export class EmbeddedRoutingModule {
 })
 export class BaseModule {
   // ensure translate has been initiated
-  constructor(
-    public translate: PicsaTranslateService,
-    budgetStore: BudgetStore
-  ) {
+  constructor(public translate: PicsaTranslateService, budgetStore: BudgetStore) {
     budgetStore.init();
   }
 }
@@ -48,10 +46,7 @@ export class BudgetToolModule {
   static forRoot(config: EmbeddedConfig): ModuleWithProviders<BaseModule> {
     return {
       ngModule: BaseModule,
-      providers: [
-        PicsaTranslateService,
-        { provide: EmbeddedConfig, useValue: config },
-      ],
+      providers: [PicsaTranslateService, { provide: EmbeddedConfig, useValue: config }],
     };
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
+import { NavigationEnd,Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { ENVIRONMENT, APP_VERSION } from '@picsa/environments';
+import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
+import { APP_VERSION,ENVIRONMENT } from '@picsa/environments';
 
 @Injectable({ providedIn: 'root' })
 /**

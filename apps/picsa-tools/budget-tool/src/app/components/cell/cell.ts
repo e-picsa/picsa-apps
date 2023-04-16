@@ -1,16 +1,17 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
-  OnDestroy,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-  SimpleChanges,
   OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
+
 import { IBudgetCard } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'budget-cell',
@@ -41,8 +42,7 @@ export class BudgetCellComponent implements OnInit, OnDestroy, OnChanges {
 
   // using manual methods to get values instead of bindings to allow more efficient change detection
   getCellValue() {
-    const cards: IBudgetCard[] =
-      this.store.activeBudgetValue.data[this.periodIndex][this.type];
+    const cards: IBudgetCard[] = this.store.activeBudgetValue.data[this.periodIndex][this.type];
     if (cards.length > 0) {
       this.cellData = cards;
     } else {

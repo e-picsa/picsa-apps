@@ -1,15 +1,9 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
-import { IBudgetCard } from '../../../models/budget-tool.models';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml, SafeUrl } from '@angular/platform-browser';
 import { catchError, firstValueFrom } from 'rxjs';
+
+import { IBudgetCard } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-card-image',
@@ -22,11 +16,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   imgData: SafeHtml;
   imgUrl: SafeUrl;
   objUrl: string;
-  constructor(
-    private http: HttpClient,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     if (this.card.customMeta) {
@@ -54,10 +44,7 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   }
 
   // check card images for correct svg or png image and return
-  private async getCardImg(
-    imageId: string,
-    imageType: 'svg' | 'png' = 'png'
-  ): Promise<Blob | null> {
+  private async getCardImg(imageId: string, imageType: 'svg' | 'png' = 'png'): Promise<Blob | null> {
     // first see if svg exists
     const targetImg = `assets/budget-cards/${imageId}.${imageType}`;
     const fallbackImg = 'assets/budget-cards/no-image.png';

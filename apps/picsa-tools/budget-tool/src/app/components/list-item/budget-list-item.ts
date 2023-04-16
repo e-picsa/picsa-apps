@@ -1,13 +1,10 @@
-import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
-import { IBudget } from '../../models/budget-tool.models';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  MatDialog,
-} from '@angular/material/dialog';
-import { BudgetStore } from '../../store/budget.store';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 import { toJS } from 'mobx';
+
+import { IBudget } from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
 
 @Component({
   selector: 'budget-list-item',
@@ -70,10 +67,7 @@ export class BudgetListItemComponent {
     </mat-form-field>
     <mat-form-field>
       <mat-label>{{ 'description' | translate }}</mat-label>
-      <textarea
-        matInput
-        [(ngModel)]="editableBudget.meta.description"
-      ></textarea>
+      <textarea matInput [(ngModel)]="editableBudget.meta.description"></textarea>
     </mat-form-field>
     <div mat-dialog-actions>
       <button mat-button mat-dialog-close>Cancel</button>

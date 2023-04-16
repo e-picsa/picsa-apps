@@ -3,21 +3,15 @@
   <mat-step>
     <ng-template matStepLabel>Intro</ng-template>
     <h2>Introduction</h2>
-    <p>
-      Using this tool you can prepare and upload data for use in the PICSA app.
-    </p>
-    <p>
-      You will need a csv file with columns to represent:
-    </p>
+    <p>Using this tool you can prepare and upload data for use in the PICSA app.</p>
+    <p>You will need a csv file with columns to represent:</p>
     <ul>
       <li>Year</li>
       <li>Seasonal Rainfall</li>
       <li>Start of Season</li>
       <li>End of Season</li>
     </ul>
-    <p>
-      This can be prepared using R-Instat.
-    </p>
+    <p>This can be prepared using R-Instat.</p>
 
     <div>
       <button mat-button matStepperNext color="primary">Continue</button>
@@ -28,39 +22,24 @@
     <ng-template matStepLabel>Select</ng-template>
     <h2>Data Upload</h2>
     <p>Upload a summary of season rainfall data for processing</p>
-    <ngx-file-drop
-      (onFileDrop)="fileDropped($event)"
-      accept=".csv"
-      [multiple]="false"
-      #fileDrop
-    >
+    <ngx-file-drop (onFileDrop)="fileDropped($event)" accept=".csv" [multiple]="false" #fileDrop>
       <ng-template ngx-file-drop-content-tmp>
         <div style="text-align: center">
-          <button
-            mat-button
-            (click)="fileDrop.openFileSelector()"
-            style="padding-right: 4px"
-          >
-            Choose a file
-          </button>
+          <button mat-button (click)="fileDrop.openFileSelector()" style="padding-right: 4px">Choose a file</button>
           <span>or drag it here</span>
-          <div style="color:var(--color-primary)" *ngIf="csvFile">
-            {{ csvFile.name }}
-          </div>
+          <div style="color: var(--color-primary)" *ngIf="csvFile">{{ csvFile.name }}</div>
         </div>
       </ng-template>
     </ngx-file-drop>
-    <div style="margin:1em 0; font-size: small">
+    <div style="margin: 1em 0; font-size: small">
       <span>Don't have data? </span
-      ><span style="cursor: pointer; font-weight: bold" (click)="loadDemoData()"
-        >Load example dataset</span
-      >
+      ><span style="cursor: pointer; font-weight: bold" (click)="loadDemoData()">Load example dataset</span>
     </div>
     <!-- preview unmapped data -->
-    <h4 style="margin-top:2.5em">Preview</h4>
+    <h4 style="margin-top: 2.5em">Preview</h4>
     <p>The first 5 rows of your data will be shown below</p>
     <picsa-data-table [data]="csvData"></picsa-data-table>
-    <div style="margin-top:1em">
+    <div style="margin-top: 1em">
       <button mat-button matStepperPrevious color="primary">Back</button>
       <button mat-button matStepperNext color="primary">Next</button>
     </div>
@@ -72,21 +51,15 @@
     <p>
       Specify which columns in your data correspond to the required fields.
       <br />
-      Drag fields from your data on the right to corresponding fields on the
-      left.
+      Drag fields from your data on the right to corresponding fields on the left.
     </p>
     <div cdkDropListGroup style="display: flex">
       <!-- drop zones -->
       <div>
         <h3>Required Data</h3>
-        <div
-          class="dropzone"
-          *ngFor="let mapping of siteDataMapping; index as i"
-        >
-          <div style="font-weight: bold; width:80px">{{ mapping.field }}</div>
-          <div style="font-size: small; width:300px; margin:0 10px">
-            {{ mapping.description }}
-          </div>
+        <div class="dropzone" *ngFor="let mapping of siteDataMapping; index as i">
+          <div style="font-weight: bold; width: 80px">{{ mapping.field }}</div>
+          <div style="font-size: small; width: 300px; margin: 0 10px">{{ mapping.description }}</div>
           <div
             cdkDropList
             class="dropzone-list"
@@ -94,11 +67,7 @@
             [cdkDropListData]="siteDataMapping[i].mappedField"
             [class.empty]="siteDataMapping[i].mappedField.length === 0"
           >
-            <div
-              class="drag-drop-item dropped"
-              *ngFor="let field of siteDataMapping[i].mappedField"
-              cdkDrag
-            >
+            <div class="drag-drop-item dropped" *ngFor="let field of siteDataMapping[i].mappedField" cdkDrag>
               {{ field }}
             </div>
           </div>
@@ -107,7 +76,7 @@
       <!-- seperator -->
       <div class="vertical-seperator"></div>
       <!-- drag items -->
-      <div style="max-width: 300px;">
+      <div style="max-width: 300px">
         <h3>CSV Data Fields</h3>
         <div
           class="drag-items-container"
@@ -126,21 +95,11 @@
 
     <div>
       <!-- preview mapped data -->
-      <h2 style="margin-top:2.5em">Data Preview</h2>
-      <picsa-data-table-station
-        *ngIf="csvMappedData.length > 0"
-        [data]="csvMappedData"
-      ></picsa-data-table-station>
-      <div style="margin-top:1em">
+      <h2 style="margin-top: 2.5em">Data Preview</h2>
+      <picsa-data-table-station *ngIf="csvMappedData.length > 0" [data]="csvMappedData"></picsa-data-table-station>
+      <div style="margin-top: 1em">
         <button mat-button matStepperPrevious color="primary">Back</button>
-        <button
-          mat-button
-          matStepperNext
-          (click)="processFullCSVData()"
-          color="primary"
-        >
-          Next
-        </button>
+        <button mat-button matStepperNext (click)="processFullCSVData()" color="primary">Next</button>
       </div>
     </div>
   </mat-step>
@@ -149,24 +108,13 @@
     <ng-template matStepLabel>Result</ng-template>
     <h2>Processed Results</h2>
     <div *ngIf="csvMappedData.length === 5">
-      <div>
-        You need not complete the previous step. Click the button below to
-        process the full data
-      </div>
-      <button mat-button color="primary" (click)="processFullCSVData()">
-        Process Data
-      </button>
+      <div>You need not complete the previous step. Click the button below to process the full data</div>
+      <button mat-button color="primary" (click)="processFullCSVData()">Process Data</button>
     </div>
-    <p *ngIf="csvMappedData.length !== 5">
-      Processed data can be seen below.
-    </p>
+    <p *ngIf="csvMappedData.length !== 5">Processed data can be seen below.</p>
     <div>
       <h4>Seasonal Rainfall</h4>
-      <picsa-chart
-        #rainfallChart
-        [data]="rainfallChartData"
-        *ngIf="rainfallChartData"
-      ></picsa-chart>
+      <picsa-chart #rainfallChart [data]="rainfallChartData" *ngIf="rainfallChartData"></picsa-chart>
       <button mat-button matStepperPrevious color="primary">Back</button>
       <button mat-button matStepperNext color="primary">Next</button>
     </div>

@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+
 import { EditorComponent } from '../../components/editor/editor.component';
 
 export interface IOptionData {

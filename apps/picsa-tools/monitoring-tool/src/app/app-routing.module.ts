@@ -4,17 +4,13 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     title: 'Monitoring',
   },
 
   {
     path: 'view',
-    loadChildren: () =>
-      import('./pages/form-view/form-view.module').then(
-        (m) => m.FormViewModule
-      ),
+    loadChildren: () => import('./pages/form-view/form-view.module').then((m) => m.FormViewModule),
     title: 'Monitoring',
   },
 ];

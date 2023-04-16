@@ -40,14 +40,8 @@
         "polyfills": "apps/picsa-tools/resources-tool/src/polyfills.ts",
         "tsConfig": "apps/picsa-tools/resources-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/picsa-tools/resources-tool/src/favicon.ico",
-          "apps/picsa-tools/resources-tool/src/assets"
-        ],
-        "styles": [
-          "apps/picsa-tools/resources-tool/src/styles.scss",
-          "libs/theme/src/_index.scss"
-        ],
+        "assets": ["apps/picsa-tools/resources-tool/src/favicon.ico", "apps/picsa-tools/resources-tool/src/assets"],
+        "styles": ["apps/picsa-tools/resources-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
       },
       "configurations": {
@@ -107,10 +101,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/resources-tool/**/*.ts",
-          "apps/picsa-tools/resources-tool/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/picsa-tools/resources-tool/**/*.ts", "apps/picsa-tools/resources-tool/**/*.html"]
       }
     },
     "test": {

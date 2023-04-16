@@ -1,4 +1,5 @@
 import { Component, Fragment, h, Prop } from '@stencil/core';
+
 import { Form } from './enketo/js/form';
 
 @Component({

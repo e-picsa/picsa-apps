@@ -1,15 +1,16 @@
 import {
-  NgModule,
   ModuleWithProviders,
+  NgModule,
   Optional,
   SkipSelf,
 } from '@angular/core';
-import { PrintProvider } from '../services/native/print';
-import { NetworkProvider } from '../services/native/network';
-import { PicsaFileService } from '../services/native/file-service';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+
+import { PicsaFileService } from '../services/native/file-service';
+import { NetworkProvider } from '../services/native/network';
+import { PrintProvider } from '../services/native/print';
 
 @NgModule({
   imports: [],

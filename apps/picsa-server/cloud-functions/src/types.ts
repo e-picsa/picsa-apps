@@ -1,6 +1,5 @@
 /** Default request object omits some of the available data */
-export interface ICloudRequest
-  extends Parse.Cloud.FunctionRequest<Parse.Cloud.Params> {
+export interface ICloudRequest extends Parse.Cloud.FunctionRequest<Parse.Cloud.Params> {
   log: any;
   ip: string;
   headers: any;

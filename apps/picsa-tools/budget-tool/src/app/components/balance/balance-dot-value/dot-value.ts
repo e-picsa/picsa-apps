@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
+
 import { IBudgetValueCounters } from '../../../models/budget-tool.models';
-import {
-  BudgetStore,
-  IBudgetCounterSVGIcons,
-} from '../../../store/budget.store';
+import { BudgetStore, IBudgetCounterSVGIcons } from '../../../store/budget.store';
 
 @Component({
   selector: 'budget-balance-dot-value',

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 
 @Component({

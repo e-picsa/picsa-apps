@@ -4,16 +4,12 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     title: 'Resources',
   },
   {
     path: 'collection',
-    loadChildren: () =>
-      import('./pages/collection/collection.module').then(
-        (m) => m.CollectionModule
-      ),
+    loadChildren: () => import('./pages/collection/collection.module').then((m) => m.CollectionModule),
   },
 ];
 /** Routes only registered in standalone mode */

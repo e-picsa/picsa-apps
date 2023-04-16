@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { _wait } from '@picsa/utils';
+
 import { ClimateChartService } from '../../services/climate-chart.service';
 
 @Component({

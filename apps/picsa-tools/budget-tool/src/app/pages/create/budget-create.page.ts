@@ -1,21 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BudgetStore } from '../../store/budget.store';
-import {
-  IEnterpriseScaleLentgh,
-  IBudgetMeta,
-  IBudgetCard,
-  IBudgetCardDB,
-} from '../../models/budget-tool.models';
 import { MatStepper } from '@angular/material/stepper';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+
+import { IBudgetCard, IBudgetCardDB, IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 
 @Component({
   selector: 'budget-create',
@@ -71,9 +62,7 @@ export class BudgetCreatePage implements OnInit {
   }
 
   customEnterpriseCreated(enterprise: IBudgetCard) {
-    this.filteredEnterprises = this.store.getfilteredEnterprises(
-      this.selectedType
-    );
+    this.filteredEnterprises = this.store.getfilteredEnterprises(this.selectedType);
     this.enterpriseClicked(enterprise);
   }
   async save() {
@@ -97,15 +86,8 @@ export class BudgetCreatePage implements OnInit {
   // create general form with formgroups for all budget fields
   // add required vaildation for fields which must be completed in this page
   private generateBudgetForm() {
-    const requiredFields1: IBudgetMetaKey[] = [
-      'enterprise',
-      'title',
-      'lengthScale',
-    ];
-    this.budgetMetaForm = this._generateFormFromValues(
-      this.store.activeBudget.meta,
-      requiredFields1
-    );
+    const requiredFields1: IBudgetMetaKey[] = ['enterprise', 'title', 'lengthScale'];
+    this.budgetMetaForm = this._generateFormFromValues(this.store.activeBudget.meta, requiredFields1);
   }
 
   // custom method to generate simple form from json object and populate with provided initial values
@@ -113,11 +95,7 @@ export class BudgetCreatePage implements OnInit {
   private _generateFormFromValues(v: any, requiredFields: string[] = []) {
     const fieldGroup = {};
     Object.keys(v).forEach(
-      (key) =>
-        (fieldGroup[key] = [
-          v[key],
-          requiredFields.includes(key) ? Validators.required : null,
-        ])
+      (key) => (fieldGroup[key] = [v[key], requiredFields.includes(key) ? Validators.required : null])
     );
     return this.fb.group(fieldGroup);
   }

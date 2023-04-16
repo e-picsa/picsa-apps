@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
+import type { IDBDoc,IDBEndpoint } from '@picsa/models';
 import {
-  getFirestore,
-  Firestore,
   collection,
-  query,
-  where,
-  getDocs,
-  setDoc as firebaseSetDoc,
   doc,
+  Firestore,
   getDoc as firebaseGetDoc,
+  getDocs,
+  getFirestore,
+  query,
+  setDoc as firebaseSetDoc,
+  where,
   writeBatch,
 } from 'firebase/firestore';
 
-import type { IDBEndpoint, IDBDoc } from '@picsa/models';
-import { AbstractDBService } from './abstract.db';
 import { PicsaFirebaseService } from '../firebase.service';
+import { AbstractDBService } from './abstract.db';
 
 @Injectable({ providedIn: 'root' })
 export class DBServerService implements AbstractDBService {

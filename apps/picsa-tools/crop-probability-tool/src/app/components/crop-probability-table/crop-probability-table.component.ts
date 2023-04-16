@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { CROP_MOCK_DATA } from '../../data/mock';
 import { MatTableDataSource } from '@angular/material/table';
+
+import { CROP_MOCK_DATA } from '../../data/mock';
 
 export interface PeriodicElement {
   name: string;
@@ -15,13 +16,7 @@ export interface PeriodicElement {
   styleUrls: ['./crop-probability-table.component.scss'],
 })
 export class CropProbabilityTableComponent {
-  displayedColumns: string[] = [
-    'crop',
-    'variety',
-    'days',
-    'water',
-    'probabilities',
-  ];
+  displayedColumns: string[] = ['crop', 'variety', 'days', 'water', 'probabilities'];
   dataSource = new MatTableDataSource(CROP_MOCK_DATA);
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

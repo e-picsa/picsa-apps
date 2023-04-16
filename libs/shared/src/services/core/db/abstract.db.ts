@@ -1,4 +1,4 @@
-import { IDBEndpoint, IDBDoc } from '@picsa/models';
+import { IDBDoc,IDBEndpoint } from '@picsa/models';
 
 /************************************************************************
  *  Abstract Class Methods

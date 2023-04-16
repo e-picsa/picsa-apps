@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import { IBudgetPeriodType } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { Router, ActivatedRoute } from '@angular/router';
 import { BUDGET_PERIOD_ROWS } from '../../store/templates';
 
 @Component({
@@ -20,11 +21,7 @@ export class BudgetPeriodSummaryComponent implements OnInit {
     };
   });
 
-  constructor(
-    public store: BudgetStore,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
+  constructor(public store: BudgetStore, private router: Router, private route: ActivatedRoute) {}
   ngOnInit(): void {
     this.periodLabels = this.store.budgetPeriodLabels;
   }

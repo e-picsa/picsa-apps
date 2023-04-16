@@ -15,10 +15,7 @@
         "polyfills": "apps/picsa-tools/climate-tool/src/polyfills.ts",
         "tsConfig": "apps/picsa-tools/climate-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/picsa-tools/climate-tool/src/favicon.ico",
-          "apps/picsa-tools/climate-tool/src/assets"
-        ],
+        "assets": ["apps/picsa-tools/climate-tool/src/favicon.ico", "apps/picsa-tools/climate-tool/src/assets"],
         "styles": [
           "apps/picsa-tools/climate-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
@@ -75,10 +72,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/climate-tool/**/*.ts",
-          "apps/picsa-tools/climate-tool/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/picsa-tools/climate-tool/**/*.ts", "apps/picsa-tools/climate-tool/**/*.html"]
       }
     },
     "test": {
