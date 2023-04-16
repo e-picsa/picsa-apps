@@ -394,7 +394,11 @@
     "tool": "budget"
   },
   {
-    "text": "Add Member",
+    "text": "Add Female Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Add Male Member",
     "tool": "budget"
   },
   {
@@ -434,6 +438,14 @@
     "tool": "budget"
   },
   {
+    "text": "Family Labour",
+    "tool": "budget"
+  },
+  {
+    "text": "Female Member",
+    "tool": "budget"
+  },
+  {
     "text": "How long is your budget for?",
     "tool": "budget"
   },
@@ -454,11 +466,23 @@
     "tool": "budget"
   },
   {
+    "text": "Male Member",
+    "tool": "budget"
+  },
+  {
     "text": "Next",
     "tool": "budget"
   },
   {
+    "text": "No outputs produce for consumption",
+    "tool": "budget"
+  },
+  {
     "text": "Outputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Produce Consumed",
     "tool": "budget"
   },
   {
@@ -507,6 +531,14 @@
   },
   {
     "text": "Total",
+    "tool": "budget"
+  },
+  {
+    "text": "Total Consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "Total Produced",
     "tool": "budget"
   },
   {
@@ -672,6 +704,10 @@
   {
     "text": "years out of every 10",
     "tool": "climate"
+  },
+  {
+    "text": "Select Country",
+    "tool": "common"
   },
   {
     "text": "Budget Tool",

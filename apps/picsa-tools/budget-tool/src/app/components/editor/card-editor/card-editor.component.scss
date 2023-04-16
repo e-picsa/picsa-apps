@@ -1,0 +1,69 @@
+:host {
+  cursor: pointer;
+  text-align: center;
+  // prevent strange offset
+  vertical-align: bottom;
+  position: relative;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.delete-button {
+  height: 36px;
+  width: 36px;
+  min-width: 36px;
+  padding: 4px;
+  margin-right: 8px;
+  margin-left: -28px;
+  margin-top: -4px;
+  font-size: 36px;
+  color: var(--color-light);
+  border: 1px solid var(--color-light);
+  border-radius: 50%;
+  background: white;
+}
+.delete-button-icon {
+  margin: 0;
+}
+
+// Input values
+.input-values {
+  margin: 10px;
+  text-align: left;
+}
+
+.card-input-field {
+  border-radius: 2px;
+}
+
+.mat-form-field-disabled {
+  border: none;
+}
+
+.card-input-field.quantity {
+  width: 100px;
+}
+.card-input-field.cost {
+  width: 175px;
+}
+.card-input.total {
+  width: 200px;
+}
+.underline {
+  background-position: 0;
+  background-color: transparent;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.42) 33%,
+    transparent 0%
+  );
+  background-size: 4px 100%;
+  background-repeat: repeat-x;
+  height: 1px;
+  width: 100%;
+}

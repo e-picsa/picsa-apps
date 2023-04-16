@@ -1,23 +1,16 @@
 :host {
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin: 10px;
   display: inline-block;
   cursor: pointer;
   text-align: center;
   // prevent strange offset
   vertical-align: bottom;
+  position: relative;
 }
 
 mat-card.budget-card {
   width: 110px;
   padding: 0;
-}
-.delete-button {
-  position: absolute;
-  right: 0;
-  min-width: 24px;
-  padding: 0 4px;
-  color: var(--color-light);
 }
 
 .budget-card[selected='true'] {

@@ -1,0 +1,15 @@
+.budget-card {
+  height: 100%;
+  border-style: dashed;
+  border-color: #848484;
+}
+#addCardButton {
+  height: 100%;
+  min-height: 120px;
+}
+#addCardButtonIcon {
+  height: 36px;
+  font-size: 36px;
+  width: 36px;
+  color: var(--color-black);
+}

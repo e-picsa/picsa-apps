@@ -1,0 +1,82 @@
+<div class="container">
+  <!-- Card summary and delete button -->
+  <div style="position: relative; display: flex">
+    <budget-card [card]="card"></budget-card>
+    <button mat-stroked-button color="primary" class="delete-button" (click)="deleteClicked.emit(card)">
+      <mat-icon class="delete-button-icon">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Inputs/Outputs Editor -->
+  <div class="input-values" *ngIf="card.type === 'inputs' || card.type === 'outputs'">
+    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+      <mat-label>{{ 'Quantity' | translate }}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values.quantity"
+        type="number"
+        (change)="setValue($event, 'quantity')"
+      />
+    </mat-form-field>
+    <mat-form-field class="card-input-field cost">
+      <mat-label>{{ 'Cost' | translate }}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values.cost"
+        type="number"
+        (change)="setValue($event, 'cost')"
+      />
+      <span matTextPrefix>{{ currency }} &nbsp;</span>
+    </mat-form-field>
+    <div style="display: flex; align-items: flex-end; box-sizing: border-box">
+      <div style="margin-right: 10px">
+        <span>{{ currency }}</span>
+      </div>
+      <div style="color: rgba(0, 0, 0, 0.38)">
+        <div style="font-size: 0.75em">{{ 'Total' | translate }}</div>
+        <div>{{ card.values.total | number: '.0' }}</div>
+      </div>
+    </div>
+    <div class="underline"></div>
+  </div>
+
+  <!-- Family Labor Editor -->
+  <div class="input-values" *ngIf="card.type === 'familyLabour'">
+    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+      <mat-label>{{ 'Days' | translate }}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values ? card.values.quantity : null"
+        type="number"
+        (change)="setValue($event, 'quantity')"
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Produce Consumed Editor -->
+  <div class="input-values" *ngIf="card.type === 'produceConsumed'">
+    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+      <mat-label>{{ 'Quantity' | translate }}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values ? card.values.quantity : null"
+        type="number"
+        (change)="setProduceConsumed($event)"
+      />
+    </mat-form-field>
+  </div>
+</div>
+
+<!-- TODO - add custom card delete bindings -->
+<!-- <button
+    mat-button
+    *ngIf="card.customMeta && !selected"
+    class="delete-button"
+    (click)="promptCustomDelete($event)"
+  >
+    <mat-icon svgIcon="picsa_delete"></mat-icon>
+  </button> -->

@@ -15,7 +15,9 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   selector: 'picsa-header',
   template: `
     <header [attr.data-style]="style">
-      <back-button></back-button>
+      <back-button
+        [style.visibility]="hideBackButton ? 'hidden' : 'visible'"
+      ></back-button>
       <h1>
         <span>{{ title | translate }}</span>
       </h1>
@@ -28,6 +30,8 @@ import { PicsaCommonComponentsService } from '../services/components.service';
 export class PicsaHeaderComponent implements OnInit, OnDestroy {
   public title = '';
   public style: 'primary' | 'inverted' = 'primary';
+  public hideBackButton? = false;
+
   private destroyed$ = new Subject<boolean>();
   /** Inject dynamic content into end slot of header using angular cdk portal */
   public endPortal?: Portal<any>;
@@ -91,7 +95,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private listenToServiceTitleChanges() {
     this.componentsService.headerOptions$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ title, style, endContent }) => {
+      .subscribe(({ title, style, endContent, hideBackButton }) => {
         requestAnimationFrame(() => {
           if (title) {
             this.title = title;
@@ -100,6 +104,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
           if (style) {
             this.style = style;
           }
+          this.hideBackButton = hideBackButton;
           this.endPortal = endContent;
         });
       });

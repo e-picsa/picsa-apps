@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { IBudgetCard, IBudgetCardDB } from '../../models/budget-tool.models';
-import { PicsaDialogService } from '@picsa/shared/features';
+import { IBudgetCard } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({
@@ -16,18 +15,5 @@ export class BudgetCardComponent {
   @Input() card: IBudgetCard;
   @Input() selected: boolean;
 
-  constructor(private dialog: PicsaDialogService, public store: BudgetStore) {}
-
-  async promptCustomDelete(e: Event) {
-    e.stopPropagation();
-    const dialogRef = await this.dialog.open('delete');
-    dialogRef.afterClosed().subscribe((v) => {
-      if (v) {
-        this.store.deleteCustomCard(this.card as IBudgetCardDB);
-        // HACK - instead of refreshing from store just mark
-        // as deleted to hide (will be gone next refresh)
-        this.card['_deleted'] = true;
-      }
-    });
-  }
+  constructor(public store: BudgetStore) {}
 }

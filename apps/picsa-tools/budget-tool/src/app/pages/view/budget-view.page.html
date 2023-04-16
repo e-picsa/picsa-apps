@@ -1,40 +1,30 @@
 <div class="page-content" *mobxAutorun>
   <div class="header-buttons">
-    <button
-      mat-button
-      *ngIf="!isEditorOpen"
-      aria-label="Share"
-      (click)="showShareDialog()"
-    >
-      <mat-icon>share</mat-icon>Share
+    <button mat-button *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
+      <mat-icon>share</mat-icon>{{'Share' | translate }}
     </button>
   </div>
 
   <!-- hide overflow so that editor can be stored outside bottom of page -->
-  <div
-    class="page-content"
-    style="overflow-y: hidden; overflow-x: auto; padding: 0"
-  >
-    <budget-table
-      *ngIf="store.activeBudget"
-      [budget]="store.activeBudget"
-      @fadeInOut
-    ></budget-table>
-    <budget-cell-editor
+  <div class="page-content" style="overflow-y: hidden; overflow-x: auto; padding: 0">
+    <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
+    <!-- Legacy Editor -->
+    <!-- <budget-cell-editor
       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
       [isOpen]="isEditorOpen"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
-    ></budget-cell-editor>
-    <!-- WiP Updated editor (replaces ABOVE) -->
-    <!-- <budget-cell-inline-editor
-       *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
+    ></budget-cell-editor> -->
+
+    <!-- Updated Editor -->
+    <budget-editor
+      *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
       [activePeriod]="store.activePeriod"
       [activeType]="store.activeType"
-      [isOpen]="isEditorOpen"
       [@flyInOut]="isEditorOpen ? 'in' : 'out'"
-    ></budget-cell-inline-editor> -->
+      (handleNextClick)="handleEditorNext()"
+    ></budget-editor>
   </div>
 
   <!-- Header Menu -->

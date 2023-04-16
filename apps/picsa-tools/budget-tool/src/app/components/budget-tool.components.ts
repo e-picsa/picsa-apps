@@ -24,13 +24,17 @@ import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardNew } from './card/card-new/card-new';
 import { BudgetCardNewDialog } from './card/card-new/card-new-dialog';
+import { BudgetCardPlaceholderComponent } from './card/card-placeholder/card-placeholder.component';
 import { BudgetCellComponent } from './cell/cell';
 import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
-import { BudgetCellEditorCardSelectComponent } from './cell-editor/card-select/card-select';
-import { BudgetCellEditorInputValuesComponent } from './cell-editor/input-values/input-values';
-import { BudgetCellEditorFamilyLabourComponent } from './cell-editor/family-labour/family-labour';
-import { BudgetCellEditorProduceConsumedComponent } from './cell-editor/produce-consumed/produce-consumed';
-import { BudgetCellInlineEditorComponent } from './cell-inline-editor/cell-inline-editor.component';
+
+import { BudgetCardEditorComponent } from './editor/card-editor/card-editor.component';
+import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-select';
+import { BudgetCellEditorInputValuesComponent } from './_deprecated/input-values/input-values';
+import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
+import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
+import { BudgetEditorComponent } from './editor/editor.component';
+
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
 import {
   BudgetListItemComponent,
@@ -45,14 +49,16 @@ const components = [
   BudgetBalanceDotValueComponent,
   BudgetBalanceEditorComponent,
   BudgetCardComponent,
+  BudgetCardEditorComponent,
   BudgetCardImageComponent,
+  BudgetCardPlaceholderComponent,
   BudgetCellComponent,
   BudgetCellEditorComponent,
   BudgetCellEditorCardSelectComponent,
   BudgetCellEditorInputValuesComponent,
   BudgetCellEditorFamilyLabourComponent,
   BudgetCellEditorProduceConsumedComponent,
-  BudgetCellInlineEditorComponent,
+  BudgetEditorComponent,
   BudgetCellLabourComponent,
   BudgetCardNew,
   BudgetCardNewDialog,

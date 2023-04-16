@@ -1,0 +1,122 @@
+import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { _wait } from '@picsa/utils';
+
+import {
+  IBudgetCard,
+  IBudgetCardWithValues,
+  IBudgetPeriodData,
+  IBudgetPeriodType,
+} from '../../models/budget-tool.models';
+import { BudgetStore } from '../../store/budget.store';
+
+const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
+  { type: 'activities', label: 'Activities' },
+  { type: 'inputs', label: 'Inputs' },
+  { type: 'familyLabour', label: 'Family Labour' },
+  { type: 'outputs', label: 'Outputs' },
+  { type: 'produceConsumed', label: 'Produce Consumed' },
+];
+
+@Component({
+  selector: 'budget-editor',
+  templateUrl: './editor.component.html',
+  styleUrls: ['./editor.component.scss'],
+  animations: [FadeInOut(ANIMATION_DELAYED)],
+})
+export class BudgetEditorComponent {
+  /** View reference to ng-template content shown in dialog */
+  @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
+  @ViewChild('cardScroller', { static: false }) cardScroller: ElementRef<HTMLDivElement>;
+
+  public data: IBudgetPeriodData;
+  public _activePeriod: number;
+  public editorSteps = EDITOR_STEPS;
+
+  /** Budget period type to display cards list for */
+  public cardsListType: IBudgetPeriodType;
+
+  @Input() set activeType(activeType: IBudgetPeriodType) {
+    this.scrollToType(activeType);
+  }
+  @Input() set activePeriod(activePeriod: number) {
+    this._activePeriod = activePeriod;
+    this.loadEditorData();
+  }
+  @Output() handleNextClick = new EventEmitter();
+
+  constructor(public store: BudgetStore, private dialog: MatDialog) {}
+
+  public showCardsList(type: IBudgetPeriodType) {
+    this.cardsListType = type;
+    this.dialog.open(this.cardsListDialog, {
+      width: '90vw',
+      height: '90vh',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      panelClass: 'no-padding',
+    });
+    // scroll existing dialog to top if exists as dialog opens
+    setTimeout(() => {
+      this.cardScroller?.nativeElement?.scrollTo(0, 0);
+    }, 200);
+  }
+
+  private async scrollToType(type: IBudgetPeriodType) {
+    const scrollContainer = document.getElementById('editorContainer');
+    const scrollTarget = document.getElementById(`edit-${type}`);
+    // provide delay whilst editor flying in
+    await _wait(200);
+    if (scrollContainer && scrollTarget) {
+      // calculate relative element offset instead of using scrollIntoView
+      // as seems to perform more consistently whilst flyInOut animation occuring
+      // include additional offset just to keep obvious there's scrollable content above
+      const elementPosition = Math.max(scrollTarget.offsetTop - 16, 0);
+      scrollContainer.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth',
+      });
+    }
+  }
+
+  private loadEditorData() {
+    if (this._activePeriod !== undefined) {
+      const activeData = this.store.activeBudget.data[this._activePeriod];
+      if (activeData) {
+        // create copy of data to avoid first input populating multiple activities
+        this.data = JSON.parse(JSON.stringify(activeData));
+      }
+    }
+  }
+
+  public trackByFn(index: number, item: IBudgetCard) {
+    return item.id;
+  }
+
+  public removeSelectedCard(type: IBudgetPeriodType, index: number) {
+    if (this.data[type][index]) {
+      const values = [...this.data[type]];
+      values.splice(index, 1);
+
+      this.onEditorChange(values, type);
+      this.loadEditorData();
+    }
+  }
+
+  public updateCardValue(type: IBudgetPeriodType, index: number, card: IBudgetCardWithValues) {
+    const values = [...this.data[type]];
+    values[index] = card;
+    this.onEditorChange(values, type);
+    this.loadEditorData();
+  }
+
+  // the store already knows what period and type it is, so just pass the updated values to save
+  onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
+    this.store.saveEditor(values, type);
+    // HACK - fix change detection issue for produceConsumed cards
+    if (type === 'produceConsumed') {
+      this.data.produceConsumed = values;
+    }
+  }
+}
