@@ -13,72 +13,47 @@ const routes: Routes = [
   // see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
   {
     path: 'budget',
-    loadChildren: () =>
-      import('@picsa/budget/src/app/app.module-embedded').then(
-        (mod) => mod.BudgetToolModule
-      ),
+    loadChildren: () => import('@picsa/budget/src/app/app.module-embedded').then((mod) => mod.BudgetToolModule),
   },
   {
     path: 'climate',
-    loadChildren: () =>
-      import('@picsa/climate/src/app/app.module-embedded').then(
-        (mod) => mod.ClimateToolModule
-      ),
+    loadChildren: () => import('@picsa/climate/src/app/app.module-embedded').then((mod) => mod.ClimateToolModule),
   },
   {
     path: 'crop-probability',
     loadChildren: () =>
-      import('@picsa/crop-probability/src/app/app.module-embedded').then(
-        (mod) => mod.CropProbabilityToolModule
-      ),
+      import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
   },
   {
     path: 'monitoring',
-    loadChildren: () =>
-      import('@picsa/monitoring/src/app/app.module-embedded').then(
-        (mod) => mod.MonitoringToolModule
-      ),
+    loadChildren: () => import('@picsa/monitoring/src/app/app.module-embedded').then((mod) => mod.MonitoringToolModule),
   },
   {
     path: 'option',
-    loadChildren: () =>
-      import('@picsa/option/src/app/app.module-embedded').then(
-        (mod) => mod.OptionsToolModule
-      ),
+    loadChildren: () => import('@picsa/option/src/app/app.module-embedded').then((mod) => mod.OptionsToolModule),
   },
   {
     path: 'resources',
-    loadChildren: () =>
-      import('@picsa/resources/src/app/app.module-embedded').then(
-        (mod) => mod.ResourcesToolModule
-      ),
+    loadChildren: () => import('@picsa/resources/src/app/app.module-embedded').then((mod) => mod.ResourcesToolModule),
   },
   {
     path: '',
-    loadChildren: () =>
-      import('./pages/home/home.module').then((mod) => mod.HomePageModule),
+    loadChildren: () => import('./pages/home/home.module').then((mod) => mod.HomePageModule),
     title: 'PICSA',
   },
   {
     path: 'settings',
-    loadChildren: () =>
-      import('./pages/settings/settings.module').then(
-        (mod) => mod.SettingsPageModule
-      ),
+    loadChildren: () => import('./pages/settings/settings.module').then((mod) => mod.SettingsPageModule),
   },
   {
     path: 'discussions',
-    loadChildren: () =>
-      import('./pages/discussions/discussions.module').then(
-        (mod) => mod.DiscussionsPageModule
-      ),
+    loadChildren: () => import('./pages/discussions/discussions.module').then((mod) => mod.DiscussionsPageModule),
     title: 'Discussions',
   },
 
   {
     path: 'privacy',
-    loadChildren: () =>
-      import('./pages/privacy/privacy.module').then((mod) => mod.PrivacyModule),
+    loadChildren: () => import('./pages/privacy/privacy.module').then((mod) => mod.PrivacyModule),
   },
 
   // { path: '**', redirectTo: '/home' }

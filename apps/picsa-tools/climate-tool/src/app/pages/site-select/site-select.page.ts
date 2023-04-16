@@ -1,13 +1,8 @@
-import { Component, NgZone,ViewChild } from '@angular/core';
-import { ActivatedRoute,Router } from '@angular/router';
+import { Component, NgZone, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration';
 import { IStationMeta } from '@picsa/models';
-import {
-  IBasemapOptions,
-  IMapMarker,
-  IMapOptions,
-  PicsaMapComponent,
-} from '@picsa/shared/features/map/map';
+import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { HARDCODED_STATIONS } from '../../data';
 
@@ -55,9 +50,7 @@ export class SiteSelectPage {
       this.picsaMap.map.fitBounds(JSON.parse(lastMapBounds));
     } else {
       // otherwise try to fit a bounding box with all stations
-      this.picsaMap.fitMapToPoints(
-        stations.map((s) => [s.latitude, s.longitude])
-      );
+      this.picsaMap.fitMapToPoints(stations.map((s) => [s.latitude, s.longitude]));
     }
   }
 
@@ -72,10 +65,7 @@ export class SiteSelectPage {
   goToSite(site: IStationMeta) {
     // record current map bound positions for returning back
     const mapBounds = this.picsaMap.map.getBounds();
-    localStorage.setItem(
-      'picsaSiteSelectBounds',
-      JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()])
-    );
+    localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));
     // navigate
     this.router.navigate(['./', 'site', site._key], {
       relativeTo: this.route,
@@ -88,15 +78,12 @@ export class SiteSelectPage {
   populateSites() {
     const iconUrl = STATION_ICON_WHITE;
     let stations = HARDCODED_STATIONS;
-    const { climateTool, localisation } =
-      this.configurationService.activeConfiguration;
+    const { climateTool, localisation } = this.configurationService.activeConfiguration;
     const filterFn = climateTool?.stationFilter;
     if (filterFn) {
       stations = stations.filter((station) => filterFn(station));
     } else {
-      stations = stations.filter(
-        (station) => station.countryCode === localisation.country.code
-      );
+      stations = stations.filter((station) => station.countryCode === localisation.country.code);
     }
     const markers: IMapMarker[] = stations.map((s) => {
       return {

@@ -5,18 +5,12 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./pages/site-select/site-select.module').then(
-        (mod) => mod.ClimateSiteSelectPageModule
-      ),
+    loadChildren: () => import('./pages/site-select/site-select.module').then((mod) => mod.ClimateSiteSelectPageModule),
     title: translateMarker('Select a site'),
   },
   {
     path: 'site/:siteId',
-    loadChildren: () =>
-      import('./pages/site-view/site-view.module').then(
-        (mod) => mod.ClimateSiteViewPageModule
-      ),
+    loadChildren: () => import('./pages/site-view/site-view.module').then((mod) => mod.ClimateSiteViewPageModule),
     data: {
       headerStyle: 'inverted',
     },

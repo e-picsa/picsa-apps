@@ -9,12 +9,7 @@ import { ResourceItemComponent } from './resource-item/resource-item.component';
 const components = [ResourceItemComponent];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    PicsaTranslateModule,
-    ResourcesMaterialModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, PicsaTranslateModule, ResourcesMaterialModule, RouterModule],
   exports: components,
   declarations: components,
   providers: [],

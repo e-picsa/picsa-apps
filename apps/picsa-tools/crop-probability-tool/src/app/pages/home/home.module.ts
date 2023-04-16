@@ -14,12 +14,7 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    CropProbabilityToolComponentsModule,
-    RouterModule.forChild(routes),
-    PicsaTranslateModule,
-  ],
+  imports: [CommonModule, CropProbabilityToolComponentsModule, RouterModule.forChild(routes), PicsaTranslateModule],
   exports: [],
   declarations: [HomeComponent],
   providers: [],

@@ -15,14 +15,8 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-tools/option-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/picsa-tools/option-tool/src/favicon.ico",
-          "apps/picsa-tools/option-tool/src/assets"
-        ],
-        "styles": [
-          "apps/picsa-tools/option-tool/src/styles.scss",
-          "libs/theme/src/_index.scss"
-        ],
+        "assets": ["apps/picsa-tools/option-tool/src/favicon.ico", "apps/picsa-tools/option-tool/src/assets"],
+        "styles": ["apps/picsa-tools/option-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
       },
       "configurations": {
@@ -74,10 +68,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/option-tool/**/*.ts",
-          "apps/picsa-tools/option-tool/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/picsa-tools/option-tool/**/*.ts", "apps/picsa-tools/option-tool/**/*.html"]
       }
     },
     "test": {

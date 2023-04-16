@@ -7,6 +7,6 @@ import { PagesRoutingModule } from './pages-routing.module';
 
 @NgModule({
   imports: [PagesRoutingModule, StationDataLayoutModule, PicsaMaterialModule],
-  declarations: [PagesComponent]
+  declarations: [PagesComponent],
 })
 export class DataPagesModule {}

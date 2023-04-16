@@ -35,10 +35,7 @@ export class EmbeddedRoutingModule {
 })
 export class BaseModule {
   // ensure translate has been initiated
-  constructor(
-    public translate: PicsaTranslateService,
-    budgetStore: BudgetStore
-  ) {
+  constructor(public translate: PicsaTranslateService, budgetStore: BudgetStore) {
     budgetStore.init();
   }
 }
@@ -49,10 +46,7 @@ export class BudgetToolModule {
   static forRoot(config: EmbeddedConfig): ModuleWithProviders<BaseModule> {
     return {
       ngModule: BaseModule,
-      providers: [
-        PicsaTranslateService,
-        { provide: EmbeddedConfig, useValue: config },
-      ],
+      providers: [PicsaTranslateService, { provide: EmbeddedConfig, useValue: config }],
     };
   }
 }

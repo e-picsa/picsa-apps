@@ -111,9 +111,7 @@
     <!-- Summary -->
     <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Summary' | translate }}</ng-template>
-      <budget-period-summary
-        [periodIndex]="store.activePeriod"
-      ></budget-period-summary>
+      <budget-period-summary [periodIndex]="store.activePeriod"></budget-period-summary>
       <!-- <next-button (click)="closeEditor()"></next-button> -->
     </mat-step>
   </mat-stepper>

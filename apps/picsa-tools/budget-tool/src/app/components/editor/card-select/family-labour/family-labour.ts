@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 

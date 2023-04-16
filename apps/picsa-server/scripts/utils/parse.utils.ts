@@ -13,11 +13,7 @@ export function initializeParseServer() {
     populateEnv(envFilePath);
   }
   const { PARSE_SERVER_APPLICATION_ID, PARSE_SERVER_MASTER_KEY } = process.env;
-  Parse.initialize(
-    PARSE_SERVER_APPLICATION_ID as string,
-    undefined,
-    PARSE_SERVER_MASTER_KEY as string
-  );
+  Parse.initialize(PARSE_SERVER_APPLICATION_ID as string, undefined, PARSE_SERVER_MASTER_KEY as string);
   Parse.serverURL = 'http://localhost:1337/parse';
 }
 

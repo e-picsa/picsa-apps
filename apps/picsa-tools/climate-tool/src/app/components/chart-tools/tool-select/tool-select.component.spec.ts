@@ -8,9 +8,8 @@ describe('ToolSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToolSelectComponent ]
-    })
-    .compileComponents();
+      declarations: [ToolSelectComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ToolSelectComponent);
     component = fixture.componentInstance;

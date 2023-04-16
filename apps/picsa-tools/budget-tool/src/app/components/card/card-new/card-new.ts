@@ -1,12 +1,9 @@
-import { Component, EventEmitter,Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 import { toJS } from 'mobx';
 
-import {
-  IBudgetCard,
-  IBudgetCardType,
-} from '../../../models/budget-tool.models';
+import { IBudgetCard, IBudgetCardType } from '../../../models/budget-tool.models';
 import { BudgetStore } from '../../../store/budget.store';
 import { BudgetCardNewDialog } from './card-new-dialog';
 
@@ -25,9 +22,7 @@ export class BudgetCardNew {
 
   showCardDialog() {
     // groupings should match the current enterprise unless otherwise specified
-    const groupings = this.groupings
-      ? this.groupings
-      : toJS(this.store.activeBudget.meta.enterprise.groupings);
+    const groupings = this.groupings ? this.groupings : toJS(this.store.activeBudget.meta.enterprise.groupings);
     const card: IBudgetCard = {
       ...NEW_CARD,
       type: this.type,

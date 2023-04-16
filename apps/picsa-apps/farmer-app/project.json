@@ -14,10 +14,7 @@
         "polyfills": "apps/picsa-apps/farmer-app/src/polyfills.ts",
         "tsConfig": "apps/picsa-apps/farmer-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/picsa-apps/farmer-app/src/favicon.ico",
-          "apps/picsa-apps/farmer-app/src/assets"
-        ],
+        "assets": ["apps/picsa-apps/farmer-app/src/favicon.ico", "apps/picsa-apps/farmer-app/src/assets"],
         "styles": ["apps/picsa-apps/farmer-app/src/styles.scss"],
         "scripts": []
       },
@@ -75,10 +72,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-apps/farmer-app/**/*.ts",
-          "apps/picsa-apps/farmer-app/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/picsa-apps/farmer-app/**/*.ts", "apps/picsa-apps/farmer-app/**/*.html"]
       }
     },
     "test": {

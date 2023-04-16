@@ -36,24 +36,22 @@ export class CollectionComponent implements OnInit, OnDestroy {
         '/resources/collection': true,
       },
     });
-    this.route.params
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((params) => {
-        const { collectionId } = params;
-        if (collectionId) {
-          this.loadCollection(collectionId);
-        } else {
-          this.collection = undefined;
-        }
-      });
+    this.route.params.pipe(takeUntil(this.componentDestroyed$)).subscribe((params) => {
+      const { collectionId } = params;
+      if (collectionId) {
+        this.loadCollection(collectionId);
+      } else {
+        this.collection = undefined;
+      }
+    });
   }
 
   private async loadCollection(id: string) {
     const foundCollection = this.store.getResourceById<IResourceCollection>(id);
     if (foundCollection) {
       this.collection = foundCollection;
-      this.collectionResources = this.collection.childResources.map(
-        (resourceId) => this.store.getResourceById(resourceId)
+      this.collectionResources = this.collection.childResources.map((resourceId) =>
+        this.store.getResourceById(resourceId)
       );
       // Use set timeout to ensure title changes after other default title change
       setTimeout(() => {

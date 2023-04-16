@@ -1,15 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Inject,
-  OnDestroy,
-} from '@angular/core';
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MatDateFormats,
-} from '@angular/material/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -18,23 +8,23 @@ import { Subject, takeUntil } from 'rxjs';
   selector: 'climte-line-date-picker-header',
   styles: [
     `
-           .line-date-picker-header {
-             display: flex;
-             align-items: center;
-             padding: 0.5em;
-           }
-     
-           .line-date-picker-header-label {
-             flex: 1;
-             height: 1em;
-             font-weight: 500;
-             text-align: center;
-           }
-     
-           .example-double-arrow .mat-icon {
-             margin: -22%;
-           }
-         `,
+      .line-date-picker-header {
+        display: flex;
+        align-items: center;
+        padding: 0.5em;
+      }
+
+      .line-date-picker-header-label {
+        flex: 1;
+        height: 1em;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .example-double-arrow .mat-icon {
+        margin: -22%;
+      }
+    `,
   ],
   template: `
     <div class="line-date-picker-header">
@@ -58,9 +48,7 @@ export class LineDatePickerHeaderComponent<D> implements OnDestroy {
     @Inject(MAT_DATE_FORMATS) private _dateFormats: MatDateFormats,
     cdr: ChangeDetectorRef
   ) {
-    _calendar.stateChanges
-      .pipe(takeUntil(this._destroyed))
-      .subscribe(() => cdr.markForCheck());
+    _calendar.stateChanges.pipe(takeUntil(this._destroyed)).subscribe(() => cdr.markForCheck());
   }
 
   ngOnDestroy() {
@@ -70,10 +58,7 @@ export class LineDatePickerHeaderComponent<D> implements OnDestroy {
 
   get periodLabel() {
     return this._dateAdapter
-      .format(
-        this._calendar.activeDate,
-        this._dateFormats.display.monthYearLabel
-      )
+      .format(this._calendar.activeDate, this._dateFormats.display.monthYearLabel)
       .toLocaleUpperCase()
       .split(' ')[0];
   }

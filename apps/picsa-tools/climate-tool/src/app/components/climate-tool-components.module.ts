@@ -50,10 +50,6 @@ const Components = [
     ReactiveFormsModule,
     RouterModule,
   ],
-  exports: [
-    ...Components,
-    PicsaCommonComponentsModule,
-    PicsaClimateMaterialModule,
-  ],
+  exports: [...Components, PicsaCommonComponentsModule, PicsaClimateMaterialModule],
 })
 export class ClimateToolComponentsModule {}

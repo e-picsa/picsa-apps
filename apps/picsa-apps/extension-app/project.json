@@ -142,10 +142,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-apps/extension-app/**/*.ts",
-          "apps/picsa-apps/extension-app/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/picsa-apps/extension-app/**/*.ts", "apps/picsa-apps/extension-app/**/*.html"]
       }
     },
     "test": {

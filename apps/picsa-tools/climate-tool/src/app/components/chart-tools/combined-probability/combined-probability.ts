@@ -44,22 +44,20 @@ export class CombinedProbabilityComponent {
   }
   calculateCropProbabilities() {
     for (const crop of this.crops) {
-      this.crops[crop.index].lengthProbability =
-        this.calculateCombinedProbability(this.data, [
-          {
-            key: 'End',
-            value: (this.dayValue + crop.lengthAvg) % 366,
-            operator: '>=',
-          },
-        ]);
-      this.crops[crop.index].rainfallProbability =
-        this.calculateCombinedProbability(this.data, [
-          {
-            key: 'Rainfall',
-            value: crop.waterAvg * (1 + this.plantDate.value / 16),
-            operator: '>=',
-          },
-        ]);
+      this.crops[crop.index].lengthProbability = this.calculateCombinedProbability(this.data, [
+        {
+          key: 'End',
+          value: (this.dayValue + crop.lengthAvg) % 366,
+          operator: '>=',
+        },
+      ]);
+      this.crops[crop.index].rainfallProbability = this.calculateCombinedProbability(this.data, [
+        {
+          key: 'Rainfall',
+          value: crop.waterAvg * (1 + this.plantDate.value / 16),
+          operator: '>=',
+        },
+      ]);
     }
   }
 

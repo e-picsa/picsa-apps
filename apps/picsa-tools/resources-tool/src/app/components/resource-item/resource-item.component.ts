@@ -191,8 +191,6 @@ class AppItemHandler {
   private handleClick(e: Event) {
     e.stopPropagation();
     const { appId } = this.resource;
-    this.parent.store.openBrowserLink(
-      `https://play.google.com/store/apps/details?id=${appId}`
-    );
+    this.parent.store.openBrowserLink(`https://play.google.com/store/apps/details?id=${appId}`);
   }
 }

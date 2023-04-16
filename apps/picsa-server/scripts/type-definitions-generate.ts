@@ -32,9 +32,7 @@ class TypeDefinitionGenerator {
   ) {
     if (this.options.prefix) {
       this.schema = schema.filter(
-        (s) =>
-          s.className.startsWith(this.options.prefix as string) ||
-          s.className.startsWith('_')
+        (s) => s.className.startsWith(this.options.prefix as string) || s.className.startsWith('_')
       );
     }
   }
@@ -50,11 +48,7 @@ class TypeDefinitionGenerator {
       this.attributes = [];
       this.attributes.push('id: string;');
       for (const [field, fieldAttributes] of Object.entries(fields)) {
-        const mapping = this.getFieldTypeMapping(
-          field,
-          fieldAttributes,
-          className
-        );
+        const mapping = this.getFieldTypeMapping(field, fieldAttributes, className);
         if (mapping) {
           this.attributes.push(mapping);
         }
@@ -86,12 +80,8 @@ class TypeDefinitionGenerator {
       .filter((v) => v !== prefixedName)
       .filter((v, i, a) => a.indexOf(v) === i)
       .sort();
-    const externalDependencies = uniqueDependencies.filter(
-      (v) => !v.startsWith('_') && !v.startsWith(prefix || '_')
-    );
-    const internalDependencies = uniqueDependencies.filter(
-      (v) => !externalDependencies.includes(v)
-    );
+    const externalDependencies = uniqueDependencies.filter((v) => !v.startsWith('_') && !v.startsWith(prefix || '_'));
+    const internalDependencies = uniqueDependencies.filter((v) => !externalDependencies.includes(v));
     internalDependencies.forEach((dep) => {
       file += `import type { ${this.p(dep)} } from './${dep}';\n`;
     });
@@ -135,11 +125,7 @@ class TypeDefinitionGenerator {
     fs.writeFileSync(path.resolve(outputPath, prefixedName + '.ts'), file);
   }
 
-  private getFieldTypeMapping(
-    field: string,
-    fieldAttributes: Parse.RestSchema['fields'][string],
-    className: string
-  ) {
+  private getFieldTypeMapping(field: string, fieldAttributes: Parse.RestSchema['fields'][string], className: string) {
     const { type, required } = fieldAttributes;
     let mappedType: string;
     if (type === 'ACL') {
@@ -147,10 +133,7 @@ class TypeDefinitionGenerator {
     }
     switch (type as Parse.Schema.TYPE) {
       case 'Pointer':
-        mappedType = this.getPointerFieldTypeMapping(
-          fieldAttributes,
-          className
-        );
+        mappedType = this.getPointerFieldTypeMapping(fieldAttributes, className);
         break;
       case 'Relation':
         mappedType = this.getRelationTypeMapping(fieldAttributes, className);
@@ -162,17 +145,13 @@ class TypeDefinitionGenerator {
 
     if (!mappedType) {
       console.error({ field, fieldAttributes });
-      throw new Error(
-        `Parse type '${type}' not implemented for typescript conversation.`
-      );
+      throw new Error(`Parse type '${type}' not implemented for typescript conversation.`);
     }
     const optionalString = required ? '' : '?';
     return `${field}${optionalString}: ${mappedType}`;
   }
 
-  private getDefaultTypeMapping(
-    fieldAttributes: Parse.RestSchema['fields'][string]
-  ): string {
+  private getDefaultTypeMapping(fieldAttributes: Parse.RestSchema['fields'][string]): string {
     const { type } = fieldAttributes;
     const sdkMappings: { [type in Parse.Schema.TYPE]?: string } = {
       // Date: null,
@@ -199,10 +178,7 @@ class TypeDefinitionGenerator {
     return mappedType;
   }
 
-  private getPointerFieldTypeMapping(
-    fieldAttributes: Parse.RestSchema['fields'][string],
-    className: string
-  ) {
+  private getPointerFieldTypeMapping(fieldAttributes: Parse.RestSchema['fields'][string], className: string) {
     const pointerTarget = this.p(fieldAttributes.targetClass as string);
     if (pointerTarget !== className) {
       this.dependencies.push(pointerTarget);
@@ -210,10 +186,7 @@ class TypeDefinitionGenerator {
     return `${pointerTarget};`;
   }
 
-  private getRelationTypeMapping(
-    fieldAttributes: Parse.RestSchema['fields'][string],
-    className: string
-  ) {
+  private getRelationTypeMapping(fieldAttributes: Parse.RestSchema['fields'][string], className: string) {
     const relationTarget = this.p(fieldAttributes.targetClass as string);
     if (relationTarget !== className) {
       this.dependencies.push(relationTarget);

@@ -10,9 +10,7 @@
       "executor": "nx:run-commands",
       "outputs": ["{projectRoot}/dist"],
       "options": {
-        "commands": [
-          "tsc --project apps/picsa-server/cloud-functions/tsconfig.build.json"
-        ]
+        "commands": ["tsc --project apps/picsa-server/cloud-functions/tsconfig.build.json"]
       }
     }
   },

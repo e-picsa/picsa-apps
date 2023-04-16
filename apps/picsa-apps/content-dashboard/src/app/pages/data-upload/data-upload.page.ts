@@ -1,8 +1,8 @@
-import { CdkDragDrop,transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { IChartSummary_V2 } from '@picsa/models';
-import { FileSystemFileEntry,NgxFileDropEntry } from 'ngx-file-drop';
+import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { Papa, PapaParseConfig } from 'ngx-papaparse';
 
 @Component({

@@ -1,9 +1,4 @@
-import {
-  IResourceCollection,
-  IResourceFile,
-  IResourceLink,
-  IResourceYoutube,
-} from '../models';
+import { IResourceCollection, IResourceFile, IResourceLink, IResourceYoutube } from '../models';
 
 /** Base class to make it easy to populate and merge different generated resources */
 export class ResourcesGenerator {

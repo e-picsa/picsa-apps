@@ -8,6 +8,6 @@ import { PicsaDataTable } from './data-table/data-table';
 @NgModule({
   imports: [PicsaMaterialModule, CommonModule],
   declarations: [PicsaDataTable, PicsaDataTableStation],
-  exports: [PicsaDataTable, PicsaDataTableStation]
+  exports: [PicsaDataTable, PicsaDataTableStation],
 })
 export class StationDataComponentsModule {}

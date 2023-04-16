@@ -14,10 +14,6 @@ const routes: Route[] = [
 
 @NgModule({
   declarations: [FormViewComponent],
-  imports: [
-    CommonModule,
-    MonitoringToolComponentsModule,
-    RouterModule.forChild(routes),
-  ],
+  imports: [CommonModule, MonitoringToolComponentsModule, RouterModule.forChild(routes)],
 })
 export class FormViewModule {}

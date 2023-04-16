@@ -1,9 +1,5 @@
 <form class="input-container">
-  <mat-form-field
-    class="input-field"
-    *ngFor="let char of importCode; let i = index"
-    appearance="outline"
-  >
+  <mat-form-field class="input-field" *ngFor="let char of importCode; let i = index" appearance="outline">
     <input
       matInput
       [(ngModel)]="char.value"
@@ -23,11 +19,5 @@
 
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>
-  <button
-    mat-button
-    (click)="handleImport()"
-    [disabled]="importValue.length !== 4 || disabled"
-  >
-    Import
-  </button>
+  <button mat-button (click)="handleImport()" [disabled]="importValue.length !== 4 || disabled">Import</button>
 </div>

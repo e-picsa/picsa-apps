@@ -1,16 +1,9 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {
-  BrowserAnimationsModule,
-  NoopAnimationsModule,
-} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import {
-  PicsaDbModule,
-  PicsaTranslateModule,
-  PicsaTranslateService,
-} from '@picsa/shared/modules';
+import { PicsaDbModule, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';

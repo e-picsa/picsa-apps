@@ -1,15 +1,7 @@
 <div class="member-card-container">
-  <mat-card
-    appearance="outlined"
-    class="member-card"
-    *ngFor="let familyCard of values; let i = index"
-  >
+  <mat-card appearance="outlined" class="member-card" *ngFor="let familyCard of values; let i = index">
     <div style="width: 36px">
-      <budget-card-image
-        class="small"
-        [card]="familyCard"
-        style="display: contents"
-      ></budget-card-image>
+      <budget-card-image class="small" [card]="familyCard" style="display: contents"></budget-card-image>
     </div>
 
     <mat-form-field class="card-input-field quantity member-input">
@@ -39,19 +31,11 @@
       <mat-icon>add</mat-icon>
     </div>
     <div style="width: 36px">
-      <budget-card-image
-        class="small"
-        [card]="memberCard"
-        style="display: contents"
-      ></budget-card-image>
+      <budget-card-image class="small" [card]="memberCard" style="display: contents"></budget-card-image>
     </div>
     <div style="flex: 1; margin-left: 1rem">
-      <span *ngIf="memberCard.id==='adultMale'"
-        >{{ 'Add Male Member' | translate }}</span
-      >
-      <span *ngIf="memberCard.id==='adultFemale'">
-        {{ 'Add Female Member' | translate }}</span
-      >
+      <span *ngIf="memberCard.id==='adultMale'">{{ 'Add Male Member' | translate }}</span>
+      <span *ngIf="memberCard.id==='adultFemale'"> {{ 'Add Female Member' | translate }}</span>
     </div>
   </div>
 </div>

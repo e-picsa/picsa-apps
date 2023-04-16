@@ -9,20 +9,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
-  imports: [
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-  ],
-  exports: [
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-  ],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule],
+  exports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule],
   providers: [
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
@@ -31,10 +19,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   ],
 })
 export class ResourcesMaterialModule {
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer
-  ) {
+  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
     this.registerIcons();
   }
 
@@ -44,9 +29,7 @@ export class ResourcesMaterialModule {
     };
     for (const [key, value] of Object.entries(RESOURCE_ICONS)) {
       const iconName = `picsa_${key}`;
-      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        `assets/resources/mat-icons/${value}.svg`
-      );
+      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/resources/mat-icons/${value}.svg`);
       this.matIconRegistry.addSvgIcon(iconName, iconUrl);
     }
   }

@@ -1,4 +1,4 @@
-import { Component, HostListener,OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Platform } from '@ionic/angular';

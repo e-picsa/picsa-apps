@@ -9,6 +9,6 @@ import { PicsaMaterialModule } from '../material.module';
 @NgModule({
   imports: [CommonModule, PicsaMaterialModule, RouterModule],
   exports: [StationDataHeader, StationDataSidebar],
-  declarations: [StationDataSidebar, StationDataHeader]
+  declarations: [StationDataSidebar, StationDataHeader],
 })
 export class StationDataLayoutModule {}

@@ -9,9 +9,7 @@ import { HomeComponent } from './pages/home/home.component';
   declarations: [AppComponent, HomeComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent },
-    ], { initialNavigation: 'enabledBlocking' }),
+    RouterModule.forRoot([{ path: '', component: HomeComponent }], { initialNavigation: 'enabledBlocking' }),
   ],
   providers: [],
   bootstrap: [AppComponent],

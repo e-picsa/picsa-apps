@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { generateDBMeta,PicsaDbService } from '@picsa/shared/services/core/db';
+import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
 import { toJS } from 'mobx';
-import { action,observable } from 'mobx-angular';
+import { action, observable } from 'mobx-angular';
 
-import { IFormDB,IFormResponse } from '../models/models';
+import { IFormDB, IFormResponse } from '../models/models';
 
 @Injectable({
   providedIn: 'root',

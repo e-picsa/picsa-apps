@@ -43,10 +43,7 @@ export class OptionsToolModule {
   static forRoot(config: EmbeddedConfig): ModuleWithProviders<BaseModule> {
     return {
       ngModule: BaseModule,
-      providers: [
-        PicsaTranslateService,
-        { provide: EmbeddedConfig, useValue: config },
-      ],
+      providers: [PicsaTranslateService, { provide: EmbeddedConfig, useValue: config }],
     };
   }
 }

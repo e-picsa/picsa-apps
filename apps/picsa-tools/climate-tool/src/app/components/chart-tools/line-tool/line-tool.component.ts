@@ -3,10 +3,7 @@ import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker'
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
-import {
-  calcPercentile,
-  ClimateToolService,
-} from '../../../services/climate-tool.service';
+import { calcPercentile, ClimateToolService } from '../../../services/climate-tool.service';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
 
@@ -29,10 +26,7 @@ export class LineToolComponent implements OnDestroy {
   public inputType?: 'number' | 'date';
   public datePickerHeader = LineDatePickerHeaderComponent;
 
-  constructor(
-    private chartService: ClimateChartService,
-    private toolService: ClimateToolService
-  ) {}
+  constructor(private chartService: ClimateChartService, private toolService: ClimateToolService) {}
 
   @Input() set chartConfig(chartConfig: IChartConfig) {
     if (chartConfig?.axis?.y) {
@@ -96,9 +90,7 @@ export class LineToolComponent implements OnDestroy {
   }
 
   private updateChartPointColours(value: number | undefined) {
-    const colours = this.definition?.linetool?.reverse
-      ? ['#BF7720', '#739B65']
-      : ['#739B65', '#BF7720'];
+    const colours = this.definition?.linetool?.reverse ? ['#BF7720', '#739B65'] : ['#739B65', '#BF7720'];
     const pointFormatter = (d: { value: number }) => {
       if (!value) return;
       return d.value >= value ? colours[0] : colours[1];

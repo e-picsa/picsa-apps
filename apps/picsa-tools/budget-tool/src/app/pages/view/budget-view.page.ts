@@ -1,9 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, OnDestroy,OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { ANIMATION_DEFAULTS_Y,FadeInOut, FlyInOut, OpenClosed } from '@picsa/shared/animations';
+import { ANIMATION_DEFAULTS_Y, FadeInOut, FlyInOut, OpenClosed } from '@picsa/shared/animations';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { Subject, takeUntil } from 'rxjs';
 

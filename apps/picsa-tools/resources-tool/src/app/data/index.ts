@@ -45,8 +45,7 @@ for (const resource of Object.values(byId)) {
 // sort types
 for (const [key, resources] of Object.entries(typeExports)) {
   typeExports[key] = resources.sort(
-    (a: IResourceItemBase, b: IResourceItemBase) =>
-      (b.priority ?? -99) - (a.priority ?? -99)
+    (a: IResourceItemBase, b: IResourceItemBase) => (b.priority ?? -99) - (a.priority ?? -99)
   );
 }
 

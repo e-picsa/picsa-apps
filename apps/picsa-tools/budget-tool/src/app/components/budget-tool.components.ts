@@ -16,10 +16,7 @@ import { BudgetCellEditorComponent } from './_deprecated/cell-editor';
 import { BudgetCellEditorInputValuesComponent } from './_deprecated/input-values/input-values';
 import { NextButton } from './_deprecated/next-button';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
-import {
-  BudgetBalanceEditorComponent,
-  BudgetBalanceLegendComponent,
-} from './balance/balance-legend/balance-legend';
+import { BudgetBalanceEditorComponent, BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardNew } from './card/card-new/card-new';
@@ -33,10 +30,7 @@ import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/fami
 import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
 import { BudgetEditorComponent } from './editor/editor.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
-import {
-  BudgetListItemComponent,
-  BudgetListItemRenameDialog,
-} from './list-item/budget-list-item';
+import { BudgetListItemComponent, BudgetListItemRenameDialog } from './list-item/budget-list-item';
 import { BudgetShareDialogComponent } from './share-dialog/share-dialog.component';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { BudgetTableComponent } from './table/budget-table';

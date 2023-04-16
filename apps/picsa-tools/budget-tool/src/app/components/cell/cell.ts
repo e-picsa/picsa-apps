@@ -42,8 +42,7 @@ export class BudgetCellComponent implements OnInit, OnDestroy, OnChanges {
 
   // using manual methods to get values instead of bindings to allow more efficient change detection
   getCellValue() {
-    const cards: IBudgetCard[] =
-      this.store.activeBudgetValue.data[this.periodIndex][this.type];
+    const cards: IBudgetCard[] = this.store.activeBudgetValue.data[this.periodIndex][this.type];
     if (cards.length > 0) {
       this.cellData = cards;
     } else {

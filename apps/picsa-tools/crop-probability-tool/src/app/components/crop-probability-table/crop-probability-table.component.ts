@@ -16,13 +16,7 @@ export interface PeriodicElement {
   styleUrls: ['./crop-probability-table.component.scss'],
 })
 export class CropProbabilityTableComponent {
-  displayedColumns: string[] = [
-    'crop',
-    'variety',
-    'days',
-    'water',
-    'probabilities',
-  ];
+  displayedColumns: string[] = ['crop', 'variety', 'days', 'water', 'probabilities'];
   dataSource = new MatTableDataSource(CROP_MOCK_DATA);
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

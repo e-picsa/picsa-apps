@@ -7,11 +7,7 @@ export interface IMigration {
   down: () => Promise<void>;
 }
 
-export const createSchema = async (
-  className: string,
-  ops: ISchemaOps,
-  permissions: Parse.Schema.CLP
-) => {
+export const createSchema = async (className: string, ops: ISchemaOps, permissions: Parse.Schema.CLP) => {
   console.log('[CREATE]', className);
   const schema = new Parse.Schema(className);
   schema.setCLP(permissions);
@@ -20,11 +16,7 @@ export const createSchema = async (
   return schema.save();
 };
 
-export const updateSchema = (
-  className: string,
-  ops?: ISchemaOps,
-  permissions?: Parse.Schema.CLP
-) => {
+export const updateSchema = (className: string, ops?: ISchemaOps, permissions?: Parse.Schema.CLP) => {
   console.log('[UPDATE]', className);
   const schema = new Parse.Schema(className);
   if (ops) {

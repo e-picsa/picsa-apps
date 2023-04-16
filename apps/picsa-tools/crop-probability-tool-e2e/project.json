@@ -21,9 +21,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/crop-probability-tool-e2e/**/*.{js,ts}"
-        ]
+        "lintFilePatterns": ["apps/picsa-tools/crop-probability-tool-e2e/**/*.{js,ts}"]
       }
     }
   },

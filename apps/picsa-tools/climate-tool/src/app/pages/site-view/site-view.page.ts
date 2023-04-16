@@ -1,14 +1,6 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { DomPortal, Portal } from '@angular/cdk/portal';
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -23,9 +15,7 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
 })
-export class ClimateSiteViewComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class ClimateSiteViewComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroyed$: Subject<boolean> = new Subject();
 
   activeView: string | undefined;
@@ -95,11 +85,9 @@ export class ClimateSiteViewComponent
 
   /** Set chart in climate service by params */
   private subscribeToParamChanges() {
-    this.route.queryParamMap
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(async (params) => {
-        const viewId = params.get('view');
-        await this.chartService.setChart(viewId || undefined);
-      });
+    this.route.queryParamMap.pipe(takeUntil(this.destroyed$)).subscribe(async (params) => {
+      const viewId = params.get('view');
+      await this.chartService.setChart(viewId || undefined);
+    });
   }
 }

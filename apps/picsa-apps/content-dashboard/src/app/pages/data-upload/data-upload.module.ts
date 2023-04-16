@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule,Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { PicsaChartsModule } from '@picsa/shared/features';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';

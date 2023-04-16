@@ -21,10 +21,7 @@ export class ClimateChartLayoutComponent implements AfterViewInit {
 
   @ViewChild('picsaChart', { static: false }) picsaChart: PicsaChartComponent;
 
-  constructor(
-    public chartService: ClimateChartService,
-    public toolService: ClimateToolService
-  ) {}
+  constructor(public chartService: ClimateChartService, public toolService: ClimateToolService) {}
 
   ngAfterViewInit() {
     this.chartService.registerChartComponent(this.picsaChart);

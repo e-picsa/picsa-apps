@@ -5,11 +5,6 @@
 <mat-form-field>
   <input matInput [(ngModel)]="card.label" class="input-editable" />
 </mat-form-field>
-<button
-  mat-stroked-button
-  (click)="save()"
-  [disabled]="card.label === ''"
-  style="margin-top: 1em; width: 70%"
->
+<button mat-stroked-button (click)="save()" [disabled]="card.label === ''" style="margin-top: 1em; width: 70%">
   <mat-icon>check</mat-icon>{{ 'Save' | translate }}
 </button>

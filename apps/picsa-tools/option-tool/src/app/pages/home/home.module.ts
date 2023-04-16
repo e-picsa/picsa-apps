@@ -15,11 +15,6 @@ const routes: Route[] = [
 
 @NgModule({
   declarations: [HomeComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    OptionToolComponentsModule,
-    PicsaTranslateModule,
-  ],
+  imports: [CommonModule, RouterModule.forChild(routes), OptionToolComponentsModule, PicsaTranslateModule],
 })
 export class HomeModule {}

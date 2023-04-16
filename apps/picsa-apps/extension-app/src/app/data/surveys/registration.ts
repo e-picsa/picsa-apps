@@ -1,63 +1,63 @@
 export const registration = {
-  _key: "deviceRegistration",
-  name: "Device Registration",
+  _key: 'deviceRegistration',
+  name: 'Device Registration',
   isActive: true,
-  icon: "device-registration",
+  icon: 'device-registration',
   surveyJson: {
     pages: [
       {
-        name: "Registration",
+        name: 'Registration',
         elements: [
           {
-            type: "text",
-            name: "Name",
-            title: "Name",
-            isRequired: true
+            type: 'text',
+            name: 'Name',
+            title: 'Name',
+            isRequired: true,
           },
           {
-            type: "radiogroup",
-            name: "Role",
-            title: "Role",
+            type: 'radiogroup',
+            name: 'Role',
+            title: 'Role',
             isRequired: true,
             choices: [
               {
-                value: "AEDO",
-                text: "AEDO"
+                value: 'AEDO',
+                text: 'AEDO',
               },
               {
-                value: "AEDC",
-                text: "AEDC"
+                value: 'AEDC',
+                text: 'AEDC',
               },
               {
-                value: "Other",
-                text: "Other"
-              }
-            ]
+                value: 'Other',
+                text: 'Other',
+              },
+            ],
           },
           {
-            type: "text",
-            name: "OtherRole",
+            type: 'text',
+            name: 'OtherRole',
             visibleIf: "{Role} = 'Other'",
-            title: "Please specify"
+            title: 'Please specify',
           },
           {
-            type: "checkbox",
-            name: "Gender",
-            title: "Gender",
+            type: 'checkbox',
+            name: 'Gender',
+            title: 'Gender',
             choices: [
               {
-                value: "item1",
-                text: "Male"
+                value: 'item1',
+                text: 'Male',
               },
               {
-                value: "item2",
-                text: "Female"
-              }
-            ]
-          }
+                value: 'item2',
+                text: 'Female',
+              },
+            ],
+          },
         ],
-        title: "Device Registration"
-      }
-    ]
-  }
+        title: 'Device Registration',
+      },
+    ],
+  },
 };

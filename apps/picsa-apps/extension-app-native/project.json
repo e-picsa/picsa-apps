@@ -19,9 +19,7 @@
       "description": "Serve extension app in external mode to connect. NOTE - need to update capacitor.config.ts before build",
       "dependsOn": ["build"],
       "options": {
-        "commands": [
-          "nx run picsa-apps-extension-app:serve --configuration=external"
-        ]
+        "commands": ["nx run picsa-apps-extension-app:serve --configuration=external"]
       }
     },
     "resources": {

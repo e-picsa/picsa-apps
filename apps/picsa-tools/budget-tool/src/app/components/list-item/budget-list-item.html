@@ -1,12 +1,6 @@
-<mat-card
-  appearance="raised"
-  style="margin-bottom: 10px; padding: 16px; cursor: pointer"
->
+<mat-card appearance="raised" style="margin-bottom: 10px; padding: 16px; cursor: pointer">
   <div style="display: flex">
-    <budget-card-image
-      class="small"
-      [card]="budget.meta.enterprise"
-    ></budget-card-image>
+    <budget-card-image class="small" [card]="budget.meta.enterprise"></budget-card-image>
     <div style="flex: 1">
       <mat-card-title>{{ budget.meta.title }}</mat-card-title>
       <mat-card-content>{{ budget.meta.description }}</mat-card-content>
@@ -25,15 +19,8 @@
       <button mat-menu-item aria-label="Copy" (click)="showCopyDialog()">
         <mat-icon svgIcon="picsa_copy"></mat-icon>Copy
       </button>
-      <button mat-menu-item aria-label="Edit" (click)="showRenameDialog()">
-        <mat-icon>edit</mat-icon>Rename
-      </button>
-      <button
-        mat-menu-item
-        aria-label="Delete"
-        color="light"
-        (click)="handleDeleteClicked($event)"
-      >
+      <button mat-menu-item aria-label="Edit" (click)="showRenameDialog()"><mat-icon>edit</mat-icon>Rename</button>
+      <button mat-menu-item aria-label="Delete" color="light" (click)="handleDeleteClicked($event)">
         <mat-icon svgIcon="picsa_delete">Delete</mat-icon>
         Delete
       </button>

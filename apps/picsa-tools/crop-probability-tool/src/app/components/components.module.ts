@@ -6,10 +6,7 @@ import { CropProbabilityTableComponent } from './crop-probability-table/crop-pro
 import { CropProbabilityTableHeaderComponent } from './crop-probability-table-header/crop-probability-table-header.component';
 import { CropProbabilityMaterialModule } from './material.module';
 
-const components = [
-  CropProbabilityTableComponent,
-  CropProbabilityTableHeaderComponent,
-];
+const components = [CropProbabilityTableComponent, CropProbabilityTableHeaderComponent];
 
 @NgModule({
   imports: [CommonModule, FormsModule, CropProbabilityMaterialModule],

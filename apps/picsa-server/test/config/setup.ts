@@ -26,8 +26,7 @@ async function setup() {
   populateEnv(envFilePath);
   const serverReady = await isServerReady();
   if (serverReady) {
-    const msg =
-      'A server already appears to be running on port 1337, attempting close';
+    const msg = 'A server already appears to be running on port 1337, attempting close';
     console.log(msg);
     stopTestServer();
   }

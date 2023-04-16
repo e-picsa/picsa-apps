@@ -50,9 +50,7 @@
       "executor": "./tools/executors/execa:commandSync",
       "outputs": [],
       "options": {
-        "commands": [
-          "ts-node apps/picsa-server/scripts/type-definitions-generate.ts"
-        ]
+        "commands": ["ts-node apps/picsa-server/scripts/type-definitions-generate.ts"]
       }
     }
   },

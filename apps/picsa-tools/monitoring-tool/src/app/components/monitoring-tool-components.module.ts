@@ -19,12 +19,7 @@ const Components = [FormItemComponent];
     RouterModule,
     PicsaCommonComponentsModule,
   ],
-  exports: [
-    WebcomponentsNgxModule,
-    MonitoringMaterialModule,
-    PicsaCommonComponentsModule,
-    ...Components,
-  ],
+  exports: [WebcomponentsNgxModule, MonitoringMaterialModule, PicsaCommonComponentsModule, ...Components],
   declarations: [Components],
   providers: [],
 })

@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
-import type {
-  IChartConfig,
-  IChartMeta,
-  IStationData,
-  IStationMeta,
-} from '@picsa/models';
+import type { IChartConfig, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PrintProvider } from '@picsa/shared/services/native';
@@ -16,12 +11,7 @@ import { firstValueFrom, Subject } from 'rxjs';
 
 import * as DATA from '../data';
 import { IClimateView } from '../models';
-import {
-  DATA_RANGES_DEFAULT,
-  IDataRanges,
-  IGridMeta,
-  seriesColors,
-} from '../models/chart-data.models';
+import { DATA_RANGES_DEFAULT, IDataRanges, IGridMeta, seriesColors } from '../models/chart-data.models';
 import { ClimateDataService } from './climate-data.service';
 
 const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
@@ -88,9 +78,7 @@ export class ClimateChartService {
     const chart = id ? CHART_VIEWS.find((v) => v._viewID === id) : undefined;
     this.chartDefinition = chart as IChartMeta & IClimateView;
     await this.generateChartConfig();
-    this.chartSeriesData = this.stationData.map(
-      (v) => v[this.chartDefinition!.keys[0]] as number
-    );
+    this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
   }
 
   /*****************************************************************************
@@ -108,9 +96,7 @@ export class ClimateChartService {
     // configure major and minor ticks, labels and gridlines
     const ranges = this.calculateDataRanges(data, definition);
     const gridMeta = this.calculateGridMeta(definition, ranges);
-    const chartName = await this.translateService.translateText(
-      definition.name
-    );
+    const chartName = await this.translateService.translateText(definition.name);
     // configure chart
     this.chartConfig = {
       // ensure axis labels fit
@@ -125,9 +111,7 @@ export class ClimateChartService {
         },
         x: 'Year',
         classes: { LineTool: 'LineTool' },
-        color: (_, d) =>
-          this.getPointColour(d as DataPoint) ||
-          seriesColors[(d as DataPoint).id],
+        color: (_, d) => this.getPointColour(d as DataPoint) || seriesColors[(d as DataPoint).id],
       },
       ['title' as any]: {
         text: `${this.station?.name} | ${chartName}`,
@@ -138,8 +122,7 @@ export class ClimateChartService {
           value: (value) => this._getTooltipFormat(value as any, definition),
           // HACK - reformat missing  titles (lost when passing "" values back from axis)
           // i marked ? as incorrect typings
-          title: (x, i?) =>
-            this._formatXAxis(data[i as number][definition.xVar] as any),
+          title: (x, i?) => this._formatXAxis(data[i as number][definition.xVar] as any),
         },
       },
       axis: {
@@ -151,10 +134,7 @@ export class ClimateChartService {
             rotate: 75,
             multiline: false,
             values: gridMeta.xTicks,
-            format: (d) =>
-              gridMeta.xLines.includes(d as any)
-                ? this._formatXAxis(d as any)
-                : '',
+            format: (d) => (gridMeta.xLines.includes(d as any) ? this._formatXAxis(d as any) : ''),
           },
           height: 60,
         },
@@ -163,9 +143,7 @@ export class ClimateChartService {
           tick: {
             values: gridMeta.yTicks,
             format: (d: any) =>
-              gridMeta.yLines.includes(d as any)
-                ? this._formatYAxis(d as any, definition, true)
-                : '',
+              gridMeta.yLines.includes(d as any) ? this._formatYAxis(d as any, definition, true) : '',
           },
           min: ranges.yMin,
           max: ranges.yMax,
@@ -199,9 +177,7 @@ export class ClimateChartService {
       },
       point: {
         r: (d) => {
-          return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id)
-            ? 0
-            : this.pointRadius;
+          return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id) ? 0 : this.pointRadius;
         },
         // make it easier to select points when tapping outside
         // TODO - could vary depending on screen size
@@ -313,9 +289,7 @@ export class ClimateChartService {
     data.forEach((d) => {
       const xVal = d[definition.xVar] as number;
       // take all possible yValues and filter out undefined
-      const yVals = definition.keys
-        .map((k) => d[k])
-        .filter((v) => typeof v === 'number') as number[];
+      const yVals = definition.keys.map((k) => d[k]).filter((v) => typeof v === 'number') as number[];
       xMax = xVal ? Math.max(xMax, xVal) : xMax;
       xMin = xVal ? Math.min(xMin, xVal) : xMin;
       yMax = Math.max(yMax, ...yVals);
@@ -386,10 +360,7 @@ export class ClimateChartService {
           d.setDate(dayNumber);
 
           // just take first 3 letters
-          label = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(
-            0,
-            3
-          )}`;
+          label = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(0, 3)}`;
         }
         return label;
       }

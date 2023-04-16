@@ -28,8 +28,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Welcome picsa-apps-farmer-app'
-    );
+    expect(compiled.querySelector('h1')?.textContent).toContain('Welcome picsa-apps-farmer-app');
   });
 });

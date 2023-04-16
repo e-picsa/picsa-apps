@@ -1,8 +1,4 @@
-import {
-  IResourceCollection,
-  IResourceFile,
-  IResourceLink,
-} from '../../models';
+import { IResourceCollection, IResourceFile, IResourceLink } from '../../models';
 
 const links: Record<string, IResourceLink> = {
   womenInExtension: {

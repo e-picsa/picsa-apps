@@ -36,10 +36,7 @@ const weatherResources: IResourceCollection = {
 
 function generateLocationResources(location: IWeatherLocation) {
   const locationResources = {
-    ...filterHashmap(
-      DOWNSCALED_FORECASTS,
-      (r) => r.meta.location_id === location.id
-    ),
+    ...filterHashmap(DOWNSCALED_FORECASTS, (r) => r.meta.location_id === location.id),
     ...new WMOGenerator(location).resources,
     ...new MeteoBlueGenerator(location).resources,
   };

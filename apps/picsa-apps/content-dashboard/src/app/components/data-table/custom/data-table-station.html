@@ -6,9 +6,7 @@
     </ng-container>
     <ng-container matColumnDef="StartDate">
       <th mat-header-cell *matHeaderCellDef>StartDate</th>
-      <td mat-cell *matCellDef="let el">
-        {{ el.StartDate ? (el.StartDate | date: 'mediumDate') : '' }}
-      </td>
+      <td mat-cell *matCellDef="let el">{{ el.StartDate ? (el.StartDate | date: 'mediumDate') : '' }}</td>
     </ng-container>
     <ng-container matColumnDef="Length">
       <th mat-header-cell *matHeaderCellDef>Length</th>
@@ -23,8 +21,5 @@
     <tr mat-row *matRowDef="let el; columns: tableColumns"></tr>
   </table>
 
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-  ></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

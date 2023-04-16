@@ -55,8 +55,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     _created: '2019-09-25T10:00:04.000Z',
     _modified: '2019-09-27T11:00:01.000Z',
     title: 'DCCMS Twitter',
-    description:
-      'Weather and Climate Updates, Alerts, Warnings and related News',
+    description: 'Weather and Climate Updates, Alerts, Warnings and related News',
     subtitle: '',
     type: 'link',
     icon: 'group',
