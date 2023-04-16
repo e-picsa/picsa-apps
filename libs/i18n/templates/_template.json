@@ -438,6 +438,10 @@
     "tool": "budget"
   },
   {
+    "text": "Family Labour",
+    "tool": "budget"
+  },
+  {
     "text": "Female Member",
     "tool": "budget"
   },
@@ -471,6 +475,10 @@
   },
   {
     "text": "Outputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Produce Consumed",
     "tool": "budget"
   },
   {
