@@ -2,17 +2,16 @@
 <div id="editorContainer">
   <div *ngFor="let editorStep of editorSteps" class="type-row" [id]="'edit-' + editorStep.type">
     <div class="type-label">{{ editorStep.label | translate }}</div>
-    <div class="selected-summary" *ngIf="data[editorStep.type] as selected">
+    <div class="selected-summary" *ngIf="data[editorStep.type] as selectedCards">
       <div class="selected-cards-container" [attr.data-type]="editorStep.type">
         <budget-card-editor
-          *ngFor="let card of selected; index as i; trackBy: trackByFn"
+          *ngFor="let card of selectedCards; index as i; trackBy: trackByFn"
           [card]="card"
           (deleteClicked)="removeSelectedCard(editorStep.type, i)"
           (valueChanged)="updateCardValue(editorStep.type, i, $event)"
           @fadeInOut
         >
         </budget-card-editor>
-
         <budget-card-placeholder (click)="showCardsList(editorStep.type)"></budget-card-placeholder>
       </div>
     </div>
@@ -38,7 +37,6 @@
       <budget-cell-editor-produce-consumed
         *ngSwitchCase="'produceConsumed'"
         @fadeInOut
-        [cards]="data.produceConsumed"
         (valueChanged)="onEditorChange($event, 'produceConsumed')"
       ></budget-cell-editor-produce-consumed>
       <!-- Default Editor -->

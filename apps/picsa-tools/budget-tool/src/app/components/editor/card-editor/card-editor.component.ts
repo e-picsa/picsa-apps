@@ -1,10 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PicsaDialogService } from '@picsa/shared/features';
 
-import {
-  IBudgetCardDB,
-  IBudgetCardWithValues,
-} from '../../../models/budget-tool.models';
+import { IBudgetCardDB, IBudgetCardWithValues } from '../../../models/budget-tool.models';
 import { BudgetStore } from '../../../store/budget.store';
 
 @Component({
@@ -27,9 +24,15 @@ export class BudgetCardEditorComponent {
     const target = e.target as HTMLInputElement;
     this.card.values[key] = Number(target.value);
     if (this.card.values.quantity && this.card.values.cost) {
-      this.card.values.total =
-        this.card.values.quantity * this.card.values.cost;
+      this.card.values.total = this.card.values.quantity * this.card.values.cost;
     }
+    this.valueChanged.emit(this.card);
+  }
+
+  // HACK - produceConsumed only populates quanityt, not values or cost
+  setProduceConsumed(e: Event) {
+    const target = e.target as HTMLInputElement;
+    this.card.values = { quantity: Number(target.value), cost: 0, total: 0 };
     this.valueChanged.emit(this.card);
   }
 

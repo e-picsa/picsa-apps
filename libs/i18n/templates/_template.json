@@ -474,6 +474,10 @@
     "tool": "budget"
   },
   {
+    "text": "No outputs produce for consumption",
+    "tool": "budget"
+  },
+  {
     "text": "Outputs",
     "tool": "budget"
   },
@@ -527,6 +531,14 @@
   },
   {
     "text": "Total",
+    "tool": "budget"
+  },
+  {
+    "text": "Total Consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "Total Produced",
     "tool": "budget"
   },
   {

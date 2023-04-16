@@ -2,21 +2,13 @@
   <!-- Card summary and delete button -->
   <div style="position: relative; display: flex">
     <budget-card [card]="card"></budget-card>
-    <button
-      mat-stroked-button
-      color="primary"
-      class="delete-button"
-      (click)="deleteClicked.emit(card)"
-    >
+    <button mat-stroked-button color="primary" class="delete-button" (click)="deleteClicked.emit(card)">
       <mat-icon class="delete-button-icon">close</mat-icon>
     </button>
   </div>
 
   <!-- Inputs/Outputs Editor -->
-  <div
-    class="input-values"
-    *ngIf="card.type === 'inputs' || card.type === 'outputs'"
-  >
+  <div class="input-values" *ngIf="card.type === 'inputs' || card.type === 'outputs'">
     <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
       <input
@@ -60,6 +52,20 @@
         [value]="card.values ? card.values.quantity : null"
         type="number"
         (change)="setValue($event, 'quantity')"
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Produce Consumed Editor -->
+  <div class="input-values" *ngIf="card.type === 'produceConsumed'">
+    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+      <mat-label>{{ 'Quantity' | translate }}</mat-label>
+      <input
+        matInput
+        class="input-editable"
+        [value]="card.values ? card.values.quantity : null"
+        type="number"
+        (change)="setProduceConsumed($event)"
       />
     </mat-form-field>
   </div>

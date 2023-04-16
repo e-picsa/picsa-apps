@@ -70,7 +70,6 @@ export class BudgetStore implements OnDestroy {
   @observable balance: IBudgetBalance = [];
   // get unique list of types in enterprise cards
   @computed get enterpriseTypeCards(): IBudgetCardDB[] {
-    console.log('get enterprisetype cards');
     const enterpriseCards = this.budgetCards.filter((c) => c.type === 'enterprise');
     return this._createCardGroupCards(enterpriseCards);
   }

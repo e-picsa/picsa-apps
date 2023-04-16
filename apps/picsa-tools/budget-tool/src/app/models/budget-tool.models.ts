@@ -69,7 +69,6 @@ export type IBudgetCardType = IBudgetPeriodType | 'enterprise' | 'other';
 
 export interface IBudgetCardWithValues extends IBudgetCard {
   values: IBudgetCardValues;
-  quantity?: number; // possible legacy use? (e.g. produce-consumed)
 }
 
 interface IBudgetCardCustomMeta {

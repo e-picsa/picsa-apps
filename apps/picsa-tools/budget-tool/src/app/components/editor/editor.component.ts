@@ -1,5 +1,8 @@
 import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { _wait } from '@picsa/utils';
+
 import {
   IBudgetCard,
   IBudgetCardWithValues,
@@ -7,8 +10,6 @@ import {
   IBudgetPeriodType,
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { MatDialog } from '@angular/material/dialog';
-import { _wait } from '@picsa/utils';
 
 const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
   { type: 'activities', label: 'Activities' },
@@ -110,9 +111,12 @@ export class BudgetEditorComponent {
     this.loadEditorData();
   }
 
-  // the store already knows what period and type it is, so just pass the updated values
-  // back up to save
+  // the store already knows what period and type it is, so just pass the updated values to save
   onEditorChange(values: IBudgetCardWithValues[], type: IBudgetPeriodType) {
     this.store.saveEditor(values, type);
+    // HACK - fix change detection issue for produceConsumed cards
+    if (type === 'produceConsumed') {
+      this.data.produceConsumed = values;
+    }
   }
 }
