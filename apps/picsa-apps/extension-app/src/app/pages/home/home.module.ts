@@ -1,14 +1,14 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
-import { HomePage } from './home.page';
-import { MobxAngularModule } from 'mobx-angular';
+import { RouterModule,Routes } from '@angular/router';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+import { MobxAngularModule } from 'mobx-angular';
+
 import { ComponentsModule } from '../../components/components.module';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
-import { PicsaCommonComponentsModule } from '@picsa/components';
+import { HomePage } from './home.page';
 
 const routes: Routes = [
   {

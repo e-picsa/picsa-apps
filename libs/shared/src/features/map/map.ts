@@ -1,13 +1,14 @@
 import {
   Component,
+  EventEmitter,
   Input,
   Output,
-  EventEmitter,
   ViewEncapsulation,
 } from '@angular/core';
+import type { Feature, GeoJsonObject, Geometry } from 'geojson';
 import * as L from 'leaflet';
+
 import * as GEOJSON from './geoJson';
-import type { GeoJsonObject, Feature, Geometry } from 'geojson';
 
 @Component({
   selector: 'picsa-map',

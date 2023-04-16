@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
-
-import { DomSanitizer } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const COMPONENTS = [
   MatButtonModule,

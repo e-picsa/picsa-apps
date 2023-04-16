@@ -1,4 +1,4 @@
-import { OnDestroy, Injectable } from '@angular/core';
+import { Injectable,OnDestroy } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationService } from '@picsa/configuration/src';

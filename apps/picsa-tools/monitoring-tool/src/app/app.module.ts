@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-
+// import { MonitoringMaterialModule } from './material.module';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 import {
   PicsaDbModule,
   PicsaTranslateModule,
@@ -11,8 +12,6 @@ import {
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-// import { MonitoringMaterialModule } from './material.module';
-import { PicsaCommonComponentsModule } from '@picsa/components';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [

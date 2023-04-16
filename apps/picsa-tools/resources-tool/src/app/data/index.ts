@@ -7,10 +7,10 @@ import {
   IResourceYoutube,
 } from '../models';
 import CROPS from './crops';
+import { GENDER_RESOURCES } from './gender';
+import PICSA_RESOURCES from './picsa';
 import WEATHER from './weather';
 import WORKSHOPS from './workshops';
-import PICSA_RESOURCES from './picsa';
-import { GENDER_RESOURCES } from './gender';
 
 const byId: { [id: string]: IResource } = {
   ...CROPS,

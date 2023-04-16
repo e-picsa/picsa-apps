@@ -1,12 +1,13 @@
-import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
+import { APP_VERSION } from '@picsa/environments';
+import { generateDBMeta } from '@picsa/shared/services/core/db';
+
 import {
   // IBudgetPeriodMeta,
   IBudget,
   IBudgetPeriodData,
   IBudgetPeriodType,
 } from '../models/budget-tool.models';
-import { generateDBMeta } from '@picsa/shared/services/core/db';
-import { APP_VERSION } from '@picsa/environments';
+import { BUDGET_API_VERSION } from '../utils/budget.upgrade';
 
 export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
   activities: [],

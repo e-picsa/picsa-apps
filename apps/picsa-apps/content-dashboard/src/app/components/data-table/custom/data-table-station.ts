@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { PicsaDataTable } from '../data-table';
 import { IChartSummary_V2 } from '@picsa/models';
+
+import { PicsaDataTable } from '../data-table';
 
 @Component({
   // tslint:disable component-selector

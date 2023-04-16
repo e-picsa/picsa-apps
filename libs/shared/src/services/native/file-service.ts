@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
-
 import { Platform } from '@ionic/angular';
-import MIMETYPES from '../../data/mimetypes';
+import { APP_VERSION } from '@picsa/environments';
 import { BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { APP_VERSION } from '@picsa/environments';
+
+import MIMETYPES from '../../data/mimetypes';
 
 declare const cordova: any;
 

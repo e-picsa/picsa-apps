@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IBudgetCardWithValues, IBudgetCard, IBudgetCardType } from '../../../models/budget-tool.models';
+import { Component, EventEmitter,Input, Output } from '@angular/core';
+import { ANIMATION_DELAYED,FadeInOut } from '@picsa/shared/animations';
+
+import { IBudgetCard, IBudgetCardType,IBudgetCardWithValues } from '../../../models/budget-tool.models';
 import { BudgetStore } from '../../../store/budget.store';
-import { FadeInOut, ANIMATION_DELAYED } from '@picsa/shared/animations';
 
 @Component({
   selector: 'budget-cell-editor-card-select',

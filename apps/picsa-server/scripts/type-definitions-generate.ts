@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
-import path from 'path';
 import Parse from 'parse/node';
+import path from 'path';
+
 import { PATHS } from './paths';
 import { initializeParseServer } from './utils';
 

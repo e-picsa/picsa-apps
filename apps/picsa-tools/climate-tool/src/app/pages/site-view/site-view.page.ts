@@ -1,23 +1,22 @@
-import { DomPortal, Portal } from '@angular/cdk/portal';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { DomPortal, Portal } from '@angular/cdk/portal';
 import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ChangeDetectorRef,
-  ViewChild,
-  ElementRef,
   AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { PicsaCommonComponentsService } from '@picsa/components/src';
-
-import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
+import { ClimateChartService } from '../../services/climate-chart.service';
 
 @Component({
   selector: 'climate-site-view',

@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Subject } from 'rxjs';
+
 import { IUser, IUserGroup } from '../../models/models';
 import { UserStore } from '../../store/user.store';
 

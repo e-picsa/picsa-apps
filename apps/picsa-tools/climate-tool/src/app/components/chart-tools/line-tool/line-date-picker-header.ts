@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import {
   DateAdapter,
-  MatDateFormats,
   MAT_DATE_FORMATS,
+  MatDateFormats,
 } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
 import { Subject, takeUntil } from 'rxjs';

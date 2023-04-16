@@ -1,5 +1,6 @@
-import * as generatedSchema from '../../generated/schema';
 import Parse from 'parse/node';
+
+import * as generatedSchema from '../../generated/schema';
 import { PATHS } from '../paths';
 import { populateEnv } from './cli.utils';
 

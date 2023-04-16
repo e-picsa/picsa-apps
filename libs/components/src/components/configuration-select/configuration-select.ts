@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfigurationSelectDialog } from './configuration-select-dialog';
 import { ConfigurationService } from '@picsa/configuration/src';
+
+import { ConfigurationSelectDialog } from './configuration-select-dialog';
 
 @Component({
   selector: 'picsa-configuration-select',

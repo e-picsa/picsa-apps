@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+
 import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
-import { IPicsaDialogData, IPicsaDialogConfig } from './dialog.models';
+import { IPicsaDialogConfig,IPicsaDialogData } from './dialog.models';
 
 @Injectable({
   providedIn: 'root',

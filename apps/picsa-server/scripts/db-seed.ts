@@ -1,8 +1,8 @@
+import fs from 'fs-extra';
 import Parse from 'parse/node';
 import path from 'path';
-import fs from 'fs-extra';
-import { PATHS } from './paths';
 
+import { PATHS } from './paths';
 import { initializeParseServer } from './utils';
 import { recursiveFindByExtension } from './utils/file.utils';
 

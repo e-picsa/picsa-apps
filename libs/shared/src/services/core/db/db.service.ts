@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { IDBEndpoint, IDBDoc } from '@picsa/models';
+import { ENVIRONMENT } from '@picsa/environments';
+import { IDBDoc,IDBEndpoint } from '@picsa/models';
+
 import { DBCacheService } from './_cache.db';
 import { DBServerService } from './_server.db';
 import { AbstractDBService } from './abstract.db';
 import { DBSyncService } from './sync.service';
-import { ENVIRONMENT } from '@picsa/environments';
 
 type IDBSource = 'cache' | 'server';
 /************************************************************************

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FirebaseCrashlytics } from '@capacitor-community/firebase-crashlytics';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
+import { FirebaseCrashlytics } from '@capacitor-community/firebase-crashlytics';
 
 @Injectable({
   providedIn: 'root',

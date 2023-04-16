@@ -3,6 +3,7 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+
 import { AppOpenPromptComponent } from './app-open-prompt.component';
 
 export class DeepLinksServiceConfig {

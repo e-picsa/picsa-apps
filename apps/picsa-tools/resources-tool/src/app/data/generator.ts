@@ -1,7 +1,7 @@
 import {
-  IResourceLink,
   IResourceCollection,
   IResourceFile,
+  IResourceLink,
   IResourceYoutube,
 } from '../models';
 

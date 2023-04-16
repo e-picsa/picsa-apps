@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ALL_ENVIRONMENTS } from '@picsa/environments';
 import type { IAppMeta } from '@picsa/models/src';
+
 import { PicsaDbService } from './db';
 
 @Injectable({ providedIn: 'root' })

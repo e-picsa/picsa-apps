@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
-import { DataPoint } from 'c3';
-
-import { getDayOfYear } from 'date-fns';
-import { firstValueFrom, Subject } from 'rxjs';
-
 import type {
   IChartConfig,
   IChartMeta,
   IStationData,
   IStationMeta,
 } from '@picsa/models';
+import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PrintProvider } from '@picsa/shared/services/native';
 import { _wait } from '@picsa/utils';
+import { DataPoint } from 'c3';
+import { getDayOfYear } from 'date-fns';
+import { firstValueFrom, Subject } from 'rxjs';
 
+import * as DATA from '../data';
 import { IClimateView } from '../models';
 import {
   DATA_RANGES_DEFAULT,
@@ -23,8 +23,6 @@ import {
   seriesColors,
 } from '../models/chart-data.models';
 import { ClimateDataService } from './climate-data.service';
-import * as DATA from '../data';
-import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 
 const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
 

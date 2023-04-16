@@ -1,15 +1,16 @@
+import { HttpClient } from '@angular/common/http';
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
   OnDestroy,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
+  OnInit,
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
-import { IBudgetCard } from '../../../models/budget-tool.models';
+import { DomSanitizer, SafeHtml,SafeUrl } from '@angular/platform-browser';
 import { catchError, firstValueFrom } from 'rxjs';
+
+import { IBudgetCard } from '../../../models/budget-tool.models';
 
 @Component({
   selector: 'budget-card-image',

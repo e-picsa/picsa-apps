@@ -1,5 +1,5 @@
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Injectable } from '@angular/core';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
 type IToolName = 'line' | 'terciles';
 

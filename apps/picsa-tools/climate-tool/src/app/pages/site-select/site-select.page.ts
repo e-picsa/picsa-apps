@@ -1,14 +1,15 @@
-import { Component, ViewChild, NgZone } from '@angular/core';
-import { HARDCODED_STATIONS } from '../../data';
+import { Component, NgZone,ViewChild } from '@angular/core';
+import { ActivatedRoute,Router } from '@angular/router';
+import { ConfigurationService } from '@picsa/configuration';
 import { IStationMeta } from '@picsa/models';
 import {
-  PicsaMapComponent,
   IBasemapOptions,
-  IMapOptions,
   IMapMarker,
+  IMapOptions,
+  PicsaMapComponent,
 } from '@picsa/shared/features/map/map';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ConfigurationService } from '@picsa/configuration';
+
+import { HARDCODED_STATIONS } from '../../data';
 
 @Component({
   selector: 'climate-site-select',

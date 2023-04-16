@@ -1,6 +1,7 @@
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { fromError as getStacktraceFromError } from 'stacktrace-js';
+
 import { CrashlyticsService } from '../native/crashlytics.service';
 
 @Injectable({

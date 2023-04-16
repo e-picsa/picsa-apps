@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+
 import { IProbabilities } from '../../../models';
 
 @Component({

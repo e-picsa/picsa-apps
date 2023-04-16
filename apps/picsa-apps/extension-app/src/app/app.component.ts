@@ -2,14 +2,14 @@
 import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
-import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
-import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
-import { ENVIRONMENT } from '@picsa/environments';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { CrashlyticsService } from '@picsa/shared/services/native/crashlytics.service';
+import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
+import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
+import { ENVIRONMENT } from '@picsa/environments';
+import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
+import { CrashlyticsService } from '@picsa/shared/services/native/crashlytics.service';
 
 @Component({
   selector: 'picsa-root',

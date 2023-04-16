@@ -1,21 +1,21 @@
+import { arrayToHashmap } from '@picsa/utils';
 import { spawnSync } from 'child_process';
-
 // import { spawnSync } from 'child_process';
 import {
   emptyDirSync,
   ensureDirSync,
   existsSync,
+  readdirSync,
   readJSONSync,
   readJsonSync,
-  readdirSync,
   rmSync,
   writeFileSync,
 } from 'fs-extra';
 import { tmpdir } from 'os';
 import { resolve } from 'path';
-import { HARDCODED_DATA, EXTRACTED_PROJECTS } from './hardcoded';
+
+import { EXTRACTED_PROJECTS,HARDCODED_DATA } from './hardcoded';
 import { ITranslationEntry } from './types';
-import { arrayToHashmap } from '@picsa/utils';
 
 const I18N_DIR = resolve(__dirname, '../');
 const PROJECT_ROOT = resolve(I18N_DIR, '../../');

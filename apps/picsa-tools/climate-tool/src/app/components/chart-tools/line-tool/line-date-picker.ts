@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import {
-  MatDateRangeSelectionStrategy,
   DateRange,
+  MatDateRangeSelectionStrategy,
 } from '@angular/material/datepicker';
 
 @Injectable()

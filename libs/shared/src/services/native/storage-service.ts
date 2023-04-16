@@ -1,14 +1,16 @@
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { Capacitor } from '@capacitor/core';
 import {
-  Filesystem,
   Directory,
   Encoding,
   FileInfo,
+  Filesystem,
   StatResult,
 } from '@capacitor/filesystem';
-import { Capacitor } from '@capacitor/core';
-import { catchError, debounceTime } from 'rxjs/operators';
+import { APP_VERSION } from '@picsa/environments';
+import write_blob from 'capacitor-blob-writer';
 import {
   BehaviorSubject,
   firstValueFrom,
@@ -16,9 +18,7 @@ import {
   Subject,
   Subscription,
 } from 'rxjs';
-import { HttpClient, HttpEventType } from '@angular/common/http';
-import { APP_VERSION } from '@picsa/environments';
-import write_blob from 'capacitor-blob-writer';
+import { catchError, debounceTime } from 'rxjs/operators';
 
 interface IStorageFileEntry {
   md5Checksum?: string;

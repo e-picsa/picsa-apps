@@ -1,8 +1,9 @@
 // similar code in core, however this is known working implementation
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ModuleWithProviders,NgModule } from '@angular/core';
+import { TranslateLoader,TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
 import { PicsaTranslateService } from './translate.service';
 
 // repeat main app.module loader to allow lazy-loaded modules import of translate

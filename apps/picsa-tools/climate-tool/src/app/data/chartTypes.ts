@@ -1,4 +1,5 @@
 import { IChartMeta } from '@picsa/models';
+
 import { IClimateView } from '../models';
 
 const CHART_TYPES: (IChartMeta & IClimateView)[] = [

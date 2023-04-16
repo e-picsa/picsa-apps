@@ -1,10 +1,10 @@
 import { readdirSync } from 'fs';
-import path from 'path';
 import Parse from 'parse/node';
+import path from 'path';
 import prompts from 'prompts';
+
 import { ClassLevelPermissions, IMigration } from '../models';
 import { PATHS } from './paths';
-
 import { typeDefinitionsGenerate } from './type-definitions-generate';
 import { initializeParseServer } from './utils';
 

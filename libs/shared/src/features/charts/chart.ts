@@ -1,14 +1,14 @@
 import {
   Component,
-  ViewEncapsulation,
-  Input,
   ElementRef,
+  HostListener,
+  Input,
   SimpleChanges,
   ViewChild,
-  HostListener,
+  ViewEncapsulation,
 } from '@angular/core';
-import * as c3 from 'c3';
 import { IChartConfig } from '@picsa/models';
+import * as c3 from 'c3';
 
 @Component({
   selector: 'picsa-chart',

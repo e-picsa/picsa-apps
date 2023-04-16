@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-
 /**
  * TODO - cordova network plugin uses vpn which requires extra permissions
  * Should refactor if required to use capacitor netowrk
  */
 // import { Network } from '@awesome-cordova-plugins/network/ngx';
-
 import { Platform } from '@ionic/angular';
 
 @Injectable({ providedIn: 'root' })

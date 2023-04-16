@@ -1,8 +1,8 @@
-import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
+import { Component, NgZone, OnDestroy } from '@angular/core';
+import { NavigationEnd,Router } from '@angular/router';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({

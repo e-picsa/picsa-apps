@@ -1,10 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule,Routes } from '@angular/router';
 import { PicsaMapModule } from '@picsa/shared/features/map';
-import { SiteSelectPage } from './site-select.page';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
+
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
+import { SiteSelectPage } from './site-select.page';
 
 const routes: Routes = [
   {

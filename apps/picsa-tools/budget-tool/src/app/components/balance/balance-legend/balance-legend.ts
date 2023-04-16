@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { BudgetStore } from '../../../store/budget.store';
-import { IBudgetValueCounters } from '../../../models/budget-tool.models';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+
+import { IBudgetValueCounters } from '../../../models/budget-tool.models';
+import { BudgetStore } from '../../../store/budget.store';
 
 @Component({
   selector: 'budget-balance-legend',

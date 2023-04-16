@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import {
+  LottieModule,
   provideCacheableAnimationLoader,
   provideLottieOptions,
-  LottieModule,
 } from 'ngx-lottie';
+
 import { PicsaAnimationComponent } from './animation.component';
 
 @NgModule({

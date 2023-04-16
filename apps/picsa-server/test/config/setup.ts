@@ -4,16 +4,18 @@
  * */
 import { register as tsNodeRegister } from 'ts-node';
 tsNodeRegister({ transpileOnly: true });
-import { compilerOptions } from '../../../../tsconfig.base.json';
 import { register as tsConfigRegister } from 'tsconfig-paths';
+
+import { compilerOptions } from '../../../../tsconfig.base.json';
 tsConfigRegister({
   baseUrl: './',
   paths: compilerOptions.paths,
 });
 
+import { populateEnv } from '@picsa/scripts';
 import { commandSync } from 'execa';
 import path from 'path';
-import { populateEnv } from '@picsa/scripts';
+
 import { isServerReady, waitForServerReady } from './common';
 import { stopTestServer } from './teardown';
 

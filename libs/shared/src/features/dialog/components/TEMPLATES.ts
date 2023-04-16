@@ -1,12 +1,13 @@
-import { IPicsaDialogData, IPicsaDialogConfig } from '../dialog.models';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { ComponentType } from '@angular/cdk/portal';
 import { TemplateRef } from '@angular/core';
+import { MatDialogConfig } from '@angular/material/dialog';
+
+import { IPicsaDialogConfig,IPicsaDialogData } from '../dialog.models';
 import {
   PicsaActionDialog,
   PicsaDialogComponent,
   PicsaSelectDialog,
 } from './dialog';
-import { ComponentType } from '@angular/cdk/portal';
 
 // defaults are applied to all unless overwritten
 const PICSA_DIALOG_DEFAULTS: MatDialogConfig = {

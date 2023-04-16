@@ -1,8 +1,8 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { ENVIRONMENT } from '@picsa/environments';
 
 import { AppModule } from './app/app.module';
-import { ENVIRONMENT } from '@picsa/environments';
 
 if (ENVIRONMENT.production) {
   enableProdMode();

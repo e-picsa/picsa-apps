@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { IChartConfig, IChartMeta } from '@picsa/models/src';
+
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import {
   calcPercentile,

@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
-import { action } from 'mobx-angular';
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
+import { ConfigurationService } from '@picsa/configuration';
 import {
   IStorageFilesHashmap,
   NativeStorageService,
 } from '@picsa/shared/services/native/storage-service';
-import { Capacitor } from '@capacitor/core';
-import { Browser } from '@capacitor/browser';
+import { action } from 'mobx-angular';
+import { lastValueFrom } from 'rxjs';
+
 import RESOURCES from '../data';
 import {
   IResource,
-  IResourceFile,
   IResourceCollection,
+  IResourceFile,
   IResourceItemBase,
 } from '../models';
-import { ConfigurationService } from '@picsa/configuration';
-import { lastValueFrom } from 'rxjs';
 
 /****************************************************************************************
  *  The resources store offers methods to list, download and open resources.

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { IChartMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
+
 import { IClimateView } from '../../models';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateToolService } from '../../services/climate-tool.service';

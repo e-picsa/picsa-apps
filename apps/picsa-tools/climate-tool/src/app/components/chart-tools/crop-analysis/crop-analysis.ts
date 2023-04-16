@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter,OnInit, Output } from '@angular/core';
+import { ActivatedRoute,Router } from '@angular/router';
 import { ICropRequirement } from '@picsa/models';
+
 import * as DATA from '../../../data';
-import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'climate-crop-analysis',
