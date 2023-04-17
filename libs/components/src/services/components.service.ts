@@ -40,4 +40,9 @@ export class PicsaCommonComponentsService {
     };
     this.breadcrumbOptions$.next(updated);
   }
+
+  public back() {
+    // access to back implementation provided by back-button component (will be overridden)
+    console.warn('No back method specified');
+  }
 }
