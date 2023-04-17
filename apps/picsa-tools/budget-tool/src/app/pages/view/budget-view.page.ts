@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -16,6 +15,7 @@ import { BudgetStore } from '../../store/budget.store';
   styleUrls: ['./budget-view.page.scss'],
   animations: [FadeInOut({ inDelay: 200 }), OpenClosed, FlyInOut(ANIMATION_DEFAULTS_Y)],
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetViewPage implements OnInit, OnDestroy {
   loader: HTMLIonLoadingElement;
   isEditorOpen = false;
@@ -24,7 +24,6 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     public store: BudgetStore,
     private componentsService: PicsaCommonComponentsService,
     private dialog: MatDialog,
@@ -53,7 +52,8 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   public async handleEditorNext() {
     // use back-navigation to return to budget view without editor open
-    this.location.back();
+    // use component back method to avoid issues on android with location.back
+    this.componentsService.back();
   }
 
   /** Subscribe to query param changes and update headers as required */

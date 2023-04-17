@@ -1,34 +1,34 @@
 [
-  {
-    "pkg": "@capacitor/app",
-    "classpath": "com.capacitorjs.plugins.app.AppPlugin"
-  },
-  {
-    "pkg": "@capacitor/browser",
-    "classpath": "com.capacitorjs.plugins.browser.BrowserPlugin"
-  },
-  {
-    "pkg": "@capacitor/device",
-    "classpath": "com.capacitorjs.plugins.device.DevicePlugin"
-  },
-  {
-    "pkg": "@capacitor/filesystem",
-    "classpath": "com.capacitorjs.plugins.filesystem.FilesystemPlugin"
-  },
-  {
-    "pkg": "capacitor-blob-writer",
-    "classpath": "com.equimaps.capacitorblobwriter.BlobWriter"
-  },
-  {
-    "pkg": "@capacitor-community/firebase-analytics",
-    "classpath": "com.getcapacitor.community.firebaseanalytics.FirebaseAnalytics"
-  },
-  {
-    "pkg": "@capacitor-community/firebase-crashlytics",
-    "classpath": "com.getcapacitor.community.firebasecrashlytics.FirebaseCrashlyticsPlugin"
-  },
-  {
-    "pkg": "@capacitor-firebase/performance",
-    "classpath": "io.capawesome.capacitorjs.plugins.firebase.performance.FirebasePerformancePlugin"
-  }
+	{
+		"pkg": "@capacitor/app",
+		"classpath": "com.capacitorjs.plugins.app.AppPlugin"
+	},
+	{
+		"pkg": "@capacitor/browser",
+		"classpath": "com.capacitorjs.plugins.browser.BrowserPlugin"
+	},
+	{
+		"pkg": "@capacitor/device",
+		"classpath": "com.capacitorjs.plugins.device.DevicePlugin"
+	},
+	{
+		"pkg": "@capacitor/filesystem",
+		"classpath": "com.capacitorjs.plugins.filesystem.FilesystemPlugin"
+	},
+	{
+		"pkg": "capacitor-blob-writer",
+		"classpath": "com.equimaps.capacitorblobwriter.BlobWriter"
+	},
+	{
+		"pkg": "@capacitor-community/firebase-analytics",
+		"classpath": "com.getcapacitor.community.firebaseanalytics.FirebaseAnalytics"
+	},
+	{
+		"pkg": "@capacitor-community/firebase-crashlytics",
+		"classpath": "com.getcapacitor.community.firebasecrashlytics.FirebaseCrashlyticsPlugin"
+	},
+	{
+		"pkg": "@capacitor-firebase/performance",
+		"classpath": "io.capawesome.capacitorjs.plugins.firebase.performance.FirebasePerformancePlugin"
+	}
 ]

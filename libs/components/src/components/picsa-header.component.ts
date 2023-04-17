@@ -16,9 +16,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   selector: 'picsa-header',
   template: `
     <header [attr.data-style]="style">
-      <back-button
-        [style.visibility]="hideBackButton ? 'hidden' : 'visible'"
-      ></back-button>
+      <back-button [style.visibility]="hideBackButton ? 'hidden' : 'visible'"></back-button>
       <h1>
         <span>{{ title | translate }}</span>
       </h1>
@@ -73,8 +71,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
           // if no options specified title will continue from previous, header will revert
           let title = '';
           let headerStyle = 'primary';
-          const snapshot: RouterStateSnapshot =
-            this.router.routerState.snapshot;
+          const snapshot: RouterStateSnapshot = this.router.routerState.snapshot;
           let route: ActivatedRouteSnapshot | undefined = snapshot.root;
           while (route !== undefined) {
             title = this.titleStrategy.getResolvedTitleForRoute(route) ?? title;

@@ -1,17 +1,17 @@
 import { Location } from '@angular/common';
 import { Component, NgZone, OnDestroy } from '@angular/core';
-import { NavigationEnd,Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Subject, takeUntil } from 'rxjs';
+
+import { PicsaCommonComponentsService } from '../services/components.service';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'back-button',
   template: `
-    <button *ngIf="showButton" mat-button (click)="back()" color="white">
-      <mat-icon>arrow_back</mat-icon>Back
-    </button>
+    <button *ngIf="showButton" mat-button (click)="back()" color="white"><mat-icon>arrow_back</mat-icon>Back</button>
   `,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
@@ -24,27 +24,34 @@ export class BackButton implements OnDestroy {
   constructor(
     private router: Router,
     private location: Location,
-    private zone: NgZone
+    private zone: NgZone,
+    componentService: PicsaCommonComponentsService
   ) {
+    // provide access to back method through component service
+    componentService.back = () => this.back();
+
     this.subscribeToRouteChanges();
+
     if (Capacitor.isNativePlatform()) {
       this.handleNativeBackButtonPress();
     }
   }
 
-  checkButtonState(url: string) {
+  public back() {
+    return Capacitor.isNativePlatform() ? this.handleNativeBack() : this.handleWebBack();
+  }
+
+  private checkButtonState(url: string) {
     this.showButton = url !== '/';
   }
 
   private subscribeToRouteChanges() {
-    this.router.events
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((e) => {
-        if (e instanceof NavigationEnd) {
-          this.history.push(e.urlAfterRedirects);
-          this.checkButtonState(e.urlAfterRedirects);
-        }
-      });
+    this.router.events.pipe(takeUntil(this.componentDestroyed$)).subscribe((e) => {
+      if (e instanceof NavigationEnd) {
+        this.history.push(e.urlAfterRedirects);
+        this.checkButtonState(e.urlAfterRedirects);
+      }
+    });
   }
 
   private async handleNativeBackButtonPress() {
@@ -54,12 +61,6 @@ export class BackButton implements OnDestroy {
         this.zone.run(() => this.handleNativeBack());
       });
     }
-  }
-
-  back() {
-    return Capacitor.isNativePlatform()
-      ? this.handleNativeBack()
-      : this.handleWebBack();
   }
 
   /**
