@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* auto-generated angular directive proxies */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone } from '@angular/core';
-import { Components } from '@picsa/webcomponents';
-
 import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
+
+import { Components } from '@picsa/webcomponents';
 
 
 
