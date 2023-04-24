@@ -470,10 +470,6 @@
     "tool": "budget"
   },
   {
-    "text": "Next",
-    "tool": "budget"
-  },
-  {
     "text": "No outputs produce for consumption",
     "tool": "budget"
   },
@@ -630,10 +626,6 @@
     "tool": "climate"
   },
   {
-    "text": "Close",
-    "tool": "climate"
-  },
-  {
     "text": "Definition",
     "tool": "climate"
   },
@@ -768,6 +760,134 @@
   {
     "text": "Forms",
     "tool": "monitoring"
+  },
+  {
+    "text": "Add New Option",
+    "tool": "option"
+  },
+  {
+    "text": "Add benefit",
+    "tool": "option"
+  },
+  {
+    "text": "Back",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits and who",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits and who ",
+    "tool": "option"
+  },
+  {
+    "text": "Close",
+    "tool": "option"
+  },
+  {
+    "text": "Delete",
+    "tool": "option"
+  },
+  {
+    "text": "Enter the practice for this option",
+    "tool": "option"
+  },
+  {
+    "text": "Female",
+    "tool": "option"
+  },
+  {
+    "text": "Finish",
+    "tool": "option"
+  },
+  {
+    "text": "High RF",
+    "tool": "option"
+  },
+  {
+    "text": "High(Rf)",
+    "tool": "option"
+  },
+  {
+    "text": "Investment",
+    "tool": "option"
+  },
+  {
+    "text": "Investment in terms of money and time",
+    "tool": "option"
+  },
+  {
+    "text": "Low RF",
+    "tool": "option"
+  },
+  {
+    "text": "Low(Rf)",
+    "tool": "option"
+  },
+  {
+    "text": "Male",
+    "tool": "option"
+  },
+  {
+    "text": "Mid RF",
+    "tool": "option"
+  },
+  {
+    "text": "Mid(Rf)",
+    "tool": "option"
+  },
+  {
+    "text": "Money",
+    "tool": "option"
+  },
+  {
+    "text": "Next",
+    "tool": "option"
+  },
+  {
+    "text": "Perfomence",
+    "tool": "option"
+  },
+  {
+    "text": "Performence in high, mid and low RF (rainfall)",
+    "tool": "option"
+  },
+  {
+    "text": "Practice",
+    "tool": "option"
+  },
+  {
+    "text": "Risk",
+    "tool": "option"
+  },
+  {
+    "text": "Risk of practice (disadvantage)",
+    "tool": "option"
+  },
+  {
+    "text": "Risks",
+    "tool": "option"
+  },
+  {
+    "text": "Time",
+    "tool": "option"
+  },
+  {
+    "text": "Time (months)",
+    "tool": "option"
+  },
+  {
+    "text": "Time to start benefiting",
+    "tool": "option"
+  },
+  {
+    "text": "Who does it",
+    "tool": "option"
+  },
+  {
+    "text": "Who does the practice",
+    "tool": "option"
   },
   {
     "text": "Collection not found",

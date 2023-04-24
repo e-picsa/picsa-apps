@@ -13,7 +13,7 @@
       <!-- gender Column -->
       <ng-container matColumnDef="gender">
         <th mat-header-cell *matHeaderCellDef>{{"Who does it" | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.gender.join(',') }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.gender.join(',') | translate }}</td>
       </ng-container>
 
       <!-- Benefits Column -->
@@ -34,9 +34,9 @@
         <th mat-header-cell *matHeaderCellDef>{{"Perfomence" | translate}}</th>
         <td mat-cell *matCellDef="let element">
           <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>High(Rf): {{ element.performance.highRf  | translate }}</li>
-            <li>Mid(Rf): {{ element.performance.midRf  | translate }}</li>
-            <li>low(Rf): {{ element.performance.lowRf | translate }}</li>
+            <li>{{"High(Rf)"| translate}}: {{ element.performance.highRf  | translate }}</li>
+            <li>{{ "Mid(Rf)" | translate}}: {{ element.performance.midRf  | translate }}</li>
+            <li>{{ "Low(Rf)" | translate}} : {{ element.performance.lowRf | translate }}</li>
           </ol>
         </td>
       </ng-container>
@@ -46,15 +46,15 @@
         <th mat-header-cell *matHeaderCellDef>{{"Investment" | translate}}</th>
         <td mat-cell *matCellDef="let element">
           <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>Money: {{ element.investment.money | translate }}</li>
-            <li>Time: {{ element.investment.time | translate }}</li>
+            <li>{{ "Money" | translate}} : {{ element.investment.money | translate }}</li>
+            <li>{{ "Time" | translate}} : {{ element.investment.time | translate }}</li>
           </ol>
         </td>
       </ng-container>
 
       <!-- Time Column -->
       <ng-container matColumnDef="time">
-        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <th mat-header-cell *matHeaderCellDef>{{"Time" | translate}}</th>
         <td mat-cell *matCellDef="let element">{{ element.time | translate }}</td>
       </ng-container>
 
