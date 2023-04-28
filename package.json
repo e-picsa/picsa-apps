@@ -22,7 +22,7 @@
     "graph": "yarn nx graph",
     "cache:clear": "nx reset",
     "version": "ts-node ./tools/workflows/version.ts",
-    "i18n": "nx run i18n:build"
+    "i18n": "nx run i18n:build && nx run i18n:spellcheck"
   },
   "private": true,
   "dependencies": {
@@ -125,6 +125,7 @@
     "@typescript-eslint/parser": "5.36.1",
     "@vendure/ngx-translate-extract": "^8",
     "autoprefixer": "^10.4.0",
+    "cspell": "^6.31.1",
     "cypress": "^12.2.0",
     "dotenv": "^16.0.1",
     "dotenv-expand": "^8.0.3",
