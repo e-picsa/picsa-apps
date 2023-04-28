@@ -1,0 +1,22 @@
+{
+  "version": "0.2",
+  "language": "en-GB",
+  "ignorePaths": [
+    "node_modules/**",
+    "**/node_modules/**",
+    ".angular",
+    ".firebase",
+    ".github",
+    ".husky",
+    ".vscode",
+    ".yarn",
+    "deprecated",
+    "dist",
+    "tools",
+    "package.json",
+    "yarn-error.log",
+    "yarn.lock"
+  ],
+  "words": ["cowpeas", "e-picsa", "picsa", "sheller", "terciles"],
+  "flagWords": []
+}

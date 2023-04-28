@@ -462,15 +462,7 @@
     "tool": "budget"
   },
   {
-    "text": "Length",
-    "tool": "budget"
-  },
-  {
     "text": "Male Member",
-    "tool": "budget"
-  },
-  {
-    "text": "Next",
     "tool": "budget"
   },
   {
@@ -487,10 +479,6 @@
   },
   {
     "text": "Quantity",
-    "tool": "budget"
-  },
-  {
-    "text": "Save",
     "tool": "budget"
   },
   {
@@ -577,6 +565,11 @@
     "context": "chart"
   },
   {
+    "text": "Length",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
     "text": "Length of Season",
     "tool": "climate",
     "context": "chart"
@@ -627,10 +620,6 @@
   },
   {
     "text": "Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Close",
     "tool": "climate"
   },
   {
@@ -706,6 +695,26 @@
     "tool": "climate"
   },
   {
+    "text": "Back",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Next",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Save",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
     "text": "Select Country",
     "tool": "common"
   },
@@ -768,6 +777,130 @@
   {
     "text": "Forms",
     "tool": "monitoring"
+  },
+  {
+    "text": "Add New Option",
+    "tool": "option"
+  },
+  {
+    "text": "Add benefit",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits and who",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits and who ",
+    "tool": "option"
+  },
+  {
+    "text": "Delete",
+    "tool": "option"
+  },
+  {
+    "text": "Enter the practice for this option",
+    "tool": "option"
+  },
+  {
+    "text": "Female",
+    "tool": "option"
+  },
+  {
+    "text": "Finish",
+    "tool": "option"
+  },
+  {
+    "text": "Gender",
+    "tool": "option"
+  },
+  {
+    "text": "High RF",
+    "tool": "option"
+  },
+  {
+    "text": "High(Rf)",
+    "tool": "option"
+  },
+  {
+    "text": "Investment",
+    "tool": "option"
+  },
+  {
+    "text": "Investment in terms of money and time",
+    "tool": "option"
+  },
+  {
+    "text": "Low RF",
+    "tool": "option"
+  },
+  {
+    "text": "Low(Rf)",
+    "tool": "option"
+  },
+  {
+    "text": "Male",
+    "tool": "option"
+  },
+  {
+    "text": "Mid RF",
+    "tool": "option"
+  },
+  {
+    "text": "Mid(Rf)",
+    "tool": "option"
+  },
+  {
+    "text": "Money",
+    "tool": "option"
+  },
+  {
+    "text": "Performance",
+    "tool": "option"
+  },
+  {
+    "text": "Performance in high, mid and low RF (rainfall)",
+    "tool": "option"
+  },
+  {
+    "text": "Practice",
+    "tool": "option"
+  },
+  {
+    "text": "Risk",
+    "tool": "option"
+  },
+  {
+    "text": "Risk of practice (disadvantage)",
+    "tool": "option"
+  },
+  {
+    "text": "Risks",
+    "tool": "option"
+  },
+  {
+    "text": "Time",
+    "tool": "option"
+  },
+  {
+    "text": "Time (months)",
+    "tool": "option"
+  },
+  {
+    "text": "Time to start benefiting",
+    "tool": "option"
+  },
+  {
+    "text": "Who does it",
+    "tool": "option"
+  },
+  {
+    "text": "Who does the practice",
+    "tool": "option"
   },
   {
     "text": "Collection not found",

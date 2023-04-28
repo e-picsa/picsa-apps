@@ -15,7 +15,13 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-tools/option-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/picsa-tools/option-tool/src/favicon.ico", "apps/picsa-tools/option-tool/src/assets"],
+        "assets": ["apps/picsa-tools/option-tool/src/favicon.ico", "apps/picsa-tools/option-tool/src/assets",
+        {
+          "glob": "*.json",
+          "input": "libs/i18n/assets",
+          "output": "assets/i18n"
+        }
+        ],
         "styles": ["apps/picsa-tools/option-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
       },

@@ -1,30 +1,35 @@
 <div class="dialog-content">
-  <button class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">Close</button>
+  <button class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">
+    {{ 'Close' | translate }}
+  </button>
   <mat-stepper [linear]="isLinear" #stepper>
     <!-- Practice -->
     <mat-step matStepContent>
-      <ng-template matStepLabel>Practice</ng-template>
+      <ng-template matStepLabel>{{ 'Practice' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Enter the practice for this option</div>
+        <div class="StepTitle">{{ 'Enter the practice for this option' | translate }}</div>
         <div class="StepContent">
           <div class="form-group">
-            <label>Practice Name</label>
+            <label>{{ 'Practice' | translate }}</label>
             <input [(ngModel)]="practiceEntry" class="form-control" />
           </div>
         </div>
         <div>
-          <button mat-raised-button color="primary" [disabled]="!practiceEntry" matStepperNext>Next</button>
+          <button mat-raised-button color="primary" [disabled]="!practiceEntry" matStepperNext>
+            {{ 'Next' | translate }}
+          </button>
         </div>
         <button mat-stroked-button style="margin-top: 3em" (click)="promptDelete()" [disabled]="!practiceEntry">
-          <mat-icon name="delete">delete</mat-icon>Delete
+          <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
         </button>
       </div>
     </mat-step>
 
     <!-- Who does it -->
-    <mat-step matStepContent label="Gender ">
+    <mat-step matStepContent>
+      <ng-template matStepLabel>{{ 'Gender' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Who does the practice?</div>
+        <div class="StepTitle">{{ 'Who does the practice' | translate }}?</div>
         <div class="StepContent">
           <div class="genderDiv">
             <div
@@ -35,7 +40,7 @@
                 'background-color': gender.includes('female') ? 'wheat' : 'lightgray'
               }"
             >
-              Female
+              {{ 'Female' | translate }}
               <mat-icon svgIcon="picsa_options_female"></mat-icon>
             </div>
             <div
@@ -46,7 +51,7 @@
                 'background-color': gender.includes('male') ? 'wheat' : 'lightgray'
               }"
             >
-              Male
+              {{ 'Male' | translate }}
               <mat-icon svgIcon="picsa_options_male"></mat-icon>
             </div>
           </div>
@@ -55,16 +60,19 @@
           </div>
         </div>
         <div class="ButtonSection">
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-raised-button color="primary" [disabled]="!(gender.length > 0)" matStepperNext>Next</button>
+          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
+          <button mat-raised-button color="primary" [disabled]="!(gender.length > 0)" matStepperNext>
+            {{ 'Next' | translate }}
+          </button>
         </div>
       </div>
     </mat-step>
 
     <!-- Benefits -->
-    <mat-step matStepContent label="Benefits ">
+    <mat-step matStepContent>
+      <ng-template matStepLabel>{{ 'Benefits' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Benefits and who?</div>
+        <div class="StepTitle">{{ 'Benefits and who ' | translate }} ?</div>
         <div class="StepContent">
           <div style="margin-bottom: 1.5rem; padding: 2px; margin-top: 2rem">
             <div *ngFor="let benefit of benefits; index as i">
@@ -78,7 +86,7 @@
                     'background-color': benefit.beneficiary.includes('female') ? 'wheat' : 'lightgray'
                   }"
                 >
-                  Female
+                  {{ 'Female' | translate }}
                   <mat-icon svgIcon="picsa_options_female"></mat-icon>
                 </div>
                 <div
@@ -89,7 +97,7 @@
                     'background-color': benefit.beneficiary.includes('male') ? 'wheat' : 'lightgray'
                   }"
                 >
-                  Male
+                  {{ 'Male' | translate }}
                   <mat-icon svgIcon="picsa_options_male"></mat-icon>
                 </div>
                 <button
@@ -103,21 +111,24 @@
               </div>
             </div>
             <button style="float: left; margin-top: 7px" (click)="handleMoreBenefits()" mat-button>
-              + Add benefit
+              + {{ 'Add benefit' | translate }}
             </button>
           </div>
         </div>
         <div class="ButtonSection">
-          <button matStepperPrevious mat-button>Back</button>
-          <button mat-raised-button color="primary" [disabled]="!(benefits.length > 0)" matStepperNext>Next</button>
+          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
+          <button mat-raised-button color="primary" [disabled]="!(benefits.length > 0)" matStepperNext>
+            {{ 'Next' | translate }}
+          </button>
         </div>
       </div>
     </mat-step>
 
     <!-- Performance -->
-    <mat-step matStepContent label="Perfomence">
+    <mat-step matStepContent>
+      <ng-template matStepLabel>{{ 'Performance' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Performence in high, mid and low RF (rainfall)?</div>
+        <div class="StepTitle">{{ 'Performance in high, mid and low RF (rainfall)' | translate }}?</div>
         <div class="StepContent">
           <mat-icon style="color: #4fc3f7; font-size: 27px">water_drop</mat-icon>
           <div
@@ -132,7 +143,7 @@
             "
           >
             <div class="performenceItem">
-              <div style="font-weight: 700">High RF</div>
+              <div style="font-weight: 700">{{ 'High RF' | translate }}</div>
               <select
                 style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
                 [(ngModel)]="perfomanceValues.highRf"
@@ -143,7 +154,7 @@
               </select>
             </div>
             <div class="performenceItem">
-              <div style="font-weight: 700">Mid RF</div>
+              <div style="font-weight: 700">{{ 'Mid RF' | translate }}</div>
               <select
                 style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
                 [(ngModel)]="perfomanceValues.midRf"
@@ -154,7 +165,7 @@
               </select>
             </div>
             <div class="performenceItem">
-              <div style="font-weight: 700">Low RF</div>
+              <div style="font-weight: 700">{{ 'Low RF' | translate }}</div>
               <select
                 style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
                 [(ngModel)]="perfomanceValues.lowRf"
@@ -167,23 +178,24 @@
           </div>
         </div>
         <div class="ButtonSection">
-          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
           <button
             mat-raised-button
             color="primary"
             [disabled]="!(perfomanceValues.lowRf && perfomanceValues.midRf && perfomanceValues.highRf)"
             matStepperNext
           >
-            Next
+            {{ 'Next' | translate }}
           </button>
         </div>
       </div>
     </mat-step>
 
     <!-- Investment -->
-    <mat-step matStepContent label="Investment">
+    <mat-step matStepContent>
+      <ng-template matStepLabel>{{ 'Investment' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Investment in terms of money and time?</div>
+        <div class="StepTitle">{{ 'Investment in terms of money and time' | translate }}?</div>
         <div class="StepContent">
           <div
             style="
@@ -198,7 +210,7 @@
           >
             <div class="performenceItem">
               <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
-                Money
+                {{ 'Money' | translate }}
                 <mat-icon style="color: #8a2644; font-size: 20px">attach_money</mat-icon>
               </div>
               <select
@@ -212,7 +224,7 @@
             </div>
             <div class="performenceItem">
               <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
-                Time
+                {{ 'Time' | translate }}
                 <mat-icon style="color: #8a2644; font-size: 20px">access_time</mat-icon>
               </div>
               <select
@@ -227,53 +239,60 @@
           </div>
         </div>
         <div class="ButtonSection">
-          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
           <button
             mat-raised-button
             color="primary"
             [disabled]="!(investmentValues.money && investmentValues.time)"
             matStepperNext
           >
-            Next
+            {{ 'Next' | translate }}
           </button>
         </div>
       </div>
     </mat-step>
 
     <!-- Time -->
-    <mat-step matStepContent label="Time">
+    <mat-step matStepContent>
+      <ng-template matStepLabel>{{ 'Time' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Time to start benefiting</div>
+        <div class="StepTitle">{{ 'Time to start benefiting' | translate }}</div>
         <div class="StepContent">
           <div class="form-group">
             <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >Time (months) <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon></label
+              >{{ 'Time (months)' | translate }}
+              <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon></label
             >
             <input [(ngModel)]="benefitsStartTime" (keypress)="onlyNumbers($event)" class="form-control" />
           </div>
         </div>
         <div class="ButtonSection">
-          <button matStepperPrevious mat-button>Back</button>
-          <button mat-raised-button color="primary" [disabled]="!benefitsStartTime" matStepperNext>Next</button>
+          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
+          <button mat-raised-button color="primary" [disabled]="!benefitsStartTime" matStepperNext>
+            {{ 'Next' | translate }}
+          </button>
         </div>
       </div>
     </mat-step>
 
     <!-- Risk -->
-    <mat-step matStepContent label="Risk">
+    <mat-step matStepContent>
+      <ng-template matStepLabel>{{ 'Risk' | translate }}</ng-template>
       <div class="StepContainer">
-        <div class="StepTitle">Risk of practice (disadvantage)</div>
+        <div class="StepTitle">{{ 'Risk of practice (disadvantage)' | translate }}</div>
         <div class="StepContent">
           <div class="form-group">
             <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >Risk<mat-icon style="color: #e71236; font-size: 20px">warning</mat-icon></label
+              >{{ 'Risk' | translate }}<mat-icon style="color: #e71236; font-size: 20px">warning</mat-icon></label
             >
             <input style="margin-left: 4px" [(ngModel)]="risk" class="form-control" />
           </div>
         </div>
         <div class="ButtonSection">
-          <button matStepperPrevious mat-button>Back</button>
-          <button mat-raised-button color="primary" [disabled]="!risk" (click)="submitForm()">Finish</button>
+          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
+          <button mat-raised-button color="primary" [disabled]="!risk" (click)="submitForm()">
+            {{ 'Finish' | translate }}
+          </button>
         </div>
       </div>
     </mat-step>
