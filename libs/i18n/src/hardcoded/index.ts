@@ -1,11 +1,9 @@
 import { ITranslationEntry } from '../types';
 import { BUDGET_ENTRIES } from './budget';
 import { CLIMATE_ENTRIES } from './climate';
+import { COMMON_ENTRIES } from './common';
 
-export const HARDCODED_DATA: ITranslationEntry[] = [
-  ...BUDGET_ENTRIES,
-  ...CLIMATE_ENTRIES,
-];
+export const HARDCODED_DATA: ITranslationEntry[] = [...BUDGET_ENTRIES, ...CLIMATE_ENTRIES, ...COMMON_ENTRIES];
 
 /** List of project paths and reference names to process with ngx-extract */
 export const EXTRACTED_PROJECTS = [
