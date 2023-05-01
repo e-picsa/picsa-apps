@@ -1,3 +1,4 @@
+<button mat-icon-button mat-dialog-close class="close-button"><mat-icon>close</mat-icon></button>
 <h2 style="margin-top: 0">{{'Select Country' | translate}}</h2>
 <div class="country-select-container">
   <div
@@ -11,8 +12,7 @@
   </div>
 </div>
 
-<h2>Select Language</h2>
-
+<h2>{{'Select Language' | translate}}</h2>
 <div class="language-select-container" *ngIf="selected.language">
   <div
     *ngFor="let language of selected.language.options"
@@ -20,6 +20,6 @@
     [class.selected]="selected.language.selected?.code ===language.code ? true : undefined"
     (click)="setLanguage(language)"
   >
-    <div>{{ language.label }}</div>
+    <div>{{ language.label | translate }}</div>
   </div>
 </div>
