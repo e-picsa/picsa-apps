@@ -67,3 +67,15 @@ mat-form-field.input-field {
 .mat-mdc-form-field-infix {
   margin-left: 4px;
 }
+
+// Create a colum-style layout for radio buttons where button appears below text
+mat-radio-group.layout-column {
+  display: block;
+  mat-radio-button {
+    .mdc-form-field {
+      display: inline-flex;
+      flex-direction: column-reverse;
+      text-align: center;
+    }
+  }
+}

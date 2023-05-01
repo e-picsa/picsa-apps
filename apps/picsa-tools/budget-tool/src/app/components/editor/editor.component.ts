@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { FadeInOut } from '@picsa/shared/animations';
 import { _wait } from '@picsa/utils';
 
 import {
@@ -23,7 +23,7 @@ const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
   selector: 'budget-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
-  animations: [FadeInOut(ANIMATION_DELAYED)],
+  animations: [FadeInOut({})],
 })
 export class BudgetEditorComponent {
   /** View reference to ng-template content shown in dialog */

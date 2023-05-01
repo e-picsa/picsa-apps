@@ -1,5 +1,5 @@
 :host {
-  display: block;
+  display: contents;
 }
 .avatar-initials {
   font-size: 16px;
@@ -10,8 +10,43 @@
   color: white;
   font-weight: bold;
 }
+.dialog-title {
+  text-align: center;
+  font-weight: bold;
+}
 .dialog-close {
   position: absolute;
   top: 0;
   right: 0;
 }
+.dialog-content {
+  min-height: 250px;
+  min-width: 250px;
+}
+.profile-add-container {
+  height: 100px;
+  width: 100px;
+  border-style: dashed;
+  border-color: #848484;
+}
+.role-icon {
+  font-size: 36px;
+  height: 36px;
+  width: 36px;
+}
+mat-radio-group {
+  border: 1px solid rgba(0, 0, 0, 0.38);
+  padding: 8px;
+  border-radius: 4px;
+}
+.buttons-container {
+  margin-top: 2rem;
+  text-align: right;
+}
+
+// :host /deep/ .mat-radio-label {
+//   flex-direction: column-reverse;
+//   .mat-radio-label-content {
+//     padding: 0;
+//   }
+// }

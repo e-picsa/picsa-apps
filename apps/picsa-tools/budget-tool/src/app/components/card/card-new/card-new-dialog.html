@@ -3,7 +3,7 @@
   <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
 </mat-card>
 <mat-form-field>
-  <input matInput [(ngModel)]="card.label" class="input-editable" />
+  <input matInput [(ngModel)]="card.label" />
 </mat-form-field>
 <button mat-stroked-button (click)="save()" [disabled]="card.label === ''" style="margin-top: 1em; width: 70%">
   <mat-icon>check</mat-icon>{{ 'Save' | translate }}
