@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Platform } from '@ionic/angular';
@@ -6,6 +6,8 @@ import { APP_VERSION } from '@picsa/environments';
 import { PicsaFileService } from '@picsa/shared/services/native';
 
 import { UserStore } from '../../store/user.store';
+import { DomPortal } from '@angular/cdk/portal';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 
 @Component({
   selector: 'app-home',
@@ -20,12 +22,16 @@ export class HomePage implements OnInit {
   columns: number;
   isPreparingShare = false;
 
+  @ViewChild('headerContent')
+  headerContent: ElementRef<HTMLElement>;
+
   constructor(
     private router: Router,
     public store: UserStore,
     // TODO - refactor to separate store
     private platform: Platform,
-    private fileService: PicsaFileService
+    private fileService: PicsaFileService,
+    private componentsService: PicsaCommonComponentsService
   ) {
     this.links = [
       {
@@ -73,6 +79,11 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.columns = this._calculateColumns(window.innerWidth);
+  }
+  ngAfterViewInit() {
+    this.componentsService.patchHeader({
+      endContent: new DomPortal(this.headerContent),
+    });
   }
   async shareApp() {
     if (this.platform.is('cordova')) {

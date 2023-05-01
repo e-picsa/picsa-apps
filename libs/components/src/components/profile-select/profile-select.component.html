@@ -1,0 +1,14 @@
+<button mat-fab class="avatar-initials" (click)="dialog.open(profileSelectDialog)">
+  <span>CC</span>
+</button>
+
+<!-- Dialog template -->
+<ng-template #profileSelectDialog>
+  <button mat-icon-button matDialogClose color="primary" class="dialog-close">
+    <mat-icon>close</mat-icon>
+  </button>
+  <h2 matDialogTitle>Dialog!</h2>
+  <mat-dialog-content>
+    <p>The content of this dialog came from an <code>ng-template</code>! Amazing, right?</p>
+  </mat-dialog-content>
+</ng-template>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -13,6 +14,7 @@ import { ConfigurationSelectComponent } from './components/configuration-select/
 import { ConfigurationSelectDialog } from './components/configuration-select/configuration-select-dialog';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
+import { ProfileSelectComponent } from './components/profile-select/profile-select.component';
 
 // import {} from './warning.component';
 const components = [
@@ -22,6 +24,7 @@ const components = [
   ConfigurationSelectDialog,
   PicsaBreadcrumbsComponent,
   PicsaHeaderComponent,
+  ProfileSelectComponent,
 ];
 
 @NgModule({
@@ -31,6 +34,7 @@ const components = [
     MatIconModule,
     MatButtonModule,
     MatCardModule,
+    MatDialogModule,
     PortalModule,
     PicsaTranslateModule,
     RouterModule,

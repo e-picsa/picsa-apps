@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+.avatar-initials {
+  font-size: 16px;
+  max-width: 40px;
+  max-height: 40px;
+  text-align: center;
+  background: blue;
+  color: white;
+  font-weight: bold;
+}
+.dialog-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
