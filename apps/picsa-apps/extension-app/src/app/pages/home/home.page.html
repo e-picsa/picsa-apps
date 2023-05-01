@@ -19,9 +19,9 @@
     </mat-grid-tile>
   </mat-grid-list>
   <footer>
-    <div class="version-info">v{{ version.number }}</div>
-    <a routerLink="privacy" class="privacy-policy">{{'Privacy Policy' | translate}}</a>
     <picsa-configuration-select></picsa-configuration-select>
+    <a routerLink="privacy" class="privacy-policy">{{'Privacy Policy' | translate}}</a>
+    <div class="version-info">v{{ version.number }}</div>
     <!-- <button mat-flat-button color="primary" (click)="shareApp()" class="share-button" [disabled]="isPreparingShare">
       <mat-icon>share</mat-icon>
       {{ 'Share App' | translate }}
