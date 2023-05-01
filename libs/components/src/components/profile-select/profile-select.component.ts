@@ -46,15 +46,18 @@ export class ProfileSelectComponent {
     console.log('saving profile', this.profileForm.value);
     const profile = this.profileForm.value as IUserProfile;
     this.activeProfile = profile;
+    this.dialog.closeAll();
     this.profiles.push(profile);
     this.profileForm.reset();
     // Pick a new default colour
     this.profileForm.patchValue({ color: generateAvatarColor() });
     this.contentView = 'list';
   }
-  public loadProfile() {
+  public loadProfile(profile: IUserProfile) {
     // TODO - load from local storage
     // Should also ensure it maps onto default profile in case of future breaking changes
+    this.activeProfile = profile;
+    this.dialog.closeAll();
   }
 
   public setInitials() {

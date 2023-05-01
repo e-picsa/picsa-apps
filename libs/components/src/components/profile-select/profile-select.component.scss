@@ -8,6 +8,12 @@
   text-align: center;
   color: white;
   font-weight: bold;
+  &.large {
+    max-width: unset;
+    max-height: unset;
+    height: 75px;
+    width: 75px;
+  }
 }
 
 .dialog-title {
@@ -23,9 +29,14 @@
   min-height: 300px;
   min-width: 250px;
 }
+.list-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 .profile-add-container {
-  height: 100px;
-  width: 100px;
+  height: 75px;
+  width: 75px;
   border-style: dashed;
   border-color: #848484;
 }
