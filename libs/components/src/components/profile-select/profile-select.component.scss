@@ -1,15 +1,15 @@
 :host {
   display: contents;
 }
-.avatar-initials {
+.avatar {
   font-size: 16px;
   max-width: 40px;
   max-height: 40px;
   text-align: center;
-  background: blue;
   color: white;
   font-weight: bold;
 }
+
 .dialog-title {
   text-align: center;
   font-weight: bold;
@@ -20,7 +20,7 @@
   right: 0;
 }
 .dialog-content {
-  min-height: 250px;
+  min-height: 300px;
   min-width: 250px;
 }
 .profile-add-container {

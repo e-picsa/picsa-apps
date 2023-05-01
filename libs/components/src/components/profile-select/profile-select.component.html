@@ -1,9 +1,11 @@
-<button *ngIf="activeProfile" mat-fab class="avatar-initials" (click)="dialog.open(profileSelectDialog)">
-  <span>{{ activeProfile.initials }}</span>
-</button>
-
-<button *ngIf="!activeProfile" mat-fab class="avatar-initials" (click)="dialog.open(profileSelectDialog)">
-  <mat-icon>person</mat-icon>
+<button
+  mat-fab
+  class="avatar"
+  (click)="dialog.open(profileSelectDialog)"
+  [style.background]="activeProfile ? activeProfile.color : 'rgba(255,255,255,0.6)'"
+>
+  <span *ngIf="activeProfile">{{ activeProfile.initials }}</span>
+  <mat-icon *ngIf="!activeProfile">person</mat-icon>
 </button>
 
 <!-- Dialog template -->
@@ -47,7 +49,7 @@
         </mat-radio-group>
         <button
           mat-fab
-          class="avatar-initials"
+          class="avatar"
           style="margin: auto"
           [style.background]="profileForm.value.color"
           (click)="colorPicker.showPicker()"

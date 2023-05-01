@@ -7,16 +7,15 @@ interface IUserProfile {
   name: string;
   initials: string;
   color: string;
-  icon: string;
   role: 'extension' | 'farmer';
 }
 
 const PROFILE_FORM: { [key in keyof IUserProfile]: FormControl } = {
-  color: new FormControl('#0000ff'),
-  icon: new FormControl(''),
+  // Create a random hsl colour avoiding more yellow-ish tones
+  color: new FormControl(generateAvatarColor()),
   initials: new FormControl(''),
-  name: new FormControl('', Validators.minLength(2)),
-  role: new FormControl('farmer', Validators.required),
+  name: new FormControl('', [Validators.required, Validators.minLength(2)]),
+  role: new FormControl('extension', Validators.required),
 };
 
 @Component({
@@ -39,8 +38,23 @@ export class ProfileSelectComponent {
   public setContentView(view: typeof this.contentView) {
     this.contentView = view;
   }
+  public editProfile() {
+    // TODO - edit active profile
+  }
   public saveProfile() {
-    console.log('saving profile', this.profileForm);
+    // TODO - save to local storage
+    console.log('saving profile', this.profileForm.value);
+    const profile = this.profileForm.value as IUserProfile;
+    this.activeProfile = profile;
+    this.profiles.push(profile);
+    this.profileForm.reset();
+    // Pick a new default colour
+    this.profileForm.patchValue({ color: generateAvatarColor() });
+    this.contentView = 'list';
+  }
+  public loadProfile() {
+    // TODO - load from local storage
+    // Should also ensure it maps onto default profile in case of future breaking changes
   }
 
   public setInitials() {
@@ -62,4 +76,28 @@ export class ProfileSelectComponent {
     }
     return initials.map((s) => s.toUpperCase()).join('');
   }
+}
+
+/** Pick a random colour avoiding yellow-ish part of spectrum */
+function generateAvatarColor() {
+  return hslToHex(randomNumberBetween(200, 400), 80, 70);
+}
+
+function hslToHex(h: number, s: number, l: number) {
+  l /= 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
+  const f = (n) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, '0'); // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function randomNumberBetween(start = 0, end = 0) {
+  const range = end - start;
+  const n = Math.round(Math.random() * range);
+  return start + n;
 }
