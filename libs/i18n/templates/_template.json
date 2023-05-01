@@ -715,7 +715,31 @@
     "context": "buttons"
   },
   {
+    "text": "Extension",
+    "tool": "common"
+  },
+  {
+    "text": "Farmer",
+    "tool": "common"
+  },
+  {
+    "text": "Name",
+    "tool": "common"
+  },
+  {
+    "text": "New Profile",
+    "tool": "common"
+  },
+  {
     "text": "Select Country",
+    "tool": "common"
+  },
+  {
+    "text": "Select Language",
+    "tool": "common"
+  },
+  {
+    "text": "Who is using?",
     "tool": "common"
   },
   {
@@ -764,10 +788,6 @@
   },
   {
     "text": "Settings",
-    "tool": "extension"
-  },
-  {
-    "text": "Share App",
     "tool": "extension"
   },
   {
