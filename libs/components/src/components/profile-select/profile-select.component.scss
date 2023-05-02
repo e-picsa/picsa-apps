@@ -52,7 +52,7 @@ mat-radio-group {
 }
 .buttons-container {
   margin-top: 2rem;
-  text-align: right;
+  display: flex;
 }
 
 // :host /deep/ .mat-radio-label {

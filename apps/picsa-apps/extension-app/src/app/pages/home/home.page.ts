@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Platform } from '@ionic/angular';
@@ -14,7 +14,7 @@ import { PicsaCommonComponentsService } from '@picsa/components/src';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   links: ILink[];
   name: string;
   version = APP_VERSION;
@@ -79,6 +79,9 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.columns = this._calculateColumns(window.innerWidth);
+  }
+  ngOnDestroy(): void {
+    this.componentsService.patchHeader({ endContent: undefined });
   }
   ngAfterViewInit() {
     this.componentsService.patchHeader({

@@ -1,18 +1,24 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
+import { PicsaDialogService } from '@picsa/shared/features';
+import { hashmapToArray } from '@picsa/utils';
 
 interface IUserProfile {
-  name: string;
-  initials: string;
+  _id: string;
   color: string;
+  initials: string;
+  name: string;
   role: 'extension' | 'farmer';
 }
 
-const PROFILE_FORM: { [key in keyof IUserProfile]: FormControl } = {
-  // Create a random hsl colour avoiding more yellow-ish tones
-  color: new FormControl(generateAvatarColor()),
+const STORAGE_NAME = 'picsa_profiles';
+
+const PROFILE_FORM_BASE: { [key in keyof IUserProfile]: FormControl } = {
+  _id: new FormControl('', Validators.required),
+  color: new FormControl('', Validators.required),
   initials: new FormControl(''),
   name: new FormControl('', [Validators.required, Validators.minLength(2)]),
   role: new FormControl('extension', Validators.required),
@@ -25,44 +31,100 @@ const PROFILE_FORM: { [key in keyof IUserProfile]: FormControl } = {
   animations: [FadeInOut(ANIMATION_DELAYED)],
 })
 export class ProfileSelectComponent {
-  activeProfile?: IUserProfile;
-  profiles: IUserProfile[] = [];
-  contentView: 'list' | 'create' = 'list';
+  public activeProfile?: IUserProfile;
 
-  profileForm: FormGroup<typeof PROFILE_FORM>;
+  private activeProfileId: string = '';
 
-  constructor(public dialog: MatDialog, private fb: FormBuilder) {
-    this.profileForm = fb.group(PROFILE_FORM);
+  private profileHashmap: Record<string, IUserProfile> = {};
+  contentView: 'list' | 'create' | 'edit' = 'list';
+
+  profileForm: FormGroup<typeof PROFILE_FORM_BASE>;
+
+  constructor(public dialog: MatDialog, private picsaDialog: PicsaDialogService, fb: FormBuilder) {
+    this.loadStorageProfiles();
+    this.profileForm = fb.group(PROFILE_FORM_BASE);
+    this.resetForm();
+  }
+
+  public get profileArray() {
+    return hashmapToArray(this.profileHashmap, '_id');
+  }
+
+  private loadStorageProfiles() {
+    const storageProfiles = localStorage.getItem(STORAGE_NAME);
+    if (storageProfiles) {
+      // TODO - ensure storage profiles map onto default in case of future breaking changes
+      const { activeProfileId, profiles } = JSON.parse(storageProfiles);
+      this.activeProfileId = activeProfileId;
+      this.profileHashmap = profiles;
+      this.loadProfile(this.activeProfileId);
+    }
+  }
+
+  public close() {
+    this.dialog.closeAll();
+    this.contentView = 'list';
   }
 
   public setContentView(view: typeof this.contentView) {
     this.contentView = view;
   }
-  public editProfile() {
-    // TODO - edit active profile
-  }
+
   public saveProfile() {
-    // TODO - save to local storage
-    console.log('saving profile', this.profileForm.value);
     const profile = this.profileForm.value as IUserProfile;
-    this.activeProfile = profile;
-    this.dialog.closeAll();
-    this.profiles.push(profile);
-    this.profileForm.reset();
-    // Pick a new default colour
-    this.profileForm.patchValue({ color: generateAvatarColor() });
-    this.contentView = 'list';
+    const { _id } = profile;
+    this.profileHashmap[_id] = profile;
+    localStorage.setItem(
+      STORAGE_NAME,
+      JSON.stringify({ activeProfileId: this.activeProfileId, profiles: this.profileHashmap })
+    );
+    this.loadProfile(_id, true);
+    this.resetForm();
   }
-  public loadProfile(profile: IUserProfile) {
-    // TODO - load from local storage
-    // Should also ensure it maps onto default profile in case of future breaking changes
-    this.activeProfile = profile;
-    this.dialog.closeAll();
+
+  public editProfile(_id: string) {
+    this.loadProfile(_id);
+    if (this.activeProfile) {
+      this.profileForm.patchValue(this.activeProfile);
+    }
+    this.contentView = 'create';
+  }
+
+  public loadProfile(_id: string, closeDialog = false) {
+    if (_id) {
+      this.activeProfileId = _id;
+      this.activeProfile = this.profileHashmap[_id];
+      if (closeDialog) {
+        // provide small delay for any button click animations
+        setTimeout(() => {
+          this.close();
+        }, 250);
+      }
+    }
+  }
+  public async deleteProfile(_id: string) {
+    const ref = await this.picsaDialog.open('delete', {});
+    ref.afterClosed().subscribe((shouldDelete) => {
+      if (shouldDelete) {
+        if (_id in this.profileHashmap) {
+          delete this.profileHashmap[_id];
+        }
+        this.activeProfile = undefined;
+        this.resetForm();
+        this.contentView = 'list';
+      }
+    });
   }
 
   public setInitials() {
     const { name } = this.profileForm.value;
     this.profileForm.patchValue({ initials: this.nameToInitials(name) });
+  }
+
+  private resetForm() {
+    this.profileForm.reset();
+    // Pick a new default colour
+    this.profileForm.patchValue({ _id: generateID(4), color: generateAvatarColor() });
   }
 
   /**
