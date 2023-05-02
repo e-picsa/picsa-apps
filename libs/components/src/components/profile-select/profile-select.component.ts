@@ -35,7 +35,7 @@ export class ProfileSelectComponent {
   public contentView: 'list' | 'create' | 'edit' = 'list';
   public profileForm: FormGroup<typeof PROFILE_FORM_BASE>;
 
-  private activeProfileId: string = '';
+  private activeProfileId = '';
   private profileHashmap: Record<string, IUserProfile> = {};
 
   constructor(public dialog: MatDialog, private picsaDialog: PicsaDialogService, fb: FormBuilder) {
@@ -136,11 +136,11 @@ export class ProfileSelectComponent {
    */
   private nameToInitials(name: string = '') {
     // Default to using first 2 characters of name
-    let initials = [name.charAt(0), name.charAt(1)];
+    const initials = [name.charAt(0), name.charAt(1)];
     const names = name.split(' ');
     // If multiple names provides use last name for 2nd character
     if (names.length > 1) {
-      initials[1] = names.pop()!.charAt(0);
+      initials[1] = names.pop()?.charAt(0) || '';
     }
     return initials.map((s) => s.toUpperCase()).join('');
   }
