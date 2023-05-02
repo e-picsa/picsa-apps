@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
-import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { hashmapToArray } from '@picsa/utils';
 
 interface IUserProfile {

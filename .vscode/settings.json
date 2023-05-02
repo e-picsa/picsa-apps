@@ -1,7 +1,5 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "cSpell.enabled": false,
-  "eslint.runtime": "node",
-  "eslint.options": { "overrideConfigFile": ".eslintrc.json" },
-  "eslint.debug": true
+  "eslint.runtime": "node"
 }
