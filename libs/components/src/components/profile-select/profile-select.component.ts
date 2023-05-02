@@ -32,13 +32,11 @@ const PROFILE_FORM_BASE: { [key in keyof IUserProfile]: FormControl } = {
 })
 export class ProfileSelectComponent {
   public activeProfile?: IUserProfile;
+  public contentView: 'list' | 'create' | 'edit' = 'list';
+  public profileForm: FormGroup<typeof PROFILE_FORM_BASE>;
 
   private activeProfileId: string = '';
-
   private profileHashmap: Record<string, IUserProfile> = {};
-  contentView: 'list' | 'create' | 'edit' = 'list';
-
-  profileForm: FormGroup<typeof PROFILE_FORM_BASE>;
 
   constructor(public dialog: MatDialog, private picsaDialog: PicsaDialogService, fb: FormBuilder) {
     this.loadStorageProfiles();
@@ -50,19 +48,9 @@ export class ProfileSelectComponent {
     return hashmapToArray(this.profileHashmap, '_id');
   }
 
-  private loadStorageProfiles() {
-    const storageProfiles = localStorage.getItem(STORAGE_NAME);
-    if (storageProfiles) {
-      // TODO - ensure storage profiles map onto default in case of future breaking changes
-      const { activeProfileId, profiles } = JSON.parse(storageProfiles);
-      this.activeProfileId = activeProfileId;
-      this.profileHashmap = profiles;
-      this.loadProfile(this.activeProfileId);
-    }
-  }
-
   public close() {
     this.dialog.closeAll();
+    this.resetForm();
     this.contentView = 'list';
   }
 
@@ -74,12 +62,8 @@ export class ProfileSelectComponent {
     const profile = this.profileForm.value as IUserProfile;
     const { _id } = profile;
     this.profileHashmap[_id] = profile;
-    localStorage.setItem(
-      STORAGE_NAME,
-      JSON.stringify({ activeProfileId: this.activeProfileId, profiles: this.profileHashmap })
-    );
+    this.saveStorageProfiles();
     this.loadProfile(_id, true);
-    this.resetForm();
   }
 
   public editProfile(_id: string) {
@@ -91,9 +75,11 @@ export class ProfileSelectComponent {
   }
 
   public loadProfile(_id: string, closeDialog = false) {
-    if (_id) {
+    // avoid loading if undefined
+    if (typeof _id === 'string') {
       this.activeProfileId = _id;
       this.activeProfile = this.profileHashmap[_id];
+      this.saveStorageProfiles();
       if (closeDialog) {
         // provide small delay for any button click animations
         setTimeout(() => {
@@ -109,7 +95,7 @@ export class ProfileSelectComponent {
         if (_id in this.profileHashmap) {
           delete this.profileHashmap[_id];
         }
-        this.activeProfile = undefined;
+        this.loadProfile('');
         this.resetForm();
         this.contentView = 'list';
       }
@@ -119,6 +105,23 @@ export class ProfileSelectComponent {
   public setInitials() {
     const { name } = this.profileForm.value;
     this.profileForm.patchValue({ initials: this.nameToInitials(name) });
+  }
+
+  private loadStorageProfiles() {
+    const storageProfiles = localStorage.getItem(STORAGE_NAME);
+    if (storageProfiles) {
+      // TODO - ensure storage profiles map onto default in case of future breaking changes
+      const { activeProfileId, profiles } = JSON.parse(storageProfiles);
+      this.profileHashmap = profiles;
+      this.loadProfile(activeProfileId);
+    }
+  }
+
+  private saveStorageProfiles() {
+    localStorage.setItem(
+      STORAGE_NAME,
+      JSON.stringify({ activeProfileId: this.activeProfileId, profiles: this.profileHashmap })
+    );
   }
 
   private resetForm() {
