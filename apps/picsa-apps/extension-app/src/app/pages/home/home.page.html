@@ -1,3 +1,7 @@
+<div #headerContent style="margin-right: 8px; display: flex; justify-content: flex-end">
+  <picsa-profile-select></picsa-profile-select>
+</div>
+
 <div class="page-content background-image">
   <mat-grid-list [cols]="columns" style="flex: 1" gutterSize="8">
     <mat-grid-tile
@@ -15,12 +19,12 @@
     </mat-grid-tile>
   </mat-grid-list>
   <footer>
-    <div class="version-info">v{{ version.number }}</div>
-    <a routerLink="privacy" class="privacy-policy">{{'Privacy Policy' | translate}}</a>
     <picsa-configuration-select></picsa-configuration-select>
-    <button mat-flat-button color="primary" (click)="shareApp()" class="share-button" [disabled]="isPreparingShare">
+    <a routerLink="privacy" class="privacy-policy">{{'Privacy Policy' | translate}}</a>
+    <div class="version-info">v{{ version.number }}</div>
+    <!-- <button mat-flat-button color="primary" (click)="shareApp()" class="share-button" [disabled]="isPreparingShare">
       <mat-icon>share</mat-icon>
       {{ 'Share App' | translate }}
-    </button>
+    </button> -->
   </footer>
 </div>

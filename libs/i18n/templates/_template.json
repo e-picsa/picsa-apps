@@ -700,7 +700,22 @@
     "context": "buttons"
   },
   {
+    "text": "Cancel",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
     "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Delete",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Edit",
     "tool": "common",
     "context": "buttons"
   },
@@ -715,7 +730,35 @@
     "context": "buttons"
   },
   {
+    "text": "Edit Profiles",
+    "tool": "common"
+  },
+  {
+    "text": "Extension",
+    "tool": "common"
+  },
+  {
+    "text": "Farmer",
+    "tool": "common"
+  },
+  {
+    "text": "Name",
+    "tool": "common"
+  },
+  {
+    "text": "New Profile",
+    "tool": "common"
+  },
+  {
     "text": "Select Country",
+    "tool": "common"
+  },
+  {
+    "text": "Select Language",
+    "tool": "common"
+  },
+  {
+    "text": "Who is using?",
     "tool": "common"
   },
   {
@@ -767,10 +810,6 @@
     "tool": "extension"
   },
   {
-    "text": "Share App",
-    "tool": "extension"
-  },
-  {
     "text": "Something went wrong...",
     "tool": "extension"
   },
@@ -796,10 +835,6 @@
   },
   {
     "text": "Benefits and who ",
-    "tool": "option"
-  },
-  {
-    "text": "Delete",
     "tool": "option"
   },
   {

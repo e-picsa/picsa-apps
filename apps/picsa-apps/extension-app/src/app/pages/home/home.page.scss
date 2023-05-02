@@ -50,6 +50,7 @@ footer {
   width: calc(100% - 10px);
   left: 0;
   background: var(--color-primary);
+  align-items: center;
 }
 
 .nav-icon {
@@ -65,13 +66,7 @@ footer {
 .version-info,
 .privacy-policy {
   color: rgba(255, 255, 255, 0.7);
-  position: absolute;
-  top: -24px;
 }
 .privacy-policy {
-  right: 8px;
   text-decoration: none;
-}
-.version-info {
-  left: 8px;
 }

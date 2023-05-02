@@ -1,0 +1,102 @@
+<button
+  mat-fab
+  class="avatar"
+  (click)="dialog.open(profileSelectDialog)"
+  [style.background]="activeProfile ? activeProfile.color : 'rgba(255,255,255,0.6)'"
+>
+  <span *ngIf="activeProfile">{{ activeProfile.initials }}</span>
+  <mat-icon *ngIf="!activeProfile">person</mat-icon>
+</button>
+
+<!-- Dialog template -->
+<ng-template #profileSelectDialog>
+  <button mat-icon-button color="primary" class="dialog-close" (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <h2 class="dialog-title">{{ 'Who is using?' | translate }}</h2>
+  <div [ngSwitch]="contentView" class="dialog-content flex-column">
+    <!-- Profile list -->
+    <div *ngSwitchCase="'list'" @fadeInOut class="flex-column">
+      <div class="list-container">
+        <div *ngFor="let profile of profileArray">
+          <button
+            mat-fab
+            class="avatar large"
+            (click)="loadProfile(profile._id, true)"
+            [style.background]="profile.color"
+          >
+            <span>{{ profile.initials }}</span>
+          </button>
+        </div>
+        <div class="profile-add-container">
+          <button mat-button (click)="setContentView('create')" style="width: 100%; height: 100%">
+            <mat-icon>add</mat-icon>
+          </button>
+          <div style="margin-top: 8px; text-align: center">{{ 'New Profile' | translate }}</div>
+        </div>
+      </div>
+      <button
+        *ngIf="profileArray.length > 0"
+        mat-stroked-button
+        style="margin-top: auto"
+        (click)="setContentView('edit')"
+      >
+        <mat-icon>edit</mat-icon>{{ 'Edit Profiles' | translate }}
+      </button>
+    </div>
+
+    <!-- Profile edit -->
+    <div *ngSwitchCase="'edit'" class="flex-column">
+      <div class="list-container">
+        <div *ngFor="let profile of profileArray" (click)="editProfile(profile._id)" style="position: relative">
+          <button mat-fab class="avatar large" [style.background]="profile.color">
+            <span><mat-icon>edit</mat-icon>{{ profile.initials }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Create -->
+    <form [formGroup]="profileForm" *ngSwitchCase="'create'" @fadeInOut>
+      <mat-form-field style="width: 100%" floatLabel="always" cdkFocusInitial>
+        <label for="name">{{ 'Name' | translate }}</label>
+        <input matInput formControlName="name" (change)="setInitials()" autoFocus />
+      </mat-form-field>
+      <div style="display: flex; align-items: center">
+        <mat-radio-group formControlName="role" class="layout-column">
+          <mat-radio-button value="farmer" style="margin-right: 8px">
+            <div>
+              <div>{{ 'Farmer' | translate }}</div>
+              <mat-icon class="role-icon">person</mat-icon>
+            </div>
+          </mat-radio-button>
+          <mat-radio-button value="extension">
+            <div>
+              <div>{{ 'Extension' | translate }}</div>
+              <mat-icon class="role-icon">groups</mat-icon>
+            </div>
+          </mat-radio-button>
+        </mat-radio-group>
+        <button
+          mat-fab
+          class="avatar"
+          style="margin: auto"
+          [style.background]="profileForm.value.color"
+          (click)="colorPicker.showPicker()"
+        >
+          {{ profileForm.value.initials }}
+        </button>
+        <input type="color" #colorPicker formControlName="color" style="visibility: hidden; width: 0" />
+      </div>
+      <div class="buttons-container">
+        <button mat-button (click)="deleteProfile(profileForm.value._id)" [disabled]="profileForm.invalid">
+          {{ 'Delete' | translate }}
+        </button>
+        <button mat-button (click)="setContentView('list')" style="margin-left: auto">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button mat-button (click)="saveProfile()" [disabled]="profileForm.invalid">{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

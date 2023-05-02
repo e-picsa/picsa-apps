@@ -14,10 +14,20 @@ header[data-style='inverted'] {
   color: var(--color-primary);
   background-color: white;
 }
-h1 {
+.start-content {
   flex: 1;
-  font-size: 2rem;
+  text-align: left;
+}
+.end-content {
+  flex: 1;
+  text-align: right;
+}
+.central-content {
+  flex: 2;
   text-align: center;
-  margin-right: 70px;
+}
+h1 {
+  font-size: 2rem;
+
   padding: 0;
 }

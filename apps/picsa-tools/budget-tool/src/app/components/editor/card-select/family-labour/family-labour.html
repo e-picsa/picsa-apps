@@ -8,7 +8,6 @@
       <mat-label>{{'Days' | translate}}</mat-label>
       <input
         matInput
-        class="input-editable"
         [value]="familyCard.values ? familyCard.values.quantity : null"
         type="number"
         (change)="setValue($event, i)"

@@ -1,4 +1,5 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
-  "cSpell.enabled": false
+  "cSpell.enabled": false,
+  "eslint.runtime": "node"
 }

@@ -11,23 +11,11 @@
   <div class="input-values" *ngIf="card.type === 'inputs' || card.type === 'outputs'">
     <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
-      <input
-        matInput
-        class="input-editable"
-        [value]="card.values.quantity"
-        type="number"
-        (change)="setValue($event, 'quantity')"
-      />
+      <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
     </mat-form-field>
     <mat-form-field class="card-input-field cost">
       <mat-label>{{ 'Cost' | translate }}</mat-label>
-      <input
-        matInput
-        class="input-editable"
-        [value]="card.values.cost"
-        type="number"
-        (change)="setValue($event, 'cost')"
-      />
+      <input matInput [value]="card.values.cost" type="number" (change)="setValue($event, 'cost')" />
       <span matTextPrefix>{{ currency }} &nbsp;</span>
     </mat-form-field>
     <div style="display: flex; align-items: flex-end; box-sizing: border-box">
@@ -48,7 +36,6 @@
       <mat-label>{{ 'Days' | translate }}</mat-label>
       <input
         matInput
-        class="input-editable"
         [value]="card.values ? card.values.quantity : null"
         type="number"
         (change)="setValue($event, 'quantity')"
@@ -62,7 +49,6 @@
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
       <input
         matInput
-        class="input-editable"
         [value]="card.values ? card.values.quantity : null"
         type="number"
         (change)="setProduceConsumed($event)"
