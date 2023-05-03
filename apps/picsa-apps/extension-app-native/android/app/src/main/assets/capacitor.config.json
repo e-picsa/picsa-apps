@@ -1,26 +1,26 @@
 {
-  "appId": "io.picsa.extension",
-  "appName": "PICSA Extension",
-  "webDir": "../../../dist/apps/picsa-apps/extension-app",
-  "bundledWebRuntime": false,
-  "includePlugins": [
-    "@awesome-cordova-plugins/file-opener",
-    "cordova-plugin-file-opener2",
-    "@awesome-cordova-plugins/file",
-    "cordova-plugin-file",
-    "@awesome-cordova-plugins/social-sharing",
-    "cordova-plugin-x-socialsharing",
-    "cordova-plugin-codeplay-share-own-apk",
-    "@capacitor/app",
-    "@capacitor/browser",
-    "@capacitor/device",
-    "@capacitor/filesystem",
-    "capacitor-blob-writer",
-    "@capacitor-community/firebase-analytics",
-    "@capacitor-community/firebase-crashlytics",
-    "@capacitor-firebase/performance"
-  ],
-  "server": {
-    "cleartext": true
-  }
+	"appId": "io.picsa.extension",
+	"appName": "PICSA Extension",
+	"webDir": "../../../dist/apps/picsa-apps/extension-app",
+	"bundledWebRuntime": false,
+	"includePlugins": [
+		"@awesome-cordova-plugins/file-opener",
+		"cordova-plugin-file-opener2",
+		"@awesome-cordova-plugins/file",
+		"cordova-plugin-file",
+		"@awesome-cordova-plugins/social-sharing",
+		"cordova-plugin-x-socialsharing",
+		"cordova-plugin-codeplay-share-own-apk",
+		"@capacitor/app",
+		"@capacitor/browser",
+		"@capacitor/device",
+		"@capacitor/filesystem",
+		"capacitor-blob-writer",
+		"@capacitor-community/firebase-analytics",
+		"@capacitor-community/firebase-crashlytics",
+		"@capacitor-firebase/performance"
+	],
+	"server": {
+		"cleartext": true
+	}
 }
