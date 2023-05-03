@@ -4,6 +4,14 @@
     <input matInput (keyup)="applyFilter($event)" placeholder="Search Crops" #input />
   </mat-form-field>
 </div>
+<div ngClass="filter-icons">
+  <div (click)="filterbyImage('maize')"><mat-icon svgIcon="picsa_crop_maize"></mat-icon></div>
+  <div (click)="filterbyImage('peas')"><mat-icon svgIcon="picsa_crop_cow_peas"></mat-icon></div>
+  <div (click)="filterbyImage('beans')"><mat-icon svgIcon="picsa_crop_beans"></mat-icon></div>
+  <div (click)="filterbyImage('soya')"><mat-icon svgIcon="picsa_crop_soya_beans"></mat-icon></div>
+  <div (click)="filterbyImage('sorghum')"><mat-icon svgIcon="picsa_crop_sorghum"></mat-icon></div>
+  <div (click)="filterbyImage('sunflower')"><mat-icon svgIcon="picsa_crop_sun_flower"></mat-icon></div>
+</div>
 <section ngClass="mat-mdc-table">
   <picsa-crop-probability-table-header></picsa-crop-probability-table-header>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

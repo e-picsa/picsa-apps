@@ -47,12 +47,26 @@ table {
   font-size: 14px;
   width: 100%;
 }
-.table-filter {
-  border: 1px solid red;
-}
 .disclaimer {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 12px;
   font-style: italic;
   margin-top: 12px;
+}
+.filter-icons{
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dotted rgb(197, 192, 192);
+    padding:10px;
+    height:90px;
+    width:80px;
+    cursor: pointer;
+    background: #fff;
+  }
 }
