@@ -47,12 +47,36 @@ table {
   font-size: 14px;
   width: 100%;
 }
-.table-filter {
-  border: 1px solid red;
-}
 .disclaimer {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 12px;
   font-style: italic;
   margin-top: 12px;
+}
+.filter-icons{
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  padding: 20px 15px;
+  div{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dotted rgb(197, 192, 192);
+    padding:10px;
+    height:90px;
+    width:80px;
+    cursor: pointer;
+    background: #fff;
+    div{
+      position: absolute;
+      bottom: 0;
+      height: 10%;
+      font-size: 14px;
+      background-color: #eeeaea;
+      text-transform: capitalize;
+    }
+  }
 }

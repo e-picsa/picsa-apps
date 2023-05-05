@@ -22,4 +22,7 @@ export class CropProbabilityTableComponent {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+  filterbyImage(title: string) {
+    this.dataSource.filter = title.trim().toLowerCase();
+  }
 }
