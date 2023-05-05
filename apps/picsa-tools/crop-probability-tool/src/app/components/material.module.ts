@@ -22,16 +22,16 @@ export class CropProbabilityMaterialModule {
   registerIcons() {
     const CROP_PROBABILITY_ICONS = {
       beans: 'beans',
-      cow_peas:'cow_peas',
-      ground_nuts:'ground_nuts',
-      maize:'maize',
-      sorghum:'sorghum',
-      soya_beans:'soya_beans',
-      sun_flower:'sun_flower'
+      cow_peas: 'cowpeas',
+      ground_nuts: 'groundnuts',
+      maize: 'maize',
+      sorghum: 'sorghum',
+      soya_beans: 'soya-beans',
+      sun_flower: 'sunflower',
     };
     for (const [key, value] of Object.entries(CROP_PROBABILITY_ICONS)) {
       const iconName = `picsa_crop_${key}`;
-      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/mat-icons/${value}.svg`);
+      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/crops/${value}.svg`);
       this.matIconRegistry.addSvgIcon(iconName, iconUrl);
     }
   }

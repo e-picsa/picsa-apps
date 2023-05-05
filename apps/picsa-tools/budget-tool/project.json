@@ -15,7 +15,11 @@
         "polyfills": "apps/picsa-tools/budget-tool/src/polyfills.ts",
         "tsConfig": "apps/picsa-tools/budget-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/picsa-tools/budget-tool/src/favicon.ico", "apps/picsa-tools/budget-tool/src/assets"],
+        "assets": [
+          "apps/picsa-tools/budget-tool/src/favicon.ico",
+          "apps/picsa-tools/budget-tool/src/assets",
+          { "glob": "**/*", "input": "libs/shared-assets/svgs/crops/", "output": "assets/budget-cards/" }
+        ],
         "styles": ["apps/picsa-tools/budget-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
       },
