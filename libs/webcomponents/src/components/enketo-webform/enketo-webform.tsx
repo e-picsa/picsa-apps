@@ -3,6 +3,7 @@ import { Component, Event, EventEmitter, Fragment, getAssetPath, h, Prop } from 
 import Events from './enketo/js/event';
 import { Form } from './enketo/js/form';
 
+// NOTE - this is manually exported from parent index as not inferred correctly from generated
 export interface IFormEntry {
   created: number;
   draft: boolean;

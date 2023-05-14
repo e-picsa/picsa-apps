@@ -39,7 +39,7 @@ declare namespace LocalJSX {
           * XML form model, as processed by an Enketo Transformer
          */
         "model": string;
-        "onDataUpdated"?: (event: CustomEvent<{ formXML: string }>) => void;
+        "onDataUpdated"?: (event: CustomEvent<{ formXML: string; nodes: string[] }>) => void;
         "onFormSaved"?: (event: CustomEvent<{ entry: IFormEntry }>) => void;
     }
     interface IntrinsicElements {

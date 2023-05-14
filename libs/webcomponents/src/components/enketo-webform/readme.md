@@ -40,10 +40,10 @@ Recommended further optimisations
 
 ## Events
 
-| Event         | Description | Type                                  |
-| ------------- | ----------- | ------------------------------------- |
-| `dataUpdated` |             | `CustomEvent<{ formXML: string; }>`   |
-| `formSaved`   |             | `CustomEvent<{ entry: IFormEntry; }>` |
+| Event         | Description | Type                                                 |
+| ------------- | ----------- | ---------------------------------------------------- |
+| `dataUpdated` |             | `CustomEvent<{ formXML: string; nodes: string[]; }>` |
+| `formSaved`   |             | `CustomEvent<{ entry: IFormEntry; }>`                |
 
 ---
 

@@ -12,7 +12,7 @@ export declare interface EnketoWebform extends Components.EnketoWebform {
   /**
    *  
    */
-  dataUpdated: EventEmitter<CustomEvent<{ formXML: string }>>;
+  dataUpdated: EventEmitter<CustomEvent<{ formXML: string; nodes: string[] }>>;
   /**
    *  
    */
