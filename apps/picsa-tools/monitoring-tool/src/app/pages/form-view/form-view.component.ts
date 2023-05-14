@@ -26,6 +26,16 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.subscribeToRouteChanges();
   }
 
+  public saveForm(data: any) {
+    // TODO
+    console.log('save form', data);
+  }
+
+  public autosave(data: any) {
+    // TODO
+    console.log('saving draft', data);
+  }
+
   private loadForm(id: string) {
     const loadedForm = this.monitoringService.getForm(id);
     if (loadedForm) {

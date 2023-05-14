@@ -7,8 +7,18 @@ import { Components } from '@picsa/webcomponents';
 
 
 
+import type { IFormEntry as IEnketoWebformIFormEntry } from '@picsa/webcomponents';
+export declare interface EnketoWebform extends Components.EnketoWebform {
+  /**
+   *  
+   */
+  dataUpdated: EventEmitter<CustomEvent<{ formXML: string }>>;
+  /**
+   *  
+   */
+  formSaved: EventEmitter<CustomEvent<{ entry: IEnketoWebformIFormEntry }>>;
 
-export declare interface EnketoWebform extends Components.EnketoWebform {}
+}
 
 @ProxyCmp({
   defineCustomElementFn: undefined,
@@ -25,5 +35,6 @@ export class EnketoWebform {
   constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
     c.detach();
     this.el = r.nativeElement;
+    proxyOutputs(this, this.el, ['dataUpdated', 'formSaved']);
   }
 }

@@ -31,7 +31,6 @@ Recommended further optimisations
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property             | Attribute | Description                                           | Type     | Default     |
@@ -39,7 +38,13 @@ Recommended further optimisations
 | `form` _(required)_  | `form`    | HTML form template                                    | `string` | `undefined` |
 | `model` _(required)_ | `model`   | XML form model, as processed by an Enketo Transformer | `string` | `undefined` |
 
+## Events
 
-----------------------------------------------
+| Event         | Description | Type                                  |
+| ------------- | ----------- | ------------------------------------- |
+| `dataUpdated` |             | `CustomEvent<{ formXML: string; }>`   |
+| `formSaved`   |             | `CustomEvent<{ entry: IFormEntry; }>` |
 
-*Built with [StencilJS](https://stenciljs.com/)*
+---
+
+_Built with [StencilJS](https://stenciljs.com/)_
