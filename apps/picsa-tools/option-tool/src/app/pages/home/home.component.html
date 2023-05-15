@@ -1,4 +1,4 @@
-<div class="HomeContainer"  [class.HideOverflow]="matStepperOpen">
+<div class="HomeContainer" [class.HideOverflow]="matStepperOpen">
   <div>
     <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
@@ -6,19 +6,19 @@
 
       <!-- Practice Column -->
       <ng-container matColumnDef="practice">
-        <th mat-header-cell *matHeaderCellDef>{{ "Practice" | translate }}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Practice' | translate }}</th>
         <td mat-cell *matCellDef="let element">{{ element._data.practice | translate }}</td>
       </ng-container>
 
       <!-- gender Column -->
       <ng-container matColumnDef="gender">
-        <th mat-header-cell *matHeaderCellDef>{{"Who does it" | translate }}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Who does it' | translate }}</th>
         <td mat-cell *matCellDef="let element">{{ element._data.gender.join(',') | translate }}</td>
       </ng-container>
 
       <!-- Benefits Column -->
       <ng-container matColumnDef="benefits">
-        <th mat-header-cell *matHeaderCellDef>{{"Benefits and who" | translate }}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Benefits and who' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <ol *ngFor="let benefit of element._data.benefits; index as i">
             <li>
@@ -31,43 +31,45 @@
 
       <!-- Perfomence Column -->
       <ng-container matColumnDef="performance">
-        <th mat-header-cell *matHeaderCellDef>{{"Perfomence" | translate}}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Perfomence' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>{{"High(Rf)"| translate}}: {{ element._data.performance.highRf  | translate }}</li>
-            <li>{{ "Mid(Rf)" | translate}}: {{ element._data.performance.midRf  | translate }}</li>
-            <li>{{ "Low(Rf)" | translate}} : {{ element._data.performance.lowRf | translate }}</li>
+            <li>{{ 'High(Rf)' | translate }}: {{ element._data.performance.highRf | translate }}</li>
+            <li>{{ 'Mid(Rf)' | translate }}: {{ element._data.performance.midRf | translate }}</li>
+            <li>{{ 'Low(Rf)' | translate }} : {{ element._data.performance.lowRf | translate }}</li>
           </ol>
         </td>
       </ng-container>
 
       <!-- Investment Column -->
       <ng-container matColumnDef="investment">
-        <th mat-header-cell *matHeaderCellDef>{{"Investment" | translate}}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Investment' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>{{ "Money" | translate}} : {{ element._data.investment.money | translate }}</li>
-            <li>{{ "Time" | translate}} : {{ element._data.investment.time | translate }}</li>
+            <li>{{ 'Money' | translate }} : {{ element._data.investment.money | translate }}</li>
+            <li>{{ 'Time' | translate }} : {{ element._data.investment.time | translate }}</li>
           </ol>
         </td>
       </ng-container>
 
       <!-- Time Column -->
       <ng-container matColumnDef="time">
-        <th mat-header-cell *matHeaderCellDef>{{"Time" | translate}}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Time' | translate }}</th>
         <td mat-cell *matCellDef="let element">{{ element._data.time | translate }}</td>
       </ng-container>
 
       <!-- Risks Column -->
       <ng-container matColumnDef="risk">
-        <th mat-header-cell *matHeaderCellDef>{{"Risks" | translate}}</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'Risks' | translate }}</th>
         <td mat-cell *matCellDef="let element">{{ element._data.risk | translate }}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; index as i; columns: displayedColumns" (click)="onRowClicked(row, i)"></tr>
     </table>
-    <button (click)="openNewDialog()" mat-button mat-raised-button color="primary">{{"Add New Option" | translate }}</button>
+    <button (click)="openNewDialog()" mat-button mat-raised-button color="primary">
+      {{ 'Add New Option' | translate }}
+    </button>
   </div>
   <div class="slide-in container" [class.active]="matStepperOpen">
     <div>

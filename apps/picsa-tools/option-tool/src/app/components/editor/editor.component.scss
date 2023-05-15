@@ -14,6 +14,7 @@
 
 .dialog-content {
   padding-bottom: 2rem;
+
   .saveButtonPosition {
     position: absolute;
     right: 20px;
@@ -26,7 +27,8 @@
     font-size: medium;
     font-weight: bold;
   }
-  .importantText{
+
+  .importantText {
     display: flex;
     justify-content: flex-start;
     font-size: small;
@@ -70,6 +72,7 @@
         padding: 5px;
         width: 90%;
       }
+
       textarea.form-control {
         font-size: 16px;
         outline-color: #8a2644;

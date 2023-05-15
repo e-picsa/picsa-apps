@@ -29,14 +29,14 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
   type: 'object',
   properties: {
     practice: {
-        type: 'string',
-        default: '', 
+      type: 'string',
+      default: '',
     },
     gender: {
       type: 'array',
       items: {
-        type: 'string'
-      }
+        type: 'string',
+      },
     },
     benefits: {
       type: 'array',
@@ -44,55 +44,53 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
         type: 'object',
         properties: {
           benefit: {
-            type: 'string'
+            type: 'string',
           },
           beneficiary: {
             type: 'array',
             items: {
-              type: 'string'
-            }
-          }
+              type: 'string',
+            },
+          },
         },
-        required: ['benefit', 'beneficiary']
-      }
+        required: ['benefit', 'beneficiary'],
+      },
     },
     performance: {
       type: 'object',
       properties: {
         lowRf: {
-          type: 'string'
+          type: 'string',
         },
         midRf: {
-          type: 'string'
+          type: 'string',
         },
         highRf: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      required: ['lowRf', 'midRf', 'highRf']
+      required: ['lowRf', 'midRf', 'highRf'],
     },
     investment: {
       type: 'object',
       properties: {
         money: {
-          type: 'string'
+          type: 'string',
         },
         time: {
-          type: 'string'
-        }
+          type: 'string',
+        },
       },
-      required: ['money', 'time']
+      required: ['money', 'time'],
     },
     time: {
-      type: 'string'
+      type: 'string',
     },
     risk: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
-  required: [
-    'practice'
-  ],
-  primaryKey: 'practice'
+  required: ['practice'],
+  primaryKey: 'practice',
 };
 export default practiceEntrySchema;

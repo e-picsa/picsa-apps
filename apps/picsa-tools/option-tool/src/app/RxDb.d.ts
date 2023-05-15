@@ -21,7 +21,7 @@ export interface RxOptionsDocumentType {
 
 export type RxOptionsDocument = RxDocument<RxOptionsDocumentType>;
 
-export type RxOptionsCollection = RxCollection<RxOptionsDocumentType, any>;
+export type RxOptionsCollection = RxCollection<RxOptionsDocumentType>;
 
 export interface RxOptionsCollections {
   options: RxOptionsCollection;

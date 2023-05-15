@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/cor
 import { MatStepper } from '@angular/material/stepper';
 import { PicsaDialogService } from '@picsa/shared/features';
 
-
 export interface IOptionData {
   practice: string;
   gender: string[];

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {createRxDatabase} from 'rxdb';
+import { createRxDatabase } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
-import optionsSchemer from '../schemas/options.schema';
 // import typings
-import { RxOptionsDatabase } from './../RxDB.d';
+import { RxOptionsDatabase } from '../Rxdb.d';
+import optionsSchemer from '../schemas/options.schema';
 
 //incase of many collections
 // const collections = [
@@ -29,8 +29,8 @@ async function _create(): Promise<RxOptionsDatabase> {
   console.log('DatabaseService: creating database..');
   const db = await createRxDatabase<RxOptionsDatabase>({
     name: 'epicsa-options-db',
-    storage: getRxStorageDexie()
-    // password: 'myLongPassword' 
+    storage: getRxStorageDexie(),
+    // password: 'myLongPassword'
   });
   console.log('DatabaseService: created database');
   (window as any).db = db; // write to window for debugging
@@ -45,8 +45,8 @@ async function _create(): Promise<RxOptionsDatabase> {
   // })));
   await db.addCollections({
     options: {
-        schema: optionsSchemer
-      }
+      schema: optionsSchemer,
+    },
   });
 
   // hooks
@@ -70,7 +70,7 @@ async function _create(): Promise<RxOptionsDatabase> {
   // await db.options.sync({
   //   remote: syncURL + '/options',
   // });
-   return db;
+  return db;
 }
 
 let DB_INSTANCE: RxOptionsDatabase;
