@@ -27,12 +27,12 @@ export class HomeComponent {
   public displayedColumns: string[] = ['practice', 'gender', 'benefits', 'performance', 'investment', 'time', 'risk'];
 
   private editorIndex = 0;
-  // private options$: Observable<RxOptionsDocument[]>;
+  dbDataDocs: RxOptionsDocument[] =[];
 
   @ViewChild(EditorComponent) editorComponent: EditorComponent;
 
   constructor(private dbService: DatabaseService) {
-    this.fetchDbData() 
+    this.refreashData() 
   }
 
   matStepperOpen = false;
@@ -41,42 +41,55 @@ export class HomeComponent {
     this.matStepperOpen = true;
   }
 
-  async fetchDbData() {
-    const items = await  this.dbService.db.collections.options.find().exec();
-    let dbItemList:IOptionData[] = [];
-    for(let i =0; i<items.length; i=i+1){
-      dbItemList.push(items[i]._data)
-    }
-    this.optionsDisplayList = dbItemList
+  async refreashData() {
+    this.dbDataDocs = await  this.dbService
+    .db
+    .collections
+    .options
+    .find()
+    .exec();
   }
 
   public closeDialog() {
     this.matStepperOpen = false;
   }
-  async onDataTransfer(data: any) {
-    // create a deep clone of data source to allow change detection for nested array objects
-    const allData = JSON.parse(JSON.stringify(this.optionsDisplayList));
+  async onDataTransfer(data: IOptionData| null) {
+
     if (data) {
-      allData[this.editorIndex] = data;
-      try {
-        //handles instertion and update as long as the name is the same. 
-        await this.dbService.db.collections.options.incrementalUpsert(data)
-      } catch (err) {
-        console.error('option.submit(): error:');
-        throw err;
-      }
+      //when the name changes, incrementalUpsert is not enough since the name is the primary key
+       if(this.dbDataDocs[this.editorIndex] 
+        && this.dbDataDocs[this.editorIndex]._data.practice !== data.practice){
+          //delete old option and add new option
+          
+          await this.addORUpdateData(data)
+          await this.deleteOption(this.dbDataDocs[this.editorIndex])
+          await this.refreashData()
+        }else{
+          await this.addORUpdateData(data)
+          await this.refreashData()
+        }
     } else {
       // remove any existing entry entry if no data passed back
       //delete from db
-      if (allData[this.editorIndex]) {
-        allData.splice(this.editorIndex, 1);
-      }
+       if (this.dbDataDocs[this.editorIndex]) {
+        await this.deleteOption(this.dbDataDocs[this.editorIndex])
+       await this.refreashData()
+      }  
     }
-    this.optionsDisplayList = allData;
     this.closeDialog();
   }
-  deleteOption(option:RxOptionsDocument ) {
-    option.remove();
+  async addORUpdateData(option:IOptionData){
+    try {
+      //handles instertion and update as long as the name is the same. 
+      await this.dbService.db.collections.options.incrementalUpsert(option)
+    } catch (err) {
+      console.error('option.submit(): error:');
+      throw err;
+    }
+  }
+
+  async deleteOption(option:RxOptionsDocument ) {
+   await option.remove();
   }
   openNewDialog() {
     this.editorIndex = this.optionsDisplayList.length;

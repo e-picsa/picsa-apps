@@ -140,7 +140,6 @@ export class EditorComponent implements OnInit {
   async promptDelete() {
     const dialogRef = await this.dialog.open('delete');
     dialogRef.afterClosed().subscribe((shouldDelete) => {
-      console.log(shouldDelete)
       if (shouldDelete) {
         this.dataTransfer.emit(null);
       }
