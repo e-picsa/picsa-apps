@@ -462,10 +462,6 @@
     "tool": "budget"
   },
   {
-    "text": "Length",
-    "tool": "budget"
-  },
-  {
     "text": "Male Member",
     "tool": "budget"
   },
@@ -483,10 +479,6 @@
   },
   {
     "text": "Quantity",
-    "tool": "budget"
-  },
-  {
-    "text": "Save",
     "tool": "budget"
   },
   {
@@ -569,6 +561,11 @@
   },
   {
     "text": "End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Length",
     "tool": "climate",
     "context": "chart"
   },
@@ -698,7 +695,70 @@
     "tool": "climate"
   },
   {
+    "text": "Back",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Cancel",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Delete",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Edit",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Next",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Save",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Edit Profiles",
+    "tool": "common"
+  },
+  {
+    "text": "Extension",
+    "tool": "common"
+  },
+  {
+    "text": "Farmer",
+    "tool": "common"
+  },
+  {
+    "text": "Name",
+    "tool": "common"
+  },
+  {
+    "text": "New Profile",
+    "tool": "common"
+  },
+  {
     "text": "Select Country",
+    "tool": "common"
+  },
+  {
+    "text": "Select Language",
+    "tool": "common"
+  },
+  {
+    "text": "Who is using?",
     "tool": "common"
   },
   {
@@ -750,10 +810,6 @@
     "tool": "extension"
   },
   {
-    "text": "Share App",
-    "tool": "extension"
-  },
-  {
     "text": "Something went wrong...",
     "tool": "extension"
   },
@@ -770,7 +826,7 @@
     "tool": "option"
   },
   {
-    "text": "Back",
+    "text": "Benefits",
     "tool": "option"
   },
   {
@@ -779,14 +835,6 @@
   },
   {
     "text": "Benefits and who ",
-    "tool": "option"
-  },
-  {
-    "text": "Close",
-    "tool": "option"
-  },
-  {
-    "text": "Delete",
     "tool": "option"
   },
   {
@@ -799,6 +847,10 @@
   },
   {
     "text": "Finish",
+    "tool": "option"
+  },
+  {
+    "text": "Gender",
     "tool": "option"
   },
   {
@@ -842,15 +894,11 @@
     "tool": "option"
   },
   {
-    "text": "Next",
+    "text": "Performance",
     "tool": "option"
   },
   {
-    "text": "Perfomence",
-    "tool": "option"
-  },
-  {
-    "text": "Performence in high, mid and low RF (rainfall)",
+    "text": "Performance in high, mid and low RF (rainfall)",
     "tool": "option"
   },
   {

@@ -18,3 +18,17 @@ export function arrayToHashmap<T extends object>(arr: T[], keyfield: keyof T) {
   }
   return hashmap;
 }
+
+export function hashmapToArray<T>(hashmap: Record<string, T>, keyfield: keyof T) {
+  if (hashmap.constructor !== {}.constructor) {
+    console.error('Cannot convert hashmap to array, not a hashmap', {
+      hashmap,
+      keyfield,
+    });
+    return [];
+  }
+  return Object.entries(hashmap).map(([key, value]) => {
+    value[keyfield as any] = key;
+    return value;
+  });
+}

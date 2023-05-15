@@ -16,11 +16,15 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   selector: 'picsa-header',
   template: `
     <header [attr.data-style]="style">
-      <back-button [style.visibility]="hideBackButton ? 'hidden' : 'visible'"></back-button>
-      <h1>
+      <div class="start-content">
+        <back-button [style.visibility]="hideBackButton ? 'hidden' : 'visible'"></back-button>
+      </div>
+      <h1 class="central-content">
         <span>{{ title | translate }}</span>
       </h1>
-      <ng-template [cdkPortalOutlet]="endPortal"></ng-template>
+      <div class="end-content">
+        <ng-template [cdkPortalOutlet]="endPortal"></ng-template>
+      </div>
     </header>
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,

@@ -27,3 +27,9 @@ body {
 .no-padding {
   padding: 0 !important;
 }
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}

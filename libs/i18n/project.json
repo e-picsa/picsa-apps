@@ -19,6 +19,13 @@
       },
       "outputs": ["libx/i18n/generated"]
     },
+    "spellcheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cspell libs/i18n/templates/_template.json"
+      },
+      "outputs": ["libx/i18n/generated"]
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],

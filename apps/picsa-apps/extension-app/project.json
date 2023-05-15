@@ -32,6 +32,7 @@
             "input": "libs/shared-assets/",
             "output": "assets"
           },
+
           {
             "glob": "*.json",
             "input": "libs/i18n/assets",
@@ -41,6 +42,11 @@
             "glob": "**/*",
             "input": "apps/picsa-tools/budget-tool/src/assets",
             "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/svgs/crops/",
+            "output": "assets/budget-cards/"
           },
           {
             "glob": "**/*",

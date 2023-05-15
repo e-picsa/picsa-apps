@@ -14,7 +14,7 @@ import {
 import { tmpdir } from 'os';
 import { resolve } from 'path';
 
-import { EXTRACTED_PROJECTS,HARDCODED_DATA } from './hardcoded';
+import { EXTRACTED_PROJECTS, HARDCODED_DATA } from './hardcoded';
 import { ITranslationEntry } from './types';
 
 const I18N_DIR = resolve(__dirname, '../');
@@ -47,8 +47,7 @@ function setupFolders() {
  * Create json and csv lists of unique entry templates for translation
  */
 function generateTranslationTemplates() {
-  // Process hardcoded entries
-  const entries: ITranslationEntry[] = HARDCODED_DATA;
+  const entries: ITranslationEntry[] = [];
   // Process ngx-translate extraction
   for (const { name, path } of EXTRACTED_PROJECTS) {
     const extracted = generateNGXTranslateStrings(resolve(PROJECT_ROOT, path));
@@ -56,13 +55,16 @@ function generateTranslationTemplates() {
       entries.push(stringToTranslationEntry(key, name));
     }
   }
+  // Process hardcoded entries (will take priority over generated)
+  for (const entry of HARDCODED_DATA) {
+    entries.push(entry);
+  }
   // sort and remove duplicates
   const unique = Object.values(arrayToHashmap(entries, 'text'));
   const sorted = unique.sort((a, b) => {
     // sort empty strings to top, then by tool-context-text
     if (a.text === '' || b.text === '') return a.text > b.text ? 1 : -1;
-    const comparator =
-      `${a.tool}-${a.context}-${a.text}` > `${b.tool}-${b.context}-${b.text}`;
+    const comparator = `${a.tool}-${a.context}-${a.text}` > `${b.tool}-${b.context}-${b.text}`;
     return comparator ? 1 : -1;
   });
   writeOutputJson(sorted);
@@ -103,11 +105,7 @@ function generateAppLanguageAssets() {
   }
 }
 
-function stringToTranslationEntry(
-  text: string,
-  tool: string,
-  context?: string
-) {
+function stringToTranslationEntry(text: string, tool: string, context?: string) {
   const entry: ITranslationEntry = {
     text,
     tool: tool as any,
@@ -130,16 +128,11 @@ function writeOutputJson(entries: ITranslationEntry[]) {
 /** Convert json to csv and output (adapted from https://stackoverflow.com/a/31536517) */
 function writeOutputCSV(entries: ITranslationEntry[]) {
   const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
-  const replacer = (key: string, value: string) =>
-    value === null ? '' : value; // specify how you want to handle null values here
+  const replacer = (key: string, value: string) => (value === null ? '' : value); // specify how you want to handle null values here
   const header: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
   const csv = [
     header.join(','), // header row first
-    ...entries.map((row) =>
-      header
-        .map((fieldName) => JSON.stringify(row[fieldName], replacer))
-        .join(',')
-    ),
+    ...entries.map((row) => header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(',')),
   ].join('\r\n');
   writeFileSync(target, csv);
 }
@@ -149,10 +142,7 @@ function writeOutputCSV(entries: ITranslationEntry[]) {
  * https://github.com/vendure-ecommerce/ngx-translate-extract
  * */
 function generateNGXTranslateStrings(input: string): Record<string, string> {
-  const binPath = resolve(
-    PROJECT_ROOT,
-    'node_modules/.bin/ngx-translate-extract'
-  );
+  const binPath = resolve(PROJECT_ROOT, 'node_modules/.bin/ngx-translate-extract');
   const tmpTarget = resolve(tmpdir(), 'ngx-extract.json');
   if (existsSync(tmpTarget)) rmSync(tmpTarget);
   const cmd = `${binPath} --input ${input} --output ${tmpTarget} --clean --sort --replace --format json`;
@@ -164,9 +154,7 @@ function generateNGXTranslateStrings(input: string): Record<string, string> {
 
 function sortJsonByKey(json: Record<string, any>) {
   const sorted = {};
-  for (const key of Object.keys(json).sort((a, b) =>
-    a.toLowerCase() > b.toLowerCase() ? 1 : -1
-  )) {
+  for (const key of Object.keys(json).sort((a, b) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1))) {
     sorted[key] = json[key];
   }
   return sorted;
