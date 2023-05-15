@@ -5,7 +5,6 @@ import { EditorComponent } from '../../components/editor/editor.component';
 import { RxOptionsDocument } from '../../RxDB.d';
 import { DatabaseService } from '../../services';
 
-
 export interface IOptionData {
   practice: string;
   gender: string[];
@@ -54,13 +53,11 @@ export class HomeComponent {
     this.matStepperOpen = false;
   }
   async onDataTransfer(data: IOptionData| null) {
-
     if (data) {
       //when the name changes, incrementalUpsert is not enough since the name is the primary key
        if(this.dbDataDocs[this.editorIndex] 
         && this.dbDataDocs[this.editorIndex]._data.practice !== data.practice){
           //delete old option and add new option
-          
           await this.addORUpdateData(data)
           await this.deleteOption(this.dbDataDocs[this.editorIndex])
           await this.refreashData()
@@ -83,6 +80,7 @@ export class HomeComponent {
       //handles instertion and update as long as the name is the same. 
       await this.dbService.db.collections.options.incrementalUpsert(option)
     } catch (err) {
+      alert('Failed to add data, please try again')
       console.error('option.submit(): error:');
       throw err;
     }
@@ -92,13 +90,13 @@ export class HomeComponent {
    await option.remove();
   }
   openNewDialog() {
-    this.editorIndex = this.optionsDisplayList.length;
+    this.editorIndex = this.dbDataDocs.length;
     this.editorComponent.resetVariables();
     this.openDialog();
   }
-  onRowClicked(row: IOptionData, index: number) {
+  onRowClicked(row: RxOptionsDocument, index: number) {
     this.editorIndex = index;
-    this.editorComponent.presetVariables(row);
+    this.editorComponent.presetVariables(row._data);
     this.openDialog();
   }
 }

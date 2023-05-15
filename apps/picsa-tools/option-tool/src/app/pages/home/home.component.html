@@ -1,4 +1,4 @@
-<div class="HomeContainer">
+<div class="HomeContainer"  [class.HideOverflow]="matStepperOpen">
   <div>
     <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.

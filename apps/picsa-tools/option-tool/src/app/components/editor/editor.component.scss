@@ -26,6 +26,14 @@
     font-size: medium;
     font-weight: bold;
   }
+  .importantText{
+    display: flex;
+    justify-content: flex-start;
+    font-size: small;
+    color: red;
+    width: 100%;
+    font-weight: normal;
+  }
 
   .StepContainer {
     display: flex;

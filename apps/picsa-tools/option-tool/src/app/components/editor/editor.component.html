@@ -11,6 +11,7 @@
             <label>{{"Practice" | translate }}</label>
             <input [(ngModel)]="practiceEntry" class="form-control" />
           </div>
+          <div class="importantText">{{"*This field is required" | translate }}</div>
         </div>
         <div>
           <button mat-raised-button color="primary" [disabled]="!practiceEntry" matStepperNext>{{"Next" | translate}}</button>
