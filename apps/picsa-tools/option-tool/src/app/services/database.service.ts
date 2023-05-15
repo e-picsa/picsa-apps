@@ -4,22 +4,23 @@ import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import optionsSchemer from '../schemas/options.schema';
 // import typings
-import { RxOptionsDatabase,RxOptionsDocument, RxOptionsDocumentType } from './../RxDB.d';
+import { RxOptionsDatabase } from './../RxDB.d';
 
-const collections = [
-  {
-    name: 'options',
-    schema: optionsSchemer,
-    // methods: {},
-    sync: true,
-  },
-];
+//incase of many collections
+// const collections = [
+//   {
+//   options: {
+//     schema: optionsSchemer,
+//     sync: true,
+//   }
+// },
+// ];
 
-console.log('hostname: ' + window.location.hostname);
-const syncURL = 'http://' + window.location.hostname + ':10101/';
+// console.log('hostname: ' + window.location.hostname);
+// const syncURL = 'http://' + window.location.hostname + ':10101/';
 
-let doSync = true;
-if (window.location.hash === '#nosync') doSync = false;
+// let doSync = true;
+// if (window.location.hash === '#nosync') doSync = false;
 
 /**
  * creates the database
@@ -34,38 +35,42 @@ async function _create(): Promise<RxOptionsDatabase> {
   console.log('DatabaseService: created database');
   (window as any).db = db; // write to window for debugging
 
-  // show leadership in title
-  db.waitForLeadership().then(() => {
-    console.log('isLeader now');
-    document.title = '♛ ' + document.title;
-  });
-
   // create collections
   console.log('DatabaseService: create collections');
-  await Promise.all(collections.map((colData) => db.addCollections({colData})));
+  // incase of many collections
+  // await Promise.all(collections.map((colData:any) => db.addCollections({
+  //   options: {
+  //     schema: optionsSchemer
+  //   }
+  // })));
+  await db.addCollections({
+    options: {
+        schema: optionsSchemer
+      }
+  });
 
   // hooks
-  console.log('DatabaseService: add hooks');
-  db.collections.options.preInsert((docObj: RxOptionsDocumentType) => {
-    const name = docObj.practiceEntry;
-    return db.collections.options
-      .findOne({ name })
-      .exec()
-      .then((has: RxOptionsDocument | null) => {
-        if (has != null) {
-          alert('another option already has the name ' + name);
-          throw new Error('option already there');
-        }
-        return db;
-      });
-  });
+  // console.log('DatabaseService: add hooks');
+  // db.collections.options.preInsert((docObj: RxOptionsDocumentType) => {
+  //   const name = docObj.practiceEntry;
+  //   return db.collections.options
+  //     .findOne({ name })
+  //     .exec()
+  //     .then((has: RxOptionsDocument | null) => {
+  //       if (has != null) {
+  //         alert('another option already has the name ' + name);
+  //         throw new Error('option already there');
+  //       }
+  //       return db;
+  //     });
+  // });
 
   // sync with server
-  console.log('DatabaseService: sync');
-  await db.options.sync({
-    remote: syncURL + '/options',
-  });
-  return db;
+  // console.log('DatabaseService: sync');
+  // await db.options.sync({
+  //   remote: syncURL + '/options',
+  // });
+   return db;
 }
 
 let DB_INSTANCE: RxOptionsDatabase;

@@ -6,21 +6,19 @@ interface Benefit {
 }
 
 interface PracticeEntry {
-  practiceEntry: string;
+  practice: string;
   gender: string[];
   benefits: Benefit[];
-  perfomanceValues: {
+  performance: {
     lowRf: string;
     midRf: string;
     highRf: string;
   };
-  performanceOptions: string[];
-  investmentValues: {
+  investment: {
     money: string;
     time: string;
   };
-  investmentOptions: string[];
-  benefitsStartTime: string;
+  time: string;
   risk: string;
 }
 
@@ -30,7 +28,7 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
   keyCompression: false,
   type: 'object',
   properties: {
-    practiceEntry: {
+    practice: {
         type: 'string',
         default: '', 
     },
@@ -58,7 +56,7 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
         required: ['benefit', 'beneficiary']
       }
     },
-    perfomanceValues: {
+    performance: {
       type: 'object',
       properties: {
         lowRf: {
@@ -73,14 +71,7 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
       },
       required: ['lowRf', 'midRf', 'highRf']
     },
-    performanceOptions: {
-      type: 'array',
-      items: {
-        type: 'string',
-        enum: ['good', 'ok', 'bad']
-      }
-    },
-    investmentValues: {
+    investment: {
       type: 'object',
       properties: {
         money: {
@@ -92,14 +83,7 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
       },
       required: ['money', 'time']
     },
-    investmentOptions: {
-      type: 'array',
-      items: {
-        type: 'string',
-        enum: ['high', 'mid', 'low']
-      }
-    },
-    benefitsStartTime: {
+    time: {
       type: 'string'
     },
     risk: {
@@ -107,8 +91,8 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
     }
   },
   required: [
-    'practiceEntry'
+    'practice'
   ],
-  primaryKey: 'practiceEntry'
+  primaryKey: 'practice'
 };
 export default practiceEntrySchema;
