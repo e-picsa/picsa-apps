@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
-import { RxOptionsDocument } from '../../Rxdb';
+import { RxOptionsDocument } from '../../RxDb';
 import { DatabaseService } from '../../services';
 
 export interface IOptionData {

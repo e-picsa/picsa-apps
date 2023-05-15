@@ -2,7 +2,6 @@
  * custom typings so typescript knows about the schema-fields
  * @type {[type]}
  */
-
 import { RxCollection, RxDatabase,RxDocument } from 'rxdb';
 
 export interface RxOptionsDocumentType {
