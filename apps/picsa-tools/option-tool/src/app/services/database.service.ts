@@ -3,7 +3,7 @@ import { createRxDatabase } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 // import typings
-import { RxOptionsDatabase } from '../Rxdb.d';
+import { RxOptionsDatabase } from '../Rxdb';
 import optionsSchemer from '../schemas/options.schema';
 
 //incase of many collections
