@@ -1,34 +1,21 @@
 /* tslint:disable */
 /* auto-generated angular directive proxies */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone } from '@angular/core';
+
 import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
 
 import { Components } from '@picsa/webcomponents';
 
 
-
-import type { IFormEntry as IEnketoWebformIFormEntry } from '@picsa/webcomponents';
-export declare interface EnketoWebform extends Components.EnketoWebform {
-  /**
-   *  
-   */
-  dataUpdated: EventEmitter<CustomEvent<{ formXML: string; nodes: string[] }>>;
-  /**
-   *  
-   */
-  formSaved: EventEmitter<CustomEvent<{ entry: IEnketoWebformIFormEntry }>>;
-
-}
-
 @ProxyCmp({
-  defineCustomElementFn: undefined,
   inputs: ['form', 'model']
 })
 @Component({
   selector: 'enketo-webform',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
-  inputs: ['form', 'model']
+  // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
+  inputs: ['form', 'model'],
 })
 export class EnketoWebform {
   protected el: HTMLElement;
@@ -38,3 +25,15 @@ export class EnketoWebform {
     proxyOutputs(this, this.el, ['dataUpdated', 'formSaved']);
   }
 }
+
+
+import type { IEventFormSaved as IEnketoWebformIEventFormSaved } from '@picsa/webcomponents';
+
+export declare interface EnketoWebform extends Components.EnketoWebform {
+
+  dataUpdated: EventEmitter<CustomEvent<{ formXML: string; nodes: string[] }>>;
+
+  formSaved: EventEmitter<CustomEvent<IEnketoWebformIEventFormSaved>>;
+}
+
+

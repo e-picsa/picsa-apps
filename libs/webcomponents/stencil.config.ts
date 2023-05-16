@@ -18,6 +18,7 @@ const rollupPlugins: Config['rollupPlugins'] = {
 setupBuild();
 
 export const config: Config = {
+  sourceMap: false,
   // use altered package.json to support monorepo builds
   namespace: 'picsa-webcomponents',
   taskQueue: 'async',
@@ -33,7 +34,7 @@ export const config: Config = {
       componentCorePackage: '@picsa/webcomponents',
       directivesProxyFile: '../../../libs/webcomponents-ngx/src/lib/generated/components.ts',
       directivesArrayFile: '../../../libs/webcomponents-ngx/src/lib/generated/index.ts',
-      // includeImportCustomElements: true,
+      includeImportCustomElements: false,
     }),
     {
       type: 'dist',
@@ -43,6 +44,8 @@ export const config: Config = {
 
     {
       type: 'dist-custom-elements',
+      generateTypeDeclarations: false,
+      customElementsExportBehavior: 'default',
       copy: [
         {
           src: '**/assets',
@@ -67,6 +70,7 @@ export const config: Config = {
       // injectGlobalPaths: [resolve(__dirname, `src/global/style.scss`).replace(/\\/g, '/')],
     }),
   ],
+  // Setup passed to jest when running via stencil test methods
   testing: {
     browserHeadless: false,
   },

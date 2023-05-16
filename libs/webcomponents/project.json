@@ -11,13 +11,42 @@
   "tags": [],
   "targets": {
     "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/webcomponents"],
+      "options": {
+        "jestConfig": "libs/webcomponents/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "test-nxtext": {
       "executor": "@nxext/stencil:test",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "projectType": "library",
+        "configPath": "libs/webcomponents/stencil.config.ts",
+        "outputPath": "dist/libs/webcomponents",
+        "watch": false
+      }
+    },
+
+    "test-stencil": {
+      "executor": "nx:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "command": "stencil test --spec --tsConfig=libs/webcomponents/tsconfig.spec.json",
+        "cwd": "libs/webcomponents"
+      }
+    },
+
+    "e2e": {
+      "executor": "@nxext/stencil:e2e",
       "outputs": ["{options.outputPath}"],
       "options": {
         "projectType": "library",
         "tsConfig": "libs/webcomponents/tsconfig.lib.json",
         "configPath": "libs/webcomponents/stencil.config.ts",
-        "outputPath": "dist/libs/webcomponents"
+        "outputPath": "dist/libs/webcomponents",
+        "watch": "true"
       }
     },
     "build": {
@@ -46,17 +75,7 @@
         "outputPath": "dist/libs/webcomponents"
       }
     },
-    "e2e": {
-      "executor": "@nxext/stencil:e2e",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "projectType": "library",
-        "tsConfig": "libs/webcomponents/tsconfig.lib.json",
-        "configPath": "libs/webcomponents/stencil.config.ts",
-        "outputPath": "dist/libs/webcomponents",
-        "watch": "true"
-      }
-    },
+
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],

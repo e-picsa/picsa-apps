@@ -16,6 +16,10 @@ export interface IFormEntry {
   xml: string;
 }
 
+export interface IEventFormSaved {
+  entry: IFormEntry;
+}
+
 @Component({
   tag: 'enketo-webform',
   styleUrl: 'enketo-webform.scss',
@@ -47,7 +51,7 @@ export class EnketoWebform {
 
   @Event() dataUpdated: EventEmitter<{ formXML: string; nodes: string[] }>;
 
-  @Event() formSaved: EventEmitter<{ entry: IFormEntry }>;
+  @Event() formSaved: EventEmitter<IEventFormSaved>;
 
   render() {
     if (!this.form || !this.model) {

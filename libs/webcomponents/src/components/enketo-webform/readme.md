@@ -27,7 +27,11 @@ Recommended further optimisations
 
 - Comment out draw widget (20kb)
 - Refactor date/time picker widgets to use native html elements (100kb)
--
+
+## Known Issues
+
+**Testing**
+Cannot integrate nxext stencil test as does not (currently) support jest 28
 
 <!-- Auto Generated Below -->
 
@@ -43,7 +47,7 @@ Recommended further optimisations
 | Event         | Description | Type                                                 |
 | ------------- | ----------- | ---------------------------------------------------- |
 | `dataUpdated` |             | `CustomEvent<{ formXML: string; nodes: string[]; }>` |
-| `formSaved`   |             | `CustomEvent<{ entry: IFormEntry; }>`                |
+| `formSaved`   |             | `CustomEvent<IEventFormSaved>`                       |
 
 ---
 
