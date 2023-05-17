@@ -1,5 +1,6 @@
 import { E2EPage, newE2EPage } from '@stencil/core/testing';
-import { MOCK_DATA } from './mocks';
+
+import { MOCK_DATA } from './test/fixtures';
 
 describe('enketo-webform', () => {
   it('renders', async () => {
@@ -12,9 +13,7 @@ describe('enketo-webform', () => {
   it('shows message when no form passed', async () => {
     const page = await newE2EPage();
     await page.setContent('<enketo-webform></enketo-webform>');
-    const element = await page.find(
-      'enketo-webform >>> [data-testid="form-na"]'
-    );
+    const element = await page.find('enketo-webform >>> [data-testid="form-na"]');
     expect(element.textContent).toEqual(`Form not available`);
   });
   it('renders form with title', async () => {

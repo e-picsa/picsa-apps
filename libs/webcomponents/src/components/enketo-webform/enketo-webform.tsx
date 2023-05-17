@@ -1,7 +1,7 @@
 import { Component, Event, EventEmitter, Fragment, getAssetPath, h, Prop } from '@stencil/core';
 
-import Events from './enketo/js/event';
-import { Form } from './enketo/js/form';
+import Events from './libs/enketo/js/event';
+import { Form } from './libs/enketo/js/form';
 
 // NOTE - this is manually exported from parent index as not inferred correctly from generated
 export interface IFormEntry {
