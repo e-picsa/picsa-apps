@@ -1,7 +1,10 @@
-// import { MockRequest } from '@stencil/core/testing';
+import fetch from 'jest-fetch-mock';
+fetch.enableMocks();
 
 import { KoboService } from './kobo-service';
 import { MOCK_DATA } from './test/fixtures';
+
+const MOCK_TOKEN = 'abcd1234';
 
 /**
  * NOTE - compile wil fail trying to bundle files - prefer e2e tests instead
@@ -10,41 +13,55 @@ describe('kobo-service', () => {
   let service: KoboService;
 
   beforeEach(() => {
-    service = new KoboService();
+    fetch.resetMocks();
+    service = new KoboService({ authToken: MOCK_TOKEN });
   });
   it('creates service', async () => {
     expect(service).not.toBeUndefined();
   });
+  it('posts xml file submission', async () => {
+    fetch.mockOnce(MOCK_DATA.xml.responseSuccess, { status: 200 });
+    await service.submitXMLSubmission(MOCK_DATA.xml.submission);
+    // test request formatting
+    expect(fetch.mock.calls.length).toEqual(1);
+    const [endpoint, options] = fetch.mock.lastCall;
+    expect(endpoint).toEqual('https://kc.kobotoolbox.org/api/v1/submissions');
+    expect(options.method).toEqual('POST');
+    expect(options.headers).toEqual({
+      Authentication: 'Token abcd1234',
+      'Content-Type': 'multipart/form-data',
+      'X-OpenRosa-Version': '1.0',
+    });
 
-  it('converts json to xml', () => {
-    const testJSON = { str: 'hello', num: 1 };
-    const xml = KoboService.jsonToXML(testJSON);
-    expect(xml).toEqual(
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
-        '<root>\n' +
-        '  <str>hello</str>\n' +
-        '  <num>1</num>\n' +
-        '</root>'
-    );
+    const body = options.body as FormData;
+    expect(body.has('xml_submission_file')).toEqual(true);
+    const xmlFile = body.get('xml_submission_file') as File;
+    expect(xmlFile.type).toEqual('application/xml');
   });
-
-  it('converts xml to json (non-fidelity)', async () => {
-    const xml =
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
-      '<root>\n' +
-      '  <str>hello</str>\n' +
-      '  <num>1</num>\n' +
-      '</root>';
-    const json = await KoboService.xmlToJson(xml);
-    // Keys will be ordered
-    expect(json).toEqual({ root: { num: ['1'], str: ['hello'] } });
+  it('handles successful submission', async () => {
+    fetch.mockOnce(MOCK_DATA.xml.responseSuccess, { status: 200 });
+    const res = await service.submitXMLSubmission(MOCK_DATA.xml.submission);
+    expect(res.data).toEqual({
+      message: ['Successful submission.'],
+      submissionMetadata: [
+        {
+          $: {
+            id: 'aM3XZ9L3BCjqDVq7CeutZ6',
+            instanceID: 'uuid:afca73df-a61c-440b-9be2-a904700c66df',
+            isComplete: 'true',
+            markedAsCompleteDate: '2023-05-15T23:46:03.621349+00:00',
+            submissionDate: '2023-05-15T23:46:03.621333+00:00',
+            xmlns: 'http://www.opendatakit.org/xforms',
+          },
+        },
+      ],
+    });
   });
-  it('converts submission xml to json', async () => {
-    const json = await KoboService.xmlToJson(MOCK_DATA.SUBMISSION_XML);
-    console.log('json', JSON.stringify(json, null, 2));
-
-    // Keys will be ordered
-    expect(json).toHaveProperty('aM3XZ9L3BCjqDVq7CeutZ6');
-    expect(json.aM3XZ9L3BCjqDVq7CeutZ6).toHaveProperty('$');
+  it('handles handles duplicate submission', async () => {
+    fetch.mockOnce(MOCK_DATA.xml.responseDuplicate, { status: 202 });
+    const res = await service.submitXMLSubmission(MOCK_DATA.xml.submission);
+    expect(res.data).toEqual({
+      message: [{ _: 'Duplicate submission', $: { nature: '' } }],
+    });
   });
 });

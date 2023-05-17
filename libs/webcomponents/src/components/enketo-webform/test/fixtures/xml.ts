@@ -1,4 +1,4 @@
-export const SUBMISSION_XML = `<?xml version="1.0" encoding="utf-8"?>
+export const submission = `
 <aM3XZ9L3BCjqDVq7CeutZ6
 	xmlns:jr="http://openrosa.org/javarosa"
 	xmlns:orx="http://openrosa.org/xforms" id="aM3XZ9L3BCjqDVq7CeutZ6" version="1 (2023-05-15 21:49:49)">
@@ -29,3 +29,16 @@ export const SUBMISSION_XML = `<?xml version="1.0" encoding="utf-8"?>
 	</formhub>
 	<__version__>v6sDQRzLKXEHQr9t7huv99</__version__>
 </aM3XZ9L3BCjqDVq7CeutZ6>`;
+
+export const responseSuccess = `<OpenRosaResponse
+xmlns="http://openrosa.org/http/response">
+<message>Successful submission.</message>
+<submissionMetadata
+  xmlns="http://www.opendatakit.org/xforms" id="aM3XZ9L3BCjqDVq7CeutZ6"  instanceID="uuid:afca73df-a61c-440b-9be2-a904700c66df" submissionDate="2023-05-15T23:46:03.621333+00:00" isComplete="true" markedAsCompleteDate="2023-05-15T23:46:03.621349+00:00"/>
+</OpenRosaResponse>`;
+
+export const responseDuplicate = `<?xml version='1.0' encoding='UTF-8' ?>
+<OpenRosaResponse
+	xmlns="http://openrosa.org/http/response">
+	<message nature="">Duplicate submission</message>
+</OpenRosaResponse>`;

@@ -1,5 +1,5 @@
 import basic from './basic.json';
 import kitchenSink from './kitchen-sink.json';
-import { SUBMISSION_XML } from './xml';
+import * as xml from './xml';
 
-export const MOCK_DATA = { basic, kitchenSink, SUBMISSION_XML };
+export const MOCK_DATA = { basic, kitchenSink, xml };

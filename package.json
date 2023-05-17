@@ -141,6 +141,7 @@
     "jest": "28.1.1",
     "jest-circus": "^29.5.0",
     "jest-environment-jsdom": "28.1.1",
+    "jest-fetch-mock": "^3.0.3",
     "jest-jasmine2": "^29.5.0",
     "jest-preset-angular": "12.2.3",
     "jetifier": "^2.0.0",

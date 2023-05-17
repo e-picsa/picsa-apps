@@ -1,4 +1,4 @@
-import { Builder as XMLBuilder, parseString as parseXMLString } from 'xml2js';
+import { xmlToJson } from './utils/utils';
 
 /**
  * Service to handle submission to koboCollect via api
@@ -19,39 +19,8 @@ export class KoboService {
     v2: 'https://kf.kobotoolbox.org/api/v2',
   };
 
-  private client;
-
-  constructor() {
+  constructor(private config: { authToken: string }) {
     //
-  }
-
-  /**
-   * Convert xml to json
-   * NOTE - unless configured carefully the output json may contain unexpected structures
-   * See https://www.npmjs.com/package/xml2js
-   * @param xml
-   * @returns
-   */
-  public static async xmlToJson<T = Record<string, any>>(xml: string): Promise<T> {
-    return new Promise((resolve, reject) =>
-      parseXMLString(xml, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result as T);
-        }
-      })
-    );
-  }
-
-  /**
-   *
-   * @param json
-   * @returns
-   */
-  public static jsonToXML(json: Record<string, any>) {
-    const builder = new XMLBuilder();
-    return builder.buildObject(json);
   }
 
   /**
@@ -60,14 +29,40 @@ export class KoboService {
    * https://docs.getodk.org/openrosa-form-submission/
    * https://bitbucket.org/javarosa/javarosa/wiki/FormSubmissionAPI
    */
-  public submitXMLSubmission(xmlSubmission: string) {
+  public async submitXMLSubmission(xmlSubmission: string) {
+    const formattedXML = this.formatXML(xmlSubmission);
     const { v1 } = this.apiEndpoints;
     const endpoint = `${v1}/submissions`;
-    console.log('submit xml submission', { xmlSubmission, endpoint });
-    //
+    const formData = new FormData();
+    // convert xml string to a file and send as part of formatted POST request
+    const xml_submission_file = new Blob([formattedXML], { type: 'application/xml' });
+    formData.append('xml_submission_file', xml_submission_file);
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        Authentication: `Token ${this.config.authToken}`,
+        'Content-Type': 'multipart/form-data',
+        'X-OpenRosa-Version': '1.0',
+      },
+      body: formData,
+    });
+    return this.getFormattedResponseData(res);
   }
 
-  public updateJSONSubmission(data: Record<string, any>, id: string) {
+  private async getFormattedResponseData(res: Response) {
+    const responseText = await res.text();
+    let data: unknown = responseText;
+    const status = res.status;
+    // 201 status code accepted, 202 duplicate (already accepted)
+    if (status === 200 || status === 202) {
+      const responseJson = await xmlToJson(this.formatXML(responseText));
+      const { $, ...rest } = responseJson['OpenRosaResponse'];
+      data = rest;
+    }
+    return { status, data };
+  }
+
+  public wipUpdateJSONSubmission(data: Record<string, any>, id: string) {
     if (!id) {
       // Although we can still update data without an id (requires `confirm:true` payload),
       // This will update all records so want to avoid
@@ -80,8 +75,10 @@ export class KoboService {
     };
   }
 
-  /** Add xml header prior to upload */
+  /** Ensure xml has proper headers (often omitted) */
   private formatXML(xmlString: string) {
-    return `<?xml version="1.0" encoding="utf-8"?>\n${xmlString}`;
+    xmlString = xmlString.trim();
+    if (!xmlString.startsWith('<?xml')) xmlString = `<?xml version="1.0" encoding="utf-8"?>\n${xmlString}`;
+    return xmlString;
   }
 }
