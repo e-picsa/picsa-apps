@@ -7,9 +7,10 @@ import { xmlStringToFile, xmlToJson } from './utils/utils';
 /**
  * Service to handle submission to koboCollect via api
  *
- *
- *
  * https://github.dev/enketo/enketo-express
+ *
+ * NOTE - ideally this should be run as part of server-side rest client
+ * to avoid exposing authToken and handle CORS
  */
 export class KoboService {
   /**
@@ -21,6 +22,19 @@ export class KoboService {
   public apiEndpoints = {
     v1: 'https://kc.kobotoolbox.org/api/v1',
     v2: 'https://kf.kobotoolbox.org/api/v2',
+  };
+
+  /**
+   * http client (default fetch)
+   * should minimally implement post request handler and response status/text extract
+   * */
+  public httpHandlers = {
+    req: (endpoint: string, options: RequestInit) =>
+      fetch(endpoint, options).then(async (res) => {
+        const status = res.status;
+        const text = await res.text();
+        return { status, text };
+      }),
   };
 
   constructor(private config: { authToken: string }) {
@@ -59,18 +73,16 @@ export class KoboService {
       headers = { ...headers, ...formData.getHeaders() };
       body = formData as any;
     }
-    const res = await fetch(endpoint, { method: 'POST', headers, body });
-    return this.getFormattedResponseData(res);
+    const { status, text } = await this.httpHandlers.req(endpoint, { method: 'POST', headers, body });
+    return this.formatResponse(status, text);
   }
 
-  private async getFormattedResponseData(res: Response) {
-    const responseText = await res.text();
-    let data: unknown = responseText;
-    const status = res.status;
+  private async formatResponse(status: number, text: string) {
+    let data: unknown = text;
 
     // 201 status code accepted, 202 duplicate (already accepted)
     if (status === 200 || status === 202) {
-      const responseJson = xmlToJson(this.formatXML(responseText), { ignoreAttributes: false });
+      const responseJson = xmlToJson(this.formatXML(text), { ignoreAttributes: false });
       data = responseJson['OpenRosaResponse'];
       // reformat duplicate response message which has nested attributes for message
       if (data['message'].constructor === {}.constructor && '#text' in data['message']) {

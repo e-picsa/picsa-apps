@@ -1,4 +1,5 @@
 import type { IEnvironment } from '@picsa/models';
+
 import PRODUCTION_ENVIRONMENT from './environment.prod';
 
 /**

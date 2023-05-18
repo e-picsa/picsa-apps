@@ -3173,12 +3173,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/android@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@capacitor/android@npm:4.1.0"
+"@capacitor/android@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@capacitor/android@npm:4.8.0"
   peerDependencies:
-    "@capacitor/core": ^4.0.0
-  checksum: a86ee223fdb1f85bda94d230fa4f53489fe8cf30bba377aef2d07ac5ec4df2b8ecd14c24b09defada140fb55090da820e1f145091dfadb40562a778cc09f872c
+    "@capacitor/core": ^4.7.0
+  checksum: 9f8ff2be252e2cb3ba37f3138586a4c28e066632935eb0300e3b2e8897230b9c85745ae6569565332f74d5a3c5c32e83946e345c989fc98937aea5c16b1db06e
   languageName: node
   linkType: hard
 
@@ -3200,14 +3200,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/cli@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@capacitor/cli@npm:4.1.0"
+"@capacitor/cli@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@capacitor/cli@npm:4.8.0"
   dependencies:
-    "@ionic/cli-framework-output": ^2.2.5
-    "@ionic/utils-fs": ^3.1.6
-    "@ionic/utils-subprocess": ^2.1.11
-    "@ionic/utils-terminal": ^2.3.3
+    "@ionic/cli-framework-output": 2.2.5
+    "@ionic/utils-fs": 3.1.6
+    "@ionic/utils-subprocess": 2.1.11
+    "@ionic/utils-terminal": 2.3.3
     commander: ^9.3.0
     debug: ^4.3.4
     env-paths: ^2.2.0
@@ -3220,20 +3220,29 @@ __metadata:
     semver: ^7.3.7
     tar: ^6.1.11
     tslib: ^2.4.0
-    xml2js: ^0.4.23
+    xml2js: ^0.5.0
   bin:
     cap: bin/capacitor
     capacitor: bin/capacitor
-  checksum: 86b02df00f57d0568923df481f0c79251baa2c6c0692c95559013dd7066e51de3d0ae9ea3f804945eb997d635cb5b8861c8de5e76cbf8a39a50721b1f973e097
+  checksum: b9e20a7fd7c82c909b7c5d2c017d9e42335179495708f9c5f6a2d661f2b8c9a0df1f4b529b8e54b863bd5305ab48baf59e70b771e19203ec3aa1d7acd6d9adc6
   languageName: node
   linkType: hard
 
-"@capacitor/core@npm:^4.0.0, @capacitor/core@npm:^4.6.2":
+"@capacitor/core@npm:^4.0.0":
   version: 4.6.2
   resolution: "@capacitor/core@npm:4.6.2"
   dependencies:
     tslib: ^2.1.0
   checksum: eb1d6256c1f70c0f30aaf0cb322b28d35ee898bef810dc66c6f5ca255ebcb084b8ed3dfcabcfde645e287bea3e389428f004b416cd1f17425579537ac472726c
+  languageName: node
+  linkType: hard
+
+"@capacitor/core@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@capacitor/core@npm:4.8.0"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 74fd71a9130ec0710021e8d6855bc32b5a77017ee1a554eb5af8460b5cb2abe67b92e84357e006748de6f15b4110a022a8af2e71792de6b86dae5ea0d9192d8d
   languageName: node
   linkType: hard
 
@@ -4653,7 +4662,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic/cli-framework-output@npm:^2.2.5":
+"@ionic/cli-framework-output@npm:2.2.5":
   version: 2.2.5
   resolution: "@ionic/cli-framework-output@npm:2.2.5"
   dependencies:
@@ -4731,7 +4740,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic/utils-subprocess@npm:^2.1.11":
+"@ionic/utils-subprocess@npm:2.1.11":
   version: 2.1.11
   resolution: "@ionic/utils-subprocess@npm:2.1.11"
   dependencies:
@@ -17632,11 +17641,11 @@ __metadata:
     "@capacitor-community/firebase-analytics": ^4.0.0
     "@capacitor-community/firebase-crashlytics": ^2.0.0-1
     "@capacitor-firebase/performance": ^1.3.0
-    "@capacitor/android": ^4.1.0
+    "@capacitor/android": ^4.8.0
     "@capacitor/app": ^4.1.1
     "@capacitor/browser": ^4.1.1
-    "@capacitor/cli": ^4.1.0
-    "@capacitor/core": ^4.6.2
+    "@capacitor/cli": ^4.8.0
+    "@capacitor/core": ^4.8.0
     "@capacitor/device": ^4.1.0
     "@capacitor/filesystem": ^4.1.4
     "@ionic-native/core": ^5.36.0
@@ -22017,16 +22026,6 @@ __metadata:
   version: 4.0.0
   resolution: "xml-name-validator@npm:4.0.0"
   checksum: af100b79c29804f05fa35aa3683e29a321db9b9685d5e5febda3fa1e40f13f85abc40f45a6b2bf7bee33f68a1dc5e8eaef4cec100a304a9db565e6061d4cb5ad
-  languageName: node
-  linkType: hard
-
-"xml2js@npm:^0.4.23":
-  version: 0.4.23
-  resolution: "xml2js@npm:0.4.23"
-  dependencies:
-    sax: ">=0.6.0"
-    xmlbuilder: ~11.0.0
-  checksum: ca0cf2dfbf6deeaae878a891c8fbc0db6fd04398087084edf143cdc83d0509ad0fe199b890f62f39c4415cf60268a27a6aed0d343f0658f8779bd7add690fa98
   languageName: node
   linkType: hard
 
