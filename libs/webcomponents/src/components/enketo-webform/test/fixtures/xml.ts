@@ -30,6 +30,33 @@ export const submission = `
 	<__version__>v6sDQRzLKXEHQr9t7huv99</__version__>
 </aM3XZ9L3BCjqDVq7CeutZ6>`;
 
+export const submissionJSON = {
+  aM3XZ9L3BCjqDVq7CeutZ6: {
+    start_time: '2023-05-15T23:12:40.585+01:00',
+    end_time: '2023-05-15T23:43:14.815+01:00',
+    today: '2023-05-15',
+    imei: 'ee.kobotoolbox.org:nDEnsue5oPp1fSaG',
+    phonenumber: 'phonenumber not found',
+    name: 'chris',
+    age: 1,
+    gender: '',
+    photo: '',
+    date: '',
+    location: '',
+    pizza_fan: '',
+    thanks: '',
+    net_worth: '',
+    a_group: { a_text: '' },
+    meta: {
+      instanceID: 'uuid:afca73df-a61c-440b-9be2-a904700c66df',
+      rootUuid: '7cde9418-700b-4254-8844-17b9799f2706',
+      deprecatedID: 'uuid:7cde9418-700b-4254-8844-17b9799f2706',
+    },
+    formhub: { uuid: '3b3f8aa41a6d49379f90bb9e39bd9827' },
+    __version__: 'v6sDQRzLKXEHQr9t7huv99',
+  },
+};
+
 export const responseSuccess = `<OpenRosaResponse
 xmlns="http://openrosa.org/http/response">
 <message>Successful submission.</message>

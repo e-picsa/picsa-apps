@@ -102,7 +102,7 @@ export class EnketoWebform {
       name: '__autoSave_1683981755249',
       // TODO - check if actually updated
       updated: new Date().getTime(),
-      xml: '<aQCDPoHBUkgJRWQgswksoo ',
+      xml: this.xmlFormValue,
     };
     console.log('save entry', entry);
     this.formSaved.emit({ entry });

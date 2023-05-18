@@ -1,4 +1,8 @@
-import { xmlToJson } from './utils/utils';
+// HACK - when running in node env FormData does not have in-built class (unlike browsers)
+// https://masteringjs.io/tutorials/axios/axios-multi-form-data
+import FormDataNode from 'form-data';
+
+import { xmlStringToFile, xmlToJson } from './utils/utils';
 
 /**
  * Service to handle submission to koboCollect via api
@@ -33,19 +37,29 @@ export class KoboService {
     const formattedXML = this.formatXML(xmlSubmission);
     const { v1 } = this.apiEndpoints;
     const endpoint = `${v1}/submissions`;
-    const formData = new FormData();
+
     // convert xml string to a file and send as part of formatted POST request
-    const xml_submission_file = new Blob([formattedXML], { type: 'application/xml' });
-    formData.append('xml_submission_file', xml_submission_file);
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        Authentication: `Token ${this.config.authToken}`,
-        'Content-Type': 'multipart/form-data',
-        'X-OpenRosa-Version': '1.0',
-      },
-      body: formData,
-    });
+    // as per https://docs.getodk.org/openrosa-form-submission/
+    // const xml_submission_file = new Blob([formattedXML], { type: 'text/xml' });
+    const xml_submission_file = xmlStringToFile(formattedXML);
+    let headers = {
+      Authorization: `Token ${this.config.authToken}`,
+      'X-OpenRosa-Version': '1.0',
+    };
+    let body: any;
+
+    // Handle formdata differently depending on browser or node environemnt
+    const isBrowser = typeof window !== 'undefined';
+    if (isBrowser) {
+      const formData = new FormData();
+      formData.append('xml_submission_file', xml_submission_file);
+    } else {
+      const formData = new FormDataNode();
+      // calculate formdata boundary (done automatically in browser)
+      headers = { ...headers, ...formData.getHeaders() };
+      body = formData as any;
+    }
+    const res = await fetch(endpoint, { method: 'POST', headers, body });
     return this.getFormattedResponseData(res);
   }
 
@@ -53,11 +67,15 @@ export class KoboService {
     const responseText = await res.text();
     let data: unknown = responseText;
     const status = res.status;
+
     // 201 status code accepted, 202 duplicate (already accepted)
     if (status === 200 || status === 202) {
-      const responseJson = await xmlToJson(this.formatXML(responseText));
-      const { $, ...rest } = responseJson['OpenRosaResponse'];
-      data = rest;
+      const responseJson = xmlToJson(this.formatXML(responseText), { ignoreAttributes: false });
+      data = responseJson['OpenRosaResponse'];
+      // reformat duplicate response message which has nested attributes for message
+      if (data['message'].constructor === {}.constructor && '#text' in data['message']) {
+        data['message'] = data['message']['#text'];
+      }
     }
     return { status, data };
   }

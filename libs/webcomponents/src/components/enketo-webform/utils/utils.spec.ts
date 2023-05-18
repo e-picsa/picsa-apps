@@ -5,31 +5,26 @@ describe('utils', () => {
   it('converts json to xml', () => {
     const testJSON = { str: 'hello', num: 1 };
     const xml = jsonToXML(testJSON);
-    expect(xml).toEqual(
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
-        '<root>\n' +
-        '  <str>hello</str>\n' +
-        '  <num>1</num>\n' +
-        '</root>'
-    );
+    expect(xml).toEqual('<str>hello</str><num>1</num>');
   });
 
-  it('converts xml to json (non-fidelity)', async () => {
+  it('converts xml to json without attributes', async () => {
     const xml =
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
       '<root>\n' +
       '  <str>hello</str>\n' +
       '  <num>1</num>\n' +
       '</root>';
-    const json = await xmlToJson(xml);
-    // Keys will be ordered
-    expect(json).toEqual({ root: { num: ['1'], str: ['hello'] } });
+    const json = xmlToJson(xml);
+    expect(json).toEqual({
+      '?xml': '',
+      root: { str: 'hello', num: 1 },
+    });
   });
 
   it('converts submission xml to json', async () => {
-    const json = await xmlToJson(MOCK_DATA.xml.submission);
+    const json = xmlToJson(MOCK_DATA.xml.submission);
     // Keys will be ordered
-    expect(json).toHaveProperty('aM3XZ9L3BCjqDVq7CeutZ6');
-    expect(json.aM3XZ9L3BCjqDVq7CeutZ6).toHaveProperty('$');
+    expect(json).toEqual(MOCK_DATA.xml.submissionJSON);
   });
 });

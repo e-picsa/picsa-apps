@@ -6,6 +6,6 @@
     "composite": true,
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts", "**/*.spec.tsx", "**/*.e2e.ts", "**/mocks/**/*", "**/*.d.ts"],
+  "exclude": ["**/*.spec.ts", "**/*.spec.tsx", "**/*.e2e.ts", "**/fixtures/**/*", "**/*.d.ts"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }
