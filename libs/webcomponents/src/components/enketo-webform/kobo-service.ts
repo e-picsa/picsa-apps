@@ -67,6 +67,7 @@ export class KoboService {
     if (isBrowser) {
       const formData = new FormData();
       formData.append('xml_submission_file', xml_submission_file);
+      body = formData;
     } else {
       const formData = new FormDataNode();
       // calculate formdata boundary (done automatically in browser)
