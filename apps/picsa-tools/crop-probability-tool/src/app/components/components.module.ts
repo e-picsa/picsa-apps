@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { CropProbabilityTableComponent } from './crop-probability-table/crop-probability-table.component';
+import { CropProbabilityTableComponent, FilterPipe } from './crop-probability-table/crop-probability-table.component';
 import { CropProbabilityTableHeaderComponent } from './crop-probability-table-header/crop-probability-table-header.component';
 import { CropProbabilityMaterialModule } from './material.module';
 
-const components = [CropProbabilityTableComponent, CropProbabilityTableHeaderComponent];
+const components = [CropProbabilityTableComponent, CropProbabilityTableHeaderComponent, FilterPipe];
 
 @NgModule({
   imports: [CommonModule, FormsModule, CropProbabilityMaterialModule],
