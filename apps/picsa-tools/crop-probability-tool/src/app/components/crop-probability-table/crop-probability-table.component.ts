@@ -25,7 +25,7 @@ export interface ICropInformation {
   };
   notes: string[];
   dates: string[];
-  season_probabilites: string[]
+  season_probabilites: string[];
 }
 @Pipe({
   name: 'filter',
@@ -45,17 +45,23 @@ export class FilterPipe implements PipeTransform {
 })
 export class CropProbabilityTableComponent {
   displayedColumns: string[] = ['crop', 'variety', 'days', 'water', 'probabilities'];
-  dataSource = new MatTableDataSource(CROP_MOCK_DATA);
+  public stations = CROP_MOCK_DATA;
+  public tableData: any;
+  public dataSource;
+
   cropIcons = CROP_PROBABILITY_ICONS;
-  stations = CROP_MOCK_DATA;
   stationId = 0;
 
   filterbyImage(title: string) {
     this.dataSource.filter = title.trim().toLowerCase();
   }
+
   onSelect(id: number) {
     this.stationId = id;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data.id === +this.stationId;
-    this.dataSource.filter = this.stationId.toString();
+    this.tableData = this.stations
+      .filter((data) => data.id === this.stationId)
+      .map((data: any) => {
+        this.dataSource = new MatTableDataSource(data.station_data);
+      });
   }
 }
