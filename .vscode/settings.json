@@ -1,5 +1,7 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "cSpell.enabled": false,
-  "eslint.runtime": "node"
+  "eslint.runtime": "node",
+  "deno.enable": true,
+  "deno.unstable": true
 }
