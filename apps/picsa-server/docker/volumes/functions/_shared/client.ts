@@ -1,10 +1,11 @@
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.22.0';
+import { Database } from '../../../../types/supabase.ts';
 
 export { SupabaseClient };
 
 export const getClient = (req: Request) => {
   // Create a Supabase client with the Auth context of the logged in user.
-  return createClient(
+  return createClient<Database>(
     // Supabase API URL - env var exported by default.
     Deno.env.get('SUPABASE_URL') ?? '',
     // Supabase API ANON KEY - env var exported by default.

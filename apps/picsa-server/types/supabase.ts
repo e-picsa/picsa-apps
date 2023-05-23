@@ -12,21 +12,30 @@ export interface Database {
       monitoring_tool_submissions: {
         Row: {
           created_at: string | null
+          form_id: string
           id: number
-          json: Json | null
-          xml: string | null
+          json: Json
+          kobo_response: string | null
+          xml: string
+          xml_hash: string
         }
         Insert: {
           created_at?: string | null
+          form_id: string
           id?: number
-          json?: Json | null
-          xml?: string | null
+          json: Json
+          kobo_response?: string | null
+          xml: string
+          xml_hash: string
         }
         Update: {
           created_at?: string | null
+          form_id?: string
           id?: number
-          json?: Json | null
-          xml?: string | null
+          json?: Json
+          kobo_response?: string | null
+          xml?: string
+          xml_hash?: string
         }
       }
     }
