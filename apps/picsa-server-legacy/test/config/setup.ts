@@ -12,6 +12,7 @@ tsConfigRegister({
   paths: compilerOptions.paths,
 });
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { populateEnv } from '@picsa/scripts';
 import { commandSync } from 'execa';
 import path from 'path';
