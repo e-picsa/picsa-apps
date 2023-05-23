@@ -8,7 +8,7 @@ async function teardown() {
 }
 
 export function stopTestServer() {
-  commandSync('yarn nx run picsa-server-docker:stop-test', {
+  commandSync('yarn nx run picsa-server-docker-legacy:stop-test', {
     cwd: rootDir,
     shell: true,
     stdio: ['pipe', 'inherit', 'inherit'],
