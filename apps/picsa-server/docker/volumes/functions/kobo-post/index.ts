@@ -63,7 +63,7 @@ serve(async (req) => {
   dbEntry.kobo_response = await extractKoboResponse(res);
   const updatedEntry = await updateDB(dbEntry);
 
-  return new Response(JSON.stringify({ updatedEntry }), { status: res.status });
+  return new Response(JSON.stringify(updatedEntry), { status: res.status });
 });
 
 /**
