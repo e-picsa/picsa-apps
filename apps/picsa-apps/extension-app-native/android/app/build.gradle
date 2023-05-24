@@ -6,8 +6,8 @@ android {
         applicationId "io.picsa.extension"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3021000
-        versionName "3.21.0"
+        versionCode 3021001
+        versionName "3.21.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
