@@ -17,7 +17,7 @@ const configuration: IConfiguration.Settings = {
     language: {
       options: [
         { id: 'en', label: 'English', code: 'en' },
-        { id: 'ny', label: 'Chichewa', code: 'ny' },
+        { id: 'mw_ny', label: 'Chichewa', code: 'mw_ny' },
       ],
       selected: undefined,
     },
