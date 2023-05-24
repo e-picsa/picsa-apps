@@ -2,7 +2,7 @@
   "name": "picsa-server-docker",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/picsa-server/docker",
+  "sourceRoot": "apps/picsa-server-legacy/docker",
   "prefix": "picsa",
   "implicitDependencies": ["picsa-server-scripts"],
   "targets": {
@@ -17,7 +17,7 @@
       "outputs": [],
       "options": {
         "commands": ["compose --project-name picsa-server up"],
-        "cwd": "apps/picsa-server/docker"
+        "cwd": "apps/picsa-server-legacy/docker"
       }
     },
     "start-test": {
@@ -33,7 +33,7 @@
         "commands": [
           "compose -f docker-compose.yml -f docker-compose.test.yml --project-name picsa-server-test up --build -V --detach"
         ],
-        "cwd": "apps/picsa-server/docker"
+        "cwd": "apps/picsa-server-legacy/docker"
       }
     },
     "stop-test": {
@@ -47,7 +47,7 @@
       "outputs": [],
       "options": {
         "commands": ["compose --project-name picsa-server-test down -v"],
-        "cwd": "apps/picsa-server/docker"
+        "cwd": "apps/picsa-server-legacy/docker"
       }
     }
   },
