@@ -179,6 +179,7 @@ tool,context,text
 "extension",,"Settings"
 "extension",,"Something went wrong..."
 "monitoring",,"Forms"
+"option",,"*This field is required"
 "option",,"Add New Option"
 "option",,"Add benefit"
 "option",,"Benefits"
