@@ -12,6 +12,7 @@ tsConfigRegister({
   paths: compilerOptions.paths,
 });
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { populateEnv } from '@picsa/scripts';
 import { commandSync } from 'execa';
 import path from 'path';
@@ -37,7 +38,7 @@ async function setup() {
   dbSeedData();
 }
 async function startTestServer() {
-  commandSync('yarn nx run picsa-server-docker:start-test', {
+  commandSync('yarn nx run picsa-server-docker-legacy:start-test', {
     cwd: rootDir,
     shell: true,
     stdio: ['pipe', 'inherit', 'inherit'],

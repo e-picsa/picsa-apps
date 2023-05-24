@@ -2,21 +2,21 @@
   "name": "picsa-server-test",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/picsa-server/test",
+  "sourceRoot": "apps/picsa-server-legacy/test",
   "implicitDependencies": [],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/picsa-server/test/**/*.ts"]
+        "lintFilePatterns": ["apps/picsa-server-legacy/test/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/picsa-server/test"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-server-legacy/test"],
       "options": {
-        "jestConfig": "apps/picsa-server/test/jest.config.ts",
+        "jestConfig": "apps/picsa-server-legacy/test/jest.config.ts",
         "passWithNoTests": true
       }
     }
