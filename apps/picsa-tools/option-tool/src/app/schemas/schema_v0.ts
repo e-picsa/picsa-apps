@@ -5,7 +5,7 @@ interface Benefit {
   beneficiary: string[];
 }
 
-interface PracticeEntry {
+export interface IOptionsToolEntry {
   practice: string;
   gender: string[];
   benefits: Benefit[];
@@ -22,7 +22,7 @@ interface PracticeEntry {
   risk: string;
 }
 
-const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
+export const SCHEMA_V0: RxJsonSchema<IOptionsToolEntry> = {
   title: 'practice entry schema',
   version: 0,
   keyCompression: false,
@@ -93,4 +93,3 @@ const practiceEntrySchema: RxJsonSchema<PracticeEntry> = {
   required: ['practice'],
   primaryKey: 'practice',
 };
-export default practiceEntrySchema;
