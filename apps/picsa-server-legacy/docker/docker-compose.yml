@@ -1,0 +1,108 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+services:
+  ####################################################################
+  # DB - Postgres with PostGIS extension
+  ####################################################################
+  db:
+    container_name: picsa_db
+    # image: postgis/postgis:13-3.2
+    image: postgres:13.7
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./config/db:/docker-entrypoint-initdb.d/ # bind db init scripts
+    logging: &logging_default
+      driver: 'json-file'
+      options:
+        max-size: '1m'
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - db_network
+    env_file:
+      - ../.env
+  ####################################################################
+  # DB Admin - PGAdmin4
+  ####################################################################
+  db_admin:
+    container_name: picsa_db_admin
+    image: dpage/pgadmin4:6.10
+    restart: unless-stopped
+    volumes:
+      - db_admin_data:/var/lib/pgadmin
+    logging: *logging_default
+    ports:
+      - 5050:80
+    networks:
+      - db_network
+    env_file:
+      - ../.env
+
+  ####################################################################
+  # Server - Parse Platform server
+  # NOTE - important to ensure version of parse bundled with the
+  # server also matches root (e.g. server 5.2.3 includes parse 3.4.2)
+  ####################################################################
+  server:
+    container_name: picsa_server
+    build: .
+    # image: 'parseplatform/parse-server:5.2.3'
+    restart: unless-stopped
+    volumes:
+      - ./cloud-functions:/parse-server/cloud
+      - server_files:/parse-server/files
+      # Could mount config file, but handling via env vars instead
+      # - ./config/parse-server:/parse-server/config
+    logging: *logging_default
+    # If running with custom config file uncomment
+    # entrypoint:
+    # ['node', './bin/parse-server', '/parse-server/config/config.json']
+    ports:
+      - '1337:1337'
+    depends_on:
+      - db
+    networks:
+      - db_network
+    env_file:
+      - ../.env
+    environment:
+      - PARSE_SERVER_MOUNT_PATH=/parse
+      - PARSE_SERVER_CLOUD=/parse-server/cloud/main.js
+      - PARSE_SERVER_MOUNT_GRAPHQL=true
+      - PARSE_SERVER_SESSION_LENGTH=86400
+      - PARSE_SERVER_ALLOW_CUSTOM_OBJECT_ID=true
+
+  ####################################################################
+  # Server Dashboard - Parse Platform server dashboard
+  ####################################################################
+  server_dashboard:
+    container_name: picsa_server_dashboard
+    image: 'parseplatform/parse-dashboard'
+    restart: unless-stopped
+    logging: *logging_default
+    ports:
+      - '4040:4040'
+    networks:
+      - db_network
+    env_file:
+      - ../.env
+    environment:
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=true
+      - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
+      - PARSE_DASHBOARD_GRAPHQL_SERVER_URL=http://localhost:1337/graphql
+      - MOUNT_PATH=/
+
+volumes:
+  db_data:
+  db_admin_data:
+  server_files:
+
+networks:
+  # User a bridge network to allow connection from external (e.g. pgadmin)
+  db_network:

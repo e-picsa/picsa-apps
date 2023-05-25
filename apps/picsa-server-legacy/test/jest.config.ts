@@ -18,7 +18,7 @@ const config: InitialOptionsTsJest = {
     },
   },
 
-  coverageDirectory: '../../../coverage/apps/picsa-server/test',
+  coverageDirectory: '../../../coverage/apps/picsa-server-legacy/test',
 };
 
 export default config;

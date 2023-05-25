@@ -14,6 +14,7 @@
 
 .dialog-content {
   padding-bottom: 2rem;
+
   .saveButtonPosition {
     position: absolute;
     right: 20px;
@@ -25,6 +26,15 @@
     justify-content: center;
     font-size: medium;
     font-weight: bold;
+  }
+
+  .importantText {
+    display: flex;
+    justify-content: flex-start;
+    font-size: small;
+    color: red;
+    width: 100%;
+    font-weight: normal;
   }
 
   .StepContainer {
@@ -62,6 +72,7 @@
         padding: 5px;
         width: 90%;
       }
+
       textarea.form-control {
         font-size: 16px;
         outline-color: #8a2644;

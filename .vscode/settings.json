@@ -1,5 +1,8 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "cSpell.enabled": false,
-  "eslint.runtime": "node"
+  "eslint.runtime": "node",
+  "deno.enable": true,
+  "deno.enablePaths": ["apps/picsa-server/docker", "apps/picsa-server/scripts"],
+  "deno.unstable": true
 }
