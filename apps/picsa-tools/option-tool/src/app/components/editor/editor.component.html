@@ -13,6 +13,7 @@
             <label>{{ 'Practice' | translate }}</label>
             <input [(ngModel)]="practiceEntry" class="form-control" />
           </div>
+          <div class="importantText">{{ '*This field is required' | translate }}</div>
         </div>
         <div>
           <button mat-raised-button color="primary" [disabled]="!practiceEntry" matStepperNext>
@@ -260,7 +261,8 @@
         <div class="StepContent">
           <div class="form-group">
             <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >{{ 'Time (months)' | translate }}
+              >{{ 'Time
+              (months)' | translate }}
               <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon></label
             >
             <input [(ngModel)]="benefitsStartTime" (keypress)="onlyNumbers($event)" class="form-control" />
