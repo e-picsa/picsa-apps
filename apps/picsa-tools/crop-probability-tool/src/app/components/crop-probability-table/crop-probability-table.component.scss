@@ -1,4 +1,4 @@
-.select-station{
+.select-station {
   padding: 15px 40px;
 }
 table {
@@ -40,7 +40,7 @@ table {
       align-items: flex-start;
       justify-content: flex-start;
     }
-    .cell{
+    .cell {
       border-bottom: 1px solid rgb(212, 211, 209);
     }
   }
@@ -59,41 +59,46 @@ table {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 12px;
   font-style: italic;
-  margin:18px 0 20px 0;
+  margin: 18px 0 20px 0;
   padding-left: 15==20px;
 }
-.mat-icon{
+.mat-icon {
   height: 50px;
   width: 50px;
+  font-size: 50px;
 }
-.icons-container{
+.icons-container {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
   padding: 20px 15px;
-  .filter-icons{
-    div.icon{
+  .filter-icons {
+    div.icon {
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       border: 2px dotted rgb(197, 192, 192);
-      padding:10px;
-      height:90px;
-      width:80px;
+      padding: 10px;
+      height: 90px;
+      width: 80px;
       cursor: pointer;
       background: #fff;
       margin-bottom: 6px;
-      div.name{
+      div.name {
         position: absolute;
         bottom: 6px;
         height: 10%;
         font-size: 12px;
         text-transform: capitalize;
       }
+      &[data-selected='true'] {
+        background: wheat;
+      }
     }
-    div.icon.active{
+
+    div.icon.active {
       background-color: #e0e0e0;
     }
   }

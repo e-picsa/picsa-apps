@@ -1,4 +1,6 @@
-export const CROP_MOCK_DATA = [
+import { IStationCropInformation } from '../models';
+
+export const CROP_MOCK_DATA: IStationCropInformation[] = [
   {
     id: 1,
     station_name: 'CHIPATA MET STATION',
@@ -147,26 +149,26 @@ export const CROP_MOCK_DATA = [
           {
             variety: 'Lutembwe',
             days: '90',
-            water: null,
-            probabilities: null,
+            water: undefined,
+            probabilities: undefined,
           },
           {
             variety: 'Bubebe',
             days: '70',
-            water: null,
-            probabilities: null,
+            water: undefined,
+            probabilities: undefined,
           },
           {
             variety: 'M’Sandile',
             days: '60',
-            water: null,
-            probabilities: null,
+            water: undefined,
+            probabilities: undefined,
           },
           {
             variety: 'Mtilizi, Namuseba',
             days: '65',
-            water: null,
-            probabilities: null,
+            water: undefined,
+            probabilities: undefined,
           },
         ],
       },
@@ -308,7 +310,7 @@ export const CROP_MOCK_DATA = [
             variety: 'Manyokola, Chamandanda, Mpale, Kalawe',
             days: '300',
             water: ['0'],
-            probabilities: null,
+            probabilities: undefined,
           },
         ],
       },
@@ -399,13 +401,13 @@ export const CROP_MOCK_DATA = [
             variety: 'Kachangu',
             days: '190',
             water: ['646'],
-            probabilities: null,
+            probabilities: undefined,
           },
           {
             variety: 'Sauma',
             days: '220',
             water: ['748'],
-            probabilities: null,
+            probabilities: undefined,
           },
           {
             variety: 'ICPL 87015 and ICPL93026',
