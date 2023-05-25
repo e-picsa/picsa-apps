@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
-import { IOptionsToolEntry } from '../../schemas/schema_v0';
+import { IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
 
 @Component({
