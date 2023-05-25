@@ -9,7 +9,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
 
-const MODULES = [MatButtonModule, MatInputModule, MatTableModule, MatFormFieldModule, MatIconModule, MatCardModule, MatOptionModule, MatSelectModule];
+const MODULES = [
+  MatButtonModule,
+  MatInputModule,
+  MatTableModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatCardModule,
+  MatOptionModule,
+  MatSelectModule,
+];
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
@@ -27,8 +36,12 @@ export class CropProbabilityMaterialModule {
       cow_peas: 'cowpeas',
       ground_nuts: 'groundnuts',
       maize: 'maize',
+      pigeon_peas: 'pigeon-peas',
+      pumpkins: 'pumpkins',
+      rice: 'rice',
       sorghum: 'sorghum',
       soya_beans: 'soya-beans',
+      sweet_potatoes: 'sweet-potatoes',
       sun_flower: 'sunflower',
     };
     for (const [key, value] of Object.entries(CROP_PROBABILITY_ICONS)) {
