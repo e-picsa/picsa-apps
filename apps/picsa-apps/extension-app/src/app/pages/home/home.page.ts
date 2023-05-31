@@ -54,7 +54,7 @@ export class HomePage implements OnInit, OnDestroy {
       },
       {
         ...LINK_DEFAULTS,
-        name: translateMarker('Crop Probabilities'),
+        name: translateMarker('Crop Probability'),
         icon: 'picsa_probability-tool',
         url: '/crop-probability',
       },
