@@ -1,13 +1,13 @@
+import { DomPortal } from '@angular/cdk/portal';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Platform } from '@ionic/angular';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION } from '@picsa/environments';
 import { PicsaFileService } from '@picsa/shared/services/native';
 
 import { UserStore } from '../../store/user.store';
-import { DomPortal } from '@angular/cdk/portal';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
 
 @Component({
   selector: 'app-home',
@@ -54,16 +54,28 @@ export class HomePage implements OnInit, OnDestroy {
       },
       {
         ...LINK_DEFAULTS,
+        name: translateMarker('Crop Probabilities'),
+        icon: 'picsa_probability-tool',
+        url: '/crop-probability',
+      },
+      {
+        ...LINK_DEFAULTS,
+        name: translateMarker('Options'),
+        icon: 'picsa_option-tool',
+        url: '/option',
+      },
+      {
+        ...LINK_DEFAULTS,
         name: translateMarker('Monitoring'),
         icon: 'picsa_data-collection',
         url: '/monitoring',
       },
-      {
-        ...LINK_DEFAULTS,
-        name: translateMarker('Discussions'),
-        icon: 'picsa_discussions',
-        url: '/discussions',
-      },
+      // {
+      //   ...LINK_DEFAULTS,
+      //   name: translateMarker('Discussions'),
+      //   icon: 'picsa_discussions',
+      //   url: '/discussions',
+      // },
 
       // {
       //   ...LINK_DEFAULTS,
