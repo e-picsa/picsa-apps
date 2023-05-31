@@ -1,8 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'picsa-crop-probability-table-header',
   templateUrl: './crop-probability-table-header.component.html',
   styleUrls: ['./crop-probability-table-header.component.scss'],
 })
-export class CropProbabilityTableHeaderComponent {}
+export class CropProbabilityTableHeaderComponent {
+  @Input() stationName: string;
+  @Input() seasonDates;
+  @Input() seasonProbabilities;
+}

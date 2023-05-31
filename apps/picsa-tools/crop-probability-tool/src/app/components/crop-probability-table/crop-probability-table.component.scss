@@ -1,3 +1,6 @@
+.select-station {
+  padding: 15px 40px;
+}
 table {
   width: 100%;
 }
@@ -31,9 +34,14 @@ table {
   }
   .probability {
     width: 520px;
-
+    padding: 3px 2px;
     .prob-row-wrapper {
       display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .cell {
+      border-bottom: 1px solid rgb(212, 211, 209);
     }
   }
   .fixed-width {
@@ -51,32 +59,47 @@ table {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 12px;
   font-style: italic;
-  margin-top: 12px;
+  margin: 18px 0 20px 0;
+  padding-left: 15==20px;
 }
-.filter-icons{
+.mat-icon {
+  height: 50px;
+  width: 50px;
+  font-size: 50px;
+}
+.icons-container {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
   padding: 20px 15px;
-  div{
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 2px dotted rgb(197, 192, 192);
-    padding:10px;
-    height:90px;
-    width:80px;
-    cursor: pointer;
-    background: #fff;
-    div{
-      position: absolute;
-      bottom: 0;
-      height: 10%;
-      font-size: 14px;
-      background-color: #eeeaea;
-      text-transform: capitalize;
+  .filter-icons {
+    div.icon {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 2px dotted rgb(197, 192, 192);
+      padding: 10px;
+      height: 90px;
+      width: 80px;
+      cursor: pointer;
+      background: #fff;
+      margin-bottom: 6px;
+      div.name {
+        position: absolute;
+        bottom: 6px;
+        height: 10%;
+        font-size: 12px;
+        text-transform: capitalize;
+      }
+      &[data-selected='true'] {
+        background: wheat;
+      }
+    }
+
+    div.icon.active {
+      background-color: #e0e0e0;
     }
   }
 }
