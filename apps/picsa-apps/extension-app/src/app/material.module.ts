@@ -7,8 +7,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BUDGET_ICONS } from '@picsa/budget/src/app/app.component';
-import { CLIMATE_ICONS } from '@picsa/climate/src/app/app.component';
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
@@ -36,9 +34,6 @@ export class ExtensionToolkitMaterialModule {
   registerIcons() {
     const icons = {
       // TODO - climate and budget icons should register in lazy-loaded material module
-
-      ...CLIMATE_ICONS,
-      ...BUDGET_ICONS,
       resources: 'resources',
       discussions: 'discussions',
       'data-collection': 'data-collection',
