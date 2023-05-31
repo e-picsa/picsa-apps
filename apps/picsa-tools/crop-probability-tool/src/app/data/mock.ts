@@ -1,6 +1,6 @@
 import { IStationCropInformation } from '../models';
 
-export const CROP_MOCK_DATA: IStationCropInformation[] = [
+export const STATION_CROP_DATA: IStationCropInformation[] = [
   {
     id: 1,
     station_name: 'CHIPATA MET STATION',
@@ -58,7 +58,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Beans',
+        crop: 'beans',
         data: [
           {
             variety: 'Kabulangeti',
@@ -81,7 +81,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Groundnuts',
+        crop: 'groundnuts',
         data: [
           {
             variety: 'MGV4',
@@ -116,7 +116,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Soya beans',
+        crop: 'soya-beans',
         data: [
           {
             variety: 'Kafue',
@@ -133,7 +133,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Sunflower',
+        crop: 'sunflower',
         data: [
           {
             variety: 'Milika',
@@ -144,7 +144,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Cowpeas',
+        crop: 'cowpeas',
         data: [
           {
             variety: 'Lutembwe',
@@ -280,7 +280,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Sweet Potatoes',
+        crop: 'sweet-potatoes',
         data: [
           {
             variety: 'Kaphulira',
@@ -304,7 +304,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Cassava',
+        crop: 'cassava',
         data: [
           {
             variety: 'Manyokola, Chamandanda, Mpale, Kalawe',
@@ -315,7 +315,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Beans',
+        crop: 'beans',
         data: [
           {
             variety: 'Napilira',
@@ -344,7 +344,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Groudnuts',
+        crop: 'groundnuts',
         data: [
           {
             variety: 'CG7',
@@ -367,7 +367,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Soyabeans',
+        crop: 'soya-beans',
         data: [
           {
             variety: 'Tikolore or Makwacha',
@@ -384,7 +384,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Cowpeas',
+        crop: 'cowpeas',
         data: [
           {
             variety: 'Sudan 1 or IT82E-16',
@@ -395,7 +395,7 @@ export const CROP_MOCK_DATA: IStationCropInformation[] = [
         ],
       },
       {
-        crop: 'Pigeon Peas',
+        crop: 'pigeon-peas',
         data: [
           {
             variety: 'Kachangu',

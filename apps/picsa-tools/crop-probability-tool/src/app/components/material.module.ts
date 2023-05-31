@@ -9,6 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { CROPS_DATA } from '../data/crops';
+
 const MODULES = [
   MatButtonModule,
   MatInputModule,
@@ -31,23 +33,9 @@ export class CropProbabilityMaterialModule {
   }
 
   registerIcons() {
-    const CROP_PROBABILITY_ICONS = {
-      beans: 'beans',
-      cow_peas: 'cowpeas',
-      ground_nuts: 'groundnuts',
-      maize: 'maize',
-      pigeon_peas: 'pigeon-peas',
-      pumpkins: 'pumpkins',
-      rice: 'rice',
-      sorghum: 'sorghum',
-      soya_beans: 'soya-beans',
-      sweet_potatoes: 'sweet-potatoes',
-      sun_flower: 'sunflower',
-    };
-    for (const [key, value] of Object.entries(CROP_PROBABILITY_ICONS)) {
-      const iconName = `picsa_crop_${key}`;
-      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/crops/${value}.svg`);
-      this.matIconRegistry.addSvgIcon(iconName, iconUrl);
+    for (const { icon, name } of Object.values(CROPS_DATA)) {
+      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(icon);
+      this.matIconRegistry.addSvgIcon(`picsa_crop_${name}`, iconUrl);
     }
   }
 }

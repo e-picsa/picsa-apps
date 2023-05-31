@@ -11,8 +11,8 @@
     <div ngClass="icons-container">
       <div ngClass="filter-icons" *ngFor="let crop of cropIcons">
         <div (click)="filterData(crop.name)" ngClass="icon" [attr.data-selected]="crop.name === selectedCropName">
-          <mat-icon [svgIcon]="crop.icon_name"></mat-icon>
-          <div ngClass="name">{{ crop.name }}</div>
+          <mat-icon [svgIcon]="'picsa_crop_' + crop.name"></mat-icon>
+          <div ngClass="name">{{ crop.label }}</div>
         </div>
       </div>
       <div ngClass="filter-icons">

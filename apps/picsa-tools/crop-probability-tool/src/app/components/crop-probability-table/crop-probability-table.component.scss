@@ -70,7 +70,7 @@ table {
 .icons-container {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  gap: 8px;
   padding: 20px 15px;
   .filter-icons {
     div.icon {
@@ -85,7 +85,6 @@ table {
       width: 80px;
       cursor: pointer;
       background: #fff;
-      margin-bottom: 6px;
       div.name {
         position: absolute;
         bottom: 6px;

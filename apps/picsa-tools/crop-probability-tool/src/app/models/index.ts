@@ -1,3 +1,5 @@
+import type { ICropName } from '../data/crops';
+
 export interface IStationCropInformation {
   id: number;
   station_name: string;
@@ -8,7 +10,7 @@ export interface IStationCropInformation {
 }
 
 export interface IStationCropData {
-  crop: string;
+  crop: ICropName;
   data: {
     variety: string;
     days: string;
