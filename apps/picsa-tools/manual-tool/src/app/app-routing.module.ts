@@ -5,7 +5,7 @@ export const ROUTES_COMMON: Routes = [
   {
     path: '',
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
-    title: 'Manual',
+    title: 'PICSA Manual',
   },
 ];
 /** Routes only registered in standalone mode */
