@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
 import { CropProbabilityToolModule } from '@picsa/crop-probability/src/app/app.module-embedded';
+import { ManualToolModule } from '@picsa/manual/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
 import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
@@ -27,6 +28,10 @@ const routes: Routes = [
   {
     path: 'monitoring',
     loadChildren: () => import('@picsa/monitoring/src/app/app.module-embedded').then((mod) => mod.MonitoringToolModule),
+  },
+  {
+    path: 'manual',
+    loadChildren: () => import('@picsa/manual/src/app/app.module-embedded').then((mod) => mod.ManualToolModule),
   },
   {
     path: 'option',
@@ -63,9 +68,10 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes),
+    BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     CropProbabilityToolModule.forRoot({ urlPrefix: 'crop-probability' }),
-    BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
+    ManualToolModule.forRoot({ urlPrefix: 'manual' }),
     MonitoringToolModule.forRoot({ urlPrefix: 'monitoring' }),
     OptionsToolModule.forRoot({ urlPrefix: 'option' }),
     ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
