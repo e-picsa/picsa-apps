@@ -1,0 +1,30 @@
+{
+  "name": "picsa-tools-manual-tool-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/picsa-tools/manual-tool-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/picsa-tools/manual-tool-e2e/cypress.config.ts",
+        "devServerTarget": "picsa-tools-manual-tool:serve:development",
+        "testingType": "e2e"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "picsa-tools-manual-tool:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/picsa-tools/manual-tool-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["picsa-tools-manual-tool"]
+}
