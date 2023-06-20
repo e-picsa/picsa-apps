@@ -62,6 +62,12 @@
             "glob": "**/*",
             "input": "apps/picsa-tools/option-tool/src/assets",
             "output": "assets"
+          },
+          {
+            "glob": "{*.min.js,op-chaining-support.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
+            "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+            "ignore": ["**/*-es5.min.js"],
+            "output": "/assets/pdf-viewer"
           }
         ],
         "styles": [

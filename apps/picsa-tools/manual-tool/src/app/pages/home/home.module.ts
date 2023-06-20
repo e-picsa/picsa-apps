@@ -14,7 +14,7 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forChild(routes), PicsaTranslateModule, ManualToolComponentsModule],
+  imports: [CommonModule, ManualToolComponentsModule, RouterModule.forChild(routes), PicsaTranslateModule],
   exports: [],
   declarations: [HomeComponent],
   providers: [],

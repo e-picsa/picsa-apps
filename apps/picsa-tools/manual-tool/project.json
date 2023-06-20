@@ -15,7 +15,16 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-tools/manual-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/picsa-tools/manual-tool/src/favicon.ico", "apps/picsa-tools/manual-tool/src/assets"],
+        "assets": [
+          "apps/picsa-tools/manual-tool/src/favicon.ico",
+          "apps/picsa-tools/manual-tool/src/assets",
+          {
+            "glob": "{*.min.js,op-chaining-support.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
+            "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+            "ignore": ["**/*-es5.min.js"],
+            "output": "/assets/pdf-viewer"
+          }
+        ],
         "styles": ["apps/picsa-tools/manual-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
       },
