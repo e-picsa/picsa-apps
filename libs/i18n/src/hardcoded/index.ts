@@ -17,6 +17,10 @@ export const EXTRACTED_PROJECTS = [
     name: 'climate',
   },
   {
+    path: 'apps/picsa-tools/manual-tool',
+    name: 'manual',
+  },
+  {
     path: 'apps/picsa-tools/monitoring-tool',
     name: 'monitoring',
   },

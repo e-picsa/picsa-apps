@@ -390,10 +390,6 @@
     "context": "outputs"
   },
   {
-    "text": "Activities",
-    "tool": "budget"
-  },
-  {
     "text": "Add Female Member",
     "tool": "budget"
   },
@@ -774,7 +770,7 @@
     "tool": "extension"
   },
   {
-    "text": "Discussions",
+    "text": "Crop Probability",
     "tool": "extension"
   },
   {
@@ -791,6 +787,10 @@
   },
   {
     "text": "Monitoring",
+    "tool": "extension"
+  },
+  {
+    "text": "Options",
     "tool": "extension"
   },
   {
@@ -812,6 +812,166 @@
   {
     "text": "Something went wrong...",
     "tool": "extension"
+  },
+  {
+    "text": "Activities",
+    "tool": "manual"
+  },
+  {
+    "text": "After the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Budget",
+    "tool": "manual"
+  },
+  {
+    "text": "Compare different options and plans",
+    "tool": "manual"
+  },
+  {
+    "text": "Crop Info",
+    "tool": "manual"
+  },
+  {
+    "text": "During the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Farmers choose",
+    "tool": "manual"
+  },
+  {
+    "text": "Historic climate",
+    "tool": "manual"
+  },
+  {
+    "text": "Is the climate changing?",
+    "tool": "manual"
+  },
+  {
+    "text": "Just before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Learn and improve",
+    "tool": "manual"
+  },
+  {
+    "text": "Livelihood Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Livestock Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Long before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Options by context",
+    "tool": "manual"
+  },
+  {
+    "text": "Probability and Risk",
+    "tool": "manual"
+  },
+  {
+    "text": "Resource Allocation Map (RAM)",
+    "tool": "manual"
+  },
+  {
+    "text": "Response to forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Review",
+    "tool": "manual"
+  },
+  {
+    "text": "Revisit",
+    "tool": "manual"
+  },
+  {
+    "text": "Seasonal Calendar",
+    "tool": "manual"
+  },
+  {
+    "text": "Seasonal forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Select and amend",
+    "tool": "manual"
+  },
+  {
+    "text": "Short-term forecasts and warnings",
+    "tool": "manual"
+  },
+  {
+    "text": "Step A",
+    "tool": "manual"
+  },
+  {
+    "text": "Step B",
+    "tool": "manual"
+  },
+  {
+    "text": "Step C",
+    "tool": "manual"
+  },
+  {
+    "text": "Step D",
+    "tool": "manual"
+  },
+  {
+    "text": "Step E",
+    "tool": "manual"
+  },
+  {
+    "text": "Step F",
+    "tool": "manual"
+  },
+  {
+    "text": "Step G",
+    "tool": "manual"
+  },
+  {
+    "text": "Step H",
+    "tool": "manual"
+  },
+  {
+    "text": "Step I",
+    "tool": "manual"
+  },
+  {
+    "text": "Step J",
+    "tool": "manual"
+  },
+  {
+    "text": "Step K",
+    "tool": "manual"
+  },
+  {
+    "text": "Step L",
+    "tool": "manual"
+  },
+  {
+    "text": "The farmer decides",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the options for the farmer?",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the probabilities and risks?",
+    "tool": "manual"
+  },
+  {
+    "text": "What does the farmer currently do?",
+    "tool": "manual"
   },
   {
     "text": "Forms",
