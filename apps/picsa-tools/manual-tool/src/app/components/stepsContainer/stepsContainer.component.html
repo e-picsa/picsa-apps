@@ -1,0 +1,46 @@
+<div class="mobileManualPage">
+  <div class="simpleSection">
+    <h3 class="ActivityHeading">Long before the season</h3>
+    <div class="ActivitiesContainer">
+      <div class="ActivityItem" *ngFor="let item of steps.LongBeforeSeason">
+        <div class="IconHolder">
+          <mat-icon class="iconStyle" svgIcon={{item.icon}}></mat-icon>
+         </div>
+          <span>{{ item.name }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="simpleSection">
+    <h3 class="ActivityHeading">Just before the season</h3>
+    <div class="ActivitiesContainer">
+      <div class="ActivityItem" *ngFor="let item of steps.JustBeforeSeason">
+        <div class="IconHolder">
+          <mat-icon class="iconStyle" svgIcon={{item.icon}}></mat-icon>
+         </div>
+          <span>{{ item.name }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="simpleSection">
+    <h3 class="ActivityHeading">During the season</h3>
+    <div class="ActivitiesContainer">
+      <div class="ActivityItem" *ngFor="let item of steps.DuringSeason">
+        <div class="IconHolder">
+          <mat-icon class="iconStyle" svgIcon={{item.icon}}></mat-icon>
+         </div>
+          <span>{{ item.name }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="simpleSection">
+    <h3 class="ActivityHeading">After the season</h3>
+    <div class="ActivitiesContainer">
+      <div class="ActivityItem" *ngFor="let item of steps.AfterSeason">
+           <div class="IconHolder">
+           <mat-icon class="iconStyle" svgIcon={{item.icon}}></mat-icon>
+          </div>
+           <span>{{ item.name }}</span>
+      </div>
+    </div>
+  </div>
+</div>

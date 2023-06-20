@@ -17,11 +17,20 @@ export class ManualToolMaterialModule {
   }
 
   registerIcons() {
-    const CUSTOM_ICONS: Record<string, string> = {};
+    const CUSTOM_ICONS: Record<string, string> = {
+      calender: 'calender',
+      campus: 'campus',
+      crop: 'crop',
+      livestock: 'livestock',
+      resource_allocation: 'resourceAllocation',
+      temperature: 'temperature',
+      place_holder: 'place_holder',
+    };
 
     for (const [key, value] of Object.entries(CUSTOM_ICONS)) {
-      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(value);
-      this.matIconRegistry.addSvgIcon(key, iconUrl);
+      const iconName = `picsa_manual_${key}`;
+      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${value}.svg`);
+      this.matIconRegistry.addSvgIcon(iconName, iconUrl);
     }
   }
 }

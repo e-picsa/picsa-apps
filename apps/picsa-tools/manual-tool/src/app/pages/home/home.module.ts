@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { ManualToolComponentsModule } from '../../components/components.module';
 import { HomeComponent } from './home.component';
 
 const routes: Route[] = [
@@ -13,7 +14,7 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forChild(routes), PicsaTranslateModule],
+  imports: [CommonModule, RouterModule.forChild(routes), PicsaTranslateModule, ManualToolComponentsModule],
   exports: [],
   declarations: [HomeComponent],
   providers: [],
