@@ -1,62 +1,103 @@
-.mobileManualPage {
+.view-toggle {
+  float: right;
+  margin-left: auto;
+}
+// List Version
+h2.section-label {
+  padding: 0 8px;
+  color: var(--color-primary);
+  font-weight: normal;
+}
+.period-section {
+  margin-bottom: 48px;
+}
+table {
+  width: 100%;
+  border: 1px solid var(--color-primary);
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+td {
+  border-top: 1px solid var(--color-primary-50);
+}
+tr:first-of-type > td {
+  border-top: unset;
+}
+
+tr:hover {
+  background: wheat;
+  cursor: pointer;
+}
+td {
+  padding: 8px;
+}
+
+td.step-arrow {
+  color: var(--color-primary);
+  width: 32px;
+}
+.step-items {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.step-item {
+  flex: 1;
+  text-align: center;
+}
+.step-item-label {
+  max-width: 150px;
+  margin: auto;
+}
+
+// Grid version
+.grid-view {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: start;
+}
+.ActivitiesContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+}
+.ActivityItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   padding: 1rem;
-
-  .simpleSection {
+  box-sizing: border-box;
+  .IconHolder {
+    width: 4rem;
+    height: 4rem;
+    border: 1px solid #8a2644;
     display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    .ActivityHeading {
-      font-weight: 700;
-      text-align: start;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    .iconSize {
+      width: 2rem;
+      height: 2rem;
+      color: black;
     }
-
-    .ActivitiesContainer {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-gap: 1rem;
-
-      .ActivityItem {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 1rem;
-        box-sizing: border-box;
-        .IconHolder{
-          width: 4rem; 
-          height: 4rem;
-          border: 1px solid #8a2644;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 10px;
-            .iconSize {
-              width: 2rem; 
-              height: 2rem;
-              color: black;
-            }
-        }
-          span {
-            margin-top: 0.2rem;
-            font-size: 14px;
-            width: 120px;
-          }
-          @media (max-width: 767px) {
-            span {
-              width: 100%;
-            }
-          }
-          @media (max-width: 767px) {
-            .ActivityItem {
-              padding: .2rem;
-            }
-          }  
-      }
+  }
+  span {
+    margin-top: 0.2rem;
+    font-size: 14px;
+    width: 120px;
+  }
+  @media (max-width: 767px) {
+    span {
+      width: 100%;
+    }
+  }
+  @media (max-width: 767px) {
+    .ActivityItem {
+      padding: 0.2rem;
     }
   }
 }
