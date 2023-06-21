@@ -3,17 +3,15 @@
   [src]="'/assets/resources/picsa-field-manual-en.pdf'"
   [page]="page ? page : 1"
   [height]="'100%'"
-  [useBrowserLocale]="true"
+  [useBrowserLocale]="false"
   [activeSidebarView]="2"
-  [textLayer]="true"
+  [textLayer]="false"
   [showHandToolButton]="true"
   [(sidebarVisible)]="sidebarOpen"
   [customToolbar]="customToolbar"
   [showBorders]="false"
   [mobileFriendlyZoom]="'1.3'"
-  [zoom]="'auto'"
-  [textLayer]="true"
-  [listenToURL]="false"
+  [textLayer]="false"
 >
 </ngx-extended-pdf-viewer>
 <div class="error-message" *ngIf="legacyBrowser">PDF Viewer not supported on this device</div>
