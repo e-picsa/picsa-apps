@@ -17462,7 +17462,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-extended-pdf-viewer@npm:^16":
+"ngx-extended-pdf-viewer@npm:^16.2.16":
   version: 16.2.16
   resolution: "ngx-extended-pdf-viewer@npm:16.2.16"
   dependencies:
@@ -18601,7 +18601,7 @@ __metadata:
     mobx-angular: ^4.7.1
     ng-packagr: 15.1.1
     ng2-canvas-whiteboard: ^4.0.2
-    ngx-extended-pdf-viewer: ^16
+    ngx-extended-pdf-viewer: ^16.2.16
     ngx-file-drop: 14.0.2
     ngx-lottie: ^10.0.0
     ngx-youtube-player: ^12.0.2
