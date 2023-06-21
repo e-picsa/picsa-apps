@@ -34,22 +34,23 @@ export class ExtensionToolkitMaterialModule {
   registerIcons() {
     const icons = {
       // TODO - climate and budget icons should register in lazy-loaded material module
-      resources: 'resources',
+      budget_tool: 'budget_tool',
+      climate_tool: 'climate_tool',
+      data_collection: 'data_collection',
       discussions: 'discussions',
-      'data-collection': 'data-collection',
-      'budget-tool': 'budget-tool',
-      'climate-tool': 'climate-tool',
-      'option-tool': 'option-tool',
-      'probability-tool': 'probability-tool',
-      whatsapp: 'whatsapp',
+      manual_tool: 'manual_tool',
+      option_tool: 'option_tool',
       play_store: 'play_store',
+      probability_tool: 'probability_tool',
+      resources_tool: 'resources_tool',
+      whatsapp: 'whatsapp',
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(
         `picsa_${key}`,
         this.domSanitizer.bypassSecurityTrustResourceUrl(
           // NOTE - svgs are imported from shared lib (see angular.json for config)
-          `assets/images/${value}.svg`
+          `assets/svgs/${value}.svg`
         )
       );
     }

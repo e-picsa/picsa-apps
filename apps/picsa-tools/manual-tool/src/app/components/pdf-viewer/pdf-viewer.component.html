@@ -1,0 +1,45 @@
+<ngx-extended-pdf-viewer
+  *ngIf="!legacyBrowser"
+  [src]="'/assets/resources/picsa-field-manual-en.pdf'"
+  [page]="page ? page : 1"
+  [height]="'100%'"
+  [useBrowserLocale]="false"
+  [activeSidebarView]="2"
+  [textLayer]="false"
+  [showHandToolButton]="true"
+  [(sidebarVisible)]="sidebarOpen"
+  [customToolbar]="customToolbar"
+  [showBorders]="false"
+  [mobileFriendlyZoom]="'1.3'"
+  [textLayer]="false"
+>
+</ngx-extended-pdf-viewer>
+<div class="error-message" *ngIf="legacyBrowser">PDF Viewer not supported on this device</div>
+
+<!-- Custom toolbar examples here: https://pdfviewer.net/extended-pdf-viewer/custom-toolbar -->
+<ng-template #customToolbar>
+  <div id="toolbarViewer">
+    <div id="toolbarViewerLeft">
+      <pdf-toggle-sidebar></pdf-toggle-sidebar>
+      <div class="toolbarButtonSpacer"></div>
+
+      <!-- <pdf-find-button [showFindButton]="true" [textLayer]="true"></pdf-find-button> -->
+      <pdf-paging-area></pdf-paging-area>
+    </div>
+    <div [class.invisible]="false" id="toolbarViewerMiddle">
+      <pdf-zoom-out id="zoomOut"></pdf-zoom-out>
+      <pdf-zoom-in id="zoomIn"></pdf-zoom-in>
+    </div>
+    <div id="toolbarViewerRight">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Custom Sidebar -->
+<!-- <ng-template #customSidebar>
+  <div id="sidebarContainer" style="top: 8px">
+    <pdf-sidebar-content></pdf-sidebar-content>
+    <div id="sidebarResizer" class="hidden"></div>
+  </div>
+</ng-template> -->
