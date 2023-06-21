@@ -19,6 +19,11 @@
           "apps/picsa-tools/manual-tool/src/favicon.ico",
           "apps/picsa-tools/manual-tool/src/assets",
           {
+            "glob": "picsa-field-manual-en.pdf",
+            "input": "apps/picsa-tools/resources-tool/src/assets/resources",
+            "output": "/assets/resources"
+          },
+          {
             "glob": "{*.min.js,op-chaining-support.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
             "input": "node_modules/ngx-extended-pdf-viewer/assets/",
             "ignore": ["**/*-es5.min.js"],
