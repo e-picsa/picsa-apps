@@ -55,6 +55,11 @@
           },
           {
             "glob": "**/*",
+            "input": "apps/picsa-tools/manual-tool/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/picsa-tools/resources-tool/src/assets",
             "output": "assets"
           },
