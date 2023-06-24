@@ -18,4 +18,7 @@ export class stepsContainerComponent {
   public goToStep(step: IManualStep) {
     this.router.navigate([], { relativeTo: this.route, queryParams: { page: step.page.en } });
   }
+  public goToActivity(activity: any) {
+    this.router.navigate(['/activity', activity.id], {relativeTo:this.route, state: { activity: activity } });
+  }
 }
