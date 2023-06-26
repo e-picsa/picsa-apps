@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
@@ -10,11 +9,11 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: 'activity',
-    loadChildren: () => import('./pages/activity-details/activity-details.module').then((m) => m.ActivityDetailsModule),
+    loadChildren: () => import('./pages/activity/activity.module').then((m) => m.ActivityDetailsModule),
   },
 ];
 /** Routes only registered in standalone mode */
-const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' },];
+const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
 
 /*******************************************************************
  *  Standalone Version

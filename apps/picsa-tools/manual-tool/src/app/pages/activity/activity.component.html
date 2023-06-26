@@ -1,0 +1,13 @@
+<div class="page-content">
+  <h2 class="section-label">{{ 'Activities' | translate }}</h2>
+  <section class="grid-view">
+    <div class="ActivitiesContainer">
+      <div class="ActivityItem" *ngFor="let activity of gridData" [routerLink]="[activity.id]">
+        <div class="IconHolder">
+          <mat-icon class="iconStyle" [svgIcon]="activity.icon"></mat-icon>
+        </div>
+        <span>{{ activity.label }}</span>
+      </div>
+    </div>
+  </section>
+</div>
