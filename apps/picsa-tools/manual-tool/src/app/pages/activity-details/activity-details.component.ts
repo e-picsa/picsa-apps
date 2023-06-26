@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IManualActivity } from '../../data/manual-contents';
+import { IManualActivity, PICSA_MANUAL_GRID_DATA } from '../../data/manual-contents';
 
 @Component({
   selector: 'picsa-manual-activity-details',
@@ -9,11 +9,14 @@ import { IManualActivity } from '../../data/manual-contents';
   styleUrls: ['./activity-details.component.scss'],
 })
 export class ActivityDetailsComponent implements OnInit {
-  activity: IManualActivity;
+  activity?: IManualActivity;
 
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.activity = history.state.activity;
+    const activityId = this.route.snapshot.params.id;
+    if (activityId) {
+      this.activity = PICSA_MANUAL_GRID_DATA.find((activity) => activity.id === activityId);
+    }
   }
 }
