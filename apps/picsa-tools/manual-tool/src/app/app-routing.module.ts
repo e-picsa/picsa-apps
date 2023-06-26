@@ -7,6 +7,10 @@ export const ROUTES_COMMON: Routes = [
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     title: 'PICSA Manual',
   },
+  {
+    path: 'activity',
+    loadChildren: () => import('./pages/activity/activity.module').then((m) => m.ActivityDetailsModule),
+  },
 ];
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];

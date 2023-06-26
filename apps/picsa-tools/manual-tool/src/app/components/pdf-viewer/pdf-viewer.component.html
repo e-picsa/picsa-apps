@@ -20,18 +20,19 @@
 <ng-template #customToolbar>
   <div id="toolbarViewer">
     <div id="toolbarViewerLeft">
-      <pdf-toggle-sidebar></pdf-toggle-sidebar>
+      <ng-content></ng-content>
       <div class="toolbarButtonSpacer"></div>
 
+      <pdf-toggle-sidebar></pdf-toggle-sidebar>
+
       <!-- <pdf-find-button [showFindButton]="true" [textLayer]="true"></pdf-find-button> -->
-      <pdf-paging-area></pdf-paging-area>
     </div>
     <div [class.invisible]="false" id="toolbarViewerMiddle">
       <pdf-zoom-out id="zoomOut"></pdf-zoom-out>
       <pdf-zoom-in id="zoomIn"></pdf-zoom-in>
     </div>
     <div id="toolbarViewerRight">
-      <ng-content></ng-content>
+      <pdf-paging-area></pdf-paging-area>
     </div>
   </div>
 </ng-template>

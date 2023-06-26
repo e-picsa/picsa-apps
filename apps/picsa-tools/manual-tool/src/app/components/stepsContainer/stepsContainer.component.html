@@ -1,44 +1,24 @@
 <!-- List version -->
-<div *ngIf="view === 'list'">
-  <button mat-button class="view-toggle" color="primary" (click)="view = 'grid'">
-    <mat-icon>grid_on</mat-icon>
-  </button>
-  <section class="period-section" *ngFor="let period of listData">
-    <h2 class="section-label">{{ period.label | translate }}</h2>
-    <table class="manual-steps">
-      <tr class="manual-step" *ngFor="let step of period.steps" (click)="goToStep(step)">
-        <td style="width: 50px; border-right: none; font-weight: bold">{{ step.name | translate }}</td>
-        <td style="border-left: none">{{ step.label | translate }}</td>
-        <td style="border-right: none">
-          <div class="step-items">
-            <div class="step-item" *ngFor="let activity of step.activities">
-              <mat-icon color="primary" svgIcon="{{ activity.icon }}"></mat-icon>
-              <div class="step-item-label">{{ activity.label }}</div>
-            </div>
+<button mat-button class="activity-link" color="primary" [routerLink]="['activity']">
+  <mat-icon>grid_on</mat-icon>
+</button>
+<section class="period-section" *ngFor="let period of listData">
+  <h2 class="section-label">{{ period.label | translate }}</h2>
+  <table class="manual-steps">
+    <tr class="manual-step" *ngFor="let step of period.steps" (click)="goToStep(step)">
+      <td style="width: 50px; border-right: none; font-weight: bold">{{ step.name | translate }}</td>
+      <td style="border-left: none">{{ step.label | translate }}</td>
+      <td style="border-right: none">
+        <div class="step-items">
+          <div class="step-item" *ngFor="let activity of step.activities">
+            <mat-icon color="primary" svgIcon="{{ activity.icon }}"></mat-icon>
+            <div class="step-item-label">{{ activity.label }}</div>
           </div>
-        </td>
-        <td class="step-arrow" style="border-left: none">
-          <mat-icon>chevron_right</mat-icon>
-        </td>
-      </tr>
-    </table>
-  </section>
-</div>
-
-<!-- Grid version -->
-<div *ngIf="view === 'grid'">
-  <button mat-button class="view-toggle" color="primary" (click)="view = 'list'">
-    <mat-icon>list</mat-icon>
-  </button>
-  <h2 class="section-label">{{ 'Activities' | translate }}</h2>
-  <section class="grid-view">
-    <div class="ActivitiesContainer">
-      <div class="ActivityItem" *ngFor="let activity of gridData">
-        <div class="IconHolder">
-          <mat-icon class="iconStyle" [svgIcon]="activity.icon"></mat-icon>
         </div>
-        <span>{{ activity.label }}</span>
-      </div>
-    </div>
-  </section>
-</div>
+      </td>
+      <td class="step-arrow" style="border-left: none">
+        <mat-icon>chevron_right</mat-icon>
+      </td>
+    </tr>
+  </table>
+</section>

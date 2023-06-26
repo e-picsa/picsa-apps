@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { IManualStep, PICSA_MANUAL_GRID_DATA, PICSA_MANUAL_LIST_DATA } from '../../data/manual-contents';
+import { IManualStep, PICSA_MANUAL_LIST_DATA } from '../../data/manual-contents';
 
 @Component({
   selector: 'picsa-manual-steps-container',
@@ -9,8 +9,6 @@ import { IManualStep, PICSA_MANUAL_GRID_DATA, PICSA_MANUAL_LIST_DATA } from '../
   styleUrls: ['./stepsContainer.component.scss'],
 })
 export class stepsContainerComponent {
-  public view: 'grid' | 'list' = 'list';
-  public gridData = PICSA_MANUAL_GRID_DATA;
   public listData = PICSA_MANUAL_LIST_DATA;
 
   constructor(private router: Router, private route: ActivatedRoute) {}
