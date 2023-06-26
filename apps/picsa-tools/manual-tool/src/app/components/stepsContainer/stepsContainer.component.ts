@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { IManualStep, PICSA_MANUAL_GRID_DATA, PICSA_MANUAL_LIST_DATA } from '../../data/manual-contents';
+import {
+  IManualActivity,
+  IManualStep,
+  PICSA_MANUAL_GRID_DATA,
+  PICSA_MANUAL_LIST_DATA,
+} from '../../data/manual-contents';
 
 @Component({
   selector: 'picsa-manual-steps-container',
@@ -18,7 +23,7 @@ export class stepsContainerComponent {
   public goToStep(step: IManualStep) {
     this.router.navigate([], { relativeTo: this.route, queryParams: { page: step.page.en } });
   }
-  public goToActivity(activity: any) {
-    this.router.navigate(['/activity', activity.id], {relativeTo:this.route, state: { activity: activity } });
+  public goToActivity(activity: IManualActivity) {
+    this.router.navigate(['activity', activity.id], { relativeTo: this.route, state: { activity: activity } });
   }
 }
