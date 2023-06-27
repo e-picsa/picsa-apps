@@ -758,7 +758,7 @@
     "tool": "common"
   },
   {
-    "text": "Budget Tool",
+    "text": "Budget",
     "tool": "extension"
   },
   {
@@ -766,11 +766,7 @@
     "tool": "extension"
   },
   {
-    "text": "Climate Tool",
-    "tool": "extension"
-  },
-  {
-    "text": "Crop Probability",
+    "text": "Climate",
     "tool": "extension"
   },
   {
@@ -786,6 +782,10 @@
     "tool": "extension"
   },
   {
+    "text": "Manual",
+    "tool": "extension"
+  },
+  {
     "text": "Monitoring",
     "tool": "extension"
   },
@@ -795,6 +795,10 @@
   },
   {
     "text": "Privacy Policy",
+    "tool": "extension"
+  },
+  {
+    "text": "Probability",
     "tool": "extension"
   },
   {
@@ -822,11 +826,11 @@
     "tool": "manual"
   },
   {
-    "text": "Budget",
+    "text": "Compare different options and plans",
     "tool": "manual"
   },
   {
-    "text": "Compare different options and plans",
+    "text": "Create",
     "tool": "manual"
   },
   {
@@ -843,6 +847,10 @@
   },
   {
     "text": "Historic climate",
+    "tool": "manual"
+  },
+  {
+    "text": "Info Sheet",
     "tool": "manual"
   },
   {
@@ -875,6 +883,10 @@
   },
   {
     "text": "Probability and Risk",
+    "tool": "manual"
+  },
+  {
+    "text": "Quiz",
     "tool": "manual"
   },
   {
@@ -1022,10 +1034,6 @@
     "tool": "option"
   },
   {
-    "text": "High(Rf)",
-    "tool": "option"
-  },
-  {
     "text": "Investment",
     "tool": "option"
   },
@@ -1038,19 +1046,11 @@
     "tool": "option"
   },
   {
-    "text": "Low(Rf)",
-    "tool": "option"
-  },
-  {
     "text": "Male",
     "tool": "option"
   },
   {
     "text": "Mid RF",
-    "tool": "option"
-  },
-  {
-    "text": "Mid(Rf)",
     "tool": "option"
   },
   {

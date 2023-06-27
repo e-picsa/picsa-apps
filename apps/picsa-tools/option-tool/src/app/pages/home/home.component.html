@@ -33,11 +33,11 @@
       <ng-container matColumnDef="performance">
         <th mat-header-cell *matHeaderCellDef>{{ 'Performance' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>{{ 'High(Rf)' | translate }}: {{ element._data.performance.highRf | translate }}</li>
-            <li>{{ 'Mid(Rf)' | translate }}: {{ element._data.performance.midRf | translate }}</li>
-            <li>{{ 'Low(Rf)' | translate }} : {{ element._data.performance.lowRf | translate }}</li>
-          </ol>
+          <div style="display: flex; flex-direction: column; gap: 3px">
+            <div>{{ 'High RF' | translate }}: {{ element._data.performance.highRf | translate }}</div>
+            <div>{{ 'Mid RF' | translate }}: {{ element._data.performance.midRf | translate }}</div>
+            <div>{{ 'Low RF' | translate }} : {{ element._data.performance.lowRf | translate }}</div>
+          </div>
         </td>
       </ng-container>
 
