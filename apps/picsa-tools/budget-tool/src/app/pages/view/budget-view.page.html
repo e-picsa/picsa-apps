@@ -1,31 +1,54 @@
 <div class="page-content" *mobxAutorun>
-  <div class="header-buttons">
-    <button mat-button *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
+  <!-- <div class="header-buttons">
+   
+  </div> -->
+
+  <picsa-sidenav-layout [opened]="false">
+    <button
+      desktopHeader
+      mat-button
+      color="primary"
+      *ngIf="!isEditorOpen"
+      aria-label="Share"
+      (click)="showShareDialog()"
+    >
       <mat-icon>share</mat-icon>{{'Share' | translate }}
     </button>
-  </div>
+    <button
+      mobileHeader
+      mat-button
+      color="primary"
+      *ngIf="!isEditorOpen"
+      aria-label="Share"
+      (click)="showShareDialog()"
+    >
+      <mat-icon>share</mat-icon>{{'Share' | translate }}
+    </button>
 
-  <!-- hide overflow so that editor can be stored outside bottom of page -->
-  <div class="page-content" style="overflow-y: hidden; overflow-x: auto; padding: 0">
-    <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
-    <!-- Legacy Editor -->
-    <!-- <budget-cell-editor
-      *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
-      [activePeriod]="store.activePeriod"
-      [activeType]="store.activeType"
-      [isOpen]="isEditorOpen"
-      [@flyInOut]="isEditorOpen ? 'in' : 'out'"
-    ></budget-cell-editor> -->
+    <div sidenav>Sidenav content</div>
+    <div content class="page-content" style="overflow-y: hidden; overflow-x: auto; padding: 0">
+      <!-- hide overflow so that editor can be stored outside bottom of page -->
 
-    <!-- Updated Editor -->
-    <budget-editor
-      *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
-      [activePeriod]="store.activePeriod"
-      [activeType]="store.activeType"
-      [@flyInOut]="isEditorOpen ? 'in' : 'out'"
-      (handleNextClick)="handleEditorNext()"
-    ></budget-editor>
-  </div>
+      <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
+      <!-- Legacy Editor -->
+      <!-- <budget-cell-editor
+    *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
+    [activePeriod]="store.activePeriod"
+    [activeType]="store.activeType"
+    [isOpen]="isEditorOpen"
+    [@flyInOut]="isEditorOpen ? 'in' : 'out'"
+  ></budget-cell-editor> -->
+
+      <!-- Updated Editor -->
+      <budget-editor
+        *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
+        [activePeriod]="store.activePeriod"
+        [activeType]="store.activeType"
+        [@flyInOut]="isEditorOpen ? 'in' : 'out'"
+        (handleNextClick)="handleEditorNext()"
+      ></budget-editor>
+    </div>
+  </picsa-sidenav-layout>
 
   <!-- Header Menu -->
   <!-- <button
