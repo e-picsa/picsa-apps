@@ -174,7 +174,7 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     type: 'inputs',
     label: 'bags',
     id: 'bags',
-    groupings: ['livestock', 'crops'],
+    groupings: ['livestock', 'crop'],
     imgType: 'png',
   },
   {
