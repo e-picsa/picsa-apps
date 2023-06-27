@@ -1,3 +1,22 @@
-<div class="page-content">
-  <div *ngIf="activity">{{ activity.label }}</div>
+
+<div class="page-container">
+    <h2>{{ activity?.label }}</h2>
+    
+      <video class="video-player" [src]="activity?.video" controls></video>
+    
+    <div class="svg-row">
+      <div class="svg-item">
+        <mat-icon  color="primary" svgIcon="picsa_manual_infor"></mat-icon>
+        <div>Infor sheet</div>
+      </div>
+      <div class="svg-item">
+        <mat-icon color="primary" svgIcon="picsa_manual_create"></mat-icon>
+        <div>Create</div>
+      </div>
+      <div class="svg-item">
+        <mat-icon color="primary" svgIcon="picsa_manual_quiz"></mat-icon>
+        <div>Quiz</div>
+      </div>
+    </div>
 </div>
+
