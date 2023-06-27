@@ -18,6 +18,7 @@ import {
   IBudgetBalance,
   IBudgetCard,
   IBudgetCardDB,
+  IBudgetCardGrouping,
   IBudgetCardWithValues,
   IBudgetCodeDoc,
   IBudgetMeta,
@@ -122,7 +123,9 @@ export class BudgetStore implements OnDestroy {
    *
    ***************************************************************************/
   getfilteredEnterprises(grouping: string) {
-    return this.budgetCards.filter((e) => e.type === 'enterprise' && e.groupings?.includes(grouping));
+    return this.budgetCards.filter(
+      (e) => e.type === 'enterprise' && e.groupings?.includes(grouping as IBudgetCardGrouping)
+    );
   }
   /**************************************************************************
    *            Budget Values

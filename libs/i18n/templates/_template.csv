@@ -114,6 +114,8 @@ tool,context,text
 "budget",,"Values"
 "budget",,"What is your type of enterprise?"
 "budget",,"description"
+"budget",,"fruits"
+"budget",,"livestock"
 "budget",,"starting in"
 "budget",,"title"
 "climate","chart","End"
