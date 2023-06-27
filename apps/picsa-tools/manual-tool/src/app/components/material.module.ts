@@ -25,6 +25,9 @@ export class ManualToolMaterialModule {
       resource_allocation: 'resourceAllocation',
       temperature: 'temperature',
       place_holder: 'place_holder',
+      info: 'info',
+      create: 'create',
+      quiz: 'quiz',
     };
 
     for (const [key, value] of Object.entries(CUSTOM_ICONS)) {
