@@ -8,7 +8,7 @@
     <button mobileHeader mat-button color="primary" (click)="showShareDialog()">
       <mat-icon>share</mat-icon>{{ 'Share' | translate }}
     </button>
-    <climate-chart-options sidenav style="padding: 8px; margin-top: -2rem"></climate-chart-options>
+    <climate-chart-options sidenav></climate-chart-options>
     <climate-chart-layout
       content
       *ngIf="chartService.chartDefinition && chartService.station"

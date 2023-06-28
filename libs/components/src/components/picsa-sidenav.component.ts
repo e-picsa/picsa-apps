@@ -49,19 +49,25 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         (openedChange)="handleSidenavChange()"
         (swipeRight)="snav.toggle()"
       >
-        <div class="sidenav-header" [style.display]="mobileQuery.matches ? 'flex' : 'none'">
-          <button mat-icon-button color="primary" (click)="snav.toggle()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <ng-content select="[mobileHeader]"></ng-content>
-          <!-- <button mat-button color="primary" (click)="showShareDialog()">
-            <mat-icon>share</mat-icon>{{ 'Share' | translate }}
-          </button> -->
+        <!-- Sidenav Content -->
+        <div class="sidenav-container" [attr.data-mobile]="mobileQuery.matches">
+          <!-- Mobile-only  -->
+          <div class="sidenav-mobile-header" [style.display]="mobileQuery.matches ? 'flex' : 'none'">
+            <button mat-icon-button color="primary" (click)="snav.toggle()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <ng-content select="[mobileHeader]"></ng-content>
+          </div>
+          <!-- Desktop and Mobile  -->
+          <div class="sidenav-content">
+            <ng-content select="[sidenav]" style="flex:1"></ng-content>
+          </div>
         </div>
-        <ng-content select="[sidenav]"></ng-content>
       </mat-sidenav>
-      <mat-sidenav-content>
-        <div class="page-content" style="height: calc(100vh - 120px); overflow: auto">
+
+      <!-- Main page content -->
+      <mat-sidenav-content style="display:flex">
+        <div class="page-content">
           <ng-content select="[content]"></ng-content>
         </div>
       </mat-sidenav-content>
@@ -69,7 +75,25 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   `,
   styles: [
     `
-      .sidenav-header {
+      :host {
+        display: contents;
+      }
+      .sidenav-container,
+      .sidenav-content,
+      .sidenav-content > * {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .sidenav-container {
+        height: calc(100% - 16px);
+        padding-left: 1rem;
+        &[data-mobile='true'] {
+          padding-right: 1rem;
+        }
+      }
+
+      .sidenav-mobile-header {
         width: 100%;
         justify-content: space-between;
         align-items: center;
@@ -78,6 +102,8 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       mat-sidenav-content.page-content {
         display: flex;
         flex-direction: column;
+        height: calc(100vh - 120px);
+        overflow: auto;
       }
       mat-sidenav-container {
         margin-top: 0 !important;
