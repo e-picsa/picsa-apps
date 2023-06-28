@@ -158,6 +158,8 @@ export class BudgetStore implements OnDestroy {
       meta: { ...this.activeBudget.meta, valueScale: newScale },
     });
     this.valueCounters = this._generateValueCounters(this.activeBudget);
+    // patch budget to trigger icon reprocessing
+    this.patchBudget({}, true);
   }
 
   async saveCustomCard(card: IBudgetCard) {

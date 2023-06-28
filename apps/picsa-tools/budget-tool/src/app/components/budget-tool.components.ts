@@ -16,7 +16,7 @@ import { BudgetCellEditorComponent } from './_deprecated/cell-editor';
 import { BudgetCellEditorInputValuesComponent } from './_deprecated/input-values/input-values';
 import { NextButton } from './_deprecated/next-button';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
-import { BudgetBalanceEditorComponent, BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
+import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardNew } from './card/card-new/card-new';
@@ -38,7 +38,6 @@ import { BudgetTableComponent } from './table/budget-table';
 const components = [
   BudgetBalanceLegendComponent,
   BudgetBalanceDotValueComponent,
-  BudgetBalanceEditorComponent,
   BudgetCardComponent,
   BudgetCardEditorComponent,
   BudgetCardImageComponent,
