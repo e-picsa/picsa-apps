@@ -12,6 +12,7 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
 })
 export class BudgetTableComponent implements OnInit {
   @Input() budget: IBudget;
+  @Input() editMode = true;
   periodLabels: string[] = [];
   rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map((key) => {
     const label = BUDGET_PERIOD_ROWS[key];
@@ -42,6 +43,13 @@ export class BudgetTableComponent implements OnInit {
       replaceUrl: false,
     });
   }
+
+  // Editor
+  public editorAddMonth() {}
+
+  public editorCopyMonth() {}
+  public editorDeleteMonth() {}
+  public editorSave() {}
 }
 
 /********************************************************************************

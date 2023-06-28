@@ -1,4 +1,4 @@
-<div id="budget" *mobxAutorun style="height: 100%; display: flex; flex-direction: column">
+<div id="budget" [attr.data-editMode]="editMode">
   <!-- parent budget div used so additional h1 can be added here on print -->
   <div class="budget-container">
     <!-- First column -->
@@ -15,7 +15,13 @@
 
     <!-- Time periods calculated Vertically -->
     <div class="time-period" *ngFor="let column of store.activeBudget.data; let columnIndex = index">
-      <div class="time-period-title cell top-row">{{ periodLabels[columnIndex] | translate }}</div>
+      <div class="time-period-title cell top-row">
+        <button mat-button class="editor-button" *ngIf="editMode"><mat-icon style="margin: 0">delete</mat-icon></button>
+        <span style="flex: 1">{{ periodLabels[columnIndex] | translate }}</span>
+        <button mat-button class="editor-button" *ngIf="editMode">
+          <mat-icon style="margin: 0">content_copy</mat-icon>
+        </button>
+      </div>
       <!-- period rows -->
       <div *ngFor="let row of rows" class="cell">
         <budget-cell [periodIndex]="columnIndex" [type]="row.key" (click)="onCellClick(columnIndex, row)"></budget-cell>
@@ -35,5 +41,15 @@
         </div>
       </div>
     </div>
+    <!-- Editor - Add month -->
+    <div class="time-period" *ngIf="editMode">
+      <button mat-button style="height: 100%; background: wheat" (click)="editorAddMonth()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+  <!-- Editor save -->
+  <div class="editor-save" *ngIf="editMode" style="display: flex">
+    <button mat-raised-button color="primary" class="footer-button">{{'Save' | translate}}</button>
   </div>
 </div>

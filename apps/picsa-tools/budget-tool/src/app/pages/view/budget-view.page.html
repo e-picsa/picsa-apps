@@ -25,7 +25,13 @@
     <!-- Sidenav -->
     <div sidenav style="display: flex; flex-direction: column; flex: 1">
       <div style="flex: 1">
-        <h3>Legend</h3>
+        <h3 style="margin-top: 0">{{'Edit' | translate}}</h3>
+        <button mat-button *ngIf="store.activeBudget && store.activeBudget.meta">
+          <mat-icon>calendar_view_week</mat-icon>{{'Budget' | translate}} {{store.activeBudget.meta.lengthScale |
+          translate}}
+        </button>
+        <mat-divider></mat-divider>
+        <h3>{{'Legend' | translate}}</h3>
         <budget-balance-legend [valueCounters]="store.valueCounters"></budget-balance-legend>
         <mat-divider></mat-divider>
       </div>
