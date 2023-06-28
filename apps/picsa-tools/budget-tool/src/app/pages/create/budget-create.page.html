@@ -64,7 +64,7 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
         <h2>{{ 'How long is your budget for?' | translate }}</h2>
-        <div style="display: flex; flex-wrap: wrap">
+        <div style="display: flex; flex-wrap: wrap; align-items: center">
           <button mat-button class="variable-container editable" (click)="periodTotalSelect.open()">
             <span class="variable-value">{{ budgetMetaForm.value.lengthTotal }}</span>
             <mat-select class="select--hidden" #periodTotalSelect formControlName="lengthTotal" style="opacity: 0">

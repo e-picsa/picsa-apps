@@ -92,6 +92,15 @@ export class BudgetStore implements OnDestroy {
   @action setActiveType(activeType: IBudgetPeriodType) {
     this.activeType = activeType;
   }
+
+  /** Reset default budget values */
+  @action unloadActiveBudget() {
+    this.activeBudget = undefined as any;
+    this.balance = [];
+    this.valueCounters = [[], []];
+    this.activePeriod = 0;
+    this.activeType = 'activities';
+  }
   get activeBudgetValue() {
     return toJS(this.activeBudget);
   }
