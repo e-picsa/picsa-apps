@@ -1,7 +1,7 @@
 <div style="display: flex; flex-direction: column; flex: 1">
   <div style="flex: 1">
     <h3 style="margin-top: 0">{{ 'Tools' | translate }}</h3>
-    <button mat-button *ngIf="store.activeBudget && store.activeBudget.meta" (click)="handleEditModeClick()">
+    <button mat-button *ngIf="store.activeBudget && store.activeBudget.meta" (click)="toggleEditorMode()">
       <mat-icon>calendar_view_week</mat-icon>{{ 'Edit Budget' | translate }}
     </button>
     <mat-divider></mat-divider>

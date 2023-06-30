@@ -13,14 +13,27 @@
       </div>
     </div>
 
-    <!-- Time periods calculated Vertically -->
+    <!-- Time periods (calculated vertically) -->
     <div class="time-period" *ngFor="let column of store.activeBudget.data; let columnIndex = index">
       <div class="time-period-title cell top-row">
-        <button mat-button class="editor-button" *ngIf="store.editorEnabled">
+        <!-- Editor - Delete -->
+        <button
+          mat-button
+          class="editor-button"
+          *ngIf="store.editorEnabled"
+          (click)="store.editorDeleteTimePeriod(columnIndex)"
+        >
           <mat-icon style="margin: 0">delete</mat-icon>
         </button>
+        <!-- Label -->
         <span style="flex: 1">{{ store.periodLabels[columnIndex] | translate }}</span>
-        <button mat-button class="editor-button" *ngIf="store.editorEnabled">
+        <!-- Editor - Copy -->
+        <button
+          mat-button
+          class="editor-button"
+          *ngIf="store.editorEnabled"
+          (click)="store.editorCopyTimePeriod(columnIndex)"
+        >
           <mat-icon style="margin: 0">content_copy</mat-icon>
         </button>
       </div>
@@ -51,7 +64,7 @@
     </div>
   </div>
   <!-- Editor save -->
-  <div class="editor-save" *ngIf="store.editorEnabled" style="display: flex">
+  <div class="editor-save" *ngIf="store.editorEnabled" style="display: flex" (click)="store.editorEnabledToggle()">
     <button mat-raised-button color="primary" class="footer-button">{{'Save' | translate}}</button>
   </div>
 </div>

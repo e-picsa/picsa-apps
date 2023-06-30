@@ -4,6 +4,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
 import { APP_VERSION } from '@picsa/environments';
 import { IAppMeta } from '@picsa/models';
+import { PicsaDialogService } from '@picsa/shared/features';
 import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { PrintProvider } from '@picsa/shared/services/native/print';
@@ -116,7 +117,8 @@ export class BudgetStore implements OnDestroy {
     private db: PicsaDbService,
     private configurationService: ConfigurationService,
     private printPrvdr: PrintProvider,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private dialogService: PicsaDialogService
   ) {
     this.counterSVGIcons = this.createBudgetCounterSVGs();
     // TODO store never destroyed so would be good to limit listeners
@@ -224,9 +226,26 @@ export class BudgetStore implements OnDestroy {
     this.editorEnabled = !this.editorEnabled;
   }
   public async editorAddTimePeriod() {
-    this.activeBudget.meta.lengthTotal = this.activeBudget.meta.lengthTotal + 1;
-    const { data } = this.activeBudget;
+    const { data, meta } = this.activeBudget;
+    this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
     data.push(PERIOD_DATA_TEMPLATE);
+    await this.patchBudget({ data });
+  }
+  public async editorDeleteTimePeriod(index: number) {
+    const dialogRef = await this.dialogService.open('delete');
+    dialogRef.afterClosed().subscribe(async (shouldDelete) => {
+      if (shouldDelete) {
+        const { meta, data } = this.activeBudget;
+        this.activeBudget.meta.lengthTotal = meta.lengthTotal - 1;
+        data.splice(index, 1);
+        await this.patchBudget({ data });
+      }
+    });
+  }
+  public async editorCopyTimePeriod(index: number) {
+    const { meta, data } = this.activeBudget;
+    this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
+    data.splice(index, 0, JSON.parse(JSON.stringify(data[index])));
     await this.patchBudget({ data });
   }
 

@@ -12,7 +12,7 @@ export class BudgetEditorSidebarComponent {
 
   @Output() emitClose = new EventEmitter<boolean>();
 
-  public handleEditModeClick() {
+  public toggleEditorMode() {
     this.store.editorEnabledToggle();
     this.emitClose.next(true);
   }
