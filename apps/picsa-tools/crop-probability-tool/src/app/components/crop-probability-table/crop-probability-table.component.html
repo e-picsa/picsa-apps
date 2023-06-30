@@ -1,17 +1,8 @@
-<div ngClass="icons-container">
-  <div ngClass="filter-icons" *ngFor="let crop of cropIcons">
-    <div (click)="filterData(crop.name)" ngClass="icon" [attr.data-selected]="crop.name === selectedCropName">
-      <mat-icon [svgIcon]="'picsa_crop_' + crop.name"></mat-icon>
-      <div ngClass="name">{{ crop.label }}</div>
-    </div>
-  </div>
-  <div ngClass="filter-icons">
-    <div (click)="filterData('')" ngClass="icon">
-      <mat-icon>sync</mat-icon>
-      <div ngClass="name">Reset</div>
-    </div>
-  </div>
-</div>
+<crop-probability-crop-select
+  [crops]="cropIcons"
+  [stationId]="station.id"
+  (cropSelected)="filterData($event)"
+></crop-probability-crop-select>
 
 <section ngClass="mat-mdc-table">
   <crop-probability-table-header
