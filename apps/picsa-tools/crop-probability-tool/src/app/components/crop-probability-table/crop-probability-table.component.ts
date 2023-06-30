@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { CROPS_DATA, ICropData } from '../../data/crops';
-import { STATION_CROP_DATA } from '../../data/mock';
 import { IStationCropData, IStationCropInformation } from '../../models';
 
 export interface PeriodicElement {
@@ -14,29 +14,38 @@ export interface PeriodicElement {
 }
 
 @Component({
-  selector: 'picsa-crop-probability-table',
+  selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
 })
 export class CropProbabilityTableComponent {
   displayedColumns: string[] = ['crop', 'variety', 'days', 'water', 'probabilities'];
-  public stations = STATION_CROP_DATA;
+
   public dataSource: MatTableDataSource<IStationCropData>;
-  public selectedStation?: IStationCropInformation;
+  public station: IStationCropInformation;
   public selectedCropName?: string;
+
+  @Input() set activeStation(activeStation: IStationCropInformation) {
+    this.station = activeStation;
+    this.filterData('');
+  }
 
   cropIcons: ICropData[] = [];
 
+  constructor(private router: Router, private route: ActivatedRoute) {}
+
+  public handleStationChange() {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { stationId: this.station?.id } });
+  }
+
   filterData(cropName: string = '') {
     this.selectedCropName = cropName;
-    if (this.selectedStation) {
-      const dataSource = new MatTableDataSource(this.selectedStation.station_data);
-      this.cropIcons = this.generateCropFilters(this.selectedStation.station_data);
-      if (cropName) {
-        dataSource.filter = cropName;
-      }
-      this.dataSource = dataSource;
+    const dataSource = new MatTableDataSource(this.station.station_data);
+    this.cropIcons = this.generateCropFilters(this.station.station_data);
+    if (cropName) {
+      dataSource.filter = cropName;
     }
+    this.dataSource = dataSource;
   }
 
   /** Utility function used in mat-select to compare whether the selected station option matches */

@@ -1,7 +1,7 @@
 import type { ICropName } from '../data/crops';
 
 export interface IStationCropInformation {
-  id: number;
+  id: string;
   station_name: string;
   station_data: IStationCropData[];
   notes: string[];
@@ -17,4 +17,9 @@ export interface IStationCropData {
     water?: string[];
     probabilities?: string[];
   }[];
+}
+
+export interface IStationRouteQueryParams {
+  /** id of active selected station */
+  stationId?: string;
 }

@@ -7,6 +7,11 @@ export const ROUTES_COMMON: Routes = [
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     title: 'Crop Probability',
   },
+  {
+    path: ':stationId',
+    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    title: 'Crop Probability',
+  },
 ];
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
