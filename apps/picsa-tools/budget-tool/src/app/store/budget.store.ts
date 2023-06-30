@@ -28,7 +28,7 @@ import {
   IBudgetValueScale,
 } from '../models/budget-tool.models';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
-import { MONTHS, NEW_BUDGET_TEMPLATE } from './templates';
+import { MONTHS, NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
 const TYPE_CARDS_BASE: {
   [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
 } = {
@@ -61,6 +61,9 @@ export class BudgetStore implements OnDestroy {
   public typeLabels = TYPE_LABELS;
   public counterSVGIcons: IBudgetCounterSVGIcons;
 
+  /** Budget column editor mode */
+  public editorEnabled = true;
+
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
@@ -76,12 +79,11 @@ export class BudgetStore implements OnDestroy {
   }
   @observable budgetCardsByType = TYPE_CARDS_BASE;
 
-  @computed get budgetPeriodLabels(): string[] {
-    return this._generateLabels(this.activeBudget.meta);
-  }
+  @observable periodLabels: string[] = [];
 
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
+    this.periodLabels = this.generatePeriodLabels(budget.meta);
   }
   @action calculateBalance() {
     this.balance = this._calculateBalance(this.activeBudget);
@@ -142,10 +144,10 @@ export class BudgetStore implements OnDestroy {
    ***************************************************************************/
   // merge current budget with added data, optionally can merge deep to include
   // nested properties
-  patchBudget(patch: Partial<IBudget>, deepMerge = false) {
+  async patchBudget(patch: Partial<IBudget>, deepMerge = false) {
     const budget = deepMerge ? merge(this.activeBudget, patch) : { ...this.activeBudget, ...patch };
     this.setActiveBudget(budget);
-    this.saveBudget();
+    return this.saveBudget();
   }
   // populate correct budget data based on editor data and current active cell
   saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
@@ -212,6 +214,20 @@ export class BudgetStore implements OnDestroy {
       svgs[`${name}-half`] = this.sanitizer.bypassSecurityTrustHtml(halfEl.outerHTML);
     }
     return svgs;
+  }
+
+  /**************************************************************************
+   *            Editor Mode
+   *
+   ***************************************************************************/
+  public editorEnabledToggle() {
+    this.editorEnabled = !this.editorEnabled;
+  }
+  public async editorAddTimePeriod() {
+    this.activeBudget.meta.lengthTotal = this.activeBudget.meta.lengthTotal + 1;
+    const { data } = this.activeBudget;
+    data.push(PERIOD_DATA_TEMPLATE);
+    await this.patchBudget({ data });
   }
 
   /**************************************************************************
@@ -407,7 +423,7 @@ export class BudgetStore implements OnDestroy {
    ***************************************************************************/
 
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
-  private _generateLabels(meta: IBudgetMeta): string[] {
+  private generatePeriodLabels(meta: IBudgetMeta): string[] {
     const { lengthScale, lengthTotal, monthStart = 1 } = meta;
     if (lengthScale === 'weeks') {
       return new Array(lengthTotal).fill(0).map((_, i) => 'Week ' + (i + 1));
