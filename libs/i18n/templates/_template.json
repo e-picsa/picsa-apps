@@ -140,6 +140,41 @@
     "context": "activities"
   },
   {
+    "text": "Monday",
+    "tool": "budget",
+    "context": "day_1"
+  },
+  {
+    "text": "Tuesday",
+    "tool": "budget",
+    "context": "day_2"
+  },
+  {
+    "text": "Wednesday",
+    "tool": "budget",
+    "context": "day_3"
+  },
+  {
+    "text": "Thursday",
+    "tool": "budget",
+    "context": "day_4"
+  },
+  {
+    "text": "Friday",
+    "tool": "budget",
+    "context": "day_5"
+  },
+  {
+    "text": "Saturday",
+    "tool": "budget",
+    "context": "day_6"
+  },
+  {
+    "text": "Sunday",
+    "tool": "budget",
+    "context": "day_7"
+  },
+  {
     "text": "afforestation",
     "tool": "budget",
     "context": "enterprise"
@@ -340,6 +375,121 @@
     "context": "inputs"
   },
   {
+    "text": "January",
+    "tool": "budget",
+    "context": "month_1"
+  },
+  {
+    "text": "October",
+    "tool": "budget",
+    "context": "month_10"
+  },
+  {
+    "text": "Oct",
+    "tool": "budget",
+    "context": "month_10_short"
+  },
+  {
+    "text": "November",
+    "tool": "budget",
+    "context": "month_11"
+  },
+  {
+    "text": "Nov",
+    "tool": "budget",
+    "context": "month_11_short"
+  },
+  {
+    "text": "December",
+    "tool": "budget",
+    "context": "month_12"
+  },
+  {
+    "text": "Dec",
+    "tool": "budget",
+    "context": "month_12_short"
+  },
+  {
+    "text": "Jan",
+    "tool": "budget",
+    "context": "month_1_short"
+  },
+  {
+    "text": "February",
+    "tool": "budget",
+    "context": "month_2"
+  },
+  {
+    "text": "Feb",
+    "tool": "budget",
+    "context": "month_2_short"
+  },
+  {
+    "text": "March",
+    "tool": "budget",
+    "context": "month_3"
+  },
+  {
+    "text": "Mar",
+    "tool": "budget",
+    "context": "month_3_short"
+  },
+  {
+    "text": "April",
+    "tool": "budget",
+    "context": "month_4"
+  },
+  {
+    "text": "Apr",
+    "tool": "budget",
+    "context": "month_4_short"
+  },
+  {
+    "text": "May",
+    "tool": "budget",
+    "context": "month_5_short"
+  },
+  {
+    "text": "June",
+    "tool": "budget",
+    "context": "month_6"
+  },
+  {
+    "text": "Jun",
+    "tool": "budget",
+    "context": "month_6_short"
+  },
+  {
+    "text": "July",
+    "tool": "budget",
+    "context": "month_7"
+  },
+  {
+    "text": "Jul",
+    "tool": "budget",
+    "context": "month_7_short"
+  },
+  {
+    "text": "August",
+    "tool": "budget",
+    "context": "month_8"
+  },
+  {
+    "text": "Aug",
+    "tool": "budget",
+    "context": "month_8_short"
+  },
+  {
+    "text": "September",
+    "tool": "budget",
+    "context": "month_9"
+  },
+  {
+    "text": "Sep",
+    "tool": "budget",
+    "context": "month_9_short"
+  },
+  {
     "text": "add custom",
     "tool": "budget",
     "context": "other"
@@ -426,6 +576,10 @@
     "tool": "budget"
   },
   {
+    "text": "Edit Budget",
+    "tool": "budget"
+  },
+  {
     "text": "Enterprise",
     "tool": "budget"
   },
@@ -455,6 +609,10 @@
   },
   {
     "text": "Inputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Legend",
     "tool": "budget"
   },
   {
@@ -631,10 +789,6 @@
     "tool": "climate"
   },
   {
-    "text": "Hide Tool Options",
-    "tool": "climate"
-  },
-  {
     "text": "Line",
     "tool": "climate"
   },
@@ -664,10 +818,6 @@
   },
   {
     "text": "Share Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Show Tool Options",
     "tool": "climate"
   },
   {
@@ -734,6 +884,10 @@
     "context": "buttons"
   },
   {
+    "text": "Are you sure you want to delete?",
+    "tool": "common"
+  },
+  {
     "text": "Edit Profiles",
     "tool": "common"
   },
@@ -743,6 +897,10 @@
   },
   {
     "text": "Farmer",
+    "tool": "common"
+  },
+  {
+    "text": "Hide Options",
     "tool": "common"
   },
   {
@@ -759,6 +917,10 @@
   },
   {
     "text": "Select Language",
+    "tool": "common"
+  },
+  {
+    "text": "Show Options",
     "tool": "common"
   },
   {
