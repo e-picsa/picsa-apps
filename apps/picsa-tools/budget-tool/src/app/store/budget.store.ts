@@ -63,7 +63,7 @@ export class BudgetStore implements OnDestroy {
   public counterSVGIcons: IBudgetCounterSVGIcons;
 
   /** Budget column editor mode */
-  public editorEnabled = true;
+  public editorEnabled = false;
 
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
@@ -318,8 +318,8 @@ export class BudgetStore implements OnDestroy {
       // append additional key to keep reference from parent to derived budgets
       const { _key } = generateDBMeta();
       budget._key += `_${_key}`;
-      this.activeBudget = budget;
-      this.saveBudget();
+      this.setActiveBudget(budget);
+      await this.saveBudget();
     } else {
       console.warn('No budget doc found for key:', key);
     }
