@@ -29,6 +29,7 @@ import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-s
 import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
 import { BudgetEditorComponent } from './editor/editor.component';
+import { BudgetEditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
 import { BudgetListItemComponent, BudgetListItemRenameDialog } from './list-item/budget-list-item';
 import { BudgetShareDialogComponent } from './share-dialog/share-dialog.component';
@@ -49,6 +50,7 @@ const components = [
   BudgetCellEditorFamilyLabourComponent,
   BudgetCellEditorProduceConsumedComponent,
   BudgetEditorComponent,
+  BudgetEditorSidebarComponent,
   BudgetCellLabourComponent,
   BudgetCardNew,
   BudgetCardNewDialog,

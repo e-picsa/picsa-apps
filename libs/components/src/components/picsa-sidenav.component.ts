@@ -1,6 +1,7 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { DomPortal } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
 
@@ -120,6 +121,7 @@ export class PicsaSidenavComponent implements OnInit, AfterViewInit {
   @Input() opened = true;
 
   @ViewChild('headerContent') headerContent: ElementRef<HTMLElement>;
+  @ViewChild(MatSidenav) matSidenav: MatSidenav;
 
   constructor(
     private componentsService: PicsaCommonComponentsService,
@@ -136,6 +138,11 @@ export class PicsaSidenavComponent implements OnInit, AfterViewInit {
       this.componentsService.patchHeader({ endContent });
       this.headerAttached = true;
     }, 50);
+  }
+
+  /** Public method to trigger sidebar close from child content */
+  public close() {
+    this.matSidenav.close();
   }
 
   /** Use media queries to handle sidenav */

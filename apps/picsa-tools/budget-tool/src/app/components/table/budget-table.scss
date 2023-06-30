@@ -165,7 +165,7 @@ hr {
 }
 
 // Edit Mode Overrides
-#budget[data-editMode='true'] {
+#budget[data-editorEnabled='true'] {
   .cell.top-row {
     background: wheat;
   }

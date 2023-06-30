@@ -10,9 +10,8 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   templateUrl: 'budget-table.html',
   styleUrls: ['./budget-table.scss'],
 })
-export class BudgetTableComponent implements OnInit {
+export class BudgetTableComponent {
   @Input() budget: IBudget;
-  @Input() editMode = true;
   periodLabels: string[] = [];
   rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map((key) => {
     const label = BUDGET_PERIOD_ROWS[key];
@@ -25,9 +24,6 @@ export class BudgetTableComponent implements OnInit {
   balance: any;
 
   constructor(public store: BudgetStore, private router: Router, private route: ActivatedRoute) {}
-  ngOnInit(): void {
-    this.periodLabels = this.store.budgetPeriodLabels;
-  }
 
   onCellClick(columnIndex: number, row: IBudgetRow) {
     this.router.navigate([], {
@@ -43,13 +39,6 @@ export class BudgetTableComponent implements OnInit {
       replaceUrl: false,
     });
   }
-
-  // Editor
-  public editorAddMonth() {}
-
-  public editorCopyMonth() {}
-  public editorDeleteMonth() {}
-  public editorSave() {}
 }
 
 /********************************************************************************
