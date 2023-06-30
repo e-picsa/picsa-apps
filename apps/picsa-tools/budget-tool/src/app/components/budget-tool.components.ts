@@ -12,9 +12,6 @@ import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 
 import { BudgetMaterialModule } from '../material.module';
 // Components
-import { BudgetCellEditorComponent } from './_deprecated/cell-editor';
-import { BudgetCellEditorInputValuesComponent } from './_deprecated/input-values/input-values';
-import { NextButton } from './_deprecated/next-button';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
 import { BudgetCardComponent } from './card/budget-card';
@@ -44,9 +41,7 @@ const components = [
   BudgetCardImageComponent,
   BudgetCardPlaceholderComponent,
   BudgetCellComponent,
-  BudgetCellEditorComponent,
   BudgetCellEditorCardSelectComponent,
-  BudgetCellEditorInputValuesComponent,
   BudgetCellEditorFamilyLabourComponent,
   BudgetCellEditorProduceConsumedComponent,
   BudgetEditorComponent,
@@ -60,7 +55,6 @@ const components = [
   BudgetPeriodSummaryComponent,
   BudgetShareDialogComponent,
   BudgetTableComponent,
-  NextButton,
 ];
 
 @NgModule({
