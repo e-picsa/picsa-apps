@@ -14,20 +14,31 @@ header[data-style='inverted'] {
   color: var(--color-primary);
   background-color: white;
 }
+
 .start-content {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  min-width: 100px;
+}
+
+.central-content {
   flex: 1;
-  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .end-content {
-  flex: 1;
-  text-align: right;
-}
-.central-content {
-  flex: 2;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  min-width: 100px;
 }
 h1 {
   font-size: 2rem;
-
   padding: 0;
+}
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

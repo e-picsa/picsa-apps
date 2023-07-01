@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { IBudgetPeriodType } from '../../models/budget-tool.models';
@@ -10,9 +10,8 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   templateUrl: './period-summary.html',
   styleUrls: ['./period-summary.scss'],
 })
-export class BudgetPeriodSummaryComponent implements OnInit {
+export class BudgetPeriodSummaryComponent {
   @Input() periodIndex: number;
-  periodLabels: string[] = [];
   rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map((key) => {
     const label = BUDGET_PERIOD_ROWS[key];
     return {
@@ -22,9 +21,6 @@ export class BudgetPeriodSummaryComponent implements OnInit {
   });
 
   constructor(public store: BudgetStore, private router: Router, private route: ActivatedRoute) {}
-  ngOnInit(): void {
-    this.periodLabels = this.store.budgetPeriodLabels;
-  }
 
   onCellClick(row: IBudgetRow) {
     this.router.navigate([], {

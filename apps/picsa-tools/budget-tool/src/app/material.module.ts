@@ -70,7 +70,7 @@ export class BudgetMaterialModule {
           `picsa_${key}`,
           this.domSanitizer.bypassSecurityTrustResourceUrl(
             // NOTE - svgs are imported from shared lib (see angular.json for config)
-            `assets/budget-cards/${value}.svg`
+            `assets/images/${value}.svg`
           )
         );
       }

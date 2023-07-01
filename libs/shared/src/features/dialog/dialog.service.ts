@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
+import { PicsaTranslateService } from '../../modules';
 import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
-import { IPicsaDialogConfig,IPicsaDialogData } from './dialog.models';
+import { IPicsaDialogConfig, IPicsaDialogData } from './dialog.models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PicsaDialogService {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private translateService: PicsaTranslateService) {}
 
   /**********************************************************************
    *  Public Methods
@@ -26,6 +27,10 @@ export class PicsaDialogService {
       ...customConfig,
       data: { ...templateConfig.data, ...customData },
     };
+    // ensure dialog title translated
+    if (config.data.title) {
+      config.data.title = await this.translateService.translateText(config.data.title);
+    }
     const dialogRef = this.dialog.open(config.component, config);
     return dialogRef;
   }
