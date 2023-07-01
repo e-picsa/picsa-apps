@@ -40,9 +40,11 @@ export class CropProbabilityTableComponent {
     this.selectedCropName = cropName;
     // flatten data rows which are grouped by crop
     const dataSource = new MatTableDataSource(this.tableData);
+    // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
+    dataSource.filterPredicate = (data, filter) => data.crop.toLowerCase() === filter;
     this.cropIcons = this.generateCropFilters(this.station.station_data);
     if (cropName) {
-      dataSource.filter = cropName;
+      dataSource.filter = cropName.toLowerCase();
     }
     this.dataSource = dataSource;
   }
