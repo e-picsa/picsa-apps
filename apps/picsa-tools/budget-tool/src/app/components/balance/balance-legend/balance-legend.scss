@@ -1,3 +1,6 @@
+:host {
+  display: block;
+}
 .dot-value {
   height: 1em;
 }
@@ -5,22 +8,12 @@
   max-height: 1em;
   margin: 1px;
 }
-.balance-button {
-  padding: 0;
-  width: 24px;
-  min-width: 24px;
-  color: #495a26;
+.counter-container {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.legend-edit-button {
-  padding: 0;
-  float: right;
-  min-width: 30px;
-  margin-top: -28px;
-  height: 30px;
-  line-height: 30px;
-  margin-right: -5px;
-}
-.legend-edit-button-icon {
-  width: 20px;
-  height: 20px;
+.buttons-container {
+  flex: 1;
 }

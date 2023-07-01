@@ -1,6 +1,12 @@
 :host {
   flex: 1;
 }
+#budget {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .scroll-content {
   background-color: white !important;
 }
@@ -69,10 +75,14 @@
   overflow: auto;
 }
 .cell.top-row {
-  height: 20px;
+  height: 32px;
   font-size: 16px;
   text-align: center;
   flex: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 } // want last row cells to adjust height to fill with/without scrollbar
 .cell.Cash {
   height: 100%;
@@ -152,4 +162,24 @@ hr {
 }
 .balance-label {
   font-size: 12px;
+}
+
+// Edit Mode Overrides
+#budget[data-editorEnabled='true'] {
+  .cell.top-row {
+    background: wheat;
+  }
+  budget-cell {
+    pointer-events: none;
+    opacity: 0.3;
+    background: grey;
+  }
+  .editor-button {
+    min-width: 32px;
+  }
+  .editor-save {
+    position: fixed;
+    bottom: 1em;
+    width: calc(100vw - 4em);
+  }
 }

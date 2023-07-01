@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
@@ -19,6 +20,7 @@ import { ConfigurationSelectComponent } from './components/configuration-select/
 import { ConfigurationSelectDialog } from './components/configuration-select/configuration-select-dialog';
 import { PicsaBreadcrumbsComponent } from './components/picsa-breadcrumbs.component';
 import { PicsaHeaderComponent } from './components/picsa-header.component';
+import { PicsaSidenavComponent } from './components/picsa-sidenav.component';
 import { ProfileSelectComponent } from './components/profile-select/profile-select.component';
 
 // import {} from './warning.component';
@@ -29,6 +31,7 @@ const components = [
   ConfigurationSelectDialog,
   PicsaBreadcrumbsComponent,
   PicsaHeaderComponent,
+  PicsaSidenavComponent,
   ProfileSelectComponent,
 ];
 
@@ -45,6 +48,7 @@ const components = [
     MatIconModule,
     MatInputModule,
     MatRadioModule,
+    MatSidenavModule,
     PortalModule,
     PicsaTranslateModule,
     ReactiveFormsModule,

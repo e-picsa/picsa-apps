@@ -1,5 +1,5 @@
-import { Portal } from '@angular/cdk/portal';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CdkPortalOutlet, Portal, PortalOutlet } from '@angular/cdk/portal';
+import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -20,17 +20,17 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         <back-button [style.visibility]="hideBackButton ? 'hidden' : 'visible'"></back-button>
       </div>
       <h1 class="central-content">
-        <span>{{ title | translate }}</span>
+        <span class="title">{{ title | translate }}</span>
       </h1>
       <div class="end-content">
-        <ng-template [cdkPortalOutlet]="endPortal"></ng-template>
+        <ng-template [cdkPortalOutlet]="endPortal" #portalOutlet></ng-template>
       </div>
     </header>
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
 })
-export class PicsaHeaderComponent implements OnInit, OnDestroy {
+export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   public title = '';
   public style: 'primary' | 'inverted' = 'primary';
   public hideBackButton? = false;
@@ -38,6 +38,9 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private destroyed$ = new Subject<boolean>();
   /** Inject dynamic content into end slot of header using angular cdk portal */
   public endPortal?: Portal<any>;
+  public endPortalReady = false;
+
+  @ViewChild(CdkPortalOutlet) portalOutlet: PortalOutlet;
   constructor(
     private componentsService: PicsaCommonComponentsService,
     private router: Router,
@@ -46,8 +49,10 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.listenToServiceTitleChanges();
     this.listenToRouteChanges();
+  }
+  ngAfterViewInit(): void {
+    this.listenToServiceTitleChanges();
   }
 
   ngOnDestroy() {
@@ -106,9 +111,21 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
           if (style) {
             this.style = style;
           }
+          if (endContent && !endContent.isAttached) {
+            this.endPortal = endContent;
+          }
+
           this.hideBackButton = hideBackButton;
-          this.endPortal = endContent;
         });
       });
+  }
+  private setEndPortal(endContent?: Portal<any>) {
+    if (this.endPortal?.isAttached) {
+      console.log('update end portal', endContent, this.endPortal);
+      this.endPortal = endContent;
+    } else {
+      console.log('retry set portal');
+      // return setTimeout(() => this.setEndPortal(endContent), 200);
+    }
   }
 }

@@ -38,7 +38,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
-    this.store.activeBudget = undefined as any;
+    this.store.unloadActiveBudget();
   }
 
   async showShareDialog() {
