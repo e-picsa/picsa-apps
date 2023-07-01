@@ -1,14 +1,14 @@
-$probabilities-width: 320px;
 $border-style: 1px solid var(--color-light);
 
 .table-container {
   // table requires space for probabilities and rest of table
-  min-width: calc($probabilities-width + 468px);
+  min-width: 768px;
   overflow-x: auto;
   padding: 1rem;
 }
 table {
   width: 100%;
+  border-collapse: collapse;
 }
 th {
   text-transform: capitalize;
@@ -17,50 +17,28 @@ td {
   padding: 0.75rem;
 }
 
-// child tables used to display probability values
-// define borders individually to make it easier to unset
-table.probability-values,
-table.probability-values td {
-  border-collapse: collapse;
-  border-left: $border-style;
-  border-right: $border-style;
+div.season-start-text {
+  padding: 8px;
+  font-weight: bold;
 }
 
-// Use custom styles to organise borders on table elements
-div.season-start-text {
-  border: $border-style;
-  padding: 8px;
-}
-td.start-date-text {
-  border-top-style: hidden;
-}
-td.probabilities-cell {
-  width: $probabilities-width;
-  padding: 0;
-}
 td.crop-title,
 th.crop-title {
   text-transform: capitalize;
-  border-right: $border-style;
-}
-td.season-start-probability {
-  border-bottom: $border-style;
 }
 
-// when nesting one table in another use absolute layout for better fit
-// (requires relative position on parent td)
-table.nested {
-  table-layout: fixed;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  // remove top/bottom borders on nested cells
-  td {
-    border-top-style: hidden;
-    border-bottom-style: hidden;
-  }
+// Use custom styles to organise borders on table elements
+.border-left {
+  border-left: $border-style;
+}
+.border-right {
+  border-right: $border-style;
+}
+.border-top {
+  border-top: $border-style;
+}
+.border-bottom {
+  border-bottom: $border-style;
 }
 
 .disclaimer {
