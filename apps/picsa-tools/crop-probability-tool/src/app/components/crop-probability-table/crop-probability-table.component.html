@@ -1,34 +1,36 @@
 <crop-probability-crop-select
   [crops]="cropIcons"
+  selectDefault="maize"
   [stationId]="station.id"
   (cropSelected)="filterData($event)"
+  style="padding: 1rem"
 ></crop-probability-crop-select>
 
 <section class="table-container mat-mdc-table">
   <!-- Main table -->
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="crop" sticky>
-      <th mat-header-cell *matHeaderCellDef class="crop-title">Crop</th>
+      <th mat-header-cell *matHeaderCellDef class="crop-title">{{ 'Crop' | translate }}</th>
       <td mat-cell *matCellDef="let element" class="crop-title">
-        {{ element.crop }}
+        {{ element.crop | translate }}
       </td>
     </ng-container>
     <ng-container matColumnDef="variety">
-      <th mat-header-cell *matHeaderCellDef>Variety</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Variety' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.variety }}
+        {{ element.variety | translate }}
       </td>
     </ng-container>
     <ng-container matColumnDef="days">
-      <th mat-header-cell *matHeaderCellDef>Days to maturity</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Days to maturity' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.days }}
+        {{ element.days | translate }}
       </td>
     </ng-container>
     <ng-container matColumnDef="water">
-      <th mat-header-cell *matHeaderCellDef>Crop water requirement (mm)*</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Crop water requirement (mm)' | translate }}*</th>
       <td mat-cell *matCellDef="let element">
-        <div *ngFor="let water of element.water">{{ water }}</div>
+        <div *ngFor="let water of element.water">{{ water | translate }}</div>
       </td>
     </ng-container>
 
@@ -53,7 +55,7 @@
         class="border-left"
       >
         <div class="season-start-text">
-          {{ 'Probability of season start on or before above date' | translate }}
+          {{ 'Probability of season start on or before below date' | translate }}
         </div>
         <table class="probability-values" style="table-layout: fixed">
           <tr>
@@ -79,5 +81,5 @@
   </table>
 </section>
 <div class="disclaimer">
-  <div *ngFor="let note of station.notes">{{ note }}</div>
+  <div *ngFor="let note of station.notes">{{ note | translate }}</div>
 </div>

@@ -671,10 +671,6 @@
     "tool": "climate"
   },
   {
-    "text": "Station",
-    "tool": "climate"
-  },
-  {
     "text": "Terciles",
     "tool": "climate"
   },
@@ -764,6 +760,106 @@
   {
     "text": "Who is using?",
     "tool": "common"
+  },
+  {
+    "text": "**Data from 140 days maturity is used, as there was no data above 140 days",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "*Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station.",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "All",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Beans",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Cassava",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Cowpeas",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop Information",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop water requirement (mm)",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Days to maturity",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Groundnuts",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Longitude:34.26, Latitude: -12.91 Altitude: 500.",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Maize",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Pigeon Peas",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Probability of season start on or before below date",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Pumpkins",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Rice",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Sorghum",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Soya Beans",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Station",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Sunflower",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Sweet Potatoes",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Variety",
+    "tool": "crop-probability"
   },
   {
     "text": "Budget",

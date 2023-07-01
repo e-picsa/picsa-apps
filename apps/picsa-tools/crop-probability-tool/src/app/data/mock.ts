@@ -1,3 +1,5 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+
 import { IStationCropInformation } from '../models';
 
 export const STATION_CROP_DATA: IStationCropInformation[] = [
@@ -174,8 +176,10 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
       },
     ],
     notes: [
-      'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station.',
-      '**Data from 140 days maturity is used, as there was no data above 140 days',
+      translateMarker(
+        '*Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station.'
+      ),
+      translateMarker('**Data from 140 days maturity is used, as there was no data above 140 days'),
     ],
     dates: ['1-Nov', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
     season_probabilities: ['1/10', '4/10', '6/10', '9/10', '10/10'],
@@ -419,8 +423,10 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
       },
     ],
     notes: [
-      'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.',
-      'Longitude:34.26, Latitude: -12.91 Altitude: 500.',
+      translateMarker(
+        'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.'
+      ),
+      translateMarker('Longitude:34.26, Latitude: -12.91 Altitude: 500.'),
     ],
     dates: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
     season_probabilities: ['1/10', '4/10', '9/10', '10/10'],
