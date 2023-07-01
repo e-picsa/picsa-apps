@@ -3,7 +3,7 @@ import { IStationCropInformation } from '../models';
 export const STATION_CROP_DATA: IStationCropInformation[] = [
   {
     id: 'chipata',
-    station_name: 'CHIPATA MET STATION',
+    station_name: 'Chipata',
     station_data: [
       {
         crop: 'maize',
@@ -181,8 +181,8 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
     season_probabilities: ['1/10', '4/10', '6/10', '9/10', '10/10'],
   },
   {
-    id: 'nhkotakota',
-    station_name: 'NKHOTAKOTA MET STATION',
+    id: 'nkhotakota',
+    station_name: 'Nkhotakota',
     station_data: [
       {
         crop: 'maize',
