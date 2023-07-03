@@ -1,59 +1,47 @@
+$border-style: 1px solid var(--color-light);
+
+.table-container {
+  // table requires space for probabilities and rest of table
+  min-width: 768px;
+  overflow-x: auto;
+  padding: 1rem;
+}
 table {
   width: 100%;
+  border-collapse: collapse;
 }
-.mat-mdc-table {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  overflow: auto;
-  padding: 0 20px;
-  padding-bottom: 10px;
-  color: black;
-  .title-cell {
-    text-transform: capitalize;
-    font-weight: 800;
-    font-size: 15px;
-  }
-  .crop-title {
-    text-transform: capitalize;
-    font-weight: 700;
-    font-size: 13px;
-  }
-  .table-row {
-    padding: 15px 10px;
-  }
-  .padded-span {
-    padding: 0 10px;
-    width: 75px;
-  }
-  .font-12 {
-    font-size: 12px;
-  }
-  .probability {
-    width: 520px;
-    padding: 3px 2px;
-    .prob-row-wrapper {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-    }
-    .cell {
-      border-bottom: 1px solid rgb(212, 211, 209);
-    }
-  }
-  .fixed-width {
-    width: 180px;
-  }
+th {
+  text-transform: capitalize;
 }
-.mat-mdc-table-sticky-border-elem-left {
-  border-right: 1px solid #e0e0e0;
+td {
+  padding: 0.75rem;
 }
-.mat-mdc-form-field {
-  font-size: 14px;
-  width: 100%;
+
+div.season-start-text {
+  padding: 8px;
+  font-weight: bold;
 }
+
+td.crop-title,
+th.crop-title {
+  text-transform: capitalize;
+}
+
+// Use custom styles to organise borders on table elements
+.border-left {
+  border-left: $border-style;
+}
+.border-right {
+  border-right: $border-style;
+}
+.border-top {
+  border-top: $border-style;
+}
+.border-bottom {
+  border-bottom: $border-style;
+}
+
 .disclaimer {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 12px;
-  font-style: italic;
-  margin: 18px 0 20px 0;
-  padding-left: 15==20px;
+  margin: 1rem;
+  line-height: 2rem;
 }
