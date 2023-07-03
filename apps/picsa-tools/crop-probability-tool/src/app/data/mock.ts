@@ -1,3 +1,5 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+
 import { IStationCropInformation } from '../models';
 
 export const STATION_CROP_DATA: IStationCropInformation[] = [
@@ -201,8 +203,8 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
     season_probabilities: ['1/10', '3/10', '7/10', '9/10'],
   },
   {
-    id: 'nhkotakota',
-    station_name: 'NKHOTAKOTA MET STATION',
+    id: 'nkhotakota',
+    station_name: 'Nkhotakota',
     station_data: [
       {
         crop: 'maize',
@@ -439,8 +441,10 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
       },
     ],
     notes: [
-      'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.',
-      'Longitude:34.26, Latitude: -12.91 Altitude: 500.',
+      translateMarker(
+        'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.'
+      ),
+      translateMarker('Longitude:34.26, Latitude: -12.91 Altitude: 500.'),
     ],
     dates: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
     season_probabilities: ['1/10', '4/10', '9/10', '10/10'],

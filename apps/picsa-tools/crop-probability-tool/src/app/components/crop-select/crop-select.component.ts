@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ICropData } from '../../data/crops';
 
@@ -7,18 +7,28 @@ import { ICropData } from '../../data/crops';
   templateUrl: './crop-select.component.html',
   styleUrls: ['./crop-select.component.scss'],
 })
-export class CropSelectComponent {
+export class CropSelectComponent implements OnInit {
   @Input() crops: ICropData[];
 
+  /** Default crop to select on init */
+  @Input() selectDefault: string;
+
   @Input() set stationId(stationId: string) {
-    // Whenever new station loaded reset data
-    this.selected = '';
+    // Prompt refilter by same crop when station id changes
+    this.handleCropSelected(this.selected);
   }
 
   @Output() cropSelected = new EventEmitter<string>();
 
   /** Name of selected crop */
   public selected = '';
+
+  ngOnInit(): void {
+    console.log('hello crop select', this.selectDefault);
+    if (this.selectDefault) {
+      this.handleCropSelected(this.selectDefault);
+    }
+  }
 
   public handleCropSelected(name: string) {
     this.selected = name;

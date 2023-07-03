@@ -43,7 +43,7 @@ const files: { [id: string]: IResourceFile } = {
     filename: 'crop-info-kasungu.pdf',
     type: 'file',
     image: '',
-    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-chipata.pdf?alt=media&token=d6637831-4fe5-4c92-9004-2bfae4aefd7a',
+    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-kasungu.pdf?alt=media&token=aa07e714-44f9-4c81-85cf-476932f6caf9',
     appCountries: ['mw'],
   },
   crop_info_nkhotakota: {

@@ -11,12 +11,14 @@ export interface IStationCropInformation {
 
 export interface IStationCropData {
   crop: ICropName;
-  data: {
-    variety: string;
-    days: string;
-    water?: string[];
-    probabilities?: string[];
-  }[];
+  data: IStationCropDataItem[];
+}
+
+export interface IStationCropDataItem {
+  variety: string;
+  days: string;
+  water?: string[];
+  probabilities?: string[];
 }
 
 export interface IStationRouteQueryParams {

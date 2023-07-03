@@ -4,14 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { CROPS_DATA, ICropData } from '../../data/crops';
-import { IStationCropData, IStationCropInformation } from '../../models';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+import { IStationCropData, IStationCropDataItem, IStationCropInformation } from '../../models';
 
 @Component({
   selector: 'crop-probability-table',
@@ -19,18 +12,23 @@ export interface PeriodicElement {
   styleUrls: ['./crop-probability-table.component.scss'],
 })
 export class CropProbabilityTableComponent {
-  displayedColumns: string[] = ['crop', 'variety', 'days', 'water', 'probabilities'];
+  public displayedColumns: string[] = [];
 
-  public dataSource: MatTableDataSource<IStationCropData>;
+  /** Tracking columns for individual probabilities */
+  public probabilityColumns: { name: string; label: string; index: number }[] = [];
+
+  public dataSource: MatTableDataSource<ITableRow>;
   public station: IStationCropInformation;
   public selectedCropName?: string;
+  public cropIcons: ICropData[] = [];
+
+  private tableData: ITableRow[] = [];
 
   @Input() set activeStation(activeStation: IStationCropInformation) {
     this.station = activeStation;
+    this.tableData = this.prepareTableRows(activeStation);
     this.filterData('');
   }
-
-  cropIcons: ICropData[] = [];
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -40,10 +38,13 @@ export class CropProbabilityTableComponent {
 
   filterData(cropName: string = '') {
     this.selectedCropName = cropName;
-    const dataSource = new MatTableDataSource(this.station.station_data);
+    // flatten data rows which are grouped by crop
+    const dataSource = new MatTableDataSource(this.tableData);
+    // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
+    dataSource.filterPredicate = (data, filter) => data.crop.toLowerCase() === filter;
     this.cropIcons = this.generateCropFilters(this.station.station_data);
     if (cropName) {
-      dataSource.filter = cropName;
+      dataSource.filter = cropName.toLowerCase();
     }
     this.dataSource = dataSource;
   }
@@ -58,4 +59,32 @@ export class CropProbabilityTableComponent {
     const availableCrops = arrayToHashmap(stationData, 'crop');
     return CROPS_DATA.filter(({ name }) => name in availableCrops);
   }
+
+  /**
+   * Flatten grouped station data for easier use in table rows
+   * Split probabilities into individual columns
+   * */
+  private prepareTableRows(station: IStationCropInformation) {
+    const stationCropData = station.station_data;
+
+    this.probabilityColumns = station.dates.map((label, index) => ({ label, name: `probability_${index}`, index }));
+    const displayColumns = ['crop', 'variety', 'days', 'water', ...this.probabilityColumns.map((c) => c.name)];
+    this.displayedColumns = displayColumns;
+
+    const entries: ITableRow[] = [];
+    for (const { crop, data } of stationCropData) {
+      for (const item of data) {
+        const { probabilities, ...rest } = item;
+        for (const { index, name } of this.probabilityColumns) {
+          rest[name] = probabilities?.[index] || '';
+        }
+        entries.push({ ...rest, crop });
+      }
+    }
+    return entries;
+  }
+}
+
+interface ITableRow extends IStationCropDataItem {
+  crop: string;
 }
