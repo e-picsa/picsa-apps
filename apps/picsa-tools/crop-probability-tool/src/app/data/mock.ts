@@ -5,7 +5,7 @@ import { IStationCropInformation } from '../models';
 export const STATION_CROP_DATA: IStationCropInformation[] = [
   {
     id: 'kasungu',
-    station_name: 'KASUNGU MET STATION',
+    station_name: 'Kasungu',
     station_data: [
       {
         crop: 'maize',
@@ -451,7 +451,7 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
   },
   {
     id: 'chipata',
-    station_name: 'CHIPATA MET STATION',
+    station_name: 'Chipata',
     station_data: [
       {
         crop: 'maize',
@@ -630,7 +630,7 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
   },
   {
     id: 'petauke',
-    station_name: 'PETAUKE MET STATION',
+    station_name: 'Petauke',
     station_data: [
       {
         crop: 'maize',
