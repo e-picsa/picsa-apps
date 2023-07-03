@@ -2,6 +2,205 @@ import { IStationCropInformation } from '../models';
 
 export const STATION_CROP_DATA: IStationCropInformation[] = [
   {
+    id: 'kasungu',
+    station_name: 'KASUNGU MET STATION',
+    station_data: [
+      {
+        crop: 'maize',
+        data: [
+          {
+            variety: 'SC304 (Kalulu)',
+            days: '90',
+            water: ['252'],
+            probabilities: ['1/10', '3/10', '6/10', '4/10'],
+          },
+          {
+            variety: 'DK8033 or SC403, SC 419, SC 423 (Kanyani) or Pan4M-19, PAN6777',
+            days: '110',
+            water: ['308'],
+            probabilities: ['1/10', '2/10', '3/10', '1/10'],
+          },
+          {
+            variety:
+              'SC537 (Mbidzi), DK777, MH39A, MH40A, MH42A, MH43A, SC513, DKC8033, PAN7M-89, DK 8031, ZM 309, ZM 523, PAN8M-93, MH 18, PAN 3M-01, PAN 12 ',
+            days: '115',
+            water: ['380'],
+            probabilities: ['1/10', '5/10', '6/10', '1/10'],
+          },
+          {
+            variety: 'DK9089, MH39A, MH40A, MH42A, MH43A, SC513, DKC8033, PAN7M-89,MH 18, ZM 523 ',
+            days: '120',
+            water: ['336'],
+            probabilities: ['0/10', '2/10', '1/10', '0/10'],
+          },
+          {
+            variety: 'MRI 455, MRI 514',
+            days: '125',
+            water: ['350'],
+            probabilities: ['0/10', '2/10', '1/10', '0/10'],
+          },
+          {
+            variety:
+              'MH 26, MH27, MH28, MH30, MH31, MH32, MH33, MH34, MH35, MH36, MH37, MH38, P3812W, DKC 8073, KC9089, DK 8053, ZM 623, ZM 721, MH32, MH33, MH34, MH35, MH36, MH37, MH38, MH26, MH27, MH28, MH30, MH31, Chitedze 2QPM, DKC 8071, DKC8073, PAN4M-19, Peacock 10, CAP 9001, DK 81-81, PAN4M-19, PAN7M-81, PAN 77, PAN57, PAN63, MRI744',
+            days: '140',
+            water: ['462'],
+            probabilities: ['1/10', '4/10', '1/10', '0/10'],
+          },
+          {
+            variety: 'SC719, 725 Njovu',
+            days: '150',
+            water: ['420'],
+            probabilities: ['0/10', '0/10', '0/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'sweet-potatoes',
+        data: [
+          {
+            variety: 'Kaphulira',
+            days: '105',
+            water: ['315'],
+            probabilities: ['1/10', '2/10', '3/10', '1/10'],
+          },
+          {
+            variety:
+              'Kenya, Semusa, Mugamba, Zondeni, Sakananthaka, Salera, Kakoma, Nyamoyo, Sungani, Anaakwanire, Mathuthu, Chipika, Kadyaubwelere',
+            days: '150',
+            water: ['450'],
+            probabilities: ['0/10', '0/10', '0/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'cassava',
+        data: [
+          {
+            variety: 'Manyokola, Chamandanda, Mpale, Kalawe',
+            days: '360',
+            water: ['0'],
+            probabilities: undefined,
+          },
+        ],
+      },
+      {
+        crop: 'beans',
+        data: [
+          {
+            variety: 'Napilira, Chimbamba, Namajengo, Saperekedwa, kalintsiro, Kalima, Bunda 93',
+            days: '90',
+            water: ['252'],
+            probabilities: ['1/10', '3/10', '6/10', '4/10'],
+          },
+          {
+            variety: 'Nua Beans',
+            days: '70',
+            water: ['196'],
+            probabilities: ['1/10', '3/10', '7/10', '7/10'],
+          },
+          {
+            variety: 'Kholophete, Kanzama',
+            days: '95',
+            water: ['266'],
+            probabilities: ['1/10', '3/10', '6/10', '4/10'],
+          },
+          {
+            variety: 'Nasaka',
+            days: '80',
+            water: ['224'],
+            probabilities: ['1/10', '3/10', '7/10', '7/10'],
+          },
+        ],
+      },
+      {
+        crop: 'groundnuts',
+        data: [
+          {
+            variety: 'CG7',
+            days: '105',
+            water: ['294'],
+            probabilities: ['1/10', '2/10', '3/10', '1/10'],
+          },
+          {
+            variety: 'Chitala, CG12',
+            days: '100',
+            water: ['280'],
+            probabilities: ['1/10', '2/10', '3/10', '1/10'],
+          },
+          {
+            variety: 'CG13, CG14',
+            days: '110',
+            water: ['308'],
+            probabilities: ['1/10', '2/10', '3/10', '1/10'],
+          },
+          {
+            variety: 'Kakoma, Baka',
+            days: '120',
+            water: ['336'],
+            probabilities: ['0/10', '2/10', '1/10', '0/10'],
+          },
+          {
+            variety: 'CG9, CG10, CG11',
+            days: '130',
+            water: ['364'],
+            probabilities: ['0/10', '0-1/10', '0-1/10', '0/10'],
+          },
+          {
+            variety: 'Chalimba, G7',
+            days: '140',
+            water: ['392'],
+            probabilities: ['0/10', '0/10', '0/10', '0/10'],
+          },
+          {
+            variety: 'Msinjiro',
+            days: '140',
+            water: ['392'],
+            probabilities: ['0/10', '0/10', '0/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'soya-beans',
+        data: [
+          {
+            variety: 'Tikolore or Makwacha',
+            days: '110',
+            water: ['341'],
+            probabilities: ['1/10', '2/10', '3/10', '1/10'],
+          },
+          {
+            variety: 'SC Serenade, PAN 1867, Soprano',
+            days: '120',
+            water: ['372'],
+            probabilities: ['0/10', '2/10', '1/10', '0/10'],
+          },
+          {
+            variety: 'Makwacha, Ocepara-4, Nasoko, Solitaire, SC Squire, SC Sequel ',
+            days: '130',
+            water: ['403'],
+            probabilities: ['0/10', '0/10', '0/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'cowpeas',
+        data: [
+          {
+            variety: 'Sudan 1 or IT82E-16',
+            days: '90',
+            water: ['252'],
+            probabilities: ['1/10', '3/10', '6/10', '4/10'],
+          },
+        ],
+      },
+    ],
+    notes: [
+      'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Kasungu Station. Longitude: 33.46, Latitude:-13.0, Altitude: 1015',
+    ],
+    dates: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
+    season_probabilities: ['1/10', '3/10', '7/10', '9/10'],
+  },
+  {
     id: 'nhkotakota',
     station_name: 'NKHOTAKOTA MET STATION',
     station_data: [
