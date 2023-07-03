@@ -17,6 +17,12 @@
     "md5Checksum": "e759637d42eb59d6ce415804a4de5135",
     "modifiedTime": "2022-09-29T05:30:34.371Z"
   },
+  "covers/daes_v2.webp": {
+    "relativePath": "covers/daes_v2.webp",
+    "size_kb": 9,
+    "md5Checksum": "ef80d55fd84105102762affa345a4b89",
+    "modifiedTime": "2023-07-03T05:51:04.456Z"
+  },
   "covers/daily-forecast.png": {
     "relativePath": "covers/daily-forecast.png",
     "size_kb": 4,
@@ -59,11 +65,23 @@
     "md5Checksum": "b7c60467a617231980c91ba8a076bf9c",
     "modifiedTime": "2022-09-08T10:31:19.006Z"
   },
+  "covers/mlimi.webp": {
+    "relativePath": "covers/mlimi.webp",
+    "size_kb": 4.9,
+    "md5Checksum": "622aaad40438e2fa153eff07cfb55b9b",
+    "modifiedTime": "2023-07-03T05:51:04.456Z"
+  },
   "covers/picsa-field-manual.jpg": {
     "relativePath": "covers/picsa-field-manual.jpg",
     "size_kb": 18,
     "md5Checksum": "ef58a7adac4ee6b02318a033a42d885d",
     "modifiedTime": "2022-09-08T10:31:19.007Z"
+  },
+  "covers/plantix.webp": {
+    "relativePath": "covers/plantix.webp",
+    "size_kb": 8.6,
+    "md5Checksum": "4eda8563fb8e347d6b76bda881ad9c53",
+    "modifiedTime": "2023-07-03T05:51:04.456Z"
   },
   "covers/plantwise.webp": {
     "relativePath": "covers/plantwise.webp",
