@@ -197,8 +197,6 @@ tool,context,text
 "common",,"Select Language"
 "common",,"Show Options"
 "common",,"Who is using?"
-"crop-probability",,"**Data from 140 days maturity is used, as there was no data above 140 days"
-"crop-probability",,"*Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station."
 "crop-probability",,"All"
 "crop-probability",,"Beans"
 "crop-probability",,"Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station."

@@ -920,14 +920,6 @@
     "tool": "common"
   },
   {
-    "text": "**Data from 140 days maturity is used, as there was no data above 140 days",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "*Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station.",
-    "tool": "crop-probability"
-  },
-  {
     "text": "All",
     "tool": "crop-probability"
   },
