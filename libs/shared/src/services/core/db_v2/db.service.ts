@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { addRxPlugin, createRxDatabase, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+
+import { PicsaUserService } from '../user.service';
 addRxPlugin(RxDBMigrationPlugin);
 
 /** When creating collections for PICSA db additional fields required to determine how to handle */
@@ -9,6 +11,7 @@ export interface IPicsaCollectionCreator<T> extends RxCollectionCreator<T> {
   /** User collections will append app user id to all entries */
   isUserCollection: boolean;
 }
+
 interface IPicsaCollectionData {
   _app_user_id?: string;
 }
@@ -27,30 +30,58 @@ export class PicsaDatabase_V2_Service {
     [key: string]: RxCollection;
   }>;
 
-  public get dbUserId() {
-    // TODO - return from user service
-    return '_default_';
-  }
+  constructor(private userService: PicsaUserService) {}
 
-  /**
-   * Call method to register db collection, avoiding re-register duplicate collection
-   */
+  /** Call method to register db collection, avoiding re-register duplicate collection */
   public async ensureCollections(collections: { [name: string]: IPicsaCollectionCreator<any> }) {
     for (const [name, picsaCollection] of Object.entries(collections)) {
       if (name in this.db.collections) {
         console.warn('Duplicate collection skipped:', name);
       } else {
-        // create collection
-        const { isUserCollection, ...collection } = picsaCollection;
-        if (isUserCollection) {
-          collection.schema.properties['_app_user_id'] = { type: 'string' };
-        }
+        // apply custom collection modifiers
+        const { collection, hookFactories } = this.handleCollectionModifiers(picsaCollection);
+
+        // register colleciton
         await this.db.addCollections({ [name]: collection });
-        // handle custom picsa collection hooks
         const createdCollection = this.db.collections[name];
-        this.addCollectionHooks(createdCollection, { isUserCollection });
+
+        // apply custom collection hooks
+        for (const hookFactory of hookFactories) {
+          hookFactory(createdCollection);
+        }
       }
     }
+  }
+
+  /**
+   * Utility method to take a collection and filter entries for active user
+   * NOTE - the collection must be marked with `isUserCollection: true` to work
+   * */
+  public activeUserQuery<T>(collection: RxCollection<T>) {
+    const _app_user_id = this.userService.activeUser$.value._id;
+    const query = collection.find({ selector: { _app_user_id } as any });
+    // TODO - handle live switch in case user id changes
+    return query;
+  }
+
+  /**
+   * Handle custom PICSA DB modifiers
+   */
+  private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
+    const { isUserCollection, ...collection } = picsaCollection;
+    const hookFactories: ((c: RxCollection) => void)[] = [];
+
+    // store app user ids in any collections marked with `isUserCollection`
+    // user information is stored in localStorage instead of db to avoid circular dependency issues
+    if (isUserCollection) {
+      collection.schema.properties['_app_user_id'] = { type: 'string' };
+      hookFactories.push((c) => {
+        const fn = (data: IPicsaCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
+        c.addHook('pre', 'save', fn);
+        c.addHook('pre', 'insert', fn);
+      });
+    }
+    return { collection, hookFactories };
   }
 
   /**
@@ -67,13 +98,6 @@ export class PicsaDatabase_V2_Service {
         name: `picsa_app`,
         storage: getRxStorageDexie({ autoOpen: true }),
       });
-    }
-  }
-
-  private addCollectionHooks(collection: RxCollection, options: { isUserCollection: boolean }) {
-    const { isUserCollection } = options;
-    if (isUserCollection) {
-      collection.addHook('pre', 'save', (data: IPicsaCollectionData) => (data._app_user_id = this.dbUserId));
     }
   }
 }

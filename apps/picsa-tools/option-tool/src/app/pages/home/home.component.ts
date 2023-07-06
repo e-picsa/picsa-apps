@@ -33,7 +33,7 @@ export class HomeComponent implements OnDestroy {
     await this.service.initialise();
     // create a live query to retrieve all docs on data change
     // pipe subscription to complete when component destroyed (avoids memory leak)
-    const query = this.service.dbCollection.find();
+    const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       this.dbDataDocs = docs;
     });

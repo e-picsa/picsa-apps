@@ -4,8 +4,10 @@
   (click)="dialog.open(profileSelectDialog)"
   [style.background]="activeProfile ? activeProfile.color : 'rgba(255,255,255,0.6)'"
 >
-  <span *ngIf="activeProfile">{{ activeProfile.initials }}</span>
-  <mat-icon *ngIf="!activeProfile">person</mat-icon>
+  <span *ngIf="activeProfile && activeProfile.initials; else profileIcon">{{ activeProfile.initials }}</span>
+  <ng-template #profileIcon>
+    <mat-icon>person</mat-icon>
+  </ng-template>
 </button>
 
 <!-- Dialog template -->

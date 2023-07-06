@@ -12,6 +12,10 @@ export class OptionsToolService {
   public get dbCollection() {
     return this.dbService.db.collections['options_tool'] as RxCollection<IOptionsToolEntry>;
   }
+  /** Provide database options tool collection filtered to active user */
+  public get dbUserCollection() {
+    return this.dbService.activeUserQuery(this.dbCollection);
+  }
 
   /** Initialise collection required for storing data to database */
   public async initialise() {
@@ -23,7 +27,8 @@ export class OptionsToolService {
   public async addORUpdateData(option: IOptionsToolEntry) {
     try {
       //handles instertion and update as long as the name is the same.
-      await this.dbCollection.incrementalUpsert(option);
+      const res = await this.dbCollection.incrementalUpsert(option);
+      console.log('[Option]', res._data);
     } catch (err) {
       alert('Failed to add data, please try again');
       console.error('option.submit(): error:');

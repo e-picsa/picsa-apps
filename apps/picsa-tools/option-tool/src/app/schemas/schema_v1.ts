@@ -22,7 +22,7 @@ export const SCHEMA_V1: RxJsonSchema<IOptionsToolEntry_v1> = {
 
 export const COLLECTION_V1: IPicsaCollectionCreator<IOptionsToolEntry_v1> = {
   schema: SCHEMA_V1,
-  isUserCollection: false,
+  isUserCollection: true,
   // Ensure old data can be migrated to new format
   // https://rxdb.info/data-migration.html
   migrationStrategies: {
