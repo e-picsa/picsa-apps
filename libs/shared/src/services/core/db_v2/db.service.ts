@@ -3,7 +3,7 @@ import { addRxPlugin, createRxDatabase, RxCollection, RxCollectionCreator, RxDat
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
-import { PicsaUserService, USER_ID_DEFAULT } from '../user.service';
+import { PicsaUserService } from '../user.service';
 addRxPlugin(RxDBMigrationPlugin);
 
 /** When creating collections for PICSA db additional fields required to determine how to handle */
@@ -59,12 +59,14 @@ export class PicsaDatabase_V2_Service {
    * NOTE - the collection must be marked with `isUserCollection: true` to work
    * */
   public activeUserQuery<T>(collection: RxCollection<T>) {
-    const _app_user_id = this.userService.activeUser$.value._id;
-    // TODO - handle live switch in case user id changes
-    if (_app_user_id === USER_ID_DEFAULT) {
-      return collection.find();
-    } else {
+    // Only filter when multiple user profiles exist so that any disassociated data
+    // still displays for single user case after delete
+    if (Object.keys(this.userService.allUsersHashmap).length > 1) {
+      const _app_user_id = this.userService.activeUser$.value._id;
+      // TODO - handle live switch in case user id changes
       return collection.find({ selector: { _app_user_id } as any });
+    } else {
+      return collection.find();
     }
   }
 
