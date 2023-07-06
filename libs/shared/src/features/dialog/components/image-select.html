@@ -1,13 +1,9 @@
 <div id="picsaDialogContainer">
   <h2 [innerHTML]="data.title"></h2>
   <div style="display: flex">
-    <div
-      *ngFor="let option of data.selectOptions"
-      class="select-option"
-      (click)="select(option)"
-    >
+    <div *ngFor="let option of data.selectOptions" class="select-option" (click)="select(option)">
       <img *ngIf="option.image" [src]="option.image" class="select-image" />
-      <div>{{ option.text }}</div>
+      <div>{{ option.text | translate }}</div>
     </div>
   </div>
 </div>

@@ -12,11 +12,8 @@ import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 
 import { BudgetMaterialModule } from '../material.module';
 // Components
-import { BudgetCellEditorComponent } from './_deprecated/cell-editor';
-import { BudgetCellEditorInputValuesComponent } from './_deprecated/input-values/input-values';
-import { NextButton } from './_deprecated/next-button';
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
-import { BudgetBalanceEditorComponent, BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
+import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardNew } from './card/card-new/card-new';
@@ -29,6 +26,7 @@ import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-s
 import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
 import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
 import { BudgetEditorComponent } from './editor/editor.component';
+import { BudgetEditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
 import { BudgetListItemComponent, BudgetListItemRenameDialog } from './list-item/budget-list-item';
 import { BudgetShareDialogComponent } from './share-dialog/share-dialog.component';
@@ -38,18 +36,16 @@ import { BudgetTableComponent } from './table/budget-table';
 const components = [
   BudgetBalanceLegendComponent,
   BudgetBalanceDotValueComponent,
-  BudgetBalanceEditorComponent,
   BudgetCardComponent,
   BudgetCardEditorComponent,
   BudgetCardImageComponent,
   BudgetCardPlaceholderComponent,
   BudgetCellComponent,
-  BudgetCellEditorComponent,
   BudgetCellEditorCardSelectComponent,
-  BudgetCellEditorInputValuesComponent,
   BudgetCellEditorFamilyLabourComponent,
   BudgetCellEditorProduceConsumedComponent,
   BudgetEditorComponent,
+  BudgetEditorSidebarComponent,
   BudgetCellLabourComponent,
   BudgetCardNew,
   BudgetCardNewDialog,
@@ -59,7 +55,6 @@ const components = [
   BudgetPeriodSummaryComponent,
   BudgetShareDialogComponent,
   BudgetTableComponent,
-  NextButton,
 ];
 
 @NgModule({

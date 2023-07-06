@@ -1,0 +1,20 @@
+<div class="page-container">
+  <h2>{{ activity?.label }}</h2>
+
+  <video class="video-player" [src]="activity?.video" controls></video>
+
+  <div class="svg-row">
+    <div class="svg-item">
+      <mat-icon color="primary" svgIcon="picsa_manual_info"></mat-icon>
+      <div>{{ 'Info Sheet' | translate }}</div>
+    </div>
+    <div class="svg-item">
+      <mat-icon color="primary" svgIcon="picsa_manual_create"></mat-icon>
+      <div>{{ 'Create' | translate }}</div>
+    </div>
+    <div class="svg-item">
+      <mat-icon color="primary" svgIcon="picsa_manual_quiz"></mat-icon>
+      <div>{{ 'Quiz' | translate }}</div>
+    </div>
+  </div>
+</div>

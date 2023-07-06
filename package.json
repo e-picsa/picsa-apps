@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.21.1",
+  "version": "3.24.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -13,6 +13,7 @@
     "start:monitoring": "nx run picsa-tools-monitoring-tool:serve",
     "start:option": "nx run picsa-tools-option-tool:serve",
     "start:resources": "nx run picsa-tools-resources-tool:serve",
+    "start:manual": "nx run picsa-tools-manual-tool:serve",
     "build": "nx run picsa-apps-extension-app-native:build",
     "build:webcomponents": "yarn nx build picsa-webcomponents",
     "docs": "cd ../docs && yarn start",
@@ -78,6 +79,7 @@
     "mobx": "^6.7.0",
     "mobx-angular": "^4.7.1",
     "ng2-canvas-whiteboard": "^4.0.2",
+    "ngx-extended-pdf-viewer": "^16.2.16",
     "ngx-file-drop": "14.0.2",
     "ngx-lottie": "^10.0.0",
     "ngx-youtube-player": "^12.0.2",

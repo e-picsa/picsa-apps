@@ -17,6 +17,14 @@ export const EXTRACTED_PROJECTS = [
     name: 'climate',
   },
   {
+    path: 'apps/picsa-tools/crop-probability-tool',
+    name: 'crop-probability',
+  },
+  {
+    path: 'apps/picsa-tools/manual-tool',
+    name: 'manual',
+  },
+  {
     path: 'apps/picsa-tools/monitoring-tool',
     name: 'monitoring',
   },

@@ -1,82 +1,47 @@
+$border-style: 1px solid var(--color-light);
+
+.table-container {
+  // table requires space for probabilities and rest of table
+  min-width: 768px;
+  overflow-x: auto;
+  padding: 1rem;
+}
 table {
   width: 100%;
+  border-collapse: collapse;
 }
-.mat-mdc-table {
-  height: 100vh;
-  max-height: 550px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  overflow: auto;
-  padding: 0 20px;
-  padding-bottom: 10px;
-  color: black;
-  .title-cell {
-    text-transform: capitalize;
-    font-weight: 800;
-    font-size: 15px;
-  }
-  .crop-title {
-    text-transform: capitalize;
-    font-weight: 700;
-    font-size: 13px;
-  }
-  .table-row {
-    padding: 15px 10px;
-  }
-  .padded-span {
-    padding: 0 10px;
-    width: 75px;
-  }
-  .font-12 {
-    font-size: 12px;
-  }
-  .probability {
-    width: 520px;
+th {
+  text-transform: capitalize;
+}
+td {
+  padding: 0.75rem;
+}
 
-    .prob-row-wrapper {
-      display: flex;
-    }
-  }
-  .fixed-width {
-    width: 180px;
-  }
+div.season-start-text {
+  padding: 8px;
+  font-weight: bold;
 }
-.mat-mdc-table-sticky-border-elem-left {
-  border-right: 1px solid #e0e0e0;
+
+td.crop-title,
+th.crop-title {
+  text-transform: capitalize;
 }
-.mat-mdc-form-field {
-  font-size: 14px;
-  width: 100%;
+
+// Use custom styles to organise borders on table elements
+.border-left {
+  border-left: $border-style;
 }
+.border-right {
+  border-right: $border-style;
+}
+.border-top {
+  border-top: $border-style;
+}
+.border-bottom {
+  border-bottom: $border-style;
+}
+
 .disclaimer {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 12px;
-  font-style: italic;
-  margin-top: 12px;
-}
-.filter-icons{
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  padding: 20px 15px;
-  div{
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 2px dotted rgb(197, 192, 192);
-    padding:10px;
-    height:90px;
-    width:80px;
-    cursor: pointer;
-    background: #fff;
-    div{
-      position: absolute;
-      bottom: 0;
-      height: 10%;
-      font-size: 14px;
-      background-color: #eeeaea;
-      text-transform: capitalize;
-    }
-  }
+  margin: 1rem;
+  line-height: 2rem;
 }

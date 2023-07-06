@@ -1,3 +1,4 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IDBDoc } from '@picsa/models';
 
 export interface IBudget extends IDBDoc {
@@ -50,13 +51,25 @@ export interface IBudgetActiveCell extends IBudgetQueryParams {
 
 /***************************************************************************** */
 
+/** Specify available groupings to ensure translations included */
+const BUDGET_CARD_GROUPINGS = {
+  livestock: translateMarker('livestock'),
+  fruits: translateMarker('fruits'),
+  crop: translateMarker('crop'),
+  fish: translateMarker('fish'),
+  afforestation: translateMarker('afforestation'),
+  '*': '*',
+} as const;
+
+export type IBudgetCardGrouping = keyof typeof BUDGET_CARD_GROUPINGS;
+
 // cards are used for budget table population as well as enterprise
 export interface IBudgetCard {
   // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
   id: string;
   label: string;
   type: IBudgetCardType;
-  groupings?: string[];
+  groupings?: IBudgetCardGrouping[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
   imgType?: 'svg' | 'png';

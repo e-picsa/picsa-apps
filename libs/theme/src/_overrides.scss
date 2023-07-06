@@ -59,6 +59,14 @@ mat-form-field.input-field {
     margin-left: 0;
   }
 }
+
+// Remove bottom hint placeholder (used in hints)
+mat-form-field.no-hint {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
 // Reduce placeholder font size (inherited above)
 .mdc-text-field__input::placeholder {
   font-size: 20px;

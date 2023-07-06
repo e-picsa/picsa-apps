@@ -16632,6 +16632,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.deburr@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "lodash.deburr@npm:4.1.0"
+  checksum: 6e2012315c20a4d8ed4f1884ed4b8e6b0093c6355a87bfd95ecf25a5243c8c88d747d67375d52cb87ebc99d090935ed8dc3814c8e661e3275a6dbe02b68efc99
+  languageName: node
+  linkType: hard
+
 "lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
@@ -17452,6 +17459,19 @@ __metadata:
     "@angular/core": ^10.0.6
     rxjs: ^6.0.0
   checksum: e5eafab7c92845f6e5195da662a775faf564822b2cbf59fe2501b99c547e658b5544d60afc90aaab1f77e92298dfd3584112f90db26da73bb159bed7d8f5a2a8
+  languageName: node
+  linkType: hard
+
+"ngx-extended-pdf-viewer@npm:^16.2.16":
+  version: 16.2.16
+  resolution: "ngx-extended-pdf-viewer@npm:16.2.16"
+  dependencies:
+    lodash.deburr: ^4.1.0
+    tslib: ^2.3.0
+  peerDependencies:
+    "@angular/common": ">=12.0.0 <16.0.0"
+    "@angular/core": ">=12.0.0 <16.0.0"
+  checksum: a08ee46989b7d0a00d11fd60c568a3a78a0508317630a6de22eb663b0d8010a5967e5b2c9f7191e8a68bb22785d8be917d8421af5788cf02e7d8342aa7444d46
   languageName: node
   linkType: hard
 
@@ -18581,6 +18601,7 @@ __metadata:
     mobx-angular: ^4.7.1
     ng-packagr: 15.1.1
     ng2-canvas-whiteboard: ^4.0.2
+    ngx-extended-pdf-viewer: ^16.2.16
     ngx-file-drop: 14.0.2
     ngx-lottie: ^10.0.0
     ngx-youtube-player: ^12.0.2

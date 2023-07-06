@@ -1,1 +1,5 @@
-<picsa-crop-probability-table></picsa-crop-probability-table>
+<crop-probability-station-select
+  [selectedStationId]="activeStation?.id"
+  style="padding: 1em"
+></crop-probability-station-select>
+<crop-probability-table [activeStation]="activeStation" *ngIf="activeStation"></crop-probability-table>

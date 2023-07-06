@@ -1,13 +1,13 @@
+import { DomPortal } from '@angular/cdk/portal';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Platform } from '@ionic/angular';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION } from '@picsa/environments';
 import { PicsaFileService } from '@picsa/shared/services/native';
 
 import { UserStore } from '../../store/user.store';
-import { DomPortal } from '@angular/cdk/portal';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
 
 @Component({
   selector: 'app-home',
@@ -36,34 +36,53 @@ export class HomePage implements OnInit, OnDestroy {
     this.links = [
       {
         ...LINK_DEFAULTS,
-        name: translateMarker('Climate Tool'),
-        icon: 'picsa_climate-tool',
-        url: '/climate',
-      },
-      {
-        ...LINK_DEFAULTS,
-        name: translateMarker('Budget Tool'),
-        icon: 'picsa_budget-tool',
-        url: '/budget',
+        name: translateMarker('Manual'),
+        icon: 'picsa_manual_tool',
+        url: '/manual',
       },
       {
         ...LINK_DEFAULTS,
         name: translateMarker('Resources'),
-        icon: 'picsa_resources',
+        icon: 'picsa_resources_tool',
         url: '/resources',
       },
       {
         ...LINK_DEFAULTS,
         name: translateMarker('Monitoring'),
-        icon: 'picsa_data-collection',
+        icon: 'picsa_data_collection',
         url: '/monitoring',
       },
       {
         ...LINK_DEFAULTS,
-        name: translateMarker('Discussions'),
-        icon: 'picsa_discussions',
-        url: '/discussions',
+        name: translateMarker('Climate'),
+        icon: 'picsa_climate_tool',
+        url: '/climate',
       },
+      {
+        ...LINK_DEFAULTS,
+        name: translateMarker('Budget'),
+        icon: 'picsa_budget_tool',
+        url: '/budget',
+      },
+      {
+        ...LINK_DEFAULTS,
+        name: translateMarker('Probability'),
+        icon: 'picsa_probability_tool',
+        url: '/crop-probability',
+      },
+      {
+        ...LINK_DEFAULTS,
+        name: translateMarker('Options'),
+        icon: 'picsa_option_tool',
+        url: '/option',
+      },
+
+      // {
+      //   ...LINK_DEFAULTS,
+      //   name: translateMarker('Discussions'),
+      //   icon: 'picsa_discussions',
+      //   url: '/discussions',
+      // },
 
       // {
       //   ...LINK_DEFAULTS,
