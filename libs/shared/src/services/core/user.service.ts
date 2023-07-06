@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+export const USER_ID_DEFAULT = '__default__';
+
 export interface IPicsaUser {
   _id: string;
   color: string;
@@ -10,7 +12,7 @@ export interface IPicsaUser {
 }
 
 const USER_DEFAULT: IPicsaUser = {
-  _id: '__default__',
+  _id: USER_ID_DEFAULT,
   role: 'extension',
   color: '',
   initials: '',
@@ -35,7 +37,7 @@ export class PicsaUserService {
     console.log('[User]', this.activeUser$.value);
   }
 
-  public deleteUser(_id) {
+  public deleteUser(_id: string) {
     if (_id in this.allUsersHashmap) {
       delete this.allUsersHashmap[_id];
       this.saveStorageUsers();
@@ -44,6 +46,10 @@ export class PicsaUserService {
   }
 
   public createOrUpdateUser(user: IPicsaUser) {
+    // If no other users exist retain the default id to avoid losing existing content
+    if (Object.keys(this.allUsersHashmap).length === 0) {
+      user._id = USER_ID_DEFAULT;
+    }
     const { _id } = user;
     this.allUsersHashmap[_id] = user;
     this.saveStorageUsers();

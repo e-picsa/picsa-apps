@@ -3,7 +3,7 @@ import { addRxPlugin, createRxDatabase, RxCollection, RxCollectionCreator, RxDat
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
-import { PicsaUserService } from '../user.service';
+import { PicsaUserService, USER_ID_DEFAULT } from '../user.service';
 addRxPlugin(RxDBMigrationPlugin);
 
 /** When creating collections for PICSA db additional fields required to determine how to handle */
@@ -61,7 +61,7 @@ export class PicsaDatabase_V2_Service {
   public activeUserQuery<T>(collection: RxCollection<T>) {
     const _app_user_id = this.userService.activeUser$.value._id;
     // TODO - handle live switch in case user id changes
-    if (_app_user_id === '__default__') {
+    if (_app_user_id === USER_ID_DEFAULT) {
       return collection.find();
     } else {
       return collection.find({ selector: { _app_user_id } as any });
