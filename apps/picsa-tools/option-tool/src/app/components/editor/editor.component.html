@@ -132,19 +132,10 @@
         <div class="StepTitle">{{ 'Performance in high, mid and low RF (rainfall)' | translate }}?</div>
         <div class="StepContent">
           <mat-icon style="color: #4fc3f7; font-size: 27px">water_drop</mat-icon>
-          <div
-            style="
-              display: flex;
-              gap: 1rem;
-              justify-content: space-evenly;
-              width: 100%;
-              flex-direction: row;
-              margin-bottom: 1.5rem;
-              margin-top: 2rem;
-            "
-          >
+          <div class="performenceItemHolders">
             <div class="performenceItem">
               <div style="font-weight: 700">{{ 'High RF' | translate }}</div>
+<!-- 
               <select
                 style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
                 [(ngModel)]="perfomanceValues.highRf"
@@ -152,8 +143,17 @@
                 <option *ngFor="let option of performanceOptions" [value]="option">
                   {{ option }}
                 </option>
-              </select>
+              </select> -->
+              <div class="emoji-wrapper">
+                <span>
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'bad' ? '0.3' : '1'}"  svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'ok' ? '0.3' : '1'}" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'good' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
+                </span>
+              </div>
+              <input type="range" min="0" max="2"  (input)="updatePerformance($event, 'high')" style="margin-top: 5px;">
             </div>
+
             <div class="performenceItem">
               <div style="font-weight: 700">{{ 'Mid RF' | translate }}</div>
               <select

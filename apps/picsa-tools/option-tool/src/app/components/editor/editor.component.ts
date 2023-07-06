@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter,OnInit, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { PicsaDialogService } from '@picsa/shared/features';
 
@@ -21,7 +21,7 @@ export class EditorComponent implements OnInit {
   gender: string[];
   benefits: { benefit: string; beneficiary: string[] }[];
   perfomanceValues: { lowRf: string; midRf: string; highRf: string };
-  performanceOptions: string[] = ['good', 'ok', 'bad'];
+  performanceOptions: string[] = ['bad', 'ok', 'good'];
   investmentValues: { money: string; time: string };
   investmentOptions: string[] = ['high', 'mid', 'low'];
   benefitsStartTime: string;
@@ -45,7 +45,7 @@ export class EditorComponent implements OnInit {
     this.investmentValues = { money: 'high', time: 'high' };
     this.practiceEntry = '';
     this.gender = [];
-    this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
+    // this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
     this.investmentValues = { money: '', time: '' };
     this.benefitsStartTime = '';
     this.risk = '';
@@ -117,7 +117,7 @@ export class EditorComponent implements OnInit {
     this.investmentValues = { money: 'high', time: 'high' };
     this.practiceEntry = '';
     this.gender = [];
-    this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
+    // this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
     this.investmentValues = { money: '', time: '' };
     this.benefitsStartTime = '';
     this.risk = '';
@@ -135,6 +135,33 @@ export class EditorComponent implements OnInit {
   resetStepper(): void {
     this.stepper.reset();
   }
+
+  updatePerformance(event: any, level: string) {
+    const selectedValue = event.target.value;
+    if (level === "high") {
+      this.perfomanceValues = {
+        ...this.perfomanceValues,
+        highRf: this.performanceOptions[selectedValue]
+      };
+    }
+  
+    if (level === "mid") {
+      this.perfomanceValues = {
+        ...this.perfomanceValues,
+        midRf: this.performanceOptions[selectedValue]
+      };
+    }
+  
+    if (level === "low") {
+      this.perfomanceValues = {
+        ...this.perfomanceValues,
+        lowRf: this.performanceOptions[selectedValue]
+      };
+    }
+    console.log(this.perfomanceValues )
+    console.log(selectedValue)
+  }
+  
 
   async promptDelete() {
     const dialogRef = await this.dialog.open('delete');
