@@ -38,7 +38,6 @@ export class PicsaUserService {
   public deleteUser(_id) {
     if (_id in this.allUsersHashmap) {
       delete this.allUsersHashmap[_id];
-      // TODO - handle user content migration
       this.saveStorageUsers();
       this.setActiveUser('');
     }

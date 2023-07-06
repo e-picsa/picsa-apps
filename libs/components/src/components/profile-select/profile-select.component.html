@@ -2,7 +2,7 @@
   mat-fab
   class="avatar"
   (click)="dialog.open(profileSelectDialog)"
-  [style.background]="activeProfile ? activeProfile.color : 'rgba(255,255,255,0.6)'"
+  [style.background]="activeProfile && activeProfile.color ? activeProfile.color : 'rgba(255,255,255,0.6)'"
 >
   <span *ngIf="activeProfile && activeProfile.initials; else profileIcon">{{ activeProfile.initials }}</span>
   <ng-template #profileIcon>

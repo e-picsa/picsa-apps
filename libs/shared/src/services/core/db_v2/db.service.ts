@@ -55,13 +55,17 @@ export class PicsaDatabase_V2_Service {
 
   /**
    * Utility method to take a collection and filter entries for active user
+   * In case no active profile loaded will return all data
    * NOTE - the collection must be marked with `isUserCollection: true` to work
    * */
   public activeUserQuery<T>(collection: RxCollection<T>) {
     const _app_user_id = this.userService.activeUser$.value._id;
-    const query = collection.find({ selector: { _app_user_id } as any });
     // TODO - handle live switch in case user id changes
-    return query;
+    if (_app_user_id === '__default__') {
+      return collection.find();
+    } else {
+      return collection.find({ selector: { _app_user_id } as any });
+    }
   }
 
   /**
