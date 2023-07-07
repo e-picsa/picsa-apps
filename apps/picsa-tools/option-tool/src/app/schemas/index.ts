@@ -6,4 +6,5 @@ export const COLLECTION = COLLECTION_V2;
 export type IOptionsToolEntry = IOptionsToolEntry_v2;
 export const SCHEMA = SCHEMA_V2;
 
+// Ensure blank templates always recreated from scratch
 export const ENTRY_TEMPLATE = ENTRY_TEMPLATE_V2;
