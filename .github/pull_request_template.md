@@ -9,7 +9,6 @@ _Feedback discussion points if relevant (should also tag as `Feedback Discussion
 ## Preview
 
 _Link to app preview if relevant_
-https://picsa.app
 
 ## Screenshots / Videos
 
