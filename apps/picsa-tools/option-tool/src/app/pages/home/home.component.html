@@ -10,21 +10,16 @@
         <td mat-cell *matCellDef="let element">{{ element._data.practice | translate }}</td>
       </ng-container>
 
-      <!-- gender Column -->
-      <ng-container matColumnDef="gender">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Who does it' | translate }}</th>
-        <!-- <td mat-cell *matCellDef="let element">{{ element._data.gender.join(',') | translate }}</td> -->
-        <td mat-cell class="Gender-Display" *matCellDef="let element">
-          <!-- {{ element._data.gender.join(',') | translate }} -->
-          <div *ngIf="element._data.gender.includes('female')" class="gender-container">
-          <mat-icon  svgIcon="picsa_options_female"></mat-icon>
-          {{ 'Females' | translate }}
-          </div>
-          <div *ngIf="element._data.gender.includes('male')"  class="gender-container">
-          <mat-icon svgIcon="picsa_options_male">male_icon</mat-icon>
-          {{ 'Males' | translate }}
-        </div>
-        </td>
+      <!-- gender decisions Column -->
+      <ng-container matColumnDef="gender_decisions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Who makes decisions' | translate }}</th>
+        <td mat-cell *matCellDef="let element">{{ element._data.gender_decisions.join(',') | translate }}</td>
+      </ng-container>
+
+      <!-- gender activities Column -->
+      <ng-container matColumnDef="gender_activities">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Who does activity' | translate }}</th>
+        <td mat-cell *matCellDef="let element">{{ element._data.gender_activities.join(',') | translate }}</td>
       </ng-container>
 
       <!-- Benefits Column -->

@@ -4,8 +4,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
-import { IOptionsToolEntry } from '../../schemas';
+import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
+
+const { _app_user_id, ...DISPLAYED_COLUMNS } = ENTRY_TEMPLATE;
 
 @Component({
   selector: 'option-home',
@@ -14,7 +16,7 @@ import { OptionsToolService } from '../../services/options-tool.service';
 })
 export class HomeComponent implements OnDestroy {
   public optionsDisplayList: IOptionsToolEntry[] = [];
-  public displayedColumns: string[] = ['practice', 'gender', 'benefits', 'performance', 'investment', 'time', 'risk'];
+  public displayedColumns = Object.keys(DISPLAYED_COLUMNS);
 
   public dbDataDocs: RxDocument<IOptionsToolEntry>[] = [];
   public matStepperOpen = false;

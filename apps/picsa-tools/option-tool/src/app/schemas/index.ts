@@ -1,7 +1,9 @@
-import { COLLECTION_V1, IOptionsToolEntry_v1, SCHEMA_V1 } from './schema_v1';
+import { COLLECTION_V2, ENTRY_TEMPLATE_V2, IOptionsToolEntry_v2, SCHEMA_V2 } from './schema_v2';
 
 // Re-export schema to provide latest version without need to refactor additonal code
 
-export const COLLECTION = COLLECTION_V1;
-export type IOptionsToolEntry = IOptionsToolEntry_v1;
-export const SCHEMA = SCHEMA_V1;
+export const COLLECTION = COLLECTION_V2;
+export type IOptionsToolEntry = IOptionsToolEntry_v2;
+export const SCHEMA = SCHEMA_V2;
+
+export const ENTRY_TEMPLATE = ENTRY_TEMPLATE_V2;
