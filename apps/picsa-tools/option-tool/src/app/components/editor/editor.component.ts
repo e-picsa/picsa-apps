@@ -23,7 +23,7 @@ export class EditorComponent implements OnInit {
   perfomanceValues: { lowRf: string; midRf: string; highRf: string };
   performanceOptions: string[] = ['bad', 'ok', 'good'];
   investmentValues: { money: string; time: string };
-  investmentOptions: string[] = ['high', 'mid', 'low'];
+  investmentOptions: string[] = ['low', 'mid', 'high'];
   benefitsStartTime: string;
   risk: string;
   isLinear = false;
@@ -42,7 +42,7 @@ export class EditorComponent implements OnInit {
       },
     ];
     this.perfomanceValues = { lowRf: 'ok', midRf: 'ok', highRf: 'ok' };
-    this.investmentValues = { money: 'high', time: 'high' };
+    this.investmentValues = { money: 'mid', time: 'mid' };
     this.practiceEntry = '';
     this.gender = [];
     // this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
@@ -114,7 +114,7 @@ export class EditorComponent implements OnInit {
       },
     ];
     this.perfomanceValues = { lowRf: 'ok', midRf: 'ok', highRf: 'ok' };
-    this.investmentValues = { money: 'high', time: 'high' };
+    this.investmentValues = { money: 'mid', time: 'mid' };
     this.practiceEntry = '';
     this.gender = [];
     // this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
@@ -138,6 +138,7 @@ export class EditorComponent implements OnInit {
 
   updatePerformance(event: any, level: string) {
     const selectedValue = event.target.value;
+    
     if (level === "high") {
       this.perfomanceValues = {
         ...this.perfomanceValues,
@@ -158,8 +159,25 @@ export class EditorComponent implements OnInit {
         lowRf: this.performanceOptions[selectedValue]
       };
     }
-    console.log(this.perfomanceValues )
-    console.log(selectedValue)
+    
+  }
+
+  updateInvestmentEffort(event: any, investment: string) {
+    const selectedValue = event.target.value; 
+    if (investment === "time") {
+      this.investmentValues = {
+        ...this.investmentValues,
+        time: this.investmentOptions[selectedValue]
+      };
+    }
+    if (investment === "money") {
+      this.investmentValues = {
+        ...this.investmentValues,
+        money: this.investmentOptions[selectedValue]
+      };
+    }
+
+    
   }
   
 

@@ -131,50 +131,64 @@
       <div class="StepContainer">
         <div class="StepTitle">{{ 'Performance in high, mid and low RF (rainfall)' | translate }}?</div>
         <div class="StepContent">
-          <mat-icon style="color: #4fc3f7; font-size: 27px">water_drop</mat-icon>
           <div class="performenceItemHolders">
             <div class="performenceItem">
               <div style="font-weight: 700">{{ 'High RF' | translate }}</div>
-<!-- 
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
-                [(ngModel)]="perfomanceValues.highRf"
-              >
-                <option *ngFor="let option of performanceOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select> -->
+              <mat-icon  svgIcon="picsa_options_bad_rain"></mat-icon>
               <div class="emoji-wrapper">
-                <span>
-                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'bad' ? '0.3' : '1'}"  svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                <div style="text-align: center;">
+                    <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                 <div style="margin-top: 5px;">{{ 'Bad' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
                   <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'ok' ? '0.3' : '1'}" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Ok' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
                   <mat-icon [ngStyle]="{'opacity': perfomanceValues.highRf !== 'good' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
-                </span>
-              </div>
-              <input type="range" min="0" max="2"  (input)="updatePerformance($event, 'high')" style="margin-top: 5px;">
+                  <div style="margin-top: 5px;">{{ 'Good' | translate }}</div>
+                </div>
+                </div>
+              <input type="range" min="0" max="2" [ngModel]="perfomanceValues.highRf === 'bad' ? 0 : perfomanceValues.highRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'high')" style="margin-top: 5px;">  
             </div>
 
             <div class="performenceItem">
               <div style="font-weight: 700">{{ 'Mid RF' | translate }}</div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
-                [(ngModel)]="perfomanceValues.midRf"
-              >
-                <option *ngFor="let option of performanceOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+              <mat-icon svgIcon="picsa_options_mid_rain">water_drop</mat-icon>
+              <div class="emoji-wrapper">
+                <div style="text-align: center;">
+                    <mat-icon [ngStyle]="{'opacity': perfomanceValues.midRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                 <div style="margin-top: 5px;">{{ 'Bad' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.midRf !== 'ok' ? '0.3' : '1'}" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Ok' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.midRf !== 'good' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Good' | translate }}</div>
+                </div>
+                </div>
+              <input type="range" min="0" max="2" [ngModel]="perfomanceValues.midRf === 'bad' ? 0 : perfomanceValues.midRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'mid')" style="margin-top: 5px;">  
             </div>
             <div class="performenceItem">
               <div style="font-weight: 700">{{ 'Low RF' | translate }}</div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
-                [(ngModel)]="perfomanceValues.lowRf"
-              >
-                <option *ngFor="let option of performanceOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+              <mat-icon svgIcon="picsa_options_low_rain">water_drop</mat-icon>
+              <div class="emoji-wrapper">
+                <div style="text-align: center;">
+                    <mat-icon [ngStyle]="{'opacity': perfomanceValues.lowRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                 <div style="margin-top: 5px;">{{ 'Bad' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.lowRf !== 'ok' ? '0.3' : '1'}" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Ok' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': perfomanceValues.lowRf !== 'good' ? '0.3' : '1'}" color="#a01222" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Good' | translate }}</div>
+                </div>
+                </div>
+              <input type="range" min="0" max="2" [ngModel]="perfomanceValues.lowRf === 'bad' ? 0 : perfomanceValues.lowRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'low')" style="margin-top: 5px;">  
             </div>
           </div>
         </div>
@@ -210,32 +224,48 @@
             "
           >
             <div class="performenceItem">
-              <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
+              <div style="font-weight: 700" > 
                 {{ 'Money' | translate }}
-                <mat-icon style="color: #8a2644; font-size: 20px">attach_money</mat-icon>
+             
               </div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 9px; outline-color: #8a2644"
-                [(ngModel)]="investmentValues.money"
-              >
-                <option *ngFor="let option of investmentOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+              <mat-icon  svgIcon="picsa_options_cash"></mat-icon>
+              <div class="emoji-wrapper">
+                <div style="text-align: center;">
+                    <mat-icon [ngStyle]="{'opacity': investmentValues.money !== 'low' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                 <div style="margin-top: 5px;">{{ 'Low' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': investmentValues.money !== 'mid' ? '0.3' : '1'}" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Mid' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': investmentValues.money!== 'high' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'High' | translate }}</div>
+                </div>
+                </div>
+              <input type="range" min="0" max="2" [ngModel]="investmentValues.money === 'low' ? 0 : investmentValues.money === 'mid'?1 : 2"  (input)="updateInvestmentEffort($event, 'money')" style="margin-top: 5px;">  
             </div>
             <div class="performenceItem">
-              <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
+              <div style="font-weight: 700;">
                 {{ 'Time' | translate }}
-                <mat-icon style="color: #8a2644; font-size: 20px">access_time</mat-icon>
+                
               </div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 9px; outline-color: #8a2644"
-                [(ngModel)]="investmentValues.time"
-              >
-                <option *ngFor="let option of investmentOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+              <mat-icon  svgIcon="picsa_options_clork"></mat-icon>
+              <div class="emoji-wrapper">
+                <div style="text-align: center;">
+                    <mat-icon [ngStyle]="{'opacity': investmentValues.time !== 'low' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+                 <div style="margin-top: 5px;">{{ 'Low' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': investmentValues.time !== 'mid' ? '0.3' : '1'}" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'Mid' | translate }}</div>
+                </div>
+                <div style="text-align: center;">
+                  <mat-icon [ngStyle]="{'opacity': investmentValues.time!== 'high' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
+                  <div style="margin-top: 5px;">{{ 'High' | translate }}</div>
+                </div>
+                </div>
+              <input type="range" min="0" max="2" [ngModel]="investmentValues.time === 'low' ? 0 : investmentValues.time === 'mid'?1 : 2"  (input)="updateInvestmentEffort($event, 'time')" style="margin-top: 5px;"> 
             </div>
           </div>
         </div>
@@ -260,11 +290,10 @@
         <div class="StepTitle">{{ 'Time to start benefiting' | translate }}</div>
         <div class="StepContent">
           <div class="form-group">
-            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >{{ 'Time
-              (months)' | translate }}
-              <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon></label
-            >
+            <label style="font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px;"
+              >{{ 'Time (months)' | translate }}
+       
+              <mat-icon svgIcon="picsa_options_calender_time" style="padding-bottom: 10px; "></mat-icon></label>
             <input [(ngModel)]="benefitsStartTime" (keypress)="onlyNumbers($event)" class="form-control" />
           </div>
         </div>
@@ -284,9 +313,10 @@
         <div class="StepTitle">{{ 'Risk of practice (disadvantage)' | translate }}</div>
         <div class="StepContent">
           <div class="form-group">
-            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >{{ 'Risk' | translate }}<mat-icon style="color: #e71236; font-size: 20px">warning</mat-icon></label
-            >
+            <label style="font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px;"
+              >
+              <mat-icon svgIcon="picsa_options_risks" style="padding-bottom: 10px; "></mat-icon>
+            </label>
             <input style="margin-left: 4px" [(ngModel)]="risk" class="form-control" />
           </div>
         </div>
