@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { RxCollection, RxDocument } from 'rxdb';
 
-import { IOptionsToolEntry, SCHEMA_V0 } from '../schemas/schema_v0';
+import { COLLECTION, IOptionsToolEntry } from '../schemas';
 
 @Injectable({ providedIn: 'root' })
 export class OptionsToolService {
@@ -12,22 +12,23 @@ export class OptionsToolService {
   public get dbCollection() {
     return this.dbService.db.collections['options_tool'] as RxCollection<IOptionsToolEntry>;
   }
+  /** Provide database options tool collection filtered to active user */
+  public get dbUserCollection() {
+    return this.dbService.activeUserQuery(this.dbCollection);
+  }
 
   /** Initialise collection required for storing data to database */
   public async initialise() {
     await this.dbService.ensureCollections({
-      options_tool: {
-        // NOTE - any future changes to schema should be made as new doc with migration strategy
-        // https://rxdb.info/data-migration.html
-        schema: SCHEMA_V0,
-      },
+      options_tool: COLLECTION,
     });
   }
 
   public async addORUpdateData(option: IOptionsToolEntry) {
     try {
       //handles instertion and update as long as the name is the same.
-      await this.dbCollection.incrementalUpsert(option);
+      const res = await this.dbCollection.incrementalUpsert(option);
+      console.log('[Option]', res._data);
     } catch (err) {
       alert('Failed to add data, please try again');
       console.error('option.submit(): error:');

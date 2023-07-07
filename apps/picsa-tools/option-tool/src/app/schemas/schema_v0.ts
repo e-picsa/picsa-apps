@@ -1,3 +1,4 @@
+import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
 interface Benefit {
@@ -5,7 +6,7 @@ interface Benefit {
   beneficiary: string[];
 }
 
-export interface IOptionsToolEntry {
+export interface IOptionsToolEntry_v0 {
   practice: string;
   gender: string[];
   benefits: Benefit[];
@@ -22,7 +23,7 @@ export interface IOptionsToolEntry {
   risk: string;
 }
 
-export const SCHEMA_V0: RxJsonSchema<IOptionsToolEntry> = {
+export const SCHEMA_V0: RxJsonSchema<IOptionsToolEntry_v0> = {
   title: 'practice entry schema',
   version: 0,
   keyCompression: false,
@@ -92,4 +93,9 @@ export const SCHEMA_V0: RxJsonSchema<IOptionsToolEntry> = {
   },
   required: ['practice'],
   primaryKey: 'practice',
+};
+
+export const COLLECTION_V0: IPicsaCollectionCreator<IOptionsToolEntry_v0> = {
+  schema: SCHEMA_V0,
+  isUserCollection: false,
 };

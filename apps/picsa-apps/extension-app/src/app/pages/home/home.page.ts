@@ -7,8 +7,6 @@ import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION } from '@picsa/environments';
 import { PicsaFileService } from '@picsa/shared/services/native';
 
-import { UserStore } from '../../store/user.store';
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -27,7 +25,6 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    public store: UserStore,
     // TODO - refactor to separate store
     private platform: Platform,
     private fileService: PicsaFileService,
