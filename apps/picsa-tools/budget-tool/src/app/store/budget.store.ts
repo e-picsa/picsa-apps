@@ -41,14 +41,7 @@ const TYPE_CARDS_BASE: {
   enterprise: [],
   other: [],
 };
-const TYPE_LABELS: { [key in IBudgetPeriodType | 'summary']: string } = {
-  activities: translateMarker('Activities'),
-  familyLabour: translateMarker('Family Labour'),
-  inputs: translateMarker('Inputs'),
-  outputs: translateMarker('Outputs'),
-  produceConsumed: translateMarker('Produce Consumed'),
-  summary: translateMarker('Summary'),
-};
+
 type IBudgetCounter = 'large' | 'large-half' | 'medium' | 'medium-half' | 'small' | 'small-half';
 export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
 
@@ -59,7 +52,6 @@ export class BudgetStore implements OnDestroy {
   changes = new BehaviorSubject<[number, string]>([null, null] as any);
   public settings: IConfiguration.IBudgetToolSettings;
   private destroyed$ = new Subject<boolean>();
-  public typeLabels = TYPE_LABELS;
   public counterSVGIcons: IBudgetCounterSVGIcons;
 
   /** Budget column editor mode */

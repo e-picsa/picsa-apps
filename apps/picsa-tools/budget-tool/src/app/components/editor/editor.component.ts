@@ -10,14 +10,7 @@ import {
   IBudgetPeriodType,
 } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-
-const EDITOR_STEPS: { type: IBudgetPeriodType; label: string }[] = [
-  { type: 'activities', label: 'Activities' },
-  { type: 'inputs', label: 'Inputs' },
-  { type: 'familyLabour', label: 'Family Labour' },
-  { type: 'outputs', label: 'Outputs' },
-  { type: 'produceConsumed', label: 'Produce Consumed' },
-];
+import { BUDGET_PERIOD_ROWS } from '../../store/templates';
 
 @Component({
   selector: 'budget-editor',
@@ -32,7 +25,7 @@ export class BudgetEditorComponent {
 
   public data: IBudgetPeriodData;
   public _activePeriod: number;
-  public editorSteps = EDITOR_STEPS;
+  public editorSteps = BUDGET_PERIOD_ROWS;
 
   /** Budget period type to display cards list for */
   public cardsListType: IBudgetPeriodType;
