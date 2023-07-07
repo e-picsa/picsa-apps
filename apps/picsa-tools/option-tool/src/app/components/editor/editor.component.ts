@@ -10,7 +10,7 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
   styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent {
-  values = ENTRY_TEMPLATE;
+  values = ENTRY_TEMPLATE();
 
   performanceOptions: string[] = ['good', 'ok', 'bad'];
   investmentOptions: string[] = ['high', 'mid', 'low'];
@@ -67,7 +67,7 @@ export class EditorComponent {
     this.resetStepper();
   }
   resetVariables() {
-    this.values = JSON.parse(JSON.stringify(ENTRY_TEMPLATE));
+    this.values = ENTRY_TEMPLATE();
   }
   //incase of edits
   presetVariables(rowData: IOptionsToolEntry) {

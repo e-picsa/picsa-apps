@@ -1,33 +1,42 @@
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
 import { COLLECTION_V1, IOptionsToolEntry_v1, SCHEMA_V1 } from './schema_v1';
 
-/** rename 'gender' to 'gender_activities' and add 'gender_decisions' */
+/**
+ * rename 'gender' to 'gender_activities' and add 'gender_decisions'
+ * add _id primary key
+ * */
 export interface IOptionsToolEntry_v2 extends Omit<IOptionsToolEntry_v1, 'gender'> {
   gender_decisions: string[];
   gender_activities: string[];
+  _id: string;
 }
 
-export const ENTRY_TEMPLATE_V2: IOptionsToolEntry_v2 = {
-  benefits: [],
+// Use a function to generate templates to ensure new object instantiated with id
+export const ENTRY_TEMPLATE_V2: () => IOptionsToolEntry_v2 = () => ({
+  _id: generateID(),
+  practice: '',
   gender_decisions: [],
   gender_activities: [],
-  investment: { money: '', time: '' },
+  benefits: [],
   performance: { lowRf: '', highRf: '', midRf: '' },
-  practice: '',
-  risk: '',
+  investment: { money: '', time: '' },
   time: '',
-  _app_user_id: '',
-};
+  risk: '',
+});
 
 const { gender, ...v1_properties_without_gender } = SCHEMA_V1.properties;
 
 export const SCHEMA_V2: RxJsonSchema<IOptionsToolEntry_v2> = {
   ...SCHEMA_V1,
-  version: 2,
+  version: 3,
   properties: {
     ...v1_properties_without_gender,
+    _id: {
+      type: 'string',
+    },
     gender_activities: {
       type: 'array',
       items: {
@@ -41,9 +50,8 @@ export const SCHEMA_V2: RxJsonSchema<IOptionsToolEntry_v2> = {
       },
     },
   },
-  // HACK - type def issue (not actually changed)
-  required: SCHEMA_V1.required as any,
-  primaryKey: SCHEMA_V1.primaryKey as any,
+  required: ['_id', 'practice'],
+  primaryKey: '_id',
 };
 
 export const COLLECTION_V2: IPicsaCollectionCreator<IOptionsToolEntry_v2> = {
@@ -60,6 +68,8 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IOptionsToolEntry_v2> = {
         ...data_without_gender,
         gender_activities: gender,
         gender_decisions: [],
+        // add new id
+        _id: generateID(),
       };
     },
   },
