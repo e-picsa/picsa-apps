@@ -77,9 +77,7 @@ export class BudgetStore implements OnDestroy {
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     this.periodLabels = this.generatePeriodLabels(budget.meta);
-  }
-  @action calculateBalance() {
-    this.balance = this._calculateBalance(this.activeBudget);
+    this.balance = this._calculateBalance(budget);
   }
   @action setActivePeriod(index: number) {
     this.activePeriod = index;
@@ -152,7 +150,6 @@ export class BudgetStore implements OnDestroy {
     this.patchBudget({ data: budgetData });
     // use behaviour subject to provide better change detection binding on changes
     this.changes.next([period, type]);
-    this.calculateBalance();
   }
 
   @action
@@ -282,7 +279,6 @@ export class BudgetStore implements OnDestroy {
     console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
     this.valueCounters = this._generateValueCounters(budget);
-    this.balance = this._calculateBalance(budget);
     this.setActiveBudget(budget);
   }
 
