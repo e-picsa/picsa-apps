@@ -8,9 +8,10 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 // Local components
 import { EditorComponent } from './editor/editor.component';
+import { GenderIconComponent } from './gender-icon/gender-icon.component';
 import { OptionMaterialModule } from './material.module';
 
-const Components = [EditorComponent];
+const Components = [EditorComponent, GenderIconComponent];
 
 @NgModule({
   imports: [
