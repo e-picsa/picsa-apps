@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
-import { IOptionsToolEntry } from '../../schemas';
+import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
 
 @Component({
@@ -14,7 +14,9 @@ import { OptionsToolService } from '../../services/options-tool.service';
 })
 export class HomeComponent implements OnDestroy {
   public optionsDisplayList: IOptionsToolEntry[] = [];
-  public displayedColumns: string[] = ['practice', 'gender', 'benefits', 'performance', 'investment', 'time', 'risk'];
+
+  /** List of columns to display in table. Note, order will match template keys */
+  public displayedColumns = Object.keys(ENTRY_TEMPLATE()).filter((key) => !key.startsWith('_'));
 
   public dbDataDocs: RxDocument<IOptionsToolEntry>[] = [];
   public matStepperOpen = false;
@@ -53,14 +55,7 @@ export class HomeComponent implements OnDestroy {
   }
   async onDataTransfer(data: IOptionsToolEntry | null) {
     if (data) {
-      //when the name changes, incrementalUpsert is not enough since the name is the primary key
-      if (this.dbDataDocs[this.editorIndex] && this.dbDataDocs[this.editorIndex]._data.practice !== data.practice) {
-        //delete old option and add new option
-        await this.service.addORUpdateData(data);
-        await this.service.deleteOption(this.dbDataDocs[this.editorIndex]);
-      } else {
-        await this.service.addORUpdateData(data);
-      }
+      await this.service.addORUpdateData(data);
     } else {
       // remove any existing entry entry if no data passed back
       //delete from db
