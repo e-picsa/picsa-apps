@@ -13,18 +13,29 @@
       <!-- gender decisions Column -->
       <ng-container matColumnDef="gender_decisions">
         <th mat-header-cell *matHeaderCellDef>{{ 'Who makes decisions' | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element._data.gender_decisions.join(',') | translate }}</td>
+        <td mat-cell *matCellDef="let element">
+          <picsa-gender-icon
+            *ngFor="let gender of element._data.gender_decisions"
+            [gender]="gender"
+          ></picsa-gender-icon>
+        </td>
       </ng-container>
 
       <!-- gender activities Column -->
       <ng-container matColumnDef="gender_activities">
         <th mat-header-cell *matHeaderCellDef>{{ 'Who does activity' | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element._data.gender_activities.join(',') | translate }}</td>
+        <td mat-cell *matCellDef="let element">
+          <picsa-gender-icon
+            *ngFor="let gender of element._data.gender_activities"
+            [gender]="gender"
+          ></picsa-gender-icon>
+        </td>
       </ng-container>
 
       <!-- Benefits Column -->
       <ng-container matColumnDef="benefits">
         <th mat-header-cell *matHeaderCellDef>{{ 'Benefits and who' | translate }}</th>
+<<<<<<< HEAD
         <td mat-cell class="beneficiary-class" *matCellDef="let element">
           <ol>
             <ng-container *ngFor="let benefit of element._data.benefits; index as i">
@@ -43,6 +54,26 @@
               </li>
             </ng-container>
           </ol>
+=======
+        <td mat-cell *matCellDef="let element">
+          <div *ngFor="let benefit of element._data.benefits; index as i" class="benefit-container">
+            <div style="flex: 1">{{ benefit.benefit }}</div>
+            <div style="display: flex; width: 50px">
+              <!-- HACK add placeholder for both female and male to align, but hide if not used -->
+              <picsa-gender-icon
+                gender="female"
+                [showLabel]="false"
+                [style.visibility]="benefit.beneficiary.includes('female') ? 'visible' : 'hidden'"
+              ></picsa-gender-icon>
+
+              <picsa-gender-icon
+                gender="male"
+                [showLabel]="false"
+                [style.visibility]="benefit.beneficiary.includes('male') ? 'visible' : 'hidden'"
+              ></picsa-gender-icon>
+            </div>
+          </div>
+>>>>>>> d2ababd9 (style: home page icons and alignment)
         </td>
       </ng-container>
 
@@ -82,6 +113,7 @@
       <!-- Investment Column -->
       <ng-container matColumnDef="investment">
         <th mat-header-cell *matHeaderCellDef>{{ 'Investment' | translate }}</th>
+<<<<<<< HEAD
         <td mat-cell  *matCellDef="let element">
           <div style="display: flex; flex-direction: row; max-width: 14rem; justify-content: space-between; align-items: flex-start;">
             <div class="performance-container">
@@ -102,6 +134,18 @@
               <div class="weatherValue">{{ element._data.investment.time | translate }}</div>
             </div>
           </div> 
+=======
+        <td mat-cell *matCellDef="let element">
+          <div>
+            <mat-icon>payments</mat-icon>
+            <span style="margin-left: 8px">{{ element._data.investment.money | translate }}</span>
+          </div>
+
+          <div style="margin-top: 1rem">
+            <mat-icon>schedule</mat-icon>
+            <span style="margin-left: 8px">{{ element._data.investment.time | translate }}</span>
+          </div>
+>>>>>>> d2ababd9 (style: home page icons and alignment)
         </td>
       </ng-container>
 

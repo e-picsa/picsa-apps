@@ -6,6 +6,12 @@ th {
   border: 1px solid black;
   padding: 8px;
 }
+td {
+  vertical-align: top;
+}
+td.mdc-data-table__cell {
+  padding: 8px;
+}
 
 .HomeContainer {
   max-height: 100vh;
@@ -48,6 +54,7 @@ th {
   display: block;
 }
 
+<<<<<<< HEAD
 .Gender-Display{
   display: flex;
   flex-direction: row;
@@ -108,3 +115,10 @@ th {
   width: 1rem;
   height: 1rem;
 }
+=======
+.benefit-container {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+>>>>>>> d2ababd9 (style: home page icons and alignment)
