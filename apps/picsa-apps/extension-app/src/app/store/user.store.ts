@@ -11,6 +11,8 @@ import { IUser } from '../models/models';
 @Injectable({
   providedIn: 'root',
 })
+
+// TODO - deprecate(???)
 export class UserStore {
   @observable user: IUser;
   @action
@@ -24,11 +26,10 @@ export class UserStore {
   }
 
   constructor(private db: PicsaDbService, private fileService: PicsaFileService) {
-    this.loadUser();
+    // this.loadUser();
   }
 
-  // TODO - deprecate(???)
-  async loadUser() {
+  private async loadUser() {
     // TODO - generate user id and save to /user/userID - use to allow user syncing
     let user: IUser = await this.db.getDoc('_appMeta', 'CURRENT_USER');
     if (!user) {
@@ -44,7 +45,7 @@ export class UserStore {
     this.setUser(user);
   }
 
-  async createNewUser() {
+  private async createNewUser() {
     const meta = generateDBMeta();
     const user: IUser = {
       // keep id as well as key so can persist within appMeta in different key
@@ -56,7 +57,7 @@ export class UserStore {
     return user;
   }
 
-  async syncUser(user: IUser) {
+  private async syncUser(user: IUser) {
     console.log('syncing user', toJS(user));
     await this.db.setDoc('_appMeta', { ...user, _key: 'CURRENT_USER' });
     // user sync happens on first load so ensure ready first

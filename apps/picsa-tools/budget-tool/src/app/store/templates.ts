@@ -1,3 +1,4 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { APP_VERSION } from '@picsa/environments';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 
@@ -41,12 +42,18 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
 
 export const BUDGET_DOT_VALUES = {};
 
-export const BUDGET_PERIOD_ROWS: { [key in IBudgetPeriodType]: string } = {
-  activities: 'Activities',
-  inputs: 'Inputs',
-  familyLabour: 'Family Labour',
-  outputs: 'Outputs',
-  produceConsumed: 'Produce Consumed',
-};
+export interface IBudgetPeriodRow {
+  type: IBudgetPeriodType;
+  label: string;
+  sublabel?: string;
+}
+
+export const BUDGET_PERIOD_ROWS: IBudgetPeriodRow[] = [
+  { type: 'activities', label: translateMarker('Activities') },
+  { type: 'inputs', label: translateMarker('Inputs'), sublabel: translateMarker('Purchased') },
+  { type: 'familyLabour', label: translateMarker('Family Labour') },
+  { type: 'outputs', label: translateMarker('Outputs'), sublabel: translateMarker('For Sale') },
+  { type: 'produceConsumed', label: translateMarker('Produce Consumed') },
+];
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

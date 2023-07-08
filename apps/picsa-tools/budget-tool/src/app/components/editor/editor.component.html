@@ -1,7 +1,10 @@
 <!-- Editor -->
 <div id="editorContainer">
   <div *ngFor="let editorStep of editorSteps" class="type-row" [id]="'edit-' + editorStep.type">
-    <div class="type-label">{{ editorStep.label | translate }}</div>
+    <div class="type-label">
+      <span>{{ editorStep.label | translate }}</span>
+      <span *ngIf="editorStep.sublabel" style="font-size: 14px"><br />{{ editorStep.sublabel | translate }}</span>
+    </div>
     <div class="selected-summary" *ngIf="data && data[editorStep.type] as selectedCards">
       <div class="selected-cards-container" [attr.data-type]="editorStep.type">
         <budget-card-editor

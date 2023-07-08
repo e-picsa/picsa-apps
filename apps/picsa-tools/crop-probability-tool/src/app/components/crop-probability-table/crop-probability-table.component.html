@@ -36,35 +36,40 @@
 
     <!-- Probability columns -->
     <ng-container [matColumnDef]="column.name" *ngFor="let column of probabilityColumns">
-      <th mat-header-cell *matHeaderCellDef class="border-left border-top">{{ column.label }}</th>
+      <th mat-header-cell *matHeaderCellDef class="border-left border-top">
+        {{ column.label }}
+      </th>
       <td *matCellDef="let element" class="border-left border-bottom">{{ element[column.name] }}</td>
     </ng-container>
 
     <!-- Use custom headers to display title and season start summary in top row -->
+    <!-- This allows for the floating probability section -->
     <ng-container matColumnDef="title-column">
       <th mat-header-cell *matHeaderCellDef [attr.colspan]="4">
         <h2 style="flex: 1">{{ 'Crop Information' | translate }} - {{ station.station_name }}</h2>
       </th>
     </ng-container>
     <ng-container matColumnDef="season-start-summary-column">
-      <td
-        mat-header-cell
-        *matHeaderCellDef
-        [attr.colspan]="probabilityColumns.length"
-        style="padding: 0"
-        class="border-left"
-      >
-        <div class="season-start-text">
-          {{ 'Probability of season start on or before below date' | translate }}
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0">
+        <table #startProbabilities style="table-layout: fixed" class="border-left">
+          <tr>
+            <td *ngFor="let column of probabilityColumns" class="border-bottom border-top border-right">
+              {{ column.label }}
+            </td>
+          </tr>
+        </table>
+        <div class="season-start-text border-left">
+          {{ 'Probability of season start on or before date' | translate }}
         </div>
-        <table class="probability-values" style="table-layout: fixed">
+
+        <table #startProbabilities style="table-layout: fixed" class="border-left">
           <tr>
             <td *ngFor="let probability of station.season_probabilities" class="border-bottom border-top border-right">
               {{ probability }}
             </td>
           </tr>
         </table>
-        <div class="season-start-text">
+        <div class="season-start-text border-left border-top" style="margin-top: 2rem; margin-left: -1px">
           {{
             'Chance of receiving the water requirement in the
           days to maturity for this crop variety'

@@ -4,7 +4,10 @@
     <!-- First column -->
     <div class="time-period">
       <div class="time-period-title cell top-row"></div>
-      <div class="cell row-title" *ngFor="let row of rows">{{ row.label | translate }}</div>
+      <div class="cell row-title" *ngFor="let row of rows">
+        <span>{{ row.label | translate }}</span>
+        <span *ngIf="row.sublabel" style="font-size: 14px"><br />{{ row.sublabel | translate }}</span>
+      </div>
       <!-- cash balance legend -->
       <div class="cell row-title">
         <div>
@@ -39,7 +42,11 @@
       </div>
       <!-- period rows -->
       <div *ngFor="let row of rows" class="cell">
-        <budget-cell [periodIndex]="columnIndex" [type]="row.key" (click)="onCellClick(columnIndex, row)"></budget-cell>
+        <budget-cell
+          [periodIndex]="columnIndex"
+          [type]="row.type"
+          (click)="onCellClick(columnIndex, row)"
+        ></budget-cell>
       </div>
       <!-- Cash Balance -->
       <div class="cell">

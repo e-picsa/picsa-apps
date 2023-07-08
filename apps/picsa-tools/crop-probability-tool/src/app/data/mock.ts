@@ -620,6 +620,51 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
           },
         ],
       },
+      {
+        crop: 'cotton',
+        data: [
+          {
+            variety: 'Chureza',
+            days: '160',
+            water: ['500mm'],
+            probabilities: ['5/10', '2/10', '1/10', '0/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'tobacco',
+        data: [
+          {
+            variety: 'Virginia',
+            days: '130',
+            water: ['400-600mm'],
+            probabilities: ['9-10/10', '10/10', '8-9/10', '5/10', '1/10'],
+          },
+          {
+            variety: 'Barley',
+            days: '130',
+            water: ['400-600mm'],
+            probabilities: ['9-10/10', '10/10', '8-9/10', '5/10', '1/10'],
+          },
+        ],
+      },
+      {
+        crop: 'sweet-potatoes',
+        data: [
+          {
+            variety: 'Bandawe',
+            days: '90-120',
+            water: ['400mm'],
+            probabilities: ['8-10/10', '10/10', '10/10', '8-10/10', '3-10/10'],
+          },
+          {
+            variety: 'Chiwoko',
+            days: '90-120',
+            water: ['400mm'],
+            probabilities: ['8-10/10', '10/10', '10/10', '8-10/10', '3-10/10'],
+          },
+        ],
+      },
     ],
     notes: [
       'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station.',
@@ -796,6 +841,51 @@ export const STATION_CROP_DATA: IStationCropInformation[] = [
             days: '65',
             water: undefined,
             probabilities: undefined,
+          },
+        ],
+      },
+      {
+        crop: 'cotton',
+        data: [
+          {
+            variety: 'Chureza',
+            days: '160',
+            water: ['500mm'],
+            probabilities: ['4/10', '1/10', '0/10', '0/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'tobacco',
+        data: [
+          {
+            variety: 'Virginia',
+            days: '130',
+            water: ['400-600mm'],
+            probabilities: ['9-10/10', '8-9/10', '5-6/10', '2-3/10', '0/10'],
+          },
+          {
+            variety: 'Barley',
+            days: '130',
+            water: ['400-600mm'],
+            probabilities: ['9-10/10', '8-9/10', '5-6/10', '2-3/10', '0/10'],
+          },
+        ],
+      },
+      {
+        crop: 'sweet-potatoes',
+        data: [
+          {
+            variety: 'Bandawe',
+            days: '90-120',
+            water: ['400mm'],
+            probabilities: ['9-10/10', '9-10/10', '8-10/10', '5-9/10', '1-7/10'],
+          },
+          {
+            variety: 'Chiwoko',
+            days: '90-120',
+            water: ['400mm'],
+            probabilities: ['9-10/10', '9-10/10', '8-10/10', '5-9/10', '1-7/10'],
           },
         ],
       },

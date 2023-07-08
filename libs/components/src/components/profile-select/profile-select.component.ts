@@ -1,22 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
+import { IPicsaUser, PicsaUserService } from '@picsa/shared/services/core/user.service';
 import { hashmapToArray } from '@picsa/utils';
+import { Subject, takeUntil } from 'rxjs';
 
-interface IUserProfile {
-  _id: string;
-  color: string;
-  initials: string;
-  name: string;
-  role: 'extension' | 'farmer';
-}
-
-const STORAGE_NAME = 'picsa_profiles';
-
-const PROFILE_FORM_BASE: { [key in keyof IUserProfile]: FormControl } = {
+const PROFILE_FORM_BASE: { [key in keyof IPicsaUser]: FormControl } = {
   _id: new FormControl('', Validators.required),
   color: new FormControl('', Validators.required),
   initials: new FormControl(''),
@@ -30,28 +22,46 @@ const PROFILE_FORM_BASE: { [key in keyof IUserProfile]: FormControl } = {
   styleUrls: ['./profile-select.component.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
 })
-export class ProfileSelectComponent {
-  public activeProfile?: IUserProfile;
+export class ProfileSelectComponent implements OnInit, OnDestroy {
+  public activeProfile: IPicsaUser;
   public contentView: 'list' | 'create' | 'edit' = 'list';
   public profileForm: FormGroup<typeof PROFILE_FORM_BASE>;
+  public profileArray: IPicsaUser[] = [];
 
-  private activeProfileId = '';
-  private profileHashmap: Record<string, IUserProfile> = {};
+  private componentDestroyed$ = new Subject<boolean>();
 
-  constructor(public dialog: MatDialog, private picsaDialog: PicsaDialogService, fb: FormBuilder) {
-    this.loadStorageProfiles();
+  constructor(
+    public dialog: MatDialog,
+    private userService: PicsaUserService,
+    private picsaDialog: PicsaDialogService,
+    fb: FormBuilder
+  ) {
     this.profileForm = fb.group(PROFILE_FORM_BASE);
     this.resetForm();
   }
 
-  public get profileArray() {
-    return hashmapToArray(this.profileHashmap, '_id');
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
+  }
+
+  ngOnInit(): void {
+    this.userService.activeUser$.pipe(takeUntil(this.componentDestroyed$)).subscribe((user) => {
+      this.activeProfile = user;
+      this.profileArray = hashmapToArray(this.userService.allUsersHashmap, '_id');
+      this.setDefaultView();
+    });
+  }
+
+  // default show create page if no users exist
+  private setDefaultView() {
+    this.contentView = this.profileArray.length === 0 ? 'create' : 'list';
   }
 
   public close() {
     this.dialog.closeAll();
     this.resetForm();
-    this.contentView = 'list';
+    this.setDefaultView();
   }
 
   public setContentView(view: typeof this.contentView) {
@@ -59,11 +69,9 @@ export class ProfileSelectComponent {
   }
 
   public saveProfile() {
-    const profile = this.profileForm.value as IUserProfile;
-    const { _id } = profile;
-    this.profileHashmap[_id] = profile;
-    this.saveStorageProfiles();
-    this.loadProfile(_id, true);
+    const profile = this.profileForm.value as IPicsaUser;
+    this.userService.createOrUpdateUser(profile);
+    this.close();
   }
 
   public editProfile(_id: string) {
@@ -77,9 +85,7 @@ export class ProfileSelectComponent {
   public loadProfile(_id: string, closeDialog = false) {
     // avoid loading if undefined
     if (typeof _id === 'string') {
-      this.activeProfileId = _id;
-      this.activeProfile = this.profileHashmap[_id];
-      this.saveStorageProfiles();
+      this.userService.setActiveUser(_id);
       if (closeDialog) {
         // provide small delay for any button click animations
         setTimeout(() => {
@@ -92,10 +98,7 @@ export class ProfileSelectComponent {
     const ref = await this.picsaDialog.open('delete', {});
     ref.afterClosed().subscribe((shouldDelete) => {
       if (shouldDelete) {
-        if (_id in this.profileHashmap) {
-          delete this.profileHashmap[_id];
-        }
-        this.loadProfile('');
+        this.userService.deleteUser(_id);
         this.resetForm();
         this.contentView = 'list';
       }
@@ -105,23 +108,6 @@ export class ProfileSelectComponent {
   public setInitials() {
     const { name } = this.profileForm.value;
     this.profileForm.patchValue({ initials: this.nameToInitials(name) });
-  }
-
-  private loadStorageProfiles() {
-    const storageProfiles = localStorage.getItem(STORAGE_NAME);
-    if (storageProfiles) {
-      // TODO - ensure storage profiles map onto default in case of future breaking changes
-      const { activeProfileId, profiles } = JSON.parse(storageProfiles);
-      this.profileHashmap = profiles;
-      this.loadProfile(activeProfileId);
-    }
-  }
-
-  private saveStorageProfiles() {
-    localStorage.setItem(
-      STORAGE_NAME,
-      JSON.stringify({ activeProfileId: this.activeProfileId, profiles: this.profileHashmap })
-    );
   }
 
   private resetForm() {
