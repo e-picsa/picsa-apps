@@ -55,14 +55,7 @@ export class HomeComponent implements OnDestroy {
   }
   async onDataTransfer(data: IOptionsToolEntry | null) {
     if (data) {
-      //when the name changes, incrementalUpsert is not enough since the name is the primary key
-      if (this.dbDataDocs[this.editorIndex] && this.dbDataDocs[this.editorIndex]._data.practice !== data.practice) {
-        //delete old option and add new option
-        await this.service.addORUpdateData(data);
-        await this.service.deleteOption(this.dbDataDocs[this.editorIndex]);
-      } else {
-        await this.service.addORUpdateData(data);
-      }
+      await this.service.addORUpdateData(data);
     } else {
       // remove any existing entry entry if no data passed back
       //delete from db

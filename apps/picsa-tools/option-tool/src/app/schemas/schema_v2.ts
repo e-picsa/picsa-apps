@@ -31,7 +31,7 @@ const { gender, ...v1_properties_without_gender } = SCHEMA_V1.properties;
 
 export const SCHEMA_V2: RxJsonSchema<IOptionsToolEntry_v2> = {
   ...SCHEMA_V1,
-  version: 3,
+  version: 2,
   properties: {
     ...v1_properties_without_gender,
     _id: {
