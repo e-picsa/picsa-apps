@@ -6,6 +6,12 @@ th {
   border: 1px solid black;
   padding: 8px;
 }
+td {
+  vertical-align: top;
+}
+td.mdc-data-table__cell {
+  padding: 8px;
+}
 
 .HomeContainer {
   max-height: 100vh;
@@ -46,4 +52,10 @@ th {
 .slide-in.active {
   transform: translateY(0);
   display: block;
+}
+
+.benefit-container {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
 }
