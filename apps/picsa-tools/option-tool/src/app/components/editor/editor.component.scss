@@ -110,3 +110,32 @@
     text-align: center;
   }
 }
+.performenceItemHolders{
+  display: flex;
+  gap: 1rem;
+  justify-content: space-evenly;
+  width: 100%;
+  flex-direction: row;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+.performenceItem{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.emoji_size{
+  width: 2rem;
+  height: 2rem;
+  padding-left: .4rem;
+  padding-right: .4rem;
+  
+}
+
+.emoji-wrapper{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}

@@ -12,8 +12,8 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 export class EditorComponent {
   values = ENTRY_TEMPLATE();
 
-  performanceOptions: string[] = ['good', 'ok', 'bad'];
-  investmentOptions: string[] = ['high', 'mid', 'low'];
+  performanceOptions: string[] = ['bad', 'ok', 'good'];
+  investmentOptions: string[] = ['low', 'mid', 'high'];
   isLinear = false;
 
   @ViewChild(MatStepper) stepper: MatStepper;
@@ -76,6 +76,50 @@ export class EditorComponent {
   resetStepper(): void {
     this.stepper.reset();
   }
+  updatePerformance(event: any, level: string) {
+    const selectedValue = event.target.value;
+    
+    if (level === "high") {
+      this.values.performance = {
+        ...this.values.performance,
+        highRf: this.performanceOptions[selectedValue]
+      };
+    }
+  
+    if (level === "mid") {
+      this.values.performance = {
+        ...this.values.performance,
+        midRf: this.performanceOptions[selectedValue]
+      };
+    }
+  
+    if (level === "low") {
+      this.values.performance = {
+        ...this.values.performance,
+        lowRf: this.performanceOptions[selectedValue]
+      };
+    }
+    
+  }
+
+  updateInvestmentEffort(event: any, investment: string) {
+    const selectedValue = event.target.value; 
+    if (investment === "time") {
+      this.values.investment = {
+        ...this.values.investment,
+        time: this.investmentOptions[selectedValue]
+      };
+    }
+    if (investment === "money") {
+      this.values.investment = {
+        ...this.values.investment,
+        money: this.investmentOptions[selectedValue]
+      };
+    }
+
+    
+  }
+  
 
   async promptDelete() {
     const dialogRef = await this.dialog.open('delete');
