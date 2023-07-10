@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IChartMeta, IStationData, IStationMeta, IStationMetaDB } from '@picsa/models';
+import { IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
 import * as Papa from 'papaparse';
 
 import * as DATA from '../data';
@@ -20,12 +20,12 @@ export class ClimateDataService {
     const station = this.dataByStation[stationID];
     if (!station) {
       console.error('No data for station');
-      return { summaries: [] as any[], name: 'Data not found' } as IStationMetaDB;
+      return { data: [] as any[], name: 'Data not found' } as IStationMetaDB;
     }
-    if (!station.summaries) {
+    if (!station.data) {
       console.log('[Climate] Load Data', stationID);
       const summaries = await this.loadStationSummaries(stationID);
-      this.dataByStation[stationID].summaries = summaries;
+      this.dataByStation[stationID].data = summaries;
     }
     return this.dataByStation[stationID];
   }
