@@ -13,10 +13,18 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class ViewSelectComponent implements OnInit, OnDestroy {
   /** List of charts available for display */
-  availableCharts: IChartMeta[] = [];
+  public availableCharts: IChartMeta[] = [];
 
   /** DEPRECATED - to confirm if plan to bring back */
-  availableReports: IReportMeta[] = [];
+  public availableReports: IReportMeta[] = [];
+
+  /** Ensure router link matches station id from parameters */
+  public routerLinkActiveOptions: IsActiveMatchOptions = {
+    paths: 'subset',
+    fragment: 'ignored',
+    matrixParams: 'ignored',
+    queryParams: 'exact',
+  };
 
   private componentDestroyed$ = new Subject();
 
@@ -37,12 +45,4 @@ export class ViewSelectComponent implements OnInit, OnDestroy {
       this.availableCharts = station ? Object.values(station.definitions) : [];
     });
   }
-
-  /** Ensure router link matches station id from parameters */
-  public routerLinkActiveOptions: IsActiveMatchOptions = {
-    paths: 'subset',
-    fragment: 'ignored',
-    matrixParams: 'ignored',
-    queryParams: 'exact',
-  };
 }
