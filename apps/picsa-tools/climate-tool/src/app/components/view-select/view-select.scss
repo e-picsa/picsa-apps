@@ -30,6 +30,9 @@ mat-card.chart-card {
 // Overide chart specific colors when not active
 .chart-card:not(.chart-active) {
   background: white !important;
+  border-color: var(--color-light) !important;
+  transform: scale(0.95);
+  // filter: grayscale(1);
 }
 
 .chart-card.chart-active {
