@@ -67,7 +67,6 @@ export class ClimateChartService {
       this.station = undefined;
       return;
     }
-    await this.dataService.ready();
     this.station = await this.dataService.getStationMeta(id);
     this.stationData = this.station.summaries as IStationData[];
     return this.station;
