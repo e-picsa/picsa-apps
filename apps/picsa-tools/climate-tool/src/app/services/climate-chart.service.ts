@@ -65,8 +65,7 @@ export class ClimateChartService {
     const station = id ? await this.dataService.getStationMeta(id) : undefined;
     this.station = station;
     this.station$.next(station);
-
-    this.stationData = station?.summaries || [];
+    this.stationData = station?.data || [];
     return this.station;
   }
 
@@ -244,7 +243,6 @@ export class ClimateChartService {
    */
   private async togglePrintVersion() {
     this.isPrintVersion = !this.isPrintVersion;
-    console.log('isPrintVersion', this.isPrintVersion);
     // if cache config exists revert back
     if (this.isPrintVersion) {
       this.chartConfig.size = { width: 900, height: 500 };

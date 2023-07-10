@@ -18,11 +18,9 @@ export interface IStationMeta {
   latitude: number;
   longitude: number;
   countryCode: string;
-  summaries?: IStationData[];
-  /**
-   * Specific definitions to accompany summaries
-   * TODO - better if merged with summary above
-   */
+  /** Data summaries for charts */
+  data?: IStationData[];
+  /** Definitions for charts */
   definitions: IChartDefinitions;
 }
 export type IStationMetaDB = IStationMeta & IDBDoc;
