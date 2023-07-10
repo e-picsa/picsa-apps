@@ -85,7 +85,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...generateMockDBMeta({
       _key: 'nkhotakota',
       _created,
-      _modified: new Date('2022-09-20').toISOString(),
+      _modified: new Date('2023-07-10').toISOString(),
     }),
     name: 'Nkhotakota',
     latitude: -12.92842,
@@ -96,7 +96,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...generateMockDBMeta({
       _key: 'kasungu',
       _created,
-      _modified: new Date('2022-09-20').toISOString(),
+      _modified: new Date('2023-07-10').toISOString(),
     }),
     name: 'Kasungu',
     latitude: -13.03681,
@@ -108,7 +108,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...generateMockDBMeta({
       _key: 'chipata',
       _created,
-      _modified: new Date('2022-09-25').toISOString(),
+      _modified: new Date('2023-07-10').toISOString(),
     }),
     name: 'Chipata',
     latitude: -13.3843,
@@ -119,7 +119,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     ...generateMockDBMeta({
       _key: 'petauke',
       _created,
-      _modified: new Date('2022-09-25').toISOString(),
+      _modified: new Date('2023-07-10').toISOString(),
     }),
     name: 'Petauke',
     latitude: -14.24474,
