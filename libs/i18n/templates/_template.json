@@ -552,6 +552,10 @@
     "tool": "budget"
   },
   {
+    "text": "Budget Tool",
+    "tool": "budget"
+  },
+  {
     "text": "Consumed",
     "tool": "budget"
   },
@@ -621,6 +625,10 @@
   },
   {
     "text": "Male Member",
+    "tool": "budget"
+  },
+  {
+    "text": "New Budget",
     "tool": "budget"
   },
   {
