@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IChartMeta, IChartSummary_V1, IStationMeta } from '@picsa/models';
+import { IChartMeta, IStationData, IStationMeta, IStationMetaDB } from '@picsa/models';
 import * as Papa from 'papaparse';
 
 import * as DATA from '../data';
@@ -10,17 +10,17 @@ export class ClimateDataService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  public dataByStation: { [name: string]: IStationMeta } = {};
+  public dataByStation: { [name: string]: IStationMetaDB } = {};
 
   constructor() {
     this.dataByStation = arrayToHashmap(DATA.HARDCODED_STATIONS, '_key');
   }
 
-  public async getStationMeta(stationID: string): Promise<IStationMeta> {
+  public async getStationMeta(stationID: string): Promise<IStationMetaDB> {
     const station = this.dataByStation[stationID];
     if (!station) {
       console.error('No data for station');
-      return { summaries: [] as any[], name: 'Data not found' } as IStationMeta;
+      return { summaries: [] as any[], name: 'Data not found' } as IStationMetaDB;
     }
     if (!station.summaries) {
       console.log('[Climate] Load Data', stationID);
@@ -30,7 +30,7 @@ export class ClimateDataService {
     return this.dataByStation[stationID];
   }
   private async loadStationSummaries(stationID: string) {
-    return this.loadCSV<IChartSummary_V1>(`assets/summaries/${stationID}.csv`);
+    return this.loadCSV<IStationData>(`assets/summaries/${stationID}.csv`);
   }
 
   private async loadCSV<T>(filePath: string): Promise<T[]> {

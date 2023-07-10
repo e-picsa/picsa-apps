@@ -1,3 +1,5 @@
+export * from './report.models';
+
 export interface IProbabilities {
   above: {
     count: number;
@@ -11,15 +13,3 @@ export interface IProbabilities {
   };
   total: number;
 }
-
-export interface IClimateView {
-  _viewID: ClimateViewID;
-  _viewType: 'report' | 'chart';
-}
-export interface IReportMeta extends IClimateView {
-  name: string;
-  image: string;
-  description: string;
-}
-
-type ClimateViewID = 'cropAnalysis' | 'start' | 'end' | 'length' | 'rainfall';

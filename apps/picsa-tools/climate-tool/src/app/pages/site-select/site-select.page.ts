@@ -1,7 +1,7 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration';
-import { IStationMeta } from '@picsa/models';
+import { IStationMeta, IStationMetaDB } from '@picsa/models';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { HARDCODED_STATIONS } from '../../data';
@@ -62,7 +62,7 @@ export class SiteSelectPage {
     });
   }
 
-  goToSite(site: IStationMeta) {
+  goToSite(site: IStationMetaDB) {
     // record current map bound positions for returning back
     const mapBounds = this.picsaMap.map.getBounds();
     localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));

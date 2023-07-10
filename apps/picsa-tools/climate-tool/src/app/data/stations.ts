@@ -1,9 +1,11 @@
-import type { IStationMeta } from '@picsa/models';
+import type { IStationMetaDB } from '@picsa/models';
 import { generateMockDBMeta } from '@picsa/utils';
+
+import { DEFINITIONS_MW, DEFINITIONS_ZM } from './definitions';
 
 const _created = new Date('2019-07-23').toISOString();
 
-export const HARDCODED_STATIONS: IStationMeta[] = [
+export const HARDCODED_STATIONS: IStationMetaDB[] = [
   {
     ...generateMockDBMeta({
       _key: 'chichiri',
@@ -14,6 +16,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -15.796432,
     longitude: 35.026425,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -25,6 +28,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -15.679203,
     longitude: 34.967697,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -36,6 +40,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -13.7050735,
     longitude: 35.037632,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -47,6 +52,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -14.4821775,
     longitude: 35.2352141,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -58,6 +64,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -14.0806369,
     longitude: 34.9062036,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -69,6 +76,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -14.3530807,
     longitude: 35.4706477,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -80,6 +88,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -13.78157,
     longitude: 34.4568,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -91,6 +100,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -12.92842,
     longitude: 34.283192,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   {
     ...generateMockDBMeta({
@@ -102,6 +112,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -13.03681,
     longitude: 33.48123,
     countryCode: 'mw',
+    definitions: DEFINITIONS_MW,
   },
   // Zambia
   {
@@ -114,6 +125,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -13.3843,
     longitude: 32.3847,
     countryCode: 'zm',
+    definitions: DEFINITIONS_ZM,
   },
   {
     ...generateMockDBMeta({
@@ -125,6 +137,7 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: -14.24474,
     longitude: 31.327641,
     countryCode: 'zm',
+    definitions: DEFINITIONS_ZM,
   },
   {
     ...generateMockDBMeta({
@@ -136,5 +149,6 @@ export const HARDCODED_STATIONS: IStationMeta[] = [
     latitude: 38.557671,
     longitude: 68.775917,
     countryCode: 'tj',
+    definitions: DEFINITIONS_ZM,
   },
 ];

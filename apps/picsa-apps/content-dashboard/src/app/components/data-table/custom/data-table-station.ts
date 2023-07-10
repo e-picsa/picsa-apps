@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { IChartSummary_V2 } from '@picsa/models';
 
 import { PicsaDataTable } from '../data-table';
+import { IStationData } from '@picsa/models/src';
 
 @Component({
   // tslint:disable component-selector
@@ -15,8 +15,9 @@ import { PicsaDataTable } from '../data-table';
 */
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class PicsaDataTableStation extends PicsaDataTable {
-  tableColumns: (keyof IChartSummary_V2)[] = ['Year', 'StartDate', 'Length', 'Rainfall'];
-  @Input() set data(data: IChartSummary_V2[]) {
+  override tableColumns: (keyof IStationData)[] = ['Year', 'Start', 'Length', 'Rainfall'];
+
+  @Input() override set data(data: IStationData[]) {
     if (data && data.length > 0) {
       this.tableData.data = data;
     }
