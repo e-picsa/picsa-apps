@@ -1,0 +1,26 @@
+// Utility list of colors used in charts
+// NOTE - these need to be manually copied into `default.ts` and serve as reference only
+$chartColors: (
+  rainfall: #377eb8,
+  length: #4daf4a,
+  start: #e41a1c,
+  end: #984ea3,
+  rainfall-extreme: #0a3a62,
+);
+
+// TODO - find way to add custom webpack config to allow direct import into ts
+// https://css-tricks.com/getting-javascript-to-talk-to-css-and-sass/
+// https://www.skovy.dev/blog/generating-typescript-definitions-for-css-modules-using-sass?seed=9y4r4p
+// https://css-tricks.com/css-in-typescript-with-vanilla-extract/
+//
+
+// :export {
+//   colors: $chartColors;
+// }
+
+// Example module `colors.d.ts`
+
+// declare module '*.scss' {
+//   const colors: { [className: string]: string };
+//   export default colors;
+// }

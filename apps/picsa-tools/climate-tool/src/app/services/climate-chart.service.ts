@@ -9,7 +9,7 @@ import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 import { BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
 
-import { DATA_RANGES_DEFAULT, IDataRanges, IGridMeta, seriesColors } from '../models/chart-data.models';
+import { DATA_RANGES_DEFAULT, IDataRanges, IGridMeta } from '../models/chart-data.models';
 import { ClimateDataService } from './climate-data.service';
 
 @Injectable({ providedIn: 'root' })
@@ -106,7 +106,7 @@ export class ClimateChartService {
         },
         x: 'Year',
         classes: { LineTool: 'LineTool' },
-        color: (_, d) => this.getPointColour(d as DataPoint) || seriesColors[(d as DataPoint).id],
+        color: (_, d) => this.getPointColour(d as DataPoint) || definition.colors[0],
       },
       ['title' as any]: {
         text: `${this.station?.name} | ${chartName}`,
