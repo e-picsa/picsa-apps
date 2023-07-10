@@ -1,5 +1,6 @@
 import type { IStationMetaDB } from '@picsa/models';
 import { generateMockDBMeta } from '@picsa/utils';
+import merge from 'deepmerge';
 
 import { DEFINITIONS_MW, DEFINITIONS_ZM } from './definitions';
 
@@ -137,7 +138,9 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -14.24474,
     longitude: 31.327641,
     countryCode: 'zm',
-    definitions: DEFINITIONS_ZM,
+    definitions: merge(DEFINITIONS_ZM, {
+      extreme_rainfall_days: { definition: 'For Petauke the 95th percentile calculated to be 41.35mm' },
+    }),
   },
   {
     ...generateMockDBMeta({
