@@ -592,6 +592,10 @@
     "tool": "budget"
   },
   {
+    "text": "For Sale",
+    "tool": "budget"
+  },
+  {
     "text": "How long is your budget for?",
     "tool": "budget"
   },
@@ -632,6 +636,10 @@
     "tool": "budget"
   },
   {
+    "text": "Purchased",
+    "tool": "budget"
+  },
+  {
     "text": "Quantity",
     "tool": "budget"
   },
@@ -661,10 +669,6 @@
   },
   {
     "text": "Show More",
-    "tool": "budget"
-  },
-  {
-    "text": "Summary",
     "tool": "budget"
   },
   {
@@ -940,6 +944,10 @@
     "tool": "crop-probability"
   },
   {
+    "text": "Cotton",
+    "tool": "crop-probability"
+  },
+  {
     "text": "Cowpeas",
     "tool": "crop-probability"
   },
@@ -976,7 +984,7 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Probability of season start on or before below date",
+    "text": "Probability of season start on or before date",
     "tool": "crop-probability"
   },
   {
@@ -1005,6 +1013,10 @@
   },
   {
     "text": "Sweet Potatoes",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Tobacco",
     "tool": "crop-probability"
   },
   {
@@ -1070,10 +1082,6 @@
   {
     "text": "Something went wrong...",
     "tool": "extension"
-  },
-  {
-    "text": "Activities",
-    "tool": "manual"
   },
   {
     "text": "After the season",
@@ -1248,6 +1256,10 @@
     "tool": "option"
   },
   {
+    "text": "Activities",
+    "tool": "option"
+  },
+  {
     "text": "Add New Option",
     "tool": "option"
   },
@@ -1268,6 +1280,10 @@
     "tool": "option"
   },
   {
+    "text": "Decisions",
+    "tool": "option"
+  },
+  {
     "text": "Enter the practice for this option",
     "tool": "option"
   },
@@ -1277,10 +1293,6 @@
   },
   {
     "text": "Finish",
-    "tool": "option"
-  },
-  {
-    "text": "Gender",
     "tool": "option"
   },
   {
@@ -1348,11 +1360,15 @@
     "tool": "option"
   },
   {
-    "text": "Who does it",
+    "text": "Who does activity",
     "tool": "option"
   },
   {
-    "text": "Who does the practice",
+    "text": "Who does the activity",
+    "tool": "option"
+  },
+  {
+    "text": "Who makes decisions",
     "tool": "option"
   },
   {
