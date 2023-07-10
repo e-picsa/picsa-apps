@@ -1,27 +1,23 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
-import type { IChartConfig, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
+import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta, IStationMetaDB } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PrintProvider } from '@picsa/shared/services/native';
 import { _wait } from '@picsa/utils';
 import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
-import { firstValueFrom, Subject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
 
-import * as DATA from '../data';
-import { IClimateView } from '../models';
 import { DATA_RANGES_DEFAULT, IDataRanges, IGridMeta, seriesColors } from '../models/chart-data.models';
 import { ClimateDataService } from './climate-data.service';
-
-const CHART_VIEWS = [...DATA.CHART_TYPES, ...DATA.REPORT_TYPES];
 
 @Injectable({ providedIn: 'root' })
 export class ClimateChartService {
   /** Observable property trigger each time chart is rendered */
   public chartRendered$ = new Subject<void>();
 
-  public chartDefinition?: IChartMeta & IClimateView;
+  public chartDefinition?: IChartMeta;
 
   /** Binding for active rendered chart component */
   public chartComponent?: PicsaChartComponent;
@@ -29,7 +25,11 @@ export class ClimateChartService {
   /** Datapoints of the current rendered chart */
   public chartSeriesData: number[];
 
-  public station?: IStationMeta;
+  /** Actively selected station */
+  public station?: IStationMetaDB;
+
+  /** Observable subject for active station */
+  public station$ = new BehaviorSubject<IStationMetaDB | undefined>(undefined);
 
   public stationData: IStationData[];
 
@@ -52,7 +52,7 @@ export class ClimateChartService {
 
   public async clearChartData() {
     this.chartDefinition = undefined;
-    this.station = undefined;
+    this.setStation(undefined);
     this.getPointColour = () => undefined;
   }
 
@@ -62,20 +62,18 @@ export class ClimateChartService {
   }
 
   public async setStation(id?: string) {
-    console.log('[Climate] set station', id);
-    if (!id) {
-      this.station = undefined;
-      return;
-    }
-    this.station = await this.dataService.getStationMeta(id);
-    this.stationData = this.station.summaries as IStationData[];
+    const station = id ? await this.dataService.getStationMeta(id) : undefined;
+    this.station = station;
+    this.station$.next(station);
+
+    this.stationData = station?.summaries || [];
     return this.station;
   }
 
-  public async setChart(id?: string) {
+  public async setChart(id?: IChartId) {
     console.log('[Climate] set chart', id);
-    const chart = id ? CHART_VIEWS.find((v) => v._viewID === id) : undefined;
-    this.chartDefinition = chart as IChartMeta & IClimateView;
+    const chart = id ? this.station?.definitions[id] : undefined;
+    this.chartDefinition = chart;
     await this.generateChartConfig();
     this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
   }
@@ -90,8 +88,7 @@ export class ClimateChartService {
    */
   private async generateChartConfig() {
     const data = this.stationData;
-    console.count('Generate chart');
-    const definition = this.chartDefinition as IChartMeta & IClimateView;
+    const definition = this.chartDefinition as IChartMeta;
     // configure major and minor ticks, labels and gridlines
     const ranges = this.calculateDataRanges(data, definition);
     const gridMeta = this.calculateGridMeta(definition, ranges);

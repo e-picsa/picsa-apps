@@ -1,11 +1,8 @@
-import { IChartMeta } from '@picsa/models';
+import { IChartDefinitions } from '@picsa/models';
 
-import { IClimateView } from '../models';
-
-const CHART_TYPES: (IChartMeta & IClimateView)[] = [
-  {
-    _viewID: 'rainfall',
-    _viewType: 'chart',
+const definitions: IChartDefinitions = {
+  rainfall: {
+    _id: 'rainfall',
     name: 'Seasonal Rainfall',
     shortname: 'Rain',
     image: 'assets/images/season-rainfall.png',
@@ -23,9 +20,8 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     definition:
       'Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season',
   },
-  {
-    _viewID: 'start',
-    _viewType: 'chart',
+  start: {
+    _id: 'start',
     name: 'Start of Season',
     shortname: 'Start',
     image: 'assets/images/season-start.png',
@@ -44,9 +40,8 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     definition:
       'Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days',
   },
-  {
-    _viewID: 'end',
-    _viewType: 'chart',
+  end: {
+    _id: 'end',
     name: 'End of Season',
     shortname: 'End',
     image: 'assets/images/season-end.png',
@@ -64,9 +59,8 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     definition:
       'End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.',
   },
-  {
-    _viewID: 'length',
-    _viewType: 'chart',
+  length: {
+    _id: 'length',
     name: 'Length of Season',
     shortname: 'Length',
     image: 'assets/images/season-length.png',
@@ -84,7 +78,13 @@ const CHART_TYPES: (IChartMeta & IClimateView)[] = [
     definition:
       'Length of season is defined as the total days from the start of the season until the end of the season as defined',
   },
-  // {name: "Combined Probability", image: "assets/images/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
-];
+};
 
-export default CHART_TYPES;
+// Provide additional export as cloned object to avoid duplicate references
+const DEFINITIONS = () => {
+  const chartDefinitions: IChartDefinitions = JSON.parse(JSON.stringify(definitions));
+  return chartDefinitions;
+};
+// {name: "Combined Probability", image: "assets/images/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
+
+export default DEFINITIONS;

@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
+import { IChartId } from '@picsa/models/src';
 
 @Component({
   selector: 'climate-site-view',
@@ -58,7 +59,7 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
   /** Set chart in climate service by params */
   private subscribeToParamChanges() {
     this.route.queryParamMap.pipe(takeUntil(this.destroyed$)).subscribe(async (params) => {
-      const viewId = params.get('view');
+      const viewId = params.get('view') as IChartId;
       await this.chartService.setChart(viewId || undefined);
     });
   }
