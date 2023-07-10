@@ -1,48 +1,36 @@
 import { Injectable } from '@angular/core';
-import { IChartMeta, IChartSummary_V1, IDBDoc, IStationMeta } from '@picsa/models';
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { PicsaDbService } from '@picsa/shared/services/core/db';
+import { IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
 import * as Papa from 'papaparse';
 
 import * as DATA from '../data';
+import { arrayToHashmap } from '@picsa/utils';
 
 @Injectable({ providedIn: 'root' })
-export class ClimateDataService extends PicsaAsyncService {
+export class ClimateDataService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  override initOnCreate = false;
+  public dataByStation: { [name: string]: IStationMetaDB } = {};
 
-  constructor(private db: PicsaDbService) {
-    super();
+  constructor() {
+    this.dataByStation = arrayToHashmap(DATA.HARDCODED_STATIONS, '_key');
   }
 
-  public override async init() {
-    const dbData = await this.db.getCollection<IStationMeta>('stationData');
-    await this.initialiseHardcodedData(dbData);
-  }
-
-  public async getStationMeta(stationID: string) {
-    await this.ready();
-    return this.db.getDoc<IStationMeta>('stationData', stationID);
-  }
-
-  // read hardcoded csv data and populate into cacheDB alongside station meta
-  async initialiseHardcodedData(dbData: IStationMeta[]) {
-    const dbDataHashmap: { [name: string]: IDBDoc } = {};
-    for (const station of dbData) {
-      dbDataHashmap[station._key] = station;
+  public async getStationMeta(stationID: string): Promise<IStationMetaDB> {
+    const station = this.dataByStation[stationID];
+    if (!station) {
+      console.error('No data for station');
+      return { data: [] as any[], name: 'Data not found' } as IStationMetaDB;
     }
-    for (const station of DATA.HARDCODED_STATIONS) {
-      // compare with existing db, only update if modified date change
-      const dbStation = dbDataHashmap[station._key];
-      if (dbStation?._modified !== station._modified) {
-        // load data and update db
-        const data = await this.loadCSV<IChartSummary_V1>(`assets/summaries/${station._key}.csv`);
-        station.summaries = [...data];
-        await this.db.setDoc('stationData', station, false, true);
-      }
+    if (!station.data) {
+      console.log('[Climate] Load Data', stationID);
+      const summaries = await this.loadStationSummaries(stationID);
+      this.dataByStation[stationID].data = summaries;
     }
+    return this.dataByStation[stationID];
+  }
+  private async loadStationSummaries(stationID: string) {
+    return this.loadCSV<IStationData>(`assets/summaries/${stationID}.csv`);
   }
 
   private async loadCSV<T>(filePath: string): Promise<T[]> {

@@ -1,7 +1,7 @@
 import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { IChartSummary_V2 } from '@picsa/models';
+import { IStationData } from '@picsa/models';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { Papa, PapaParseConfig } from 'ngx-papaparse';
 
@@ -16,7 +16,7 @@ export class DataUpload {
   csvFile: File;
   csvData: IParsedField[] = [];
   demoData: string;
-  csvMappedData: IChartSummary_V2[] = [];
+  csvMappedData: IStationData[] = [];
   csvFields: string[] = [];
   mappedFields: string[] = [];
   rainfallChartData: any;
@@ -119,7 +119,7 @@ export class DataUpload {
     });
     // map data where exists
     this.csvMappedData = this.csvData.map((el) => {
-      const summary: IChartSummary_V2 = {
+      const summary: Partial<IStationData> = {
         Year: map.Year ? Number(el[map.Year]) : null,
         StartDate: map.StartDate ? new Date(el[map.StartDate]) : null,
         Length: map.Length ? Number(el[map.Length]) : null,
@@ -166,7 +166,7 @@ export class DataUpload {
  *    Interfaces
  ******************************************************************************/
 interface ISiteDataField {
-  field: keyof IChartSummary_V2;
+  field: keyof IStationData;
   description: string;
   dataType: 'string' | 'number' | 'date';
 }

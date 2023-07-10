@@ -1,10 +1,3 @@
-export const seriesColors = {
-  Rainfall: '#377eb8',
-  Start: '#e41a1c',
-  End: '#984ea3',
-  Length: '#4daf4a',
-};
-
 export interface IDataRanges {
   yMin: number;
   yMax: number;
