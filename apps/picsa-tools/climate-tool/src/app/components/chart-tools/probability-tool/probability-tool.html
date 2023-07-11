@@ -24,20 +24,30 @@
     </div>
     <!-- coloured blocks -->
     <div class="probability-blocks-group" style="display: flex">
-      <div class="block good" *ngFor="let b of numberToArray(probabilities.above.count)"></div>
-      <div class="block empty" *ngFor="let b of numberToArray(probabilities.below.count)"></div>
+      <div class="block above" *ngFor="let b of numberToArray(probabilities.above.count)"></div>
+      <div class="block below" *ngFor="let b of numberToArray(probabilities.below.count)"></div>
     </div>
     <!-- text -->
     <div class="probability-info">
       <div style="display: flex; margin-top: 1em">
-        <mat-card appearance="outlined" mat-elevation-z4 id="probabilityCount">
-          <span>{{ probabilities.above.count }}</span>
-          {{ 'out of' | translate }} {{ probabilities.total }} {{ 'satisfy' | translate }}
+        <mat-card class="card-above text-summary" appearance="outlined" mat-elevation-z4>
+          <div class="summary-label">
+            <span>{{'above' | translate}}</span>
+          </div>
+          <div style="margin: 4px">
+            {{ probabilities.above.count }} {{ 'out of' | translate }} {{ probabilities.total }}
+          </div>
+          <div class="prob-10">{{ probabilities.above.inTen }} {{ 'years out of every 10' | translate }}</div>
         </mat-card>
-        <mat-card appearance="outlined" mat-elevation-z4 style="flex: 1; text-align: center">
-          {{ 'On average' | translate }},
-          <span class="variable"> {{ probabilities.above.inTen }} {{ 'years out of every 10' | translate }} </span>
-          {{ 'satisfy' | translate }} {{ chartName }}
+
+        <mat-card class="card-below text-summary" appearance="outlined" mat-elevation-z4>
+          <div class="summary-label">
+            <span>{{'below' | translate}}</span>
+          </div>
+          <div style="margin: 4px">
+            {{ probabilities.below.count }} {{ 'out of' | translate }} {{ probabilities.total }}
+          </div>
+          <div class="prob-10">{{ probabilities.below.inTen }} {{ 'years out of every 10' | translate }}</div>
         </mat-card>
       </div>
     </div>

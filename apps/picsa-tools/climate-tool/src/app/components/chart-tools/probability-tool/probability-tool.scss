@@ -1,8 +1,5 @@
-#probabilityCount {
-  width: 86px;
-  text-align: center;
-  margin-right: 1em;
-}
+$above-color: #739b65;
+$below-color: #bf7720;
 
 .probability-grid-container {
   display: flex;
@@ -45,19 +42,39 @@
 .probability-blocks-group :first-child {
   border-left: 1px solid black;
 }
-.good {
-  color: #739b65;
+.above {
+  color: $above-color;
 }
-.bad {
-  color: #bf7720;
+.below {
+  color: $below-color;
 }
-.block.good {
-  background-color: #739b65;
+.block.above {
+  background-color: $above-color;
 }
-.block.bad {
-  background-color: #bf7720;
+.block.below {
+  background-color: $below-color;
 }
-.variable {
+.card-above {
+  border-color: $above-color;
+}
+.card-below {
+  border-color: $below-color;
+}
+
+mat-card.text-summary {
+  padding: 8px;
+  flex: 1;
+  text-align: center;
+}
+// float label on box
+.summary-label {
+  margin-top: -1rem;
+  & > span {
+    background: white;
+    font-weight: bold;
+    padding: 0 8px;
+  }
+}
+.prob-10 {
   font-weight: bold;
-  font-size: large;
 }
