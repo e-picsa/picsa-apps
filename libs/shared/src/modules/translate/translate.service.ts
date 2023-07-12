@@ -37,7 +37,7 @@ export class PicsaTranslateService implements OnDestroy {
 
   // use translate service to translate strings that will be displayed
   // outside of html templates (where pipe method used instead)
-  async translateText(text: string = '') {
+  async translateText(text = '') {
     if (!text) return text;
     const translation = await this.ngxTranslate.get(text).toPromise();
     return translation;
