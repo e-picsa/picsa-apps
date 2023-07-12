@@ -8,7 +8,7 @@
 <climate-probability-tool
   *ngIf="toolService.enabled['line']"
   style="height: 140px"
-  [x]="$any(toolService.tools['line'].value)"
+  [lineValue]="$any(toolService.tools['line'].value)"
   [values]="chartService.chartSeriesData"
   [chartName]="definition.name"
 ></climate-probability-tool>

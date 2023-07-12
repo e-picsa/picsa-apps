@@ -1,6 +1,3 @@
-$above-color: #739b65;
-$below-color: #bf7720;
-
 .probability-grid-container {
   display: flex;
   z-index: 1;
@@ -42,25 +39,6 @@ $below-color: #bf7720;
 .probability-blocks-group :first-child {
   border-left: 1px solid black;
 }
-.above {
-  color: $above-color;
-}
-.below {
-  color: $below-color;
-}
-.block.above {
-  background-color: $above-color;
-}
-.block.below {
-  background-color: $below-color;
-}
-.card-above {
-  border-color: $above-color;
-}
-.card-below {
-  border-color: $below-color;
-}
-
 mat-card.text-summary {
   padding: 8px;
   flex: 1;

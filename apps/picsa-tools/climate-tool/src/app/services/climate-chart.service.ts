@@ -38,6 +38,7 @@ export class ClimateChartService {
   public chartConfig$ = new BehaviorSubject<IChartConfig | undefined>(undefined);
   public chartDefinition$ = new BehaviorSubject<IChartMeta | undefined>(undefined);
   public station$ = new BehaviorSubject<IStationMetaDB | undefined>(undefined);
+  public chartSeriesData$ = new BehaviorSubject<number[]>([]);
 
   public chartRendered$ = new Subject<void>();
 
@@ -77,6 +78,7 @@ export class ClimateChartService {
     this.chartDefinition = chart;
     await this.generateChartConfig();
     this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
+    this.chartSeriesData$.next(this.chartSeriesData);
     this.chartDefinition$.next(this.chartDefinition);
   }
 

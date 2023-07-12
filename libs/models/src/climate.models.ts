@@ -52,7 +52,7 @@ export interface IChartMeta {
   yLabel: string;
   xVar: keyof IStationData;
   xLabel: string;
-  tools: { line: ILineToolOptions; probabliity: IProbabilityToolOptions };
+  tools: { line: ILineToolOptions; probability: IProbabilityToolOptions };
   units: string;
   definition: string;
   xMinor: number;
@@ -77,15 +77,14 @@ export interface ILineToolOptions {
   };
 }
 export interface IProbabilityToolOptions {
-  enabled: boolean;
   above: {
+    /** label to populate for 'above' summary */
     label: string;
-    color: string;
-    show: boolean;
   };
   below: {
+    /** label to populate for 'below' summary */
     label: string;
-    color: string;
-    show: boolean;
   };
+  /** reverse probabilities to show 'below' values first */
+  reverse?: boolean;
 }

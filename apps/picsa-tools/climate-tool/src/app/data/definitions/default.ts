@@ -1,24 +1,12 @@
-import { IChartDefinitions, IChartMeta, IProbabilityToolOptions } from '@picsa/models';
-import { LINE_TOOL_OPTIONS } from '../../components/chart-tools/line-tool/line-tool.model';
-import deepmerge from 'deepmerge';
+import merge from 'deepmerge';
+
+import { IChartDefinitions, IChartMeta } from '@picsa/models';
+import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS } from '../../components/chart-tools/line-tool/line-tool.model';
+import { PROBABILITY_TOOL_OPTIONS } from '../../components/chart-tools/probability-tool/probabililty-tool.model';
 
 const tools: IChartMeta['tools'] = {
   line: LINE_TOOL_OPTIONS,
-  probabliity: {} as any,
-};
-
-export const ProbabilityToolDefaults: IProbabilityToolOptions = {
-  enabled: true,
-  above: {
-    label: 'above',
-    color: 'green',
-    show: true,
-  },
-  below: {
-    label: 'above',
-    color: 'green',
-    show: true,
-  },
+  probability: PROBABILITY_TOOL_OPTIONS,
 };
 
 const definitions: IChartDefinitions = {
@@ -58,9 +46,14 @@ const definitions: IChartDefinitions = {
     // assume 367 days in a year (366 leap + 1 for 0 index), mark weekly and mid month
     yMinor: 365 / 48,
     yMajor: 365 / 12,
-    tools: deepmerge(tools, {
-      // Invert line tool as usually interested in start of season before date
-      // line: { above: { color: tools.line.below.color }, below: { color: tools.line.above.color } },
+    tools: merge(tools, {
+      // start of season focuses more on values below line. Use different colors to emphasise change
+      line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
+      probability: {
+        above: { color: LINE_TOOL_COLORS.red, label: 'After' },
+        below: { color: LINE_TOOL_COLORS.purple, label: 'Before' },
+        reverse: true,
+      },
     }),
     units: '',
     definition:
@@ -81,7 +74,15 @@ const definitions: IChartDefinitions = {
     xMajor: 2,
     yMinor: 365 / 48,
     yMajor: 365 / 12,
-    tools,
+    tools: merge(tools, {
+      // start of season focuses more on values below line. Use different colors to emphasise change
+      line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
+      probability: {
+        above: { color: LINE_TOOL_COLORS.red, label: 'After' },
+        below: { color: LINE_TOOL_COLORS.purple, label: 'Before' },
+        reverse: true,
+      },
+    }),
     units: '',
     definition:
       'End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.',
