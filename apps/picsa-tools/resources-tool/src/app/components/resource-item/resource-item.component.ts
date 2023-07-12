@@ -58,7 +58,6 @@ export class ResourceItemComponent implements OnInit {
     if (inputHandler) {
       inputHandler(this.resource);
     }
-    console.log('resource', this.resource);
   }
 }
 

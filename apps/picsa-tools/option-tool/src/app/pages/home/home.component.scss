@@ -1,12 +1,24 @@
 table {
   border-collapse: collapse;
 }
+
 th {
   border: 1px solid black;
   padding: 8px;
 }
+td {
+  vertical-align: top;
+}
+td.mdc-data-table__cell {
+  padding: 8px;
+}
+
 .HomeContainer {
-  height: 100vh;
+  max-height: 100vh;
+}
+
+.HideOverflow {
+  overflow-y: hidden;
 }
 
 .container {
@@ -22,11 +34,13 @@ th {
   top: 0;
   right: 0;
 }
+
 .buttonposition {
   position: absolute;
   right: 20px;
   top: 20px;
 }
+
 .slide-in {
   position: absolute;
   bottom: 0;
@@ -34,7 +48,14 @@ th {
   transition: transform 0.3s ease-in-out;
   transform: translateY(100%);
 }
+
 .slide-in.active {
   transform: translateY(0);
   display: block;
+}
+
+.benefit-container {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
 }

@@ -1,31 +1,58 @@
-<div class="HomeContainer">
+<div class="HomeContainer" [class.HideOverflow]="matStepperOpen">
   <div>
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
       <!-- Practice Column -->
       <ng-container matColumnDef="practice">
         <th mat-header-cell *matHeaderCellDef>{{ 'Practice' | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.practice | translate }}</td>
+        <td mat-cell *matCellDef="let element">{{ element._data.practice | translate }}</td>
       </ng-container>
 
-      <!-- gender Column -->
-      <ng-container matColumnDef="gender">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Who does it' | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.gender.join(',') | translate }}</td>
+      <!-- gender decisions Column -->
+      <ng-container matColumnDef="gender_decisions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Who makes decisions' | translate }}</th>
+        <td mat-cell *matCellDef="let element">
+          <picsa-gender-icon
+            *ngFor="let gender of element._data.gender_decisions"
+            [gender]="gender"
+          ></picsa-gender-icon>
+        </td>
+      </ng-container>
+
+      <!-- gender activities Column -->
+      <ng-container matColumnDef="gender_activities">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Who does activity' | translate }}</th>
+        <td mat-cell *matCellDef="let element">
+          <picsa-gender-icon
+            *ngFor="let gender of element._data.gender_activities"
+            [gender]="gender"
+          ></picsa-gender-icon>
+        </td>
       </ng-container>
 
       <!-- Benefits Column -->
       <ng-container matColumnDef="benefits">
         <th mat-header-cell *matHeaderCellDef>{{ 'Benefits and who' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <ol *ngFor="let benefit of element.benefits; index as i">
-            <li>
-              {{ benefit.benefit }}
-              <div>{{ benefit.beneficiary.join(',') }}</div>
-            </li>
-          </ol>
+          <div *ngFor="let benefit of element._data.benefits; index as i" class="benefit-container">
+            <div style="flex: 1">{{ benefit.benefit }}</div>
+            <div style="display: flex; width: 50px">
+              <!-- HACK add placeholder for both female and male to align, but hide if not used -->
+              <picsa-gender-icon
+                gender="female"
+                [showLabel]="false"
+                [style.visibility]="benefit.beneficiary.includes('female') ? 'visible' : 'hidden'"
+              ></picsa-gender-icon>
+
+              <picsa-gender-icon
+                gender="male"
+                [showLabel]="false"
+                [style.visibility]="benefit.beneficiary.includes('male') ? 'visible' : 'hidden'"
+              ></picsa-gender-icon>
+            </div>
+          </div>
         </td>
       </ng-container>
 
@@ -33,11 +60,11 @@
       <ng-container matColumnDef="performance">
         <th mat-header-cell *matHeaderCellDef>{{ 'Performance' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>{{ 'High(Rf)' | translate }}: {{ element.performance.highRf | translate }}</li>
-            <li>{{ 'Mid(Rf)' | translate }}: {{ element.performance.midRf | translate }}</li>
-            <li>{{ 'Low(Rf)' | translate }} : {{ element.performance.lowRf | translate }}</li>
-          </ol>
+          <div style="display: flex; flex-direction: column; gap: 3px">
+            <div>{{ 'High RF' | translate }}: {{ element._data.performance.highRf | translate }}</div>
+            <div>{{ 'Mid RF' | translate }}: {{ element._data.performance.midRf | translate }}</div>
+            <div>{{ 'Low RF' | translate }} : {{ element._data.performance.lowRf | translate }}</div>
+          </div>
         </td>
       </ng-container>
 
@@ -45,23 +72,28 @@
       <ng-container matColumnDef="investment">
         <th mat-header-cell *matHeaderCellDef>{{ 'Investment' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <ol style="display: flex; flex-direction: column; gap: 3px">
-            <li>{{ 'Money' | translate }} : {{ element.investment.money | translate }}</li>
-            <li>{{ 'Time' | translate }} : {{ element.investment.time | translate }}</li>
-          </ol>
+          <div>
+            <mat-icon>payments</mat-icon>
+            <span style="margin-left: 8px">{{ element._data.investment.money | translate }}</span>
+          </div>
+
+          <div style="margin-top: 1rem">
+            <mat-icon>schedule</mat-icon>
+            <span style="margin-left: 8px">{{ element._data.investment.time | translate }}</span>
+          </div>
         </td>
       </ng-container>
 
       <!-- Time Column -->
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef>{{ 'Time' | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.time | translate }}</td>
+        <td mat-cell *matCellDef="let element">{{ element._data.time | translate }}</td>
       </ng-container>
 
       <!-- Risks Column -->
       <ng-container matColumnDef="risk">
         <th mat-header-cell *matHeaderCellDef>{{ 'Risks' | translate }}</th>
-        <td mat-cell *matCellDef="let element">{{ element.risk | translate }}</td>
+        <td mat-cell *matCellDef="let element">{{ element._data.risk | translate }}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

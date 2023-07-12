@@ -3,7 +3,7 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { IPicsaLoaders } from '../loading/loading';
 
 export interface IPicsaDialogButtons {
-  text?: string;
+  text: string;
   value?: any;
   focus?: boolean;
 }

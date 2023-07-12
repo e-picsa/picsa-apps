@@ -3,13 +3,16 @@
     appearance="outlined"
     *ngFor="let chart of availableCharts"
     class="mat-elevation-z8 chart-card"
-    [attr.data-id]="chart._viewID"
+    [attr.data-id]="chart._id"
     [attr.data-active]=""
     [routerLink]="[]"
-    [queryParams]="{view:chart._viewID}"
+    [queryParams]="{view:chart._id}"
     routerLinkActive="chart-active"
     [routerLinkActiveOptions]="routerLinkActiveOptions"
     [replaceUrl]="true"
+    [style.color]="chart.colors[0]"
+    [style.background-color]="chart.colors[0]"
+    [style.border-color]="chart.colors[0]"
   >
     <div class="chart-name">{{ chart.shortname | translate }}</div>
     <div class="chart-image-container">

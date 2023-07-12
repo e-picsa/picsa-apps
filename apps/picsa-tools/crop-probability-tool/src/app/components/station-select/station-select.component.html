@@ -1,0 +1,7 @@
+<!-- Station Filter -->
+<mat-form-field style="width: 250px" class="no-hint">
+  <mat-label>{{ 'Station' | translate }}</mat-label>
+  <mat-select [value]="selectedStationId" (selectionChange)="handleStationChange($event.value)" #stationSelect>
+    <mat-option *ngFor="let station of stations" [value]="station.id">{{ station.station_name }}</mat-option>
+  </mat-select>
+</mat-form-field>

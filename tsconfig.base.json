@@ -31,6 +31,7 @@
       "@picsa/environments": ["libs/environments/src/index.ts"],
       "@picsa/extension/*": ["apps/native/extension-toolkit/*"],
       "@picsa/i18n": ["libs/i18n/src/index.ts"],
+      "@picsa/manual/*": ["apps/picsa-tools/manual-tool/*"],
       "@picsa/models": ["libs/models/src/index.ts"],
       "@picsa/monitoring/*": ["apps/picsa-tools/monitoring-tool/*"],
       "@picsa/option/*": ["apps/picsa-tools/option-tool/*"],

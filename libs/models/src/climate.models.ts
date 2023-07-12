@@ -13,38 +13,41 @@ export interface ICropRequirement {
   waterMax: number | null;
 }
 
-export interface IStationMeta extends IDBDoc {
+export interface IStationMeta {
   name: string;
   latitude: number;
   longitude: number;
   countryCode: string;
-  summaries?: IChartSummary_V1[] | IChartSummary_V2[];
+  /** Data summaries for charts */
+  data?: IStationData[];
+  /** Definitions for charts */
+  definitions: IChartDefinitions;
 }
+export type IStationMetaDB = IStationMeta & IDBDoc;
 
-export interface IChartSummary_V1 {
+export interface IStationData {
   Year: number;
   Start: number;
   End: number;
   Length: number;
   Rainfall: number;
+  Extreme_events: number;
 }
-
-export interface IChartSummary_V2 {
-  Year: number;
-  StartDate: Date;
-  Length: number;
-  Rainfall: number;
-}
-// merged old and new formats for use when not sure type
-export type IStationData = IChartSummary_V1 & IChartSummary_V2;
 
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
+export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days';
+export type IChartDefinitions = { [id in IChartId]: IChartMeta };
+
 export interface IChartMeta {
+  _id: IChartId;
   name: string;
   shortname: string;
   image: string;
+  /** Column names for data series */
   keys: (keyof IStationData)[];
+  /** Colors for data series */
+  colors: string[];
   yFormat: 'value' | 'date' | 'date-from-July';
   yLabel: string;
   xVar: keyof IStationData;

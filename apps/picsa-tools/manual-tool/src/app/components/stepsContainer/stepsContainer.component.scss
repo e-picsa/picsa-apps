@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+.activity-link {
+  float: right;
+  margin-left: auto;
+}
+h2.section-label {
+  padding: 0 8px;
+  color: var(--color-primary);
+  font-weight: normal;
+}
+.period-section {
+  margin-bottom: 48px;
+}
+table {
+  width: 100%;
+  border: 1px solid var(--color-primary);
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+td {
+  border-top: 1px solid var(--color-primary-50);
+}
+tr:first-of-type > td {
+  border-top: unset;
+}
+
+tr:hover {
+  background: wheat;
+  cursor: pointer;
+}
+td {
+  padding: 8px;
+}
+
+td.step-arrow {
+  color: var(--color-primary);
+  width: 32px;
+}
+.step-items {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.step-item {
+  flex: 1;
+  text-align: center;
+}
+.step-item-label {
+  max-width: 150px;
+  margin: auto;
+}

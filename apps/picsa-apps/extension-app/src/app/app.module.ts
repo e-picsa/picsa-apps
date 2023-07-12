@@ -6,7 +6,13 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaAnimationsModule } from '@picsa/shared/features';
-import { PicsaDbModule, PicsaDeepLinksModule, PicsaNativeModule, PicsaTranslateModule } from '@picsa/shared/modules';
+import {
+  PicsaDb_V2_Module,
+  PicsaDbModule,
+  PicsaDeepLinksModule,
+  PicsaNativeModule,
+  PicsaTranslateModule,
+} from '@picsa/shared/modules';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { MobxAngularModule } from 'mobx-angular';
 
@@ -22,6 +28,7 @@ import { AppRoutingModule } from './app-routing.module';
     HttpClientModule,
     MobxAngularModule,
     PicsaDbModule.forRoot(),
+    PicsaDb_V2_Module.forRoot(),
     PicsaNativeModule.forRoot(),
     PicsaTranslateModule.forRoot(),
     PicsaDeepLinksModule.forRoot({

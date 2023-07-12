@@ -1,67 +1,8 @@
 import { IResourceCollection, IResourceFile } from '../../models';
 
-const files: { [id: string]: IResourceFile } = {
-  crop_info_chipata: {
-    _key: 'crop_info_chipata',
-    _created: '2022-09-21T02:00:00.000Z',
-    _modified: '2022-09-21T02:00:00.000Z',
-    title: 'Crop Information Sheet',
-    mimetype: 'application/pdf',
-    description: 'Crop Information - Chipata',
-    subtitle: '',
-    folder: '',
-    filename: 'crop-info-chipata.pdf',
-    type: 'file',
-    image: '',
-    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-chipata.pdf?alt=media&token=d6637831-4fe5-4c92-9004-2bfae4aefd7a',
-    appCountries: ['zm'],
-  },
-  crop_info_petauke: {
-    _key: 'crop_info_petauke',
-    _created: '2022-09-21T02:00:00.000Z',
-    _modified: '2022-09-21T02:00:00.000Z',
-    title: 'Crop Information Sheet',
-    mimetype: 'application/pdf',
-    description: 'Crop Information - Petauke',
-    subtitle: '',
-    folder: '',
-    filename: 'crop-info-petauke.pdf',
-    type: 'file',
-    image: '',
-    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-petauke.pdf?alt=media&token=793e9beb-9776-45bf-a094-e26bfa35e6b5',
-    appCountries: ['zm'],
-  },
-  crop_info_kasungu: {
-    _key: 'crop_info_kasungu',
-    _created: '2022-09-21T02:00:00.000Z',
-    _modified: '2022-09-21T02:00:00.000Z',
-    title: 'Crop Information Sheet',
-    mimetype: 'application/pdf',
-    description: 'Kasungu',
-    subtitle: '',
-    folder: '',
-    filename: 'crop-info-kasungu.pdf',
-    type: 'file',
-    image: '',
-    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-chipata.pdf?alt=media&token=d6637831-4fe5-4c92-9004-2bfae4aefd7a',
-    appCountries: ['mw'],
-  },
-  crop_info_nkhotakota: {
-    _key: 'crop_info_nkhotakota',
-    _created: '2022-09-21T02:00:00.000Z',
-    _modified: '2022-09-21T02:00:00.000Z',
-    title: 'Crop Information Sheet',
-    mimetype: 'application/pdf',
-    description: 'Nkhotakota',
-    subtitle: '',
-    folder: 'workshop-salima-2022',
-    filename: 'crop-info-nkhotakota.pdf',
-    type: 'file',
-    image: '',
-    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2Fcrop-info-nkhotakota.pdf?alt=media&token=e5b99547-b55a-4904-890a-ccf49fa381ac',
-    appCountries: ['mw'],
-  },
-};
+const files: { [id: string]: IResourceFile } = {};
+
+/** DEPRECATED CC 2023-07-03 (use tool instead) */
 const cropInfoCollection: IResourceCollection = {
   _key: 'cropInfoCollection',
   _created: '2019-09-25T10:00:04.000Z',
@@ -74,4 +15,4 @@ const cropInfoCollection: IResourceCollection = {
   parentResource: 'cropResources',
   childResources: Object.keys(files),
 };
-export default { ...files, cropInfoCollection };
+export default { ...files };

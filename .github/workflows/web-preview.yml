@@ -10,7 +10,7 @@ on:
     branches:
       - main
 jobs:
-  web_preview_resources:
+  web_preview:
     if: contains(github.event.pull_request.labels.*.name, 'Test - Preview')
     runs-on: ubuntu-latest
     steps:
@@ -29,5 +29,6 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           projectId: picsa-apps
           target: extension-toolkit
+          expires: 30d
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels

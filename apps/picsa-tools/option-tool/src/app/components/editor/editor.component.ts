@@ -1,77 +1,48 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { PicsaDialogService } from '@picsa/shared/features';
 
-export interface IOptionData {
-  practice: string;
-  gender: string[];
-  benefits: { benefit: string; beneficiary: string[] }[];
-  performance: { lowRf: string; midRf: string; highRf: string };
-  investment: { money: string; time: string };
-  time: string;
-  risk: string;
-}
+import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
+
 @Component({
   selector: 'option-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements OnInit {
-  practiceEntry: string;
-  gender: string[];
-  benefits: { benefit: string; beneficiary: string[] }[];
-  perfomanceValues: { lowRf: string; midRf: string; highRf: string };
+export class EditorComponent {
+  values = ENTRY_TEMPLATE();
+
   performanceOptions: string[] = ['good', 'ok', 'bad'];
-  investmentValues: { money: string; time: string };
   investmentOptions: string[] = ['high', 'mid', 'low'];
-  benefitsStartTime: string;
-  risk: string;
   isLinear = false;
 
   @ViewChild(MatStepper) stepper: MatStepper;
-  @Output() dataTransfer = new EventEmitter<IOptionData | null>();
+  @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
 
   constructor(private dialog: PicsaDialogService) {}
 
-  ngOnInit(): void {
-    this.gender = [];
-    this.benefits = [
-      {
-        benefit: '',
-        beneficiary: [],
-      },
-    ];
-    this.perfomanceValues = { lowRf: 'ok', midRf: 'ok', highRf: 'ok' };
-    this.investmentValues = { money: 'high', time: 'high' };
-    this.practiceEntry = '';
-    this.gender = [];
-    this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
-    this.investmentValues = { money: '', time: '' };
-    this.benefitsStartTime = '';
-    this.risk = '';
-  }
-
-  handleGender(gender: string) {
-    if (!this.gender.includes(gender)) {
-      this.gender.push(gender);
+  handleGender(gender: string, field: 'gender_activities' | 'gender_decisions') {
+    console.log('handle gender', { gender, field }, this.values[field]);
+    if (!this.values[field].includes(gender)) {
+      this.values[field].push(gender);
     } else {
-      const index = this.gender.indexOf(gender);
-      this.gender.splice(index, 1);
+      const index = this.values[field].indexOf(gender);
+      this.values[field].splice(index, 1);
     }
   }
   handleBenficiaryGender(index: number, gender: string) {
-    if (!this.benefits[index].beneficiary.includes(gender)) {
-      this.benefits[index].beneficiary.push(gender);
+    if (!this.values.benefits[index].beneficiary.includes(gender)) {
+      this.values.benefits[index].beneficiary.push(gender);
     } else {
-      const itemIndex = this.benefits[index].beneficiary.indexOf(gender);
-      this.benefits[index].beneficiary.splice(itemIndex, 1);
+      const itemIndex = this.values.benefits[index].beneficiary.indexOf(gender);
+      this.values.benefits[index].beneficiary.splice(itemIndex, 1);
     }
   }
   handleRemovingBenefits(index: number) {
-    this.benefits.splice(index, 1);
+    this.values.benefits.splice(index, 1);
   }
   handleMoreBenefits() {
-    this.benefits.push({
+    this.values.benefits.push({
       benefit: '',
       beneficiary: [],
     });
@@ -87,50 +58,20 @@ export class EditorComponent implements OnInit {
 
   async submitForm() {
     // minimum for auto save should be at least a name
-    if (!this.practiceEntry) {
+    if (!this.values.practice) {
       this.dataTransfer.emit(null);
       return;
     }
-    const data: IOptionData = {
-      practice: this.practiceEntry,
-      gender: this.gender,
-      benefits: this.benefits,
-      performance: this.perfomanceValues,
-      investment: this.investmentValues,
-      time: this.benefitsStartTime,
-      risk: this.risk,
-    };
-    this.dataTransfer.emit(data);
+    this.dataTransfer.emit(this.values);
     this.resetVariables();
     this.resetStepper();
   }
   resetVariables() {
-    // Reset variables when the component is destroyed.
-    this.gender = [];
-    this.benefits = [
-      {
-        benefit: '',
-        beneficiary: [],
-      },
-    ];
-    this.perfomanceValues = { lowRf: 'ok', midRf: 'ok', highRf: 'ok' };
-    this.investmentValues = { money: 'high', time: 'high' };
-    this.practiceEntry = '';
-    this.gender = [];
-    this.perfomanceValues = { lowRf: '', midRf: '', highRf: '' };
-    this.investmentValues = { money: '', time: '' };
-    this.benefitsStartTime = '';
-    this.risk = '';
+    this.values = ENTRY_TEMPLATE();
   }
   //incase of edits
-  presetVariables(rowData: IOptionData) {
-    this.benefits = rowData.benefits;
-    this.perfomanceValues = rowData.performance;
-    this.investmentValues = rowData.investment;
-    this.practiceEntry = rowData.practice;
-    this.gender = rowData.gender;
-    this.benefitsStartTime = rowData.time;
-    this.risk = rowData.risk;
+  presetVariables(rowData: IOptionsToolEntry) {
+    this.values = rowData;
   }
   resetStepper(): void {
     this.stepper.reset();

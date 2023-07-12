@@ -140,6 +140,41 @@
     "context": "activities"
   },
   {
+    "text": "Monday",
+    "tool": "budget",
+    "context": "day_1"
+  },
+  {
+    "text": "Tuesday",
+    "tool": "budget",
+    "context": "day_2"
+  },
+  {
+    "text": "Wednesday",
+    "tool": "budget",
+    "context": "day_3"
+  },
+  {
+    "text": "Thursday",
+    "tool": "budget",
+    "context": "day_4"
+  },
+  {
+    "text": "Friday",
+    "tool": "budget",
+    "context": "day_5"
+  },
+  {
+    "text": "Saturday",
+    "tool": "budget",
+    "context": "day_6"
+  },
+  {
+    "text": "Sunday",
+    "tool": "budget",
+    "context": "day_7"
+  },
+  {
     "text": "afforestation",
     "tool": "budget",
     "context": "enterprise"
@@ -340,6 +375,121 @@
     "context": "inputs"
   },
   {
+    "text": "January",
+    "tool": "budget",
+    "context": "month_1"
+  },
+  {
+    "text": "October",
+    "tool": "budget",
+    "context": "month_10"
+  },
+  {
+    "text": "Oct",
+    "tool": "budget",
+    "context": "month_10_short"
+  },
+  {
+    "text": "November",
+    "tool": "budget",
+    "context": "month_11"
+  },
+  {
+    "text": "Nov",
+    "tool": "budget",
+    "context": "month_11_short"
+  },
+  {
+    "text": "December",
+    "tool": "budget",
+    "context": "month_12"
+  },
+  {
+    "text": "Dec",
+    "tool": "budget",
+    "context": "month_12_short"
+  },
+  {
+    "text": "Jan",
+    "tool": "budget",
+    "context": "month_1_short"
+  },
+  {
+    "text": "February",
+    "tool": "budget",
+    "context": "month_2"
+  },
+  {
+    "text": "Feb",
+    "tool": "budget",
+    "context": "month_2_short"
+  },
+  {
+    "text": "March",
+    "tool": "budget",
+    "context": "month_3"
+  },
+  {
+    "text": "Mar",
+    "tool": "budget",
+    "context": "month_3_short"
+  },
+  {
+    "text": "April",
+    "tool": "budget",
+    "context": "month_4"
+  },
+  {
+    "text": "Apr",
+    "tool": "budget",
+    "context": "month_4_short"
+  },
+  {
+    "text": "May",
+    "tool": "budget",
+    "context": "month_5_short"
+  },
+  {
+    "text": "June",
+    "tool": "budget",
+    "context": "month_6"
+  },
+  {
+    "text": "Jun",
+    "tool": "budget",
+    "context": "month_6_short"
+  },
+  {
+    "text": "July",
+    "tool": "budget",
+    "context": "month_7"
+  },
+  {
+    "text": "Jul",
+    "tool": "budget",
+    "context": "month_7_short"
+  },
+  {
+    "text": "August",
+    "tool": "budget",
+    "context": "month_8"
+  },
+  {
+    "text": "Aug",
+    "tool": "budget",
+    "context": "month_8_short"
+  },
+  {
+    "text": "September",
+    "tool": "budget",
+    "context": "month_9"
+  },
+  {
+    "text": "Sep",
+    "tool": "budget",
+    "context": "month_9_short"
+  },
+  {
     "text": "add custom",
     "tool": "budget",
     "context": "other"
@@ -390,10 +540,6 @@
     "context": "outputs"
   },
   {
-    "text": "Activities",
-    "tool": "budget"
-  },
-  {
     "text": "Add Female Member",
     "tool": "budget"
   },
@@ -403,6 +549,10 @@
   },
   {
     "text": "Balance",
+    "tool": "budget"
+  },
+  {
+    "text": "Budget Tool",
     "tool": "budget"
   },
   {
@@ -430,11 +580,11 @@
     "tool": "budget"
   },
   {
-    "text": "Enterprise",
+    "text": "Edit Budget",
     "tool": "budget"
   },
   {
-    "text": "Family",
+    "text": "Enterprise",
     "tool": "budget"
   },
   {
@@ -446,7 +596,15 @@
     "tool": "budget"
   },
   {
+    "text": "For Sale",
+    "tool": "budget"
+  },
+  {
     "text": "How long is your budget for?",
+    "tool": "budget"
+  },
+  {
+    "text": "Import",
     "tool": "budget"
   },
   {
@@ -462,7 +620,15 @@
     "tool": "budget"
   },
   {
+    "text": "Legend",
+    "tool": "budget"
+  },
+  {
     "text": "Male Member",
+    "tool": "budget"
+  },
+  {
+    "text": "New Budget",
     "tool": "budget"
   },
   {
@@ -475,6 +641,10 @@
   },
   {
     "text": "Produce Consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "Purchased",
     "tool": "budget"
   },
   {
@@ -510,10 +680,6 @@
     "tool": "budget"
   },
   {
-    "text": "Summary",
-    "tool": "budget"
-  },
-  {
     "text": "Title",
     "tool": "budget"
   },
@@ -530,15 +696,19 @@
     "tool": "budget"
   },
   {
-    "text": "Values",
-    "tool": "budget"
-  },
-  {
     "text": "What is your type of enterprise?",
     "tool": "budget"
   },
   {
     "text": "description",
+    "tool": "budget"
+  },
+  {
+    "text": "fruits",
+    "tool": "budget"
+  },
+  {
+    "text": "livestock",
     "tool": "budget"
   },
   {
@@ -627,10 +797,6 @@
     "tool": "climate"
   },
   {
-    "text": "Hide Tool Options",
-    "tool": "climate"
-  },
-  {
     "text": "Line",
     "tool": "climate"
   },
@@ -660,14 +826,6 @@
   },
   {
     "text": "Share Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Show Tool Options",
-    "tool": "climate"
-  },
-  {
-    "text": "Station",
     "tool": "climate"
   },
   {
@@ -730,6 +888,10 @@
     "context": "buttons"
   },
   {
+    "text": "Are you sure you want to delete?",
+    "tool": "common"
+  },
+  {
     "text": "Edit Profiles",
     "tool": "common"
   },
@@ -739,6 +901,10 @@
   },
   {
     "text": "Farmer",
+    "tool": "common"
+  },
+  {
+    "text": "Hide Options",
     "tool": "common"
   },
   {
@@ -758,11 +924,115 @@
     "tool": "common"
   },
   {
+    "text": "Show Options",
+    "tool": "common"
+  },
+  {
     "text": "Who is using?",
     "tool": "common"
   },
   {
-    "text": "Budget Tool",
+    "text": "All",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Beans",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Cassava",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Cotton",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Cowpeas",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop Information",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop water requirement (mm)",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Days to maturity",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Groundnuts",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Longitude:34.26, Latitude: -12.91 Altitude: 500.",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Maize",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Pigeon Peas",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Probability of season start on or before date",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Pumpkins",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Rice",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Sorghum",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Soya Beans",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Station",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Sunflower",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Sweet Potatoes",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Tobacco",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Budget",
     "tool": "extension"
   },
   {
@@ -770,11 +1040,7 @@
     "tool": "extension"
   },
   {
-    "text": "Climate Tool",
-    "tool": "extension"
-  },
-  {
-    "text": "Discussions",
+    "text": "Climate",
     "tool": "extension"
   },
   {
@@ -790,11 +1056,23 @@
     "tool": "extension"
   },
   {
+    "text": "Manual",
+    "tool": "extension"
+  },
+  {
     "text": "Monitoring",
     "tool": "extension"
   },
   {
+    "text": "Options",
+    "tool": "extension"
+  },
+  {
     "text": "Privacy Policy",
+    "tool": "extension"
+  },
+  {
+    "text": "Probability",
     "tool": "extension"
   },
   {
@@ -814,8 +1092,180 @@
     "tool": "extension"
   },
   {
+    "text": "After the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Compare different options and plans",
+    "tool": "manual"
+  },
+  {
+    "text": "Create",
+    "tool": "manual"
+  },
+  {
+    "text": "Crop Info",
+    "tool": "manual"
+  },
+  {
+    "text": "During the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Farmers choose",
+    "tool": "manual"
+  },
+  {
+    "text": "Historic climate",
+    "tool": "manual"
+  },
+  {
+    "text": "Info Sheet",
+    "tool": "manual"
+  },
+  {
+    "text": "Is the climate changing?",
+    "tool": "manual"
+  },
+  {
+    "text": "Just before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Learn and improve",
+    "tool": "manual"
+  },
+  {
+    "text": "Livelihood Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Livestock Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Long before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Options by context",
+    "tool": "manual"
+  },
+  {
+    "text": "Probability and Risk",
+    "tool": "manual"
+  },
+  {
+    "text": "Quiz",
+    "tool": "manual"
+  },
+  {
+    "text": "Resource Allocation Map (RAM)",
+    "tool": "manual"
+  },
+  {
+    "text": "Response to forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Review",
+    "tool": "manual"
+  },
+  {
+    "text": "Revisit",
+    "tool": "manual"
+  },
+  {
+    "text": "Seasonal Calendar",
+    "tool": "manual"
+  },
+  {
+    "text": "Seasonal forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Select and amend",
+    "tool": "manual"
+  },
+  {
+    "text": "Short-term forecasts and warnings",
+    "tool": "manual"
+  },
+  {
+    "text": "Step A",
+    "tool": "manual"
+  },
+  {
+    "text": "Step B",
+    "tool": "manual"
+  },
+  {
+    "text": "Step C",
+    "tool": "manual"
+  },
+  {
+    "text": "Step D",
+    "tool": "manual"
+  },
+  {
+    "text": "Step E",
+    "tool": "manual"
+  },
+  {
+    "text": "Step F",
+    "tool": "manual"
+  },
+  {
+    "text": "Step G",
+    "tool": "manual"
+  },
+  {
+    "text": "Step H",
+    "tool": "manual"
+  },
+  {
+    "text": "Step I",
+    "tool": "manual"
+  },
+  {
+    "text": "Step J",
+    "tool": "manual"
+  },
+  {
+    "text": "Step K",
+    "tool": "manual"
+  },
+  {
+    "text": "Step L",
+    "tool": "manual"
+  },
+  {
+    "text": "The farmer decides",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the options for the farmer?",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the probabilities and risks?",
+    "tool": "manual"
+  },
+  {
+    "text": "What does the farmer currently do?",
+    "tool": "manual"
+  },
+  {
     "text": "Forms",
     "tool": "monitoring"
+  },
+  {
+    "text": "*This field is required",
+    "tool": "option"
+  },
+  {
+    "text": "Activities",
+    "tool": "option"
   },
   {
     "text": "Add New Option",
@@ -838,6 +1288,10 @@
     "tool": "option"
   },
   {
+    "text": "Decisions",
+    "tool": "option"
+  },
+  {
     "text": "Enter the practice for this option",
     "tool": "option"
   },
@@ -850,15 +1304,7 @@
     "tool": "option"
   },
   {
-    "text": "Gender",
-    "tool": "option"
-  },
-  {
     "text": "High RF",
-    "tool": "option"
-  },
-  {
-    "text": "High(Rf)",
     "tool": "option"
   },
   {
@@ -874,19 +1320,11 @@
     "tool": "option"
   },
   {
-    "text": "Low(Rf)",
-    "tool": "option"
-  },
-  {
     "text": "Male",
     "tool": "option"
   },
   {
     "text": "Mid RF",
-    "tool": "option"
-  },
-  {
-    "text": "Mid(Rf)",
     "tool": "option"
   },
   {
@@ -930,11 +1368,15 @@
     "tool": "option"
   },
   {
-    "text": "Who does it",
+    "text": "Who does activity",
     "tool": "option"
   },
   {
-    "text": "Who does the practice",
+    "text": "Who does the activity",
+    "tool": "option"
+  },
+  {
+    "text": "Who makes decisions",
     "tool": "option"
   },
   {

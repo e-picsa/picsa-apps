@@ -1,80 +1,90 @@
-<!-- <div ngClass="table-filter">
-  <mat-form-field>
-    <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Search Crops" #input />
-  </mat-form-field>
-</div> -->
-<div ngClass="filter-icons">
-  <div (click)="filterbyImage('maize')"><mat-icon svgIcon="picsa_crop_maize"></mat-icon><div>Maize</div></div>
-  <div (click)="filterbyImage('peas')"><mat-icon svgIcon="picsa_crop_cow_peas"></mat-icon><div>cowpeas</div></div>
-  <div (click)="filterbyImage('beans')"><mat-icon svgIcon="picsa_crop_beans"></mat-icon><div>beans</div></div>
-  <div (click)="filterbyImage('soya')"><mat-icon svgIcon="picsa_crop_soya_beans"></mat-icon><div>soya-beans</div></div>
-  <div (click)="filterbyImage('sorghum')"><mat-icon svgIcon="picsa_crop_sorghum"></mat-icon><div>sorghum</div></div>
-  <div (click)="filterbyImage('sunflower')"><mat-icon svgIcon="picsa_crop_sun_flower"></mat-icon><div>sunflower</div></div>
-  <div (click)="filterbyImage('')">Reset</div>
-</div>
-<section ngClass="mat-mdc-table">
-  <picsa-crop-probability-table-header></picsa-crop-probability-table-header>
+<crop-probability-crop-select
+  [crops]="cropIcons"
+  selectDefault="maize"
+  [stationId]="station.id"
+  (cropSelected)="filterData($event)"
+  style="padding: 1rem"
+></crop-probability-crop-select>
+
+<section class="table-container mat-mdc-table">
+  <!-- Main table -->
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="crop" sticky>
-      <th mat-header-cell *matHeaderCellDef ngClass="title-cell fixed-width">Crop</th>
-      <td mat-cell *matCellDef="let element" ngClass="crop-title font-12">
-        {{ element.crop }}
+      <th mat-header-cell *matHeaderCellDef class="crop-title">{{ 'Crop' | translate }}</th>
+      <td mat-cell *matCellDef="let element" class="crop-title">
+        {{ element.crop | translate }}
       </td>
     </ng-container>
-
     <ng-container matColumnDef="variety">
-      <th mat-header-cell *matHeaderCellDef ngClass="title-cell fixed-width">Variety</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Variety' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        <div *ngFor="let item of element.data" ngClass="table-row">
-          <div ngClass="font-12">{{ item.variety }}</div>
-        </div>
+        {{ element.variety | translate }}
       </td>
     </ng-container>
-
     <ng-container matColumnDef="days">
-      <th mat-header-cell *matHeaderCellDef ngClass="title-cell fixed-width">Days to maturity</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Days to maturity' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        <div *ngFor="let item of element.data" ngClass="table-row">
-          <div ngClass="font-12">{{ item.days }}</div>
-        </div>
+        {{ element.days | translate }}
       </td>
     </ng-container>
-
     <ng-container matColumnDef="water">
-      <th mat-header-cell *matHeaderCellDef ngClass="title-cell fixed-width">Crop water requirement (mm)*</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Crop water requirement (mm)' | translate }}*</th>
       <td mat-cell *matCellDef="let element">
-        <div *ngFor="let item of element.data" ngClass="table-row">
-          <div *ngFor="let water of item.water" ngClass="font-12">
-            {{ water }}
-          </div>
-        </div>
+        <div *ngFor="let water of element.water">{{ water | translate }}</div>
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="probabilities">
-      <th mat-header-cell *matHeaderCellDef ngClass="title-cell">
-        Chance of receiving the water requirement in the days to maturity for this crop variety
+    <!-- Probability columns -->
+    <ng-container [matColumnDef]="column.name" *ngFor="let column of probabilityColumns">
+      <th mat-header-cell *matHeaderCellDef class="border-left border-top">
+        {{ column.label }}
       </th>
-      <td mat-cell *matCellDef="let element" ngClass="probability">
-        <div *ngFor="let item of element.data" ngClass="table-row prob-row-wrapper">
-          <span *ngFor="let probability of item.probabilities" ngClass="padded-span font-12">
-            {{ probability }}
-          </span>
+      <td *matCellDef="let element" class="border-left border-bottom">{{ element[column.name] }}</td>
+    </ng-container>
+
+    <!-- Use custom headers to display title and season start summary in top row -->
+    <!-- This allows for the floating probability section -->
+    <ng-container matColumnDef="title-column">
+      <th mat-header-cell *matHeaderCellDef [attr.colspan]="4">
+        <h2 style="flex: 1">{{ 'Crop Information' | translate }} - {{ station.station_name }}</h2>
+      </th>
+    </ng-container>
+    <ng-container matColumnDef="season-start-summary-column">
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0">
+        <table #startProbabilities style="table-layout: fixed" class="border-left">
+          <tr>
+            <td *ngFor="let column of probabilityColumns" class="border-bottom border-top border-right">
+              {{ column.label }}
+            </td>
+          </tr>
+        </table>
+        <div class="season-start-text border-left">
+          {{ 'Probability of season start on or before date' | translate }}
+        </div>
+
+        <table #startProbabilities style="table-layout: fixed" class="border-left">
+          <tr>
+            <td *ngFor="let probability of station.season_probabilities" class="border-bottom border-top border-right">
+              {{ probability }}
+            </td>
+          </tr>
+        </table>
+        <div class="season-start-text border-left border-top" style="margin-top: 2rem; margin-left: -1px">
+          {{
+            'Chance of receiving the water requirement in the
+          days to maturity for this crop variety'
+              | translate
+          }}
         </div>
       </td>
     </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['title-column', 'season-start-summary-column']"></tr>
 
+    <!-- Render main columns -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </section>
-<div ngClass="disclaimer">
-  <span
-    >*Note: Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met
-    Station</span
-  >
-</div>
-<div ngClass="disclaimer">
-  <span>**Data from 140 days maturity is used, as there was no data above 140 days</span>
+<div class="disclaimer">
+  <div *ngFor="let note of station.notes">{{ note | translate }}</div>
 </div>

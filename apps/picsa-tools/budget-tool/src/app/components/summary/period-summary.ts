@@ -1,48 +1,28 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { IBudgetPeriodType } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
-import { BUDGET_PERIOD_ROWS } from '../../store/templates';
+import { BUDGET_PERIOD_ROWS, IBudgetPeriodRow } from '../../store/templates';
 
 @Component({
   selector: 'budget-period-summary',
   templateUrl: './period-summary.html',
   styleUrls: ['./period-summary.scss'],
 })
-export class BudgetPeriodSummaryComponent implements OnInit {
+export class BudgetPeriodSummaryComponent {
   @Input() periodIndex: number;
-  periodLabels: string[] = [];
-  rows: IBudgetRow[] = Object.keys(BUDGET_PERIOD_ROWS).map((key) => {
-    const label = BUDGET_PERIOD_ROWS[key];
-    return {
-      key: key as IBudgetPeriodType,
-      label,
-    };
-  });
+  rows = BUDGET_PERIOD_ROWS;
 
   constructor(public store: BudgetStore, private router: Router, private route: ActivatedRoute) {}
-  ngOnInit(): void {
-    this.periodLabels = this.store.budgetPeriodLabels;
-  }
 
-  onCellClick(row: IBudgetRow) {
+  onCellClick(row: IBudgetPeriodRow) {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        type: row.key,
+        type: row.type,
       },
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
   }
-}
-
-/********************************************************************************
- *      Interfaces and constants
- *******************************************************************************/
-
-interface IBudgetRow {
-  key: IBudgetPeriodType;
-  label: string;
 }

@@ -1,11 +1,12 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { CHART_TYPES } from '@picsa/climate/src/app/data';
+import DEFAULT_DEFINITIONS from '@picsa/climate/src/app/data/definitions/default';
 
 import type { ITranslationEntry } from '../types';
 
 const entries: ITranslationEntry[] = [];
+const definitions = Object.values(DEFAULT_DEFINITIONS());
 
-for (const el of CHART_TYPES) {
+for (const el of definitions) {
   entries.push({ text: el.name, tool: 'climate', context: 'chart' });
   entries.push({ text: el.shortname, tool: 'climate', context: 'chart' });
   entries.push({ text: el.yLabel, tool: 'climate', context: 'chart' });

@@ -90,15 +90,19 @@ function generateAppLanguageAssets() {
     const translations = readJsonSync(filePath);
     // Populate case-insensitive translations to case-sensitive source entries
     for (const { text } of entries) {
-      if (text in translations) {
+      const translation = translations[text];
+      if (translation) {
         translated[text] = translations[text];
       } else {
+        // use marker to show non-translated version fallback
+        translated[text] = `•${text}•`;
         untranslated[text] = '';
       }
     }
     const outputTarget = resolve(GENERATED_ASSETS_DIR, `${code}.json`);
     const outputTranslations = {
-      ...sortJsonByKey(untranslated),
+      // Omit missing translations
+      // ...sortJsonByKey(untranslated),
       ...sortJsonByKey(translated),
     };
     writeFileSync(outputTarget, JSON.stringify(outputTranslations, null, 2));

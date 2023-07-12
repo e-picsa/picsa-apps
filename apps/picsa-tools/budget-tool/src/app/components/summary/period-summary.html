@@ -3,7 +3,7 @@
     <div *ngFor="let row of rows">
       <div style="display: flex">
         <div style="width: 150px">{{ row.label }}</div>
-        <budget-cell [periodIndex]="periodIndex" [type]="row.key" (click)="onCellClick(row)"></budget-cell>
+        <budget-cell [periodIndex]="periodIndex" [type]="row.type" (click)="onCellClick(row)"></budget-cell>
       </div>
       <hr />
     </div>
@@ -13,7 +13,7 @@
   <div class="cell summary-container">
     <div *ngIf="store.balance && store.balance[periodIndex]" class="balance-cell-contents">
       <div class="balance-value-container">
-        <div class="balance-label">{{ periodLabels[periodIndex] | translate }}</div>
+        <div class="balance-label">{{ store.periodLabels[periodIndex] | translate }}</div>
         <div class="balance-value">{{ store.balance[periodIndex].period | number: '.0' }}</div>
       </div>
       <hr />

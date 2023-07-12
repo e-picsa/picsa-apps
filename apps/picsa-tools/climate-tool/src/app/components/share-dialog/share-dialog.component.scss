@@ -17,3 +17,7 @@ img[data-disabled] {
   grid-template-columns: 1fr 1fr;
   width: 280px;
 }
+// remove default 36px height restriction
+button.share-button {
+  height: auto !important;
+}

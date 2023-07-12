@@ -1,13 +1,10 @@
 import { ComponentType } from '@angular/cdk/portal';
 import { TemplateRef } from '@angular/core';
 import { MatDialogConfig } from '@angular/material/dialog';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IPicsaDialogConfig,IPicsaDialogData } from '../dialog.models';
-import {
-  PicsaActionDialog,
-  PicsaDialogComponent,
-  PicsaSelectDialog,
-} from './dialog';
+import { IPicsaDialogConfig, IPicsaDialogData } from '../dialog.models';
+import { PicsaActionDialog, PicsaDialogComponent, PicsaSelectDialog } from './dialog';
 
 // defaults are applied to all unless overwritten
 const PICSA_DIALOG_DEFAULTS: MatDialogConfig = {
@@ -37,14 +34,14 @@ const CUSTOM_TEMPLATES: { [key in ICustomTemplate]: CustomTemplateFields } = {
   delete: {
     component: PicsaActionDialog,
     data: {
-      title: 'Are you sure you want to delete?',
+      title: translateMarker('Are you sure you want to delete?'),
       buttons: [
         {
-          text: 'Cancel',
+          text: translateMarker('Cancel'),
           value: false,
         },
         {
-          text: 'Delete',
+          text: translateMarker('Delete'),
           value: true,
           focus: true,
         },
