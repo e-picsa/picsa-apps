@@ -64,8 +64,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
   private loadForm(id: string) {
     const loadedForm = this.monitoringService.getForm(id);
     if (loadedForm) {
-      this.formHtml = loadedForm.form;
-      this.formXml = loadedForm.model;
+      const { form, model } = loadedForm.enketoDefinition;
+      this.formHtml = form;
+      this.formXml = model;
       this.showForm = true;
     }
   }

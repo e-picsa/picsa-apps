@@ -6,8 +6,9 @@ import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
 
 import { Components } from '@picsa/webcomponents';
 
+
 @ProxyCmp({
-  inputs: ['form', 'model'],
+  inputs: ['form', 'model']
 })
 @Component({
   selector: 'enketo-webform',
@@ -25,10 +26,14 @@ export class EnketoWebform {
   }
 }
 
+
 import type { IEventFormSaved as IEnketoWebformIEventFormSaved } from '@picsa/webcomponents';
 
 export declare interface EnketoWebform extends Components.EnketoWebform {
+
   dataUpdated: EventEmitter<CustomEvent<{ formXML: string; nodes: string[] }>>;
 
   formSaved: EventEmitter<CustomEvent<IEnketoWebformIEventFormSaved>>;
 }
+
+
