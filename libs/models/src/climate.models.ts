@@ -52,14 +52,40 @@ export interface IChartMeta {
   yLabel: string;
   xVar: keyof IStationData;
   xLabel: string;
-  tools: { line: boolean };
+  tools: { line: ILineToolOptions; probabliity: IProbabilityToolOptions };
   units: string;
   definition: string;
   xMinor: number;
   xMajor: number;
   yMinor: number;
   yMajor: number;
-  linetool?: {
-    reverse?: boolean;
+}
+
+/*************************************************************************
+ *                            Tools
+ ************************************************************************/
+export interface ILineToolOptions {
+  /** Specify if tool should be available */
+  enabled: boolean;
+  /** Display config for points above line */
+  above: {
+    color: string;
+  };
+  /** Display config for points below line */
+  below: {
+    color: string;
+  };
+}
+export interface IProbabilityToolOptions {
+  enabled: boolean;
+  above: {
+    label: string;
+    color: string;
+    show: boolean;
+  };
+  below: {
+    label: string;
+    color: string;
+    show: boolean;
   };
 }
