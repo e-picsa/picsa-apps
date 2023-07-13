@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IEventFormSaved } from "./components/enketo-webform/enketo-webform";
-export { IEventFormSaved } from "./components/enketo-webform/enketo-webform";
+import { IEventDataUpdated, IEventFormSaved } from "./components/enketo-webform/enketo-webform";
+export { IEventDataUpdated, IEventFormSaved } from "./components/enketo-webform/enketo-webform";
 export namespace Components {
     interface EnketoWebform {
         /**
@@ -44,7 +44,7 @@ declare namespace LocalJSX {
           * XML form model, as processed by an Enketo Transformer
          */
         "model": string;
-        "onDataUpdated"?: (event: EnketoWebformCustomEvent<{ formXML: string; nodes: string[] }>) => void;
+        "onDataUpdated"?: (event: EnketoWebformCustomEvent<IEventDataUpdated>) => void;
         "onFormSaved"?: (event: EnketoWebformCustomEvent<IEventFormSaved>) => void;
     }
     interface IntrinsicElements {

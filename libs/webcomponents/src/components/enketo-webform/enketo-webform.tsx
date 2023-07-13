@@ -20,6 +20,13 @@ export interface IEventFormSaved {
   entry: IFormEntry;
 }
 
+export interface IEventDataUpdated {
+  /** Full submission sml */
+  xml: string;
+  /** List of nodes updated */
+  nodes: string[];
+}
+
 @Component({
   tag: 'enketo-webform',
   styleUrl: 'enketo-webform.scss',
@@ -49,7 +56,7 @@ export class EnketoWebform {
   /** XML form model, as processed by an Enketo Transformer */
   @Prop() model!: string;
 
-  @Event() dataUpdated: EventEmitter<{ formXML: string; nodes: string[] }>;
+  @Event() dataUpdated: EventEmitter<IEventDataUpdated>;
 
   @Event() formSaved: EventEmitter<IEventFormSaved>;
 
@@ -120,7 +127,7 @@ export class EnketoWebform {
     //   const val = modelNode.getVal();
     // }
 
-    this.dataUpdated.emit({ formXML: this.xmlFormValue, nodes });
+    this.dataUpdated.emit({ xml: this.xmlFormValue, nodes });
   }
 
   private handleEventXmlFormChange(e: ReturnType<typeof Events.XFormsValueChanged>) {

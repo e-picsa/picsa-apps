@@ -10,6 +10,10 @@ const routes: Route[] = [
     path: ':formId',
     component: FormViewComponent,
   },
+  {
+    path: ':formId/:submissionId',
+    component: FormViewComponent,
+  },
 ];
 
 @NgModule({

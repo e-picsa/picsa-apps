@@ -15,7 +15,6 @@ export interface IEnketoFormDefinition {
   /** Form theme - NOTE - currently only grid theme imported */
   theme: 'grid';
 }
-export interface IPicsaForm extends IEnketoFormDefinition {}
 
 /**
  * DB forms include basic metadata on

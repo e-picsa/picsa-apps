@@ -44,10 +44,10 @@ Cannot integrate nxext stencil test as does not (currently) support jest 28
 
 ## Events
 
-| Event         | Description | Type                                                 |
-| ------------- | ----------- | ---------------------------------------------------- |
-| `dataUpdated` |             | `CustomEvent<{ formXML: string; nodes: string[]; }>` |
-| `formSaved`   |             | `CustomEvent<IEventFormSaved>`                       |
+| Event         | Description | Type                             |
+| ------------- | ----------- | -------------------------------- |
+| `dataUpdated` |             | `CustomEvent<IEventDataUpdated>` |
+| `formSaved`   |             | `CustomEvent<IEventFormSaved>`   |
 
 ---
 

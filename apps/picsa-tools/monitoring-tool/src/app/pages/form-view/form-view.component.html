@@ -1,5 +1,6 @@
 <div class="page-content">
-  <ng-container *ngIf="showForm">
+  <monitoring-response-list *ngIf="formId" [formId]="formId" [submissions]="submissions"></monitoring-response-list>
+  <ng-container *ngIf="submissionId && formHtml && formXml">
     <enketo-webform
       [form]="formHtml"
       [model]="formXml"

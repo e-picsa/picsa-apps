@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
-import { arrayToHashmap } from '@picsa/utils';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { COLLECTION, IMonitoringForm } from '../schema/forms';
+import * as FormSchema from '../schema/forms';
 import { RxCollection } from 'rxdb';
+import * as SubmissionSchema from '../schema/submissions';
 
 @Injectable({ providedIn: 'root' })
 export class MonitoringToolService extends PicsaAsyncService {
-  public forms = HARDCODED_FORMS;
-  private formsById = arrayToHashmap(HARDCODED_FORMS, '_id');
-
   constructor(private dbService: PicsaDatabase_V2_Service) {
     super();
   }
@@ -22,23 +19,43 @@ export class MonitoringToolService extends PicsaAsyncService {
    */
   public override async init() {
     await this.dbService.ensureCollections({
-      monitoring_tool_forms: COLLECTION,
+      monitoring_tool_forms: FormSchema.COLLECTION,
+      monitoring_tool_submissions: SubmissionSchema.COLLECTION,
     });
     await this.dbFormCollection.bulkUpsert(HARDCODED_FORMS);
-    console.log('forms upserted');
   }
 
   /** Provide database options tool collection (with typings) */
   public get dbFormCollection() {
-    return this.dbService.db.collections['monitoring_tool_forms'] as RxCollection<IMonitoringForm>;
+    return this.dbService.db.collections['monitoring_tool_forms'] as RxCollection<FormSchema.IMonitoringForm>;
   }
 
-  public getForm(formId: string, entry?: string) {
-    const form = this.formsById[formId];
-    if (!form) {
+  /** Provide database options tool collection (with typings) */
+  public get dbSubmissionsCollection() {
+    return this.dbService.db.collections[
+      'monitoring_tool_submissions'
+    ] as RxCollection<SubmissionSchema.IFormSubmission>;
+  }
+
+  public async getSubmissions(formId: string) {
+    return this.dbSubmissionsCollection.find({ selector: { formId } });
+  }
+
+  public async createNewSubmission(formId: string) {
+    const template = SubmissionSchema.ENTRY_TEMPLATE(formId);
+    console.log({ formId, template });
+    // template.formId = formId;
+    await this.dbSubmissionsCollection.insert(template);
+    return template;
+  }
+
+  public async getForm(formId: string, entry?: string) {
+    const doc = await this.dbFormCollection.findOne(formId).exec();
+    if (!doc) {
       console.error('could not find form with id', formId);
       return undefined;
     }
-    return form;
+
+    return doc._data;
   }
 }

@@ -27,11 +27,12 @@ export class EnketoWebform {
 }
 
 
+import type { IEventDataUpdated as IEnketoWebformIEventDataUpdated } from '@picsa/webcomponents';
 import type { IEventFormSaved as IEnketoWebformIEventFormSaved } from '@picsa/webcomponents';
 
 export declare interface EnketoWebform extends Components.EnketoWebform {
 
-  dataUpdated: EventEmitter<CustomEvent<{ formXML: string; nodes: string[] }>>;
+  dataUpdated: EventEmitter<CustomEvent<IEnketoWebformIEventDataUpdated>>;
 
   formSaved: EventEmitter<CustomEvent<IEnketoWebformIEventFormSaved>>;
 }
