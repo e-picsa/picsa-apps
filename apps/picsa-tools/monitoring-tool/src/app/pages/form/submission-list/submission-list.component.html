@@ -1,0 +1,12 @@
+<div class="page-content">
+  <div class="header-container">
+    <h2 style="flex: 1">{{ 'Submissions' | translate }}</h2>
+    <button class="create-button" mat-stroked-button color="primary" (click)="createNewSubmission()">
+      <mat-icon>add</mat-icon>
+      <span>{{ 'Create New' | translate }}</span>
+    </button>
+  </div>
+  <div *ngFor="let submission of submissions">
+    {{ submission._id }}
+  </div>
+</div>

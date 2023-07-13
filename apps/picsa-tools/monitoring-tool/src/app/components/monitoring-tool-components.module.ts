@@ -7,9 +7,8 @@ import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 
 import { FormItemComponent } from './form-item/form-item.component';
 import { MonitoringMaterialModule } from './material.module';
-import { ResponseListComponent } from './response-list/response-list.component';
 
-const Components = [FormItemComponent, ResponseListComponent];
+const Components = [FormItemComponent];
 
 @NgModule({
   imports: [

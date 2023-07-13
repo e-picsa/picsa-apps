@@ -58,4 +58,7 @@ export class MonitoringToolService extends PicsaAsyncService {
 
     return doc._data;
   }
+  public async getFormSubmissions(formId: string) {
+    return this.dbService.activeUserQuery(this.dbSubmissionsCollection, { formId }).exec();
+  }
 }

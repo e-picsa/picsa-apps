@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
@@ -58,15 +58,15 @@ export class PicsaDatabase_V2_Service {
    * In case no active profile loaded will return all data
    * NOTE - the collection must be marked with `isUserCollection: true` to work
    * */
-  public activeUserQuery<T>(collection: RxCollection<T>) {
+  public activeUserQuery<T>(collection: RxCollection<T>, query: MangoQuerySelector<T> = {}) {
     // Only filter when multiple user profiles exist so that any disassociated data
     // still displays for single user case after delete
     if (Object.keys(this.userService.allUsersHashmap).length > 1) {
       const _app_user_id = this.userService.activeUser$.value._id;
       // TODO - handle live switch in case user id changes
-      return collection.find({ selector: { _app_user_id } as any });
+      return collection.find({ selector: { _app_user_id, ...query } as any });
     } else {
-      return collection.find();
+      return collection.find({ selector: query });
     }
   }
 
