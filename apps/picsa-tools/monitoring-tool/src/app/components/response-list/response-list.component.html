@@ -1,5 +1,5 @@
 <h2>Submissions</h2>
 <button mat-button (click)="createNewSubmission()">Create New</button>
 <div *ngFor="let submission of submissions">
-  {{ submission | json }}
+  {{ submission._id }}
 </div>

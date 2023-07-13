@@ -1290,7 +1290,7 @@ class Form {
    * @return {boolean} whether target found
    */
   public goToTarget = function (target: HTMLElement) {
-    console.trace('scroll to target', target);
+    // console.trace('scroll to target', target);
     if (target) {
       if (this.pages.active) {
         // Flip to page
