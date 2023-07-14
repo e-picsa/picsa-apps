@@ -1,4 +1,4 @@
-import { IEnketoFormDefinition } from '@picsa/monitoring/src/app/schema/forms/schema_v1';
+import { IEnketoFormDefinition } from '../../src/app/schema';
 
 const form: IEnketoFormDefinition = {
   enketoId: 'poiB',

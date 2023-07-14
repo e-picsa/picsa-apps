@@ -98,8 +98,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
    * TODO - add tests
    */
   private async finaliseForm(action?: 'UPDATE' | 'DELETE' | 'IGNORE') {
-    let afterJson = this.getFormEntryJson(this.formEntry?.xml);
-
+    const afterJson = this.getFormEntryJson(this.formEntry?.xml);
     // Determine action to automatically take if exit unexpectedly
     if (!action) {
       const { enketoEntry, json: beforeJson } = this.formInitial.submission;
@@ -155,7 +154,8 @@ export class FormViewComponent implements OnInit, OnDestroy {
   private async loadFormSubmission(id: string, submission: IFormSubmission) {
     const formMeta = await this.monitoringService.getForm(id);
     if (formMeta) {
-      let { form, model } = formMeta.enketoDefinition;
+      let { model } = formMeta.enketoDefinition;
+      const { form } = formMeta.enketoDefinition;
       // replace the xml <instance>...</instance> content with the submission xml to load values
       if (submission.enketoEntry?.xml) {
         model = xmlNodeReplaceContent({ xml: model, tagname: 'instance', content: submission.enketoEntry.xml });

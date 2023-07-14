@@ -1,4 +1,4 @@
-import { IMonitoringForm } from '@picsa/monitoring/src/app/schema/forms';
+import { IMonitoringForm } from '../../src/app/schema/forms';
 
 import ewMonitoringForm from './ew-monitoring.form';
 import demoKitchenForm from './demo-kitchen.form';
