@@ -34,3 +34,37 @@ export function xmlStringToFile(xmlString: string) {
   }
   throw new Error('File api not supported in this environment');
 }
+
+/**
+ * Replace content of a given xml tag (first instance only)
+ * TODO - add tests
+ *
+ * @param xml string representation of xml
+ * @param tagname node selector to query within xml
+ * @param content content to replace
+ *
+ * @example
+ * ```
+ * xmlNodeReplaceContent({
+ * xml: '<model><instance><old_data>...<old_data></instance></model>'
+ * tagName: "instance",
+ * content: "<new_data>...</new_data>"
+ * })
+ * // Returns
+ * // "<model><instance><new_data>...<new_data></instance></model>"
+ * ```
+ * https://www.w3schools.com/xml/dom_nodes_replace.asp
+ */
+export function xmlNodeReplaceContent(options: { xml: string; tagname: string; content: string }) {
+  const { xml, tagname, content } = options;
+  const xmlDoc = parseXmlString(xml);
+  const targetEl = xmlDoc.getElementsByTagName(tagname)[0];
+  targetEl.innerHTML = content;
+  const replacedXmlString = xmlDoc.firstElementChild!.outerHTML.toString();
+  return replacedXmlString;
+}
+
+/** Convert an xml string to an xml document */
+function parseXmlString(xmlString: string) {
+  return new DOMParser().parseFromString(xmlString, 'application/xml');
+}

@@ -1,0 +1,11 @@
+<div class="page-content">
+  <ng-container *ngIf="formInitial">
+    <enketo-webform
+      [form]="formInitial.form"
+      [model]="formInitial.model"
+      (dataUpdated)="handleAutosave($event)"
+      (formSaved)="handleSave($event)"
+    ></enketo-webform>
+    <button mat-stroked-button color="primary">Submit</button>
+  </ng-container>
+</div>
