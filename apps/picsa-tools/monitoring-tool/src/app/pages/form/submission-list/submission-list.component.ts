@@ -37,7 +37,6 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
         await this.loadSubmissions(formId);
       }
     }
-    console.log({ form: this.form, submissions: this.submissionData.data });
   }
 
   async ngOnDestroy() {
