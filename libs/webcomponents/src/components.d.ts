@@ -17,6 +17,7 @@ export namespace Components {
           * XML form model, as processed by an Enketo Transformer
          */
         "model": string;
+        "showButtons": boolean;
     }
 }
 export interface EnketoWebformCustomEvent<T> extends CustomEvent<T> {
@@ -46,6 +47,7 @@ declare namespace LocalJSX {
         "model": string;
         "onDataUpdated"?: (event: EnketoWebformCustomEvent<IEventDataUpdated>) => void;
         "onFormSaved"?: (event: EnketoWebformCustomEvent<IEventFormSaved>) => void;
+        "showButtons"?: boolean;
     }
     interface IntrinsicElements {
         "enketo-webform": EnketoWebform;

@@ -37,10 +37,11 @@ Cannot integrate nxext stencil test as does not (currently) support jest 28
 
 ## Properties
 
-| Property             | Attribute | Description                                           | Type     | Default     |
-| -------------------- | --------- | ----------------------------------------------------- | -------- | ----------- |
-| `form` _(required)_  | `form`    | HTML form template                                    | `string` | `undefined` |
-| `model` _(required)_ | `model`   | XML form model, as processed by an Enketo Transformer | `string` | `undefined` |
+| Property             | Attribute      | Description                                           | Type      | Default     |
+| -------------------- | -------------- | ----------------------------------------------------- | --------- | ----------- |
+| `form` _(required)_  | `form`         | HTML form template                                    | `string`  | `undefined` |
+| `model` _(required)_ | `model`        | XML form model, as processed by an Enketo Transformer | `string`  | `undefined` |
+| `showButtons`        | `show-buttons` |                                                       | `boolean` | `true`      |
 
 ## Events
 

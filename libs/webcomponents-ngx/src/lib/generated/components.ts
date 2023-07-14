@@ -8,14 +8,14 @@ import { Components } from '@picsa/webcomponents';
 
 
 @ProxyCmp({
-  inputs: ['form', 'model']
+  inputs: ['form', 'model', 'showButtons']
 })
 @Component({
   selector: 'enketo-webform',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
-  inputs: ['form', 'model'],
+  inputs: ['form', 'model', 'showButtons'],
 })
 export class EnketoWebform {
   protected el: HTMLElement;

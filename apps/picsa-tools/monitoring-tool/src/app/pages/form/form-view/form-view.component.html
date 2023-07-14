@@ -5,7 +5,15 @@
       [model]="formInitial.model"
       (dataUpdated)="handleAutosave($event)"
       (formSaved)="handleSave($event)"
+      [showButtons]="false"
     ></enketo-webform>
-    <button mat-stroked-button color="primary">Submit</button>
+    <div style="display: flex">
+      <button mat-button style="margin-right: 1rem" (click)="promptDelete()">
+        <mat-icon>delete</mat-icon>{{ 'Delete' | translate }}
+      </button>
+      <button mat-raised-button color="primary" style="flex: 1" [disabled]="!formEntry" (click)="handleCustomSave()">
+        {{ 'Submit' | translate }}
+      </button>
+    </div>
   </ng-container>
 </div>

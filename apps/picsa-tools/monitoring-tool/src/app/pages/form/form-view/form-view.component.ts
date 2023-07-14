@@ -11,6 +11,7 @@ import { IFormSubmission } from '../../../schema/submissions';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
 import { RxDocument } from 'rxdb';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaDialogService } from '@picsa/shared/features';
 
 @Component({
   selector: 'monitoring-form-view',
@@ -27,24 +28,28 @@ export class FormViewComponent implements OnInit, OnDestroy {
     submission: IFormSubmission;
   };
 
-  private formId: string;
-
   /** Form entry data from enketo form */
-  private formEntry?: IEnketoFormEntry;
+  public formEntry?: IEnketoFormEntry;
+  private formId: string;
+  /** Track if form has already had finalisation action (e.g. update/delete) */
+  private formFinalised = false;
 
   /** DB doc linked to current submission entry */
   private submissionDoc: RxDocument<IFormSubmission>;
-
   private componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
     private monitoringService: MonitoringToolService,
-    private componentService: PicsaCommonComponentsService
+    private componentService: PicsaCommonComponentsService,
+    private dialogService: PicsaDialogService
   ) {}
 
   async ngOnDestroy() {
-    await this.finaliseForm();
+    // Check whether outstanding data requires saving/deleting
+    if (!this.formFinalised) {
+      await this.finaliseForm();
+    }
     this.componentDestroyed$.next(true);
   }
 
@@ -53,10 +58,21 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.subscribeToRouteChanges();
   }
 
+  /** Handle save event triggered from enketo form */
   public async handleSave(e: Event) {
     const entry: IEnketoFormEntry = (e as any).detail.entry;
     this.formEntry = entry;
+    await this.finaliseForm('UPDATE');
     this.componentService.back();
+  }
+
+  /** Handle save event triggered from button */
+  public async handleCustomSave() {
+    if (this.formEntry) {
+      this.formEntry.draft = false;
+      await this.finaliseForm('UPDATE');
+      this.componentService.back();
+    }
   }
 
   /** When autosave triggered store value in memory (write on destroy) */
@@ -65,19 +81,34 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.formEntry = entry;
   }
 
+  public async promptDelete() {
+    const dialog = await this.dialogService.open('delete');
+    dialog.afterClosed().subscribe(async (shouldDelete) => {
+      if (shouldDelete) {
+        await this.finaliseForm('DELETE');
+        this.componentService.back();
+      }
+    });
+
+    // TODO - Delete from server (?)
+  }
+
   /**
    *
    * TODO - add tests
    */
-  private async finaliseForm() {
-    const { enketoEntry, json: beforeJson } = this.formInitial.submission;
-    const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
-
+  private async finaliseForm(action?: 'UPDATE' | 'DELETE' | 'IGNORE') {
     let afterJson = this.getFormEntryJson(this.formEntry?.xml);
-    const after = { json: afterJson, xml: this.formEntry?.xml || '' };
 
-    const action = this.determineFinaliseAction({ before, after });
-
+    // Determine action to automatically take if exit unexpectedly
+    if (!action) {
+      const { enketoEntry, json: beforeJson } = this.formInitial.submission;
+      const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
+      const after = { json: afterJson, xml: this.formEntry?.xml || '' };
+      action = this.determineFinaliseAction({ before, after });
+    }
+    this.formFinalised = true;
+    console.log('[FORM]', action);
     if (action === 'DELETE') return this.submissionDoc.remove();
     if (action === 'UPDATE') {
       const patch: Partial<IFormSubmission> = {

@@ -56,6 +56,8 @@ export class EnketoWebform {
   /** XML form model, as processed by an Enketo Transformer */
   @Prop() model!: string;
 
+  @Prop() showButtons = true;
+
   @Event() dataUpdated: EventEmitter<IEventDataUpdated>;
 
   @Event() formSaved: EventEmitter<IEventFormSaved>;
@@ -74,17 +76,19 @@ export class EnketoWebform {
         <this.EnketoLogo />
         <div ref={(el) => (this.formContainerEl = el as HTMLDivElement)} />
         {/* TODO - keep buttons visible */}
-        <section id="form-footer">
-          <button class="btn btn-default" id="save-draft" onClick={() => this.save({ draft: true })}>
-            <i class="icon icon-pencil"> </i>
-            <span data-i18n="formfooter.savedraft.btn">Save Draft</span>
-          </button>
-          <button class="btn btn-primary" id="submit-form" onClick={() => this.save()}>
-            <i class="icon icon-check">✔️</i>
-            <span data-i18n="formfooter.submit.btn">Submit</span>
-          </button>
-          {/* TODO - add next/prev page button and bindings (remove custom css to display all) */}
-        </section>
+        {this.showButtons && (
+          <section id="form-footer">
+            <button class="btn btn-default" id="save-draft" onClick={() => this.save({ draft: true })}>
+              <i class="icon icon-pencil"> </i>
+              <span data-i18n="formfooter.savedraft.btn">Save Draft</span>
+            </button>
+            <button class="btn btn-primary" id="submit-form" onClick={() => this.save()}>
+              <i class="icon icon-check">✔️</i>
+              <span data-i18n="formfooter.submit.btn">Submit</span>
+            </button>
+            {/* TODO - add next/prev page button and bindings (remove custom css to display all) */}
+          </section>
+        )}
       </Fragment>
     );
   }
@@ -103,6 +107,7 @@ export class EnketoWebform {
       // TODO - merge with previous values
       created: 1683981755251,
       draft,
+      // TODO - need to populate correct id
       enketoId: 'PGpldp9m',
       files: [],
       instanceId: '__autoSave_PGpldp9m',
