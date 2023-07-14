@@ -4,7 +4,7 @@ import Events from './libs/enketo/js/event';
 import { Form } from './libs/enketo/js/form';
 
 // NOTE - this is manually exported from parent index as not inferred correctly from generated
-export interface IFormEntry {
+export interface IEnketoFormEntry {
   created: number;
   draft: boolean;
   enketoId: string;
@@ -17,7 +17,7 @@ export interface IFormEntry {
 }
 
 export interface IEventFormSaved {
-  entry: IFormEntry;
+  entry: IEnketoFormEntry;
 }
 
 export interface IEventDataUpdated {
@@ -99,7 +99,7 @@ export class EnketoWebform {
   private save(opts = { draft: false }) {
     const { draft } = opts;
     // TODO - format like
-    const entry: IFormEntry = {
+    const entry: IEnketoFormEntry = {
       // TODO - merge with previous values
       created: 1683981755251,
       draft,

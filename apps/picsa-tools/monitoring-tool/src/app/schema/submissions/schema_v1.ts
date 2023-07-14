@@ -1,18 +1,19 @@
 import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { RxJsonSchema } from 'rxdb';
+import { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 
 /**
  * DB forms include basic metadata on
  * */
 export interface IFormSubmission_v1 {
   _id: string;
+  _created: string;
+  _modified: string;
   /** form id used to link submission to form */
   formId: string;
-  /** specify if draft submission */
-  draft?: boolean;
   /** xml submission string */
-  xml: string;
+  enketoEntry?: IEnketoFormEntry;
   /** converted json representation of xml submission */
   json: Record<string, any>;
 }
@@ -28,17 +29,21 @@ export const SCHEMA_V1: RxJsonSchema<IFormSubmission_v1> = {
     _id: {
       type: 'string',
     },
-    formId: {
+    // TODO - should ideally track automatically with db utility methods
+    _created: {
       type: 'string',
     },
-    draft: {
-      type: 'boolean',
+    _modified: {
+      type: 'string',
+    },
+    formId: {
+      type: 'string',
     },
     json: {
       type: 'object',
     },
-    xml: {
-      type: 'string',
+    enketoEntry: {
+      type: 'object',
     },
   },
 };
@@ -51,8 +56,8 @@ export const COLLECTION_V1: IPicsaCollectionCreator<IFormSubmission_v1> = {
 // Use a function to generate templates to ensure new object instantiated with id
 export const ENTRY_TEMPLATE_V1 = (formId: string): IFormSubmission_v1 => ({
   _id: generateID(),
+  _created: new Date().toISOString(),
+  _modified: new Date().toISOString(),
   formId,
-  draft: true,
-  xml: '',
   json: {},
 });

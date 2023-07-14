@@ -26,6 +26,8 @@ export interface IMonitoringForm_v1 {
   /** List of app configuration countries where resource shown (default all) */
   appCountries?: string[];
   enketoDefinition: IEnketoFormDefinition;
+  /** List of fields to display in table summary */
+  summaryFields: { label: string; field: string }[];
 }
 
 export const SCHEMA_V1: RxJsonSchema<IMonitoringForm_v1> = {
@@ -49,6 +51,9 @@ export const SCHEMA_V1: RxJsonSchema<IMonitoringForm_v1> = {
     },
     enketoDefinition: {
       type: 'object',
+    },
+    summaryFields: {
+      type: 'array',
     },
   },
 };

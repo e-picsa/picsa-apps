@@ -9,6 +9,12 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     title: 'Extension Worker Monitoring',
     description: '',
     enketoDefinition: ewMonitoringForm,
+    summaryFields: [
+      { field: 'Date', label: 'Date' },
+      { field: 'Location', label: 'Location' },
+      { field: 'Number_of_female_farmers_present', label: 'Female Farmers' },
+      { field: 'Number_of_male_farmers_present', label: 'Male Farmers' },
+    ],
   },
 
   {
@@ -17,5 +23,6 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     description: '',
     appCountries: ['global'],
     enketoDefinition: demoKitchenForm,
+    summaryFields: [{ field: '_id', label: 'ID' }],
   },
 ];
