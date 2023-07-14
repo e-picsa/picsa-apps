@@ -1,99 +1,101 @@
-* {
+enketo-webform {
+  * {
     @include box-sizing(border-box);
-}
+  }
 
-*:before,
-*:after {
+  *:before,
+  *:after {
     @include box-sizing(border-box);
-}
+  }
 
-html {
+  html {
     font-size: 62.5%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
+  }
 
-body {
+  body {
     @include font-normal;
 
     font-size: $font-size-base;
     line-height: $line-height-base;
     color: $text-color;
     background-color: $body-bg;
-}
+  }
 
-input,
-button,
-select,
-textarea {
+  input,
+  button,
+  select,
+  textarea {
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-}
+  }
 
-a {
+  a {
     color: $link-color;
 
     &:hover,
     &:focus {
-        color: $link-hover-color;
+      color: $link-hover-color;
     }
 
     &:focus {
-        @include tab-focus;
+      @include tab-focus;
     }
-}
+  }
 
-figure {
+  figure {
     margin: 0;
-}
+  }
 
-img {
+  img {
     vertical-align: middle;
-}
+  }
 
-hr {
+  hr {
     margin-top: $line-height-computed;
     margin-bottom: $line-height-computed;
     border: 0;
     border-top: 1px solid $hr-border;
-}
+  }
 
-strong {
+  strong {
     font-weight: bold;
-}
+  }
 
-h1 {
+  h1 {
     font-size: $font-size-base * 2.75;
-}
+  }
 
-h2 {
+  h2 {
     font-size: $font-size-base * 2.25;
-}
+  }
 
-h3 {
+  h3 {
     font-size: $font-size-base * 1.75;
-}
+  }
 
-h4 {
+  h4 {
     font-size: $font-size-base * 1.25;
-}
+  }
 
-h5 {
+  h5 {
     font-size: $font-size-base;
-}
+  }
 
-h6 {
+  h6 {
     font-size: $font-size-base * 0.85;
-}
+  }
 
-h2,
-h3,
-h4 {
+  h2,
+  h3,
+  h4 {
     font-weight: bold;
-}
+  }
 
-input,
-select,
-textarea {
+  input,
+  select,
+  textarea {
     font-weight: normal;
+  }
 }

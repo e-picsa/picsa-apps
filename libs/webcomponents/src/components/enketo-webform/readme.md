@@ -14,7 +14,7 @@ In addition it allows for various size optimisations
 Core modifications
 
 - Rewrite JS to TS, attempt method migration
--
+- Adjust grid theme to nest inside enketo-webform selector (avoid knock-ons for head/body sizing)
 
 Additional optimisations
 
