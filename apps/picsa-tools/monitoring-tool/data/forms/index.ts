@@ -10,10 +10,10 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     description: '',
     enketoDefinition: ewMonitoringForm,
     summaryFields: [
-      { field: 'Date', label: 'Date' },
-      { field: 'Location', label: 'Location' },
-      { field: 'Number_of_female_farmers_present', label: 'Female Farmers' },
-      { field: 'Number_of_male_farmers_present', label: 'Male Farmers' },
+      { field: 'date', label: 'Date' },
+      { field: 'district', label: 'District' },
+      { field: 'location', label: 'Location' },
+      { field: 'total_farmers', label: 'Total Farmers' },
     ],
   },
 

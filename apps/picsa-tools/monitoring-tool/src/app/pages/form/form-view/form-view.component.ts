@@ -107,7 +107,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
       action = this.determineFinaliseAction({ before, after });
     }
     this.formFinalised = true;
-    console.log('[FORM]', action);
+    console.log('[FORM]', action, afterJson);
     if (action === 'DELETE') return this.submissionDoc.remove();
     if (action === 'UPDATE') {
       const patch: Partial<IFormSubmission> = {

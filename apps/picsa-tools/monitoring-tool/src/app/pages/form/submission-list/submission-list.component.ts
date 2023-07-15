@@ -17,7 +17,7 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
   private form: IMonitoringForm;
   public submissionData = new MatTableDataSource<IFormSubmission>([]);
   public displayedColumns: string[] = [];
-  public columnHeaders: string[] = [];
+  public displayedColumnsMeta: IMonitoringForm['summaryFields'] = [];
 
   private componentDestroyed$ = new Subject<boolean>();
 
@@ -48,8 +48,8 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
     const form = await this.service.getForm(formId);
     if (form) {
       this.form = form;
+      this.displayedColumnsMeta = form.summaryFields;
       this.displayedColumns = form.summaryFields.map(({ field }) => field);
-      this.columnHeaders = form.summaryFields.map(({ label }) => label);
       this.componentService.patchHeader({ title: form.title });
     }
   }

@@ -2,6 +2,11 @@ import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 import { IEnketoFormDefinition } from '../common.schema';
 
+interface ISummaryField {
+  label: string;
+  field: string;
+}
+
 /**
  * DB forms include basic metadata on
  * */
@@ -13,7 +18,7 @@ export interface IMonitoringForm_v1 {
   appCountries?: string[];
   enketoDefinition: IEnketoFormDefinition;
   /** List of fields to display in table summary */
-  summaryFields: { label: string; field: string }[];
+  summaryFields: ISummaryField[];
 }
 
 export const SCHEMA_V1: RxJsonSchema<IMonitoringForm_v1> = {
