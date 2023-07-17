@@ -70,11 +70,14 @@ export class ClimateChartService {
   }
 
   public async setChart(id?: IChartId) {
-    console.log('[Climate] set chart', id);
     const chart = id ? this.station?.definitions[id] : undefined;
     this.chartDefinition = chart;
-    await this.generateChartConfig();
-    this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
+    if (chart) {
+      await this.generateChartConfig();
+      this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
+    } else {
+      console.warn('No chart found', id, this.station);
+    }
   }
 
   /*****************************************************************************

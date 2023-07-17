@@ -60,7 +60,7 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
   private subscribeToParamChanges() {
     this.route.queryParamMap.pipe(takeUntil(this.destroyed$)).subscribe(async (params) => {
       const viewId = params.get('view') as IChartId;
-      await this.chartService.setChart(viewId || undefined);
+      await this.chartService.setChart(viewId);
     });
   }
 }
