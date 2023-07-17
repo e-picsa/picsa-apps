@@ -24,11 +24,40 @@ export interface IManualActivity {
 
 export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
   {
+    label: translateMarker('PICSA'),
+    steps: [
+      {
+        page: {
+          en: 5,
+          zm_ny: 5,
+          mw_ny: 5,
+        },
+        name: '',
+        label: translateMarker('Introduction'),
+        type: 'step',
+        activities: [],
+      },
+      {
+        page: {
+          en: 8,
+          zm_ny: 10,
+          mw_ny: 10,
+        },
+        name: '',
+        label: translateMarker('Activity Flow Chart'),
+        type: 'step',
+        activities: [],
+      },
+    ],
+  },
+  {
     label: translateMarker('Long before the season'),
     steps: [
       {
         page: {
           en: 11,
+          zm_ny: 13,
+          mw_ny: 13,
         },
         name: translateMarker('Step A'),
         label: translateMarker('What does the farmer currently do?'),
@@ -51,6 +80,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 16,
+          zm_ny: 18,
+          mw_ny: 18,
         },
         name: translateMarker('Step B'),
         label: translateMarker('Is the climate changing?'),
@@ -67,6 +98,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 25,
+          zm_ny: 27,
+          mw_ny: 27,
         },
         name: translateMarker('Step C'),
         label: translateMarker('What are the probabilities and risks?'),
@@ -83,6 +116,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 29,
+          zm_ny: 31,
+          mw_ny: 31,
         },
         name: translateMarker('Step D'),
         label: translateMarker('What are the options for the farmer?'),
@@ -111,6 +146,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 39,
+          zm_ny: 41,
+          mw_ny: 41,
         },
         name: translateMarker('Step E'),
         label: translateMarker('Options by context'),
@@ -127,6 +164,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 41,
+          zm_ny: 43,
+          mw_ny: 43,
         },
         name: translateMarker('Step F'),
         label: translateMarker('Compare different options and plans'),
@@ -143,6 +182,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 45,
+          zm_ny: 47,
+          mw_ny: 47,
         },
         name: translateMarker('Step G'),
         label: translateMarker('The farmer decides'),
@@ -164,6 +205,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 48,
+          zm_ny: 50,
+          mw_ny: 50,
         },
         name: translateMarker('Step H'),
         label: translateMarker('Seasonal forecast'),
@@ -173,6 +216,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 52,
+          zm_ny: 54,
+          mw_ny: 54,
         },
         name: translateMarker('Step I'),
         label: translateMarker('Response to forecast'),
@@ -194,6 +239,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 55,
+          zm_ny: 57,
+          mw_ny: 57,
         },
         name: translateMarker('Step J'),
         label: translateMarker('Short-term forecasts and warnings'),
@@ -203,6 +250,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 57,
+          zm_ny: 59,
+          mw_ny: 59,
         },
         name: translateMarker('Step K'),
         label: translateMarker('Response to forecast'),
@@ -224,6 +273,8 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       {
         page: {
           en: 59,
+          zm_ny: 61,
+          mw_ny: 61,
         },
         name: translateMarker('Step L'),
         label: translateMarker('Learn and improve'),

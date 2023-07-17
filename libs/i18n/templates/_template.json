@@ -668,6 +668,10 @@
     "tool": "budget"
   },
   {
+    "text": "Share App Link",
+    "tool": "budget"
+  },
+  {
     "text": "Share Budget",
     "tool": "budget"
   },
@@ -735,6 +739,26 @@
     "context": "chart"
   },
   {
+    "text": "Extreme",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Extreme Rainfall",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Frequency of Extreme",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
     "text": "Length",
     "tool": "climate",
     "context": "chart"
@@ -789,11 +813,19 @@
     "tool": "climate"
   },
   {
+    "text": "Calculated with the date range of Start of rains and End of the rains",
+    "tool": "climate"
+  },
+  {
+    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
+    "tool": "climate"
+  },
+  {
     "text": "Chart",
     "tool": "climate"
   },
   {
-    "text": "Definition",
+    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
     "tool": "climate"
   },
   {
@@ -801,15 +833,11 @@
     "tool": "climate"
   },
   {
-    "text": "On average",
-    "tool": "climate"
-  },
-  {
     "text": "Print Version",
     "tool": "climate"
   },
   {
-    "text": "Seasonal Total Rainfall",
+    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
     "tool": "climate"
   },
   {
@@ -818,10 +846,6 @@
   },
   {
     "text": "Share",
-    "tool": "climate"
-  },
-  {
-    "text": "Share App Link",
     "tool": "climate"
   },
   {
@@ -837,15 +861,15 @@
     "tool": "climate"
   },
   {
-    "text": "Year",
+    "text": "above",
+    "tool": "climate"
+  },
+  {
+    "text": "below",
     "tool": "climate"
   },
   {
     "text": "out of",
-    "tool": "climate"
-  },
-  {
-    "text": "satisfy",
     "tool": "climate"
   },
   {
@@ -1092,6 +1116,10 @@
     "tool": "extension"
   },
   {
+    "text": "Activity Flow Chart",
+    "tool": "manual"
+  },
+  {
     "text": "After the season",
     "tool": "manual"
   },
@@ -1124,6 +1152,10 @@
     "tool": "manual"
   },
   {
+    "text": "Introduction",
+    "tool": "manual"
+  },
+  {
     "text": "Is the climate changing?",
     "tool": "manual"
   },
@@ -1148,7 +1180,15 @@
     "tool": "manual"
   },
   {
+    "text": "Manual Requires Download",
+    "tool": "manual"
+  },
+  {
     "text": "Options by context",
+    "tool": "manual"
+  },
+  {
+    "text": "PICSA",
     "tool": "manual"
   },
   {

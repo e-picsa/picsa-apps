@@ -1,6 +1,12 @@
 import { IResourceCollection, IResourceFile } from '../../models';
 
-const manuals: Record<string, IResourceFile> = {
+type IPicsaManualId = 'picsa_manual' | 'picsa_manual_chichewa' | 'picsa_manual_tumbuka' | 'picsa_manual_tajik';
+
+/**
+ * List of manuals available both within manual tool and resource collection
+ * Exported standalone to also allow direct access from resources tool
+ */
+export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } = {
   picsa_manual: {
     _key: 'picsa_manual',
     _created: '2019-09-25T10:00:01.000Z',
@@ -68,7 +74,7 @@ const picsa_manuals: IResourceCollection = {
   description: 'PICSA training manuals available in a variety of languages',
   image: 'assets/resources/covers/picsa-field-manual.jpg',
   imageFit: 'cover',
-  childResources: Object.keys(manuals),
+  childResources: Object.keys(PICSA_MANUAL_RESOURCES),
 };
 
-export default { ...manuals, picsa_manuals };
+export default { ...PICSA_MANUAL_RESOURCES, picsa_manuals };

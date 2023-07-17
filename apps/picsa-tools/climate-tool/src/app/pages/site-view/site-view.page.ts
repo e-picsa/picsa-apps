@@ -8,6 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { IChartId } from '@picsa/models/src';
+import { ClimateToolService } from '../../services/climate-tool.service';
 
 @Component({
   selector: 'climate-site-view',
@@ -22,6 +23,7 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
   public showRotateAnimation = false;
   constructor(
     public chartService: ClimateChartService,
+    private toolService: ClimateToolService,
     private route: ActivatedRoute,
     private componentsService: PicsaCommonComponentsService,
     private dialog: MatDialog
@@ -58,9 +60,13 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
 
   /** Set chart in climate service by params */
   private subscribeToParamChanges() {
-    this.route.queryParamMap.pipe(takeUntil(this.destroyed$)).subscribe(async (params) => {
+    this.route.queryParamMap.pipe(takeUntil(this.destroyed$)).subscribe((params) => {
       const viewId = params.get('view') as IChartId;
-      await this.chartService.setChart(viewId || undefined);
+      // clear tools before loading chart
+      this.toolService.disableAll();
+      setTimeout(async () => {
+        await this.chartService.setChart(viewId);
+      }, 50);
     });
   }
 }
