@@ -2,25 +2,13 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Capacitor } from '@capacitor/core';
-import {
-  Directory,
-  Encoding,
-  FileInfo,
-  Filesystem,
-  StatResult,
-} from '@capacitor/filesystem';
+import { Directory, Encoding, FileInfo, Filesystem, StatResult } from '@capacitor/filesystem';
 import { APP_VERSION } from '@picsa/environments';
 import write_blob from 'capacitor-blob-writer';
-import {
-  BehaviorSubject,
-  firstValueFrom,
-  of,
-  Subject,
-  Subscription,
-} from 'rxjs';
+import { BehaviorSubject, firstValueFrom, of, Subject, Subscription } from 'rxjs';
 import { catchError, debounceTime } from 'rxjs/operators';
 
-interface IStorageFileEntry {
+export interface IStorageFileEntry {
   md5Checksum?: string;
   modifiedTime: string;
   relativePath: string;
@@ -76,10 +64,7 @@ export class NativeStorageService {
    * @param assetPath - relative path to asset, omitting first /assets/ part
    * @returns asset contents if found, undefined if not
    */
-  public async readAssetFile(
-    assetPath: string,
-    responseType: 'text' | 'blob' | 'arraybuffer' = 'text'
-  ) {
+  public async readAssetFile(assetPath: string, responseType: 'text' | 'blob' | 'arraybuffer' = 'text') {
     const fileContents = await firstValueFrom(
       this.http
         .get(`assets/${assetPath}`, {
@@ -93,9 +78,7 @@ export class NativeStorageService {
   /** Read the contents.json file from an asset folder and return contents */
   public async readAssetContents(assetFolderPath: string) {
     let contents: IStorageFilesHashmap = {};
-    const contentsFile = await this.readAssetFile(
-      `${assetFolderPath}/contents.json`
-    );
+    const contentsFile = await this.readAssetFile(`${assetFolderPath}/contents.json`);
     if (contentsFile) {
       contents = JSON.parse(contentsFile) as any;
       // map files to include relative asset folder
@@ -191,10 +174,7 @@ export class NativeStorageService {
             },
           });
           const FileInfo = await Filesystem.stat({ path, directory });
-          this.cachedFilesList[relativePath] = this.createFileCacheEntry(
-            FileInfo,
-            relativePath
-          );
+          this.cachedFilesList[relativePath] = this.createFileCacheEntry(FileInfo, relativePath);
           this.cachedFilesUpdated$.next(true);
           updates$.next({ progress, subscription, cachePath });
           updates$.complete();
@@ -203,10 +183,7 @@ export class NativeStorageService {
     });
     return updates$;
   }
-  private createFileCacheEntry(
-    file: FileInfo | StatResult,
-    relativePath: string
-  ) {
+  private createFileCacheEntry(file: FileInfo | StatResult, relativePath: string) {
     const { mtime, size } = file;
     const entry: IStorageFileEntry = {
       modifiedTime: new Date(mtime).toISOString(),
@@ -216,11 +193,7 @@ export class NativeStorageService {
     return entry;
   }
 
-  private async loadFileList(
-    directory: Directory,
-    path = '',
-    filesHashmap: IStorageFilesHashmap = {}
-  ) {
+  private async loadFileList(directory: Directory, path = '', filesHashmap: IStorageFilesHashmap = {}) {
     const cacheFolderPath = `${this.cacheName}/${path}`;
     const { files } = await Filesystem.readdir({
       directory,
@@ -230,11 +203,7 @@ export class NativeStorageService {
       const { name, type } = file;
       const relativePath: string = path ? `${path}/${name}` : name;
       if (type === 'directory') {
-        filesHashmap = await this.loadFileList(
-          directory,
-          relativePath,
-          filesHashmap
-        );
+        filesHashmap = await this.loadFileList(directory, relativePath, filesHashmap);
       } else {
         const entry = this.createFileCacheEntry(file, relativePath);
         filesHashmap[entry.relativePath] = entry;
@@ -257,11 +226,7 @@ export class NativeStorageService {
    *  Helper methods
    ************************************************************************************/
 
-  private downloadFile(
-    url: string,
-    responseType: 'blob' | 'base64' = 'base64',
-    headers = {}
-  ) {
+  private downloadFile(url: string, responseType: 'blob' | 'base64' = 'base64', headers = {}) {
     // If downloading from local assets ignore cache
     if (!url.startsWith('http')) {
       headers = {
@@ -346,7 +311,7 @@ export class NativeStorageService {
   }
 
   // html templates can't show local file:/// images, so convert using cordova webview
-  private async convertToLocalUrl(entry: IStorageFileEntry) {
+  public async convertToLocalUrl(entry: IStorageFileEntry) {
     const fileUrl = `${this.basePath}/${entry.relativePath}`;
     return Capacitor.convertFileSrc(fileUrl);
   }
