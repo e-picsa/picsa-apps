@@ -1,12 +1,14 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ConfigurationService } from '@picsa/configuration/src';
-import { FlyInOut } from '@picsa/shared/animations';
-import { ResourcesStore } from '@picsa/resources/src/app/stores';
-import { Subject, takeUntil } from 'rxjs';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { PICSA_MANUAL_RESOURCES } from '../../data/manual-resources';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { IResourceFile } from '@picsa/resources/src/app/models';
+import { ResourcesStore } from '@picsa/resources/src/app/stores';
+import { FlyInOut } from '@picsa/shared/animations';
+import { Subject, takeUntil } from 'rxjs';
+
+import { PICSA_MANUAL_RESOURCES } from '../../data/manual-resources';
 
 const LOCALISED_VERSIONS = {
   en: PICSA_MANUAL_RESOURCES.picsa_manual,
