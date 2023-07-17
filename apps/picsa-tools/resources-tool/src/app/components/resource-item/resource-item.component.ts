@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import {
   IResourceApp,
   IResourceCollection,
   IResourceFile,
+  IResourceItemBase,
   IResourceLink,
   IResourceType,
 } from '../../models';
@@ -30,6 +31,10 @@ interface IActionButton {
 export class ResourceItemComponent implements OnInit {
   @Input() viewStyle: 'expanded' | 'default' = 'default';
   @Input() resource: IResource;
+
+  @Input() openAfterDownload = true;
+
+  @Output() downloadComplete = new EventEmitter<IResourceFile>();
 
   public actionButton?: IActionButton;
   public downloadProgress?: number;
@@ -135,7 +140,10 @@ class FileItemHandler {
       complete: () => {
         this.parent.downloadProgress = undefined;
         this.parent.actionButton = { icon: 'open_in_new' };
-        this.parent.store.openFileResource(this.resource);
+        this.parent.downloadComplete.emit(this.resource);
+        if (this.parent.openAfterDownload) {
+          this.parent.store.openFileResource(this.resource);
+        }
       },
     });
   }

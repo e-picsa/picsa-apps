@@ -1,8 +1,16 @@
 <div class="page-content">
   <div class="pdf-container slide-in" [class.active]="page">
-    <picsa-pdf-viewer [page]="page">
+    <picsa-pdf-viewer [page]="page" [src]="pdfSrc" *ngIf="pdfSrc">
       <back-button style="margin-right: 8px"></back-button>
     </picsa-pdf-viewer>
   </div>
-  <picsa-manual-steps-container></picsa-manual-steps-container>
+  <picsa-alert-box *ngIf="downloadPrompt.show" type="info" [title]="downloadPrompt.title">
+    <picsa-resource-item
+      [resource]="downloadPrompt.resource"
+      (downloadComplete)="handleManualDownloaded($event)"
+      [openAfterDownload]="false"
+    ></picsa-resource-item>
+  </picsa-alert-box>
+
+  <picsa-manual-steps-container *ngIf="pdfSrc" [pageMapping]="localisation"></picsa-manual-steps-container>
 </div>
