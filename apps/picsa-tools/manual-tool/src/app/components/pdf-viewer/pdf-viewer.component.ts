@@ -11,6 +11,7 @@ export class PdfViewerComponent {
   legacyBrowser = true;
   sidebarOpen = false;
   @Input() page?: number;
+  @Input() src: string;
   constructor() {
     // name of folder pdf viewer assets copied to as declared in `angular.json`
     pdfDefaultOptions.assetsFolder = 'assets/pdf-viewer';
