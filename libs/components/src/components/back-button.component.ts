@@ -17,15 +17,13 @@ import { PicsaCommonComponentsService } from '../services/components.service';
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BackButton implements OnDestroy {
   showButton = false;
-  /** Track list of page views for back navigation */
-  private history: string[] = [];
   private componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private router: Router,
     private location: Location,
     private zone: NgZone,
-    componentService: PicsaCommonComponentsService
+    private componentService: PicsaCommonComponentsService
   ) {
     // provide access to back method through component service
     componentService.back = () => this.back();
@@ -35,6 +33,14 @@ export class BackButton implements OnDestroy {
     if (Capacitor.isNativePlatform()) {
       this.handleNativeBackButtonPress();
     }
+  }
+
+  /**
+   * Track browser history using component service to allow for shared history
+   * across multiple buttons
+   */
+  private get history() {
+    return this.componentService.navHistory;
   }
 
   public back() {
