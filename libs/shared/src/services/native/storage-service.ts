@@ -310,7 +310,10 @@ export class NativeStorageService {
     }
   }
 
-  // html templates can't show local file:/// images, so convert using cordova webview
+  /**
+   * Convert storage entry to usable src
+   * Required as devices can't show local file:/// images
+   */
   public async convertToLocalUrl(entry: IStorageFileEntry) {
     const fileUrl = `${this.basePath}/${entry.relativePath}`;
     return Capacitor.convertFileSrc(fileUrl);
