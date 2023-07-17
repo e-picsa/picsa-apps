@@ -16,8 +16,8 @@ const configuration: IConfiguration.Settings = {
     },
     language: {
       options: [
-        { id: 'en', label: 'English', code: 'en' },
-        { id: 'tg', label: 'Тоҷикӣ', code: 'tg' },
+        { id: 'tj', label: 'English', code: 'en' },
+        { id: 'tj_tg', label: 'Тоҷикӣ', code: 'tj_tg' },
       ],
       selected: undefined,
     },

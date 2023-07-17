@@ -51,7 +51,7 @@ function generateLocationResources(location: IWeatherLocation) {
     image: '',
     parentResource: 'weatherResources',
     childResources: Object.keys(locationResources),
-    appCountries: [location.countryCode],
+    appLocalisations: [location.countryCode as any],
   };
   return {
     [collection._key]: collection,

@@ -1,6 +1,12 @@
 <div class="page-content">
+  <mat-form-field>
+    <mat-label>{{ 'Manual' | translate }}</mat-label>
+    <mat-select [value]="manualSelected" (selectionChange)="handleManualSelect($event.value)" #manualSelect>
+      <mat-option *ngFor="let option of manualOptions" [value]="option._key">{{ option.title }}</mat-option>
+    </mat-select>
+  </mat-form-field>
   <div class="pdf-container slide-in" [class.active]="page">
-    <picsa-pdf-viewer [page]="page">
+    <picsa-pdf-viewer [page]="page" [src]="pdfSrc" *ngIf="pdfSrc">
       <back-button style="margin-right: 8px"></back-button>
     </picsa-pdf-viewer>
   </div>

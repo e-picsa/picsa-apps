@@ -1,3 +1,4 @@
+import { IConfiguration } from '@picsa/configuration/src';
 import type { IDBDoc } from '@picsa/models';
 
 export type IResourceType = 'collection' | 'file' | 'youtube' | 'link' | 'app';
@@ -7,7 +8,7 @@ export interface IResourceItemBase extends IDBDoc {
   description: string;
   type: IResourceType;
   /** List of app configuration countries where resource shown (default all) */
-  appCountries?: string[];
+  appLocalisations?: IConfiguration.LocalisationCode[];
   /** Order of priority when shown in list (highest numbers shown first) */
   priority?: number;
   image?: string;

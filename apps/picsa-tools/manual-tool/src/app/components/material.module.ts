@@ -2,9 +2,10 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer } from '@angular/platform-browser';
 
-const MODULES = [MatButtonModule, MatInputModule, MatIconModule];
+const MODULES = [MatButtonModule, MatInputModule, MatIconModule, MatSelectModule];
 
 // use custom module to make it easier to control what is available through app
 @NgModule({

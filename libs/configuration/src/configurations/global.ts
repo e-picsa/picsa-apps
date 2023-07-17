@@ -23,7 +23,7 @@ const configuration: IConfiguration.Settings = {
         { id: 'en', label: 'English', code: 'en' },
         { id: 'mw_ny', label: 'Chichewa', code: 'mw_ny' },
         { id: 'zm_ny', label: 'Chichewa', code: 'zm_ny' },
-        { id: 'tg', label: 'Тоҷикӣ', code: 'tg' },
+        { id: 'tg', label: 'Тоҷикӣ', code: 'tj_tg' },
         // Additional language available to debug text marked for translators
         // Marked text will appear as •{text}•
         { id: 'debug', label: 'Translators', code: 'debug' },

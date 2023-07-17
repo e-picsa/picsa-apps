@@ -6,9 +6,17 @@ export namespace IConfiguration {
     [key: string]: any;
   }
 
+  export type CountryCode = 'mw' | 'zm' | 'en' | 'tj' | 'debug';
+
+  /**
+   * Track available localisation codes to ensure allow type-checking within tools (e.g. manual tool)
+   * These can either be country-wide or country-language combinations
+   * */
+  export type LocalisationCode = CountryCode | 'mw_ny' | 'mw_en' | 'zm_ny' | 'zm_en' | 'tj_tg' | 'tj_en';
+
   export interface LanguageOption extends IConfiguration.UserOption {
     label: string;
-    code: string;
+    code: LocalisationCode;
   }
 
   export interface Localisation {

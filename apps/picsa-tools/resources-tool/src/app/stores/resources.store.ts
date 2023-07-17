@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { ConfigurationService } from '@picsa/configuration';
+import { ConfigurationService, IConfiguration } from '@picsa/configuration';
 import { IStorageFilesHashmap, NativeStorageService } from '@picsa/shared/services/native/storage-service';
-import { action } from 'mobx-angular';
 import { lastValueFrom } from 'rxjs';
+
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 
 import RESOURCES from '../data';
 import { IResource, IResourceCollection, IResourceFile, IResourceItemBase } from '../models';
@@ -15,26 +16,28 @@ import { IResource, IResourceCollection, IResourceFile, IResourceItemBase } from
 @Injectable({
   providedIn: 'root',
 })
-export class ResourcesStore {
-  isNative = Capacitor.isNativePlatform();
-  /** Country code from app configuration used to filter resources */
-  private appConfigCountryCode: string;
-  constructor(private storageService: NativeStorageService, private configurationService: ConfigurationService) {
-    this.init();
-  }
-  resourcesById: { [id: string]: IResource } = {};
+export class ResourcesStore extends PicsaAsyncService {
   /** Parent collections */
-  collections: IResourceCollection[];
+  public collections: IResourceCollection[];
 
-  public downloadedResources: IStorageFilesHashmap = {};
+  private isNative = Capacitor.isNativePlatform();
+  /** Country code from app configuration used to filter resources */
+  private appLocalisationCode: IConfiguration.LocalisationCode;
 
-  @action
+  constructor(private storageService: NativeStorageService, private configurationService: ConfigurationService) {
+    super();
+    this.ready().then(() => console.log('[Resources] store ready'));
+  }
+  private resourcesById: { [id: string]: IResource } = {};
+
+  private downloadedResources: IStorageFilesHashmap = {};
+
   /**
    *  Load resources listed in cache.
    *  @param checkUpdates - check if hardcoded data lists any additional resources
    *  that should be popluated, and check server for any updates also
    */
-  private async init() {
+  public override async init() {
     this.listenToConfigurationChanges();
     if (this.isNative) {
       await this.storageService.init();
@@ -47,12 +50,13 @@ export class ResourcesStore {
     }
     console.log('[Resources] init complete');
   }
+
   private listenToConfigurationChanges() {
     this.configurationService.activeConfiguration$.subscribe((config) => {
-      const { code } = config.localisation.country;
-      if (code !== this.appConfigCountryCode) {
-        this.appConfigCountryCode = code;
-        this.populateCountryResources(this.appConfigCountryCode);
+      const code = config.localisation.language.selected?.code || 'en';
+      if (code !== this.appLocalisationCode) {
+        this.appLocalisationCode = code;
+        this.populateLocalisedResources(this.appLocalisationCode);
       }
     });
   }
@@ -66,12 +70,19 @@ export class ResourcesStore {
    * TODO - would be cleaner if implementing more like a tree/graph
    * https://github.com/joaonuno/tree-model-js OR https://github.com/dagrejs/graphlib
    */
-  private populateCountryResources(countryCode: string) {
+  private populateLocalisedResources(localisationCode: IConfiguration.LocalisationCode = 'en') {
+    const [country, language] = localisationCode.split('_');
     // take a copy of all resources to preserve original
     const resourcesById: { [id: string]: IResource } = JSON.parse(JSON.stringify(RESOURCES.byId));
-    // Remove any collections with country filters (include all resources if no countryCode provided)
+    // Remove any collections with localisation filters (include all resources if no localisationCode provided)
+    // Allow filter either by entire code or just country
     Object.entries(resourcesById).forEach(([key, resource]) => {
-      if (countryCode && resource.appCountries && !resource.appCountries.includes(countryCode)) {
+      const { appLocalisations } = resource;
+      if (
+        appLocalisations &&
+        appLocalisations.includes(localisationCode) &&
+        !appLocalisations.includes(country as any)
+      ) {
         delete resourcesById[key];
         if (resource.type === 'collection') {
           const collection = resource as IResourceCollection;

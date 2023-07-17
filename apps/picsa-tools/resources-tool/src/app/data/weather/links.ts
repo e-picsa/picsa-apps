@@ -11,7 +11,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     icon: 'group',
     url: 'https://chat.whatsapp.com/KSRlJie2m3aKTz6urP8KuT',
     image: 'assets/resources/covers/whatsapp.svg',
-    appCountries: ['zm'],
+    appLocalisations: ['zm'],
   },
   zmdFacebook: {
     _created: '2020-10-21T10:00:04.000Z',
@@ -23,7 +23,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     icon: 'group',
     url: 'https://facebook.com/zambiameteorologicaldepartment/',
     image: 'assets/resources/covers/facebook.svg',
-    appCountries: ['zm'],
+    appLocalisations: ['zm'],
   },
   dccms_daily_forecast: {
     _key: 'dccms_daily_forecast',
@@ -35,7 +35,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     image: 'assets/resources/covers/dccms.jpg',
     url: 'https://www.metmalawi.gov.mw/dccms_weather.php',
     priority: 10,
-    appCountries: ['mw'],
+    appLocalisations: ['mw'],
   },
   dccms_facebook: {
     _key: 'dccms_daily_forecast',
@@ -48,7 +48,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     image: 'assets/resources/covers/facebook.svg',
     url: 'https://www.facebook.com/DCCMSMalawiWeather/',
     priority: 10,
-    appCountries: ['mw'],
+    appLocalisations: ['mw'],
   },
   dccms_twitter: {
     _key: 'dccms_twitter',
@@ -61,6 +61,6 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     icon: 'group',
     image: 'assets/resources/covers/twitter.png',
     url: 'https://twitter.com/DccmsM',
-    appCountries: ['mw'],
+    appLocalisations: ['mw'],
   },
 };

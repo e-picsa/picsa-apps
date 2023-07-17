@@ -17,7 +17,7 @@ const collections: { [id: string]: IResourceCollection } = {
       'mw_weather_forecast_4th_september',
     ],
     parentResource: 'picsaWorkshops',
-    appCountries: ['mw'],
+    appLocalisations: ['mw'],
   },
 };
 const links: { [id: string]: IResourceLink } = {
