@@ -1,4 +1,13 @@
-import { IChartDefinitions } from '@picsa/models';
+import merge from 'deepmerge';
+
+import { IChartDefinitions, IChartMeta } from '@picsa/models';
+import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS } from '../../components/chart-tools/line-tool/line-tool.model';
+import { PROBABILITY_TOOL_OPTIONS } from '../../components/chart-tools/probability-tool/probabililty-tool.model';
+
+const tools: IChartMeta['tools'] = {
+  line: LINE_TOOL_OPTIONS,
+  probability: PROBABILITY_TOOL_OPTIONS,
+};
 
 const definitions: IChartDefinitions = {
   rainfall: {
@@ -16,7 +25,7 @@ const definitions: IChartDefinitions = {
     xMajor: 2,
     yMinor: 100,
     yMajor: 200,
-    tools: { line: true },
+    tools,
     units: 'mm',
     definition:
       'Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season',
@@ -37,7 +46,15 @@ const definitions: IChartDefinitions = {
     // assume 367 days in a year (366 leap + 1 for 0 index), mark weekly and mid month
     yMinor: 365 / 48,
     yMajor: 365 / 12,
-    tools: { line: false },
+    tools: merge(tools, {
+      // start of season focuses more on values below line. Use different colors to emphasise change
+      line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
+      probability: {
+        above: { color: LINE_TOOL_COLORS.red, label: 'After' },
+        below: { color: LINE_TOOL_COLORS.purple, label: 'Before' },
+        reverse: true,
+      },
+    }),
     units: '',
     definition:
       'Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days',
@@ -57,7 +74,15 @@ const definitions: IChartDefinitions = {
     xMajor: 2,
     yMinor: 365 / 48,
     yMajor: 365 / 12,
-    tools: { line: false },
+    tools: merge(tools, {
+      // start of season focuses more on values below line. Use different colors to emphasise change
+      line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
+      probability: {
+        above: { color: LINE_TOOL_COLORS.red, label: 'After' },
+        below: { color: LINE_TOOL_COLORS.purple, label: 'Before' },
+        reverse: true,
+      },
+    }),
     units: '',
     definition:
       'End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.',
@@ -77,7 +102,7 @@ const definitions: IChartDefinitions = {
     xMajor: 2,
     yMinor: 10,
     yMajor: 50,
-    tools: { line: true },
+    tools,
     units: 'days',
     definition:
       'Length of season is defined as the total days from the start of the season until the end of the season as defined',
@@ -97,7 +122,7 @@ const definitions: IChartDefinitions = {
     xMajor: 2,
     yMinor: 0.5,
     yMajor: 1,
-    tools: { line: true },
+    tools,
     units: 'days',
     definition: 'Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile',
   },

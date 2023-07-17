@@ -833,10 +833,6 @@
     "tool": "climate"
   },
   {
-    "text": "On average",
-    "tool": "climate"
-  },
-  {
     "text": "Print Version",
     "tool": "climate"
   },
@@ -865,11 +861,15 @@
     "tool": "climate"
   },
   {
-    "text": "out of",
+    "text": "above",
     "tool": "climate"
   },
   {
-    "text": "satisfy",
+    "text": "below",
+    "tool": "climate"
+  },
+  {
+    "text": "out of",
     "tool": "climate"
   },
   {
