@@ -50,14 +50,18 @@ input.mat-mdc-input-element.mdc-text-field__input {
   text-align: center;
   // margin-left: -4px;
 }
-// Reduce padding and remove inset from fields with custom .input-field class
-mat-form-field.input-field {
+// Reduce padding and remove inset from fields with custom .input-field or .no-padding class
+mat-form-field.input-field,
+mat-form-field.no-padding {
   .mat-mdc-text-field-wrapper {
     padding: 4px !important;
   }
   .mat-mdc-form-field-infix {
     margin-left: 0;
   }
+}
+// Reduce padding and remove inset from fields with custom .no,padding class
+mat-form-field.no-padding {
 }
 
 // Remove bottom hint placeholder (used in hints)

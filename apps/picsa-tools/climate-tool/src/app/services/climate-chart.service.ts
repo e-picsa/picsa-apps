@@ -14,9 +14,6 @@ import { ClimateDataService } from './climate-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateChartService {
-  /** Observable property trigger each time chart is rendered */
-  public chartRendered$ = new Subject<void>();
-
   public chartDefinition?: IChartMeta;
 
   /** Binding for active rendered chart component */
@@ -27,9 +24,7 @@ export class ClimateChartService {
 
   /** Actively selected station */
   public station?: IStationMetaDB;
-
   /** Observable subject for active station */
-  public station$ = new BehaviorSubject<IStationMetaDB | undefined>(undefined);
 
   public stationData: IStationData[];
 
@@ -38,6 +33,14 @@ export class ClimateChartService {
 
   /** Png version of chart converted from SVG */
   public chartPng?: string;
+
+  /** Observable properties for config above */
+  public chartConfig$ = new BehaviorSubject<IChartConfig | undefined>(undefined);
+  public chartDefinition$ = new BehaviorSubject<IChartMeta | undefined>(undefined);
+  public station$ = new BehaviorSubject<IStationMetaDB | undefined>(undefined);
+  public chartSeriesData$ = new BehaviorSubject<number[]>([]);
+
+  public chartRendered$ = new Subject<void>();
 
   /** Track whether print mode has been toggled */
   private isPrintVersion = false;
@@ -51,7 +54,7 @@ export class ClimateChartService {
   ) {}
 
   public async clearChartData() {
-    this.chartDefinition = undefined;
+    this.setChart(undefined);
     this.setStation(undefined);
     this.getPointColour = () => undefined;
   }
@@ -75,6 +78,8 @@ export class ClimateChartService {
     this.chartDefinition = chart;
     await this.generateChartConfig();
     this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
+    this.chartSeriesData$.next(this.chartSeriesData);
+    this.chartDefinition$.next(this.chartDefinition);
   }
 
   /*****************************************************************************
@@ -91,7 +96,12 @@ export class ClimateChartService {
     // configure major and minor ticks, labels and gridlines
     const ranges = this.calculateDataRanges(data, definition);
     const gridMeta = this.calculateGridMeta(definition, ranges);
+
+    // configur text and translations
     const chartName = await this.translateService.translateText(definition.name);
+    const yLabel = await this.translateService.translateText(definition.yLabel);
+    const xLabel = await this.translateService.translateText(definition.xLabel);
+
     // configure chart
     this.chartConfig = {
       // ensure axis labels fit
@@ -122,7 +132,7 @@ export class ClimateChartService {
       },
       axis: {
         x: {
-          label: definition.xLabel,
+          label: xLabel,
           min: ranges.xMin,
           max: ranges.xMax,
           tick: {
@@ -134,7 +144,7 @@ export class ClimateChartService {
           height: 60,
         },
         y: {
-          label: { position: 'outer-middle', text: definition.yLabel },
+          label: { position: 'outer-middle', text: yLabel },
           tick: {
             values: gridMeta.yTicks,
             format: (d: any) =>
@@ -182,6 +192,7 @@ export class ClimateChartService {
         this.chartRendered$.next();
       },
     };
+    this.chartConfig$.next(this.chartConfig);
   }
 
   /*****************************************************************************
@@ -335,9 +346,8 @@ export class ClimateChartService {
 
   private _formatYAxis(value: number, meta: IChartMeta, isAxisLabel?: boolean) {
     const { yMajor } = meta;
-    const monthNames: string[] = this.translateService.monthNames;
+    const { monthNames } = this.translateService;
     let label: string;
-
     switch (meta.yFormat) {
       case 'date-from-July': {
         // previously 181 based on local met +182 and -1 for index starting at 0

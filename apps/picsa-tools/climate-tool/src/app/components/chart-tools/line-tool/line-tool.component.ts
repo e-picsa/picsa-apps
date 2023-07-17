@@ -1,11 +1,12 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
-import { IChartConfig, IChartMeta } from '@picsa/models/src';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import { calcPercentile, ClimateToolService } from '../../../services/climate-tool.service';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
+import { Subject, takeUntil } from 'rxjs';
+import { LINE_TOOL_OPTIONS } from './line-tool.model';
 
 @Component({
   selector: 'climate-line-tool',
@@ -18,7 +19,7 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
     },
   ],
 })
-export class LineToolComponent implements OnDestroy {
+export class LineToolComponent implements OnInit, OnDestroy {
   public value?: number;
   public ranges: { min: number; max: number };
   public step: number;
@@ -26,43 +27,22 @@ export class LineToolComponent implements OnDestroy {
   public inputType?: 'number' | 'date';
   public datePickerHeader = LineDatePickerHeaderComponent;
 
+  /** Configurable options overridden in chart config */
+  private options = LINE_TOOL_OPTIONS;
+
+  private componentDestroyed$ = new Subject<boolean>();
+
   constructor(private chartService: ClimateChartService, private toolService: ClimateToolService) {}
 
-  @Input() set chartConfig(chartConfig: IChartConfig) {
-    if (chartConfig?.axis?.y) {
-      this.ranges = {
-        min: chartConfig.axis?.y?.min || 0,
-        max: chartConfig.axis?.y?.max || 0,
-      };
-    }
-    if (chartConfig) {
-      this.setDefaultLineValue();
-    }
-  }
-
-  @Input() set definition(definition: IChartMeta) {
-    console.log('set definition', definition);
-    if (definition) {
-      this.step = definition.yMinor;
-      if (definition.yFormat === 'value') {
-        this.inputType = 'number';
-        this.formatThumbValue = (v) => `${v}`;
-      } else {
-        this.inputType = 'date';
-        this.formatThumbValue = () => '';
-      }
-      this.setDefaultLineValue();
-    }
+  ngOnInit(): void {
+    this.subscribeToDefinitionChanges();
   }
 
   ngOnDestroy() {
     // when tool is toggle off also remove from the graph
     this.updateChartPointColours(undefined);
-  }
-
-  /** Specify how to format number that appears in slider thumb */
-  public formatThumbValue(v: number): string {
-    return '';
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
   }
 
   public setLineToolFromDate(datestring: string) {
@@ -76,12 +56,8 @@ export class LineToolComponent implements OnDestroy {
    * and trigger event emitter to handle line load/unload and chart refresh
    */
   public setLineToolValue(value: number) {
-    // disable line tool if slider brought to base
     if (value <= (this.ranges?.min as number)) {
       value = undefined as any;
-      // return setTimeout(() => {
-      //   this.toolService.enabled.line = false;
-      // }, 750);
     }
     this.value = value;
     this.updateChartPointColours(value);
@@ -89,11 +65,38 @@ export class LineToolComponent implements OnDestroy {
     return this.toolService.setValue('line', value);
   }
 
+  /** Set line tool dates formats and min/max values for line tool */
+  private loadLineToolConfig() {
+    const { chartConfig: config, chartDefinition: definition } = this.chartService;
+    if (config && definition) {
+      this.options = definition.tools.line;
+      this.step = definition.yMinor;
+      if (definition.yFormat === 'value') {
+        this.inputType = 'number';
+      } else {
+        this.inputType = 'date';
+      }
+      this.ranges = {
+        min: config.axis?.y?.min || 0,
+        max: config.axis?.y?.max || 0,
+      };
+      setTimeout(() => {
+        this.setDefaultLineValue();
+      }, 50);
+    }
+  }
+
+  private subscribeToDefinitionChanges() {
+    this.chartService.chartDefinition$.pipe(takeUntil(this.componentDestroyed$)).subscribe(() => {
+      this.loadLineToolConfig();
+    });
+  }
+
   private updateChartPointColours(value: number | undefined) {
-    const colours = this.definition?.linetool?.reverse ? ['#BF7720', '#739B65'] : ['#739B65', '#BF7720'];
+    const { above, below } = this.options;
     const pointFormatter = (d: { value: number }) => {
       if (!value) return;
-      return d.value >= value ? colours[0] : colours[1];
+      return d.value >= value ? above.color : below.color;
     };
     this.chartService.getPointColour = pointFormatter;
     this.updateChart(value);

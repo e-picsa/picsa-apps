@@ -10,7 +10,7 @@
   orient="vertical"
 />
 
-<mat-form-field class="lineToolInputField" *ngIf="inputType === 'number'">
+<mat-form-field class="lineToolInputField no-padding" *ngIf="inputType === 'number'">
   <input
     matInput
     class="lineToolInput"
@@ -20,7 +20,7 @@
   />
 </mat-form-field>
 
-<mat-form-field class="lineToolInputField" *ngIf="inputType === 'date'">
+<mat-form-field class="lineToolInputField no-padding" *ngIf="inputType === 'date'">
   <mat-label style="display: none"></mat-label>
   <input
     matInput

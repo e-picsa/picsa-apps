@@ -35,6 +35,10 @@ export class ClimateToolService {
     terciles: false,
   };
 
+  public disableAll() {
+    this.enabled = { line: false, terciles: false };
+  }
+
   public toggleEnabled(tool: IToolName) {
     this.enabled[tool] = !this.enabled[tool];
   }
