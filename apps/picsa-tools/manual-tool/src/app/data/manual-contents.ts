@@ -24,6 +24,29 @@ export interface IManualActivity {
 
 export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
   {
+    label: translateMarker('PICSA'),
+    steps: [
+      {
+        page: {
+          en: 5,
+        },
+        name: '',
+        label: translateMarker('Introduction'),
+        type: 'step',
+        activities: [],
+      },
+      {
+        page: {
+          en: 8,
+        },
+        name: '',
+        label: translateMarker('Activity Flow Chart'),
+        type: 'step',
+        activities: [],
+      },
+    ],
+  },
+  {
     label: translateMarker('Long before the season'),
     steps: [
       {
