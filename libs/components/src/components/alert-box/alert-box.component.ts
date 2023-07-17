@@ -27,17 +27,10 @@ export class AlertBoxComponent {
     if (!type) {
       type = 'info';
     }
-    console.log('set type', type, this.element.nativeElement);
     this.icon = ICON_MAPPING[type];
     const [h, s, l] = COLOR_MAPPING[type];
-    this.element.nativeElement.style.setProperty(
-      '--alert-color',
-      `hsl(${h},${s}%,${l}%)`
-    );
-    this.element.nativeElement.style.setProperty(
-      '--alert-color-bg',
-      `hsl(${h},${s}%,${l}%,${0.15})`
-    );
+    this.element.nativeElement.style.setProperty('--alert-color', `hsl(${h},${s}%,${l}%)`);
+    this.element.nativeElement.style.setProperty('--alert-color-bg', `hsl(${h},${s}%,${l}%,${0.15})`);
     if (!this.title) {
       this.title = capitaliseString(type);
     }
@@ -47,7 +40,6 @@ export class AlertBoxComponent {
   constructor(private element: ElementRef<HTMLElement>) {}
 }
 function capitaliseString(s: string = '') {
-  console.log('capitalise', s, s[0], s.substring(1));
   return s[0].toUpperCase() + s.substring(1);
 }
 // utility to make it easier to copy/paste css hsl values

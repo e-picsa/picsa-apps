@@ -17,15 +17,13 @@ import { PicsaCommonComponentsService } from '../services/components.service';
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BackButton implements OnDestroy {
   showButton = false;
-  /** Track list of page views for back navigation */
-  private history: string[] = [];
   private componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private router: Router,
     private location: Location,
     private zone: NgZone,
-    componentService: PicsaCommonComponentsService
+    private componentService: PicsaCommonComponentsService
   ) {
     // provide access to back method through component service
     componentService.back = () => this.back();
@@ -35,6 +33,14 @@ export class BackButton implements OnDestroy {
     if (Capacitor.isNativePlatform()) {
       this.handleNativeBackButtonPress();
     }
+  }
+
+  /**
+   * Track browser history using component service to allow for shared history
+   * across multiple buttons
+   */
+  private get history() {
+    return this.componentService.navHistory;
   }
 
   public back() {
@@ -48,8 +54,13 @@ export class BackButton implements OnDestroy {
   private subscribeToRouteChanges() {
     this.router.events.pipe(takeUntil(this.componentDestroyed$)).subscribe((e) => {
       if (e instanceof NavigationEnd) {
-        this.history.push(e.urlAfterRedirects);
-        this.checkButtonState(e.urlAfterRedirects);
+        // HACK - ensure android doesn't store encoded URIs
+        const url = decodeURIComponent(e.urlAfterRedirects);
+        // Hack - Avoid accidental duplicate entries
+        if (url !== this.history[this.history.length - 1]) {
+          this.history.push(url);
+        }
+        this.checkButtonState(url);
       }
     });
   }
@@ -100,8 +111,11 @@ export class BackButton implements OnDestroy {
       try {
         const current = this.history.pop();
         const previous = this.history.pop();
-        this.router.navigate([previous], { replaceUrl: true });
+        // HACK - ensure queryParams extracted correctly
+        const { pathname, params } = extractSearchParams(previous);
+        this.router.navigate([pathname || '/'], { replaceUrl: true, queryParams: params });
       } catch (error) {
+        console.error(error);
         return this.router.navigate(['/'], {
           replaceUrl: true,
         });
@@ -114,4 +128,14 @@ export class BackButton implements OnDestroy {
     this.componentDestroyed$.complete();
     CapacitorApp.removeAllListeners();
   }
+}
+
+function extractSearchParams(path = '/') {
+  const params: Record<string, string> = {};
+  // HACK - use template host as android will have invalid scheme
+  const url = new URL(`http://example.com${path}`);
+  url.searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+  return { pathname: url.pathname, params };
 }

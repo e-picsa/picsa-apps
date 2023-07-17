@@ -1116,6 +1116,10 @@
     "tool": "extension"
   },
   {
+    "text": "Activity Flow Chart",
+    "tool": "manual"
+  },
+  {
     "text": "After the season",
     "tool": "manual"
   },
@@ -1148,6 +1152,10 @@
     "tool": "manual"
   },
   {
+    "text": "Introduction",
+    "tool": "manual"
+  },
+  {
     "text": "Is the climate changing?",
     "tool": "manual"
   },
@@ -1172,7 +1180,15 @@
     "tool": "manual"
   },
   {
+    "text": "Manual Requires Download",
+    "tool": "manual"
+  },
+  {
     "text": "Options by context",
+    "tool": "manual"
+  },
+  {
+    "text": "PICSA",
     "tool": "manual"
   },
   {

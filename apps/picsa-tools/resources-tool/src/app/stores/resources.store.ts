@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { ConfigurationService } from '@picsa/configuration';
+import { ConfigurationService, IConfiguration } from '@picsa/configuration';
 import { IStorageFilesHashmap, NativeStorageService } from '@picsa/shared/services/native/storage-service';
-import { action } from 'mobx-angular';
 import { lastValueFrom } from 'rxjs';
+
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 
 import RESOURCES from '../data';
 import { IResource, IResourceCollection, IResourceFile, IResourceItemBase } from '../models';
@@ -15,26 +16,27 @@ import { IResource, IResourceCollection, IResourceFile, IResourceItemBase } from
 @Injectable({
   providedIn: 'root',
 })
-export class ResourcesStore {
-  isNative = Capacitor.isNativePlatform();
+export class ResourcesStore extends PicsaAsyncService {
+  /** Parent collections */
+  public collections: IResourceCollection[];
+
+  private isNative = Capacitor.isNativePlatform();
   /** Country code from app configuration used to filter resources */
   private appConfigCountryCode: string;
   constructor(private storageService: NativeStorageService, private configurationService: ConfigurationService) {
-    this.init();
+    super();
+    this.ready().then(() => console.log('[Resources] store ready'));
   }
-  resourcesById: { [id: string]: IResource } = {};
-  /** Parent collections */
-  collections: IResourceCollection[];
+  private resourcesById: { [id: string]: IResource } = {};
 
-  public downloadedResources: IStorageFilesHashmap = {};
+  private downloadedResources: IStorageFilesHashmap = {};
 
-  @action
   /**
    *  Load resources listed in cache.
    *  @param checkUpdates - check if hardcoded data lists any additional resources
    *  that should be popluated, and check server for any updates also
    */
-  private async init() {
+  public override async init() {
     this.listenToConfigurationChanges();
     if (this.isNative) {
       await this.storageService.init();
@@ -117,6 +119,20 @@ export class ResourcesStore {
     } else {
       return true;
     }
+  }
+  /**
+   * Get URI for file resource in a format compatible with src URLs
+   * If the resource is downloaded will return a converted URL
+   * If the resource is not downloaded will return a web link
+   */
+  public getFileLocalLink(file: IResourceFile) {
+    if (this.isNative) {
+      const storageFile = this.downloadedResources[`resources/${file.filename}`];
+      if (storageFile) {
+        return this.storageService.convertToLocalUrl(storageFile);
+      }
+    }
+    return file.url;
   }
 
   async openFileResource(resource: IResourceFile) {

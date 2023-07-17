@@ -64,8 +64,8 @@ export class ClimateSiteViewComponent implements OnInit, OnDestroy {
       const viewId = params.get('view') as IChartId;
       // clear tools before loading chart
       this.toolService.disableAll();
-      setTimeout(() => {
-        this.chartService.setChart(viewId || undefined);
+      setTimeout(async () => {
+        await this.chartService.setChart(viewId);
       }, 50);
     });
   }

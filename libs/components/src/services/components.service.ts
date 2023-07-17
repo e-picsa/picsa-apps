@@ -19,6 +19,9 @@ export class PicsaCommonComponentsService {
   headerOptions$ = new BehaviorSubject<IHeaderOptions>({});
   breadcrumbOptions$ = new BehaviorSubject<IBreadcrumbOptions>({});
 
+  /** Track navigation history - used by back-button components (multi-instance) */
+  public navHistory: string[] = [];
+
   /** Programatically set the header options such as title and style */
   public setHeader(options: Partial<IHeaderOptions>) {
     this.headerOptions$.next(options);

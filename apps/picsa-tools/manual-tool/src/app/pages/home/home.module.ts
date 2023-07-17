@@ -1,6 +1,8 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
+import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ManualToolComponentsModule } from '../../components/components.module';
@@ -14,7 +16,13 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, ManualToolComponentsModule, RouterModule.forChild(routes), PicsaTranslateModule],
+  imports: [
+    CommonModule,
+    ManualToolComponentsModule,
+    RouterModule.forChild(routes),
+    PicsaTranslateModule,
+    ResourcesComponentsModule,
+  ],
   exports: [],
   declarations: [HomeComponent],
   providers: [],
