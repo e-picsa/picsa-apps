@@ -32,3 +32,21 @@ export function hashmapToArray<T>(hashmap: Record<string, T>, keyfield: keyof T)
     return value;
   });
 }
+
+/** Convert an array into an object grouped by specific key */
+export function arrayToHashmapArray<T extends object>(arr: T[], keyfield: keyof T) {
+  const hashmap: Record<string, T[]> = {} as any;
+  if (!Array.isArray(arr)) {
+    console.error('Cannot convert non-array to hashmap', { arr, keyfield });
+    return {};
+  }
+
+  for (const el of arr) {
+    const hashKey = el[keyfield] as string;
+    if (!(hashKey in hashmap)) {
+      hashmap[hashKey] = [];
+    }
+    hashmap[hashKey].push(el);
+  }
+  return hashmap;
+}

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
+import { arrayToHashmap } from '@picsa/utils';
 import * as Papa from 'papaparse';
 
 import * as DATA from '../data';
-import { arrayToHashmap } from '@picsa/utils';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateDataService {

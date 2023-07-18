@@ -10,7 +10,7 @@
             *ngFor="let card of enterpriseTypeCards; trackBy: trackByFn"
             [card]="card"
             (click)="enterpriseTypeClicked(card.id)"
-            [selected]="selectedType === card.id"
+            [selected]="enterpriseType === card.id"
             @fadeInOut
           ></budget-card>
         </div>
@@ -35,14 +35,14 @@
           <budget-card
             *ngFor="let enterprise of filteredEnterprises"
             [card]="enterprise"
-            (click)="enterpriseClicked(enterprise)"
+            (click)="setEnterprise(enterprise)"
             [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
             @fadeInOut
           >
           </budget-card>
           <budget-card-new
             type="enterprise"
-            [groupings]="[selectedType]"
+            [groupings]="[enterpriseType]"
             (cardSaved)="customEnterpriseCreated($event)"
           ></budget-card-new>
         </div>

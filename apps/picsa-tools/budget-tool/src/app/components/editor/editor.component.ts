@@ -1,15 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FadeInOut } from '@picsa/shared/animations';
 import { _wait } from '@picsa/utils';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 
-import {
-  IBudgetCard,
-  IBudgetCardWithValues,
-  IBudgetPeriodData,
-  IBudgetPeriodType,
-} from '../../models/budget-tool.models';
+import { IBudgetPeriodData, IBudgetPeriodType } from '../../models/budget-tool.models';
+import { IBudgetCard, IBudgetCardWithValues } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
+import { BudgetCardService } from '../../store/budget-card.service';
 import { BUDGET_PERIOD_ROWS } from '../../store/templates';
 
 @Component({
@@ -18,7 +16,7 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   styleUrls: ['./editor.component.scss'],
   animations: [FadeInOut({})],
 })
-export class BudgetEditorComponent {
+export class BudgetEditorComponent implements OnDestroy {
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
   @ViewChild('cardScroller', { static: false }) cardScroller: ElementRef<HTMLDivElement>;
@@ -27,8 +25,12 @@ export class BudgetEditorComponent {
   public _activePeriod: number;
   public editorSteps = BUDGET_PERIOD_ROWS;
 
+  public periodType: IBudgetPeriodType;
+  private periodType$ = new Subject<IBudgetPeriodType>();
+  private componentDestroyed$ = new Subject<boolean>();
+
   /** Budget period type to display cards list for */
-  public cardsListType: IBudgetPeriodType;
+  public budgetCards: IBudgetCard[] = [];
 
   @Input() set activeType(activeType: IBudgetPeriodType) {
     this.scrollToType(activeType);
@@ -39,10 +41,31 @@ export class BudgetEditorComponent {
   }
   @Output() handleNextClick = new EventEmitter();
 
-  constructor(public store: BudgetStore, private dialog: MatDialog) {}
+  constructor(public store: BudgetStore, public cardService: BudgetCardService, private dialog: MatDialog) {
+    this.subscribeToPeriodTypeChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
+  }
+
+  private subscribeToPeriodTypeChanges() {
+    // subscribe to db cards for type until next card type change
+    this.periodType$
+      .pipe(
+        switchMap(() => this.cardService.dbCollection.find({ selector: { type: this.periodType } }).$),
+        takeUntil(this.componentDestroyed$)
+      )
+      .subscribe((docs) => {
+        this.budgetCards = docs.map((d) => d._data);
+      });
+  }
 
   public showCardsList(type: IBudgetPeriodType) {
-    this.cardsListType = type;
+    this.periodType = type;
+    this.periodType$.next(type);
+
     this.dialog.open(this.cardsListDialog, {
       width: '90vw',
       height: '90vh',

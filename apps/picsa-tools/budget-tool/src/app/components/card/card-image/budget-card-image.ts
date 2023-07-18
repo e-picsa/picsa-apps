@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy
 import { DomSanitizer, SafeHtml, SafeUrl } from '@angular/platform-browser';
 import { catchError, firstValueFrom } from 'rxjs';
 
-import { IBudgetCard } from '../../../models/budget-tool.models';
+import { IBudgetCard } from '../../../schema';
 
 @Component({
   selector: 'budget-card-image',
