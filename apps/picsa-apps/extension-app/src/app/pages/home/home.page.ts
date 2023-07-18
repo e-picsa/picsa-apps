@@ -5,7 +5,13 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION } from '@picsa/environments';
 
-const PAGE_LINKS: ILink[] = [
+interface IPageLink {
+  name: string;
+  icon: string;
+  url: string;
+}
+
+const PAGE_LINKS: IPageLink[] = [
   {
     name: translateMarker('Manual'),
     icon: 'picsa_manual_tool',
@@ -43,14 +49,12 @@ const PAGE_LINKS: ILink[] = [
   },
 
   // {
-  //   ...LINK_DEFAULTS,
   //   name: translateMarker('Discussions'),
   //   icon: 'picsa_discussions',
   //   url: '/discussions',
   // },
 
   // {
-  //   ...LINK_DEFAULTS,
   //   name: 'Settings',
   //   icon: 'picsa_settings',
   //   url: '/settings'
@@ -63,17 +67,15 @@ const PAGE_LINKS: ILink[] = [
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnDestroy, AfterViewInit {
-  public links: ILink[];
+  public links = PAGE_LINKS;
   public version = APP_VERSION;
 
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
 
-  constructor(private router: Router, private componentsService: PicsaCommonComponentsService) {
-    this.links = PAGE_LINKS;
-  }
+  constructor(private router: Router, private componentsService: PicsaCommonComponentsService) {}
 
-  linkClicked(link: ILink) {
+  linkClicked(link: IPageLink) {
     this.router.navigate([link.url]);
   }
 
@@ -85,11 +87,4 @@ export class HomePage implements OnDestroy, AfterViewInit {
       endContent: new DomPortal(this.headerContent),
     });
   }
-}
-
-interface ILink {
-  name: string;
-  icon: string;
-  img?: string;
-  url?: string;
 }
