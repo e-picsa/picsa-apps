@@ -1,6 +1,10 @@
 .page {
   background: var(--color-primary);
 }
+.page-content {
+  overflow: hidden;
+  padding: 0;
+}
 .background-image {
   position: relative;
 }
@@ -31,13 +35,27 @@
   z-index: -1;
   opacity: 0.4;
 }
-mat-grid-tile {
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  grid-auto-rows: max-content;
+  gap: 8px;
+  flex: 1;
+  padding: 1rem;
+  margin-bottom: 3rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 136px);
+}
+
+.grid-tile {
   background: rgba(0, 0, 0, 0.65);
   color: white;
   cursor: pointer;
   font-size: 18px;
+  padding: 16px 8px 8px 8px;
 }
-mat-grid-tile:hover {
+.grid-tile:hover {
   transform: scale(1.02);
   transition: all 0.3s ease-out;
 }
@@ -58,7 +76,11 @@ footer {
   height: 70px;
 }
 .nav-text {
-  height: 2em;
+  min-height: 3rem;
+  max-height: 4rem;
+  overflow: auto;
+  text-overflow: clip;
+  word-wrap: break-word;
 }
 .share-button {
   padding: 0;
