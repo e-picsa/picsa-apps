@@ -2,14 +2,12 @@ import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewCh
 import { MatDialog } from '@angular/material/dialog';
 import { FadeInOut } from '@picsa/shared/animations';
 import { _wait } from '@picsa/utils';
+import { Subject, takeUntil } from 'rxjs';
 
-import {
-  IBudgetCard,
-  IBudgetCardWithValues,
-  IBudgetPeriodData,
-  IBudgetPeriodType,
-} from '../../models/budget-tool.models';
+import { IBudgetPeriodData, IBudgetPeriodType } from '../../models/budget-tool.models';
+import { IBudgetCard, IBudgetCardWithValues } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
+import { BudgetCardService } from '../../store/budget-card.service';
 import { BUDGET_PERIOD_ROWS } from '../../store/templates';
 
 @Component({
@@ -27,8 +25,11 @@ export class BudgetEditorComponent {
   public _activePeriod: number;
   public editorSteps = BUDGET_PERIOD_ROWS;
 
+  public periodType: IBudgetPeriodType;
+  private periodType$ = new Subject<IBudgetPeriodType>();
+
   /** Budget period type to display cards list for */
-  public cardsListType: IBudgetPeriodType;
+  public budgetCards: IBudgetCard[] = [];
 
   @Input() set activeType(activeType: IBudgetPeriodType) {
     this.scrollToType(activeType);
@@ -39,10 +40,18 @@ export class BudgetEditorComponent {
   }
   @Output() handleNextClick = new EventEmitter();
 
-  constructor(public store: BudgetStore, private dialog: MatDialog) {}
+  constructor(public store: BudgetStore, public cardService: BudgetCardService, private dialog: MatDialog) {}
 
   public showCardsList(type: IBudgetPeriodType) {
-    this.cardsListType = type;
+    this.periodType = type;
+    this.periodType$.next(type);
+
+    // subscribe to db cards for type until next card type change
+    const ref = this.cardService.dbCollection.find({ selector: { type } });
+    ref.$.pipe(takeUntil(this.periodType$)).subscribe((docs) => {
+      this.budgetCards = docs.map((d) => d._data);
+    });
+
     this.dialog.open(this.cardsListDialog, {
       width: '90vw',
       height: '90vh',

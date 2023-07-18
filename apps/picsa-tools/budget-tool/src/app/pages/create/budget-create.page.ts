@@ -4,8 +4,10 @@ import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 
-import { IBudgetCard, IBudgetCardDB, IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
+import { IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
+import { IBudgetCard } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
+import { BudgetCardService } from '../../store/budget-card.service';
 import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
 
 @Component({
@@ -23,32 +25,34 @@ export class BudgetCreatePage implements OnInit {
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
-  enterpriseTypeCards: IBudgetCardDB[] = [];
+  enterpriseTypeCards: IBudgetCard[] = [];
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cardService: BudgetCardService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.store.createNewBudget();
     this.generateBudgetForm();
-    this.enterpriseTypeCards = this.store.enterpriseTypeCards;
+    this.enterpriseTypeCards = await this.cardService.getEnterpriseGroupCards();
   }
 
   /**************************************************************************
    *  Public Helpers
    **************************************************************************/
 
-  enterpriseTypeClicked(type: string) {
+  async enterpriseTypeClicked(type: string) {
     // reset form on new type selected
     this.selectedType = type;
     this.enterpriseToggle = false;
     this.budgetMetaForm.patchValue({ enterprise: { type } });
-    setTimeout(() => {
-      this.filteredEnterprises = this.store.getfilteredEnterprises(type);
+    const filteredEnterprises = await this.getFilteredEnterprises(type);
+    setTimeout(async () => {
+      this.filteredEnterprises = filteredEnterprises;
       this.enterpriseToggle = true;
     }, 200);
   }
@@ -61,9 +65,13 @@ export class BudgetCreatePage implements OnInit {
     });
   }
 
-  customEnterpriseCreated(enterprise: IBudgetCard) {
-    this.filteredEnterprises = this.store.getfilteredEnterprises(this.selectedType);
+  async customEnterpriseCreated(enterprise: IBudgetCard) {
+    this.filteredEnterprises = await this.getFilteredEnterprises(this.selectedType);
     this.enterpriseClicked(enterprise);
+  }
+  private async getFilteredEnterprises(grouping: string) {
+    const docs = await this.cardService.dbCollection.find({ selector: { type: 'enterprise' } }).exec();
+    return docs.map((d) => d._data).filter((e) => e.groupings?.includes(grouping as any));
   }
   async save() {
     const meta = this.budgetMetaForm.value as IBudgetMeta;
@@ -75,7 +83,7 @@ export class BudgetCreatePage implements OnInit {
     });
   }
 
-  public trackByFn(index: number, item: IBudgetCardDB) {
+  public trackByFn(index: number, item: IBudgetCard) {
     return item.id;
   }
 

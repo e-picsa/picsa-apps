@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { IBudgetCard } from '../../models/budget-tool.models';
+import { IBudgetCard } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({

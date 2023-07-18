@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from 
 import { MatInput } from '@angular/material/input';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IBudgetCardWithValues } from '../../../../models/budget-tool.models';
+import { IBudgetCardWithValues } from '../../../../schema';
 
 const LABELS: { [id: string]: string } = {
   adultMale: translateMarker('Male Member'),

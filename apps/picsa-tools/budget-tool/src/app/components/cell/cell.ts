@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { IBudgetCard } from '../../models/budget-tool.models';
+import { IBudgetCard } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({

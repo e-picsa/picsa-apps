@@ -27,8 +27,8 @@
 
 <!-- Dialog -->
 <ng-template #cardsListDialog>
-  <div id="cardsList" *ngIf="data && cardsListType && store.budgetCardsByType">
-    <div #cardScroller style="flex: 1; overflow: auto" [ngSwitch]="cardsListType">
+  <div id="cardsList" *ngIf="data && periodType">
+    <div #cardScroller style="flex: 1; overflow: auto" [ngSwitch]="periodType">
       <!-- Family Labour -->
       <budget-cell-editor-family-labour
         *ngSwitchCase="'familyLabour'"
@@ -45,10 +45,10 @@
       <!-- Default Editor -->
       <budget-cell-editor-card-select
         *ngSwitchDefault
-        [type]="cardsListType"
-        [values]="data[cardsListType]"
-        [cards]="store.budgetCardsByType[cardsListType]"
-        (valueChanged)="onEditorChange($event, cardsListType)"
+        [type]="periodType"
+        [values]="data[periodType]"
+        [cards]="budgetCards"
+        (valueChanged)="onEditorChange($event, periodType)"
       >
       </budget-cell-editor-card-select>
     </div>

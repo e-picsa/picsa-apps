@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BudgetCardService } from '@picsa/budget/src/app/store/budget-card.service';
 
-import { IBudgetCardWithValues } from '../../../../models/budget-tool.models';
+import { IBudgetCardWithValues } from '../../../../schema';
 import { BudgetStore } from '../../../../store/budget.store';
 
 @Component({
@@ -20,10 +21,10 @@ export class BudgetCellEditorProduceConsumedComponent implements OnInit {
   public totalOutputs: Record<string, number>;
   public totalConsumed: Record<string, number>;
 
-  constructor(private store: BudgetStore) {}
+  constructor(private store: BudgetStore, private cardService: BudgetCardService) {}
 
-  ngOnInit(): void {
-    const { cards } = this.generateProduceConsumedCards();
+  async ngOnInit() {
+    const { cards } = await this.generateProduceConsumedCards();
     this.cards = cards;
   }
 
@@ -32,7 +33,7 @@ export class BudgetCellEditorProduceConsumedComponent implements OnInit {
    * The list restricts to only cards that have had outputs produced within
    * the active period, and tracks total quanitities available/consumed
    */
-  private generateProduceConsumedCards() {
+  private async generateProduceConsumedCards() {
     const allBudgetPeriods = this.store.activeBudget.data || [];
 
     // Extract values for any existing produce consumed values
@@ -50,7 +51,10 @@ export class BudgetCellEditorProduceConsumedComponent implements OnInit {
 
     // Create a list of produceConsumed cards from list of output card, including only those
     // that have had outputs produced and assigned with existing period values
-    const cards = this.store.budgetCardsByType.outputs
+    const docs = await this.cardService.dbCollection.find({ selector: { type: 'outputs' } }).exec();
+
+    const cards = docs
+      .map((d) => d._data)
       .filter(({ id }) => id in this.totalOutputs && id !== 'money')
       .map((c) => {
         const card = c as IBudgetCardWithValues;
