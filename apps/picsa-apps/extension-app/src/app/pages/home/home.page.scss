@@ -3,6 +3,7 @@
 }
 .page-content {
   overflow: hidden;
+  padding: 0;
 }
 .background-image {
   position: relative;
@@ -40,8 +41,10 @@
   grid-auto-rows: max-content;
   gap: 8px;
   flex: 1;
+  padding: 1rem;
   margin-bottom: 3rem;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   max-height: calc(100vh - 136px);
 }
 
