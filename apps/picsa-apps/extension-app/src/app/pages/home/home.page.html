@@ -3,21 +3,15 @@
 </div>
 
 <div class="page-content background-image">
-  <mat-grid-list [cols]="columns" style="flex: 1" gutterSize="8">
-    <mat-grid-tile
-      *ngFor="let link of links"
-      [colspan]="link.cols"
-      [rowspan]="link.rows"
-      data-cy="link"
-      class="grid-tile"
-      (click)="linkClicked(link)"
-    >
+  <div class="link-grid">
+    <div *ngFor="let link of links" data-cy="link" class="grid-tile" (click)="linkClicked(link)">
       <div style="text-align: center">
         <mat-icon [svgIcon]="link.icon" class="nav-icon"></mat-icon>
         <div class="nav-text">{{ link.name | translate }}</div>
       </div>
-    </mat-grid-tile>
-  </mat-grid-list>
+    </div>
+  </div>
+
   <footer>
     <picsa-configuration-select></picsa-configuration-select>
     <a routerLink="privacy" class="privacy-policy">{{'Privacy Policy' | translate}}</a>
