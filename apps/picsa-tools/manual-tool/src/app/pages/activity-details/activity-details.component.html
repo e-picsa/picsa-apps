@@ -1,7 +1,10 @@
 <div class="page-container">
   <h2>{{ activity?.label }}</h2>
 
-  <video class="video-player" [src]="activity?.video" controls></video>
+  <!-- <video class="video-player" [src]="activity?.video" controls></video> -->
+
+  <div class="video-player" id="fullscreen" slot="fixed"></div>
+    <!-- <button (click)="playVideo()">Play Video</button> -->
 
   <div class="svg-row">
     <div class="svg-item">
