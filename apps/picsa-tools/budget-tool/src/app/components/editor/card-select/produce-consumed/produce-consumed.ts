@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { BudgetCardService } from '@picsa/budget/src/app/store/budget-card.service';
 
 import { IBudgetCardWithValues } from '../../../../schema';
 import { BudgetStore } from '../../../../store/budget.store';
+import { BudgetCardService } from '../../../../store/budget-card.service';
 
 @Component({
   selector: 'budget-cell-editor-produce-consumed',
