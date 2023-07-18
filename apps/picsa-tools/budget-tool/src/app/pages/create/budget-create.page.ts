@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
 import { IBudgetCard } from '../../schema';
@@ -17,28 +18,37 @@ import { MONTHS, PERIOD_DATA_TEMPLATE } from '../../store/templates';
   animations: [FadeInOut(ANIMATION_DELAYED)],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BudgetCreatePage implements OnInit {
+export class BudgetCreatePage implements OnInit, OnDestroy {
   budgetMetaForm: FormGroup;
   enterpriseToggle = false;
-  selectedType: string;
+  enterpriseType: string;
+  enterpriseType$ = new Subject<string>();
   filteredEnterprises: IBudgetCard[] = [];
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
   periodLabelOptions = [...MONTHS];
   enterpriseTypeCards: IBudgetCard[] = [];
+  private componentDestroyed$ = new Subject<boolean>();
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,
     private router: Router,
     private route: ActivatedRoute,
-    private cardService: BudgetCardService
+    private cardService: BudgetCardService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
     this.store.createNewBudget();
     this.generateBudgetForm();
     this.enterpriseTypeCards = await this.cardService.getEnterpriseGroupCards();
+    this.subscribeToEnterpriseChanges();
+    this.cdr.markForCheck();
+  }
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
   }
 
   /**************************************************************************
@@ -47,17 +57,18 @@ export class BudgetCreatePage implements OnInit {
 
   async enterpriseTypeClicked(type: string) {
     // reset form on new type selected
-    this.selectedType = type;
+    this.enterpriseType = type;
+    this.enterpriseType$.next(type);
+
     this.enterpriseToggle = false;
     this.budgetMetaForm.patchValue({ enterprise: { type } });
-    const filteredEnterprises = await this.getFilteredEnterprises(type);
+
     setTimeout(async () => {
-      this.filteredEnterprises = filteredEnterprises;
       this.enterpriseToggle = true;
     }, 200);
   }
 
-  enterpriseClicked(enterprise: IBudgetCard) {
+  setEnterprise(enterprise: IBudgetCard) {
     // TODO - defaults no longer set for each enterprise,
     // possibly find a way to store somewhere and lookup
     this.budgetMetaForm.patchValue({
@@ -66,12 +77,28 @@ export class BudgetCreatePage implements OnInit {
   }
 
   async customEnterpriseCreated(enterprise: IBudgetCard) {
-    this.filteredEnterprises = await this.getFilteredEnterprises(this.selectedType);
-    this.enterpriseClicked(enterprise);
+    this.setEnterprise(enterprise);
+    this.cdr.markForCheck();
   }
-  private async getFilteredEnterprises(grouping: string) {
-    const docs = await this.cardService.dbCollection.find({ selector: { type: 'enterprise' } }).exec();
-    return docs.map((d) => d._data).filter((e) => e.groupings?.includes(grouping as any));
+
+  /**
+   * Subscribe to enterprise type group select to automatically
+   * retrieve cards related to that enterprise grouping
+   * Use inner subscription to include live updates from custom cards created
+   */
+  private async subscribeToEnterpriseChanges() {
+    this.enterpriseType$
+      .pipe(
+        switchMap(() => {
+          const ref = this.cardService.dbCollection.find({ selector: { type: 'enterprise' } });
+          return ref.$.pipe(map((docs) => docs.map((doc) => doc._data)));
+        }),
+        takeUntil(this.componentDestroyed$)
+      )
+      .subscribe((enterprises) => {
+        this.filteredEnterprises = enterprises.filter((e) => e.groupings?.includes(this.enterpriseType as any));
+        this.cdr.markForCheck();
+      });
   }
   async save() {
     const meta = this.budgetMetaForm.value as IBudgetMeta;

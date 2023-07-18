@@ -13,6 +13,7 @@ export class BudgetCardService extends PicsaAsyncService {
   constructor(private dbService: PicsaDatabase_V2_Service) {
     super();
     this.ready().then(() => console.log('[Budget Card] service ready'));
+    // TODO - migrate legacy db custom cards (if possible)
   }
 
   public override async init() {
@@ -32,17 +33,15 @@ export class BudgetCardService extends PicsaAsyncService {
     const docs = await this.dbCollection.find({ selector: { type: 'enterprise' } }).exec();
     const cards = docs.map((d) => d._data);
     const groups = this.groupEnterpriseCards(cards);
-    console.log({ groups });
     return groups;
   }
 
   public async saveCustomCard(card: CardSchema.IBudgetCard) {
-    // await this.db.setDoc('budgetTool/_all/cards', card);
-    // // re-populate budget cards
-    // console.log('card saved', card);
+    return this.dbCollection.upsert(card);
   }
   public async deleteCustomCard(card: CardSchema.IBudgetCard) {
-    // return this.db.deleteDocs('budgetTool/_all/cards', [card._key]);
+    const ref = this.dbCollection.findOne(card.id);
+    return ref.remove();
   }
 
   private async loadHardcodedData() {

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { generateDBMeta } from '@picsa/shared/services/core/db';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { toJS } from 'mobx';
 
 import { IBudgetCard, IBudgetCardGrouping, IBudgetCardType } from '../../../schema';
@@ -25,7 +25,8 @@ export class BudgetCardNew {
     // groupings should match the current enterprise unless otherwise specified
     const groupings = this.groupings ? this.groupings : toJS(this.store.activeBudget.meta.enterprise.groupings);
     const card: IBudgetCard = {
-      ...NEW_CARD,
+      id: generateID(),
+      label: '',
       type: this.type,
       groupings: groupings as IBudgetCardGrouping[],
     };
@@ -51,9 +52,4 @@ const PLACEHOLDER_CARD: IBudgetCard = {
   type: 'other',
   imgType: 'svg',
   groupings: ['*'],
-};
-const NEW_CARD: IBudgetCard = {
-  id: generateDBMeta()._key,
-  label: '',
-  type: 'other',
 };
