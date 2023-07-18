@@ -3,6 +3,7 @@ import { addRxPlugin, createRxDatabase, RxCollection, RxCollectionCreator, RxDat
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
+import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
 addRxPlugin(RxDBMigrationPlugin);
 
@@ -23,14 +24,27 @@ interface IPicsaCollectionData {
  * https://rxdb.info/rx-database.html
  */
 @Injectable({ providedIn: 'root' })
-export class PicsaDatabase_V2_Service {
-  private _init_called = false;
-
+export class PicsaDatabase_V2_Service extends PicsaAsyncService {
+  public override initOnCreate = true;
   public db: RxDatabase<{
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService) {}
+  constructor(private userService: PicsaUserService) {
+    super();
+  }
+
+  /**
+   * Initialise the database
+   * @note This is called automatically when importing the module and so should
+   * not be manually triggered
+   */
+  public override async init() {
+    this.db = await createRxDatabase({
+      name: `picsa_app`,
+      storage: getRxStorageDexie({ autoOpen: true }),
+    });
+  }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
   public async ensureCollections(collections: { [name: string]: IPicsaCollectionCreator<any> }) {
@@ -88,22 +102,5 @@ export class PicsaDatabase_V2_Service {
       });
     }
     return { collection, hookFactories };
-  }
-
-  /**
-   * Initialise the database
-   * @note This is called automatically when importing the module and so should
-   * not be manually triggered
-   */
-  public async initialise() {
-    // Avoid duplicate initialisation
-    // Shouldn't happen as init called in forRoot but just in case
-    if (!this._init_called) {
-      this._init_called = true;
-      this.db = await createRxDatabase({
-        name: `picsa_app`,
-        storage: getRxStorageDexie({ autoOpen: true }),
-      });
-    }
   }
 }

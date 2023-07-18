@@ -7,7 +7,7 @@ import { PicsaDatabase_V2_Service } from '../../services/core/db_v2/db.service';
  * https://stackoverflow.com/questions/46257184/angular-async-factory-provider
  */
 function dbInitFactory(dbService: PicsaDatabase_V2_Service) {
-  return () => dbService.initialise();
+  return () => dbService.ready();
 }
 
 /**
