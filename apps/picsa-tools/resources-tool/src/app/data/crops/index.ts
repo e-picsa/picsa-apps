@@ -1,5 +1,35 @@
-import type { IResourceApp, IResourceCollection, IResourceLink } from '../../models';
+import type { IResourceApp, IResourceCollection, IResourceLink, IResourceFile } from '../../models';
 
+const files: { [key: string]: IResourceFile } = {
+  gap: {
+    _key: 'gap',
+    _created: '2019-09-25T10:00:04.000Z',
+    _modified: '2019-09-27T11:00:01.000Z',
+    title: 'Guide to Agriculture Production',
+    description: 'And Natural Resource Management in Malawi',
+    subtitle: '',
+    type: 'file',
+    image: 'assets/resources/covers/gap.jpg',
+    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FGAP_2021.pdf?alt=media&token=4832ad76-cf14-490f-8fba-73bd5845d440',
+    filename: 'GAP_2021.pdf',
+    mimetype: 'application/pdf',
+    appCountries: ['mw'],
+  },
+  bmtm: {
+    _key: 'bmtm',
+    _created: '2019-09-25T10:00:04.000Z',
+    _modified: '2019-09-27T11:00:01.000Z',
+    title: 'Business Models Training Manual',
+    description: 'For Linking Producers and Processors',
+    subtitle: '',
+    type: 'file',
+    image: 'assets/resources/covers/bmtm.jpg',
+    url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FBUSINESS%20MODELS%20TRAINING%20MANUAL.pdf?alt=media&token=e682f443-1163-4894-88a7-7ea9851512a8',
+    filename: 'BUSINESS MODELS TRAINING MANUAL.pdf',
+    mimetype: 'application/pdf',
+    appCountries: ['mw'],
+  },
+};
 const links: { [key: string]: IResourceLink } = {
   accessAg: {
     _key: 'accessAg',
@@ -84,6 +114,7 @@ const cropResources: IResourceCollection = {
   childResources: [
     // TODO - cropInfoCollection in Picsa Resources
     'cropInfoCollection',
+    ...Object.keys(files),
     ...Object.keys(links),
     ...Object.keys(apps),
   ],
@@ -91,6 +122,7 @@ const cropResources: IResourceCollection = {
 
 export default {
   cropResources,
+  ...files,
   ...links,
   ...apps,
 };

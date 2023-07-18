@@ -11,6 +11,12 @@
     "md5Checksum": "994688495c9894b1c10b8c73ccbb06af",
     "modifiedTime": "2022-09-08T10:31:19.003Z"
   },
+  "covers/bmtm.jpg": {
+    "relativePath": "covers/bmtm.jpg",
+    "size_kb": 28.9,
+    "md5Checksum": "81e603b769431198c44eda8a154cc664",
+    "modifiedTime": "2023-07-18T21:30:38.138Z"
+  },
   "covers/crops.svg": {
     "relativePath": "covers/crops.svg",
     "size_kb": 1.7,
@@ -40,6 +46,12 @@
     "size_kb": 1.1,
     "md5Checksum": "8626bc9119bd6b8bc0fa04e8a20b6e74",
     "modifiedTime": "2022-09-28T20:19:52.986Z"
+  },
+  "covers/gap.jpg": {
+    "relativePath": "covers/gap.jpg",
+    "size_kb": 25.7,
+    "md5Checksum": "67282f753ec9fd76c073c7883f467171",
+    "modifiedTime": "2023-07-18T21:21:54.636Z"
   },
   "covers/gender-equality-1.svg": {
     "relativePath": "covers/gender-equality-1.svg",
