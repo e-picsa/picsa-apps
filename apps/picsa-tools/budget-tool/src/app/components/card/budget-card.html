@@ -8,3 +8,11 @@
   <budget-card-image [card]="card"></budget-card-image>
   <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
 </mat-card>
+<button
+  mat-button
+  *ngIf="showCustomCardDelete && card.customMeta && !selected"
+  class="delete-button"
+  (click)="promptCustomDelete($event)"
+>
+  <mat-icon class="delete-button-icon" svgIcon="picsa_delete"></mat-icon>
+</button>
