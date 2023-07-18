@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { toJS } from 'mobx';
 
@@ -30,7 +31,6 @@ export class BudgetCardNew {
       type: this.type,
       groupings: groupings as IBudgetCardGrouping[],
     };
-    console.log('card', card);
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
       width: '250px',
       data: card,
@@ -48,7 +48,7 @@ export class BudgetCardNew {
  ***********************************************************************/
 const PLACEHOLDER_CARD: IBudgetCard = {
   id: 'add-custom',
-  label: 'add other',
+  label: translateMarker('Add Card'),
   type: 'other',
   imgType: 'svg',
   groupings: ['*'],

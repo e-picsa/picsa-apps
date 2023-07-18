@@ -1,8 +1,8 @@
-import { Component, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FadeInOut } from '@picsa/shared/animations';
 import { _wait } from '@picsa/utils';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 
 import { IBudgetPeriodData, IBudgetPeriodType } from '../../models/budget-tool.models';
 import { IBudgetCard, IBudgetCardWithValues } from '../../schema';
@@ -16,7 +16,7 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   styleUrls: ['./editor.component.scss'],
   animations: [FadeInOut({})],
 })
-export class BudgetEditorComponent {
+export class BudgetEditorComponent implements OnDestroy {
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
   @ViewChild('cardScroller', { static: false }) cardScroller: ElementRef<HTMLDivElement>;
@@ -27,6 +27,7 @@ export class BudgetEditorComponent {
 
   public periodType: IBudgetPeriodType;
   private periodType$ = new Subject<IBudgetPeriodType>();
+  private componentDestroyed$ = new Subject<boolean>();
 
   /** Budget period type to display cards list for */
   public budgetCards: IBudgetCard[] = [];
@@ -40,17 +41,30 @@ export class BudgetEditorComponent {
   }
   @Output() handleNextClick = new EventEmitter();
 
-  constructor(public store: BudgetStore, public cardService: BudgetCardService, private dialog: MatDialog) {}
+  constructor(public store: BudgetStore, public cardService: BudgetCardService, private dialog: MatDialog) {
+    this.subscribeToPeriodTypeChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
+  }
+
+  private subscribeToPeriodTypeChanges() {
+    // subscribe to db cards for type until next card type change
+    this.periodType$
+      .pipe(
+        switchMap(() => this.cardService.dbCollection.find({ selector: { type: this.periodType } }).$),
+        takeUntil(this.componentDestroyed$)
+      )
+      .subscribe((docs) => {
+        this.budgetCards = docs.map((d) => d._data);
+      });
+  }
 
   public showCardsList(type: IBudgetPeriodType) {
     this.periodType = type;
     this.periodType$.next(type);
-
-    // subscribe to db cards for type until next card type change
-    const ref = this.cardService.dbCollection.find({ selector: { type } });
-    ref.$.pipe(takeUntil(this.periodType$)).subscribe((docs) => {
-      this.budgetCards = docs.map((d) => d._data);
-    });
 
     this.dialog.open(this.cardsListDialog, {
       width: '90vw',
