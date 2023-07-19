@@ -13529,14 +13529,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "fast-xml-parser@npm:4.2.2"
+"fast-xml-parser@npm:^4.2.5":
+  version: 4.2.6
+  resolution: "fast-xml-parser@npm:4.2.6"
   dependencies:
     strnum: ^1.0.5
   bin:
     fxparser: src/cli/cli.js
-  checksum: f0e687927ddc11b2ba9e434d8bf77ef759b6692639dd2dd731e2f30201319e7c70dec08a103dd67a1af7a27f176246502d9d0f5325b5b5b99ab49665fa876857
+  checksum: 1628e4b2c5ae01fe35eb920f09c6def7e29fd455f307fc44c3372c78114504643f34b28e87c13a4f1657c10498dbb6729a341507044dc7cba498e457e8fe2573
   languageName: node
   linkType: hard
 
@@ -19091,7 +19091,7 @@ __metadata:
     eslint-plugin-cypress: ^2.10.3
     eslint-plugin-simple-import-sort: ^10.0.0
     execa: ^5.1.1
-    fast-xml-parser: ^4.2.2
+    fast-xml-parser: ^4.2.5
     firebase: ^9.16.0
     form-data: ^4.0.0
     fs-extra: ^10.1.0
