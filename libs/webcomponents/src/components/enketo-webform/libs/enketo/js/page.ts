@@ -4,11 +4,13 @@
  * @module pages
  */
 
-import $ from 'jquery';
-import config from '../config';
-import events from './event';
-import { getSiblingElement, getAncestors } from './dom-utils';
 import 'jquery-touchswipe';
+
+import $ from 'jquery';
+
+import config from '../config';
+import { getAncestors, getSiblingElement } from './dom-utils';
+import events from './event';
 
 export default {
   /**
@@ -30,27 +32,12 @@ export default {
    */
   init() {
     if (!this.form) {
-      throw new Error(
-        'Repeats module not correctly instantiated with form property.'
-      );
+      throw new Error('Repeats module not correctly instantiated with form property.');
     }
-    console.log(
-      'init form pages',
-      this.form.view.html,
-      this.form.view.html.classList.contains('pages')
-    );
+
     if (this.form.view.html.classList.contains('pages')) {
-      console.log('process pages');
-      const allPages = [
-        ...this.form.view.html.querySelectorAll(
-          '.question, .or-appearance-field-list'
-        ),
-      ]
-        .concat([
-          ...this.form.view.html.querySelectorAll(
-            '.or-repeat.or-appearance-field-list + .or-repeat-info'
-          ),
-        ])
+      const allPages = [...this.form.view.html.querySelectorAll('.question, .or-appearance-field-list')]
+        .concat([...this.form.view.html.querySelectorAll('.or-repeat.or-appearance-field-list + .or-repeat-info')])
         .filter(
           (el) =>
             // something tells me there is a more efficient way to doing this
@@ -109,9 +96,7 @@ export default {
       const referer = e.querySelector('[data-for]');
       const ancestor = e.closest('.or-repeat, form.or');
       if (referer && ancestor) {
-        const linkedQuestion = ancestor.querySelector(
-          `[name="${referer.dataset.for}"]`
-        );
+        const linkedQuestion = ancestor.querySelector(`[name="${referer.dataset.for}"]`);
         if (linkedQuestion) {
           this._flipTo(linkedQuestion.closest('[role="page"]'));
         }
@@ -186,9 +171,7 @@ export default {
            * set form.pageNavigationBlocked to true. The edge case will be very slow devices
            * and/or amazingly complex constraint expressions.
            */
-          const focused = that._getCurrent()
-            ? that._getCurrent().querySelector(':focus')
-            : null;
+          const focused = that._getCurrent() ? that._getCurrent().querySelector(':focus') : null;
           if (focused) {
             focused.blur();
           }
@@ -205,13 +188,8 @@ export default {
       .on('click', 'a', function () {
         if (!that.form.pageNavigationBlocked) {
           if (this.parentElement && this.parentElement.getAttribute('tocId')) {
-            const tocId = parseInt(
-              this.parentElement.getAttribute('tocId'),
-              10
-            );
-            const destItem = that.form.toc.tocItems.find(
-              (item) => item.tocId === tocId
-            );
+            const tocId = parseInt(this.parentElement.getAttribute('tocId'), 10);
+            const destItem = that.form.toc.tocItems.find((item) => item.tocId === tocId);
             if (destItem && destItem.element) {
               const destEl = destItem.element;
               that.form.goToTarget(destEl);
@@ -247,22 +225,19 @@ export default {
         this._toggleButtons();
       }
     });
-    this.form.view.html.addEventListener(
-      events.RemoveRepeat().type,
-      (event) => {
-        // if the current page is removed
-        // note that that.current will have length 1 even if it was removed from DOM!
-        if (this.current && !this.current.closest('html')) {
-          this._updateAllActive();
-          let $target = $(event.target).prev();
-          if ($target.length === 0) {
-            $target = $(event.target);
-          }
-          // is it best to go to previous page always?
-          this.flipToPageContaining($target);
+    this.form.view.html.addEventListener(events.RemoveRepeat().type, (event) => {
+      // if the current page is removed
+      // note that that.current will have length 1 even if it was removed from DOM!
+      if (this.current && !this.current.closest('html')) {
+        this._updateAllActive();
+        let $target = $(event.target).prev();
+        if ($target.length === 0) {
+          $target = $(event.target);
         }
+        // is it best to go to previous page always?
+        this.flipToPageContaining($target);
       }
-    );
+    });
   },
   /**
    * sets branch handlers
@@ -308,8 +283,7 @@ export default {
           // or-repeat-info is only considered a page by itself if it has no sibling repeats
           // When there are siblings repeats, we use CSS trickery to show the + button underneath the last
           // repeat.
-          (el.matches('.or-repeat-info') &&
-            !getSiblingElement(el, '.or-repeat')))
+          (el.matches('.or-repeat-info') && !getSiblingElement(el, '.or-repeat')))
     );
     this._updateToc();
   },
@@ -388,11 +362,9 @@ export default {
     pageEl.classList.add('current', 'hidden');
     // Was just added, for animation?
     pageEl.classList.remove('hidden');
-    getAncestors(
-      pageEl,
-      '.or-group, .or-group-data, .or-repeat',
-      '.or'
-    ).forEach((el) => el.classList.add('contains-current'));
+    getAncestors(pageEl, '.or-group, .or-group-data, .or-repeat', '.or').forEach((el) =>
+      el.classList.add('contains-current')
+    );
     this.current = pageEl;
   },
   /**
@@ -407,11 +379,9 @@ export default {
       // if current page is not same as pageEl
       if (this.current !== pageEl) {
         this.current.classList.remove('current', 'fade-out');
-        getAncestors(
-          this.current,
-          '.or-group, .or-group-data, .or-repeat',
-          '.or'
-        ).forEach((el) => el.classList.remove('contains-current'));
+        getAncestors(this.current, '.or-group, .or-group-data, .or-repeat', '.or').forEach((el) =>
+          el.classList.remove('contains-current')
+        );
         this._pauseMultimedia(this.current);
         this._setToCurrent(pageEl);
         this._focusOnFirstQuestion(pageEl);

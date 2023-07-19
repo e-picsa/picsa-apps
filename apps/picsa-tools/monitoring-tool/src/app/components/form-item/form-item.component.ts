@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-
-import { IPicsaForm } from '../../models';
+import { IMonitoringForm } from '../../schema/forms';
 
 @Component({
   selector: 'monitoring-form-item',
@@ -8,5 +7,5 @@ import { IPicsaForm } from '../../models';
   styleUrls: ['./form-item.component.scss'],
 })
 export class FormItemComponent {
-  @Input() form: IPicsaForm;
+  @Input() form: IMonitoringForm;
 }

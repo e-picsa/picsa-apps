@@ -1,5 +1,5 @@
 /** Enekto form definition as processed by Enketo Transformer */
-interface IEnketoFormDefinition {
+export interface IEnketoFormDefinition {
   enketoId: string;
   externalData?: any[];
   /** HTML form representation */
@@ -11,8 +11,4 @@ interface IEnketoFormDefinition {
   model: string;
   /** Form theme - NOTE - currently only grid theme imported */
   theme: 'grid';
-}
-export interface IPicsaForm extends IEnketoFormDefinition {
-  title: string;
-  description: string;
 }

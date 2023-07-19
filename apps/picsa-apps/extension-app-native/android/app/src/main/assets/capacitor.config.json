@@ -13,6 +13,7 @@
 		"cordova-plugin-codeplay-share-own-apk",
 		"@capacitor/app",
 		"@capacitor/browser",
+		"@capacitor/core",
 		"@capacitor/device",
 		"@capacitor/filesystem",
 		"capacitor-blob-writer",
@@ -20,6 +21,11 @@
 		"@capacitor-community/firebase-crashlytics",
 		"@capacitor-firebase/performance"
 	],
+	"plugins": {
+		"CapacitorHttp": {
+			"enabled": true
+		}
+	},
 	"server": {
 		"cleartext": true
 	}

@@ -1,6 +1,7 @@
 import type { IEnvironment } from '@picsa/models';
-import GROUPS from './groups';
+
 import { FirebaseConfig } from './firebase/config';
+import GROUPS from './groups';
 
 /** Used in main picsa extension app, allows country-change at runtime */
 const productionEnvironment: IEnvironment = {
