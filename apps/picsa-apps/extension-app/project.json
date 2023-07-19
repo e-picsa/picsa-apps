@@ -60,6 +60,11 @@
           },
           {
             "glob": "**/*",
+            "input": "apps/picsa-tools/monitoring-tool/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/picsa-tools/resources-tool/src/assets",
             "output": "assets"
           },
