@@ -1,9 +1,6 @@
 <div class="page-content">
   <div class="page-columns">
     <div class="content-container">
-      <picsa-alert-box type="warning">
-        These forms are for demonstration purposes only, data is not collected or stored
-      </picsa-alert-box>
       <h2>{{ 'Forms' | translate }}</h2>
       <div class="list-container">
         <monitoring-form-item *ngFor="let form of forms" [form]="form"></monitoring-form-item>
