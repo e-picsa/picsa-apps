@@ -1,5 +1,6 @@
 import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
+
 import { IEnketoFormDefinition } from '../common.schema';
 
 interface ISummaryField {

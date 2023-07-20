@@ -7387,12 +7387,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stencil/angular-output-target@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@stencil/angular-output-target@npm:0.6.0"
+"@stencil/angular-output-target@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "@stencil/angular-output-target@npm:0.7.1"
   peerDependencies:
-    "@stencil/core": ^2.9.0 || ^3.0.0
-  checksum: 0d5aba8ef1ecfa980f992bc4a35efd7264c1167cade9acde98c101ffdb8a11ba81bedfa653304cc502ef80a9b404aaf000df4d78fd997855a5d5ddf11d95f3bb
+    "@stencil/core": ">=2.0.0 || >=3 || >= 4.0.0-beta.0 || >= 4.0.0"
+  checksum: 87d3994dbfe3f7018bf32132e757c9222d31417d1adee1814c08f51567e8a8e6c9a869dc3183701b08a1251d419d391580bec334244f90e7d0fa81632a436da3
   languageName: node
   linkType: hard
 
@@ -19054,7 +19054,7 @@ __metadata:
     "@nrwl/nx-cloud": 15.0.2
     "@nrwl/workspace": 15.6.2
     "@nxext/stencil": ^15.7.0
-    "@stencil/angular-output-target": ^0.6.0
+    "@stencil/angular-output-target": ^0.7.1
     "@stencil/core": 3.2.2
     "@stencil/sass": ^3.0.2
     "@supabase/supabase-js": ^2.22.0

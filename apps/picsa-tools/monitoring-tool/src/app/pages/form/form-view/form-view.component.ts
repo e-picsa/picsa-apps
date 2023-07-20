@@ -1,17 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
-import { KoboService } from '@picsa/webcomponents';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaDialogService } from '@picsa/shared/features';
+import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
 import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
+import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
-import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 import { IFormSubmission } from '../../../schema/submissions';
-import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
-import { RxDocument } from 'rxdb';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { PicsaDialogService } from '@picsa/shared/features';
+import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 
 @Component({
   selector: 'monitoring-form-view',
@@ -188,14 +187,14 @@ export class FormViewComponent implements OnInit, OnDestroy {
    * https://github.com/silkimen/cordova-plugin-advanced-http#uploadfile
    */
   private wipTestKoboEndpoint() {
-    const koboService = new KoboService({ authToken: environment.koboAuthToken });
-    if (Capacitor.isNativePlatform()) {
-      koboService.httpHandlers.req = (endpoint, options) => {
-        return CapacitorHttp.request({ url: endpoint, ...(options as any) }).then(async (res) => ({
-          status: res.status,
-          text: res.data,
-        }));
-      };
-    }
+    // const koboService = new KoboService({ authToken: environment.koboAuthToken });
+    // if (Capacitor.isNativePlatform()) {
+    //   koboService.httpHandlers.req = (endpoint, options) => {
+    //     return CapacitorHttp.request({ url: endpoint, ...(options as any) }).then(async (res) => ({
+    //       status: res.status,
+    //       text: res.data,
+    //     }));
+    //   };
+    // }
   }
 }
