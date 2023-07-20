@@ -32,14 +32,14 @@ export const config: Config = {
     angularOutputTarget({
       // should match tsconfig path to webcomponents dist
       componentCorePackage: '@picsa/webcomponents',
-      directivesProxyFile: '../../../libs/webcomponents-ngx/src/lib/generated/components.ts',
-      directivesArrayFile: '../../../libs/webcomponents-ngx/src/lib/generated/index.ts',
+      directivesProxyFile: 'libs/webcomponents-ngx/src/lib/generated/components.ts',
+      directivesArrayFile: 'libs/webcomponents-ngx/src/lib/generated/index.ts',
       includeImportCustomElements: false,
     }),
     {
       type: 'dist',
       esmLoaderPath: '../loader',
-      dir: '../../dist/libs/webcomponents/dist',
+      dir: 'dist',
     },
 
     {
@@ -49,7 +49,7 @@ export const config: Config = {
       copy: [
         {
           src: '**/assets',
-          dest: '../../libs/webcomponents/www/assets',
+          dest: 'libs/webcomponents/www/assets',
           warn: true,
         },
       ],
@@ -59,7 +59,7 @@ export const config: Config = {
     },
     {
       type: 'www',
-      dir: '../../dist/libs/webcomponents/www',
+      dir: 'www',
       serviceWorker: null, // disable service workers
     },
   ],

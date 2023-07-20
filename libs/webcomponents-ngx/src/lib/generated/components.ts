@@ -1,14 +1,12 @@
 /* tslint:disable */
 /* auto-generated angular directive proxies */
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone } from '@angular/core';
+import { Components } from '@picsa/webcomponents';
 
 import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
 
-import { Components } from '@picsa/webcomponents';
-
-
 @ProxyCmp({
-  inputs: ['form', 'model', 'showButtons']
+  inputs: ['form', 'model', 'showButtons'],
 })
 @Component({
   selector: 'enketo-webform',
@@ -26,15 +24,11 @@ export class EnketoWebform {
   }
 }
 
-
 import type { IEventDataUpdated as IEnketoWebformIEventDataUpdated } from '@picsa/webcomponents';
 import type { IEventFormSaved as IEnketoWebformIEventFormSaved } from '@picsa/webcomponents';
 
 export declare interface EnketoWebform extends Components.EnketoWebform {
-
   dataUpdated: EventEmitter<CustomEvent<IEnketoWebformIEventDataUpdated>>;
 
   formSaved: EventEmitter<CustomEvent<IEnketoWebformIEventFormSaved>>;
 }
-
-

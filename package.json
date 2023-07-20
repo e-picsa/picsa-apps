@@ -57,7 +57,7 @@
     "@ngx-translate/core": "~14.0.0",
     "@ngx-translate/http-loader": "~7.0.0",
     "@nrwl/angular": "15.6.2",
-    "@stencil/angular-output-target": "^0.6.0",
+    "@stencil/angular-output-target": "^0.7.1",
     "@supabase/supabase-js": "^2.22.0",
     "c3": "^0.7.20",
     "capacitor-blob-writer": "^1.1.3",
