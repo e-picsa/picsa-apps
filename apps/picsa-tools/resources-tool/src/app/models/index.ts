@@ -16,6 +16,8 @@ export interface IResourceItemBase extends IDBDoc {
   subtitle?: string;
   language?: string;
   meta?: any;
+  /** Custom keywords used for some filtering (manual) and in future could be used for search */
+  keywords?: string[];
 }
 //
 export interface IResourceFile extends IResourceItemBase {
