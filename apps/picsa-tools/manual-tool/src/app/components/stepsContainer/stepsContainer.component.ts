@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { IManualStep, PICSA_MANUAL_LIST_DATA } from '../../data/manual-contents';
+import { IManualPeriodEntry, IManualStep } from '../../data';
 
 @Component({
   selector: 'picsa-manual-steps-container',
@@ -9,7 +9,7 @@ import { IManualStep, PICSA_MANUAL_LIST_DATA } from '../../data/manual-contents'
   styleUrls: ['./stepsContainer.component.scss'],
 })
 export class stepsContainerComponent {
-  public listData = PICSA_MANUAL_LIST_DATA;
+  @Input() stepData: IManualPeriodEntry[];
 
   /** Lookup key to correctly map pages within sections (localisation code) */
   @Input() pageMapping = 'en';
