@@ -11,6 +11,12 @@ ngx-extended-pdf-viewer {
   .toolbarButton {
     color: var(--color-primary-contrast) !important;
   }
+
+  // hide first/last page buttons
+  #primaryFirstPage,
+  #primaryLastPage {
+    display: none;
+  }
 }
 
 .error-message {

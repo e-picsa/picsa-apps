@@ -126,7 +126,6 @@ export class NativeStorageService {
 
   public checkFileCached(entry: IStorageFileEntry) {
     const cachedEntry = this.cachedFilesList[entry.relativePath];
-    console.log('check file cached', entry.relativePath);
     if (!cachedEntry) {
       return false;
     }
@@ -157,7 +156,6 @@ export class NativeStorageService {
         updates$.next({ progress, subscription });
       },
       complete: async () => {
-        console.log('download to cache completed');
         if (data) {
           const directory = Directory.Data;
           const { relativePath } = fileMeta;
@@ -169,7 +167,7 @@ export class NativeStorageService {
             recursive: true,
             fast_mode: true,
             on_fallback(error) {
-              console.error(error);
+              console.error('blobl write error', cachePath, error);
               throw error;
             },
           });

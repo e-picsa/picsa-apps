@@ -30,11 +30,12 @@ const config: CapacitorConfig = {
   ],
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http
-  plugins: {
-    CapacitorHttp: {
-      enabled: true,
-    },
-  },
+  // TODO - check if resources still work as intended once enabled
+  // plugins: {
+  //   CapacitorHttp: {
+  //     enabled: true,
+  //   },
+  // },
   server: {
     /** Uncomment and replace with local ip to serve live-reload */
 

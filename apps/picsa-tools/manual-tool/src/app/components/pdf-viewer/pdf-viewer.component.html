@@ -27,12 +27,13 @@
 
       <!-- <pdf-find-button [showFindButton]="true" [textLayer]="true"></pdf-find-button> -->
     </div>
-    <div [class.invisible]="false" id="toolbarViewerMiddle">
+    <!-- Only show zoom in/out buttons on web (native uses pinch zoom) -->
+    <div [class.invisible]="false" id="toolbarViewerMiddle" *ngIf="!isNative">
       <pdf-zoom-out id="zoomOut"></pdf-zoom-out>
       <pdf-zoom-in id="zoomIn"></pdf-zoom-in>
     </div>
     <div id="toolbarViewerRight">
-      <pdf-paging-area></pdf-paging-area>
+      <pdf-paging-area> </pdf-paging-area>
     </div>
   </div>
 </ng-template>

@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
@@ -8,7 +7,6 @@ import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/compon
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
-import { environment } from '../../../../environments/environment';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 
