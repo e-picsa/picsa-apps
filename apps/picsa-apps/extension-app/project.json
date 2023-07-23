@@ -110,7 +110,9 @@
               "with": "libs/environments/src/environment.prod.ts"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "namedChunks": true,
+          "statsJson": false
         },
         "development": {
           "buildOptimizer": false,
@@ -119,6 +121,29 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
+        },
+        "stats": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "libs/environments/src/environment.ts",
+              "with": "libs/environments/src/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all",
+          "namedChunks": true,
+          "statsJson": true
         }
       },
       "defaultConfiguration": "production"
