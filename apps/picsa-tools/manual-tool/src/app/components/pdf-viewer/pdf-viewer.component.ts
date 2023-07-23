@@ -1,4 +1,5 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
 
 @Component({
@@ -10,6 +11,7 @@ import { pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
 export class PdfViewerComponent {
   legacyBrowser = true;
   sidebarOpen = false;
+  public isNative = Capacitor.isNativePlatform();
   @Input() page?: number;
   @Input() src: string;
   constructor() {
