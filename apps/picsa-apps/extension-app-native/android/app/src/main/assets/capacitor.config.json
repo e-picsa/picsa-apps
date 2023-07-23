@@ -21,11 +21,6 @@
 		"@capacitor-community/firebase-crashlytics",
 		"@capacitor-firebase/performance"
 	],
-	"plugins": {
-		"CapacitorHttp": {
-			"enabled": true
-		}
-	},
 	"server": {
 		"cleartext": true
 	}
