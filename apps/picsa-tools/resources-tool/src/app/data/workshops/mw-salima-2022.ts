@@ -1,24 +1,24 @@
 import { IResourceCollection, IResourceFile, IResourceLink } from '../../models';
 
 const collections: { [id: string]: IResourceCollection } = {
-  workshopSalima2022: {
-    _created: '2022-09-20T10:00:04.000Z',
-    _modified: '2022-09-20T11:00:01.000Z',
-    _key: 'workshopSalima2022',
-    type: 'collection',
-    title: 'Salima 2022',
-    description: 'Materials used in Salima picsa workshop 2022',
-    image: 'assets/resources/covers/workshop-salima-2022.jpg',
-    imageFit: 'cover',
-    childResources: [
-      'ag_bulletin',
-      'mw_seasonal_forecast_2022',
-      'nkhotatkota_salima_advisory_31_july',
-      'mw_weather_forecast_4th_september',
-    ],
-    parentResource: 'picsaWorkshops',
-    appCountries: ['mw'],
-  },
+  // workshopSalima2022: {
+  //   _created: '2022-09-20T10:00:04.000Z',
+  //   _modified: '2022-09-20T11:00:01.000Z',
+  //   _key: 'workshopSalima2022',
+  //   type: 'collection',
+  //   title: 'Salima 2022',
+  //   description: 'Materials used in Salima picsa workshop 2022',
+  //   image: 'assets/resources/covers/workshop-salima-2022.jpg',
+  //   imageFit: 'cover',
+  //   childResources: [
+  //     'ag_bulletin',
+  //     'mw_seasonal_forecast_2022',
+  //     'nkhotatkota_salima_advisory_31_july',
+  //     'mw_weather_forecast_4th_september',
+  //   ],
+  //   parentResource: 'picsaWorkshops',
+  //   appCountries: ['mw'],
+  // },
 };
 const links: { [id: string]: IResourceLink } = {
   // feedbackform: {

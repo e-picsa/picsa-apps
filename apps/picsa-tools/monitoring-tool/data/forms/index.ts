@@ -1,21 +1,36 @@
 import { IMonitoringForm } from '../../src/app/schema/forms';
-
-import ewMonitoringForm from './ew-monitoring.form';
 import demoKitchenForm from './demo-kitchen.form';
+import ewMonitoringFormMW from './ew-monitoring-mw.form';
+import ewMonitoringFormZM from './ew-monitoring-zm.form';
 
 export const HARDCODED_FORMS: IMonitoringForm[] = [
   {
     _id: 'ew_monitoring',
     title: 'Extension Worker Monitoring',
     description: 'Malawi',
-    enketoDefinition: ewMonitoringForm,
+    enketoDefinition: ewMonitoringFormMW,
     summaryFields: [
       { field: 'date', label: 'Date' },
       { field: 'district', label: 'District' },
-      { field: 'location', label: 'Location' },
+      { field: 'EPA', label: 'EPA' },
+      { field: 'section', label: 'Section' },
       { field: 'total_farmers', label: 'Total Farmers' },
     ],
     appCountries: ['mw', ''],
+  },
+  {
+    _id: 'ew_monitoring_zm',
+    title: 'Extension Worker Monitoring',
+    description: 'Zambia',
+    enketoDefinition: ewMonitoringFormZM,
+    summaryFields: [
+      { field: 'date', label: 'Date' },
+      { field: 'district', label: 'District' },
+      { field: 'EPA', label: 'EPA' },
+      { field: 'section', label: 'Section' },
+      { field: 'total_farmers', label: 'Total Farmers' },
+    ],
+    appCountries: ['zm', ''],
   },
 
   {

@@ -10,7 +10,7 @@ import { WMOGenerator } from './wmo';
  * Weather resources are generated dynamically to assign location-specific
  * values to links
  */
-const allResources = WEATHER_LOCATIONS.reduce(
+const localisedResources = WEATHER_LOCATIONS.reduce(
   (resources, location) => ({
     ...resources,
     ...generateLocationResources(location),
@@ -62,7 +62,7 @@ function generateLocationResources(location: IWeatherLocation) {
 
 export default {
   weatherResources,
-  ...allResources,
   ...WEATHER_LINKS,
+  ...localisedResources,
   ...DOWNSCALED_FORECASTS,
 };

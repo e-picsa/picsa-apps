@@ -1,8 +1,8 @@
 <!-- List version -->
-<button mat-button class="activity-link" color="primary" [routerLink]="['activity']">
+<!-- <button mat-button class="activity-link" color="primary" [routerLink]="['activity']">
   <mat-icon>grid_on</mat-icon>
-</button>
-<section class="period-section" *ngFor="let period of listData">
+</button> -->
+<section class="period-section" *ngFor="let period of stepData">
   <h2 class="section-label">{{ period.label | translate }}</h2>
   <table class="manual-steps">
     <tr class="manual-step" *ngFor="let step of period.steps" (click)="goToStep(step)">

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { PICSA_MANUAL_GRID_DATA } from '../../data/manual-contents';
+import { PICSA_MANUAL_GRID_DATA_EXTENSION } from '../../data';
 
 @Component({
   selector: 'picsa-activity',
@@ -8,5 +8,5 @@ import { PICSA_MANUAL_GRID_DATA } from '../../data/manual-contents';
   styleUrls: ['./activity.component.scss'],
 })
 export class ActivityComponent {
-  public gridData = PICSA_MANUAL_GRID_DATA;
+  public gridData = PICSA_MANUAL_GRID_DATA_EXTENSION;
 }

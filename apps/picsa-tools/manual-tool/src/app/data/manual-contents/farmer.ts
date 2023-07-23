@@ -1,63 +1,30 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-interface IManualPeriodEntry {
-  label: string;
-  steps: IManualStep[];
-}
-export interface IManualStep {
-  page: {
-    [code: string]: number;
-  };
-  name: string;
-  label: string;
-  type: 'step';
-  activities: IManualActivity[];
-}
-export interface IManualActivity {
-  label: string;
-  video: string;
-  icon: string;
-  id: string;
-}
+import { IManualActivity, IManualPeriodEntry } from './common';
 
 /** Picsa manual contents organised by section and step */
 
-export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
+export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
   {
     label: translateMarker('PICSA'),
     steps: [
       {
         page: {
-          en: 5,
-          zm_ny: 5,
-          mw_ny: 5,
+          en: 2,
+          zm_ny: 2,
+          mw_ny: 2,
         },
         name: '',
         label: translateMarker('Introduction'),
         type: 'step',
         activities: [],
       },
+
       {
         page: {
-          en: 8,
-          zm_ny: 10,
-          mw_ny: 10,
-        },
-        name: '',
-        label: translateMarker('Activity Flow Chart'),
-        type: 'step',
-        activities: [],
-      },
-    ],
-  },
-  {
-    label: translateMarker('Long before the season'),
-    steps: [
-      {
-        page: {
-          en: 11,
-          zm_ny: 13,
-          mw_ny: 13,
+          en: 6,
+          zm_ny: 11,
+          mw_ny: 11,
         },
         name: translateMarker('Step A'),
         label: translateMarker('What does the farmer currently do?'),
@@ -79,9 +46,9 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 16,
-          zm_ny: 18,
-          mw_ny: 18,
+          en: 10,
+          zm_ny: 17,
+          mw_ny: 17,
         },
         name: translateMarker('Step B'),
         label: translateMarker('Is the climate changing?'),
@@ -97,12 +64,12 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 25,
-          zm_ny: 27,
-          mw_ny: 27,
+          en: 12,
+          zm_ny: 20,
+          mw_ny: 20,
         },
         name: translateMarker('Step C'),
-        label: translateMarker('What are the probabilities and risks?'),
+        label: translateMarker('What are the opportunities and risks?'),
         type: 'step',
         activities: [
           {
@@ -115,9 +82,9 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 29,
-          zm_ny: 31,
-          mw_ny: 31,
+          en: 14,
+          zm_ny: 23,
+          mw_ny: 23,
         },
         name: translateMarker('Step D'),
         label: translateMarker('What are the options for the farmer?'),
@@ -145,9 +112,9 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 39,
-          zm_ny: 41,
-          mw_ny: 41,
+          en: 16,
+          zm_ny: 26,
+          mw_ny: 26,
         },
         name: translateMarker('Step E'),
         label: translateMarker('Options by context'),
@@ -163,12 +130,12 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 41,
-          zm_ny: 43,
-          mw_ny: 43,
+          en: 17,
+          zm_ny: 27,
+          mw_ny: 27,
         },
         name: translateMarker('Step F'),
-        label: translateMarker('Compare different options and plans'),
+        label: translateMarker('Comparing different options and planning using Participatory Budgets'),
         type: 'step',
         activities: [
           {
@@ -181,9 +148,9 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 45,
-          zm_ny: 47,
-          mw_ny: 47,
+          en: 19,
+          zm_ny: 30,
+          mw_ny: 30,
         },
         name: translateMarker('Step G'),
         label: translateMarker('The farmer decides'),
@@ -199,108 +166,17 @@ export const PICSA_MANUAL_LIST_DATA: IManualPeriodEntry[] = [
       },
     ],
   },
-  {
-    label: translateMarker('Just before the season'),
-    steps: [
-      {
-        page: {
-          en: 48,
-          zm_ny: 50,
-          mw_ny: 50,
-        },
-        name: translateMarker('Step H'),
-        label: translateMarker('Seasonal forecast'),
-        type: 'step',
-        activities: [],
-      },
-      {
-        page: {
-          en: 52,
-          zm_ny: 54,
-          mw_ny: 54,
-        },
-        name: translateMarker('Step I'),
-        label: translateMarker('Response to forecast'),
-        type: 'step',
-        activities: [
-          {
-            label: translateMarker('Revisit'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
-            id: 'revisit-activity',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: translateMarker('During the season'),
-    steps: [
-      {
-        page: {
-          en: 55,
-          zm_ny: 57,
-          mw_ny: 57,
-        },
-        name: translateMarker('Step J'),
-        label: translateMarker('Short-term forecasts and warnings'),
-        type: 'step',
-        activities: [],
-      },
-      {
-        page: {
-          en: 57,
-          zm_ny: 59,
-          mw_ny: 59,
-        },
-        name: translateMarker('Step K'),
-        label: translateMarker('Response to forecast'),
-        type: 'step',
-        activities: [
-          {
-            label: translateMarker('Revisit'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
-            id: 'revisit-activity',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: translateMarker('After the season'),
-    steps: [
-      {
-        page: {
-          en: 59,
-          zm_ny: 61,
-          mw_ny: 61,
-        },
-        name: translateMarker('Step L'),
-        label: translateMarker('Learn and improve'),
-        type: 'step',
-        activities: [
-          {
-            label: translateMarker('Review'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
-            id: 'review-activity',
-          },
-        ],
-      },
-    ],
-  },
 ];
 
 /** Picsa manual contents organised by section only */
-const PICSA_MANUAL_GRID_DATA: IManualActivity[] = [];
+const PICSA_MANUAL_GRID_DATA_FARMER: IManualActivity[] = [];
 
-for (const period of PICSA_MANUAL_LIST_DATA) {
+for (const period of PICSA_MANUAL_CONTENTS_FARMER) {
   for (const step of period.steps) {
     for (const item of step.activities) {
-      PICSA_MANUAL_GRID_DATA.push(item);
+      PICSA_MANUAL_GRID_DATA_FARMER.push(item);
     }
   }
 }
 
-export { PICSA_MANUAL_GRID_DATA };
+export { PICSA_MANUAL_GRID_DATA_FARMER };

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { ConfigurationService, IConfiguration } from '@picsa/configuration';
+import { ConfigurationService } from '@picsa/configuration';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { IStorageFilesHashmap, NativeStorageService } from '@picsa/shared/services/native/storage-service';
 import { lastValueFrom } from 'rxjs';
-
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 
 import RESOURCES from '../data';
 import { IResource, IResourceCollection, IResourceFile, IResourceItemBase } from '../models';

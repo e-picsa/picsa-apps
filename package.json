@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.30.0",
+  "version": "3.31.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -16,6 +16,8 @@
     "start:manual": "nx run picsa-tools-manual-tool:serve",
     "build": "nx run picsa-apps-extension-app-native:build",
     "build:webcomponents": "yarn nx build picsa-webcomponents",
+    "build:stats": "nx run picsa-apps-extension-app-native:build:stats",
+    "analyse": "yarn build:stats && webpack-bundle-analyzer dist/apps/picsa-apps/extension-app/stats.json",
     "docs": "cd ../docs && yarn start",
     "docs:edit": "cd ../docs && code .",
     "test": "nx test",
@@ -169,7 +171,8 @@
     "tailwindcss": "^3.0.2",
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
-    "typescript": "4.8.4"
+    "typescript": "4.8.4",
+    "webpack-bundle-analyzer": "^4.9.0"
   },
   "packageManager": "yarn@3.2.1",
   "lint-staged": {
