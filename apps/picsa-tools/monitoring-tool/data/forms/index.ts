@@ -12,7 +12,8 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     summaryFields: [
       { field: 'date', label: 'Date' },
       { field: 'district', label: 'District' },
-      { field: 'location', label: 'Location' },
+      { field: 'EPA', label: 'EPA' },
+      { field: 'section', label: 'Section' },
       { field: 'total_farmers', label: 'Total Farmers' },
     ],
     appCountries: ['mw', ''],
@@ -25,7 +26,8 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     summaryFields: [
       { field: 'date', label: 'Date' },
       { field: 'district', label: 'District' },
-      { field: 'location', label: 'Location' },
+      { field: 'EPA', label: 'EPA' },
+      { field: 'section', label: 'Section' },
       { field: 'total_farmers', label: 'Total Farmers' },
     ],
     appCountries: ['zm', ''],
