@@ -540,6 +540,10 @@
     "context": "outputs"
   },
   {
+    "text": "Add Card",
+    "tool": "budget"
+  },
+  {
     "text": "Add Female Member",
     "tool": "budget"
   },
@@ -809,7 +813,15 @@
     "context": "chart"
   },
   {
+    "text": "Above",
+    "tool": "climate"
+  },
+  {
     "text": "Analyse",
+    "tool": "climate"
+  },
+  {
+    "text": "Below",
     "tool": "climate"
   },
   {
@@ -858,14 +870,6 @@
   },
   {
     "text": "Tools",
-    "tool": "climate"
-  },
-  {
-    "text": "above",
-    "tool": "climate"
-  },
-  {
-    "text": "below",
     "tool": "climate"
   },
   {
@@ -1128,6 +1132,10 @@
     "tool": "manual"
   },
   {
+    "text": "Comparing different options and planning using Participatory Budgets",
+    "tool": "manual"
+  },
+  {
     "text": "Create",
     "tool": "manual"
   },
@@ -1284,6 +1292,10 @@
     "tool": "manual"
   },
   {
+    "text": "What are the opportunities and risks?",
+    "tool": "manual"
+  },
+  {
     "text": "What are the options for the farmer?",
     "tool": "manual"
   },
@@ -1296,7 +1308,19 @@
     "tool": "manual"
   },
   {
+    "text": "Create New",
+    "tool": "monitoring"
+  },
+  {
     "text": "Forms",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Submissions",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Submit",
     "tool": "monitoring"
   },
   {
