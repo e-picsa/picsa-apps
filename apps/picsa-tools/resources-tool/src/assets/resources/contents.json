@@ -137,12 +137,6 @@
     "md5Checksum": "43597bdd99299fff0b3061cedd7fdc20",
     "modifiedTime": "2022-09-28T20:02:26.876Z"
   },
-  "covers/workshop-salima-2022.jpg": {
-    "relativePath": "covers/workshop-salima-2022.jpg",
-    "size_kb": 18.3,
-    "md5Checksum": "3ee48dcc52837e1a60d740b7a9dd3125",
-    "modifiedTime": "2022-09-21T08:51:57.458Z"
-  },
   "covers/workshops.png": {
     "relativePath": "covers/workshops.png",
     "size_kb": 11.2,
@@ -172,17 +166,5 @@
     "size_kb": 1183.5,
     "md5Checksum": "7d191f7148a023ac812daa0a2dd2826c",
     "modifiedTime": "2023-07-22T06:04:06.567Z"
-  },
-  "potential-PICSA-training-schedule-cover.png": {
-    "relativePath": "potential-PICSA-training-schedule-cover.png",
-    "size_kb": 6.2,
-    "md5Checksum": "bc102121f8293636e82e48ddf9898524",
-    "modifiedTime": "2022-09-08T10:31:19.249Z"
-  },
-  "potential-PICSA-training-scheduled.pdf": {
-    "relativePath": "potential-PICSA-training-scheduled.pdf",
-    "size_kb": 17.8,
-    "md5Checksum": "1431a9389a8192ac6bbf52702e199fb0",
-    "modifiedTime": "2022-09-08T10:31:19.250Z"
   }
 }
