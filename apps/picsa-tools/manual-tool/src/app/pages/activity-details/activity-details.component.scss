@@ -9,12 +9,21 @@
 h2{
     margin-bottom: 2rem;
 }
-.video-player{
+.guide-video-placeholder{
     width: 70%;
     margin-bottom: 2rem;
+    height: 20rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: black;
+}
+.play-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4rem;
+    width: 4rem;
 }
 .svg-row{
     display: flex;
@@ -24,7 +33,7 @@ h2{
     justify-content: space-evenly;
     align-items: center;
 }
-mat-icon{
+.row-mat-icon{
     height: 3rem;
     width: 3rem;
 }

@@ -2,21 +2,23 @@
   <h2>{{ activity?.label }}</h2>
 
   <!-- <video class="video-player" [src]="activity?.video" controls></video> -->
+  <div class="guide-video-placeholder" >
+    <mat-icon (click)="playVideo()" class="play-button" color="primary">play_circle_outline</mat-icon>
+  </div>
 
   <div class="video-player" id="video-player" slot="fixed"></div>
-    <!-- <button (click)="playVideo()">Play Video</button> -->
 
   <div class="svg-row">
     <div class="svg-item">
-      <mat-icon color="primary" svgIcon="picsa_manual_info"></mat-icon>
+      <mat-icon class="row-mat-icon" color="primary" svgIcon="picsa_manual_info"></mat-icon>
       <div>{{ 'Info Sheet' | translate }}</div>
     </div>
     <div class="svg-item">
-      <mat-icon color="primary" svgIcon="picsa_manual_create"></mat-icon>
+      <mat-icon class="row-mat-icon" color="primary" svgIcon="picsa_manual_create"></mat-icon>
       <div>{{ 'Create' | translate }}</div>
     </div>
     <div class="svg-item">
-      <mat-icon color="primary" svgIcon="picsa_manual_quiz"></mat-icon>
+      <mat-icon class="row-mat-icon" color="primary" svgIcon="picsa_manual_quiz"></mat-icon>
       <div>{{ 'Quiz' | translate }}</div>
     </div>
   </div>

@@ -67,10 +67,16 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
     
     this.videoPlayer = player.plugin;
 
-    await this.intiateVideoPlayer()
+    //await this.intiateVideoPlayer()
     
     //await this.addListenersToPlayerPlugin();
   }
+
+  
+  async playVideo (){
+    await this.intiateVideoPlayer();
+  }
+
   async intiateVideoPlayer() {
     this.mUrl = this.activity?.video;
     this.mStoptions = this.stoptions;
@@ -86,7 +92,7 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
         this.first = true;
       }
       const res: any = await this.videoPlayer.initPlayer({
-        mode: 'embedded',// or fullscreen (2 modes)
+        mode: 'fullscreen',// or embedded (2 modes)
         url: this.mUrl,
         subtitleOptions: this.mStoptions,
         playerId: 'video-player',
