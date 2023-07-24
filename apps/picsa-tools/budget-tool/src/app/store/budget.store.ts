@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
 import { APP_VERSION } from '@picsa/environments';
 import { IAppMeta } from '@picsa/models';
@@ -13,14 +12,9 @@ import { toJS } from 'mobx';
 import { action, computed, observable } from 'mobx-angular';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
-import { BUDGET_CARDS } from '../data';
 import {
   IBudget,
   IBudgetBalance,
-  IBudgetCard,
-  IBudgetCardDB,
-  IBudgetCardGrouping,
-  IBudgetCardWithValues,
   IBudgetCodeDoc,
   IBudgetMeta,
   IBudgetPeriodData,
@@ -28,19 +22,9 @@ import {
   IBudgetValueCounters,
   IBudgetValueScale,
 } from '../models/budget-tool.models';
+import { IBudgetCard, IBudgetCardGrouping, IBudgetCardWithValues } from '../schema';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
 import { MONTHS, NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
-const TYPE_CARDS_BASE: {
-  [key in IBudgetPeriodType | 'enterprise' | 'other']: IBudgetCard[];
-} = {
-  activities: [],
-  familyLabour: [],
-  inputs: [],
-  outputs: [],
-  produceConsumed: [],
-  enterprise: [],
-  other: [],
-};
 
 type IBudgetCounter = 'large' | 'large-half' | 'medium' | 'medium-half' | 'small' | 'small-half';
 export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
@@ -65,12 +49,6 @@ export class BudgetStore implements OnDestroy {
   @observable savedBudgets: IBudget[] = [];
   @observable valueCounters: IBudgetValueCounters = [[], []];
   @observable balance: IBudgetBalance = [];
-  // get unique list of types in enterprise cards
-  @computed get enterpriseTypeCards(): IBudgetCardDB[] {
-    const enterpriseCards = this.budgetCards.filter((c) => c.type === 'enterprise');
-    return this._createCardGroupCards(enterpriseCards);
-  }
-  @observable budgetCardsByType = TYPE_CARDS_BASE;
 
   @observable periodLabels: string[] = [];
 
@@ -122,15 +100,6 @@ export class BudgetStore implements OnDestroy {
   }
 
   /**************************************************************************
-   *            Enterprise methods
-   *
-   ***************************************************************************/
-  getfilteredEnterprises(grouping: string) {
-    return this.budgetCards.filter(
-      (e) => e.type === 'enterprise' && e.groupings?.includes(grouping as IBudgetCardGrouping)
-    );
-  }
-  /**************************************************************************
    *            Budget Values
    *
    ***************************************************************************/
@@ -162,16 +131,6 @@ export class BudgetStore implements OnDestroy {
     this.valueCounters = this._generateValueCounters(this.activeBudget);
     // patch budget to trigger icon reprocessing
     this.patchBudget({}, true);
-  }
-
-  async saveCustomCard(card: IBudgetCard) {
-    await this.db.setDoc('budgetTool/_all/cards', card);
-    // re-populate budget cards
-    console.log('card saved', card);
-    await this.preloadData();
-  }
-  deleteCustomCard(card: IBudgetCardDB) {
-    return this.db.deleteDocs('budgetTool/_all/cards', [card._key]);
   }
 
   /**
@@ -343,23 +302,9 @@ export class BudgetStore implements OnDestroy {
   public async init() {
     this.loadSavedBudgets();
     await this.checkForUpdates();
-    await this.preloadData();
     this.storeReady = true;
   }
 
-  // load the corresponding values into the budgetMeta observable
-  @action
-  private async preloadData() {
-    const endpoint = 'budgetTool/_all/cards';
-    this.budgetCards = await this.db.getCollection<IBudgetCard>(endpoint);
-    this.budgetCards.forEach((card) => {
-      if (!this.budgetCardsByType[card.type]) {
-        console.log('missing budget card type', card.type);
-        this.budgetCardsByType[card.type] = [];
-      }
-      this.budgetCardsByType[card.type].push(card);
-    });
-  }
   // check for latest app version initialised. If this one is different then
   // attempt to reload any hardcoded data present in the app
   private async checkForUpdates() {
@@ -373,18 +318,18 @@ export class BudgetStore implements OnDestroy {
   }
 
   private async setHardcodedData() {
-    const endpoint = 'budgetTool/_all/cards';
-    const docs: IBudgetCardDB[] = BUDGET_CARDS.map((card) => {
-      return {
-        ...card,
-        // add doc metadata - this would be auto populated however want to keep
-        // reference of app version date so can be overwritten by db if desired
-        _created: new Date(APP_VERSION.date).toISOString(),
-        _modified: new Date(APP_VERSION.date).toISOString(),
-        _key: `${card.type}_${card.id}`,
-      };
-    });
-    await this.db.setDocs(endpoint, docs);
+    // const endpoint = 'budgetTool/_all/cards';
+    // const docs: IBudgetCard[] = BUDGET_CARDS.map((card) => {
+    //   return {
+    //     ...card,
+    //     // add doc metadata - this would be auto populated however want to keep
+    //     // reference of app version date so can be overwritten by db if desired
+    //     _created: new Date(APP_VERSION.date).toISOString(),
+    //     _modified: new Date(APP_VERSION.date).toISOString(),
+    //     _key: `${card.type}_${card.id}`,
+    //   };
+    // });
+    // await this.db.setDocs(endpoint, docs);
   }
 
   /**************************************************************************
@@ -445,27 +390,7 @@ export class BudgetStore implements OnDestroy {
     }
     return [];
   }
-  // group all enterprise cards and create new parent card that will be used to reveal group
-  private _createCardGroupCards(cards: IBudgetCard[]): IBudgetCardDB[] {
-    const allGroupings: string[][] = cards.map((e) => toJS(e.groupings) as string[]);
-    // eslint-disable-next-line prefer-spread
-    const mergedGroupings: string[] = ([] as any).concat.apply([], allGroupings);
-    // NOTE - technically Array.from shouldn't be required but current issue with typescript
-    // see https://stackoverflow.com/questions/33464504/using-spread-syntax-and-new-set-with-typescript/33464709
-    const uniqueGroups = [...Array.from(new Set(mergedGroupings))].sort();
-    const enterpriseTypeCards: IBudgetCardDB[] = uniqueGroups.map((group) => {
-      return {
-        id: group,
-        label: group,
-        type: 'enterprise',
-        imgType: 'svg',
-        _key: `_group_${group}`,
-        _created: new Date().toISOString(),
-        _modified: new Date().toISOString(),
-      };
-    });
-    return enterpriseTypeCards;
-  }
+
   // each currency has a base unit (e.g. MK 1000) which is used to generate
   // counter representations in orders of 10 (i.e. 100, 1000, 10000) and half values.
   // These can additionaly be scaled up or down by magnitudes of 10.

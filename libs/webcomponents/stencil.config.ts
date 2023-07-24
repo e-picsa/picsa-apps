@@ -1,14 +1,14 @@
+import { angularOutputTarget } from '@stencil/angular-output-target';
 import type { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
-import { angularOutputTarget } from '@stencil/angular-output-target';
 import fs from 'fs';
+import { resolve } from 'path';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { resolve } from 'path';
 
 // TODO - want to avoid in server but show in prod build
-let useVisualiser = false;
-let createBuildPackageJson = true;
+const useVisualiser = false;
+const createBuildPackageJson = true;
 // plugins target before node-resolve or after commonjs transform
 const rollupPlugins: Config['rollupPlugins'] = {
   before: [],
@@ -18,6 +18,7 @@ const rollupPlugins: Config['rollupPlugins'] = {
 setupBuild();
 
 export const config: Config = {
+  sourceMap: false,
   // use altered package.json to support monorepo builds
   namespace: 'picsa-webcomponents',
   taskQueue: 'async',
@@ -31,31 +32,45 @@ export const config: Config = {
     angularOutputTarget({
       // should match tsconfig path to webcomponents dist
       componentCorePackage: '@picsa/webcomponents',
-      directivesProxyFile:
-        '../../../libs/webcomponents-ngx/src/lib/generated/components.ts',
-      directivesArrayFile:
-        '../../../libs/webcomponents-ngx/src/lib/generated/index.ts',
-      // includeImportCustomElements: true,
+      directivesProxyFile: 'libs/webcomponents-ngx/src/lib/generated/components.ts',
+      directivesArrayFile: 'libs/webcomponents-ngx/src/lib/generated/index.ts',
+      includeImportCustomElements: false,
     }),
     {
       type: 'dist',
       esmLoaderPath: '../loader',
-      dir: '../../dist/libs/webcomponents/dist',
+      dir: 'dist',
     },
 
     {
       type: 'dist-custom-elements',
+      generateTypeDeclarations: false,
+      customElementsExportBehavior: 'default',
+      copy: [
+        {
+          src: '**/assets',
+          dest: 'libs/webcomponents/www/assets',
+          warn: true,
+        },
+      ],
     },
     {
       type: 'docs-readme',
     },
     {
       type: 'www',
-      dir: '../../dist/libs/webcomponents/www',
+      dir: 'www',
       serviceWorker: null, // disable service workers
     },
   ],
-  plugins: [sass()],
+  plugins: [
+    // Can also include global scss via injectGlobalPaths, but be careful of pathnames
+    // https://github.com/ionic-team/stencil-sass/issues/49
+    sass({
+      // injectGlobalPaths: [resolve(__dirname, `src/global/style.scss`).replace(/\\/g, '/')],
+    }),
+  ],
+  // Setup passed to jest when running via stencil test methods
   testing: {
     browserHeadless: false,
   },
@@ -83,8 +98,7 @@ function setupBuild() {
     });
     fs.writeFileSync(pkgPath, JSON.stringify(modifiedContents, null, 2));
     // revert changes on end
-    const cleanUp = () =>
-      fs.writeFileSync(pkgPath, JSON.stringify(pkgContents, null, 2) + '\n');
+    const cleanUp = () => fs.writeFileSync(pkgPath, JSON.stringify(pkgContents, null, 2) + '\n');
     process.on('SIGINT', () => cleanUp());
     process.on('exit', () => cleanUp());
     process.on('uncaughtException', () => cleanUp());

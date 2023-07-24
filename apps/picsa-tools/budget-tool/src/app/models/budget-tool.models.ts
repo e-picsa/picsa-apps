@@ -1,5 +1,6 @@
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IDBDoc } from '@picsa/models';
+
+import { IBudgetCard, IBudgetCardWithValues } from '../schema';
 
 export interface IBudget extends IDBDoc {
   data: IBudgetPeriodData[];
@@ -47,52 +48,6 @@ export interface IBudgetQueryParams {
 // active cell data is calculated separately by store
 export interface IBudgetActiveCell extends IBudgetQueryParams {
   data: IBudgetCardWithValues[];
-}
-
-/***************************************************************************** */
-
-/** Specify available groupings to ensure translations included */
-const BUDGET_CARD_GROUPINGS = {
-  livestock: translateMarker('livestock'),
-  fruits: translateMarker('fruits'),
-  crop: translateMarker('crop'),
-  fish: translateMarker('fish'),
-  afforestation: translateMarker('afforestation'),
-  '*': '*',
-} as const;
-
-export type IBudgetCardGrouping = keyof typeof BUDGET_CARD_GROUPINGS;
-
-// cards are used for budget table population as well as enterprise
-export interface IBudgetCard {
-  // id used as well as key to easier specify image (and be non-unique for things like inputs and outputs)
-  id: string;
-  label: string;
-  type: IBudgetCardType;
-  groupings?: IBudgetCardGrouping[];
-  customMeta?: IBudgetCardCustomMeta;
-  values?: IBudgetCardValues;
-  imgType?: 'svg' | 'png';
-  /** Optional image overide (default used card id) */
-  imgId?: string;
-  _deleted?: boolean;
-}
-export type IBudgetCardDB = IBudgetCard & IDBDoc;
-export type IBudgetCardType = IBudgetPeriodType | 'enterprise' | 'other';
-
-export interface IBudgetCardWithValues extends IBudgetCard {
-  values: IBudgetCardValues;
-}
-
-interface IBudgetCardCustomMeta {
-  imgData: string;
-  dateCreated: string;
-  createdBy: string;
-}
-export interface IBudgetCardValues {
-  quantity: number;
-  cost: number;
-  total: number;
 }
 
 /***************************************************************************** */

@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { IBudgetCard } from '../../../models/budget-tool.models';
+import { IBudgetCard } from '../../../schema';
 
 // Dialog
 @Component({

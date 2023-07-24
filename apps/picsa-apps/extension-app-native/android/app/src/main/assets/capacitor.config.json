@@ -13,6 +13,7 @@
 		"cordova-plugin-codeplay-share-own-apk",
 		"@capacitor/app",
 		"@capacitor/browser",
+		"@capacitor/core",
 		"@capacitor/device",
 		"@capacitor/filesystem",
 		"capacitor-blob-writer",

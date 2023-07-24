@@ -6,6 +6,7 @@
       "files": ["*.ts"],
       "extends": ["plugin:@nrwl/nx/angular", "plugin:@angular-eslint/template/process-inline-templates"],
       "rules": {
+        "no-useless-escape": "off",
         "@angular-eslint/directive-selector": [
           "error",
           {

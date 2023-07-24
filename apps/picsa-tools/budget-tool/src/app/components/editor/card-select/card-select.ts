@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 
-import { IBudgetCard, IBudgetCardType, IBudgetCardWithValues } from '../../../models/budget-tool.models';
+import { IBudgetCard, IBudgetCardType, IBudgetCardWithValues } from '../../../schema';
 import { BudgetStore } from '../../../store/budget.store';
 
 @Component({

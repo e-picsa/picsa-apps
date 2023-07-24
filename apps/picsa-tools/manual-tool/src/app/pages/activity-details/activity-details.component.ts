@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy,OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IManualActivity, PICSA_MANUAL_GRID_DATA } from '../../data/manual-contents';
+import { IManualActivity, PICSA_MANUAL_GRID_DATA_EXTENSION } from '../../data/manual-contents';
 import { setVideoPlayer } from '../../utils/video-player';
 
 @Component({
@@ -60,7 +60,7 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const activityId = this.route.snapshot.params.id;
     if (activityId) {
-      this.activity = PICSA_MANUAL_GRID_DATA.find((activity) => activity.id === activityId);
+      this.activity = PICSA_MANUAL_GRID_DATA_EXTENSION.find((activity) => activity.id === activityId);
     }
     this.mTestApi = this.testApi ? this.testApi : false;
     const player: any = await setVideoPlayer();

@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { generateDBMeta } from '@picsa/shared/services/core/db';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { toJS } from 'mobx';
 
-import { IBudgetCard, IBudgetCardGrouping, IBudgetCardType } from '../../../models/budget-tool.models';
+import { IBudgetCard, IBudgetCardGrouping, IBudgetCardType } from '../../../schema';
 import { BudgetStore } from '../../../store/budget.store';
+import { BudgetCardService } from '../../../store/budget-card.service';
 import { BudgetCardNewDialog } from './card-new-dialog';
 
 @Component({
@@ -18,24 +20,24 @@ export class BudgetCardNew {
   @Output() cardSaved = new EventEmitter<IBudgetCard>();
   card = PLACEHOLDER_CARD;
 
-  constructor(public dialog: MatDialog, public store: BudgetStore) {}
+  constructor(public dialog: MatDialog, public store: BudgetStore, private cardService: BudgetCardService) {}
 
   showCardDialog() {
     // groupings should match the current enterprise unless otherwise specified
     const groupings = this.groupings ? this.groupings : toJS(this.store.activeBudget.meta.enterprise.groupings);
     const card: IBudgetCard = {
-      ...NEW_CARD,
+      id: generateID(),
+      label: '',
       type: this.type,
       groupings: groupings as IBudgetCardGrouping[],
     };
-    console.log('card', card);
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
       width: '250px',
       data: card,
     });
 
     dialogRef.afterClosed().subscribe(async (data) => {
-      await this.store.saveCustomCard(data);
+      await this.cardService.saveCustomCard(data);
       this.cardSaved.emit(data);
     });
   }
@@ -46,13 +48,8 @@ export class BudgetCardNew {
  ***********************************************************************/
 const PLACEHOLDER_CARD: IBudgetCard = {
   id: 'add-custom',
-  label: 'add other',
+  label: translateMarker('Add Card'),
   type: 'other',
   imgType: 'svg',
   groupings: ['*'],
-};
-const NEW_CARD: IBudgetCard = {
-  id: generateDBMeta()._key,
-  label: '',
-  type: 'other',
 };

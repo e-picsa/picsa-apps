@@ -14,7 +14,7 @@ In addition it allows for various size optimisations
 Core modifications
 
 - Rewrite JS to TS, attempt method migration
--
+- Adjust grid theme to nest inside enketo-webform selector (avoid knock-ons for head/body sizing)
 
 Additional optimisations
 
@@ -27,17 +27,30 @@ Recommended further optimisations
 
 - Comment out draw widget (20kb)
 - Refactor date/time picker widgets to use native html elements (100kb)
--
+
+## Known Issues
+
+**Testing**
+Cannot integrate nxext stencil test as does not (currently) support jest 28
 
 <!-- Auto Generated Below -->
 
 
 ## Properties
 
-| Property             | Attribute | Description                                           | Type     | Default     |
-| -------------------- | --------- | ----------------------------------------------------- | -------- | ----------- |
-| `form` _(required)_  | `form`    | HTML form template                                    | `string` | `undefined` |
-| `model` _(required)_ | `model`   | XML form model, as processed by an Enketo Transformer | `string` | `undefined` |
+| Property             | Attribute      | Description                                           | Type      | Default     |
+| -------------------- | -------------- | ----------------------------------------------------- | --------- | ----------- |
+| `form` _(required)_  | `form`         | HTML form template                                    | `string`  | `undefined` |
+| `model` _(required)_ | `model`        | XML form model, as processed by an Enketo Transformer | `string`  | `undefined` |
+| `showButtons`        | `show-buttons` |                                                       | `boolean` | `true`      |
+
+
+## Events
+
+| Event         | Description | Type                             |
+| ------------- | ----------- | -------------------------------- |
+| `dataUpdated` |             | `CustomEvent<IEventDataUpdated>` |
+| `formSaved`   |             | `CustomEvent<IEventFormSaved>`   |
 
 
 ----------------------------------------------

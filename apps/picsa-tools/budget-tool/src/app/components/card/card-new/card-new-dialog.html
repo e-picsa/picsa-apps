@@ -1,6 +1,6 @@
 <mat-card appearance="outlined" mat-elevation-z4 class="budget-card selectable">
   <budget-card-image [card]="card"></budget-card-image>
-  <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
+  <div class="card-title">{{ card.label | translate }}</div>
 </mat-card>
 <mat-form-field>
   <input matInput [(ngModel)]="card.label" />

@@ -91,3 +91,17 @@ mat-radio-group.layout-column {
     }
   }
 }
+
+/******************************************************************
+Enketo Form
+*******************************************************************/
+enketo-webform {
+  // EW monitoring form uses grid which should be visisble on smaller devices
+  section.or-appearance-w3 {
+    flex-wrap: nowrap;
+  }
+  // Remove imposed (100% - 30px) width
+  .question .question-label {
+    width: 100%;
+  }
+}

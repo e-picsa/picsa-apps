@@ -1,4 +1,4 @@
-import type { IBudgetCard } from '../models/budget-tool.models';
+import type { IBudgetCard } from '../schema/cards';
 
 // This data is automatically populated on first load and update from live when available
 export const BUDGET_CARDS: IBudgetCard[] = [

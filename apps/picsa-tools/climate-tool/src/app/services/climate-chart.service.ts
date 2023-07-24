@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
-import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta, IStationMetaDB } from '@picsa/models';
+import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PrintProvider } from '@picsa/shared/services/native';

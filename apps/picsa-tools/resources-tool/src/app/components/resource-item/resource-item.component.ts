@@ -192,7 +192,6 @@ class AppItemHandler {
   }
   private async handleOverrides() {
     this.parent.actionButton = { icon: 'picsa_play_store', svgIcon: true };
-    console.log('app item', this.parent);
   }
 
   private handleClick(e: Event) {

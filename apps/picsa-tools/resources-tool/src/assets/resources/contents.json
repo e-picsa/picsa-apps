@@ -11,6 +11,12 @@
     "md5Checksum": "994688495c9894b1c10b8c73ccbb06af",
     "modifiedTime": "2022-09-08T10:31:19.003Z"
   },
+  "covers/bmtm.jpg": {
+    "relativePath": "covers/bmtm.jpg",
+    "size_kb": 28.9,
+    "md5Checksum": "81e603b769431198c44eda8a154cc664",
+    "modifiedTime": "2023-07-18T21:30:38.138Z"
+  },
   "covers/crops.svg": {
     "relativePath": "covers/crops.svg",
     "size_kb": 1.7,
@@ -40,6 +46,12 @@
     "size_kb": 1.1,
     "md5Checksum": "a09b2f44f6b44b5b6e29aedba9f92029",
     "modifiedTime": "2023-07-10T22:11:12.359Z"
+  },
+  "covers/gap.jpg": {
+    "relativePath": "covers/gap.jpg",
+    "size_kb": 25.7,
+    "md5Checksum": "67282f753ec9fd76c073c7883f467171",
+    "modifiedTime": "2023-07-18T21:21:54.636Z"
   },
   "covers/gender-equality-1.svg": {
     "relativePath": "covers/gender-equality-1.svg",
@@ -125,12 +137,6 @@
     "md5Checksum": "43597bdd99299fff0b3061cedd7fdc20",
     "modifiedTime": "2022-09-28T20:02:26.876Z"
   },
-  "covers/workshop-salima-2022.jpg": {
-    "relativePath": "covers/workshop-salima-2022.jpg",
-    "size_kb": 18.3,
-    "md5Checksum": "3ee48dcc52837e1a60d740b7a9dd3125",
-    "modifiedTime": "2022-09-21T08:51:57.458Z"
-  },
   "covers/workshops.png": {
     "relativePath": "covers/workshops.png",
     "size_kb": 11.2,
@@ -155,16 +161,10 @@
     "md5Checksum": "ee548d6d7be566890f836d6e4cab24f7",
     "modifiedTime": "2022-09-08T10:31:19.161Z"
   },
-  "potential-PICSA-training-schedule-cover.png": {
-    "relativePath": "potential-PICSA-training-schedule-cover.png",
-    "size_kb": 6.2,
-    "md5Checksum": "bc102121f8293636e82e48ddf9898524",
-    "modifiedTime": "2022-09-08T10:31:19.249Z"
-  },
-  "potential-PICSA-training-scheduled.pdf": {
-    "relativePath": "potential-PICSA-training-scheduled.pdf",
-    "size_kb": 17.8,
-    "md5Checksum": "1431a9389a8192ac6bbf52702e199fb0",
-    "modifiedTime": "2022-09-08T10:31:19.250Z"
+  "picsa-manual-farmer.pdf": {
+    "relativePath": "picsa-manual-farmer.pdf",
+    "size_kb": 1183.5,
+    "md5Checksum": "7d191f7148a023ac812daa0a2dd2826c",
+    "modifiedTime": "2023-07-22T06:04:06.567Z"
   }
 }

@@ -20,6 +20,7 @@ const config: CapacitorConfig = {
     // capacitor
     '@capacitor/app',
     '@capacitor/browser',
+    '@capacitor/core',
     '@capacitor/device',
     '@capacitor/filesystem',
     'capacitor-blob-writer',
@@ -27,6 +28,14 @@ const config: CapacitorConfig = {
     '@capacitor-community/firebase-crashlytics',
     '@capacitor-firebase/performance',
   ],
+  // Enable app to use native http for requests (bypass cors)
+  // https://capacitorjs.com/docs/apis/http
+  // TODO - check if resources still work as intended once enabled
+  // plugins: {
+  //   CapacitorHttp: {
+  //     enabled: true,
+  //   },
+  // },
   server: {
     /** Uncomment and replace with local ip to serve live-reload */
 

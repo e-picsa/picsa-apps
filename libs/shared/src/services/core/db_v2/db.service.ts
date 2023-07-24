@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
+import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
 addRxPlugin(RxDBMigrationPlugin);
 
@@ -23,14 +24,27 @@ interface IPicsaCollectionData {
  * https://rxdb.info/rx-database.html
  */
 @Injectable({ providedIn: 'root' })
-export class PicsaDatabase_V2_Service {
-  private _init_called = false;
-
+export class PicsaDatabase_V2_Service extends PicsaAsyncService {
+  public override initOnCreate = true;
   public db: RxDatabase<{
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService) {}
+  constructor(private userService: PicsaUserService) {
+    super();
+  }
+
+  /**
+   * Initialise the database
+   * @note This is called automatically when importing the module and so should
+   * not be manually triggered
+   */
+  public override async init() {
+    this.db = await createRxDatabase({
+      name: `picsa_app`,
+      storage: getRxStorageDexie({ autoOpen: true }),
+    });
+  }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
   public async ensureCollections(collections: { [name: string]: IPicsaCollectionCreator<any> }) {
@@ -58,15 +72,15 @@ export class PicsaDatabase_V2_Service {
    * In case no active profile loaded will return all data
    * NOTE - the collection must be marked with `isUserCollection: true` to work
    * */
-  public activeUserQuery<T>(collection: RxCollection<T>) {
+  public activeUserQuery<T>(collection: RxCollection<T>, query: MangoQuerySelector<T> = {}) {
     // Only filter when multiple user profiles exist so that any disassociated data
     // still displays for single user case after delete
     if (Object.keys(this.userService.allUsersHashmap).length > 1) {
       const _app_user_id = this.userService.activeUser$.value._id;
       // TODO - handle live switch in case user id changes
-      return collection.find({ selector: { _app_user_id } as any });
+      return collection.find({ selector: { _app_user_id, ...query } as any });
     } else {
-      return collection.find();
+      return collection.find({ selector: query });
     }
   }
 
@@ -88,22 +102,5 @@ export class PicsaDatabase_V2_Service {
       });
     }
     return { collection, hookFactories };
-  }
-
-  /**
-   * Initialise the database
-   * @note This is called automatically when importing the module and so should
-   * not be manually triggered
-   */
-  public async initialise() {
-    // Avoid duplicate initialisation
-    // Shouldn't happen as init called in forRoot but just in case
-    if (!this._init_called) {
-      this._init_called = true;
-      this.db = await createRxDatabase({
-        name: `picsa_app`,
-        storage: getRxStorageDexie({ autoOpen: true }),
-      });
-    }
   }
 }

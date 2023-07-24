@@ -1,0 +1,16 @@
+:host {
+  display: contents;
+}
+.page-content {
+  // allow table to be wider than page (if mat-table decides to do so)
+  overflow-x: auto;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+}
+
+.create-button {
+  height: 64px;
+}

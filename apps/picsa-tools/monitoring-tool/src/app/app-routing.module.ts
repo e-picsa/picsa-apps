@@ -10,7 +10,7 @@ export const ROUTES_COMMON: Routes = [
 
   {
     path: 'view',
-    loadChildren: () => import('./pages/form-view/form-view.module').then((m) => m.FormViewModule),
+    loadChildren: () => import('./pages/form/form.module').then((m) => m.FormModule),
     title: 'Monitoring',
   },
 ];

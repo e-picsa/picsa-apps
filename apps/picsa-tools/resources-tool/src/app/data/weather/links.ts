@@ -46,7 +46,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     type: 'link',
     icon: 'group',
     image: 'assets/resources/covers/facebook.svg',
-    url: 'https://www.facebook.com/DCCMSMalawiWeather/',
+    url: 'https://www.facebook.com/MALAWIWEATHERUPDATE',
     priority: 10,
     appCountries: ['mw'],
   },
