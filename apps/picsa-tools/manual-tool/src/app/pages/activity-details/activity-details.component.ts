@@ -238,16 +238,16 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
   // }
 
   
-  async ngOnDestroy() {
-    const res: any  = await this.videoPlayer.stopAllPlayers();
-    // clearTimeout(this.apiTimer3);
-    // clearTimeout(this.apiTimer2);
-    // clearTimeout(this.apiTimer1);
-    // this.handlerPlay.remove();
-    // this.handlerPause.remove();
-    // this.handlerEnded.remove();
-    // this.handlerReady.remove();
-    // this.handlerPlaying.remove();
-    // this.handlerExit.remove();
-}
+      async ngOnDestroy() {
+        const res: any  = await this.videoPlayer.stopAllPlayers();
+        // clearTimeout(this.apiTimer3);
+        // clearTimeout(this.apiTimer2);
+        // clearTimeout(this.apiTimer1);
+        // this.handlerPlay.remove();
+        // this.handlerPause.remove();
+        // this.handlerEnded.remove();
+        // this.handlerReady.remove();
+        // this.handlerPlaying.remove();
+        // this.handlerExit.remove();
+      }
 }
