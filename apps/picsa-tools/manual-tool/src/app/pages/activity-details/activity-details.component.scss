@@ -12,6 +12,9 @@ h2{
 .video-player{
     width: 70%;
     margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .svg-row{
     display: flex;
