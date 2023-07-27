@@ -4,11 +4,20 @@
 
 <div class="page-content background-image">
   <div class="link-grid">
-    <div *ngFor="let link of links" data-cy="link" class="grid-tile" (click)="linkClicked(link)">
+    <div
+      *ngFor="let link of links"
+      [attr.id]="link.element"
+      data-cy="link"
+      class="grid-tile"
+      (click)="linkClicked(link)"
+    >
       <div style="text-align: center">
         <mat-icon [svgIcon]="link.icon" class="nav-icon"></mat-icon>
         <div class="nav-text">{{ link.name | translate }}</div>
       </div>
+    </div>
+    <div class="grid-tile" (click)="takeTour()" style="position: relative">
+      <div style="position: absolute; width: 90%; text-align: center; bottom: 60px">Take App Tour</div>
     </div>
   </div>
 
