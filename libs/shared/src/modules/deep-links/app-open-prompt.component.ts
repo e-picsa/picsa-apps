@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
+import { CommunicationService } from '../../services/promptToHomePageService.service';
 import { DeepLinksService } from './deep-links.service';
 
 /**
@@ -72,12 +73,15 @@ export class AppOpenPromptComponent {
   appDynamicLink: string;
   constructor(
     deepLinksService: DeepLinksService,
-    private bottomSheet: MatBottomSheet
+    private bottomSheet: MatBottomSheet,
+    private communicationService: CommunicationService
   ) {
     this.appDynamicLink = deepLinksService.config.appDynamicLink;
   }
 
   dismiss() {
     this.bottomSheet.dismiss();
+    // trigger homepage tour
+    this.communicationService.triggerUserEvent();
   }
 }
