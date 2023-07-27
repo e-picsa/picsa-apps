@@ -14975,6 +14975,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"intro.js@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "intro.js@npm:7.0.1"
+  checksum: e29fd0b64fd049bfe7ec59c1916ce20789313320829f09c7ad6fedd9344a7c3aa985c0c65086fa08feca792c6fdfe189dfdc8776af9437c6f5ced751268c453f
+  languageName: node
+  linkType: hard
+
 "ionicons@npm:^6.1.1":
   version: 6.1.1
   resolution: "ionicons@npm:6.1.1"
@@ -16738,7 +16745,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff73078, leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
+  checksum: b2280f200f5ea410e33cc5feb500d67d86cb5f16b294eea1306da055614ffc906be7de6dbc9bbf4db6e6e5d27d0396e4701a3b6c4c920548d2aac94b8223879f
   languageName: node
   linkType: hard
 
@@ -19130,6 +19137,7 @@ __metadata:
     glob: ^8.1.0
     html2canvas: ^1.4.1
     husky: ^8.0.0
+    intro.js: ^7.0.1
     jest: 28.1.1
     jest-circus: ^29.5.0
     jest-environment-jsdom: 28.1.1
