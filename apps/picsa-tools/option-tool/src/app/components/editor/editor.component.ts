@@ -31,6 +31,11 @@ export class EditorComponent {
       this.values[field].splice(index, 1);
     }
   }
+  handleBothGenderInput() {
+    this.handleGender('male', 'gender_decisions');
+    this.handleGender('female', 'gender_decisions');
+  }
+
   handleBenficiaryGender(index: number, gender: string) {
     if (!this.values.benefits[index].beneficiary.includes(gender)) {
       this.values.benefits[index].beneficiary.push(gender);
