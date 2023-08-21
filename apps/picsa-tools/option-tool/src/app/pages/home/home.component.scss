@@ -66,6 +66,66 @@ td.mdc-data-table__cell {
   display: block;
 }
 
+.Gender-Display{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.gender-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap:10px;
+}
+.beneficiary-class{
+  max-width: 15rem;
+}
+.beneficiary-container{
+     display: flex;
+     flex-direction: row;
+     margin-bottom: 10px;
+}
+.weatherHeader{
+  font-size: 13px;
+  font-weight: 500;
+  padding-bottom: 7px;
+}
+.performance-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+}
+.performance-td{
+  max-width: 17rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.weatherValue{
+  font-size: 13px;
+}
+.investment-td{
+  max-width: 10rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.vertical-line {
+  width: 1px;
+  height: 40px;
+  background-color: #ccc;
+  margin: 0 4px;
+}
+.emoji_size{
+  width: 1rem;
+  height: 1rem;
+}
 .benefit-container {
   display: flex;
   margin-bottom: 8px;

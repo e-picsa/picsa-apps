@@ -24,6 +24,13 @@ export class OptionMaterialModule {
       female: 'female',
       male: 'male',
       close: 'close',
+      bad_rain: 'bad-rain',
+      low_rain:'low-rain',
+      mid_rain:'mid-rain',
+      risks:'risks',
+      thumbs_up:'thumbs-up',
+      thumbs_down:'thumbs-down',
+      fist_bump:'fist-bump'
     };
     for (const [key, value] of Object.entries(icons)) {
       const iconName = `picsa_options_${key}`;
