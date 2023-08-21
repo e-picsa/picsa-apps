@@ -126,7 +126,7 @@
 .performenceItem{
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   gap: 10px;
 }
 
@@ -148,4 +148,21 @@
 }
 .guideText{
   margin-top: 5px;
+}
+.investmentsContentContainer{
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1rem;
+  width: 100%;
+  flex-direction: row;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+.performenceHeading{
+  font-weight: 700;
+}
+.rainIconContainer{
+   background-color: #ffffff;
+   border-radius: 5px;
+   padding: 13px;
 }

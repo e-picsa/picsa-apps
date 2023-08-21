@@ -193,9 +193,11 @@
         <div class="StepContent">
           <div class="performenceItemHolders">
             <div class="performenceItem">
-              <div style="font-weight: 700">{{ 'High RF' | translate }}</div>
+              <div class="performenceHeading">{{ 'High RF' | translate }}</div>
+              <div class="rainIconContainer">
               <mat-icon  svgIcon="picsa_options_bad_rain"></mat-icon>
-              <div class="emoji-wrapper">
+             </div>
+              <!-- <div class="emoji-wrapper">
                 <div class="emojiTextContainer">
                     <mat-icon [ngStyle]="{'opacity': values.performance.highRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
                  <div class="guideText">{{ 'Bad' | translate }}</div>
@@ -208,13 +210,15 @@
                   <mat-icon [ngStyle]="{'opacity': values.performance.highRf !== 'good' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
                   <div class="guideText">{{ 'Good' | translate }}</div>
                 </div>
-                </div>
-              <input type="range" min="0" max="2" [ngModel]="values.performance.highRf === 'bad' ? 0 : values.performance.highRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'high')" class="guideText">  
+              </div> -->
+              <!-- <input type="range" min="0" max="2" [ngModel]="values.performance.highRf === 'bad' ? 0 : values.performance.highRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'high')" class="guideText">   -->
             </div>
 
             <div class="performenceItem">
-              <div style="font-weight: 700">{{ 'Mid RF' | translate }}</div>
-              <mat-icon svgIcon="picsa_options_mid_rain">water_drop</mat-icon>
+              <div class="performenceHeading">{{ 'Mid RF' | translate }}</div>
+              <div class="rainIconContainer">
+              <mat-icon svgIcon="picsa_options_mid_rain"></mat-icon>
+              </div>
               <div class="emoji-wrapper">
                 <div class="emojiTextContainer">
                     <mat-icon [ngStyle]="{'opacity': values.performance.midRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
@@ -232,8 +236,10 @@
               <input type="range" min="0" max="2" [ngModel]="values.performance.midRf === 'bad' ? 0 : values.performance.midRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'mid')" class="guideText">  
             </div>
             <div class="performenceItem">
-              <div style="font-weight: 700">{{ 'Low RF' | translate }}</div>
-              <mat-icon svgIcon="picsa_options_low_rain">water_drop</mat-icon>
+              <div class="performenceHeading">{{ 'Low RF' | translate }}</div>
+              <div class="rainIconContainer">
+              <mat-icon svgIcon="picsa_options_low_rain"></mat-icon>
+              </div>
               <div class="emoji-wrapper">
                 <div class="emojiTextContainer">
                     <mat-icon [ngStyle]="{'opacity': values.performance.lowRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
@@ -273,18 +279,10 @@
           <div class="StepTitle">{{ 'Investment in terms of money and time' | translate }}?</div>
           <div class="StepContent">
             <div
-              style="
-                display: flex;
-                justify-content: space-evenly;
-                gap: 1rem;
-                width: 100%;
-                flex-direction: row;
-                margin-bottom: 1.5rem;
-                margin-top: 2rem;
-              "
+              class="investmentsContentContainer"
             >
               <div class="performenceItem">
-                <div style="font-weight: 700" > 
+                <div class="performenceHeading" > 
                   {{ 'Money' | translate }}
                 </div>
                 <mat-icon style="color: #8a2644; font-size: 20px">payments</mat-icon>
