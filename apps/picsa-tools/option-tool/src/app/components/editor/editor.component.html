@@ -197,7 +197,7 @@
               <div class="rainIconContainer">
               <mat-icon  svgIcon="picsa_options_bad_rain"></mat-icon>
              </div>
-              <!-- <div class="emoji-wrapper">
+              <div class="emoji-wrapper">
                 <div class="emojiTextContainer">
                     <mat-icon [ngStyle]="{'opacity': values.performance.highRf !== 'bad' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
                  <div class="guideText">{{ 'Bad' | translate }}</div>
@@ -210,8 +210,8 @@
                   <mat-icon [ngStyle]="{'opacity': values.performance.highRf !== 'good' ? '0.3' : '1'}" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
                   <div class="guideText">{{ 'Good' | translate }}</div>
                 </div>
-              </div> -->
-              <!-- <input type="range" min="0" max="2" [ngModel]="values.performance.highRf === 'bad' ? 0 : values.performance.highRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'high')" class="guideText">   -->
+              </div>
+              <input type="range" min="0" max="2" [ngModel]="values.performance.highRf === 'bad' ? 0 : values.performance.highRf === 'ok'?1 : 2"  (input)="updatePerformance($event, 'high')" class="guideText">  
             </div>
 
             <div class="performenceItem">
