@@ -16,6 +16,7 @@ export class EditorComponent {
   investmentOptions: string[] = ['high', 'mid', 'low'];
   isLinear = false;
 
+
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
 
