@@ -23,6 +23,7 @@ export class OptionMaterialModule {
     const icons = {
       female: 'female',
       male: 'male',
+      close: 'close',
     };
     for (const [key, value] of Object.entries(icons)) {
       const iconName = `picsa_options_${key}`;

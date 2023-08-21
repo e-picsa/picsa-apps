@@ -14,7 +14,17 @@ td.mdc-data-table__cell {
 }
 
 .HomeContainer {
-  max-height: 100vh;
+  height: 100vh;
+}
+
+.blurBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 10;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .HideOverflow {
@@ -23,16 +33,17 @@ td.mdc-data-table__cell {
 
 .container {
   position: relative;
-  height: 100vh;
+  height: 80vh;
   overflow: auto;
   background-color: #fff;
-  width: 100%;
+  width: 95%;
   z-index: 20;
   justify-content: center;
   display: flex;
   padding-top: 2rem;
-  top: 0;
-  right: 0;
+  top: 30px;
+  left: 35px;
+  right: 25px;
 }
 
 .buttonposition {

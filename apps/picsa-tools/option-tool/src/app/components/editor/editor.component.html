@@ -1,7 +1,9 @@
 <div class="dialog-content">
-  <button class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">
+  <!-- <button class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">
     {{ 'Close' | translate }}
-  </button>
+  </button> -->
+  <mat-icon svgIcon="picsa_options_close" class="saveButtonPosition"  (click)="submitForm()"  ></mat-icon>
+
   <mat-stepper [linear]="isLinear" #stepper>
     <!-- Practice -->
     <mat-step matStepContent>
