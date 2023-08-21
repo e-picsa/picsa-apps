@@ -19,6 +19,8 @@
     position: absolute;
     right: 20px;
     top: 20px;
+    width: 3rem;
+    height: 3rem;
   }
 
   .StepTitle {
@@ -41,18 +43,19 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 50%;
     gap: 0.4rem;
+    background-color: #D9D9D9;
+    padding: 2rem;
+    border-radius: 20px;
+    width: fit-content;
+    min-width: 23rem;
+    box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
 
     .StepContent {
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      // .rain-icon{
-      //   font-size: 50px;
-      //   color: black;
-      // }
 
       .form-group {
         // width: 500px;
