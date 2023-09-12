@@ -1,5 +1,6 @@
 table {
   border-collapse: collapse;
+  height: 100%; // allows child header cell to fit 100% https://stackoverflow.com/a/34690864
 }
 
 th {
@@ -66,7 +67,7 @@ td.mdc-data-table__cell {
   display: block;
 }
 
-.Gender-Display{
+.Gender-Display {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -74,43 +75,60 @@ td.mdc-data-table__cell {
   margin-top: 20px;
 }
 
-.gender-container{
+.gender-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap:10px;
+  gap: 10px;
 }
-.beneficiary-class{
+.beneficiary-class {
   max-width: 15rem;
 }
-.beneficiary-container{
-     display: flex;
-     flex-direction: row;
-     margin-bottom: 10px;
+.beneficiary-container {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
 }
-.weatherHeader{
+.weatherHeader {
   font-size: 13px;
   font-weight: 500;
   padding-bottom: 7px;
 }
-.performance-container{
+.performance-container {
   display: flex;
   flex-direction: column;
   align-items: center;
- 
 }
-.performance-td{
+.performance-td {
   max-width: 17rem;
   height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-.weatherValue{
+.performance-subheader {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  mat-icon {
+    flex: 1;
+    padding: 4px;
+    height: 100%;
+    max-width: 48px;
+    margin: auto;
+  }
+  mat-icon:nth-of-type(even) {
+    border-left: 1px solid var(--color-light);
+    border-right: 1px solid var(--color-light);
+  }
+}
+.weatherValue {
   font-size: 13px;
 }
-.investment-td{
+.investment-td {
   max-width: 10rem;
   display: flex;
   flex-direction: row;
@@ -123,7 +141,7 @@ td.mdc-data-table__cell {
   background-color: #ccc;
   margin: 0 4px;
 }
-.emoji_size{
+.emoji_size {
   width: 1rem;
   height: 1rem;
 }
