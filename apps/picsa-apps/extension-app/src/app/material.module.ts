@@ -28,6 +28,7 @@ export class ExtensionToolkitMaterialModule {
       play_store: 'play_store',
       probability_tool: 'probability_tool',
       resources_tool: 'resources_tool',
+      tutorial: 'tutorial',
       whatsapp: 'whatsapp',
     };
     for (const [key, value] of Object.entries(icons)) {
