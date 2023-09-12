@@ -1,4 +1,4 @@
-<div class="HomeContainer" [class.HideOverflow]="matStepperOpen">
+<div class="page-content" [class.HideOverflow]="matStepperOpen">
   <div>
     <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
@@ -56,71 +56,141 @@
         </td>
       </ng-container>
 
-       <!-- Performance Column -->
-       <ng-container matColumnDef="performance">
-        <th mat-header-cell *matHeaderCellDef>{{ 'Performance' | translate }}</th>
-        <td mat-cell  *matCellDef="let element">
+      <!-- Performance Column -->
+      <ng-container matColumnDef="performance">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ 'Performance' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
           <div class="performance-td">
-          <div class="performance-container">
-            <mat-icon  svgIcon="picsa_options_bad_rain"></mat-icon>
-            <!-- <div class="weatherHeader">{{ 'High RF' | translate }}</div> -->
-            <mat-icon *ngIf="element._data.performance.highRf === 'bad'" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
-            <mat-icon *ngIf="element._data.performance.highRf === 'ok'" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
-            <mat-icon *ngIf="element._data.performance.highRf === 'good'" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
-            <div class="weatherValue">{{ element._data.performance.highRf | translate }}</div>
+            <div class="performance-container">
+              <!-- <div class="weatherHeader">{{ 'High RF' | translate }}</div> -->
+              <mat-icon
+                *ngIf="element._data.performance.highRf === 'bad'"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.performance.highRf === 'ok'"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.performance.highRf === 'good'"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="weatherValue">{{ element._data.performance.highRf | translate }}</div>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="performance-container">
+              <mat-icon svgIcon="picsa_options_rain_medium_label"></mat-icon>
+              <!-- <div class="weatherHeader">{{ 'Mid RF' | translate }}</div> -->
+              <mat-icon
+                *ngIf="element._data.performance.midRf === 'bad'"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.performance.midRf === 'ok'"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.performance.midRf === 'good'"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="weatherValue">{{ element._data.performance.midRf | translate }}</div>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="performance-container">
+              <mat-icon svgIcon="picsa_options_rain_low_label"></mat-icon>
+              <!-- <div class="weatherHeader">{{ 'Low RF' | translate }}</div> -->
+              <mat-icon
+                *ngIf="element._data.performance.lowRf === 'bad'"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.performance.lowRf === 'ok'"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.performance.lowRf === 'good'"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="weatherValue">{{ element._data.performance.lowRf | translate }}</div>
+            </div>
           </div>
-          <div class="vertical-line "></div>
-          <div class="performance-container">
-            <mat-icon  svgIcon="picsa_options_mid_rain"></mat-icon>
-            <!-- <div class="weatherHeader">{{ 'Mid RF' | translate }}</div> -->
-            <mat-icon *ngIf="element._data.performance.midRf === 'bad'" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
-            <mat-icon *ngIf="element._data.performance.midRf === 'ok'" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
-            <mat-icon *ngIf="element._data.performance.midRf === 'good'" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
-            <div class="weatherValue">{{ element._data.performance.midRf | translate }}</div>
-          </div>
-          <div class="vertical-line "></div>
-          <div class="performance-container">
-            <mat-icon  svgIcon="picsa_options_low_rain"></mat-icon>
-            <!-- <div class="weatherHeader">{{ 'Low RF' | translate }}</div> -->
-            <mat-icon *ngIf="element._data.performance.lowRf === 'bad'" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
-            <mat-icon *ngIf="element._data.performance.lowRf === 'ok'" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
-            <mat-icon *ngIf="element._data.performance.lowRf === 'good'" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
-            <div class="weatherValue">{{ element._data.performance.lowRf | translate }}</div>
-          </div>
-        </div>
         </td>
       </ng-container>
 
       <!-- Investment Column -->
       <ng-container matColumnDef="investment">
         <th mat-header-cell *matHeaderCellDef>{{ 'Investment' | translate }}</th>
-        <td mat-cell  *matCellDef="let element">
-          <div style="display: flex; flex-direction: row; padding: 4px; max-width: 14rem; justify-content: space-between; align-items: flex-start;">
+        <td mat-cell *matCellDef="let element">
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              padding: 4px;
+              max-width: 14rem;
+              justify-content: space-between;
+              align-items: flex-start;
+            "
+          >
             <div class="performance-container">
               <mat-icon style="color: #8a2644; font-size: 20px">payments</mat-icon>
               <!-- <div class="weatherHeader">{{ 'Money' | translate }}</div> -->
-              <mat-icon *ngIf="element._data.investment.money === 'low'" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
-              <mat-icon *ngIf="element._data.investment.money === 'mid'" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
-              <mat-icon *ngIf="element._data.investment.money === 'high'" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+              <mat-icon
+                *ngIf="element._data.investment.money === 'low'"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.investment.money === 'mid'"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.investment.money === 'high'"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
               <div class="weatherValue">{{ element._data.investment.money | translate }}</div>
             </div>
             <div class="vertical-line"></div>
             <div class="performance-container">
               <mat-icon style="color: #8a2644; font-size: 20px">schedule</mat-icon>
               <!-- <div class="weatherHeader">{{ 'Time' | translate }}</div> -->
-              <mat-icon *ngIf="element._data.investment.time === 'low'" svgIcon="picsa_options_thumbs_up" class="emoji_size"></mat-icon>
-              <mat-icon *ngIf="element._data.investment.time === 'mid'" svgIcon="picsa_options_fist_bump" class="emoji_size"></mat-icon>
-              <mat-icon *ngIf="element._data.investment.time === 'high'" svgIcon="picsa_options_thumbs_down" class="emoji_size"></mat-icon>
+              <mat-icon
+                *ngIf="element._data.investment.time === 'low'"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.investment.time === 'mid'"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="element._data.investment.time === 'high'"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
               <div class="weatherValue">{{ element._data.investment.time | translate }}</div>
             </div>
-          </div> 
+          </div>
         </td>
       </ng-container>
 
       <!-- Time Column -->
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef>{{ 'Time' | translate }}</th>
-        <td mat-cell style="text-align: center;" *matCellDef="let element">{{ element._data.time | translate }}</td>
+        <td mat-cell style="text-align: center" *matCellDef="let element">{{ element._data.time | translate }}</td>
       </ng-container>
 
       <!-- Risks Column -->
@@ -129,7 +199,23 @@
         <td mat-cell *matCellDef="let element">{{ element._data.risk | translate }}</td>
       </ng-container>
 
+      <!-- Sub Headers 
+        Templates for any required subheaders as defined in component ts (fallback to default)
+        adapted from https://stackoverflow.com/q/56724439
+      -->
+      <ng-container matColumnDef="performance_subheader">
+        <th mat-header-cell *matHeaderCellDef class="subheader">
+          <div class="performance-subheader">
+            <mat-icon svgIcon="picsa_options_rain_high_label"></mat-icon>
+            <mat-icon svgIcon="picsa_options_rain_medium_label"></mat-icon>
+            <mat-icon svgIcon="picsa_options_rain_low_label"></mat-icon>
+          </div>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="default_subheader"><th *matHeaderCellDef class="subheader"></th></ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="subheaderColumns" id="subheaderRow"></tr>
       <tr mat-row *matRowDef="let row; index as i; columns: displayedColumns" (click)="onRowClicked(row, i)"></tr>
     </table>
     <button (click)="openNewDialog()" mat-button mat-raised-button color="primary">
@@ -141,5 +227,5 @@
       <option-editor (dataTransfer)="onDataTransfer($event)"></option-editor>
     </div>
   </div>
-  <div *ngIf="matStepperOpen"  class="blurBackground"></div>
+  <div *ngIf="matStepperOpen" class="blurBackground"></div>
 </div>

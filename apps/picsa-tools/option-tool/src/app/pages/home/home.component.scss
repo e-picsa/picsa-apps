@@ -44,17 +44,16 @@ td.mdc-data-table__cell {
 
 .container {
   position: relative;
-  height: 80vh;
+  height: calc(100% - 4rem);
+  margin: 1rem;
+  left: 0;
+  width: calc(100% - 2rem);
   overflow: auto;
   background-color: #fff;
   width: 95%;
   z-index: 20;
   justify-content: center;
   display: flex;
-  padding-top: 2rem;
-  top: 40px;
-  left: 35px;
-  right: 25px;
   border-radius: 20px;
 }
 

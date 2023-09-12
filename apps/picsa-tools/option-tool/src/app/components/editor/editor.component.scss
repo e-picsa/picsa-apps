@@ -1,7 +1,127 @@
-.mat-stepper-horizontal {
-  margin-top: 27px;
+// ***************************************************************************************
+// Stepper - General
+// ***************************************************************************************
+
+$close-button-height: 40px;
+
+mat-stepper.mat-stepper-horizontal {
+  margin-top: $close-button-height + 8px;
+  margin-bottom: 2rem;
 }
 
+.closeButton {
+  position: absolute;
+  right: 8px;
+  top: (-$close-button-height);
+  width: $close-button-height;
+  height: $close-button-height;
+  color: white;
+  z-index: 2;
+}
+
+// ***************************************************************************************
+// Steps - General
+// ***************************************************************************************
+$container-border-radius: 16px;
+
+.StepContainer {
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
+  position: relative;
+  border-radius: $container-border-radius;
+  min-width: 18rem;
+  box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
+  // Desktop layout - container moves along with stepper
+  @media only screen and (min-width: 768px) {
+    &[data-step='2'] {
+      left: 12%;
+    }
+    &[data-step='3'] {
+      left: 24%;
+    }
+    &[data-step='4'] {
+      left: 36%;
+    }
+    &[data-step='5'] {
+      left: calc(min(100vw - 4rem - 36rem, 48%)); // apply min sizing to prevent overflow off screen
+    }
+    &[data-step='6'] {
+      left: calc(min(100vw - 4rem - 26rem, 60%));
+    }
+    &[data-step='7'] {
+      left: calc(min(100vw - 4rem - 21rem, 72%));
+    }
+    &[data-step='8'] {
+      left: calc(min(100vw - 4rem - 21rem, 84%));
+    }
+  }
+}
+
+h3.StepTitle {
+  margin: 0;
+  background: var(--color-primary);
+  font-weight: normal;
+  padding: 1rem;
+  color: white;
+  text-align: center;
+  border-top-left-radius: $container-border-radius;
+  border-top-right-radius: $container-border-radius;
+}
+
+.StepContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+// ***************************************************************************************
+// Steps - Performance
+// ***************************************************************************************
+$rain-icon-size: 64px;
+.performenceItemHolders {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+.performenceItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.performenceHeading {
+  font-weight: 700;
+  text-align: center;
+  width: calc($rain-icon-size + 16px);
+  background: var(--color-primary);
+  margin-bottom: -10px;
+  padding: 4px;
+  color: white;
+  z-index: 1;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.rainIconContainer {
+  width: calc($rain-icon-size + 8px - 2px); // include padding and border in width
+  text-align: center;
+  background-color: #ffffff;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 8px;
+  mat-icon {
+    width: calc($rain-icon-size);
+    height: calc($rain-icon-size);
+  }
+  border: 1px solid var(--color-primary);
+}
+
+// ***************************************************************************************
+// Steps - To sort
+// ***************************************************************************************
 .mat-mdc-form-field {
   margin-top: 16px;
 }
@@ -13,16 +133,8 @@
 }
 
 .dialog-content {
+  position: relative;
   padding-bottom: 2rem;
-
-  .saveButtonPosition {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 3rem;
-    height: 3rem;
-  }
-
   .importantText {
     display: flex;
     justify-content: flex-start;
@@ -82,127 +194,29 @@
   margin-bottom: 1.5rem;
   margin-top: 2rem;
 }
-// ***************************************************************************************
-// Steps - General
-// ***************************************************************************************
-$container-border-radius: 16px;
 
-.StepContainer {
-  flex-direction: column;
-  align-items: flex-start;
-  width: fit-content;
-  position: relative;
-  border-radius: $container-border-radius;
-  min-width: 18rem;
-  box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
-  // Desktop layout - container moves along with stepper
-  @media only screen and (min-width: 768px) {
-    &[data-step='2'] {
-      left: 12%;
-    }
-    &[data-step='3'] {
-      left: 24%;
-    }
-    &[data-step='4'] {
-      left: 36%;
-    }
-    &[data-step='5'] {
-      left: calc(min(100vw - 4rem - 36rem, 48%)); // apply min sizing to prevent overflow off screen
-    }
-    &[data-step='6'] {
-      left: calc(min(100vw - 4rem - 26rem, 60%));
-    }
-    &[data-step='7'] {
-      left: calc(min(100vw - 4rem - 21rem, 72%));
-    }
-    &[data-step='8'] {
-      left: calc(min(100vw - 4rem - 21rem, 84%));
-    }
-  }
+label {
+  font-size: 14px;
+  font-weight: 400;
+  margin-right: 10px;
 }
 
-h3.StepTitle {
-  margin: 0;
-  background: var(--color-primary);
-  font-weight: normal;
-  padding: 1rem;
-  color: white;
-  text-align: center;
-  border-top-left-radius: $container-border-radius;
-  border-top-right-radius: $container-border-radius;
+input.form-control {
+  font-size: 16px;
+  outline-color: #8a2644;
+  padding: 5px;
+  width: 90%;
 }
 
-.StepContent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 1rem;
-
-  label {
-    font-size: 14px;
-    font-weight: 400;
-    margin-right: 10px;
-  }
-
-  input.form-control {
-    font-size: 16px;
-    outline-color: #8a2644;
-    padding: 5px;
-    width: 90%;
-  }
-
-  textarea.form-control {
-    font-size: 16px;
-    outline-color: #8a2644;
-    padding: 5px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    vertical-align: top;
-  }
-
-  .ButtonSection {
-    width: 15rem;
-  }
+textarea.form-control {
+  font-size: 16px;
+  outline-color: #8a2644;
+  padding: 5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  vertical-align: top;
 }
 
-// ***************************************************************************************
-// Steps - Performance
-// ***************************************************************************************
-.performenceItemHolders {
-  display: flex;
-  gap: 1rem;
-  width: 100%;
-}
-.performenceItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-$rain-icon-size: 64px;
-.performenceHeading {
-  font-weight: 700;
-  text-align: center;
-  width: calc($rain-icon-size + 16px);
-  background: var(--color-primary);
-  margin-bottom: -10px;
-  padding: 4px;
-  color: white;
-  z-index: 1;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-.rainIconContainer {
-  width: calc($rain-icon-size + 8px - 2px); // include padding and border in width
-  text-align: center;
-  background-color: #ffffff;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  padding: 8px;
-  mat-icon {
-    width: calc($rain-icon-size);
-    height: calc($rain-icon-size);
-  }
-  border: 1px solid var(--color-primary);
+.ButtonSection {
+  width: 15rem;
 }

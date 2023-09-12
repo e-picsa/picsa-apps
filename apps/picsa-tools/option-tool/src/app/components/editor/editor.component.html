@@ -1,10 +1,9 @@
 <div class="dialog-content">
-  <!-- <button class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">
-    {{ 'Close' | translate }}
-  </button> -->
-  <mat-icon svgIcon="picsa_options_close" class="saveButtonPosition" (click)="submitForm()"></mat-icon>
+  <button mat-mini-fab color="primary" (click)="submitForm()" class="closeButton">
+    <mat-icon>close</mat-icon>
+  </button>
 
-  <mat-stepper [linear]="false" #stepper>
+  <mat-stepper [linear]="false" #stepper class="slim-headers">
     <!-- 1. Practice -->
     <mat-step matStepContent>
       <ng-template matStepLabel>{{ 'Practice' | translate }}</ng-template>

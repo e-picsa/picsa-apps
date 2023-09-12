@@ -91,6 +91,11 @@ mat-radio-group.layout-column {
     }
   }
 }
+mat-stepper.slim-headers {
+  mat-step-header {
+    height: 48px;
+  }
+}
 
 /******************************************************************
 Enketo Form
