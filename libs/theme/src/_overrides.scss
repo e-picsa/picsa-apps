@@ -105,3 +105,16 @@ enketo-webform {
     width: 100%;
   }
 }
+/******************************************************************
+Intro.JS Tour
+*******************************************************************/
+.introjs-tooltip.picsa-tooltip {
+  .introjs-tooltip-header {
+    background: var(--color-primary);
+    color: white;
+  }
+  .introjs-skipbutton {
+    color: white;
+    line-height: 36px;
+  }
+}
