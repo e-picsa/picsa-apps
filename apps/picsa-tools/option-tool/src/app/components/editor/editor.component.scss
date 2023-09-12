@@ -23,13 +23,6 @@
     height: 3rem;
   }
 
-  .StepTitle {
-    display: flex;
-    justify-content: center;
-    font-size: medium;
-    font-weight: bold;
-  }
-
   .importantText {
     display: flex;
     justify-content: flex-start;
@@ -37,59 +30,6 @@
     color: red;
     width: 100%;
     font-weight: normal;
-  }
-
-  .StepContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.4rem;
-    background-color: #D9D9D9;
-    padding: 2rem;
-    border-radius: 20px;
-    width: fit-content;
-    position: relative;
-    min-width: 18rem;
-    box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
-
-    .StepContent {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-
-      .form-group {
-        // width: 500px;
-        padding-top: 10px;
-        padding-bottom: 20px;
-      }
-
-      label {
-        font-size: 14px;
-        font-weight: 400;
-        margin-right: 10px;
-      }
-
-      input.form-control {
-        font-size: 16px;
-        outline-color: #8a2644;
-        padding: 5px;
-        width: 90%;
-      }
-
-      textarea.form-control {
-        font-size: 16px;
-        outline-color: #8a2644;
-        padding: 5px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        vertical-align: top;
-      }
-
-      .ButtonSection {
-        width: 15rem;
-      }
-    }
   }
 
   .genderDiv {
@@ -114,42 +54,26 @@
     text-align: center;
   }
 }
-.performenceItemHolders{
-  display: flex;
-  gap: 1rem;
-  justify-content: space-evenly;
-  width: 100%;
-  flex-direction: row;
-  margin-bottom: 1.5rem;
-  margin-top: 2rem;
-}
-.performenceItem{
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 10px;
-}
 
-.emoji_size{
+.emoji_size {
   width: 2rem;
   height: 2rem;
-  padding-left: .4rem;
-  padding-right: .4rem;
-  
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 
-.emoji-wrapper{
+.emoji-wrapper {
   display: flex;
   flex-direction: row;
   gap: 10px;
 }
-.emojiTextContainer{
+.emojiTextContainer {
   text-align: start;
 }
-.guideText{
+.guideText {
   margin-top: 5px;
 }
-.investmentsContentContainer{
+.investmentsContentContainer {
   display: flex;
   justify-content: space-evenly;
   gap: 1rem;
@@ -158,11 +82,127 @@
   margin-bottom: 1.5rem;
   margin-top: 2rem;
 }
-.performenceHeading{
-  font-weight: 700;
+// ***************************************************************************************
+// Steps - General
+// ***************************************************************************************
+$container-border-radius: 16px;
+
+.StepContainer {
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
+  position: relative;
+  border-radius: $container-border-radius;
+  min-width: 18rem;
+  box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
+  // Desktop layout - container moves along with stepper
+  @media only screen and (min-width: 768px) {
+    &[data-step='2'] {
+      left: 12%;
+    }
+    &[data-step='3'] {
+      left: 24%;
+    }
+    &[data-step='4'] {
+      left: 36%;
+    }
+    &[data-step='5'] {
+      left: calc(min(100vw - 4rem - 36rem, 48%)); // apply min sizing to prevent overflow off screen
+    }
+    &[data-step='6'] {
+      left: calc(min(100vw - 4rem - 26rem, 60%));
+    }
+    &[data-step='7'] {
+      left: calc(min(100vw - 4rem - 21rem, 72%));
+    }
+    &[data-step='8'] {
+      left: calc(min(100vw - 4rem - 21rem, 84%));
+    }
+  }
 }
-.rainIconContainer{
-   background-color: #ffffff;
-   border-radius: 5px;
-   padding: 13px;
+
+h3.StepTitle {
+  margin: 0;
+  background: var(--color-primary);
+  font-weight: normal;
+  padding: 1rem;
+  color: white;
+  text-align: center;
+  border-top-left-radius: $container-border-radius;
+  border-top-right-radius: $container-border-radius;
+}
+
+.StepContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+
+  label {
+    font-size: 14px;
+    font-weight: 400;
+    margin-right: 10px;
+  }
+
+  input.form-control {
+    font-size: 16px;
+    outline-color: #8a2644;
+    padding: 5px;
+    width: 90%;
+  }
+
+  textarea.form-control {
+    font-size: 16px;
+    outline-color: #8a2644;
+    padding: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    vertical-align: top;
+  }
+
+  .ButtonSection {
+    width: 15rem;
+  }
+}
+
+// ***************************************************************************************
+// Steps - Performance
+// ***************************************************************************************
+.performenceItemHolders {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+.performenceItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+$rain-icon-size: 64px;
+.performenceHeading {
+  font-weight: 700;
+  text-align: center;
+  width: calc($rain-icon-size + 16px);
+  background: var(--color-primary);
+  margin-bottom: -10px;
+  padding: 4px;
+  color: white;
+  z-index: 1;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.rainIconContainer {
+  width: calc($rain-icon-size + 8px - 2px); // include padding and border in width
+  text-align: center;
+  background-color: #ffffff;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 8px;
+  mat-icon {
+    width: calc($rain-icon-size);
+    height: calc($rain-icon-size);
+  }
+  border: 1px solid var(--color-primary);
 }
