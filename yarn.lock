@@ -8042,6 +8042,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/intro.js@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@types/intro.js@npm:5.1.1"
+  checksum: 72fa6b928acc6837b4574259a9d69d67fceb4e9a319930ae5b7dcf65d7728822dc91a1c8d0baa96800b6e0d8ca5f39cbdb7508fd16a6cefc86af7c806dd1b877
+  languageName: node
+  linkType: hard
+
 "@types/istanbul-lib-coverage@npm:*, @types/istanbul-lib-coverage@npm:^2.0.0, @types/istanbul-lib-coverage@npm:^2.0.1":
   version: 2.0.4
   resolution: "@types/istanbul-lib-coverage@npm:2.0.4"
@@ -16745,7 +16752,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff73078, leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: b2280f200f5ea410e33cc5feb500d67d86cb5f16b294eea1306da055614ffc906be7de6dbc9bbf4db6e6e5d27d0396e4701a3b6c4c920548d2aac94b8223879f
+  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
   languageName: node
   linkType: hard
 
@@ -19099,6 +19106,7 @@ __metadata:
     "@supabase/supabase-js": ^2.22.0
     "@types/c3": ^0.7.8
     "@types/hammerjs": ^2.0.41
+    "@types/intro.js": ^5.1.1
     "@types/jest": 28.1.1
     "@types/leaflet": ^1.8.0
     "@types/node": ^18.14.2
