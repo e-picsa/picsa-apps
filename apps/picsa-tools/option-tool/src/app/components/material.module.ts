@@ -21,16 +21,19 @@ export class OptionMaterialModule {
   // icons can be accessed in mat-icon as svgIcon='station_data_${key}'
   registerIcons() {
     const icons = {
+      close: 'close',
       female: 'female',
       male: 'male',
-      close: 'close',
-      bad_rain: 'bad-rain',
-      low_rain:'low-rain',
-      mid_rain:'mid-rain',
-      risks:'risks',
-      thumbs_up:'thumbs-up',
-      thumbs_down:'thumbs-down',
-      fist_bump:'fist-bump'
+      rain_high: 'rain-high',
+      rain_low: 'rain-low',
+      rain_medium: 'rain-medium',
+      rain_high_label: 'rain-high-label',
+      rain_low_label: 'rain-low-label',
+      rain_medium_label: 'rain-medium-label',
+      risks: 'risks',
+      thumbs_up: 'thumbs-up',
+      thumbs_down: 'thumbs-down',
+      fist_bump: 'fist-bump',
     };
     for (const [key, value] of Object.entries(icons)) {
       const iconName = `picsa_options_${key}`;
