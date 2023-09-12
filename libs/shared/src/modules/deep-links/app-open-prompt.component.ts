@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
+import { CommunicationService } from '../../services/promptToHomePageService.service';
 import { DeepLinksService } from './deep-links.service';
 
 /**
@@ -15,7 +16,7 @@ import { DeepLinksService } from './deep-links.service';
         <div class="open-option">
           <div class="picsa-app-icon">PICSA</div>
           <h3>PICSA App</h3>
-          <button mat-raised-button color="primary">Open</button>
+          <button mat-raised-button color="primary" (click)="triggerTour()">Open</button>
         </div>
       </a>
       <div class="open-option" (click)="dismiss()">
@@ -72,12 +73,19 @@ export class AppOpenPromptComponent {
   appDynamicLink: string;
   constructor(
     deepLinksService: DeepLinksService,
-    private bottomSheet: MatBottomSheet
+    private bottomSheet: MatBottomSheet,
+    private communicationService: CommunicationService
   ) {
     this.appDynamicLink = deepLinksService.config.appDynamicLink;
   }
 
+  triggerTour(){
+   this.communicationService.triggerUserEvent();
+  }
+
   dismiss() {
     this.bottomSheet.dismiss();
+    // trigger homepage tour
+    this.triggerTour();
   }
 }
