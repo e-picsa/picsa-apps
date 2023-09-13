@@ -97,107 +97,18 @@
 
     <!-- 5. Performance -->
     <ng-template #performanceInput>
-      <div class="performenceItemHolders">
-        <div class="performenceItem">
-          <div class="performenceHeading">{{ 'High' | translate }}</div>
-          <div class="rainIconContainer">
-            <mat-icon svgIcon="picsa_options_rain_high"></mat-icon>
-          </div>
-          <div class="emoji-wrapper">
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.highRf !== 'bad' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_down"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Bad' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.highRf !== 'ok' ? '0.3' : '1' }"
-                svgIcon="picsa_options_fist_bump"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Ok' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.highRf !== 'good' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_up"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Good' | translate }}</div>
+      <div class="performance-container">
+        <div class="performence-item-container" *ngFor="let condition of performanceConditions">
+          <div class="performenceItem">
+            <div class="performenceHeading">{{ condition.label | translate }}</div>
+            <div class="rainIconContainer">
+              <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
             </div>
           </div>
-          <!-- updatePerformance -->
-        </div>
-
-        <div class="performenceItem">
-          <div class="performenceHeading">{{ 'Mid' | translate }}</div>
-          <div class="rainIconContainer">
-            <mat-icon svgIcon="picsa_options_rain_medium"></mat-icon>
-          </div>
-          <div class="emoji-wrapper">
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.midRf !== 'bad' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_down"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Bad' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.midRf !== 'ok' ? '0.3' : '1' }"
-                svgIcon="picsa_options_fist_bump"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Ok' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.midRf !== 'good' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_up"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Good' | translate }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="performenceItem">
-          <div class="performenceHeading">{{ 'Low' | translate }}</div>
-          <div class="rainIconContainer">
-            <mat-icon svgIcon="picsa_options_rain_low"></mat-icon>
-          </div>
-          <div class="emoji-wrapper">
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.lowRf !== 'bad' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_down"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Bad' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.lowRf !== 'ok' ? '0.3' : '1' }"
-                svgIcon="picsa_options_fist_bump"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Ok' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.performance.lowRf !== 'good' ? '0.3' : '1' }"
-                color="#a01222"
-                svgIcon="picsa_options_thumbs_up"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Good' | translate }}</div>
-            </div>
-          </div>
+          <option-performance-input [(ngModel)]="values.performance[condition.id]"></option-performance-input>
         </div>
       </div>
+
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{

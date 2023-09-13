@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { PicsaTranslateService } from '@picsa/shared/modules';
 
 const GENDER_OPTIONS: { [id: string]: { label: string; icon: string } } = {
   female: {
@@ -55,7 +54,7 @@ export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenderInputComponent implements ControlValueAccessor {
-  public selectOptions = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ...value, id }));
+  protected selectOptions = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
   /** Configurable display options */
   @Input() options: { showValueText?: boolean } = {};
@@ -81,7 +80,7 @@ export class GenderInputComponent implements ControlValueAccessor {
 
   private _selected: string[] = []; // this is the updated value that the class accesses
 
-  constructor(private cdr: ChangeDetectorRef, private translateService: PicsaTranslateService) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   /**
    * Return a text representation of the value. Returns an array or individual words for easier translation

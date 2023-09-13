@@ -1,6 +1,10 @@
 :host {
   display: contents;
 }
+// ************************************************************
+//  Table - General
+// ************************************************************
+
 table {
   border-collapse: collapse;
 }
@@ -29,11 +33,12 @@ td {
 td.mdc-data-table__cell {
   padding: 8px;
 }
-
+// ************************************************************
+//  Editor - Popup
+// ************************************************************
 .HideOverflow {
   overflow-y: hidden;
 }
-
 .editor-popup {
   position: fixed;
   z-index: 2;
@@ -43,7 +48,7 @@ td.mdc-data-table__cell {
 }
 .editor-container {
   height: 100%;
-  max-height: 600px;
+  max-height: 750px;
   background-color: white;
   overflow: auto;
   border-radius: 20px;
@@ -60,7 +65,6 @@ td.mdc-data-table__cell {
   transition: transform 0.3s ease-in-out;
   transform: translateY(100vh);
 }
-
 .slide-in.active {
   transform: translateY(0);
 }
@@ -72,6 +76,63 @@ td.mdc-data-table__cell {
   width: 100vw;
   background-color: rgba(0, 0, 0, 0.6);
 }
+
+// ************************************************************
+//  Table Value - Performance
+// ************************************************************
+td.performance-td.mdc-data-table__cell {
+  padding: 8px 0;
+}
+.performance-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mat-mdc-header-cell {
+  border-top: none;
+  &.subheader {
+    padding: 0;
+    height: 100%;
+  }
+}
+.performance-subheader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  mat-icon {
+    flex: 1;
+    padding: 0 4px;
+    height: 100%;
+    max-width: 48px;
+    margin: auto;
+  }
+  mat-icon:nth-of-type(even) {
+    border-left: 1px solid var(--color-light);
+    border-right: 1px solid var(--color-light);
+  }
+}
+//
+td.split-values {
+  padding: 8px 0;
+  div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  div > * {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+// ************************************************************
+//  Table Value - To Sort
+// ************************************************************
 
 .Gender-Display {
   display: flex;
@@ -100,66 +161,29 @@ td.mdc-data-table__cell {
   font-size: 13px;
   font-weight: 500;
   padding-bottom: 7px;
-}
-.performance-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.performance-td {
-  max-width: 17rem;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.mat-mdc-header-cell {
-  border-top: none;
-  &.subheader {
-    padding: 0;
-    height: 100%;
+  .weatherValue {
+    font-size: 13px;
   }
-}
-.performance-subheader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  .investment-td {
+    max-width: 10rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
-  mat-icon {
-    flex: 1;
-    padding: 0 4px;
-    height: 100%;
-    max-width: 48px;
-    margin: auto;
+  .vertical-line {
+    width: 1px;
+    height: 40px;
+    background-color: #ccc;
+    margin: 0 4px;
   }
-  mat-icon:nth-of-type(even) {
-    border-left: 1px solid var(--color-light);
-    border-right: 1px solid var(--color-light);
+  .emoji_size {
+    width: 1rem;
+    height: 1rem;
   }
-}
-.weatherValue {
-  font-size: 13px;
-}
-.investment-td {
-  max-width: 10rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.vertical-line {
-  width: 1px;
-  height: 40px;
-  background-color: #ccc;
-  margin: 0 4px;
-}
-.emoji_size {
-  width: 1rem;
-  height: 1rem;
-}
-.benefit-container {
-  display: flex;
-  margin-bottom: 8px;
-  align-items: center;
+  .benefit-container {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: center;
+  }
 }

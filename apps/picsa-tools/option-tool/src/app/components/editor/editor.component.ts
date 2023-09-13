@@ -13,23 +13,25 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 export class EditorComponent {
   values = ENTRY_TEMPLATE();
 
-  performanceOptions: string[] = ['bad', 'ok', 'good'];
-  investmentOptions: string[] = ['low', 'mid', 'high'];
-
-  public genderSelectors = [
+  public performanceConditions = [
     {
-      id: 'female',
-      label: translateMarker('Female'),
-      color: '#800080',
-      icon: 'picsa_options_female',
+      id: 'lowRf',
+      label: 'Low',
+      svgIcon: 'picsa_options_rain_low',
     },
     {
-      id: 'male',
-      label: translateMarker('Male'),
-      color: '#008066',
-      icon: 'picsa_options_male',
+      id: 'midRf',
+      label: 'Mid',
+      svgIcon: 'picsa_options_rain_medium',
+    },
+    {
+      id: 'highRf',
+      label: 'High',
+      svgIcon: 'picsa_options_rain_high',
     },
   ];
+
+  investmentOptions: string[] = ['low', 'mid', 'high'];
 
   /** */
   public stepperSteps = [
@@ -112,30 +114,6 @@ export class EditorComponent {
   }
   resetStepper(): void {
     this.stepper.reset();
-  }
-  updatePerformance(event: any, level: string) {
-    const selectedValue = event.target.value;
-
-    if (level === 'high') {
-      this.values.performance = {
-        ...this.values.performance,
-        highRf: this.performanceOptions[selectedValue],
-      };
-    }
-
-    if (level === 'mid') {
-      this.values.performance = {
-        ...this.values.performance,
-        midRf: this.performanceOptions[selectedValue],
-      };
-    }
-
-    if (level === 'low') {
-      this.values.performance = {
-        ...this.values.performance,
-        lowRf: this.performanceOptions[selectedValue],
-      };
-    }
   }
 
   updateInvestmentEffort(event: any, investment: string) {

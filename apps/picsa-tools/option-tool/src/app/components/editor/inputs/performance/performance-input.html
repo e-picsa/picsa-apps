@@ -1,0 +1,18 @@
+<div class="input-container" *ngIf="!options.readonly">
+  <button
+    mat-button
+    *ngFor="let option of selectOptions"
+    class="select-button"
+    (click)="selected=option.id"
+    [attr.data-value]="option.id"
+    [attr.data-selected]="selected===option.id"
+  >
+    <div>
+      <mat-icon>{{option.matIcon}}</mat-icon>
+      <div>{{ option.label | translate }}</div>
+    </div>
+  </button>
+</div>
+<div class="readonly-value" *ngIf="options.readonly" [attr.data-value]="selected">
+  <mat-icon>{{selectedIconValue}}</mat-icon>
+</div>
