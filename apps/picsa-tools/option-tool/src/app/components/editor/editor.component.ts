@@ -80,22 +80,8 @@ export class EditorComponent {
 
   constructor(private dialog: PicsaDialogService) {}
 
-  handleGender(gender: string, field: 'gender_activities' | 'gender_decisions') {
-    if (!this.values[field].includes(gender)) {
-      this.values[field].push(gender);
-    } else {
-      const index = this.values[field].indexOf(gender);
-      this.values[field].splice(index, 1);
-    }
-  }
-
-  handleBenficiaryGender(index: number, gender: string) {
-    if (!this.values.benefits[index].beneficiary.includes(gender)) {
-      this.values.benefits[index].beneficiary.push(gender);
-    } else {
-      const itemIndex = this.values.benefits[index].beneficiary.indexOf(gender);
-      this.values.benefits[index].beneficiary.splice(itemIndex, 1);
-    }
+  handleBenficiaryGender(index: number, value: string[]) {
+    this.values.benefits[index].beneficiary = value;
   }
   handleRemovingBenefits(index: number) {
     this.values.benefits.splice(index, 1);
@@ -105,14 +91,6 @@ export class EditorComponent {
       benefit: '',
       beneficiary: [],
     });
-  }
-
-  onlyNumbers(event): boolean {
-    const charCode = event.which ? event.which : event.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
-    return true;
   }
 
   async submitForm() {

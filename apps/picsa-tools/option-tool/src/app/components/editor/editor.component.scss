@@ -155,28 +155,6 @@ $rain-icon-size: 64px;
 .dialog-content {
   position: relative;
   padding-bottom: 2rem;
-
-  .genderDiv {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    flex-direction: row;
-  }
-
-  .genderType {
-    width: 5rem;
-    height: 5rem;
-    font-weight: 700;
-    display: flex;
-    border-radius: 5px;
-    margin: 2px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
 }
 
 .emoji_size {

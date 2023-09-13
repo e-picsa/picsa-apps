@@ -37,23 +37,12 @@
 
     <!-- 2. Decisions -->
     <ng-template #decisionsInput>
-      <div class="genderDiv">
-        <div *ngFor="let gender of genderSelectors">
-          <div
-            class="genderType"
-            [style.color]="gender.color"
-            (click)="handleGender(gender.id, 'gender_decisions')"
-            [attr.data-selected]="values.gender_decisions.includes(gender.id)"
-            [attr.data-gender]="gender.id"
-          >
-            {{ gender.label | translate }}
-            <mat-icon [svgIcon]="gender.icon"></mat-icon>
-          </div>
-        </div>
-      </div>
-      <div style="height: 1rem">
-        {{ values.gender_decisions.length > 1 ? values.gender_decisions.join(' and ') : values.gender_decisions[0] }}
-      </div>
+      <option-gender-input
+        style="margin-top: 1rem"
+        [(ngModel)]="values.gender_decisions"
+        [options]="{ showValueText: true }"
+      ></option-gender-input>
+
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
@@ -63,35 +52,11 @@
 
     <!-- 3. Activity -->
     <ng-template #activitiesInput>
-      <div class="genderDiv">
-        <div
-          class="genderType"
-          style="color: #800080"
-          (click)="handleGender('female', 'gender_activities')"
-          [ngStyle]="{
-            'background-color': values.gender_activities.includes('female') ? 'wheat' : 'lightgray'
-          }"
-        >
-          {{ 'Female' | translate }}
-          <mat-icon svgIcon="picsa_options_female"></mat-icon>
-        </div>
-        <div
-          class="genderType"
-          (click)="handleGender('male', 'gender_activities')"
-          style="color: #008066"
-          [ngStyle]="{
-            'background-color': values.gender_activities.includes('male') ? 'wheat' : 'lightgray'
-          }"
-        >
-          {{ 'Male' | translate }}
-          <mat-icon svgIcon="picsa_options_male"></mat-icon>
-        </div>
-        <div style="height: 1rem">
-          {{
-            values.gender_activities.length > 1 ? values.gender_activities.join(' and ') : values.gender_activities[0]
-          }}
-        </div>
-      </div>
+      <option-gender-input
+        style="margin-top: 1rem"
+        [(ngModel)]="values.gender_activities"
+        [options]="{ showValueText: true }"
+      ></option-gender-input>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: values.gender_activities.length === 0 }"
@@ -104,39 +69,23 @@
         <div *ngFor="let benefit of values.benefits; index as i">
           <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
             <input [(ngModel)]="benefit.benefit" class="form-control" />
-            <div
-              class="genderType"
-              style="color: #800080; padding: 3px; height: 6rem"
-              (click)="handleBenficiaryGender(i, 'female')"
-              [ngStyle]="{
-                'background-color': benefit.beneficiary.includes('female') ? 'wheat' : 'lightgray'
-              }"
-            >
-              {{ 'Female' | translate }}
-              <mat-icon svgIcon="picsa_options_female"></mat-icon>
-            </div>
-            <div
-              class="genderType"
-              (click)="handleBenficiaryGender(i, 'male')"
-              style="color: #008066; padding: 3px; height: 6rem"
-              [ngStyle]="{
-                'background-color': benefit.beneficiary.includes('male') ? 'wheat' : 'lightgray'
-              }"
-            >
-              {{ 'Male' | translate }}
-              <mat-icon svgIcon="picsa_options_male"></mat-icon>
-            </div>
-            <button
-              mat-button
-              color="primary"
-              (click)="handleRemovingBenefits(i)"
-              [disabled]="!values.benefits[i] || !values.benefits[i].benefit"
-            >
+            <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
+            <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
               <mat-icon>close</mat-icon>
             </button>
           </div>
         </div>
-        <button style="float: left; margin-top: 7px" (click)="handleMoreBenefits()" mat-button>
+        <!-- Only enable adding more benefits when previous are validated -->
+        <button
+          style="float: left; margin-top: 7px"
+          (click)="handleMoreBenefits()"
+          mat-button
+          [disabled]="
+            values.benefits[values.benefits.length - 1] === undefined ||
+            values.benefits[values.benefits.length - 1].benefit === undefined ||
+            values.benefits[values.benefits.length - 1].beneficiary.length === 0
+          "
+        >
           + {{ 'Add benefit' | translate }}
         </button>
       </div>
@@ -356,7 +305,7 @@
           {{ 'Time (months)' | translate }}
           <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon>
         </label>
-        <input [(ngModel)]="values.time" (keypress)="onlyNumbers($event)" class="form-control" />
+        <input [(ngModel)]="values.time" type="number" class="form-control" />
       </div>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
