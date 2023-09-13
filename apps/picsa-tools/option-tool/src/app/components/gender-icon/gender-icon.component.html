@@ -1,4 +1,2 @@
-<div class="gender-container">
-  <mat-icon [svgIcon]="'picsa_options_' + gender"></mat-icon>
-  <div class="gender-label" *ngIf="showLabel">{{ gender | translate }}</div>
-</div>
+<mat-icon [svgIcon]="'picsa_options_' + gender" [style]="iconStyle" [attr.data-gender]="gender"></mat-icon>
+<div class="gender-label" *ngIf="showLabel">{{ gender | translate }}</div>

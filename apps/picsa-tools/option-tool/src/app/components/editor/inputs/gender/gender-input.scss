@@ -1,0 +1,41 @@
+$icon-height: 36px;
+
+:host {
+  display: block;
+}
+.input-container {
+  display: flex;
+  gap: 8px;
+}
+
+mat-icon {
+  height: $icon-height;
+  width: $icon-height;
+}
+button.select-button.mat-mdc-button {
+  height: calc($icon-height + 2rem);
+  width: calc($icon-height + 2rem);
+  &[data-gender='female'] {
+    background-color: #800080;
+    color: #800080;
+  }
+  &[data-gender='male'] {
+    color: #008066;
+    background-color: #008066;
+  }
+  &[data-selected='false'] {
+    background-color: white !important;
+  }
+  &[data-selected='true'] {
+    color: white !important;
+    transform: scale(1.05);
+  }
+}
+.text-value {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+.text-value > span {
+  margin-right: 4px;
+}

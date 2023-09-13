@@ -8,4 +8,5 @@ import { Component, Input } from '@angular/core';
 export class GenderIconComponent {
   @Input() gender: 'male' | 'female';
   @Input() showLabel = true;
+  @Input() iconStyle = '';
 }
