@@ -45,6 +45,7 @@ export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
  * Adapted from:
  * https://valor-software.com/articles/avoiding-common-pitfalls-with-controlvalueaccessors-in-angular
  * https://sreyaj.dev/custom-form-controls-controlvalueaccessor-in-angular
+ * https://indepth.dev/posts/1055/never-again-be-confused-when-implementing-controlvalueaccessor-in-angular-forms
  */
 @Component({
   selector: 'option-gender-input',
