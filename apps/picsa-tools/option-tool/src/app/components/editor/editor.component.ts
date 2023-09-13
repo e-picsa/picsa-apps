@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
@@ -14,8 +15,65 @@ export class EditorComponent {
 
   performanceOptions: string[] = ['bad', 'ok', 'good'];
   investmentOptions: string[] = ['low', 'mid', 'high'];
-  isLinear = false;
 
+  public genderSelectors = [
+    {
+      id: 'female',
+      label: translateMarker('Female'),
+      color: '#800080',
+      icon: 'picsa_options_female',
+    },
+    {
+      id: 'male',
+      label: translateMarker('Male'),
+      color: '#008066',
+      icon: 'picsa_options_male',
+    },
+  ];
+
+  /** */
+  public stepperSteps = [
+    {
+      id: 'practice',
+      label: translateMarker('Practice'),
+      title: translateMarker('Name of practice'),
+    },
+    {
+      id: 'gender_decisions',
+      label: translateMarker('Decisions'),
+      title: translateMarker('Who makes decisions'),
+    },
+    {
+      id: 'gender_activities',
+      label: translateMarker('Activities'),
+      title: translateMarker('Who does the activity'),
+    },
+    {
+      id: 'benefits',
+      label: translateMarker('Benefits'),
+      title: translateMarker('Benefits and who'),
+    },
+    {
+      id: 'performance',
+      label: translateMarker('Performance'),
+      title: translateMarker('Performance in high, mid and low rainfall'),
+    },
+    {
+      id: 'investment',
+      label: translateMarker('Investment'),
+      title: translateMarker('Investment in terms of money and time'),
+    },
+    {
+      id: 'time',
+      label: translateMarker('Time'),
+      title: translateMarker('Time to start benefiting'),
+    },
+    {
+      id: 'risk',
+      label: translateMarker('Risk'),
+      title: translateMarker('Risk of practice (disadvantage)'),
+    },
+  ];
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
@@ -23,17 +81,12 @@ export class EditorComponent {
   constructor(private dialog: PicsaDialogService) {}
 
   handleGender(gender: string, field: 'gender_activities' | 'gender_decisions') {
-    console.log('handle gender', { gender, field }, this.values[field]);
     if (!this.values[field].includes(gender)) {
       this.values[field].push(gender);
     } else {
       const index = this.values[field].indexOf(gender);
       this.values[field].splice(index, 1);
     }
-  }
-  handleBothGenderInput() {
-    this.handleGender('male', 'gender_decisions');
-    this.handleGender('female', 'gender_decisions');
   }
 
   handleBenficiaryGender(index: number, gender: string) {
@@ -84,48 +137,44 @@ export class EditorComponent {
   }
   updatePerformance(event: any, level: string) {
     const selectedValue = event.target.value;
-    
-    if (level === "high") {
+
+    if (level === 'high') {
       this.values.performance = {
         ...this.values.performance,
-        highRf: this.performanceOptions[selectedValue]
+        highRf: this.performanceOptions[selectedValue],
       };
     }
-  
-    if (level === "mid") {
+
+    if (level === 'mid') {
       this.values.performance = {
         ...this.values.performance,
-        midRf: this.performanceOptions[selectedValue]
+        midRf: this.performanceOptions[selectedValue],
       };
     }
-  
-    if (level === "low") {
+
+    if (level === 'low') {
       this.values.performance = {
         ...this.values.performance,
-        lowRf: this.performanceOptions[selectedValue]
+        lowRf: this.performanceOptions[selectedValue],
       };
     }
-    
   }
 
   updateInvestmentEffort(event: any, investment: string) {
-    const selectedValue = event.target.value; 
-    if (investment === "time") {
+    const selectedValue = event.target.value;
+    if (investment === 'time') {
       this.values.investment = {
         ...this.values.investment,
-        time: this.investmentOptions[selectedValue]
+        time: this.investmentOptions[selectedValue],
       };
     }
-    if (investment === "money") {
+    if (investment === 'money') {
       this.values.investment = {
         ...this.values.investment,
-        money: this.investmentOptions[selectedValue]
+        money: this.investmentOptions[selectedValue],
       };
     }
-
-    
   }
-  
 
   async promptDelete() {
     const dialogRef = await this.dialog.open('delete');

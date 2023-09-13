@@ -4,77 +4,112 @@
   </button>
 
   <mat-stepper [linear]="false" #stepper class="slim-headers">
-    <!-- 1. Practice -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Practice' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="1">
-        <h3 class="StepTitle">{{ 'Name of practice' | translate }}</h3>
+    <!-- Step header (common) -->
+    <mat-step matStepContent *ngFor="let step of stepperSteps; index as stepIndex">
+      <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
+      <div class="StepContainer" [attr.data-step]="stepIndex + 1">
+        <h3 class="StepTitle">{{ step.title | translate }}</h3>
         <div class="StepContent">
-          <div class="form-group">
-            <label>{{ 'Practice' | translate }}</label>
-            <input [(ngModel)]="values.practice" class="form-control" />
-          </div>
-          <div class="importantText">{{ '*This field is required' | translate }}</div>
+          <!-- Step inputs (loaded from templates below) -->
+          <ng-container [ngSwitch]="step.id">
+            <ng-container *ngSwitchCase="'practice'" [ngTemplateOutlet]="practiceInput"></ng-container>
+            <ng-container *ngSwitchCase="'gender_decisions'" [ngTemplateOutlet]="decisionsInput"></ng-container>
+            <ng-container *ngSwitchCase="'gender_activities'" [ngTemplateOutlet]="activitiesInput"></ng-container>
+            <ng-container *ngSwitchCase="'benefits'" [ngTemplateOutlet]="benefitsInput"></ng-container>
+            <ng-container *ngSwitchCase="'performance'" [ngTemplateOutlet]="performanceInput"></ng-container>
+            <ng-container *ngSwitchCase="'investment'" [ngTemplateOutlet]="investmentInput"></ng-container>
+            <ng-container *ngSwitchCase="'time'" [ngTemplateOutlet]="timeInput"></ng-container>
+            <ng-container *ngSwitchCase="'risk'" [ngTemplateOutlet]="riskInput"></ng-container>
+            <ng-container *ngSwitchDefault>Input Not found</ng-container>
+          </ng-container>
         </div>
-        <div>
-          <button mat-raised-button color="primary" [disabled]="!values.practice" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
-        <button mat-stroked-button style="margin-top: 3em" (click)="promptDelete()" [disabled]="!values.practice">
-          <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
-        </button>
       </div>
     </mat-step>
+
+    <!-- 1. Practice -->
+    <ng-template #practiceInput>
+      <div class="form-group">
+        <input [(ngModel)]="values.practice" class="form-control" />
+      </div>
+      <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !values.practice }">
+      </ng-container>
+    </ng-template>
 
     <!-- 2. Decisions -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Decisions' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="2">
-        <h3 class="StepTitle">{{ 'Who makes decisions' | translate }}?</h3>
-        <div class="StepContent">
-          <div class="genderDiv">
-            <div *ngFor="let gender of genderSelectors">
-              <div
-                class="genderType"
-                [style.color]="gender.color"
-                (click)="handleGender(gender.id, 'gender_decisions')"
-                [attr.data-selected]="values.gender_decisions.includes(gender.id)"
-                [attr.data-gender]="gender.id"
-              >
-                {{ gender.label | translate }}
-                <mat-icon [svgIcon]="gender.icon"></mat-icon>
-              </div>
-            </div>
+    <ng-template #decisionsInput>
+      <div class="genderDiv">
+        <div *ngFor="let gender of genderSelectors">
+          <div
+            class="genderType"
+            [style.color]="gender.color"
+            (click)="handleGender(gender.id, 'gender_decisions')"
+            [attr.data-selected]="values.gender_decisions.includes(gender.id)"
+            [attr.data-gender]="gender.id"
+          >
+            {{ gender.label | translate }}
+            <mat-icon [svgIcon]="gender.icon"></mat-icon>
           </div>
-          <div style="height: 1rem">
-            {{
-              values.gender_decisions.length > 1 ? values.gender_decisions.join(' and ') : values.gender_decisions[0]
-            }}
-          </div>
-        </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!(values.gender_decisions.length > 0)" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
         </div>
       </div>
-    </mat-step>
+      <div style="height: 1rem">
+        {{ values.gender_decisions.length > 1 ? values.gender_decisions.join(' and ') : values.gender_decisions[0] }}
+      </div>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
+      >
+      </ng-container>
+    </ng-template>
 
     <!-- 3. Activity -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Activities' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="3">
-        <h3 class="StepTitle">{{ 'Who does the activity' | translate }}?</h3>
-        <div class="StepContent">
-          <div class="genderDiv">
+    <ng-template #activitiesInput>
+      <div class="genderDiv">
+        <div
+          class="genderType"
+          style="color: #800080"
+          (click)="handleGender('female', 'gender_activities')"
+          [ngStyle]="{
+            'background-color': values.gender_activities.includes('female') ? 'wheat' : 'lightgray'
+          }"
+        >
+          {{ 'Female' | translate }}
+          <mat-icon svgIcon="picsa_options_female"></mat-icon>
+        </div>
+        <div
+          class="genderType"
+          (click)="handleGender('male', 'gender_activities')"
+          style="color: #008066"
+          [ngStyle]="{
+            'background-color': values.gender_activities.includes('male') ? 'wheat' : 'lightgray'
+          }"
+        >
+          {{ 'Male' | translate }}
+          <mat-icon svgIcon="picsa_options_male"></mat-icon>
+        </div>
+        <div style="height: 1rem">
+          {{
+            values.gender_activities.length > 1 ? values.gender_activities.join(' and ') : values.gender_activities[0]
+          }}
+        </div>
+      </div>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: values.gender_activities.length === 0 }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- 4. Benefits -->
+    <ng-template #benefitsInput>
+      <div style="margin-bottom: 1.5rem; padding: 2px; margin-top: 2rem">
+        <div *ngFor="let benefit of values.benefits; index as i">
+          <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
+            <input [(ngModel)]="benefit.benefit" class="form-control" />
             <div
               class="genderType"
-              style="color: #800080"
-              (click)="handleGender('female', 'gender_activities')"
+              style="color: #800080; padding: 3px; height: 6rem"
+              (click)="handleBenficiaryGender(i, 'female')"
               [ngStyle]="{
-                'background-color': values.gender_activities.includes('female') ? 'wheat' : 'lightgray'
+                'background-color': benefit.beneficiary.includes('female') ? 'wheat' : 'lightgray'
               }"
             >
               {{ 'Female' | translate }}
@@ -82,355 +117,294 @@
             </div>
             <div
               class="genderType"
-              (click)="handleGender('male', 'gender_activities')"
-              style="color: #008066"
+              (click)="handleBenficiaryGender(i, 'male')"
+              style="color: #008066; padding: 3px; height: 6rem"
               [ngStyle]="{
-                'background-color': values.gender_activities.includes('male') ? 'wheat' : 'lightgray'
+                'background-color': benefit.beneficiary.includes('male') ? 'wheat' : 'lightgray'
               }"
             >
               {{ 'Male' | translate }}
               <mat-icon svgIcon="picsa_options_male"></mat-icon>
             </div>
-          </div>
-          <div style="height: 1rem">
-            {{
-              values.gender_activities.length > 1 ? values.gender_activities.join(' and ') : values.gender_activities[0]
-            }}
-          </div>
-        </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!(values.gender_activities.length > 0)" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
-      </div>
-    </mat-step>
-
-    <!-- 4. Benefits -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Benefits' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="4">
-        <h3 class="StepTitle">{{ 'Benefits and who ' | translate }} ?</h3>
-        <div class="StepContent">
-          <div style="margin-bottom: 1.5rem; padding: 2px; margin-top: 2rem">
-            <div *ngFor="let benefit of values.benefits; index as i">
-              <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
-                <textarea [(ngModel)]="benefit.benefit" class="form-control"></textarea>
-                <div
-                  class="genderType"
-                  style="color: #800080; padding: 3px; height: 6rem"
-                  (click)="handleBenficiaryGender(i, 'female')"
-                  [ngStyle]="{
-                    'background-color': benefit.beneficiary.includes('female') ? 'wheat' : 'lightgray'
-                  }"
-                >
-                  {{ 'Female' | translate }}
-                  <mat-icon svgIcon="picsa_options_female"></mat-icon>
-                </div>
-                <div
-                  class="genderType"
-                  (click)="handleBenficiaryGender(i, 'male')"
-                  style="color: #008066; padding: 3px; height: 6rem"
-                  [ngStyle]="{
-                    'background-color': benefit.beneficiary.includes('male') ? 'wheat' : 'lightgray'
-                  }"
-                >
-                  {{ 'Male' | translate }}
-                  <mat-icon svgIcon="picsa_options_male"></mat-icon>
-                </div>
-                <button
-                  mat-button
-                  color="primary"
-                  (click)="handleRemovingBenefits(i)"
-                  [disabled]="!values.benefits[i] || !values.benefits[i].benefit"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
-            </div>
-            <button style="float: left; margin-top: 7px" (click)="handleMoreBenefits()" mat-button>
-              + {{ 'Add benefit' | translate }}
+            <button
+              mat-button
+              color="primary"
+              (click)="handleRemovingBenefits(i)"
+              [disabled]="!values.benefits[i] || !values.benefits[i].benefit"
+            >
+              <mat-icon>close</mat-icon>
             </button>
           </div>
         </div>
-        <div class="ButtonSection">
-          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!(values.benefits.length > 0)" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <button style="float: left; margin-top: 7px" (click)="handleMoreBenefits()" mat-button>
+          + {{ 'Add benefit' | translate }}
+        </button>
       </div>
-    </mat-step>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: values.benefits.length === 0 }"
+      ></ng-container>
+    </ng-template>
 
     <!-- 5. Performance -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Performance' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="5">
-        <h3 class="StepTitle">{{ 'Performance in high, mid and low rainfall' | translate }}?</h3>
-        <div class="StepContent">
-          <div class="performenceItemHolders">
-            <div class="performenceItem">
-              <div class="performenceHeading">{{ 'High' | translate }}</div>
-              <div class="rainIconContainer">
-                <mat-icon svgIcon="picsa_options_rain_high"></mat-icon>
-              </div>
-              <div class="emoji-wrapper">
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.highRf !== 'bad' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_down"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Bad' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.highRf !== 'ok' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_fist_bump"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Ok' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.highRf !== 'good' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_up"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Good' | translate }}</div>
-                </div>
-              </div>
-              <!-- updatePerformance -->
+    <ng-template #performanceInput>
+      <div class="performenceItemHolders">
+        <div class="performenceItem">
+          <div class="performenceHeading">{{ 'High' | translate }}</div>
+          <div class="rainIconContainer">
+            <mat-icon svgIcon="picsa_options_rain_high"></mat-icon>
+          </div>
+          <div class="emoji-wrapper">
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.highRf !== 'bad' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Bad' | translate }}</div>
             </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.highRf !== 'ok' ? '0.3' : '1' }"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Ok' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.highRf !== 'good' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Good' | translate }}</div>
+            </div>
+          </div>
+          <!-- updatePerformance -->
+        </div>
 
-            <div class="performenceItem">
-              <div class="performenceHeading">{{ 'Mid' | translate }}</div>
-              <div class="rainIconContainer">
-                <mat-icon svgIcon="picsa_options_rain_medium"></mat-icon>
-              </div>
-              <div class="emoji-wrapper">
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.midRf !== 'bad' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_down"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Bad' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.midRf !== 'ok' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_fist_bump"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Ok' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.midRf !== 'good' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_up"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Good' | translate }}</div>
-                </div>
-              </div>
+        <div class="performenceItem">
+          <div class="performenceHeading">{{ 'Mid' | translate }}</div>
+          <div class="rainIconContainer">
+            <mat-icon svgIcon="picsa_options_rain_medium"></mat-icon>
+          </div>
+          <div class="emoji-wrapper">
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.midRf !== 'bad' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Bad' | translate }}</div>
             </div>
-            <div class="performenceItem">
-              <div class="performenceHeading">{{ 'Low' | translate }}</div>
-              <div class="rainIconContainer">
-                <mat-icon svgIcon="picsa_options_rain_low"></mat-icon>
-              </div>
-              <div class="emoji-wrapper">
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.lowRf !== 'bad' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_down"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Bad' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.lowRf !== 'ok' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_fist_bump"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Ok' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.performance.lowRf !== 'good' ? '0.3' : '1' }"
-                    color="#a01222"
-                    svgIcon="picsa_options_thumbs_up"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Good' | translate }}</div>
-                </div>
-              </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.midRf !== 'ok' ? '0.3' : '1' }"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Ok' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.midRf !== 'good' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Good' | translate }}</div>
             </div>
           </div>
         </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!(values.performance.lowRf && values.performance.midRf && values.performance.highRf)"
-            matStepperNext
-          >
-            {{ 'Next' | translate }}
-          </button>
+        <div class="performenceItem">
+          <div class="performenceHeading">{{ 'Low' | translate }}</div>
+          <div class="rainIconContainer">
+            <mat-icon svgIcon="picsa_options_rain_low"></mat-icon>
+          </div>
+          <div class="emoji-wrapper">
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.lowRf !== 'bad' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Bad' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.lowRf !== 'ok' ? '0.3' : '1' }"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Ok' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.performance.lowRf !== 'good' ? '0.3' : '1' }"
+                color="#a01222"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Good' | translate }}</div>
+            </div>
+          </div>
         </div>
       </div>
-    </mat-step>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{
+          nextDisabled: !(values.performance.lowRf && values.performance.midRf && values.performance.highRf)
+        }"
+      ></ng-container>
+    </ng-template>
 
     <!-- 6. Investment -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Investment' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="6">
-        <h3 class="StepTitle">{{ 'Investment in terms of money and time' | translate }}?</h3>
-        <div class="StepContent">
-          <div class="investmentsContentContainer">
-            <div class="performenceItem">
-              <div class="performenceHeading">
-                {{ 'Money' | translate }}
-              </div>
-              <mat-icon style="color: #8a2644; font-size: 20px">payments</mat-icon>
-              <div class="emoji-wrapper">
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.investment.money !== 'low' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_up"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Low' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.investment.money !== 'mid' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_fist_bump"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Mid' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.investment.money !== 'high' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_down"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'High' | translate }}</div>
-                </div>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="2"
-                [ngModel]="values.investment.money === 'low' ? 0 : values.investment.money === 'mid' ? 1 : 2"
-                (input)="updateInvestmentEffort($event, 'money')"
-                class="guideText"
-              />
+    <ng-template #investmentInput>
+      <div class="investmentsContentContainer">
+        <div class="performenceItem">
+          <div class="performenceHeading">
+            {{ 'Money' | translate }}
+          </div>
+          <mat-icon style="color: #8a2644; font-size: 20px">payments</mat-icon>
+          <div class="emoji-wrapper">
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.investment.money !== 'low' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Low' | translate }}</div>
             </div>
-            <div class="performenceItem">
-              <div style="font-weight: 700">
-                {{ 'Time' | translate }}
-              </div>
-              <mat-icon style="color: #8a2644; font-size: 20px">schedule</mat-icon>
-              <div class="emoji-wrapper">
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.investment.time !== 'low' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_up"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Low' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.investment.time !== 'mid' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_fist_bump"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'Mid' | translate }}</div>
-                </div>
-                <div class="emojiTextContainer">
-                  <mat-icon
-                    [ngStyle]="{ opacity: values.investment.time !== 'high' ? '0.3' : '1' }"
-                    svgIcon="picsa_options_thumbs_down"
-                    class="emoji_size"
-                  ></mat-icon>
-                  <div class="guideText">{{ 'High' | translate }}</div>
-                </div>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="2"
-                [ngModel]="values.investment.time === 'low' ? 0 : values.investment.time === 'mid' ? 1 : 2"
-                (input)="updateInvestmentEffort($event, 'time')"
-                class="guideText"
-              />
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.investment.money !== 'mid' ? '0.3' : '1' }"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Mid' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.investment.money !== 'high' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'High' | translate }}</div>
             </div>
           </div>
+          <input
+            type="range"
+            min="0"
+            max="2"
+            [ngModel]="values.investment.money === 'low' ? 0 : values.investment.money === 'mid' ? 1 : 2"
+            (input)="updateInvestmentEffort($event, 'money')"
+            class="guideText"
+          />
         </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!(values.investment.money && values.investment.time)"
-            matStepperNext
-          >
-            {{ 'Next' | translate }}
-          </button>
+        <div class="performenceItem">
+          <div style="font-weight: 700">
+            {{ 'Time' | translate }}
+          </div>
+          <mat-icon style="color: #8a2644; font-size: 20px">schedule</mat-icon>
+          <div class="emoji-wrapper">
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.investment.time !== 'low' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_up"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Low' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.investment.time !== 'mid' ? '0.3' : '1' }"
+                svgIcon="picsa_options_fist_bump"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'Mid' | translate }}</div>
+            </div>
+            <div class="emojiTextContainer">
+              <mat-icon
+                [ngStyle]="{ opacity: values.investment.time !== 'high' ? '0.3' : '1' }"
+                svgIcon="picsa_options_thumbs_down"
+                class="emoji_size"
+              ></mat-icon>
+              <div class="guideText">{{ 'High' | translate }}</div>
+            </div>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="2"
+            [ngModel]="values.investment.time === 'low' ? 0 : values.investment.time === 'mid' ? 1 : 2"
+            (input)="updateInvestmentEffort($event, 'time')"
+            class="guideText"
+          />
         </div>
       </div>
-    </mat-step>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{
+          nextDisabled: !(values.investment.money && values.investment.time)
+        }"
+      ></ng-container>
+    </ng-template>
 
     <!-- 7. Time -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Time' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="7">
-        <h3 class="StepTitle">{{ 'Time to start benefiting' | translate }}</h3>
-        <div class="StepContent">
-          <div class="form-group">
-            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
-              {{ 'Time (months)' | translate }}
-              <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon>
-            </label>
-            <input [(ngModel)]="values.time" (keypress)="onlyNumbers($event)" class="form-control" />
-          </div>
-        </div>
-        <div class="ButtonSection">
-          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!values.time" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+    <ng-template #timeInput>
+      <div class="form-group">
+        <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
+          {{ 'Time (months)' | translate }}
+          <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon>
+        </label>
+        <input [(ngModel)]="values.time" (keypress)="onlyNumbers($event)" class="form-control" />
       </div>
-    </mat-step>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: !values.time }"
+      ></ng-container>
+    </ng-template>
 
     <!-- 8. Risk -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Risk' | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="8">
-        <h3 class="StepTitle">{{ 'Risk of practice (disadvantage)' | translate }}</h3>
-        <div class="StepContent">
-          <div class="form-group">
-            <label style="font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px">
-              <mat-icon svgIcon="picsa_options_risks" style="padding-bottom: 10px"></mat-icon>
-            </label>
-            <input style="margin-left: 4px" [(ngModel)]="values.risk" class="form-control" />
-          </div>
-          <div class="ButtonSection">
-            <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
-            <button mat-raised-button color="primary" [disabled]="!values.risk" (click)="submitForm()">
-              {{ 'Finish' | translate }}
-            </button>
-          </div>
-        </div>
+    <ng-template #riskInput>
+      <div class="form-group">
+        <label style="font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px">
+          <mat-icon svgIcon="picsa_options_risks" style="padding-bottom: 10px"></mat-icon>
+        </label>
+        <input style="margin-left: 4px" [(ngModel)]="values.risk" class="form-control" />
       </div>
-    </mat-step>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: !values.risk }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- Step Footer (common) -->
+    <!-- Context variables an be passed via `[ngTemplateOutletContext]="{ nextDisabled: true }"` -->
+    <ng-template #stepButtons let-nextDisabled="nextDisabled" let-firstStep="stepper.selectedIndex === 0">
+      <div class="step-buttons">
+        <button *ngIf="stepper.selectedIndex === 0" mat-button (click)="promptDelete()" [disabled]="nextDisabled">
+          <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
+        </button>
+        <button *ngIf="stepper.selectedIndex > 0" mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
+        <button
+          *ngIf="stepper.selectedIndex < 7"
+          mat-raised-button
+          color="primary"
+          [disabled]="nextDisabled"
+          matStepperNext
+        >
+          {{ 'Next' | translate }}
+        </button>
+        <button
+          *ngIf="stepper.selectedIndex === 7"
+          mat-raised-button
+          color="primary"
+          [disabled]="nextDisabled"
+          (click)="submitForm()"
+        >
+          {{ 'Finish' | translate }}
+        </button>
+      </div>
+    </ng-template>
   </mat-stepper>
 </div>

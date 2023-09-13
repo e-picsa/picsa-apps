@@ -1,5 +1,5 @@
 <div class="page-content" [class.HideOverflow]="matStepperOpen">
-  <div>
+  <div style="overflow: auto; flex: 1">
     <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8">
       <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -218,14 +218,17 @@
       <tr mat-header-row *matHeaderRowDef="subheaderColumns" id="subheaderRow"></tr>
       <tr mat-row *matRowDef="let row; index as i; columns: displayedColumns" (click)="onRowClicked(row, i)"></tr>
     </table>
-    <button (click)="openNewDialog()" mat-button mat-raised-button color="primary">
+  </div>
+  <div class="sticky-footer">
+    <button class="footer-button" (click)="openNewDialog()" mat-button mat-raised-button color="primary">
+      <mat-icon>add</mat-icon>
       {{ 'Add New Option' | translate }}
     </button>
   </div>
-  <div class="slide-in container" [class.active]="matStepperOpen">
-    <div>
-      <option-editor (dataTransfer)="onDataTransfer($event)"></option-editor>
+  <div class="editor-popup slide-in" [class.active]="matStepperOpen">
+    <div class="blurBackground"></div>
+    <div class="editor-container">
+      <option-editor (dataTransfer)="onDataTransfer($event)" style="width: 100%"></option-editor>
     </div>
   </div>
-  <div *ngIf="matStepperOpen" class="blurBackground"></div>
 </div>

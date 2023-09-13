@@ -1,6 +1,8 @@
+:host {
+  display: contents;
+}
 table {
   border-collapse: collapse;
-  height: 100%; // allows child header cell to fit 100% https://stackoverflow.com/a/34690864
 }
 
 th {
@@ -28,52 +30,47 @@ td.mdc-data-table__cell {
   padding: 8px;
 }
 
+.HideOverflow {
+  overflow-y: hidden;
+}
+
+.editor-popup {
+  position: fixed;
+  z-index: 2;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.editor-container {
+  height: 100%;
+  max-height: 600px;
+  background-color: white;
+  overflow: auto;
+  border-radius: 20px;
+  justify-content: center;
+  display: flex;
+  margin: 1rem;
+  z-index: 2;
+  position: absolute;
+  top: 2.5rem;
+  left: 1rem;
+  width: calc(100vw - 4rem);
+}
+.slide-in {
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100vh);
+}
+
+.slide-in.active {
+  transform: translateY(0);
+}
 .blurBackground {
   position: absolute;
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: 10;
   width: 100vw;
   background-color: rgba(0, 0, 0, 0.6);
-}
-
-.HideOverflow {
-  overflow-y: hidden;
-}
-
-.container {
-  position: relative;
-  height: calc(100% - 4rem);
-  margin: 1rem;
-  left: 0;
-  width: calc(100% - 2rem);
-  overflow: auto;
-  background-color: #fff;
-  width: 95%;
-  z-index: 20;
-  justify-content: center;
-  display: flex;
-  border-radius: 20px;
-}
-
-.buttonposition {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-}
-
-.slide-in {
-  position: absolute;
-  bottom: 0;
-  display: none;
-  transition: transform 0.3s ease-in-out;
-  transform: translateY(100%);
-}
-
-.slide-in.active {
-  transform: translateY(0);
-  display: block;
 }
 
 .Gender-Display {
