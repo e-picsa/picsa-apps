@@ -60,10 +60,10 @@ $container-border-radius: 16px;
       left: calc(min(100vw - 4rem - 26rem, 60%));
     }
     &[data-step='7'] {
-      left: calc(min(100vw - 4rem - 21rem, 72%));
+      left: calc(min(100vw - 4rem - 26rem, 72%));
     }
     &[data-step='8'] {
-      left: calc(min(100vw - 4rem - 21rem, 84%));
+      left: calc(min(100vw - 4rem - 26rem, 84%));
     }
   }
 }
@@ -111,6 +111,7 @@ h3.StepTitle {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  justify-content: center;
 }
 .entry-row-item {
   display: flex;
@@ -186,4 +187,10 @@ textarea.form-control {
   font-size: 1.5rem;
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+mat-select.form-control {
+  font-size: 1.5rem;
+  .mat-mdc-select-value {
+    color: var(--color-primary) !important;
+  }
 }

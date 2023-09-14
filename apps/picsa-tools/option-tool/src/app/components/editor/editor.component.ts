@@ -75,7 +75,7 @@ const STEPPER_STEPS = [
   {
     id: 'risk',
     label: translateMarker('Risk'),
-    title: translateMarker('Risk of practice (disadvantage)'),
+    title: translateMarker('Risks or disadvantages'),
   },
 ];
 
@@ -129,6 +129,14 @@ export class EditorComponent {
   }
   public resetVariables() {
     this.values = ENTRY_TEMPLATE();
+  }
+
+  /**
+   * Using [(ngModel)] bindings inside an array requires simple trackBy function
+   * https://stackoverflow.com/a/50139592
+   **/
+  public trackByIndex(index: number) {
+    return index;
   }
 
   private resetStepper(): void {

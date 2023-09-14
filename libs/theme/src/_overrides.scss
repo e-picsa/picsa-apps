@@ -97,6 +97,13 @@ mat-stepper.slim-headers {
   }
 }
 
+// Allow use of primary color with selected value by custom `value-primary` class
+mat-select.value-primary {
+  .mat-mdc-select-value {
+    color: var(--color-primary) !important;
+  }
+}
+
 /******************************************************************
 Enketo Form
 *******************************************************************/

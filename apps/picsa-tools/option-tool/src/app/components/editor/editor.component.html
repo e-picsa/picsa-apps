@@ -87,7 +87,7 @@
               values.benefits[values.benefits.length - 1].beneficiary.length === 0)
           "
         >
-          + {{ 'Add benefit' | translate }}
+          + {{ 'Add' | translate }}{{ ' ' }}{{ 'benefit' | translate }}
         </button>
       </div>
 
@@ -142,13 +142,15 @@
 
     <!-- 7. Time -->
     <ng-template #timeInput>
-      <div class="form-group">
-        <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
-          {{ 'Time (months)' | translate }}
-          <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon>
-        </label>
-        <input [(ngModel)]="values.time" type="number" class="form-control" />
+      <div style="display: flex; gap: 16px; align-items: center">
+        <input [(ngModel)]="values.time.value" type="number" class="form-control" style="width: 64px" />
+        <mat-select class="form-control value-primary" [(value)]="values.time.unit">
+          <mat-option value="month">{{ 'Months' | translate }}</mat-option>
+          <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>
+          <mat-option value="day">{{ 'Days' | translate }}</mat-option>
+        </mat-select>
       </div>
+
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: !values.time }"
@@ -157,12 +159,25 @@
 
     <!-- 8. Risk -->
     <ng-template #riskInput>
-      <div class="form-group">
-        <label style="font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 10px">
-          <mat-icon svgIcon="picsa_options_risks" style="padding-bottom: 10px"></mat-icon>
-        </label>
-        <input style="margin-left: 4px" [(ngModel)]="values.risk" class="form-control" />
+      <div class="entry-rows">
+        <div class="entry-row-item" *ngFor="let risk of values.risk; index as i; trackBy: trackByIndex">
+          <div style="display: flex; align-items: center">
+            <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
+            <button mat-icon-button (click)="values.risk.splice(i, 1)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+        <button
+          style="margin-bottom: 16px; margin-top: -16px"
+          (click)="values.risk.push('')"
+          mat-button
+          [disabled]="values.risk.length > 0 && !values.risk[values.benefits.length - 1]"
+        >
+          + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
+        </button>
       </div>
+
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: !values.risk }"
