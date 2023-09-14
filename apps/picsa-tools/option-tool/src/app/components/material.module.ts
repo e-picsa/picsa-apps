@@ -31,9 +31,6 @@ export class OptionMaterialModule {
       rain_low_label: 'rain-low-label',
       rain_medium_label: 'rain-medium-label',
       risks: 'risks',
-      thumbs_up: 'thumbs-up',
-      thumbs_down: 'thumbs-down',
-      fist_bump: 'fist-bump',
     };
     for (const [key, value] of Object.entries(icons)) {
       const iconName = `picsa_options_${key}`;

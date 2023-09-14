@@ -12,9 +12,19 @@ mat-icon {
   height: $icon-height;
   width: $icon-height;
 }
-button.select-button.mat-mdc-button {
-  height: calc($icon-height + 2rem);
-  width: calc($icon-height + 2rem);
+
+.text-value {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+.text-value > span {
+  margin-right: 4px;
+}
+
+// Main colors
+button.select-button.mat-mdc-button,
+div.readonly-value {
   &[data-gender='female'] {
     background-color: #800080;
     color: #800080;
@@ -23,6 +33,13 @@ button.select-button.mat-mdc-button {
     color: #008066;
     background-color: #008066;
   }
+}
+
+// Button overrides
+button.select-button.mat-mdc-button {
+  height: calc($icon-height + 2rem);
+  width: calc($icon-height + 2rem);
+
   &[data-selected='false'] {
     background-color: white !important;
   }
@@ -31,11 +48,12 @@ button.select-button.mat-mdc-button {
     transform: scale(1.05);
   }
 }
-.text-value {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
-}
-.text-value > span {
-  margin-right: 4px;
+
+// Readonly overrides
+div.readonly-value {
+  background-color: unset !important;
+  mat-icon {
+    height: 24px;
+    width: 24px;
+  }
 }

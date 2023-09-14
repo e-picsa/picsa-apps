@@ -11,14 +11,14 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-const GENDER_OPTIONS: { [id: string]: { label: string; icon: string } } = {
+const GENDER_OPTIONS: { [id: string]: { label: string; svgIcon: string } } = {
   female: {
     label: translateMarker('Female'),
-    icon: 'picsa_options_female',
+    svgIcon: 'picsa_options_female',
   },
   male: {
     label: translateMarker('Male'),
-    icon: 'picsa_options_male',
+    svgIcon: 'picsa_options_male',
   },
 };
 
@@ -57,7 +57,7 @@ export class GenderInputComponent implements ControlValueAccessor {
   protected selectOptions = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
   /** Configurable display options */
-  @Input() options: { showValueText?: boolean } = {};
+  @Input() options: { showValueText?: boolean; readonly?: boolean } = {};
 
   /** Selected value binding */
   @Input()

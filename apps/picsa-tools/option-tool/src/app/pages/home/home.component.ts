@@ -50,7 +50,7 @@ export class HomeComponent implements OnDestroy {
    * As only some header rows want a subheader use a fallback 'default_subheader' templated in component html
    */
   private addSubheaderColumns() {
-    const enabledSubheaders = ['performance'];
+    const enabledSubheaders = ['performance', 'investment'];
     this.subheaderColumns = this.displayedColumns.map((name) =>
       enabledSubheaders.includes(name) ? `${name}_subheader` : `default_subheader`
     );

@@ -10,10 +10,9 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { EditorComponent } from './editor/editor.component';
 import { GenderInputComponent } from './editor/inputs/gender/gender-input';
 import { PerformanceInputComponent } from './editor/inputs/performance/performance-input';
-import { GenderIconComponent } from './gender-icon/gender-icon.component';
 import { OptionMaterialModule } from './material.module';
 
-const Components = [EditorComponent, GenderIconComponent, GenderInputComponent, PerformanceInputComponent];
+const Components = [EditorComponent, GenderInputComponent, PerformanceInputComponent];
 
 @NgModule({
   imports: [

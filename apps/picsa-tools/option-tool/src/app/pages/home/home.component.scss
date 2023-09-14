@@ -97,13 +97,7 @@ td.performance-td.mdc-data-table__cell {
   }
 }
 .performance-subheader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-
   mat-icon {
-    flex: 1;
     padding: 0 4px;
     height: 100%;
     max-width: 48px;
@@ -115,7 +109,8 @@ td.performance-td.mdc-data-table__cell {
   }
 }
 //
-td.split-values {
+td.split-values,
+th.split-values {
   padding: 8px 0;
   div {
     display: flex;
@@ -148,42 +143,4 @@ td.split-values {
   align-items: center;
   justify-content: center;
   gap: 10px;
-}
-.beneficiary-class {
-  max-width: 15rem;
-}
-.beneficiary-container {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 10px;
-}
-.weatherHeader {
-  font-size: 13px;
-  font-weight: 500;
-  padding-bottom: 7px;
-  .weatherValue {
-    font-size: 13px;
-  }
-  .investment-td {
-    max-width: 10rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .vertical-line {
-    width: 1px;
-    height: 40px;
-    background-color: #ccc;
-    margin: 0 4px;
-  }
-  .emoji_size {
-    width: 1rem;
-    height: 1rem;
-  }
-  .benefit-container {
-    display: flex;
-    margin-bottom: 8px;
-    align-items: center;
-  }
 }
