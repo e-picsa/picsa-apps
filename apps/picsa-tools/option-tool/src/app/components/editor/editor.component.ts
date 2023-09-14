@@ -127,7 +127,7 @@ export class EditorComponent {
       }
     });
   }
-  private resetVariables() {
+  public resetVariables() {
     this.values = ENTRY_TEMPLATE();
   }
 
