@@ -81,9 +81,9 @@
           (click)="handleMoreBenefits()"
           mat-button
           [disabled]="
-            values.benefits[values.benefits.length - 1] === undefined ||
-            values.benefits[values.benefits.length - 1].benefit === undefined ||
-            values.benefits[values.benefits.length - 1].beneficiary.length === 0
+            values.benefits.length > 0 &&
+            (values.benefits[values.benefits.length - 1].benefit === undefined ||
+              values.benefits[values.benefits.length - 1].beneficiary.length === 0)
           "
         >
           + {{ 'Add benefit' | translate }}
