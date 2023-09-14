@@ -5,97 +5,107 @@ import { PicsaDialogService } from '@picsa/shared/features';
 
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 
+const PERFORMANCE_CONDITIONS = [
+  {
+    id: 'lowRf',
+    label: translateMarker('Low'),
+    svgIcon: 'picsa_options_rain_low',
+  },
+  {
+    id: 'midRf',
+    label: translateMarker('Mid'),
+    svgIcon: 'picsa_options_rain_medium',
+  },
+  {
+    id: 'highRf',
+    label: translateMarker('High'),
+    svgIcon: 'picsa_options_rain_high',
+  },
+];
+
+const INVESTMENT_TYPES = [
+  {
+    id: 'money',
+    label: translateMarker('Money'),
+    matIcon: 'payments',
+  },
+  {
+    id: 'time',
+    label: translateMarker('Time'),
+    matIcon: 'schedule',
+  },
+];
+
+const STEPPER_STEPS = [
+  {
+    id: 'practice',
+    label: translateMarker('Practice'),
+    title: translateMarker('Name of practice'),
+  },
+  {
+    id: 'gender_decisions',
+    label: translateMarker('Decisions'),
+    title: translateMarker('Who makes decisions'),
+  },
+  {
+    id: 'gender_activities',
+    label: translateMarker('Activities'),
+    title: translateMarker('Who does the activity'),
+  },
+  {
+    id: 'benefits',
+    label: translateMarker('Benefits'),
+    title: translateMarker('Benefits and who'),
+  },
+  {
+    id: 'performance',
+    label: translateMarker('Performance'),
+    title: translateMarker('Performance in high, mid and low rainfall'),
+  },
+  {
+    id: 'investment',
+    label: translateMarker('Investment'),
+    title: translateMarker('Investment in terms of money and time'),
+  },
+  {
+    id: 'time',
+    label: translateMarker('Time'),
+    title: translateMarker('Time to start benefiting'),
+  },
+  {
+    id: 'risk',
+    label: translateMarker('Risk'),
+    title: translateMarker('Risk of practice (disadvantage)'),
+  },
+];
+
 @Component({
   selector: 'option-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent {
-  values = ENTRY_TEMPLATE();
-
-  public performanceConditions = [
-    {
-      id: 'lowRf',
-      label: 'Low',
-      svgIcon: 'picsa_options_rain_low',
-    },
-    {
-      id: 'midRf',
-      label: 'Mid',
-      svgIcon: 'picsa_options_rain_medium',
-    },
-    {
-      id: 'highRf',
-      label: 'High',
-      svgIcon: 'picsa_options_rain_high',
-    },
-  ];
-
-  investmentOptions: string[] = ['low', 'mid', 'high'];
-
-  /** */
-  public stepperSteps = [
-    {
-      id: 'practice',
-      label: translateMarker('Practice'),
-      title: translateMarker('Name of practice'),
-    },
-    {
-      id: 'gender_decisions',
-      label: translateMarker('Decisions'),
-      title: translateMarker('Who makes decisions'),
-    },
-    {
-      id: 'gender_activities',
-      label: translateMarker('Activities'),
-      title: translateMarker('Who does the activity'),
-    },
-    {
-      id: 'benefits',
-      label: translateMarker('Benefits'),
-      title: translateMarker('Benefits and who'),
-    },
-    {
-      id: 'performance',
-      label: translateMarker('Performance'),
-      title: translateMarker('Performance in high, mid and low rainfall'),
-    },
-    {
-      id: 'investment',
-      label: translateMarker('Investment'),
-      title: translateMarker('Investment in terms of money and time'),
-    },
-    {
-      id: 'time',
-      label: translateMarker('Time'),
-      title: translateMarker('Time to start benefiting'),
-    },
-    {
-      id: 'risk',
-      label: translateMarker('Risk'),
-      title: translateMarker('Risk of practice (disadvantage)'),
-    },
-  ];
+  public values = ENTRY_TEMPLATE();
+  public performanceConditions = PERFORMANCE_CONDITIONS;
+  public investmentTypes = INVESTMENT_TYPES;
+  public stepperSteps = STEPPER_STEPS;
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
 
   constructor(private dialog: PicsaDialogService) {}
 
-  handleBenficiaryGender(index: number, value: string[]) {
-    this.values.benefits[index].beneficiary = value;
-  }
-  handleRemovingBenefits(index: number) {
+  public handleRemovingBenefits(index: number) {
     this.values.benefits.splice(index, 1);
   }
-  handleMoreBenefits() {
+  public handleMoreBenefits() {
     this.values.benefits.push({
       benefit: '',
       beneficiary: [],
     });
   }
 
-  async submitForm() {
+  public async submitForm() {
     // minimum for auto save should be at least a name
     if (!this.values.practice) {
       this.dataTransfer.emit(null);
@@ -105,39 +115,23 @@ export class EditorComponent {
     this.resetVariables();
     this.resetStepper();
   }
-  resetVariables() {
-    this.values = ENTRY_TEMPLATE();
-  }
-  //incase of edits
-  presetVariables(rowData: IOptionsToolEntry) {
+  // Allow update from home copmonent
+  public presetVariables(rowData: IOptionsToolEntry) {
     this.values = rowData;
   }
-  resetStepper(): void {
-    this.stepper.reset();
-  }
-
-  updateInvestmentEffort(event: any, investment: string) {
-    const selectedValue = event.target.value;
-    if (investment === 'time') {
-      this.values.investment = {
-        ...this.values.investment,
-        time: this.investmentOptions[selectedValue],
-      };
-    }
-    if (investment === 'money') {
-      this.values.investment = {
-        ...this.values.investment,
-        money: this.investmentOptions[selectedValue],
-      };
-    }
-  }
-
-  async promptDelete() {
+  public async promptDelete() {
     const dialogRef = await this.dialog.open('delete');
     dialogRef.afterClosed().subscribe((shouldDelete) => {
       if (shouldDelete) {
         this.dataTransfer.emit(null);
       }
     });
+  }
+  private resetVariables() {
+    this.values = ENTRY_TEMPLATE();
+  }
+
+  private resetStepper(): void {
+    this.stepper.reset();
   }
 }

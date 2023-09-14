@@ -1,4 +1,4 @@
-<div class="dialog-content">
+<div class="editor-container">
   <button mat-mini-fab color="primary" (click)="submitForm()" class="closeButton">
     <mat-icon>close</mat-icon>
   </button>
@@ -65,8 +65,8 @@
 
     <!-- 4. Benefits -->
     <ng-template #benefitsInput>
-      <div style="margin-bottom: 1.5rem; padding: 2px; margin-top: 2rem">
-        <div *ngFor="let benefit of values.benefits; index as i">
+      <div class="entry-rows">
+        <div class="entry-row-item" *ngFor="let benefit of values.benefits; index as i">
           <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
             <input [(ngModel)]="benefit.benefit" class="form-control" />
             <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
@@ -75,9 +75,10 @@
             </button>
           </div>
         </div>
-        <!-- Only enable adding more benefits when previous are validated -->
+        <!-- Only enable adding more benefits when previous are validated
+            TODO would be easier to manage all validation if using formgroups -->
         <button
-          style="float: left; margin-top: 7px"
+          style="margin-bottom: 16px; margin-top: -16px"
           (click)="handleMoreBenefits()"
           mat-button
           [disabled]="
@@ -89,6 +90,7 @@
           + {{ 'Add benefit' | translate }}
         </button>
       </div>
+
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: values.benefits.length === 0 }"
@@ -97,11 +99,11 @@
 
     <!-- 5. Performance -->
     <ng-template #performanceInput>
-      <div class="performance-container">
-        <div class="performence-item-container" *ngFor="let condition of performanceConditions">
-          <div class="performenceItem">
-            <div class="performenceHeading">{{ condition.label | translate }}</div>
-            <div class="rainIconContainer">
+      <div class="entry-rows">
+        <div class="entry-row-item" *ngFor="let condition of performanceConditions">
+          <div class="icon-with-heading">
+            <div class="icon-heading">{{ condition.label | translate }}</div>
+            <div class="icon-container">
               <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
             </div>
           </div>
@@ -119,87 +121,16 @@
 
     <!-- 6. Investment -->
     <ng-template #investmentInput>
-      <div class="investmentsContentContainer">
-        <!-- <div class="performenceItem">
-          <div class="performenceHeading">
-            {{ 'Money' | translate }}
-          </div>
-          <mat-icon style="color: #8a2644; font-size: 20px">payments</mat-icon>
-          <div class="emoji-wrapper">
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.investment.money !== 'low' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_up"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Low' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.investment.money !== 'mid' ? '0.3' : '1' }"
-                svgIcon="picsa_options_fist_bump"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Mid' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.investment.money !== 'high' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_down"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'High' | translate }}</div>
+      <div class="entry-rows">
+        <div *ngFor="let investment of investmentTypes" class="entry-row-item">
+          <div class="icon-with-heading">
+            <div class="icon-heading">{{ investment.label | translate }}</div>
+            <div class="icon-container">
+              <mat-icon style="color: #8a2644; font-size: 36px">{{ investment.matIcon }}</mat-icon>
             </div>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="2"
-            [ngModel]="values.investment.money === 'low' ? 0 : values.investment.money === 'mid' ? 1 : 2"
-            (input)="updateInvestmentEffort($event, 'money')"
-            class="guideText"
-          />
+          <option-investment-input [(ngModel)]="values.investment[investment.id]"></option-investment-input>
         </div>
-        <div class="performenceItem">
-          <div style="font-weight: 700">
-            {{ 'Time' | translate }}
-          </div>
-          <mat-icon style="color: #8a2644; font-size: 20px">schedule</mat-icon>
-          <div class="emoji-wrapper">
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.investment.time !== 'low' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_up"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Low' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.investment.time !== 'mid' ? '0.3' : '1' }"
-                svgIcon="picsa_options_fist_bump"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'Mid' | translate }}</div>
-            </div>
-            <div class="emojiTextContainer">
-              <mat-icon
-                [ngStyle]="{ opacity: values.investment.time !== 'high' ? '0.3' : '1' }"
-                svgIcon="picsa_options_thumbs_down"
-                class="emoji_size"
-              ></mat-icon>
-              <div class="guideText">{{ 'High' | translate }}</div>
-            </div>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="2"
-            [ngModel]="values.investment.time === 'low' ? 0 : values.investment.time === 'mid' ? 1 : 2"
-            (input)="updateInvestmentEffort($event, 'time')"
-            class="guideText"
-          />
-        </div> -->
       </div>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
