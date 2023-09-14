@@ -1,0 +1,59 @@
+$icon-height: 24px;
+
+:host {
+  display: block;
+}
+.input-container {
+  display: flex;
+  gap: 8px;
+}
+
+mat-icon {
+  height: $icon-height;
+  width: $icon-height;
+}
+
+// Icon colors
+div.readonly-value,
+button.select-button.mat-mdc-button {
+  &[data-value='low'] {
+    background-color: hsl(0, 0%, 25%);
+    color: hsl(0, 0%, 25%);
+  }
+  &[data-value='medium'] {
+    color: hsl(0, 0%, 25%);
+    background-color: hsl(0, 0%, 25%);
+  }
+  &[data-value='high'] {
+    color: hsl(0, 0%, 25%);
+    background-color: hsl(0, 0%, 25%);
+  }
+}
+
+// Button overrides
+button.select-button.mat-mdc-button {
+  height: calc($icon-height + 2rem);
+  width: calc($icon-height + 2rem);
+  &[data-selected='false'] {
+    background-color: white !important;
+  }
+  &[data-selected='true'] {
+    color: white !important;
+    transform: scale(1.05);
+  }
+}
+
+// Readonly overrides
+div.readonly-value {
+  background: none !important;
+  font-weight: bold;
+}
+
+.text-value {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+.text-value > span {
+  margin-right: 4px;
+}
