@@ -572,10 +572,6 @@
     "tool": "budget"
   },
   {
-    "text": "Days",
-    "tool": "budget"
-  },
-  {
     "text": "Decrease Scale",
     "tool": "budget"
   },
@@ -1120,6 +1116,10 @@
     "tool": "extension"
   },
   {
+    "text": "Take App Tour",
+    "tool": "extension"
+  },
+  {
     "text": "Activity Flow Chart",
     "tool": "manual"
   },
@@ -1324,19 +1324,19 @@
     "tool": "monitoring"
   },
   {
-    "text": "*This field is required",
-    "tool": "option"
-  },
-  {
     "text": "Activities",
     "tool": "option"
   },
   {
-    "text": "Add New Option",
+    "text": "Add",
     "tool": "option"
   },
   {
-    "text": "Add benefit",
+    "text": "Add Option",
+    "tool": "option"
+  },
+  {
+    "text": "Bad",
     "tool": "option"
   },
   {
@@ -1348,15 +1348,15 @@
     "tool": "option"
   },
   {
-    "text": "Benefits and who ",
+    "text": "Both",
+    "tool": "option"
+  },
+  {
+    "text": "Days",
     "tool": "option"
   },
   {
     "text": "Decisions",
-    "tool": "option"
-  },
-  {
-    "text": "Enter the practice for this option",
     "tool": "option"
   },
   {
@@ -1368,7 +1368,11 @@
     "tool": "option"
   },
   {
-    "text": "High RF",
+    "text": "Good",
+    "tool": "option"
+  },
+  {
+    "text": "High",
     "tool": "option"
   },
   {
@@ -1380,7 +1384,7 @@
     "tool": "option"
   },
   {
-    "text": "Low RF",
+    "text": "Low",
     "tool": "option"
   },
   {
@@ -1388,7 +1392,11 @@
     "tool": "option"
   },
   {
-    "text": "Mid RF",
+    "text": "Medium",
+    "tool": "option"
+  },
+  {
+    "text": "Mid",
     "tool": "option"
   },
   {
@@ -1396,11 +1404,27 @@
     "tool": "option"
   },
   {
+    "text": "Months",
+    "tool": "option"
+  },
+  {
+    "text": "Name of practice",
+    "tool": "option"
+  },
+  {
+    "text": "Neutral",
+    "tool": "option"
+  },
+  {
+    "text": "Only",
+    "tool": "option"
+  },
+  {
     "text": "Performance",
     "tool": "option"
   },
   {
-    "text": "Performance in high, mid and low RF (rainfall)",
+    "text": "Performance in high, mid and low rainfall",
     "tool": "option"
   },
   {
@@ -1412,11 +1436,11 @@
     "tool": "option"
   },
   {
-    "text": "Risk of practice (disadvantage)",
+    "text": "Risks",
     "tool": "option"
   },
   {
-    "text": "Risks",
+    "text": "Risks or disadvantages",
     "tool": "option"
   },
   {
@@ -1424,11 +1448,11 @@
     "tool": "option"
   },
   {
-    "text": "Time (months)",
+    "text": "Time to start benefiting",
     "tool": "option"
   },
   {
-    "text": "Time to start benefiting",
+    "text": "Weeks",
     "tool": "option"
   },
   {
@@ -1441,6 +1465,18 @@
   },
   {
     "text": "Who makes decisions",
+    "tool": "option"
+  },
+  {
+    "text": "and",
+    "tool": "option"
+  },
+  {
+    "text": "benefit",
+    "tool": "option"
+  },
+  {
+    "text": "risk",
     "tool": "option"
   },
   {
