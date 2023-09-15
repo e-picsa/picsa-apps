@@ -15,22 +15,28 @@ import { PerformanceService } from '@picsa/shared/services/core/performance.serv
 export class AppComponent {
   title = 'extension-toolkit';
 
-  constructor(
-    analyticsService: AnalyticsService,
-    router: Router,
-    performanceService: PerformanceService,
-    deviceSupport: DeviceSupportService,
-    crashlyticsService: CrashlyticsService
-  ) {
-    performanceService.setEnabled({ enabled: ENVIRONMENT.production });
-    if (ENVIRONMENT.production) {
-      analyticsService.init(router);
-    }
-    crashlyticsService.ready().then(() => null);
+  public showUI = false;
 
-    deviceSupport.checkDeviceCompatibility().then(async () => {
-      await deviceSupport.showDeviceTroubleshooter();
-      // TODO - only show main display after troubleshooter closed?
-    });
+  constructor(
+    private analyticsService: AnalyticsService,
+    private router: Router,
+    private performanceService: PerformanceService,
+    private deviceSupport: DeviceSupportService,
+    private crashlyticsService: CrashlyticsService
+  ) {
+    this.init();
+  }
+
+  private async init() {
+    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
+    this.crashlyticsService.ready().then(() => null);
+    await this.deviceSupport.runDeviceTroubleshooter();
+    if (ENVIRONMENT.production) {
+      this.analyticsService.init(this.router);
+    }
+    console.log('showing ui');
+    this.showUI = true;
+
+    // TODO - only show main display after troubleshooter closed?
   }
 }

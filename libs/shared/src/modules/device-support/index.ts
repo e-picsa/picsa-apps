@@ -1,5 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
+import { PicsaTranslateModule } from '../translate';
 import { DeviceSupportService } from './device-support.service';
 import { DeviceTroubleshooterComponent } from './device-troubleshooter/device-troubleshooter.component';
 
@@ -19,13 +20,11 @@ export { DeviceSupportService };
  * 
  * Checks can be run via the included service
  * ```ts
- * deviceSupportService.checkDeviceCompatibility().then(()=>{
- *  deviceSupportService.showDeviceTroubleshooter()
- * })
+ *  deviceSupportService.runDeviceTroubleshooter()
  * ```
  */
 @NgModule({
-  imports: [],
+  imports: [PicsaTranslateModule],
   declarations: [DeviceTroubleshooterComponent],
 })
 export class PicsaDeviceSupportModule {

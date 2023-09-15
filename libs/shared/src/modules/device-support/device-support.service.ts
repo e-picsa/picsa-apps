@@ -2,19 +2,26 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Device, DeviceInfo } from '@capacitor/device';
 
-import { ICompatibilityWarning } from './device-support.models';
+import { IDeviceRecommendation } from './device-support.models';
 import { DeviceTroubleshooterComponent } from './device-troubleshooter/device-troubleshooter.component';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceSupportService {
-  private compatibilityWarnings: ICompatibilityWarning[] = [];
+  public recommendations: IDeviceRecommendation[] = [];
   private deviceInfo: DeviceInfo;
 
   constructor(private dialog: MatDialog) {}
 
+  public async runDeviceTroubleshooter() {
+    await this.checkDeviceCompatibility();
+    // if (this.recommendations.length > 0) {
+    const dialog = this.dialog.open(DeviceTroubleshooterComponent);
+    // }
+  }
+
   /**  */
-  public async checkDeviceCompatibility() {
-    this.compatibilityWarnings = [];
+  private async checkDeviceCompatibility() {
+    this.recommendations = [];
     this.deviceInfo = await Device.getInfo();
     const { platform } = this.deviceInfo;
     const platformChecks = {
@@ -27,13 +34,7 @@ export class DeviceSupportService {
     } else {
       throw new Error('Compatibility service not support for platform: ' + platform);
     }
-    return this.compatibilityWarnings;
-  }
-
-  public async showDeviceTroubleshooter() {
-    if (this.compatibilityWarnings.length > 0) {
-      const dialog = this.dialog.open(DeviceTroubleshooterComponent);
-    }
+    return this.recommendations;
   }
 
   private runAndroidChecks() {
@@ -67,7 +68,7 @@ export class DeviceSupportService {
   }
 
   private recordWarning(message: string, link?: string) {
-    this.compatibilityWarnings.push({ severity: 'warning', message, link });
+    this.recommendations.push({ severity: 'warning', message, link });
   }
   private getBrowserName() {
     // TODO - could be more exact with user-agents (?)
