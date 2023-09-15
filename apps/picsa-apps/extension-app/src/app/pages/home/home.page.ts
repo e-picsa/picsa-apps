@@ -102,17 +102,17 @@ export class HomePage implements OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.componentsService.patchHeader({ endContent: undefined });
-    this.userEventSubscription.unsubscribe();
+    // this.userEventSubscription.unsubscribe();
   }
 
   ngAfterViewInit() {
     this.componentsService.patchHeader({
       endContent: new DomPortal(this.headerContent),
     });
-    this.userEventSubscription = this.communicationService.userEvent$.subscribe(() => {
-      // Trigger the guided tour when the prompt event occurs
-      this.startTour();
-    });
+    // this.userEventSubscription = this.communicationService.userEvent$.subscribe(() => {
+    //   // Trigger the guided tour when the prompt event occurs
+    //   this.startTour();
+    // });
   }
 
   public startTour() {

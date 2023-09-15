@@ -18,6 +18,9 @@ export class HomeComponent implements OnDestroy {
   /** List of columns to display in table. Note, order will match template keys */
   public displayedColumns = Object.keys(ENTRY_TEMPLATE()).filter((key) => !key.startsWith('_'));
 
+  /** List of columns to display subheader row for */
+  public subheaderColumns: string[];
+
   public dbDataDocs: RxDocument<IOptionsToolEntry>[] = [];
   public matStepperOpen = false;
 
@@ -28,6 +31,7 @@ export class HomeComponent implements OnDestroy {
 
   constructor(private service: OptionsToolService) {
     this.subscribeToDbChanges();
+    this.addSubheaderColumns();
   }
 
   /** Initialise service and subscribe to data changes */
@@ -39,6 +43,17 @@ export class HomeComponent implements OnDestroy {
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       this.dbDataDocs = docs;
     });
+  }
+
+  /**
+   * Add mat-table identifiers for all subheader columns that will appear below the main heading row
+   * As only some header rows want a subheader use a fallback 'default_subheader' templated in component html
+   */
+  private addSubheaderColumns() {
+    const enabledSubheaders = ['performance', 'investment'];
+    this.subheaderColumns = this.displayedColumns.map((name) =>
+      enabledSubheaders.includes(name) ? `${name}_subheader` : `default_subheader`
+    );
   }
 
   ngOnDestroy(): void {

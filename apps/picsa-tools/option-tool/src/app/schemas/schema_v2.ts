@@ -5,8 +5,9 @@ import { RxJsonSchema } from 'rxdb';
 import { COLLECTION_V1, IOptionsToolEntry_v1, SCHEMA_V1 } from './schema_v1';
 
 /**
- * rename 'gender' to 'gender_activities' and add 'gender_decisions'
- * add _id primary key
+ * RENAME 'gender' to 'gender_activities'
+ * ADD 'gender_decisions'
+ * ADD _id primary key
  * */
 export interface IOptionsToolEntry_v2 extends Omit<IOptionsToolEntry_v1, 'gender'> {
   gender_decisions: string[];

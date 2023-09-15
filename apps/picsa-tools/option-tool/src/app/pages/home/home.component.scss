@@ -1,10 +1,31 @@
+:host {
+  display: contents;
+}
+// ************************************************************
+//  Table - General
+// ************************************************************
+
 table {
   border-collapse: collapse;
 }
 
 th {
-  border: 1px solid black;
+  border-right: 1px solid var(--color-light);
+  border-left: 1px solid var(--color-light);
+  border-bottom: none;
   padding: 8px;
+}
+th.subheader {
+  border-bottom: 2px solid var(--color-primary);
+}
+th:first-of-type {
+  border-left: none;
+}
+th:last-of-type {
+  border-right: none;
+}
+tr#subheaderRow {
+  height: 36px;
 }
 td {
   vertical-align: top;
@@ -12,50 +33,114 @@ td {
 td.mdc-data-table__cell {
   padding: 8px;
 }
-
-.HomeContainer {
-  max-height: 100vh;
-}
-
+// ************************************************************
+//  Editor - Popup
+// ************************************************************
 .HideOverflow {
   overflow-y: hidden;
 }
-
-.container {
-  position: relative;
-  height: 100vh;
+.editor-popup {
+  position: fixed;
+  z-index: 2;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.editor-container {
+  height: 100%;
+  max-height: 750px;
+  background-color: white;
   overflow: auto;
-  background-color: #fff;
-  width: 100%;
-  z-index: 20;
+  border-radius: 20px;
   justify-content: center;
   display: flex;
-  padding-top: 2rem;
-  top: 0;
-  right: 0;
-}
-
-.buttonposition {
+  margin: 1rem;
+  z-index: 2;
   position: absolute;
-  right: 20px;
-  top: 20px;
+  top: 2.5rem;
+  left: 1rem;
+  width: calc(100vw - 4rem);
 }
-
 .slide-in {
-  position: absolute;
-  bottom: 0;
-  display: none;
   transition: transform 0.3s ease-in-out;
-  transform: translateY(100%);
+  transform: translateY(100vh);
 }
-
 .slide-in.active {
   transform: translateY(0);
-  display: block;
+}
+.blurBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
-.benefit-container {
+// ************************************************************
+//  Table Value - Performance
+// ************************************************************
+td.performance-td.mdc-data-table__cell {
+  padding: 8px 0;
+}
+.performance-container {
   display: flex;
-  margin-bottom: 8px;
+  flex-direction: column;
   align-items: center;
+}
+
+.mat-mdc-header-cell {
+  border-top: none;
+  &.subheader {
+    padding: 0;
+    height: 100%;
+  }
+}
+.performance-subheader {
+  mat-icon {
+    padding: 0 4px;
+    height: 100%;
+    max-width: 48px;
+    margin: auto;
+  }
+  mat-icon:nth-of-type(even) {
+    border-left: 1px solid var(--color-light);
+    border-right: 1px solid var(--color-light);
+  }
+}
+//
+td.split-values,
+th.split-values {
+  padding: 8px 0;
+  div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  div > * {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+// ************************************************************
+//  Table Value - To Sort
+// ************************************************************
+
+.Gender-Display {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.gender-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }

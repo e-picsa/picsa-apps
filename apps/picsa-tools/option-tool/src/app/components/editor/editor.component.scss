@@ -1,112 +1,196 @@
-.mat-stepper-horizontal {
-  margin-top: 27px;
+:host {
+  display: block;
+}
+.editor-container {
+  position: relative;
+  padding-bottom: 2rem;
+}
+// ***************************************************************************************
+// Stepper - General
+// ***************************************************************************************
+
+$close-button-height: 40px;
+
+mat-stepper.mat-stepper-horizontal {
+  margin-top: $close-button-height + 8px;
+  margin-bottom: 2rem;
 }
 
+.closeButton {
+  position: absolute;
+  right: 8px;
+  top: (-$close-button-height);
+  width: $close-button-height;
+  height: $close-button-height;
+  color: white;
+  z-index: 2;
+}
+
+// ***************************************************************************************
+// Steps - General
+// ***************************************************************************************
+$container-border-radius: 16px;
+
+.StepContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
+  position: relative;
+  border-radius: $container-border-radius;
+  min-width: 18rem;
+  min-height: 18rem;
+  margin-top: 1rem;
+  box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
+  // Desktop layout - container moves along with stepper
+  @media only screen and (min-width: 768px) {
+    &[data-step='2'] {
+      left: 12%;
+    }
+    &[data-step='3'] {
+      left: 24%;
+    }
+    &[data-step='4'] {
+      left: 36%;
+    }
+    &[data-step='5'] {
+      left: calc(min(100vw - 4rem - 36rem, 48%)); // apply min sizing to prevent overflow off screen
+    }
+    &[data-step='6'] {
+      left: calc(min(100vw - 4rem - 26rem, 60%));
+    }
+    &[data-step='7'] {
+      left: calc(min(100vw - 4rem - 26rem, 72%));
+    }
+    &[data-step='8'] {
+      left: calc(min(100vw - 4rem - 26rem, 84%));
+    }
+  }
+}
+
+h3.StepTitle {
+  width: -webkit-fill-available;
+  margin: 0;
+  background: var(--color-primary);
+  font-weight: normal;
+  padding: 1rem;
+  color: white;
+  text-align: center;
+  border-top-left-radius: $container-border-radius;
+  border-top-right-radius: $container-border-radius;
+}
+
+.StepContent {
+  width: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1rem;
+  align-items: center;
+}
+
+.step-buttons {
+  width: -webkit-fill-available;
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  button {
+    flex: 1;
+  }
+}
+
+// ***************************************************************************************
+// Steps - Multiple row entries
+// Display as rows with light border, and content in a row
+//
+// ***************************************************************************************
+
+.entry-rows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+.entry-row-item {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-light);
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+// Rows also use text and icon at start of the row to help identifiy input requirements
+$entry-icon-size: 64px;
+.icon-with-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-heading {
+  font-weight: 700;
+  text-align: center;
+  width: calc($entry-icon-size + 16px);
+  background: var(--color-primary);
+  margin-bottom: -10px;
+  padding: 4px;
+  color: white;
+  z-index: 1;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.icon-container {
+  width: calc($entry-icon-size + 8px - 2px); // include padding and border in width
+  text-align: center;
+  background-color: #ffffff;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 8px;
+  // Styles need to accomodate slightly different variations depending if regular mat-icon or svgIcon used
+  mat-icon {
+    width: 100%;
+    height: 100%;
+    max-height: $entry-icon-size;
+    max-width: $entry-icon-size;
+  }
+  border: 1px solid var(--color-primary);
+}
+
+// ***************************************************************************************
+// Inputs - General
+// ***************************************************************************************
 .mat-mdc-form-field {
   margin-top: 16px;
 }
 
-.warningText {
-  text-align: center;
-  color: red;
-  font-size: 12px;
+label {
+  font-size: 14px;
+  font-weight: 400;
+  margin-right: 10px;
 }
 
-.dialog-content {
-  padding-bottom: 2rem;
-
-  .saveButtonPosition {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-  }
-
-  .StepTitle {
-    display: flex;
-    justify-content: center;
-    font-size: medium;
-    font-weight: bold;
-  }
-
-  .importantText {
-    display: flex;
-    justify-content: flex-start;
-    font-size: small;
-    color: red;
-    width: 100%;
-    font-weight: normal;
-  }
-
-  .StepContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 50%;
-    gap: 0.4rem;
-
-    .StepContent {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      // .rain-icon{
-      //   font-size: 50px;
-      //   color: black;
-      // }
-
-      .form-group {
-        // width: 500px;
-        padding-top: 10px;
-        padding-bottom: 20px;
-      }
-
-      label {
-        font-size: 14px;
-        font-weight: 400;
-        margin-right: 10px;
-      }
-
-      input.form-control {
-        font-size: 16px;
-        outline-color: #8a2644;
-        padding: 5px;
-        width: 90%;
-      }
-
-      textarea.form-control {
-        font-size: 16px;
-        outline-color: #8a2644;
-        padding: 5px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        vertical-align: top;
-      }
-
-      .ButtonSection {
-        width: 15rem;
-      }
-    }
-  }
-
-  .genderDiv {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    flex-direction: row;
-  }
-
-  .genderType {
-    width: 5rem;
-    height: 5rem;
-    font-weight: 700;
-    display: flex;
-    border-radius: 5px;
-    margin: 2px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+input.form-control,
+textarea.form-control {
+  padding: 8px;
+  color: var(--color-primary);
+  outline-color: var(--color-primary);
+  max-width: 200px;
+  display: block;
+  font-size: 1.5rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+mat-select.form-control {
+  font-size: 1.5rem;
+  .mat-mdc-select-value {
+    color: var(--color-primary) !important;
   }
 }
