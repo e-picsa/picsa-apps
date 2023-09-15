@@ -1,349 +1,216 @@
-<div class="dialog-content">
-  <button class="saveButtonPosition" mat-button mat-raised-button (click)="submitForm()" color="primary">
-    {{ 'Close' | translate }}
+<div class="editor-container">
+  <button mat-mini-fab color="primary" (click)="submitForm()" class="closeButton">
+    <mat-icon>close</mat-icon>
   </button>
-  <mat-stepper [linear]="isLinear" #stepper>
-    <!-- Practice -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Practice' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Enter the practice for this option' | translate }}</div>
-        <div class="StepContent">
-          <div class="form-group">
-            <label>{{ 'Practice' | translate }}</label>
-            <input [(ngModel)]="values.practice" class="form-control" />
-          </div>
-          <div class="importantText">{{ '*This field is required' | translate }}</div>
-        </div>
-        <div>
-          <button mat-raised-button color="primary" [disabled]="!values.practice" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
-        <button mat-stroked-button style="margin-top: 3em" (click)="promptDelete()" [disabled]="!values.practice">
-          <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
-        </button>
-      </div>
-    </mat-step>
 
-    <!-- Who does it -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Decisions' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Who makes decisions' | translate }}?</div>
+  <mat-stepper [linear]="false" #stepper class="slim-headers">
+    <!-- Step header (common) -->
+    <mat-step matStepContent *ngFor="let step of stepperSteps; index as stepIndex">
+      <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
+      <div class="StepContainer" [attr.data-step]="stepIndex + 1">
+        <h3 class="StepTitle">{{ step.title | translate }}</h3>
         <div class="StepContent">
-          <div class="genderDiv">
-            <div
-              class="genderType"
-              style="color: #800080"
-              (click)="handleGender('female', 'gender_decisions')"
-              [ngStyle]="{
-                'background-color': values.gender_decisions.includes('female') ? 'wheat' : 'lightgray'
-              }"
-            >
-              {{ 'Female' | translate }}
-              <mat-icon svgIcon="picsa_options_female"></mat-icon>
-            </div>
-            <div
-              class="genderType"
-              (click)="handleGender('male', 'gender_decisions')"
-              style="color: #008066"
-              [ngStyle]="{
-                'background-color': values.gender_decisions.includes('male') ? 'wheat' : 'lightgray'
-              }"
-            >
-              {{ 'Male' | translate }}
-              <mat-icon svgIcon="picsa_options_male"></mat-icon>
-            </div>
-          </div>
-          <div style="height: 1rem">
-            {{
-              values.gender_decisions.length > 1 ? values.gender_decisions.join(' and ') : values.gender_decisions[0]
-            }}
-          </div>
-        </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!(values.gender_decisions.length > 0)" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
+          <!-- Step inputs (loaded from templates below) -->
+          <ng-container [ngSwitch]="step.id">
+            <ng-container *ngSwitchCase="'practice'" [ngTemplateOutlet]="practiceInput"></ng-container>
+            <ng-container *ngSwitchCase="'gender_decisions'" [ngTemplateOutlet]="decisionsInput"></ng-container>
+            <ng-container *ngSwitchCase="'gender_activities'" [ngTemplateOutlet]="activitiesInput"></ng-container>
+            <ng-container *ngSwitchCase="'benefits'" [ngTemplateOutlet]="benefitsInput"></ng-container>
+            <ng-container *ngSwitchCase="'performance'" [ngTemplateOutlet]="performanceInput"></ng-container>
+            <ng-container *ngSwitchCase="'investment'" [ngTemplateOutlet]="investmentInput"></ng-container>
+            <ng-container *ngSwitchCase="'time'" [ngTemplateOutlet]="timeInput"></ng-container>
+            <ng-container *ngSwitchCase="'risk'" [ngTemplateOutlet]="riskInput"></ng-container>
+            <ng-container *ngSwitchDefault>Input Not found</ng-container>
+          </ng-container>
         </div>
       </div>
     </mat-step>
 
-    <!-- Who does it -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Activities' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Who does the activity' | translate }}?</div>
-        <div class="StepContent">
-          <div class="genderDiv">
-            <div
-              class="genderType"
-              style="color: #800080"
-              (click)="handleGender('female', 'gender_activities')"
-              [ngStyle]="{
-                'background-color': values.gender_activities.includes('female') ? 'wheat' : 'lightgray'
-              }"
-            >
-              {{ 'Female' | translate }}
-              <mat-icon svgIcon="picsa_options_female"></mat-icon>
-            </div>
-            <div
-              class="genderType"
-              (click)="handleGender('male', 'gender_activities')"
-              style="color: #008066"
-              [ngStyle]="{
-                'background-color': values.gender_activities.includes('male') ? 'wheat' : 'lightgray'
-              }"
-            >
-              {{ 'Male' | translate }}
-              <mat-icon svgIcon="picsa_options_male"></mat-icon>
-            </div>
-          </div>
-          <div style="height: 1rem">
-            {{
-              values.gender_activities.length > 1 ? values.gender_activities.join(' and ') : values.gender_activities[0]
-            }}
-          </div>
-        </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!(values.gender_activities.length > 0)" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+    <!-- 1. Practice -->
+    <ng-template #practiceInput>
+      <div class="form-group">
+        <input [(ngModel)]="values.practice" class="form-control" />
       </div>
-    </mat-step>
+      <ng-container [ngTemplateOutlet]="stepButtons" [ngTemplateOutletContext]="{ nextDisabled: !values.practice }">
+      </ng-container>
+    </ng-template>
 
-    <!-- Benefits -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Benefits' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Benefits and who ' | translate }} ?</div>
-        <div class="StepContent">
-          <div style="margin-bottom: 1.5rem; padding: 2px; margin-top: 2rem">
-            <div *ngFor="let benefit of values.benefits; index as i">
-              <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
-                <textarea [(ngModel)]="benefit.benefit" class="form-control"></textarea>
-                <div
-                  class="genderType"
-                  style="color: #800080; padding: 3px; height: 6rem"
-                  (click)="handleBenficiaryGender(i, 'female')"
-                  [ngStyle]="{
-                    'background-color': benefit.beneficiary.includes('female') ? 'wheat' : 'lightgray'
-                  }"
-                >
-                  {{ 'Female' | translate }}
-                  <mat-icon svgIcon="picsa_options_female"></mat-icon>
-                </div>
-                <div
-                  class="genderType"
-                  (click)="handleBenficiaryGender(i, 'male')"
-                  style="color: #008066; padding: 3px; height: 6rem"
-                  [ngStyle]="{
-                    'background-color': benefit.beneficiary.includes('male') ? 'wheat' : 'lightgray'
-                  }"
-                >
-                  {{ 'Male' | translate }}
-                  <mat-icon svgIcon="picsa_options_male"></mat-icon>
-                </div>
-                <button
-                  mat-button
-                  color="primary"
-                  (click)="handleRemovingBenefits(i)"
-                  [disabled]="!values.benefits[i] || !values.benefits[i].benefit"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
-            </div>
-            <button style="float: left; margin-top: 7px" (click)="handleMoreBenefits()" mat-button>
-              + {{ 'Add benefit' | translate }}
+    <!-- 2. Decisions -->
+    <ng-template #decisionsInput>
+      <option-gender-input
+        style="margin-top: 1rem"
+        [(ngModel)]="values.gender_decisions"
+        [options]="{ showValueText: true }"
+      ></option-gender-input>
+
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
+      >
+      </ng-container>
+    </ng-template>
+
+    <!-- 3. Activity -->
+    <ng-template #activitiesInput>
+      <option-gender-input
+        style="margin-top: 1rem"
+        [(ngModel)]="values.gender_activities"
+        [options]="{ showValueText: true }"
+      ></option-gender-input>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: values.gender_activities.length === 0 }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- 4. Benefits -->
+    <ng-template #benefitsInput>
+      <div class="entry-rows">
+        <div class="entry-row-item" *ngFor="let benefit of values.benefits; index as i">
+          <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
+            <input [(ngModel)]="benefit.benefit" class="form-control" />
+            <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
+            <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
+              <mat-icon>close</mat-icon>
             </button>
           </div>
         </div>
-        <div class="ButtonSection">
-          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!(values.benefits.length > 0)" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <!-- Only enable adding more benefits when previous are validated
+            TODO would be easier to manage all validation if using formgroups -->
+        <button
+          style="margin-bottom: 16px; margin-top: -16px"
+          (click)="handleMoreBenefits()"
+          mat-button
+          [disabled]="
+            values.benefits.length > 0 &&
+            (values.benefits[values.benefits.length - 1].benefit === undefined ||
+              values.benefits[values.benefits.length - 1].beneficiary.length === 0)
+          "
+        >
+          + {{ 'Add' | translate }}{{ ' ' }}{{ 'benefit' | translate }}
+        </button>
       </div>
-    </mat-step>
 
-    <!-- Performance -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Performance' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Performance in high, mid and low RF (rainfall)' | translate }}?</div>
-        <div class="StepContent">
-          <mat-icon style="color: #4fc3f7; font-size: 27px">water_drop</mat-icon>
-          <div
-            style="
-              display: flex;
-              gap: 1rem;
-              justify-content: space-evenly;
-              width: 100%;
-              flex-direction: row;
-              margin-bottom: 1.5rem;
-              margin-top: 2rem;
-            "
-          >
-            <div class="performenceItem">
-              <div style="font-weight: 700">{{ 'High RF' | translate }}</div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
-                [(ngModel)]="values.performance.highRf"
-              >
-                <option *ngFor="let option of performanceOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </div>
-            <div class="performenceItem">
-              <div style="font-weight: 700">{{ 'Mid RF' | translate }}</div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
-                [(ngModel)]="values.performance.midRf"
-              >
-                <option *ngFor="let option of performanceOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </div>
-            <div class="performenceItem">
-              <div style="font-weight: 700">{{ 'Low RF' | translate }}</div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 5px; outline-color: #8a2644"
-                [(ngModel)]="values.performance.lowRf"
-              >
-                <option *ngFor="let option of performanceOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: values.benefits.length === 0 }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- 5. Performance -->
+    <ng-template #performanceInput>
+      <div class="entry-rows">
+        <div class="entry-row-item" *ngFor="let condition of performanceConditions">
+          <div class="icon-with-heading">
+            <div class="icon-heading">{{ condition.label | translate }}</div>
+            <div class="icon-container">
+              <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
             </div>
           </div>
-        </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!(values.performance.lowRf && values.performance.midRf && values.performance.highRf)"
-            matStepperNext
-          >
-            {{ 'Next' | translate }}
-          </button>
+          <option-performance-input [(ngModel)]="values.performance[condition.id]"></option-performance-input>
         </div>
       </div>
-    </mat-step>
 
-    <!-- Investment -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Investment' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Investment in terms of money and time' | translate }}?</div>
-        <div class="StepContent">
-          <div
-            style="
-              display: flex;
-              justify-content: space-evenly;
-              gap: 1rem;
-              width: 100%;
-              flex-direction: row;
-              margin-bottom: 1.5rem;
-              margin-top: 2rem;
-            "
-          >
-            <div class="performenceItem">
-              <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
-                {{ 'Money' | translate }}
-                <mat-icon style="color: #8a2644; font-size: 20px">payments</mat-icon>
-              </div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 9px; outline-color: #8a2644"
-                [(ngModel)]="values.investment.money"
-              >
-                <option *ngFor="let option of investmentOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </div>
-            <div class="performenceItem">
-              <div style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between">
-                {{ 'Time' | translate }}
-                <mat-icon style="color: #8a2644; font-size: 20px">schedule</mat-icon>
-              </div>
-              <select
-                style="width: 5rem; height: 2rem; font-size: 14px; margin-top: 9px; outline-color: #8a2644"
-                [(ngModel)]="values.investment.time"
-              >
-                <option *ngFor="let option of investmentOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{
+          nextDisabled: !(values.performance.lowRf && values.performance.midRf && values.performance.highRf)
+        }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- 6. Investment -->
+    <ng-template #investmentInput>
+      <div class="entry-rows">
+        <div *ngFor="let investment of investmentTypes" class="entry-row-item">
+          <div class="icon-with-heading">
+            <div class="icon-heading">{{ investment.label | translate }}</div>
+            <div class="icon-container">
+              <mat-icon style="color: #8a2644; font-size: 36px">{{ investment.matIcon }}</mat-icon>
             </div>
           </div>
-        </div>
-        <div class="ButtonSection">
-          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!(values.investment.money && values.investment.time)"
-            matStepperNext
-          >
-            {{ 'Next' | translate }}
-          </button>
+          <option-investment-input [(ngModel)]="values.investment[investment.id]"></option-investment-input>
         </div>
       </div>
-    </mat-step>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{
+          nextDisabled: !(values.investment.money && values.investment.time)
+        }"
+      ></ng-container>
+    </ng-template>
 
-    <!-- Time -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Time' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Time to start benefiting' | translate }}</div>
-        <div class="StepContent">
-          <div class="form-group">
-            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >{{ 'Time
-              (months)' | translate }}
-              <mat-icon style="color: #8a2644; font-size: 20px">date_range</mat-icon></label
-            >
-            <input [(ngModel)]="values.time" (keypress)="onlyNumbers($event)" class="form-control" />
+    <!-- 7. Time -->
+    <ng-template #timeInput>
+      <div style="display: flex; gap: 16px; align-items: center">
+        <input [(ngModel)]="values.time.value" type="number" class="form-control" style="width: 64px" />
+        <mat-select class="form-control value-primary" [(value)]="values.time.unit">
+          <mat-option value="month">{{ 'Months' | translate }}</mat-option>
+          <mat-option value="week">{{ 'Weeks' | translate }}</mat-option>
+          <mat-option value="day">{{ 'Days' | translate }}</mat-option>
+        </mat-select>
+      </div>
+
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: !values.time }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- 8. Risk -->
+    <ng-template #riskInput>
+      <div class="entry-rows">
+        <div class="entry-row-item" *ngFor="let risk of values.risk; index as i; trackBy: trackByIndex">
+          <div style="display: flex; align-items: center">
+            <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
+            <button mat-icon-button (click)="values.risk.splice(i, 1)">
+              <mat-icon>close</mat-icon>
+            </button>
           </div>
         </div>
-        <div class="ButtonSection">
-          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!values.time" matStepperNext>
-            {{ 'Next' | translate }}
-          </button>
-        </div>
+        <button
+          style="margin-bottom: 16px; margin-top: -16px"
+          (click)="values.risk.push('')"
+          mat-button
+          [disabled]="values.risk.length > 0 && !values.risk[values.benefits.length - 1]"
+        >
+          + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
+        </button>
       </div>
-    </mat-step>
 
-    <!-- Risk -->
-    <mat-step matStepContent>
-      <ng-template matStepLabel>{{ 'Risk' | translate }}</ng-template>
-      <div class="StepContainer">
-        <div class="StepTitle">{{ 'Risk of practice (disadvantage)' | translate }}</div>
-        <div class="StepContent">
-          <div class="form-group">
-            <label style="font-weight: 700; display: flex; flex-direction: row; justify-content: space-between"
-              >{{ 'Risk' | translate }}<mat-icon style="color: #e71236; font-size: 20px">warning</mat-icon></label
-            >
-            <input style="margin-left: 4px" [(ngModel)]="values.risk" class="form-control" />
-          </div>
-        </div>
-        <div class="ButtonSection">
-          <button matStepperPrevious mat-button>{{ 'Back' | translate }}</button>
-          <button mat-raised-button color="primary" [disabled]="!values.risk" (click)="submitForm()">
-            {{ 'Finish' | translate }}
-          </button>
-        </div>
+      <ng-container
+        [ngTemplateOutlet]="stepButtons"
+        [ngTemplateOutletContext]="{ nextDisabled: !values.risk }"
+      ></ng-container>
+    </ng-template>
+
+    <!-- Step Footer (common) -->
+    <!-- Context variables an be passed via `[ngTemplateOutletContext]="{ nextDisabled: true }"` -->
+    <ng-template #stepButtons let-nextDisabled="nextDisabled" let-firstStep="stepper.selectedIndex === 0">
+      <div class="step-buttons">
+        <button *ngIf="stepper.selectedIndex === 0" mat-button (click)="promptDelete()" [disabled]="nextDisabled">
+          <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
+        </button>
+        <button *ngIf="stepper.selectedIndex > 0" mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
+        <button
+          *ngIf="stepper.selectedIndex < 7"
+          mat-raised-button
+          color="primary"
+          [disabled]="nextDisabled"
+          matStepperNext
+        >
+          {{ 'Next' | translate }}
+        </button>
+        <button
+          *ngIf="stepper.selectedIndex === 7"
+          mat-raised-button
+          color="primary"
+          [disabled]="nextDisabled"
+          (click)="submitForm()"
+        >
+          {{ 'Finish' | translate }}
+        </button>
       </div>
-    </mat-step>
+    </ng-template>
   </mat-stepper>
 </div>

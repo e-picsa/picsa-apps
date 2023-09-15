@@ -1,0 +1,33 @@
+<div *ngIf="!options.readonly">
+  <div class="input-container">
+    <button
+      mat-button
+      *ngFor="let option of selectOptions"
+      class="select-button"
+      (click)="toggleOptionSelect(option.id)"
+      [attr.data-gender]="option.id"
+      [attr.data-selected]="selected.includes(option.id)"
+    >
+      <div>
+        <mat-icon class="gender-icon" [svgIcon]="option.svgIcon"></mat-icon>
+        <div class="gender-label">{{ option.label | translate }}</div>
+      </div>
+    </button>
+  </div>
+  <div *ngIf="options.showValueText" class="text-value">
+    <span *ngFor="let text of valueTextArray">{{text | translate}}</span>
+  </div>
+</div>
+
+<!-- readonly display - Render all icons but hide non-selected to keep consistent spacing -->
+<div *ngIf="options.readonly" style="display: flex">
+  <div *ngFor="let option of selectOptions" class="readonly-value" [attr.data-gender]="option.id">
+    <mat-icon
+      [svgIcon]="option.svgIcon"
+      [style.visibility]="selected.includes(option.id) ? 'visible' : 'hidden'"
+    ></mat-icon>
+  </div>
+  <div *ngIf="options.showValueText" class="text-value">
+    <span *ngFor="let text of valueTextArray">{{text | translate}}</span>
+  </div>
+</div>

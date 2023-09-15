@@ -91,6 +91,18 @@ mat-radio-group.layout-column {
     }
   }
 }
+mat-stepper.slim-headers {
+  mat-step-header {
+    height: 48px;
+  }
+}
+
+// Allow use of primary color with selected value by custom `value-primary` class
+mat-select.value-primary {
+  .mat-mdc-select-value {
+    color: var(--color-primary) !important;
+  }
+}
 
 /******************************************************************
 Enketo Form
@@ -103,5 +115,18 @@ enketo-webform {
   // Remove imposed (100% - 30px) width
   .question .question-label {
     width: 100%;
+  }
+}
+/******************************************************************
+Intro.JS Tour
+*******************************************************************/
+.introjs-tooltip.picsa-tooltip {
+  .introjs-tooltip-header {
+    background: var(--color-primary);
+    color: white;
+  }
+  .introjs-skipbutton {
+    color: white;
+    line-height: 36px;
   }
 }

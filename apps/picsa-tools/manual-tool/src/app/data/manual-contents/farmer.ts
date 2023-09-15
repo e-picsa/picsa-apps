@@ -11,8 +11,8 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
       {
         page: {
           en: 2,
-          zm_ny: 2,
-          mw_ny: 2,
+          zm_ny: 7,
+          mw_ny: 7,
         },
         name: '',
         label: translateMarker('Introduction'),
