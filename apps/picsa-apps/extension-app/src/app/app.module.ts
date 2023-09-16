@@ -10,7 +10,6 @@ import {
   PicsaDb_V2_Module,
   PicsaDbModule,
   PicsaDeepLinksModule,
-  PicsaDeviceSupportModule,
   PicsaNativeModule,
   PicsaTranslateModule,
 } from '@picsa/shared/modules';
@@ -36,7 +35,6 @@ import { AppRoutingModule } from './app-routing.module';
       baseUrl: 'https://picsa.app',
       appDynamicLink: 'https://picsa.page.link/dynamic',
     }),
-    PicsaDeviceSupportModule.forRoot(),
     PicsaTranslateModule,
     PicsaAnimationsModule.forRoot(),
     PicsaCommonComponentsModule,
