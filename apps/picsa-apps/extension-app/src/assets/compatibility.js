@@ -38,8 +38,10 @@ function checkCompatibility() {
   const info = getInfo();
   if (info.operatingSystem === 'android') {
     // Catch case where app may be sideloaded onto a device with sdk lower than `minSdkVersion` (API 23, Android 6.0)
+    // Additionally the render prompt update will fail due to use of template literals
     if (info.androidVersion && info.androidVersion < minAndroidVersion) {
       alert('This app is not supported on Android 5.\nPlease use a device running Android 6 or higher');
+      return;
     }
     // Check chrome webview version up-to-date
     if (info.chromeVersion && info.chromeVersion < minAndroidWebviewVersion) {
@@ -62,6 +64,7 @@ function checkCompatibility() {
     }
   }
 }
+
 checkCompatibility();
 
 /**
