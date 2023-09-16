@@ -51,7 +51,7 @@ function checkCompatibility() {
       // https://chromium.googlesource.com/chromium/src/+/HEAD/android_webview/docs/faq.md#what_s-the-relationship-between-webview-and-chrome
       // https://techblogs.42gears.com/webkit-provider-changes-in-various-android-versions/
 
-      if (info.androidVersion >= 7 && info.androidVersion <= 10) {
+      if (info.androidVersion >= 7 && info.androidVersion <= 9) {
         renderUpdatePrompt('Google Chrome', 'https://play.google.com/store/apps/details?id=com.android.chrome');
       } else {
         renderUpdatePrompt(
@@ -108,11 +108,11 @@ function getChromeVersion() {
 /** Create a custom popup element that blocks the screen to force user to update before continuing */
 function renderUpdatePrompt(appName, appLink) {
   const backdropEl = document.createElement('div');
-  /**
-   * @types {CSSStyleDeclaration}
-   */
+  backdropEl.id = 'updatePrompt';
   const styles = `
   position:absolute; 
+  top:0;
+  left:0;
   height:100vh; 
   width:100vw; 
   z-index:2; 
@@ -124,6 +124,7 @@ function renderUpdatePrompt(appName, appLink) {
   `;
   backdropEl.style.cssText = styles;
 
+  // Main content container
   const contentEl = document.createElement('div');
   contentEl.style.cssText = `
   width:300px;
@@ -132,6 +133,26 @@ function renderUpdatePrompt(appName, appLink) {
   border-radius: 8px;
   `;
 
+  // Close button
+  const closeButtonEl = document.createElement('button');
+  closeButtonEl.style.cssText = `
+   float:right;
+   `;
+  closeButtonEl.textContent = 'X';
+  closeButtonEl.onclick = closePrompt;
+  contentEl.appendChild(closeButtonEl);
+
+  // Heading
+  const headingEl = document.createElement('h2');
+  (headingEl.textContent = 'Update Required'), (headingEl.style.cssText = `text-align:center`);
+  contentEl.appendChild(headingEl);
+
+  // Text
+  const textEl = document.createElement('p');
+  textEl.innerHTML = `Please update the <u>${appName}</u> app from the play store and restart the app`;
+  contentEl.appendChild(textEl);
+
+  //  Action button
   const buttonEl = document.createElement('button');
   buttonEl.textContent = 'Go To Play Store';
   buttonEl.style.cssText = `
@@ -147,20 +168,20 @@ function renderUpdatePrompt(appName, appLink) {
   border: none;
   cursor: pointer;
   `;
-  const linkEl = document.createElement('a');
 
+  // Action button link
+  const linkEl = document.createElement('a');
   linkEl.href = appLink;
   linkEl.target = '_blank';
   linkEl.appendChild(buttonEl);
-
-  contentEl.innerHTML = `
-  <h2 style="text-align:center">Update Required</h2>
-  <p> Please update the <u>${appName}</u> app from the play store and restart the app</p>  
-  `.trim();
-
   contentEl.appendChild(linkEl);
 
+  // Append to main content
   backdropEl.appendChild(contentEl);
   const bodyEl = document.querySelector('body');
   bodyEl.appendChild(backdropEl);
+}
+
+function closePrompt() {
+  document.getElementById('updatePrompt').remove();
 }
