@@ -8,7 +8,6 @@ export {
   PicsaDb_V2_Module,
   PicsaDbModule,
   PicsaDeepLinksModule,
-  PicsaDeviceSupportModule,
   PicsaNativeModule,
   PicsaTranslateModule,
   PicsaTranslateService,
