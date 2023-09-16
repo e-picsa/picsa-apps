@@ -36,7 +36,6 @@ const minAndroidWebviewVersion = 93;
  */
 function checkCompatibility() {
   const info = getInfo();
-  console.log('[Compatibility check]', info);
   if (info.operatingSystem === 'android') {
     // Catch case where app may be sideloaded onto a device with sdk lower than `minSdkVersion` (API 23, Android 6.0)
     if (info.androidVersion && info.androidVersion < minAndroidVersion) {
@@ -44,13 +43,15 @@ function checkCompatibility() {
     }
     // Check chrome webview version up-to-date
     if (info.chromeVersion && info.chromeVersion < minAndroidWebviewVersion) {
+      console.log('[Compatibility check]');
+      console.log(JSON.stringify(info, null, 2));
       // Webview version is controlled by different apps depending on android version
       // For android 7-9 this is the controlled by the preinstalled Google Chrome app
       // For android 6 and 10+ this is controlled by the standalone Android Webview app
       // https://chromium.googlesource.com/chromium/src/+/HEAD/android_webview/docs/faq.md#what_s-the-relationship-between-webview-and-chrome
       // https://techblogs.42gears.com/webkit-provider-changes-in-various-android-versions/
 
-      if (7 <= info.androidVersion <= 9) {
+      if (info.androidVersion >= 7 && info.androidVersion <= 10) {
         renderUpdatePrompt('Google Chrome', 'https://play.google.com/store/apps/details?id=com.android.chrome');
       } else {
         renderUpdatePrompt(
