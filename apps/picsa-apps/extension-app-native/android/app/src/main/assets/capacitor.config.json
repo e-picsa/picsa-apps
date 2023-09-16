@@ -22,6 +22,7 @@
 		"@capacitor-firebase/performance"
 	],
 	"server": {
+		"androidScheme": "http",
 		"cleartext": true
 	}
 }
