@@ -14,8 +14,6 @@ import { PerformanceService } from '@picsa/shared/services/core/performance.serv
 export class AppComponent {
   title = 'extension-toolkit';
 
-  public showUI = false;
-
   constructor(
     private analyticsService: AnalyticsService,
     private router: Router,
@@ -31,9 +29,5 @@ export class AppComponent {
     if (ENVIRONMENT.production) {
       this.analyticsService.init(this.router);
     }
-    console.log('showing ui');
-    this.showUI = true;
-
-    // TODO - only show main display after troubleshooter closed?
   }
 }
