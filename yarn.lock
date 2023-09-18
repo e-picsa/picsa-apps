@@ -6927,21 +6927,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/devkit@npm:~15.7.0":
-  version: 15.7.2
-  resolution: "@nrwl/devkit@npm:15.7.2"
-  dependencies:
-    "@phenomnomnominal/tsquery": 4.1.1
-    ejs: ^3.1.7
-    ignore: ^5.0.4
-    semver: 7.3.4
-    tslib: ^2.3.0
-  peerDependencies:
-    nx: ">= 14.1 <= 16"
-  checksum: a6f78a1374e91c183a71fb3cb81bfc8fe0d21e18d2bd7b20d01777fd31d155c16dce5944ed2146514761a3960683842f137fc5a22975403d515c32fc753c0a1f
-  languageName: node
-  linkType: hard
-
 "@nrwl/eslint-plugin-nx@npm:16.8.1":
   version: 16.8.1
   resolution: "@nrwl/eslint-plugin-nx@npm:16.8.1"
@@ -7097,7 +7082,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/devkit@npm:16.8.1":
+"@nx/devkit@npm:16.8.1, @nx/devkit@npm:^16.3.0":
   version: 16.8.1
   resolution: "@nx/devkit@npm:16.8.1"
   dependencies:
@@ -7159,7 +7144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/js@npm:16.8.1":
+"@nx/js@npm:16.8.1, @nx/js@npm:^16.3.0":
   version: 16.8.1
   resolution: "@nx/js@npm:16.8.1"
   dependencies:
@@ -7382,34 +7367,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nxext/stencil@npm:^15.7.0":
-  version: 15.7.0
-  resolution: "@nxext/stencil@npm:15.7.0"
+"@nxext/stencil@npm:^16.3.0":
+  version: 16.3.0
+  resolution: "@nxext/stencil@npm:16.3.0"
   dependencies:
-    "@nrwl/devkit": ~15.7.0
+    "@nx/devkit": ^16.3.0
+    "@nx/js": ^16.3.0
+    "@phenomnomnominal/tsquery": 4.1.1
     ignore: ^5.2.0
   peerDependencies:
-    "@nrwl/angular": ^15.7.0
-    "@nrwl/cypress": ^15.7.0
-    "@nrwl/jest": ^15.7.0
-    "@nrwl/linter": ^15.7.0
-    "@nrwl/react": ^15.7.0
-    "@nrwl/storybook": ^15.7.0
-    "@nrwl/workspace": ^15.7.0
-    "@nxext/svelte": ^15.7.0
+    "@nx/angular": 16.3.0
+    "@nx/cypress": 16.3.0
+    "@nx/jest": 16.3.0
+    "@nx/linter": 16.3.0
+    "@nx/react": 16.3.0
+    "@nx/storybook": 16.3.0
+    "@nx/workspace": 16.3.0
+    "@nxext/svelte": ^16.3.0
     "@stencil/core": ^2.17.1
   peerDependenciesMeta:
-    "@nrwl/angular":
+    "@nx/angular":
       optional: true
-    "@nrwl/cypress":
+    "@nx/cypress":
       optional: true
-    "@nrwl/react":
+    "@nx/react":
       optional: true
-    "@nrwl/storybook":
+    "@nx/storybook":
       optional: true
     "@nxext/svelte":
       optional: true
-  checksum: a6c9ebdf12b725315705b29bb850c50236f226de26faa9674875463e3cbbda7d9933a9665c5e3770b6cbd8dba6be7652a27489ea8f6f157de27e88810022cc41
+  checksum: d9f99305ce81112765f0c0bbcc3e3e5ebf21f36c300259379455db536c971ab058dd01fe92822eaacd21d435a66a205469fcd5bf08b87b061eccb15334744e3e
   languageName: node
   linkType: hard
 
@@ -19924,7 +19911,7 @@ __metadata:
     "@nx/linter": 16.8.1
     "@nx/nest": 16.8.1
     "@nx/workspace": 16.8.1
-    "@nxext/stencil": ^15.7.0
+    "@nxext/stencil": ^16.3.0
     "@schematics/angular": 16.2.2
     "@stencil/angular-output-target": ^0.7.1
     "@stencil/core": 3.2.2
@@ -22393,17 +22380,6 @@ __metadata:
   dependencies:
     node-forge: ^1
   checksum: aa9ce2150a54838978d5c0aee54d7ebe77649a32e4e690eb91775f71fdff773874a4fbafd0ac73d8ec3b702ff8a395c604df4f8e8868528f36fd6c15076fb43a
-  languageName: node
-  linkType: hard
-
-"semver@npm:7.3.4":
-  version: 7.3.4
-  resolution: "semver@npm:7.3.4"
-  dependencies:
-    lru-cache: ^6.0.0
-  bin:
-    semver: bin/semver.js
-  checksum: 96451bfd7cba9b60ee87571959dc47e87c95b2fe58a9312a926340fee9907fc7bc062c352efdaf5bb24b2dff59c145e14faf7eb9d718a84b4751312531b39f43
   languageName: node
   linkType: hard
 
