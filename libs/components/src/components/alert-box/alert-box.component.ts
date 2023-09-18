@@ -39,7 +39,7 @@ export class AlertBoxComponent {
 
   constructor(private element: ElementRef<HTMLElement>) {}
 }
-function capitaliseString(s: string = '') {
+function capitaliseString(s = '') {
   return s[0].toUpperCase() + s.substring(1);
 }
 // utility to make it easier to copy/paste css hsl values

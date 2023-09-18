@@ -36,7 +36,7 @@ export class CropProbabilityTableComponent {
     this.router.navigate([], { relativeTo: this.route, queryParams: { stationId: this.station?.id } });
   }
 
-  filterData(cropName: string = '') {
+  filterData(cropName = '') {
     this.selectedCropName = cropName;
     // flatten data rows which are grouped by crop
     const dataSource = new MatTableDataSource(this.tableData);
