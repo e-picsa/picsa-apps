@@ -7312,13 +7312,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/youtube@npm:0.0.46":
-  version: 0.0.46
-  resolution: "@types/youtube@npm:0.0.46"
-  checksum: a56f6572a3adc71c741403f93fd51df80ef15aa2bf797a1a122973015abb3579a716d6d9dc50457cb4576c6401638d2f4d44a74455d6b3c4a9f078e1e4cbbc06
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/eslint-plugin@npm:5.60.1":
   version: 5.60.1
   resolution: "@typescript-eslint/eslint-plugin@npm:5.60.1"
@@ -16681,19 +16674,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-youtube-player@npm:^12.0.2":
-  version: 12.0.2
-  resolution: "ngx-youtube-player@npm:12.0.2"
-  dependencies:
-    "@types/youtube": 0.0.46
-    tslib: ^2.0.0
-  peerDependencies:
-    "@angular/common": ^12.0.0
-    "@angular/core": ^12.0.0
-  checksum: 2839b6dd769db5ee73ef765801192245fa84dee98cf8955afb989bbe6c31276b9c5cd661f26e72bc319e9a60788e53a60f128c93f168438dae6f565a05c73068
-  languageName: node
-  linkType: hard
-
 "nice-napi@npm:^1.0.2":
   version: 1.0.2
   resolution: "nice-napi@npm:1.0.2"
@@ -17842,7 +17822,6 @@ __metadata:
     ngx-extended-pdf-viewer: ^16.2.16
     ngx-file-drop: 14.0.2
     ngx-lottie: ^10.0.0
-    ngx-youtube-player: ^12.0.2
     nx: 16.8.1
     nx-cloud: 16.4.0
     papaparse: ^5.3.2
