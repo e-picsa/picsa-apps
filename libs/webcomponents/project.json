@@ -11,7 +11,7 @@
   "tags": [],
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/webcomponents"],
       "options": {
         "jestConfig": "libs/webcomponents/jest.config.ts",
@@ -28,7 +28,6 @@
         "watch": false
       }
     },
-
     "test-stencil": {
       "executor": "nx:run-commands",
       "outputs": ["{options.outputPath}"],
@@ -37,7 +36,6 @@
         "cwd": "libs/webcomponents"
       }
     },
-
     "e2e": {
       "executor": "@nxext/stencil:e2e",
       "outputs": ["{options.outputPath}"],
@@ -75,9 +73,8 @@
         "outputPath": "dist/libs/webcomponents"
       }
     },
-
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/webcomponents/**/*.tsx"]

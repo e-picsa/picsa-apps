@@ -6,7 +6,7 @@
   "implicitDependencies": ["picsa-server-cloud-functions"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/picsa-server-legacy/scripts/**/*.ts"]
@@ -16,8 +16,8 @@
       "executor": "./tools/executors/execa:commandSync",
       "dependsOn": [
         {
-          "projects": "dependencies",
-          "target": "build"
+          "target": "build",
+          "dependencies": true
         }
       ],
       "outputs": ["{workspaceRoot}/apps/picsa-server-legacy/docker/cloud-functions"],

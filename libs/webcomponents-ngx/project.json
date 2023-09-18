@@ -1,11 +1,12 @@
 {
   "name": "webcomponents-ngx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/webcomponents-ngx/src",
   "prefix": "picsa",
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/webcomponents-ngx"],
       "options": {
         "jestConfig": "libs/webcomponents-ngx/jest.config.ts",
@@ -13,7 +14,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/webcomponents-ngx/**/*.ts", "libs/webcomponents-ngx/**/*.html"]
       }

@@ -70,13 +70,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/climate-tool/**/*.ts", "apps/picsa-tools/climate-tool/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/climate-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts",

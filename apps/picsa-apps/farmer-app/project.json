@@ -1,5 +1,6 @@
 {
   "name": "picsa-apps-farmer-app",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/picsa-apps/farmer-app/src",
   "prefix": "picsa",
@@ -70,13 +71,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-apps/farmer-app/**/*.ts", "apps/picsa-apps/farmer-app/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/farmer-app"],
       "options": {
         "jestConfig": "apps/picsa-apps/farmer-app/jest.config.ts",

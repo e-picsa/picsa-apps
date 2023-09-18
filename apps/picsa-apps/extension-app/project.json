@@ -32,7 +32,6 @@
             "input": "libs/shared-assets/",
             "output": "assets"
           },
-
           {
             "glob": "*.json",
             "input": "libs/i18n/assets",
@@ -89,9 +88,7 @@
           "apps/picsa-apps/extension-app/src/styles.scss",
           "node_modules/intro.js/introjs.css"
         ],
-        "scripts": [
-          "node_modules/intro.js/intro.js"
-        ]
+        "scripts": ["node_modules/intro.js/intro.js"]
       },
       "configurations": {
         "production": {
@@ -155,7 +152,6 @@
       "executor": "./tools/executors/execa:commandSync",
       "dependsOn": [
         {
-          "projects": "self",
           "target": "build"
         }
       ],
@@ -190,13 +186,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-apps/extension-app/**/*.ts", "apps/picsa-apps/extension-app/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/extension-app"],
       "options": {
         "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts",
