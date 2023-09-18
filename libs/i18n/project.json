@@ -5,7 +5,7 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/i18n/**/*.ts"]
@@ -17,17 +17,17 @@
         "command": "ts-node ./src/generate.ts",
         "cwd": "libs/i18n"
       },
-      "outputs": ["libx/i18n/generated"]
+      "outputs": ["{workspaceRoot}/libx/i18n/generated"]
     },
     "spellcheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cspell libs/i18n/templates/_template.json"
       },
-      "outputs": ["libx/i18n/generated"]
+      "outputs": ["{workspaceRoot}/libx/i18n/generated"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/i18n/jest.config.ts",

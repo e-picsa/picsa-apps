@@ -120,7 +120,7 @@ export class ProfileSelectComponent implements OnInit, OnDestroy {
    * Convert full name to initials, using first to characters if first name only
    * or first and last name initials if multiple names provided
    */
-  private nameToInitials(name: string = '') {
+  private nameToInitials(name = '') {
     // Default to using first 2 characters of name
     const initials = [name.charAt(0), name.charAt(1)];
     const names = name.split(' ');

@@ -3,14 +3,9 @@
  */
 
 // shared variables
+@import 'themes';
 @import 'variables';
 @import 'fonts';
 @import 'layout';
 @import 'typography';
 @import 'overrides';
-
-@import './themes/picsa-default.scss';
-@import './themes/picsa-global.scss';
-@import './themes/picsa-mw.scss';
-@import './themes/picsa-tj.scss';
-@import './themes/picsa-zm.scss';

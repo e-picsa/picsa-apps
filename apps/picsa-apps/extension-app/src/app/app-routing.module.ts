@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';

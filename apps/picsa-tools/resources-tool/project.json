@@ -1,5 +1,6 @@
 {
   "name": "picsa-tools-resources-tool",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/resources-tool/src",
   "prefix": "picsa",
@@ -8,7 +9,6 @@
       "executor": "./tools/executors/execa:commandSync",
       "dependsOn": [
         {
-          "projects": "self",
           "target": "build"
         }
       ],
@@ -27,13 +27,20 @@
     "build": {
       "dependsOn": [
         {
-          "projects": "self",
           "target": "preBuild"
         }
       ],
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": [
+          "lottie-web/build/player/lottie_light",
+          "downloadjs",
+          "html2canvas",
+          "save-svg-as-png",
+          "fast-xml-parser",
+          "leaflet"
+        ],
         "outputPath": "dist/apps/picsa-tools/resources-tool",
         "index": "apps/picsa-tools/resources-tool/src/index.html",
         "main": "apps/picsa-tools/resources-tool/src/main.ts",
@@ -99,13 +106,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/resources-tool/**/*.ts", "apps/picsa-tools/resources-tool/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/resources-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/resources-tool/jest.config.ts",

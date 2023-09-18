@@ -9,6 +9,17 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": [
+          "c3",
+          "deepmerge",
+          "downloadjs",
+          "fast-xml-parser",
+          "html2canvas",
+          "leaflet",
+          "lottie-web/build/player/lottie_light",
+          "papaparse",
+          "save-svg-as-png"
+        ],
         "outputPath": "dist/apps/picsa-tools/climate-tool",
         "index": "apps/picsa-tools/climate-tool/src/index.html",
         "main": "apps/picsa-tools/climate-tool/src/main.ts",
@@ -70,13 +81,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/climate-tool/**/*.ts", "apps/picsa-tools/climate-tool/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/climate-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts",

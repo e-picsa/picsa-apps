@@ -1,4 +1,4 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { BUDGET_CARDS } from '@picsa/budget/src/app/data';
 
 import type { ITranslationEntry } from '../types';

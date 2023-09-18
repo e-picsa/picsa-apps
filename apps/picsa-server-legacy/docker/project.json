@@ -10,8 +10,8 @@
       "executor": "./tools/executors/docker:docker",
       "dependsOn": [
         {
-          "projects": "dependencies",
-          "target": "docker-prepare"
+          "target": "docker-prepare",
+          "dependencies": true
         }
       ],
       "outputs": [],
@@ -24,8 +24,8 @@
       "executor": "./tools/executors/docker:docker",
       "dependsOn": [
         {
-          "projects": "dependencies",
-          "target": "docker-prepare"
+          "target": "docker-prepare",
+          "dependencies": true
         }
       ],
       "outputs": [],
@@ -40,8 +40,8 @@
       "executor": "./tools/executors/docker:docker",
       "dependsOn": [
         {
-          "projects": "dependencies",
-          "target": "docker-prepare"
+          "target": "docker-prepare",
+          "dependencies": true
         }
       ],
       "outputs": [],

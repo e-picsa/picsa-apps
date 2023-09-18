@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ENVIRONMENT } from '@picsa/environments';

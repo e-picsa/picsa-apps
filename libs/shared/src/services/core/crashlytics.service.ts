@@ -26,7 +26,7 @@ export class CrashlyticsService extends PicsaAsyncService {
     if (this.enabled) {
       const { setEnabled, setUserId, setContext, sendUnsentReports } = FirebaseCrashlytics;
       await setEnabled({ enabled: true });
-      const { uuid } = await Device.getId();
+      const { identifier: uuid } = await Device.getId();
       await setUserId({ userId: uuid });
       // populate webview useragent info
       const { webViewVersion } = await Device.getInfo();

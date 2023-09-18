@@ -66,13 +66,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-apps/content-dashboard/**/*.ts", "apps/picsa-apps/content-dashboard/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/content-dashboard"],
       "options": {
         "jestConfig": "apps/picsa-apps/content-dashboard/jest.config.ts",

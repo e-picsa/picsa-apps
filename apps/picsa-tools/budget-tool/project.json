@@ -9,6 +9,13 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": [
+          "c3",
+          "deepmerge",
+          "fast-xml-parser",
+          "leaflet",
+          "lottie-web/build/player/lottie_light"
+        ],
         "outputPath": "dist/apps/picsa-tools/budget-tool",
         "index": "apps/picsa-tools/budget-tool/src/index.html",
         "main": "apps/picsa-tools/budget-tool/src/main.ts",
@@ -18,7 +25,11 @@
         "assets": [
           "apps/picsa-tools/budget-tool/src/favicon.ico",
           "apps/picsa-tools/budget-tool/src/assets",
-          { "glob": "**/*", "input": "libs/shared-assets/svgs/crops/", "output": "assets/budget-cards/" }
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/svgs/crops/",
+            "output": "assets/budget-cards/"
+          }
         ],
         "styles": ["apps/picsa-tools/budget-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
@@ -70,13 +81,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/budget-tool/**/*.ts", "apps/picsa-tools/budget-tool/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/budget-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/budget-tool/jest.config.ts",
