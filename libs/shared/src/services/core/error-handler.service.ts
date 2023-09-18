@@ -1,16 +1,14 @@
-import { ErrorHandler, Injectable, Injector } from '@angular/core';
+import { ErrorHandler, Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { fromError as getStacktraceFromError } from 'stacktrace-js';
 
-import { CrashlyticsService } from '../native/crashlytics.service';
+import { CrashlyticsService } from './crashlytics.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ErrorHandlerService extends ErrorHandler {
-  // Error handling is important and needs to be loaded first.
-  // Because of this we should manually inject the services with Injector.
-  constructor(private injector: Injector) {
+  constructor(private crashlyticsService: CrashlyticsService) {
     super();
   }
 
@@ -19,8 +17,9 @@ export class ErrorHandlerService extends ErrorHandler {
    * (console logs and modal in dev mode, ignored in production), on android
    * this logs to firebase crashlytics
    */
-  override handleError(error: Error) {
+  override async handleError(error: Error) {
     if (Capacitor.isNativePlatform()) {
+      await this.crashlyticsService.ready();
       return this.logToCrashlytics(error);
     } else {
       super.handleError(error);
@@ -29,13 +28,10 @@ export class ErrorHandlerService extends ErrorHandler {
   }
 
   private async logToCrashlytics(error: Error) {
-    const crashlyticsService = this.injector.get(CrashlyticsService);
-    if (crashlyticsService) {
-      const stacktrace = await getStacktraceFromError(error);
-      crashlyticsService.recordException({
-        message: error.message,
-        stacktrace,
-      });
-    }
+    const stacktrace = await getStacktraceFromError(error);
+    return this.crashlyticsService.recordException({
+      message: error.message,
+      stacktrace,
+    });
   }
 }

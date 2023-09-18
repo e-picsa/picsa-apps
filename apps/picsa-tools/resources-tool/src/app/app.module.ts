@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDbModule, PicsaNativeModule, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
-import { NgxYoutubePlayerModule } from 'ngx-youtube-player';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -17,7 +16,6 @@ const StandaloneImports = [AppRoutingModule, BrowserModule, BrowserAnimationsMod
 /** Common imports used in both standalone and embedded formats */
 export const APP_COMMON_IMPORTS = [
   FormsModule,
-  NgxYoutubePlayerModule,
   PicsaTranslateModule,
   MobxAngularModule,
   ResourcesMaterialModule,

@@ -64,7 +64,6 @@ libs/environments/firebase/config.prod.ts
 libs/features/map/tiles/assets-for-copy   
 libs/features/map/tiles/**/*.png
 
-releases/
 apps/extension-toolkit/www_sourcemaps
 
 .env

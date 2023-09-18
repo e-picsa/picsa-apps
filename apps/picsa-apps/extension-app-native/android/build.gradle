@@ -7,13 +7,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath 'com.google.gms:google-services:4.3.14'
+        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.google.gms:google-services:4.3.15'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1' // Crashlytics Gradle plugin
-        classpath 'com.google.firebase:perf-plugin:1.4.1' // Performance Gradle plugin
+
+        // CC Note - firebase seems to require for some modules, as proposed by android studio firebase integration)
+       classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+       classpath 'com.google.firebase:perf-plugin:1.4.2'
     }
 }
 

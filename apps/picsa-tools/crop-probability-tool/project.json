@@ -18,7 +18,11 @@
         "assets": [
           "apps/picsa-tools/crop-probability-tool/src/favicon.ico",
           "apps/picsa-tools/crop-probability-tool/src/assets",
-          { "glob": "**/*", "input": "libs/shared-assets/svgs/crops/", "output": "assets/svgs/crops/" }
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/svgs/crops/",
+            "output": "assets/svgs/crops/"
+          }
         ],
         "styles": ["apps/picsa-tools/crop-probability-tool/src/styles.scss", "libs/theme/src/_index.scss"],
         "scripts": []
@@ -69,7 +73,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -79,7 +83,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/picsa-tools/crop-probability-tool/jest.config.ts",

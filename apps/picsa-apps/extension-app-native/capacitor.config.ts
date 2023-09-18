@@ -40,6 +40,7 @@ const config: CapacitorConfig = {
     /** Uncomment and replace with local ip to serve live-reload */
 
     // url: 'http://192.168.50.67:4200',
+    androidScheme: 'http',
 
     /**
      * NOTE - cleartext still required for caching fetch requests even when not serving locally

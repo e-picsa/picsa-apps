@@ -1,5 +1,6 @@
 {
   "name": "picsa-tools-monitoring-tool",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/monitoring-tool/src",
   "prefix": "picsa",
@@ -70,13 +71,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/monitoring-tool/**/*.ts", "apps/picsa-tools/monitoring-tool/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/monitoring-tool"],
       "options": {
         "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts",

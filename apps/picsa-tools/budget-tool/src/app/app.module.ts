@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components/src';
-// import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 import { PicsaDbModule, PicsaNativeModule, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
 

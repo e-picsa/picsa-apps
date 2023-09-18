@@ -1,8 +1,3 @@
-@use '@angular/material' as mat;
-
-@include mat.core();
-
-// http://mcg.mbitson.com/#!?mcgpalette0=%23ef7d00&themename=mcgtheme
 $primary: (
   50: #f4e3e4,
   100: #e3b8bd,
@@ -79,17 +74,17 @@ $palette-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $theme-mw: mat.define-light-theme(
-  $palette-primary,
-  $palette-accent,
-  $palette-warn
+  (
+    color: (
+      primary: $palette-primary,
+      accent: $palette-accent,
+      warn: $palette-warn,
+    ),
+  )
 );
 
-// .theme-mw {
-//   @include mat.all-component-themes($picsa-mw);
-// }
 body[data-theme='picsa-mw'] {
-  @include mat.all-component-themes($theme-mw);
-
+  @include mat.all-component-colors($theme-mw);
   --color-primary: #{map-get($palette-primary, 500)};
   --color-primary-50: #{map-get($palette-primary, 50)};
   --color-secondary: #{map-get($palette-accent, 500)};

@@ -33,3 +33,26 @@ body {
   flex-direction: column;
   flex: 1;
 }
+
+// instead of using bottom use top with calc to avoid jumping
+$footer-height: 5em;
+.sticky-footer {
+  position: fixed;
+  height: $footer-height;
+  top: calc(100vh - #{$footer-height});
+  left: 0;
+  width: 100%;
+  background: white;
+  display: flex;
+  align-items: center;
+}
+
+button.footer-button.mat-mdc-button-base {
+  width: 60%;
+  left: 20%;
+  height: calc(#{$footer-height} - 10px) !important;
+  .mdc-button__label {
+    font-size: 1.5rem;
+    line-height: 3rem;
+  }
+}

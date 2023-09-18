@@ -13,7 +13,6 @@ const videos: Record<string, IResourceFile> = {
     type: 'file',
     image: 'assets/resources/covers/ram-refresher.jpg',
     url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/picsa%2Fvideos%2Fram-refresher.mp4?alt=media&token=fcc2d91b-3e61-4def-a147-30eced72186c',
-    // youtubeID: 'Kw5UznKvCN8',
   },
 };
 

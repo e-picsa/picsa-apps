@@ -7,16 +7,9 @@ import type { IAvailableAnimations } from './models';
 @Component({
   selector: 'picsa-animation',
   styleUrls: ['./animation.component.scss'],
-  template: ` <div
-    class="animation-background"
-    [style.display]="options ? 'block' : 'none'"
-  >
+  template: ` <div class="animation-background" [style.display]="options ? 'block' : 'none'">
     <ng-container *ngIf="options">
-      <ng-lottie
-        id="animation-container"
-        [options]="options"
-        (loopComplete)="loopComplete($event)"
-      ></ng-lottie>
+      <ng-lottie id="animation-container" [options]="options" (loopComplete)="loopComplete($event)"></ng-lottie>
     </ng-container>
   </div>`,
 })
@@ -49,7 +42,7 @@ export class PicsaAnimationComponent implements OnInit {
 
   /** Track number of times animation has looped, destroy if loops limit provided */
   loopComplete(e: BMCompleteLoopEvent) {
-    if (this.loops && e.currentLoop >= this.loops) {
+    if (this.loops && (e.currentLoop as number) >= this.loops) {
       this.selfDestruct();
     }
   }

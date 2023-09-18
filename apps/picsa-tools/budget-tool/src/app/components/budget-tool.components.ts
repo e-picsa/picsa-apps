@@ -8,7 +8,6 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule } from '@picsa/shared/features';
 import { PicsaDbModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
-import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
 
 import { BudgetMaterialModule } from '../material.module';
 // Components
@@ -67,7 +66,6 @@ const components = [
     TranslateModule.forChild(),
     PicsaDialogsModule,
     PicsaCommonComponentsModule,
-    CanvasWhiteboardModule,
     MobxAngularModule,
     PicsaDbModule,
     RouterModule,

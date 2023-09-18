@@ -1,0 +1,10 @@
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@use '@angular/material' as mat;
+@include mat.core();
+
+@import './picsa-global.scss';
+@import './picsa-mw.scss';
+@import './picsa-tj.scss';
+@import './picsa-zm.scss';

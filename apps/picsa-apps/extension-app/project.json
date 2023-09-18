@@ -6,6 +6,18 @@
   "prefix": "picsa",
   "targets": {
     "build": {
+      "allowedCommonJsDependencies": [
+        "c3",
+        "deepmerge",
+        "downloadjs",
+        "fast-xml-parser",
+        "html2canvas",
+        "leaflet",
+        "node-forge",
+        "papaparse",
+        "save-svg-as-png",
+        "stacktrace-js"
+      ],
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -32,7 +44,6 @@
             "input": "libs/shared-assets/",
             "output": "assets"
           },
-
           {
             "glob": "*.json",
             "input": "libs/i18n/assets",
@@ -86,9 +97,10 @@
           "apps/picsa-tools/budget-tool/src/styles.scss",
           "apps/picsa-tools/resources-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
-          "apps/picsa-apps/extension-app/src/styles.scss"
+          "apps/picsa-apps/extension-app/src/styles.scss",
+          "node_modules/intro.js/introjs.css"
         ],
-        "scripts": []
+        "scripts": ["node_modules/intro.js/intro.js"]
       },
       "configurations": {
         "production": {
@@ -152,7 +164,6 @@
       "executor": "./tools/executors/execa:commandSync",
       "dependsOn": [
         {
-          "projects": "self",
           "target": "build"
         }
       ],
@@ -187,13 +198,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/picsa-apps/extension-app/**/*.ts", "apps/picsa-apps/extension-app/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/extension-app"],
       "options": {
         "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts",
