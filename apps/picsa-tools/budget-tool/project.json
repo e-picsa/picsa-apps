@@ -9,6 +9,7 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["deepmerge"],
         "outputPath": "dist/apps/picsa-tools/budget-tool",
         "index": "apps/picsa-tools/budget-tool/src/index.html",
         "main": "apps/picsa-tools/budget-tool/src/main.ts",

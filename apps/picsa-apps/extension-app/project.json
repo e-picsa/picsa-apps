@@ -6,6 +6,18 @@
   "prefix": "picsa",
   "targets": {
     "build": {
+      "allowedCommonJsDependencies": [
+        "c3",
+        "deepmerge",
+        "downloadjs",
+        "fast-xml-parser",
+        "html2canvas",
+        "leaflet",
+        "node-forge",
+        "papaparse",
+        "save-svg-as-png",
+        "stacktrace-js"
+      ],
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {

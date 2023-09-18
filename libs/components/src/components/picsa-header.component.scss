@@ -18,7 +18,7 @@ header[data-style='inverted'] {
 .start-content {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
   min-width: 100px;
 }
 
@@ -31,7 +31,7 @@ header[data-style='inverted'] {
 .end-content {
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: flex-end;
   min-width: 100px;
 }
 h1 {

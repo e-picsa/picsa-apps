@@ -9,6 +9,7 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["deepmerge", "papaparse"],
         "outputPath": "dist/apps/picsa-tools/climate-tool",
         "index": "apps/picsa-tools/climate-tool/src/index.html",
         "main": "apps/picsa-tools/climate-tool/src/main.ts",
