@@ -9,7 +9,17 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": ["deepmerge", "papaparse"],
+        "allowedCommonJsDependencies": [
+          "c3",
+          "deepmerge",
+          "downloadjs",
+          "fast-xml-parser",
+          "html2canvas",
+          "leaflet",
+          "lottie-web/build/player/lottie_light",
+          "papaparse",
+          "save-svg-as-png"
+        ],
         "outputPath": "dist/apps/picsa-tools/climate-tool",
         "index": "apps/picsa-tools/climate-tool/src/index.html",
         "main": "apps/picsa-tools/climate-tool/src/main.ts",
