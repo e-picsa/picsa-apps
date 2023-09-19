@@ -1,47 +1,30 @@
-.page-container{
-    padding-left: 1rem;
-    padding-right: 1rem;
-    width: 90%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+.page-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
-h2{
-    margin-bottom: 2rem;
+h2 {
+  margin-bottom: 2rem;
 }
-.guide-video-placeholder{
-    width: 70%;
-    margin-bottom: 2rem;
-    height: 20rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
+.svg-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 3rem;
+  justify-content: space-evenly;
+  align-items: center;
 }
-.play-button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 4rem;
-    width: 4rem;
-}
-.svg-row{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    margin-top: 3rem;
-    justify-content: space-evenly;
-    align-items: center;
-}
-.row-mat-icon{
-    height: 3rem;
-    width: 3rem;
+.row-mat-icon {
+  height: 3rem;
+  width: 3rem;
 }
 
-
-.svg-item{
-   flex-direction: column;
-   display: flex;
-   align-items: center;
-   gap:.5rem
+.svg-item {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }

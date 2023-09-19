@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Route, RouterModule } from '@angular/router';
+import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ManualToolComponentsModule } from '../../components/components.module';
@@ -20,7 +21,14 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, ManualToolComponentsModule,MatIconModule, RouterModule.forChild(routes), PicsaTranslateModule],
+  imports: [
+    CommonModule,
+    ManualToolComponentsModule,
+    MatIconModule,
+    RouterModule.forChild(routes),
+    PicsaTranslateModule,
+    PicsaVideoPlayerModule,
+  ],
   exports: [],
   declarations: [ActivityComponent, ActivityDetailsComponent],
   providers: [],

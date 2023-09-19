@@ -88,6 +88,7 @@ body[data-theme='picsa-tj'] {
   --color-primary: #{map-get($palette-primary, 500)};
   --color-primary-50: #{map-get($palette-primary, 50)};
   --color-secondary: #{map-get($palette-accent, 500)};
+  --color-warn: #{map-get($palette-warn, 500)};
   --color-black: #1a2138;
   --color-light: #d8d8d8;
   --color-white: #ffffff;

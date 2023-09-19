@@ -1,12 +1,7 @@
 <div class="page-container">
   <h2>{{ activity?.label }}</h2>
 
-  <!-- <video class="video-player" [src]="activity?.video" controls></video> -->
-  <div class="guide-video-placeholder" >
-    <mat-icon (click)="playVideo()" class="play-button" color="primary">play_circle_outline</mat-icon>
-  </div>
-
-  <div class="video-player" id="video-player" slot="fixed"></div>
+  <picsa-video-player *ngIf="activity?.video" [url]="activity?.video"></picsa-video-player>
 
   <div class="svg-row">
     <div class="svg-item">
