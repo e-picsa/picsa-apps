@@ -30,17 +30,18 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   /** Url of video to player */
   @Input() url?: string;
   /** Unique identifier used in case of multiple players*/
-  protected playerId = `videoPlayer${generateID(5)}`;
+  protected playerId = `videoPlayer_${generateID(5)}`;
 
-  protected showPlayButton = false;
+  protected showPlayButton = Capacitor.isNativePlatform() ? true : false;
 
   public videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
 
   private playerOptions: capVideoPlayerOptions;
 
   async ngAfterViewInit() {
-    // Automatically init after page loaded on web so that preview can be generated
-    // Do not initialise on native (required before playback start)
+    // When running on native platform avoid init as will trigger fullscreen playback
+    // Instead prefer just to show play button which will call init on play
+    // When running on web call init immediately as this will populate a visual preview of content
     if (!Capacitor.isNativePlatform()) {
       this.initPlayer();
     }
@@ -55,11 +56,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     // On native initialise before every playback to ensure full screen fragments created
     if (Capacitor.isNativePlatform()) {
       await this.initPlayer();
+    } else {
+      await this.videoPlayer.play({ playerId: this.playerId });
     }
-    await this.videoPlayer.play({ playerId: this.playerId });
   }
 
   private async initPlayer() {
+    if (!this.url) return;
     const defaultOptions: capVideoPlayerOptions = {
       mode: 'embedded',
       url: this.url,
@@ -73,6 +76,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     if (Capacitor.isNativePlatform()) {
       defaultOptions.mode = 'fullscreen';
       defaultOptions.exitOnEnd = true;
+      if (this.url.startsWith('assets')) {
+        // NOTE - android local assets require 'public' prefix
+        // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
+        defaultOptions.url = `public/${this.url}`;
+      }
     }
     // Merge default options with user override
     this.playerOptions = { ...defaultOptions, ...this.options };
