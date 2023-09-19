@@ -39,8 +39,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private playerOptions: capVideoPlayerOptions;
 
   async ngAfterViewInit() {
-    // Automatically init after page loaded so that preview can be generated
-    this.initPlayer();
+    // Automatically init after page loaded on web so that preview can be generated
+    // Do not initialise on native (required before playback start)
+    if (!Capacitor.isNativePlatform()) {
+      this.initPlayer();
+    }
   }
 
   async ngOnDestroy() {
@@ -49,6 +52,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
 
   public async playVideo() {
+    // On native initialise before every playback to ensure full screen fragments created
+    if (Capacitor.isNativePlatform()) {
+      await this.initPlayer();
+    }
     await this.videoPlayer.play({ playerId: this.playerId });
   }
 
