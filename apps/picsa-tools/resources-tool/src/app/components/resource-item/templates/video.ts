@@ -1,14 +1,21 @@
 import { Component, Input } from '@angular/core';
 
-import { IResourceVideo } from '../../models';
-import { ResourceItemComponent } from './resource-item.component';
-import { FileItemHandler } from './templates/file';
+import { IResourceVideo } from '../../../models';
+import { ResourceItemComponent } from '../resource-item.component';
+import { FileItemHandler } from './file';
 
 @Component({
   selector: 'resource-item-video',
   template: `
-    <div>Video</div>
-    <picsa-video-player [url]="resource.url" #videoPlayer (click)="videoPlayer.playVideo()"></picsa-video-player>
+    <h2>{{ resource.title | translate }}</h2>
+    <picsa-video-player
+      [url]="resource.url"
+      #videoPlayer
+      (click)="videoPlayer.playVideo()"
+      [thumbnail]="resource.image"
+    ></picsa-video-player>
+    <p *ngIf="resource.subtitle">{{ resource.subtitle | translate }}</p>
+    <p *ngIf="resource.description">{{ resource.description | translate }}</p>
   `,
 })
 export class ResourceItemVideoComponent {

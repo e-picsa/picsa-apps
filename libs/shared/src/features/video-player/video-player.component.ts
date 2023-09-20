@@ -29,6 +29,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   @Input() options: Partial<capVideoPlayerOptions> = {};
   /** Url of video to player */
   @Input() url?: string;
+  /** Optional image shown as preview */
+  @Input() thumbnail?: string;
   /** Unique identifier used in case of multiple players*/
   protected playerId = `videoPlayer_${generateID(5)}`;
 
@@ -53,6 +55,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
 
   public async playVideo() {
+    // Remove thumbnail from future playback
+    this.thumbnail = undefined;
     // On native initialise before every playback to ensure full screen fragments created
     if (Capacitor.isNativePlatform()) {
       await this.initPlayer();

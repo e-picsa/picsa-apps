@@ -1,4 +1,5 @@
 <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
+  <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div>
   <button *ngIf="showPlayButton" mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!url">
     <mat-icon>play_arrow</mat-icon>
   </button>

@@ -1,18 +1,31 @@
 @use '@angular/material' as mat;
 
+$playerWidth: 480px;
+
 :host {
   display: contents;
 }
+.placeholder,
+.thumbnail {
+  width: 100%;
+  max-width: $playerWidth;
+  aspect-ratio: 16/9;
+}
 .placeholder {
   position: relative;
-  width: 100%;
-  max-width: 480px;
   margin-bottom: 2rem;
-  aspect-ratio: 16/9;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.25);
+}
+.thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 $icon-size: 3rem;
 .play-button {

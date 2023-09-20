@@ -7,7 +7,7 @@ const videos: Record<string, IResourceVideo> = {
     _modified: '2019-09-25T11:00:01.000Z',
     title: 'RAM Refresher',
     mimetype: 'video/mp4',
-    description: '',
+    description: 'A summary of how to create resource allocation maps (RAMs)',
     subtitle: '',
     filename: 'ram-refresher.mp4',
     type: 'video',

@@ -1,4 +1,4 @@
-export * from '../video';
+export * from './video';
 export * from './app';
 export * from './card/card';
 export * from './collection/collection';
