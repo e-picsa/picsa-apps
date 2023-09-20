@@ -24,6 +24,7 @@ const config: CapacitorConfig = {
     '@capacitor/device',
     '@capacitor/filesystem',
     'capacitor-blob-writer',
+    'capacitor-video-player',
     '@capacitor-community/firebase-analytics',
     '@capacitor-community/firebase-crashlytics',
     '@capacitor-firebase/performance',

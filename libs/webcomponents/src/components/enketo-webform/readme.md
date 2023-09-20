@@ -35,6 +35,7 @@ Cannot integrate nxext stencil test as does not (currently) support jest 28
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property             | Attribute      | Description                                           | Type      | Default     |
@@ -43,6 +44,7 @@ Cannot integrate nxext stencil test as does not (currently) support jest 28
 | `model` _(required)_ | `model`        | XML form model, as processed by an Enketo Transformer | `string`  | `undefined` |
 | `showButtons`        | `show-buttons` |                                                       | `boolean` | `true`      |
 
+
 ## Events
 
 | Event         | Description | Type                             |
@@ -50,6 +52,7 @@ Cannot integrate nxext stencil test as does not (currently) support jest 28
 | `dataUpdated` |             | `CustomEvent<IEventDataUpdated>` |
 | `formSaved`   |             | `CustomEvent<IEventFormSaved>`   |
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

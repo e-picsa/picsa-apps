@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IManualActivity, PICSA_MANUAL_GRID_DATA_EXTENSION } from '../../data';
+import { IManualActivity, PICSA_MANUAL_GRID_DATA_EXTENSION } from '../../data/manual-contents';
 
 @Component({
   selector: 'picsa-manual-activity-details',
@@ -12,7 +12,7 @@ export class ActivityDetailsComponent implements OnInit {
   activity?: IManualActivity;
 
   constructor(private route: ActivatedRoute) {}
-  ngOnInit() {
+  async ngOnInit() {
     const activityId = this.route.snapshot.params.id;
     if (activityId) {
       this.activity = PICSA_MANUAL_GRID_DATA_EXTENSION.find((activity) => activity.id === activityId);

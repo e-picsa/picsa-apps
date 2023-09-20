@@ -20,6 +20,10 @@
 		"classpath": "com.equimaps.capacitorblobwriter.BlobWriter"
 	},
 	{
+		"pkg": "capacitor-video-player",
+		"classpath": "com.jeep.plugin.capacitor.capacitorvideoplayer.CapacitorVideoPlayerPlugin"
+	},
+	{
 		"pkg": "@capacitor-community/firebase-analytics",
 		"classpath": "com.getcapacitor.community.firebaseanalytics.FirebaseAnalytics"
 	},

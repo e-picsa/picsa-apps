@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.33.0",
+  "version": "3.34.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -67,6 +67,7 @@
     "@supabase/supabase-js": "^2.22.0",
     "c3": "^0.7.20",
     "capacitor-blob-writer": "^1.1.14",
+    "capacitor-video-player": "^5.0.1",
     "cordova-plugin-codeplay-share-own-apk": "0.0.7",
     "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-file-opener2": "^4.0.0",
@@ -80,6 +81,7 @@
     "firebase": "^9.16.0",
     "form-data": "^4.0.0",
     "glob": "^8.1.0",
+    "hls.js": "^1.4.9",
     "html2canvas": "^1.4.1",
     "intro.js": "^7.0.1",
     "leaflet": "^1.9.3",
@@ -164,7 +166,6 @@
     "nx-cloud": "16.4.0",
     "postcss": "^8.4.5",
     "postcss-import": "~14.1.0",
-    "postcss-preset-env": "~7.5.0",
     "postcss-url": "~10.1.3",
     "prettier": "2.6.2",
     "prompts": "^2.4.2",
