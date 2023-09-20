@@ -28,6 +28,7 @@ const emptyTypes: () => { [type in IResource['type']]: [] } = () => ({
   link: [],
   youtube: [],
   app: [],
+  video: [],
 });
 
 const typeExports: {

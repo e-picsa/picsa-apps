@@ -1,6 +1,6 @@
 import type { IDBDoc } from '@picsa/models';
 
-export type IResourceType = 'collection' | 'file' | 'youtube' | 'link' | 'app';
+export type IResourceType = 'collection' | 'file' | 'youtube' | 'link' | 'app' | 'video';
 
 export interface IResourceItemBase extends IDBDoc {
   title: string;
@@ -19,17 +19,22 @@ export interface IResourceItemBase extends IDBDoc {
   /** Custom keywords used for some filtering (manual) and in future could be used for search */
   keywords?: string[];
 }
-//
-export interface IResourceFile extends IResourceItemBase {
-  // Core DB type
-  type: 'file';
-  filename: string;
-  mimetype: 'application/pdf' | 'video/mp4';
+
+interface IDownloadableResource {
+  _downloaded?: boolean;
   url: string;
-  folder?: string;
-  // TODO - legacy types
-  viewableBy?: string[];
-  filepath?: string;
+  filename: string;
+}
+//
+export interface IResourceFile extends IResourceItemBase, IDownloadableResource {
+  _isDownloaded?: boolean;
+  type: 'file';
+  mimetype: 'application/pdf';
+}
+
+export interface IResourceVideo extends IResourceItemBase, IDownloadableResource {
+  type: 'video';
+  mimetype: 'video/mp4';
 }
 export interface IResourceYoutube extends IResourceItemBase {
   type: 'youtube';
@@ -52,4 +57,10 @@ export interface IResourceApp extends IResourceItemBase {
   appId: string;
 }
 
-export type IResource = IResourceFile | IResourceYoutube | IResourceCollection | IResourceLink | IResourceApp;
+export type IResource =
+  | IResourceFile
+  | IResourceYoutube
+  | IResourceVideo
+  | IResourceCollection
+  | IResourceLink
+  | IResourceApp;

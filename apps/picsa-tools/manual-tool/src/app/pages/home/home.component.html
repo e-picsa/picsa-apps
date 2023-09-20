@@ -9,11 +9,11 @@
     <!-- Extension version -->
     <mat-tab [label]="'Extension' | translate">
       <picsa-alert-box *ngIf="downloadPrompt.show" type="info" [title]="downloadPrompt.title">
-        <picsa-resource-item
+        <resource-item
           [resource]="downloadPrompt.resource"
           (downloadComplete)="handleManualDownloaded($event)"
           [openAfterDownload]="false"
-        ></picsa-resource-item>
+        ></resource-item>
       </picsa-alert-box>
       <picsa-manual-steps-container
         *ngIf="pdfSrc"
@@ -25,11 +25,11 @@
     <mat-tab [label]="'Farmer' | translate">
       <div class="mat-elevation-z4">
         <picsa-alert-box *ngIf="downloadPrompt.show" type="info" [title]="downloadPrompt.title">
-          <picsa-resource-item
+          <resource-item
             [resource]="downloadPrompt.resource"
             (downloadComplete)="handleManualDownloaded($event)"
             [openAfterDownload]="false"
-          ></picsa-resource-item>
+          ></resource-item>
         </picsa-alert-box>
         <picsa-manual-steps-container
           *ngIf="pdfSrc"

@@ -1,17 +1,6 @@
 <div class="page-content no-padding">
-  <picsa-resource-item [resource]="collection" viewStyle="expanded" *ngIf="collection; else elseBlock">
-    <div style="margin-top: 2rem">
-      <mat-card-title style="font-size: 20px">{{ 'Resources' | translate }}</mat-card-title>
-      <div class="list-container">
-        <picsa-resource-item
-          *ngFor="let resource of collectionResources"
-          [resource]="resource"
-          style="margin-bottom: 8px"
-        >
-        </picsa-resource-item>
-      </div>
-    </div>
-  </picsa-resource-item>
+  <resource-item-collection [collection]="collection" viewStyle="expanded" *ngIf="collection; else elseBlock">
+  </resource-item-collection>
   <ng-template #elseBlock>{{ 'Collection not found' | translate }}</ng-template>
 </div>
 

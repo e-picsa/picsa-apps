@@ -3,18 +3,17 @@ import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { Subject, takeUntil } from 'rxjs';
 
-import { IResource, IResourceCollection, IResourceItemBase } from '../../models';
+import { IResourceCollection } from '../../models';
 import { ResourcesStore } from '../../stores';
 
 @Component({
-  selector: 'picsa-collection',
+  selector: 'resource-collection',
   templateUrl: './collection.component.html',
   styleUrls: ['./collection.component.scss'],
 })
 export class CollectionComponent implements OnInit, OnDestroy {
   title = 'Collection';
   collection: IResourceCollection | undefined;
-  collectionResources: IResource[] = [];
   componentDestroyed$ = new Subject();
   constructor(
     private store: ResourcesStore,
@@ -50,10 +49,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     const foundCollection = this.store.getResourceById<IResourceCollection>(id);
     if (foundCollection) {
       this.collection = foundCollection;
-      this.collectionResources = this.collection.childResources
-        .map((resourceId) => this.store.getResourceById(resourceId))
-        .sort((a: IResourceItemBase, b: IResourceItemBase) => (b.priority ?? -99) - (a.priority ?? -99));
-      // Use set timeout to ensure title changes after other default title change
+
       setTimeout(() => {
         this.componentsService.setHeader({ title: foundCollection.title });
       }, 0);

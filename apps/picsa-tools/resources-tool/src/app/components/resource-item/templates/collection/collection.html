@@ -1,0 +1,26 @@
+<!-- Main View -->
+<mat-card *ngIf="viewStyle==='expanded'">
+  <!-- Header -->
+  <mat-card-header>
+    <mat-card-title>{{ collection.title | translate }}</mat-card-title>
+    <mat-card-subtitle> {{ collection.subtitle || collection.description || ''}} </mat-card-subtitle>
+    <img mat-card-avatar *ngIf="collection.image" [src]="collection.image" />
+  </mat-card-header>
+  <!-- Contents -->
+  <mat-card-content>
+    <div *ngIf="collection.language" style="margin-top: 2em">
+      <span class="language-code">{{ collection.language.toUpperCase() }}</span>
+    </div>
+    <div style="margin-top: 2rem" class="child-resources">
+      <mat-card-title style="font-size: 20px">{{ 'Resources' | translate }}</mat-card-title>
+      <div class="list-container">
+        <resource-item *ngFor="let resource of resources" [resource]="resource" style="margin-bottom: 8px">
+        </resource-item>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- Summary View -->
+<resource-item-card *ngIf="viewStyle==='summary'" (handleClick)="goToCollection()" [resource]="collection">
+</resource-item-card>

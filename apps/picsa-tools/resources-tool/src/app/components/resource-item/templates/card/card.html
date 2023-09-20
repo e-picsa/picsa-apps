@@ -1,0 +1,28 @@
+<!-- Base resource display -->
+<mat-card appearance="raised" class="resource-card link" (click)="handleClick.emit($event)">
+  <div class="card-layout">
+    <!-- Side Image -->
+    <div
+      *ngIf="resource.image"
+      class="background-image"
+      [style.background-image]="'url(' + resource.image + ')'"
+      [attr.data-fit]="resource.imageFit"
+    ></div>
+
+    <!-- Main content -->
+    <div class="central-content">
+      <mat-card-header>
+        <mat-card-title style="margin-top: 12px">{{ resource.title | translate }}</mat-card-title>
+        <mat-card-subtitle *ngIf="resource.subtitle"> {{ resource.subtitle }} </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p *ngIf="resource.description">{{ resource.description | translate }}</p>
+        <!-- Child Content -->
+        <ng-content></ng-content>
+        <div *ngIf="resource.language" style="margin-top: 2em">
+          <span class="language-code">{{ resource.language.toUpperCase() }}</span>
+        </div>
+      </mat-card-content>
+    </div>
+  </div>
+</mat-card>
