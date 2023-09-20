@@ -13,9 +13,9 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - fix/android-ci
 jobs:
   android_release:
     runs-on: ubuntu-latest

@@ -42,7 +42,7 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
 
     // Required for capacitor-video-player
-    implementation 'com.google.android.gms:play-services-cast-framework:21.2.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
 
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
 }
