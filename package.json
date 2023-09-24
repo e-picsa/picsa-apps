@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.34.1",
+  "version": "3.34.2",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -56,7 +56,7 @@
     "@capacitor-firebase/performance": "^5.1.0",
     "@capacitor/app": "^5.0.6",
     "@capacitor/browser": "^5.1.0",
-    "@capacitor/core": "^5.4.0",
+    "@capacitor/core": "^5.4.1",
     "@capacitor/device": "^5.0.6",
     "@capacitor/filesystem": "^5.1.4",
     "@ionic-native/core": "^5.36.0",
