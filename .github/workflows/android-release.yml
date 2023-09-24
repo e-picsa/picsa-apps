@@ -51,8 +51,6 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/extension-app-native/android/app/google-services.json
-      - name: Install Dependencies
-        run: yarn install
       - name: Build Extension App
         run: yarn nx run picsa-apps-extension-app-native:build
         # Re-sync as remote cache won't populate files during nx build command
