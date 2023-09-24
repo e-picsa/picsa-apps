@@ -63,13 +63,6 @@ const PAGE_LINKS: IPageLink[] = [
     url: '/option',
     tourId: 'option',
   },
-  {
-    name: translateMarker('Seasonal Calendar'),
-    icon: 'picsa_seasonal_calendar_tool',
-    url: '/seasonal-calendar',
-    tourId: 'seasonal-calendar',
-    devOnly: true,
-  },
 
   // {
   //   name: translateMarker('Discussions'),
@@ -84,6 +77,22 @@ const PAGE_LINKS: IPageLink[] = [
   // }
 ];
 
+/** Additional links only available when running in non-production */
+const DEV_PAGE_LINKS: IPageLink[] = [
+  {
+    name: translateMarker('Seasonal Calendar'),
+    icon: 'picsa_seasonal_calendar_tool',
+    url: '/seasonal-calendar',
+    tourId: 'seasonal-calendar',
+    devOnly: true,
+  },
+];
+if (!ENVIRONMENT.production) {
+  for (const link of DEV_PAGE_LINKS) {
+    PAGE_LINKS.push(link);
+  }
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -91,7 +100,7 @@ const PAGE_LINKS: IPageLink[] = [
 })
 export class HomePage implements OnDestroy, AfterViewInit {
   /** List of home page display links, filtered when running in production */
-  public links = PAGE_LINKS.filter((link) => (ENVIRONMENT.production ? !link.devOnly : link));
+  public links = PAGE_LINKS;
   public version = APP_VERSION;
 
   private userEventSubscription: Subscription;
