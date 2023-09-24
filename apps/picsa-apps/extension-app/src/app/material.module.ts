@@ -28,6 +28,7 @@ export class ExtensionToolkitMaterialModule {
       play_store: 'play_store',
       probability_tool: 'probability_tool',
       resources_tool: 'resources_tool',
+      seasonal_calendar_tool: 'seasonal_calendar_tool',
       tutorial: 'tutorial',
       whatsapp: 'whatsapp',
     };

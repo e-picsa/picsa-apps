@@ -55,6 +55,9 @@
   font-size: 18px;
   padding: 16px 8px 8px 8px;
 }
+.grid-tile[data-dev-only='true'] {
+  background: rgba(0, 0, 0, 0.35);
+}
 .grid-tile:hover {
   transform: scale(1.02);
   transition: all 0.3s ease-out;
