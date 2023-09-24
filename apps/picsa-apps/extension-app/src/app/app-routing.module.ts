@@ -8,6 +8,7 @@ import { ManualToolModule } from '@picsa/manual/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
 import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
+import { SeasonalCalendarToolModule } from '@picsa/seasonal-calendar/src/app/app.module-embedded';
 
 const routes: Routes = [
   // support embed of budget tool app
@@ -40,6 +41,11 @@ const routes: Routes = [
   {
     path: 'resources',
     loadChildren: () => import('@picsa/resources/src/app/app.module-embedded').then((mod) => mod.ResourcesToolModule),
+  },
+  {
+    path: 'seasonal-calendar',
+    loadChildren: () =>
+      import('@picsa/seasonal-calendar/src/app/app.module-embedded').then((mod) => mod.SeasonalCalendarToolModule),
   },
   {
     path: '',
@@ -75,6 +81,7 @@ const routes: Routes = [
     MonitoringToolModule.forRoot({ urlPrefix: 'monitoring' }),
     OptionsToolModule.forRoot({ urlPrefix: 'option' }),
     ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
+    SeasonalCalendarToolModule.forRoot({ urlPrefix: 'seasonal-calendar' }),
   ],
   exports: [RouterModule],
 })

@@ -74,6 +74,12 @@
             "input": "apps/picsa-tools/monitoring-tool/src/assets",
             "output": "assets"
           },
+
+          {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/option-tool/src/assets",
+            "output": "assets"
+          },
           {
             "glob": "**/*",
             "input": "apps/picsa-tools/resources-tool/src/assets",
@@ -81,7 +87,7 @@
           },
           {
             "glob": "**/*",
-            "input": "apps/picsa-tools/option-tool/src/assets",
+            "input": "apps/picsa-tools/seasonal-calendar-tool/src/assets",
             "output": "assets"
           },
           {

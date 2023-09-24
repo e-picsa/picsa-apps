@@ -36,6 +36,7 @@
       "@picsa/monitoring/*": ["apps/picsa-tools/monitoring-tool/*"],
       "@picsa/option/*": ["apps/picsa-tools/option-tool/*"],
       "@picsa/resources/*": ["apps/picsa-tools/resources-tool/*"],
+      "@picsa/seasonal-calendar/*": ["apps/picsa-tools/seasonal-calendar-tool/*"],
       "@picsa/shared": ["libs/shared/src/index.ts"],
       "@picsa/shared/*": ["libs/shared/src/*"],
       "@picsa/theme": ["libs/theme/src/index.ts"],
