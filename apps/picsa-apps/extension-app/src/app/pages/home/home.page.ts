@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@ang
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { APP_VERSION } from '@picsa/environments';
+import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { TourService } from '@picsa/shared/services/core/tour.service';
 import { CommunicationService } from '@picsa/shared/services/promptToHomePageService.service';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,8 @@ interface IPageLink {
   url: string;
   /** Element ID used in tours */
   tourId: string;
+  /** Specify if only shown in dev mode */
+  devOnly?: boolean;
 }
 
 const PAGE_LINKS: IPageLink[] = [
@@ -61,6 +63,13 @@ const PAGE_LINKS: IPageLink[] = [
     url: '/option',
     tourId: 'option',
   },
+  {
+    name: translateMarker('Seasonal Calendar'),
+    icon: 'picsa_seasonal_calendar_tool',
+    url: '/seasonal-calendar',
+    tourId: 'seasonal-calendar',
+    devOnly: true,
+  },
 
   // {
   //   name: translateMarker('Discussions'),
@@ -81,7 +90,8 @@ const PAGE_LINKS: IPageLink[] = [
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnDestroy, AfterViewInit {
-  public links = PAGE_LINKS;
+  /** List of home page display links, filtered when running in production */
+  public links = PAGE_LINKS.filter((link) => (ENVIRONMENT.production ? !link.devOnly : link));
   public version = APP_VERSION;
 
   private userEventSubscription: Subscription;
