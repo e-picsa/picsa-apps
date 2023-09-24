@@ -2403,12 +2403,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/core@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "@capacitor/core@npm:5.4.0"
+"@capacitor/core@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "@capacitor/core@npm:5.4.1"
   dependencies:
     tslib: ^2.1.0
-  checksum: 41f013f71dbf38a4e3c7261fbfeff5e443879b569cd27be7a5da74ffdf9817b3526b2835402fe93933a285b2571de50d3bfd8f65ed829e645dcde24085db5d00
+  checksum: ec6a9f484b3d30e0813b63281634c4a722ed07f47f85d1e7d7d578b7833812325e0014a8f1e8482f23d3826b57736e119ef6b98547934228ba089abc608fd2b4
   languageName: node
   linkType: hard
 
@@ -17687,7 +17687,7 @@ __metadata:
     "@capacitor/app": ^5.0.6
     "@capacitor/browser": ^5.1.0
     "@capacitor/cli": latest
-    "@capacitor/core": ^5.4.0
+    "@capacitor/core": ^5.4.1
     "@capacitor/device": ^5.0.6
     "@capacitor/filesystem": ^5.1.4
     "@ionic-native/core": ^5.36.0
