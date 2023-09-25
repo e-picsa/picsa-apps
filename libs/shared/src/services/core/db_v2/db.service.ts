@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
+import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+addRxPlugin(RxDBAttachmentsPlugin);
 addRxPlugin(RxDBMigrationPlugin);
 
 /** When creating collections for PICSA db additional fields required to determine how to handle */

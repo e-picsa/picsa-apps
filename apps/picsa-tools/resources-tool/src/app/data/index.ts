@@ -1,9 +1,11 @@
 import {
   IResource,
+  IResourceApp,
   IResourceCollection,
   IResourceFile,
   IResourceItemBase,
   IResourceLink,
+  IResourceVideo,
   IResourceYoutube,
 } from '../models';
 import CROPS from './crops';
@@ -23,18 +25,20 @@ console.log({ PICSA_RESOURCES });
 
 /** Base generator to ensure any created types appear in final export */
 const emptyTypes: () => { [type in IResource['type']]: [] } = () => ({
+  app: [],
   collection: [],
   file: [],
   link: [],
-  youtube: [],
-  app: [],
   video: [],
+  youtube: [],
 });
 
 const typeExports: {
+  app: IResourceApp[];
   collection: IResourceCollection[];
   file: IResourceFile[];
   link: IResourceLink[];
+  video: IResourceVideo[];
   youtube: IResourceYoutube[];
 } = emptyTypes();
 
