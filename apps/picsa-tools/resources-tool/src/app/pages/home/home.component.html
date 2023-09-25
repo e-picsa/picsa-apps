@@ -4,7 +4,13 @@
       <h2>Search</h2>
     </div> -->
     <div class="content-container">
-      <h2>Collections</h2>
+      <div style="display: flex; align-items: center">
+        <h2 style="flex: 1">{{ 'Collections' | translate }}</h2>
+        <button mat-stroked-button color="primary" class="downloads-button" routerLink="downloads">
+          <mat-icon>download</mat-icon>
+          {{ 'Manage Downloads' | translate }}
+        </button>
+      </div>
       <div class="list-container">
         <resource-item-collection
           *ngFor="let collection of store.collections"

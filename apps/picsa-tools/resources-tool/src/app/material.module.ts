@@ -5,12 +5,22 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
+
+const Modules = [
+  MatButtonModule,
+  MatCardModule,
+  MatIconModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatTableModule,
+];
 
 // use custom module to make it easier to control what is available through app
 @NgModule({
-  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule],
-  exports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule],
+  imports: Modules,
+  exports: Modules,
   providers: [
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

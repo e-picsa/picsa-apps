@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { RxCollection } from 'rxdb';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
-import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import * as FormSchema from '../schema/forms';
-import { RxCollection } from 'rxdb';
 import * as SubmissionSchema from '../schema/submissions';
 
 @Injectable({ providedIn: 'root' })

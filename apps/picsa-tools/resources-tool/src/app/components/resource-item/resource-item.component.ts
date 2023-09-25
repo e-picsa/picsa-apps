@@ -8,7 +8,6 @@ import { AppItemHandler } from './templates/app';
 import { CollectionItemHandler } from './templates/collection/collection';
 import { FileItemHandler } from './templates/file';
 import { LinkItemHandler } from './templates/link';
-import { VideoItemHandler } from './templates/video';
 
 type IResourceClickHandlers = {
   [type in IResourceType]: (resource: any) => void;

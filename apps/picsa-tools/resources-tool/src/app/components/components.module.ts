@@ -5,6 +5,7 @@ import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ResourcesMaterialModule } from '../material.module';
+import { ResourceDownloadComponent } from './resource-download/resource-download.component';
 import { ResourceItemComponent } from './resource-item/resource-item.component';
 import {
   ResourceItemCardComponent,
@@ -13,6 +14,7 @@ import {
 } from './resource-item/templates';
 
 const components = [
+  ResourceDownloadComponent,
   ResourceItemComponent,
   ResourceItemCardComponent,
   ResourceItemCollectionComponent,
@@ -21,7 +23,7 @@ const components = [
 
 @NgModule({
   imports: [CommonModule, PicsaTranslateModule, PicsaVideoPlayerModule, ResourcesMaterialModule, RouterModule],
-  exports: components,
+  exports: [...components, ResourcesMaterialModule, PicsaTranslateModule],
   declarations: components,
   providers: [],
 })
