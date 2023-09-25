@@ -26,6 +26,7 @@ $playerWidth: 480px;
   z-index: 3;
   background-repeat: no-repeat;
   background-size: cover;
+  filter: saturate(0.75);
 }
 $icon-size: 3rem;
 .play-button {

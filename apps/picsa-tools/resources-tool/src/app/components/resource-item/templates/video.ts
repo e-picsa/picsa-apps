@@ -22,28 +22,28 @@ export class ResourceItemVideoComponent {
   @Input() resource: IResourceVideo;
 }
 
-export class VideoItemHandler extends FileItemHandler {
-  constructor(component: ResourceItemComponent) {
-    super(component);
-  }
+// export class VideoItemHandler extends FileItemHandler {
+//   constructor(component: ResourceItemComponent) {
+//     super(component);
+//   }
 
-  public override handleDownloadComplete(): void {
-    this.component.actionButton = undefined;
-    // this.resource.url = this.component.store.getFileLocalLink(this.resource)
-    // TODO - prompt auto open
-  }
-  public override handleResourceOpen(): void {
-    //
-  }
-  public override handleInit(): void {
-    if (this.resource._isDownloaded) {
-      this.component.actionButton = undefined;
-      // TODO - get fully qualified storage URI to play from
-      // Possibly using convertToLocalUrl
-    } else {
-      this.component.actionButton = {
-        icon: 'file_download',
-      };
-    }
-  }
-}
+//   public override handleDownloadComplete(): void {
+//     this.component.actionButton = undefined;
+//     // this.resource.url = this.component.store.getFileLocalLink(this.resource)
+//     // TODO - prompt auto open
+//   }
+//   public override handleResourceOpen(): void {
+//     //
+//   }
+//   public override handleInit(): void {
+//     if (this.resource._isDownloaded) {
+//       this.component.actionButton = undefined;
+//       // TODO - get fully qualified storage URI to play from
+//       // Possibly using convertToLocalUrl
+//     } else {
+//       this.component.actionButton = {
+//         icon: 'file_download',
+//       };
+//     }
+//   }
+// }

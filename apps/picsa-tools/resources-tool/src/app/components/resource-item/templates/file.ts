@@ -12,7 +12,7 @@ export class FileItemHandler {
 
   constructor(public component: ResourceItemComponent) {
     component.handleResourceClick = (e) => this.handleClick(e);
-    this.resource._isDownloaded = this.component.store.isFileDownloaded(this.resource);
+    // this.resource._isDownloaded = this.component.store.isFileDownloaded(this.resource);
 
     this.handleInit();
   }
@@ -22,9 +22,9 @@ export class FileItemHandler {
   }
 
   public handleInit() {
-    this.component.actionButton = {
-      icon: this.resource._isDownloaded ? 'open_in_new' : 'file_download',
-    }; // TODO show file download size alongside download icon
+    // this.component.actionButton = {
+    //   icon: this.resource._isDownloaded ? 'open_in_new' : 'file_download',
+    // }; // TODO show file download size alongside download icon
   }
 
   public handleDownloadComplete() {
@@ -39,14 +39,14 @@ export class FileItemHandler {
 
   private async handleClick(e: Event) {
     e.stopPropagation();
-    if (this.download$) {
-      return this.cancelDownload();
-    }
-    if (!this.resource._isDownloaded) {
-      this.handleResourceDownload();
-    } else {
-      this.handleResourceOpen();
-    }
+    // if (this.download$) {
+    //   return this.cancelDownload();
+    // }
+    // if (!this.resource._isDownloaded) {
+    //   this.handleResourceDownload();
+    // } else {
+    //   this.handleResourceOpen();
+    // }
   }
   /** Cancel ongoing download */
   private cancelDownload() {
@@ -76,7 +76,7 @@ export class FileItemHandler {
       complete: () => {
         this.component.downloadProgress = undefined;
         this.component.downloadComplete.emit(this.resource);
-        this.resource._isDownloaded = true;
+        // this.resource._isDownloaded = true;
         this.handleDownloadComplete();
       },
     });

@@ -27,7 +27,6 @@ interface IDownloadableResource {
 }
 //
 export interface IResourceFile extends IResourceItemBase, IDownloadableResource {
-  _isDownloaded?: boolean;
   type: 'file';
   mimetype: 'application/pdf';
 }
