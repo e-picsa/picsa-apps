@@ -1,0 +1,11 @@
+table {
+  width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr:hover {
+  background: whitesmoke;
+}
