@@ -2348,12 +2348,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/android@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "@capacitor/android@npm:5.4.0"
+"@capacitor/android@npm:5.4.1":
+  version: 5.4.1
+  resolution: "@capacitor/android@npm:5.4.1"
   peerDependencies:
     "@capacitor/core": ^5.4.0
-  checksum: c8c2e20702cbd2c00681d34a71cae7bce0712aa22b7b25be836741cdc945ede7f876bea210ab9242a5cd0b2eb8c458bf77fc59d72defabdbb2fc170aed756ef7
+  checksum: 9abd6270209b414811ff63ad64ec4d6393f72497dfdb88578d0be47db493fd32a3352a4797095b3520cbc38e9532a6620f589639fcb22abfbaea274aca5754f1
   languageName: node
   linkType: hard
 
@@ -17683,7 +17683,7 @@ __metadata:
     "@capacitor-community/firebase-analytics": ^5.0.1
     "@capacitor-community/firebase-crashlytics": ^3.0.0
     "@capacitor-firebase/performance": ^5.1.0
-    "@capacitor/android": ^5.4.0
+    "@capacitor/android": 5.4.1
     "@capacitor/app": ^5.0.6
     "@capacitor/browser": ^5.1.0
     "@capacitor/cli": latest
