@@ -1,3 +1,20 @@
-<button mat-icon-button (click)="downloadResource()">
+<button mat-icon-button (click)="downloadResource()" *ngIf="downloadStatus === 'ready'">
   <mat-icon>download</mat-icon>
+</button>
+
+<div class="download-progress" *ngIf="downloadStatus === 'pending'">
+  <mat-progress-spinner
+    class="example-margin"
+    color="accent"
+    [mode]="downloadProgress > 0 ? 'determinate' : 'indeterminate'"
+    [value]="downloadProgress"
+    diameter="48"
+  >
+  </mat-progress-spinner>
+  <button mat-button class="download-cancel" (click)="cancelDownload()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<button mat-icon-button *ngIf="downloadStatus === 'complete'">
+  <mat-icon>check</mat-icon>
 </button>
