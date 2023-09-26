@@ -1,4 +1,4 @@
-import { HttpClient, HttpEventType } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Capacitor } from '@capacitor/core';
@@ -7,6 +7,8 @@ import { APP_VERSION } from '@picsa/environments';
 import write_blob from 'capacitor-blob-writer';
 import { BehaviorSubject, firstValueFrom, of, Subject, Subscription } from 'rxjs';
 import { catchError, debounceTime } from 'rxjs/operators';
+
+import { FileService } from '../../core/file.service';
 
 export interface IStorageFileEntry {
   md5Checksum?: string;
@@ -23,10 +25,12 @@ export type IStorageFilesHashmap = {
   [relativePath: string]: IStorageFileEntry;
 };
 
+/**
+ * @deprecated prefer to use cross-platform db attachments instead of native storage methods
+ */
 @Injectable({
   providedIn: 'root',
 })
-// storage service only used on cordova, otherwise service-worker handles
 export class NativeStorageService {
   cacheName = 'picsa_extension';
   private basePath: string;
@@ -38,7 +42,7 @@ export class NativeStorageService {
   // use subject to debounce writes to file that keeps log of cached files
   public cachedFilesUpdated$: BehaviorSubject<any> = new BehaviorSubject(true);
 
-  constructor(private fileOpener: FileOpener, private http: HttpClient) {}
+  constructor(private fileService: FileService, private fileOpener: FileOpener, private http: HttpClient) {}
 
   public async init() {
     console.log('[Native Storage] init');
@@ -147,7 +151,7 @@ export class NativeStorageService {
     }>();
     // call file download subscription, passing values to top observable
     // TODO - might be tidier way to manage nested observables (e.g. map/switchmap/mergemap op)
-    this.downloadFile(fileMeta.downloadUrl, 'blob').subscribe({
+    this.fileService.downloadFile(fileMeta.downloadUrl, 'blob').subscribe({
       error: (err) => updates$.error(err),
       next: async (res) => {
         data = res.data as Blob;
@@ -223,71 +227,6 @@ export class NativeStorageService {
   /************************************************************************************
    *  Helper methods
    ************************************************************************************/
-
-  private downloadFile(url: string, responseType: 'blob' | 'base64' = 'base64', headers = {}) {
-    // If downloading from local assets ignore cache
-    if (!url.startsWith('http')) {
-      headers = {
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
-        Expires: '0',
-        ...headers,
-      };
-    }
-
-    // subscribe and share updates
-    let subscription = new Subscription();
-    let progress = 0;
-    let data: Blob | string;
-
-    // share initial update with request and subscription objects to allow dl interrupt via unsubscribe method
-    const updates$ = new BehaviorSubject<{
-      progress: number;
-      subscription: Subscription;
-      data?: Blob | string;
-    }>({ progress, subscription });
-
-    subscription = this.http
-      .get(url, {
-        responseType: 'blob',
-        reportProgress: true,
-        headers,
-        observe: 'events',
-      })
-      .subscribe({
-        error: (err) => updates$.error(err),
-        next: async (event) => {
-          // handle progress update
-          if (event.type === HttpEventType.DownloadProgress) {
-            if (event.total) {
-              progress = Math.round((100 * event.loaded) / event.total);
-            }
-          }
-          // handle full response received
-          if (event.type === HttpEventType.Response) {
-            data = event.body as Blob;
-          }
-          updates$.next({ progress, subscription, data });
-        },
-        complete: async () => {
-          if (responseType === 'base64') {
-            data = await this.convertBlobToBase64(data as Blob);
-          }
-          updates$.next({ progress: 100, data, subscription });
-          updates$.complete();
-        },
-      });
-    return updates$;
-  }
-
-  private convertBlobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsDataURL(blob);
-    });
-  }
 
   private async ensureCacheDirectory() {
     try {

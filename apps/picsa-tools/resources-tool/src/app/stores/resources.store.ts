@@ -3,7 +3,7 @@ import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { IStorageFilesHashmap, NativeStorageService } from '@picsa/shared/services/native/storage-service';
+import { IStorageFilesHashmap, NativeStorageService } from '@picsa/shared/services/native/_deprecated/storage-service';
 import { lastValueFrom } from 'rxjs';
 
 import RESOURCES from '../data';
