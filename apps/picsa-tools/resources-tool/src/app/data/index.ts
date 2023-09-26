@@ -8,6 +8,7 @@ import {
   IResourceVideo,
   IResourceYoutube,
 } from '../models';
+import * as schemas from '../schemas';
 import CROPS from './crops';
 import { GENDER_RESOURCES } from './gender';
 import PICSA_RESOURCES from './picsa';
@@ -53,5 +54,23 @@ for (const [key, resources] of Object.entries(typeExports)) {
     (a: IResourceItemBase, b: IResourceItemBase) => (b.priority ?? -99) - (a.priority ?? -99)
   );
 }
+
+/**
+ * Format of hardcoded resources to be used in database
+ * TODO - alternate formats can be removed once DB used throughout app
+ */
+const dbEntries: schemas.IResourceFile[] = [];
+for (const entry of [...typeExports.file, ...typeExports.video]) {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const { _created, _key, _modified, meta, appCountries, image, imageFit, subtitle, ...keptFields } = entry;
+  const file: schemas.IResourceFile = {
+    ...keptFields,
+    id: _key,
+    filename: _key,
+    priority: entry.priority || 1,
+  };
+  dbEntries.push(file);
+}
+export const DB_ENTRIES = dbEntries;
 
 export default { ...typeExports, byId };

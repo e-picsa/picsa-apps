@@ -1,4 +1,4 @@
-import type { IResourceApp, IResourceCollection, IResourceLink, IResourceFile } from '../../models';
+import type { IResourceApp, IResourceCollection, IResourceFile, IResourceLink } from '../../models';
 
 const files: { [key: string]: IResourceFile } = {
   gap: {
@@ -12,6 +12,8 @@ const files: { [key: string]: IResourceFile } = {
     image: 'assets/resources/covers/gap.jpg',
     url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FGAP_2021.pdf?alt=media&token=4832ad76-cf14-490f-8fba-73bd5845d440',
     filename: 'GAP_2021.pdf',
+    md5Checksum: 'ea0e86161b3eae185ff5bbce71975057',
+    size_kb: 3645.5,
     mimetype: 'application/pdf',
     appCountries: ['mw'],
   },
@@ -26,6 +28,8 @@ const files: { [key: string]: IResourceFile } = {
     image: 'assets/resources/covers/bmtm.jpg',
     url: 'https://firebasestorage.googleapis.com/v0/b/picsa-apps.appspot.com/o/crop-info%2FBUSINESS%20MODELS%20TRAINING%20MANUAL.pdf?alt=media&token=e682f443-1163-4894-88a7-7ea9851512a8',
     filename: 'BUSINESS MODELS TRAINING MANUAL.pdf',
+    md5Checksum: '16fd9bf6d037d9b05607e562de090a82',
+    size_kb: 1425.3,
     mimetype: 'application/pdf',
     appCountries: ['mw'],
   },

@@ -16,6 +16,6 @@ const picsaWorkshops: IResourceCollection = {
 };
 
 export default {
-  picsaWorkshops,
-  ...mwSalima2022,
+  // picsaWorkshops,
+  // ...mwSalima2022,
 };

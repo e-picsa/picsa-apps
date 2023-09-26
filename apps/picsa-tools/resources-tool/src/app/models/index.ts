@@ -21,9 +21,11 @@ export interface IResourceItemBase extends IDBDoc {
 }
 
 interface IDownloadableResource {
-  _downloaded?: boolean;
   url: string;
   filename: string;
+  md5Checksum: string;
+  size_kb: number;
+  mimetype: string;
 }
 //
 export interface IResourceFile extends IResourceItemBase, IDownloadableResource {

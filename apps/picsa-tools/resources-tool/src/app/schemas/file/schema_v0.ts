@@ -5,8 +5,10 @@ import { RxJsonSchema } from 'rxdb';
 export type IResourceFileType = 'video/mp4' | 'application/pdf';
 
 export interface IResourceFile_v0 {
-  /** Unique identifier for file (assume flat folder structure) */
+  /** Unique identifier for file (recommend folder prefix + filenanme) */
   id: string;
+  /** Filename used to store attachment in db */
+  filename: string;
   cover?: {
     image?: string;
     /** Specify if resource image should be contained (default) or stretched to cover */
@@ -23,7 +25,7 @@ export interface IResourceFile_v0 {
   language?: string;
   /** Custom keywords used for some filtering (manual) and in future could be used for search */
   keywords?: string[];
-  md5Hash: string;
+  md5Checksum: string;
   mimetype: IResourceFileType;
   /** Order of priority when shown in list (highest numbers shown first) */
   priority: number;
@@ -43,17 +45,18 @@ export const SCHEMA_V0: RxJsonSchema<IResourceFile_v0> = {
     downloaded: { type: 'boolean', default: false },
     description: { type: 'string', default: '' },
     id: { type: 'string' },
+    filename: { type: 'string' },
     filter: { type: 'object', properties: { countries: { type: 'array' } } },
     keywords: { type: 'array', default: [] },
     language: { type: 'string', default: 'gb_en' },
-    md5Hash: { type: 'string' },
+    md5Checksum: { type: 'string' },
     mimetype: { type: 'string' },
     priority: { type: 'number', default: 1.0 },
     size_kb: { type: 'number' },
     title: { type: 'string' },
     url: { type: 'string' },
   },
-  required: ['id', 'md5Hash', 'size_kb', 'title', 'mimetype', 'url'],
+  required: ['id', 'md5Checksum', 'size_kb', 'title', 'mimetype', 'url'],
   primaryKey: 'id',
   attachments: {
     compression: undefined,
