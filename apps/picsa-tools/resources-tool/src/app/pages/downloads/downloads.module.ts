@@ -3,12 +3,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ResourcesComponentsModule } from '../../components/components.module';
-import { DownloadsComponent } from './downloads.component';
+import { ResourcesPipesModule } from '../../pipes';
+import { DownloadsPageComponent } from './downloads.page';
 
-const routes: Routes = [{ path: '', component: DownloadsComponent, title: 'Downloads' }];
+const routes: Routes = [{ path: '', component: DownloadsPageComponent, title: 'Downloads' }];
 
 @NgModule({
-  declarations: [DownloadsComponent],
-  imports: [CommonModule, RouterModule.forChild(routes), ResourcesComponentsModule],
+  declarations: [DownloadsPageComponent],
+  imports: [CommonModule, RouterModule.forChild(routes), ResourcesComponentsModule, ResourcesPipesModule],
 })
 export class DownloadsModule {}
