@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FileService } from '@picsa/shared/services/core/file.service';
-import { RxDocument } from 'rxdb';
+import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
@@ -18,7 +18,7 @@ export class ResourceDownloadComponent implements OnInit, OnDestroy {
 
   @Input() dbDoc: RxDocument<IResourceFile>;
 
-  @Output() downloadComplete = new EventEmitter();
+  @Output() downloadComplete = new EventEmitter<RxAttachment<IResourceFile>>();
 
   constructor(private fileService: FileService) {}
 
@@ -33,6 +33,7 @@ export class ResourceDownloadComponent implements OnInit, OnDestroy {
       // TODO - check if update available
       if (attachment && attachment.id === this.resource.filename) {
         this.downloadStatus = 'complete';
+        this.downloadComplete.next(attachment);
       } else {
         this.downloadStatus = 'ready';
       }

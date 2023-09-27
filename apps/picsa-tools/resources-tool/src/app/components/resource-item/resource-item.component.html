@@ -19,19 +19,5 @@
     <button mat-button class="action-button" *ngIf="actionButton && !actionButton.svgIcon">
       <mat-icon color="primary">{{ actionButton.icon }}</mat-icon>
     </button>
-    <!-- Download Progress -->
-    <div class="download-progress" *ngIf="downloadProgress !== undefined">
-      <mat-progress-spinner
-        class="example-margin"
-        color="accent"
-        [mode]="downloadProgress > 0 ? 'determinate' : 'indeterminate'"
-        [value]="downloadProgress"
-        diameter="64"
-      >
-      </mat-progress-spinner>
-      <button mat-button style="position: absolute; top: 12px">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
   </resource-item-card>
 </ng-container>

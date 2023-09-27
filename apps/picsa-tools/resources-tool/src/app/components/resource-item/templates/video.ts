@@ -1,49 +1,79 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { RxDocument } from 'rxdb';
 
 import { IResourceVideo } from '../../../models';
-import { ResourceItemComponent } from '../resource-item.component';
-import { FileItemHandler } from './file';
+import { IResourceFile } from '../../../schemas';
+import { ResourcesToolService } from '../../../services/resources-tool.service';
 
 @Component({
   selector: 'resource-item-video',
   template: `
     <h2>{{ resource.title | translate }}</h2>
-    <picsa-video-player
-      [url]="resource.url"
-      #videoPlayer
-      (click)="videoPlayer.playVideo()"
-      [thumbnail]="resource.image"
-    ></picsa-video-player>
+    <div style="position:relative">
+      <picsa-video-player [source]="videoData" #videoPlayer [thumbnail]="resource.image"> </picsa-video-player>
+      <div class="download-overlay" *ngIf="!isDownloaded">
+        <resource-download
+          *ngIf="dbDoc"
+          [dbDoc]="dbDoc"
+          class="download-button"
+          (downloadComplete)="loadVideo()"
+        ></resource-download>
+      </div>
+    </div>
+
     <p *ngIf="resource.subtitle">{{ resource.subtitle | translate }}</p>
     <p *ngIf="resource.description">{{ resource.description | translate }}</p>
   `,
+  styles: [
+    `
+      .download-overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 3;
+        background: #fbfbfb91;
+        max-width: 480px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .download-button {
+        display: flex;
+        background: white;
+        color: var(--color-primary);
+        border-radius: 8px;
+        width: 64px;
+        height: 64px;
+        align-items: center;
+        justify-content: center;
+      }
+    `,
+  ],
 })
-export class ResourceItemVideoComponent {
+export class ResourceItemVideoComponent implements OnInit {
   @Input() resource: IResourceVideo;
+
+  public dbDoc: RxDocument<IResourceFile>;
+  public isDownloaded: boolean;
+  public videoData: Blob;
+
+  constructor(private service: ResourcesToolService) {}
+
+  async ngOnInit() {
+    await this.service.ready();
+    const dbDoc = await this.service.dbFileCollection.findOne(this.resource._key).exec();
+    if (dbDoc) {
+      this.dbDoc = dbDoc;
+    }
+  }
+
+  public async loadVideo() {
+    const dbAttachment = await this.service.getFileAttachment(this.dbDoc);
+    if (dbAttachment) {
+      this.isDownloaded = true;
+      this.videoData = dbAttachment;
+    }
+  }
 }
-
-// export class VideoItemHandler extends FileItemHandler {
-//   constructor(component: ResourceItemComponent) {
-//     super(component);
-//   }
-
-//   public override handleDownloadComplete(): void {
-//     this.component.actionButton = undefined;
-//     // this.resource.url = this.component.store.getFileLocalLink(this.resource)
-//     // TODO - prompt auto open
-//   }
-//   public override handleResourceOpen(): void {
-//     //
-//   }
-//   public override handleInit(): void {
-//     if (this.resource._isDownloaded) {
-//       this.component.actionButton = undefined;
-//       // TODO - get fully qualified storage URI to play from
-//       // Possibly using convertToLocalUrl
-//     } else {
-//       this.component.actionButton = {
-//         icon: 'file_download',
-//       };
-//     }
-//   }
-// }

@@ -66,8 +66,10 @@ for (const entry of [...typeExports.file, ...typeExports.video]) {
   const file: schemas.IResourceFile = {
     ...keptFields,
     id: _key,
-    filename: _key,
     priority: entry.priority || 1,
+    filter: {
+      countries: appCountries || [],
+    },
   };
   dbEntries.push(file);
 }
