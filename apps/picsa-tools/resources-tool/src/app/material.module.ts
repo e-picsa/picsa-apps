@@ -3,8 +3,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -12,8 +14,10 @@ const Modules = [
   MatButtonModule,
   MatCardModule,
   MatIconModule,
+  MatMenuModule,
   MatProgressBarModule,
   MatProgressSpinnerModule,
+  MatSortModule,
   MatTableModule,
 ];
 
@@ -35,6 +39,9 @@ export class ResourcesMaterialModule {
 
   registerIcons() {
     const RESOURCE_ICONS = {
+      filetype_document: 'filetype_document',
+      filetype_pdf: 'filetype_pdf',
+      filetype_video: 'filetype_video',
       play_store: 'play_store',
     };
     for (const [key, value] of Object.entries(RESOURCE_ICONS)) {
