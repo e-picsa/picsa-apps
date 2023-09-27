@@ -1,11 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { RxDocument } from 'rxdb';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
-const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb', 'downloaded'];
+const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'];
 
 @Component({
   selector: 'resource-downloads',
@@ -15,35 +18,35 @@ const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'
 export class DownloadsPageComponent implements OnInit, OnDestroy {
   private componentDestroyed$ = new Subject();
 
-  public fileResourceDocs: RxDocument<IResourceFile>[] = [];
-  public displayedColumns = [...DISPLAY_COLUMNS, 'menu_options'];
+  public fileResourceDocs: MatTableDataSource<RxDocument<IResourceFile>>;
+  public displayedColumns = [...DISPLAY_COLUMNS, 'download_button', 'menu_options'];
 
-  constructor(public service: ResourcesToolService) {}
+  @ViewChild(MatSort) sort: MatSort;
+
+  constructor(public service: ResourcesToolService, private configurationService: ConfigurationService) {}
 
   async ngOnInit() {
     await this.service.ready();
-    // create a live query to retrieve all docs on data change
-    // pipe subscription to complete when component destroyed (avoids memory leak)
-    const query = this.service.dbFileCollection.find();
-    query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      this.fileResourceDocs = docs;
-      // const { code } = this.configurationService.activeConfiguration.localisation.country;
-      // // filter forms to include only active config country forms
-      // this.forms = docs
-      //   .map((doc) => doc._data)
-      //   .filter((form) => !form.appCountries || form.appCountries.includes(code));
+    // retrieve docs only once on load as child item component manages individual subscription
+    const resourceFileDocs = await this.service.dbFileCollection.find().exec();
+    const filteredDocs = resourceFileDocs.filter((doc) => {
+      // filter resources to filter out any resources for other country localisations
+      const { country } = this.configurationService.activeConfiguration.localisation;
+      const filterCountries = doc._data.filter?.countries || [];
+      return filterCountries.length === 0 || filterCountries.includes(country.code);
     });
+    this.fileResourceDocs = new MatTableDataSource<RxDocument<IResourceFile>>(filteredDocs);
+    this.fileResourceDocs.sort = this.sort;
   }
-
-  public async deleteDownload(resource: RxDocument<IResourceFile>) {
-    const attachment = resource.getAttachment(resource.filename);
-    if (attachment) {
-      await attachment.remove();
-    }
-  }
-
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
+  }
+
+  public async deleteDownload(doc: RxDocument<IResourceFile>) {
+    const attachment = doc.getAttachment(doc.filename);
+    if (attachment) {
+      await attachment.remove();
+    }
   }
 }
