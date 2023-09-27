@@ -1,7 +1,7 @@
 <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
   <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div>
-  <button *ngIf="showPlayButton" mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!url">
+  <button *ngIf="showPlayButton" mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!source">
     <mat-icon>play_arrow</mat-icon>
   </button>
-  <p *ngIf="!url" class="error-message mat-error">No Video Selected</p>
+  <p *ngIf="!source" class="error-message mat-error">No Video Selected</p>
 </div>
