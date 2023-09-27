@@ -59,7 +59,7 @@ for (const [key, resources] of Object.entries(typeExports)) {
  * Format of hardcoded resources to be used in database
  * TODO - alternate formats can be removed once DB used throughout app
  */
-const dbEntries: schemas.IResourceFile[] = [];
+const dbFileEntries: schemas.IResourceFile[] = [];
 for (const entry of [...typeExports.file, ...typeExports.video]) {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const { _created, _key, _modified, meta, appCountries, image, imageFit, subtitle, ...keptFields } = entry;
@@ -71,8 +71,8 @@ for (const entry of [...typeExports.file, ...typeExports.video]) {
       countries: appCountries || [],
     },
   };
-  dbEntries.push(file);
+  dbFileEntries.push(file);
 }
-export const DB_ENTRIES = dbEntries;
+export const DB_FILE_ENTRIES = dbFileEntries;
 
 export default { ...typeExports, byId };

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
-import { RxCollection } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 
-import HARDCODED_RESOURCES from '../data';
+import { DB_FILE_ENTRIES } from '../data';
 import * as schemas from '../schemas';
 
 @Injectable({ providedIn: 'root' })
@@ -29,27 +29,12 @@ export class ResourcesToolService extends PicsaAsyncService {
     return this.dbService.db.collections['resources_tool_files'] as RxCollection<schemas.IResourceFile>;
   }
 
+  public getFileAttachment(doc: RxDocument<schemas.IResourceFile>) {
+    return this.dbService.getAttachment('resources_tool_files', doc as any);
+  }
+
   private async populateFileList() {
-    // TODO - ideally refactor hardcoded to keep all file resources together and remove store methods
-    const { file, video } = HARDCODED_RESOURCES;
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    const combined = [...file, ...video];
-    const fileResources: schemas.IResourceFile[] = combined.map((entry) => {
-      const { _created, _key, _modified, _downloaded, meta, appCountries, image, imageFit, subtitle, ...keptFields } =
-        entry;
-      const file: schemas.IResourceFile = {
-        ...keptFields,
-        id: _key,
-        md5Hash: 'TODO',
-        size_kb: -1,
-        priority: entry.priority || 1,
-      };
-      return file;
-    });
-    console.log('populating file resources', fileResources);
-    // TODO - handle resource removal or file updated
-    await this.dbFileCollection.bulkUpsert(fileResources);
-    // dbFormCollection.bulkUpsert(HARDCODED_FORMS);
+    await this.dbFileCollection.bulkUpsert(DB_FILE_ENTRIES);
   }
 
   private async populateAssetResources() {

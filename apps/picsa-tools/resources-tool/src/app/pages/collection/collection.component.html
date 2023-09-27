@@ -1,7 +1,7 @@
 <div class="page-content no-padding">
-  <resource-item-collection [collection]="collection" viewStyle="expanded" *ngIf="collection; else elseBlock">
+  <resource-item-collection [collection]="collection" viewStyle="expanded" *ngIf="collection">
   </resource-item-collection>
-  <ng-template #elseBlock>{{ 'Collection not found' | translate }}</ng-template>
+  <picsa-alert-box *ngIf="showcollectionNotFound" type="info" style="margin: 2rem">{{
+    'Collection not found' | translate
+  }}</picsa-alert-box>
 </div>
-
-<!--  -->

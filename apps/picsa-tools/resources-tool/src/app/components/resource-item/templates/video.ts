@@ -11,7 +11,7 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
     <h2>{{ resource.title | translate }}</h2>
     <div style="position:relative">
       <picsa-video-player [source]="videoData" #videoPlayer [thumbnail]="resource.image"> </picsa-video-player>
-      <div class="download-overlay" *ngIf="!isDownloaded">
+      <div class="download-overlay" [style.visibility]="showDownloadOverlay ? 'visible' : 'hidden'">
         <resource-download
           *ngIf="dbDoc"
           [dbDoc]="dbDoc"
@@ -56,8 +56,9 @@ export class ResourceItemVideoComponent implements OnInit {
   @Input() resource: IResourceVideo;
 
   public dbDoc: RxDocument<IResourceFile>;
-  public isDownloaded: boolean;
   public videoData: Blob;
+
+  public showDownloadOverlay = false;
 
   constructor(private service: ResourcesToolService) {}
 
@@ -66,14 +67,20 @@ export class ResourceItemVideoComponent implements OnInit {
     const dbDoc = await this.service.dbFileCollection.findOne(this.resource._key).exec();
     if (dbDoc) {
       this.dbDoc = dbDoc;
+      this.loadVideo();
     }
   }
 
   public async loadVideo() {
-    const dbAttachment = await this.service.getFileAttachment(this.dbDoc);
-    if (dbAttachment) {
-      this.isDownloaded = true;
-      this.videoData = dbAttachment;
+    // avoid duplicate calls on initial init as downloadComplete emits
+    if (!this.videoData) {
+      const dbAttachment = await this.service.getFileAttachment(this.dbDoc);
+      if (dbAttachment) {
+        this.videoData = dbAttachment;
+        this.showDownloadOverlay = false;
+      } else {
+        this.showDownloadOverlay = true;
+      }
     }
   }
 }
