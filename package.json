@@ -117,7 +117,7 @@
     "@angular/language-service": "16.2.5",
     "@biesbjerg/ngx-translate-extract-marker": "^1.0.0",
     "@capacitor/android": "5.4.1",
-    "@capacitor/cli": "latest",
+    "@capacitor/cli": "5.4.1",
     "@nx/cypress": "16.8.1",
     "@nx/eslint-plugin": "16.8.1",
     "@nx/jest": "16.8.1",
