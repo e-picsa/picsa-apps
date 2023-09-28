@@ -4,6 +4,7 @@ import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
+import { ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({
   selector: 'resource-download',
@@ -20,7 +21,7 @@ export class ResourceDownloadComponent implements OnInit, OnDestroy {
 
   @Output() downloadComplete = new EventEmitter<RxAttachment<IResourceFile>>();
 
-  constructor(private fileService: FileService) {}
+  constructor(private service: ResourcesToolService, private fileService: FileService) {}
 
   public get resource() {
     return this.dbDoc._data;
@@ -29,9 +30,9 @@ export class ResourceDownloadComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     // subscribe to doc attachment changes to confirm whether downloaded
     this.dbDoc.allAttachments$.pipe(takeUntil(this.componentDestroyed$)).subscribe((attachments) => {
-      const [attachment] = attachments;
+      const attachment = attachments.find((a) => a.id === this.resource.filename);
       // TODO - check if update available
-      if (attachment && attachment.id === this.resource.filename) {
+      if (attachment) {
         this.downloadStatus = 'complete';
         this.downloadComplete.next(attachment);
       } else {
@@ -68,8 +69,7 @@ export class ResourceDownloadComponent implements OnInit, OnDestroy {
   }
 
   private async persistDownload(data: Blob) {
-    const { filename, mimetype } = this.resource;
-    await this.dbDoc.putAttachment({ id: filename, data, type: mimetype });
+    await this.service.putFileAttachment(this.dbDoc, data);
   }
 
   /** Cancel ongoing download */

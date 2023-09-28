@@ -4,9 +4,11 @@ import { RxJsonSchema } from 'rxdb';
 /** Populated properties following RXDB putAttachment method */
 export interface IAttachment_v0 {
   id: string;
-  data: string;
+  /** Web-only base64 encoded string data stored in document */
+  data?: string;
   length: number;
   type: string;
+  /** sha256 created by rxdb */
   digest?: string;
 }
 

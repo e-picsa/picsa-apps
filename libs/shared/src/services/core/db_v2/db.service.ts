@@ -1,20 +1,11 @@
 import { Injectable } from '@angular/core';
-import {
-  addRxPlugin,
-  createBlobFromBase64,
-  createRxDatabase,
-  MangoQuerySelector,
-  RxCollection,
-  RxCollectionCreator,
-  RxDatabase,
-} from 'rxdb';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
-import { ATTACHMENTS_COLLECTION, IAttachment } from './schemas/attachments';
 
 addRxPlugin(RxDBAttachmentsPlugin);
 addRxPlugin(RxDBMigrationPlugin);
@@ -27,12 +18,6 @@ export interface IPicsaCollectionCreator<T> extends RxCollectionCreator<T> {
 
 interface IPicsaCollectionData {
   _app_user_id?: string;
-}
-interface IDocWithAttachments {
-  /** Native property assigned by rxdb for attachments */
-  _attachments: { [filename: string]: { data: string; length: number; type: string; digest?: string } };
-  mimetype: string;
-  filename: string;
 }
 
 /**
@@ -48,8 +33,6 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     [key: string]: RxCollection;
   }>;
 
-  private attachments: RxCollection<IAttachment>;
-
   constructor(private userService: PicsaUserService) {
     super();
   }
@@ -63,9 +46,10 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     this.db = await createRxDatabase({
       name: `picsa_app`,
       storage: getRxStorageDexie({ autoOpen: true }),
+      // hashFunction: (s) => md5hash(s).toString(),
+      // TODO - want to use md5 hashfunction but would need to migrate all collections
+      // import md5hash from 'crypto-js/md5';
     });
-    await this.ensureCollections({ attachments: ATTACHMENTS_COLLECTION });
-    this.attachments = this.db.collections.attachments;
   }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
@@ -122,58 +106,6 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         c.addHook('pre', 'insert', fn);
       });
     }
-    // apply custom attchment handler
-    if (collection.attachments) {
-      hookFactories.push((c) => {
-        c.addHook('pre', 'save', async (doc: IDocWithAttachments) => this.persistAttachments(c.name, doc));
-        c.addHook('post', 'save', (doc: IDocWithAttachments) => this.updatePersistedAttachmentDigest(c.name, doc));
-      });
-    }
     return { collection, hookFactories };
-  }
-
-  /*********************************************************************************************
-   *  Attachments
-   * Ordinarily RXDB handles attachments within the storage provider, however dexie is not
-   * currently supported. So manual workaround to persist attachment files to separate collection
-   * instead and retrieve on demand
-   *
-   * TODO - would be more efficient to rewrite as plugin adapter
-   ********************************************************************************************/
-
-  /** Get a file attachment populate to a specific collection doc */
-  public async getAttachment(collectionName: string, doc: IDocWithAttachments) {
-    const id = `${collectionName}||${doc.filename}`;
-    const ref = await this.attachments.findOne(id).exec();
-    if (ref) {
-      // use rxdb method to convert back from base64 string to blob
-      const blob = createBlobFromBase64(ref._data.data, doc.mimetype);
-      return blob;
-    }
-    return null;
-  }
-
-  /** Save attachment data to separate collection */
-  private async persistAttachments(collectionName: string, doc: IDocWithAttachments) {
-    for (const [filename, attachment] of Object.entries(doc._attachments)) {
-      if (attachment.data) {
-        // NOTE - differs from RXDB. `attachmentMapKey` as using global attachments across all collections
-        const id = `${collectionName}||${filename}`;
-        await this.attachments.upsert({ ...attachment, id });
-      }
-    }
-  }
-  /** RXDB file sha256 digest not available pre-save so provide method to update post-save */
-  private async updatePersistedAttachmentDigest(collectionName: string, doc: IDocWithAttachments) {
-    for (const [filename, attachment] of Object.entries(doc._attachments)) {
-      if (attachment.data) {
-        // NOTE - differs from RXDB. `attachmentMapKey` as using global attachments across all collections
-        const id = `${collectionName}||${filename}`;
-        const ref = await this.attachments.findOne(id).exec();
-        if (ref) {
-          await ref.patch({ digest: attachment.digest });
-        }
-      }
-    }
   }
 }

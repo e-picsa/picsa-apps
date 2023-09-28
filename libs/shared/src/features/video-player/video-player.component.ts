@@ -65,14 +65,7 @@ export class VideoPlayerComponent implements OnDestroy {
   private async initPlayer() {
     if (this.initialised) return;
     if (!this.source) return;
-    // handle loading url or data blob video source
-    let url: string;
-    if (this.source instanceof Blob) {
-      this.objectUrl = URL.createObjectURL(this.source);
-      url = this.objectUrl;
-    } else {
-      url = this.source;
-    }
+    const url = this.convertSourceToUrl(this.source);
     // load player
     const defaultOptions: capVideoPlayerOptions = {
       mode: 'embedded',
@@ -87,17 +80,32 @@ export class VideoPlayerComponent implements OnDestroy {
     if (Capacitor.isNativePlatform()) {
       defaultOptions.mode = 'fullscreen';
       defaultOptions.exitOnEnd = true;
-      if (url.startsWith('assets')) {
-        // NOTE - android local assets require 'public' prefix
-        // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
-        defaultOptions.url = `public/${url}`;
-      }
     }
     // Merge default options with user override
     this.playerOptions = { ...defaultOptions, ...this.options };
     await this.videoPlayer.initPlayer(this.playerOptions);
     this.addListeners();
     this.initialised = true;
+  }
+
+  /** Video player requires url source, handle conversion from blob or internal asset url */
+  private convertSourceToUrl(source: string | Blob) {
+    let url: string;
+    if (source instanceof Blob) {
+      this.objectUrl = URL.createObjectURL(source);
+      url = this.objectUrl;
+    } else {
+      url = source;
+    }
+    // NOTE - android local assets require 'public' prefix
+    // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
+    if (Capacitor.isNativePlatform()) {
+      if (url.startsWith('assets')) {
+        url = `public/${url}`;
+      }
+    }
+
+    return url;
   }
 
   /*********************************************************************************

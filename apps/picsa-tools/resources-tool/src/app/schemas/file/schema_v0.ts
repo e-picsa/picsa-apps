@@ -7,8 +7,6 @@ export type IResourceFileType = 'video/mp4' | 'application/pdf';
 export interface IResourceFile_v0 {
   /** Unique identifier for file (recommend folder prefix + filenanme) */
   id: string;
-  /** Filename used to store attachment in db */
-  filename: string;
   cover?: {
     image?: string;
     /** Specify if resource image should be contained (default) or stretched to cover */
@@ -23,14 +21,17 @@ export interface IResourceFile_v0 {
   language?: string;
   /** Custom keywords used for some filtering (manual) and in future could be used for search */
   keywords?: string[];
+  /** Filename used to store attachment in db */
+  filename: string;
+  /** TODO - prefer sha256 to compare with rxdb digest */
   md5Checksum: string;
   mimetype: IResourceFileType;
-  /** Order of priority when shown in list (highest numbers shown first) */
-  priority: number;
   size_kb: number;
-  title: string;
   /** Link where file can be downloaded from */
   url: string;
+  /** Order of priority when shown in list (highest numbers shown first) */
+  priority: number;
+  title: string;
 }
 
 export const SCHEMA_V0: RxJsonSchema<IResourceFile_v0> = {
@@ -43,17 +44,19 @@ export const SCHEMA_V0: RxJsonSchema<IResourceFile_v0> = {
     description: { type: 'string', default: '' },
     id: { type: 'string' },
     filename: { type: 'string' },
+    md5Checksum: { type: 'string' },
+    mimetype: { type: 'string' },
+    size_kb: { type: 'number' },
+    url: { type: 'string' },
     filter: { type: 'object', properties: { countries: { type: 'array' } } },
     keywords: { type: 'array', default: [] },
     language: { type: 'string', default: 'gb_en' },
-    md5Checksum: { type: 'string' },
-    mimetype: { type: 'string' },
+
     priority: { type: 'number', default: 1.0 },
-    size_kb: { type: 'number' },
+
     title: { type: 'string' },
-    url: { type: 'string' },
   },
-  required: ['id', 'md5Checksum', 'size_kb', 'title', 'mimetype', 'url'],
+  required: ['id'],
   primaryKey: 'id',
   attachments: {
     compression: undefined,

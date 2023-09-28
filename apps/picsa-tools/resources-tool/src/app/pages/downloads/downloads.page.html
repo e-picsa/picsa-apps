@@ -2,7 +2,7 @@
   <ng-container matColumnDef="mimetype">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Type' | translate }}</th>
     <td mat-cell *matCellDef="let doc">
-      <ng-container [ngSwitch]="doc._data.mimetype">
+      <ng-container [ngSwitch]="doc._data.files[0].mimetype">
         <mat-icon *ngSwitchCase="'application/pdf'" svgIcon="picsa_filetype_pdf"></mat-icon>
         <mat-icon *ngSwitchCase="'video/mp4'" svgIcon="picsa_filetype_video"></mat-icon>
         <mat-icon *ngSwitchDefault svgIcon="picsa_filetype_document"></mat-icon>
@@ -17,7 +17,7 @@
 
   <ng-container matColumnDef="size_kb">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Size' | translate }}</th>
-    <td mat-cell *matCellDef="let doc">{{ doc._data.size_kb | sizeMB }}MB</td>
+    <td mat-cell *matCellDef="let doc">{{ doc._data.files[0].size_kb | sizeMB }}MB</td>
   </ng-container>
 
   <ng-container matColumnDef="download_button">

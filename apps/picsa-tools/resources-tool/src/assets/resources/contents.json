@@ -155,6 +155,24 @@
     "md5Checksum": "bbb95cbbd8fa74e009e0c911138db540",
     "modifiedTime": "2022-10-21T22:29:22.638Z"
   },
+  "mat-icons/filetype_document.svg": {
+    "relativePath": "mat-icons/filetype_document.svg",
+    "size_kb": 0.9,
+    "md5Checksum": "8d777e32a529b2b20f747cc02d2b84f5",
+    "modifiedTime": "2023-09-26T19:56:12.975Z"
+  },
+  "mat-icons/filetype_pdf.svg": {
+    "relativePath": "mat-icons/filetype_pdf.svg",
+    "size_kb": 3.7,
+    "md5Checksum": "e5b847db313b426c89ea73161d8bd61a",
+    "modifiedTime": "2023-09-26T20:03:27.584Z"
+  },
+  "mat-icons/filetype_video.svg": {
+    "relativePath": "mat-icons/filetype_video.svg",
+    "size_kb": 0.6,
+    "md5Checksum": "f192ec84b4558ce8383b12a78f787c9a",
+    "modifiedTime": "2023-09-26T20:05:26.016Z"
+  },
   "mat-icons/play_store.svg": {
     "relativePath": "mat-icons/play_store.svg",
     "size_kb": 6,

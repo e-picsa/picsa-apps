@@ -63,7 +63,7 @@ const dbFileEntries: schemas.IResourceFile[] = [];
 for (const entry of [...typeExports.file, ...typeExports.video]) {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const { _created, _key, _modified, meta, appCountries, image, imageFit, subtitle, ...keptFields } = entry;
-  const file: schemas.IResourceFile = {
+  const dbEntry: schemas.IResourceFile = {
     ...keptFields,
     id: _key,
     priority: entry.priority || 1,
@@ -71,7 +71,7 @@ for (const entry of [...typeExports.file, ...typeExports.video]) {
       countries: appCountries || [],
     },
   };
-  dbFileEntries.push(file);
+  dbFileEntries.push(dbEntry);
 }
 export const DB_FILE_ENTRIES = dbFileEntries;
 

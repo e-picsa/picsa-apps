@@ -44,9 +44,6 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
   }
 
   public async deleteDownload(doc: RxDocument<IResourceFile>) {
-    const attachment = doc.getAttachment(doc.filename);
-    if (attachment) {
-      await attachment.remove();
-    }
+    return this.service.removeFileAttachment(doc);
   }
 }
