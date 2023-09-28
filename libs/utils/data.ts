@@ -1,3 +1,5 @@
+import { createBlobFromBase64 } from 'rxdb';
+
 /**
  * Convert an object array into a json object, with keys corresponding to array entries
  * @param keyfield any unique field which all array objects contain to use as hash keys (e.g. 'id')
@@ -49,4 +51,8 @@ export function arrayToHashmapArray<T extends object>(arr: T[], keyfield: keyof 
     hashmap[hashKey].push(el);
   }
   return hashmap;
+}
+
+export function base64ToBlob(base64String, mimetype: string) {
+  return createBlobFromBase64(base64String, mimetype);
 }
