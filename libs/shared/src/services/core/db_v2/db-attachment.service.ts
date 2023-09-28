@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { blobToBase64String, createBlobFromBase64, RxCollection, RxDocument } from 'rxdb';
+import { blobToBase64String, RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { NativeStorageService } from '../../native';
@@ -30,6 +30,9 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
 
   public override async init() {
     await this.dbService.ensureCollections({ attachments: ATTACHMENTS_COLLECTION });
+    if (Capacitor.isNativePlatform()) {
+      await this.nativeStorageService.ready();
+    }
   }
 
   /**
@@ -48,7 +51,10 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     const entry: IAttachment = { id, length: size, type };
     // TODO - handle native better to write to disk and get url
     if (Capacitor.isNativePlatform()) {
-      // TODO
+      const result = await this.nativeStorageService.writeFile(data, id.replace('||', '/'));
+      if (result) {
+        entry.uri = result.uri;
+      }
     } else {
       // RXDB converts blobs to string, which has more support on safari/ios
       // https://web.dev/indexeddb-best-practices/#not-everything-can-be-stored-in-indexeddb-on-all-platforms
@@ -60,26 +66,23 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     const { digest } = await doc.putAttachment({ id: filename, type, data });
     await attachmentDoc.patch({ digest });
   }
-  /** Get a file attachment populated to a specific collection doc */
+  /** Get a file attachment ref populated to a specific collection doc */
   public async getAttachment(doc: RxDocument<any>, filename: string) {
     const id = this.getAttachmentId(doc, filename);
-    const ref = await this.collection.findOne(id).exec();
-    if (ref) {
-      // use rxdb method to convert back from base64 string to blob
-      // TODO - do we actually want to be using blobs?
-      const dataBase64 = ref.data;
-      if (dataBase64) {
-        const blob = await createBlobFromBase64(dataBase64, ref.type);
-        return blob;
-      }
-    }
-    return null;
+    return this.collection.findOne(id).exec();
   }
   /** Remove attachments populated to a specific collection doc */
-  public async removeAttachments(doc: RxDocument<any>, filename: string) {
+  public async removeAttachment(doc: RxDocument<any>, filename: string) {
     const id = this.getAttachmentId(doc, filename);
     const ref = await this.collection.findOne(id).exec();
     if (ref) {
+      if (ref.uri) {
+        try {
+          await this.nativeStorageService.deleteFile(id.replace('||', '/'));
+        } catch (error) {
+          // File may have been manually deleted or renamed
+        }
+      }
       await ref.remove();
     }
     const docRef = doc.getAttachment(filename);
@@ -88,6 +91,10 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     }
   }
 
+  /**
+   * Generate unique id composed of doc collection name and filename
+   * Mimics rxdb convention (although recommend file-based storage should replace separator)
+   * */
   private getAttachmentId(doc: RxDocument<any>, filename: string) {
     return `${doc.collection.name}||${filename}`;
   }

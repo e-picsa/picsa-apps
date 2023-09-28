@@ -11,7 +11,7 @@
     diameter="48"
   >
   </mat-progress-spinner>
-  <button mat-button class="download-cancel" (click)="cancelDownload()">
+  <button mat-button class="download-cancel" (click)="cancelDownload()" [disabled]="downloadProgress === 100">
     <mat-icon>close</mat-icon>
   </button>
 </div>

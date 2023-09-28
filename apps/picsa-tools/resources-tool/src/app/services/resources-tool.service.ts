@@ -42,7 +42,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     return this.dbAttachmentService.getAttachment(doc, doc.filename);
   }
   public removeFileAttachment(doc: RxDocument<schemas.IResourceFile>) {
-    return this.dbAttachmentService.removeAttachments(doc, doc.filename);
+    return this.dbAttachmentService.removeAttachment(doc, doc.filename);
   }
 
   private async populateFileList() {

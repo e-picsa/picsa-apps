@@ -4,8 +4,10 @@ import { RxJsonSchema } from 'rxdb';
 /** Populated properties following RXDB putAttachment method */
 export interface IAttachment_v0 {
   id: string;
-  /** Web-only base64 encoded string data stored in document */
+  /** web - base64 encoded string data stored in document */
   data?: string;
+  /** native - uri to data */
+  uri?: string;
   length: number;
   type: string;
   /** sha256 created by rxdb */
@@ -19,8 +21,8 @@ export const SCHEMA_V0: RxJsonSchema<IAttachment_v0> = {
   type: 'object',
   properties: {
     id: { type: 'string' },
-    /** Base64 encoded string */
     data: { type: 'string' },
+    uri: { type: 'string' },
     length: { type: 'integer' },
     type: { type: 'string' },
     digest: { type: 'string' },

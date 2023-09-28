@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { IAttachment } from '@picsa/shared/services/core/db_v2/schemas/attachments';
+import { base64ToBlob } from '@picsa/utils';
 import { RxDocument } from 'rxdb';
 
 import { IResourceVideo } from '../../../models';
@@ -10,7 +12,7 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
   template: `
     <h2>{{ resource.title | translate }}</h2>
     <div style="position:relative">
-      <picsa-video-player [source]="videoData" #videoPlayer [thumbnail]="resource.image"> </picsa-video-player>
+      <picsa-video-player [source]="videoSource" #videoPlayer [thumbnail]="resource.image"> </picsa-video-player>
       <div class="download-overlay" [style.visibility]="showDownloadOverlay ? 'visible' : 'hidden'">
         <resource-download
           *ngIf="dbDoc"
@@ -56,7 +58,7 @@ export class ResourceItemVideoComponent implements OnInit {
   @Input() resource: IResourceVideo;
 
   public dbDoc: RxDocument<IResourceFile>;
-  public videoData: Blob;
+  public videoSource: Blob | string;
 
   public showDownloadOverlay = false;
 
@@ -73,14 +75,25 @@ export class ResourceItemVideoComponent implements OnInit {
 
   public async loadVideo() {
     // avoid duplicate calls on initial init as downloadComplete emits
-    if (!this.videoData) {
+    if (!this.videoSource) {
       const dbAttachment = await this.service.getFileAttachment(this.dbDoc);
       if (dbAttachment) {
-        this.videoData = dbAttachment;
+        this.videoSource = await this.convertFileToVideoSource(dbAttachment._data);
         this.showDownloadOverlay = false;
       } else {
         this.showDownloadOverlay = true;
       }
     }
+  }
+  private async convertFileToVideoSource(attachment: IAttachment): Promise<Blob | string> {
+    // on web convert base64 data to blob
+    if (attachment.data) {
+      return base64ToBlob(attachment.data, attachment.type);
+    }
+    // on native simply return file resource uri
+    if (attachment.uri) {
+      return attachment.uri;
+    }
+    return '';
   }
 }
