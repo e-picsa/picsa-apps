@@ -1,10 +1,53 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, of, Subscription } from 'rxjs';
+
+export interface IStorageFileEntry {
+  md5Checksum?: string;
+  modifiedTime: string;
+  relativePath: string;
+  size_kb: number;
+}
+
+// format of contents.json file (as populated from utiltiy methods)
+export type IStorageFilesHashmap = {
+  [relativePath: string]: IStorageFileEntry;
+};
 
 @Injectable({ providedIn: 'root' })
 export class FileService {
   constructor(private http: HttpClient) {}
+
+  /**
+   * Read a file from the local assets folder
+   * @param assetPath - relative path to asset, omitting first /assets/ part
+   * @returns asset contents if found, undefined if not
+   */
+  public async readAssetFile(assetPath: string, responseType: 'text' | 'blob' | 'arraybuffer' = 'text') {
+    const fileContents = await firstValueFrom(
+      this.http
+        .get(`assets/${assetPath}`, {
+          responseType: responseType as any,
+        })
+        .pipe(catchError((err) => of(undefined)))
+    );
+    return fileContents as any;
+  }
+
+  /** Read the contents.json file from an asset folder and return contents */
+  public async readAssetContents(assetFolderPath: string) {
+    let contents: IStorageFilesHashmap = {};
+    const contentsFile = await this.readAssetFile(`${assetFolderPath}/contents.json`);
+    if (contentsFile) {
+      contents = JSON.parse(contentsFile) as any;
+      // map files to include relative asset folder
+      Object.entries(contents).forEach(([key, value]) => {
+        value.relativePath = `${assetFolderPath}/${value.relativePath}`;
+        contents[key] = value;
+      });
+    }
+    return contents;
+  }
 
   /** Observable method to download a file from url   */
   public downloadFile(url: string, responseType: 'blob' | 'base64' = 'base64', headers = {}) {

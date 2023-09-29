@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
+import { base64ToBlob } from '@picsa/utils';
 import { blobToBase64String, RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../asyncService.service';
@@ -16,10 +17,13 @@ import { ATTACHMENTS_COLLECTION, IAttachment } from './schemas/attachments';
  *
  * TODO - may want hooks system to ensure attachments removed on doc delete
  * TODO - change all md5checksum for sha256
- * TODO - add db service hooks to also remove files
+ * TODO - add db service hooks to also remove files on doc remove
  ********************************************************************************************/
 @Injectable({ providedIn: 'root' })
 export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
+  /** Track any generate objectURLs so that they can be removed from dom as required */
+  private objectURLs: { [filename: string]: string } = {};
+
   constructor(private dbService: PicsaDatabase_V2_Service, private nativeStorageService: NativeStorageService) {
     super();
   }
@@ -35,6 +39,45 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     }
   }
 
+  /** Get a file attachment ref populated to a specific collection doc */
+  public async getAttachment(doc: RxDocument<any>, filename: string) {
+    const id = this.generateAttachmentID(doc, filename);
+    return this.collection.findOne(id).exec();
+  }
+
+  /**
+   * Retrieve a doc attachment and convert to URI for use within components
+   * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
+   **/
+  public async getFileAttachmentURI(doc: RxDocument<any>) {
+    const attachment = await this.getAttachment(doc, doc.filename);
+    if (!attachment) return null;
+    if (attachment) {
+      // On native URI already stored as path to file stored locally
+      if (attachment.uri) return attachment.uri;
+      // On web data stored as base64 string, convert to blob and generate object url
+      if (attachment.data) {
+        const blob = await base64ToBlob(attachment.data, attachment.type);
+        this.objectURLs[doc.filename] = URL.createObjectURL(blob);
+        return this.objectURLs[doc.filename];
+      }
+    }
+    return null;
+  }
+  /**
+   * Release a file attachment URI when no longer required
+   * @param filenames specific resource filenames to revoke (default all)
+   * */
+  public async revokeFileAttachmentURIs(filenames: string[]) {
+    for (const filename of filenames) {
+      const url = this.objectURLs[filename];
+      if (url) {
+        URL.revokeObjectURL(url);
+        delete this.objectURLs[filename];
+      }
+    }
+  }
+
   /**
    * Store binary data of a specified doc file attachment
    * Attachments will be stored independent of doc for performance and platform optimisation
@@ -47,9 +90,8 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   public async putAttachment(doc: RxDocument<any>, filename: string, data: Blob) {
     // prefer to use downloaded blob data directly instead of doc expected
     const { type, size } = data;
-    const id = this.getAttachmentId(doc, filename);
+    const id = this.generateAttachmentID(doc, filename);
     const entry: IAttachment = { id, length: size, type };
-    // TODO - handle native better to write to disk and get url
     if (Capacitor.isNativePlatform()) {
       const result = await this.nativeStorageService.writeFile(data, id.replace('||', '/'));
       if (result) {
@@ -66,14 +108,10 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     const { digest } = await doc.putAttachment({ id: filename, type, data });
     await attachmentDoc.patch({ digest });
   }
-  /** Get a file attachment ref populated to a specific collection doc */
-  public async getAttachment(doc: RxDocument<any>, filename: string) {
-    const id = this.getAttachmentId(doc, filename);
-    return this.collection.findOne(id).exec();
-  }
+
   /** Remove attachments populated to a specific collection doc */
   public async removeAttachment(doc: RxDocument<any>, filename: string) {
-    const id = this.getAttachmentId(doc, filename);
+    const id = this.generateAttachmentID(doc, filename);
     const ref = await this.collection.findOne(id).exec();
     if (ref) {
       if (ref.uri) {
@@ -95,7 +133,7 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
    * Generate unique id composed of doc collection name and filename
    * Mimics rxdb convention (although recommend file-based storage should replace separator)
    * */
-  private getAttachmentId(doc: RxDocument<any>, filename: string) {
+  private generateAttachmentID(doc: RxDocument<any>, filename: string) {
     return `${doc.collection.name}||${filename}`;
   }
 }
