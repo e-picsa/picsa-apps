@@ -1,0 +1,54 @@
+<div class="container">
+    <!-- Crops -->
+    <div class="box">
+      <h2>Crops</h2>
+      <div class="user-activity-list">
+        <div *ngFor="let userCrop of userCrops; let i = index" class="activity">
+          {{ userCrop }}
+          <button (click)="removeCrop(i)">Remove</button>
+        </div>
+      </div>
+      <div class="select-box">
+        <select [(ngModel)]="selectedCrop">
+          <option *ngFor="let crop of crops" [value]="crop">{{ crop }}</option>
+          <option value="Other">Other</option>
+        </select>
+        <input *ngIf="selectedCrop === 'Other'" [(ngModel)]="customCrop" placeholder="Enter custom crop" />
+        <button (click)="addCrop()" *ngIf="selectedCrop === 'Other'">Add</button>
+        <button (click)="addCrop()" *ngIf="selectedCrop !== '' && selectedCrop !== 'Other'">Add Selected</button>
+      </div>
+    </div>
+  
+    <!-- List of Activities -->
+    <div class="box">
+      <h2>List of Activities</h2>
+      <div class="activity-list">
+        <div *ngFor="let activity of activities" class="activity">{{ activity }}</div>
+      </div>
+      <div class="select-box">
+        <input type="text" [(ngModel)]="selectedActivity" />
+        <button (click)="addActivity()" *ngIf="selectedActivity">Add</button>
+      </div>
+    </div>
+
+  <!-- Calendar Time -->
+<div class="box">
+  <h2>Calendar Time</h2>
+  <div class="form-group">
+    <label for="startMonth">Start Month:</label>
+    <select id="startMonth" [(ngModel)]="startMonth">
+      <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="numberOfMonths">Number of Months Needed:</label>
+    <input type="number" id="numberOfMonths" [(ngModel)]="numMonths" />
+  </div>
+  <div class="months">
+    <div *ngFor="let monthData of calendarMonths" class="month">
+      {{ monthData.month }}
+      <input type="text" [(ngModel)]="monthData.weather"  />
+    </div>
+  </div>
+</div>
+</div>

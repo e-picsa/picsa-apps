@@ -7,6 +7,11 @@ export const ROUTES_COMMON: Routes = [
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     title: 'Seasonal Calendar',
   },
+  {
+    path: 'create-calender',
+    loadChildren: () => import('./pages/create-calender/create-calender.module').then((m) => m.CreateCalenderModule),
+    title: 'Create Calendar',
+  },
 ];
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];

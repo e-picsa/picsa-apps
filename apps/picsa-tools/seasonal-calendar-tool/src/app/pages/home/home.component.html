@@ -1,3 +1,13 @@
 <div class="page-content">
-  <p>Seasonal Calendar Home</p>
+  <div class="create-button">
+    <button class="" mat-button mat-raised-button color="primary">Create new calender</button> 
+  </div>
+  <h2>Categories</h2>
+  <div class="categories-list">
+    <div class="categories-item">Crops</div>
+  </div>
+  <h2>Calendar Lists</h2>
+  <div class="calendar-list">
+    <div class="feedbackMessage" *ngIf="calendars.length === 0">No available calendars</div>
+    </div>
 </div>
