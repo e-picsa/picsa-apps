@@ -28,7 +28,7 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
   /** Video source - can be string url or data blob */
-  @Input() source?: string | Blob;
+  @Input() source?: string;
   /** Optional image shown as preview */
   @Input() thumbnail?: string;
   /** Unique identifier used in case of multiple players*/
@@ -89,23 +89,16 @@ export class VideoPlayerComponent implements OnDestroy {
   }
 
   /** Video player requires url source, handle conversion from blob or internal asset url */
-  private convertSourceToUrl(source: string | Blob) {
-    let url: string;
-    if (source instanceof Blob) {
-      this.objectUrl = URL.createObjectURL(source);
-      url = this.objectUrl;
-    } else {
-      url = source;
-    }
+  private convertSourceToUrl(source: string) {
     // NOTE - android local assets require 'public' prefix
     // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
     if (Capacitor.isNativePlatform()) {
-      if (url.startsWith('assets')) {
-        url = `public/${url}`;
+      if (source.startsWith('assets')) {
+        source = `public/${source}`;
       }
     }
 
-    return url;
+    return source;
   }
 
   /*********************************************************************************

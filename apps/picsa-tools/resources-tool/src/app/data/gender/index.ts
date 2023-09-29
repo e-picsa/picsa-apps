@@ -28,6 +28,8 @@ const genderCollection: IResourceCollection = {
   type: 'collection',
   cover: { image: 'assets/resources/covers/gender-equality.svg' },
   childResources: {
+    collections: [],
+    files: [],
     links: Object.keys(links),
   },
 };

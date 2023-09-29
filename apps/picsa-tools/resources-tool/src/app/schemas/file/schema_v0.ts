@@ -8,6 +8,7 @@ type IResourceFileMimetype = 'video/mp4' | 'application/pdf';
 
 export interface IResourceFile_v0 extends IResourceBase_v0 {
   type: 'file';
+  subtype: 'video' | 'pdf';
   /** Filename used to store attachment in db */
   filename: string;
   /** TODO - prefer sha256 to compare with rxdb digest */
@@ -25,6 +26,7 @@ export const SCHEMA_V0: RxJsonSchema<IResourceFile_v0> = {
   type: 'object',
   properties: {
     ...SCHEMA_BASE_V0.properties,
+    subtype: { type: 'string' },
     filename: { type: 'string' },
     md5Checksum: { type: 'string' },
     mimetype: { type: 'string' },

@@ -7,9 +7,9 @@ export interface IResourceCollection_v0 extends IResourceBase_v0 {
   type: 'collection';
   /** IDs of child resources */
   childResources: {
-    collections?: string[];
-    links?: string[];
-    files?: string[];
+    collections: string[];
+    links: string[];
+    files: string[];
   };
 }
 

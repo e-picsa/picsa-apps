@@ -1,4 +1,4 @@
-import { IResourceCollection, IResourceLink } from '../../schemas';
+import { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { filterHashmap } from '../../utils/data.utils';
 import { DOWNSCALED_FORECASTS } from './files';
 import { WEATHER_LINKS } from './links';
@@ -27,16 +27,19 @@ const weatherResources: IResourceCollection = {
   cover: { image: 'assets/resources/covers/weather.svg' },
   priority: 6,
   childResources: {
-    links: Object.keys(WEATHER_LINKS),
     collections: WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
+    files: [],
+    links: Object.keys(WEATHER_LINKS),
   },
 };
 
 function generateLocationResources(location: IWeatherLocation) {
-  const locationResources: Record<string, IResourceLink> = {
+  const links: Record<string, IResourceLink> = {
+    ...new WMOGenerator(location).links,
+    ...new MeteoBlueGenerator(location).links,
+  };
+  const files: Record<string, IResourceFile> = {
     ...filterHashmap(DOWNSCALED_FORECASTS, (r) => r.meta.locationId === location.id),
-    ...new WMOGenerator(location).resources,
-    ...new MeteoBlueGenerator(location).resources,
   };
 
   const collection: IResourceCollection = {
@@ -47,13 +50,16 @@ function generateLocationResources(location: IWeatherLocation) {
     cover: { image: '' },
     // parentResource: 'weatherResources',
     childResources: {
-      links: Object.keys(locationResources),
+      collections: [],
+      files: Object.keys(files),
+      links: Object.keys(links),
     },
     filter: { countries: [location.countryCode] },
   };
   return {
     [collection.id]: collection,
-    ...locationResources,
+    ...links,
+    ...files,
     ...DOWNSCALED_FORECASTS,
   };
 }

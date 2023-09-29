@@ -5,19 +5,7 @@
     [collection]="$any(resource)"
   ></resource-item-collection>
 
-  <resource-item-video *ngSwitchCase="'video'" [resource]="$any(resource)"></resource-item-video>
+  <resource-item-link *ngSwitchCase="'link'" [resource]="resourceLink"> </resource-item-link>
 
-  <!-- <resource-item-pdf *ngSwitchCase="'pdf'" [resource]="$any(resource)"></resource-item-video> -->
-
-  <resource-item-card *ngSwitchDefault [resource]="$any(resource)">
-    <!-- Google play button -->
-    <button mat-button class="action-button google-play" *ngIf="actionButton && actionButton.svgIcon">
-      <mat-icon [svgIcon]="actionButton.icon"></mat-icon>
-    </button>
-
-    <!-- Inline Action Button -->
-    <button mat-button class="action-button" *ngIf="actionButton && !actionButton.svgIcon">
-      <mat-icon color="primary">{{ actionButton.icon }}</mat-icon>
-    </button>
-  </resource-item-card>
+  <resource-item-file *ngSwitchCase="'file'" [resource]="resourceFile"> </resource-item-file>
 </ng-container>

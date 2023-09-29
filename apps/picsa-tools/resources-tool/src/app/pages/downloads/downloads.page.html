@@ -2,9 +2,9 @@
   <ng-container matColumnDef="mimetype">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Type' | translate }}</th>
     <td mat-cell *matCellDef="let doc">
-      <ng-container [ngSwitch]="doc._data.mimetype">
-        <mat-icon *ngSwitchCase="'application/pdf'" svgIcon="picsa_filetype_pdf"></mat-icon>
-        <mat-icon *ngSwitchCase="'video/mp4'" svgIcon="picsa_filetype_video"></mat-icon>
+      <ng-container [ngSwitch]="doc._data.subtype">
+        <mat-icon *ngSwitchCase="'pdf'" svgIcon="picsa_filetype_pdf"></mat-icon>
+        <mat-icon *ngSwitchCase="'video'" svgIcon="picsa_filetype_video"></mat-icon>
         <mat-icon *ngSwitchDefault svgIcon="picsa_filetype_document"></mat-icon>
       </ng-container>
     </td>

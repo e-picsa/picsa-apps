@@ -8,16 +8,18 @@ import { ResourcesMaterialModule } from '../material.module';
 import { ResourceDownloadComponent } from './resource-download/resource-download.component';
 import { ResourceItemComponent } from './resource-item/resource-item.component';
 import {
-  ResourceItemCardComponent,
   ResourceItemCollectionComponent,
+  ResourceItemFileComponent,
+  ResourceItemLinkComponent,
   ResourceItemVideoComponent,
 } from './resource-item/templates';
 
 const components = [
   ResourceDownloadComponent,
   ResourceItemComponent,
-  ResourceItemCardComponent,
   ResourceItemCollectionComponent,
+  ResourceItemFileComponent,
+  ResourceItemLinkComponent,
   ResourceItemVideoComponent,
 ];
 

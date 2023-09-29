@@ -5,9 +5,10 @@ import { IWeatherLocation } from './locations';
 export class MeteoBlueGenerator extends ResourcesGenerator {
   constructor(private location: IWeatherLocation) {
     super();
+    this.generate();
   }
 
-  public override generate() {
+  private generate() {
     const { id, meteoBlueId } = this.location;
     if (!meteoBlueId) {
       return;

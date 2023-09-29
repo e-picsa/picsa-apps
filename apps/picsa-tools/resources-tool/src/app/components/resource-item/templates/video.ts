@@ -1,9 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { IAttachment } from '@picsa/shared/services/core/db_v2/schemas/attachments';
-import { base64ToBlob } from '@picsa/utils';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RxDocument } from 'rxdb';
 
-import { IResourceVideo } from '../../../models';
 import { IResourceFile } from '../../../schemas';
 import { ResourcesToolService } from '../../../services/resources-tool.service';
 
@@ -12,7 +9,7 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
   template: `
     <h2>{{ resource.title | translate }}</h2>
     <div style="position:relative">
-      <picsa-video-player [source]="videoSource" #videoPlayer [thumbnail]="resource.image"> </picsa-video-player>
+      <picsa-video-player [source]="videoSource" #videoPlayer [thumbnail]="resource.cover?.image"> </picsa-video-player>
       <div class="download-overlay" [style.visibility]="showDownloadOverlay ? 'visible' : 'hidden'">
         <resource-download
           *ngIf="dbDoc"
@@ -23,7 +20,6 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
       </div>
     </div>
 
-    <p *ngIf="resource.subtitle">{{ resource.subtitle | translate }}</p>
     <p *ngIf="resource.description">{{ resource.description | translate }}</p>
   `,
   styles: [
@@ -54,11 +50,11 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
     `,
   ],
 })
-export class ResourceItemVideoComponent implements OnInit {
-  @Input() resource: IResourceVideo;
+export class ResourceItemVideoComponent implements OnInit, OnDestroy {
+  @Input() resource: IResourceFile;
 
   public dbDoc: RxDocument<IResourceFile>;
-  public videoSource: Blob | string;
+  public videoSource?: string;
 
   public showDownloadOverlay = false;
 
@@ -66,34 +62,28 @@ export class ResourceItemVideoComponent implements OnInit {
 
   async ngOnInit() {
     await this.service.ready();
-    const dbDoc = await this.service.dbFileCollection.findOne(this.resource._key).exec();
+    const dbDoc = await this.service.dbFileCollection.findOne(this.resource.id).exec();
     if (dbDoc) {
       this.dbDoc = dbDoc;
       this.loadVideo();
     }
   }
 
+  async ngOnDestroy() {
+    // ensure any created file attachment uris disposed of
+    this.service.revokeFileAttachmentURIs([this.dbDoc.filename]);
+  }
+
   public async loadVideo() {
     // avoid duplicate calls on initial init as downloadComplete emits
     if (!this.videoSource) {
-      const dbAttachment = await this.service.getFileAttachment(this.dbDoc);
-      if (dbAttachment) {
-        this.videoSource = await this.convertFileToVideoSource(dbAttachment._data);
+      const videoSource = await this.service.getFileAttachmentURI(this.dbDoc);
+      if (videoSource) {
+        this.videoSource = videoSource;
         this.showDownloadOverlay = false;
       } else {
         this.showDownloadOverlay = true;
       }
     }
-  }
-  private async convertFileToVideoSource(attachment: IAttachment): Promise<Blob | string> {
-    // on web convert base64 data to blob
-    if (attachment.data) {
-      return base64ToBlob(attachment.data, attachment.type);
-    }
-    // on native simply return file resource uri
-    if (attachment.uri) {
-      return attachment.uri;
-    }
-    return '';
   }
 }

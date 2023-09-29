@@ -16,6 +16,7 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   picsa_manual: {
     id: 'picsa_manual',
     type: 'file',
+    subtype: 'pdf',
     title: 'PICSA Manual (Extension)',
     language: 'english',
     mimetype: 'application/pdf',
@@ -30,6 +31,7 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   picsa_manual_farmer: {
     id: 'picsa_manual_farmer',
     type: 'file',
+    subtype: 'pdf',
     title: 'PICSA Manual (Farmer)',
     language: 'english',
     mimetype: 'application/pdf',
@@ -44,6 +46,7 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   picsa_manual_chichewa: {
     id: 'picsa_manual_chichewa',
     type: 'file',
+    subtype: 'pdf',
     title: 'Buku la PICSA (Extension)',
     mimetype: 'application/pdf',
     language: 'chichewa',
@@ -61,6 +64,7 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   picsa_manual_chichewa_farmer: {
     id: 'picsa_manual_chichewa_farmer',
     type: 'file',
+    subtype: 'pdf',
     title: 'Buku la PICSA (Farmer)',
     mimetype: 'application/pdf',
     language: 'chichewa',
@@ -78,6 +82,7 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   picsa_manual_tumbuka: {
     id: 'picsa_manual_tumbuka',
     type: 'file',
+    subtype: 'pdf',
     title: 'Buku la PICSA',
     mimetype: 'application/pdf',
     description: '',
@@ -93,6 +98,7 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
   picsa_manual_tajik: {
     id: 'picsa_manual_tajik',
     type: 'file',
+    subtype: 'pdf',
     title: 'ПИКСА (Забони тоҷикӣ)',
     mimetype: 'application/pdf',
     description: '',
@@ -119,7 +125,9 @@ const picsa_manuals: IResourceCollection = {
   },
 
   childResources: {
+    collections: [],
     files: Object.keys(PICSA_MANUAL_RESOURCES),
+    links: [],
   },
 };
 

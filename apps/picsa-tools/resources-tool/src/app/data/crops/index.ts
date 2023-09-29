@@ -4,6 +4,7 @@ const files: { [key: string]: IResourceFile } = {
   gap: {
     id: 'gap',
     type: 'file',
+    subtype: 'pdf',
     title: 'Guide to Agriculture Production',
     description: 'And Natural Resource Management in Malawi',
     cover: { image: 'assets/resources/covers/gap.jpg' },
@@ -17,6 +18,7 @@ const files: { [key: string]: IResourceFile } = {
   bmtm: {
     id: 'bmtm',
     type: 'file',
+    subtype: 'pdf',
     title: 'Business Models Training Manual',
     description: 'For Linking Producers and Processors',
     cover: { image: 'assets/resources/covers/bmtm.jpg' },

@@ -3,10 +3,11 @@ import { ResourcesGenerator } from '../generator';
 import { IWeatherLocation } from './locations';
 
 export class WMOGenerator extends ResourcesGenerator {
-  constructor(private location: IWeatherLocation) {
+  constructor(public location: IWeatherLocation) {
     super();
+    this.generate();
   }
-  public override generate() {
+  private generate() {
     const { id, wmoCityId } = this.location;
     if (!wmoCityId) {
       return;
