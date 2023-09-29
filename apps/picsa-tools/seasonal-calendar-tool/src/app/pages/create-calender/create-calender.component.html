@@ -1,54 +1,82 @@
 <div class="container">
+  <h2>Crops Seasonal calender</h2>
+  <div class="box">
+    <h2>Calender name</h2>
+    <input class="inputField" [(ngModel)]="calenderTitle" placeholder="Season of 85" />
+  </div>
+
     <!-- Crops -->
     <div class="box">
-      <h2>Crops</h2>
-      <div class="user-activity-list">
-        <div *ngFor="let userCrop of userCrops; let i = index" class="activity">
-          {{ userCrop }}
-          <button (click)="removeCrop(i)">Remove</button>
-        </div>
-      </div>
+      <h2>Season Crops</h2>
       <div class="select-box">
-        <select [(ngModel)]="selectedCrop">
+        <div class="select-input-field">
+        <select  [(ngModel)]="selectedCrop">
+          <option value="" disabled selected>Select a Crop</option>
           <option *ngFor="let crop of crops" [value]="crop">{{ crop }}</option>
           <option value="Other">Other</option>
         </select>
-        <input *ngIf="selectedCrop === 'Other'" [(ngModel)]="customCrop" placeholder="Enter custom crop" />
-        <button (click)="addCrop()" *ngIf="selectedCrop === 'Other'">Add</button>
-        <button (click)="addCrop()" *ngIf="selectedCrop !== '' && selectedCrop !== 'Other'">Add Selected</button>
+        <button
+           mat-button mat-raised-button color="primary"
+          (click)="addCrop()" *ngIf="selectedCrop !== '' && selectedCrop !== 'Other'">
+          + {{ 'Add Selected' | translate }}
+        </button>
+      </div>
+        <div class="select-input-field">
+        <input class="inputField" *ngIf="selectedCrop === 'Other'" [(ngModel)]="customCrop" placeholder="Enter custom crop" />
+        <button
+          mat-button mat-raised-button color="primary"
+          (click)="addCrop()" 
+          *ngIf="selectedCrop === 'Other'" >
+          + {{ 'Add' | translate }}
+        </button>
+        </div>
+      </div>
+      <h3 *ngIf="userCrops.length > 0" >Selected crops</h3>
+      <div class="user-activity-list">
+        <div *ngFor="let userCrop of userCrops; let i = index" class="activity">
+          {{ userCrop }}
+          <mat-icon  (click)="removeCrop(i)" color="primary">clear</mat-icon>
+        </div>
       </div>
     </div>
   
     <!-- List of Activities -->
     <div class="box">
       <h2>List of Activities</h2>
-      <div class="activity-list">
-        <div *ngFor="let activity of activities" class="activity">{{ activity }}</div>
+      <div class="user-activity-list">
+        <div *ngFor="let activity of activities" class="activity-items">{{ activity }}</div>
       </div>
-      <div class="select-box">
-        <input type="text" [(ngModel)]="selectedActivity" />
-        <button (click)="addActivity()" *ngIf="selectedActivity">Add</button>
+      <h3>Add to activities if not on the provided list</h3>
+      <div class="select-input-field">
+        <input placeholder="planting.." class="inputField" type="text" [(ngModel)]="selectedActivity" />
+        <button mat-button mat-raised-button color="primary" (click)="addActivity()" *ngIf="selectedActivity">Add</button>
       </div>
     </div>
 
   <!-- Calendar Time -->
-<div class="box">
+<div >
   <h2>Calendar Time</h2>
+  <div class="calender-box">
   <div class="form-group">
     <label for="startMonth">Start Month:</label>
     <select id="startMonth" [(ngModel)]="startMonth">
+      <option value="" disabled selected>Select start month</option>
       <option *ngFor="let month of months" [value]="month">{{ month }}</option>
     </select>
   </div>
   <div class="form-group">
     <label for="numberOfMonths">Number of Months Needed:</label>
-    <input type="number" id="numberOfMonths" [(ngModel)]="numMonths" />
+    <input type="number" class="inputField" id="numberOfMonths" [(ngModel)]="numMonths" />
   </div>
-  <div class="months">
-    <div *ngFor="let monthData of calendarMonths" class="month">
-      {{ monthData.month }}
-      <input type="text" [(ngModel)]="monthData.weather"  />
-    </div>
+</div>
+<h4 *ngIf="calendarMonths.length > 0" >{{"Enter the selected month's weather condition" | translate}}</h4>
+<div class="monthsGrid">
+  <div *ngFor="let monthData of calendarMonths" class="month">
+   <div>{{ monthData.month }}</div> 
+   <div>
+    <input placeholder="wet,dry..." type="text" class="inputField" [(ngModel)]="monthData.weather"  />
   </div>
+  </div>
+</div>
 </div>
 </div>

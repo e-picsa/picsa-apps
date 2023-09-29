@@ -12,6 +12,7 @@ export class CreateCalenderComponent {
   constructor() {
     this.generateCalendarMonths();
   }
+  calenderTitle = "";
   crops: string[] = ["Maize", "Beans", "Peas"];
   activities: string[] = ["Planting", "Weeding", "Preparation", "Harvesting", "Drying"];
   selectedCrop = "";
@@ -74,7 +75,7 @@ export class CreateCalenderComponent {
     if (this.selectedCrop === 'Other' && this.customCrop.trim() !== '') {
       this.userCrops.push(this.customCrop);
       this.customCrop = ''; 
-    } else if (this.selectedCrop && this.selectedCrop !== 'Other') {
+    } else if (this.selectedCrop && this.selectedCrop !== 'Other' &&  !this.userCrops.includes(this.selectedCrop)) {
       this.userCrops.push(this.selectedCrop);
     }
     this.selectedCrop = ''; 
