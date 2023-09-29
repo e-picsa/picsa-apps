@@ -5,6 +5,8 @@ import { IResourceBase_v0, SCHEMA_BASE_V0 } from '../base/schema_v0';
 
 export interface IResourceCollection_v0 extends IResourceBase_v0 {
   type: 'collection';
+  /** Specify if collection nested within parent */
+  parentCollection?: string;
   /** IDs of child resources */
   childResources: {
     collections: string[];
@@ -20,6 +22,7 @@ export const SCHEMA_V0: RxJsonSchema<IResourceCollection_v0> = {
   type: 'object',
   properties: {
     ...SCHEMA_BASE_V0.properties,
+    parentCollection: { type: 'string' },
     childResources: {
       type: 'object',
       properties: {

@@ -1,35 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 
+import { IResourceCollection } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
-import { ResourcesStore } from '../../stores';
 
 @Component({
   selector: 'resource-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  private componentDestroyed$ = new Subject();
+export class HomeComponent implements OnInit {
+  public collections: IResourceCollection[];
 
-  constructor(public service: ResourcesToolService, public store: ResourcesStore) {}
+  constructor(public service: ResourcesToolService) {}
 
   async ngOnInit() {
     await this.service.ready();
-    // TODO - want to subscribe to collections
-    const query = this.service.dbFileCollection.find();
-    query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      console.log('home page files retrieved', docs);
-      // const { code } = this.configurationService.activeConfiguration.localisation.country;
-      // // filter forms to include only active config country forms
-      // this.forms = docs
-      //   .map((doc) => doc._data)
-      //   .filter((form) => !form.appCountries || form.appCountries.includes(code));
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next(true);
-    this.componentDestroyed$.complete();
+    const collections = await this.service.dbCollections.find({ sort: [{ priority: 'desc' }] }).exec();
+    const localised = this.service.filterLocalisedResources(collections);
+    this.collections = localised.filter((c) => !c._data.parentCollection).map((c) => c._data);
   }
 }

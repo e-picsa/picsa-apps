@@ -5,7 +5,7 @@ import { IResourceBase_v0, SCHEMA_BASE_V0 } from '../base/schema_v0';
 
 export interface IResourceLink extends IResourceBase_v0 {
   type: 'link';
-  subtype: 'play_store' | 'website' | 'youtube' | 'whatsapp' | 'facebook';
+  subtype: 'play_store' | 'website' | 'youtube' | 'whatsapp' | 'facebook' | 'internal';
   url: string;
 }
 

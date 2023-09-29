@@ -38,7 +38,7 @@ export const SCHEMA_BASE_V0: RxJsonSchema<IResourceBase_v0> = {
     type: { type: 'string' },
     filter: { type: 'object', properties: { countries: { type: 'array' } } },
     keywords: { type: 'array', default: [] },
-    language: { type: 'string', default: 'gb_en' },
+    language: { type: 'string', default: '' },
     priority: { type: 'number', default: 1.0 },
     title: { type: 'string' },
     meta: { type: 'object' },

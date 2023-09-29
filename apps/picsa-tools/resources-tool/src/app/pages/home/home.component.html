@@ -13,10 +13,9 @@
       </div>
       <div class="list-container">
         <resource-item-collection
-          *ngFor="let collection of store.collections"
-          trackBy:collection.__key
+          *ngFor="let collection of collections"
+          trackBy:collectionLink.id
           [collection]="collection"
-          viewStyle="summary"
         >
         </resource-item-collection>
       </div>

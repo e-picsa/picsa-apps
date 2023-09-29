@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ConfigurationService } from '@picsa/configuration/src';
 import { RxDocument } from 'rxdb';
 import { Subject } from 'rxjs';
 
@@ -23,18 +22,13 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public service: ResourcesToolService, private configurationService: ConfigurationService) {}
+  constructor(public service: ResourcesToolService) {}
 
   async ngOnInit() {
     await this.service.ready();
     // retrieve docs only once on load as child item component manages individual subscription
-    const resourceFileDocs = await this.service.dbFileCollection.find().exec();
-    const filteredDocs = resourceFileDocs.filter((doc) => {
-      // filter resources to filter out any resources for other country localisations
-      const { country } = this.configurationService.activeConfiguration.localisation;
-      const filterCountries = doc._data.filter?.countries || [];
-      return filterCountries.length === 0 || filterCountries.includes(country.code);
-    });
+    const resourceFileDocs = await this.service.dbFiles.find().exec();
+    const filteredDocs = this.service.filterLocalisedResources(resourceFileDocs);
     this.fileResourceDocs = new MatTableDataSource<RxDocument<IResourceFile>>(filteredDocs);
     this.fileResourceDocs.sort = this.sort;
   }
