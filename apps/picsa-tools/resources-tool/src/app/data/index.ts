@@ -1,21 +1,12 @@
-import {
-  IResource,
-  IResourceApp,
-  IResourceCollection,
-  IResourceFile,
-  IResourceItemBase,
-  IResourceLink,
-  IResourceVideo,
-  IResourceYoutube,
-} from '../models';
 import * as schemas from '../schemas';
+import { IResourceBase } from '../schemas/base';
 import CROPS from './crops';
 import { GENDER_RESOURCES } from './gender';
 import PICSA_RESOURCES from './picsa';
 import WEATHER from './weather';
 import WORKSHOPS from './workshops';
 
-const byId: { [id: string]: IResource } = {
+const byId: { [id: string]: IResourceBase } = {
   ...CROPS,
   ...GENDER_RESOURCES,
   ...WEATHER,
@@ -24,55 +15,21 @@ const byId: { [id: string]: IResource } = {
 };
 console.log({ PICSA_RESOURCES });
 
-/** Base generator to ensure any created types appear in final export */
-const emptyTypes: () => { [type in IResource['type']]: [] } = () => ({
-  app: [],
+const typeExports: {
+  collection: schemas.IResourceCollection[];
+  file: schemas.IResourceFile[];
+  link: schemas.IResourceLink[];
+} = {
   collection: [],
   file: [],
   link: [],
-  video: [],
-  youtube: [],
-});
+};
 
-const typeExports: {
-  app: IResourceApp[];
-  collection: IResourceCollection[];
-  file: IResourceFile[];
-  link: IResourceLink[];
-  video: IResourceVideo[];
-  youtube: IResourceYoutube[];
-} = emptyTypes();
-
+// order by types
 for (const resource of Object.values(byId)) {
-  const { type } = resource;
-  typeExports[type].push(resource as any);
+  typeExports[resource.type].push(resource as any);
 }
 
-// sort types
-for (const [key, resources] of Object.entries(typeExports)) {
-  typeExports[key] = resources.sort(
-    (a: IResourceItemBase, b: IResourceItemBase) => (b.priority ?? -99) - (a.priority ?? -99)
-  );
-}
-
-/**
- * Format of hardcoded resources to be used in database
- * TODO - alternate formats can be removed once DB used throughout app
- */
-const dbFileEntries: schemas.IResourceFile[] = [];
-for (const entry of [...typeExports.file, ...typeExports.video]) {
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const { _created, _key, _modified, meta, appCountries, image, imageFit, subtitle, ...keptFields } = entry;
-  const dbEntry: schemas.IResourceFile = {
-    ...keptFields,
-    id: _key,
-    priority: entry.priority || 1,
-    filter: {
-      countries: appCountries || [],
-    },
-  };
-  dbFileEntries.push(dbEntry);
-}
-export const DB_FILE_ENTRIES = dbFileEntries;
-
-export default { ...typeExports, byId };
+export const DB_COLLECTION_ENTRIES = typeExports.collection;
+export const DB_FILE_ENTRIES = typeExports.file;
+export const DB_LINK_ENTRIES = typeExports.link;
