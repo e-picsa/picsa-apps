@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
-import { IResourceCollection } from '../../schemas';
+import { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
-import { ResourcesStore } from '../../stores';
 
 @Component({
   selector: 'resource-collection',
@@ -14,13 +14,16 @@ import { ResourcesStore } from '../../stores';
 })
 export class CollectionComponent implements OnInit, OnDestroy {
   public collection: IResourceCollection | undefined;
+  public files: IResourceFile[] = [];
+  public links: IResourceLink[] = [];
+  public collections: IResourceCollection[] = [];
+
   public showcollectionNotFound = false;
 
   private componentDestroyed$ = new Subject();
 
   constructor(
     private service: ResourcesToolService,
-    private store: ResourcesStore,
     private route: ActivatedRoute,
     private componentsService: PicsaCommonComponentsService
   ) {}
@@ -40,9 +43,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
       },
     });
     await this.service.ready();
-
-    // TODO - replace with service methods
-
     this.route.params.pipe(takeUntil(this.componentDestroyed$)).subscribe((params) => {
       const { collectionId } = params;
       if (collectionId) {
@@ -54,13 +54,30 @@ export class CollectionComponent implements OnInit, OnDestroy {
   }
 
   private async loadCollection(id: string) {
-    const foundCollection = this.store.getResourceById<IResourceCollection>(id);
+    const foundCollection = await this.service.dbCollections.findOne(id).exec();
     this.showcollectionNotFound = foundCollection ? false : true;
     if (foundCollection) {
-      this.collection = foundCollection;
+      this.collection = foundCollection._data;
+      await this.loadCollectionResources(foundCollection._data);
       setTimeout(() => {
         this.componentsService.setHeader({ title: foundCollection.title });
       }, 0);
     }
+  }
+
+  private async loadCollectionResources(collection: IResourceCollection) {
+    const { collections, files, links } = collection.childResources;
+    const linkDocs = await this.service.dbLinks.findByIds(links).sort('priority').exec();
+    this.links = this.processDocs(linkDocs);
+    const collectionDocs = await this.service.dbCollections.findByIds(collections).sort('priority').exec();
+    this.collections = this.processDocs(collectionDocs);
+    const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
+    this.files = this.processDocs(fileDocs);
+    console.log({ fileDocs });
+  }
+
+  private processDocs(docs: Map<string, RxDocument<any>>) {
+    const entries = [...docs.values()];
+    return this.service.filterLocalisedResources(entries).map((d) => d._data);
   }
 }

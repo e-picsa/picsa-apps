@@ -48,7 +48,7 @@ function generateLocationResources(location: IWeatherLocation) {
     title: location.label,
     description: `Local information for ${location.label}`,
     cover: { image: '' },
-    // parentResource: 'weatherResources',
+    parentCollection: 'weatherResources',
     childResources: {
       collections: [],
       files: Object.keys(files),

@@ -62,7 +62,7 @@ export class ResourceItemVideoComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.service.ready();
-    const dbDoc = await this.service.dbFileCollection.findOne(this.resource.id).exec();
+    const dbDoc = await this.service.dbFiles.findOne(this.resource.id).exec();
     if (dbDoc) {
       this.dbDoc = dbDoc;
       this.loadVideo();

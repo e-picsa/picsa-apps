@@ -1,7 +1,37 @@
-<div class="page-content no-padding">
-  <resource-item-collection [collection]="collection" viewStyle="expanded" *ngIf="collection">
-  </resource-item-collection>
-  <picsa-alert-box *ngIf="showcollectionNotFound" type="info" style="margin: 2rem">{{
-    'Collection not found' | translate
-  }}</picsa-alert-box>
-</div>
+<picsa-alert-box *ngIf="showcollectionNotFound" type="info" style="margin: 2rem">{{
+  'Collection not found' | translate
+}}</picsa-alert-box>
+
+<mat-card *ngIf="collection">
+  <!-- Header -->
+  <mat-card-header>
+    <mat-card-title>{{ collection.title | translate }}</mat-card-title>
+    <mat-card-subtitle> {{ collection.description || '' }} </mat-card-subtitle>
+    <img mat-card-avatar *ngIf="collection.cover?.image" [src]="collection.cover?.image" />
+  </mat-card-header>
+  <!-- Contents -->
+  <mat-card-content>
+    <div *ngIf="collection.language" style="margin-top: 2em">
+      <span class="language-code">{{ collection.language.toUpperCase() }}</span>
+    </div>
+    <div style="margin-top: 2rem" class="child-resources" *ngIf="collections.length > 0">
+      <mat-card-title style="font-size: 20px">{{ 'Collections' | translate }}</mat-card-title>
+      <div class="list-container">
+        <resource-item *ngFor="let resource of collections" [resource]="resource" style="margin-bottom: 8px">
+        </resource-item>
+      </div>
+    </div>
+    <div style="margin-top: 2rem" class="child-resources" *ngIf="files.length > 0">
+      <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
+      <div class="list-container">
+        <resource-item *ngFor="let resource of files" [resource]="resource" style="margin-bottom: 8px"> </resource-item>
+      </div>
+    </div>
+    <div style="margin-top: 2rem" class="child-resources" *ngIf="links.length > 0">
+      <mat-card-title style="font-size: 20px">{{ 'Links' | translate }}</mat-card-title>
+      <div class="list-container">
+        <resource-item *ngFor="let resource of links" [resource]="resource" style="margin-bottom: 8px"> </resource-item>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
