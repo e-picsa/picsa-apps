@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 
@@ -11,6 +11,11 @@ import { IResourceLink } from '../../../../schemas';
 })
 export class ResourceItemLinkComponent {
   @Input() resource: IResourceLink;
+
+  /** Check if any existing click handlers already bound to element to use as override */
+  // eslint-disable-next-line @angular-eslint/no-output-native
+  @Output() click: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   /** Specific icons to use as action buttons below link. Used when main image not fully indicative of link type */
@@ -25,6 +30,8 @@ export class ResourceItemLinkComponent {
   };
 
   public handleClick() {
+    // If (click) binding present on element ignore own methods
+    if (this.click.observed) return;
     switch (this.resource.subtype) {
       case 'internal':
         return this.handleInternalLink(this.resource.url);
