@@ -1,5 +1,5 @@
 <!-- Base resource display -->
-<mat-card appearance="raised" class="resource-card link" (click)="handleClick($event)">
+<mat-card appearance="raised" class="resource-card link" (click)="handleClick()">
   <div class="card-layout">
     <!-- Side Image -->
     <div
@@ -18,6 +18,14 @@
         <p *ngIf="resource.description">{{ resource.description | translate }}</p>
         <!-- Child Content -->
         <ng-content></ng-content>
+        <div
+          class="action-button"
+          *ngIf="actionButtons[resource.subtype] as actionButton"
+          [attr.data-type]="resource.subtype"
+        >
+          <mat-icon *ngIf="actionButton.svgIcon" [svgIcon]="actionButton.svgIcon"></mat-icon>
+          <mat-icon *ngIf="actionButton.matIcon">{{actionButton.matIcon}}</mat-icon>
+        </div>
         <div *ngIf="resource.language" style="margin-top: 2em">
           <span class="language-code">{{ resource.language.toUpperCase() }}</span>
         </div>
