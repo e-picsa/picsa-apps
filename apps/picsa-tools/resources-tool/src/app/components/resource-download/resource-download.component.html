@@ -15,6 +15,10 @@
     <mat-icon>close</mat-icon>
   </button>
 </div>
-<button mat-icon-button *ngIf="downloadStatus === 'complete'">
+<button
+  mat-icon-button
+  *ngIf="downloadStatus === 'complete'"
+  [style.visibility]="hideOnComplete ? 'hidden' : 'visible'"
+>
   <mat-icon>check</mat-icon>
 </button>

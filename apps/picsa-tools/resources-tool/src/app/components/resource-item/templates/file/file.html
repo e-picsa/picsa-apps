@@ -1,18 +1,26 @@
-<!-- TODO - switch shoudl be inside overlay -->
-<ng-container [ngSwitch]="resource.subtype">
-  <!-- TODO - should remove overlay and css from component to use in parent instead -->
-  <resource-item-video *ngSwitchCase="'video'" [resource]="$any(resource)"></resource-item-video>
+<!-- TODO - should remove overlay and css from component to use in parent instead -->
 
-  <!-- TODO - should be able to refactor video item to be included here -->
-  <div style="position: relative" *ngSwitchDefault>
-    <resource-item-link [resource]="resourceLink" (click)="handleClick($event)"> </resource-item-link>
-    <div class="download-overlay" [style.visibility]="showDownloadOverlay ? 'visible' : 'hidden'">
-      <resource-download
-        *ngIf="dbDoc"
-        [dbDoc]="dbDoc"
-        class="download-button"
-        (downloadComplete)="handleResourceDownloaded($event)"
-      ></resource-download>
-    </div>
+<!-- TODO - should be able to refactor video item to be included here -->
+<div style="position: relative">
+  <!-- Download overlay -->
+  <div class="download-overlay" [style.visibility]="attachment ? 'hidden' : 'visible'">
+    <resource-download
+      *ngIf="dbDoc"
+      [dbDoc]="dbDoc"
+      class="download-button"
+      [hideOnComplete]="true"
+      (attachmentChange)="handleAttachmentChange($event)"
+    ></resource-download>
   </div>
-</ng-container>
+
+  <ng-container [ngSwitch]="resource.subtype">
+    <resource-item-video *ngSwitchCase="'video'" [resource]="resource" [fileURI]="fileURI"></resource-item-video>
+    <resource-item-link
+      *ngSwitchDefault
+      [resource]="resourceLink"
+      (click)="handleFileLinkClick($event)"
+      style="height: 100%"
+    >
+    </resource-item-link>
+  </ng-container>
+</div>

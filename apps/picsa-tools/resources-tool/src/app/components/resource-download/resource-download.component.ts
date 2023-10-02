@@ -6,38 +6,48 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
+type IDownloadStatus = 'ready' | 'pending' | 'complete' | 'error';
+
 @Component({
   selector: 'resource-download',
   templateUrl: './resource-download.component.html',
   styleUrls: ['./resource-download.component.scss'],
 })
-export class ResourceDownloadComponent implements OnInit, OnDestroy {
-  public downloadStatus: 'ready' | 'pending' | 'complete' | 'error';
+export class ResourceDownloadComponent implements OnDestroy {
+  public downloadStatus: IDownloadStatus;
   public downloadProgress = 0;
+  public attachment?: RxAttachment<IResourceFile>;
+
+  private _dbDoc: RxDocument<IResourceFile>;
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
 
-  @Input() dbDoc: RxDocument<IResourceFile>;
+  @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
+    this._dbDoc = dbDoc;
+    if (dbDoc) {
+      this.subscribeToAttachmentChanges(dbDoc);
+    }
+  }
 
-  @Output() downloadComplete = new EventEmitter<RxAttachment<IResourceFile>>();
+  @Input() hideOnComplete = false;
+
+  /** Emit downloaded file updates */
+  @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
 
   constructor(private service: ResourcesToolService, private fileService: FileService) {}
 
   public get resource() {
-    return this.dbDoc._data;
+    return this._dbDoc._data;
   }
 
-  async ngOnInit() {
+  private subscribeToAttachmentChanges(dbDoc: RxDocument<IResourceFile>) {
     // subscribe to doc attachment changes to confirm whether downloaded
-    this.dbDoc.allAttachments$.pipe(takeUntil(this.componentDestroyed$)).subscribe((attachments) => {
+    dbDoc.allAttachments$.pipe(takeUntil(this.componentDestroyed$)).subscribe((attachments) => {
       const attachment = attachments.find((a) => a.id === this.resource.filename);
       // TODO - check if update available
-      if (attachment) {
-        this.downloadStatus = 'complete';
-        this.downloadComplete.next(attachment);
-      } else {
-        this.downloadStatus = 'ready';
-      }
+      this.downloadStatus = attachment ? 'complete' : 'ready';
+      this.attachment = attachment;
+      this.attachmentChange.next(attachment);
     });
   }
 
@@ -69,7 +79,7 @@ export class ResourceDownloadComponent implements OnInit, OnDestroy {
   }
 
   private async persistDownload(data: Blob) {
-    await this.service.putFileAttachment(this.dbDoc, data);
+    await this.service.putFileAttachment(this._dbDoc, data);
   }
 
   /** Cancel ongoing download */

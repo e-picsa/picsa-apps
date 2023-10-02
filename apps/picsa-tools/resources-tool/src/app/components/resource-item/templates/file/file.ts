@@ -1,20 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
-import { RxDocument } from 'rxdb';
+import { RxAttachment, RxDocument } from 'rxdb';
 
 import { IResourceFile, IResourceLink } from '../../../../schemas';
+import { _wait } from '@picsa/utils';
 
 @Component({
   selector: 'resource-item-file',
   templateUrl: 'file.html',
   styleUrls: ['file.scss'],
 })
-export class ResourceItemFileComponent implements OnInit {
+export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;
 
-  public showDownloadOverlay = true;
-
   public dbDoc: RxDocument<IResourceFile>;
+  public attachment: RxAttachment<IResourceFile> | undefined;
+  public fileURI: string;
 
   constructor(private service: ResourcesToolService) {}
 
@@ -25,8 +26,22 @@ export class ResourceItemFileComponent implements OnInit {
     }
   }
 
-  public handleResourceDownloaded(e) {
-    console.log('resource downloaded', e);
+  async ngOnDestroy() {
+    // ensure any created file attachment uris disposed of
+    this.service.revokeFileAttachmentURIs([this.dbDoc.filename]);
+  }
+
+  /** When attachment state changed attempt to get URI to downloaded file resource */
+  public async handleAttachmentChange(attachment: RxAttachment<IResourceFile> | undefined) {
+    if (attachment) {
+      // use neglible timeout due to avoid afterViewCheck change detection
+      await _wait(0);
+      this.attachment = attachment;
+      const uri = await this.service.getFileAttachmentURI(this.dbDoc);
+      if (uri) {
+        this.fileURI = uri;
+      }
+    }
   }
 
   /** Display file in resource link format */
@@ -39,8 +54,8 @@ export class ResourceItemFileComponent implements OnInit {
     return link;
   }
 
-  public handleClick(e: Event) {
-    // TODO - should be openResource method assuming child will be blocked by overlay if not downloaded
-    console.log('file clicked', this.resource);
+  /** Generic file opener */
+  public async handleFileLinkClick(e: Event) {
+    this.service.openFileResource(this.fileURI, this.attachment!.type);
   }
 }

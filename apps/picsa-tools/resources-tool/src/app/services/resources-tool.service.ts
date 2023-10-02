@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
+import { NativeStorageService } from '@picsa/shared/services/native';
 import { RxCollection, RxDocument } from 'rxdb';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
@@ -12,7 +15,8 @@ export class ResourcesToolService extends PicsaAsyncService {
   constructor(
     private dbService: PicsaDatabase_V2_Service,
     private dbAttachmentService: PicsaDatabaseAttachmentService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private storageService: NativeStorageService
   ) {
     super();
   }
@@ -59,6 +63,18 @@ export class ResourcesToolService extends PicsaAsyncService {
       if (!filterCountries) return true;
       return filterCountries.includes(code);
     });
+  }
+
+  public async openFileResource(uri: string, mimetype: string) {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        this.storageService.openFile(uri, mimetype);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      return Browser.open({ url: uri });
+    }
   }
 
   public async putFileAttachment(doc: RxDocument<schemas.IResourceFile>, data: Blob) {
