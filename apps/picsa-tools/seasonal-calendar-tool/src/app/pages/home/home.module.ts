@@ -1,19 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { Route, RouterModule } from '@angular/router';
 
 import { SeasonalCalendarToolComponentsModule } from '../../components/components.module';
 import { HomeComponent } from './home.component';
-
-const routes: Route[] = [
-  {
-    path: '',
-    component: HomeComponent,
-  },
-];
+import { HomeRoutingModule } from './home.routing.module';
 
 @NgModule({
   declarations: [HomeComponent],
-  imports: [CommonModule, RouterModule.forChild(routes), SeasonalCalendarToolComponentsModule],
+  imports: [CommonModule, HomeRoutingModule, SeasonalCalendarToolComponentsModule],
 })
 export class HomeModule {}

@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'seasonal-calendar-picsa-create-calender',
-  templateUrl: './create-calender.component.html',
-  styleUrls: ['./create-calender.component.scss'],
+  selector: 'seasonal-calendar-create-calender',
+  templateUrl: './create-calendar.component.html',
+  styleUrls: ['./create-calendar.component.scss'],
 })
 
 
-export class CreateCalenderComponent {
+export class CreateCalendarComponent {
   
   constructor() {
     this.generateCalendarMonths();

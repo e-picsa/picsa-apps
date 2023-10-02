@@ -9,7 +9,7 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: 'create-calender',
-    loadChildren: () => import('./pages/create-calender/create-calender.module').then((m) => m.CreateCalenderModule),
+    loadChildren: () => import('./pages/create-calendar/create-calendar.module').then((m) => m.CreateCalendarModule),
     title: 'Create Calendar',
   },
 ];
