@@ -43,11 +43,7 @@
     style="margin-top: 2rem; display: flex; width: 100%"
   >
     <div style="max-width: 300px; margin: auto">
-      <resource-item-file
-        *ngIf="resourceDoc && !pdfSrc"
-        [resource]="resourceDoc._data"
-        buttonStyle="inverted"
-      ></resource-item-file>
+      <resource-item-file *ngIf="resourceDoc && !pdfSrc" [resource]="resourceDoc._data"></resource-item-file>
     </div>
   </picsa-alert-box>
 </ng-template>
