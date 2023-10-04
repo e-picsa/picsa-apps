@@ -5,38 +5,57 @@
     </picsa-pdf-viewer>
   </div>
 
-  <mat-tab-group dynamicHeight [selectedIndex]="initialTabIndex" (selectedIndexChange)="setSelectedTab($event)">
+  <mat-tab-group
+    animationDuration="0ms"
+    dynamicHeight
+    [selectedIndex]="initialTabIndex"
+    (selectedIndexChange)="setSelectedTab($event)"
+  >
     <!-- Extension version -->
-    <mat-tab [label]="'Extension' | translate">
-      <picsa-alert-box *ngIf="downloadPrompt.show" type="info" [title]="downloadPrompt.title">
-        <resource-item
-          [resource]="downloadPrompt.resource"
-          (downloadComplete)="handleManualDownloaded($event)"
-          [openAfterDownload]="false"
-        ></resource-item>
-      </picsa-alert-box>
+    <mat-tab [label]="'Extension' | translate" #extensionTab>
+      <ng-container *ngTemplateOutlet="manualDownload"></ng-container>
       <picsa-manual-steps-container
-        *ngIf="pdfSrc"
+        [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
         [pageMapping]="localisation"
         [stepData]="contents.extension"
+        [@fadeInOut]="extensionTab.isActive ? 'in' : 'out'"
       ></picsa-manual-steps-container>
     </mat-tab>
+
     <!-- Farmer Version -->
-    <mat-tab [label]="'Farmer' | translate">
-      <div class="mat-elevation-z4">
-        <picsa-alert-box *ngIf="downloadPrompt.show" type="info" [title]="downloadPrompt.title">
-          <resource-item
-            [resource]="downloadPrompt.resource"
-            (downloadComplete)="handleManualDownloaded($event)"
-            [openAfterDownload]="false"
-          ></resource-item>
-        </picsa-alert-box>
-        <picsa-manual-steps-container
-          *ngIf="pdfSrc"
-          [pageMapping]="localisation"
-          [stepData]="contents.farmer"
-        ></picsa-manual-steps-container>
-      </div>
+    <mat-tab [label]="'Farmer' | translate" #farmerTab>
+      <ng-container *ngTemplateOutlet="manualDownload"></ng-container>
+      <picsa-manual-steps-container
+        [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
+        [pageMapping]="localisation"
+        [stepData]="contents.farmer"
+        [@fadeInOut]="farmerTab.isActive ? 'in' : 'out'"
+      ></picsa-manual-steps-container>
     </mat-tab>
   </mat-tab-group>
 </div>
+
+<ng-template #manualDownload>
+  <picsa-alert-box
+    *ngIf="downloadPrompt.show"
+    type="info"
+    [title]="downloadPrompt.title"
+    style="margin-top: 2rem; display: flex; width: 100%"
+  >
+    <div style="max-width: 300px; margin: auto">
+      <resource-item-file
+        *ngIf="resourceDoc && !pdfSrc"
+        [resource]="resourceDoc._data"
+        buttonStyle="inverted"
+      ></resource-item-file>
+    </div>
+  </picsa-alert-box>
+</ng-template>
+
+<!-- Invisible resource downloader used just to track download progress (resource-item-file also contains) -->
+<resource-download
+  *ngIf="resourceDoc"
+  [dbDoc]="resourceDoc"
+  (attachmentChange)="loadManual($event)"
+  style="display: none"
+></resource-download>

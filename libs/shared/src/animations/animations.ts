@@ -1,10 +1,4 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 // NOTE - AOT very temperamental with animations, see guidance here:
 // https://blog.angularindepth.com/total-guide-to-dynamic-angular-animations-that-can-be-toggled-at-runtime-be5bb6778a0a
 // Main issues are declaring new const/let/var or string interpolation
@@ -49,17 +43,10 @@ export function FadeInOut(config: Partial<IAnimationConfig> = {}) {
     // (e.g. part of ngIf statement), so explicitly define
     transition(':enter', [
       style({ opacity: 0 }),
-      animate(
-        c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing,
-        style({ opacity: 1 })
-      ),
+      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing, style({ opacity: 1 })),
     ]),
-    transition('* => in', [
-      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing),
-    ]),
-    transition('in => out', [
-      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
-    ]),
+    transition('* => in', [animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)]),
+    transition('in => out', [animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing)]),
   ]);
 }
 
@@ -85,21 +72,14 @@ export function FlyInOut(config?: Partial<IAnimationConfig>) {
       animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
       style({ transform: 'translate' + c.axis + '(100%)' }),
     ]),
-    transition('out => in', [
-      animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing),
-    ]),
-    transition('in => out', [
-      animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing),
-    ]),
+    transition('out => in', [animate(c.inSpeed + 'ms ' + c.inDelay + 'ms ' + c.inEasing)]),
+    transition('in => out', [animate(c.outSpeed + 'ms ' + c.outDelay + 'ms ' + c.outEasing)]),
   ]);
 }
 
 // helper method to turn config into string of animation parameters
 // NOTE - not called directly as doesn't work with AOT, but kept for reference
-export function getAnimationTimings(
-  config: Partial<IAnimationConfig>,
-  direction: 'in' | 'out'
-) {
+export function getAnimationTimings(config: Partial<IAnimationConfig>, direction: 'in' | 'out') {
   const c = {
     ...ANIMATION_DEFAULTS,
     ...config,
@@ -150,6 +130,7 @@ export const ANIMATION_DELAYED: IAnimationConfig = {
 };
 
 interface IAnimationConfig {
+  /** duration in ms */
   inSpeed: number;
   inDelay: number;
   inEasing: string;
@@ -158,7 +139,7 @@ interface IAnimationConfig {
   outEasing: string;
   axis: 'X' | 'Y';
   /** Additional styles to apply to in-state */
-  inStyle: any;
+  inStyle: Record<string, string | number>;
   /** Additional styles to apply to out-state */
-  outStyle: any;
+  outStyle: Record<string, string | number>;
 }

@@ -1,11 +1,13 @@
 /* eslint-disable @nx/enforce-module-boundaries */
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { IResourceFile } from '@picsa/resources/src/app/models';
-import { ResourcesStore } from '@picsa/resources/src/app/stores';
-import { FlyInOut } from '@picsa/shared/animations';
+import { IResourceFile } from '@picsa/resources/src/app/schemas';
+import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
+import { ANIMATION_DELAYED, FadeInOut, FlyInOut } from '@picsa/shared/animations';
+import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PICSA_MANUAL_CONTENTS_EXTENSION, PICSA_MANUAL_CONTENTS_FARMER } from '../../data';
@@ -31,9 +33,36 @@ const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IReso
   selector: 'picsa-manual-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  animations: [FlyInOut({ axis: 'Y' })],
+  animations: [
+    FlyInOut({ axis: 'Y' }),
+    FadeInOut({ inDelay: 200, inSpeed: 300 }),
+
+    trigger('openClose', [
+      // ...
+      state(
+        'open',
+        style({
+          height: '200px',
+          opacity: 1,
+          backgroundColor: 'yellow',
+        })
+      ),
+      state(
+        'closed',
+        style({
+          height: '100px',
+          opacity: 0.8,
+          backgroundColor: 'blue',
+        })
+      ),
+      transition('open => closed', [animate('1s')]),
+      transition('closed => open', [animate('0.5s')]),
+    ]),
+  ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  public resourceDoc: RxDocument<IResourceFile> | null;
+
   public page?: number = undefined;
   public pdfSrc?: string;
   /** Used to track whether extension or farmer tab should be displayed */
@@ -47,8 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public downloadPrompt = {
     show: false,
-    title: translateMarker('Manual Requires Download'),
-    resource: {} as IResourceFile,
+    title: translateMarker('Download the PICSA Manual'),
   };
 
   private componentDestroyed$ = new Subject<boolean>();
@@ -56,14 +84,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private ConfigurationService: ConfigurationService,
-    private resourcesStore: ResourcesStore
+    private resourcesService: ResourcesToolService
   ) {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(({ page }) => {
       this.page = Number(page);
     });
-    // Start with tab user most recently used
-    const version = this.getManualVersion();
-    this.initialTabIndex = TAB_MAPPING[version];
   }
 
   ngOnInit(): void {
@@ -72,7 +97,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe(async (config) => {
         const code = config.localisation.language.selected?.code || 'en';
         this.localisation = code;
-        this.loadManual();
+        // Start with tab user most recently used
+        const version = this.getManualVersion();
+        this.setSelectedTab(TAB_MAPPING[version]);
       });
   }
 
@@ -80,25 +107,29 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Read local language setting and manual version preference to determine which version of the manual
    * to attempt loading
    */
-  private async loadManual() {
-    await this.resourcesStore.ready();
-    const code = this.localisation;
-    const version = this.getManualVersion();
-    // Pick manual version, with fallback to english if not available
-    const manualResource = LOCALISED_VERSIONS[version][code] || LOCALISED_VERSIONS[version].en;
-    const isDownloaded = this.resourcesStore.isFileDownloaded(manualResource);
-    if (isDownloaded) {
-      this.pdfSrc = await this.resourcesStore.getFileLocalLink(manualResource);
-    } else {
-      this.downloadPrompt.show = true;
-      this.downloadPrompt.resource = manualResource;
+  public async loadManual(attachment?: RxAttachment<IResourceFile>) {
+    if (attachment && this.resourceDoc) {
+      const uri = await this.resourcesService.getFileAttachmentURI(this.resourceDoc);
+      if (uri) {
+        this.downloadPrompt.show = false;
+        this.pdfSrc = uri;
+        return;
+      }
     }
+    this.downloadPrompt.show = true;
   }
 
   public async setSelectedTab(index: number) {
+    this.pdfSrc = undefined;
     this.initialTabIndex = index;
-    this.setManualVersion(index === 1 ? 'farmer' : 'extension');
-    this.loadManual();
+    const version = index === 1 ? 'farmer' : 'extension';
+    this.setManualVersion();
+    const manualResource = LOCALISED_VERSIONS[version][this.localisation] || LOCALISED_VERSIONS[version].en;
+    await this.resourcesService.ready();
+    const manualDoc = await this.resourcesService.dbFiles.findOne(manualResource.id).exec();
+    if (manualDoc) {
+      this.resourceDoc = manualDoc;
+    }
   }
 
   /** use localstorage to track farmer version preference */
@@ -109,12 +140,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     return localStorage.setItem('manual_version', version);
   }
 
-  public async handleManualDownloaded(resource: IResourceFile) {
-    this.downloadPrompt.show = false;
-    this.pdfSrc = await this.resourcesStore.getFileLocalLink(resource);
-  }
-
   ngOnDestroy() {
+    // revoke any created object uris
+    this.resourcesService.revokeFileAttachmentURIs([
+      ...Object.values(LOCALISED_VERSIONS.extension).map((manual) => manual.filename),
+      ...Object.values(LOCALISED_VERSIONS.farmer).map((manual) => manual.filename),
+    ]);
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
   }

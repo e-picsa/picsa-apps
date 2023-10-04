@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';

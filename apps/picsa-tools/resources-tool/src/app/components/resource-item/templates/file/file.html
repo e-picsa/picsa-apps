@@ -8,6 +8,7 @@
       *ngIf="dbDoc"
       [dbDoc]="dbDoc"
       class="download-button"
+      [attr.data-button-style]="buttonStyle"
       [hideOnComplete]="true"
       (attachmentChange)="handleAttachmentChange($event)"
     ></resource-download>

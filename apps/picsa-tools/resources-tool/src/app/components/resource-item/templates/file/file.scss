@@ -23,4 +23,8 @@
   height: 64px;
   align-items: center;
   justify-content: center;
+  &[data-button-style='inverted'] {
+    background: var(--color-primary);
+    color: white;
+  }
 }

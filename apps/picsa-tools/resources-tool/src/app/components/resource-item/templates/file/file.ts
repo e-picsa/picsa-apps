@@ -13,6 +13,9 @@ import { _wait } from '@picsa/utils';
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;
 
+  /** Button style, options 'primary' (default) or 'inverted' */
+  @Input() buttonStyle: 'primary' | 'inverted' = 'primary';
+
   public dbDoc: RxDocument<IResourceFile>;
   public attachment: RxAttachment<IResourceFile> | undefined;
   public fileURI: string;
