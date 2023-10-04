@@ -22,6 +22,10 @@ export class ResourceDownloadComponent implements OnDestroy {
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
 
+  @Input() styleVariant: 'primary' | 'white' = 'primary';
+
+  @Input() size = 48;
+
   @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
     this._dbDoc = dbDoc;
     if (dbDoc) {
@@ -35,6 +39,10 @@ export class ResourceDownloadComponent implements OnDestroy {
   @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
 
   constructor(private service: ResourcesToolService, private fileService: FileService) {}
+
+  public get sizePx() {
+    return `${this.size}px`;
+  }
 
   public get resource() {
     return this._dbDoc._data;

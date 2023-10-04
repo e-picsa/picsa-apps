@@ -6,17 +6,15 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ResourcesMaterialModule } from '../material.module';
 import { ResourceDownloadComponent } from './resource-download/resource-download.component';
-import { ResourceItemComponent } from './resource-item/resource-item.component';
 import {
   ResourceItemCollectionComponent,
   ResourceItemFileComponent,
   ResourceItemLinkComponent,
   ResourceItemVideoComponent,
-} from './resource-item/templates';
+} from './resource-item';
 
 const components = [
   ResourceDownloadComponent,
-  ResourceItemComponent,
   ResourceItemCollectionComponent,
   ResourceItemFileComponent,
   ResourceItemLinkComponent,

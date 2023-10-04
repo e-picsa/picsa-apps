@@ -17,20 +17,25 @@
     <div style="margin-top: 2rem" class="child-resources" *ngIf="collections.length > 0">
       <mat-card-title style="font-size: 20px">{{ 'Collections' | translate }}</mat-card-title>
       <div class="list-container">
-        <resource-item *ngFor="let resource of collections" [resource]="resource" style="margin-bottom: 8px">
-        </resource-item>
+        <resource-item-collection
+          *ngFor="let collection of collections"
+          [collection]="collection"
+          style="margin-bottom: 8px"
+        ></resource-item-collection>
       </div>
     </div>
     <div style="margin-top: 2rem" class="child-resources" *ngIf="files.length > 0">
       <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
       <div class="list-container">
-        <resource-item *ngFor="let resource of files" [resource]="resource" style="margin-bottom: 8px"> </resource-item>
+        <resource-item-file *ngFor="let resource of files" [resource]="resource" style="margin-bottom: 8px">
+        </resource-item-file>
       </div>
     </div>
     <div style="margin-top: 2rem" class="child-resources" *ngIf="links.length > 0">
       <mat-card-title style="font-size: 20px">{{ 'Links' | translate }}</mat-card-title>
       <div class="list-container">
-        <resource-item *ngFor="let resource of links" [resource]="resource" style="margin-bottom: 8px"> </resource-item>
+        <resource-item-link *ngFor="let resource of links" [resource]="resource" style="margin-bottom: 8px">
+        </resource-item-link>
       </div>
     </div>
   </mat-card-content>

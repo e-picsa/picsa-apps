@@ -1,5 +1,0 @@
-<ng-container [ngSwitch]="resource.type">
-  <resource-item-collection *ngSwitchCase="'collection'" [collection]="resourceCollection"></resource-item-collection>
-  <resource-item-link *ngSwitchCase="'link'" [resource]="resourceLink"> </resource-item-link>
-  <resource-item-file *ngSwitchCase="'file'" [resource]="resourceFile"> </resource-item-file>
-</ng-container>

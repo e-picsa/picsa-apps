@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { IResourceFile } from '../../../schemas';
+import { IResourceFile } from '../../schemas';
 
 @Component({
   selector: 'resource-item-video',

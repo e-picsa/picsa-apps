@@ -4,14 +4,17 @@
 <div style="position: relative">
   <!-- Download overlay -->
   <div class="download-overlay" [style.visibility]="attachment ? 'hidden' : 'visible'">
-    <resource-download
-      *ngIf="dbDoc"
-      [dbDoc]="dbDoc"
-      class="download-button"
-      [attr.data-button-style]="buttonStyle"
-      [hideOnComplete]="true"
-      (attachmentChange)="handleAttachmentChange($event)"
-    ></resource-download>
+    <div class="mat-elevation-z8; border-radius: 8px;">
+      <resource-download
+        *ngIf="dbDoc"
+        [dbDoc]="dbDoc"
+        class="download-button"
+        styleVariant="white"
+        [size]="36"
+        [hideOnComplete]="true"
+        (attachmentChange)="handleAttachmentChange($event)"
+      ></resource-download>
+    </div>
   </div>
 
   <ng-container [ngSwitch]="resource.subtype">

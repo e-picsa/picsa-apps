@@ -3,17 +3,20 @@
 }
 .download-progress {
   position: relative;
-  width: 48px;
 }
 button.download-cancel {
-  height: 48px;
-  width: 48px;
-  min-width: 48px;
   position: absolute;
+  padding: 0;
   top: 0;
   left: 0;
   border-radius: 50%;
   mat-icon {
     margin-right: 0;
   }
+}
+mat-progress-spinner[data-style-variant='white'] {
+  --mdc-circular-progress-active-indicator-color: white !important;
+}
+button[data-style-variant='white'] {
+  color: white;
 }

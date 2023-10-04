@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { IResourceCollection, IResourceLink } from '../../../../schemas';
+import { IResourceCollection, IResourceLink } from '../../../schemas';
 
 @Component({
   selector: 'resource-item-collection',

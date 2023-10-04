@@ -16,15 +16,15 @@
 }
 .download-button {
   display: flex;
-  background: white;
-  color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
   border-radius: 8px;
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   align-items: center;
   justify-content: center;
   &[data-button-style='inverted'] {
-    background: var(--color-primary);
-    color: white;
+    background: white;
+    color: var(--color-primary);
   }
 }

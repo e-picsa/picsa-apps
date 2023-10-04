@@ -2,7 +2,7 @@ import { AfterContentInit, AfterViewInit, Component, Input, OnDestroy, OnInit, V
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
 import { RxAttachment, RxDocument } from 'rxdb';
 
-import { IResourceFile, IResourceLink } from '../../../../schemas';
+import { IResourceFile, IResourceLink } from '../../../schemas';
 import { _wait } from '@picsa/utils';
 
 @Component({
@@ -12,9 +12,6 @@ import { _wait } from '@picsa/utils';
 })
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;
-
-  /** Button style, options 'primary' (default) or 'inverted' */
-  @Input() buttonStyle: 'primary' | 'inverted' = 'primary';
 
   public dbDoc: RxDocument<IResourceFile>;
   public attachment: RxAttachment<IResourceFile> | undefined;

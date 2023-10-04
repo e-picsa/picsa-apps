@@ -73,7 +73,6 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.collections = this.processDocs(collectionDocs);
     const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
     this.files = this.processDocs(fileDocs);
-    console.log({ files: this.files, collections: this.collections, links: this.links });
   }
 
   private processDocs(docs: Map<string, RxDocument<any>>) {

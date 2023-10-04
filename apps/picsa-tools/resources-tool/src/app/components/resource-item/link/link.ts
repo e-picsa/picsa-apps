@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 
-import { IResourceLink } from '../../../../schemas';
+import { IResourceLink } from '../../../schemas';
 
 @Component({
   selector: 'resource-item-link',
