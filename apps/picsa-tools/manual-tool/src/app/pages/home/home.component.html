@@ -37,21 +37,17 @@
 
 <ng-template #manualDownload>
   <picsa-alert-box
-    *ngIf="downloadPrompt.show"
+    [style.display]="downloadPrompt.show ? 'block' : 'none'"
     type="info"
     [title]="downloadPrompt.title"
     style="margin-top: 2rem; display: flex; width: 100%"
   >
     <div style="max-width: 300px; margin: auto">
-      <resource-item-file *ngIf="resourceDoc && !pdfSrc" [resource]="resourceDoc._data"></resource-item-file>
+      <resource-item-file
+        *ngIf="resourceDoc"
+        [resource]="resourceDoc._data"
+        (attachmentChange)="handleResourceAttachmentChange($event)"
+      ></resource-item-file>
     </div>
   </picsa-alert-box>
 </ng-template>
-
-<!-- Invisible resource downloader used just to track download progress (resource-item-file also contains) -->
-<resource-download
-  *ngIf="resourceDoc"
-  [dbDoc]="resourceDoc"
-  (attachmentChange)="loadManual($event)"
-  style="display: none"
-></resource-download>

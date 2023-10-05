@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { APP_VERSION } from '@picsa/environments/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
+import { FileService } from '@picsa/shared/services/core/file.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
+import { _wait, arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
+import { lastValueFrom } from 'rxjs';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
@@ -16,7 +20,8 @@ export class ResourcesToolService extends PicsaAsyncService {
     private dbService: PicsaDatabase_V2_Service,
     private dbAttachmentService: PicsaDatabaseAttachmentService,
     private configurationService: ConfigurationService,
-    private storageService: NativeStorageService
+    private storageService: NativeStorageService,
+    private fileService: FileService
   ) {
     super();
   }
@@ -29,7 +34,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     await this.dbService.ready();
     await this.dbAttachmentService.ready();
     await this.dbInit();
-    await this.populateAssetResources();
+    await this.populateHardcodedResources();
   }
 
   private async dbInit() {
@@ -38,9 +43,6 @@ export class ResourcesToolService extends PicsaAsyncService {
       resources_tool_files: schemas.FILES_COLLECTION,
       resources_tool_links: schemas.LINKS_COLLECTION,
     });
-    await this.dbCollections.bulkUpsert(DB_COLLECTION_ENTRIES);
-    await this.dbFiles.bulkUpsert(DB_FILE_ENTRIES);
-    await this.dbLinks.bulkUpsert(DB_LINK_ENTRIES);
   }
 
   /** Provide database options tool collection (with typings) */
@@ -103,7 +105,46 @@ export class ResourcesToolService extends PicsaAsyncService {
     return this.dbAttachmentService.removeAttachment(doc, doc.filename);
   }
 
-  private async populateAssetResources() {
-    // TODO - use assets manifest to populate attachments
+  private async populateHardcodedResources() {
+    // Use caching system to only populate once per app version launch
+    const assetsCacheVersion = this.getAssetResourcesVersion();
+    if (assetsCacheVersion === APP_VERSION.number) {
+      return;
+    }
+    // Update DB with hardcoded entries
+    await this.dbCollections.bulkUpsert(DB_COLLECTION_ENTRIES);
+    await this.dbFiles.bulkUpsert(DB_FILE_ENTRIES);
+    await this.dbLinks.bulkUpsert(DB_LINK_ENTRIES);
+
+    // Populate assets included in app build
+    await this.copyResourcesFromAssets();
+    this.setAssetResourcesVersion();
+  }
+
+  /** Copy hardcoded assets to db (if checksums match) */
+  private async copyResourcesFromAssets() {
+    // Populate files from cache
+    const fileEntries = await this.dbFiles.find().exec();
+    const dbChecksumHashmap = arrayToHashmap(fileEntries, '_data', (el) => el._data.md5Checksum);
+    const contents = await this.fileService.readAssetContents('resources');
+    for (const { md5Checksum, relativePath } of Object.values(contents)) {
+      const dbDoc = dbChecksumHashmap[md5Checksum];
+      // TODO - could skip if db already contains attachment (although would need systme to track update)
+      // and can't easiliy use asset digest. Would likely need to track db updates instead of bulk
+      if (dbDoc) {
+        const res = await lastValueFrom(this.fileService.downloadFile(`/assets/${relativePath}`, 'blob'));
+        if (res?.data) {
+          await this.putFileAttachment(dbDoc, res.data as Blob);
+        }
+      }
+    }
+  }
+
+  private getAssetResourcesVersion() {
+    return localStorage.getItem(`picsa-resources-tool||assets-cache-version`);
+  }
+
+  private setAssetResourcesVersion() {
+    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
 }

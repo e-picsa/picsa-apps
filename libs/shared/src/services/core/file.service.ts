@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, firstValueFrom, of, Subscription } from 'rxjs';
 
 export interface IStorageFileEntry {
-  md5Checksum?: string;
+  md5Checksum: string;
   modifiedTime: string;
   relativePath: string;
   size_kb: number;

@@ -1,12 +1,11 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
-import { ANIMATION_DELAYED, FadeInOut, FlyInOut } from '@picsa/shared/animations';
+import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -33,41 +32,18 @@ const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IReso
   selector: 'picsa-manual-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  animations: [
-    FlyInOut({ axis: 'Y' }),
-    FadeInOut({ inDelay: 200, inSpeed: 300 }),
-
-    trigger('openClose', [
-      // ...
-      state(
-        'open',
-        style({
-          height: '200px',
-          opacity: 1,
-          backgroundColor: 'yellow',
-        })
-      ),
-      state(
-        'closed',
-        style({
-          height: '100px',
-          opacity: 0.8,
-          backgroundColor: 'blue',
-        })
-      ),
-      transition('open => closed', [animate('1s')]),
-      transition('closed => open', [animate('0.5s')]),
-    ]),
-  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [FlyInOut({ axis: 'Y' }), FadeInOut({ inDelay: 200, inSpeed: 300 })],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnDestroy, AfterViewInit {
   public resourceDoc: RxDocument<IResourceFile> | null;
+
+  public localisation: string;
 
   public page?: number = undefined;
   public pdfSrc?: string;
   /** Used to track whether extension or farmer tab should be displayed */
-  public initialTabIndex = 1;
-  public localisation: string;
+  public initialTabIndex = 0;
 
   public contents = {
     extension: PICSA_MANUAL_CONTENTS_EXTENSION,
@@ -84,31 +60,46 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private ConfigurationService: ConfigurationService,
-    private resourcesService: ResourcesToolService
+    private resourcesService: ResourcesToolService,
+    private cdr: ChangeDetectorRef
   ) {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(({ page }) => {
       this.page = Number(page);
+      this.cdr.markForCheck();
     });
+    const version = this.getManualVersion();
+    this.initialTabIndex = TAB_MAPPING[version];
+    this.localisation = this.ConfigurationService.activeConfiguration.localisation.language.selected?.code || 'en';
   }
 
-  ngOnInit(): void {
-    this.ConfigurationService.activeConfiguration$
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe(async (config) => {
-        const code = config.localisation.language.selected?.code || 'en';
-        this.localisation = code;
-        // Start with tab user most recently used
-        const version = this.getManualVersion();
-        this.setSelectedTab(TAB_MAPPING[version]);
-      });
+  async ngAfterViewInit() {
+    await this.resourcesService.ready();
+    await this.loadManual();
+    this.cdr.markForCheck();
+  }
+
+  /** Prompt manual load if resource file attachment updated */
+  public async handleResourceAttachmentChange(attachment?: RxAttachment<IResourceFile>) {
+    if (attachment) {
+      await this.loadManual();
+      this.cdr.markForCheck();
+    }
   }
 
   /**
    * Read local language setting and manual version preference to determine which version of the manual
    * to attempt loading
    */
-  public async loadManual(attachment?: RxAttachment<IResourceFile>) {
-    if (attachment && this.resourceDoc) {
+  private async loadManual() {
+    await this.resourcesService.ready();
+    const version = this.getManualVersion();
+    const manualResource = LOCALISED_VERSIONS[version][this.localisation] || LOCALISED_VERSIONS[version].en;
+    if (this.pdfSrc) {
+      return;
+    }
+    const manualDoc = await this.resourcesService.dbFiles.findOne(manualResource.id).exec();
+    if (manualDoc) {
+      this.resourceDoc = manualDoc;
       const uri = await this.resourcesService.getFileAttachmentURI(this.resourceDoc);
       if (uri) {
         this.downloadPrompt.show = false;
@@ -121,31 +112,29 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public async setSelectedTab(index: number) {
     this.pdfSrc = undefined;
-    this.initialTabIndex = index;
+    this.resourceDoc = null;
     const version = index === 1 ? 'farmer' : 'extension';
-    this.setManualVersion();
-    const manualResource = LOCALISED_VERSIONS[version][this.localisation] || LOCALISED_VERSIONS[version].en;
-    await this.resourcesService.ready();
-    const manualDoc = await this.resourcesService.dbFiles.findOne(manualResource.id).exec();
-    if (manualDoc) {
-      this.resourceDoc = manualDoc;
-    }
+    this.setManualVersion(version);
+    await this.loadManual();
+    this.cdr.markForCheck();
   }
 
   /** use localstorage to track farmer version preference */
   private getManualVersion(): IManualVersion {
     return localStorage.getItem('manual_version') === 'farmer' ? 'farmer' : 'extension';
   }
-  private setManualVersion(version: IManualVersion = 'extension') {
+  private setManualVersion(version: IManualVersion) {
     return localStorage.setItem('manual_version', version);
   }
 
   ngOnDestroy() {
-    // revoke any created object uris
-    this.resourcesService.revokeFileAttachmentURIs([
-      ...Object.values(LOCALISED_VERSIONS.extension).map((manual) => manual.filename),
-      ...Object.values(LOCALISED_VERSIONS.farmer).map((manual) => manual.filename),
-    ]);
+    // revoke any created object uris (use timeout to avoid destroy while still in use)
+    setTimeout(() => {
+      this.resourcesService.revokeFileAttachmentURIs([
+        ...Object.values(LOCALISED_VERSIONS.extension).map((manual) => manual.filename),
+        ...Object.values(LOCALISED_VERSIONS.farmer).map((manual) => manual.filename),
+      ]);
+    }, 500);
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
   }

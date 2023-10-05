@@ -3,8 +3,9 @@ import { createBlobFromBase64 } from 'rxdb';
 /**
  * Convert an object array into a json object, with keys corresponding to array entries
  * @param keyfield any unique field which all array objects contain to use as hash keys (e.g. 'id')
+ * @param keyAccessor alternative function to access key from element data (instead of using keyfield)
  */
-export function arrayToHashmap<T extends object>(arr: T[], keyfield: keyof T) {
+export function arrayToHashmap<T extends object>(arr: T[], keyfield: keyof T, keyAccessor?: (el: T) => string) {
   const hashmap: Record<string, T> = {};
   if (!Array.isArray(arr)) {
     console.error('Cannot convert array to hashmap, not an array', {
@@ -14,8 +15,9 @@ export function arrayToHashmap<T extends object>(arr: T[], keyfield: keyof T) {
     return {};
   }
   for (const el of arr) {
-    if (el.hasOwnProperty(keyfield)) {
-      hashmap[el[keyfield as string]] = el;
+    const hashmapKey = keyAccessor ? keyAccessor(el) : el[keyfield];
+    if (typeof hashmapKey === 'string') {
+      hashmap[hashmapKey] = el;
     }
   }
   return hashmap;

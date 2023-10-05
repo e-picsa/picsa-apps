@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
 import { RxAttachment, RxDocument } from 'rxdb';
 
@@ -13,6 +13,9 @@ import { _wait } from '@picsa/utils';
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;
 
+  /** Emit downloaded file updates */
+  @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
+
   public dbDoc: RxDocument<IResourceFile>;
   public attachment: RxAttachment<IResourceFile> | undefined;
   public fileURI: string;
@@ -20,6 +23,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   constructor(private service: ResourcesToolService) {}
 
   async ngOnInit() {
+    await this.service.ready();
     const dbDoc = await this.service.dbFiles.findOne(this.resource.id).exec();
     if (dbDoc) {
       this.dbDoc = dbDoc;
@@ -42,6 +46,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
         this.fileURI = uri;
       }
     }
+    this.attachmentChange.next(attachment);
   }
 
   /** Display file in resource link format */
