@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FileService } from '@picsa/shared/services/core/file.service';
+import { _wait } from '@picsa/utils';
 import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -81,6 +82,8 @@ export class ResourceDownloadComponent implements OnDestroy {
         throw error;
       },
       complete: async () => {
+        // give small timeout to allow UI to update
+        await _wait(50);
         await this.persistDownload(downloadData);
       },
     });
