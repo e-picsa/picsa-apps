@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
+import { DataService } from './../../services/calender.data.service';
 @Component({
   selector: 'seasonal-calendar-create-calender',
   templateUrl: './create-calendar.component.html',
@@ -9,7 +11,7 @@ import { Component, Input } from '@angular/core';
 
 export class CreateCalendarComponent {
   
-  constructor() {
+  constructor(private router: Router, private dataService: DataService) {
     this.generateCalendarMonths();
   }
   calenderTitle = "";
@@ -17,7 +19,7 @@ export class CreateCalendarComponent {
   activities: string[] = ["Planting", "Weeding", "Preparation", "Harvesting", "Drying"];
   selectedCrop = "";
   selectedActivity = "";
-  customCrop = '';
+  customCrop = ''
 
   userCrops: string[] = [];
 
@@ -85,6 +87,10 @@ export class CreateCalendarComponent {
     this.userCrops.splice(index, 1);
   }
 
+  removeActivity(index: number) {
+    this.activities.splice(index, 1);
+  }
+
   generateCalendarMonths() {
     const startIndex = this.months.indexOf(this.startMonth);
     this.calendarMonths = [];
@@ -94,24 +100,24 @@ export class CreateCalendarComponent {
     }
   }
 
-
-  getMonthsArray(): string[] {
-    
-    const startMonthIndex = this.months.indexOf(this.startMonth);
-    const monthsArray: string[] = [];
-  
-    for (let i = 0; i < this.numMonths; i++) {
-      const index = (startMonthIndex + i) % this.months.length;
-      monthsArray.push(this.months[index]);
-    }
-    return monthsArray;
-  }
-
-
-
   getWeatherCondition(month: string): string {
     const selectedMonth = this.calendarMonths.find(item => item.month === month);
     return selectedMonth ? selectedMonth.weather : '';
+  }
+
+  onSubmition(){
+    //any required data validation
+    const data = {
+     name: this.calenderTitle,
+     crops: this.userCrops,
+     timeAndConditions: this.calendarMonths,
+     activities: this.activities
+    }
+    console.log(data);
+  
+    this.dataService.saveData(data);
+  
+    this.router.navigate(['/seasonal-calendar', data]);
   }
 
 }
