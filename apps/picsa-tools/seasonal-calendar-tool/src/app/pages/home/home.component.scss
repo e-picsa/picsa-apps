@@ -33,5 +33,25 @@
         text-align: center;
         width: 100%;
     }
+    .items-containe{
+      width: 100%;
+    }
+    .calenders-display {
+      width: 90vw;
+      padding-left: 1rem;
+      color: #000; 
+      font-size: 23px;
+      font-weight: 600;
+      position: relative;
+      border-bottom: 1px solid #000;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-right: 2rem;
+    }
+    
+  
+    
   }
   
