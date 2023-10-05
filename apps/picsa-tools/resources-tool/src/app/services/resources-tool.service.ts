@@ -33,6 +33,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   public override async init() {
     await this.dbService.ready();
     await this.dbAttachmentService.ready();
+    await this.storageService.ready();
     await this.dbInit();
     await this.populateHardcodedResources();
   }
@@ -70,7 +71,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   public async openFileResource(uri: string, mimetype: string) {
     if (Capacitor.isNativePlatform()) {
       try {
-        this.storageService.openFile(uri, mimetype);
+        this.storageService.openFileURI(uri, mimetype);
       } catch (error) {
         console.error(error);
       }
@@ -89,9 +90,10 @@ export class ResourcesToolService extends PicsaAsyncService {
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
+   * @param convertNativeSrc - Convert to src usable within web content (e.g as image or pdf src)
    **/
-  public async getFileAttachmentURI(doc: RxDocument<schemas.IResourceFile>) {
-    return this.dbAttachmentService.getFileAttachmentURI(doc);
+  public async getFileAttachmentURI(doc: RxDocument<schemas.IResourceFile>, convertNativeSrc = false) {
+    return this.dbAttachmentService.getFileAttachmentURI(doc, convertNativeSrc);
   }
   /**
    * Release a file attachment URI when no longer required

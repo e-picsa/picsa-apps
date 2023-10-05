@@ -48,11 +48,16 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
+   * @param convertNativeSrc - Convert to src usable within web content (e.g as image or pdf src)
    **/
-  public async getFileAttachmentURI(doc: RxDocument<any>) {
+  public async getFileAttachmentURI(doc: RxDocument<any>, convertNativeSrc = false) {
     const attachment = await this.getAttachment(doc, doc.filename);
     if (!attachment) return null;
     if (attachment) {
+      if (Capacitor.isNativePlatform()) {
+        const { uri } = attachment;
+        return convertNativeSrc ? Capacitor.convertFileSrc(uri as string) : uri;
+      }
       // On native URI already stored as path to file stored locally
       if (attachment.uri) return attachment.uri;
       // On web data stored as base64 string, convert to blob and generate object url

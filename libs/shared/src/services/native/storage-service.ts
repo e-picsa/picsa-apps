@@ -33,9 +33,15 @@ export class NativeStorageService extends PicsaAsyncService {
     console.log('[Native Storage] init complete');
   }
 
+  /** Open a file by a given storage path */
   public async openFile(storagePath: string, mimetype: string) {
     const filepath = `${this.basePath}/${storagePath}`;
     await this.fileOpener.open(filepath, mimetype);
+  }
+
+  /** Open a file by a given URI */
+  public async openFileURI(uri: string, mimetype: string) {
+    await this.fileOpener.open(uri, mimetype);
   }
 
   /************************************************************************************
