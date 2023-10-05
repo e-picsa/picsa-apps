@@ -7,7 +7,7 @@ import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
-import { _wait, arrayToHashmap } from '@picsa/utils';
+import { arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
 import { lastValueFrom } from 'rxjs';
 
@@ -20,7 +20,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     private dbService: PicsaDatabase_V2_Service,
     private dbAttachmentService: PicsaDatabaseAttachmentService,
     private configurationService: ConfigurationService,
-    private storageService: NativeStorageService,
+    private nativeStorageService: NativeStorageService,
     private fileService: FileService
   ) {
     super();
@@ -33,7 +33,9 @@ export class ResourcesToolService extends PicsaAsyncService {
   public override async init() {
     await this.dbService.ready();
     await this.dbAttachmentService.ready();
-    await this.storageService.ready();
+    if (Capacitor.isNativePlatform()) {
+      await this.nativeStorageService.ready();
+    }
     await this.dbInit();
     await this.populateHardcodedResources();
   }
@@ -71,7 +73,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   public async openFileResource(uri: string, mimetype: string) {
     if (Capacitor.isNativePlatform()) {
       try {
-        this.storageService.openFileURI(uri, mimetype);
+        this.nativeStorageService.openFileURI(uri, mimetype);
       } catch (error) {
         console.error(error);
       }
