@@ -1,0 +1,30 @@
+:host {
+  display: contents;
+}
+.download-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  background: #fbfbfb91;
+  max-width: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.download-button {
+  display: flex;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  &[data-button-style='inverted'] {
+    background: white;
+    color: var(--color-primary);
+  }
+}

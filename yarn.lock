@@ -2375,9 +2375,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/cli@npm:latest":
-  version: 5.4.0
-  resolution: "@capacitor/cli@npm:5.4.0"
+"@capacitor/cli@npm:5.4.1":
+  version: 5.4.1
+  resolution: "@capacitor/cli@npm:5.4.1"
   dependencies:
     "@ionic/cli-framework-output": ^2.2.5
     "@ionic/utils-fs": ^3.1.6
@@ -2387,7 +2387,7 @@ __metadata:
     debug: ^4.3.4
     env-paths: ^2.2.0
     kleur: ^4.1.4
-    native-run: ^1.7.2
+    native-run: ^1.7.3
     open: ^8.4.0
     plist: ^3.0.5
     prompts: ^2.4.2
@@ -2399,7 +2399,7 @@ __metadata:
   bin:
     cap: bin/capacitor
     capacitor: bin/capacitor
-  checksum: f1268da031fff12ddb03081b8558daa7b28ed7442e9d7f8e932727f74715ae53e0b79042ea87a461f242b700bc1220e9da9fb24f85849bbe13ffac57e3684b65
+  checksum: 13d104a7c8b7a52df01d64c3b44a830709dd8cb35e795ff1e67100b260de0d79a7c8356e8862ef6f29f5ea0e1b539e23192c2afa6a19e94d84d7bd807b04897b
   languageName: node
   linkType: hard
 
@@ -16449,9 +16449,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"native-run@npm:^1.7.2":
-  version: 1.7.2
-  resolution: "native-run@npm:1.7.2"
+"native-run@npm:^1.7.3":
+  version: 1.7.3
+  resolution: "native-run@npm:1.7.3"
   dependencies:
     "@ionic/utils-fs": ^3.1.6
     "@ionic/utils-terminal": ^2.3.3
@@ -16466,7 +16466,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     native-run: bin/native-run
-  checksum: e892344602772fba4eb5fed29e18305ed7106c02e8b9ce166e20e98a352fbc7b335d9ef101c52448c11b5888e560da9008c3e841f1915810631b1f40a6666693
+  checksum: 18c90f39265d008247ec66699338d8aafa64512e30ae136084aa1222856b4ee8b912ce50a0e687e3397ca34ea9e33549925bef8e6740ba45efdfa1e9df1d388d
   languageName: node
   linkType: hard
 
@@ -17686,7 +17686,7 @@ __metadata:
     "@capacitor/android": 5.4.1
     "@capacitor/app": ^5.0.6
     "@capacitor/browser": ^5.1.0
-    "@capacitor/cli": latest
+    "@capacitor/cli": 5.4.1
     "@capacitor/core": 5.4.1
     "@capacitor/device": ^5.0.6
     "@capacitor/filesystem": ^5.1.4

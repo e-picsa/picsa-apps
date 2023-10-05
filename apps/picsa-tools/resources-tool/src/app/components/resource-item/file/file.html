@@ -1,0 +1,30 @@
+<!-- TODO - should remove overlay and css from component to use in parent instead -->
+
+<!-- TODO - should be able to refactor video item to be included here -->
+<div style="position: relative">
+  <!-- Download overlay -->
+  <div class="download-overlay" [style.visibility]="attachment ? 'hidden' : 'visible'">
+    <div class="mat-elevation-z8; border-radius: 8px;">
+      <resource-download
+        *ngIf="dbDoc"
+        [dbDoc]="dbDoc"
+        class="download-button"
+        styleVariant="white"
+        [size]="36"
+        [hideOnComplete]="true"
+        (attachmentChange)="handleAttachmentChange($event)"
+      ></resource-download>
+    </div>
+  </div>
+
+  <ng-container [ngSwitch]="resource.subtype">
+    <resource-item-video *ngSwitchCase="'video'" [resource]="resource" [fileURI]="fileURI"></resource-item-video>
+    <resource-item-link
+      *ngSwitchDefault
+      [resource]="resourceLink"
+      (click)="handleFileLinkClick($event)"
+      style="height: 100%"
+    >
+    </resource-item-link>
+  </ng-container>
+</div>

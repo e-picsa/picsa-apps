@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
+import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
+import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
-addRxPlugin(RxDBMigrationPlugin);
+import { IPicsaCollectionCreator } from './models';
 
-/** When creating collections for PICSA db additional fields required to determine how to handle */
-export interface IPicsaCollectionCreator<T> extends RxCollectionCreator<T> {
-  /** User collections will append app user id to all entries */
-  isUserCollection: boolean;
-}
+addRxPlugin(RxDBAttachmentsPlugin);
+addRxPlugin(RxDBMigrationPlugin);
+addRxPlugin(RxDBQueryBuilderPlugin);
 
 interface IPicsaCollectionData {
   _app_user_id?: string;
@@ -43,6 +43,9 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     this.db = await createRxDatabase({
       name: `picsa_app`,
       storage: getRxStorageDexie({ autoOpen: true }),
+      // hashFunction: (s) => md5hash(s).toString(),
+      // TODO - want to use md5 hashfunction but would need to migrate all collections
+      // import md5hash from 'crypto-js/md5';
     });
   }
 
@@ -90,7 +93,6 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
   private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
     const { isUserCollection, ...collection } = picsaCollection;
     const hookFactories: ((c: RxCollection) => void)[] = [];
-
     // store app user ids in any collections marked with `isUserCollection`
     // user information is stored in localStorage instead of db to avoid circular dependency issues
     if (isUserCollection) {

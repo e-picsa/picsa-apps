@@ -684,10 +684,6 @@
     "tool": "budget"
   },
   {
-    "text": "Title",
-    "tool": "budget"
-  },
-  {
     "text": "Total",
     "tool": "budget"
   },
@@ -1068,18 +1064,6 @@
     "tool": "extension"
   },
   {
-    "text": "Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in",
-    "tool": "extension"
-  },
-  {
-    "text": "Join",
-    "tool": "extension"
-  },
-  {
-    "text": "Joined",
-    "tool": "extension"
-  },
-  {
     "text": "Manual",
     "tool": "extension"
   },
@@ -1108,7 +1092,7 @@
     "tool": "extension"
   },
   {
-    "text": "Settings",
+    "text": "Seasonal Calendar",
     "tool": "extension"
   },
   {
@@ -1141,6 +1125,10 @@
   },
   {
     "text": "Crop Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Download the PICSA Manual",
     "tool": "manual"
   },
   {
@@ -1188,10 +1176,6 @@
     "tool": "manual"
   },
   {
-    "text": "Manual Requires Download",
-    "tool": "manual"
-  },
-  {
     "text": "Options by context",
     "tool": "manual"
   },
@@ -1221,10 +1205,6 @@
   },
   {
     "text": "Revisit",
-    "tool": "manual"
-  },
-  {
-    "text": "Seasonal Calendar",
     "tool": "manual"
   },
   {
@@ -1481,6 +1461,34 @@
   },
   {
     "text": "Collection not found",
+    "tool": "resources"
+  },
+  {
+    "text": "Collections",
+    "tool": "resources"
+  },
+  {
+    "text": "Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Links",
+    "tool": "resources"
+  },
+  {
+    "text": "Manage Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "Size",
+    "tool": "resources"
+  },
+  {
+    "text": "Title",
+    "tool": "resources"
+  },
+  {
+    "text": "Type",
     "tool": "resources"
   }
 ]

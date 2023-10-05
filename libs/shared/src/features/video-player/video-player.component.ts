@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
@@ -24,48 +24,52 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
 })
-export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
-  /** Url of video to player */
-  @Input() url?: string;
+  /** Video source - can be string url or data blob */
+  @Input() source?: string;
+  /** Optional image shown as preview */
+  @Input() thumbnail?: string;
   /** Unique identifier used in case of multiple players*/
   protected playerId = `videoPlayer_${generateID(5)}`;
 
-  protected showPlayButton = Capacitor.isNativePlatform() ? true : false;
+  protected showPlayButton = true;
 
   public videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
 
   private playerOptions: capVideoPlayerOptions;
 
-  async ngAfterViewInit() {
-    // When running on native platform avoid init as will trigger fullscreen playback
-    // Instead prefer just to show play button which will call init on play
-    // When running on web call init immediately as this will populate a visual preview of content
-    if (!Capacitor.isNativePlatform()) {
-      this.initPlayer();
-    }
-  }
+  /** Track if player has been initialised */
+  private initialised = false;
+
+  /** Track any created object urls to dispose on destroy */
+  private objectUrl: string;
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
     this.removeListeners();
-  }
-
-  public async playVideo() {
-    // On native initialise before every playback to ensure full screen fragments created
-    if (Capacitor.isNativePlatform()) {
-      await this.initPlayer();
-    } else {
-      await this.videoPlayer.play({ playerId: this.playerId });
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl);
     }
   }
 
+  public async playVideo() {
+    // Remove thumbnail from future playback
+    this.thumbnail = undefined;
+    // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
+    await this.initPlayer();
+    await this.videoPlayer.play({ playerId: this.playerId });
+  }
+
   private async initPlayer() {
-    if (!this.url) return;
+    if (this.initialised) return;
+    if (!this.source) return;
+    const url = this.convertSourceToUrl(this.source);
+    // load player
     const defaultOptions: capVideoPlayerOptions = {
       mode: 'embedded',
-      url: this.url,
+      url,
       playerId: this.playerId,
       componentTag: 'picsa-video-player',
       exitOnEnd: false,
@@ -76,16 +80,25 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     if (Capacitor.isNativePlatform()) {
       defaultOptions.mode = 'fullscreen';
       defaultOptions.exitOnEnd = true;
-      if (this.url.startsWith('assets')) {
-        // NOTE - android local assets require 'public' prefix
-        // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
-        defaultOptions.url = `public/${this.url}`;
-      }
     }
     // Merge default options with user override
     this.playerOptions = { ...defaultOptions, ...this.options };
     await this.videoPlayer.initPlayer(this.playerOptions);
     this.addListeners();
+    this.initialised = true;
+  }
+
+  /** Video player requires url source, handle conversion from blob or internal asset url */
+  private convertSourceToUrl(source: string) {
+    // NOTE - android local assets require 'public' prefix
+    // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
+    if (Capacitor.isNativePlatform()) {
+      if (source.startsWith('assets')) {
+        source = `public/${source}`;
+      }
+    }
+
+    return source;
   }
 
   /*********************************************************************************

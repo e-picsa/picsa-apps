@@ -1,13 +1,14 @@
-import { IResourceLink } from '../../models';
+import { IResourceLink } from '../../schemas';
 import { ResourcesGenerator } from '../generator';
 import { IWeatherLocation } from './locations';
 
 export class MeteoBlueGenerator extends ResourcesGenerator {
   constructor(private location: IWeatherLocation) {
     super();
+    this.generate();
   }
 
-  public override generate() {
+  private generate() {
     const { id, meteoBlueId } = this.location;
     if (!meteoBlueId) {
       return;
@@ -15,38 +16,35 @@ export class MeteoBlueGenerator extends ResourcesGenerator {
     const prefix = `meteoBlue_${id}`;
     const links: IResourceLink[] = [
       {
-        _created: '',
-        _key: `${prefix}_7day`,
-        _modified: '',
-        image: 'assets/resources/covers/meteoblue.jpg',
+        id: `${prefix}_7day`,
+        cover: { image: 'assets/resources/covers/meteoblue.jpg' },
         description: '',
         title: '7-Day Weather',
         type: 'link',
+        subtype: 'website',
         url: `https://www.meteoblue.com/en/weather/week/${meteoBlueId}`,
       },
       {
-        _created: '',
-        _key: `${prefix}_mapWidget`,
-        _modified: '',
-        image: 'assets/resources/covers/meteoblue.jpg',
+        id: `${prefix}_mapWidget`,
+        cover: { image: 'assets/resources/covers/meteoblue.jpg' },
         description: '',
         title: 'Live Weather Map',
         type: 'link',
+        subtype: 'website',
         url: `https://www.meteoblue.com/en/weather/maps/widget/${meteoBlueId}`,
       },
       {
-        _created: '',
-        _key: `${prefix}_seasonalForecast`,
-        _modified: '',
-        image: 'assets/resources/covers/meteoblue.jpg',
+        id: `${prefix}_seasonalForecast`,
+        cover: { image: 'assets/resources/covers/meteoblue.jpg' },
         description: '',
         title: 'Seasonal Forecast',
         type: 'link',
+        subtype: 'website',
         url: `https://www.meteoblue.com/en/weather/forecast/seasonaloutlook/${meteoBlueId}`,
       },
     ];
     for (const link of links) {
-      this.links[link._key] = link;
+      this.links[link.id] = link;
     }
   }
 }

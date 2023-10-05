@@ -52,15 +52,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/home.module').then((mod) => mod.HomePageModule),
     title: 'PICSA',
   },
-  {
-    path: 'settings',
-    loadChildren: () => import('./pages/settings/settings.module').then((mod) => mod.SettingsPageModule),
-  },
-  {
-    path: 'discussions',
-    loadChildren: () => import('./pages/discussions/discussions.module').then((mod) => mod.DiscussionsPageModule),
-    title: 'Discussions',
-  },
 
   {
     path: 'privacy',
