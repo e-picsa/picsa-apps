@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
+import { _wait } from '@picsa/utils';
 import { RxAttachment, RxDocument } from 'rxdb';
 
 import { IResourceFile, IResourceLink } from '../../../schemas';
-import { _wait } from '@picsa/utils';
+import { ResourcesToolService } from '../../../services/resources-tool.service';
 
 @Component({
   selector: 'resource-item-file',

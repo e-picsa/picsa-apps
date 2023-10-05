@@ -1,5 +1,6 @@
-import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
+
+import type { IPicsaCollectionCreator } from '../../models';
 
 /** Populated properties following RXDB putAttachment method */
 export interface IAttachment_v0 {

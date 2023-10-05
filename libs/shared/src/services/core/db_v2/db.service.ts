@@ -7,16 +7,11 @@ import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
 addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
-
-/** When creating collections for PICSA db additional fields required to determine how to handle */
-export interface IPicsaCollectionCreator<T> extends RxCollectionCreator<T> {
-  /** User collections will append app user id to all entries */
-  isUserCollection: boolean;
-}
 
 interface IPicsaCollectionData {
   _app_user_id?: string;

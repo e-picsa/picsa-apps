@@ -1,5 +1,5 @@
 import { generateID } from '@picsa/shared/services/core/db/db.service';
-import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
+import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
 import { IBudgetCardCustomMeta, IBudgetCardGrouping, IBudgetCardType, IBudgetCardValues } from './common';
