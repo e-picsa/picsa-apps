@@ -3,15 +3,18 @@
         <thead>
           <tr>
             <th></th>
-            <th *ngFor="let month of sampleData.timeAndWeather">{{ month.month }}</th>
+            <th *ngFor="let month of calendarData.timeAndConditions">
+                {{ month.month }} <br/>
+                ( {{ month.weather }})
+            </th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let crop of sampleData.crops">
+          <ng-container *ngFor="let crop of calendarData.crops">
             <tr>
               <td>{{ crop.name }}</td>
-              <td *ngFor="let month of sampleData.timeAndWeather">
-                <span class="activities-cell"  >
+              <td *ngFor="let month of calendarData.timeAndConditions"  class="activities-cell">
+                <span >
                     {{ getActivitiesForMonthAndCrop(month.month, crop) }}
                 </span>
               </td>
