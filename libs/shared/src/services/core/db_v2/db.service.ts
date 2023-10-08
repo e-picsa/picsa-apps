@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
@@ -7,13 +7,14 @@ import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { ISupabasePushEntry, PicsaDatabaseSupabasePushService } from './db-supabase-push.service';
 import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
 addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
 
-interface IPicsaCollectionData {
+interface IUserCollectionData {
   _app_user_id?: string;
 }
 
@@ -30,7 +31,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService) {
+  constructor(private userService: PicsaUserService, private pushService: PicsaDatabaseSupabasePushService) {
     super();
   }
 
@@ -66,6 +67,11 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         for (const hookFactory of hookFactories) {
           hookFactory(createdCollection);
         }
+
+        // register supabase push
+        if (picsaCollection.pushToSupabase) {
+          this.pushService.registerCollection(createdCollection);
+        }
       }
     }
   }
@@ -91,14 +97,28 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * Handle custom PICSA DB modifiers
    */
   private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
-    const { isUserCollection, ...collection } = picsaCollection;
+    const { isUserCollection, pushToSupabase, ...collection } = picsaCollection;
     const hookFactories: ((c: RxCollection) => void)[] = [];
     // store app user ids in any collections marked with `isUserCollection`
     // user information is stored in localStorage instead of db to avoid circular dependency issues
     if (isUserCollection) {
       collection.schema.properties['_app_user_id'] = { type: 'string' };
       hookFactories.push((c) => {
-        const fn = (data: IPicsaCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
+        const fn = (data: IUserCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
+        c.addHook('pre', 'save', fn);
+        c.addHook('pre', 'insert', fn);
+      });
+    }
+    // If collection pushed to supabase store _supabase_push_status and update to 'ready' state
+    // on change if previously submitted
+    if (pushToSupabase) {
+      collection.schema.properties['_supabase_push_status'] = { type: 'string' };
+      hookFactories.push((c) => {
+        const fn = (data: ISupabasePushEntry) => {
+          if (data._supabase_push_status === 'complete') {
+            data._supabase_push_status = 'ready';
+          }
+        };
         c.addHook('pre', 'save', fn);
         c.addHook('pre', 'insert', fn);
       });
