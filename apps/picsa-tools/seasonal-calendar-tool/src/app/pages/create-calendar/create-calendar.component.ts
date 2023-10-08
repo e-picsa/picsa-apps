@@ -16,7 +16,7 @@ export class CreateCalendarComponent {
   }
   calenderTitle = "";
   crops: string[] = ["Maize", "Beans", "Peas"];
-  activities: string[] = ["Planting", "Weeding", "Preparation", "Harvesting", "Drying"];
+  //activities: string[] = ["Planting", "Weeding", "Preparation", "Harvesting", "Drying"];
   selectedCrop = "";
   selectedActivity = "";
   customCrop = ''
@@ -65,12 +65,12 @@ export class CreateCalendarComponent {
   }
   
 
-  addActivity() {
-    if (this.selectedActivity && !this.activities.includes(this.selectedActivity)) {
-      this.activities.push(this.selectedActivity);
-      this.selectedActivity = "";
-    }
-  }
+  // addActivity() {
+  //   if (this.selectedActivity && !this.activities.includes(this.selectedActivity)) {
+  //     this.activities.push(this.selectedActivity);
+  //     this.selectedActivity = "";
+  //   }
+  // }
 
 
   addCrop() {
@@ -87,9 +87,9 @@ export class CreateCalendarComponent {
     this.userCrops.splice(index, 1);
   }
 
-  removeActivity(index: number) {
-    this.activities.splice(index, 1);
-  }
+  // removeActivity(index: number) {
+  //   this.activities.splice(index, 1);
+  // }
 
   generateCalendarMonths() {
     const startIndex = this.months.indexOf(this.startMonth);
@@ -106,18 +106,16 @@ export class CreateCalendarComponent {
   }
 
   onSubmition(){
-    //any required data validation
+    //any required data validation happens here
     const data = {
      name: this.calenderTitle,
      crops: this.userCrops,
      timeAndConditions: this.calendarMonths,
-     activities: this.activities
     }
     console.log(data);
-  
+
     this.dataService.saveData(data);
-  
-    this.router.navigate(['/seasonal-calendar', data]);
+    this.router.navigate(['/seasonal-calendar']);
   }
 
 }

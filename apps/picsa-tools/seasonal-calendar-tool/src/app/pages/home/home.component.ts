@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { DataService } from './../../services/calender.data.service';
 
@@ -7,8 +8,8 @@ import { DataService } from './../../services/calender.data.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
-  constructor( public dataService: DataService) { }
+export class HomeComponent implements OnInit {
+  constructor(private router: Router ,public dataService: DataService) { }
   calendars;
 
   ngOnInit() {
@@ -20,4 +21,9 @@ export class HomeComponent {
   getCalendarsAsArray(calenderObject): any[] {
     return Object.keys(calenderObject).map((key) => calenderObject[key]);
   }
+  redirectToCalendarTable(calendarName: string) {
+    
+    this.router.navigate(['/seasonal-calendar/calendar-table',{calendarName}] );
+  }
 }
+ 

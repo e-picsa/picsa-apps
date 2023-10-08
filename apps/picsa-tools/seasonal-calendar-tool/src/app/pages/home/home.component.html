@@ -1,6 +1,6 @@
 <div class="page-content">
   <div class="create-button">
-    <button class="" mat-button mat-raised-button  routerLink="create-calender" color="primary">Create new calender</button> 
+    <button class="" mat-button mat-raised-button  routerLink="create-calendar" color="primary">Create new calender</button> 
   </div>
   <h2>Categories</h2>
   <div class="categories-list">
@@ -11,8 +11,10 @@
     <div class="feedbackMessage" *ngIf="calendars.length === 0">No available calendars</div>
     <!-- map calenders -->
     <div *ngIf="calendars.length > 0" class="items-container" >
-    <div *ngFor="let calender of calendars" class="calenders-display">
-      <div>{{ calender.name }}</div>
+    <div *ngFor="let calendar of calendars" class="calendars-display">
+      <div (click)="redirectToCalendarTable(calendar.name)">
+        {{ calendar.name }}
+      </div>
       <mat-icon>keyboard_arrow_right</mat-icon>
     </div>
   </div>

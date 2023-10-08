@@ -1,0 +1,24 @@
+<div class="table-container">
+    <table class="calendar-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th *ngFor="let month of sampleData.timeAndWeather">{{ month.month }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let crop of sampleData.crops">
+            <tr>
+              <td>{{ crop.name }}</td>
+              <td *ngFor="let month of sampleData.timeAndWeather">
+                <span class="activities-cell"  >
+                    {{ getActivitiesForMonthAndCrop(month.month, crop) }}
+                </span>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      
+
+</div>

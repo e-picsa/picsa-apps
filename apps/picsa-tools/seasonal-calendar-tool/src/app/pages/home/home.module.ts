@@ -7,6 +7,6 @@ import { HomeRoutingModule } from './home.routing.module';
 
 @NgModule({
   declarations: [HomeComponent],
-  imports: [CommonModule, HomeRoutingModule, SeasonalCalendarToolComponentsModule],
+  imports: [CommonModule, HomeRoutingModule, SeasonalCalendarToolComponentsModule ],
 })
 export class HomeModule {}

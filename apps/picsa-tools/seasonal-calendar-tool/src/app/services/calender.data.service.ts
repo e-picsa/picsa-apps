@@ -4,19 +4,27 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class DataService {
+
+
    calendars= {}; 
-//   activities: string[] = [];
-//   userCrops: string[] = [];
-//   calendarMonths: { weather: string; month: string }[] = [];
+
 
   saveData(data: any) {
     //save new calender as key for the mean time 
-    this.calendars[data.name] = {
-        name: data.name,
-        crops : data.crops,
-        timeAndConditions: data.timeAndConditions,
-        activities: data.activities
-    }
+    const transformedData = {
+      name: data.name,
+      timeAndConditions: data.timeAndConditions,
+      crops: data.crops.map((cropName) => ({
+        name: cropName,
+        months: data.timeAndConditions.map((monthData) => ({
+          month: monthData.month,
+          activities: [], // Initially empty
+        })),
+        extraInformation: "",
+      })),
+    };
+    this.calendars[data.name] = transformedData;
   } 
 
 }
+

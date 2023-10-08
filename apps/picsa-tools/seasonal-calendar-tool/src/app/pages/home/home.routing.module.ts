@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { CalendarTableComponent } from '../calender-table/calendar-table.component';
 import { CreateCalendarComponent } from '../create-calendar/create-calendar.component';
 import { HomeComponent } from './home.component';
 
@@ -10,9 +11,13 @@ const routes: Routes = [
         component: HomeComponent,
     },
     {
-      path: 'create-calender',
+      path: 'create-calendar',
       component: CreateCalendarComponent,
-  }
+     },
+     {
+      path: 'calendar-table',
+      component: CalendarTableComponent,
+     }
 ];
 
 @NgModule({
