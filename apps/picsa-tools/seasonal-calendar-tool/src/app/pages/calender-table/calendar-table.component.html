@@ -12,7 +12,9 @@
         <tbody>
           <ng-container *ngFor="let crop of calendarData.crops">
             <tr>
-              <td>{{ crop.name }}</td>
+              <td (click)="openCropDialog(crop)" >
+                <span class="y-axis-header" > {{ crop.name }} <mat-icon>info</mat-icon></span>
+             </td>
               <td *ngFor="let month of calendarData.timeAndConditions"  class="activities-cell">
                 <span >
                     {{ getActivitiesForMonthAndCrop(month.month, crop) }}
@@ -22,6 +24,4 @@
           </ng-container>
         </tbody>
       </table>
-      
-
 </div>

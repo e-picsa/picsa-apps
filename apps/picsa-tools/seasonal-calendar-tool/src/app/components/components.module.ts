@@ -6,10 +6,11 @@ import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { CropDialogComponentComponent  } from './../crop-dialog-component/crop-dialog-component.component';
 // Local components
 import { SeasonalCalendarMaterialModule } from './material.module';
 
-const Components = [];
+const Components = [CropDialogComponentComponent];
 
 @NgModule({
   imports: [

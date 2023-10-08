@@ -64,5 +64,11 @@
   .calendar-table th {
     border-radius: 5px;
   }
+  .y-axis-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
   
 }
