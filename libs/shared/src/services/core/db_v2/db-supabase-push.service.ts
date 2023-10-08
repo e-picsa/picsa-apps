@@ -33,20 +33,16 @@ export class PicsaDatabaseSupabasePushService {
     await this.supabaseService.ready();
     // sync existing records
     const docs: RxDocument<ISupabasePushEntry>[] = await collection
-      .find({ selector: { _supabase_push_status: 'ready' } })
+      .find({ selector: { $or: [{ _supabase_push_status: 'ready' }, { _supabase_push_status: 'failed' }] } })
       .exec();
     if (docs.length > 0) {
       await this.syncRecords(docs, collection);
     }
-    // TODO - subscribe to ongoing changes
-    collection.$.subscribe((change) => {
+    collection.$.subscribe(async (change) => {
       // TODO - update only if ready for submission, maybe debounce
-      // TODO - ensure update on change to reset sync_status
-      const before = change.previousDocumentData as ISupabasePushEntry;
-      const after = change.documentData as ISupabasePushEntry;
-      console.log('doc changed', change);
-      if (after._supabase_push_status === 'ready' && before._supabase_push_status !== 'ready') {
-        console.log('doc ready to submit', after);
+      const { _supabase_push_status } = change.documentData as ISupabasePushEntry;
+      if (_supabase_push_status === 'ready' || _supabase_push_status === 'complete') {
+        await this.syncRecords([{ _data: change.documentData } as any], collection);
       }
     });
   }
@@ -57,20 +53,31 @@ export class PicsaDatabaseSupabasePushService {
       const { _meta, _rev, _supabase_push_status, ...keptFields } = d._data as ISupabasePushEntry;
       return keptFields;
     });
+
     const table = this.supabaseService.db.table(collection.name);
     const res = await table.upsert(records);
     if (res.status === 201) {
-      await collection.bulkUpsert(
-        docs.map((d) => {
+      // update local collection status where applicatble
+      const successUpdate = docs
+        .filter((d) => d._data._supabase_push_status !== 'complete')
+        .map((d) => {
           d._data._supabase_push_status = 'complete';
           return d._data;
-        })
-      );
+        });
+      await collection.bulkUpsert(successUpdate);
     } else {
+      const failUpdate = docs
+        .filter((d) => d._data._supabase_push_status !== 'failed')
+        .map((d) => {
+          d._data._supabase_push_status = 'failed';
+          return d._data;
+        });
+      await collection.bulkUpsert(failUpdate);
       console.error({ records, res });
       throw new Error(`Supabase sync fail: [${res.status}] ${res.error?.message}`);
       // TODO - how best to handle errrors? crashlytics?
       // TODO - how best to handle internet issues
+      // TODO - how to handle retry - maybe just periodically try main sync method?
     }
   }
 }

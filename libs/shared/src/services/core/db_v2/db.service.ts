@@ -109,19 +109,9 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         c.addHook('pre', 'insert', fn);
       });
     }
-    // If collection pushed to supabase store _supabase_push_status and update to 'ready' state
-    // on change if previously submitted
+    // If collection pushed to supabase store _supabase_push_status
     if (pushToSupabase) {
       collection.schema.properties['_supabase_push_status'] = { type: 'string' };
-      hookFactories.push((c) => {
-        const fn = (data: ISupabasePushEntry) => {
-          if (data._supabase_push_status === 'complete') {
-            data._supabase_push_status = 'ready';
-          }
-        };
-        c.addHook('pre', 'save', fn);
-        c.addHook('pre', 'insert', fn);
-      });
     }
     return { collection, hookFactories };
   }
