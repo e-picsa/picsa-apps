@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router'
 
-import { DataService } from './../../services/calender.data.service';
+import { CalendarData,Crop,DataService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-table',
@@ -44,26 +44,4 @@ export class CalendarTableComponent implements OnInit  {
     }
   }
   
-}
-
-interface MonthData {
-  month: string;
-  weather: string;
-}
-
-interface CropMonth {
-  month: string;
-  activities: string[];
-}
-
-interface Crop {
-  name: string;
-  months: CropMonth[];
-  extraInformation: string;
-}
-
-interface CalendarData {
-  name: string;
-  timeAndConditions: MonthData[];
-  crops: Crop[];
 }

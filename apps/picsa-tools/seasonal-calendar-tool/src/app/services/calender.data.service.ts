@@ -27,4 +27,25 @@ export class DataService {
   } 
 
 }
+interface MonthData {
+  month: string;
+  weather: string;
+}
+
+interface CropMonth {
+  month: string;
+  activities: string[];
+}
+
+export interface Crop {
+  name: string;
+  months: CropMonth[];
+  extraInformation: string;
+}
+
+export interface CalendarData {
+  name: string;
+  timeAndConditions: MonthData[];
+  crops: Crop[];
+}
 
