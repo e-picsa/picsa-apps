@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SeasonalCalendarMaterialModule } from './components/material.module';
 
+
 /** Core imports only required when running standalone */
 const StandaloneImports = [
   AppRoutingModule,

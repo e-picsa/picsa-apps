@@ -3,7 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { CropDialogComponentComponent } from '../../crop-dialog-component/crop-dialog-component.component';
+import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
+import { CropDialogComponentComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
 import { CalendarData, Crop, DataService } from './../../services/calender.data.service';
 
 @Component({
