@@ -11,7 +11,7 @@ import { DataService } from './../../services/calender.data.service';
 })
 
 export class CalendarTableComponent implements OnInit  {
-  calendarData: CalendarData | null = null;
+  calendarData: CalendarData;
   months: string[] = [
     'January', 'February', 'March', 'April',
     'May', 'June', 'July', 'August',
@@ -34,7 +34,6 @@ export class CalendarTableComponent implements OnInit  {
   crops: string[] = ['Beans', 'Maize', 'Peas', 'Wheat', 'Barley']; 
 
   dataSource: MatTableDataSource<any>;
-
 
   getActivitiesForMonthAndCrop(monthName: string, crop: Crop): string {
     const selectedMonth = crop.months.find((month) => month.month === monthName);
