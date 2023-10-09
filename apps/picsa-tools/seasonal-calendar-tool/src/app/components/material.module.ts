@@ -8,6 +8,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
 
+
 const COMPONENTS = [MatButtonModule, MatDialogModule, MatIconModule, MatSelectModule, MatStepperModule, MatTableModule];
 // use custom module to make it easier to control what is available through app
 @NgModule({

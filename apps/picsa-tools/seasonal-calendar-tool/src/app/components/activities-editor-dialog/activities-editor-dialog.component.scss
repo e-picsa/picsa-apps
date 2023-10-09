@@ -1,0 +1,35 @@
+.table-container {
+    width: 23rem;
+    text-align: center;
+  
+    .dialog-title {
+      margin-bottom: 1rem;
+    }
+  
+    .dialog-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .inputField{
+        padding: .5rem;
+        font-size: 16px;
+        border-radius: 5px;
+        width: 12rem;
+    }
+    .selectField{
+        padding: .5rem;
+    }
+  
+    .buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+  
+      .add-button {
+        margin-right: 1rem;
+      }
+    }
+  }
+  

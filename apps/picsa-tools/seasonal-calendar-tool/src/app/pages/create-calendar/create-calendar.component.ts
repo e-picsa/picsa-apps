@@ -22,7 +22,6 @@ export class CreateCalendarComponent {
   customCrop = ''
 
   userCrops: string[] = [];
-
   
   calendarMonths: {weather:string, month:string}[]= [];
 
@@ -42,6 +41,8 @@ export class CreateCalendarComponent {
     'December'
   ];
 
+  message = 'Please fill all the fields.';
+ showMessageFlag = false;
  
   private _numMonths = 0;
   private _startMonth = '';
@@ -106,16 +107,18 @@ export class CreateCalendarComponent {
   }
 
   onSubmition(){
-    //any required data validation happens here
+   if(this.calendarMonths.length > 0 && this.userCrops.length > 0 && this.calenderTitle){
     const data = {
      name: this.calenderTitle,
      crops: this.userCrops,
      timeAndConditions: this.calendarMonths,
     }
-    console.log(data);
-
+    // console.log(data);
     this.dataService.saveData(data);
     this.router.navigate(['/seasonal-calendar']);
+  }else{
+    this.showMessageFlag = true;
   }
+ }
 
 }

@@ -1,1 +1,22 @@
-<p>activities-editor-dialog works!</p>
+<div class="table-container">
+    <h2 class="dialog-title">Add Activity</h2>
+    <div class="dialog-body">
+      <mat-form-field>
+        <mat-label>Select Activity</mat-label>
+        <mat-select class="selectField" [(ngModel)]="selectedActivity">
+          <mat-option *ngFor="let activity of activities" [value]="activity">
+            {{ activity }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div *ngIf="selectedActivity === 'Other'">
+        <h4>Type other activity</h4>
+        <input matInput class="inputField" placeholder="Custom Activity" [(ngModel)]="customActivity">
+      </div>
+    </div>
+    <div class="buttons">
+      <button mat-button class="add-button" (click)="onSave()" [mat-dialog-close]="selectedActivity || customActivity" [disabled]="!(selectedActivity || customActivity)">Add</button>
+      <button mat-button class="cancel-button" (click)="onClose()">Cancel</button>
+    </div>
+</div>
+  

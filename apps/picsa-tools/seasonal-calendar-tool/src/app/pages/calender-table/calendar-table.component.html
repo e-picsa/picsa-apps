@@ -1,27 +1,33 @@
 <div class="table-container">
-    <table class="calendar-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th *ngFor="let month of calendarData.timeAndConditions">
-                {{ month.month }} <br/>
-                ( {{ month.weather }})
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let crop of calendarData.crops">
-            <tr>
-              <td (click)="openCropDialog(crop)" >
-                <span class="y-axis-header" > {{ crop.name }} <mat-icon>info</mat-icon></span>
-             </td>
-              <td *ngFor="let month of calendarData.timeAndConditions"  class="activities-cell">
-                <span >
-                    {{ getActivitiesForMonthAndCrop(month.month, crop) }}
-                </span>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
+  <h1>{{calendarData.name}}</h1>
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th *ngFor="let month of calendarData.timeAndConditions">
+          {{ month.month }} <br />
+          ( {{ month.weather }})
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let crop of calendarData.crops">
+        <tr>
+          <td (click)="openCropDialog(crop)">
+            <span class="y-axis-header"> {{ crop.name }} <mat-icon>info</mat-icon></span>
+          </td>
+          <td class="activities-cell" (click)="openAddActivityDialog(crop, month)" *ngFor="let month of calendarData.timeAndConditions">
+            <div class="user-activity-list">
+              <div class="activity" *ngFor="let activity of getActivitiesForMonthAndCrop(month.month, crop).split(',')">
+                <ng-container *ngIf="activity.trim() !== ''">
+                {{ activity }}
+                <mat-icon (click)="deleteActivity(crop, month.month, activity)" color="primary">clear</mat-icon>
+                </ng-container>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
 </div>

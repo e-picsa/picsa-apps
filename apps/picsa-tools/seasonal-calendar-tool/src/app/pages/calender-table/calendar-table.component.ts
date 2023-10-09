@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
 import { CropDialogComponentComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
-import { CalendarData, Crop, DataService } from './../../services/calender.data.service';
+import { CalendarData, Crop, DataService, MonthData } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-table',
@@ -29,7 +29,6 @@ export class CalendarTableComponent implements OnInit {
     });
   }
 
-  crops: string[] = ['Beans', 'Maize', 'Peas', 'Wheat', 'Barley'];
 
   dataSource: MatTableDataSource<any>;
 
@@ -41,6 +40,15 @@ export class CalendarTableComponent implements OnInit {
       return '';
     }
   }
+  deleteActivity(crop: Crop, monthName: string, activity: string) {
+    const selectedMonth = crop.months.find((month) => month.month === monthName);
+    if (selectedMonth) {
+      const activityIndex = selectedMonth.activities.indexOf(activity);
+      if (activityIndex !== -1) {
+        selectedMonth.activities.splice(activityIndex, 1);
+      }
+    }
+  }
   openCropDialog(crop: Crop) {
     const dialogRef = this.dialog.open(CropDialogComponentComponent, {
       data: crop, 
@@ -48,6 +56,30 @@ export class CalendarTableComponent implements OnInit {
   
     dialogRef.afterClosed().subscribe((result) => {
       console.log("closed")
+    });
+  }
+
+  openAddActivityDialog(crop: Crop, month: MonthData) {
+    const dialogRef = this.dialog.open(ActivitiesEditorDialogComponent, {
+      data: {
+        crop,
+        month
+      }, 
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const activityToAdd = result;
+        const selectedMonth = crop.months.find((m) => m.month === month.month);
+    
+        if (selectedMonth) {
+          if (!selectedMonth.activities.includes(activityToAdd)) {
+            selectedMonth.activities.push(activityToAdd);
+          } else {
+            console.log('Activity already exists in this month.');
+          }
+        }
+      }
     });
   }
 

@@ -36,19 +36,6 @@
       </div>
     </div>
   </div>
- <!-- to be added at cell level -->
-  <!-- List of Activities
-  <div class="box">
-    <h2>List of Activities</h2>
-    <div class="user-activity-list">
-      <div *ngFor="let activity of activities" class="activity-items">{{ activity }}</div>
-    </div>
-    <h3>Add to activities if not on the provided list</h3>
-    <div class="select-input-field">
-      <input placeholder="planting.." class="inputField" type="text" [(ngModel)]="selectedActivity" />
-      <button mat-button mat-raised-button color="primary" (click)="addActivity()" *ngIf="selectedActivity">Add</button>
-    </div>
-  </div> -->
 
   <!-- Calendar Time -->
   <div>
@@ -78,5 +65,8 @@
   </div>
   <div class="submit-button">
     <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">Create  calender</button> 
+  </div>
+  <div class="flag-message" *ngIf="showMessageFlag">
+    <p>{{message}}</p>
   </div>
 </div>

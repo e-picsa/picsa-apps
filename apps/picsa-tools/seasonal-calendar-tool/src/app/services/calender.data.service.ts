@@ -27,7 +27,7 @@ export class DataService {
   } 
 
 }
-interface MonthData {
+export interface MonthData {
   month: string;
   weather: string;
 }
