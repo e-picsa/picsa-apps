@@ -66,13 +66,6 @@ export class CreateCalendarComponent {
   }
   
 
-  // addActivity() {
-  //   if (this.selectedActivity && !this.activities.includes(this.selectedActivity)) {
-  //     this.activities.push(this.selectedActivity);
-  //     this.selectedActivity = "";
-  //   }
-  // }
-
 
   addCrop() {
     if (this.selectedCrop === 'Other' && this.customCrop.trim() !== '') {
@@ -87,10 +80,6 @@ export class CreateCalendarComponent {
   removeCrop(index: number) {
     this.userCrops.splice(index, 1);
   }
-
-  // removeActivity(index: number) {
-  //   this.activities.splice(index, 1);
-  // }
 
   generateCalendarMonths() {
     const startIndex = this.months.indexOf(this.startMonth);

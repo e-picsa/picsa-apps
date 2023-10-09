@@ -13,8 +13,8 @@ export class HomeComponent implements OnInit {
   calendars;
 
   ngOnInit() {
-    //confirm data sharing
-    console.log(this.dataService.calendars)
+    // //confirm data sharing
+    // console.log(this.dataService.calendars)
     this.calendars = this.getCalendarsAsArray(this.dataService.calendars)
   }
   
