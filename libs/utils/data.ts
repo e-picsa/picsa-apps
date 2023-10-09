@@ -23,6 +23,11 @@ export function arrayToHashmap<T extends object>(arr: T[], keyfield: keyof T, ke
   return hashmap;
 }
 
+/**
+ * Convert hashmap object to array
+ * @param hashmap
+ * @param keyfield field to populate with key from hashmap
+ */
 export function hashmapToArray<T>(hashmap: Record<string, T>, keyfield: keyof T) {
   if (hashmap.constructor !== {}.constructor) {
     console.error('Cannot convert hashmap to array, not a hashmap', {
