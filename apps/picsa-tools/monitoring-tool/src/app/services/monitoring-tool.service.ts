@@ -9,6 +9,9 @@ import * as SubmissionSchema from '../schema/submissions';
 
 @Injectable({ providedIn: 'root' })
 export class MonitoringToolService extends PicsaAsyncService {
+  /** Track number of items pending push to supabase db (0 value implies fully synced) */
+  public pendingSyncCount = -1;
+
   constructor(private dbService: PicsaDatabase_V2_Service) {
     super();
   }
@@ -22,6 +25,7 @@ export class MonitoringToolService extends PicsaAsyncService {
       monitoring_tool_forms: FormSchema.COLLECTION,
       monitoring_tool_submissions: SubmissionSchema.COLLECTION,
     });
+    this.listPendingSync();
     await this.dbFormCollection.bulkUpsert(HARDCODED_FORMS);
   }
 
@@ -60,5 +64,12 @@ export class MonitoringToolService extends PicsaAsyncService {
   }
   public getFormSubmissionsQuery(formId: string) {
     return this.dbService.activeUserQuery(this.dbSubmissionsCollection, { formId });
+  }
+
+  private listPendingSync() {
+    const selector = { $or: [{ _supabase_push_status: 'ready' }, { _supabase_push_status: 'failed' }] };
+    this.dbSubmissionsCollection.find({ selector }).$.subscribe((res) => {
+      this.pendingSyncCount = res.length;
+    });
   }
 }

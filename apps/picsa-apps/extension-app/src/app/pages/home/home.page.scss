@@ -49,6 +49,7 @@
 }
 
 .grid-tile {
+  position: relative;
   background: rgba(0, 0, 0, 0.65);
   color: white;
   cursor: pointer;
@@ -62,6 +63,25 @@
   transform: scale(1.02);
   transition: all 0.3s ease-out;
 }
+
+.tile-badge {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  background: var(--color-secondary);
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+  padding: 4px;
+  font-size: 16px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
 footer {
   display: flex;
   justify-content: space-between;

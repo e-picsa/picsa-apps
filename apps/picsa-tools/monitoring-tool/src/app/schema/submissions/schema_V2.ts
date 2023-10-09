@@ -39,7 +39,7 @@ export const ENTRY_TEMPLATE_V2 = (formId: string): IFormSubmission_V2 => ({
   _id: generateID(),
   _created: new Date().toISOString(),
   _modified: new Date().toISOString(),
-  _supabase_push_status: 'ready',
+  _supabase_push_status: 'draft',
   formId,
   json: {},
 });
