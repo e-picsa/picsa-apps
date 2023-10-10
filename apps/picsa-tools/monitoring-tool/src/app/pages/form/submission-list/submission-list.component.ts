@@ -50,7 +50,7 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
   }
 
   public get dataSourceColumns() {
-    return [...this.displayedColumns, '_supabase_push_status'];
+    return [...this.displayedColumns, '_sync_push_status'];
   }
 
   private async loadForm(formId: string) {

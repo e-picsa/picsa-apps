@@ -1,7 +1,7 @@
-import { ISupabasePushEntry } from '@picsa/shared/services/core/db_v2/db-supabase-push.service';
+import { ISyncPushEntry } from '@picsa/shared/services/core/db_v2/db-sync.service';
 
 export const STATUS_ICONS: {
-  [status in ISupabasePushEntry['_supabase_push_status']]: {
+  [status in ISyncPushEntry['_sync_push_status']]: {
     matIcon: string;
   };
 } = {

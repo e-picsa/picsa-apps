@@ -13,6 +13,7 @@ dependencies {
     implementation project(':capacitor-browser')
     implementation project(':capacitor-device')
     implementation project(':capacitor-filesystem')
+    implementation project(':capacitor-network')
     implementation project(':capacitor-blob-writer')
     implementation project(':capacitor-video-player')
     implementation project(':capacitor-community-firebase-analytics')

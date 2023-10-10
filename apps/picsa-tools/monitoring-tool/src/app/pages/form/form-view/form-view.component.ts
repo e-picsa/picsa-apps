@@ -134,7 +134,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
         json: afterJson,
         enketoEntry: this.formEntry,
         _modified: new Date().toISOString(),
-        _supabase_push_status: this.formEntry?.draft ? 'draft' : 'ready',
+        _sync_push_status: this.formEntry?.draft ? 'draft' : 'ready',
       };
       return this.submissionDoc.incrementalPatch(patch);
     }

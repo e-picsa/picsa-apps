@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ISupabasePushEntry } from '@picsa/shared/services/core/db_v2/db-supabase-push.service';
+import { ISyncPushEntry } from '@picsa/shared/services/core/db_v2/db-sync.service';
 import { arrayToHashmapArray, hashmapToArray } from '@picsa/utils';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { IFormSubmission } from '../../schema/submissions';
 import { MonitoringToolService } from '../../services/monitoring-tool.service';
 
 type ISyncStatus = {
-  [status in ISupabasePushEntry['_supabase_push_status']]: {
+  [status in ISyncPushEntry['_sync_push_status']]: {
     value: number;
     matIcon: string;
     id?: string;
@@ -54,7 +54,7 @@ export class FormItemComponent implements OnInit, OnDestroy {
     const submissionsQuery = this.service.getFormSubmissionsQuery(this.form._id);
     submissionsQuery.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       const submissions = docs.map((d) => d.toMutableJSON());
-      const submissionsByStatus = arrayToHashmapArray<IFormSubmission>(submissions, '_supabase_push_status');
+      const submissionsByStatus = arrayToHashmapArray<IFormSubmission>(submissions, '_sync_push_status');
       for (const status of Object.keys(this.syncStatusMap)) {
         this.syncStatusMap[status].value = submissionsByStatus[status]?.length || 0;
       }

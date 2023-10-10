@@ -5,26 +5,22 @@ import { RxCollection, RxDocument } from 'rxdb';
 
 import { SupabaseService } from '../supabase.service';
 
-export interface ISupabasePushEntry {
-  _supabase_push_status: 'draft' | 'ready' | 'complete' | 'failed';
+export interface ISyncPushEntry {
+  _sync_push_status: 'draft' | 'ready' | 'complete' | 'failed';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
-/** Any collection marked as a supabasePushCollection will have metadata fields appended */
-// type ISupabasePushCollection = RxCollection<RxJsonSchema<ISupabasePushEntry>>;
-
 /**
  * Simple service to push a replica of data to supabase server
  *
- * TODO - Row level security
  * TODO - managing auth users in app (app_user_id with global user id)
  *
  * NOTE - is single direction push only, for full replication see:
  * https://github.com/marceljuenemann/rxdb-supabase/tree/main
  */
 @Injectable({ providedIn: 'root' })
-export class PicsaDatabaseSupabasePushService {
+export class PicsaDatabaseSyncService {
   private registeredCollections: Record<string, RxCollection> = {};
 
   constructor(private supabaseService: SupabaseService) {
@@ -50,8 +46,8 @@ export class PicsaDatabaseSupabasePushService {
    * */
   public async syncPendingDocs(collection: RxCollection) {
     await this.supabaseService.ready();
-    const docs: RxDocument<ISupabasePushEntry>[] = await collection
-      .find({ selector: { _supabase_push_status: 'ready' } })
+    const docs: RxDocument<ISyncPushEntry>[] = await collection
+      .find({ selector: { _sync_push_status: 'ready' } })
       .exec();
     if (docs.length > 0) {
       return this.pushDocsToSupabase(docs, collection);
@@ -87,17 +83,17 @@ export class PicsaDatabaseSupabasePushService {
   private async subscribeToCollectionChanges(collection: RxCollection) {
     collection.$.subscribe(async (change) => {
       // TODO - update only if ready for submission, maybe debounce
-      const { _supabase_push_status } = change.documentData as ISupabasePushEntry;
-      if (_supabase_push_status === 'ready' || _supabase_push_status === 'complete') {
+      const { _sync_push_status } = change.documentData as ISyncPushEntry;
+      if (_sync_push_status === 'ready' || _sync_push_status === 'complete') {
         await this.pushDocsToSupabase([{ _data: change.documentData } as any], collection);
       }
     });
   }
 
-  private async pushDocsToSupabase(docs: RxDocument<ISupabasePushEntry>[], collection: RxCollection) {
+  private async pushDocsToSupabase(docs: RxDocument<ISyncPushEntry>[], collection: RxCollection) {
     const records = docs.map((d) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { _meta, _rev, _supabase_push_status, ...keptFields } = d._data as ISupabasePushEntry;
+      const { _meta, _rev, _sync_push_status, ...keptFields } = d._data as ISyncPushEntry;
       return keptFields;
     });
     const table = this.supabaseService.db.table(collection.name);
@@ -105,9 +101,9 @@ export class PicsaDatabaseSupabasePushService {
     if (res.status === 201) {
       // update local collection status where applicatble
       const successUpdate = docs
-        .filter((d) => d._data._supabase_push_status !== 'complete')
+        .filter((d) => d._data._sync_push_status !== 'complete')
         .map((d) => {
-          d._data._supabase_push_status = 'complete';
+          d._data._sync_push_status = 'complete';
           return d._data;
         });
       await collection.bulkUpsert(successUpdate);

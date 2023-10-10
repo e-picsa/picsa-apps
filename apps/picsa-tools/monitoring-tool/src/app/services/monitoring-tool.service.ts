@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
-import { PicsaDatabaseSupabasePushService } from '@picsa/shared/services/core/db_v2/db-supabase-push.service';
+import { PicsaDatabaseSyncService } from '@picsa/shared/services/core/db_v2/db-sync.service';
 import { RxCollection } from 'rxdb';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
@@ -10,10 +10,10 @@ import * as SubmissionSchema from '../schema/submissions';
 
 @Injectable({ providedIn: 'root' })
 export class MonitoringToolService extends PicsaAsyncService {
-  /** Track number of items pending push to supabase db (0 value implies fully synced) */
+  /** Track number of items pending push to server db (0 value implies fully synced) */
   public pendingSyncCount = -1;
 
-  constructor(private dbService: PicsaDatabase_V2_Service, private syncService: PicsaDatabaseSupabasePushService) {
+  constructor(private dbService: PicsaDatabase_V2_Service, private syncService: PicsaDatabaseSyncService) {
     super();
   }
 
@@ -76,7 +76,7 @@ export class MonitoringToolService extends PicsaAsyncService {
   }
 
   private listPendingSync() {
-    const selector = { _supabase_push_status: 'ready' };
+    const selector = { _sync_push_status: 'ready' };
     this.dbSubmissionsCollection.find({ selector }).$.subscribe((res) => {
       this.pendingSyncCount = res.length;
     });

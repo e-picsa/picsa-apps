@@ -7,7 +7,7 @@ import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
-import { ISupabasePushEntry, PicsaDatabaseSupabasePushService } from './db-supabase-push.service';
+import { PicsaDatabaseSyncService } from './db-sync.service';
 import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
@@ -31,7 +31,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService, private pushService: PicsaDatabaseSupabasePushService) {
+  constructor(private userService: PicsaUserService, private pushService: PicsaDatabaseSyncService) {
     super();
   }
 
@@ -68,8 +68,8 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
           hookFactory(createdCollection);
         }
 
-        // register supabase push
-        if (picsaCollection.pushToSupabase) {
+        // register sync push
+        if (picsaCollection.syncPush) {
           this.pushService.registerCollection(createdCollection);
         }
       }
@@ -97,7 +97,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * Handle custom PICSA DB modifiers
    */
   private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
-    const { isUserCollection, pushToSupabase, ...collection } = picsaCollection;
+    const { isUserCollection, syncPush, ...collection } = picsaCollection;
     const hookFactories: ((c: RxCollection) => void)[] = [];
     // store app user ids in any collections marked with `isUserCollection`
     // user information is stored in localStorage instead of db to avoid circular dependency issues
@@ -109,9 +109,9 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         c.addHook('pre', 'insert', fn);
       });
     }
-    // If collection pushed to supabase store _supabase_push_status
-    if (pushToSupabase) {
-      collection.schema.properties['_supabase_push_status'] = { type: 'string' };
+    // If collection pushed to server db store _sync_push_status
+    if (syncPush) {
+      collection.schema.properties['_sync_push_status'] = { type: 'string' };
     }
     return { collection, hookFactories };
   }
