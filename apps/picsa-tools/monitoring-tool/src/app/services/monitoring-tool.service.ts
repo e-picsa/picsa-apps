@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { PicsaDatabaseSupabasePushService } from '@picsa/shared/services/core/db_v2/db-supabase-push.service';
 import { RxCollection } from 'rxdb';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
@@ -12,7 +13,7 @@ export class MonitoringToolService extends PicsaAsyncService {
   /** Track number of items pending push to supabase db (0 value implies fully synced) */
   public pendingSyncCount = -1;
 
-  constructor(private dbService: PicsaDatabase_V2_Service) {
+  constructor(private dbService: PicsaDatabase_V2_Service, private syncService: PicsaDatabaseSupabasePushService) {
     super();
   }
 
@@ -66,8 +67,16 @@ export class MonitoringToolService extends PicsaAsyncService {
     return this.dbService.activeUserQuery(this.dbSubmissionsCollection, { formId });
   }
 
+  /**
+   * Attempt to force sync of records. Note, syncing should be automated however method could be used to
+   * help determine any sync errors
+   */
+  public syncPending() {
+    return this.syncService.syncPendingDocs(this.dbSubmissionsCollection);
+  }
+
   private listPendingSync() {
-    const selector = { $or: [{ _supabase_push_status: 'ready' }, { _supabase_push_status: 'failed' }] };
+    const selector = { _supabase_push_status: 'ready' };
     this.dbSubmissionsCollection.find({ selector }).$.subscribe((res) => {
       this.pendingSyncCount = res.length;
     });

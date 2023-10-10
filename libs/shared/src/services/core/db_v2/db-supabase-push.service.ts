@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Network } from '@capacitor/network';
+import { _wait } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
 
 import { SupabaseService } from '../supabase.service';
@@ -23,37 +25,81 @@ export interface ISupabasePushEntry {
  */
 @Injectable({ providedIn: 'root' })
 export class PicsaDatabaseSupabasePushService {
-  constructor(private supabaseService: SupabaseService) {}
+  private registeredCollections: Record<string, RxCollection> = {};
 
-  public registerCollection(collection: RxCollection) {
-    this.pushCollectionData(collection);
+  constructor(private supabaseService: SupabaseService) {
+    this.subscribeToNetworkChanges();
   }
 
-  private async pushCollectionData(collection: RxCollection) {
+  /** Register a given collection to have records pushed to supabase db */
+  public async registerCollection(collection: RxCollection) {
+    if (this.registeredCollections[collection.name]) {
+      console.warn('[Supabase Push] Collection already registered: ' + collection.name);
+      return;
+    }
     await this.supabaseService.ready();
-    // sync existing records
+    this.subscribeToCollectionChanges(collection);
+    this.registeredCollections[collection.name] = collection;
+    await this.syncPendingDocs(collection);
+  }
+
+  /**
+   * Trigger sync of pending docs
+   * NOTE - this will be automatically called on collection register
+   * and when network presence detected as online
+   * */
+  public async syncPendingDocs(collection: RxCollection) {
+    await this.supabaseService.ready();
     const docs: RxDocument<ISupabasePushEntry>[] = await collection
-      .find({ selector: { $or: [{ _supabase_push_status: 'ready' }, { _supabase_push_status: 'failed' }] } })
+      .find({ selector: { _supabase_push_status: 'ready' } })
       .exec();
     if (docs.length > 0) {
-      await this.syncRecords(docs, collection);
+      return this.pushDocsToSupabase(docs, collection);
+    } else {
+      return { status: 200, msg: 'Already up to date' };
     }
-    collection.$.subscribe(async (change) => {
-      // TODO - update only if ready for submission, maybe debounce
-      const { _supabase_push_status } = change.documentData as ISupabasePushEntry;
-      if (_supabase_push_status === 'ready' || _supabase_push_status === 'complete') {
-        await this.syncRecords([{ _data: change.documentData } as any], collection);
+  }
+
+  private syncAllPendingDocs() {
+    return Promise.all(
+      Object.values(this.registeredCollections).map(async (collection) => {
+        await this.syncPendingDocs(collection);
+      })
+    );
+  }
+
+  private subscribeToNetworkChanges() {
+    // Initial sync - use timeout to allow time for collections to be registered
+    Network.getStatus().then(async ({ connected }) => {
+      if (connected) {
+        await _wait(2000);
+        this.syncAllPendingDocs();
+      }
+    });
+    // Sync when network changes offline -> online
+    Network.addListener('networkStatusChange', ({ connected }) => {
+      if (connected) {
+        this.syncAllPendingDocs();
       }
     });
   }
 
-  private async syncRecords(docs: RxDocument<ISupabasePushEntry>[], collection: RxCollection) {
+  private async subscribeToCollectionChanges(collection: RxCollection) {
+    collection.$.subscribe(async (change) => {
+      // TODO - update only if ready for submission, maybe debounce
+      const { _supabase_push_status } = change.documentData as ISupabasePushEntry;
+      if (_supabase_push_status === 'ready' || _supabase_push_status === 'complete') {
+        await this.pushDocsToSupabase([{ _data: change.documentData } as any], collection);
+      }
+    });
+  }
+
+  private async pushDocsToSupabase(docs: RxDocument<ISupabasePushEntry>[], collection: RxCollection) {
     const records = docs.map((d) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { _meta, _rev, _supabase_push_status, ...keptFields } = d._data as ISupabasePushEntry;
       return keptFields;
     });
-
     const table = this.supabaseService.db.table(collection.name);
     const res = await table.upsert(records);
     if (res.status === 201) {
@@ -66,18 +112,11 @@ export class PicsaDatabaseSupabasePushService {
         });
       await collection.bulkUpsert(successUpdate);
     } else {
-      const failUpdate = docs
-        .filter((d) => d._data._supabase_push_status !== 'failed')
-        .map((d) => {
-          d._data._supabase_push_status = 'failed';
-          return d._data;
-        });
-      await collection.bulkUpsert(failUpdate);
+      // Error cause unknown (e.g. network, conflict, endpoint down etc.)
+      // Assume records fine to leave in 'ready' state to re-attempt in future sync
+      // Previously 'failed' state included but not very useful as still wants to be synced
       console.error({ records, res });
-      throw new Error(`Supabase sync fail: [${res.status}] ${res.error?.message}`);
-      // TODO - how best to handle errrors? crashlytics?
-      // TODO - how best to handle internet issues
-      // TODO - how to handle retry - maybe just periodically try main sync method?
     }
+    return res;
   }
 }
