@@ -43,10 +43,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnDestroy() {
-    // Check whether outstanding data requires saving/deleting
-    if (!this.formFinalised) {
-      await this.finaliseForm();
-    }
+    await this.handleViewDestroy();
     this.componentDestroyed$.next(true);
   }
 
@@ -90,31 +87,15 @@ export class FormViewComponent implements OnInit, OnDestroy {
     // TODO - Delete from server (?)
   }
 
-  /**
-   *
-   * TODO - add tests
-   */
-  private async finaliseForm(action?: 'UPDATE' | 'DELETE' | 'IGNORE') {
-    const afterJson = this.getFormEntryJson(this.formEntry?.xml);
-    // Determine action to automatically take if exit unexpectedly
-    if (!action) {
-      const { enketoEntry, json: beforeJson } = this.formInitial.submission;
-      const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
-      const after = { json: afterJson, xml: this.formEntry?.xml || '' };
-      action = this.determineFinaliseAction({ before, after });
+  private async handleViewDestroy() {
+    // Check whether outstanding data requires saving/deleting
+    if (!this.formFinalised) {
+      const action = this.determineFormAction();
+      if (action === 'UPDATE') {
+        this.formEntry!.draft = true;
+        await this.finaliseForm('UPDATE');
+      }
     }
-    this.formFinalised = true;
-    console.log('[FORM]', action, afterJson);
-    if (action === 'DELETE') return this.submissionDoc.remove();
-    if (action === 'UPDATE') {
-      const patch: Partial<IFormSubmission> = {
-        json: afterJson,
-        enketoEntry: this.formEntry,
-        _modified: new Date().toISOString(),
-      };
-      return this.submissionDoc.incrementalPatch(patch);
-    }
-    return;
   }
 
   /**
@@ -123,16 +104,39 @@ export class FormViewComponent implements OnInit, OnDestroy {
    * IGNORE - form not interacted with
    * UPDATE - all other cases (TODO - could check if metadata only changed)
    */
-  private determineFinaliseAction(data: {
-    before: { xml: string; json: Record<string, any> };
-    after: { xml: string; json: Record<string, any> };
-  }): 'UPDATE' | 'DELETE' | 'IGNORE' {
-    const { before, after } = data;
+  private determineFormAction(): 'UPDATE' | 'DELETE' | 'IGNORE' {
+    const afterJson = this.getFormEntryJson(this.formEntry?.xml);
+    const { enketoEntry, json: beforeJson } = this.formInitial.submission;
+    const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
+    const after = { json: afterJson, xml: this.formEntry?.xml || '' };
+
     // Empty form data, delete
     if (Object.keys(before.json).length === 0 && Object.keys(after.json).length === 0) return 'DELETE';
     // Form not interacted with, ignore
     if (!after.xml) return 'IGNORE';
     return 'UPDATE';
+  }
+
+  /**
+   *
+   * TODO - add tests
+   */
+  private async finaliseForm(action: 'UPDATE' | 'DELETE' | 'IGNORE') {
+    const afterJson = this.getFormEntryJson(this.formEntry?.xml);
+
+    this.formFinalised = true;
+    console.log('[FORM]', action, afterJson);
+    if (action === 'DELETE') return this.submissionDoc.remove();
+    if (action === 'UPDATE') {
+      const patch: Partial<IFormSubmission> = {
+        json: afterJson,
+        enketoEntry: this.formEntry,
+        _modified: new Date().toISOString(),
+        _supabase_push_status: this.formEntry?.draft ? 'draft' : 'ready',
+      };
+      return this.submissionDoc.incrementalPatch(patch);
+    }
+    return;
   }
 
   /**
