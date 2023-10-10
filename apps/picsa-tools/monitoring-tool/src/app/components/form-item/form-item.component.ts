@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ISupabasePushEntry } from '@picsa/shared/services/core/db_v2/db-supabase-push.service';
-import { hashmapToArray } from '@picsa/utils';
+import { arrayToHashmapArray, hashmapToArray } from '@picsa/utils';
+import { Subject, takeUntil } from 'rxjs';
 
+import { STATUS_ICONS } from '../../models';
 import { IMonitoringForm } from '../../schema/forms';
+import { IFormSubmission } from '../../schema/submissions';
+import { MonitoringToolService } from '../../services/monitoring-tool.service';
 
 type ISyncStatus = {
   [status in ISupabasePushEntry['_supabase_push_status']]: {
-    label: string;
     value: number;
     matIcon: string;
     id?: string;
@@ -20,33 +22,43 @@ type ISyncStatus = {
   styleUrls: ['./form-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormItemComponent {
+export class FormItemComponent implements OnInit, OnDestroy {
   @Input() form: IMonitoringForm;
 
   public syncStatusMap: ISyncStatus = {
-    complete: {
-      label: translateMarker('Complete'),
-      value: 12,
-      matIcon: 'task_alt',
-    },
-    ready: {
-      label: translateMarker('Ready'),
-      value: 3,
-      matIcon: 'upload_file',
-    },
-    draft: {
-      label: translateMarker('Draft'),
-      value: 1,
-      matIcon: 'edit',
-    },
-    failed: {
-      label: translateMarker('Failed'),
-      value: 6,
-      matIcon: 'error',
-    },
+    complete: { ...STATUS_ICONS.complete, value: 0 },
+    ready: { ...STATUS_ICONS.ready, value: 0 },
+    draft: { ...STATUS_ICONS.draft, value: 0 },
+    failed: { ...STATUS_ICONS.failed, value: 0 },
   };
+
+  private componentDestroyed$ = new Subject();
+
+  constructor(private service: MonitoringToolService, private cdr: ChangeDetectorRef) {}
 
   public get syncStatus() {
     return hashmapToArray(this.syncStatusMap, 'id');
+  }
+
+  ngOnInit() {
+    this.subscribeToSubmissionSummary();
+  }
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
+  }
+
+  /** Subscribe to form submissions and summarise by status */
+  private subscribeToSubmissionSummary() {
+    const submissionsQuery = this.service.getFormSubmissionsQuery(this.form._id);
+    submissionsQuery.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
+      const submissions = docs.map((d) => d.toMutableJSON());
+      const submissionsByStatus = arrayToHashmapArray<IFormSubmission>(submissions, '_supabase_push_status');
+      for (const status of Object.keys(this.syncStatusMap)) {
+        this.syncStatusMap[status].value = submissionsByStatus[status]?.length || 0;
+      }
+      this.cdr.markForCheck();
+    });
   }
 }

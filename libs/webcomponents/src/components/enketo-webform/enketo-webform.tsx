@@ -136,10 +136,9 @@ export class EnketoWebform {
   }
 
   private handleEventXmlFormChange(e: ReturnType<typeof Events.XFormsValueChanged>) {
-    console.log('handle xml form chagne', e.detail);
     // Value savied in autoSave method of https://github.com/enketo/enketo-express/blob/master/public/js/src/module/controller-webform.js
     const formXML = this.xmlFormValue;
-    console.log('XFormsValueChanged', { formXML });
+    // console.log('XFormsValueChanged', { formXML });
   }
 
   /**

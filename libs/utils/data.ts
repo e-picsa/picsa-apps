@@ -43,7 +43,7 @@ export function hashmapToArray<T>(hashmap: Record<string, T>, keyfield: keyof T)
 }
 
 /** Convert an array into an object grouped by specific key */
-export function arrayToHashmapArray<T extends object>(arr: T[], keyfield: keyof T) {
+export function arrayToHashmapArray<T>(arr: T[], keyfield: keyof T) {
   const hashmap: Record<string, T[]> = {} as any;
   if (!Array.isArray(arr)) {
     console.error('Cannot convert non-array to hashmap', { arr, keyfield });
