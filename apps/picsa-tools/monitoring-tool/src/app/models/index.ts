@@ -6,7 +6,7 @@ export const STATUS_ICONS: {
   };
 } = {
   complete: { matIcon: 'task_alt' },
-  ready: { matIcon: 'upload_file' },
+  ready: { matIcon: 'sync' },
   draft: { matIcon: 'edit' },
   failed: { matIcon: 'error' },
 };

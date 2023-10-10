@@ -19,6 +19,7 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
   public submissionData = new MatTableDataSource<IFormSubmission>([]);
   public displayedColumns: string[] = [];
   public displayedColumnsMeta: IMonitoringForm['summaryFields'] = [];
+  public dataSourceColumns: string[] = [];
 
   public statusIcons = STATUS_ICONS;
 
@@ -49,10 +50,6 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
     this.componentDestroyed$.complete();
   }
 
-  public get dataSourceColumns() {
-    return [...this.displayedColumns, '_sync_push_status'];
-  }
-
   private async loadForm(formId: string) {
     const form = await this.service.getForm(formId);
     if (form) {
@@ -60,6 +57,7 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
       const { summaryFields } = form;
       this.displayedColumnsMeta = summaryFields;
       this.displayedColumns = summaryFields.map(({ field }) => field);
+      this.dataSourceColumns = [...this.displayedColumns, '_sync_push_status'];
       this.componentService.patchHeader({ title: form.title });
       this.cdr.markForCheck();
     }

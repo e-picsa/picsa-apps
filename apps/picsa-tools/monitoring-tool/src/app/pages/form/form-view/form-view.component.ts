@@ -94,10 +94,11 @@ export class FormViewComponent implements OnInit, OnDestroy {
     // Check whether outstanding data requires saving/deleting
     if (!this.formFinalised) {
       const action = this.determineFormAction();
+      // save as draft if data updated
       if (action === 'UPDATE') {
         this.formEntry!.draft = true;
-        await this.finaliseForm('UPDATE');
       }
+      await this.finaliseForm(action);
     }
   }
 
