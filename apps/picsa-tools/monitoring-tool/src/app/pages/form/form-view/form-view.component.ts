@@ -31,6 +31,8 @@ export class FormViewComponent implements OnInit, OnDestroy {
   /** Track if form has already had finalisation action (e.g. update/delete) */
   private formFinalised = false;
 
+  private formInteracted = false;
+
   /** DB doc linked to current submission entry */
   private submissionDoc: RxDocument<IFormSubmission>;
   private componentDestroyed$ = new Subject<boolean>();
@@ -71,6 +73,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
   /** When autosave triggered store value in memory (write on destroy) */
   public async handleAutosave(e: Event) {
+    this.formInteracted = true;
     const entry = (e as any).detail as IEnketoFormEntry;
     this.formEntry = entry;
   }
@@ -109,11 +112,10 @@ export class FormViewComponent implements OnInit, OnDestroy {
     const { enketoEntry, json: beforeJson } = this.formInitial.submission;
     const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
     const after = { json: afterJson, xml: this.formEntry?.xml || '' };
-
     // Empty form data, delete
     if (Object.keys(before.json).length === 0 && Object.keys(after.json).length === 0) return 'DELETE';
     // Form not interacted with, ignore
-    if (!after.xml) return 'IGNORE';
+    if (!this.formInteracted) return 'IGNORE';
     return 'UPDATE';
   }
 
@@ -161,6 +163,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
       if (submission.enketoEntry?.xml) {
         model = xmlNodeReplaceContent({ xml: model, tagname: 'instance', content: submission.enketoEntry.xml });
       }
+      this.formEntry = submission.enketoEntry;
       this.formInitial = { form, model, submission };
     }
   }
