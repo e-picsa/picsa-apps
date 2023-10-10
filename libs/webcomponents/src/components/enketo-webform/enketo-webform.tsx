@@ -135,8 +135,10 @@ export class EnketoWebform {
     this.dataUpdated.emit({ xml: this.xmlFormValue, nodes });
   }
 
-  private handleEventXmlFormChange(e: ReturnType<typeof Events.XFormsValueChanged>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private handleEventXmlFormChange(_e: ReturnType<typeof Events.XFormsValueChanged>) {
     // Value savied in autoSave method of https://github.com/enketo/enketo-express/blob/master/public/js/src/module/controller-webform.js
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const formXML = this.xmlFormValue;
     // console.log('XFormsValueChanged', { formXML });
   }
