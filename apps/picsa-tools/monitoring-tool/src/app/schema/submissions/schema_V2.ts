@@ -15,6 +15,7 @@ export const SCHEMA_V2: RxJsonSchema<IFormSubmission_V2> = {
   properties: {
     ...SCHEMA_V1.properties,
     _sync_push_status: { type: 'string' },
+    _sync_push_timestamp: { type: 'integer' },
   },
   version: 2,
 };

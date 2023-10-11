@@ -31,7 +31,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService, private pushService: PicsaDatabaseSyncService) {
+  constructor(private userService: PicsaUserService, private syncService: PicsaDatabaseSyncService) {
     super();
   }
 
@@ -48,6 +48,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
       // TODO - want to use md5 hashfunction but would need to migrate all collections
       // import md5hash from 'crypto-js/md5';
     });
+    await this.syncService.registerDB(this.db);
   }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
@@ -70,7 +71,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
 
         // register sync push
         if (picsaCollection.syncPush) {
-          this.pushService.registerCollection(createdCollection);
+          this.syncService.registerCollection(createdCollection);
         }
       }
     }
