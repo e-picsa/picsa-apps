@@ -4,7 +4,7 @@ import { parse } from 'https://deno.land/x/xml@2.1.1/mod.ts';
 import { Sha256 } from 'https://deno.land/std@0.119.0/hash/sha256.ts';
 import { getClient, SupabaseClient } from '../_shared/client.ts';
 import { corsHeaders } from '../_shared/cors.ts';
-import { Database } from '../../../../types/supabase.ts';
+import { Database } from '../../../../types/supabase.js';
 
 interface IFormData {
   xml: string;

@@ -7,8 +7,9 @@ import { resolve, dirname, fromFileUrl } from 'https://deno.land/std@0.188.0/pat
  */
 export function supabaseCLIExec(args: string[]) {
   const __dirname = dirname(fromFileUrl(import.meta.url));
+  const cwd = resolve(__dirname, '../');
   const binPath = resolve(__dirname, '../../../node_modules/supabase/bin/supabase.exe');
-  const command = new Deno.Command(binPath, { args });
+  const command = new Deno.Command(binPath, { args, cwd });
 
   return command.output();
 }

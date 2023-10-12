@@ -9,17 +9,15 @@ import { supabaseCLIExec, supabaseDBUrl } from './utils.ts';
  *
  * deno run --allow-env --allow-read --allow-run --allow-write scripts/db-export.ts
  */
-export async function dbExport() {
+export async function dbImport() {
   const dbUrl = supabaseDBUrl();
   const __dirname = dirname(fromFileUrl(import.meta.url));
 
   const targets = [
-    // { filename: 'roles.sql', arg: '--role-only' },
-    // { filename: 'data.sql', arg: '--data-only' },
     { filename: 'schema.sql', arg: '' },
   ];
   for (const { filename, arg } of targets) {
-    const schemaOutput = resolve(__dirname, filename);
+    const schemaInput = resolve(__dirname, filename);
     const args = ['db', 'dump', '--db-url', dbUrl, '-f', schemaOutput, arg];
     const { stdout, stderr } = await supabaseCLIExec(args);
     if (stderr) {
@@ -32,4 +30,4 @@ export async function dbExport() {
     }
   }
 }
-dbExport();
+dbImport();
