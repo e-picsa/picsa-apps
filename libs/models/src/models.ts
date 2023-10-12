@@ -33,10 +33,19 @@ export interface IFirebaseConfig {
   measurementId: string;
 }
 
+export interface ISupabaseConfig {
+  apiUrl: string;
+  /** Default credentials used by app to login as anonymous user */
+  appUser: { email: string; password?: string };
+  /** DB anon key (TODO - is required?) */
+  anonKey: string;
+}
+
 // combined settings
 export interface IEnvironment {
   production: boolean;
   firebase: IFirebaseConfig;
   group: IGroupSettings;
   defaultConfiguration: string;
+  supabase: ISupabaseConfig;
 }
