@@ -15242,7 +15242,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
+  checksum: b2280f200f5ea410e33cc5feb500d67d86cb5f16b294eea1306da055614ffc906be7de6dbc9bbf4db6e6e5d27d0396e4701a3b6c4c920548d2aac94b8223879f
   languageName: node
   linkType: hard
 
