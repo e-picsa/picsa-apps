@@ -14,6 +14,25 @@
         "cwd": "apps/picsa-server"
       }
     },
+    "start-functions": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["npx supabase functions serve"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+
+    "gen-types": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["npx supabase gen types typescript --local > supabase/types/index.ts"],
+        "cwd": "apps/picsa-server"
+      }
+    },
     "stop": {
       "executor": "nx:run-commands",
       "dependsOn": [],
