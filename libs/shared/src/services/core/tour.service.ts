@@ -7,6 +7,7 @@ import type { Options } from 'intro.js/src/option';
 export interface ITourStep extends Partial<IntroStep> {
   id: string;
   text: string;
+  // elementToClick?: HTMLElement;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -15,8 +16,10 @@ export interface ITourStep extends Partial<IntroStep> {
  */
 export class TourService {
   private intro: IntroJs;
+
   constructor() {
     this.intro = introJs();
+    // this.intro.onbeforechange(this.handleBeforeNext.bind(this));
   }
 
   public startTour(tourSteps: ITourStep[], tourOptions: Partial<Options> = {}): void {
@@ -29,7 +32,6 @@ export class TourService {
       };
       return mappedStep;
     });
-    console.log('starting tour', steps);
 
     this.intro
       .setOptions({
@@ -39,6 +41,30 @@ export class TourService {
         steps,
         ...tourOptions,
       })
+      // .onbeforechange(onBeforeChange())
       .start();
   }
+
+  public getCurrentStep() {
+    return this.intro._currentStep;
+  }
+
+  public advanceToNextStep(tourStep: number) {
+    this.intro.goToStep(tourStep);
+  }
+
+  public onBeforeChange(onBeforeChangeFunction: Function = () => {}) {
+    this.intro.onbeforechange(onBeforeChangeFunction()).start();
+  }
+
+  // private handleBeforeNext(tourSteps: ITourStep[]) {
+  //   const currentStep = this.intro._currentStep; // Get the current step
+  //   if (tourSteps[currentStep].elementToClick !== undefined) {
+  //     // If there's an element to click, trigger a click event
+  //     const elementToClick: HTMLElement = document.querySelector(tourSteps[currentStep].elementToClick!);
+  //     if (elementToClick) {
+  //       elementToClick.click();
+  //     }
+  //   }
+  // }
 }
