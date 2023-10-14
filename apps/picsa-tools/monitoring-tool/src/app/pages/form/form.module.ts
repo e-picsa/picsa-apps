@@ -1,10 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { FormViewComponent } from './form-view/form-view.component';
-import { CommonModule } from '@angular/common';
-import { MonitoringToolComponentsModule } from '../../components/monitoring-tool-components.module';
-import { SubmissionListComponent } from './submission-list/submission-list.component';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
+
+import { MonitoringToolComponentsModule } from '../../components/monitoring-tool-components.module';
+import { FormViewComponent } from './form-view/form-view.component';
+import { SubmissionListComponent } from './submission-list/submission-list.component';
 
 const routes: Route[] = [
   {

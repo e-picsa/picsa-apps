@@ -41,8 +41,10 @@ export interface Database {
           _created: string
           _deleted: boolean
           _id: string
+          _kobo_form_id: string | null
           _kobo_sync_required: boolean | null
           _kobo_sync_time: string | null
+          _kobo_uuid: string | null
           _modified: string
           enketoEntry: Json
           formId: string
@@ -54,8 +56,10 @@ export interface Database {
           _created?: string
           _deleted?: boolean
           _id: string
+          _kobo_form_id?: string | null
           _kobo_sync_required?: boolean | null
           _kobo_sync_time?: string | null
+          _kobo_uuid?: string | null
           _modified?: string
           enketoEntry: Json
           formId: string
@@ -67,8 +71,10 @@ export interface Database {
           _created?: string
           _deleted?: boolean
           _id?: string
+          _kobo_form_id?: string | null
           _kobo_sync_required?: boolean | null
           _kobo_sync_time?: string | null
+          _kobo_uuid?: string | null
           _modified?: string
           enketoEntry?: Json
           formId?: string
