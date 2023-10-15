@@ -60,6 +60,14 @@ Authorization credentials should be provided using the service_role key output w
 
 https://supabase.com/docs/guides/functions/local-development
 
+**Test Functions**
+
+Whilst serving functions tests can be executed by
+
+```sh
+yarn nx run picsa-server:test-functions
+```
+
 ## Advanced Usage
 
 ## Export DB Type Generation

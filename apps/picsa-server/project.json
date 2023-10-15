@@ -23,6 +23,15 @@
         "cwd": "apps/picsa-server"
       }
     },
+    "test-functions": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["deno test --allow-all tests/index.ts"],
+        "cwd": "apps/picsa-server/supabase/functions"
+      }
+    },
 
     "gen-types": {
       "executor": "nx:run-commands",
