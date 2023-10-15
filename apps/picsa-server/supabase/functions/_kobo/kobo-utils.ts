@@ -66,7 +66,8 @@ export async function createKoboSubmission(xml: string) {
   const blob = new Blob([xml], { type: 'application/xml' });
   const body = new FormData();
   body.set('xml_submission_file', blob);
-  return await KoboRequest('https://kc.kobotoolbox.org/api/v1/submissions', { method: 'POST', body });
+  const res = await KoboRequest('https://kc.kobotoolbox.org/api/v1/submissions', { method: 'POST', body });
+  return extractKoboResponse(res);
 }
 
 /**
@@ -115,14 +116,15 @@ export async function deleteKoboSubmissionByUUID(formId: string, uuid: string) {
     const { _id } = await getRes.json();
     return deleteKoboSubmission(formId, _id);
   } else {
-    return getRes;
+    return extractKoboResponse(getRes);
   }
 }
 /** Delete a kobo submission identified by formId and numeric kobo _id */
 async function deleteKoboSubmission(formId: string, _id: number) {
-  return await KoboRequest(`https://kf.kobotoolbox.org/api/v2/assets/${formId}/data/${_id}?format=json`, {
+  const res = await KoboRequest(`https://kf.kobotoolbox.org/api/v2/assets/${formId}/data/${_id}?format=json`, {
     method: 'DELETE',
   });
+  return extractKoboResponse(res);
 }
 
 /** Convert xml file submission to json and use to extract formId and data */
@@ -143,10 +145,11 @@ export function extractSubmissionXML(xmlString: string) {
  * When Kobo returns response code it usually includes xml body
  * Return xml in raw format and as parsed json
  */
-export async function extractKoboResponse(res: Response) {
-  let text: string | null = null;
+async function extractKoboResponse(res: Response) {
+  let raw: string | null = null;
   let json: any | null = null;
-
+  let message: string | null = null;
+  const { status, statusText } = res;
   if (res.body) {
     const contentType = res.headers.get('content-type');
     switch (contentType) {
@@ -154,15 +157,28 @@ export async function extractKoboResponse(res: Response) {
         json = await res.json();
         break;
       case 'text/xml; charset=utf-8': {
-        text = await res.text();
-        json = parse(text);
+        // TODO - could further extract specific messages
+        raw = await res.text();
+        json = parse(raw);
+        message = extractKoboResponseMessage(json);
         break;
       }
       default:
         console.warn('Could not parse kobo response', contentType);
-        text = await res.text();
+        raw = await res.text();
         break;
     }
   }
-  return { json, text };
+  return { json, raw, status, statusText, message };
+}
+
+/** Kobo xml may contain message in various formats. Extract from parsed json */
+function extractKoboResponseMessage(responseJson: any) {
+  const OpenRosaResponse = responseJson['OpenRosaResponse'] as { message?: string | { ['#text']: string } };
+  if (OpenRosaResponse) {
+    const { message } = OpenRosaResponse;
+    if (typeof message === 'string') return message;
+    if (message && message.constructor === {}.constructor && message['#text']) return message['#text'];
+  }
+  return null;
 }
