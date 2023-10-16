@@ -1,0 +1,9 @@
+{
+  "test": {
+    "include": ["**/*.test.ts", "tests/index.ts"],
+    "exclude": ["src/testdata/", "data/fixtures/**/*.ts"]
+  },
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.7.1"
+  }
+}

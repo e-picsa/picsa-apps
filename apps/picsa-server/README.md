@@ -50,7 +50,7 @@ Ensure **Auto Confirm** is checked
 
 If developing functions locally run via
 
-```
+```sh
 yarn nx run picsa-server:supabase functions serve
 ```
 
@@ -66,6 +66,16 @@ Whilst serving functions tests can be executed by
 
 ```sh
 yarn nx run picsa-server:test-functions
+```
+
+In order to run tests that connect to supabase an additional `.env.local` file should be populated in the the functions directory with SUPABASE_ANON_KEY credentials
+
+Tests are written using the [Behavior-Driven Development](https://docs.deno.com/runtime/manual/basics/testing/behavior_driven_development) module
+
+Functions cli supports [additional arguments](https://fig.io/manual/deno/test) such as `--watch`
+
+```sh
+yarn nx run picsa-server:test-functions --watch
 ```
 
 ## Advanced Usage

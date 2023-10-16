@@ -28,7 +28,7 @@
       "dependsOn": [],
       "outputs": [],
       "options": {
-        "commands": ["deno test --allow-all tests/index.ts"],
+        "commands": ["deno test --allow-all"],
         "cwd": "apps/picsa-server/supabase/functions"
       }
     },

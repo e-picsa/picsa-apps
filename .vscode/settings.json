@@ -12,5 +12,5 @@
     "apps/picsa-server/_deprecated/scripts"
   ],
   "deno.unstable": true,
-  "deno.importMap": "apps/picsa-server/supabase/functions/import_map.json"
+  "deno.config": "apps/picsa-server/supabase/functions/deno.jsonc"
 }
