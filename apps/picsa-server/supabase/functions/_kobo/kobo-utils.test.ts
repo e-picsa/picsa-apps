@@ -13,10 +13,8 @@ import { setupTestEnv } from '../tests/test-utils.ts';
  * Kobo Utils Testing
  *
  * TODO
- * - Split to separate test functions
  * - Include QA (e.g. ensure KOBO_API_KEY)
  * - Ensure form contains no entries before population
- * - Use dedicated testing .env
  */
 
 describe('Kobo Utils', () => {
@@ -29,12 +27,10 @@ describe('Kobo Utils', () => {
     await setupTestEnv();
     instanceId = crypto.randomUUID();
     submissionXML = mockInstanceXML(testFormId, instanceId);
-    // TODO - clear server data
   });
 
   it('Creates new submission and returns metadata', async () => {
     const createRes = await createKoboSubmission(submissionXML);
-    console.log('createRes', createRes);
     assert(createRes.status === 201, 'Submission created succesfully');
     const { submissionMetadata } = createRes.json.OpenRosaResponse;
     assert(submissionMetadata['@instanceID'] === `uuid:${instanceId}`);
@@ -54,8 +50,6 @@ describe('Kobo Utils', () => {
     const entryByKoboID = await getKoboSubmission(testFormId, koboId);
     assert(entryByKoboID?._id === entryByUUID?._id, 'Submission retrieval with kobo _id matches uuid');
   });
-
-  it('Retrieves same submission by kobo id', async () => {});
 
   it('Updates a submission', async () => {
     const upsertRes = await upsertKoboSubmission(submissionXML.replace('<q1>test</q1>', '<q1>test update</q1>'));

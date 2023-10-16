@@ -1,7 +1,7 @@
 import { beforeAll, describe, it } from 'https://deno.land/std@0.204.0/testing/bdd.ts';
 import { assertSpyCall, stub, resolvesNext } from 'https://deno.land/std@0.204.0/testing/mock.ts';
 
-import { invokeSupabaseFunctionFetch, mockSupabaseRequest, setupTestEnv } from '../tests/test-utils.ts';
+import { invokeSupabaseFunctionFetch, mockSupabaseRequest, setupTestEnv } from '../../tests/test-utils.ts';
 import { assert } from 'https://deno.land/std@0.188.0/_util/asserts.ts';
 import { _internals } from './index.ts';
 

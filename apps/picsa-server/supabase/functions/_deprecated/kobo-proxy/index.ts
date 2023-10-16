@@ -2,8 +2,8 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { multiParser } from 'https://deno.land/x/multiparser@0.114.0/mod.ts';
-import { corsHeaders } from '../_shared/cors.ts';
-import { upsertKoboSubmission } from '../_kobo/kobo-utils.ts';
+import { corsHeaders } from '../../_shared/cors.ts';
+import { upsertKoboSubmission } from '../../_kobo/kobo-utils.ts';
 
 /** Expected format of post data received */
 interface IFormData {
@@ -11,6 +11,9 @@ interface IFormData {
 }
 
 /**
+ * @DEPRECATED
+ * Endpoints to allow app to communicate directly with kobo endpoint
+ *
  * TODO
  * - Read from DB
  * - Handle update

@@ -12,7 +12,7 @@ import { createKoboSubmission,  deleteKoboSubmissionByUUID, extractKoboResponse 
  *
  * https://github.com/supabase/supabase/blob/master/examples/edge-functions/supabase/functions/select-from-table-with-auth-rls/index.ts
  */
-serve(async (req) => {
+serve(async (req:Request) => {
   if (req.method === 'POST') {
     const { results, status } = await new KoboSyncHandler(req).run();
 
