@@ -123,6 +123,9 @@ yarn nx run picsa-server:supabase migration new create_monitoring_submissions
 supabase link --project-ref [ref] --password [pass]
 ```
 
+**Relative import path "@supabase/supabase-js" not prefixed**
+Any Imports have to be defined both in `import-map.json` file
+
 # Links
 
 - https://supabase.com/blog/supabase-local-dev

@@ -3,7 +3,5 @@
     "include": ["**/*.test.ts", "tests/test-utils.ts"],
     "exclude": ["src/testdata/", "data/fixtures/**/*.ts"]
   },
-  "imports": {
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.7.1"
-  }
+  "importMap": "./import_map.json"
 }

@@ -34,6 +34,33 @@ export interface Database {
   }
   public: {
     Tables: {
+      kobo_sync: {
+        Row: {
+          _created: string
+          _id: string
+          _modified: string
+          _sync_timestamp: string | null
+          kobo_uuid: string | null
+          operation: string
+        }
+        Insert: {
+          _created?: string
+          _id: string
+          _modified?: string
+          _sync_timestamp?: string | null
+          kobo_uuid?: string | null
+          operation: string
+        }
+        Update: {
+          _created?: string
+          _id?: string
+          _modified?: string
+          _sync_timestamp?: string | null
+          kobo_uuid?: string | null
+          operation?: string
+        }
+        Relationships: []
+      }
       monitoring_tool_submissions: {
         Row: {
           _app_user_id: string
