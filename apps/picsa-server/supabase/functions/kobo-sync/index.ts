@@ -1,15 +1,13 @@
 // Initialize the JS client
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { corsHeaders } from '../_shared/cors.ts';
+
 import { getClient } from '../_shared/client.ts';
+import { createKoboSubmission,  deleteKoboSubmissionByUUID, extractKoboResponse } from '../_kobo/kobo-utils.ts';
 
 /**
  * TODO
- * - Read from DB
- * - Handle update
- *      Currently updating data creates new record, either need to delete old before update or find way to update
- * - Handle delete
+ * - Handle db delete
  *
  *
  * https://github.com/supabase/supabase/blob/master/examples/edge-functions/supabase/functions/select-from-table-with-auth-rls/index.ts
@@ -59,11 +57,13 @@ class KoboSyncHandler {
     _kobo_uuid: string | null;
   }) {
     const { _kobo_form_id, _kobo_uuid, _id, enketoEntry } = entry;
+    // TODO - simplify to single upsert method that checks for existing using enketo entry xml only
+    // TOOD - tests
 
     // Handle existing submission delete
     if (_kobo_form_id && _kobo_uuid) {
       // previous submission exists, delete first before uploading new
-      const { status, statusText } = await deleteKoboSubmission(_kobo_form_id, _kobo_uuid);
+      const { status, statusText } = await deleteKoboSubmissionByUUID(_kobo_form_id, _kobo_uuid);
       this.results.push({ operation: 'DELETE', status, statusText, _id, _kobo_form_id, _kobo_uuid });
       // Could not delete, break
       // May return 404 status if already deleted, or 200 successful delete
@@ -81,19 +81,21 @@ class KoboSyncHandler {
     // 201 - submission created succesfully, patch db entry
 
     if (res.status === 201) {
-      const updateResponseXML = await res.text();
-      await this.updateDBEntry(updateResponseXML, _id);
+      const { json } = await extractKoboResponse(res);
+      console.log('update db entry',json.submissionMetadata.)
+      // TODO - extract form and instance id before upsert
+      await this.updateDBEntry(_id);
     }
   }
 
   /**
    *
    * @param updateResponseXML
-   * @param _id
+   * @param _id - db row id
+   * @param instanceID - kobo instance id
    */
-  private async updateDBEntry(updateResponseXML: string, _id: string) {
+  private async updateDBEntry(_id: string, instanceID:string) {
     const patch: Record<string, string> = { _kobo_sync_time: new Date().toISOString() };
-    const { instanceID, id } = extractResponseXML(updateResponseXML);
     if (instanceID) {
       patch._kobo_uuid = instanceID.replace('uuid:', '');
     }
@@ -112,69 +114,4 @@ class KoboSyncHandler {
   }
 }
 
-async function createKoboSubmission(xml: string) {
-  const token = Deno.env.get('KOBO_API_KEY');
-  if (!token) {
-    return ErrorResponse('KOBO_API_KEY not provided. Please include in .env');
-  }
-  const headers = { 'X-OpenRosa-Version': '1.0', authorization: 'Token ' + token };
-  const blob = new Blob([xml], { type: 'application/xml' });
-  const body = new FormData();
-  body.set('xml_submission_file', blob);
-  return await fetch('https://kc.kobotoolbox.org/api/v1/submissions', { headers, method: 'POST', body });
-}
 
-/**
- *
- * @param formId
- * @param dataId
- * @returns 204 response
- *
- * NOTE - can also be handled through kc.kobotoolbox.org/api/v1/data api but requires numeric form id (?)
- * TODO - v2 api also needs numeric id
- */
-async function deleteKoboSubmission(formId: string, uuid: string) {
-  const token = Deno.env.get('KOBO_API_KEY');
-  if (!token) {
-    return ErrorResponse('KOBO_API_KEY not provided. Please include in .env');
-  }
-  const headers = { 'X-OpenRosa-Version': '1.0', authorization: 'Token ' + token };
-  // Make a get request for UUID to get additional numeric id property required for delete operation
-  const getRes = await fetch(`https://kf.kobotoolbox.org/api/v2/assets/${formId}/data/${uuid}?format=json`, {
-    headers,
-    method: 'GET',
-  });
-  if (getRes.status === 200) {
-    const { _id } = await getRes.json();
-    return await fetch(`https://kf.kobotoolbox.org/api/v2/assets/${formId}/data/${_id}`, {
-      headers,
-      method: 'DELETE',
-    });
-  } else {
-    return getRes;
-  }
-}
-
-function ErrorResponse(msg: string, status = 400) {
-  return new Response(JSON.stringify({ msg }), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-/**
- * Extract key-value pairs from response xml, e.g.
- * <submissionMetadata id="aQCDPoHBUkgJRWQgswksoo" instanceID="uuid:78bd4c91-407c-4f8b-9ab5-c88a6a39a482"
- * {id:"aQCDPoHBUkgJRWQgswksoo", instanceID:"uuid:78bd4c91-407c-4f8b-9ab5-c88a6a39a482"}
- * */
-function extractResponseXML(xml: string) {
-  const regex = /(?<key>[\w]+)="(?<value>[^"]*)"/gi;
-  const data: Record<string, string> = {};
-
-  for (const match of xml.matchAll(regex)) {
-    if (match?.groups) {
-      data[match.groups.key] = match.groups.value;
-    }
-  }
-  return data;
-}
