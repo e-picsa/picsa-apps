@@ -1,6 +1,6 @@
 {
   "test": {
-    "include": ["**/*.test.ts", "tests/index.ts"],
+    "include": ["**/*.test.ts", "tests/test-utils.ts"],
     "exclude": ["src/testdata/", "data/fixtures/**/*.ts"]
   },
   "imports": {
