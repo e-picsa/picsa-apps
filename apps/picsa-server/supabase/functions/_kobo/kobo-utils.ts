@@ -1,5 +1,5 @@
 import { Sha256 } from 'https://deno.land/std@0.119.0/hash/sha256.ts';
-import { parse } from 'https://deno.land/x/xml@2.1.1/mod.ts';
+import { parse } from 'xml';
 import { ErrorResponse } from '../_shared/response.ts';
 
 /** JSON representation of enketo xml data for submission */

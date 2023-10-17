@@ -37,12 +37,7 @@ CREATE TABLE IF NOT EXISTS "public"."monitoring_tool_submissions" (
     "json" "jsonb" NOT NULL,
     "_app_user_id" character varying NOT NULL,
     "_attachments" "jsonb" NOT NULL,
-    "_deleted" boolean DEFAULT false NOT NULL,
-    "_kobo_form_id" character varying,
-    "_kobo_uuid" character varying,
-    "_kobo_sync_time" timestamp with time zone,
-    -- Computed Column
-    "_kobo_sync_required" boolean GENERATED ALWAYS AS ((_kobo_sync_time IS NULL) OR (_kobo_sync_time < _modified)) STORED
+    "_deleted" boolean DEFAULT false NOT NULL
 );
 
 ALTER TABLE "public"."monitoring_tool_submissions" OWNER TO "postgres";

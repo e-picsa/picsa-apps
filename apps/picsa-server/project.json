@@ -19,7 +19,7 @@
       "dependsOn": [],
       "outputs": [],
       "options": {
-        "commands": ["npx supabase functions serve"],
+        "commands": ["npx supabase functions serve --import-map import-map.json"],
         "cwd": "apps/picsa-server"
       }
     },

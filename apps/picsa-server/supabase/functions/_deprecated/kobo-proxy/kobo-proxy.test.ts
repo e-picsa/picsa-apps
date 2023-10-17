@@ -5,7 +5,7 @@ import { invokeSupabaseFunctionFetch, mockSupabaseRequest, setupTestEnv } from '
 import { assert } from 'https://deno.land/std@0.188.0/_util/asserts.ts';
 import { _internals } from './index.ts';
 
-describe('Kobo Proxy API', () => {
+describe.skip('Kobo Proxy API', () => {
   beforeAll(async () => {
     await setupTestEnv();
   });
