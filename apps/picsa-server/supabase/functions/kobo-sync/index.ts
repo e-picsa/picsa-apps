@@ -9,25 +9,49 @@ import {
   extractSubmissionXML,
   upsertKoboSubmission,
 } from '../_kobo/kobo-utils.ts';
+import { Database } from '../../types/index.ts';
+
+type TableRecord = Database['public']['Tables']['kobo_sync']['Row'];
+
+type UpdatePayload = {
+  type: 'UPDATE';
+  table: string;
+  schema: string;
+  record: TableRecord;
+  old_record: TableRecord;
+};
 
 /**
- * Sync all records marked in kobo_sync table queue
- * The function is designed to be run as a regular cron task (e.g. every 15 mins)
- * TODO - due to function timeout may fail if large amounts of outstanding data
- * TODO - could be refactored to execute on a per-row basis via db trigger
- * TODO - add cron triggers
- * TODO - deploy
+ * Sync records marked in kobo_sync table queue
  *
- * https://github.com/supabase/supabase/blob/master/examples/edge-functions/supabase/functions/select-from-table-with-auth-rls/index.ts
+ * When triggered via GET request all outstanding records will be synced (e.g. cron task)
+ * When triggered via POST requerst (DB webhook) just the specific record will be synced
+ *
  */
 serve(async (req: Request) => {
-  if (req.method === 'GET') {
-    const { results, status } = await new KoboSyncHandler(req).run();
+  const koboSync = new KoboSyncHandler(req);
 
+  // When calling via GET request attempt to sync all outstanding entries
+  if (req.method === 'GET') {
+    const pending = await koboSync.getPending();
+    const { results, status } = await new KoboSyncHandler(req).sync(pending);
     return new Response(JSON.stringify(results), {
       status,
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+
+  // When calling via POST request (triggered by DB) sync specific row
+  if (req.method === 'POST') {
+    const payload: UpdatePayload = await req.json();
+    const { kobo_sync_required } = payload.record;
+    if (kobo_sync_required) {
+      const { results, status } = await new KoboSyncHandler(req).sync([payload.record]);
+      console.log('handle post request', payload);
+      return new Response(JSON.stringify({ results }), { status });
+    } else {
+      return new Response('Sync not required', { status: 200 });
+    }
   }
   return new Response('Method not supported: ' + req.method, { status: 400 });
 });
@@ -44,11 +68,9 @@ class KoboSyncHandler {
   private get table() {
     return this.client.from('kobo_sync');
   }
-  public async run() {
-    const pending = await this.listPending();
-
+  public async sync(entries: TableRecord[]) {
     // TODO - consider invoking in batches/child functions to avoid timeout
-    for (const entry of pending) {
+    for (const entry of entries) {
       // deno-lint-ignore prefer-const
       let { _id, operation, enketo_entry, kobo_form_id, kobo_uuid } = entry;
       const kobo_sync_time = new Date().toISOString();
@@ -87,7 +109,7 @@ class KoboSyncHandler {
     return { status: this.status, results: this.results };
   }
 
-  private async listPending() {
+  public async getPending() {
     const { data, error } = await this.table.select(`*`, { count: 'exact' }).eq('kobo_sync_required', true);
     return data || [];
   }

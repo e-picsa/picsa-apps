@@ -49,14 +49,15 @@ end;
 $$ language plpgsql;
 
 -- Trigger kobo-sync backend function when kobo_sync table updated
+-- NOTE - fails to run locally and for production needs authorization header and prod endpoint
 create trigger trigger_kobo_sync_function
     after insert or update on kobo_sync 
     for each row 
-    -- TODO - handle production endpoint 
+    -- TODO - handle production endpoint and auth token
     execute function "supabase_functions"."http_request"(
     'http://localhost:54321/functions/v1/kobo-sync',
     'POST',
-    '{"Content-Type":"application/json"}',
+    '{"Content-Type":"application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"}',
     '{}',
     '1000'
     );
