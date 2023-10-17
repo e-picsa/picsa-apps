@@ -23,6 +23,16 @@
         "cwd": "apps/picsa-server"
       }
     },
+    "deploy-functions": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["npx supabase functions deploy"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+
     "test-functions": {
       "executor": "nx:run-commands",
       "dependsOn": [],

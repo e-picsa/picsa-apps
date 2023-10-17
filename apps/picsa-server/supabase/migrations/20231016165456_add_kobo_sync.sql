@@ -29,10 +29,12 @@ begin
             (NEW._id, TG_OP, NEW."enketoEntry")
         ON CONFLICT (_id) DO UPDATE 
             SET 
-                operation = excluded.operation,
+                operation = 'UPDATE',
                 enketo_entry = excluded.enketo_entry,
                 _modified = excluded._modified;
     -- Handle delete
+    -- TODO - want to avoid updating current row, prefer to delete current and create new 'DELETE' entry
+    -- (double detection with update followed by delete)
     elsif (TG_OP = 'DELETE') then
         insert into
             kobo_sync(_id, operation)
@@ -40,8 +42,7 @@ begin
             (OLD._id, TG_OP)
         ON CONFLICT (_id) DO UPDATE 
             SET 
-                operation = excluded.operation,
-                enketo_entry = excluded.enketo_entry,
+                operation = 'DELETE',
                 _modified = excluded._modified;
     END IF;
     RETURN NULL;
@@ -49,19 +50,20 @@ end;
 $$ language plpgsql;
 
 -- Trigger kobo-sync backend function when kobo_sync table updated
--- NOTE - fails to run locally and for production needs authorization header and prod endpoint
+-- NOTE - running locally has to target docker ip (not localhost)
+-- https://github.com/supabase/pg_net/issues/79
+-- https://github.com/orgs/supabase/discussions/9837
 create trigger trigger_kobo_sync_function
     after insert or update on kobo_sync 
     for each row 
     -- TODO - handle production endpoint and auth token
     execute function "supabase_functions"."http_request"(
-    'http://localhost:54321/functions/v1/kobo-sync',
+    'http://172.17.0.1:54321/functions/v1/kobo-sync',
     'POST',
     '{"Content-Type":"application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"}',
     '{}',
     '1000'
     );
-
 
 
 

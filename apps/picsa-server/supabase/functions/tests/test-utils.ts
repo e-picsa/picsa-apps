@@ -10,6 +10,7 @@ export async function setupTestEnv() {
   await load({ envPath: resolve(__dirname, '../.env'), export: true });
   await load({ envPath: resolve(__dirname, '../.env.local'), export: true });
   Deno.env.set('SUPABASE_URL', 'http://localhost:54321');
+  Deno.env.set('TEST', 'true');
 }
 
 /**
@@ -64,8 +65,13 @@ function generateSupabaseFetchRequest(name: string, options: FunctionInvokeOptio
     headers: { ...options.headers, Authorization: `Bearer ${supabaseKey}` },
   };
   if (options.body) {
-    // TODO - default method would set more headers depending on body, assume test will structure correctly
-    requestOptions.body = options.body as any;
+    if (options.body.constructor === {}.constructor) {
+      requestOptions.body = JSON.stringify(options.body);
+      requestOptions.headers = { ...requestOptions.headers, ['Content-Type']: 'application/json' };
+    } else {
+      // TODO - default method would set more headers depending on body, assume test will structure correctly
+      requestOptions.body = options.body as any;
+    }
   }
   return new Request(`${supabaseUrl}/functions/v1/${name}`, requestOptions);
 }
