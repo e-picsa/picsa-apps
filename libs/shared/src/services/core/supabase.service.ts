@@ -33,5 +33,7 @@ export class SupabaseService extends PicsaAsyncService {
     console.log('[Supabase Auth]', res);
   }
 
-  public override async init(...args: any): Promise<void> {}
+  public override async init(...args: any): Promise<void> {
+    // Not currently required
+  }
 }
