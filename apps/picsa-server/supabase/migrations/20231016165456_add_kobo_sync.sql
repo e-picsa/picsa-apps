@@ -48,10 +48,21 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger monitoring_tool_kobo_sync
-    after insert or update or delete on monitoring_tool_submissions 
+-- Trigger kobo-sync backend function when kobo_sync table updated
+create trigger trigger_kobo_sync_function
+    after insert or update on kobo_sync 
     for each row 
-    execute function add_kobo_sync_entry();
+    -- TODO - handle production endpoint 
+    execute function "supabase_functions"."http_request"(
+    'http://localhost:54321/functions/v1/kobo-sync',
+    'POST',
+    '{"Content-Type":"application/json"}',
+    '{}',
+    '1000'
+    );
+
+
+
 
 
 -- Alt - could concat id with table `concat(TG_TABLE_NAME,'||',NEW._id`
