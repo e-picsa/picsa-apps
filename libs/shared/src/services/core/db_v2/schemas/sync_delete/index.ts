@@ -1,4 +1,4 @@
-import * as schema from './schema_v0';
+import * as schema from './schema_V0';
 
 // Re-export schema to provide latest version without need to refactor additonal code
 
