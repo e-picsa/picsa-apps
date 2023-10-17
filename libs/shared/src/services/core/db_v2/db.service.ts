@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxCollectionCreator, RxDatabase } from 'rxdb';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
@@ -7,13 +7,14 @@ import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { PicsaDatabaseSyncService } from './db-sync.service';
 import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
 addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
 
-interface IPicsaCollectionData {
+interface IUserCollectionData {
   _app_user_id?: string;
 }
 
@@ -30,7 +31,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService) {
+  constructor(private userService: PicsaUserService, private syncService: PicsaDatabaseSyncService) {
     super();
   }
 
@@ -47,6 +48,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
       // TODO - want to use md5 hashfunction but would need to migrate all collections
       // import md5hash from 'crypto-js/md5';
     });
+    await this.syncService.registerDB(this.db);
   }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
@@ -65,6 +67,11 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         // apply custom collection hooks
         for (const hookFactory of hookFactories) {
           hookFactory(createdCollection);
+        }
+
+        // register sync push
+        if (picsaCollection.syncPush) {
+          this.syncService.registerCollection(createdCollection);
         }
       }
     }
@@ -91,17 +98,21 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * Handle custom PICSA DB modifiers
    */
   private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
-    const { isUserCollection, ...collection } = picsaCollection;
+    const { isUserCollection, syncPush, ...collection } = picsaCollection;
     const hookFactories: ((c: RxCollection) => void)[] = [];
     // store app user ids in any collections marked with `isUserCollection`
     // user information is stored in localStorage instead of db to avoid circular dependency issues
     if (isUserCollection) {
       collection.schema.properties['_app_user_id'] = { type: 'string' };
       hookFactories.push((c) => {
-        const fn = (data: IPicsaCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
+        const fn = (data: IUserCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
         c.addHook('pre', 'save', fn);
         c.addHook('pre', 'insert', fn);
       });
+    }
+    // If collection pushed to server db store _sync_push_status
+    if (syncPush) {
+      collection.schema.properties['_sync_push_status'] = { type: 'string' };
     }
     return { collection, hookFactories };
   }

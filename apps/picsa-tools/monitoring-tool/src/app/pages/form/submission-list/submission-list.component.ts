@@ -1,31 +1,37 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { MonitoringToolService } from '../../../services/monitoring-tool.service';
-import { IFormSubmission } from '../../../schema/submissions';
-import { IMonitoringForm } from '../../../schema/forms';
-import { PicsaCommonComponentsService } from '@picsa/components';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components';
 import { Subject, takeUntil } from 'rxjs';
+
+import { STATUS_ICONS } from '../../../models';
+import { IMonitoringForm } from '../../../schema/forms';
+import { IFormSubmission } from '../../../schema/submissions';
+import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 
 @Component({
   selector: 'monitoring-submission-list',
   templateUrl: './submission-list.component.html',
   styleUrls: ['./submission-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubmissionListComponent implements OnInit, OnDestroy {
-  private form: IMonitoringForm;
   public submissionData = new MatTableDataSource<IFormSubmission>([]);
   public displayedColumns: string[] = [];
   public displayedColumnsMeta: IMonitoringForm['summaryFields'] = [];
+  public dataSourceColumns: string[] = [];
+
+  public statusIcons = STATUS_ICONS;
 
   private componentDestroyed$ = new Subject<boolean>();
+  private form: IMonitoringForm;
 
   constructor(
     private service: MonitoringToolService,
     private route: ActivatedRoute,
     private router: Router,
-    private componentService: PicsaCommonComponentsService
+    private componentService: PicsaCommonComponentsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -48,9 +54,12 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
     const form = await this.service.getForm(formId);
     if (form) {
       this.form = form;
-      this.displayedColumnsMeta = form.summaryFields;
-      this.displayedColumns = form.summaryFields.map(({ field }) => field);
+      const { summaryFields } = form;
+      this.displayedColumnsMeta = summaryFields;
+      this.displayedColumns = summaryFields.map(({ field }) => field);
+      this.dataSourceColumns = [...this.displayedColumns, '_sync_push_status'];
       this.componentService.patchHeader({ title: form.title });
+      this.cdr.markForCheck();
     }
   }
 
@@ -59,8 +68,9 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
     // form view ondestroy action (may have delay)
     const query = this.service.getFormSubmissionsQuery(formId);
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((data) => {
-      const submissions = data.map((doc) => doc._data);
+      const submissions = data.map((doc) => doc.toMutableJSON());
       this.submissionData.data = submissions;
+      this.cdr.markForCheck();
     });
   }
 

@@ -162,6 +162,16 @@
           "outputHashing": "all",
           "namedChunks": true,
           "statsJson": true
+        },
+        "sourcemaps": {
+          "fileReplacements": [
+            {
+              "replace": "libs/environments/src/environment.ts",
+              "with": "libs/environments/src/environment.prod.ts"
+            }
+          ],
+          "namedChunks": true,
+          "sourceMap": true
         }
       },
       "defaultConfiguration": "production"

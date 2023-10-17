@@ -7,10 +7,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DomSanitizer } from '@angular/platform-browser';
 
+const modules = [MatButtonModule, MatIconModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule];
+
 // use custom module to make it easier to control what is available through app
 @NgModule({
-  imports: [MatButtonModule, MatIconModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule],
-  exports: [MatButtonModule, MatIconModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule],
+  imports: modules,
+  exports: modules,
 })
 export class ExtensionToolkitMaterialModule {
   constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {

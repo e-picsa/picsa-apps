@@ -32,24 +32,24 @@ export class PicsaAsyncService {
     }
   }
 
-  private callInitFunction() {
+  private callInitFunction(...args: any) {
     this.initCalled = true;
-    this.init().then(() => this.initialised$.next(true));
+    this.init(args).then(() => this.initialised$.next(true));
   }
 
   /**
    * public function to check if service async init method has been completed
    * @returns Promise<boolean>
    */
-  readonly ready = () => {
+  readonly ready = (...args: any) => {
     if (!this.initCalled) {
-      this.callInitFunction();
+      this.callInitFunction(args);
     }
     return firstValueFrom(this.initialised$.pipe(filter((v) => v === true)));
   };
 
   /** Specify any async initialisation logic in method */
-  public async init() {
+  public async init(...args: any) {
     console.log('[PicsaAsyncService] init');
     // Handle initialisation logic
   }

@@ -138,7 +138,15 @@ export class ResourcesToolService extends PicsaAsyncService {
       if (dbDoc) {
         const res = await lastValueFrom(this.fileService.downloadFile(`/assets/${relativePath}`, 'blob'));
         if (res?.data) {
-          await this.putFileAttachment(dbDoc, res.data as Blob);
+          const blob = res.data as Blob;
+          const existingAttachment = dbDoc.getAttachment(dbDoc.filename);
+          // ignore update if attachment same size as existing, otherwise remove existing attachment before putting new
+          // TODO - add tests to confirm behaviour is as expected (or manually test with modified files)
+          if (existingAttachment) {
+            if (blob.size === existingAttachment?.length) return;
+            await this.removeFileAttachment(dbDoc);
+          }
+          await this.putFileAttachment(dbDoc, blob);
         }
       }
     }

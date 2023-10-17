@@ -1,0 +1,7 @@
+{
+  "test": {
+    "include": ["**/*.test.ts", "tests/test-utils.ts"],
+    "exclude": []
+  },
+  "importMap": "./import_map.json"
+}
