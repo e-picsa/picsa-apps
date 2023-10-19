@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
 import { CropProbabilityToolModule } from '@picsa/crop-probability/src/app/app.module-embedded';
+import { FarmerActivityModule } from '@picsa/farmer-activity/src/app/app.module-embedded';
 import { ManualToolModule } from '@picsa/manual/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
@@ -25,6 +26,11 @@ const routes: Routes = [
     path: 'crop-probability',
     loadChildren: () =>
       import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
+  },
+  {
+    path: 'farmer-activity',
+    loadChildren: () =>
+      import('@picsa/farmer-activity/src/app/app.module-embedded').then((mod) => mod.FarmerActivityModule),
   },
   {
     path: 'monitoring',
@@ -68,6 +74,7 @@ const routes: Routes = [
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     CropProbabilityToolModule.forRoot({ urlPrefix: 'crop-probability' }),
+    FarmerActivityModule.forRoot({ urlPrefix: 'farmer-activity' }),
     ManualToolModule.forRoot({ urlPrefix: 'manual' }),
     MonitoringToolModule.forRoot({ urlPrefix: 'monitoring' }),
     OptionsToolModule.forRoot({ urlPrefix: 'option' }),

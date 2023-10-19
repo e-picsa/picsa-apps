@@ -30,6 +30,12 @@ const PAGE_LINKS: IPageLink[] = [
     tourId: 'manual',
   },
   {
+    name: translateMarker('Farmer Activities'),
+    icon: 'picsa_farmer_activity',
+    url: '/farmer-activity',
+    tourId: 'farmer',
+  },
+  {
     name: translateMarker('Resources'),
     icon: 'picsa_resources_tool',
     url: '/resources',
