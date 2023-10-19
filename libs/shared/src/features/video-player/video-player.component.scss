@@ -1,9 +1,12 @@
 @use '@angular/material' as mat;
 
-$playerWidth: 480px;
+$playerWidth: 854px;
 
 :host {
-  display: contents;
+  display: block;
+  width: 100%;
+  max-width: $playerWidth;
+  aspect-ratio: 16/9;
 }
 .placeholder,
 .thumbnail {

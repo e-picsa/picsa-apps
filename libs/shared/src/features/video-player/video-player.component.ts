@@ -54,6 +54,10 @@ export class VideoPlayerComponent implements OnDestroy {
     }
   }
 
+  public async pauseVideo() {
+    return this.videoPlayer.pause({ playerId: this.playerId });
+  }
+
   public async playVideo() {
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
@@ -73,8 +77,8 @@ export class VideoPlayerComponent implements OnDestroy {
       playerId: this.playerId,
       componentTag: 'picsa-video-player',
       exitOnEnd: false,
-      width: 480,
-      height: 270,
+      width: 854,
+      height: 480,
       displayMode: 'landscape',
     };
     if (Capacitor.isNativePlatform()) {
