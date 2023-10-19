@@ -1,6 +1,6 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IManualActivity, IManualPeriodEntry } from './common';
+import { IManualPeriodEntry } from './common';
 
 /** Picsa manual contents organised by section and step */
 
@@ -47,14 +47,12 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Resource Allocation Map (RAM)'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_resource_allocation',
+            svgIcon: 'picsa_manual_resource_allocation',
             id: 'ram-activity',
           },
           {
             label: translateMarker('Seasonal Calendar'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_calender',
+            svgIcon: 'picsa_manual_calender',
             id: 'calendar-activity',
           },
         ],
@@ -71,8 +69,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Historic climate'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_temperature',
+            svgIcon: 'picsa_manual_temperature',
             id: 'historic-climate-activity',
           },
         ],
@@ -89,8 +86,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Probability and Risk'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_campus',
+            svgIcon: 'picsa_manual_campus',
             id: 'probability-risk-activity',
           },
         ],
@@ -107,20 +103,17 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Crop Info'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_crop',
+            svgIcon: 'picsa_manual_crop',
             id: 'crop-info-activity',
           },
           {
             label: translateMarker('Livestock Info'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_livestock',
+            svgIcon: 'picsa_manual_livestock',
             id: 'livestock-info-activity',
           },
           {
             label: translateMarker('Livelihood Info'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'livelihood-info-activity',
           },
         ],
@@ -137,8 +130,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Farmers choose'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'farmers-choose-activity',
           },
         ],
@@ -155,8 +147,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Budget'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'budget-activity',
           },
         ],
@@ -173,8 +164,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Select and amend'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'select-amend-activity',
           },
         ],
@@ -207,8 +197,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Revisit'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'revisit-activity',
           },
         ],
@@ -241,8 +230,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Revisit'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'revisit-activity',
           },
         ],
@@ -264,8 +252,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Review'),
-            video: 'assets/videos/countdown.mp4',
-            icon: 'picsa_manual_place_holder',
+            svgIcon: 'picsa_manual_place_holder',
             id: 'review-activity',
           },
         ],
@@ -273,16 +260,3 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
     ],
   },
 ];
-
-/** Picsa manual contents organised by section only */
-const PICSA_MANUAL_GRID_DATA_EXTENSION: IManualActivity[] = [];
-
-for (const period of PICSA_MANUAL_CONTENTS_EXTENSION) {
-  for (const step of period.steps) {
-    for (const item of step.activities) {
-      PICSA_MANUAL_GRID_DATA_EXTENSION.push(item);
-    }
-  }
-}
-
-export { PICSA_MANUAL_GRID_DATA_EXTENSION };

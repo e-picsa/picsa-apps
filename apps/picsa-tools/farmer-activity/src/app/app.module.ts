@@ -7,7 +7,10 @@ import { PicsaDb_V2_Module, PicsaTranslateModule, PicsaTranslateService } from '
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { FarmerActivityComponentsModule } from './components/components.module';
 import { FarmerActivityMaterialModule } from './components/material.module';
+import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
+import { HomeComponent } from './pages/home/home.component';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -22,6 +25,7 @@ const StandaloneImports = [
 /** Common imports used in both standalone and embedded formats */
 export const APP_COMMON_IMPORTS = [
   HttpClientModule,
+  FarmerActivityComponentsModule,
   FarmerActivityMaterialModule,
   PicsaTranslateModule,
   PicsaDb_V2_Module,
@@ -32,7 +36,7 @@ export const APP_COMMON_IMPORTS = [
  *  Standalone Version
  ******************************************************************/
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, HomeComponent, ActivityDetailsComponent],
   imports: [...StandaloneImports, ...APP_COMMON_IMPORTS],
   bootstrap: [AppComponent],
   schemas: [],

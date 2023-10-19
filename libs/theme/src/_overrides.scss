@@ -104,6 +104,14 @@ mat-select.value-primary {
   }
 }
 
+// Use 'height-fill' class on mat-tab-group to fill child content to flex height
+mat-tab-group.height-fill {
+  flex: 1;
+  .mat-mdc-tab-body-wrapper {
+    flex: 1;
+  }
+}
+
 /******************************************************************
 Enketo Form
 *******************************************************************/

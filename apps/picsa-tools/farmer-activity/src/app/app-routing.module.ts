@@ -1,11 +1,17 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
+import { HomeComponent } from './pages/home/home.component';
+
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
-    title: 'Activities',
+    component: HomeComponent,
+  },
+  {
+    path: ':id',
+    component: ActivityDetailsComponent,
   },
 ];
 /** Routes only registered in standalone mode */

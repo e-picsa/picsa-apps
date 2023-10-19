@@ -7,6 +7,13 @@ $playerWidth: 854px;
   width: 100%;
   max-width: $playerWidth;
   aspect-ratio: 16/9;
+  // Assuming that video player displayed within 1rem content padding,
+  // force video to display across all space (full width)
+  @media screen and (max-width: $playerWidth) {
+    width: calc(100% + 2rem);
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
 }
 .placeholder,
 .thumbnail {

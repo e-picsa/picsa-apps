@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 // Local components
@@ -17,11 +18,12 @@ const Components = [];
     FormsModule,
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
+    PicsaVideoPlayerModule,
     ReactiveFormsModule,
     RouterModule,
     FarmerActivityMaterialModule,
   ],
-  exports: [PicsaCommonComponentsModule, FarmerActivityMaterialModule, ...Components],
+  exports: [PicsaCommonComponentsModule, FarmerActivityMaterialModule, PicsaVideoPlayerModule, ...Components],
   declarations: [Components],
   providers: [],
 })

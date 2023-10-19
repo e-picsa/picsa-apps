@@ -21,6 +21,10 @@ export const EXTRACTED_PROJECTS = [
     name: 'crop-probability',
   },
   {
+    path: 'apps/picsa-tools/farmer-activity',
+    name: 'farmer-activity',
+  },
+  {
     path: 'apps/picsa-tools/manual-tool',
     name: 'manual',
   },
@@ -35,6 +39,10 @@ export const EXTRACTED_PROJECTS = [
   {
     path: 'apps/picsa-tools/resources-tool',
     name: 'resources',
+  },
+  {
+    path: 'apps/picsa-tools/seasonal-calendar',
+    name: 'seasonal-calendar',
   },
   // apps
   {
