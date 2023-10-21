@@ -36,12 +36,12 @@ export const WEATHER_LOCATIONS: IWeatherLocation[] = [
     id: 'Malawi_Kasungu',
     label: 'Kasungu',
     countryCode: 'mw',
-    meteoBlueId: 'kasungu_malawi_928534',
+    // meteoBlueId: 'kasungu_malawi_928534',
   },
   {
     id: 'Malawi_Nkhotakota',
     label: 'Nkhotakota',
     countryCode: 'mw',
-    meteoBlueId: 'nkhotakota_malawi_924705',
+    // meteoBlueId: 'nkhotakota_malawi_924705',
   },
 ];
