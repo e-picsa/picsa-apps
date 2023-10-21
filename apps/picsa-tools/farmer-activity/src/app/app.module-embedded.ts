@@ -22,7 +22,7 @@ export class EmbeddedConfig {
 export class EmbeddedRoutingModule {
   constructor(router: Router, embeddedConfig: EmbeddedConfig, service: FarmerActivityService) {
     registerEmbeddedRoutes(ROUTES_COMMON, router, embeddedConfig.urlPrefix);
-    service.createNestedToolNavigation(router);
+    service.createNestedToolRoutes(router);
   }
 }
 
