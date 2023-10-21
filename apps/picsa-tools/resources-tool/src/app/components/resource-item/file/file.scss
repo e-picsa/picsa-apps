@@ -9,10 +9,12 @@
   left: 0;
   z-index: 4;
   background: #fbfbfb91;
-  max-width: 480px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.download-overlay[data-file-type='video'] {
+  max-width: 854px;
 }
 .download-button {
   display: flex;

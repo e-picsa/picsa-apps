@@ -36,7 +36,11 @@ const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IReso
   animations: [FlyInOut({ axis: 'Y' }), FadeInOut({ inDelay: 200, inSpeed: 300 })],
 })
 export class HomeComponent implements OnDestroy, AfterViewInit {
-  public resourceDoc: RxDocument<IResourceFile> | null;
+  // TODO - ideally all variables should be tracked by version (use additional component)
+  public resourceDocs: { [version in IManualVersion]: RxDocument<IResourceFile> | null } = {
+    farmer: null,
+    extension: null,
+  };
 
   public localisation: string;
 
@@ -81,6 +85,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   /** Prompt manual load if resource file attachment updated */
   public async handleResourceAttachmentChange(attachment?: RxAttachment<IResourceFile>) {
     if (attachment) {
+      console.log('resource attachment changed', attachment);
       await this.loadManual();
       this.cdr.markForCheck();
     }
@@ -99,8 +104,8 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     }
     const manualDoc = await this.resourcesService.dbFiles.findOne(manualResource.id).exec();
     if (manualDoc) {
-      this.resourceDoc = manualDoc;
-      const uri = await this.resourcesService.getFileAttachmentURI(this.resourceDoc, true);
+      this.resourceDocs[version] = manualDoc;
+      const uri = await this.resourcesService.getFileAttachmentURI(manualDoc, true);
       if (uri) {
         this.downloadPrompt.show = false;
         this.pdfSrc = uri;
@@ -112,7 +117,6 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
 
   public async setSelectedTab(index: number) {
     this.pdfSrc = undefined;
-    this.resourceDoc = null;
     const version = index === 1 ? 'farmer' : 'extension';
     this.setManualVersion(version);
     await this.loadManual();
