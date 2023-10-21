@@ -3,7 +3,11 @@
 <!-- TODO - should be able to refactor video item to be included here -->
 <div style="position: relative">
   <!-- Download overlay -->
-  <div class="download-overlay" [style.visibility]="attachment ? 'hidden' : 'visible'">
+  <div
+    class="download-overlay"
+    [style.visibility]="attachment ? 'hidden' : 'visible'"
+    [attr.data-file-type]="dbDoc?.subtype || null"
+  >
     <div class="mat-elevation-z8; border-radius: 8px;">
       <resource-download
         *ngIf="dbDoc"

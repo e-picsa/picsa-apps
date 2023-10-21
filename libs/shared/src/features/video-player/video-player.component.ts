@@ -73,8 +73,8 @@ export class VideoPlayerComponent implements OnDestroy {
       playerId: this.playerId,
       componentTag: 'picsa-video-player',
       exitOnEnd: false,
-      width: 480,
-      height: 270,
+      width: 854,
+      height: 480,
       displayMode: 'landscape',
     };
     if (Capacitor.isNativePlatform()) {
