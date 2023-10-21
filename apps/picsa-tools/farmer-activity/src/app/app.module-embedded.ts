@@ -6,6 +6,7 @@ import { registerEmbeddedRoutes } from '@picsa/utils';
 import { AppComponentEmbedded } from './app.component';
 import { APP_COMMON_IMPORTS } from './app.module';
 import { ROUTES_COMMON } from './app-routing.module';
+import { FarmerActivityService } from './services/farmer-activity.service';
 
 export class EmbeddedConfig {
   /** Path app routed through, e.g. 'budget' */
@@ -19,8 +20,9 @@ export class EmbeddedConfig {
   imports: [RouterModule.forChild([])],
 })
 export class EmbeddedRoutingModule {
-  constructor(router: Router, embeddedConfig: EmbeddedConfig) {
+  constructor(router: Router, embeddedConfig: EmbeddedConfig, service: FarmerActivityService) {
     registerEmbeddedRoutes(ROUTES_COMMON, router, embeddedConfig.urlPrefix);
+    service.createNestedToolNavigation(router);
   }
 }
 

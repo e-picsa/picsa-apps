@@ -1,10 +1,12 @@
 <div class="page-content" style="padding: 0">
   <mat-tab-group
-    (selectedTabChange)="handleTabChange()"
+    (selectedTabChange)="handleTabChange($event)"
     class="height-fill"
     style="width: 100%; flex: 1"
     headerPosition="below"
     preserveContent
+    *ngIf="activity"
+    [(selectedIndex)]="selectedTabIndex"
   >
     <mat-tab>
       <ng-template mat-tab-label>
@@ -14,8 +16,8 @@
       <div class="tab-content">
         <picsa-video-player
           #videoPlayer
-          *ngIf="activity?.video"
-          [source]="activity?.video"
+          *ngIf="activity.video"
+          [source]="activity.video"
           style="margin-top: 1rem"
         ></picsa-video-player>
         <p>
@@ -31,7 +33,7 @@
         <mat-icon class="tab-icon">edit_square</mat-icon>
         Activity
       </ng-template>
-      <div class="tab-content">Content 2</div>
+      <div class="tab-content">(TODO)</div>
     </mat-tab>
 
     <mat-tab *ngIf="activity.tool">
@@ -39,22 +41,11 @@
         <mat-icon class="tab-icon">smartphone</mat-icon>
         Tool
       </ng-template>
-      <div class="tab-content">Content 3</div>
+      <div class="tab-content router-tab">
+        <div class="page">
+          <router-outlet #toolRouter class="tool-router"></router-outlet>
+        </div>
+      </div>
     </mat-tab>
   </mat-tab-group>
-  <!-- 
-  <div class="svg-row">
-    <div class="svg-item">
-      <mat-icon class="row-mat-icon" color="primary" svgIcon="picsa_manual_info"></mat-icon>
-      <div>{{ 'Info Sheet' | translate }}</div>
-    </div>
-    <div class="svg-item">
-      <mat-icon class="row-mat-icon" color="primary" svgIcon="picsa_manual_create"></mat-icon>
-      <div>{{ 'Create' | translate }}</div>
-    </div>
-    <div class="svg-item">
-      <mat-icon class="row-mat-icon" color="primary" svgIcon="picsa_manual_quiz"></mat-icon>
-      <div>{{ 'Quiz' | translate }}</div>
-    </div>
-  </div> -->
 </div>

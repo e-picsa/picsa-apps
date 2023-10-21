@@ -10,7 +10,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { FarmerActivityComponentsModule } from './components/components.module';
 import { FarmerActivityMaterialModule } from './components/material.module';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
-import { HomeComponent } from './pages/home/home.component';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -36,7 +35,7 @@ export const APP_COMMON_IMPORTS = [
  *  Standalone Version
  ******************************************************************/
 @NgModule({
-  declarations: [AppComponent, HomeComponent, ActivityDetailsComponent],
+  declarations: [AppComponent, ActivityDetailsComponent],
   imports: [...StandaloneImports, ...APP_COMMON_IMPORTS],
   bootstrap: [AppComponent],
   schemas: [],

@@ -6,7 +6,8 @@
       [routerLink]="[activity.id]"
       [attr.data-status]="activity.status"
     >
-      <mat-icon class="activity-icon" color="primary" [svgIcon]="activity.icon"></mat-icon>
+      <mat-icon class="activity-icon" color="primary" *ngIf="activity.svgIcon" [svgIcon]="activity.svgIcon"></mat-icon>
+      <mat-icon class="activity-icon" color="primary" *ngIf="activity.matIcon">{{ activity.matIcon }}</mat-icon>
       <span class="activity-label">{{ activity.label }}</span>
     </div>
   </section>

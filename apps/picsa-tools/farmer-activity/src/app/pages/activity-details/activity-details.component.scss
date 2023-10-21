@@ -8,23 +8,19 @@ h2 {
 .tab-content {
   padding: 16px;
 }
-
-// .svg-row {
-//   display: flex;
-//   flex-direction: row;
-//   width: 100%;
-//   margin-top: 3rem;
-//   justify-content: space-evenly;
-//   align-items: center;
-// }
-// .row-mat-icon {
-//   height: 3rem;
-//   width: 3rem;
-// }
-
-// .svg-item {
-//   flex-direction: column;
-//   display: flex;
-//   align-items: center;
-//   gap: 0.5rem;
-// }
+// Force child-router tab to fill screen and provide page region
+.tab-content.router-tab {
+  padding: 0;
+  height: calc(100% - 32px);
+  // background: yellow;
+  display: flex;
+  flex-direction: column;
+  // Some styles also inherited from main .page
+  .page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    max-height: calc(100vh - 104px);
+  }
+}
