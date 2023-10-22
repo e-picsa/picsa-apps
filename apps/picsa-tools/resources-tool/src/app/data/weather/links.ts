@@ -33,14 +33,14 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     filter: { countries: ['mw'] },
   },
   dccms_facebook: {
-    id: 'dccms_daily_forecast',
+    id: 'dccms_facebook',
     title: 'DCCMS Malawi',
     description: 'Facebook Group',
     type: 'link',
     subtype: 'facebook',
     cover: { image: 'assets/resources/covers/facebook.svg' },
     url: 'https://www.facebook.com/MALAWIWEATHERUPDATE',
-    priority: 10,
+    priority: 9,
     filter: { countries: ['mw'] },
   },
   dccms_twitter: {
