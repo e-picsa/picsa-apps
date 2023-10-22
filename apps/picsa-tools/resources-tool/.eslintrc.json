@@ -10,7 +10,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "picsa",
+            "prefix": "resource",
             "style": "camelCase"
           }
         ],
@@ -18,7 +18,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "picsa",
+            "prefix": "resource",
             "style": "kebab-case"
           }
         ],

@@ -6,11 +6,9 @@ import { PicsaDialogsModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 import { ExtensionToolkitMaterialModule } from '../material.module';
-import { UserGroupComponent } from './user-group/user-group';
-import { WhatsappGroupComponent } from './whatsapp-group/whatsapp-group';
 
 @NgModule({
-  declarations: [UserGroupComponent, WhatsappGroupComponent],
+  declarations: [],
   imports: [
     CommonModule,
     FormsModule,
@@ -20,6 +18,6 @@ import { WhatsappGroupComponent } from './whatsapp-group/whatsapp-group';
     PicsaDialogsModule,
     ExtensionToolkitMaterialModule,
   ],
-  exports: [UserGroupComponent, WhatsappGroupComponent],
+  exports: [],
 })
 export class ComponentsModule {}

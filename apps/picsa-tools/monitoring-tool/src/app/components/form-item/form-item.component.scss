@@ -1,3 +1,34 @@
 :host {
   display: contents;
 }
+
+.sync-status-container {
+  display: flex;
+  margin-top: 1rem;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.sync-status-item {
+  font-weight: bold;
+  font-size: 16px;
+  // min-width: 50px;
+  &[data-status='complete'] {
+    color: hsl(100, 100%, 30%);
+  }
+  &[data-status='ready'] {
+    color: hsl(45, 90%, 40%);
+  }
+  &[data-status='draft'] {
+    color: hsl(0, 0%, 50%);
+  }
+  &[data-status='failed'] {
+    color: hsl(0, 50%, 50%);
+  }
+}
+.sync-status-value {
+  margin-left: 4px;
+  line-height: 16px;
+}
+.sync-status-label {
+  margin-top: 8px;
+}

@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
-
-import { MonitoringToolService } from '../../services/monitoring-tool.service';
-import { Subject, takeUntil } from 'rxjs';
-import { IMonitoringForm } from '../../schema/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { Subject, takeUntil } from 'rxjs';
+
+import { IMonitoringForm } from '../../schema/forms';
+import { MonitoringToolService } from '../../services/monitoring-tool.service';
 
 @Component({
   selector: 'monitoring-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   forms: IMonitoringForm[] = [];
 
   private componentDestroyed$ = new Subject<boolean>();
@@ -33,5 +33,10 @@ export class HomeComponent {
         .map((doc) => doc._data)
         .filter((form) => !form.appCountries || form.appCountries.includes(code));
     });
+  }
+
+  public async syncPending() {
+    const res = await this.service.syncPending();
+    // TODO - show toast?
   }
 }

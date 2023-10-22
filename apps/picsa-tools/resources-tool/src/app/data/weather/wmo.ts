@@ -1,12 +1,13 @@
-import { IResourceLink } from '../../models';
+import { IResourceLink } from '../../schemas';
 import { ResourcesGenerator } from '../generator';
 import { IWeatherLocation } from './locations';
 
 export class WMOGenerator extends ResourcesGenerator {
-  constructor(private location: IWeatherLocation) {
+  constructor(public location: IWeatherLocation) {
     super();
+    this.generate();
   }
-  public override generate() {
+  private generate() {
     const { id, wmoCityId } = this.location;
     if (!wmoCityId) {
       return;
@@ -14,18 +15,17 @@ export class WMOGenerator extends ResourcesGenerator {
     const prefix = `wmo_${id}`;
     const links: IResourceLink[] = [
       {
-        _created: '',
-        _key: `${prefix}`,
-        _modified: '',
-        image: 'assets/resources/covers/wmo.png',
+        id: `${prefix}`,
+        cover: { image: 'assets/resources/covers/wmo.png' },
         description: '',
         title: 'Official Forecast',
         type: 'link',
+        subtype: 'website',
         url: `https://worldweather.wmo.int/en/city.html?cityId=${wmoCityId}`,
       },
     ];
     for (const link of links) {
-      this.links[link._key] = link;
+      this.links[link.id] = link;
     }
   }
 }

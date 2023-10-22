@@ -23,6 +23,7 @@ const config: CapacitorConfig = {
     '@capacitor/core',
     '@capacitor/device',
     '@capacitor/filesystem',
+    '@capacitor/network',
     'capacitor-blob-writer',
     'capacitor-video-player',
     '@capacitor-community/firebase-analytics',

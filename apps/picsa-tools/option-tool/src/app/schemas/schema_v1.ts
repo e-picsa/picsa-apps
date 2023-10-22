@@ -1,4 +1,4 @@
-import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
+import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
 import { IOptionsToolEntry_v0, SCHEMA_V0 } from './schema_v0';

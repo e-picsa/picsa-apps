@@ -16,6 +16,12 @@
         <mat-icon [svgIcon]="link.icon" class="nav-icon"></mat-icon>
         <div class="nav-text">{{ link.name | translate }}</div>
       </div>
+      <div
+        class="tile-badge mat-elevation-z8"
+        *ngIf="link.tourId==='monitoring' && monitoringService.pendingSyncCount>0"
+      >
+        {{monitoringService.pendingSyncCount}}
+      </div>
     </div>
     <div class="grid-tile" (click)="startTour()" style="position: relative">
       <div style="text-align: center">

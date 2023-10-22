@@ -4,10 +4,20 @@
       <h2>Search</h2>
     </div> -->
     <div class="content-container">
-      <h2>Collections</h2>
+      <div style="display: flex; align-items: center">
+        <h2 style="flex: 1">{{ 'Collections' | translate }}</h2>
+        <button mat-stroked-button color="primary" class="downloads-button" routerLink="downloads">
+          <mat-icon>download</mat-icon>
+          {{ 'Manage Downloads' | translate }}
+        </button>
+      </div>
       <div class="list-container">
-        <picsa-resource-item *ngFor="let resource of store.collections" trackBy:resource.__key [resource]="resource">
-        </picsa-resource-item>
+        <resource-item-collection
+          *ngFor="let collection of collections"
+          trackBy:collectionLink.id
+          [collection]="collection"
+        >
+        </resource-item-collection>
       </div>
     </div>
   </div>
