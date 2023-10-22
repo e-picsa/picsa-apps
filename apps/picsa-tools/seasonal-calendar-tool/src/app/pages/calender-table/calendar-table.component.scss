@@ -7,6 +7,14 @@
     overflow-x: auto;
 
   }
+  .header-section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90%;
+    align-items: center;
+    padding-top: 1.5rem;
+  }
   
   .calendar-table th,
   .calendar-table td {

@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
 
-import { Crop } from '../../services/calender.data.service';
+import { Crop } from '../../schema/schema_v0';
 
 @Component({
   selector: 'seasonal-calendar-dialog-component',

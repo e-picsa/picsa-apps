@@ -1,5 +1,5 @@
-<div class="table-container">
-  <h1>{{calendarData.name}}</h1>
+<div *ngIf="calendarData" class="table-container">
+  <div class="header-section" ><h1>{{calendarData?.name}}</h1>  <button class="" mat-button mat-raised-button  (click)="saveCalendar()" color="primary">Save</button> </div>
   <table class="calendar-table">
     <thead>
       <tr>

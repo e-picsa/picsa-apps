@@ -1,51 +1,92 @@
 import { Injectable } from '@angular/core';
+import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { RxCollection, RxDocument, RxQuery } from 'rxdb';
+
+import { CalendarDataEntry,COLLECTION } from '../schema';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DataService {
+export class SeasonCalenderService {
+  constructor(private dbService: PicsaDatabase_V2_Service) {}
 
+  /** Provide database options tool collection (with typings) */
+  public get dbCollection() {
+    return this.dbService.db.collections['seasonal_calender_tool'] as RxCollection<CalendarDataEntry>;
+  }
+  /** Provide database options tool collection filtered to active user */
+  public get dbUserCollection() {
+    return this.dbService.activeUserQuery(this.dbCollection);
+  }
 
-   calendars= {}; 
+  /** Initialise collection required for storing data to database */
+  public async initialise() {
+    await this.dbService.ensureCollections({
+      seasonal_calender_tool: COLLECTION,
+    });
+  }
 
-
-  saveData(data: any) {
-    //save new calender as key for the mean time 
-    const transformedData = {
-      name: data.name,
-      timeAndConditions: data.timeAndConditions,
-      crops: data.crops.map((cropName) => ({
-        name: cropName,
-        months: data.timeAndConditions.map((monthData) => ({
-          month: monthData.month,
-          activities: [], // Initially empty
+  public async addORUpdateData(calender: any,insertionType:string) {
+    try {
+      //handles instertion and update as long as the name is the same.
+      let transformedCalenderData;
+      if(insertionType==='add'){
+       transformedCalenderData = {
+        name: calender.name,
+        timeAndConditions: calender.timeAndConditions,
+        crops: calender.crops.map((cropName) => ({
+          name: cropName,
+          months: calender.timeAndConditions.map((monthData) => ({
+            month: monthData.month,
+            activities: [], // Initially empty
+          })),
+          extraInformation: "",
         })),
-        extraInformation: "",
-      })),
-    };
-    this.calendars[data.name] = transformedData;
-  } 
+      };
+     }else{
+      // the table could be used to edit more information about the calender
+      transformedCalenderData = {
+        name: calender.name,
+        crops: calender.crops,
+        timeAndConditions: calender.timeAndConditions
+      }
+     }
+
+      const res = await this.dbCollection.incrementalUpsert(transformedCalenderData);
+      console.log('[calender]', res._data);
+    } catch (err) {
+      alert('Failed to add data, please try again');
+      console.error('calender.submit(): error:');
+      throw err;
+    }
+  }
+
+  public async deleteCalender(calendar: RxDocument<CalendarDataEntry>) {
+    await calendar.remove();
+  }
+
+  public async getCalenderByName(name: string){
+    try {
+      const result = await this.dbCollection.findOne(
+        {
+          selector: {
+            name: name
+          }
+        }
+      ).exec()   
+      const calendar = result?._data
+      //console.log(calendar)
+      if (calendar) {
+        return calendar;
+      } else {
+        return null; 
+      }
+    } catch (err) {
+      console.error('Failed to get calendar by name:', err);
+      throw err;
+    }
+  }
 
 }
-export interface MonthData {
-  month: string;
-  weather: string;
-}
 
-interface CropMonth {
-  month: string;
-  activities: string[];
-}
-
-export interface Crop {
-  name: string;
-  months: CropMonth[];
-  extraInformation: string;
-}
-
-export interface CalendarData {
-  name: string;
-  timeAndConditions: MonthData[];
-  crops: Crop[];
-}
 

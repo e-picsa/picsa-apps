@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { DataService } from './../../services/calender.data.service';
+import { SeasonCalenderService } from './../../services/calender.data.service';
+
 @Component({
   selector: 'seasonal-calendar-create-calender',
   templateUrl: './create-calendar.component.html',
@@ -10,9 +11,12 @@ import { DataService } from './../../services/calender.data.service';
 
 
 export class CreateCalendarComponent {
+  data
   
-  constructor(private router: Router, private dataService: DataService) {
+  constructor(private router: Router, private dataService: SeasonCalenderService ) {
     this.generateCalendarMonths();
+    this.data = this.router?.getCurrentNavigation()?.extras?.state;
+    console.log(this.data)
   }
   calenderTitle = "";
   crops: string[] = ["Maize", "Beans", "Peas"];
@@ -24,7 +28,6 @@ export class CreateCalendarComponent {
   userCrops: string[] = [];
   
   calendarMonths: {weather:string, month:string}[]= [];
-
 
   months: string[] = [
     'January',
@@ -65,8 +68,6 @@ export class CreateCalendarComponent {
     return this._startMonth;
   }
   
-
-
   addCrop() {
     if (this.selectedCrop === 'Other' && this.customCrop.trim() !== '') {
       this.userCrops.push(this.customCrop);
@@ -103,7 +104,7 @@ export class CreateCalendarComponent {
      timeAndConditions: this.calendarMonths,
     }
     // console.log(data);
-    this.dataService.saveData(data);
+    this.dataService.addORUpdateData(data, 'add');
     this.router.navigate(['/seasonal-calendar']);
   }else{
     this.showMessageFlag = true;

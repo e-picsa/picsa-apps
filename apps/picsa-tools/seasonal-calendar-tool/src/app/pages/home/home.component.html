@@ -8,14 +8,15 @@
   </div>
   <h2>Calendar Lists</h2>
   <div class="calendar-list">
-    <div class="feedbackMessage" *ngIf="calendars.length === 0">No available calendars</div>
+    <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">No available calendars</div>
     <!-- map calenders -->
-    <div *ngIf="calendars.length > 0" class="items-container" >
-    <div *ngFor="let calendar of calendars" class="calendars-display">
-      <div (click)="redirectToCalendarTable(calendar.name)">
+    <div *ngIf="dbCalendars.length > 0" class="items-container" >
+    <div *ngFor="let calendar of dbCalendars;  let i = index" class="calendars-display">
+      <div (click)="redirectToCalendarTable(calendar.name, i)">
         {{ calendar.name }}
       </div>
-      <mat-icon>keyboard_arrow_right</mat-icon>
+       <mat-icon (click)="deleteThisCalender(i)">cancel</mat-icon>
+       <!-- <mat-icon>keyboard_arrow_right</mat-icon> -->
     </div>
   </div>
   </div>

@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
 import { CropDialogComponentComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
-import { CalendarData, Crop, DataService, MonthData } from './../../services/calender.data.service';
+import { Crop, MonthData } from '../../schema/schema_v0'
+import {  SeasonCalenderService } from './../../services/calender.data.service';
+
+
 
 @Component({
   selector: 'seasonal-calendar-table',
@@ -13,24 +15,38 @@ import { CalendarData, Crop, DataService, MonthData } from './../../services/cal
   styleUrls: ['./calendar-table.component.scss'],
 })
 export class CalendarTableComponent implements OnInit {
-  calendarData: CalendarData;
+  calendarData: any;
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
-  constructor(private route: ActivatedRoute,private dialog: MatDialog, private dataService: DataService, private router: Router) {}
+  constructor(private route: ActivatedRoute,private dialog: MatDialog, private router: Router, private service: SeasonCalenderService,  ) {
+     this.initaliseDb()
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const calendarName = params.get('calendarName');
       if (calendarName) {
-        this.calendarData = this.dataService.calendars[calendarName];
-        if (!this.calendarData || Object.keys(this.calendarData).length === 0) {
-          this.router.navigate(['/seasonal-calendar']);
-        }
+         this.fetchData(calendarName).then((resData)=>{
+          //console.log(resData)
+          this.calendarData = resData;
+         }).catch(()=>{
+           this.calendarData = null
+         }).finally(()=>{
+          console.log(this.calendarData) 
+          if (!this.calendarData ) {
+            this.router.navigate(['/seasonal-calendar']);
+          }
+         })    
       }
     });
   }
+  async fetchData(calendarName: string){
+   return await this.service.getCalenderByName(calendarName);
+  }
+  private async initaliseDb() {
+    await this.service.initialise();
+  }
 
 
-  dataSource: MatTableDataSource<any>;
 
   getActivitiesForMonthAndCrop(monthName: string, crop: Crop): string {
     const selectedMonth = crop.months.find((month) => month.month === monthName);
@@ -47,6 +63,7 @@ export class CalendarTableComponent implements OnInit {
       if (activityIndex !== -1) {
         selectedMonth.activities.splice(activityIndex, 1);
       }
+     
     }
   }
   openCropDialog(crop: Crop) {
@@ -56,6 +73,7 @@ export class CalendarTableComponent implements OnInit {
   
     dialogRef.afterClosed().subscribe((result) => {
       console.log("closed")
+
     });
   }
 
@@ -75,12 +93,20 @@ export class CalendarTableComponent implements OnInit {
         if (selectedMonth) {
           if (!selectedMonth.activities.includes(activityToAdd)) {
             selectedMonth.activities.push(activityToAdd);
+
           } else {
             console.log('Activity already exists in this month.');
           }
+
         }
       }
     });
+  }
+
+  saveCalendar(){
+    console.log(this.calendarData)
+    this.service.addORUpdateData(this.calendarData, 'update')
+    this.router.navigate(['/seasonal-calendar']);
   }
 
 }
