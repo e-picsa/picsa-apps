@@ -110,6 +110,10 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   private async populateHardcodedResources() {
+    // Remove resources marked for deletion (TODO - find cleaner method to keep in sync)
+    // TODO - process after cache check
+    await this.deleteRemovedResources();
+
     // Use caching system to only populate once per app version launch
     const assetsCacheVersion = this.getAssetResourcesVersion();
     if (assetsCacheVersion === APP_VERSION.number) {
@@ -123,6 +127,32 @@ export class ResourcesToolService extends PicsaAsyncService {
     // Populate assets included in app build
     await this.copyResourcesFromAssets();
     this.setAssetResourcesVersion();
+  }
+
+  /** Remove any resources that no longer appear in hardcoded resource list */
+  private async deleteRemovedResources() {
+    // TODO - likely more efficient to track locally docs with a _deleted property (?)
+    // But keep as-is for now to ensure any legacy data cleaned
+    const collectionDeletes = await this.diffDBHardcodedResources(this.dbCollections as any, DB_COLLECTION_ENTRIES);
+    const fileDeletes = await this.diffDBHardcodedResources(this.dbFiles as any, DB_FILE_ENTRIES);
+    const LinkDeletes = await this.diffDBHardcodedResources(this.dbLinks as any, DB_LINK_ENTRIES);
+
+    await this.dbCollections.bulkRemove(collectionDeletes);
+    // TODO - ensure attachments removed also
+    await this.dbFiles.bulkRemove(fileDeletes);
+    await this.dbLinks.bulkRemove(LinkDeletes);
+  }
+  /**
+   * Compare list of hardcoded resources with db collection, returning IDs of any resources that
+   * exist in DB but not in hardcoded
+   * */
+  private async diffDBHardcodedResources(
+    collection: RxCollection<schemas.IResourceBase>,
+    hardcoded: schemas.IResourceBase[]
+  ) {
+    const hardcodedHashmap = arrayToHashmap(hardcoded, 'id');
+    const dbEntries = await collection.find().exec();
+    return dbEntries.filter((doc) => !(doc.id in hardcodedHashmap)).map((doc) => doc.id);
   }
 
   /** Copy hardcoded assets to db (if checksums match) */

@@ -13,7 +13,7 @@
   >
     <!-- Extension version -->
     <mat-tab [label]="'Extension' | translate" #extensionTab>
-      <ng-container *ngTemplateOutlet="manualDownload"></ng-container>
+      <ng-container *ngTemplateOutlet="manualDownload; context: { version: 'extension' }"></ng-container>
       <picsa-manual-steps-container
         [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
         [pageMapping]="localisation"
@@ -24,7 +24,7 @@
 
     <!-- Farmer Version -->
     <mat-tab [label]="'Farmer' | translate" #farmerTab>
-      <ng-container *ngTemplateOutlet="manualDownload"></ng-container>
+      <ng-container *ngTemplateOutlet="manualDownload; context: { version: 'farmer' }"></ng-container>
       <picsa-manual-steps-container
         [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
         [pageMapping]="localisation"
@@ -35,7 +35,7 @@
   </mat-tab-group>
 </div>
 
-<ng-template #manualDownload>
+<ng-template #manualDownload let-version="version">
   <picsa-alert-box
     [style.display]="downloadPrompt.show ? 'block' : 'none'"
     type="info"
@@ -44,8 +44,8 @@
   >
     <div style="max-width: 300px; margin: auto">
       <resource-item-file
-        *ngIf="resourceDoc"
-        [resource]="resourceDoc._data"
+        *ngIf="resourceDocs[version]"
+        [resource]="resourceDocs[version]._data"
         (attachmentChange)="handleResourceAttachmentChange($event)"
       ></resource-item-file>
     </div>
