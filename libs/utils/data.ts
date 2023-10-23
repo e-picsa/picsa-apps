@@ -60,6 +60,27 @@ export function arrayToHashmapArray<T>(arr: T[], keyfield: keyof T) {
   return hashmap;
 }
 
+/**
+ * Retrieve a nested property from a json object
+ * using a single path string accessor
+ * (modified from https://gist.github.com/jasonrhodes/2321581)
+ *
+ * @returns value if exists, or null otherwise
+ *
+ * @example
+ * const obj = {"a":{"b":{"c":1}}}
+ * jsonNestedProperty(obj,'a.b.c')  // returns 1
+ * jsonNestedProperty(obj,'a.b.c.d')  // returns null
+ *
+ * @param obj data object to iterate over
+ * @param nestedPath property path, such as data.subfield1.deeperfield2
+ */
+export function jsonNestedProperty<T>(obj: any, nestedPath: string) {
+  return nestedPath.split('.').reduce((prev, current) => {
+    return prev ? prev[current] : null;
+  }, obj) as T;
+}
+
 export function base64ToBlob(base64String, mimetype: string) {
   return createBlobFromBase64(base64String, mimetype);
 }

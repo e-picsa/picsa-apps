@@ -2,7 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
+import { ConfigurationService } from '@picsa/configuration/src';
+import { IFarmerVideosById, PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/picsa/farmer-videos';
+import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
+import { jsonNestedProperty } from '@picsa/utils';
 
 import { ACTIVITY_DATA, IActivityEntry } from '../../data';
 
@@ -14,17 +18,21 @@ import { ACTIVITY_DATA, IActivityEntry } from '../../data';
 export class ActivityDetailsComponent implements OnInit {
   activity: IActivityEntry;
 
+  public videoResource: IResourceFile;
+  public videoUri: string;
+
   constructor(
     private componentsService: PicsaCommonComponentsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private configurationService: ConfigurationService
   ) {}
 
   private getActivityById(id: string) {
     return ACTIVITY_DATA.find((activity) => activity.id === id);
   }
 
-  @ViewChild('videoPlayer') videoPlayer: VideoPlayerComponent;
+  @ViewChild('videoPlayer', { static: false }) videoPlayerComponent: VideoPlayerComponent;
 
   async ngOnInit() {
     //  Ensure route config updated before init
@@ -35,17 +43,38 @@ export class ActivityDetailsComponent implements OnInit {
       if (activity) {
         this.activity = activity;
         this.componentsService.setHeader({ title: activity.label });
+        this.videoResource = this.getVideoResource(activity);
       }
     }
   }
 
+  handleResourceAttachmentChange(uri: string) {
+    this.videoUri = uri;
+  }
+
   public handleTabChange(e: MatTabChangeEvent) {
-    if (this.videoPlayer) {
-      this.videoPlayer.pauseVideo();
+    if (this.videoPlayerComponent) {
+      this.videoPlayerComponent.pauseVideo();
     }
     if (e.index === 2) {
       this.loadToolTab();
     }
+  }
+
+  /**
+   * Lookup db resources. Return video matching activity and language code,
+   * with fallback to default video set
+   */
+  private getVideoResource(activity: IActivityEntry) {
+    const { language } = this.configurationService.activeConfiguration.localisation;
+    const localisedVideos = jsonNestedProperty<IFarmerVideosById>(
+      PICSA_FARMER_VIDEO_RESOURCES,
+      `${language.selected?.code}.360p`
+    );
+    if (localisedVideos) {
+      return localisedVideos[activity.videoId];
+    }
+    return PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'][activity.videoId];
   }
 
   /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
