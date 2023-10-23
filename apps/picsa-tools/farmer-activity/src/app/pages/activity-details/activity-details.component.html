@@ -13,12 +13,16 @@
         {{ 'Intro' | translate }}
       </ng-template>
       <div class="tab-content">
-        <picsa-video-player
-          #videoPlayer
-          *ngIf="activity.video"
-          [source]="activity.video"
-          style="margin-top: 1rem"
-        ></picsa-video-player>
+        <!-- HACK - ordinarily resource item will also handle video playback but use separated player
+        to allow custom pause handling on tab change -->
+        <resource-item-file
+          *ngIf="videoResource"
+          [resource]="videoResource"
+          (attachmentChange)="handleResourceAttachmentChange($event.uri)"
+          [style.display]="videoUri ? 'none' : 'block'"
+        ></resource-item-file>
+        <h2 *ngIf="videoUri">{{ videoResource.title | translate }}</h2>
+        <picsa-video-player #videoPlayer *ngIf="videoUri" [source]="videoUri"></picsa-video-player>
         <p>
           {{ 'In this video you will learn about the PICSA step:' | translate }}
           {{ activity!.label | translate }}

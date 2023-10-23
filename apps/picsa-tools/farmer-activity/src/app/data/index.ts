@@ -1,10 +1,12 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import FARMER_VIDEO_RESOURCES from '@picsa/resources/src/app/data/picsa/farmer-videos';
+export { FARMER_VIDEO_RESOURCES };
 
 export interface IActivityEntry {
   label: string;
-  video: string;
   svgIcon?: string;
   matIcon?: string;
+  videoId: string;
   id: string;
   tool?: { url: string };
   status?: 'draft';
@@ -15,14 +17,14 @@ export interface IActivityEntry {
 export const ACTIVITY_DATA: IActivityEntry[] = [
   {
     label: translateMarker('Resource Allocation Map (RAM)'),
-    video: 'assets/videos/ram.mp4',
+    videoId: 'ram',
     svgIcon: 'picsa_manual_resource_allocation',
     id: 'ram-activity',
   },
   {
     label: translateMarker('Seasonal Calendar'),
-    video: 'assets/videos/countdown.mp4',
     svgIcon: 'picsa_manual_calender',
+    videoId: 'seasonal_calendar',
     id: 'calendar-activity',
     // tool: {
     //   url: 'seasonal-calendar',
@@ -30,8 +32,8 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Historic climate'),
-    video: 'assets/videos/countdown.mp4',
     svgIcon: 'picsa_manual_temperature',
+    videoId: 'historic_climate',
     id: 'historic-climate-activity',
     tool: {
       url: 'climate',
@@ -39,8 +41,8 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Probability and Risk'),
-    video: 'assets/videos/countdown.mp4',
     svgIcon: 'picsa_manual_campus',
+    videoId: 'probability_risk',
     id: 'probability-risk-activity',
     tool: {
       url: 'crop-probability',
@@ -48,14 +50,13 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   // {
   //   label: translateMarker('Crop Info'),
-  //   video: 'assets/videos/countdown.mp4',
   //   svgIcon: 'picsa_manual_crop',
   //   id: 'crop-info-activity',
   // },
   {
     label: translateMarker('Options'),
-    video: 'assets/videos/countdown.mp4',
     svgIcon: 'picsa_manual_livestock',
+    videoId: 'options',
     id: 'options-activity',
     tool: {
       url: 'option',
@@ -64,8 +65,8 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   {
     label: translateMarker('Budget'),
     // TODO - change
-    video: 'assets/videos/ram.mp4',
     svgIcon: '',
+    videoId: 'participatory_budget',
     matIcon: 'calculate',
     id: 'budget-activity',
     tool: {
@@ -74,7 +75,6 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   // {
   //   label: translateMarker('Farmers choose'),
-  //   video: 'assets/videos/countdown.mp4',
   //   svgIcon: '',
   //   id: 'farmers-choose-activity',
   //   status: 'draft',
@@ -82,21 +82,18 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
 
   // {
   //   label: translateMarker('Select and amend'),
-  //   video: 'assets/videos/countdown.mp4',
   //   svgIcon: '',
   //   id: 'select-amend-activity',
   //   status: 'draft',
   // },
   // {
   //   label: translateMarker('Revisit'),
-  //   video: 'assets/videos/countdown.mp4',
   //   svgIcon: '',
   //   id: 'revisit-activity',
   //   status: 'draft',
   // },
   // {
   //   label: translateMarker('Review'),
-  //   video: 'assets/videos/countdown.mp4',
   //   svgIcon: '',
   //   id: 'review-activity',
   //   status: 'draft',

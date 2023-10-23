@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { PicsaDb_V2_Module, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 
 import { AppComponent } from './app.component';
@@ -29,6 +30,7 @@ export const APP_COMMON_IMPORTS = [
   PicsaTranslateModule,
   PicsaDb_V2_Module,
   PicsaCommonComponentsModule,
+  ResourcesComponentsModule,
 ];
 
 /*******************************************************************
