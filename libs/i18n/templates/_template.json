@@ -1064,6 +1064,10 @@
     "tool": "extension"
   },
   {
+    "text": "Farmer Activities",
+    "tool": "extension"
+  },
+  {
     "text": "Manual",
     "tool": "extension"
   },
@@ -1104,6 +1108,18 @@
     "tool": "extension"
   },
   {
+    "text": "After watching continue to the activity",
+    "tool": "farmer-activity"
+  },
+  {
+    "text": "In this video you will learn about the PICSA step:",
+    "tool": "farmer-activity"
+  },
+  {
+    "text": "Intro",
+    "tool": "farmer-activity"
+  },
+  {
     "text": "Activity Flow Chart",
     "tool": "manual"
   },
@@ -1117,10 +1133,6 @@
   },
   {
     "text": "Comparing different options and planning using Participatory Budgets",
-    "tool": "manual"
-  },
-  {
-    "text": "Create",
     "tool": "manual"
   },
   {
@@ -1141,10 +1153,6 @@
   },
   {
     "text": "Historic climate",
-    "tool": "manual"
-  },
-  {
-    "text": "Info Sheet",
     "tool": "manual"
   },
   {
@@ -1185,10 +1193,6 @@
   },
   {
     "text": "Probability and Risk",
-    "tool": "manual"
-  },
-  {
-    "text": "Quiz",
     "tool": "manual"
   },
   {
@@ -1288,11 +1292,19 @@
     "tool": "manual"
   },
   {
+    "text": "All Submitted",
+    "tool": "monitoring"
+  },
+  {
     "text": "Create New",
     "tool": "monitoring"
   },
   {
     "text": "Forms",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Records",
     "tool": "monitoring"
   },
   {
