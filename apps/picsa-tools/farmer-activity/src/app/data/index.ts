@@ -24,9 +24,9 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
     video: 'assets/videos/countdown.mp4',
     svgIcon: 'picsa_manual_calender',
     id: 'calendar-activity',
-    tool: {
-      url: 'seasonal-calendar',
-    },
+    // tool: {
+    //   url: 'seasonal-calendar',
+    // },
   },
   {
     label: translateMarker('Historic climate'),
@@ -46,27 +46,20 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
       url: 'crop-probability',
     },
   },
-  {
-    label: translateMarker('Crop Info'),
-    video: 'assets/videos/countdown.mp4',
-    svgIcon: 'picsa_manual_crop',
-    id: 'crop-info-activity',
-  },
+  // {
+  //   label: translateMarker('Crop Info'),
+  //   video: 'assets/videos/countdown.mp4',
+  //   svgIcon: 'picsa_manual_crop',
+  //   id: 'crop-info-activity',
+  // },
   {
     label: translateMarker('Options'),
     video: 'assets/videos/countdown.mp4',
     svgIcon: 'picsa_manual_livestock',
-    id: 'livestock-info-activity',
+    id: 'options-activity',
     tool: {
       url: 'option',
     },
-  },
-  {
-    label: translateMarker('Farmers choose'),
-    video: 'assets/videos/countdown.mp4',
-    svgIcon: '',
-    id: 'farmers-choose-activity',
-    status: 'draft',
   },
   {
     label: translateMarker('Budget'),
@@ -79,32 +72,33 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
       url: 'budget',
     },
   },
-  {
-    label: translateMarker('Select and amend'),
-    video: 'assets/videos/countdown.mp4',
-    svgIcon: '',
-    id: 'select-amend-activity',
-    status: 'draft',
-  },
-  {
-    label: translateMarker('Revisit'),
-    video: 'assets/videos/countdown.mp4',
-    svgIcon: '',
-    id: 'revisit-activity',
-    status: 'draft',
-  },
-  {
-    label: translateMarker('Revisit'),
-    video: 'assets/videos/countdown.mp4',
-    svgIcon: '',
-    id: 'revisit-activity',
-    status: 'draft',
-  },
-  {
-    label: translateMarker('Review'),
-    video: 'assets/videos/countdown.mp4',
-    svgIcon: '',
-    id: 'review-activity',
-    status: 'draft',
-  },
+  // {
+  //   label: translateMarker('Farmers choose'),
+  //   video: 'assets/videos/countdown.mp4',
+  //   svgIcon: '',
+  //   id: 'farmers-choose-activity',
+  //   status: 'draft',
+  // },
+
+  // {
+  //   label: translateMarker('Select and amend'),
+  //   video: 'assets/videos/countdown.mp4',
+  //   svgIcon: '',
+  //   id: 'select-amend-activity',
+  //   status: 'draft',
+  // },
+  // {
+  //   label: translateMarker('Revisit'),
+  //   video: 'assets/videos/countdown.mp4',
+  //   svgIcon: '',
+  //   id: 'revisit-activity',
+  //   status: 'draft',
+  // },
+  // {
+  //   label: translateMarker('Review'),
+  //   video: 'assets/videos/countdown.mp4',
+  //   svgIcon: '',
+  //   id: 'review-activity',
+  //   status: 'draft',
+  // },
 ];

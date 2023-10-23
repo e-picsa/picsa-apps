@@ -74,12 +74,13 @@ const routes: Routes = [
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     CropProbabilityToolModule.forRoot({ urlPrefix: 'crop-probability' }),
-    FarmerActivityModule.forRoot({ urlPrefix: 'farmer-activity' }),
     ManualToolModule.forRoot({ urlPrefix: 'manual' }),
     MonitoringToolModule.forRoot({ urlPrefix: 'monitoring' }),
     OptionsToolModule.forRoot({ urlPrefix: 'option' }),
     ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
     SeasonalCalendarToolModule.forRoot({ urlPrefix: 'seasonal-calendar' }),
+    // NOTE - the farmer-activity module should be registered last to reuse routes from other tools
+    FarmerActivityModule.forRoot({ urlPrefix: 'farmer-activity' }),
   ],
   exports: [RouterModule],
 })
