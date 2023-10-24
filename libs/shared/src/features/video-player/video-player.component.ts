@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
@@ -11,7 +11,7 @@ type IVideoEvent =
   | 'jeepCapVideoPlayerEnded'
   | 'jeepCapVideoPlayerExit';
 interface capVideoListener {
-  playerId: string;
+  fromPlayerId: string;
   currentTime: number;
 }
 interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
@@ -31,8 +31,12 @@ export class VideoPlayerComponent implements OnDestroy {
   @Input() source?: string;
   /** Optional image shown as preview */
   @Input() thumbnail?: string;
-  /** Unique identifier used in case of multiple players*/
-  protected playerId = `videoPlayer_${generateID(5)}`;
+
+  /** Specify whether should open overlay to play video (default inline) */
+  @Input() playInModal = false;
+
+  // Bind player id to host element to support element query when initialising player
+  @HostBinding('attr.data-player-id') playerId = `videoPlayer_${generateID(5)}`;
 
   protected showPlayButton = true;
 
@@ -46,6 +50,8 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Track any created object urls to dispose on destroy */
   private objectUrl: string;
 
+  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
+
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
     this.removeListeners();
@@ -54,11 +60,16 @@ export class VideoPlayerComponent implements OnDestroy {
     }
   }
 
+  public async pauseVideo() {
+    return this.videoPlayer.pause({ playerId: this.playerId });
+  }
+
   public async playVideo() {
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
+    await this.videoPlayer.stopAllPlayers();
     await this.videoPlayer.play({ playerId: this.playerId });
   }
 
@@ -66,15 +77,17 @@ export class VideoPlayerComponent implements OnDestroy {
     if (this.initialised) return;
     if (!this.source) return;
     const url = this.convertSourceToUrl(this.source);
+    const { clientWidth } = this.elementRef.nativeElement;
     // load player
     const defaultOptions: capVideoPlayerOptions = {
       mode: 'embedded',
       url,
       playerId: this.playerId,
-      componentTag: 'picsa-video-player',
+      componentTag: `picsa-video-player[data-player-id="${this.playerId}"]`,
       exitOnEnd: false,
-      width: 854,
-      height: 480,
+      // Use host element to calculate default player size
+      width: clientWidth,
+      height: Math.round((clientWidth * 9) / 16),
       displayMode: 'landscape',
     };
     if (Capacitor.isNativePlatform()) {
@@ -130,10 +143,13 @@ export class VideoPlayerComponent implements OnDestroy {
   private handlePlayerReady() {
     this.showPlayButton = true;
   }
-  private handlePlayerPlay() {
-    this.showPlayButton = false;
+  private handlePlayerPlay(e: { fromPlayerId: string }) {
+    // Events can be emitted from any player, so only update play button of current player id
+    if (e.fromPlayerId === this.playerId) {
+      this.showPlayButton = false;
+    }
   }
-  private handlePlayerPause() {
+  private async handlePlayerPause() {
     this.showPlayButton = true;
   }
 

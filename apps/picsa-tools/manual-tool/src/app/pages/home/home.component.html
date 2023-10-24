@@ -46,7 +46,7 @@
       <resource-item-file
         *ngIf="resourceDocs[version]"
         [resource]="resourceDocs[version]._data"
-        (attachmentChange)="handleResourceAttachmentChange($event)"
+        (attachmentChange)="handleResourceAttachmentChange($event.attachment)"
       ></resource-item-file>
     </div>
   </picsa-alert-box>

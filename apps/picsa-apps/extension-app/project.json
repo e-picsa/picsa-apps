@@ -66,6 +66,11 @@
           },
           {
             "glob": "**/*",
+            "input": "apps/picsa-tools/farmer-activity/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/picsa-tools/manual-tool/src/assets",
             "output": "assets"
           },

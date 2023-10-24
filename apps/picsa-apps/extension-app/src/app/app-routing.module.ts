@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
 import { CropProbabilityToolModule } from '@picsa/crop-probability/src/app/app.module-embedded';
+import { FarmerActivityModule } from '@picsa/farmer-activity/src/app/app.module-embedded';
 import { ManualToolModule } from '@picsa/manual/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
@@ -25,6 +26,11 @@ const routes: Routes = [
     path: 'crop-probability',
     loadChildren: () =>
       import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
+  },
+  {
+    path: 'farmer-activity',
+    loadChildren: () =>
+      import('@picsa/farmer-activity/src/app/app.module-embedded').then((mod) => mod.FarmerActivityModule),
   },
   {
     path: 'monitoring',
@@ -73,6 +79,8 @@ const routes: Routes = [
     OptionsToolModule.forRoot({ urlPrefix: 'option' }),
     ResourcesToolModule.forRoot({ urlPrefix: 'resources' }),
     SeasonalCalendarToolModule.forRoot({ urlPrefix: 'seasonal-calendar' }),
+    // NOTE - the farmer-activity module should be registered last to reuse routes from other tools
+    FarmerActivityModule.forRoot({ urlPrefix: 'farmer-activity' }),
   ],
   exports: [RouterModule],
 })
