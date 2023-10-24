@@ -1,4 +1,5 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import FARMER_VIDEO_RESOURCES from '@picsa/resources/src/app/data/picsa/farmer-videos';
 export { FARMER_VIDEO_RESOURCES };
 
@@ -23,7 +24,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Seasonal Calendar'),
-    svgIcon: 'picsa_manual_calender',
+    svgIcon: 'picsa_seasonal_calendar_tool',
     videoId: 'seasonal_calendar',
     id: 'calendar-activity',
     // tool: {
@@ -32,7 +33,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Historic climate'),
-    svgIcon: 'picsa_manual_temperature',
+    svgIcon: 'picsa_climate_tool',
     videoId: 'historic_climate',
     id: 'historic-climate-activity',
     tool: {
@@ -41,7 +42,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Probability and Risk'),
-    svgIcon: 'picsa_manual_campus',
+    svgIcon: 'picsa_probability_tool',
     videoId: 'probability_risk',
     id: 'probability-risk-activity',
     tool: {
@@ -55,7 +56,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   // },
   {
     label: translateMarker('Options'),
-    svgIcon: 'picsa_manual_livestock',
+    svgIcon: 'picsa_option_tool',
     videoId: 'options',
     id: 'options-activity',
     tool: {
@@ -65,9 +66,8 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   {
     label: translateMarker('Budget'),
     // TODO - change
-    svgIcon: '',
+    svgIcon: 'picsa_budget_tool',
     videoId: 'participatory_budget',
-    matIcon: 'calculate',
     id: 'budget-activity',
     tool: {
       url: 'budget',

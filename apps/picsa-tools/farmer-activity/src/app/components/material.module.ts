@@ -17,6 +17,8 @@ export class FarmerActivityMaterialModule {
   // register custom icons from the assets/svgs folder for access within the app
   // icons can be accessed in mat-icon as svgIcon='farmer_activity_${key}'
   registerIcons() {
+    // Most icons used are already made available within extension app
+    // (won't show in standalone)
     const icons = {};
     for (const [key, value] of Object.entries(icons)) {
       const iconName = `farmer_activity_${key}`;

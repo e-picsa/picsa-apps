@@ -140,7 +140,6 @@ for (const [languageCode, resourcesByResolution] of Object.entries(PICSA_FARMER_
     }
   }
 }
-console.log({ fileResources });
 
 const picsa_videos_farmer: IResourceCollection = {
   id: 'picsa_videos_farmer',

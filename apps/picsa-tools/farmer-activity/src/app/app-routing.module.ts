@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';

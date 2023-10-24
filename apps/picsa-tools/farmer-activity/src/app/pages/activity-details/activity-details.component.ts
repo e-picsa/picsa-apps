@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -71,7 +72,7 @@ export class ActivityDetailsComponent implements OnInit {
       PICSA_FARMER_VIDEO_RESOURCES,
       `${language.selected?.code}.360p`
     );
-    if (localisedVideos) {
+    if (localisedVideos?.[activity.videoId]) {
       return localisedVideos[activity.videoId];
     }
     return PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'][activity.videoId];
