@@ -34,7 +34,7 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">edit_square</mat-icon>
-        Activity
+        {{ 'Activity' | translate }}
       </ng-template>
       <div class="tab-content">Coming soon...</div>
     </mat-tab>
@@ -42,7 +42,7 @@
     <mat-tab *ngIf="activity.tool">
       <ng-template mat-tab-label>
         <mat-icon class="tab-icon">smartphone</mat-icon>
-        Tool
+        {{ 'Tool' | translate }}
       </ng-template>
       <div class="tab-content router-tab">
         <div class="page">
