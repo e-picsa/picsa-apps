@@ -1,22 +1,29 @@
 import type { ITourStep } from '@picsa/shared/services/core/tour.service';
 
-export const CROP_PROBABILITY_TOUR: ITourStep[] = [
+export const CROP_PROBABILITY_TOUR_STEP_ONE: ITourStep[] = [
   {
     id: 'station',
-    text: 'Click this box to choose a station whose crop information you’d like to know.',
+    text: 'Click the arrow to choose a station whose crop information you’d like to know.',
+    position: 'right',
+  }
+];
+
+export const CROP_PROBABILITY_TOUR_STEP_TWO: ITourStep[] = [
+  {
+    id: 'kasungu',
+    text: 'Here, you can select a station whose probability information you would like to know.',
+    position: 'right',
+  },
+];
+
+export const CROP_PROBABILITY_TOUR_STEP_THREE: ITourStep[] = [
+  {
+    id: 'table',
+    text: 'In the crop information table, you will be able to see the probabilities for different crops through the different seasons.',
     position: 'right',
   },
   {
-    id: 'kasungu',
-    text: 'In this dropdown you’ll be able to select a station whose information you would like to know',
-    position: 'top',
-  },
-  {
-    id: 'crop',
-    text: 'In the crop information table, you can see the probabilities for different crops',
-  },
-  {
     id: 'maize',
-    text: 'Click an icon to filter the table for you to see information for only that crop',
+    text: 'Click a crop icon for the table to show you information for only that crop.',
   },
 ];
