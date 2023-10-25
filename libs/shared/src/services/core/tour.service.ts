@@ -7,7 +7,6 @@ import type { Options } from 'intro.js/src/option';
 export interface ITourStep extends Partial<IntroStep> {
   id: string;
   text: string;
-  // elementToClick?: HTMLElement;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -19,7 +18,6 @@ export class TourService {
 
   constructor() {
     this.intro = introJs();
-    // this.intro.onbeforechange(this.handleBeforeNext.bind(this));
   }
 
   public startTour(tourSteps: ITourStep[], tourOptions: Partial<Options> = {}): void {
@@ -41,7 +39,6 @@ export class TourService {
         steps,
         ...tourOptions,
       })
-      // .onbeforechange(onBeforeChange())
       .start();
   }
 
