@@ -3,6 +3,6 @@
     [selectedStationId]="activeStation?.id"
     style="padding: 1em"
   ></crop-probability-station-select>
-  <span (click)="triggerTourStepOne()">Take Tour</span>
+  <span (click)="triggerTourStepOne()" class="tour-button">Take Tour</span>
 </div>
 <crop-probability-table [activeStation]="activeStation" *ngIf="activeStation"></crop-probability-table>
