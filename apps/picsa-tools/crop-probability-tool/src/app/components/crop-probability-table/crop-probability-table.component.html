@@ -50,7 +50,13 @@
       </th>
     </ng-container>
     <ng-container matColumnDef="season-start-summary-column">
-      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0">
+      <td
+        mat-header-cell
+        *matHeaderCellDef
+        [attr.colspan]="probabilityColumns.length"
+        style="padding: 0"
+        data-tour-id="table"
+      >
         <table #startProbabilities style="table-layout: fixed" class="border-left">
           <tr>
             <td *ngFor="let column of probabilityColumns" class="border-bottom border-top border-right">
