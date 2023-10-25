@@ -1,5 +1,8 @@
-<crop-probability-station-select
-  [selectedStationId]="activeStation?.id"
-  style="padding: 1em"
-></crop-probability-station-select>
+<div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
+  <crop-probability-station-select
+    [selectedStationId]="activeStation?.id"
+    style="padding: 1em"
+  ></crop-probability-station-select>
+  <span (click)="triggerTourStepOne()">Take Tour</span>
+</div>
 <crop-probability-table [activeStation]="activeStation" *ngIf="activeStation"></crop-probability-table>
