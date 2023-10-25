@@ -50,10 +50,6 @@ export class TourService {
     this.intro.goToStep(tourStep);
   }
 
-  public onBeforeChange(onBeforeChangeFunction: Function = () => {}) {
-    this.intro.onbeforechange(onBeforeChangeFunction()).start();
-  }
-
   // private handleBeforeNext(tourSteps: ITourStep[]) {
   //   const currentStep = this.intro._currentStep; // Get the current step
   //   if (tourSteps[currentStep].elementToClick !== undefined) {
