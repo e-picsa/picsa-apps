@@ -20,10 +20,11 @@ export const CROP_PROBABILITY_TOUR_STEP_THREE: ITourStep[] = [
   {
     id: 'table',
     text: 'In the crop information table, you will be able to see the probabilities for different crops through the different seasons.',
-    position: 'right',
+    position: 'left',
   },
   {
     id: 'maize',
     text: 'Click a crop icon for the table to show you information for only that crop.',
+    position: 'left',
   },
 ];
