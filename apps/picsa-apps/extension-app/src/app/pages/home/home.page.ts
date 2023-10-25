@@ -1,9 +1,11 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { DomPortal } from '@angular/cdk/portal';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
+import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { TourService } from '@picsa/shared/services/core/tour.service';
 import { CommunicationService } from '@picsa/shared/services/promptToHomePageService.service';
 import { Subscription } from 'rxjs';
@@ -26,6 +28,12 @@ const PAGE_LINKS: IPageLink[] = [
     icon: 'picsa_manual_tool',
     url: '/manual',
     tourId: 'manual',
+  },
+  {
+    name: translateMarker('Farmer Activities'),
+    icon: 'picsa_farmer_activity',
+    url: '/farmer-activity',
+    tourId: 'farmer',
   },
   {
     name: translateMarker('Resources'),
@@ -112,6 +120,7 @@ export class HomePage implements OnDestroy, AfterViewInit {
     private router: Router,
     private componentsService: PicsaCommonComponentsService,
     private communicationService: CommunicationService,
+    public monitoringService: MonitoringToolService,
     private tourService: TourService
   ) {}
 

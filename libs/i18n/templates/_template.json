@@ -684,10 +684,6 @@
     "tool": "budget"
   },
   {
-    "text": "Title",
-    "tool": "budget"
-  },
-  {
     "text": "Total",
     "tool": "budget"
   },
@@ -1068,15 +1064,7 @@
     "tool": "extension"
   },
   {
-    "text": "Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in",
-    "tool": "extension"
-  },
-  {
-    "text": "Join",
-    "tool": "extension"
-  },
-  {
-    "text": "Joined",
+    "text": "Farmer Activities",
     "tool": "extension"
   },
   {
@@ -1108,7 +1096,7 @@
     "tool": "extension"
   },
   {
-    "text": "Settings",
+    "text": "Seasonal Calendar",
     "tool": "extension"
   },
   {
@@ -1118,6 +1106,26 @@
   {
     "text": "Take App Tour",
     "tool": "extension"
+  },
+  {
+    "text": "Activity",
+    "tool": "farmer-activity"
+  },
+  {
+    "text": "After watching continue to the activity",
+    "tool": "farmer-activity"
+  },
+  {
+    "text": "In this video you will learn about the PICSA step:",
+    "tool": "farmer-activity"
+  },
+  {
+    "text": "Intro",
+    "tool": "farmer-activity"
+  },
+  {
+    "text": "Tool",
+    "tool": "farmer-activity"
   },
   {
     "text": "Activity Flow Chart",
@@ -1136,11 +1144,11 @@
     "tool": "manual"
   },
   {
-    "text": "Create",
+    "text": "Crop Info",
     "tool": "manual"
   },
   {
-    "text": "Crop Info",
+    "text": "Download the PICSA Manual",
     "tool": "manual"
   },
   {
@@ -1153,10 +1161,6 @@
   },
   {
     "text": "Historic climate",
-    "tool": "manual"
-  },
-  {
-    "text": "Info Sheet",
     "tool": "manual"
   },
   {
@@ -1188,10 +1192,6 @@
     "tool": "manual"
   },
   {
-    "text": "Manual Requires Download",
-    "tool": "manual"
-  },
-  {
     "text": "Options by context",
     "tool": "manual"
   },
@@ -1201,10 +1201,6 @@
   },
   {
     "text": "Probability and Risk",
-    "tool": "manual"
-  },
-  {
-    "text": "Quiz",
     "tool": "manual"
   },
   {
@@ -1221,10 +1217,6 @@
   },
   {
     "text": "Revisit",
-    "tool": "manual"
-  },
-  {
-    "text": "Seasonal Calendar",
     "tool": "manual"
   },
   {
@@ -1308,11 +1300,19 @@
     "tool": "manual"
   },
   {
+    "text": "All Submitted",
+    "tool": "monitoring"
+  },
+  {
     "text": "Create New",
     "tool": "monitoring"
   },
   {
     "text": "Forms",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Records",
     "tool": "monitoring"
   },
   {
@@ -1481,6 +1481,34 @@
   },
   {
     "text": "Collection not found",
+    "tool": "resources"
+  },
+  {
+    "text": "Collections",
+    "tool": "resources"
+  },
+  {
+    "text": "Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Links",
+    "tool": "resources"
+  },
+  {
+    "text": "Manage Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "Size",
+    "tool": "resources"
+  },
+  {
+    "text": "Title",
+    "tool": "resources"
+  },
+  {
+    "text": "Type",
     "tool": "resources"
   }
 ]

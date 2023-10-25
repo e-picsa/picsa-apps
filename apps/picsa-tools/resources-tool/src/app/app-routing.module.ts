@@ -11,6 +11,10 @@ export const ROUTES_COMMON: Routes = [
     path: 'collection',
     loadChildren: () => import('./pages/collection/collection.module').then((m) => m.CollectionModule),
   },
+  {
+    path: 'downloads',
+    loadChildren: () => import('./pages/downloads/downloads.module').then((m) => m.DownloadsModule),
+  },
 ];
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];

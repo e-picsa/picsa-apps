@@ -1,0 +1,40 @@
+<button
+  mat-icon-button
+  (click)="downloadResource()"
+  *ngIf="downloadStatus === 'ready'"
+  [attr.data-style-variant]="styleVariant"
+>
+  <mat-icon>download</mat-icon>
+</button>
+<div class="download-progress" *ngIf="downloadStatus === 'pending'">
+  <mat-progress-spinner
+    [class]="'spinner' + styleVariant"
+    color="primary"
+    [mode]="downloadProgress > 0 ? 'determinate' : 'indeterminate'"
+    [value]="downloadProgress"
+    [diameter]="size"
+    [style.width]="sizePx"
+    [attr.data-style-variant]="styleVariant"
+  >
+  </mat-progress-spinner>
+  <button
+    mat-button
+    class="download-cancel"
+    (click)="cancelDownload()"
+    [disabled]="downloadProgress === 100"
+    [style.width]="sizePx"
+    [style.min-width]="sizePx"
+    [style.height]="sizePx"
+    [attr.data-style-variant]="styleVariant"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<button
+  mat-icon-button
+  *ngIf="downloadStatus === 'complete'"
+  [attr.data-style-variant]="styleVariant"
+  [style.visibility]="hideOnComplete ? 'hidden' : 'visible'"
+>
+  <mat-icon>check</mat-icon>
+</button>

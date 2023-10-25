@@ -1,0 +1,67 @@
+{
+  "name": "picsa-server-deprecated",
+  "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-server/docker",
+  "prefix": "picsa",
+  "targets": {
+    "docker-start": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["compose -f docker-compose.yml --project-name picsa-server up"],
+        "cwd": "apps/picsa-server/docker"
+      }
+    },
+
+    "scripts": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["deno run --allow-all"],
+        "cwd": "apps/picsa-server/scripts"
+      }
+    },
+    "supabase": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["npx supabase"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "stop": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["compose --project-name picsa-server down"],
+        "cwd": "apps/picsa-server/docker"
+      }
+    },
+    "start-test": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": [
+          "compose -f docker-compose.yml -f docker-compose.test.yml --project-name picsa-server-test up --build -V --detach"
+        ],
+        "cwd": "apps/picsa-server/docker"
+      }
+    },
+    "stop-test": {
+      "executor": "./tools/executors/docker:docker",
+      "dependsOn": [],
+      "outputs": [],
+      "options": {
+        "commands": ["compose --project-name picsa-server-test down -v"],
+        "cwd": "apps/picsa-server/docker"
+      }
+    }
+  },
+  "tags": []
+}

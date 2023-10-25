@@ -66,6 +66,11 @@
           },
           {
             "glob": "**/*",
+            "input": "apps/picsa-tools/farmer-activity/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/picsa-tools/manual-tool/src/assets",
             "output": "assets"
           },
@@ -162,6 +167,16 @@
           "outputHashing": "all",
           "namedChunks": true,
           "statsJson": true
+        },
+        "sourcemaps": {
+          "fileReplacements": [
+            {
+              "replace": "libs/environments/src/environment.ts",
+              "with": "libs/environments/src/environment.prod.ts"
+            }
+          ],
+          "namedChunks": true,
+          "sourceMap": true
         }
       },
       "defaultConfiguration": "production"

@@ -1,4 +1,4 @@
-import type { IResourceCollection } from '../../models';
+import { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { filterHashmap } from '../../utils/data.utils';
 import { DOWNSCALED_FORECASTS } from './files';
 import { WEATHER_LINKS } from './links';
@@ -20,42 +20,46 @@ const localisedResources = WEATHER_LOCATIONS.reduce(
 
 /** Main collection that hosts child resources */
 const weatherResources: IResourceCollection = {
-  _created: '2019-05-25T10:00:04.000Z',
-  _modified: '2019-05-27T11:00:01.000Z',
-  _key: 'weatherResources',
+  id: 'weatherResources',
   type: 'collection',
   title: 'Weather Resources',
   description: 'Local forecasts and meterological services',
-  image: 'assets/resources/covers/weather.svg',
+  cover: { image: 'assets/resources/covers/weather.svg' },
   priority: 6,
-  childResources: [
-    ...WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
-    ...Object.keys(WEATHER_LINKS),
-  ],
+  childResources: {
+    collections: WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
+    files: [],
+    links: Object.keys(WEATHER_LINKS),
+  },
 };
 
 function generateLocationResources(location: IWeatherLocation) {
-  const locationResources = {
-    ...filterHashmap(DOWNSCALED_FORECASTS, (r) => r.meta.location_id === location.id),
-    ...new WMOGenerator(location).resources,
-    ...new MeteoBlueGenerator(location).resources,
+  const links: Record<string, IResourceLink> = {
+    ...new WMOGenerator(location).links,
+    ...new MeteoBlueGenerator(location).links,
+  };
+  const files: Record<string, IResourceFile> = {
+    ...filterHashmap(DOWNSCALED_FORECASTS, (r) => r.meta.locationId === location.id),
   };
 
   const collection: IResourceCollection = {
-    _created: '2019-05-25T10:00:04.000Z',
-    _modified: '2019-05-27T11:00:01.000Z',
-    _key: `weatherResources_${location.id}`,
+    id: `weatherResources_${location.id}`,
     type: 'collection',
     title: location.label,
     description: `Local information for ${location.label}`,
-    image: '',
-    parentResource: 'weatherResources',
-    childResources: Object.keys(locationResources),
-    appCountries: [location.countryCode],
+    cover: { image: '' },
+    parentCollection: 'weatherResources',
+    childResources: {
+      collections: [],
+      files: Object.keys(files),
+      links: Object.keys(links),
+    },
+    filter: { countries: [location.countryCode] },
   };
   return {
-    [collection._key]: collection,
-    ...locationResources,
+    [collection.id]: collection,
+    ...links,
+    ...files,
     ...DOWNSCALED_FORECASTS,
   };
 }

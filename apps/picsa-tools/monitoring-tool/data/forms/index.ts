@@ -17,6 +17,9 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
       { field: 'total_farmers', label: 'Total Farmers' },
     ],
     appCountries: ['mw', ''],
+    cover: {
+      icon: 'assets/svgs/monitoring-forms/ew-monitoring.svg',
+    },
   },
   {
     _id: 'ew_monitoring_zm',
@@ -31,6 +34,9 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
       { field: 'total_farmers', label: 'Total Farmers' },
     ],
     appCountries: ['zm', ''],
+    cover: {
+      icon: 'assets/svgs/monitoring-forms/ew-monitoring.svg',
+    },
   },
 
   {
@@ -40,5 +46,8 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     appCountries: [''],
     enketoDefinition: demoKitchenForm,
     summaryFields: [{ field: '_id', label: 'ID' }],
+    cover: {
+      icon: '',
+    },
   },
 ];

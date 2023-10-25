@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
@@ -11,7 +11,7 @@ type IVideoEvent =
   | 'jeepCapVideoPlayerEnded'
   | 'jeepCapVideoPlayerExit';
 interface capVideoListener {
-  playerId: string;
+  fromPlayerId: string;
   currentTime: number;
 }
 interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
@@ -24,68 +24,94 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
 })
-export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
-  /** Url of video to player */
-  @Input() url?: string;
-  /** Unique identifier used in case of multiple players*/
-  protected playerId = `videoPlayer_${generateID(5)}`;
+  /** Video source - can be string url or data blob */
+  @Input() source?: string;
+  /** Optional image shown as preview */
+  @Input() thumbnail?: string;
 
-  protected showPlayButton = Capacitor.isNativePlatform() ? true : false;
+  /** Specify whether should open overlay to play video (default inline) */
+  @Input() playInModal = false;
+
+  // Bind player id to host element to support element query when initialising player
+  @HostBinding('attr.data-player-id') playerId = `videoPlayer_${generateID(5)}`;
+
+  protected showPlayButton = true;
 
   public videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
 
   private playerOptions: capVideoPlayerOptions;
 
-  async ngAfterViewInit() {
-    // When running on native platform avoid init as will trigger fullscreen playback
-    // Instead prefer just to show play button which will call init on play
-    // When running on web call init immediately as this will populate a visual preview of content
-    if (!Capacitor.isNativePlatform()) {
-      this.initPlayer();
-    }
-  }
+  /** Track if player has been initialised */
+  private initialised = false;
+
+  /** Track any created object urls to dispose on destroy */
+  private objectUrl: string;
+
+  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
     this.removeListeners();
-  }
-
-  public async playVideo() {
-    // On native initialise before every playback to ensure full screen fragments created
-    if (Capacitor.isNativePlatform()) {
-      await this.initPlayer();
-    } else {
-      await this.videoPlayer.play({ playerId: this.playerId });
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl);
     }
   }
 
+  public async pauseVideo() {
+    return this.videoPlayer.pause({ playerId: this.playerId });
+  }
+
+  public async playVideo() {
+    // Remove thumbnail from future playback
+    this.thumbnail = undefined;
+    // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
+    await this.initPlayer();
+    await this.videoPlayer.stopAllPlayers();
+    await this.videoPlayer.play({ playerId: this.playerId });
+  }
+
   private async initPlayer() {
-    if (!this.url) return;
+    if (this.initialised) return;
+    if (!this.source) return;
+    const url = this.convertSourceToUrl(this.source);
+    const { clientWidth } = this.elementRef.nativeElement;
+    // load player
     const defaultOptions: capVideoPlayerOptions = {
       mode: 'embedded',
-      url: this.url,
+      url,
       playerId: this.playerId,
-      componentTag: 'picsa-video-player',
+      componentTag: `picsa-video-player[data-player-id="${this.playerId}"]`,
       exitOnEnd: false,
-      width: 480,
-      height: 270,
+      // Use host element to calculate default player size
+      width: clientWidth,
+      height: Math.round((clientWidth * 9) / 16),
       displayMode: 'landscape',
     };
     if (Capacitor.isNativePlatform()) {
       defaultOptions.mode = 'fullscreen';
       defaultOptions.exitOnEnd = true;
-      if (this.url.startsWith('assets')) {
-        // NOTE - android local assets require 'public' prefix
-        // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
-        defaultOptions.url = `public/${this.url}`;
-      }
     }
     // Merge default options with user override
     this.playerOptions = { ...defaultOptions, ...this.options };
     await this.videoPlayer.initPlayer(this.playerOptions);
     this.addListeners();
+    this.initialised = true;
+  }
+
+  /** Video player requires url source, handle conversion from blob or internal asset url */
+  private convertSourceToUrl(source: string) {
+    // NOTE - android local assets require 'public' prefix
+    // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#from-asset
+    if (Capacitor.isNativePlatform()) {
+      if (source.startsWith('assets')) {
+        source = `public/${source}`;
+      }
+    }
+
+    return source;
   }
 
   /*********************************************************************************
@@ -117,10 +143,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private handlePlayerReady() {
     this.showPlayButton = true;
   }
-  private handlePlayerPlay() {
-    this.showPlayButton = false;
+  private handlePlayerPlay(e: { fromPlayerId: string }) {
+    // Events can be emitted from any player, so only update play button of current player id
+    if (e.fromPlayerId === this.playerId) {
+      this.showPlayButton = false;
+    }
   }
-  private handlePlayerPause() {
+  private async handlePlayerPause() {
     this.showPlayButton = true;
   }
 

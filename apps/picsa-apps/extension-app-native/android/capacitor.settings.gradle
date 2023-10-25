@@ -14,6 +14,9 @@ project(':capacitor-device').projectDir = new File('../../../../node_modules/@ca
 include ':capacitor-filesystem'
 project(':capacitor-filesystem').projectDir = new File('../../../../node_modules/@capacitor/filesystem/android')
 
+include ':capacitor-network'
+project(':capacitor-network').projectDir = new File('../../../../node_modules/@capacitor/network/android')
+
 include ':capacitor-blob-writer'
 project(':capacitor-blob-writer').projectDir = new File('../../../../node_modules/capacitor-blob-writer/android')
 

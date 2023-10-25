@@ -1,18 +1,42 @@
-<div class="page-content no-padding">
-  <picsa-resource-item [resource]="collection" viewStyle="expanded" *ngIf="collection; else elseBlock">
-    <div style="margin-top: 2rem">
-      <mat-card-title style="font-size: 20px">{{ 'Resources' | translate }}</mat-card-title>
+<picsa-alert-box *ngIf="showcollectionNotFound" type="info" style="margin: 2rem">{{
+  'Collection not found' | translate
+}}</picsa-alert-box>
+
+<mat-card *ngIf="collection">
+  <!-- Header -->
+  <mat-card-header>
+    <mat-card-title>{{ collection.title | translate }}</mat-card-title>
+    <mat-card-subtitle> {{ collection.description || '' }} </mat-card-subtitle>
+    <img mat-card-avatar *ngIf="collection.cover?.image" [src]="collection.cover?.image" />
+  </mat-card-header>
+  <!-- Contents -->
+  <mat-card-content>
+    <div *ngIf="collection.language" style="margin-top: 2em">
+      <span class="language-code">{{ collection.language.toUpperCase() }}</span>
+    </div>
+    <div style="margin-top: 2rem" class="child-resources" *ngIf="collections.length > 0">
+      <mat-card-title style="font-size: 20px">{{ 'Collections' | translate }}</mat-card-title>
       <div class="list-container">
-        <picsa-resource-item
-          *ngFor="let resource of collectionResources"
-          [resource]="resource"
+        <resource-item-collection
+          *ngFor="let collection of collections"
+          [collection]="collection"
           style="margin-bottom: 8px"
-        >
-        </picsa-resource-item>
+        ></resource-item-collection>
       </div>
     </div>
-  </picsa-resource-item>
-  <ng-template #elseBlock>{{ 'Collection not found' | translate }}</ng-template>
-</div>
-
-<!--  -->
+    <div style="margin-top: 2rem" class="child-resources" *ngIf="files.length > 0">
+      <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
+      <div class="list-container">
+        <resource-item-file *ngFor="let resource of files" [resource]="resource" style="margin-bottom: 8px">
+        </resource-item-file>
+      </div>
+    </div>
+    <div style="margin-top: 2rem" class="child-resources" *ngIf="links.length > 0">
+      <mat-card-title style="font-size: 20px">{{ 'Links' | translate }}</mat-card-title>
+      <div class="list-container">
+        <resource-item-link *ngFor="let resource of links" [resource]="resource" style="margin-bottom: 8px">
+        </resource-item-link>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

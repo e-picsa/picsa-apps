@@ -1,5 +1,6 @@
-import cropInfo from './cropInfo';
+import extensionVideos from './extension-videos';
+import farmerVideos from './farmer-videos';
 import manuals from './manuals';
 import videos from './videos';
 
-export default { ...cropInfo, ...manuals, ...videos };
+export default { ...manuals, ...videos, ...farmerVideos, ...extensionVideos };

@@ -1,27 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { ResourcesStore } from '../../stores';
+import { IResourceCollection } from '../../schemas';
+import { ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({
-  selector: 'picsa-resources-home',
+  selector: 'resource-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
-  // playerWidth: number;
-  // externalDir: string;
-  // platformIsWeb = false;
+export class HomeComponent implements OnInit {
+  public collections: IResourceCollection[];
 
-  constructor(public store: ResourcesStore) {}
+  constructor(public service: ResourcesToolService) {}
 
-  ngAfterViewInit() {
-    this._setVideoPlayerWidth();
-  }
-
-  // video width needs to be set programtically
-  _setVideoPlayerWidth() {
-    // const width = window.innerWidth;
-    // this.playerWidth = width * 0.9;
-    // console.log('width', this.playerWidth, window);
+  async ngOnInit() {
+    await this.service.ready();
+    const collections = await this.service.dbCollections.find({ sort: [{ priority: 'desc' }] }).exec();
+    const localised = this.service.filterLocalisedResources(collections);
+    this.collections = localised.filter((c) => !c._data.parentCollection).map((c) => c._data);
   }
 }

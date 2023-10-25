@@ -11,9 +11,8 @@ export interface IManualStep {
   type: 'step';
   activities: IManualActivity[];
 }
-export interface IManualActivity {
+interface IManualActivity {
   label: string;
-  video: string;
-  icon: string;
+  svgIcon: string;
   id: string;
 }

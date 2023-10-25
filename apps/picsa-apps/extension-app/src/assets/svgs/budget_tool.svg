@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="133.19258mm"
-   height="151.35521mm"
-   viewBox="0 0 133.19258 151.35521"
+   width="128mm"
+   height="128mm"
+   viewBox="0 0 128 128"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="calendar.svg">
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="budget_tool.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="-196.86892"
-     inkscape:cy="214.38221"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="197.00792"
+     inkscape:cy="391.89384"
      inkscape:document-units="mm"
      inkscape:current-layer="g3719"
      showgrid="false"
@@ -36,9 +36,9 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -56,18 +56,21 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-30.165615,-54.200083)">
+     transform="translate(-30.165615,-77.555292)">
     <g
        id="g3719"
        transform="matrix(1.5135521,0,0,1.5135521,30.165615,54.200083)">
       <path
          id="path3699"
-         d="M 0,32 V 91.906 C 0,96.377 3.582,100 8,100 h 72 c 4.418,0 8,-3.623 8,-8.094 V 32 Z M 22,94 H 6 V 78 H 22 Z M 22,74 H 6 V 58 H 22 Z M 22,54 H 6 V 38 H 22 Z M 42,94 H 26 V 78 H 42 Z M 42,74 H 26 V 58 H 42 Z M 42,54 H 26 V 38 H 42 Z M 62,94 H 46 V 78 H 62 Z M 62,74 H 46 V 58 H 62 Z M 62,54 H 46 V 38 H 62 Z M 82,94 H 66 V 78 H 82 Z M 82,74 H 66 V 58 H 82 Z M 82,54 H 66 V 38 h 16 z"
-         inkscape:connector-curvature="0" />
+         d="m -2.4598535e-7,34.651016 v 57.570532 c 0,4.296696 3.44235384598535,7.778451 7.68811574598535,7.778451 H 76.881157 c 4.245762,0 7.688116,-3.481755 7.688116,-7.778451 V 34.651016 Z M 21.142318,94.233912 H 5.7660866 V 78.857681 H 21.142318 Z m 0,-19.220289 H 5.7660866 V 59.637392 H 21.142318 Z m 0,-19.220289 H 5.7660866 V 40.417103 H 21.142318 Z M 40.362607,94.233912 H 24.986376 V 78.857681 h 15.376231 z m 0,-19.220289 H 24.986376 V 59.637392 h 15.376231 z m 0,-19.220289 H 24.986376 V 40.417103 h 15.376231 z m 19.22029,38.440578 H 44.206665 V 78.857681 h 15.376232 z m 0,-19.220289 H 44.206665 V 59.637392 h 15.376232 z m 0,-19.220289 H 44.206665 V 40.417103 H 59.582897 Z M 78.803186,94.233912 H 63.426954 V 78.857681 h 15.376232 z m 0,-19.220289 H 63.426954 V 59.637392 h 15.376232 z m 0,-19.220289 H 63.426954 V 40.417103 h 15.376232 z"
+         inkscape:connector-curvature="0"
+         style="stroke-width:0.96101445" />
       <path
          id="path3701"
-         d="M 80,12 H 67 V 3 C 67,1.343 65.656,0 64,0 62.343,0 61,1.343 61,3 v 9 H 27 V 3 C 27,1.343 25.656,0 24,0 22.343,0 21,1.343 21,3 v 9 H 8 C 3.582,12 0,15.623 0,20.093 V 27 v 0 1 h 88 v -1 0 -6.907 C 88,15.623 84.418,12 80,12 Z M 24,26 c -3.313,0 -6,-2.687 -6,-6 0,-2.219 1.209,-4.152 3,-5.19 V 20 c 0,1.657 1.343,3 3,3 1.656,0 3,-1.343 3,-3 v -5.191 c 1.792,1.038 3,2.972 3,5.191 0,3.313 -2.686,6 -6,6 z m 40,0 c -3.313,0 -6,-2.687 -6,-6 0,-2.219 1.209,-4.152 3,-5.19 V 20 c 0,1.657 1.343,3 3,3 1.656,0 3,-1.343 3,-3 v -5.191 c 1.792,1.038 3,2.972 3,5.191 0,3.313 -2.686,6 -6,6 z"
-         inkscape:connector-curvature="0" />
+         d="M 76.881157,15.430727 H 7.6881155 c -4.2457619,0 -7.68811574598535,3.481755 -7.68811574598535,7.77749 v 6.637727 0 0.961014 H 84.569273 v -0.961014 0 -6.637727 c 0,-4.295735 -3.442354,-7.77749 -7.688116,-7.77749 z"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccsccccccsc"
+         style="stroke-width:0.96101445" />
     </g>
   </g>
 </svg>

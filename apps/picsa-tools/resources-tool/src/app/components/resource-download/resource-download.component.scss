@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+.download-progress {
+  position: relative;
+}
+button.download-cancel {
+  position: absolute;
+  padding: 0;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  mat-icon {
+    margin-right: 0;
+  }
+}
+mat-progress-spinner[data-style-variant='white'] {
+  --mdc-circular-progress-active-indicator-color: white !important;
+}
+button[data-style-variant='white'] {
+  color: white;
+}
