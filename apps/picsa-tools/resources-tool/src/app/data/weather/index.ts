@@ -1,6 +1,6 @@
 import { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { filterHashmap } from '../../utils/data.utils';
-import { DOWNSCALED_FORECASTS } from './files';
+import weatherFiles from './files';
 import { WEATHER_LINKS } from './links';
 import { IWeatherLocation, WEATHER_LOCATIONS } from './locations';
 import { MeteoBlueGenerator } from './meteoBlue';
@@ -38,8 +38,9 @@ function generateLocationResources(location: IWeatherLocation) {
     ...new WMOGenerator(location).links,
     ...new MeteoBlueGenerator(location).links,
   };
+  const forecasts = { ...weatherFiles.downscaledForecasts, ...weatherFiles.otherForecasts };
   const files: Record<string, IResourceFile> = {
-    ...filterHashmap(DOWNSCALED_FORECASTS, (r) => r.meta.locationId === location.id),
+    ...filterHashmap(forecasts, (r) => r.meta.locationIds.includes(location.id)),
   };
 
   const collection: IResourceCollection = {
@@ -60,7 +61,8 @@ function generateLocationResources(location: IWeatherLocation) {
     [collection.id]: collection,
     ...links,
     ...files,
-    ...DOWNSCALED_FORECASTS,
+    ...weatherFiles.downscaledForecasts,
+    ...weatherFiles.otherForecasts,
   };
 }
 
@@ -68,5 +70,6 @@ export default {
   weatherResources,
   ...WEATHER_LINKS,
   ...localisedResources,
-  ...DOWNSCALED_FORECASTS,
+  ...weatherFiles.downscaledForecasts,
+  ...weatherFiles.otherForecasts,
 };
