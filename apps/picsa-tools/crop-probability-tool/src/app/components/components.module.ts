@@ -12,7 +12,7 @@ const components = [CropProbabilityStationSelectComponent, CropProbabilityTableC
 
 @NgModule({
   imports: [CommonModule, FormsModule, CropProbabilityMaterialModule, PicsaTranslateModule],
-  exports: components,
+  exports: [...components, CropProbabilityMaterialModule],
   declarations: components,
   providers: [],
 })

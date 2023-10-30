@@ -1,8 +1,11 @@
 <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
   <crop-probability-station-select
     [selectedStationId]="activeStation?.id"
-    style="padding: 1em"
+    style="padding: 1em; margin-top: 1em"
   ></crop-probability-station-select>
-  <span (click)="triggerTourStepOne()" class="tour-button">Take Tour</span>
+  <button mat-button class="tour-button" color="primary" (click)="triggerTourStepOne()">
+    <mat-icon class="tour-icon mat-elevation-z4">question_mark</mat-icon>
+    <span>{{ 'Demo' | translate }}</span>
+  </button>
 </div>
 <crop-probability-table [activeStation]="activeStation" *ngIf="activeStation"></crop-probability-table>
