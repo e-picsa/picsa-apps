@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
 import { TourService } from '@picsa/shared/services/core/tour.service';
+import { Subject, takeUntil } from 'rxjs';
 
 import { STATION_CROP_DATA } from '../../data/mock';
-import { IStationCropInformation, IStationRouteQueryParams } from '../../models';
 import { CROP_PROBABILITY_TOUR_STEP_ONE } from '../../data/tour';
+import { IStationCropInformation, IStationRouteQueryParams } from '../../models';
 
 @Component({
   selector: 'crop-probability-home',
@@ -48,6 +48,4 @@ export class HomeComponent implements OnInit, OnDestroy {
     localStorage.setItem('TourTrigger', 'true');
     this.tourService.startTour(CROP_PROBABILITY_TOUR_STEP_ONE);
   }
-
 }
-
