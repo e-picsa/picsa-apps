@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { arrayToHashmap } from '@picsa/utils';
@@ -13,7 +13,7 @@ import { CROP_PROBABILITY_TOUR_STEP_THREE } from '../../data/tour';
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
 })
-export class CropProbabilityTableComponent implements AfterViewInit {
+export class CropProbabilityTableComponent implements AfterViewInit{
   public displayedColumns: string[] = [];
 
   /** Tracking columns for individual probabilities */
