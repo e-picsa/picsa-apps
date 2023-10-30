@@ -11,7 +11,7 @@ export const CROP_PROBABILITY_TOUR_STEP_ONE: ITourStep[] = [
 export const CROP_PROBABILITY_TOUR_STEP_TWO: ITourStep[] = [
   {
     id: 'kasungu',
-    text: 'Here, you can select a station whose probability information you would like to know.',
+    text: 'In this dropdown, you can select a station whose probability information you would like to know.',
     position: 'right',
   },
 ];
@@ -24,7 +24,7 @@ export const CROP_PROBABILITY_TOUR_STEP_THREE: ITourStep[] = [
   },
   {
     id: 'maize',
-    text: 'Click a crop icon for the table to show you information for only that crop.',
+    text: 'Click one of these crop icons for the table to show you information for only that crop.',
     position: 'left',
   },
 ];
