@@ -67,7 +67,7 @@ export class ActivityDetailsComponent implements OnInit {
    * with fallback to default video set
    */
   private getVideoResource(activity: IActivityEntry) {
-    const { language } = this.configurationService.activeConfiguration.localisation;
+    const { language, country } = this.configurationService.activeConfiguration.localisation;
     const localisedVideos = jsonNestedProperty<IFarmerVideosById>(
       PICSA_FARMER_VIDEO_RESOURCES,
       `${language.selected?.code}.360p`
@@ -75,7 +75,11 @@ export class ActivityDetailsComponent implements OnInit {
     if (localisedVideos?.[activity.videoId]) {
       return localisedVideos[activity.videoId];
     }
-    return PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'][activity.videoId];
+    // HACK - Use default fallbacks for ZM or MW
+    // TODO - add english versions and make default fallback
+    return country.code === 'zm'
+      ? PICSA_FARMER_VIDEO_RESOURCES.zm_ny['360p'][activity.videoId]
+      : PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'][activity.videoId];
   }
 
   /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
