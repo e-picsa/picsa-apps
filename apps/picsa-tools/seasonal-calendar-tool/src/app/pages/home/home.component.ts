@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { Component, OnDestroy } from '@angular/core';
+import {  Router } from '@angular/router';
+import { PicsaDialogService } from '@picsa/shared/features';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -16,7 +17,7 @@ export class HomeComponent implements OnDestroy {
   private componentDestroyed$ = new Subject();
   public dbCalendars: RxDocument<CalendarDataEntry>[] = [];
 
-  constructor(private router: Router, private service: SeasonCalenderService) {
+  constructor(private router: Router, private service: SeasonCalenderService,  private dialogService: PicsaDialogService) {
     this.subscribeToDbChanges();
   }
 
@@ -39,10 +40,21 @@ export class HomeComponent implements OnDestroy {
   //  console.log(this.dbCalendars)
   // }
 
-  deleteThisCalender(index: number){
-    this.service.deleteCalender(this.dbCalendars[index]);
-  }
   
+  
+  public async promptDelete(index: number) {
+    const dialog = await this.dialogService.open('delete');
+    dialog.afterClosed().subscribe(async (shouldDelete) => {
+      if (shouldDelete) {
+        //
+        this.service.deleteCalender(this.dbCalendars[index]);
+      }
+    });
+
+    
+  }
+
+
   getCalendarsAsArray(calenderObject): any[] {
     return Object.keys(calenderObject).map((key) => calenderObject[key]);
   }

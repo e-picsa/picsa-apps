@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CropDialogComponent } from './crop-dialog-component.component';
+import { MonthDialogComponent } from './crop-dialog-component.component';
 
-describe('CropDialogComponent', () => {
-  let component: CropDialogComponent;
-  let fixture: ComponentFixture<CropDialogComponent>;
+describe('MonthDialogComponent', () => {
+  let component: MonthDialogComponent;
+  let fixture: ComponentFixture<MonthDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CropDialogComponent],
+      declarations: [MonthDialogComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CropDialogComponent);
+    fixture = TestBed.createComponent(MonthDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

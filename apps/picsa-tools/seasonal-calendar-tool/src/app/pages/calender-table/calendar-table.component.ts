@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
-import { CropDialogComponentComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
+import { CropDialogComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
 import { Crop, MonthData } from '../../schema/schema_v0'
 import {  SeasonCalenderService } from './../../services/calender.data.service';
 
@@ -67,7 +67,18 @@ export class CalendarTableComponent implements OnInit {
     }
   }
   openCropDialog(crop: Crop) {
-    const dialogRef = this.dialog.open(CropDialogComponentComponent, {
+    const dialogRef = this.dialog.open(CropDialogComponent, {
+      data: crop, 
+    });
+  
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log("closed")
+
+    });
+  }
+
+  openMonthHeading(crop: Crop) {
+    const dialogRef = this.dialog.open(CropDialogComponent, {
       data: crop, 
     });
   

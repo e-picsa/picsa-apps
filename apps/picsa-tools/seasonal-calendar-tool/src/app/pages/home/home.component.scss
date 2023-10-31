@@ -49,8 +49,13 @@
       flex-direction: row;
       justify-content: space-between;
       padding-right: 2rem;
+      cursor: pointer;
     }
-    
+    .actions-section{
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+    }
   
     
   }

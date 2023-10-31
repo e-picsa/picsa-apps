@@ -15,7 +15,10 @@
       <div (click)="redirectToCalendarTable(calendar.name, i)">
         {{ calendar.name }}
       </div>
-       <mat-icon (click)="deleteThisCalender(i)">cancel</mat-icon>
+      <div class="actions-section">
+       <mat-icon >edit</mat-icon> 
+       <mat-icon (click)="promptDelete(i)">cancel</mat-icon>
+      </div>
        <!-- <mat-icon>keyboard_arrow_right</mat-icon> -->
     </div>
   </div>
