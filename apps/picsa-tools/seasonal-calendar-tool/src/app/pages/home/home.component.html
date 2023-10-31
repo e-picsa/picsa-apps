@@ -12,8 +12,8 @@
     <!-- map calenders -->
     <div *ngIf="dbCalendars.length > 0" class="items-container" >
     <div *ngFor="let calendar of dbCalendars;  let i = index" class="calendars-display">
-      <div (click)="!editMode ? redirectToCalendarTable(calendar.name, i) : null">
-        <div *ngIf="!editMode; else editField">
+      <div (click)="editMode!==i ? redirectToCalendarTable(calendar.name, i) : null">
+        <div *ngIf="editMode!==i; else editField">
           {{ calendar.name }}
         </div>
         <ng-template #editField>
@@ -22,8 +22,8 @@
       </div>
       <div class="actions-section">
         <div >
-          <button *ngIf="editMode"  (click)="saveUpdates(calendar)"  class="" mat-button mat-raised-button color="primary">Save</button> 
-          <mat-icon (click)="editMode = true" *ngIf="!editMode">edit</mat-icon>
+          <button *ngIf="editMode===i"  (click)="saveUpdates(calendar)"  class="" mat-button mat-raised-button color="primary">Save</button> 
+          <mat-icon (click)="editMode = i" *ngIf="editMode!==i">edit</mat-icon>
         </div>
        <mat-icon class="custom-trash-icon " (click)="promptDelete(i)">delete</mat-icon>
       </div>

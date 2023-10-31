@@ -11,7 +11,7 @@ import {  SeasonCalenderService } from './../../services/calender.data.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnDestroy {
-  editMode = false;
+  editMode = -1;
 
   private componentDestroyed$ = new Subject();
   public dbCalendars: any = [];
@@ -60,7 +60,7 @@ export class HomeComponent implements OnDestroy {
 
   async saveUpdates(calendar:any) {
     await this.service.addORUpdateData(calendar, 'update');
-    this.editMode = false;
+    this.editMode = -1;
   }
 
   redirectToCalendarTable(calendarName: string, index) {
