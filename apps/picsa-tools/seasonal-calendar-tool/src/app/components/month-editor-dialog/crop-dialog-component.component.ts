@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
 
-import { Crop } from '../../schema/schema_v0';
+import { MonthData } from '../../schema/schema_v0';
 
 @Component({
   selector: 'seasonal-calendar-month-editor',
@@ -9,13 +9,13 @@ import { Crop } from '../../schema/schema_v0';
   styleUrls: ['./crop-dialog-component.component.scss'],
 })
 export class MonthDialogComponent {
-  editedExtraInformation: string;
+  weather: string;
 
   constructor(
     public dialogRef: MatDialogRef<MonthDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Crop
+    @Inject(MAT_DIALOG_DATA) public data: MonthData
   ) {
-    this.editedExtraInformation = data.extraInformation;
+    this.weather = data.weather;
   }
 
   onClose(): void {
@@ -23,7 +23,7 @@ export class MonthDialogComponent {
   }
 
   onSave(): void {
-    this.data.extraInformation = this.editedExtraInformation;
+    this.data.weather = this.weather;
     this.dialogRef.close();
   }
 }

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
 import { CropDialogComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
+import { MonthDialogComponent } from '../../components/month-editor-dialog/crop-dialog-component.component';
 import { Crop, MonthData } from '../../schema/schema_v0'
 import {  SeasonCalenderService } from './../../services/calender.data.service';
 
@@ -77,15 +78,15 @@ export class CalendarTableComponent implements OnInit {
     });
   }
 
-  openMonthHeading(crop: Crop) {
-    const dialogRef = this.dialog.open(CropDialogComponent, {
-      data: crop, 
+  openMonthHeading(month: MonthData) {
+    const dialogRef = this.dialog.open(MonthDialogComponent, {
+      data: month, 
     });
   
     dialogRef.afterClosed().subscribe((result) => {
       console.log("closed")
-
     });
+    
   }
 
   openAddActivityDialog(crop: Crop, month: MonthData) {
