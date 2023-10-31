@@ -12,12 +12,17 @@ import {  SeasonCalenderService } from './../../services/calender.data.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-
 export class HomeComponent implements OnDestroy {
-  private componentDestroyed$ = new Subject();
-  public dbCalendars: RxDocument<CalendarDataEntry>[] = [];
+  editMode = false;
 
-  constructor(private router: Router, private service: SeasonCalenderService,  private dialogService: PicsaDialogService) {
+  private componentDestroyed$ = new Subject();
+  public dbCalendars: any = [];
+
+  constructor(
+    private router: Router,
+    private service: SeasonCalenderService,
+    private dialogService: PicsaDialogService
+  ) {
     this.subscribeToDbChanges();
   }
 
@@ -26,7 +31,9 @@ export class HomeComponent implements OnDestroy {
 
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      this.dbCalendars = docs;
+      const extractedData = docs.map((doc) => doc._data);
+      console.log(extractedData);
+      this.dbCalendars = extractedData;
     });
   }
 
@@ -40,27 +47,26 @@ export class HomeComponent implements OnDestroy {
   //  console.log(this.dbCalendars)
   // }
 
-  
-  
   public async promptDelete(index: number) {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
-        //
-        this.service.deleteCalender(this.dbCalendars[index]);
+          await this.service.deleteCalenderByName(this.dbCalendars[index].name);
       }
     });
-
-    
   }
-
 
   getCalendarsAsArray(calenderObject): any[] {
     return Object.keys(calenderObject).map((key) => calenderObject[key]);
   }
 
-  redirectToCalendarTable(calendarName: string, index) { 
-    this.router.navigate(['/seasonal-calendar/calendar-table',{calendarName}]);
+  async saveUpdates(calendar:any) {
+    await this.service.addORUpdateData(calendar, 'update');
+    this.editMode = false;
+  }
+
+  redirectToCalendarTable(calendarName: string, index) {
+    this.router.navigate(['/seasonal-calendar/calendar-table', { calendarName }]);
   }
 }
  

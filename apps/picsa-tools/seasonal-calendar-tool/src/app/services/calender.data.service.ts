@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
-import { RxCollection, RxDocument, RxQuery } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 
 import { CalendarDataEntry,COLLECTION } from '../schema';
 
@@ -27,11 +28,14 @@ export class SeasonCalenderService {
   }
 
   public async addORUpdateData(calender: any,insertionType:string) {
+ ;
+
     try {
       //handles instertion and update as long as the name is the same.
       let transformedCalenderData;
       if(insertionType==='add'){
        transformedCalenderData = {
+       ID: generateID(),
         name: calender.name,
         timeAndConditions: calender.timeAndConditions,
         crops: calender.crops.map((cropName) => ({
@@ -46,6 +50,7 @@ export class SeasonCalenderService {
      }else{
       // the table could be used to edit more information about the calender
       transformedCalenderData = {
+        ID: calender.ID,
         name: calender.name,
         crops: calender.crops,
         timeAndConditions: calender.timeAndConditions
@@ -63,6 +68,25 @@ export class SeasonCalenderService {
 
   public async deleteCalender(calendar: RxDocument<CalendarDataEntry>) {
     await calendar.remove();
+  }
+  public async deleteCalenderByName(name: string) {
+    try {
+      const calendar = await this.dbCollection.findOne({
+        selector: {
+          name: name,
+        },
+      }).exec();
+  
+      if (calendar) {
+        await calendar.remove();
+        console.log(`Calendar "${name}" has been deleted.`);
+      } else {
+        console.log(`Calendar "${name}" not found.`);
+      }
+    } catch (err) {
+      console.error(`Failed to delete calendar "${name}":`, err);
+      throw err;
+    }
   }
 
   public async getCalenderByName(name: string){
@@ -86,6 +110,8 @@ export class SeasonCalenderService {
       throw err;
     }
   }
+
+ 
 
 }
 

@@ -39,6 +39,7 @@
     .calendars-display {
       width: 90vw;
       padding-left: 1rem;
+      padding-bottom: 0.5rem;
       color: #000; 
       font-size: 23px;
       font-weight: 600;
@@ -56,7 +57,12 @@
       flex-direction: row;
       gap: 1rem;
     }
+    .inputField{
+      padding: .5rem;
+      width: 14rem;
+      font-size: 16px;
+      border-radius: 5px;
+  } 
   
-    
   }
   
