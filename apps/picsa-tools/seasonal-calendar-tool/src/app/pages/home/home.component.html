@@ -25,9 +25,8 @@
           <button *ngIf="editMode"  (click)="saveUpdates(calendar)"  class="" mat-button mat-raised-button color="primary">Save</button> 
           <mat-icon (click)="editMode = true" *ngIf="!editMode">edit</mat-icon>
         </div>
-       <mat-icon (click)="promptDelete(i)">cancel</mat-icon>
+       <mat-icon class="custom-trash-icon " (click)="promptDelete(i)">delete</mat-icon>
       </div>
-       <!-- <mat-icon>keyboard_arrow_right</mat-icon> -->
     </div>
   </div>
   </div>

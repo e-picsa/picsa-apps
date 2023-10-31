@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PicsaDialogService } from '@picsa/shared/features';
 
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
 import { CropDialogComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
 import { MonthDialogComponent } from '../../components/month-editor-dialog/crop-dialog-component.component';
 import { Crop, MonthData } from '../../schema/schema_v0'
 import {  SeasonCalenderService } from './../../services/calender.data.service';
-
-
 
 @Component({
   selector: 'seasonal-calendar-table',
@@ -18,7 +17,12 @@ import {  SeasonCalenderService } from './../../services/calender.data.service';
 export class CalendarTableComponent implements OnInit {
   calendarData: any;
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
-  constructor(private route: ActivatedRoute,private dialog: MatDialog, private router: Router, private service: SeasonCalenderService,  ) {
+  crops: string[] = ["Maize", "Beans", "Peas"];
+  selectedCrop = "";
+  customCrop = ''
+  showCropAdder = false;
+
+  constructor(private route: ActivatedRoute,private dialog: MatDialog, private router: Router, private service: SeasonCalenderService, private dialogService: PicsaDialogService ) {
      this.initaliseDb()
   }
 
@@ -86,7 +90,10 @@ export class CalendarTableComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       console.log("closed")
     });
-    
+
+  }
+  toggleCropAdder() {
+    this.showCropAdder = !this.showCropAdder;
   }
 
   openAddActivityDialog(crop: Crop, month: MonthData) {
@@ -113,6 +120,44 @@ export class CalendarTableComponent implements OnInit {
         }
       }
     });
+  }
+  async deleteCropData(crop: Crop) {
+    const dialog = await this.dialogService.open('delete');
+    dialog.afterClosed().subscribe(async (shouldDelete) => {
+      if (shouldDelete) {
+        const cropIndex = this.calendarData.crops.findIndex((c) => c.name === crop.name);
+        if (cropIndex !== -1) {
+          this.calendarData.crops.splice(cropIndex, 1); 
+        }
+      }
+    });
+    
+  }
+  addNewCrop() {
+    let cropName
+    if (this.selectedCrop === 'Other' && this.customCrop.trim() !== '') {
+      cropName = this.customCrop
+      this.customCrop = ''; 
+    } else if (this.selectedCrop && this.selectedCrop !== 'Other' ) {
+      cropName =  this.selectedCrop
+    }
+    if (!this.isCropNameDuplicate(cropName)) {
+      const newCrop: Crop = {
+        name: cropName,
+        months: this.calendarData.timeAndConditions.map((monthData) => ({
+          month: monthData.month,
+          activities: [],
+        })),
+        extraInformation: '',
+      };
+  
+      this.calendarData.crops.push(newCrop);
+    } else {
+      console.log('Crop with the same name already exists.');
+    }
+  }
+  isCropNameDuplicate(newCropName: string): boolean {
+    return this.calendarData.crops.some((crop) => crop.name === newCropName);
   }
 
   saveCalendar(){

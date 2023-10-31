@@ -1,10 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import {  Router } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
-import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
-import {  CalendarDataEntry } from '../../schema';
 import {  SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
@@ -32,7 +30,7 @@ export class HomeComponent implements OnDestroy {
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       const extractedData = docs.map((doc) => doc._data);
-      console.log(extractedData);
+      //console.log(extractedData);
       this.dbCalendars = extractedData;
     });
   }

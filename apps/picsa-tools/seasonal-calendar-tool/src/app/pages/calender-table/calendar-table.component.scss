@@ -1,5 +1,7 @@
 .table-container{
     padding-left: 1.5rem;
+    padding-bottom: 2rem;
+
 .calendar-table {
     width: 90%;
     border-collapse: collapse;
@@ -75,8 +77,9 @@
   .y-axis-header{
     display: flex;
     flex-direction: row;
+    height: '100%';
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
   }
   .activities-cell{
     max-width: 7rem;
@@ -102,6 +105,32 @@
   justify-content: start;
   width: 100%;
   align-items: centeer; 
+}
+.crop-adder{
+  margin-top: 1rem;
+}
+.custom-trash-icon {
+  color: red; 
+}
+.y-axis-actions{
+  display: flex;
+  gap: 1rem;
+}
+select{
+  padding: .5rem;
+  width: 16rem;
+}
+.select-input-field{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.select-box{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 1rem;
 }
  
 }
