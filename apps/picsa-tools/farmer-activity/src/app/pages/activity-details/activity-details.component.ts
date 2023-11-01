@@ -49,10 +49,12 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
         this.videoResource = this.getVideoResource(activity);
       }
     }
+    // update the tour service to allow triggering tour from inside mat-tab component
     this.tourService.useInMatTab = true;
   }
 
   async ngOnDestroy() {
+    // revert updates to tour service
     this.tourService.useInMatTab = false;
   }
 

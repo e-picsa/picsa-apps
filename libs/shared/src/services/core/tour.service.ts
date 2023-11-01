@@ -185,20 +185,23 @@ export class TourService {
   }
 
   /**
-   * Provide a custom method to scroll to target element and wait for animation to be complete
-   * Intersection observer used as scroll action has not callback function to indicate complete
+   * Provide a custom method to scroll to target element and wait for action to be complete
+   * Intersection observer used as scroll method has not callback function to indicate complete
    * https://github.com/w3c/csswg-drafts/issues/3744
    */
   private async scrollToElement(el: HTMLElement) {
     el.style.scrollMarginTop = '32px';
-
     let observer: IntersectionObserver;
     await new Promise((resolve) => {
       observer = new IntersectionObserver(
+        // when the observer detects the element is in view stop opserving and resolve promise
         () => {
           observer.disconnect();
           resolve(true);
         },
+        // require the element to be at least 90% in scroll view before resolving
+        // NOTE - this still doesn't fully guarantee scrolling action complete, so recommend
+        // including small timeout after if essential for scrolling to be fully complete
         {
           root: null,
           rootMargin: '0px',
@@ -235,6 +238,8 @@ export class TourService {
           const { params, queryParams } = this.route.snapshot;
           return { params, queryParams };
         }),
+        // use filter callback to detect if handler completes action successfully
+        // so that a take() operator can be used to end subscription after first emit
         filter((v) => {
           const wasHandled = routeEvents.handler(v, this);
           return wasHandled;
