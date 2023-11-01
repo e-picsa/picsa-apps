@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
@@ -7,6 +7,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { IFarmerVideosById, PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/picsa/farmer-videos';
 import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
+import { TourService } from '@picsa/shared/services/core/tour.service';
 import { jsonNestedProperty } from '@picsa/utils';
 
 import { ACTIVITY_DATA, IActivityEntry } from '../../data';
@@ -16,7 +17,7 @@ import { ACTIVITY_DATA, IActivityEntry } from '../../data';
   templateUrl: './activity-details.component.html',
   styleUrls: ['./activity-details.component.scss'],
 })
-export class ActivityDetailsComponent implements OnInit {
+export class ActivityDetailsComponent implements OnInit, OnDestroy {
   activity: IActivityEntry;
 
   public videoResource: IResourceFile;
@@ -26,7 +27,8 @@ export class ActivityDetailsComponent implements OnInit {
     private componentsService: PicsaCommonComponentsService,
     private route: ActivatedRoute,
     private router: Router,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private tourService: TourService
   ) {}
 
   private getActivityById(id: string) {
@@ -47,6 +49,11 @@ export class ActivityDetailsComponent implements OnInit {
         this.videoResource = this.getVideoResource(activity);
       }
     }
+    this.tourService.useInMatTab = true;
+  }
+
+  async ngOnDestroy() {
+    this.tourService.useInMatTab = false;
   }
 
   handleResourceAttachmentChange(uri: string) {
