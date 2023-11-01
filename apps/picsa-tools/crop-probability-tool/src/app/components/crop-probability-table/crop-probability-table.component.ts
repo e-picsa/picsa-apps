@@ -1,11 +1,9 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TourService } from '@picsa/shared/services/core/tour.service';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { CROPS_DATA, ICropData } from '../../data/crops';
-import { CROP_PROBABILITY_TOUR_STEP_THREE } from '../../data/tour';
 import { IStationCropData, IStationCropDataItem, IStationCropInformation } from '../../models';
 
 @Component({
@@ -13,7 +11,7 @@ import { IStationCropData, IStationCropDataItem, IStationCropInformation } from 
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
 })
-export class CropProbabilityTableComponent implements AfterViewInit {
+export class CropProbabilityTableComponent {
   public displayedColumns: string[] = [];
 
   /** Tracking columns for individual probabilities */
@@ -32,19 +30,7 @@ export class CropProbabilityTableComponent implements AfterViewInit {
     this.filterData('');
   }
 
-  constructor(private router: Router, private route: ActivatedRoute, private tourService: TourService) {}
-  // Trigger tour steps if user is currently on tour
-  public handleTourStepThree(): void {
-    const trigger = localStorage.getItem('TourTrigger');
-    if (trigger === 'true') {
-      this.tourService.startTour(CROP_PROBABILITY_TOUR_STEP_THREE);
-      localStorage.removeItem('TourTrigger');
-    } else return;
-  }
-
-  ngAfterViewInit() {
-    this.handleTourStepThree();
-  }
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   public handleStationChange() {
     this.router.navigate([], { relativeTo: this.route, queryParams: { stationId: this.station?.id } });

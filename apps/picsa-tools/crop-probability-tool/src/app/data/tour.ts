@@ -3,28 +3,43 @@ import type { ITourStep } from '@picsa/shared/services/core/tour.service';
 export const CROP_PROBABILITY_TOUR_STEP_ONE: ITourStep[] = [
   {
     id: 'station',
-    text: 'Click the arrow to choose a station whose crop information you’d like to know.',
-    position: 'right',
-  }
-];
+    text: 'Tap here to choose a station',
 
-export const CROP_PROBABILITY_TOUR_STEP_TWO: ITourStep[] = [
-  {
-    id: 'kasungu',
-    text: 'In this dropdown, you can select a station whose probability information you would like to know.',
-    position: 'right',
+    tourOptions: {
+      showBullets: false,
+      showButtons: false,
+    },
+    // When user clicks on the station select suspend the tour so that the user can
+    // interact with the select popup
+    clickEvents: {
+      handler: (service) => {
+        service.pauseTour();
+      },
+    },
+    // Resume the tour once the user has navigated to a station
+    routeEvents: {
+      handler: ({ queryParams }, service) => {
+        if (queryParams.stationId) {
+          service.resumeTour();
+        }
+        return false;
+      },
+    },
   },
-];
 
-export const CROP_PROBABILITY_TOUR_STEP_THREE: ITourStep[] = [
   {
-    id: 'table',
+    customElement: {
+      selector: 'section.table-container',
+    },
     text: 'In the crop information table, you will be able to see the probabilities for different crops through the different seasons.',
-    position: 'left',
+    tourOptions: {
+      disableInteraction: true,
+    },
   },
   {
-    id: 'maize',
+    customElement: {
+      selector: 'crop-probability-crop-select',
+    },
     text: 'Click one of these crop icons for the table to show you information for only that crop.',
-    position: 'left',
   },
 ];

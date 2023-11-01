@@ -1,10 +1,9 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TourService } from '@picsa/shared/services/core/tour.service';
 
 import { STATION_CROP_DATA } from '../../data/mock';
 import { IStationRouteQueryParams } from '../../models';
-import { CROP_PROBABILITY_TOUR_STEP_TWO } from '../../data/tour';
 
 @Component({
   selector: 'crop-probability-station-select',
@@ -22,13 +21,5 @@ export class CropProbabilityStationSelectComponent {
   public handleStationChange(stationId: string) {
     const queryParams: IStationRouteQueryParams = { stationId };
     this.router.navigate([], { relativeTo: this.route, queryParams });
-  }
-
-  // Trigger step two of tour after the dropdown has been clicked
-  public handleTourStepTwo() {
-    const trigger = localStorage.getItem('TourTrigger');
-    if (trigger === 'true') {
-      this.tourService.startTour(CROP_PROBABILITY_TOUR_STEP_TWO);
-    } 
   }
 }
