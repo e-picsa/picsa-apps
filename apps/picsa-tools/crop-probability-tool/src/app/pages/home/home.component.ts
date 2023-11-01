@@ -4,7 +4,7 @@ import { TourService } from '@picsa/shared/services/core/tour.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { STATION_CROP_DATA } from '../../data/mock';
-import { CROP_PROBABILITY_TOUR_STEP_ONE } from '../../data/tour';
+import { CROP_PROBABILITY_TOUR } from '../../data/tour';
 import { IStationCropInformation, IStationRouteQueryParams } from '../../models';
 
 @Component({
@@ -44,8 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   // Start tour on click of tour button, store a temp value in localstorage to trigger other steps
-  public triggerTourStepOne() {
-    localStorage.setItem('TourTrigger', 'true');
-    this.tourService.startTour(CROP_PROBABILITY_TOUR_STEP_ONE);
+  public startTour() {
+    this.tourService.startTour(CROP_PROBABILITY_TOUR);
   }
 }

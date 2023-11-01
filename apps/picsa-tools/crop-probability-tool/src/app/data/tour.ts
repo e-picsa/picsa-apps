@@ -1,6 +1,6 @@
 import type { ITourStep } from '@picsa/shared/services/core/tour.service';
 
-export const CROP_PROBABILITY_TOUR_STEP_ONE: ITourStep[] = [
+export const CROP_PROBABILITY_TOUR: ITourStep[] = [
   {
     id: 'station',
     text: 'Tap here to choose a station',
