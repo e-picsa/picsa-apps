@@ -133,8 +133,14 @@ Intro.JS Tour
     background: var(--color-primary);
     color: white;
   }
+
   .introjs-skipbutton {
     color: white;
     line-height: 36px;
   }
+}
+// fix intro-js not adjusting correctly when focus element larger than screen size
+.introjs-tooltipReferenceLayer {
+  max-height: 100vh;
+  max-width: 100vw;
 }
