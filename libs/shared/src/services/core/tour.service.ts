@@ -22,6 +22,8 @@ export interface ITourStep extends Partial<IntroStep> {
    * Supports elements dynamically injected into dom (will wait max 2s for visisble) */
   customElement?: {
     selector: string;
+    /** Auto scroll to element (default: true) */
+    autoScroll?: boolean;
   };
 
   /** Add custom handler for click events. Will be triggered once */
@@ -129,9 +131,7 @@ export class TourService {
     });
 
     this.intro.onafterchange(async (el) => {
-      // ensure el was scrolled properly and intro does not accidentally rescroll/move
-      // (happens if focus element larger than screen size)
-      el.scrollIntoView({ behavior: 'instant', block: 'start', inline: 'nearest' });
+      await this.fixPopupPositioning(el);
     });
 
     this.intro.onexit(async () => {
@@ -156,7 +156,7 @@ export class TourService {
   }
 
   /**
-   * Wait for any custom elements to be visible and set as target element for a step
+   * Wait for step elements to be visible and set as target element for a step
    * https://stackoverflow.com/questions/36650854/how-to-make-intro-js-select-the-element-that-dynamically-generated-after-page-lo
    *
    * Ensure target element scrolled into view and scroll animation complete before triggerring intro.js to prepare tooltip
@@ -164,23 +164,55 @@ export class TourService {
    */
   private async prepareNextStepElement(stepIndex: number) {
     const stepOptions = this.tourSteps[stepIndex];
-    const { customElement } = stepOptions;
-    let targetEl = this.intro._introItems[stepIndex].element as HTMLElement | undefined;
-    if (customElement) {
-      const customEl = await this.waitForElement(customElement.selector);
-      if (customEl) {
-        this.intro._introItems[stepIndex].element = customEl;
-        targetEl = customEl;
+    const { customElement, id } = stepOptions;
+    const stepSelector = id ? `[data-tour-id="${id}"]` : customElement?.selector;
+    if (stepSelector) {
+      const stepTargetEl = await this.waitForElement(stepSelector);
+      if (stepTargetEl) {
+        this.intro._introItems[stepIndex].element = stepTargetEl;
+        if (customElement?.autoScroll !== false) {
+          // include wait either side of scroll to provide time for any other dom changes to take effect
+          await _wait(250);
+          await this.scrollToElement(stepTargetEl);
+          await _wait(250);
+          // Force intro to re-evaluate tooltip positioning now that target element scrolled into view
+          this.intro.refresh();
+        }
       }
     }
+  }
 
+  /**
+   *
+   * @param targetEl
+   * @returns
+   */
+  private async fixPopupPositioning(targetEl: HTMLElement) {
     if (targetEl) {
-      // include wait either side of scroll to provide time for any other dom changes to take effect
-      await _wait(250);
-      await this.scrollToElement(targetEl);
-      await _wait(250);
-      // Force intro to re-evaluate tooltip positioning now that target element scrolled into view
-      this.intro.refresh();
+      // ignore elements that fill full page (intro usually centers tooltip correctly)
+      const targetRect = targetEl.getBoundingClientRect();
+      if (targetRect.height > window.innerHeight) {
+        // ensure el was scrolled properly and intro does not accidentally rescroll/move
+        // (happens if focus element larger than screen size)
+        targetEl.scrollIntoView({ behavior: 'instant', block: 'start', inline: 'nearest' });
+        return;
+      }
+      // allow tooltip animation to complete before trying to adjust margins
+      await _wait(350);
+      const tooltipEl = await this.waitForElement('div.introjs-tooltip.picsa-tooltip');
+      if (tooltipEl) {
+        // Fix bug where sometimes popup overlaid on top of target el
+        // DEPRECATED - seems to not be needed if separate tours used to load dynamic content
+        return;
+        // const tooltipRect = tooltipEl.getBoundingClientRect();
+        // if (tooltipRect.top < targetRect.bottom) {
+        //   const marginTop = parseInt(tooltipEl.style.marginTop);
+        //   // try to place tooltip 8px below target
+        //   const adjustment = targetRect.bottom - tooltipRect.top + 8;
+        //   tooltipEl.style.marginTop = `${marginTop + adjustment}px`;
+        //   // TODO - check if can fit first
+        // }
+      }
     }
   }
 
@@ -309,13 +341,17 @@ export class TourService {
   }
 }
 
-/** Compare two element bounding boxes to check if they intersect */
+/**
+ * Compare two element bounding boxes to check if they intersect
+ * */
 function doElementsOverlap(el1: HTMLElement, el2: HTMLElement) {
   const a = el1.getBoundingClientRect();
   const b = el2.getBoundingClientRect();
-  if (a.top < b.top && a.bottom > b.top) return true;
-  if (a.top < b.bottom && a.bottom > b.bottom) return true;
-  if (a.left < b.left && a.left > b.left) return true;
-  if (a.left < b.right && a.left > b.right) return true;
-  return false;
+  function isVerticalOverlap() {
+    return a.bottom > b.top && a.top < b.bottom;
+  }
+  function isHorizontalOverlap() {
+    return a.right > b.left && a.left < b.right;
+  }
+  return isVerticalOverlap() && isHorizontalOverlap();
 }
