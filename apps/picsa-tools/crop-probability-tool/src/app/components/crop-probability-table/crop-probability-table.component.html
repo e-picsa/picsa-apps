@@ -46,11 +46,19 @@
     <!-- This allows for the floating probability section -->
     <ng-container matColumnDef="title-column">
       <th mat-header-cell *matHeaderCellDef [attr.colspan]="4">
-        <h2 style="flex: 1">{{ 'Crop Information' | translate }} - {{ station.station_name }}</h2>
+        <h2 style="flex: 1" data-tour-id="table-title">
+          {{ 'Crop Information' | translate }} - {{ station.station_name }}
+        </h2>
       </th>
     </ng-container>
     <ng-container matColumnDef="season-start-summary-column">
-      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0">
+      <td
+        mat-header-cell
+        *matHeaderCellDef
+        [attr.colspan]="probabilityColumns.length"
+        style="padding: 0"
+        data-tour-id="season-start"
+      >
         <table #startProbabilities style="table-layout: fixed" class="border-left">
           <tr>
             <td *ngFor="let column of probabilityColumns" class="border-bottom border-top border-right">
