@@ -1,0 +1,12 @@
+<div ngClass="icons-container">
+  <div ngClass="filter-icons" *ngFor="let crop of selectOptions">
+    <div
+      (click)="handleSelected(crop.name)"
+      ngClass="icon"
+      [attr.data-selected]="_options.multiple ? selected.includes(crop.name) : selected === crop.name"
+    >
+      <mat-icon [svgIcon]="'picsa_crop_' + crop.name"></mat-icon>
+      <div ngClass="name">{{ crop.label | translate }}</div>
+    </div>
+  </div>
+</div>
