@@ -8,8 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
-
-import { CROPS_DATA } from '../data/crops';
+import { CROPS_DATA } from '@picsa/data';
 
 const MODULES = [
   MatButtonModule,
