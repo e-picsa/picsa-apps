@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CROPS_DATA, ICropData } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 
-import { CROPS_DATA, ICropData } from '../../data/crops';
 import { IStationCropData, IStationCropDataItem, IStationCropInformation } from '../../models';
 
 @Component({
