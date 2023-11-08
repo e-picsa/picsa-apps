@@ -6,8 +6,8 @@ import { PicsaDialogService } from '@picsa/shared/features';
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
 import { CropDialogComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
 import { MonthDialogComponent } from '../../components/month-editor-dialog/crop-dialog-component.component';
-import { Crop, MonthData } from '../../schema/schema_v0'
-import {  SeasonCalenderService } from './../../services/calender.data.service';
+import { Crop, MonthData } from '../../schema/schema_v0';
+import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-table',
@@ -28,11 +28,10 @@ export class CalendarTableComponent implements OnInit {
     private router: Router,
     private service: SeasonCalenderService,
     private dialogService: PicsaDialogService
-  ) {
-    this.initaliseDb();
-  }
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.service.ready();
     this.route.paramMap.subscribe((params) => {
       const calendarName = params.get('calendarName');
       if (calendarName) {
@@ -55,9 +54,6 @@ export class CalendarTableComponent implements OnInit {
   }
   async fetchData(calendarName: string) {
     return await this.service.getCalenderByName(calendarName);
-  }
-  private async initaliseDb() {
-    await this.service.initialise();
   }
 
   getActivitiesForMonthAndCrop(monthName: string, crop: Crop): string {
