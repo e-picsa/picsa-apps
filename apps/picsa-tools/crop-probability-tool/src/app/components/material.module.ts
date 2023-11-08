@@ -14,6 +14,7 @@ import { CROPS_DATA } from '../data/crops';
 const MODULES = [
   MatButtonModule,
   MatInputModule,
+  MatIconModule,
   MatTableModule,
   MatFormFieldModule,
   MatIconModule,

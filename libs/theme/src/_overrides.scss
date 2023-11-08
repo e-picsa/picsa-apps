@@ -129,6 +129,10 @@ enketo-webform {
 Intro.JS Tour
 *******************************************************************/
 .introjs-tooltip.picsa-tooltip {
+  // add fade in-out animation when manually setting opacity as part of size fixes
+  transition: opacity 0.5s ease-in-out 0s;
+
+  // style header to match primary styles
   .introjs-tooltip-header {
     background: var(--color-primary);
     color: white;
@@ -137,4 +141,9 @@ Intro.JS Tour
     color: white;
     line-height: 36px;
   }
+}
+// fix intro-js not adjusting correctly when focus element larger than screen size
+.introjs-tooltipReferenceLayer {
+  max-height: 100vh;
+  max-width: 100vw;
 }
