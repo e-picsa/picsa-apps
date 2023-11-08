@@ -31,6 +31,7 @@
       "@picsa/data": ["libs/data/index.ts"],
       "@picsa/environments": ["libs/environments/src/index.ts"],
       "@picsa/extension/*": ["apps/native/extension-toolkit/*"],
+      "@picsa/farmer-activity/*": ["apps/picsa-tools/farmer-activity/*"],
       "@picsa/i18n": ["libs/i18n/src/index.ts"],
       "@picsa/manual/*": ["apps/picsa-tools/manual-tool/*"],
       "@picsa/models": ["libs/models/src/index.ts"],

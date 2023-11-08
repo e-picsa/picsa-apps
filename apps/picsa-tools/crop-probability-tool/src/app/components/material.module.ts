@@ -13,6 +13,7 @@ import { CROPS_DATA } from '@picsa/data';
 const MODULES = [
   MatButtonModule,
   MatInputModule,
+  MatIconModule,
   MatTableModule,
   MatFormFieldModule,
   MatIconModule,
