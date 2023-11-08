@@ -24,6 +24,7 @@ export const HOME_TOUR: ITourStep[] = [
   {
     id: 'crop-probability',
     text: 'This is the crop-probability tool. It provides immediate calculations on which crops and varieties have the best chance to succeed, according to regions.',
+    position: 'left',
   },
   {
     id: 'option',

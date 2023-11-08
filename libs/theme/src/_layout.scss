@@ -37,7 +37,7 @@ body {
 // instead of using bottom use top with calc to avoid jumping
 $footer-height: 5em;
 .sticky-footer {
-  position: fixed;
+  position: static;
   height: $footer-height;
   top: calc(100vh - #{$footer-height});
   left: 0;

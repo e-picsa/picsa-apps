@@ -85,7 +85,6 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   /** Prompt manual load if resource file attachment updated */
   public async handleResourceAttachmentChange(attachment?: RxAttachment<IResourceFile>) {
     if (attachment) {
-      console.log('resource attachment changed', attachment);
       await this.loadManual();
       this.cdr.markForCheck();
     }

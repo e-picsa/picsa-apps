@@ -33,6 +33,7 @@ export class ExtensionToolkitMaterialModule {
       seasonal_calendar_tool: 'seasonal_calendar_tool',
       tutorial: 'tutorial',
       whatsapp: 'whatsapp',
+      farmer_activity: 'farmer_activity',
     };
     for (const [key, value] of Object.entries(icons)) {
       this.matIconRegistry.addSvgIcon(
