@@ -1,0 +1,9 @@
+<div class="dialog-container">
+    <h2 class="dialog-container" >Edit {{ data.month }} weather condition</h2>
+    <p>{{"Enter the weather condition for this month"}}</p>
+    <input  class="inputField" [(ngModel)]="weather" placeholder="Edit extra information" />
+    <div mat-dialog-actions>
+        <button mat-button (click)="onSave()">Save</button>
+        <button mat-button (click)="onClose()">Close</button>
+    </div>
+</div>

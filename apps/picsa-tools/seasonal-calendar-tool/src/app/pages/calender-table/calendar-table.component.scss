@@ -1,0 +1,136 @@
+.table-container{
+    padding-left: 1.5rem;
+    padding-bottom: 2rem;
+
+.calendar-table {
+    width: 90%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow-x: auto;
+
+  }
+  .header-section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90%;
+    align-items: center;
+    padding-top: 1.5rem;
+  }
+  
+  .calendar-table th,
+  .calendar-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .calendar-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .calendar-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .calendar-table td {
+    background-color: #fff;
+  }
+  
+
+  .calendar-table td:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .calendar-table td:first-child {
+    font-weight: bold;
+    text-align: left;
+    background-color: #f2f2f2;
+  }
+
+  .calendar-table th:first-child {
+    text-align: center;
+  }
+  
+ 
+  .calendar-table thead {
+    background-color: #333;
+    color: #000;
+  }
+  
+
+  .calendar-table th {
+    color: #000;
+  }
+
+  .calendar-table th,
+  .calendar-table td {
+    padding: 10px;
+  }
+  
+  
+  .calendar-table td,
+  .calendar-table th {
+    border-radius: 5px;
+  }
+  .y-axis-header{
+    display: flex;
+    flex-direction: row;
+    height: '100%';
+    align-items: center;
+    justify-content: space-between;
+  }
+  .activities-cell{
+    max-width: 7rem;
+    font-size: large;
+  }
+  .activity{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: .2rem;
+    font-size: 15px;
+    font-weight: 600;
+    width: fit-content;
+    padding: .7rem;
+    border: 1px solid var(--color-primary);
+    border-radius: 12px;
+}
+.user-activity-list{
+  margin-top: .5rem;
+  display: flex;
+  gap: .4rem;
+  flex-direction: column; 
+  justify-content: start;
+  width: 100%;
+  align-items: centeer; 
+}
+.crop-adder{
+  margin-top: 1rem;
+}
+.custom-trash-icon {
+  color: red; 
+}
+.y-axis-actions{
+  display: flex;
+  gap: 1rem;
+}
+select{
+  padding: .5rem;
+  width: 16rem;
+}
+.select-input-field{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.select-box{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+ 
+}

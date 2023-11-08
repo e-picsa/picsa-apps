@@ -1,0 +1,50 @@
+<div class="container">
+  <h2>Crops Seasonal calender</h2>
+  <div class="box">
+    <h2>Calender name</h2>
+    <input class="inputField" [(ngModel)]="calenderTitle" placeholder="Season of 85" />
+  </div>
+
+  <!-- Crops -->
+  <div class="box">
+    <h2>Season Crops</h2>
+    <div class="select-box">
+      <div class="select-input-field">
+        <picsa-form-crop-select [(ngModel)]="userCrops"></picsa-form-crop-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Time -->
+  <div>
+    <h2>Calendar Time</h2>
+    <div class="calender-box">
+      <div class="form-group">
+        <label for="startMonth">Start Month:</label>
+        <select id="startMonth" [(ngModel)]="startMonth">
+          <option value="" disabled selected>Select start month</option>
+          <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="numberOfMonths">Number of Months Needed:</label>
+        <input type="number" class="inputField" id="numberOfMonths" [(ngModel)]="numMonths" />
+      </div>
+    </div>
+    <h4 *ngIf="calendarMonths.length > 0">{{ "Enter the selected month's weather condition" | translate }}</h4>
+    <div class="monthsGrid">
+      <div *ngFor="let monthData of calendarMonths" class="month">
+        <div>{{ monthData.month }}</div>
+        <div>
+          <input placeholder="wet,dry..." type="text" class="inputField" [(ngModel)]="monthData.weather" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="submit-button">
+    <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">Create calender</button>
+  </div>
+  <div class="flag-message" *ngIf="showMessageFlag">
+    <p>{{ message }}</p>
+  </div>
+</div>

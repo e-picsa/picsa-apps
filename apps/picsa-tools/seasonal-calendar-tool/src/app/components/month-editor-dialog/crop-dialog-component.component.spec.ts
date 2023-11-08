@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HomeComponent } from './home.component';
+import { MonthDialogComponent } from './crop-dialog-component.component';
 
-describe('HomeComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('MonthDialogComponent', () => {
+  let component: MonthDialogComponent;
+  let fixture: ComponentFixture<MonthDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HomeComponent],
+      declarations: [MonthDialogComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(MonthDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
