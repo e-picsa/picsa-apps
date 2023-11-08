@@ -10,29 +10,7 @@
     <h2>Season Crops</h2>
     <div class="select-box">
       <div class="select-input-field">
-        <select [(ngModel)]="selectedCrop">
-          <option value="" disabled selected>Select a Crop</option>
-          <option *ngFor="let crop of crops" [value]="crop">{{ crop }}</option>
-          <option value="Other">Other</option>
-        </select>
-        <button mat-button mat-raised-button color="primary" (click)="addCrop()"
-          *ngIf="selectedCrop !== '' && selectedCrop !== 'Other'">
-          + {{ 'Add Selected' | translate }}
-        </button>
-      </div>
-      <div class="select-input-field">
-        <input class="inputField" *ngIf="selectedCrop === 'Other'" [(ngModel)]="customCrop"
-          placeholder="Enter custom crop" />
-        <button mat-button mat-raised-button color="primary" (click)="addCrop()" *ngIf="selectedCrop === 'Other'">
-          + {{ 'Add' | translate }}
-        </button>
-      </div>
-    </div>
-    <h3 *ngIf="userCrops.length > 0">Selected crops</h3>
-    <div class="user-activity-list">
-      <div *ngFor="let userCrop of userCrops; let i = index" class="activity">
-        {{ userCrop }}
-        <mat-icon (click)="removeCrop(i)" color="primary">clear</mat-icon>
+        <picsa-form-crop-select [(ngModel)]="userCrops"></picsa-form-crop-select>
       </div>
     </div>
   </div>
@@ -53,7 +31,7 @@
         <input type="number" class="inputField" id="numberOfMonths" [(ngModel)]="numMonths" />
       </div>
     </div>
-    <h4 *ngIf="calendarMonths.length > 0">{{"Enter the selected month's weather condition" | translate}}</h4>
+    <h4 *ngIf="calendarMonths.length > 0">{{ "Enter the selected month's weather condition" | translate }}</h4>
     <div class="monthsGrid">
       <div *ngFor="let monthData of calendarMonths" class="month">
         <div>{{ monthData.month }}</div>
@@ -64,9 +42,9 @@
     </div>
   </div>
   <div class="submit-button">
-    <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">Create  calender</button> 
+    <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">Create calender</button>
   </div>
   <div class="flag-message" *ngIf="showMessageFlag">
-    <p>{{message}}</p>
+    <p>{{ message }}</p>
   </div>
 </div>

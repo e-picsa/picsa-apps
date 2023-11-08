@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { RxCollection, RxDocument } from 'rxdb';
 
-import { CalendarDataEntry,COLLECTION } from '../schema';
+import { CalendarDataEntry, COLLECTION } from '../schema';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SeasonCalenderService {
-  constructor(private dbService: PicsaDatabase_V2_Service) {}
+export class SeasonCalenderService extends PicsaAsyncService {
+  constructor(private dbService: PicsaDatabase_V2_Service) {
+    super();
+  }
 
   /** Provide database options tool collection (with typings) */
   public get dbCollection() {
@@ -21,47 +24,45 @@ export class SeasonCalenderService {
   }
 
   /** Initialise collection required for storing data to database */
-  public async initialise() {
+  public override async init() {
     await this.dbService.ensureCollections({
       seasonal_calender_tool: COLLECTION,
     });
   }
 
-  public async addORUpdateData(calender: any,insertionType:string) {
- ;
-
+  public async addORUpdateData(calender: any, insertionType: string) {
     try {
       //handles instertion and update as long as the name is the same.
       let transformedCalenderData;
-      if(insertionType==='add'){
-       transformedCalenderData = {
-       ID: generateID(),
-        name: calender.name,
-        timeAndConditions: calender.timeAndConditions,
-        crops: calender.crops.map((cropName) => ({
-          name: cropName,
-          months: calender.timeAndConditions.map((monthData) => ({
-            month: monthData.month,
-            activities: [], // Initially empty
+      if (insertionType === 'add') {
+        transformedCalenderData = {
+          ID: generateID(),
+          name: calender.name,
+          timeAndConditions: calender.timeAndConditions,
+          crops: calender.crops.map((cropName) => ({
+            name: cropName,
+            months: calender.timeAndConditions.map((monthData) => ({
+              month: monthData.month,
+              activities: [], // Initially empty
+            })),
+            extraInformation: '',
           })),
-          extraInformation: "",
-        })),
-      };
-     }else{
-      // the table could be used to edit more information about the calender
-      transformedCalenderData = {
-        ID: calender.ID,
-        name: calender.name,
-        crops: calender.crops,
-        timeAndConditions: calender.timeAndConditions
+        };
+      } else {
+        // the table could be used to edit more information about the calender
+        transformedCalenderData = {
+          ID: calender.ID,
+          name: calender.name,
+          crops: calender.crops,
+          timeAndConditions: calender.timeAndConditions,
+        };
       }
-     }
 
       const res = await this.dbCollection.incrementalUpsert(transformedCalenderData);
       console.log('[calender]', res._data);
     } catch (err) {
       alert('Failed to add data, please try again');
-      console.error('calender.submit(): error:');
+      console.error(err);
       throw err;
     }
   }
@@ -71,12 +72,14 @@ export class SeasonCalenderService {
   }
   public async deleteCalenderByName(name: string) {
     try {
-      const calendar = await this.dbCollection.findOne({
-        selector: {
-          name: name,
-        },
-      }).exec();
-  
+      const calendar = await this.dbCollection
+        .findOne({
+          selector: {
+            name: name,
+          },
+        })
+        .exec();
+
       if (calendar) {
         await calendar.remove();
         console.log(`Calendar "${name}" has been deleted.`);
@@ -89,30 +92,25 @@ export class SeasonCalenderService {
     }
   }
 
-  public async getCalenderByName(name: string){
+  public async getCalenderByName(name: string) {
     try {
-      const result = await this.dbCollection.findOne(
-        {
+      const result = await this.dbCollection
+        .findOne({
           selector: {
-            name: name
-          }
-        }
-      ).exec()   
-      const calendar = result?._data
+            name: name,
+          },
+        })
+        .exec();
+      const calendar = result?._data;
       //console.log(calendar)
       if (calendar) {
         return calendar;
       } else {
-        return null; 
+        return null;
       }
     } catch (err) {
       console.error('Failed to get calendar by name:', err);
       throw err;
     }
   }
-
- 
-
 }
-
-

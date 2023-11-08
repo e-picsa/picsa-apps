@@ -1,9 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { Subject, takeUntil } from 'rxjs';
 
-import {  SeasonCalenderService } from './../../services/calender.data.service';
+import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-home',
@@ -25,7 +25,7 @@ export class HomeComponent implements OnDestroy {
   }
 
   private async subscribeToDbChanges() {
-    await this.service.initialise();
+    await this.service.ready();
 
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
@@ -49,7 +49,7 @@ export class HomeComponent implements OnDestroy {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
-          await this.service.deleteCalenderByName(this.dbCalendars[index].name);
+        await this.service.deleteCalenderByName(this.dbCalendars[index].name);
       }
     });
   }
@@ -58,7 +58,7 @@ export class HomeComponent implements OnDestroy {
     return Object.keys(calenderObject).map((key) => calenderObject[key]);
   }
 
-  async saveUpdates(calendar:any) {
+  async saveUpdates(calendar: any) {
     await this.service.addORUpdateData(calendar, 'update');
     this.editMode = -1;
   }
@@ -67,4 +67,3 @@ export class HomeComponent implements OnDestroy {
     this.router.navigate(['/seasonal-calendar/calendar-table', { calendarName }]);
   }
 }
- 

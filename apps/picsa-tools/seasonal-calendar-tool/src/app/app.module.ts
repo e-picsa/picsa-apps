@@ -3,12 +3,16 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaDb_V2_Module, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
+import {
+  PicsaDb_V2_Module,
+  PicsaFormsModule,
+  PicsaTranslateModule,
+  PicsaTranslateService,
+} from '@picsa/shared/modules';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SeasonalCalendarMaterialModule } from './components/material.module';
-
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -16,17 +20,19 @@ const StandaloneImports = [
   BrowserModule,
   BrowserAnimationsModule,
   NoopAnimationsModule,
-  PicsaTranslateModule.forRoot(),
   PicsaDb_V2_Module.forRoot(),
+  PicsaFormsModule.forRoot(),
+  PicsaTranslateModule.forRoot(),
 ];
 
 /** Common imports used in both standalone and embedded formats */
 export const APP_COMMON_IMPORTS = [
   HttpClientModule,
   SeasonalCalendarMaterialModule,
-  PicsaTranslateModule,
-  PicsaDb_V2_Module,
   PicsaCommonComponentsModule,
+  PicsaDb_V2_Module,
+  PicsaFormsModule,
+  PicsaTranslateModule,
 ];
 
 /*******************************************************************
