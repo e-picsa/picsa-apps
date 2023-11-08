@@ -129,11 +129,14 @@ enketo-webform {
 Intro.JS Tour
 *******************************************************************/
 .introjs-tooltip.picsa-tooltip {
+  // add fade in-out animation when manually setting opacity as part of size fixes
+  transition: opacity 0.5s ease-in-out 0s;
+
+  // style header to match primary styles
   .introjs-tooltip-header {
     background: var(--color-primary);
     color: white;
   }
-
   .introjs-skipbutton {
     color: white;
     line-height: 36px;

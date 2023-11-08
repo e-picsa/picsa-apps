@@ -126,12 +126,13 @@ export class TourService {
     this.intro.setOptions(this.initialOptions);
 
     this.intro.onbeforechange(async (el, stepIndex) => {
+      await this.fixPopupPositioning('before');
       await this.prepareNextStep(stepIndex);
       return true;
     });
 
     this.intro.onafterchange(async (el) => {
-      await this.fixPopupPositioning(el);
+      await this.fixPopupPositioning('after', el);
     });
 
     this.intro.onexit(async () => {
@@ -174,7 +175,7 @@ export class TourService {
           // include wait either side of scroll to provide time for any other dom changes to take effect
           await _wait(250);
           await this.scrollToElement(stepTargetEl);
-          await _wait(250);
+
           // Force intro to re-evaluate tooltip positioning now that target element scrolled into view
           this.intro.refresh();
         }
@@ -183,35 +184,55 @@ export class TourService {
   }
 
   /**
-   *
+   * A series of hacky workaround to fix issues identified with tooltip positioning
+   * when running tour on different sized devices
    * @param targetEl
    * @returns
    */
-  private async fixPopupPositioning(targetEl: HTMLElement) {
+  private async fixPopupPositioning(event: 'before' | 'after', targetEl?: HTMLElement) {
+    // Handle before trigger - revert changes from previous step and hide tooltip until after fix
+    if (event === 'before') {
+      const tooltipEl = document.querySelector<HTMLElement>('div.introjs-tooltip.picsa-tooltip');
+      if (tooltipEl) {
+        tooltipEl.style.opacity = '0';
+        await _wait(200);
+        tooltipEl.style.position = 'absolute';
+        await _wait(200);
+      }
+      return;
+    }
+    // Handle after trigger- ensure tooltips positioned correctly
     if (targetEl) {
       // ignore elements that fill full page (intro usually centers tooltip correctly)
       const targetRect = targetEl.getBoundingClientRect();
       if (targetRect.height > window.innerHeight) {
         // ensure el was scrolled properly and intro does not accidentally rescroll/move
         // (happens if focus element larger than screen size)
-        targetEl.scrollIntoView({ behavior: 'instant', block: 'start', inline: 'nearest' });
+        targetEl.scrollIntoView({ behavior: 'instant', block: 'start', inline: 'start' });
         return;
       }
       // allow tooltip animation to complete before trying to adjust margins
       await _wait(350);
       const tooltipEl = await this.waitForElement('div.introjs-tooltip.picsa-tooltip');
       if (tooltipEl) {
-        // Fix bug where sometimes popup overlaid on top of target el
-        // DEPRECATED - seems to not be needed if separate tours used to load dynamic content
-        return;
-        // const tooltipRect = tooltipEl.getBoundingClientRect();
-        // if (tooltipRect.top < targetRect.bottom) {
-        //   const marginTop = parseInt(tooltipEl.style.marginTop);
-        //   // try to place tooltip 8px below target
-        //   const adjustment = targetRect.bottom - tooltipRect.top + 8;
-        //   tooltipEl.style.marginTop = `${marginTop + adjustment}px`;
-        //   // TODO - check if can fit first
-        // }
+        // fix case  on small devices where tooltip may be off screen
+        const { left, right, width } = tooltipEl.getBoundingClientRect();
+        const { innerWidth } = window;
+        const xOffScreen = left < 0 || right > innerWidth;
+        if (xOffScreen) {
+          // adjust horizontal positioning to account for any page scroll
+          let scrollX = 0;
+          document.querySelectorAll('.page').forEach(({ scrollLeft }) => (scrollX = Math.max(scrollLeft, scrollX)));
+          // Adjust x-axis to sit fixed in middle of screen
+          // adjust y-axis to sit below element or in center of screen
+          const adjustedLeft = Math.round((innerWidth - width) / 2);
+          const adjustedTop = targetEl.getBoundingClientRect().bottom + 16;
+          tooltipEl.style.position = 'fixed';
+          tooltipEl.style.left = `${adjustedLeft}px`;
+          tooltipEl.style.top = `${adjustedTop}px`;
+        }
+        await _wait(500);
+        tooltipEl.style.opacity = '1';
       }
     }
   }
@@ -222,7 +243,11 @@ export class TourService {
    * https://github.com/w3c/csswg-drafts/issues/3744
    */
   private async scrollToElement(el: HTMLElement) {
-    el.style.scrollMarginTop = '32px';
+    const { paddingTop, marginTop } = el.style;
+    // Try to ensure element is scrolled to with 32px top space (deduct existing padding and margins)
+    const scrollMarginTop = `calc(32px - ${paddingTop || '0px'} - ${marginTop || '0px'})`;
+    el.style.scrollMarginTop = scrollMarginTop;
+    // Setup scroll observer
     let observer: IntersectionObserver;
     await new Promise((resolve) => {
       observer = new IntersectionObserver(
@@ -237,12 +262,14 @@ export class TourService {
         {
           root: null,
           rootMargin: '0px',
-          threshold: 0.9,
+          threshold: 1.0,
         }
       );
       observer.observe(el);
-      el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+      el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
     });
+    // additional wait to ensure animations complete
+    await _wait(500);
   }
 
   /** Add support for route change and element click event callbacks */
@@ -354,4 +381,10 @@ function doElementsOverlap(el1: HTMLElement, el2: HTMLElement) {
     return a.right > b.left && a.left < b.right;
   }
   return isVerticalOverlap() && isHorizontalOverlap();
+}
+
+function isOffScreen(el: HTMLElement) {
+  const { left, right, top, bottom } = el.getBoundingClientRect();
+  const { innerWidth, innerHeight } = window;
+  return left < 0 || top < 0 || right > innerWidth || bottom > innerHeight;
 }

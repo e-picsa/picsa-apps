@@ -90,10 +90,10 @@ export const CROP_PROBABILITY_TABLE_TOUR: ITourStep[] = [
   {
     customElement: {
       autoScroll: false,
-      selector: 'tbody>tr',
+      selector: 'tbody>tr>td:nth-of-type(5)',
     },
     text: translateMarker(
-      'The maturity and water requirements can be used to calculate the chance of satisfying these conditions for different planting dates'
+      'The maturity and water requirements can be used to calculate the chance of satisfying these conditions for a specific planting date'
     ),
   },
   {
