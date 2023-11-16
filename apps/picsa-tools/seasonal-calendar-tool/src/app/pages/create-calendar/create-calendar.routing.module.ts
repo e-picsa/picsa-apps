@@ -5,7 +5,7 @@ import { CreateCalendarComponent } from './create-calendar.component';
 
 const routes: Routes = [
     {
-        path: 'create-calendar',
+        path: 'create',
         component: CreateCalendarComponent,
     }
 ];

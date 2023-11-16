@@ -33,9 +33,8 @@ export class CalendarTableComponent implements OnInit {
   async ngOnInit() {
     
     await this.service.ready();
-    this.route.paramMap.subscribe((params) => {
-      const id = params['id'];
-      console.log(params)
+    this.route.params.subscribe((params) => {
+      const {id} = params;
       if (id) {
         this.fetchData(id)
           .then((resData) => {
