@@ -8,12 +8,12 @@ export const ROUTES_COMMON: Routes = [
     title: 'Seasonal Calendar',
   },
   {
-    path: 'create-calendar',
+    path: 'create',
     loadChildren: () => import('./pages/create-calendar/create-calendar.module').then((m) => m.CreateCalendarModule),
     title: 'Create Calendar',
   },
   {
-    path: 'calendar-table',
+    path: ':id',
     loadChildren: () => import('./pages/calender-table/calendar-table.module').then((m) => m.CalenderTableModule),
     title: 'Calendar Table',
   },

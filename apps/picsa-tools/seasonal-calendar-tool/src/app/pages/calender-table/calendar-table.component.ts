@@ -31,11 +31,13 @@ export class CalendarTableComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    
     await this.service.ready();
     this.route.paramMap.subscribe((params) => {
-      const calendarName = params.get('calendarName');
-      if (calendarName) {
-        this.fetchData(calendarName)
+      const id = params['id'];
+      console.log(params)
+      if (id) {
+        this.fetchData(id)
           .then((resData) => {
             //console.log(resData)
             this.calendarData = resData;
@@ -52,8 +54,8 @@ export class CalendarTableComponent implements OnInit {
       }
     });
   }
-  async fetchData(calendarName: string) {
-    return await this.service.getCalenderByName(calendarName);
+  async fetchData(id: string) {
+    return await this.service.getCalenderById(id);
   }
 
   getActivitiesForMonthAndCrop(monthName: string, crop: Crop): string {

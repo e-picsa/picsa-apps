@@ -5,7 +5,7 @@ import { CalendarTableComponent } from './calendar-table.component';
 
 const routes: Routes = [
     {
-        path: 'calendar-table',
+        path: ':id',
         component: CalendarTableComponent,
     }
 ];

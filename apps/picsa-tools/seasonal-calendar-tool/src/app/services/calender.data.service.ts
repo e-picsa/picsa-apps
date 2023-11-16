@@ -92,12 +92,12 @@ export class SeasonCalenderService extends PicsaAsyncService {
     }
   }
 
-  public async getCalenderByName(name: string) {
+  public async getCalenderById(ID: string) {
     try {
       const result = await this.dbCollection
         .findOne({
           selector: {
-            name: name,
+            ID: ID,
           },
         })
         .exec();

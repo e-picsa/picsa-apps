@@ -12,7 +12,7 @@
     <!-- map calenders -->
     <div *ngIf="dbCalendars.length > 0" class="items-container" >
     <div *ngFor="let calendar of dbCalendars;  let i = index" class="calendars-display">
-      <div (click)="editMode!==i ? redirectToCalendarTable(calendar.name, i) : null">
+      <div (click)="editMode!==i ? redirectToCalendarTable(calendar.ID, i) : null">
         <div *ngIf="editMode!==i; else editField">
           {{ calendar.name }}
         </div>
