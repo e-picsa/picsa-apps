@@ -51,10 +51,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "picsa-apps-content-dashboard:build:production"
+          "buildTarget": "picsa-apps-content-dashboard:build:production"
         },
         "development": {
-          "browserTarget": "picsa-apps-content-dashboard:build:development"
+          "buildTarget": "picsa-apps-content-dashboard:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -62,11 +62,11 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "picsa-apps-content-dashboard:build"
+        "buildTarget": "picsa-apps-content-dashboard:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/picsa-apps/content-dashboard/**/*.ts", "apps/picsa-apps/content-dashboard/**/*.html"]
       }
@@ -75,8 +75,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/content-dashboard"],
       "options": {
-        "jestConfig": "apps/picsa-apps/content-dashboard/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/picsa-apps/content-dashboard/jest.config.ts"
       }
     }
   },

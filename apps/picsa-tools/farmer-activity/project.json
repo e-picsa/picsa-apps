@@ -50,10 +50,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "farmer-activity:build:production"
+          "buildTarget": "farmer-activity:build:production"
         },
         "development": {
-          "browserTarget": "farmer-activity:build:development"
+          "buildTarget": "farmer-activity:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -61,11 +61,11 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "farmer-activity:build"
+        "buildTarget": "farmer-activity:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/farmer-activity/**/*.ts", "apps/picsa-tools/farmer-activity/**/*.html"]
@@ -75,14 +75,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/picsa-tools/farmer-activity/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "apps/picsa-tools/farmer-activity/jest.config.ts"
       }
     },
     "serve-static": {

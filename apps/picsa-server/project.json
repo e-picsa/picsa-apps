@@ -32,7 +32,6 @@
         "cwd": "apps/picsa-server"
       }
     },
-
     "test-functions": {
       "executor": "nx:run-commands",
       "dependsOn": [],
@@ -42,7 +41,6 @@
         "cwd": "apps/picsa-server/supabase/functions"
       }
     },
-
     "gen-types": {
       "executor": "nx:run-commands",
       "dependsOn": [],
