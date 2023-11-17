@@ -1,5 +1,5 @@
 import { CdkPortalOutlet, Portal, PortalOutlet } from '@angular/cdk/portal';
-import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -112,8 +112,8 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.style = style;
           }
           this.setEndPortal(endContent);
-
-          this.hideBackButton = hideBackButton;
+          // hide back button when set or if on homepage
+          this.hideBackButton = hideBackButton || location.pathname === '/';
         });
       });
   }
