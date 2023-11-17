@@ -111,21 +111,19 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           if (style) {
             this.style = style;
           }
-          if (endContent && !endContent.isAttached) {
-            this.endPortal = endContent;
-          }
+          this.setEndPortal(endContent);
 
           this.hideBackButton = hideBackButton;
         });
       });
   }
   private setEndPortal(endContent?: Portal<any>) {
-    if (this.endPortal?.isAttached) {
-      console.log('update end portal', endContent, this.endPortal);
+    if (!endContent) {
+      this.endPortal = undefined;
+      return;
+    }
+    if (!endContent.isAttached) {
       this.endPortal = endContent;
-    } else {
-      console.log('retry set portal');
-      // return setTimeout(() => this.setEndPortal(endContent), 200);
     }
   }
 }
