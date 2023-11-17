@@ -127,7 +127,7 @@
     "@nx/nest": "17.1.2",
     "@nx/web": "17.1.2",
     "@nx/workspace": "17.1.2",
-    "@nxext/stencil": "^16.3.0",
+    "@nxext/stencil": "^17.0.2",
     "@schematics/angular": "17.0.1",
     "@stencil/core": "3.2.2",
     "@stencil/sass": "^3.0.2",
