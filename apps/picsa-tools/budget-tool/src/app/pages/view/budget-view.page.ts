@@ -74,7 +74,7 @@ export class BudgetViewPage implements OnInit, OnDestroy {
         if (this.isEditorOpen) {
           title = await this.translateService.translateText(label);
         }
-        this.componentsService.setHeader({ title });
+        this.componentsService.patchHeader({ title });
       }
     });
   }

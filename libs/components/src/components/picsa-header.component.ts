@@ -17,7 +17,10 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   template: `
     <header [attr.data-style]="style">
       <div class="start-content">
-        <back-button [style.visibility]="hideBackButton ? 'hidden' : 'visible'"></back-button>
+        <back-button
+          [style.visibility]="hideBackButton ? 'hidden' : 'visible'"
+          [variant]="style === 'primary' ? 'white' : 'primary'"
+        ></back-button>
       </div>
       <h1 class="central-content">
         <span class="title">{{ title | translate }}</span>
