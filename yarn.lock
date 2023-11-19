@@ -17391,16 +17391,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-extended-pdf-viewer@npm:^16.2.16":
-  version: 16.2.16
-  resolution: "ngx-extended-pdf-viewer@npm:16.2.16"
+"ngx-extended-pdf-viewer@npm:^18.1.7":
+  version: 18.1.7
+  resolution: "ngx-extended-pdf-viewer@npm:18.1.7"
   dependencies:
     lodash.deburr: ^4.1.0
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": ">=12.0.0 <16.0.0"
-    "@angular/core": ">=12.0.0 <16.0.0"
-  checksum: a08ee46989b7d0a00d11fd60c568a3a78a0508317630a6de22eb663b0d8010a5967e5b2c9f7191e8a68bb22785d8be917d8421af5788cf02e7d8342aa7444d46
+    "@angular/common": ">=12.0.0 <18.0.0"
+    "@angular/core": ">=12.0.0 <18.0.0"
+  checksum: 40aeae858e05f2af40fa5e3e6a13618e702deca326cfdd7058c191e6132f40665f1328736e62ac547098c022b1abca454086de6cc5ac51b85cb0eeeb3700108a
   languageName: node
   linkType: hard
 
@@ -18659,7 +18659,7 @@ __metadata:
     mobx: ^6.7.0
     mobx-angular: ^4.7.1
     ng-packagr: 17.0.1
-    ngx-extended-pdf-viewer: ^16.2.16
+    ngx-extended-pdf-viewer: ^18.1.7
     ngx-file-drop: 14.0.2
     ngx-lottie: ^10.0.0
     nx: 17.1.2

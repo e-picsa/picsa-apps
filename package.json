@@ -90,7 +90,7 @@
     "lottie-web": "^5.10.2",
     "mobx": "^6.7.0",
     "mobx-angular": "^4.7.1",
-    "ngx-extended-pdf-viewer": "^16.2.16",
+    "ngx-extended-pdf-viewer": "^18.1.7",
     "ngx-file-drop": "14.0.2",
     "ngx-lottie": "^10.0.0",
     "papaparse": "^5.3.2",
