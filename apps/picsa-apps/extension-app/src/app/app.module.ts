@@ -2,7 +2,6 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { IonicModule } from '@ionic/angular';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaAnimationsModule } from '@picsa/shared/features';
@@ -40,7 +39,6 @@ import { AppRoutingModule } from './app-routing.module';
     PicsaCommonComponentsModule,
     HttpClientModule,
     AppRoutingModule,
-    IonicModule.forRoot(),
   ],
   bootstrap: [AppComponent],
 })

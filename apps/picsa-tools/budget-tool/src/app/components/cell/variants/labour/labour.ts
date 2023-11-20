@@ -35,8 +35,3 @@ export class BudgetCellLabourComponent {
     return new Array(length).fill(value) as T[];
   }
 }
-
-const baseAllocation = {
-  days: [],
-  people: [],
-};

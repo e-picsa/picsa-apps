@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule } from '@picsa/shared/features';
@@ -59,7 +58,6 @@ const components = [
 @NgModule({
   declarations: components,
   imports: [
-    IonicModule,
     CommonModule,
     FormsModule,
     BudgetMaterialModule,
