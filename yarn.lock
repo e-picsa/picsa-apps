@@ -573,7 +573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/core@npm:^6.3.0":
+"@awesome-cordova-plugins/core@npm:^6.4.0":
   version: 6.4.0
   resolution: "@awesome-cordova-plugins/core@npm:6.4.0"
   dependencies:
@@ -584,7 +584,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/file-opener@npm:^6.3.0":
+"@awesome-cordova-plugins/file-opener@npm:^6.4.0":
   version: 6.4.0
   resolution: "@awesome-cordova-plugins/file-opener@npm:6.4.0"
   dependencies:
@@ -596,7 +596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/file@npm:^6.3.0":
+"@awesome-cordova-plugins/file@npm:^6.4.0":
   version: 6.4.0
   resolution: "@awesome-cordova-plugins/file@npm:6.4.0"
   dependencies:
@@ -608,7 +608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/network@npm:^6.3.0":
+"@awesome-cordova-plugins/network@npm:^6.4.0":
   version: 6.4.0
   resolution: "@awesome-cordova-plugins/network@npm:6.4.0"
   dependencies:
@@ -620,7 +620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome-cordova-plugins/social-sharing@npm:^6.3.0":
+"@awesome-cordova-plugins/social-sharing@npm:^6.4.0":
   version: 6.4.0
   resolution: "@awesome-cordova-plugins/social-sharing@npm:6.4.0"
   dependencies:
@@ -4142,35 +4142,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ionic-native/core@npm:^5.36.0":
-  version: 5.36.0
-  resolution: "@ionic-native/core@npm:5.36.0"
-  dependencies:
-    "@types/cordova": latest
-  peerDependencies:
-    rxjs: ^5.5.0 || ^6.5.0
-  checksum: 3c376ecf98fa9cc8f00a977872afd2e7e7076bfc31779ed0f2246013696b1c2f2c84286b91103f26a5c73611b4f0e385a71fe86f6a977a59e40e6640a5fe8bc6
-  languageName: node
-  linkType: hard
-
-"@ionic/angular@npm:6.5.2":
-  version: 6.5.2
-  resolution: "@ionic/angular@npm:6.5.2"
-  dependencies:
-    "@ionic/core": 6.5.2
-    ionicons: ^6.1.1
-    jsonc-parser: ^3.0.0
-    tslib: ^2.0.0
-  peerDependencies:
-    "@angular/core": ">=12.0.0"
-    "@angular/forms": ">=12.0.0"
-    "@angular/router": ">=12.0.0"
-    rxjs: ">=6.6.0"
-    zone.js: ">=0.11.0"
-  checksum: c9ca40cec673350593e98f71df88c018e6a0ce56643eccec143d3fdcf4e7006b1bb83a5e91be81b64ff8f36541f4f9ded27648172c5a0f38ec541cd5222918e7
-  languageName: node
-  linkType: hard
-
 "@ionic/cli-framework-output@npm:^2.2.5":
   version: 2.2.6
   resolution: "@ionic/cli-framework-output@npm:2.2.6"
@@ -4179,17 +4150,6 @@ __metadata:
     debug: ^4.0.0
     tslib: ^2.0.1
   checksum: ac39c57130f4c03a0378b0269f32412a298c2f43fa6a87abc216952a51e2ee68464b8c3e70e82c0139d8f892f8986b855f971b7bb5768a857144dd4f9eacb699
-  languageName: node
-  linkType: hard
-
-"@ionic/core@npm:6.5.2":
-  version: 6.5.2
-  resolution: "@ionic/core@npm:6.5.2"
-  dependencies:
-    "@stencil/core": ^2.18.0
-    ionicons: ^6.1.1
-    tslib: ^2.1.0
-  checksum: 889472605b46bc1221325269b2be5d06d443d79223f214ee457f5860c72fcd05cbf8a11705b10e6dc58c7f9951c3447c6a571ad8267fa4d01cb9f25c453ec671
   languageName: node
   linkType: hard
 
@@ -6851,15 +6811,6 @@ __metadata:
   bin:
     stencil: bin/stencil
   checksum: ed30f202ed16f4506f2ded18dac0b2afbb080b53580f1d387c492c91cd5ab4ac3caa04baf646095ae01c5312d90ab834794b01f94c8e56a343666282869caf9d
-  languageName: node
-  linkType: hard
-
-"@stencil/core@npm:^2.18.0":
-  version: 2.22.3
-  resolution: "@stencil/core@npm:2.22.3"
-  bin:
-    stencil: bin/stencil
-  checksum: b43fd0c0e10c8f6831821635de650f49c8d94eab75aa8e9214b723511cfd1f90fbf1ad33a79b4d2f165ef9ca6bee02839aac7b0a234ec6082b5959f98069f397
   languageName: node
   linkType: hard
 
@@ -9662,13 +9613,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "capacitor-video-player@npm:5.0.1"
+"capacitor-video-player@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "capacitor-video-player@npm:5.0.3"
   peerDependencies:
     "@capacitor/core": ^5.0.0
     hls.js: ^1.4.0
-  checksum: d316c4062bc0ad5b2c5104b127871c2f33bfadc4826e604856e635769fba15b417b90f8e062ee924544ae61cf588846115a0ceb4503f91a1fa34295c0db8afe1
+  checksum: d904feb2883ac3a0f6732ccd101615050b9a632490c09ffc8a0e750f72902b59a19dca401b15f071f171ddc118957fab6ec4ed0b67d46df411fc8b80f2ee3ebf
   languageName: node
   linkType: hard
 
@@ -10328,10 +10279,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cordova-plugin-file@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "cordova-plugin-file@npm:7.0.0"
-  checksum: bcf64705b80dea5a0ce598208f75bc080f2909e262e857477d34cbfefa7b60fe93df8a3015b1ea37f31142f3aa225b89591dcdaea54e3ddd6cc8a119ae0f3932
+"cordova-plugin-file@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cordova-plugin-file@npm:8.0.1"
+  checksum: 58b7e34cfd482307fff9a8d3ea20129436f40035e5a261cc8424db74ec24e03942ab87298153be35c162161580bf817971e7ef107ce489ef477a82f8e2c8f7b5
   languageName: node
   linkType: hard
 
@@ -14422,15 +14373,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ionicons@npm:^6.1.1":
-  version: 6.1.3
-  resolution: "ionicons@npm:6.1.3"
-  dependencies:
-    "@stencil/core": ^2.18.0
-  checksum: c63aa3e0f83129129a836f97f07547b6c53a244e84a41f838a70b4eb17ddc9d926526e1fdee63f897a32300523192fe0c0889aa38617b9df01d15c62e9cb3a37
-  languageName: node
-  linkType: hard
-
 "ip@npm:^2.0.0":
   version: 2.0.0
   resolution: "ip@npm:2.0.0"
@@ -15705,7 +15647,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:3.2.0, jsonc-parser@npm:^3.0.0, jsonc-parser@npm:^3.2.0":
+"jsonc-parser@npm:3.2.0, jsonc-parser@npm:^3.2.0":
   version: 3.2.0
   resolution: "jsonc-parser@npm:3.2.0"
   checksum: 946dd9a5f326b745aa326d48a7257e3f4a4b62c5e98ec8e49fa2bdd8d96cef7e6febf1399f5c7016114fd1f68a1c62c6138826d5d90bc650448e3cf0951c53c7
@@ -18369,11 +18311,11 @@ __metadata:
     "@angular/router": 17.0.3
     "@angular/service-worker": 17.0.3
     "@asymmetrik/ngx-leaflet": ^14.0.1
-    "@awesome-cordova-plugins/core": ^6.3.0
-    "@awesome-cordova-plugins/file": ^6.3.0
-    "@awesome-cordova-plugins/file-opener": ^6.3.0
-    "@awesome-cordova-plugins/network": ^6.3.0
-    "@awesome-cordova-plugins/social-sharing": ^6.3.0
+    "@awesome-cordova-plugins/core": ^6.4.0
+    "@awesome-cordova-plugins/file": ^6.4.0
+    "@awesome-cordova-plugins/file-opener": ^6.4.0
+    "@awesome-cordova-plugins/network": ^6.4.0
+    "@awesome-cordova-plugins/social-sharing": ^6.4.0
     "@biesbjerg/ngx-translate-extract-marker": ^1.0.0
     "@capacitor-community/firebase-analytics": ^5.0.1
     "@capacitor-community/firebase-crashlytics": ^3.0.0
@@ -18386,8 +18328,6 @@ __metadata:
     "@capacitor/device": ^5.0.6
     "@capacitor/filesystem": ^5.1.4
     "@capacitor/network": ^5.0.6
-    "@ionic-native/core": ^5.36.0
-    "@ionic/angular": 6.5.2
     "@ngx-translate/core": ~14.0.0
     "@ngx-translate/http-loader": ~7.0.0
     "@nx/angular": 17.1.2
@@ -18421,9 +18361,9 @@ __metadata:
     autoprefixer: ^10.4.0
     c3: ^0.7.20
     capacitor-blob-writer: ^1.1.14
-    capacitor-video-player: ^5.0.1
+    capacitor-video-player: ^5.0.3
     cordova-plugin-codeplay-share-own-apk: 0.0.7
-    cordova-plugin-file: ^7.0.0
+    cordova-plugin-file: ^8.0.1
     cordova-plugin-file-opener2: ^4.0.0
     cordova-plugin-x-socialsharing: ^6.0.4
     cspell: ^6.31.1
