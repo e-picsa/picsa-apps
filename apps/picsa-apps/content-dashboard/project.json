@@ -34,7 +34,8 @@
             }
           ],
           "fileReplacements": [],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "namedChunks": true
         },
         "development": {
           "buildOptimizer": false,
