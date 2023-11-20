@@ -14,7 +14,7 @@ export class CreateCalendarComponent implements OnInit {
   constructor(private router: Router, private service: SeasonCalenderService) {
     this.generateCalendarMonths();
     this.data = this.router?.getCurrentNavigation()?.extras?.state;
-    console.log(this.data);
+    //console.log(this.data);
   }
   calenderTitle = '';
   selectedCrop = '';
@@ -43,8 +43,9 @@ export class CreateCalendarComponent implements OnInit {
   message = 'Please fill all the fields.';
   showMessageFlag = false;
 
-  private _numMonths = 0;
-  private _startMonth = '';
+  private _numMonths  =0;
+  private _startMonth = ''
+  
 
   @Input() set numMonths(value: number) {
     this._numMonths = value;
@@ -65,7 +66,9 @@ export class CreateCalendarComponent implements OnInit {
   }
   async ngOnInit() {
     await this.service.ready();
+    
   }
+  
 
   generateCalendarMonths() {
     const startIndex = this.months.indexOf(this.startMonth);
@@ -80,6 +83,7 @@ export class CreateCalendarComponent implements OnInit {
     const selectedMonth = this.calendarMonths.find((item) => item.month === month);
     return selectedMonth ? selectedMonth.weather : '';
   }
+  
 
   onSubmition() {
     if (this.calendarMonths.length > 0 && this.userCrops.length > 0 && this.calenderTitle) {
@@ -91,6 +95,7 @@ export class CreateCalendarComponent implements OnInit {
       this.service.addORUpdateData(data, 'add');
       this.router.navigate(['/seasonal-calendar']);
     } else {
+      // verify fields
       this.showMessageFlag = true;
     }
   }
