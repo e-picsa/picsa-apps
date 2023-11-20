@@ -17,7 +17,6 @@ import { BudgetStore } from '../../store/budget.store';
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetViewPage implements OnInit, OnDestroy {
-  loader: HTMLIonLoadingElement;
   isEditorOpen = false;
   periodLabel: string;
   componentDestroyed$ = new Subject<boolean>();

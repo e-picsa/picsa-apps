@@ -3,7 +3,6 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
-import { NetworkProvider } from '../services/native/network';
 import { PrintProvider } from '../services/native/print';
 
 @NgModule({
@@ -18,7 +17,7 @@ export class PicsaNativeModule {
   static forRoot(): ModuleWithProviders<PicsaNativeModule> {
     return {
       ngModule: PicsaNativeModule,
-      providers: [PrintProvider, NetworkProvider, SocialSharing, File, FileOpener],
+      providers: [PrintProvider, SocialSharing, File, FileOpener],
     };
   }
 }
