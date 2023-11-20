@@ -1,14 +1,14 @@
 {
   "name": "@picsa/webcomponents",
   "version": "0.0.1",
-  "main": "../../dist/libs/webcomponents/dist/index.cjs.js",
-  "module": "../../dist/libs/webcomponents/dist/index.js",
-  "es2015": "../../dist/libs/webcomponents/dist/esm/index.mjs",
-  "es2017": "../../dist/libs/webcomponents/dist/esm/index.mjs",
-  "types": "../../dist/libs/webcomponents/dist/types/components.d.ts",
-  "collection": "../../dist/libs/webcomponents/dist/collection/collection-manifest.json",
-  "collection:main": "../../dist/libs/webcomponents/dist/collection/index.js",
-  "unpkg": "../../dist/libs/webcomponents/dist/picsa-webcomponents/picsa-webcomponents.js",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "es2015": "./dist/esm/index.mjs",
+  "es2017": "./dist/esm/index.mjs",
+  "types": "./dist/types/components.d.ts",
+  "collection": "./dist/collection/collection-manifest.json",
+  "collection:main": "./dist/collection/index.js",
+  "unpkg": "./dist/picsa-webcomponents/picsa-webcomponents.js",
   "files": [
     "dist/",
     "loader/"

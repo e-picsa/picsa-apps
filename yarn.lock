@@ -2472,12 +2472,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/android@npm:5.4.1":
-  version: 5.4.1
-  resolution: "@capacitor/android@npm:5.4.1"
+"@capacitor/android@npm:5.5.1":
+  version: 5.5.1
+  resolution: "@capacitor/android@npm:5.5.1"
   peerDependencies:
-    "@capacitor/core": ^5.4.0
-  checksum: 9abd6270209b414811ff63ad64ec4d6393f72497dfdb88578d0be47db493fd32a3352a4797095b3520cbc38e9532a6620f589639fcb22abfbaea274aca5754f1
+    "@capacitor/core": ^5.5.0
+  checksum: 5d7d4dc49a0aad961cf5cdc660e125442ec0d97407687ff8af5ef67a423cb2b549ac2bcdf19eecbbe850764c5762c88da819653db3b82d0e2bbec644aa456d3a
   languageName: node
   linkType: hard
 
@@ -2499,9 +2499,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/cli@npm:5.4.1":
-  version: 5.4.1
-  resolution: "@capacitor/cli@npm:5.4.1"
+"@capacitor/cli@npm:5.5.1":
+  version: 5.5.1
+  resolution: "@capacitor/cli@npm:5.5.1"
   dependencies:
     "@ionic/cli-framework-output": ^2.2.5
     "@ionic/utils-fs": ^3.1.6
@@ -2523,16 +2523,16 @@ __metadata:
   bin:
     cap: bin/capacitor
     capacitor: bin/capacitor
-  checksum: 13d104a7c8b7a52df01d64c3b44a830709dd8cb35e795ff1e67100b260de0d79a7c8356e8862ef6f29f5ea0e1b539e23192c2afa6a19e94d84d7bd807b04897b
+  checksum: e41dd52775082bde25112de83380e72de986fef175a2440850a9b4fd02e1e4dd1a934df3623fc368f713f7834bd63a6018fd26e51c27bac3bbd168e40ed45911
   languageName: node
   linkType: hard
 
-"@capacitor/core@npm:5.4.1":
-  version: 5.4.1
-  resolution: "@capacitor/core@npm:5.4.1"
+"@capacitor/core@npm:5.5.1":
+  version: 5.5.1
+  resolution: "@capacitor/core@npm:5.5.1"
   dependencies:
     tslib: ^2.1.0
-  checksum: ec6a9f484b3d30e0813b63281634c4a722ed07f47f85d1e7d7d578b7833812325e0014a8f1e8482f23d3826b57736e119ef6b98547934228ba089abc608fd2b4
+  checksum: 6b729965f5a67c6d88018ea09bcc043b09c87a2128eb5b79160de26e2ea1e49ca68d332875a2c60b32a42996d2abd83339f2dbb4fa7295581c44e37965c264e9
   languageName: node
   linkType: hard
 
@@ -18378,11 +18378,11 @@ __metadata:
     "@capacitor-community/firebase-analytics": ^5.0.1
     "@capacitor-community/firebase-crashlytics": ^3.0.0
     "@capacitor-firebase/performance": ^5.1.0
-    "@capacitor/android": 5.4.1
+    "@capacitor/android": 5.5.1
     "@capacitor/app": ^5.0.6
     "@capacitor/browser": ^5.1.0
-    "@capacitor/cli": 5.4.1
-    "@capacitor/core": 5.4.1
+    "@capacitor/cli": 5.5.1
+    "@capacitor/core": 5.5.1
     "@capacitor/device": ^5.0.6
     "@capacitor/filesystem": ^5.1.4
     "@capacitor/network": ^5.0.6
