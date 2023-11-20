@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { _wait } from '@picsa/utils';
 import { RxAttachment, RxDocument } from 'rxdb';
@@ -13,6 +21,7 @@ type IDownloadStatus = 'ready' | 'pending' | 'complete' | 'error';
   selector: 'resource-download',
   templateUrl: './resource-download.component.html',
   styleUrls: ['./resource-download.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceDownloadComponent implements OnDestroy {
   public downloadStatus: IDownloadStatus;
@@ -39,7 +48,11 @@ export class ResourceDownloadComponent implements OnDestroy {
   /** Emit downloaded file updates */
   @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
 
-  constructor(private service: ResourcesToolService, private fileService: FileService) {}
+  constructor(
+    private service: ResourcesToolService,
+    private fileService: FileService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   public get sizePx() {
     return `${this.size}px`;
@@ -76,21 +89,26 @@ export class ResourceDownloadComponent implements OnDestroy {
         if (progress === 100) {
           downloadData = data as Blob;
         }
+        this.cdr.markForCheck();
       },
       error: (error) => {
         this.downloadStatus = 'error';
+        this.cdr.markForCheck();
+        console.error(error);
         throw error;
       },
       complete: async () => {
         // give small timeout to allow UI to update
-        await _wait(50);
-        await this.persistDownload(downloadData);
+        await _wait(100);
+        this.persistDownload(downloadData);
       },
     });
   }
 
   private async persistDownload(data: Blob) {
     await this.service.putFileAttachment(this._dbDoc, data);
+    this.downloadStatus = 'complete';
+    this.cdr.markForCheck();
   }
 
   /** Cancel ongoing download */

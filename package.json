@@ -24,7 +24,7 @@
     "test": "nx test",
     "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
-    "cache:clear": "nx reset",
+    "cache:clear": "nx reset && yarn build --skip-nx-cache",
     "version": "ts-node ./tools/workflows/version.ts",
     "i18n": "nx run i18n:build && nx run i18n:spellcheck"
   },
@@ -93,9 +93,6 @@
     "ngx-lottie": "^10.0.0",
     "papaparse": "^5.3.2",
     "parse": "3.4.2",
-    "pouchdb": "^8.0.1",
-    "pouchdb-adapter-http": "^8.0.1",
-    "pouchdb-adapter-idb": "^8.0.1",
     "rxdb": "^14.11.1",
     "rxjs": "~7.8.0",
     "save-svg-as-png": "^1.4.17",
