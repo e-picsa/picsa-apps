@@ -63,7 +63,7 @@ export class HomeComponent implements OnDestroy {
     this.editMode = -1;
   }
 
-  redirectToCalendarTable(calendarName: string, index) {
-    this.router.navigate(['/seasonal-calendar/calendar-table', { calendarName }]);
+  redirectToCalendarTable(id: string, index) {
+    this.router.navigate([`/seasonal-calendar/${id}`]);
   }
 }

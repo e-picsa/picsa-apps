@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { SeasonalCalendarMaterialModule } from '../../components/material.module';
 import { CalendarTableComponent } from './calendar-table.component';
@@ -21,6 +21,7 @@ import { CalendarTableRoutingModule } from './calendar-table.routing.module';
     PicsaVideoPlayerModule,
     MatButtonModule,
     CalendarTableRoutingModule,
+    PicsaFormsModule,
   ]
 })
 export class CalenderTableModule {}

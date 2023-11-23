@@ -21,6 +21,8 @@ export class CalendarTableComponent implements OnInit {
   selectedCrop = '';
   customCrop = '';
   showCropAdder = false;
+  userCropNames: string[] = [];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -31,20 +33,24 @@ export class CalendarTableComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    
     await this.service.ready();
-    this.route.paramMap.subscribe((params) => {
-      const calendarName = params.get('calendarName');
-      if (calendarName) {
-        this.fetchData(calendarName)
+    this.route.params.subscribe((params) => {
+      const {id} = params;
+      if (id) {
+        this.fetchData(id)
           .then((resData) => {
             //console.log(resData)
             this.calendarData = resData;
+            //map crop names
+            this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);
+            //console.log(this.userCropNames)
           })
           .catch(() => {
             this.calendarData = null;
           })
           .finally(() => {
-            console.log(this.calendarData);
+            //console.log(this.calendarData);
             if (!this.calendarData) {
               this.router.navigate(['/seasonal-calendar']);
             }
@@ -52,8 +58,8 @@ export class CalendarTableComponent implements OnInit {
       }
     });
   }
-  async fetchData(calendarName: string) {
-    return await this.service.getCalenderByName(calendarName);
+  async fetchData(id: string) {
+    return await this.service.getCalenderById(id);
   }
 
   getActivitiesForMonthAndCrop(monthName: string, crop: Crop): string {
@@ -70,6 +76,7 @@ export class CalendarTableComponent implements OnInit {
       const activityIndex = selectedMonth.activities.indexOf(activity);
       if (activityIndex !== -1) {
         selectedMonth.activities.splice(activityIndex, 1);
+        this.autoDbUpdate();
       }
     }
   }
@@ -80,6 +87,7 @@ export class CalendarTableComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log('closed');
+      this.autoDbUpdate();
     });
   }
 
@@ -90,6 +98,7 @@ export class CalendarTableComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log('closed');
+      this.autoDbUpdate();
     });
   }
   toggleCropAdder() {
@@ -112,6 +121,7 @@ export class CalendarTableComponent implements OnInit {
         if (selectedMonth) {
           if (!selectedMonth.activities.includes(activityToAdd)) {
             selectedMonth.activities.push(activityToAdd);
+            this.autoDbUpdate();
           } else {
             console.log('Activity already exists in this month.');
           }
@@ -126,33 +136,35 @@ export class CalendarTableComponent implements OnInit {
         const cropIndex = this.calendarData.crops.findIndex((c) => c.name === crop.name);
         if (cropIndex !== -1) {
           this.calendarData.crops.splice(cropIndex, 1);
+          //update db
+          this.autoDbUpdate()
         }
       }
     });
   }
-
+  autoDbUpdate(){
+     //upadate db
+     this.service.addORUpdateData(this.calendarData, 'update');
+     //refreash crop names
+     this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);  
+  }
+  
   addNewCrop() {
-    let cropName;
-    if (this.selectedCrop === 'Other' && this.customCrop.trim() !== '') {
-      cropName = this.customCrop;
-      this.customCrop = '';
-    } else if (this.selectedCrop && this.selectedCrop !== 'Other') {
-      cropName = this.selectedCrop;
-    }
-    if (!this.isCropNameDuplicate(cropName)) {
+    for(let i =0; i<this.userCropNames.length; i++ )
+     //skip crops that already exist
+     if (!this.isCropNameDuplicate(this.userCropNames[i])) {
       const newCrop: Crop = {
-        name: cropName,
+        name: this.userCropNames[i],
         months: this.calendarData.timeAndConditions.map((monthData) => ({
           month: monthData.month,
           activities: [],
         })),
         extraInformation: '',
       };
-
       this.calendarData.crops.push(newCrop);
-    } else {
-      console.log('Crop with the same name already exists.');
     }
+    this.autoDbUpdate();
+    this.showCropAdder = false;
   }
 
   isCropNameDuplicate(newCropName: string): boolean {
@@ -172,12 +184,13 @@ export class CalendarTableComponent implements OnInit {
         this.calendarData.crops.forEach((crop) => {
           crop.months = crop.months.filter((month) => month.month !== monthName);
         });
+        this.autoDbUpdate();
       }
     });
   }
 
   saveCalendar() {
-    console.log(this.calendarData);
+    //console.log(this.calendarData);
     this.service.addORUpdateData(this.calendarData, 'update');
     this.router.navigate(['/seasonal-calendar']);
   }

@@ -2,7 +2,9 @@
   <h2>Crops Seasonal calender</h2>
   <div class="box">
     <h2>Calender name</h2>
-    <input class="inputField" [(ngModel)]="calenderTitle" placeholder="Season of 85" />
+    <input class="inputField"  [(ngModel)]="calenderTitle"  placeholder="Season of 85" />
+    <seasonal-calendar-error-display [displayError]="showMessageFlag && calenderTitle===''" errorMsg="Please add the calender title">
+    </seasonal-calendar-error-display>
   </div>
 
   <!-- Crops -->
@@ -12,6 +14,8 @@
       <div class="select-input-field">
         <picsa-form-crop-select [(ngModel)]="userCrops"></picsa-form-crop-select>
       </div>
+      <seasonal-calendar-error-display [displayError]="showMessageFlag && userCrops.length<1" errorMsg="Please select a crop">
+      </seasonal-calendar-error-display>
     </div>
   </div>
 
@@ -19,17 +23,25 @@
   <div>
     <h2>Calendar Time</h2>
     <div class="calender-box">
+      <div>
       <div class="form-group">
         <label for="startMonth">Start Month:</label>
-        <select id="startMonth" [(ngModel)]="startMonth">
+        <select  id="startMonth" [(ngModel)]="startMonth">
           <option value="" disabled selected>Select start month</option>
           <option *ngFor="let month of months" [value]="month">{{ month }}</option>
         </select>
       </div>
+      <seasonal-calendar-error-display [displayError]="showMessageFlag && startMonth ===''"  errorMsg="Please select a start month">
+      </seasonal-calendar-error-display>
+    </div>
+    <div>
       <div class="form-group">
         <label for="numberOfMonths">Number of Months Needed:</label>
         <input type="number" class="inputField" id="numberOfMonths" [(ngModel)]="numMonths" />
       </div>
+      <seasonal-calendar-error-display [displayError]="showMessageFlag && numMonths <1 " errorMsg="Please enter the required number of months">
+      </seasonal-calendar-error-display>
+    </div>
     </div>
     <h4 *ngIf="calendarMonths.length > 0">{{ "Enter the selected month's weather condition" | translate }}</h4>
     <div class="monthsGrid">

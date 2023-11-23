@@ -51,7 +51,7 @@
       {{ showCropAdder ? 'Hide Crop Adder' : 'Show Crop Adder' }}
     </button>
     <div *ngIf="showCropAdder" class="select-box">
-      <div class="select-input-field">
+      <!-- <div class="select-input-field">
         <select [(ngModel)]="selectedCrop">
           <option value="" disabled selected>Select a Crop</option>
           <option *ngFor="let crop of crops" [value]="crop">{{ crop }}</option>
@@ -59,7 +59,7 @@
         </select>
         <button mat-button mat-raised-button color="primary" (click)="addNewCrop()"
           *ngIf="selectedCrop !== '' && selectedCrop !== 'Other'">
-          + {{ 'Add Selected' | translate }}
+          + {{ 'Add Selected' | translate }}z
         </button>
       </div>
       <div class="select-input-field">
@@ -68,7 +68,13 @@
         <button mat-button mat-raised-button color="primary" (click)="addNewCrop()" *ngIf="selectedCrop === 'Other'">
           + {{ 'Add' | translate }}
         </button>
+      </div> -->
+      <div class="select-input-field">
+        <picsa-form-crop-select [(ngModel)]="userCropNames"></picsa-form-crop-select>
       </div>
+        <button mat-button mat-raised-button color="primary" (click)="addNewCrop()">
+           {{ 'Update Crops' | translate }}
+        </button>
     </div>
   </div>
 </div>

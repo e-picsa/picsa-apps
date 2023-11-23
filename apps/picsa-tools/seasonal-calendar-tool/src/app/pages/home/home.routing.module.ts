@@ -11,11 +11,11 @@ const routes: Routes = [
         component: HomeComponent,
     },
     {
-      path: 'create-calendar',
+      path: 'create',
       component: CreateCalendarComponent,
      },
      {
-      path: 'calendar-table',
+      path: ':id',
       component: CalendarTableComponent,
      }
 ];
