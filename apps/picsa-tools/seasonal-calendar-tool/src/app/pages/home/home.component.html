@@ -1,6 +1,6 @@
 <div class="page-content">
   <div class="create-button">
-    <button class="" mat-button mat-raised-button  routerLink="create" color="primary">Create new calender</button> 
+    <button mat-raised-button routerLink="create" color="primary">Create new calender</button>
   </div>
   <h2>Categories</h2>
   <div class="categories-list">
@@ -10,24 +10,33 @@
   <div class="calendar-list">
     <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">No available calendars</div>
     <!-- map calenders -->
-    <div *ngIf="dbCalendars.length > 0" class="items-container" >
-    <div *ngFor="let calendar of dbCalendars;  let i = index" class="calendars-display">
-      <div (click)="editMode!==i ? redirectToCalendarTable(calendar.ID, i) : null">
-        <div *ngIf="editMode!==i; else editField">
-          {{ calendar.name }}
+    <div *ngIf="dbCalendars.length > 0" class="items-container">
+      <div *ngFor="let calendar of dbCalendars; let i = index" class="calendars-display">
+        <div (click)="editMode !== i ? redirectToCalendarTable(calendar.ID, i) : null">
+          <div *ngIf="editMode !== i; else editField">
+            {{ calendar.name }}
+          </div>
+          <ng-template #editField>
+            <input class="inputField" type="text" [(ngModel)]="calendar.name" />
+          </ng-template>
         </div>
-        <ng-template #editField>
-          <input class="inputField"  type="text" [(ngModel)]="calendar.name"  />
-        </ng-template>
-      </div>
-      <div class="actions-section">
-        <div >
-          <button *ngIf="editMode===i"  (click)="saveUpdates(calendar)"  class="" mat-button mat-raised-button color="primary">Save</button> 
-          <mat-icon (click)="editMode = i" *ngIf="editMode!==i">edit</mat-icon>
+        <div class="actions-section">
+          <div>
+            <button
+              *ngIf="editMode === i"
+              (click)="saveUpdates(calendar)"
+              class=""
+              mat-button
+              mat-raised-button
+              color="primary"
+            >
+              Save
+            </button>
+            <mat-icon (click)="editMode = i" *ngIf="editMode !== i">edit</mat-icon>
+          </div>
+          <mat-icon class="custom-trash-icon" (click)="promptDelete(i)">delete</mat-icon>
         </div>
-       <mat-icon class="custom-trash-icon " (click)="promptDelete(i)">delete</mat-icon>
       </div>
     </div>
-  </div>
   </div>
 </div>

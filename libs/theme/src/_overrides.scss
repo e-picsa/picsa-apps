@@ -11,6 +11,10 @@ button.mat-mdc-button > .mat-icon {
   width: 24px;
   height: 24px;
 }
+// fix height styles lost since angular/material 17 updates
+button.mat-mdc-raised-button {
+  height: var(--mdc-protected-button-container-height, 36px);
+}
 
 mat-card.link {
   cursor: pointer;
