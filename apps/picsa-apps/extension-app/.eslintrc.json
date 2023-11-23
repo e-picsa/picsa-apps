@@ -22,7 +22,8 @@
             "style": "kebab-case"
           }
         ],
-        "@angular-eslint/component-class-suffix": ["warn"]
+        "@angular-eslint/component-class-suffix": ["warn"],
+        "@typescript-eslint/no-explicit-any": ["warn"]
       }
     },
     {

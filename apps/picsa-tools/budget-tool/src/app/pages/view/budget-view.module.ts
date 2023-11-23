@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
 import { PicsaCommonComponentsModule } from '@picsa/components/src';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { MobxAngularModule } from 'mobx-angular';
@@ -22,7 +21,6 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     RouterModule.forChild(routes),
     PicsaCommonComponentsModule,
     PicsaTranslateModule,

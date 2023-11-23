@@ -1,5 +1,5 @@
 import { CdkPortalOutlet, Portal, PortalOutlet } from '@angular/cdk/portal';
-import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -17,7 +17,10 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   template: `
     <header [attr.data-style]="style">
       <div class="start-content">
-        <back-button [style.visibility]="hideBackButton ? 'hidden' : 'visible'"></back-button>
+        <back-button
+          [style.visibility]="hideBackButton ? 'hidden' : 'visible'"
+          [variant]="style === 'primary' ? 'white' : 'primary'"
+        ></back-button>
       </div>
       <h1 class="central-content">
         <span class="title">{{ title | translate }}</span>
@@ -111,21 +114,19 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
           if (style) {
             this.style = style;
           }
-          if (endContent && !endContent.isAttached) {
-            this.endPortal = endContent;
-          }
-
-          this.hideBackButton = hideBackButton;
+          this.setEndPortal(endContent);
+          // hide back button when set or if on homepage
+          this.hideBackButton = hideBackButton || location.pathname === '/';
         });
       });
   }
   private setEndPortal(endContent?: Portal<any>) {
-    if (this.endPortal?.isAttached) {
-      console.log('update end portal', endContent, this.endPortal);
+    if (!endContent) {
+      this.endPortal = undefined;
+      return;
+    }
+    if (!endContent.isAttached) {
       this.endPortal = endContent;
-    } else {
-      console.log('retry set portal');
-      // return setTimeout(() => this.setEndPortal(endContent), 200);
     }
   }
 }

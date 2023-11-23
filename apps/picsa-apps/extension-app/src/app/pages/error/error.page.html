@@ -1,19 +1,25 @@
-<ion-content padding>
+<div class="page" padding>
   <div class="container">
     <div class="top-content"></div>
     <div class="central-content">
-      <img class="error-image" src="assets/img/error.png" />
+      <!-- <img class="error-image" src="assets/img/error.png" /> -->
       <div style="margin-top: 2em">
         <h2>{{ "Something went wrong..." | translate }}</h2>
         <div>{{ "Click on the button below to retry" | translate }}</div>
-        <ion-button [disabled]="reloading" class="reload-button" (click)="reloadPage()">
-          <ion-icon name="refresh" slot="start"></ion-icon>
+        <button
+          mat-raised-button
+          style="margin-top: 1rem; padding: 16px"
+          color="primary"
+          [disabled]="reloading"
+          (click)="reloadPage()"
+        >
+          <mat-icon>refresh</mat-icon>
           {{ "Reload" | translate }}
-        </ion-button>
+        </button>
       </div>
     </div>
     <div class="bottom-content">
       <div class="error-message">{{ errorMessage }}</div>
     </div>
   </div>
-</ion-content>
+</div>

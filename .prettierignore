@@ -4,3 +4,5 @@
 /coverage
 *.geojson.json
 .angular
+
+/.nx/cache

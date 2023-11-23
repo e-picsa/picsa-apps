@@ -6,7 +6,7 @@
   "implicitDependencies": ["picsa-server-cloud-functions"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/picsa-server-legacy/scripts/**/*.ts"]

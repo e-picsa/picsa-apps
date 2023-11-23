@@ -18,7 +18,7 @@
         "save-svg-as-png",
         "stacktrace-js"
       ],
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/picsa-apps/extension-app",
@@ -79,7 +79,6 @@
             "input": "apps/picsa-tools/monitoring-tool/src/assets",
             "output": "assets"
           },
-
           {
             "glob": "**/*",
             "input": "apps/picsa-tools/option-tool/src/assets",
@@ -119,7 +118,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "3mb"
+              "maximumError": "4mb"
             },
             {
               "type": "anyComponentStyle",
@@ -140,7 +139,6 @@
         "development": {
           "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
@@ -150,7 +148,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "3mb"
+              "maximumError": "4mb"
             },
             {
               "type": "anyComponentStyle",
@@ -196,18 +194,18 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "picsa-apps-extension-app:build:production"
+          "buildTarget": "picsa-apps-extension-app:build:production"
         },
         "development": {
-          "browserTarget": "picsa-apps-extension-app:build:development"
+          "buildTarget": "picsa-apps-extension-app:build:development"
         },
         "external": {
-          "browserTarget": "picsa-apps-extension-app:build:development",
-          "host": "0.0.0.0"
+          "host": "0.0.0.0",
+          "buildTarget": "picsa-apps-extension-app:build:development"
         },
         "external_production": {
-          "browserTarget": "picsa-apps-extension-app:build:production",
-          "host": "0.0.0.0"
+          "host": "0.0.0.0",
+          "buildTarget": "picsa-apps-extension-app:build:production"
         }
       },
       "defaultConfiguration": "development"
@@ -215,11 +213,11 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "picsa-apps-extension-app:build"
+        "buildTarget": "picsa-apps-extension-app:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/picsa-apps/extension-app/**/*.ts", "apps/picsa-apps/extension-app/**/*.html"]
       }
@@ -228,8 +226,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/extension-app"],
       "options": {
-        "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts"
       }
     }
   },

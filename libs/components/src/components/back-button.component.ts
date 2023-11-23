@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, NgZone, OnDestroy } from '@angular/core';
+import { Component, Input, NgZone, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -11,12 +11,17 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'back-button',
   template: `
-    <button *ngIf="showButton" mat-button (click)="back()" color="white"><mat-icon>arrow_back</mat-icon>Back</button>
+    <button *ngIf="variant === 'primary'" mat-button color="primary" (click)="back()">
+      <mat-icon>arrow_back</mat-icon>Back
+    </button>
+    <button *ngIf="variant === 'white'" mat-button style="color:white" (click)="back()">
+      <mat-icon>arrow_back</mat-icon>Back
+    </button>
   `,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BackButton implements OnDestroy {
-  showButton = false;
+  @Input() variant: 'white' | 'primary' = 'white';
   private componentDestroyed$ = new Subject<boolean>();
 
   constructor(
@@ -47,10 +52,6 @@ export class BackButton implements OnDestroy {
     return Capacitor.isNativePlatform() ? this.handleNativeBack() : this.handleWebBack();
   }
 
-  private checkButtonState(url: string) {
-    this.showButton = url !== '/';
-  }
-
   private subscribeToRouteChanges() {
     this.router.events.pipe(takeUntil(this.componentDestroyed$)).subscribe((e) => {
       if (e instanceof NavigationEnd) {
@@ -60,7 +61,6 @@ export class BackButton implements OnDestroy {
         if (url !== this.history[this.history.length - 1]) {
           this.history.push(url);
         }
-        this.checkButtonState(url);
       }
     });
   }

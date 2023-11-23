@@ -6,7 +6,7 @@
   "prefix": "picsa",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/picsa-tools/manual-tool",
@@ -44,7 +44,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "3mb"
+              "maximumError": "4mb"
             },
             {
               "type": "anyComponentStyle",
@@ -52,12 +52,12 @@
               "maximumError": "4kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "namedChunks": true
         },
         "development": {
           "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
@@ -69,10 +69,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "picsa-tools-manual-tool:build:production"
+          "buildTarget": "picsa-tools-manual-tool:build:production"
         },
         "development": {
-          "browserTarget": "picsa-tools-manual-tool:build:development"
+          "buildTarget": "picsa-tools-manual-tool:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -80,11 +80,11 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "picsa-tools-manual-tool:build"
+        "buildTarget": "picsa-tools-manual-tool:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/picsa-tools/manual-tool/**/*.ts", "apps/picsa-tools/manual-tool/**/*.html"]
@@ -94,14 +94,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/picsa-tools/manual-tool/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "apps/picsa-tools/manual-tool/jest.config.ts"
       }
     }
   },

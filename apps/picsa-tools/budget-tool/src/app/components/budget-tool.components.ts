@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule } from '@picsa/shared/features';
@@ -19,7 +18,6 @@ import { BudgetCardNew } from './card/card-new/card-new';
 import { BudgetCardNewDialog } from './card/card-new/card-new-dialog';
 import { BudgetCardPlaceholderComponent } from './card/card-placeholder/card-placeholder.component';
 import { BudgetCellComponent } from './cell/cell';
-import { BudgetCellLabourComponent } from './cell/variants/labour/labour';
 import { BudgetCardEditorComponent } from './editor/card-editor/card-editor.component';
 import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-select';
 import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
@@ -45,7 +43,6 @@ const components = [
   BudgetCellEditorProduceConsumedComponent,
   BudgetEditorComponent,
   BudgetEditorSidebarComponent,
-  BudgetCellLabourComponent,
   BudgetCardNew,
   BudgetCardNewDialog,
   BudgetImportDialogComponent,
@@ -59,7 +56,6 @@ const components = [
 @NgModule({
   declarations: components,
   imports: [
-    IonicModule,
     CommonModule,
     FormsModule,
     BudgetMaterialModule,

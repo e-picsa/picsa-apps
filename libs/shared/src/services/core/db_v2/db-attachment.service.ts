@@ -40,7 +40,7 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   }
 
   /** Get a file attachment ref populated to a specific collection doc */
-  public async getAttachment(doc: RxDocument<any>, filename: string) {
+  private async getAttachment(doc: RxDocument<any>, filename: string) {
     const id = this.generateAttachmentID(doc, filename);
     return this.collection.findOne(id).exec();
   }
@@ -93,25 +93,35 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
    * @param index doc file entry number in case of multiple files
    */
   public async putAttachment(doc: RxDocument<any>, filename: string, data: Blob) {
+    if (!data) return;
     // prefer to use downloaded blob data directly instead of doc expected
     const { type, size } = data;
     const id = this.generateAttachmentID(doc, filename);
     const entry: IAttachment = { id, length: size, type };
+    // Native
     if (Capacitor.isNativePlatform()) {
       const result = await this.nativeStorageService.writeFile(data, id.replace('||', '/'));
       if (result) {
         entry.uri = result.uri;
       }
-    } else {
+    }
+    // Web
+    else {
       // RXDB converts blobs to string, which has more support on safari/ios
       // https://web.dev/indexeddb-best-practices/#not-everything-can-be-stored-in-indexeddb-on-all-platforms
       entry.data = await blobToBase64String(data);
     }
-    // Write data to attachments collection on web
+    // Combined
     const attachmentDoc = await this.collection.upsert(entry);
     // Additionally write to rxdb attachment system to trigger any observable reactions
-    const { digest } = await doc.putAttachment({ id: filename, type, data });
-    await attachmentDoc.patch({ digest });
+    // NOTE - avoid writing full blob as very slow
+    // TODO - can probably remove any rxdb digest refs from schemas
+    await doc.putAttachment({
+      id: filename,
+      type,
+      data: new Blob([JSON.stringify(attachmentDoc._data)], { type: 'application/json' }),
+    });
+    // await attachmentDoc.patch({ digest });
   }
 
   /** Remove attachments populated to a specific collection doc */
