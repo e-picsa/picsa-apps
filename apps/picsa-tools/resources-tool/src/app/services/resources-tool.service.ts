@@ -86,9 +86,6 @@ export class ResourcesToolService extends PicsaAsyncService {
     return this.dbAttachmentService.putAttachment(doc, doc.filename, data);
   }
 
-  public getFileAttachment(doc: RxDocument<schemas.IResourceFile>) {
-    return this.dbAttachmentService.getAttachment(doc, doc.filename);
-  }
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required

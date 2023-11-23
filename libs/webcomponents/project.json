@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/webcomponents"],
       "options": {
-        "jestConfig": "libs/webcomponents/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/webcomponents/jest.config.ts"
       }
     },
     "test-nxtext": {
@@ -74,7 +73,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/webcomponents/**/*.tsx"]

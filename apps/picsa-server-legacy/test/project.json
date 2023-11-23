@@ -6,7 +6,7 @@
   "implicitDependencies": [],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/picsa-server-legacy/test/**/*.ts"]
@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-server-legacy/test"],
       "options": {
-        "jestConfig": "apps/picsa-server-legacy/test/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/picsa-server-legacy/test/jest.config.ts"
       }
     }
   },

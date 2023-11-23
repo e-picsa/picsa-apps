@@ -1,21 +1,14 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { LoadingController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { Subject, takeUntil } from 'rxjs';
 
 @Injectable()
 export class PicsaTranslateService implements OnDestroy {
-  loader: HTMLIonLoadingElement;
   monthNames: string[] = MONTHS;
   public language = 'en';
   private destroyed$ = new Subject<boolean>();
-  constructor(
-    public toastCtrl: ToastController,
-    public ngxTranslate: TranslateService,
-    public loadingCtrl: LoadingController,
-    public configurationService: ConfigurationService
-  ) {
+  constructor(public ngxTranslate: TranslateService, public configurationService: ConfigurationService) {
     this.subscribeToConfigLanguageChanges();
   }
 

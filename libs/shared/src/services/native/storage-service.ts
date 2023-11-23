@@ -68,7 +68,7 @@ export class NativeStorageService extends PicsaAsyncService {
       recursive: true,
       fast_mode: true,
       on_fallback(error) {
-        console.error('blobl write error', cachePath, error);
+        console.error('blob write error', cachePath, error);
         throw error;
       },
     });
