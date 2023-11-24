@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments/src';
 import { StorageClient } from '@supabase/storage-js';
 import { createClient, RealtimeClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 
 import { PicsaAsyncService } from '../asyncService.service';
 
@@ -12,6 +13,7 @@ export class SupabaseService extends PicsaAsyncService {
   private supabase: SupabaseClient;
   public storage: StorageClient;
   public realtime: RealtimeClient;
+  public auth: SupabaseAuthClient;
 
   public db: { table: SupabaseClient['from'] };
 
@@ -21,6 +23,7 @@ export class SupabaseService extends PicsaAsyncService {
     this.supabase = createClient(apiUrl, anonKey, {});
     this.storage = this.supabase.storage;
     this.realtime = this.supabase.realtime;
+    this.auth = this.supabase.auth;
     this.db = { table: (relation: string) => this.supabase.from(relation) };
   }
 
