@@ -17,8 +17,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import type { SupabaseService } from '../supabase.service';
 import { PicsaNotificationService } from '../../notification.service';
+import type { SupabaseService } from '../supabase.service';
 
 export interface ISignInDialogData {
   service: SupabaseService;
