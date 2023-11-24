@@ -126,6 +126,12 @@ supabase link --project-ref [ref] --password [pass]
 **Relative import path "@supabase/supabase-js" not prefixed**
 Any Imports have to be defined both in `import-map.json` file
 
+**Ports are not available: exposing port TCP 0.0.0.0:54322 -> 0.0.0.0:0: listen tcp 0.0.0.0:54322: bind: An attempt was made to access a socket in a way forbidden by its access permissions**
+Windows reserves some of the same ports that supabase uses. Either the supabase ports can be modified from the `config.toml` file, or windows updated to change restricted port ranges
+
+https://stackoverflow.com/a/71190107/5693245
+https://github.com/supabase/cli/issues/189
+
 # Links
 
 - https://supabase.com/blog/supabase-local-dev

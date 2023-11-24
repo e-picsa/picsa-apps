@@ -1,7 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { SupabaseService } from '@picsa/shared/services/core/supabase.service';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from './material.module';
 
@@ -13,7 +14,7 @@ interface INavLink {
 
 @Component({
   standalone: true,
-  imports: [RouterModule, DashboardMaterialModule],
+  imports: [RouterModule, DashboardMaterialModule, CommonModule],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -32,17 +33,10 @@ export class AppComponent implements AfterViewInit {
     },
   ];
 
-  constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
+  constructor(public supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
 
   async ngAfterViewInit() {
     await this.supabaseService.init();
-    const { data, error } = await this.supabaseService.auth.getUser();
-    if (error?.name === 'AuthRetryableFetchError') {
-      this.notificationService.showUserNotification({
-        icon: 'cloud_off',
-        message: 'Server Connection Failed',
-        buttonText: 'Dismiss',
-      });
-    }
+    await this.supabaseService.signInDefaultUser();
   }
 }

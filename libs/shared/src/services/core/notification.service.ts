@@ -4,9 +4,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 
 interface IUserNotificationData {
-  icon: string;
+  matIcon: string;
   message: string;
-  buttonText: string;
+  buttonText?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,9 +23,9 @@ export class PicsaNotificationService {
 @Component({
   selector: 'picsa-snack-bar-with-icon-component',
   template: ` <div class="message-container">
-    <mat-icon>{{ data.icon }}</mat-icon>
+    <mat-icon>{{ data.matIcon }}</mat-icon>
     <span style="margin:0 16px; flex:1">{{ data.message }}</span>
-    <button mat-stroked-button color="accent" (click)="snackRef.dismiss()">{{ data.buttonText }}</button>
+    <button mat-stroked-button color="accent" (click)="snackRef.dismiss()">{{ data.buttonText || 'dismiss' }}</button>
   </div>`,
   styles: [
     `

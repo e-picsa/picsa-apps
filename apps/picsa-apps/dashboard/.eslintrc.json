@@ -27,7 +27,9 @@
     {
       "files": ["*.html"],
       "extends": ["plugin:@nx/angular-template"],
-      "rules": {}
+      "rules": {
+        "@angular-eslint/template/prefer-control-flow": ["error"]
+      }
     }
   ]
 }
