@@ -7,3 +7,7 @@ mat-nav-list {
 mat-toolbar {
   z-index: 2;
 }
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+}

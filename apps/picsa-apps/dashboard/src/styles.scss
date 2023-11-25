@@ -19,3 +19,7 @@ Made available from project.json
 @import 'layout';
 @import 'typography';
 @import 'overrides';
+
+mat-sidenav-content > * {
+  display: contents;
+}

@@ -15,7 +15,7 @@ interface INavLink {
 @Component({
   standalone: true,
   imports: [RouterModule, DashboardMaterialModule, CommonModule],
-  selector: 'app-root',
+  selector: 'dashboard-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

@@ -108,6 +108,9 @@ supabase db pull
 yarn nx run picsa-server:supabase migration new create_monitoring_submissions
 ```
 
+This will populate a new sql file in the `migrations` folder
+Update the sql as required and update local db
+
 ```
 
 ```
