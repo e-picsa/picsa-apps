@@ -1,15 +1,21 @@
 categories:
-  - title: '🚀 Features'
-    labels:
-      - 'feature'
-      - 'enhancement'
-  - title: '🐛 Bug Fixes'
-    labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
-  - title: '🧰 Maintenance'
-    label: 'chore'
+  # - title: '🚀 Features'
+  #   labels:
+  #     - 'feature'
+  #     - 'enhancement'
+  [
+    { title: ' Budget Tool', labels: ['Tool: Budget'] },
+    { title: ' Climate Tool', labels: ['Tool: Climate'] },
+    { title: ' Crop Probability Tool', labels: ['Tool: Crop Probability'] },
+    { title: ' Farmer Activity Tool', labels: ['Tool: Farmer Activity'] },
+    { title: ' Manual Tool', labels: ['Tool: Manual'] },
+    { title: ' Monitoring Tool', labels: ['Tool: Monitoring'] },
+    { title: ' Option Tool', labels: ['Tool: Option'] },
+    { title: ' Resources Tool', labels: ['Tool: Resources'] },
+    { title: ' Seasonal Calendar Tool', labels: ['Tool: Seasonal Calendar'] },
+    { title: ' Dashboard App', labels: ['App: Dashboard'] },
+    { title: ' Server App', labels: ['App: Server'] },
+  ]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 template: |
   ## What’s Changed
