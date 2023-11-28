@@ -1,0 +1,25 @@
+/* You can add global styles to this file, and also import other style files */
+
+/**
+Shared styles
+
+These are imported from libs\theme\src\_index.scss
+
+Made available from project.json 
+```
+"stylePreprocessorOptions": {
+          "includePaths": ["libs/theme/src"]
+        },
+```
+*/
+
+@import 'themes';
+@import 'variables';
+@import 'fonts';
+@import 'layout';
+@import 'typography';
+@import 'overrides';
+
+mat-sidenav-content > * {
+  display: contents;
+}

@@ -1,0 +1,38 @@
+<div class="page">
+  <mat-toolbar color="primary" class="mat-elevation-z2" style="display: flex; align-items: center">
+    <button mat-icon-button (click)="sidenav.opened = !sidenav.opened">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span style="flex: 1">PICSA Dashboard</span>
+    @if(supabaseService.authUser(); as user){
+    <div style="position: relative">
+      <button mat-button (click)="supabaseService.signOut()" style="margin-top: 16px">
+        <mat-icon>person</mat-icon>
+        Sign Out
+      </button>
+      <div style="position: absolute; top: 4px; right: 0; font-size: 12px">
+        {{ user.email }}
+      </div>
+    </div>
+
+    } @else {
+    <button mat-button (click)="supabaseService.signInPrompt()" style="margin: 8px 0">
+      <mat-icon>person</mat-icon>
+      Sign In
+    </button>
+    }
+  </mat-toolbar>
+
+  <mat-sidenav-container style="flex: 1">
+    <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="48">
+      <mat-nav-list>
+        @for (link of navLinks; track link.href) {
+        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated">{{ link.label }}</a>
+        }
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

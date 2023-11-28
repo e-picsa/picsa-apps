@@ -1,0 +1,13 @@
+mat-sidenav {
+  width: 256px;
+}
+mat-nav-list {
+  --mdc-list-list-item-one-line-container-height: 48px;
+}
+mat-toolbar {
+  z-index: 2;
+}
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+}
