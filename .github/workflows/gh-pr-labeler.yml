@@ -10,6 +10,9 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
+      # Checkout repo to access local templates (if updated)
+      - name: checkout
+        uses: actions/checkout@main
       # Check if PR title matches conventional commit standard
       # Not strictly enforced so allow continue on error
       # https://github.com/marketplace/actions/semantic-pull-request
