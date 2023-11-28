@@ -26,17 +26,12 @@ jobs:
           # Labels assigned based on pr name prefix
           type_labels: |
             {
-              "Tool: Budget": "Budget Tool",
-              "Tool: Climate": "Climate Tool",
-              "Tool: Crop Probability": "Crop Probability Tool",
-              "Tool: Farmer Activity": "Farmer Activity Tool",
-              "Tool: Manual": " Manual Tool",
-              "Tool: Monitoring": "Monitoring Tool",
-              "Tool: Option": "Option Tool",
-              "Tool: Resources": "Resources Tool",
-              "Tool: Seasonal Calendar": "Seasonal Calendar Tool",
-              "App: Dashboard": "App Dashboard",
-              "App: Server": "App Server"
+              "breaking": "breaking",
+              "chore": "maintenance",
+              "docs": "documentation",
+              "feat": "feature",
+              "fix": "fix",
+              "refactor": "maintenance"
             }
           # Do not ignore any labels (default ignores chore:)
           ignored_types: '[]'
