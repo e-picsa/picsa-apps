@@ -8,7 +8,10 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "rules": {}
+      "rules": {
+        "@angular-eslint/component-selector": ["off"],
+        "@angular-eslint/component-class-suffix": ["off"]
+      }
     },
     {
       "files": ["*.js", "*.jsx"],

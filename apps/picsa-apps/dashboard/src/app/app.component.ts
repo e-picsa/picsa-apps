@@ -27,10 +27,10 @@ export class AppComponent implements AfterViewInit {
       label: 'Home',
       href: '/',
     },
-    {
-      label: 'Resources',
-      href: '/resources',
-    },
+    // {
+    //   label: 'Resources',
+    //   href: '/resources',
+    // },
   ];
 
   constructor(public supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
