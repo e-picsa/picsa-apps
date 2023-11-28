@@ -1,0 +1,25 @@
+# Apps
+'App: Dashboard':
+  - apps/picsa-apps/dashboard/**/*
+'App: Server':
+  - apps/picsa-apps/server/**/*
+
+# Tools
+'Tool: Budget':
+  - apps/picsa-apps/budget-tool/**/*
+'Tool: Climate':
+  - apps/picsa-apps/climate-tool/**/*
+'Tool: Crop Probability':
+  - apps/picsa-apps/crop-probability-tool/**/*
+'Tool: Farmer Activity':
+  - apps/picsa-apps/farmer-activity/**/*
+'Tool: Manual':
+  - apps/picsa-apps/manual-tool/**/*
+'Tool: Monitoring':
+  - apps/picsa-apps/monitoring-tool/**/*
+'Tool: Option':
+  - apps/picsa-apps/option-tool/**/*
+'Tool: Resources':
+  - apps/picsa-apps/resources-tool/**/*
+'Tool: Seasonal Calendar':
+  - apps/picsa-apps/seasonal-calendar-tool/**/*

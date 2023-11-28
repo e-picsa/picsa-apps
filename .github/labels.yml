@@ -1,0 +1,32 @@
+# List of labels used in project (will be synced on updated)
+# Original list generated from gh cli via
+# `gh label list --json color,description,name`
+[
+  { 'color': 'd73a4a', 'description': "Something isn't working", 'name': 'bug' },
+  { 'color': '0075ca', 'description': 'Improvements or additions to documentation', 'name': 'documentation' },
+  { 'color': 'cfd3d7', 'description': 'This issue or pull request already exists', 'name': 'duplicate' },
+  { 'color': 'a2eeef', 'description': 'New feature or request', 'name': 'enhancement' },
+  { 'color': '7057ff', 'description': 'Good for newcomers', 'name': 'good first issue' },
+  { 'color': '008672', 'description': 'Extra attention is needed', 'name': 'help wanted' },
+  { 'color': 'e4e669', 'description': "This doesn't seem right", 'name': 'invalid' },
+  { 'color': 'd876e3', 'description': 'Further information is requested', 'name': 'question' },
+  { 'color': 'ffffff', 'description': 'This will not be worked on', 'name': 'wontfix' },
+  { 'color': '0366d6', 'description': 'Pull requests that update a dependency file', 'name': 'dependencies' },
+  { 'color': 'CF3458', 'description': '', 'name': 'Feedback Discussion' },
+  { 'color': 'ffffff', 'description': '', 'name': 'Test - Preview' },
+  { 'color': '0ADC3B', 'description': '', 'name': 'ready for review' },
+  { 'color': 'FEF2C0', 'description': '', 'name': 'work in progress' },
+  # PICSA Tools
+  { 'color': '000000', 'description': 'Updates related to Budget tool', 'name': 'Tool: Budget' },
+  { 'color': '000000', 'description': 'Updates related to Climate tool', 'name': 'Tool: Climate' },
+  { 'color': '000000', 'description': 'Updates related to Crop Probability tool', 'name': 'Tool: Crop Probability' },
+  { 'color': '000000', 'description': 'Updates related to Farmer Activity tool', 'name': 'Tool: Farmer Activity' },
+  { 'color': '000000', 'description': 'Updates related to Manual tool', 'name': 'Tool: Manual' },
+  { 'color': '000000', 'description': 'Updates related to Monitoring tool', 'name': 'Tool: Monitoring' },
+  { 'color': '000000', 'description': 'Updates related to Option tool', 'name': 'Tool: Option' },
+  { 'color': '000000', 'description': 'Updates related to Resources tool', 'name': 'Tool: Resources' },
+  { 'color': '000000', 'description': 'Updates related to Seasonal Calendar tool', 'name': 'Tool: Seasonal Calendar' },
+  # PICSA Apps
+  { 'color': '000000', 'description': 'Updates related to Dashboard app', 'name': 'App: Dashboard' },
+  { 'color': '000000', 'description': 'Updates related to Server app', 'name': 'App: Server' },
+]
