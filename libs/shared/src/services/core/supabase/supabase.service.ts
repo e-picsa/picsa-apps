@@ -1,13 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ENVIRONMENT } from '@picsa/environments/src';
-import { StorageClient } from '@supabase/storage-js';
 import { AuthError, createClient, RealtimeClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaNotificationService } from '../notification.service';
 import { SupabaseSignInDialogComponent } from './dialogs/sign-in.dialog';
+import { SupabaseStorageService } from './storage/supabase-storage.service';
 
 /** Key safe to use in browser (assuming tables have row-level security) */
 
@@ -20,16 +20,20 @@ export class SupabaseService extends PicsaAsyncService {
   public db: { table: SupabaseClient['from'] };
 
   private supabase: SupabaseClient;
-  private storage: StorageClient;
   private realtime: RealtimeClient;
 
   private auth: SupabaseAuthClient;
 
-  constructor(private notificationService: PicsaNotificationService, private dialog: MatDialog) {
+  constructor(
+    private notificationService: PicsaNotificationService,
+    private dialog: MatDialog,
+    public storage: SupabaseStorageService
+  ) {
     super();
     const { anonKey, apiUrl } = ENVIRONMENT.supabase;
     this.supabase = createClient(apiUrl, anonKey, {});
-    this.storage = this.supabase.storage;
+    this.storage.registerSupabaseClient(this.supabase);
+
     this.realtime = this.supabase.realtime;
     this.auth = this.supabase.auth;
     this.db = { table: (relation: string) => this.supabase.from(relation) };
@@ -111,7 +115,7 @@ export class SupabaseService extends PicsaAsyncService {
     return mapping[message] || { message: `${name} - ${message}`, matIcon: 'error' };
   }
 
-  private logUserErrorMessage(error: AuthError) {
+  public logUserErrorMessage(error: AuthError) {
     const { message, matIcon, devMessage } = this.getUserErrorMessage(error);
     this.notificationService.showUserNotification({ matIcon, message });
     if (devMessage) {
