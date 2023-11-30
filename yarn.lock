@@ -6878,9 +6878,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.38.5":
-  version: 2.38.5
-  resolution: "@supabase/supabase-js@npm:2.38.5"
+"@supabase/supabase-js@npm:^2.39.0":
+  version: 2.39.0
+  resolution: "@supabase/supabase-js@npm:2.39.0"
   dependencies:
     "@supabase/functions-js": ^2.1.5
     "@supabase/gotrue-js": ^2.56.0
@@ -6888,7 +6888,7 @@ __metadata:
     "@supabase/postgrest-js": ^1.8.6
     "@supabase/realtime-js": ^2.8.4
     "@supabase/storage-js": ^2.5.4
-  checksum: db6b77ee1edcc71971e530caaecc0e3d969736212b07dc3505b3397b8daa46582bc1ea7e4ffdb353096af722640d277ee32a5b357f7dc06b41361c336d6bb0e4
+  checksum: 78bc615ddcb686b427d323273afa1d63feca93e0b177a5c41dab51d03d5906a1d8256f6896950604340d25c22b5a354196fffb1d3b841cb695bd7d9f1a904640
   languageName: node
   linkType: hard
 
@@ -18605,7 +18605,7 @@ __metadata:
     "@stencil/angular-output-target": ^0.7.1
     "@stencil/core": 3.2.2
     "@stencil/sass": ^3.0.2
-    "@supabase/supabase-js": ^2.38.5
+    "@supabase/supabase-js": ^2.39.0
     "@swc-node/register": ~1.6.7
     "@swc/core": ~1.3.85
     "@types/c3": ^0.7.8
@@ -18691,7 +18691,7 @@ __metadata:
     save-svg-as-png: ^1.4.17
     sharp: ^0.31.3
     stacktrace-js: ^2.0.2
-    supabase: 1.113.3
+    supabase: 1.115.4
     tailwindcss: ^3.0.2
     ts-jest: 29.1.1
     ts-node: 10.9.1
@@ -21409,9 +21409,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supabase@npm:1.113.3":
-  version: 1.113.3
-  resolution: "supabase@npm:1.113.3"
+"supabase@npm:1.115.4":
+  version: 1.115.4
+  resolution: "supabase@npm:1.115.4"
   dependencies:
     bin-links: ^4.0.1
     https-proxy-agent: ^7.0.2
@@ -21419,7 +21419,7 @@ __metadata:
     tar: 6.2.0
   bin:
     supabase: bin/supabase
-  checksum: e76dfb534a9f6d62c423e1d93fae0eeddaca71bf8888bfb97f6c4af3a8e9fe237e1feaa74a17e35af807514d4b348160dd9b78821bf929cd958d035a05909a38
+  checksum: 1456333e74d15420b2ad7ea0090a4e4687817d11b5ea4f3aaf341e8b7a9ed39b6bc883b0b57aa66e67ef658f06e57c5d8478fa911dcdf77fbbc85954c0c8d49d
   languageName: node
   linkType: hard
 
