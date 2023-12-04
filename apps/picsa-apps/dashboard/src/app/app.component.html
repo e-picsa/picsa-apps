@@ -27,7 +27,14 @@
     <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="48">
       <mat-nav-list>
         @for (link of navLinks; track link.href) {
-        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated">{{ link.label }}</a>
+        <a
+          mat-list-item
+          [routerLink]="link.href"
+          routerLinkActive="mdc-list-item--activated active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ link.label }}
+        </a>
         }
       </mat-nav-list>
     </mat-sidenav>

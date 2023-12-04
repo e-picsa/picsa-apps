@@ -1,3 +1,12 @@
+<mat-form-field>
+  <mat-label>Storage Folder</mat-label>
+  <input matInput type="text" [(ngModel)]="storageFolder">
+  @if (storageFolder) {
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="storageFolder=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>
 <uppy-dashboard [uppy]="uppy" [props]="uppyOptions" />
 <button mat-stroked-button color="primary" [disabled]="uploadDisabled" (click)="startUpload()">
   <mat-icon>upload</mat-icon>Upload
