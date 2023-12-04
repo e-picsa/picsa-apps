@@ -8,9 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { ENVIRONMENT } from '@picsa/environments';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { UppyAngularDashboardModule } from '@uppy/angular';
-import Uppy from '@uppy/core';
+import Uppy, { UppyFile } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
+import { SupabaseStorageService } from '../storage/supabase-storage.service';
+import { PicsaNotificationService } from '../../notification.service';
 
 /**
  * Supabase storage uploader built on top of Uppy dashboard, with support for resumable uploads
@@ -46,15 +48,18 @@ export class SupabaseUploadComponent {
     height: 320,
   };
 
-  constructor(private supabaseService: SupabaseService) {
+  private storageService: SupabaseStorageService;
+
+  constructor(supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
     this.addUppyUploader();
+    supabaseService.ready().then(() => {
+      this.storageService = supabaseService.storage;
+    });
   }
 
   public async startUpload() {
-    await this.supabaseService.ready();
     this.uploadDisabled = true;
     const res = await this.uppy.upload();
-    console.log('res', res);
     this.uploadDisabled = false;
   }
 
@@ -89,7 +94,20 @@ export class SupabaseUploadComponent {
         objectName: file.name,
         cacheControl: 3600,
       };
-      this.uploadDisabled = false;
+      this.checkDuplicateUpload(file);
     });
+  }
+
+  private async checkDuplicateUpload(file: UppyFile) {
+    this.uploadDisabled = true;
+    const storageFile = await this.storageService.getFile({ bucketId: 'resources', filename: file.name });
+    if (storageFile) {
+      this.notificationService.showUserNotification({
+        matIcon: 'error',
+        message: `Resource with name ${file.name} already exists`,
+      });
+      this.uppy.removeFile(file.id);
+    }
+    this.uploadDisabled = false;
   }
 }
