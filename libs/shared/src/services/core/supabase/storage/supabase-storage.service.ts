@@ -24,13 +24,21 @@ export class SupabaseStorageService {
     this.supabaseClient = client;
   }
 
-  /** List a bucket contents */
-  public async list(bucketId: string, path = '', options: SearchOptions = {}) {
-    const { data, error } = await this.storage.from(bucketId).list(path, options);
+  /**
+   * List a bucket contents
+   * Uses custom table view as by default js sdk appears to only return top-level files/folders
+   * and not recursive children
+   * Requires custom view created (see example resources migration)
+   * */
+  public async list(bucketId: string) {
+    // NOTE - access via storage table instead of storage api as does not support recursive list
+    const { data, error } = await this.supabaseClient.from(`storage_objects`).select('*').eq('bucket_id', bucketId);
+
     if (error) {
       console.error(error);
+      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
     }
-    return data;
+    return data || [];
   }
 
   public async getFile(options: {

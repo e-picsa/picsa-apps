@@ -13,6 +13,9 @@ import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
 import { SupabaseStorageService } from '../storage/supabase-storage.service';
 import { PicsaNotificationService } from '../../notification.service';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 /**
  * Supabase storage uploader built on top of Uppy dashboard, with support for resumable uploads
@@ -25,21 +28,27 @@ import { PicsaNotificationService } from '../../notification.service';
 @Component({
   selector: 'picsa-supabase-upload',
   standalone: true,
-  imports: [CommonModule, UppyAngularDashboardModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    UppyAngularDashboardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+  ],
   templateUrl: './supabase-upload.component.html',
   styleUrls: ['./supabase-upload.component.scss'],
 })
 export class SupabaseUploadComponent {
   public uploadDisabled = true;
 
+  public storageFolder = '';
+
   public uppy: Uppy = new Uppy({
     debug: true,
     autoProceed: false,
-    restrictions: { maxNumberOfFiles: 1 },
-    // TODO - check in advance for file conflicts
-    onBeforeUpload: (files) => {
-      return files;
-    },
+    // restrictions: { maxNumberOfFiles: 1 },
   });
 
   public uppyOptions: DashboardOptions = {
@@ -59,8 +68,23 @@ export class SupabaseUploadComponent {
 
   public async startUpload() {
     this.uploadDisabled = true;
+    // remove duplicates
+    for (const file of this.uppy.getFiles()) {
+      const objectName = this.storageFolder ? `${this.storageFolder}/${file.name}` : file.name;
+
+      this.uppy.setFileMeta(file.id, {
+        ...file.meta,
+        contentType: file.type,
+        bucketName: 'resources',
+        objectName,
+        cacheControl: 3600,
+      });
+      await this.checkDuplicateUpload(file);
+    }
     const res = await this.uppy.upload();
+    console.log({ res });
     this.uploadDisabled = false;
+    this.storageFolder = '';
   }
 
   private addUppyUploader() {
@@ -86,21 +110,19 @@ export class SupabaseUploadComponent {
     });
     // Use file-added hook to update metadata used by supabase for managing file metadata
     // NOTE - additional hooks can also be added to observe upload progress, errors etc.
+
     this.uppy.on('file-added', (file) => {
-      file.meta = {
-        ...file.meta,
-        contentType: file.type,
-        bucketName: 'resources',
-        objectName: file.name,
-        cacheControl: 3600,
-      };
-      this.checkDuplicateUpload(file);
+      this.uploadDisabled = false;
     });
   }
 
   private async checkDuplicateUpload(file: UppyFile) {
     this.uploadDisabled = true;
-    const storageFile = await this.storageService.getFile({ bucketId: 'resources', filename: file.name });
+    const storageFile = await this.storageService.getFile({
+      bucketId: 'resources',
+      filename: file.name,
+      folderPath: this.storageFolder || '',
+    });
     if (storageFile) {
       this.notificationService.showUserNotification({
         matIcon: 'error',
@@ -108,6 +130,5 @@ export class SupabaseUploadComponent {
       });
       this.uppy.removeFile(file.id);
     }
-    this.uploadDisabled = false;
   }
 }
