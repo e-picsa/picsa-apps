@@ -1,14 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import {
-  AbstractControl,
   FormControl,
   FormGroup,
   FormGroupDirective,
   FormsModule,
   NgForm,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { PicsaNotificationService } from '../../notification.service';
 import type { SupabaseService } from '../supabase.service';
+import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 
 export interface ISignInDialogData {
   service: SupabaseService;
@@ -34,18 +32,6 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
-
-/**
- * Custom form validator to ensure passwords match. Adapted from
- * https://stackoverflow.com/a/51606362/5693245
- */
-const validatePasswordMatch: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  if (!control) return null;
-  const form = control.parent;
-  if (!form) return null;
-  const pass = form.get('password')?.value;
-  return pass === control.value ? null : { notSame: true };
-};
 
 @Component({
   selector: 'picsa-supabase-sign-in-dialog',
@@ -154,7 +140,10 @@ export class SupabaseSignInDialogComponent {
   public enableRegisterMode() {
     this.template = 'register';
     this.title = 'Register';
-    this.form.addControl('passwordConfirm', new FormControl('', [Validators.required, validatePasswordMatch]));
+    this.form.addControl(
+      'passwordConfirm',
+      new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch])
+    );
   }
 
   public async handleSignIn() {

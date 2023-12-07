@@ -4,6 +4,8 @@ $fontFamily: Roboto, 'Helvetica Neue', sans-serif;
 body {
   --mdc-protected-button-container-height: 36px;
   --mdc-outlined-button-container-height: 36px;
+  --mdc-filled-button-container-height: 36px;
+  --mat-stepper-header-height: 72px;
 }
 
 // Revert changes appliec md14 -> md15
@@ -84,6 +86,13 @@ mat-form-field.no-hint {
 // Add margin after input with prefix
 .mat-mdc-form-field-infix {
   margin-left: 4px;
+}
+
+mat-chip {
+  // Mat chip pointer cursor
+  .mdc-evolution-chip__action--presentational {
+    cursor: pointer;
+  }
 }
 
 // Create a colum-style layout for radio buttons where button appears below text

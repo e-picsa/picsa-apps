@@ -54,6 +54,11 @@ export class SupabaseStorageService {
     }
     return data?.[0] || null;
   }
+
+  /** Return the link to a file in a public bucket */
+  public getPublicLink(bucketId: string, objectPath: string) {
+    return this.storage.from(bucketId).getPublicUrl(objectPath).data.publicUrl;
+  }
 }
 
 /**
