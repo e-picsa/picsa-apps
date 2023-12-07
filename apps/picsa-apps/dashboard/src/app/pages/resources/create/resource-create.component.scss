@@ -1,0 +1,13 @@
+mat-radio-button {
+  margin-right: 1rem;
+}
+mat-form-field {
+  width: 100%;
+  max-width: 500px;
+}
+mat-chip.file-chip {
+  --mdc-chip-label-text-color: var(--color-primary);
+  margin-top: 1rem;
+  border: 1px solid var(--color-primary);
+  background-color: white;
+}

@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../material.module';
 
@@ -12,7 +13,7 @@ type IStorageEntry = Database['storage']['Tables']['objects']['Row'];
 @Component({
   selector: 'dashboard-resources-page',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, SupabaseUploadComponent],
+  imports: [CommonModule, DashboardMaterialModule, RouterModule],
   templateUrl: './resources.page.html',
   styleUrls: ['./resources.page.scss'],
 })
