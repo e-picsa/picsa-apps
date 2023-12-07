@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PicsaTranslateService } from '@picsa/shared/modules';
 
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
@@ -11,7 +12,7 @@ import { SeasonCalenderService } from './../../services/calender.data.service';
 export class CreateCalendarComponent implements OnInit {
   data;
 
-  constructor(private router: Router, private service: SeasonCalenderService) {
+  constructor(private router: Router, private service: SeasonCalenderService, translateService:PicsaTranslateService) {
     this.generateCalendarMonths();
     this.data = this.router?.getCurrentNavigation()?.extras?.state;
     //console.log(this.data);

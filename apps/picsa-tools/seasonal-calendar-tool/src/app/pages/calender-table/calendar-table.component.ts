@@ -17,7 +17,7 @@ import { SeasonCalenderService } from './../../services/calender.data.service';
 export class CalendarTableComponent implements OnInit {
   calendarData: any;
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
-  crops: string[] = ['Maize', 'Beans', 'Peas'];
+  // crops: string[] = ['Maize', 'Beans', 'Peas'];
   selectedCrop = '';
   customCrop = '';
   showCropAdder = false;
