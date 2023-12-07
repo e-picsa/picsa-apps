@@ -3,6 +3,10 @@ mat-sidenav {
 }
 mat-nav-list {
   --mdc-list-list-item-one-line-container-height: 48px;
+
+  height: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
 }
 mat-toolbar {
   z-index: 2;

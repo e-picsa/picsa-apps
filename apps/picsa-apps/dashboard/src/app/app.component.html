@@ -36,6 +36,19 @@
           {{ link.label }}
         </a>
         }
+        <mat-divider style="margin-top: auto"></mat-divider>
+        <div mat-subheader>Global Admin</div>
+        <mat-divider></mat-divider>
+        @for (link of globalLinks; track link.href) {
+        <a
+          mat-list-item
+          [routerLink]="link.href"
+          routerLinkActive="mdc-list-item--activated active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ link.label }}
+        </a>
+        }
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
