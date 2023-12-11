@@ -34,11 +34,13 @@ export interface IFirebaseConfig {
 }
 
 export interface ISupabaseConfig {
-  apiUrl: string;
   /** Default credentials used by app to login as anonymous user */
   appUser: { email: string; password?: string };
-  /** DB anon key (TODO - is required?) */
-  anonKey: string;
+  /** Async function used to load credentials which may be stored in local file */
+  load: () => Promise<{
+    anonKey: string;
+    apiUrl: string;
+  }>;
 }
 
 // combined settings

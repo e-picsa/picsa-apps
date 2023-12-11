@@ -17,19 +17,20 @@ export class SupabaseService extends PicsaAsyncService {
 
   private supabase: SupabaseClient;
 
-  // private auth: SupabaseAuthClient;
-
   constructor(public storage: SupabaseStorageService, public auth: SupabaseAuthService) {
     super();
-    const { anonKey, apiUrl } = ENVIRONMENT.supabase;
+  }
+
+  public override async init(): Promise<void> {
+    const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
     this.supabase = createClient(apiUrl, anonKey, {});
+
+    // register supabase instance with child services
     this.storage.registerSupabaseClient(this.supabase);
     this.auth.registerSupabaseClient(this.supabase);
 
-    // this.auth = this.supabase.auth;
     this.db = { table: (relation: string) => this.supabase.from(relation) };
-  }
-  public override async init(): Promise<void> {
+
     await this.auth.ready();
   }
 }

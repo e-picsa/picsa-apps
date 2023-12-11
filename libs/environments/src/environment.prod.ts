@@ -11,10 +11,14 @@ const productionEnvironment: IEnvironment = {
   defaultConfiguration: 'global',
   // TODO - load from CI
   supabase: {
-    apiUrl: 'https://earfrmpodubnbuhclccx.supabase.co',
     appUser: { email: 'anonymous_user@picsa.app' },
-    anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcmZybXBvZHVibmJ1aGNsY2N4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3NTM2ODIsImV4cCI6MjAwMDMyOTY4Mn0.bNZcTIB-LqzcubgEy0_azbw7chMtCp-w4Ss9plTeuKY',
+    load: async () => {
+      return {
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhcmZybXBvZHVibmJ1aGNsY2N4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3NTM2ODIsImV4cCI6MjAwMDMyOTY4Mn0.bNZcTIB-LqzcubgEy0_azbw7chMtCp-w4Ss9plTeuKY',
+        apiUrl: 'https://earfrmpodubnbuhclccx.supabase.co',
+      };
+    },
   },
 };
 

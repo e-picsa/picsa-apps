@@ -62,7 +62,7 @@ export class AppComponent implements AfterViewInit {
   constructor(public supabaseService: SupabaseService) {}
 
   async ngAfterViewInit() {
-    await this.supabaseService.init();
+    await this.supabaseService.ready();
     await this.supabaseService.auth.signInDefaultUser();
   }
 }

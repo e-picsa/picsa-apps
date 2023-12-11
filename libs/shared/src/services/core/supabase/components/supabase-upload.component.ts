@@ -82,16 +82,15 @@ export class SupabaseUploadComponent {
 
   private storageService: SupabaseStorageService;
 
-  constructor(supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
-    supabaseService.ready().then(() => {
-      this.storageService = supabaseService.storage;
-    });
-  }
-  ngOnInit(): void {
-    this.initialise();
+  constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
+
+  async ngOnInit() {
+    await this.supabaseService.ready();
+    this.storageService = this.supabaseService.storage;
+    this.initUppy();
   }
 
-  private initialise() {
+  private async initUppy() {
     // Create new Uppy instance, mapping configurable props
     this.uppy = new Uppy({
       debug: false,
@@ -100,7 +99,7 @@ export class SupabaseUploadComponent {
     });
     this.uppyOptions.height = this.fileDropHeight;
     // Create custom upload to support upload to supabase
-    this.registerSupabaseUppyUploader();
+    await this.registerSupabaseUppyUploader();
   }
 
   public async startUpload() {
@@ -134,8 +133,8 @@ export class SupabaseUploadComponent {
     this.uploadComplete.next(uploads);
   }
 
-  private registerSupabaseUppyUploader() {
-    const { anonKey, apiUrl } = ENVIRONMENT.supabase;
+  private async registerSupabaseUppyUploader() {
+    const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
     this.uppy.use(Tus, {
       endpoint: `${apiUrl}/storage/v1/upload/resumable`,
       headers: {
