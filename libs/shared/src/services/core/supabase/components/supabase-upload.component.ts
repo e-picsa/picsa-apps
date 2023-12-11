@@ -3,19 +3,20 @@ import '@uppy/dashboard/dist/style.min.css';
 
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { ENVIRONMENT } from '@picsa/environments';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { UppyAngularDashboardModule } from '@uppy/angular';
 import Uppy, { InternalMetadata, UploadResult, UppyFile } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
-import { SupabaseStorageService } from '../storage/supabase-storage.service';
+
 import { PicsaNotificationService } from '../../notification.service';
-import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { SupabaseStorageService } from '../services/supabase-storage.service';
 
 interface IUploadMeta extends InternalMetadata {
   bucketName: string;

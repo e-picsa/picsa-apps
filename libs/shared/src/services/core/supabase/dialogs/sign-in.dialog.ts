@@ -13,13 +13,13 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
-import { PicsaNotificationService } from '../../notification.service';
-import type { SupabaseService } from '../supabase.service';
 import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 
+import { PicsaNotificationService } from '../../notification.service';
+import type { SupabaseAuthService } from '../services/supabase-auth.service';
+
 export interface ISignInDialogData {
-  service: SupabaseService;
+  authService: SupabaseAuthService;
 }
 
 /**
@@ -122,7 +122,7 @@ export class SupabaseSignInDialogComponent {
 
   errorMatcher = new showErrorAfterInteraction();
 
-  private service: SupabaseService;
+  private authService: SupabaseAuthService;
 
   public form = new FormGroup<{ email: FormControl; password: FormControl; passwordConfirm?: FormControl }>({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -134,7 +134,7 @@ export class SupabaseSignInDialogComponent {
     @Inject(MAT_DIALOG_DATA) data: ISignInDialogData,
     private notificationService: PicsaNotificationService
   ) {
-    this.service = data.service;
+    this.authService = data.authService;
   }
 
   public enableRegisterMode() {
@@ -149,7 +149,7 @@ export class SupabaseSignInDialogComponent {
   public async handleSignIn() {
     this.form.disable();
     const { email, password } = this.form.value;
-    const { data, error } = await this.service.signInUser(email, password);
+    const { data, error } = await this.authService.signInUser(email, password);
     console.log({ data, error });
     if (error) {
       console.error(error);
@@ -162,7 +162,7 @@ export class SupabaseSignInDialogComponent {
   public async handleRegister() {
     this.form.disable();
     const { email, password } = this.form.value;
-    const { error } = await this.service.signUpUser(email, password);
+    const { error } = await this.authService.signUpUser(email, password);
     if (error) {
       console.error(error);
       this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });
