@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FileObject, SearchOptions } from '@supabase/storage-js';
+import { FileObject } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { PicsaNotificationService } from '../../notification.service';

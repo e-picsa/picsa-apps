@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ENVIRONMENT } from '@picsa/environments/src';
-import { AuthError, createClient, RealtimeClient, SupabaseClient, User } from '@supabase/supabase-js';
+import { AuthError, createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 
 import { PicsaAsyncService } from '../../asyncService.service';
@@ -20,7 +20,6 @@ export class SupabaseService extends PicsaAsyncService {
   public db: { table: SupabaseClient['from'] };
 
   private supabase: SupabaseClient;
-  private realtime: RealtimeClient;
 
   private auth: SupabaseAuthClient;
 
@@ -34,11 +33,10 @@ export class SupabaseService extends PicsaAsyncService {
     this.supabase = createClient(apiUrl, anonKey, {});
     this.storage.registerSupabaseClient(this.supabase);
 
-    this.realtime = this.supabase.realtime;
     this.auth = this.supabase.auth;
     this.db = { table: (relation: string) => this.supabase.from(relation) };
   }
-  public override async init(...args: any): Promise<void> {
+  public override async init(): Promise<void> {
     this.subscribeToAuthChanges();
   }
 
