@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from './material.module';
@@ -60,10 +59,10 @@ export class AppComponent implements AfterViewInit {
     },
   ];
 
-  constructor(public supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
+  constructor(public supabaseService: SupabaseService) {}
 
   async ngAfterViewInit() {
     await this.supabaseService.init();
-    await this.supabaseService.signInDefaultUser();
+    await this.supabaseService.auth.signInDefaultUser();
   }
 }

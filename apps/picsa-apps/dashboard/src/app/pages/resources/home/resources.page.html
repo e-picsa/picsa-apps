@@ -1,0 +1,42 @@
+<div class="page-content">
+  <h2>Resources</h2>
+  <table mat-table class="resources-table" [dataSource]="service.resources()">
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let resource">{{resource.description}}</td>
+    </ng-container>
+    <ng-container matColumnDef="storage_file">
+      <th mat-header-cell *matHeaderCellDef>storage_file</th>
+      <td mat-cell *matCellDef="let resource">
+        @if(resource.storage_file; as storageFile){ {{storageFile.filename}} }
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row class="resource-row" [routerLink]="row.id" *matRowDef="let row; columns: displayedColumns;"></tr>
+    <!-- <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Languages</th>
+      <th>Deployments</th>
+      <th>File</th>
+    </tr> -->
+    <!-- @for (resource of resources; track resource.id) {
+    <tr class="resource-row" >
+      <td>...</td>
+      <td>{{resource.description}}</td>
+      <td>...</td>
+      <td>...</td>
+      <td></td>
+    </tr> -->
+
+    <!-- } -->
+  </table>
+  <button mat-stroked-button color="primary" routerLink="create" style="margin-top: 1rem">
+    <mat-icon>add</mat-icon>
+    Add Resource
+  </button>
+
+  <h2>Super Admin</h2>
+  <button mat-stroked-button color="primary" (click)="service.migrateHardcodedResources()">Import</button>
+  <button mat-stroked-button color="primary">Export</button>
+</div>

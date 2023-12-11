@@ -1,29 +1,30 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { Database } from '@picsa/server-types';
+import { Injectable, signal } from '@angular/core';
+import { Database } from '@picsa/server-types';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { arrayToHashmap } from '@picsa/utils';
 
-import { DashboardMaterialModule } from '../../material.module';
+export type IStorageEntry = Database['storage']['Tables']['objects']['Row'];
+export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
-type IStorageEntry = Database['storage']['Tables']['objects']['Row'];
+/** Resource db entry with merged storage_file entry */
+export interface IResource extends Omit<IResourceEntry, 'storage_file'> {
+  storage_file?: IStorageEntry & { filename?: string };
+}
 
-@Component({
-  selector: 'dashboard-resources-page',
-  standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, RouterModule],
-  templateUrl: './resources.page.html',
-  styleUrls: ['./resources.page.scss'],
-})
-export class ResourcesPageComponent implements OnInit {
+@Injectable({ providedIn: 'root' })
+export class ResourcesDashboardService {
   private storageFiles: IStorageEntry[] = [];
-  constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
-  async ngOnInit() {
-    await this.listResourcesByFolder();
-    // TODO
-    return;
+  private storageFilesHashmap: Record<string, IStorageEntry> = {};
+  public readonly resources = signal<IResource[]>([]);
+
+  constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
+    this.initialise();
+  }
+
+  private async initialise() {
+    await this.listStorageFiles();
+    await this.listResources();
   }
 
   /**
@@ -80,8 +81,31 @@ export class ResourcesPageComponent implements OnInit {
     return decodeURI(pathname).replace(/%2F/g, '/').replace('/v0/b/picsa-apps.appspot.com/o/', '');
   }
 
-  private async listResourcesByFolder() {
-    const resources: IStorageEntry[] = await this.supabaseService.storage.list('resources');
-    this.storageFiles = resources;
+  private async listStorageFiles() {
+    this.storageFiles = await this.supabaseService.storage.list('resources');
+    this.storageFilesHashmap = arrayToHashmap(this.storageFiles, 'id');
+    console.log('storage files', this.storageFilesHashmap);
+  }
+
+  /**
+   *
+   */
+  private async listResources() {
+    const { data, error } = await this.supabaseService.db.table('resources').select('*');
+    if (error) {
+      throw error;
+    }
+    const resources: IResource[] = data.map((entry: IResourceEntry) => {
+      const { storage_file } = entry;
+      const storageEntry = storage_file ? this.storageFilesHashmap[storage_file] : undefined;
+      const filename = storageEntry?.name?.split('/').pop() || '';
+      const resource: IResource = {
+        ...entry,
+        storage_file: { ...(storageEntry as IStorageEntry), filename },
+      };
+      return resource;
+    });
+    this.resources.set(resources);
+    console.log('resources', this.resources);
   }
 }

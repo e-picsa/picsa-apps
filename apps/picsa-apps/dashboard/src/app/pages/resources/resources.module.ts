@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { ResourceCreateComponent } from './create/resource-create.component';
-import { ResourcesPageComponent } from './resources.page';
+import { ResourcesPageComponent } from './home/resources.page';
 
 @NgModule({
   declarations: [],
@@ -16,6 +16,10 @@ import { ResourcesPageComponent } from './resources.page';
       },
       {
         path: 'create',
+        component: ResourceCreateComponent,
+      },
+      {
+        path: ':id',
         component: ResourceCreateComponent,
       },
     ]),
