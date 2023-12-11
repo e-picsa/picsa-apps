@@ -8,28 +8,20 @@
     <ng-container matColumnDef="storage_file">
       <th mat-header-cell *matHeaderCellDef>storage_file</th>
       <td mat-cell *matCellDef="let resource">
-        @if(resource.storage_file; as storageFile){ {{storageFile.filename}} }
+        @if(resource.storage_file; as storage_file ){
+        <!-- storage file lookup -->
+        @if(service.storageFilesHashmap[storage_file]; as storageEntry){
+        <div>{{storageEntry.name?.split('/')?.pop()}}</div>
+        } }
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row class="resource-row" [routerLink]="row.id" *matRowDef="let row; columns: displayedColumns;"></tr>
     <!-- <tr>
       <th>Name</th>
-      <th>Description</th>
       <th>Languages</th>
       <th>Deployments</th>
-      <th>File</th>
     </tr> -->
-    <!-- @for (resource of resources; track resource.id) {
-    <tr class="resource-row" >
-      <td>...</td>
-      <td>{{resource.description}}</td>
-      <td>...</td>
-      <td>...</td>
-      <td></td>
-    </tr> -->
-
-    <!-- } -->
   </table>
   <button mat-stroked-button color="primary" routerLink="create" style="margin-top: 1rem">
     <mat-icon>add</mat-icon>
