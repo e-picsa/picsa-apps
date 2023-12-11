@@ -9,7 +9,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ENVIRONMENT } from '@picsa/environments';
-import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { UppyAngularDashboardModule } from '@uppy/angular';
 import Uppy, { InternalMetadata, UploadResult, UppyFile } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
@@ -17,6 +16,7 @@ import Tus from '@uppy/tus';
 
 import { PicsaNotificationService } from '../../notification.service';
 import { SupabaseStorageService } from '../services/supabase-storage.service';
+import { SupabaseService } from '../supabase.service';
 
 interface IUploadMeta extends InternalMetadata {
   bucketName: string;

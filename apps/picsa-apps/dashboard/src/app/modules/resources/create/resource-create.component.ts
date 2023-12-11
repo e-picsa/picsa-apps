@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Database } from '@picsa/server-types';
+import { ActivatedRoute } from '@angular/router';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { Database } from '@picsa/server-types';
 import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 import { IUploadResult, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
 
