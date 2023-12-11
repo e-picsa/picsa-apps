@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
@@ -9,17 +10,21 @@ export type IStorageEntry = Database['storage']['Tables']['objects']['Row'];
 export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
 @Injectable({ providedIn: 'root' })
-export class ResourcesDashboardService {
+export class ResourcesDashboardService extends PicsaAsyncService {
   private storageFiles: IStorageEntry[] = [];
   public storageFilesHashmap: Record<string, IStorageEntry> = {};
   public readonly resources = signal<IResourceEntry[]>([]);
 
   constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
-    this.initialise();
+    super();
   }
 
-  private async initialise() {
+  public override async init() {
     await this.supabaseService.ready();
+    await this.refreshResourcesList();
+  }
+
+  public async refreshResourcesList() {
     await this.listStorageFiles();
     await this.listResources();
   }

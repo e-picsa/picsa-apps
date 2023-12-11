@@ -14,9 +14,9 @@ import Uppy, { InternalMetadata, UploadResult, UppyFile } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
 
-import { PicsaNotificationService } from '../../notification.service';
-import { SupabaseStorageService } from '../services/supabase-storage.service';
-import { SupabaseService } from '../supabase.service';
+import { PicsaNotificationService } from '../../../notification.service';
+import { SupabaseStorageService } from '../../services/supabase-storage.service';
+import { SupabaseService } from '../../supabase.service';
 
 interface IUploadMeta extends InternalMetadata {
   bucketName: string;
@@ -69,9 +69,12 @@ export class SupabaseUploadComponent {
 
   @Input() autoUpload = false;
 
-  @Output() uploadComplete = new EventEmitter<IUploadResult[]>();
+  @Input() set disabled(disabled: boolean) {
+    // Update options through plugin interface for better change detection
+    this.uppyOptions = { ...this.uppyOptions, disabled };
+  }
 
-  public uploadDisabled = true;
+  @Output() uploadComplete = new EventEmitter<IUploadResult[]>();
 
   public uppy: Uppy;
 
@@ -103,7 +106,6 @@ export class SupabaseUploadComponent {
   }
 
   public async startUpload() {
-    this.uploadDisabled = true;
     // remove duplicates
     for (const file of this.uppy.getFiles()) {
       const objectName = this.storageFolderPath ? `${this.storageFolderPath}/${file.name}` : file.name;
@@ -119,12 +121,10 @@ export class SupabaseUploadComponent {
     }
     const res = await this.uppy.upload();
     this.handleUploadComplete(res);
-    this.uploadDisabled = false;
     this.storageFolderPath = '';
   }
 
   private handleUploadComplete(res: UploadResult) {
-    console.log('upload res', res);
     const uploads = res.successful.map((res) => {
       const meta: IUploadMeta = res.meta as any;
       meta.publicUrl = this.storageService.getPublicLink(meta.bucketName, meta.objectName);
@@ -161,14 +161,12 @@ export class SupabaseUploadComponent {
     this.uppy.on('file-added', (file) => this.handleFileAdded());
   }
   private handleFileAdded() {
-    this.uploadDisabled = false;
     if (this.autoUpload) {
       this.startUpload();
     }
   }
 
   private async checkDuplicateUpload(file: UppyFile) {
-    this.uploadDisabled = true;
     const storageFile = await this.storageService.getFile({
       bucketId: 'resources',
       filename: file.name,

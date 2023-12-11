@@ -8,6 +8,7 @@ import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 import { IUploadResult, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../material.module';
+import { ResourcesDashboardService } from '../resources.service';
 
 type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
@@ -20,6 +21,7 @@ type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 })
 export class ResourceCreateComponent implements OnInit {
   constructor(
+    private service: ResourcesDashboardService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private supabaseService: SupabaseService
@@ -36,9 +38,10 @@ export class ResourceCreateComponent implements OnInit {
     type: ['file'],
   });
 
-  public uploadedFile: IUploadResult;
+  public uploadedFile?: { name?: string; publicUrl?: string };
 
   async ngOnInit() {
+    await this.service.ready();
     const { id } = this.route.snapshot.params;
     if (id) {
       const { data, error } = await this.supabaseService.db
@@ -58,14 +61,30 @@ export class ResourceCreateComponent implements OnInit {
     console.log('laod file resource', resource);
     this.resourceType = 'file';
     if (resource.storage_file) {
-      // const {} = await this.supabaseService.db.table('');
-      // console.log('fetch storage file', resource.storage_file);
+      const storageEntry = this.service.storageFilesHashmap[resource.storage_file];
+      if (storageEntry) {
+        const { bucket_id, name, id } = storageEntry;
+        const publicUrl = this.supabaseService.storage.getPublicLink(bucket_id as string, name as string);
+        console.log({ storageEntry, publicUrl });
+        // const {} = await this.supabaseService.db.table('');
+        // console.log('fetch storage file', resource.storage_file);
+        this.uploadedFile = {
+          publicUrl,
+          name: name?.split('/').pop() || '',
+        };
+      }
     }
     this.fileForm.patchValue(resource);
-    // this.uploadedFile = { data: {}, meta: {} };
   }
 
   public async handleUploadComplete(res: IUploadResult[]) {
-    this.uploadedFile = res[0];
+    if (res.length === 0) {
+      this.uploadedFile = undefined;
+      return;
+    }
+    const [{ meta }] = res;
+    const { name, publicUrl } = meta;
+    this.uploadedFile = { name: name.split('/').pop(), publicUrl };
+    await this.service.refreshResourcesList();
   }
 }

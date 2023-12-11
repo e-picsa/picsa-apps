@@ -13,6 +13,7 @@
   <form [formGroup]="fileForm">
     <label style="display: block; margin-bottom: 8px">Resource File</label>
     <picsa-supabase-upload
+      [disabled]="uploadedFile ? true : false"
       [fileDropHeight]="128"
       style="width: 300px"
       [autoUpload]="true"
@@ -21,10 +22,10 @@
     ></picsa-supabase-upload>
     @if(uploadedFile){
 
-    <a [href]="uploadedFile.meta.publicUrl" target="_blank" rel="noopener" style="margin-top: 1rem">
+    <a [href]="uploadedFile.publicUrl" target="_blank" rel="noopener" style="margin-top: 1rem">
       <mat-chip class="file-chip">
         <div style="display: flex; align-items: center; gap: 4px; padding: 4px 0">
-          <span>{{ uploadedFile.meta.name }}</span>
+          <span>{{ uploadedFile.name }}</span>
           <mat-icon>open_in_new</mat-icon>
         </div>
       </mat-chip>
