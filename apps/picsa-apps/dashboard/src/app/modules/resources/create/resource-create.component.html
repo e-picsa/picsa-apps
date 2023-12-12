@@ -2,7 +2,7 @@
   <h2>New Resource</h2>
 
   <div style="margin-bottom: 1rem">
-    <label style="display: block; margin-bottom: 8px">Resource Type</label>
+    <label>Resource Type</label>
     <mat-radio-group [(ngModel)]="resourceType">
       <mat-radio-button value="file">File</mat-radio-button>
       <mat-radio-button value="link">Link</mat-radio-button>
@@ -11,27 +11,31 @@
 
   @if (resourceType==='file') {
   <form [formGroup]="fileForm">
-    <label style="display: block; margin-bottom: 8px">Resource File</label>
-    <picsa-supabase-upload
-      [disabled]="uploadedFile ? true : false"
-      [fileDropHeight]="128"
-      style="width: 300px"
-      [autoUpload]="true"
-      storageBucketName="resources"
-      (uploadComplete)="handleUploadComplete($event)"
-    ></picsa-supabase-upload>
-    @if(uploadedFile){
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+      @for (item of [{code:'global',label:'Global'}]; track $index) {
+      <mat-tab [label]="item.label">
+        <!-- Resource storage file -->
+        <label style="margin-top: 1rem">Resource</label>
+        <picsa-supabase-upload
+          [disabled]="fileForm.value.storage_file ? true : false"
+          [fileDropHeight]="128"
+          style="width: 300px"
+          [autoUpload]="true"
+          storageBucketName="resources"
+          [storageFolderPath]="item.code"
+          (uploadComplete)="handleUploadComplete($event, 'storage_file')"
+        ></picsa-supabase-upload>
+        @if(fileForm.value.storage_file ){
+        <dashboard-resources-storage-link
+          [id]="fileForm.value.storage_file"
+          style="margin-top: 1rem"
+        ></dashboard-resources-storage-link>
 
-    <a [href]="uploadedFile.publicUrl" target="_blank" rel="noopener" style="margin-top: 1rem">
-      <mat-chip class="file-chip">
-        <div style="display: flex; align-items: center; gap: 4px; padding: 4px 0">
-          <span>{{ uploadedFile.name }}</span>
-          <mat-icon>open_in_new</mat-icon>
-        </div>
-      </mat-chip>
-    </a>
-
-    }
+        }
+      </mat-tab>
+      }
+    </mat-tab-group>
+    <button style="margin-top: 2rem" mat-stroked-button [disabled]="!fileForm.valid">Save Resource</button>
   </form>
 
   } @if (resourceType==='link') {

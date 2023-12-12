@@ -6,7 +6,13 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
 
-export type IStorageEntry = Database['storage']['Tables']['objects']['Row'];
+type IStorageDB = Database['storage']['Tables']['objects']['Row'];
+
+export interface IStorageEntry extends IStorageDB {
+  /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
+  publicUrl: string;
+}
+
 export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
 @Injectable({ providedIn: 'root' })
@@ -21,12 +27,17 @@ export class ResourcesDashboardService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
-    await this.refreshResourcesList();
-  }
-
-  public async refreshResourcesList() {
     await this.listStorageFiles();
     await this.listResources();
+  }
+
+  /** Retrieve storage db meta for a file */
+  public async getStorageFileById(id: string) {
+    // Refresh storage file cache if id not found
+    if (!this.storageFilesHashmap[id]) {
+      await this.listStorageFiles();
+    }
+    return this.storageFilesHashmap[id];
   }
 
   /**
@@ -46,7 +57,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     const missing: unknown[] = [];
 
     for (const fileEntry of Object.values(DB_FILE_ENTRIES)) {
-      const { type, filename, id, description, url } = fileEntry;
+      const { type, description, url } = fileEntry;
       // extract pathname from firebase url
       const { pathname } = new URL(url);
       const storagePath = decodeURI(pathname).replace(/%2F/g, '/').replace('/v0/b/picsa-apps.appspot.com/o/', '');
@@ -79,7 +90,11 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   }
 
   private async listStorageFiles() {
-    this.storageFiles = await this.supabaseService.storage.list('resources');
+    const storageFiles: IStorageDB[] = await this.supabaseService.storage.list('resources');
+    this.storageFiles = storageFiles.map((file) => ({
+      ...file,
+      publicUrl: this.supabaseService.storage.getPublicLink(file.bucket_id as string, file.name as string),
+    }));
     this.storageFilesHashmap = arrayToHashmap(this.storageFiles, 'id');
     console.log('storage files', this.storageFilesHashmap);
   }

@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ENVIRONMENT } from '@picsa/environments';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { FileObject } from '@supabase/storage-js';
 import { UppyAngularDashboardModule } from '@uppy/angular';
 import Uppy, { InternalMetadata, UploadResult, UppyFile } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
@@ -18,17 +20,32 @@ import { PicsaNotificationService } from '../../../notification.service';
 import { SupabaseStorageService } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
 
+/** Metadata populated to uploads so that supabase can process correctly */
 interface IUploadMeta extends InternalMetadata {
   bucketName: string;
   cacheControl: number;
   contentType?: string;
   objectName: string;
-  /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
-  publicUrl?: string;
 }
+
+/** DB entry populated to server storage objects with explicit metadata expected */
+interface IStorageEntry extends FileObject {
+  metadata: {
+    /** cacheControl will be altered from input metadata, e.g. `3600` -> `"max-age=3600"` */
+    cacheControl: string;
+    contentLength: number;
+    eTag: string;
+    httpStatusCode: number;
+    lastModified: string;
+    mimetype: string;
+    size: number;
+  };
+}
+
+/** Storage entry data returned following upload */
 export interface IUploadResult {
   data: File | Blob;
-  meta: IUploadMeta;
+  entry: IStorageEntry;
 }
 
 /**
@@ -120,16 +137,28 @@ export class SupabaseUploadComponent {
       await this.checkDuplicateUpload(file);
     }
     const res = await this.uppy.upload();
-    this.handleUploadComplete(res);
+    await this.handleUploadComplete(res);
     this.storageFolderPath = '';
   }
 
-  private handleUploadComplete(res: UploadResult) {
-    const uploads = res.successful.map((res) => {
-      const meta: IUploadMeta = res.meta as any;
-      meta.publicUrl = this.storageService.getPublicLink(meta.bucketName, meta.objectName);
-      return { data: res.data, meta: meta };
-    });
+  private async handleUploadComplete(res: UploadResult) {
+    const uploads = await Promise.all(
+      res.successful.map(async (res) => {
+        const meta: IUploadMeta = res.meta as any;
+        // HACK - manually retrieve db data associated with file. In future this may be handled automatically
+        // https://github.com/orgs/supabase/discussions/4303
+        const entry = (await this.storageService.getFile({
+          bucketId: meta.bucketName,
+          filename: meta.name,
+          folderPath: meta.objectName.split('/').slice(0, -1).join('/'),
+        })) as IStorageEntry;
+        if (!entry) {
+          console.warn('Storage entry not found', meta);
+          throw new Error(`Storage entry not found`);
+        }
+        return { data: res.data, entry };
+      })
+    );
     this.uploadComplete.next(uploads);
   }
 
