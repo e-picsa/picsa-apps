@@ -115,7 +115,7 @@ export interface Database {
           description: string | null
           id: string
           modified_at: string
-          storage_cover: Json | null
+          storage_cover: string | null
           storage_file: string | null
           type: string
         }
@@ -124,7 +124,7 @@ export interface Database {
           description?: string | null
           id?: string
           modified_at?: string
-          storage_cover?: Json | null
+          storage_cover?: string | null
           storage_file?: string | null
           type: string
         }
@@ -133,11 +133,23 @@ export interface Database {
           description?: string | null
           id?: string
           modified_at?: string
-          storage_cover?: Json | null
+          storage_cover?: string | null
           storage_file?: string | null
           type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "resources_storage_cover_fkey"
+            columns: ["storage_cover"]
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_storage_cover_fkey"
+            columns: ["storage_cover"]
+            referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "resources_storage_file_fkey"
             columns: ["storage_file"]
@@ -146,6 +158,55 @@ export interface Database {
           },
           {
             foreignKeyName: "resources_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      resources_child: {
+        Row: {
+          country_code: string | null
+          created_at: string
+          id: number
+          language_code: string | null
+          parent: string
+          storage_file: string
+          tag: string | null
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string
+          id?: number
+          language_code?: string | null
+          parent: string
+          storage_file: string
+          tag?: string | null
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string
+          id?: number
+          language_code?: string | null
+          parent?: string
+          storage_file?: string
+          tag?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_child_parent_fkey"
+            columns: ["parent"]
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_child_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_child_storage_file_fkey"
             columns: ["storage_file"]
             referencedRelation: "storage_objects"
             referencedColumns: ["id"]
