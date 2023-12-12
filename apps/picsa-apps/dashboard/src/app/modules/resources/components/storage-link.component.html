@@ -1,0 +1,13 @@
+@if(storageEntry){
+<a [href]="storageEntry.publicUrl" target="_blank" rel="noopener" style="margin-top: 1rem">
+  <mat-chip class="file-chip">
+    <div style="display: flex; align-items: center; gap: 4px; padding: 4px 0">
+      <span>{{ storageEntry.name?.split('/')?.pop() }}</span>
+      <mat-icon>open_in_new</mat-icon>
+    </div>
+  </mat-chip>
+</a>
+
+} @if(notFound) {
+<p class="error-message">Storage file not found</p>
+}
