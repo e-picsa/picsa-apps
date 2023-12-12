@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { ResourceCreateComponent } from './create/resource-create.component';
-import { ResourcesPageComponent } from './home/resources.page';
+import { ResourceCreateComponent } from './pages/create/resource-create.component';
+import { ResourcesPageComponent } from './pages/home/resources.page';
 
 @NgModule({
   declarations: [],

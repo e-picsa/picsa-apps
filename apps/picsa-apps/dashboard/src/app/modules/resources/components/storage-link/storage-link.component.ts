@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IStorageEntry, ResourcesDashboardService } from '../resources.service';
+import { IStorageEntry, ResourcesDashboardService } from '../../resources.service';
 
 @Component({
   selector: 'dashboard-resources-storage-link',

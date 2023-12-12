@@ -7,9 +7,9 @@ import type { Database } from '@picsa/server-types';
 import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 import { IUploadResult, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
 
-import { DashboardMaterialModule } from '../../../material.module';
-import { DashboardResourcesStorageLinkComponent } from '../components/storage-link.component';
-import { ResourcesDashboardService } from '../resources.service';
+import { DashboardMaterialModule } from '../../../../material.module';
+import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
+import { ResourcesDashboardService } from '../../resources.service';
 
 type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 

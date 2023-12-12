@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { DashboardMaterialModule } from '../../../material.module';
-import { ResourcesDashboardService } from '../resources.service';
+import { DashboardMaterialModule } from '../../../../material.module';
+import { ResourcesDashboardService } from '../../resources.service';
 
 @Component({
   selector: 'dashboard-resources-page',
