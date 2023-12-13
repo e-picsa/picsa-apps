@@ -28,3 +28,7 @@ button.file-remove {
     margin-bottom: -4px;
   }
 }
+textarea.mdc-text-field__input {
+  color: var(--color-primary) !important;
+  font-size: 20px;
+}

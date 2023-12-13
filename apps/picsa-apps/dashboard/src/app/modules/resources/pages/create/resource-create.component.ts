@@ -54,8 +54,9 @@ export class ResourceCreateComponent implements OnInit {
   });
   public fileForm = this.formBuilder.group({
     id: new FormControl<string | null>(null),
-    title: ['', Validators.required],
     type: ['file'],
+    title: ['', Validators.required],
+    description: [''],
     storage_file: ['', Validators.required],
     storage_cover: ['', Validators.required],
   });
@@ -84,6 +85,7 @@ export class ResourceCreateComponent implements OnInit {
 
   private populateResource(resource: IResourceEntry) {
     this.resourceType = resource.type as any;
+    console.log('populate resource', resource);
     switch (resource.type) {
       case 'file':
         this.fileForm.patchValue(resource);
