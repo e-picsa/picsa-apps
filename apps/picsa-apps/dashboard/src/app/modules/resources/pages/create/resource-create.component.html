@@ -54,12 +54,14 @@
             <label>Cover Image</label>
             @if(fileForm.value.storage_cover ){
             <dashboard-resources-storage-link
+              #storageLink
               [id]="fileForm.value.storage_cover"
               displayStyle="button"
             ></dashboard-resources-storage-link>
             <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'storage_cover')">
               <mat-icon>close</mat-icon>
             </button>
+            <img class="cover-preview" [src]="storageLink.entry?.publicUrl" style="margin-top: 8px" />
 
             } @else {
             <picsa-supabase-upload

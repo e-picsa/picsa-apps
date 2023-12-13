@@ -14,7 +14,7 @@ import { ResourcesDashboardService } from '../../resources.service';
   styleUrls: ['./resources.page.scss'],
 })
 export class ResourcesPageComponent implements OnInit {
-  public displayedColumns = ['description', 'storage_file'];
+  public displayedColumns = ['title', 'storage_file'];
   constructor(public service: ResourcesDashboardService) {}
   ngOnInit(): void {
     this.service.ready();
