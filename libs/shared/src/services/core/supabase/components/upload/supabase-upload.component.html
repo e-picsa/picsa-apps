@@ -1,7 +1,7 @@
 
 <!-- Dashboard dropzone -->
 @if(uppy){
-  <uppy-dashboard [uppy]="uppy" [props]="uppyOptions"   />
+  <uppy-dashboard [uppy]="uppy" [props]="dashboardOptions"   />
 }
 
 <!-- Storage path editor -->
@@ -19,7 +19,7 @@
 
 <!-- Upload button -->
 @if(!this.autoUpload){
-  <button mat-stroked-button color="primary" [disabled]="uppyOptions.disabled" (click)="startUpload()" style="margin-top: 1rem;">
+  <button mat-stroked-button color="primary" [disabled]="dashboardOptions.disabled" (click)="startUpload()" style="margin-top: 1rem;">
     <mat-icon>upload</mat-icon>Upload
   </button>
 }

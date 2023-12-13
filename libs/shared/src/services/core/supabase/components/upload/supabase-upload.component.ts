@@ -12,7 +12,7 @@ import { ENVIRONMENT } from '@picsa/environments';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { FileObject } from '@supabase/storage-js';
 import { UppyAngularDashboardModule } from '@uppy/angular';
-import Uppy, { InternalMetadata, UploadResult, UppyFile } from '@uppy/core';
+import Uppy, { InternalMetadata, UploadResult, UppyFile, UppyOptions } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
 
@@ -88,16 +88,29 @@ export class SupabaseUploadComponent {
 
   @Input() set disabled(disabled: boolean) {
     // Update options through plugin interface for better change detection
-    this.uppyOptions = { ...this.uppyOptions, disabled };
+    this.dashboardOptions = { ...this.dashboardOptions, disabled };
+  }
+  /**
+   * Specify input file type. Must correspond to unique file type specifiers
+   * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#unique_file_type_specifiers
+   */
+  @Input() set fileTypes(filetypes: string[]) {
+    this.setFileTypeRestrictions(filetypes);
   }
 
   @Output() uploadComplete = new EventEmitter<IUploadResult[]>();
 
   public uppy: Uppy;
 
-  public uppyOptions: DashboardOptions = {
+  public dashboardOptions: DashboardOptions = {
     proudlyDisplayPoweredByUppy: false,
     hideUploadButton: true,
+  };
+
+  private uppyOptions: UppyOptions = {
+    debug: false,
+    autoProceed: false,
+    restrictions: { maxNumberOfFiles: 1 },
   };
 
   private storageService: SupabaseStorageService;
@@ -112,12 +125,8 @@ export class SupabaseUploadComponent {
 
   private async initUppy() {
     // Create new Uppy instance, mapping configurable props
-    this.uppy = new Uppy({
-      debug: false,
-      autoProceed: false,
-      restrictions: { maxNumberOfFiles: 1 },
-    });
-    this.uppyOptions.height = this.fileDropHeight;
+    this.uppy = new Uppy(this.uppyOptions);
+    this.dashboardOptions.height = this.fileDropHeight;
     // Create custom upload to support upload to supabase
     await this.registerSupabaseUppyUploader();
   }
@@ -192,6 +201,21 @@ export class SupabaseUploadComponent {
   private handleFileAdded() {
     if (this.autoUpload) {
       this.startUpload();
+    }
+  }
+
+  private setFileTypeRestrictions(types: string[]) {
+    // Specify options loaded on init
+    this.uppyOptions = {
+      ...this.uppyOptions,
+      restrictions: {
+        ...this.uppyOptions.restrictions,
+        allowedFileTypes: types,
+      },
+    };
+    // Update options if uppy already initialised
+    if (this.uppy) {
+      this.uppy.setOptions(this.uppyOptions);
     }
   }
 
