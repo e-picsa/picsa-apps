@@ -84,7 +84,7 @@ $theme-tj: mat.define-light-theme(
 );
 
 body[data-theme='picsa-tj'] {
-  @include mat.all-component-colors($theme-tj);
+  @include mat.all-component-themes($theme-tj);
   --color-primary: #{map-get($palette-primary, 500)};
   --color-primary-50: #{map-get($palette-primary, 50)};
   --color-secondary: #{map-get($palette-accent, 500)};

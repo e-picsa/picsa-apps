@@ -1,6 +1,7 @@
 $fontFamily: Roboto, 'Helvetica Neue', sans-serif;
 
 // fix height styles lost since angular/material 17 updates
+// NOTE - these may have been fixed since inclusion of `mat.all-component-bases`
 body {
   --mdc-protected-button-container-height: 36px;
   --mdc-outlined-button-container-height: 36px;
