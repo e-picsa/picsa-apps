@@ -21,7 +21,7 @@
             @if(fileForm.value.storage_file ){
             <dashboard-resources-storage-link
               [id]="fileForm.value.storage_file"
-              displayStyle="chip"
+              displayStyle="button"
             ></dashboard-resources-storage-link>
             } @else {
             <picsa-supabase-upload
@@ -39,12 +39,10 @@
           <div>
             <label>Cover Image</label>
             @if(fileForm.value.storage_cover ){
-            <mat-chip class="file-chip" style="margin-top: 1rem">
-              <dashboard-resources-storage-link
-                [id]="fileForm.value.storage_cover"
-                displayStyle="chip"
-              ></dashboard-resources-storage-link>
-            </mat-chip>
+            <dashboard-resources-storage-link
+              [id]="fileForm.value.storage_cover"
+              displayStyle="button"
+            ></dashboard-resources-storage-link>
 
             } @else {
             <picsa-supabase-upload

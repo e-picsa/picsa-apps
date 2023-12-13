@@ -34,7 +34,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
   /** Resource storage id */
   @Input() id: string;
 
-  @Input() displayStyle: 'chip' | 'link' | 'default' = 'default';
+  @Input() displayStyle: 'button' | 'link' | 'default' = 'default';
 
   constructor(private service: ResourcesDashboardService) {}
 
@@ -60,7 +60,6 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
   private getFileTypeIcon(entry: IStorageEntry) {
     const extension = entry.name?.split('.').pop();
     if (!extension) return 'document';
-    console.log('get file type icon', entry, extension);
     return filetypeIconMapping[extension] || 'document';
   }
 }

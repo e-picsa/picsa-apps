@@ -5,11 +5,21 @@
 .error-message {
   color: var(--color-warn);
 }
+mat-icon {
+  overflow: visible;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
 button.chip-button {
   padding: 0;
+  margin-bottom: 4px;
+  border: 1px solid;
 
   .chip-icon {
-    // background-color: var(--color-primary);
     color: white;
     position: absolute;
     top: 0;
@@ -21,39 +31,44 @@ button.chip-button {
     justify-content: center;
   }
   .chip-text {
-    border-top: 1px solid var(--color-primary);
-    border-bottom: 1px solid var(--color-primary);
-    border-right: 1px solid var(--color-primary);
     margin-left: 32px;
-    padding: 4px;
+    padding: 8px;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
   }
 }
-mat-icon.default-icon {
-  overflow: visible;
-}
 
-a {
-  text-decoration: none;
-  color: var(--color-primary);
-}
+// Colors used for different filetypes
+$color-file-document: hsl(230, 40%, 40%);
+$color-file-video: hsl(0, 70%, 60%);
+$color-file-image: hsl(150, 60%, 40%);
 
 .filetype-icon {
-  background: white;
+  color: var(--color-primary);
   &[data-icon='description'] {
-    color: hsl(230, 40%, 40%);
+    color: $color-file-document;
   }
   &[data-icon='smart_display'] {
-    color: hsl(0, 70%, 60%);
+    color: $color-file-video;
+  }
+  &[data-icon='image'] {
+    color: $color-file-image;
   }
 }
+
 .filetype-icon.inverted {
   color: white;
+  background: var(--color-primary);
+  // document icon
   &[data-icon='description'] {
-    background: hsl(230, 40%, 40%);
+    background: $color-file-document;
   }
+  // video icon
   &[data-icon='smart_display'] {
-    background: hsl(0, 70%, 60%);
+    background: $color-file-video;
+  }
+  // image icon
+  &[data-icon='image'] {
+    background: $color-file-image;
   }
 }

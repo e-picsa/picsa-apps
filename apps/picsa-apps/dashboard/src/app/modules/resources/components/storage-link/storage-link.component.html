@@ -1,13 +1,14 @@
 @if(entry){ @switch (displayStyle) {
 <!-- chip style -->
-@case ('chip') {
-<button class="chip-button" mat-button color="primary" (click)="handleLinkClick(entry.publicUrl)">
-  <div style="display: flex; align-items: center">
-    <div class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon">
-      <mat-icon>{{ fileTypeIcon }}</mat-icon>
-    </div>
-    <div class="chip-text">{{ entry.name?.split('/')?.pop() }}</div>
-  </div>
+@case ('button') {
+<button
+  class="chip-button filetype-icon"
+  mat-button
+  [attr.data-icon]="fileTypeIcon"
+  (click)="handleLinkClick(entry.publicUrl)"
+>
+  <mat-icon class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
+  <div class="chip-text">{{ entry.name?.split('/')?.pop() }}</div>
 </button>
 
 }
