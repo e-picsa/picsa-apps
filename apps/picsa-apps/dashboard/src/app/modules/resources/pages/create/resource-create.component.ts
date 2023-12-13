@@ -1,11 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
-import { IUploadResult, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
+import {
+  IUploadResult,
+  SupabaseService,
+  SupabaseStoragePickerDirective,
+  SupabaseUploadComponent,
+} from '@picsa/shared/services/core/supabase';
+import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
@@ -22,6 +28,7 @@ type IResourceEntry = Database['public']['Tables']['resources']['Row'];
     DashboardResourcesStorageLinkComponent,
     FormsModule,
     ReactiveFormsModule,
+    SupabaseStoragePickerDirective,
     SupabaseUploadComponent,
   ],
   templateUrl: './resource-create.component.html',
@@ -41,15 +48,21 @@ export class ResourceCreateComponent implements OnInit {
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
 
   public linkForm = this.formBuilder.group({
+    id: new FormControl<string | null>(null),
     type: ['link'],
     url: ['', PICSAFormValidators.isUrl],
   });
   public fileForm = this.formBuilder.group({
+    id: new FormControl<string | null>(null),
     title: ['', Validators.required],
     type: ['file'],
     storage_file: ['', Validators.required],
     storage_cover: ['', Validators.required],
   });
+
+  private get form() {
+    return this.resourceType === 'file' ? this.fileForm : this.linkForm;
+  }
 
   async ngOnInit() {
     await this.service.ready();
@@ -61,6 +74,12 @@ export class ResourceCreateComponent implements OnInit {
         this.populateResource(resource);
       }
     }
+  }
+
+  public async saveResource() {
+    console.log('save resource', this.form.value);
+    const { data, error } = await this.supabaseService.db.table('resources').upsert(this.form.value);
+    console.log({ data, error });
   }
 
   private populateResource(resource: IResourceEntry) {
@@ -77,11 +96,15 @@ export class ResourceCreateComponent implements OnInit {
     }
   }
 
-  public async handleUploadComplete(res: IUploadResult[], ref: 'storage_file' | 'storage_cover') {
+  public async handleUploadComplete(res: IUploadResult[], controlName: 'storage_file' | 'storage_cover') {
     if (res.length === 0) {
       return;
     }
     const [{ entry }] = res;
-    this.fileForm.patchValue({ [ref]: entry.id });
+    this.fileForm.patchValue({ [controlName]: entry.id });
+  }
+
+  public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'storage_cover') {
+    this.fileForm.patchValue({ [controlName]: entry?.id });
   }
 }

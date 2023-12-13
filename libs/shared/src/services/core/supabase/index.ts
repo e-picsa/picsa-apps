@@ -1,2 +1,2 @@
-export * from './components/upload/supabase-upload.component';
+export * from './components';
 export * from './supabase.service';

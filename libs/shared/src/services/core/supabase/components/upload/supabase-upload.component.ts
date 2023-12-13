@@ -9,15 +9,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ENVIRONMENT } from '@picsa/environments';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { FileObject } from '@supabase/storage-js';
 import { UppyAngularDashboardModule } from '@uppy/angular';
 import Uppy, { InternalMetadata, UploadResult, UppyFile, UppyOptions } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
 
 import { PicsaNotificationService } from '../../../notification.service';
-import { SupabaseStorageService } from '../../services/supabase-storage.service';
+import { IStorageEntrySDK, SupabaseStorageService } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
 
 /** Metadata populated to uploads so that supabase can process correctly */
@@ -28,24 +26,10 @@ interface IUploadMeta extends InternalMetadata {
   objectName: string;
 }
 
-/** DB entry populated to server storage objects with explicit metadata expected */
-interface IStorageEntry extends FileObject {
-  metadata: {
-    /** cacheControl will be altered from input metadata, e.g. `3600` -> `"max-age=3600"` */
-    cacheControl: string;
-    contentLength: number;
-    eTag: string;
-    httpStatusCode: number;
-    lastModified: string;
-    mimetype: string;
-    size: number;
-  };
-}
-
 /** Storage entry data returned following upload */
 export interface IUploadResult {
   data: File | Blob;
-  entry: IStorageEntry;
+  entry: IStorageEntrySDK;
 }
 
 /**
@@ -156,11 +140,11 @@ export class SupabaseUploadComponent {
         const meta: IUploadMeta = res.meta as any;
         // HACK - manually retrieve db data associated with file. In future this may be handled automatically
         // https://github.com/orgs/supabase/discussions/4303
-        const entry = (await this.storageService.getFile({
+        const entry = await this.storageService.getFile({
           bucketId: meta.bucketName,
           filename: meta.name,
           folderPath: meta.objectName.split('/').slice(0, -1).join('/'),
-        })) as IStorageEntry;
+        });
         if (!entry) {
           console.warn('Storage entry not found', meta);
           throw new Error(`Storage entry not found`);

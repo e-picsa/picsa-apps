@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IStorageEntry, ResourcesDashboardService } from '../../resources.service';
+import { IResourceStorageEntry, ResourcesDashboardService } from '../../resources.service';
 
 /**
  * Mat icons used to represent various filetype extensions
@@ -38,7 +38,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
 
   constructor(private service: ResourcesDashboardService) {}
 
-  public entry?: IStorageEntry;
+  public entry?: IResourceStorageEntry;
 
   public notFound = false;
 
@@ -57,7 +57,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
     window.open(url, '_blank', 'noopener');
   }
 
-  private getFileTypeIcon(entry: IStorageEntry) {
+  private getFileTypeIcon(entry: IResourceStorageEntry) {
     const extension = entry.name?.split('.').pop();
     if (!extension) return 'document';
     return filetypeIconMapping[extension] || 'document';

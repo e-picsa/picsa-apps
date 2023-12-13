@@ -2,8 +2,8 @@ mat-radio-button {
   margin-right: 1rem;
 }
 mat-form-field {
-  width: 100%;
-  max-width: 500px;
+  flex: 1;
+  min-width: 200px;
 }
 
 label {
@@ -15,5 +15,16 @@ label {
   }
 }
 picsa-supabase-upload {
-  width: 300px;
+  width: 100%;
+  max-width: 284px;
+}
+dashboard-resources-storage-link {
+  display: inline-block;
+}
+button.file-remove {
+  display: inline;
+  padding: 0;
+  mat-icon {
+    margin-bottom: -4px;
+  }
 }

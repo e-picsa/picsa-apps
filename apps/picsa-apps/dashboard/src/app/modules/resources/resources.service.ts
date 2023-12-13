@@ -4,11 +4,10 @@ import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { arrayToHashmap } from '@picsa/utils';
 
-type IStorageDB = Database['storage']['Tables']['objects']['Row'];
-
-export interface IStorageEntry extends IStorageDB {
+export interface IResourceStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
 }
@@ -17,8 +16,8 @@ export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesDashboardService extends PicsaAsyncService {
-  private storageFiles: IStorageEntry[] = [];
-  public storageFilesHashmap: Record<string, IStorageEntry> = {};
+  private storageFiles: IResourceStorageEntry[] = [];
+  public storageFilesHashmap: Record<string, IResourceStorageEntry> = {};
   public readonly resources = signal<IResourceEntry[]>([]);
 
   constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
@@ -90,7 +89,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   }
 
   private async listStorageFiles() {
-    const storageFiles: IStorageDB[] = await this.supabaseService.storage.list('resources');
+    const storageFiles = await this.supabaseService.storage.list('resources');
     this.storageFiles = storageFiles.map((file) => ({
       ...file,
       publicUrl: this.supabaseService.storage.getPublicLink(file.bucket_id as string, file.name as string),

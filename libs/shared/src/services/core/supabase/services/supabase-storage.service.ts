@@ -1,8 +1,29 @@
 import { Injectable } from '@angular/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { Database } from '@picsa/server-types';
 import { FileObject } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { PicsaNotificationService } from '../../notification.service';
+
+type IStorageDB = Database['storage']['Tables']['objects']['Row'];
+
+/** DB entry populated to server storage objects with explicit metadata expected */
+export interface IStorageEntry extends IStorageDB {
+  metadata: {
+    /** cacheControl will be altered from input metadata, e.g. `3600` -> `"max-age=3600"` */
+    cacheControl: string;
+    contentLength: number;
+    eTag: string;
+    httpStatusCode: number;
+    lastModified: string;
+    mimetype: string;
+    size: number;
+  };
+}
+
+/** Data populated when storage object retrieved via SDK (as opposed to storage table direct) */
+export interface IStorageEntrySDK extends FileObject {}
 
 /**
  * Utility class for interacting with supabase storage client
@@ -30,9 +51,14 @@ export class SupabaseStorageService {
    * and not recursive children
    * Requires custom view created (see example resources migration)
    * */
-  public async list(bucketId: string) {
+  public async list(bucketId: string, folderPath?: string) {
     // NOTE - access via storage table instead of storage api as does not support recursive list
-    const { data, error } = await this.supabaseClient.from(`storage_objects`).select('*').eq('bucket_id', bucketId);
+    let query = this.supabaseClient.from(`storage_objects`).select<'*', IStorageEntry>('*').eq('bucket_id', bucketId);
+
+    if (folderPath) {
+      query = query.like('name', `${folderPath}/%`);
+    }
+    const { data, error } = await query;
 
     if (error) {
       console.error(error);
@@ -45,7 +71,7 @@ export class SupabaseStorageService {
     bucketId: string;
     filename: string;
     folderPath?: string;
-  }): Promise<FileObject | null> {
+  }): Promise<IStorageEntrySDK | null> {
     const defaults = { folderPath: '' };
     const { bucketId, filename, folderPath } = { ...defaults, ...options };
     const { data, error } = await this.storage.from(bucketId).list(folderPath, { limit: 1, search: filename });
