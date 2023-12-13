@@ -1,6 +1,59 @@
 :host {
   display: block;
+  max-width: 200px;
 }
 .error-message {
   color: var(--color-warn);
+}
+button.chip-button {
+  padding: 0;
+
+  .chip-icon {
+    // background-color: var(--color-primary);
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chip-text {
+    border-top: 1px solid var(--color-primary);
+    border-bottom: 1px solid var(--color-primary);
+    border-right: 1px solid var(--color-primary);
+    margin-left: 32px;
+    padding: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+}
+mat-icon.default-icon {
+  overflow: visible;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.filetype-icon {
+  background: white;
+  &[data-icon='description'] {
+    color: hsl(230, 40%, 40%);
+  }
+  &[data-icon='smart_display'] {
+    color: hsl(0, 70%, 60%);
+  }
+}
+.filetype-icon.inverted {
+  color: white;
+  &[data-icon='description'] {
+    background: hsl(230, 40%, 40%);
+  }
+  &[data-icon='smart_display'] {
+    background: hsl(0, 70%, 60%);
+  }
 }

@@ -1,5 +1,5 @@
 <div class="page-content">
-  <h2>New Resource</h2>
+  <h2>Edit Resource</h2>
 
   <div style="margin-bottom: 1rem">
     <label>Resource Type</label>
@@ -14,24 +14,50 @@
     <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
       @for (item of [{code:'global',label:'Global'}]; track $index) {
       <mat-tab [label]="item.label">
-        <!-- Resource storage file -->
-        <label style="margin-top: 1rem">Resource</label>
-        <picsa-supabase-upload
-          [disabled]="fileForm.value.storage_file ? true : false"
-          [fileDropHeight]="128"
-          style="width: 300px"
-          [autoUpload]="true"
-          storageBucketName="resources"
-          [storageFolderPath]="item.code"
-          (uploadComplete)="handleUploadComplete($event, 'storage_file')"
-        ></picsa-supabase-upload>
-        @if(fileForm.value.storage_file ){
-        <dashboard-resources-storage-link
-          [id]="fileForm.value.storage_file"
-          style="margin-top: 1rem"
-        ></dashboard-resources-storage-link>
+        <div style="display: flex; gap: 4rem; flex-wrap: wrap; margin-top: 2rem">
+          <!-- Storage file -->
+          <div>
+            <label>Resource</label>
+            @if(fileForm.value.storage_file ){
+            <dashboard-resources-storage-link
+              [id]="fileForm.value.storage_file"
+              displayStyle="chip"
+            ></dashboard-resources-storage-link>
+            } @else {
+            <picsa-supabase-upload
+              [fileTypes]="allowedFileTypes"
+              [fileDropHeight]="128"
+              [autoUpload]="true"
+              storageBucketName="resources"
+              [storageFolderPath]="item.code"
+              (uploadComplete)="handleUploadComplete($event, 'storage_file')"
+            ></picsa-supabase-upload>
+            }
+          </div>
 
-        }
+          <!-- Storage cover -->
+          <div>
+            <label>Cover Image</label>
+            @if(fileForm.value.storage_cover ){
+            <mat-chip class="file-chip" style="margin-top: 1rem">
+              <dashboard-resources-storage-link
+                [id]="fileForm.value.storage_cover"
+                displayStyle="chip"
+              ></dashboard-resources-storage-link>
+            </mat-chip>
+
+            } @else {
+            <picsa-supabase-upload
+              [fileTypes]="allowedCoverTypes"
+              [fileDropHeight]="128"
+              [autoUpload]="true"
+              storageBucketName="resources"
+              storageFolderPath="covers"
+              (uploadComplete)="handleUploadComplete($event, 'storage_cover')"
+            ></picsa-supabase-upload>
+            }
+          </div>
+        </div>
       </mat-tab>
       }
     </mat-tab-group>

@@ -37,6 +37,9 @@ export class ResourceCreateComponent implements OnInit {
 
   public resourceType: 'file' | 'link';
 
+  public allowedFileTypes = ['pdf', 'mp4', 'mp3', 'jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
+  public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
+
   public linkForm = this.formBuilder.group({
     type: ['link'],
     url: ['', PICSAFormValidators.isUrl],
