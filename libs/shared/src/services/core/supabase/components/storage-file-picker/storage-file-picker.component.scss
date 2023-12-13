@@ -8,3 +8,8 @@
     height: 100%;
   }
 }
+mat-selection-list {
+  max-height: 50vh;
+  overflow: auto;
+  width: 600px;
+}
