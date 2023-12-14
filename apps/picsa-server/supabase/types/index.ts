@@ -109,9 +109,161 @@ export interface Database {
         }
         Relationships: []
       }
+      resources: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          modified_at: string
+          storage_cover: string | null
+          storage_file: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          modified_at?: string
+          storage_cover?: string | null
+          storage_file?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          modified_at?: string
+          storage_cover?: string | null
+          storage_file?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_storage_cover_fkey"
+            columns: ["storage_cover"]
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_storage_cover_fkey"
+            columns: ["storage_cover"]
+            referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      resources_child: {
+        Row: {
+          country_code: string | null
+          created_at: string
+          id: number
+          language_code: string | null
+          parent: string
+          storage_file: string
+          tag: string | null
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string
+          id?: number
+          language_code?: string | null
+          parent: string
+          storage_file: string
+          tag?: string | null
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string
+          id?: number
+          language_code?: string | null
+          parent?: string
+          storage_file?: string
+          tag?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_child_parent_fkey"
+            columns: ["parent"]
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_child_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_child_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      storage_objects: {
+        Row: {
+          bucket_id: string | null
+          created_at: string | null
+          id: string | null
+          last_accessed_at: string | null
+          metadata: Json | null
+          name: string | null
+          owner: string | null
+          owner_id: string | null
+          path_tokens: string[] | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          bucket_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          last_accessed_at?: string | null
+          metadata?: Json | null
+          name?: string | null
+          owner?: string | null
+          owner_id?: string | null
+          path_tokens?: string[] | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          bucket_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          last_accessed_at?: string | null
+          metadata?: Json | null
+          name?: string | null
+          owner?: string | null
+          owner_id?: string | null
+          path_tokens?: string[] | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objects_bucketId_fkey"
+            columns: ["bucket_id"]
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
@@ -134,6 +286,7 @@ export interface Database {
           id: string
           name: string
           owner: string | null
+          owner_id: string | null
           public: boolean | null
           updated_at: string | null
         }
@@ -145,6 +298,7 @@ export interface Database {
           id: string
           name: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
@@ -156,17 +310,11 @@ export interface Database {
           id?: string
           name?: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "buckets_owner_fkey"
-            columns: ["owner"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       migrations: {
         Row: {
@@ -198,6 +346,7 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
+          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -210,6 +359,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -222,6 +372,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null

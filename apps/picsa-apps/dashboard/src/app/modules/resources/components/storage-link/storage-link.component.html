@@ -1,0 +1,29 @@
+@if(entry){ @switch (displayStyle) {
+<!-- chip style -->
+@case ('button') {
+<button
+  class="chip-button filetype-icon"
+  mat-button
+  [attr.data-icon]="fileTypeIcon"
+  (click)="handleLinkClick(entry.publicUrl)"
+>
+  <mat-icon class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
+  <div class="chip-text filename">{{ entry.name?.split('/')?.pop() }}</div>
+</button>
+
+}
+<!-- link style -->
+@case ('link') {
+<a [href]="entry.publicUrl" target="_blank" rel="noopener">
+  <div class="link-text">{{ entry.name?.split('/')?.pop() }}</div>
+</a>
+}
+<!-- default style -->
+@default {
+<div style="display: flex; align-items: center">
+  <mat-icon class="filetype-icon default-icon" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
+  <div class="filename" style="margin-left: 8px">{{ entry.name?.split('/')?.pop() }}</div>
+</div>
+} } } @if(notFound) {
+<p class="error-message">Storage file not found</p>
+}
