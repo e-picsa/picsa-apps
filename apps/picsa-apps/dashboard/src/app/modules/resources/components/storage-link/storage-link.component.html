@@ -8,7 +8,7 @@
   (click)="handleLinkClick(entry.publicUrl)"
 >
   <mat-icon class="chip-icon filetype-icon inverted" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
-  <div class="chip-text">{{ entry.name?.split('/')?.pop() }}</div>
+  <div class="chip-text filename">{{ entry.name?.split('/')?.pop() }}</div>
 </button>
 
 }
@@ -22,7 +22,7 @@
 @default {
 <div style="display: flex; align-items: center">
   <mat-icon class="filetype-icon default-icon" [attr.data-icon]="fileTypeIcon">{{ fileTypeIcon }}</mat-icon>
-  <div style="margin-left: 8px">{{ entry.name?.split('/')?.pop() }}</div>
+  <div class="filename" style="margin-left: 8px">{{ entry.name?.split('/')?.pop() }}</div>
 </div>
 } } } @if(notFound) {
 <p class="error-message">Storage file not found</p>

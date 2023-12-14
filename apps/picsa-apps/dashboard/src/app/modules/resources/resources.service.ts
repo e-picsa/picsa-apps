@@ -20,6 +20,10 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   public storageFilesHashmap: Record<string, IResourceStorageEntry> = {};
   public readonly resources = signal<IResourceEntry[]>([]);
 
+  public get table() {
+    return this.supabaseService.db.table('resources');
+  }
+
   constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
     super();
   }
@@ -42,6 +46,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   /**
    *
    * TODO - only enable super admin/local dev
+   * TODO - remove when no longer required
    */
   public async migrateHardcodedResources() {
     // NOTE - assumes storage files manually uploaded

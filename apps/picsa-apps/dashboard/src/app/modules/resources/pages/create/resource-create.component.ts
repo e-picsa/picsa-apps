@@ -7,7 +7,6 @@ import type { Database } from '@picsa/server-types';
 import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 import {
   IUploadResult,
-  SupabaseService,
   SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
@@ -38,8 +37,7 @@ export class ResourceCreateComponent implements OnInit {
   constructor(
     private service: ResourcesDashboardService,
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private supabaseService: SupabaseService
+    private route: ActivatedRoute
   ) {}
 
   public resourceType: 'file' | 'link';
@@ -58,7 +56,7 @@ export class ResourceCreateComponent implements OnInit {
     title: ['', Validators.required],
     description: [''],
     storage_file: ['', Validators.required],
-    storage_cover: ['', Validators.required],
+    storage_cover: [''],
   });
 
   private get form() {
@@ -69,7 +67,7 @@ export class ResourceCreateComponent implements OnInit {
     await this.service.ready();
     const { id } = this.route.snapshot.params;
     if (id) {
-      const { data } = await this.supabaseService.db.table('resources').select<'*', IResourceEntry>('*').eq('id', id);
+      const { data } = await this.service.table.select<'*', IResourceEntry>('*').eq('id', id);
       const resource = data?.[0];
       if (resource) {
         this.populateResource(resource);
@@ -77,9 +75,14 @@ export class ResourceCreateComponent implements OnInit {
     }
   }
 
+  // TODO - handle success/error messages
   public async saveResource() {
-    console.log('save resource', this.form.value);
-    const { data, error } = await this.supabaseService.db.table('resources').upsert(this.form.value);
+    const values = this.form.getRawValue() as any;
+    // Remove id entry if not populated
+    if (values.id === null) {
+      delete values.id;
+    }
+    const { data, error } = await this.service.table.upsert(values);
     console.log({ data, error });
   }
 

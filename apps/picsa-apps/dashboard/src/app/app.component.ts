@@ -30,33 +30,33 @@ export class AppComponent implements AfterViewInit {
       label: 'Resources',
       href: '/resources',
     },
-    {
-      label: 'Climate Data',
-      href: '/climate-data',
-    },
-    {
-      label: 'Crop Information',
-      href: '/crop-information',
-    },
-    {
-      label: 'Monitoring Forms',
-      href: '/monitoring-forms',
-    },
-    {
-      label: 'Translations',
-      href: '/translations',
-    },
+    // {
+    //   label: 'Climate Data',
+    //   href: '/climate-data',
+    // },
+    // {
+    //   label: 'Crop Information',
+    //   href: '/crop-information',
+    // },
+    // {
+    //   label: 'Monitoring Forms',
+    //   href: '/monitoring-forms',
+    // },
+    // {
+    //   label: 'Translations',
+    //   href: '/translations',
+    // },
   ];
 
   globalLinks: INavLink[] = [
-    {
-      label: 'Deployments',
-      href: '/deployments',
-    },
-    {
-      label: 'Users',
-      href: '/users',
-    },
+    // {
+    //   label: 'Deployments',
+    //   href: '/deployments',
+    // },
+    // {
+    //   label: 'Users',
+    //   href: '/users',
+    // },
   ];
 
   constructor(public supabaseService: SupabaseService) {}
