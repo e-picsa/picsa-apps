@@ -1,0 +1,25 @@
+
+<!-- Dashboard dropzone -->
+@if(uppy){
+  <uppy-dashboard [uppy]="uppy" [props]="dashboardOptions"   />
+}
+
+<!-- Storage path editor -->
+@if(storageFolderPathEditable){
+  <mat-form-field floatLabel="always" style="width:100%; margin-top: 1rem;">
+    <mat-label>Storage Folder</mat-label>
+    <input matInput type="text" [(ngModel)]="storageFolderPath"  >
+    @if (storageFolderPath) {
+      <button matSuffix mat-icon-button aria-label="Clear" (click)="storageFolderPath=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+}
+
+<!-- Upload button -->
+@if(!this.autoUpload){
+  <button mat-stroked-button color="primary" [disabled]="dashboardOptions.disabled" (click)="startUpload()" style="margin-top: 1rem;">
+    <mat-icon>upload</mat-icon>Upload
+  </button>
+}

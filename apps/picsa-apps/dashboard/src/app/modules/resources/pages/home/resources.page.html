@@ -1,0 +1,30 @@
+<div class="page-content">
+  <div style="display: flex">
+    <h2 style="flex: 1">Resources</h2>
+    <button mat-stroked-button color="primary" routerLink="create" style="margin-top: 1rem">
+      <mat-icon>add</mat-icon>
+      Add Resource
+    </button>
+  </div>
+
+  <table mat-table class="resources-table" [dataSource]="service.resources()">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Title</th>
+      <td mat-cell *matCellDef="let resource">{{resource.title}}</td>
+    </ng-container>
+    <ng-container matColumnDef="storage_file">
+      <th mat-header-cell *matHeaderCellDef>storage_file</th>
+      <td mat-cell *matCellDef="let resource">
+        @if(resource.storage_file; as storage_file ){
+        <dashboard-resources-storage-link [id]="resource.storage_file"></dashboard-resources-storage-link>
+        }
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row class="resource-row" [routerLink]="row.id" *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <h2>Super Admin</h2>
+  <button mat-stroked-button color="primary" (click)="service.migrateHardcodedResources()">Import</button>
+  <button mat-stroked-button color="primary">Export</button>
+</div>

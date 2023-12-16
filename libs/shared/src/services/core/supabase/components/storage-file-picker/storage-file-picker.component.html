@@ -1,0 +1,24 @@
+<mat-selection-list [multiple]="false" [(ngModel)]="selected" (selectionChange)="handleFileSelect()">
+  @for (entry of fileEntries; track entry.id) {
+  <mat-list-option [value]="entry">{{ entry.name }}</mat-list-option>
+  }
+</mat-selection-list>
+<div class="preview-image">
+  @if(previewUrl){
+  <img [src]="previewUrl" />
+
+  }
+</div>
+
+<div style="display: flex; margin-top: 1rem">
+  <button mat-button (click)="fileSelected.next(undefined)">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="fileSelected.next(selected[0])"
+    [disabled]="!selected[0]"
+    style="margin-left: auto"
+  >
+    Save
+  </button>
+</div>

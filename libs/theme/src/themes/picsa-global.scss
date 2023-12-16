@@ -84,7 +84,10 @@ $theme-global: mat.define-light-theme(
 );
 
 body[data-theme='picsa-global'] {
-  @include mat.all-component-colors($theme-global);
+  // Include base layouts for all mat components. Could be restricted to specific components, e.g.
+  // https://github.com/angular/components/blob/main/src/material/core/theming/_all-theme.scss
+  // @include mat.all-component-themes($theme-global);
+  @include mat.all-component-themes($theme-global);
   --color-primary: #{map-get($palette-primary, 500)};
   --color-primary-50: #{map-get($palette-primary, 50)};
   --color-secondary: #{map-get($palette-accent, 500)};

@@ -1,0 +1,119 @@
+<div class="page-content">
+  <h2>Edit Resource</h2>
+
+  <div style="margin-bottom: 1rem">
+    <label>Resource Type</label>
+    <mat-radio-group [(ngModel)]="resourceType">
+      <mat-radio-button value="file">File</mat-radio-button>
+      <mat-radio-button value="link">Link</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  @if (resourceType==='file') {
+  <form [formGroup]="fileForm">
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+      @for (item of [{code:'global',label:'Global'}]; track $index) {
+      <mat-tab [label]="item.label">
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; max-width: 600px">
+          <!-- Storage file -->
+          <div style="flex: 1">
+            <label>Resource</label>
+            @if(fileForm.value.storage_file ){
+            <dashboard-resources-storage-link
+              [id]="fileForm.value.storage_file"
+              displayStyle="button"
+            ></dashboard-resources-storage-link>
+            <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'storage_file')">
+              <mat-icon>close</mat-icon>
+            </button>
+            } @else {
+            <picsa-supabase-upload
+              [fileTypes]="allowedFileTypes"
+              [fileDropHeight]="128"
+              [autoUpload]="true"
+              storageBucketName="resources"
+              [storageFolderPath]="item.code"
+              (uploadComplete)="handleUploadComplete($event, 'storage_file')"
+            ></picsa-supabase-upload>
+            <button
+              mat-button
+              color="primary"
+              supabaseStoragePicker
+              storageBucketName="resources"
+              [storageFolderPath]="item.code"
+              (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
+              style="margin-top: 4px"
+            >
+              <mat-icon>perm_media</mat-icon>
+              Select existing file
+            </button>
+            }
+          </div>
+          <!-- Storage cover -->
+          <div style="flex: 1">
+            <label>Cover Image</label>
+            @if(fileForm.value.storage_cover ){
+            <dashboard-resources-storage-link
+              #storageLink
+              [id]="fileForm.value.storage_cover"
+              displayStyle="button"
+            ></dashboard-resources-storage-link>
+            <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'storage_cover')">
+              <mat-icon>close</mat-icon>
+            </button>
+            <img class="cover-preview" [src]="storageLink.entry?.publicUrl" style="margin-top: 8px" />
+
+            } @else {
+            <picsa-supabase-upload
+              [fileTypes]="allowedCoverTypes"
+              [fileDropHeight]="128"
+              [autoUpload]="true"
+              storageBucketName="resources"
+              storageFolderPath="covers"
+              (uploadComplete)="handleUploadComplete($event, 'storage_cover')"
+            ></picsa-supabase-upload>
+            <button
+              mat-button
+              color="primary"
+              supabaseStoragePicker
+              storageBucketName="resources"
+              storageFolderPath="covers"
+              (storageFileSelected)="handleStorageFileSelected($event, 'storage_cover')"
+              style="margin-top: 4px"
+            >
+              <mat-icon>perm_media</mat-icon>
+              Select existing file
+            </button>
+            }
+          </div>
+          <!-- Title -->
+          <mat-form-field style="flex-basis: 100%">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" />
+          </mat-form-field>
+          <!-- Description -->
+          <mat-form-field style="flex-basis: 100%">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
+        </div>
+      </mat-tab>
+      }
+    </mat-tab-group>
+    <button style="margin-top: 2rem" mat-stroked-button [disabled]="!fileForm.valid" (click)="saveResource()">
+      Save Resource
+    </button>
+  </form>
+
+  } @if (resourceType==='link') {
+  <form [formGroup]="linkForm">
+    <mat-form-field>
+      <mat-label>URL</mat-label>
+      <input matInput type="text" formControlName="url" placeholder="https://..." />
+    </mat-form-field>
+    @if (linkForm.controls.url.errors) {
+    <mat-error>Please enter a valid url</mat-error>
+    }
+  </form>
+  }
+</div>

@@ -10,10 +10,36 @@ const ENVIRONMENT: IEnvironment = {
   production: false,
   supabase: {
     ...PRODUCTION_ENVIRONMENT.supabase,
-    apiUrl: 'http://localhost:54321',
-    anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+    load: loadSupabaseDevEnvironment,
   },
 };
 
 export default ENVIRONMENT;
+
+/**
+ * Asynchronously load supabase dev environment from local config file
+ * This enables any developers to provide their own local anonKey by creating a
+ * `config.json` file in the local `supabase` environment folder
+ *
+ * https://stackoverflow.com/a/47956054/5693245
+ * */
+async function loadSupabaseDevEnvironment(): Promise<{ anonKey: string; apiUrl: string }> {
+  const defaultConfig = {
+    anonKey:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+    apiUrl: 'http://localhost:54321',
+  };
+  return new Promise((resolve) => {
+    try {
+      // Use a variable filename so that compiler bundles all files in folder
+      // regardless of whether specific config file exists or not
+      const filename = 'config.json';
+      import(`./supabase/${filename}`).then((res) => {
+        resolve({ ...defaultConfig, ...res.default });
+      });
+    } catch (error) {
+      console.warn('[Supabase] Dev config not provided\nlibs/environments/src/supabase/config.json');
+      resolve(defaultConfig);
+    }
+  });
+}

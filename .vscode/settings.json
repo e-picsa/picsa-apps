@@ -12,5 +12,6 @@
     "apps/picsa-server/_deprecated/scripts"
   ],
   "deno.unstable": true,
-  "deno.config": "apps/picsa-server/supabase/functions/deno.jsonc"
+  "deno.config": "apps/picsa-server/supabase/functions/deno.jsonc",
+  "angular.enable-strict-mode-prompt": false
 }
