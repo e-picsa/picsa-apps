@@ -1,3 +1,6 @@
+import { readdirSync } from 'fs-extra';
+import { resolve } from 'path';
+
 import { ITranslationEntry } from '../types';
 import { BUDGET_ENTRIES } from './budget';
 import { CLIMATE_ENTRIES } from './climate';
@@ -5,46 +8,18 @@ import { COMMON_ENTRIES } from './common';
 
 export const HARDCODED_DATA: ITranslationEntry[] = [...BUDGET_ENTRIES, ...CLIMATE_ENTRIES, ...COMMON_ENTRIES];
 
+const PROJECT_ROOT = resolve(__dirname, '../../../../');
+
 /** List of project paths and reference names to process with ngx-extract */
 export const EXTRACTED_PROJECTS = [
   // tools
-  {
-    path: 'apps/picsa-tools/budget-tool',
-    name: 'budget',
-  },
-  {
-    path: 'apps/picsa-tools/climate-tool',
-    name: 'climate',
-  },
-  {
-    path: 'apps/picsa-tools/crop-probability-tool',
-    name: 'crop-probability',
-  },
-  {
-    path: 'apps/picsa-tools/farmer-activity',
-    name: 'farmer-activity',
-  },
-  {
-    path: 'apps/picsa-tools/manual-tool',
-    name: 'manual',
-  },
-  {
-    path: 'apps/picsa-tools/monitoring-tool',
-    name: 'monitoring',
-  },
-  {
-    path: 'apps/picsa-tools/option-tool',
-    name: 'option',
-  },
-  {
-    path: 'apps/picsa-tools/resources-tool',
-    name: 'resources',
-  },
-  {
-    path: 'apps/picsa-tools/seasonal-calendar',
-    name: 'seasonal-calendar',
-  },
-  // apps
+  ...readdirSync(resolve(PROJECT_ROOT, 'apps/picsa-tools'))
+    .filter((project) => !project.endsWith('-e2e'))
+    .map((project) => ({
+      path: `apps/picsa-tools/${project}`,
+      name: project.replace('-tool', ''),
+    })),
+  // additional apps to include
   {
     path: 'apps/picsa-apps/extension-app',
     name: 'extension',
