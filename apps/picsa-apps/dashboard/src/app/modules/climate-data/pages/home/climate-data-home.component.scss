@@ -1,0 +1,24 @@
+.status-code {
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  background: gray;
+  &[data-status='200'] {
+    background: green;
+  }
+}
+
+table.station-table {
+  max-height: 50vh;
+  display: block;
+  overflow: auto;
+}
+tr.station-row {
+  cursor: pointer;
+  &:hover {
+    background: whitesmoke;
+  }
+}
+th {
+  font-weight: bold;
+}

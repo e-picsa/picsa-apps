@@ -30,10 +30,10 @@ export class AppComponent implements AfterViewInit {
       label: 'Resources',
       href: '/resources',
     },
-    // {
-    //   label: 'Climate Data',
-    //   href: '/climate-data',
-    // },
+    {
+      label: 'Climate Data',
+      href: '/climate-data',
+    },
     // {
     //   label: 'Crop Information',
     //   href: '/crop-information',
