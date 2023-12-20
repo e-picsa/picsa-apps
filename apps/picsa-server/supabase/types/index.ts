@@ -34,6 +34,36 @@ export interface Database {
   }
   public: {
     Tables: {
+      climate_stations: {
+        Row: {
+          country_code: string | null
+          district: string | null
+          elevation: number | null
+          latitude: number | null
+          longitude: number | null
+          station_id: number
+          station_name: string | null
+        }
+        Insert: {
+          country_code?: string | null
+          district?: string | null
+          elevation?: number | null
+          latitude?: number | null
+          longitude?: number | null
+          station_id?: number
+          station_name?: string | null
+        }
+        Update: {
+          country_code?: string | null
+          district?: string | null
+          elevation?: number | null
+          latitude?: number | null
+          longitude?: number | null
+          station_id?: number
+          station_name?: string | null
+        }
+        Relationships: []
+      }
       kobo_sync: {
         Row: {
           _created: string
@@ -112,29 +142,32 @@ export interface Database {
       resources: {
         Row: {
           created_at: string
-          description: string | null
+          description: string
           id: string
           modified_at: string
           storage_cover: string | null
           storage_file: string | null
+          title: string | null
           type: string
         }
         Insert: {
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
           modified_at?: string
           storage_cover?: string | null
           storage_file?: string | null
+          title?: string | null
           type: string
         }
         Update: {
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
           modified_at?: string
           storage_cover?: string | null
           storage_file?: string | null
+          title?: string | null
           type?: string
         }
         Relationships: [
@@ -212,6 +245,24 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: number
+        }
+        Relationships: []
       }
     }
     Views: {
