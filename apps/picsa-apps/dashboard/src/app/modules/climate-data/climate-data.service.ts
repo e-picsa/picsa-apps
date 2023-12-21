@@ -27,8 +27,8 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
-    this.checkStatus();
-    this.listStations();
+    await this.checkStatus();
+    await this.listStations();
   }
 
   private async checkStatus() {
