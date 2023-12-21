@@ -1,0 +1,33 @@
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2 style="flex: 1">Climate Data</h2>
+    @if(service.apiStatus; as status){
+    <div class="server-status">
+      Server Status <span class="status-code" [attr.data-status]="status">{{ status }}</span>
+    </div>
+    }
+  </div>
+  <h3>Stations</h3>
+  <div style="display: flex; gap: 1rem">
+    <div style="flex: 1">
+      <table mat-table class="stations-table" [dataSource]="service.stations" style="width: 200px">
+        <ng-container matColumnDef="station_id">
+          <th mat-header-cell *matHeaderCellDef>station_id</th>
+          <td mat-cell *matCellDef="let station">{{ station.station_id }}</td>
+        </ng-container>
+        <ng-container matColumnDef="station_name">
+          <th mat-header-cell *matHeaderCellDef>station_name</th>
+          <td mat-cell *matCellDef="let station">{{ station.station_name }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          class="station-row"
+          [routerLink]="row.station_id"
+          *matRowDef="let row; columns: displayedColumns"
+        ></tr>
+      </table>
+    </div>
+    <picsa-map style="height: 500px; width: 500px" [markers]="mapMarkers"></picsa-map>
+  </div>
+</div>
