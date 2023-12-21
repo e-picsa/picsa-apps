@@ -594,16 +594,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asymmetrik/ngx-leaflet@npm:^14.0.1":
-  version: 14.0.1
-  resolution: "@asymmetrik/ngx-leaflet@npm:14.0.1"
+"@asymmetrik/ngx-leaflet@npm:^17.0.0":
+  version: 17.0.0
+  resolution: "@asymmetrik/ngx-leaflet@npm:17.0.0"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": 14
-    "@angular/core": 14
+    "@angular/common": 17
+    "@angular/core": 17
     leaflet: 1
-  checksum: c30fbfd3821cea0e8c05b3da914cee1580eb0ce2670e53f234cd15691115127b28c180665850b856da0c4c2ea159de257daf5571171bf49033e2576c33a6df58
+  checksum: 504be40bbb9d9425e133824836f84a3300bb0220f530bd7abba4a9cb7c1122db6bee4fec8fd61ffe42d40c5efa6936ab07fde13006d48b91b3606c5bfeb668bc
   languageName: node
   linkType: hard
 
@@ -8357,12 +8357,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet@npm:^1.8.0":
-  version: 1.9.4
-  resolution: "@types/leaflet@npm:1.9.4"
+"@types/leaflet@npm:^1.9.4":
+  version: 1.9.8
+  resolution: "@types/leaflet@npm:1.9.8"
   dependencies:
     "@types/geojson": "*"
-  checksum: ae5b4422b6eb912e6c6910d049f63cb96537eac46af4a897471ab98c642d059a32789f411157b873a5dafdbc9cef3399dc0673c5f64be067eebc530c43783e75
+  checksum: d6a33d5db0bdf608957cd52701b17ee89e936034a8f0ab619b8e7ef70312a0da177837dd125756e83af036276a8b299cc724c9ffb3caa7d22893fea2791e1e13
   languageName: node
   linkType: hard
 
@@ -16467,7 +16467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"leaflet@npm:^1.9.3":
+"leaflet@npm:^1.9.3, leaflet@npm:^1.9.4":
   version: 1.9.4
   resolution: "leaflet@npm:1.9.4"
   checksum: bfc79f17a247b37b92d84b3c78702501603392d6589fde606de4a825d11f1609d90225388834f2e0709dac327e52dcd4b4b9cc9fd3d590060c5b1e53b84fa6c6
@@ -18937,7 +18937,7 @@ __metadata:
     "@angular/platform-browser-dynamic": 17.0.3
     "@angular/router": 17.0.3
     "@angular/service-worker": 17.0.3
-    "@asymmetrik/ngx-leaflet": ^14.0.1
+    "@asymmetrik/ngx-leaflet": ^17.0.0
     "@awesome-cordova-plugins/core": ^6.4.0
     "@awesome-cordova-plugins/file": ^6.4.0
     "@awesome-cordova-plugins/file-opener": ^6.4.0
@@ -18978,7 +18978,7 @@ __metadata:
     "@types/hammerjs": ^2.0.41
     "@types/intro.js": ^5.1.1
     "@types/jest": 29.4.4
-    "@types/leaflet": ^1.8.0
+    "@types/leaflet": ^1.9.4
     "@types/node": ^18.14.2
     "@types/papaparse": ^5.3.2
     "@types/parse": ^2.18.16
@@ -19033,7 +19033,7 @@ __metadata:
     jest-preset-angular: 13.1.4
     jetifier: ^2.0.0
     jsonc-eslint-parser: ^2.4.0
-    leaflet: ^1.9.3
+    leaflet: ^1.9.4
     lint-staged: ^13.2.1
     lottie-web: ^5.10.2
     mobx: ^6.7.0
