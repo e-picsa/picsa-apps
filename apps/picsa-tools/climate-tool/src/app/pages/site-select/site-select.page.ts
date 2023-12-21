@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration';
 import { IStationMeta, IStationMetaDB } from '@picsa/models';
@@ -11,7 +11,7 @@ import { HARDCODED_STATIONS } from '../../data';
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
 })
-export class SiteSelectPage {
+export class SiteSelectPage implements OnInit {
   activeStation: any;
   // avoid static: true for map as created dynamic
   @ViewChild('picsaMap') picsaMap: PicsaMapComponent;
@@ -21,6 +21,7 @@ export class SiteSelectPage {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
   };
+  mapMarkers: IMapMarker[] = [];
 
   constructor(
     private ngZone: NgZone,
@@ -29,29 +30,8 @@ export class SiteSelectPage {
     private configurationService: ConfigurationService
   ) {}
 
-  // called from html when onMapReady is triggered
-  onMapReady(map: PicsaMapComponent['map']) {
-    // sometimes map ready fires before angular change detection complete and viewchild picked up
-    if (!this.picsaMap) {
-      return setTimeout(() => {
-        this.onMapReady(map);
-      }, 50);
-    }
-    return this.ngZone.run(() => {
-      this.setMapBounds();
-    });
-  }
-  private setMapBounds() {
-    const { stations } = this.populateSites();
-    // use stored last bounds if exist (ephemeral only)
-    const lastMapBounds = localStorage.getItem('picsaSiteSelectBounds');
-    if (lastMapBounds) {
-      localStorage.removeItem('picsaSiteSelectBounds');
-      this.picsaMap.map.fitBounds(JSON.parse(lastMapBounds));
-    } else {
-      // otherwise try to fit a bounding box with all stations
-      this.picsaMap.fitMapToPoints(stations.map((s) => [s.latitude, s.longitude]));
-    }
+  ngOnInit() {
+    this.populateSites();
   }
 
   onMarkerClick(marker: IMapMarker) {
@@ -93,7 +73,7 @@ export class SiteSelectPage {
         numbered: true,
       };
     });
-    this.picsaMap.addMarkers(markers);
+    this.mapMarkers = markers;
     return { stations, markers };
   }
 }

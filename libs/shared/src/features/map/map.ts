@@ -1,27 +1,28 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewEncapsulation,
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { Feature, GeoJsonObject, Geometry } from 'geojson';
 import * as L from 'leaflet';
 
 import * as GEOJSON from './geoJson';
 
 @Component({
+  imports: [CommonModule, LeafletModule],
   selector: 'picsa-map',
   templateUrl: './map.html',
   styleUrls: ['./map.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
 })
 export class PicsaMapComponent {
   @Output() onMapReady = new EventEmitter<L.Map>();
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
-  @Input() mapOptions: L.MapOptions;
-  @Input() basemapOptions: IBasemapOptions;
+
+  @Input() mapOptions: L.MapOptions = {};
+  @Input() basemapOptions: Partial<IBasemapOptions> = {};
+  @Input() markers: IMapMarker[];
+
   // make native map element available directly
   public map: L.Map;
   // expose full leaflet functionality for use within parent components
@@ -39,7 +40,7 @@ export class PicsaMapComponent {
     this._mapOptions = { ...mapOptions, layers: [basemap] };
   }
 
-  public addMarkers(mapMarkers: IMapMarker[], popupContent?: HTMLDivElement) {
+  private addMarkers(mapMarkers: IMapMarker[], popupContent?: HTMLDivElement) {
     mapMarkers.forEach((m, i) => {
       const icon = L.icon({
         ...ICON_DEFAULTS,
@@ -64,18 +65,20 @@ export class PicsaMapComponent {
     });
   }
 
-  /** Calculate a bounding rectangle that covers all points and fit within map */
-  public fitMapToPoints(points: [number, number][]) {
-    const latLngs = points.map((p) => L.latLng(p[0], p[1]));
-    const bounds = new L.LatLngBounds(latLngs as any);
-    this.map.fitBounds(bounds, { maxZoom: 8, padding: [10, 10] });
-  }
-
   // when the map is ready it emits event with map, and also binds map to
   // public api to be accessed by other services
   _onMapReady(map: L.Map) {
     this.map = map;
+    this.addMarkers(this.markers);
+    this.fitMapToMarkers();
     this.onMapReady.emit(map);
+  }
+
+  /** Calculate a bounding rectangle that covers all points and fit within map */
+  private fitMapToMarkers() {
+    const latLngs = this.markers.map((m) => m.latlng);
+    const bounds = new L.LatLngBounds(latLngs as any);
+    this.map.fitBounds(bounds, { maxZoom: 8, padding: [10, 10] });
   }
 
   // zoom in on layer click and emit event.
@@ -87,12 +90,7 @@ export class PicsaMapComponent {
   }
 
   // when marker is clicked notifiy event with original marker data
-  protected _onMarkerClick(
-    m: IMapMarker,
-    marker: L.Marker,
-    activeIcon: L.Icon,
-    inactiveIcon: L.Icon
-  ) {
+  protected _onMarkerClick(m: IMapMarker, marker: L.Marker, activeIcon: L.Icon, inactiveIcon: L.Icon) {
     if (this._activeMarker) {
       this._activeMarker.setIcon(inactiveIcon);
     }
@@ -139,7 +137,8 @@ const BASEMAP_DEFAULTS: IBasemapOptions = {
 
 const MAP_DEFAULTS: L.MapOptions = {
   layers: [],
-  zoom: 5,
+  zoom: 2,
+  center: [0, 0],
 };
 
 const GEOJSON_STYLE: L.PathOptions = {
@@ -177,7 +176,7 @@ const NUMBER_TOOLTIP_DEFAULTS: L.TooltipOptions = {
 type IFeaturedCountry = 'malawi' | 'kenya';
 export interface IMapMarker {
   iconUrl: string;
-  latlng: L.LatLngExpression;
+  latlng: L.LatLngTuple;
   numbered?: boolean;
   data?: any;
 }

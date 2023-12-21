@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PicsaMapModule } from '@picsa/shared/features/map';
+import { PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
@@ -20,7 +20,7 @@ const routes: Routes = [
     ClimateToolComponentsModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
-    PicsaMapModule,
+    PicsaMapComponent,
   ],
   declarations: [SiteSelectPage],
 })
