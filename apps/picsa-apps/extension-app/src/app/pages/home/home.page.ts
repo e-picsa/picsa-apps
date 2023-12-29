@@ -6,7 +6,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
-import { TourService } from '@picsa/shared/services/core/tour.service';
+import { TourService } from '@picsa/shared/services/core/tour';
 import { CommunicationService } from '@picsa/shared/services/promptToHomePageService.service';
 import { Subscription } from 'rxjs';
 

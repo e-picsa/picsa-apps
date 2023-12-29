@@ -5,6 +5,7 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { CropProbabilityToolComponentsModule } from '../../components/components.module';
 import { HomeComponent } from './home.component';
+import { PicsaTourButton } from '@picsa/components/src';
 
 const routes: Route[] = [
   {
@@ -14,7 +15,13 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, CropProbabilityToolComponentsModule, RouterModule.forChild(routes), PicsaTranslateModule],
+  imports: [
+    CommonModule,
+    CropProbabilityToolComponentsModule,
+    RouterModule.forChild(routes),
+    PicsaTranslateModule,
+    PicsaTourButton,
+  ],
   exports: [],
   declarations: [HomeComponent],
   providers: [],
