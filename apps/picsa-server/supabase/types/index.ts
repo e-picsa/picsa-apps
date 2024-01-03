@@ -264,6 +264,36 @@ export interface Database {
         }
         Relationships: []
       }
+      translations: {
+        Row: {
+          created_at: string
+          en: string | null
+          id: number
+          mw_ny: string | null
+          sw: string | null
+          tg: string | null
+          zm_ny: string | null
+        }
+        Insert: {
+          created_at?: string
+          en?: string | null
+          id?: number
+          mw_ny?: string | null
+          sw?: string | null
+          tg?: string | null
+          zm_ny?: string | null
+        }
+        Update: {
+          created_at?: string
+          en?: string | null
+          id?: number
+          mw_ny?: string | null
+          sw?: string | null
+          tg?: string | null
+          zm_ny?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       storage_objects: {
