@@ -57,7 +57,6 @@ export class TourService {
 
   /** Register a set of tour steps to allow triggering by id */
   public registerTour(id: string, steps: ITourStep[]) {
-    console.log('register tour 1', id, steps);
     this.registeredTours[id] = steps;
   }
 
