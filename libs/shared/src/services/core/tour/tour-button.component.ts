@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { TourService } from './tour.service';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { MatIconModule } from '@angular/material/icon';
+
+import { PicsaTranslateModule } from '../../../modules/translate';
+import { TourService } from './tour.service';
 
 /**
  * Help button which, when clicked triggers start of tour with id as provided.
