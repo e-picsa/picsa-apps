@@ -6,28 +6,24 @@ import { _wait } from '@picsa/utils';
  * Example tour to select a site from list
  * Includes route listeners to automatically trigger table tour once table loaded
  */
-export const CROP_PROBABILITY_SELECT_TOUR: ITourStep[] = [
+export const BUDGET_CREATE_TOUR: ITourStep[] = [
   {
-    id: 'station',
-    text: 'Tap here to choose a station',
+    text: 'Welcome to the budget tool tour. We will first show the main features and then create a new tour',
+  },
+  {
+    id: 'create',
+    text: 'New budgets ',
 
     tourOptions: {
       showBullets: false,
       showButtons: false,
-    },
-    // When user clicks on the station select suspend the tour so that the user can
-    // interact with the select popup
-    clickEvents: {
-      handler: (service) => {
-        service.pauseTour();
-      },
     },
     // Resume the tour once the user has navigated to a station
     routeEvents: {
       handler: ({ queryParams }, service) => {
         if (queryParams.stationId) {
           _wait(500).then(() => {
-            service.startTour(CROP_PROBABILITY_TABLE_TOUR);
+            service.startTour(BUDGET_TABLE_TOUR);
           });
           return true;
         }
@@ -42,7 +38,7 @@ export const CROP_PROBABILITY_SELECT_TOUR: ITourStep[] = [
  * Steps are independent of station select tour to make it easier to handle tables that
  * will be loaded dynamically
  */
-export const CROP_PROBABILITY_TABLE_TOUR: ITourStep[] = [
+export const BUDGET_TABLE_TOUR: ITourStep[] = [
   {
     customElement: {
       selector: 'section.table-container',

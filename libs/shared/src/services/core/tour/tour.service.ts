@@ -1,46 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { _wait } from '@picsa/utils';
 import introJs from 'intro.js';
 import type { IntroStep } from 'intro.js/src/core/steps';
 import type { IntroJs } from 'intro.js/src/intro';
 import type { Options } from 'intro.js/src/option';
 import { filter, map, merge, skip, Subscription, take } from 'rxjs';
-
-export interface ITourStep extends Partial<IntroStep> {
-  /** value of target element selector, selected by [attr.data-tour-id]  */
-  id?: string;
-
-  /** Text to display in tour step */
-  text: string;
-
-  /** Specific tour options that will only be enabled for step */
-  tourOptions?: Partial<Options>;
-
-  /**
-   * Provide a custom element selector to use as intro element.
-   * Supports elements dynamically injected into dom (will wait max 2s for visisble) */
-  customElement?: {
-    selector: string;
-    /** Auto scroll to element (default: true) */
-    autoScroll?: boolean;
-  };
-
-  /** Add custom handler for click events. Will be triggered once */
-  clickEvents?: {
-    /** Element to add click event listener to via querySelectorAll. Default to step target el */
-    selector?: string;
-    handler: (service: TourService) => void;
-  };
-
-  /**
-   * Add custom handler for route events. Triggers on any route param or queryParam changes
-   * Must return boolean value that indicates whether event handled and subscriptions can be removed
-   * */
-  routeEvents?: {
-    handler: (data: { params: Params; queryParams: Params }, service: TourService) => boolean;
-  };
-}
+import type { ITourStep } from './tour.types';
 
 const DEFAULT_OPTIONS: Partial<Options> = {
   hidePrev: true,
@@ -53,6 +19,8 @@ const DEFAULT_OPTIONS: Partial<Options> = {
 /** Interact with Intro.JS tours */
 @Injectable({ providedIn: 'root' })
 export class TourService {
+  private registeredTours: Record<string, ITourStep[]> = {};
+
   private intro: IntroJs;
 
   /** List of active tour steps as configured on tour start */
@@ -87,6 +55,11 @@ export class TourService {
     this.tourRootElSelector = enabled ? 'mat-tab-body.mat-mdc-tab-body-active' : undefined;
   }
 
+  /** Register a set of tour steps to allow triggering by id */
+  public registerTour(id: string, steps: ITourStep[]) {
+    this.registeredTours[id] = steps;
+  }
+
   /** Hide tour interface but retain event subscribers that may be used to resume */
   public async pauseTour() {
     this.tourPaused = true;
@@ -97,6 +70,14 @@ export class TourService {
   public async resumeTour() {
     this.intro._currentStep = this.intro.currentStep() + 1;
     await this.intro.nextStep();
+  }
+
+  public async startTourById(id: string) {
+    const tourSteps = this.registeredTours[id];
+    if (!tourSteps) {
+      throw new Error(`[${id}] tour must be registered by use`);
+    }
+    this.startTour(tourSteps);
   }
 
   public async startTour(tourSteps: ITourStep[], tourOptions: Partial<Options> = {}) {
