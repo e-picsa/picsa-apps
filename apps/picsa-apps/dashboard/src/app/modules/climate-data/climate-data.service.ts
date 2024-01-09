@@ -20,6 +20,7 @@ export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 export class ClimateDataDashboardService extends PicsaAsyncService {
   public apiStatus: number;
   public stations: IStationRow[] = [];
+  public activeStation: IStationRow;
 
   constructor(private supabaseService: SupabaseService, private api: ClimateDataApiService) {
     super();
@@ -29,6 +30,10 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
     await this.supabaseService.ready();
     await this.checkStatus();
     await this.listStations();
+  }
+
+  public setActiveStation(station: IStationRow) {
+    this.activeStation = station;
   }
 
   private async checkStatus() {

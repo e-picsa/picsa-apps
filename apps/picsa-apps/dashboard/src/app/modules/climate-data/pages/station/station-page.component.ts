@@ -3,17 +3,20 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
-import { ClimateDataDashboardService, IStationRow } from '../../climate-data.service';
+import { ClimateDataDashboardService } from '../../climate-data.service';
+import { RainfallSummaryComponent } from './components/rainfall-summary';
 
 @Component({
   selector: 'dashboard-station-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RainfallSummaryComponent],
   templateUrl: './station-page.component.html',
   styleUrls: ['./station-page.component.scss'],
 })
 export class StationPageComponent implements OnInit {
-  public station: IStationRow | undefined;
+  public get station() {
+    return this.service.activeStation;
+  }
 
   public get stationSummary() {
     return {
@@ -31,8 +34,10 @@ export class StationPageComponent implements OnInit {
   async ngOnInit() {
     await this.service.ready();
     const { stationId } = this.route.snapshot.params;
-    this.station = this.service.stations.find((station) => station.station_id === parseInt(stationId));
-    if (!this.station) {
+    const station = this.service.stations.find((station) => station.station_id === parseInt(stationId));
+    if (station) {
+      this.service.setActiveStation(station);
+    } else {
       this.notificationService.showUserNotification({ matIcon: 'error', message: `Station data not found` });
     }
   }
