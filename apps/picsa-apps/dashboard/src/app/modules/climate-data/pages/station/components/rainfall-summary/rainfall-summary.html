@@ -1,0 +1,27 @@
+<div style="display: flex; align-items: center">
+  <h3 style="flex: 1">Rainfall Summary</h3>
+  <button mat-stroked-button (click)="refreshData()" [disabled]="api.cb['rainfallSummary']==='pending'">
+    <mat-icon [class.spin]="api.cb['rainfallSummary']==='pending'">autorenew</mat-icon>
+    Refresh Data
+  </button>
+</div>
+<mat-tab-group preserveContent>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>view_list</mat-icon>
+      Table
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>show_chart</mat-icon>
+      Chart
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>description</mat-icon>
+      Definition
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

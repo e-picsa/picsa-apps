@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { ClimateDataDashboardService } from '../../climate-data.service';
-import { RainfallSummaryComponent } from './components/rainfall-summary';
+import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
 
 @Component({
   selector: 'dashboard-station-page',
