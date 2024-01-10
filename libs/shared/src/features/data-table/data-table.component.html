@@ -1,0 +1,31 @@
+<!-- Data Search -->
+@if(tableOptions.search){
+<mat-form-field class="search-field">
+  <mat-label>Search Data</mat-label>
+  <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
+  <mat-icon matPrefix>search</mat-icon>
+</mat-form-field>
+}
+
+<!-- Main Table -->
+<table mat-table matSort [dataSource]="dataSource" [matSortDisabled]="!tableOptions.sort">
+  @for(column of tableOptions.displayColumns; track column){
+  <ng-container [matColumnDef]="column">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</th>
+    <td mat-cell *matCellDef="let el">{{ el[column] }}</td>
+  </ng-container>
+  }
+  <tr mat-header-row *matHeaderRowDef="tableOptions.displayColumns"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: tableOptions.displayColumns"
+    (click)="tableOptions.handleRowClick(row)"
+  ></tr>
+</table>
+
+<!-- Paginator -->
+<mat-paginator
+  [pageSizeOptions]="tableOptions.paginatorSizes"
+  [style.display]="tableOptions.paginatorSizes.length > 0 ? 'block' : 'none'"
+>
+</mat-paginator>
