@@ -1,21 +1,38 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 
 import { ClimateDataDashboardService } from '../../../../climate-data.service';
 import { ClimateDataApiService } from '../../../../climate-data-api.service';
 import { RAINFALL_SUMMARY_MOCK } from './rainfall-summary.spec';
 
+interface IRainfallSummary {
+  data: any[];
+  metadata: any;
+}
+
 @Component({
   selector: 'dashboard-climate-rainfall-summary',
   templateUrl: './rainfall-summary.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatTabsModule],
+  imports: [MatButtonModule, MatIconModule, MatTabsModule, PicsaDataTableComponent, JsonPipe],
   styleUrl: './rainfall-summary.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RainfallSummaryComponent implements AfterViewInit {
-  constructor(public api: ClimateDataApiService, private service: ClimateDataDashboardService) {}
+  public summary: IRainfallSummary = { data: [], metadata: {} };
+  constructor(
+    public api: ClimateDataApiService,
+    private service: ClimateDataDashboardService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  public tableOptions: IDataTableOptions = {
+    paginatorSizes: [25, 50],
+  };
 
   ngAfterViewInit() {
     // TODO - retrieve from server
@@ -34,11 +51,11 @@ export class RainfallSummaryComponent implements AfterViewInit {
         },
       });
     console.log({ response, data, error });
-    this.loadData(data);
+    this.loadData(data as any);
   }
 
-  private loadData(summaryData) {
-    console.log('loading data', summaryData);
-    const { data, metadata } = summaryData;
+  private loadData(summary: IRainfallSummary) {
+    this.summary = summary;
+    this.cdr.markForCheck();
   }
 }

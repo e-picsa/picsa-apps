@@ -11,6 +11,7 @@
       <mat-icon>view_list</mat-icon>
       Table
     </ng-template>
+    <picsa-data-table [data]="summary.data" [options]="tableOptions"></picsa-data-table>
   </mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>
@@ -23,5 +24,6 @@
       <mat-icon>description</mat-icon>
       Definition
     </ng-template>
+    <pre>{{summary.metadata | json}}</pre>
   </mat-tab>
 </mat-tab-group>
