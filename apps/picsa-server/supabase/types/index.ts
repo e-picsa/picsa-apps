@@ -34,6 +34,37 @@ export interface Database {
   }
   public: {
     Tables: {
+      climate_products: {
+        Row: {
+          created_at: string
+          data: Json
+          id: number
+          station_id: number | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: number
+          station_id?: number | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: number
+          station_id?: number | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "climate_products_station_id_fkey"
+            columns: ["station_id"]
+            referencedRelation: "climate_stations"
+            referencedColumns: ["station_id"]
+          }
+        ]
+      }
       climate_stations: {
         Row: {
           country_code: string | null
