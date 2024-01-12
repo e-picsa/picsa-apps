@@ -10,18 +10,24 @@ const API_ENDPOINT = 'https://api.epicsa.idems.international';
 type ICallbackClient = (id:string)=>ReturnType<typeof createClient<paths>>
 
 /** Type-safe http client with added support for callbacks */
-type IClient = ReturnType<typeof createClient<paths>> & {useCallback:ICallbackClient}
+type IClient = ReturnType<typeof createClient<paths>> & {useMeta:ICallbackClient}
 
-type ICallbackStatus = 'pending' | 'success' | 'error' | 'unknown'
+
+
+interface IMetaEntry{
+  status:'pending' | 'success' | 'error' | 'unknown',
+  rawResponse?:Response,
+}
+
 
 /** 
  * Service to interact with external PICSA Climate API 
  * All methods are exposed through a type-safe `client` property, or can additionally use
- * a custom client that includes status notification updates via the `useCallback` method
+ * a custom client that includes status notification updates via the `useMeta` method
  * @example
  * Use custom callback that will show user notifications on error and record to service
  * ```ts
- * const {response, data, error} = await api.useCallback('myRequestId').POST(...)
+ * const {response, data, error} = await api.useMeta('myRequestId').POST(...)
  * ```
  * Use default client without additional callbacks
  * ```ts
@@ -31,38 +37,38 @@ type ICallbackStatus = 'pending' | 'success' | 'error' | 'unknown'
 @Injectable({ providedIn: 'root' })
 export class ClimateDataApiService {
 
-  /** List of monitored callbacks with status */
-  public cb:Record<string,ICallbackStatus>={}
+  /** Request additional meta by id */
+  public meta:Record<string ,IMetaEntry>={}
   
   /** Http client with type-definitions for API endpoints */
   public client:IClient
 
   constructor(private notificationService:PicsaNotificationService) {
     const client = createClient<paths>({ baseUrl: API_ENDPOINT,mode:'cors' });
-    this.client = {...client,useCallback:()=>{
+    this.client = {...client,useMeta:()=>{
       return client
     }}
   }
 
 
   /** 
-   * Provide a callback id which will be monitored alongside requests 
-   * and provide user notification on error 
+   * Provide an id which which will be updated alongside requests. 
+   * The cache will also include interceptors to provide user notification on error 
    **/
-  public useCallback(id:string){
+  public useMeta(id:string){
     const customFetch = this.createCustomFetchClient(id)
-    const callbackClient = createClient<paths>({ baseUrl: API_ENDPOINT,mode:'cors',fetch:customFetch });
-    return callbackClient
+    const customClient = createClient<paths>({ baseUrl: API_ENDPOINT,mode:'cors',fetch:customFetch });
+    return customClient
   }
 
   /** Create a custom implementation of fetch client to handle status updates and notifications */
   private createCustomFetchClient(id:string){
    return async (...args:Parameters<typeof window['fetch']>)=>{
-      this.cb[id]='pending'
+      this.meta[id]={status:'pending'}
       const response = await window.fetch(...args);
-      const callbackStatus =  this.getCallbackStatus(response.status)
-      this.cb[id]= callbackStatus
-      if(callbackStatus==='error' ){
+      this.meta[id].status =  this.getCallbackStatus(response.status)
+      this.meta[id].rawResponse = response
+      if(this.meta[id].status ==='error' ){
         await this.showCustomFetchErrorMessage(id,response)
       }
       return response
@@ -84,7 +90,7 @@ export class ClimateDataApiService {
     }
   }
 
-  private getCallbackStatus(statusCode:number):ICallbackStatus{
+  private getCallbackStatus(statusCode:number):IMetaEntry['status']{
     if(200 <= statusCode && statusCode <=299) return 'success'
     if(400 <= statusCode && statusCode <=499) return 'error'
     if(500 <= statusCode && statusCode <=599) return 'error'

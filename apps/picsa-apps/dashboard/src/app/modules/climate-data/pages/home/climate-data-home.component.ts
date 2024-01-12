@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateDataDashboardService, IStationRow } from '../../climate-data.service';
+import { ClimateDataApiService } from '../../climate-data-api.service';
 
 @Component({
   selector: 'dashboard-climate-data-home',
@@ -18,7 +19,7 @@ export class ClimateDataHomeComponent implements OnInit {
 
   public mapMarkers: IMapMarker[];
 
-  constructor(public service: ClimateDataDashboardService) {}
+  constructor(public service: ClimateDataDashboardService, public api: ClimateDataApiService) {}
 
   async ngOnInit() {
     await this.service.ready();

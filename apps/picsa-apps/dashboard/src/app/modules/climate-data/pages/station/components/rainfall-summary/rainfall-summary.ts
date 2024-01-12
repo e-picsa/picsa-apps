@@ -34,6 +34,10 @@ export class RainfallSummaryComponent implements AfterViewInit {
     paginatorSizes: [25, 50],
   };
 
+  public get res() {
+    return this.api.meta.rainfallSummary || {};
+  }
+
   ngAfterViewInit() {
     // TODO - retrieve from server
     this.loadData(RAINFALL_SUMMARY_MOCK);
@@ -41,15 +45,13 @@ export class RainfallSummaryComponent implements AfterViewInit {
 
   public async refreshData() {
     const { station_id, country_code } = this.service.activeStation;
-    const { response, data, error } = await this.api
-      .useCallback('rainfallSummary')
-      .POST('/v1/annual_rainfall_summaries/', {
-        body: {
-          country: `${country_code}` as any,
-          station_id: `${station_id}`,
-          summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
-        },
-      });
+    const { response, data, error } = await this.api.useMeta('rainfallSummary').POST('/v1/annual_rainfall_summaries/', {
+      body: {
+        country: `${country_code}` as any,
+        station_id: `${station_id}`,
+        summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
+      },
+    });
     console.log({ response, data, error });
     this.loadData(data as any);
   }

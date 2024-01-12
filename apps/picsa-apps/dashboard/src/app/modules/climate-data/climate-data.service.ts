@@ -37,9 +37,7 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
   }
 
   private async checkStatus() {
-    const { client } = this.api;
-    const { response } = await client.GET('/v1/status/');
-    this.apiStatus = response.status;
+    await this.api.useMeta('serverStatus').GET('/v1/status/');
   }
 
   private async listStations() {

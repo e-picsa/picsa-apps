@@ -1,7 +1,7 @@
 <div style="display: flex; align-items: center">
   <h3 style="flex: 1">Rainfall Summary</h3>
-  <button mat-stroked-button (click)="refreshData()" [disabled]="api.cb['rainfallSummary']==='pending'">
-    <mat-icon [class.spin]="api.cb['rainfallSummary']==='pending'">autorenew</mat-icon>
+  <button mat-stroked-button (click)="refreshData()" [disabled]="res.status==='pending'">
+    <mat-icon [class.spin]="res.status==='pending'">autorenew</mat-icon>
     Refresh Data
   </button>
 </div>
