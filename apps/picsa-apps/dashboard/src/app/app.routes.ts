@@ -9,4 +9,9 @@ export const appRoutes: Route[] = [
     path: 'climate-data',
     loadChildren: () => import('./modules/climate-data/climate-data.module').then((m) => m.ClimateDataModule),
   },
+  {
+    path: '',
+    redirectTo: 'resources',
+    pathMatch: 'full',
+  },
 ];
