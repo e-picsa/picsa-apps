@@ -1,11 +1,19 @@
-<!-- Data Search -->
-@if(tableOptions.search){
-<mat-form-field class="search-field">
-  <mat-label>Search Data</mat-label>
-  <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
-  <mat-icon matPrefix>search</mat-icon>
-</mat-form-field>
-}
+<div style="display: flex; align-items: center">
+  <!-- Data Search -->
+  @if(tableOptions.search){
+  <mat-form-field class="search-field" style="flex: 1; margin-right: 2rem">
+    <mat-label>Search Data</mat-label>
+    <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+  }
+  <!-- Data Export -->
+  @if(tableOptions.exportFilename){
+  <button mat-button style="margin-right: auto" (click)="handleExport()">
+    <mat-icon>file_download</mat-icon>Export CSV
+  </button>
+  }
+</div>
 
 <!-- Main Table -->
 <table mat-table matSort [dataSource]="dataSource" [matSortDisabled]="!tableOptions.sort">

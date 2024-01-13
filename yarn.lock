@@ -8162,6 +8162,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/downloadjs@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@types/downloadjs@npm:1.4.6"
+  checksum: 0e98425946c12315a7b9646edb75285bcc0fda2d59f9d296fa3bf9455ef62d6d73383c52ee86eec50e9b4cee6f9af9dba78c6fb56bc6444395b4ac4f76a86ec0
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.3":
   version: 3.7.4
   resolution: "@types/eslint-scope@npm:3.7.4"
@@ -18991,6 +18998,7 @@ __metadata:
     "@swc-node/register": ~1.6.7
     "@swc/core": ~1.3.85
     "@types/c3": ^0.7.8
+    "@types/downloadjs": ^1.4.6
     "@types/hammerjs": ^2.0.41
     "@types/intro.js": ^5.1.1
     "@types/jest": 29.4.4

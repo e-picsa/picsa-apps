@@ -75,6 +75,7 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   private loadData(summary: IRainfallSummary) {
+    this.tableOptions.exportFilename = `${this.service.activeStation.station_name}_rainfallSummary.csv`;
     this.summary = summary;
     this.cdr.markForCheck();
   }

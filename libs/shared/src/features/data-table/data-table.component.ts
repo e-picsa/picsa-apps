@@ -1,21 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import download from 'downloadjs';
+import { unparse } from 'papaparse';
 
 export interface IDataTableOptions {
   /** Optional list of columns to display (default selects first keys from first data entry) */
   displayColumns?: string[];
-  /** Specify whether to include column sort headers (default true) */
-  sort?: boolean;
+  /** Provide filename to export data as csv. If omitted export option will not be presented */
+  exportFilename?: string;
   /** Specify size options to show in page paginator, e.g. [5,10,25] or just [25] (no paginator if left blank) */
   paginatorSizes?: number[];
   /** Specify whether to enable search input box and table filtering (will include all data during filter) */
   search?: boolean;
+  /** Specify whether to include column sort headers (default true) */
+  sort?: boolean;
   /** Bind to row click events */
   handleRowClick?: (row: any) => void;
 }
@@ -33,6 +38,7 @@ export interface IDataTableOptions {
   standalone: true,
   imports: [
     CommonModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -55,9 +61,10 @@ export class PicsaDataTableComponent implements OnChanges {
 
   public tableOptions: Required<IDataTableOptions> = {
     displayColumns: [],
-    sort: true,
+    exportFilename: '',
     paginatorSizes: [],
     search: true,
+    sort: true,
     handleRowClick: () => null,
   };
 
@@ -72,6 +79,12 @@ export class PicsaDataTableComponent implements OnChanges {
 
   public applyFilter(value: string) {
     this.dataSource.filter = value.trim().toLowerCase();
+  }
+
+  public handleExport() {
+    const { displayColumns, exportFilename } = this.tableOptions;
+    const csv = unparse(this.dataSource.filteredData, { columns: displayColumns });
+    download(csv, exportFilename, 'text/csv');
   }
 
   private loadData<T>(data: T[] = [], overrides: IDataTableOptions = {}) {
