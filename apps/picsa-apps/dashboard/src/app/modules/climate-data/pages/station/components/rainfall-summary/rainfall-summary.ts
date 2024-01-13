@@ -4,10 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { ClimateDataDashboardService } from '../../../../climate-data.service';
 import { ClimateDataApiService } from '../../../../climate-data-api.service';
-import { RAINFALL_SUMMARY_MOCK } from './rainfall-summary.spec';
 
 interface IRainfallSummary {
   data: any[];
@@ -27,7 +27,8 @@ export class RainfallSummaryComponent implements AfterViewInit {
   constructor(
     public api: ClimateDataApiService,
     private service: ClimateDataDashboardService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private supabase: SupabaseService
   ) {}
 
   public tableOptions: IDataTableOptions = {
@@ -38,9 +39,19 @@ export class RainfallSummaryComponent implements AfterViewInit {
     return this.api.meta.rainfallSummary || {};
   }
 
-  ngAfterViewInit() {
-    // TODO - retrieve from server
-    this.loadData(RAINFALL_SUMMARY_MOCK);
+  private get db() {
+    return this.supabase.db.table('climate_products');
+  }
+
+  async ngAfterViewInit() {
+    const { station_id } = this.service.activeStation;
+    // Load data stored in supabase db if available. Otherwise load from api
+    const { data } = await this.db.select('*').eq('station_id', station_id).eq('type', 'rainfallSummary').single();
+    if (data) {
+      this.loadData(data?.data || { data: [], metadata: {} });
+    } else {
+      await this.refreshData();
+    }
   }
 
   public async refreshData() {
@@ -52,8 +63,15 @@ export class RainfallSummaryComponent implements AfterViewInit {
         summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
       },
     });
-    console.log({ response, data, error });
+    console.log('rainfallSummary', { response, data, error });
     this.loadData(data as any);
+    // TODO - generalise way to persist db updates from api queries
+    const dbRes = await this.supabase.db.table('climate_products').upsert({
+      data,
+      station_id,
+      type: 'rainfallSummary',
+    });
+    console.log('climate data persist', dbRes);
   }
 
   private loadData(summary: IRainfallSummary) {
