@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 
 import { ClimateDataDashboardService } from '../../climate-data.service';
 import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
@@ -9,7 +8,7 @@ import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall
 @Component({
   selector: 'dashboard-station-page',
   standalone: true,
-  imports: [CommonModule, MatProgressBarModule, RainfallSummaryComponent, PicsaLoadingComponent],
+  imports: [CommonModule, MatProgressBarModule, RainfallSummaryComponent],
   templateUrl: './station-page.component.html',
   styleUrls: ['./station-page.component.scss'],
 })
