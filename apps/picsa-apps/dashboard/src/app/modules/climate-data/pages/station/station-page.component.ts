@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { ActivatedRoute } from '@angular/router';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { ClimateDataDashboardService } from '../../climate-data.service';
 import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
@@ -27,20 +25,9 @@ export class StationPageComponent implements OnInit {
     };
   }
 
-  constructor(
-    private service: ClimateDataDashboardService,
-    private route: ActivatedRoute,
-    private notificationService: PicsaNotificationService
-  ) {}
+  constructor(private service: ClimateDataDashboardService) {}
 
   async ngOnInit() {
     await this.service.ready();
-    const { stationId } = this.route.snapshot.params;
-    const station = this.service.stations.find((station) => station.station_id === parseInt(stationId));
-    if (station) {
-      this.service.setActiveStation(station);
-    } else {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: `Station data not found` });
-    }
   }
 }
