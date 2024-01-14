@@ -15,6 +15,10 @@ export const ROUTES_COMMON: Routes = [
     path: 'downloads',
     loadChildren: () => import('./pages/downloads/downloads.module').then((m) => m.DownloadsModule),
   },
+  {
+    path: 'search',
+    loadChildren:() => import('./pages/resources/search.module').then((m)=>m.SearchModule)
+  }
 ];
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];

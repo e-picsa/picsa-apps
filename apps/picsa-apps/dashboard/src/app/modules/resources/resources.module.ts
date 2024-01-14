@@ -5,10 +5,12 @@ import { RouterModule } from '@angular/router';
 import { ResourceCreateComponent } from './pages/create/resource-create.component';
 import { ResourcesPageComponent } from './pages/home/resources.page';
 
+
+
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule,
+  CommonModule,
     RouterModule.forChild([
       {
         path: '',
@@ -22,6 +24,10 @@ import { ResourcesPageComponent } from './pages/home/resources.page';
         path: ':id',
         component: ResourceCreateComponent,
       },
+      {
+        path:'search',
+        // component:Sear/chComponent,
+      }
     ]),
   ],
 })
