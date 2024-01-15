@@ -31,7 +31,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
   }
 
 
-  private async listTranslations() {
+  public async listTranslations() {
     const { data, error } = await this.supabaseService.db.table('translations').select<'*', ITranslationRow>('*');
     if (error) {
       throw error;
@@ -54,8 +54,33 @@ export class TranslationDashboardService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    
     return data;
   }
 
+  //delete function 
+  public async deleteTranslationById(id: number): Promise<string> {
+    const { error } = await this.supabaseService
+      .db
+      .table('translations')
+      .delete()
+      .eq('id', id);
+  
+    if (error) {
+      throw error;
+    }
+    return "Deleted Successfully"
+  }
+
+// In your TranslationDashboardService
+public async addTranslation(translation: Partial<ITranslationRow>): Promise<string> {
+  const { data, error } = await this.supabaseService
+    .db
+    .table('translations')
+    .insert([translation]);
+
+  if (error) {
+    throw error;
+  }
+  return "Added successfully";
+}
 }

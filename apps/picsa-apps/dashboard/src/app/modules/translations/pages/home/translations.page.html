@@ -1,11 +1,13 @@
 <div class="page-content">
-  <div style="display: flex">
-    <h2 style="flex: 1">Translations</h2>
+  <div style="display: flex; align-items: center;">
+    <h2 style="flex: 1;">Translations</h2>
+    <button mat-raised-button color="primary" routerLink="/translations/new">Add New Translation</button>
   </div>
+  @if(service.translations){
   <table mat-table [dataSource]="service.translations">
     
     <!-- 'en' Column -->
-    <ng-container matColumnDef="en" clickable>
+    <ng-container matColumnDef="en" clickable >
       <th mat-header-cell *matHeaderCellDef> en </th>
       <td mat-cell *matCellDef="let element"> {{ element.en }} </td>
     </ng-container>
@@ -40,9 +42,10 @@
       <td mat-cell *matCellDef="let element">  {{ element.created_at | date: 'mediumDate' }} </td>
     </ng-container>
 
-  
     <!-- Table Rows -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToRecord(row)"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"(click)="goToRecord(row)" ></tr>
   </table>
+}
+
 </div>

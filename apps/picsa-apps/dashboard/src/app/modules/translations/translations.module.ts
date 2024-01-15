@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { TranslationsEditComponent } from './pages/edit/translations-edit.component';
 import { TranslationsPageComponent } from './pages/home/translations.page';
+import { NewTranslationsComponent } from './pages/new/new-translations.component';
 
 @NgModule({
   declarations: [],
@@ -15,8 +16,8 @@ import { TranslationsPageComponent } from './pages/home/translations.page';
         component: TranslationsPageComponent,
       },
       {
-        path: 'edit',
-        component: TranslationsEditComponent,
+        path: 'new',
+        component: NewTranslationsComponent,
       },
       {
         path: ':id',

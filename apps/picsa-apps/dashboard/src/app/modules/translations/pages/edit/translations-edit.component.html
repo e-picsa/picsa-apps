@@ -2,8 +2,8 @@
   <h2>Edit Translations</h2>
   @if(translationRow){
   <form class="form-content">
-    <div>
-      <label>Created At</label>
+    <div class="form-data">
+      <label>Date of Creation</label>
       <div>{{ translationRow.created_at | date: 'mediumDate' }}</div>
     </div>
 
@@ -29,7 +29,7 @@
       <label>zm_ny</label>
       <input matInput [(ngModel)]="translationRow.zm_ny" name="zm_ny" />
     </div>
-    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Submit</button>
+    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Update</button>
   </form>
   } @else if(dataLoadError) {
   <div>{{dataLoadError}}</div>
@@ -37,6 +37,11 @@
   <div>Loading...</div>
   }
   @if(editActionFeedbackMessage){
-    <div>{{editActionFeedbackMessage}}</div>
+  <div>{{editActionFeedbackMessage}}</div>
+  }
+  @if(translationRow){
+  <h2>Delete this Translation</h2>
+  <button mat-raised-button color="primary" class="deleteButton" (click)="openTranslationDeleteDialog()">Delete this
+    translation <mat-icon color="white">delete</mat-icon></button>
   }
 </div>

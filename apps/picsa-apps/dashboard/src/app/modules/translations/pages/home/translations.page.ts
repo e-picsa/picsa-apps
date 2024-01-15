@@ -17,12 +17,22 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
   styleUrls: ['./translations.page.scss'],
 })
 export class TranslationsPageComponent implements OnInit {
-  displayedColumns: string[] = [ 'en', 'mw_ny', 'sw', 'tg', 'zm_ny','created_at',];
+  displayedColumns: string[] = [ 'en', 'mw_ny', 'sw', 'tg', 'zm_ny','created_at'];
+ 
   constructor(public service: TranslationDashboardService, private router: Router) {}
   ngOnInit(): void {
     this.service.ready();
+    this.refreshTranslations();
   }
+
   goToRecord(row:ITranslationRow){
     this.router.navigate([`/translations`, row.id]);
+  }
+
+
+  refreshTranslations() {
+    this.service.listTranslations().catch((error) => {
+      console.error('Error fetching translations:', error);
+    });
   }
 }

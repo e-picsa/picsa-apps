@@ -1,0 +1,34 @@
+<div class="page-content">
+  <h2>New Translations</h2>
+
+  <form class="form-content">
+
+    <div class="form-data">
+      <label>English</label>
+      <input matInput [(ngModel)]="en" name="en" />
+    </div>
+
+    <div class="form-data">
+      <label>mw_ny</label>
+      <input matInput [(ngModel)]="mw_ny" name="mw_ny" />
+    </div>
+
+    <div class="form-data">
+      <label>sw</label>
+      <input matInput [(ngModel)]="sw" name="sw" />
+    </div>
+    <div class="form-data">
+      <label>tg</label>
+      <input matInput [(ngModel)]="tg" name="tg" />
+    </div>
+    <div class="form-data">
+      <label>zm_ny</label>
+      <input matInput [(ngModel)]="zm_ny" name="zm_ny" />
+    </div>
+    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Submit</button>
+  </form>
+
+  @if(editActionFeedbackMessage){
+    <div>{{editActionFeedbackMessage}}</div>
+  }
+</div>
