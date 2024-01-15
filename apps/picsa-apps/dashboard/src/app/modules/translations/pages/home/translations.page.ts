@@ -21,11 +21,8 @@ export class TranslationsPageComponent implements OnInit {
   constructor(public service: TranslationDashboardService, private router: Router) {}
   ngOnInit(): void {
     this.service.ready();
-    
   }
   goToRecord(row:ITranslationRow){
-    console.log(row)
-    this.router.navigate([`/`, row.id]);
-
+    this.router.navigate([`/translations`, row.id]);
   }
 }
