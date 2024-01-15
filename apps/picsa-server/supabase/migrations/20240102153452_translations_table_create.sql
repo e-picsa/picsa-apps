@@ -1,8 +1,9 @@
 create table
   public.translations (
+    id text not null,
     created_at timestamp with time zone not null default now(),
     tool text not null,
-    context text not null default ''::text,
+    context text,
     en text not null,
     -- Additional languages
     -- Uses ISO 3166 alpha-2 country code and  ISO 639 Set 1 language code
@@ -13,5 +14,6 @@ create table
     tj_tg text null,
     zm_ny text null,
     -- Primary key generated as combination of tool, context and en text
-    constraint translations_pkey primary key (tool, context, en)
+    constraint translations_pkey primary key (id),
+    constraint translations_tool_context_en_key unique (tool, context, en)
   ) tablespace pg_default;

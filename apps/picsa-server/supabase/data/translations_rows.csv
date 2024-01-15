@@ -1,345 +1,101 @@
-created_at,tool,context,en,mw_ny,ke_sw,tj_tg,zm_ny
-2024-01-15 20:34:08.423203+00,budget,,Add Female Member,Onjezerani membala wa mkazi,,,Ikamponi membala wam'kazi
-2024-01-15 20:34:08.423203+00,budget,,Add Male Member,Onjezerani membala wa mamuna,,,Ikamponi membala wam'muna
-2024-01-15 20:34:08.423203+00,budget,,Balance,Ndalama zotsala,,,Zokharira
-2024-01-15 20:34:08.423203+00,budget,,Consumed,Zodyedwa,,,Zosewenzetsedwa
-2024-01-15 20:34:08.423203+00,budget,,Cost,Mtengo,,,Mtengo
-2024-01-15 20:34:08.423203+00,budget,,Create New Budget,Pangani bajeti yatsopano,,,Pangani bajeti yatsopano
-2024-01-15 20:34:08.423203+00,budget,,Days,Masiku,,,Masiku
-2024-01-15 20:34:08.423203+00,budget,,Decrease Scale,Kuchepetsa mlingo,,,Chepetsa kukula
-2024-01-15 20:34:08.423203+00,budget,,description,mafotokozeredwe,,,kaonekeswe
-2024-01-15 20:34:08.423203+00,budget,,Description (optional),Kufotokozera (Mukhoza osalemba),,,Kufotokozera (posankha)
-2024-01-15 20:34:08.423203+00,budget,,Enterprise,bizinesi,,,malonda
-2024-01-15 20:34:08.423203+00,budget,,Family,banja,,,banja
-2024-01-15 20:34:08.423203+00,budget,,Family Labour,ntchito yogwiridwa ndi amubanjamo,,,ntchito ya banja
-2024-01-15 20:34:08.423203+00,budget,,How long is your budget for?,bajeti yanu imakhala yayitali bwanji?,,,bajeti yanu imakhala yayitali motani?
-2024-01-15 20:34:08.423203+00,budget,,Import Budget Code,lowetsani nambala ya bajeti,,,nambala ya bajeti
-2024-01-15 20:34:08.423203+00,budget,,Increase Scale,onjezerani mulingo,,,kuchulukitsa
-2024-01-15 20:34:08.423203+00,budget,,Inputs,zolowa,,,zolowa
-2024-01-15 20:34:08.423203+00,budget,,Outputs,zotuluka,,,zotuluka
-2024-01-15 20:34:08.423203+00,budget,activities,apply fertiliser,kuthira feteleza,,,thirani fatatleza
-2024-01-15 20:34:08.423203+00,budget,activities,apply pesticide,kopopela mankhwala a tizilombo,,,thirani mankhwala
-2024-01-15 20:34:08.423203+00,budget,activities,bagging,kupakila mmatumba,,,kuika m'mathumba
-2024-01-15 20:34:08.423203+00,budget,activities,banding,kubandila,,,kumangilira
-2024-01-15 20:34:08.423203+00,budget,activities,build housing,kumanga makola,,,kumanga nyumba
-2024-01-15 20:34:08.423203+00,budget,activities,compost manure making,kupanga manyowa,,,kupanga manyowa kuzinyalala
-2024-01-15 20:34:08.423203+00,budget,activities,dipping,kupanga dipi ziweto,,,kupaka
-2024-01-15 20:34:08.423203+00,budget,activities,feeding livestock,kudyetsa ziweto,,,kudyetsa ziweto
-2024-01-15 20:34:08.423203+00,budget,activities,harvesting,kukolola,,,kukolola
-2024-01-15 20:34:08.423203+00,budget,activities,land clearing,kusosa,,,kukonza malo
-2024-01-15 20:34:08.423203+00,budget,activities,marketing and selling,kutsatsa ndi kugulitsa,,,kutsatsa ndi kugulitsa
-2024-01-15 20:34:08.423203+00,budget,activities,mulching,kuphimbila,,,mochi
-2024-01-15 20:34:08.423203+00,budget,activities,ploughing,kugalauza,,,kugaula
-2024-01-15 20:34:08.423203+00,budget,activities,post-harvest handling,kusamala zokolora,,,kagwiridwe pambuyo po kolola
-2024-01-15 20:34:08.423203+00,budget,activities,provide supplements,kupereka zakudya zoonjezera,,,perekani zothandizila
-2024-01-15 20:34:08.423203+00,budget,activities,provide water,kupereka madzi ku ziweto,,,perekani madzi
-2024-01-15 20:34:08.423203+00,budget,activities,purchase,kugula,,,gulani
-2024-01-15 20:34:08.423203+00,budget,activities,relocation,kusamutsa ziweso,,,kusamukira
-2024-01-15 20:34:08.423203+00,budget,activities,shelling,kutonola/kusola,,,kutongola
-2024-01-15 20:34:08.423203+00,budget,activities,sowing,kufesa,,,kufesa
-2024-01-15 20:34:08.423203+00,budget,activities,storage,kusunga,,,kasungidwe
-2024-01-15 20:34:08.423203+00,budget,activities,threshing,kupuntha,,,kupuntha
-2024-01-15 20:34:08.423203+00,budget,activities,transport,transipoti,,,mayendedwe
-2024-01-15 20:34:08.423203+00,budget,activities,transport livestock,kunyamula ziweto,,,kunyamula ziweto
-2024-01-15 20:34:08.423203+00,budget,activities,vaccinate,kupereka katemela,,,katemera
-2024-01-15 20:34:08.423203+00,budget,activities,value addition,kuwonjezera phindu,,,kuwonjezera phindu
-2024-01-15 20:34:08.423203+00,budget,activities,watering,kuthirira,,,kuthirira
-2024-01-15 20:34:08.423203+00,budget,activities,weeding,kupalira,,,kupalira
-2024-01-15 20:34:08.423203+00,common,buttons,Cancel,thetsani,,,kutseka
-2024-01-15 20:34:08.423203+00,common,buttons,Close,Tsekani,,,Tsekani
-2024-01-15 20:34:08.423203+00,common,buttons,Next,pitani tsamba lina,,,ina
-2024-01-15 20:34:08.423203+00,common,buttons,Save,sungani,,,sungani
-2024-01-15 20:34:08.423203+00,common,buttons,Back,Kumbuyo,,,Bwelerani
-2024-01-15 20:34:08.423203+00,common,buttons,Delete,Kufufuta,,,Fafanizani
-2024-01-15 20:34:08.423203+00,common,buttons,Edit,Sinthani,,,Lembani bwino
-2024-01-15 20:34:08.423203+00,climate,chart,End,Pothera,,,Tsirizani
-2024-01-15 20:34:08.423203+00,climate,chart,End of Season,Mapeto a nyengo,,,Kutha kwa nyengo
-2024-01-15 20:34:08.423203+00,climate,chart,End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.,Mapeto a nyengo akutanthauza tsiku lomaliza mu nyengo (1 okotobala mpaka 30 epulo) lomwe kwagwa mvula yoposa 10mm,,,Kutha kwa nyengo akutanthauza tsiku lomaliza mu nyengo (1 okotobala mpaka 30 epulo) lomwe kwagwa mvula yoposa 10mm
-2024-01-15 20:34:08.423203+00,climate,chart,Length,kutalika,,,kutalika
-2024-01-15 20:34:08.423203+00,climate,chart,Length of Season,Kutalika kwa nyengo,,,Kutalika kwa nyengo
-2024-01-15 20:34:08.423203+00,climate,chart,Length of season is defined as the total days from the start of the season until the end of the season as defined,Lutalika kwa nyengo kutanthauza masiku onse kuyambira pachiyambi mpaka pamapeto a nyengo monga momwe zafotokozedwa,,,Kutalika kwa nyengo kutanthauza masiku onse kuyambira pachiyambi mpaka pamapeto a nyengo monga momwe zafotokozedwa
-2024-01-15 20:34:08.423203+00,climate,chart,Rain,Mvula,,,Mvula
-2024-01-15 20:34:08.423203+00,climate,chart,Seasonal Rainfall,Mvula ya mu nyengo,,,Mvula ya mu nyengo
-2024-01-15 20:34:08.423203+00,climate,chart,Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season,Mvula ya mu nyengo imatanthauza mvula yonse yomwe yalembedwa kuti yagwa kuyambira pachiyambi mpaka pa mapeto a nyengoyo,,,Mvula ya mu nyengo imatanthauza mvula yonse yomwe yalembedwa kuti yagwa kuyambira pachiyambi mpaka pa mapeto a nyengoyo
-2024-01-15 20:34:08.423203+00,climate,chart,Seasonal Total Rainfall (mm),Mvula yathu yathunthu ya nyengo yapadera (mm),,,Mvula yathu yathunthu ya nyengo yapadera (mm)
-2024-01-15 20:34:08.423203+00,climate,chart,Start,Kuyamba,,,Suyamba
-2024-01-15 20:34:08.423203+00,climate,chart,Start of Season,chiyambi cha nyengo,,,chiyambi cha nyengo
-2024-01-15 20:34:08.423203+00,climate,chart,Start of season is defined as the first occasion (from 1st October) with more than 25mm in a 3 day period and no dry spell of 10 days or more within the following 30 days,chiymabi cha nyengo chimatanthauza mvula yoyamba (kuyambira pa 1 okotobala) yomwe yagwa kuposa mlingo wa 25mm mu masiku atatu ndipo kuti panalibe ng'amba ya masiku oposa khumi mu masiku makumi atatu kuchokera nthawi yomwe mvula inagwa.,,,chiymabi cha nyengo chimatanthauza mvula yoyamba (kuyambira pa 1 okotobala) yomwe yagwa kuposa mlingo wa 25mm mu masiku atatu ndipo kuti panalibe ng'amba ya masiku oposa khumi mu masiku makumi atatu kuchokera nthawi yomwe mvula inagwa.
-2024-01-15 20:34:08.423203+00,climate,chart,Extreme,,,,
-2024-01-15 20:34:08.423203+00,climate,chart,Extreme Rainfall,,,,
-2024-01-15 20:34:08.423203+00,climate,chart,Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile,,,,
-2024-01-15 20:34:08.423203+00,climate,chart,Frequency of Extreme,,,,
-2024-01-15 20:34:08.423203+00,budget,day_1,Monday,Lolemba,,,Pa lolemba
-2024-01-15 20:34:08.423203+00,budget,day_2,Tuesday,Lachiwiri,,,Pa chiwiri
-2024-01-15 20:34:08.423203+00,budget,day_3,Wednesday,Lachitatu,,,Pa chitatu
-2024-01-15 20:34:08.423203+00,budget,day_4,Thursday,lachinayi,,,Pa chinai
-2024-01-15 20:34:08.423203+00,budget,day_5,Friday,Lachisanu,,,Pa chisanu
-2024-01-15 20:34:08.423203+00,budget,day_6,Saturday,Loweruka,,,Pa chiweru
-2024-01-15 20:34:08.423203+00,budget,day_7,Sunday,Lamulungu,,,Pa sondo
-2024-01-15 20:34:08.423203+00,budget,enterprise,afforestation,kudzala mitengo,,,kubyala mitengo
-2024-01-15 20:34:08.423203+00,budget,enterprise,cattle,ng'ombe,,,ng'ombe
-2024-01-15 20:34:08.423203+00,budget,enterprise,chicken,nkhuku,,,nkhuku
-2024-01-15 20:34:08.423203+00,budget,enterprise,cowpeas,khobwe,,,nyemba
-2024-01-15 20:34:08.423203+00,budget,enterprise,ducks,abakha,,,abakha
-2024-01-15 20:34:08.423203+00,budget,enterprise,fish,nsomba,,,nsomba
-2024-01-15 20:34:08.423203+00,budget,enterprise,goats,mbuzi,,,mbuzi
-2024-01-15 20:34:08.423203+00,budget,enterprise,groundnuts,mtedza,,,nshawa
-2024-01-15 20:34:08.423203+00,budget,enterprise,guinea fowl,nkhanga,,,nkhanga
-2024-01-15 20:34:08.423203+00,budget,enterprise,maize,chimanga,,,chimanga
-2024-01-15 20:34:08.423203+00,budget,enterprise,mixed,kusakaniza,,,kusakaniza
-2024-01-15 20:34:08.423203+00,budget,enterprise,onions,anyezi,,,anyezi
-2024-01-15 20:34:08.423203+00,budget,enterprise,paw-paw,papaya,,,paw-paw
-2024-01-15 20:34:08.423203+00,budget,enterprise,pigeon peas,nandolo,,,nyamdolo
-2024-01-15 20:34:08.423203+00,budget,enterprise,pigs,nkhumba,,,nkhumba
-2024-01-15 20:34:08.423203+00,budget,enterprise,rice,mpunga,,,mpunga
-2024-01-15 20:34:08.423203+00,budget,enterprise,sheep,nkhosa,,,mbelele
-2024-01-15 20:34:08.423203+00,budget,enterprise,sorghum,mapila,,,mapira
-2024-01-15 20:34:08.423203+00,budget,enterprise,soya beans,soya,,,nyemba za soya
-2024-01-15 20:34:08.423203+00,budget,enterprise,sweet potatoes,mbatata ya kholowa,,,kandolo/kachamba
-2024-01-15 20:34:08.423203+00,budget,enterprise,tomatoes,tomato,,,chimate
-2024-01-15 20:34:08.423203+00,budget,enterprise,watermelon,mavwende,,,vwembe
-2024-01-15 20:34:08.423203+00,budget,inputs,bags,matumba,,,matumba
-2024-01-15 20:34:08.423203+00,budget,inputs,chemicals,mankhwala,,,mankhwala
-2024-01-15 20:34:08.423203+00,budget,inputs,feed,zakudza za ziweto,,,zakudya zaziweto (Kudyetsa)
-2024-01-15 20:34:08.423203+00,budget,inputs,fertiliser,feteleza,,,fataleza
-2024-01-15 20:34:08.423203+00,budget,inputs,housing,khola,,,mosungila
-2024-01-15 20:34:08.423203+00,budget,inputs,labour - paid,"ganyu ",,,ntchito - yolipidwa
-2024-01-15 20:34:08.423203+00,budget,inputs,manure sacks,matumba a manyowa,,,masaka ya manyowa
-2024-01-15 20:34:08.423203+00,budget,inputs,manure wheelbarrows,wilibala ya manyowa,,,wilibala ya manyowa
-2024-01-15 20:34:08.423203+00,budget,inputs,ox cart,ngolo,,,kochikali/ ngolo
-2024-01-15 20:34:08.423203+00,budget,inputs,pot for storage,mphika wongula zinthu,,,mphika posungira
-2024-01-15 20:34:08.423203+00,budget,inputs,protective equipment,zida zozitetezera pogwira ntchito,,,zida zoteteza
-2024-01-15 20:34:08.423203+00,budget,inputs,seeds,mbewu,,,mbewu
-2024-01-15 20:34:08.423203+00,budget,inputs,sheller hire,kupanga hayala chida chotonolera,,,makina otongolera olipilidwa
-2024-01-15 20:34:08.423203+00,budget,inputs,supplements,zakudya za ziweto zoowonjezera,,,zothandizila
-2024-01-15 20:34:08.423203+00,budget,inputs,tools,zida,,,zida
-2024-01-15 20:34:08.423203+00,budget,inputs,tractor hire,kubweleka thirakitale,,,ganyu ya thalakita
-2024-01-15 20:34:08.423203+00,budget,inputs,transportation hire,hayala ya thiransipoti,,,mayendedwe olipira
-2024-01-15 20:34:08.423203+00,budget,inputs,vaccine,katemera,,,katemera
-2024-01-15 20:34:08.423203+00,budget,month_1,January,januwale,,,januwale
-2024-01-15 20:34:08.423203+00,budget,month_1_short,Jan,januwale,,,jan
-2024-01-15 20:34:08.423203+00,budget,month_10,October,okotabala,,,okotabala
-2024-01-15 20:34:08.423203+00,budget,month_10_short,Oct,oko,,,oko
-2024-01-15 20:34:08.423203+00,budget,month_11,November,novembala,,,novembala
-2024-01-15 20:34:08.423203+00,budget,month_11_short,Nov,novembala,,,nov
-2024-01-15 20:34:08.423203+00,budget,month_12,December,disembala,,,disembala
-2024-01-15 20:34:08.423203+00,budget,month_12_short,Dec,disembala,,,dis
-2024-01-15 20:34:08.423203+00,budget,month_2,February,febuluwale,,,febuluwale
-2024-01-15 20:34:08.423203+00,budget,month_2_short,Feb,febuluwale,,,feb
-2024-01-15 20:34:08.423203+00,budget,month_3,March,marichi,,,marichi
-2024-01-15 20:34:08.423203+00,budget,month_3_short,Mar,marichi,,,mar
-2024-01-15 20:34:08.423203+00,budget,month_4,April,epulo,,,epulo
-2024-01-15 20:34:08.423203+00,budget,month_4_short,Apr,epulo,,,epu
-2024-01-15 20:34:08.423203+00,budget,month_5_short,May,meyi,,,meyi
-2024-01-15 20:34:08.423203+00,budget,month_6,June,juni,,,juni
-2024-01-15 20:34:08.423203+00,budget,month_6_short,Jun,juni,,,jun
-2024-01-15 20:34:08.423203+00,budget,month_7,July,julayi,,,julayi
-2024-01-15 20:34:08.423203+00,budget,month_7_short,Jul,Julaye,,,jul
-2024-01-15 20:34:08.423203+00,budget,month_8,August,ogasiti,,,ogasiti
-2024-01-15 20:34:08.423203+00,budget,month_8_short,Aug,ogasiti,,,oga
-2024-01-15 20:34:08.423203+00,budget,month_9,September,sepitembala,,,sepitembala
-2024-01-15 20:34:08.423203+00,budget,month_9_short,Sep,sepitembala,,,sep
-2024-01-15 20:34:08.423203+00,budget,other,add custom,onjezani zipangizo,,,kuikapo m'sonkho
-2024-01-15 20:34:08.423203+00,budget,other,family labour,ntchito yogwiridwa ndi amubanjamo,,,ntchito ya banja
-2024-01-15 20:34:08.423203+00,budget,outputs,crop,mbewu,,,zokolora
-2024-01-15 20:34:08.423203+00,budget,outputs,eggs,mazira,,,mazira
-2024-01-15 20:34:08.423203+00,budget,outputs,fodder for livestock,chakudya cha ziweto,,,chakudya cha ziweto
-2024-01-15 20:34:08.423203+00,budget,outputs,manure for compost,manyowa a kompositi,,,manyowa ozipangila kuzinyalala
-2024-01-15 20:34:08.423203+00,budget,outputs,meat,nyama,,,nyama
-2024-01-15 20:34:08.423203+00,budget,outputs,milk,mkaka,,,mkaka
-2024-01-15 20:34:08.423203+00,budget,outputs,money,ndalama,,,ndalama
-2024-01-15 20:34:08.423203+00,budget,outputs,wood,nkhuni,,,matabwa
-2024-01-15 20:34:08.423203+00,budget,,Produce Consumed,zokolola zomwe zagwiritsidwa ntchito,,,zokolola zomwe zagwiritsidwa ntchito
-2024-01-15 20:34:08.423203+00,budget,,Quantity,kuchuluka,,,kuchuluka kwake
-2024-01-15 20:34:08.423203+00,budget,,Saved Budgets,bajeti zosungidwa,,,bajeti zosungidwa
-2024-01-15 20:34:08.423203+00,budget,,Save your budget,sungani bajeti yanu,,,sungani bajeti yanu
-2024-01-15 20:34:08.423203+00,budget,,Select,sankhani,,,sankhani
-2024-01-15 20:34:08.423203+00,budget,,Select Enterprise,sankhani mtundu wa bizinezi,,,sankhani makampani
-2024-01-15 20:34:08.423203+00,budget,,Share as Picture,tumizani ngati chithunzi,,,gawani monga chithunzi
-2024-01-15 20:34:08.423203+00,budget,,Share Budget,tumizani bajeti kwa ena,,,gawani bajeti
-2024-01-15 20:34:08.423203+00,budget,,Show More,onetsani zambiri,,,onetsani zambiri
-2024-01-15 20:34:08.423203+00,budget,,starting in,kuyambira mu,,,kuyambira
-2024-01-15 20:34:08.423203+00,budget,,Summary,mwachidule,,,chidule
-2024-01-15 20:34:08.423203+00,budget,,Title,mutu,,,mutu
-2024-01-15 20:34:08.423203+00,budget,,Total,zonse pamodzi,,,zonse
-2024-01-15 20:34:08.423203+00,budget,,Values,kuchuluka kwake,,,mfundo
-2024-01-15 20:34:08.423203+00,budget,,What is your type of enterprise?,kodi mtundu wanu wabizinesi ndi uti?,,,kodi mtundu wanu wabizinesi ndi uti?
-2024-01-15 20:34:08.423203+00,climate,,Analyse,Kuzukuta,,,Fufuza
-2024-01-15 20:34:08.423203+00,climate,,Chart,Galafu,,,Zithunzi zazochita
-2024-01-15 20:34:08.423203+00,climate,,Definition,Tanthauzo,,,Kumasulira
-2024-01-15 20:34:08.423203+00,climate,,Hide Tool Options,Bisani Zipangizo,,,bisani zosankha za chida
-2024-01-15 20:34:08.423203+00,climate,,Line,Mzere,,,Mzere
-2024-01-15 20:34:08.423203+00,climate,,On average,pa mlingo wa chikatikati,,,pamodzi
-2024-01-15 20:34:08.423203+00,climate,,out of,kuchokera pa,,,kuchokera
-2024-01-15 20:34:08.423203+00,climate,,Print Version,zoti zikhoza kusindikizidwa,,,zolembedwa papepala
-2024-01-15 20:34:08.423203+00,climate,,satisfy,kukhutitsidwa,,,kuthutila
-2024-01-15 20:34:08.423203+00,climate,,Seasonal Total Rainfall,Mvula yonse ya nyengo,,,mvula yonse ya nyengo
-2024-01-15 20:34:08.423203+00,climate,,Select a site,sankhani malo,,,sankhani malo
-2024-01-15 20:34:08.423203+00,climate,,Share,tumizani,,,gawani
-2024-01-15 20:34:08.423203+00,climate,,Share App Link,Tumizani progalamu,,,Gawani ulalo wa app
-2024-01-15 20:34:08.423203+00,climate,,Share Chart,tumizani galafu,,,gawani chithunzi
-2024-01-15 20:34:08.423203+00,climate,,Show Tool Options,onetsani zipangizo,,,onetsani zida zosiyana
-2024-01-15 20:34:08.423203+00,climate,,Station,sitesheni,,,malo
-2024-01-15 20:34:08.423203+00,climate,,Terciles,Magawo a zotsatira za kafukufuku,,,Misampha
-2024-01-15 20:34:08.423203+00,climate,,Tools,zida,,,zida
-2024-01-15 20:34:08.423203+00,climate,,Year,chaka,,,chaka
-2024-01-15 20:34:08.423203+00,climate,,years out of every 10,zaka pa zaka 10 zilizonse,,,zaka 10 zilizonse
-2024-01-15 20:34:08.423203+00,budget,,Edit Budget,Sinthani bajeti,,,Kupitamonso mu bajeti
-2024-01-15 20:34:08.423203+00,budget,,Female Member,Membala wa mkazi,,,Membala wam'kazi
-2024-01-15 20:34:08.423203+00,budget,,Import,Kutenga bajeti yokonzedwa,,,Kuika nji
-2024-01-15 20:34:08.423203+00,budget,,Legend,Zizindikiro,,,Wosaiwalika
-2024-01-15 20:34:08.423203+00,budget,,Male Member,Membala wa mamuna,,,Membala wam'muna
-2024-01-15 20:34:08.423203+00,budget,,No outputs produce for consumption,Palibe zokolora zomwe zagwiritsidwa (zadyedwa) ntchito pakhomo,,,Palibe zokolola zakudya pakhomo
-2024-01-15 20:34:08.423203+00,budget,,Total Consumed,Zonse zomwe zagwiritsidwa  ntchito (zadyedwa),,,Zonse Zosewenzetsadwa
-2024-01-15 20:34:08.423203+00,budget,,Total Produced,Zokolola zonse,,,Zonse Zokololedwa
-2024-01-15 20:34:08.423203+00,common,,Are you sure you want to delete?,Mukutsimikiza kuti mufuna mufufute?,,,Kodi mutsimikiza kuti mufuna kufufuta?
-2024-01-15 20:34:08.423203+00,extension,,Budget,Bajeti,,,Bajeti
-2024-01-15 20:34:08.423203+00,extension,,Click on the button below to retry,dinani pa batani pansipa kuti muyesenso,,,dinizani pa batani pansipa kuti muyesenso
-2024-01-15 20:34:08.423203+00,extension,,Discussions are held within WhatsApp groups. You can use the links below to join groups you are interested in,"Pa whatsapp group ya alangizi pamakhala zokambilana. ngati mukufuna kulowanawo gululi, ndinu olandilidwa ndipo tsatilani link pansipa",,,"Pa whatsapp group ya alangizi pamakhala zokambilana. ngati mukufuna kulowanawo gululi, ndinu olandilidwa ndipo tsatilani link pansipa"
-2024-01-15 20:34:08.423203+00,extension,,Join,lowani,,,lowani
-2024-01-15 20:34:08.423203+00,extension,,Joined,Alowa,,,Kulumikizana
-2024-01-15 20:34:08.423203+00,extension,,Manual,Buku,,,Buku
-2024-01-15 20:34:08.423203+00,extension,,Monitoring,Kuwunikira,,,Kuyanganira / Kuyendera
-2024-01-15 20:34:08.423203+00,extension,,Privacy Policy,Mfundo zazinsinsi,,,Mfundo zazinsinsi
-2024-01-15 20:34:08.423203+00,extension,,Probability,kuthekera koti zikhoza kuchitika,,,mpata wa zoyembekezeleka
-2024-01-15 20:34:08.423203+00,extension,,Reload,bwezeraninso,,,bwezeraninso
-2024-01-15 20:34:08.423203+00,extension,,Resources,zipangizo,,,zipangizo
-2024-01-15 20:34:08.423203+00,extension,,Settings,zipangizo,,,makhalidwe
-2024-01-15 20:34:08.423203+00,extension,,Something went wrong...,chinachake chinalakwika ...,,,chinachake chinalakwika ...
-2024-01-15 20:34:08.423203+00,manual,,Activities,Zochitika,,,Zinchito
-2024-01-15 20:34:08.423203+00,common,,Edit Profiles,Sinthani mbiri,,,Lembani bwino maprofaelo
-2024-01-15 20:34:08.423203+00,common,,Extension,Ulangizi,,,Kukuza
-2024-01-15 20:34:08.423203+00,common,,Farmer,Mlimi,,,Mlimi
-2024-01-15 20:34:08.423203+00,common,,Hide Options,Bisani Zipangizo,,,Bimphani zosankha
-2024-01-15 20:34:08.423203+00,common,,Name,Dzina,,,Dzina
-2024-01-15 20:34:08.423203+00,common,,New Profile,Mbiri yatsopano,,,Profaelo yatsopano
-2024-01-15 20:34:08.423203+00,common,,Select Country,Sankhani Dziko,,,Sankhani dziko
-2024-01-15 20:34:08.423203+00,common,,Select Language,Sankhani chilankhulo,,,Sankhani Chilankhulidwe
-2024-01-15 20:34:08.423203+00,common,,Show Options,onetsani zipangizo,,,Wonetsani zosankha
-2024-01-15 20:34:08.423203+00,common,,Who is using?,Akugwiritsa ntchito ndi ndani?,,,Ndani akusewenzetsa
-2024-01-15 20:34:08.423203+00,crop-probability,,Beans,Nyemba,,,Kaela
-2024-01-15 20:34:08.423203+00,crop-probability,,Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.,Kuwerengeredwa pogwiritsa ntchito FAO CLIMWAT 2.0 ya Cropwat ndi Cropwat 8.0 ndi uthenga wa  zanyengo ya Nkhotakota Met Station.,,,Kuwerengela kusewenzetsa FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.
-2024-01-15 20:34:08.423203+00,crop-probability,,Cassava,Chinangwa,,,Chinangwa
-2024-01-15 20:34:08.423203+00,crop-probability,,Chance of receiving the water requirement in the days to maturity for this crop variety,Mwayi olandira madzi amene mbewu imafunikira mu masiku amene mbewu imatenga kuti ikhwime  pa mbewu zosiyanasiyana,,,Mpata wolandila madzi oyenera kuti mtundu wa mbeu iyi iche.
-2024-01-15 20:34:08.423203+00,crop-probability,,Crop water requirement (mm),Kuchuluka kwa madzi amene mbewu imafuna,,,M'yeso wofunikira wa madzi ku mbeu iyi
-2024-01-15 20:34:08.423203+00,crop-probability,,Days to maturity,Masiku omwe zimatenga kuti ziche,,,Masiku kuti iche
-2024-01-15 20:34:08.423203+00,crop-probability,,"Longitude:34.26, Latitude: -12.91 Altitude: 500.","Longitude:34.26, Latitude: -12.91 Altitude: 500.",,,"Kutalika :34.26, Kutambasuka:12.91, Mtunda wa M'mwamba : 500"
-2024-01-15 20:34:08.423203+00,crop-probability,,Probability of season start on or before below date,Kuthekera koti nyengo ikhoza kuyamba pa tsiku lili mmunsili,,,Mpata wa dzinja kuyamba pa loikika kapena isanafike tsikulo
-2024-01-15 20:34:08.423203+00,crop-probability,,Pumpkins,Maungu,,,Matanje/Maungu
-2024-01-15 20:34:08.423203+00,crop-probability,,Sunflower,Mpendadzuwa,,,M'penya dzuwa/nsendemu
-2024-01-15 20:34:08.423203+00,crop-probability,,Variety,Mtundu wa mbewu,,,Mtundu wa mbeu
-2024-01-15 20:34:08.423203+00,extension,,Climate,Nyengo,,,Nyengo
-2024-01-15 20:34:08.423203+00,extension,,Options,Zisankho,,,Zosankha
-2024-01-15 20:34:08.423203+00,manual,,After the season,Pakutha pa nyengo,,,Pambuyo pakutha kwa Nyengo
-2024-01-15 20:34:08.423203+00,manual,,Step A,Gawo A,,,Gawo A
-2024-01-15 20:34:08.423203+00,manual,,Step B,Gawo B,,,Gawo B
-2024-01-15 20:34:08.423203+00,manual,,Step C,Gawo C,,,Gawo C
-2024-01-15 20:34:08.423203+00,manual,,Step D,Gawo D,,,Gawo D
-2024-01-15 20:34:08.423203+00,manual,,Step E,Gawo E,,,Gawo E
-2024-01-15 20:34:08.423203+00,manual,,Step F,Gawo F,,,Gawo F
-2024-01-15 20:34:08.423203+00,manual,,Step G,Gawo G,,,Gawo G
-2024-01-15 20:34:08.423203+00,manual,,Step H,Gawo H,,,Gawo H
-2024-01-15 20:34:08.423203+00,manual,,Step I,Gawo I,,,Gawo I
-2024-01-15 20:34:08.423203+00,manual,,Step J,Gawo J,,,Gawo J
-2024-01-15 20:34:08.423203+00,manual,,Step K,Gawo K,,,Gawo K
-2024-01-15 20:34:08.423203+00,manual,,Step L,Gawo L,,,Gawo L
-2024-01-15 20:34:08.423203+00,manual,,Compare different options and plans,Siyanitsani zisankho ndi ma pulani osiyanasiyana,,,Linganizani Zosankha
-2024-01-15 20:34:08.423203+00,manual,,Create,Pangani,,,Pangani
-2024-01-15 20:34:08.423203+00,manual,,Crop Info,Zokhudza mbeu,,,Zambiri za Mbeu
-2024-01-15 20:34:08.423203+00,manual,,During the season,Mkatikati mwa sizoni/nyengo,,,Mkati mwa Nyengo
-2024-01-15 20:34:08.423203+00,monitoring,,Forms,mafomu,,,mafomu
-2024-01-15 20:34:08.423203+00,manual,,Farmers choose,Alimi amasankha,,,Alimi asankha
-2024-01-15 20:34:08.423203+00,manual,,Historic climate,mbiri ya za nyengo,,,Mbiri ya za Nyengo
-2024-01-15 20:34:08.423203+00,manual,,Info Sheet,Tsamba la mauthenga,,,Tsamba la zambiri
-2024-01-15 20:34:08.423203+00,manual,,Is the climate changing?,Kodi nyengo ikusintha?,,,Kodi nyengo ikusintha?
-2024-01-15 20:34:08.423203+00,manual,,Just before the season,Sizoni/nyengo isanayambe,,,Pafupi kuyamba kwa nyengo
-2024-01-15 20:34:08.423203+00,manual,,Learn and improve,Kuphunzira ndi kukonza,,,Phunzilani ndi kusintha
-2024-01-15 20:34:08.423203+00,manual,,Livelihood Info,Zokhudza njira zopezera ndalama,,,Zambiri ya makhalidwe
-2024-01-15 20:34:08.423203+00,manual,,Livestock Info,Mauthenga a ziweto,,,Zambiri ya ziweto
-2024-01-15 20:34:08.423203+00,manual,,Long before the season,Kutali ndi kuyamba kwa nyengo,,,M'malanga
-2024-01-15 20:34:08.423203+00,manual,,Options by context,Zisankho potengera nkhani,,,Zosankha Munjirayake
-2024-01-15 20:34:08.423203+00,manual,,Probability and Risk,Kuthekera and Ziopsezo,,,Mpata komanso ziophyezo
-2024-01-15 20:34:08.423203+00,manual,,Quiz,Mayeso,,,Mafunso
-2024-01-15 20:34:08.423203+00,manual,,Resource Allocation Map (RAM),Mapu ogawa zinthu zimene tikuyenera kugwiritsa ntchito,,,Chitunzi cha Zomwe tilinazo
-2024-01-15 20:34:08.423203+00,manual,,Response to forecast,Yankho ku ulosi wa nyengo,,,Zomwe tichita ndi uthenga wa zanyengo
-2024-01-15 20:34:08.423203+00,option,,Money,ndalama,,,ndalama
-2024-01-15 20:34:08.423203+00,manual,,Review,Kuunikira,,,Ndemanga
-2024-01-15 20:34:08.423203+00,manual,,Revisit,Kubwereza,,,Yenderansoni
-2024-01-15 20:34:08.423203+00,manual,,Seasonal Calendar,Kalendala ya nyengo,,,Kalenda ya Nyengo
-2024-01-15 20:34:08.423203+00,manual,,Seasonal forecast,ulosi wa nyengo,,,Uthenga wa zanyengo
-2024-01-15 20:34:08.423203+00,manual,,Select and amend,sankhani ndipo sinthani,,,Sankhani ndi Kusintha
-2024-01-15 20:34:08.423203+00,manual,,Short-term forecasts and warnings,Ulosi wakanthawi kochepa wa zanyengo ndi ma chenjezo,,,Uthenga wa zanyengo wa nthawi yochepa
-2024-01-15 20:34:08.423203+00,manual,,The farmer decides,Mulimi amapanga chiganizo,,,Mlimi asankha zochita
-2024-01-15 20:34:08.423203+00,manual,,What are the options for the farmer?,Zisankho zomwe mulimi alinazo ndi ziti?,,,Kodi nizosankha zotani mam'limi?
-2024-01-15 20:34:08.423203+00,manual,,What are the probabilities and risks?,Kodi kuthera koti zikhoza kuchitika komanso ziopzezo zake ndi ziti?,,,Kodi pali m'pata wotani komanso ziophyezo?
-2024-01-15 20:34:08.423203+00,manual,,What does the farmer currently do?,Kodi muliliyu amapanga chiyani pakadali pano?,,,Kodi m'limi achita zotani pa nthawi ino?
-2024-01-15 20:34:08.423203+00,option,,Add benefit,Onjezerani phindu/ubwino,,,Ikani maphindu
-2024-01-15 20:34:08.423203+00,option,,Add New Option,Onjezerani Chisankho china,,,Ikani zosankha zatsopano
-2024-01-15 20:34:08.423203+00,resources,,Collection not found,Kutolera sizikupezeka,,,Zokonzedwa bwino sizikupezeka
-2024-01-15 20:34:08.423203+00,budget,,fruits,zipatso,,,zipatso
-2024-01-15 20:34:08.423203+00,budget,,livestock,ziweto,,,ziweto
-2024-01-15 20:34:08.423203+00,option,,Benefits,Ubwino/Phindu,,,Maphindu
-2024-01-15 20:34:08.423203+00,option,,Benefits and who,Ubwino/Phindu ndipo amapindula ndindani?,,,Maphindu ndipo kwayani
-2024-01-15 20:34:08.423203+00,option,,Enter the practice for this option,Lembani zochitika za chisankho ichi,,,Ikani ndondomeko ya zosankha za apa
-2024-01-15 20:34:08.423203+00,option,,Female,Mkazi,,,M'zimai
-2024-01-15 20:34:08.423203+00,option,,Finish,Kumaliza,,,Tsilizani
-2024-01-15 20:34:08.423203+00,option,,Gender,Mwamuna kapena Mkazi,,,Jenda
-2024-01-15 20:34:08.423203+00,option,,High RF,Mvula yambiri,,,Mvula yambiri
-2024-01-15 20:34:08.423203+00,option,,Investment,Zomwe talowetsa,,,Zolowamo
-2024-01-15 20:34:08.423203+00,option,,Investment in terms of money and time,Ndalama ndi nthawi zomwe talowetsa,,,Ndalama Zolowamo komanso nthawi
-2024-01-15 20:34:08.423203+00,option,,Low RF,Mvula yochepa,,,Mvula yochepekera
-2024-01-15 20:34:08.423203+00,option,,Male,Mwamuna,,,M'zibambo
-2024-01-15 20:34:08.423203+00,option,,Mid RF,Mvula yachikatikati,,,Mvula yapakatinkati
-2024-01-15 20:34:08.423203+00,option,,Performance,Mene zachitira,,,Kakulidwe ka mbeu
-2024-01-15 20:34:08.423203+00,crop-probability,,All,zonse,,,zonse
-2024-01-15 20:34:08.423203+00,option,,"Performance in high, mid and low RF (rainfall)","Mene zachitira pomwe mvula inali yambiri, yochepa kapena yachikatikati",,,"Kakulidwe ka mbeu ngati mvula yachuluka, yachepekela komanso ngati niyapakatinkati"
-2024-01-15 20:34:08.423203+00,option,,Practice,Zochitika,,,Nyira ya Malimidwe
-2024-01-15 20:34:08.423203+00,option,,Risk,Ziopsezo,,,Chiophyezo
-2024-01-15 20:34:08.423203+00,option,,Risk of practice (disadvantage),Kuipa (Ziopsezo) za chochitika ichi,,,Chiphyezo cha malimidwe awo
-2024-01-15 20:34:08.423203+00,crop-probability,,Cowpeas,khobwe,,,nyemba
-2024-01-15 20:34:08.423203+00,crop-probability,,Crop,mbewu,,,zokolora
-2024-01-15 20:34:08.423203+00,crop-probability,,Crop Information,uthenga okhudza mbeu,,,mauthenga a mbeu
-2024-01-15 20:34:08.423203+00,option,,Risks,Ziopsezo,,,Ziophyezo
-2024-01-15 20:34:08.423203+00,option,,*This field is required,gawoli ndilofunika kuyankhidwa,,,Apa mpofunikira
-2024-01-15 20:34:08.423203+00,crop-probability,,Groundnuts,mtedza,,,nshawa
-2024-01-15 20:34:08.423203+00,option,,Time,Nthawi,,,Nthawi
-2024-01-15 20:34:08.423203+00,crop-probability,,Maize,chimanga,,,chimanga
-2024-01-15 20:34:08.423203+00,crop-probability,,Pigeon Peas,nandolo,,,nyamdolo
-2024-01-15 20:34:08.423203+00,option,,Time (months),Nthawi (Miyezi),,,Minyezi
-2024-01-15 20:34:08.423203+00,option,,Time to start benefiting,Nthawi imene ikutenga kuti tizayambe kupindula,,,Nthawi yoyamba kuona maphindu
-2024-01-15 20:34:08.423203+00,crop-probability,,Rice,mpunga,,,mpunga
-2024-01-15 20:34:08.423203+00,crop-probability,,Sorghum,mapila,,,mapira
-2024-01-15 20:34:08.423203+00,crop-probability,,Soya Beans,soya,,,nyemba za soya
-2024-01-15 20:34:08.423203+00,crop-probability,,Station,sitesheni,,,malo
-2024-01-15 20:34:08.423203+00,option,,Who does it,Amachita ndi ndani?,,,Ndani achita izi
-2024-01-15 20:34:08.423203+00,crop-probability,,Sweet Potatoes,mbatata ya kholowa,,,kandolo/kachamba
-2024-01-15 20:34:08.423203+00,option,,Who does the practice,Amachita ichi ndi ndani?,,,Ndani achita ndondomeko iyi
-2024-01-15 20:34:08.423203+00,budget,,Budget Tool,kupanga bajeti,,,njira ya kayendetsedwe ka chuma
-2024-01-15 20:34:08.423203+00,budget,,For Sale,,,,
-2024-01-15 20:34:08.423203+00,budget,,New Budget,,,,
-2024-01-15 20:34:08.423203+00,budget,,Purchased,,,,
-2024-01-15 20:34:08.423203+00,crop-probability,,Cotton,,,,
-2024-01-15 20:34:08.423203+00,crop-probability,,Probability of season start on or before date,,,,
-2024-01-15 20:34:08.423203+00,crop-probability,,Tobacco,,,,
-2024-01-15 20:34:08.423203+00,option,,Activities,Zochitika,,,Zinchito
-2024-01-15 20:34:08.423203+00,option,,Decisions,,,,
-2024-01-15 20:34:08.423203+00,option,,Who does activity,,,,
-2024-01-15 20:34:08.423203+00,option,,Who does the activity,,,,
-2024-01-15 20:34:08.423203+00,option,,Who makes decisions,,,,
-2024-01-15 20:34:08.423203+00,budget,,Add Card,,,,
-2024-01-15 20:34:08.423203+00,budget,,Share App Link,Tumizani progalamu,,,Gawani ulalo wa app
-2024-01-15 20:34:08.423203+00,climate,,Calculated with the date range of Start of rains and End of the rains,,,,
-2024-01-15 20:34:08.423203+00,climate,,Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day,,,,
-2024-01-15 20:34:08.423203+00,climate,,First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days,,,,
-2024-01-15 20:34:08.423203+00,climate,,Seasonal total rainfall calculated between the defined start and defined end of the season,,,,
-2024-01-15 20:34:08.423203+00,manual,,Activity Flow Chart,,,,
-2024-01-15 20:34:08.423203+00,manual,,Comparing different options and planning using Participatory Budgets,,,,
-2024-01-15 20:34:08.423203+00,manual,,Introduction,,,,
-2024-01-15 20:34:08.423203+00,manual,,Manual Requires Download,,,,
-2024-01-15 20:34:08.423203+00,manual,,PICSA,PICSA,,,PICSA
-2024-01-15 20:34:08.423203+00,manual,,What are the opportunities and risks?,,,,
-2024-01-15 20:34:08.423203+00,monitoring,,Create New,,,,
-2024-01-15 20:34:08.423203+00,monitoring,,Submissions,,,,
-2024-01-15 20:34:08.423203+00,monitoring,,Submit,,,,
-2024-01-15 20:34:08.423203+00,climate,,Above,,,,
-2024-01-15 20:34:08.423203+00,climate,,Below,,,,
+id,created_at,tool,context,en,mw_ny,ke_sw,tj_tg,zm_ny
+budget-activities-applyfertiliser,2024-01-15 20:34:08.423203+00,budget,activities,apply fertiliser,kuthira feteleza,,,thirani fatatleza
+budget-activities-applypesticide,2024-01-15 20:34:08.423203+00,budget,activities,apply pesticide,kopopela mankhwala a tizilombo,,,thirani mankhwala
+budget-activities-bagging,2024-01-15 20:34:08.423203+00,budget,activities,bagging,kupakila mmatumba,,,kuika m'mathumba
+budget-activities-banding,2024-01-15 20:34:08.423203+00,budget,activities,banding,kubandila,,,kumangilira
+budget-activities-buildhousing,2024-01-15 20:34:08.423203+00,budget,activities,build housing,kumanga makola,,,kumanga nyumba
+budget-activities-compostmanuremaking,2024-01-15 20:34:08.423203+00,budget,activities,compost manure making,kupanga manyowa,,,kupanga manyowa kuzinyalala
+budget-activities-dipping,2024-01-15 20:34:08.423203+00,budget,activities,dipping,kupanga dipi ziweto,,,kupaka
+budget-activities-feedinglivestock,2024-01-15 20:34:08.423203+00,budget,activities,feeding livestock,kudyetsa ziweto,,,kudyetsa ziweto
+budget-activities-harvesting,2024-01-15 20:34:08.423203+00,budget,activities,harvesting,kukolola,,,kukolola
+budget-activities-landclearing,2024-01-15 20:34:08.423203+00,budget,activities,land clearing,kusosa,,,kukonza malo
+budget-activities-marketingandselling,2024-01-15 20:34:08.423203+00,budget,activities,marketing and selling,kutsatsa ndi kugulitsa,,,kutsatsa ndi kugulitsa
+budget-activities-mulching,2024-01-15 20:34:08.423203+00,budget,activities,mulching,kuphimbila,,,mochi
+budget-activities-ploughing,2024-01-15 20:34:08.423203+00,budget,activities,ploughing,kugalauza,,,kugaula
+budget-activities-postharvesthandling,2024-01-15 20:34:08.423203+00,budget,activities,post-harvest handling,kusamala zokolora,,,kagwiridwe pambuyo po kolola
+budget-activities-providesupplements,2024-01-15 20:34:08.423203+00,budget,activities,provide supplements,kupereka zakudya zoonjezera,,,perekani zothandizila
+budget-activities-providewater,2024-01-15 20:34:08.423203+00,budget,activities,provide water,kupereka madzi ku ziweto,,,perekani madzi
+budget-activities-purchase,2024-01-15 20:34:08.423203+00,budget,activities,purchase,kugula,,,gulani
+budget-activities-relocation,2024-01-15 20:34:08.423203+00,budget,activities,relocation,kusamutsa ziweso,,,kusamukira
+budget-activities-shelling,2024-01-15 20:34:08.423203+00,budget,activities,shelling,kutonola/kusola,,,kutongola
+budget-activities-sowing,2024-01-15 20:34:08.423203+00,budget,activities,sowing,kufesa,,,kufesa
+budget-activities-storage,2024-01-15 20:34:08.423203+00,budget,activities,storage,kusunga,,,kasungidwe
+budget-activities-threshing,2024-01-15 20:34:08.423203+00,budget,activities,threshing,kupuntha,,,kupuntha
+budget-activities-transport,2024-01-15 20:34:08.423203+00,budget,activities,transport,transipoti,,,mayendedwe
+budget-activities-transportlivestock,2024-01-15 20:34:08.423203+00,budget,activities,transport livestock,kunyamula ziweto,,,kunyamula ziweto
+budget-activities-vaccinate,2024-01-15 20:34:08.423203+00,budget,activities,vaccinate,kupereka katemela,,,katemera
+budget-activities-valueaddition,2024-01-15 20:34:08.423203+00,budget,activities,value addition,kuwonjezera phindu,,,kuwonjezera phindu
+budget-activities-watering,2024-01-15 20:34:08.423203+00,budget,activities,watering,kuthirira,,,kuthirira
+budget-activities-weeding,2024-01-15 20:34:08.423203+00,budget,activities,weeding,kupalira,,,kupalira
+budget--addfemalemember,2024-01-15 20:34:08.423203+00,budget,,Add Female Member,Onjezerani membala wa mkazi,,,Ikamponi membala wam'kazi
+budget--addmalemember,2024-01-15 20:34:08.423203+00,budget,,Add Male Member,Onjezerani membala wa mamuna,,,Ikamponi membala wam'muna
+budget--balance,2024-01-15 20:34:08.423203+00,budget,,Balance,Ndalama zotsala,,,Zokharira
+budget--consumed,2024-01-15 20:34:08.423203+00,budget,,Consumed,Zodyedwa,,,Zosewenzetsedwa
+budget--cost,2024-01-15 20:34:08.423203+00,budget,,Cost,Mtengo,,,Mtengo
+budget--createnewbudget,2024-01-15 20:34:08.423203+00,budget,,Create New Budget,Pangani bajeti yatsopano,,,Pangani bajeti yatsopano
+budget--days,2024-01-15 20:34:08.423203+00,budget,,Days,Masiku,,,Masiku
+budget--decreasescale,2024-01-15 20:34:08.423203+00,budget,,Decrease Scale,Kuchepetsa mlingo,,,Chepetsa kukula
+budget--description,2024-01-15 20:34:08.423203+00,budget,,description,mafotokozeredwe,,,kaonekeswe
+budget--descriptionoptional,2024-01-15 20:34:08.423203+00,budget,,Description (optional),Kufotokozera (Mukhoza osalemba),,,Kufotokozera (posankha)
+budget--enterprise,2024-01-15 20:34:08.423203+00,budget,,Enterprise,bizinesi,,,malonda
+budget-enterprise-afforestation,2024-01-15 20:34:08.423203+00,budget,enterprise,afforestation,kudzala mitengo,,,kubyala mitengo
+budget-enterprise-cattle,2024-01-15 20:34:08.423203+00,budget,enterprise,cattle,ng'ombe,,,ng'ombe
+budget-enterprise-chicken,2024-01-15 20:34:08.423203+00,budget,enterprise,chicken,nkhuku,,,nkhuku
+budget-enterprise-cowpeas,2024-01-15 20:34:08.423203+00,budget,enterprise,cowpeas,khobwe,,,nyemba
+budget-enterprise-ducks,2024-01-15 20:34:08.423203+00,budget,enterprise,ducks,abakha,,,abakha
+budget-enterprise-fish,2024-01-15 20:34:08.423203+00,budget,enterprise,fish,nsomba,,,nsomba
+budget-enterprise-goats,2024-01-15 20:34:08.423203+00,budget,enterprise,goats,mbuzi,,,mbuzi
+budget-enterprise-groundnuts,2024-01-15 20:34:08.423203+00,budget,enterprise,groundnuts,mtedza,,,nshawa
+budget-enterprise-guineafowl,2024-01-15 20:34:08.423203+00,budget,enterprise,guinea fowl,nkhanga,,,nkhanga
+budget-enterprise-maize,2024-01-15 20:34:08.423203+00,budget,enterprise,maize,chimanga,,,chimanga
+budget-enterprise-mixed,2024-01-15 20:34:08.423203+00,budget,enterprise,mixed,kusakaniza,,,kusakaniza
+budget-enterprise-onions,2024-01-15 20:34:08.423203+00,budget,enterprise,onions,anyezi,,,anyezi
+budget-enterprise-pawpaw,2024-01-15 20:34:08.423203+00,budget,enterprise,paw-paw,papaya,,,paw-paw
+budget-enterprise-pigeonpeas,2024-01-15 20:34:08.423203+00,budget,enterprise,pigeon peas,nandolo,,,nyamdolo
+budget-enterprise-pigs,2024-01-15 20:34:08.423203+00,budget,enterprise,pigs,nkhumba,,,nkhumba
+budget-enterprise-rice,2024-01-15 20:34:08.423203+00,budget,enterprise,rice,mpunga,,,mpunga
+budget-enterprise-sheep,2024-01-15 20:34:08.423203+00,budget,enterprise,sheep,nkhosa,,,mbelele
+budget-enterprise-sorghum,2024-01-15 20:34:08.423203+00,budget,enterprise,sorghum,mapila,,,mapira
+budget-enterprise-soyabeans,2024-01-15 20:34:08.423203+00,budget,enterprise,soya beans,soya,,,nyemba za soya
+budget-enterprise-sweetpotatoes,2024-01-15 20:34:08.423203+00,budget,enterprise,sweet potatoes,mbatata ya kholowa,,,kandolo/kachamba
+budget-enterprise-tomatoes,2024-01-15 20:34:08.423203+00,budget,enterprise,tomatoes,tomato,,,chimate
+budget-enterprise-watermelon,2024-01-15 20:34:08.423203+00,budget,enterprise,watermelon,mavwende,,,vwembe
+budget--family,2024-01-15 20:34:08.423203+00,budget,,Family,banja,,,banja
+budget--familylabour,2024-01-15 20:34:08.423203+00,budget,,Family Labour,ntchito yogwiridwa ndi amubanjamo,,,ntchito ya banja
+budget-day_1-monday,2024-01-15 20:34:08.423203+00,budget,day_1,Monday,Lolemba,,,Pa lolemba
+budget--howlongisyourbudgetfor,2024-01-15 20:34:08.423203+00,budget,,How long is your budget for?,bajeti yanu imakhala yayitali bwanji?,,,bajeti yanu imakhala yayitali motani?
+budget--importbudgetcode,2024-01-15 20:34:08.423203+00,budget,,Import Budget Code,lowetsani nambala ya bajeti,,,nambala ya bajeti
+budget--increasescale,2024-01-15 20:34:08.423203+00,budget,,Increase Scale,onjezerani mulingo,,,kuchulukitsa
+budget--inputs,2024-01-15 20:34:08.423203+00,budget,,Inputs,zolowa,,,zolowa
+budget-inputs-bags,2024-01-15 20:34:08.423203+00,budget,inputs,bags,matumba,,,matumba
+budget-inputs-chemicals,2024-01-15 20:34:08.423203+00,budget,inputs,chemicals,mankhwala,,,mankhwala
+budget-inputs-feed,2024-01-15 20:34:08.423203+00,budget,inputs,feed,zakudza za ziweto,,,zakudya zaziweto (Kudyetsa)
+budget-inputs-fertiliser,2024-01-15 20:34:08.423203+00,budget,inputs,fertiliser,feteleza,,,fataleza
+budget-inputs-housing,2024-01-15 20:34:08.423203+00,budget,inputs,housing,khola,,,mosungila
+budget-inputs-labourpaid,2024-01-15 20:34:08.423203+00,budget,inputs,labour - paid,ganyu,,,ntchito - yolipidwa
+budget-inputs-manuresacks,2024-01-15 20:34:08.423203+00,budget,inputs,manure sacks,matumba a manyowa,,,masaka ya manyowa
+budget-inputs-manurewheelbarrows,2024-01-15 20:34:08.423203+00,budget,inputs,manure wheelbarrows,wilibala ya manyowa,,,wilibala ya manyowa
+budget-inputs-oxcart,2024-01-15 20:34:08.423203+00,budget,inputs,ox cart,ngolo,,,kochikali/ ngolo
+budget-inputs-potforstorage,2024-01-15 20:34:08.423203+00,budget,inputs,pot for storage,mphika wongula zinthu,,,mphika posungira
+budget-inputs-protectiveequipment,2024-01-15 20:34:08.423203+00,budget,inputs,protective equipment,zida zozitetezera pogwira ntchito,,,zida zoteteza
+budget-inputs-seeds,2024-01-15 20:34:08.423203+00,budget,inputs,seeds,mbewu,,,mbewu
+budget-inputs-shellerhire,2024-01-15 20:34:08.423203+00,budget,inputs,sheller hire,kupanga hayala chida chotonolera,,,makina otongolera olipilidwa
+budget-inputs-supplements,2024-01-15 20:34:08.423203+00,budget,inputs,supplements,zakudya za ziweto zoowonjezera,,,zothandizila
+budget-inputs-tools,2024-01-15 20:34:08.423203+00,budget,inputs,tools,zida,,,zida
+budget-inputs-tractorhire,2024-01-15 20:34:08.423203+00,budget,inputs,tractor hire,kubweleka thirakitale,,,ganyu ya thalakita
+budget-inputs-transportationhire,2024-01-15 20:34:08.423203+00,budget,inputs,transportation hire,hayala ya thiransipoti,,,mayendedwe olipira
+budget-inputs-vaccine,2024-01-15 20:34:08.423203+00,budget,inputs,vaccine,katemera,,,katemera
+budget-day_2-tuesday,2024-01-15 20:34:08.423203+00,budget,day_2,Tuesday,Lachiwiri,,,Pa chiwiri
+budget-day_3-wednesday,2024-01-15 20:34:08.423203+00,budget,day_3,Wednesday,Lachitatu,,,Pa chitatu
+budget-other-addcustom,2024-01-15 20:34:08.423203+00,budget,other,add custom,onjezani zipangizo,,,kuikapo m'sonkho
+budget-other-familylabour,2024-01-15 20:34:08.423203+00,budget,other,family labour,ntchito yogwiridwa ndi amubanjamo,,,ntchito ya banja
+budget--outputs,2024-01-15 20:34:08.423203+00,budget,,Outputs,zotuluka,,,zotuluka
+budget-outputs-crop,2024-01-15 20:34:08.423203+00,budget,outputs,crop,mbewu,,,zokolora
+budget-outputs-eggs,2024-01-15 20:34:08.423203+00,budget,outputs,eggs,mazira,,,mazira
+budget-outputs-fodderforlivestock,2024-01-15 20:34:08.423203+00,budget,outputs,fodder for livestock,chakudya cha ziweto,,,chakudya cha ziweto
+budget-outputs-manureforcompost,2024-01-15 20:34:08.423203+00,budget,outputs,manure for compost,manyowa a kompositi,,,manyowa ozipangila kuzinyalala
+budget-outputs-meat,2024-01-15 20:34:08.423203+00,budget,outputs,meat,nyama,,,nyama
+budget-outputs-milk,2024-01-15 20:34:08.423203+00,budget,outputs,milk,mkaka,,,mkaka
+budget-outputs-money,2024-01-15 20:34:08.423203+00,budget,outputs,money,ndalama,,,ndalama
+budget-outputs-wood,2024-01-15 20:34:08.423203+00,budget,outputs,wood,nkhuni,,,matabwa
+budget--produceconsumed,2024-01-15 20:34:08.423203+00,budget,,Produce Consumed,zokolola zomwe zagwiritsidwa ntchito,,,zokolola zomwe zagwiritsidwa ntchito

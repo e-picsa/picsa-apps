@@ -199,9 +199,10 @@ export interface Database {
       }
       translations: {
         Row: {
-          context: string
+          context: string | null
           created_at: string
           en: string
+          id: string
           ke_sw: string | null
           mw_ny: string | null
           tj_tg: string | null
@@ -209,9 +210,10 @@ export interface Database {
           zm_ny: string | null
         }
         Insert: {
-          context?: string
+          context?: string | null
           created_at?: string
           en: string
+          id: string
           ke_sw?: string | null
           mw_ny?: string | null
           tj_tg?: string | null
@@ -219,9 +221,10 @@ export interface Database {
           zm_ny?: string | null
         }
         Update: {
-          context?: string
+          context?: string | null
           created_at?: string
           en?: string
+          id?: string
           ke_sw?: string | null
           mw_ny?: string | null
           tj_tg?: string | null

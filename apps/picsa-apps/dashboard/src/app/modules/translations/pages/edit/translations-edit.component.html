@@ -18,12 +18,12 @@
     </div>
 
     <div class="form-data">
-      <label>sw</label>
-      <input matInput [(ngModel)]="translationRow.sw" name="sw" />
+      <label>ke_sw</label>
+      <input matInput [(ngModel)]="translationRow.ke_sw" name="sw" />
     </div>
     <div class="form-data">
-      <label>tg</label>
-      <input matInput [(ngModel)]="translationRow.tg" name="tg" />
+      <label>tj_tg</label>
+      <input matInput [(ngModel)]="translationRow.tj_tg" name="tg" />
     </div>
     <div class="form-data">
       <label>zm_ny</label>
@@ -32,16 +32,15 @@
     <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Update</button>
   </form>
   } @else if(dataLoadError) {
-  <div>{{dataLoadError}}</div>
+  <div>{{ dataLoadError }}</div>
   } @else {
   <div>Loading...</div>
-  }
-  @if(editActionFeedbackMessage){
-  <div>{{editActionFeedbackMessage}}</div>
-  }
-  @if(translationRow){
+  } @if(editActionFeedbackMessage){
+  <div>{{ editActionFeedbackMessage }}</div>
+  } @if(translationRow){
   <h2>Delete this Translation</h2>
-  <button mat-raised-button color="primary" class="deleteButton" (click)="openTranslationDeleteDialog()">Delete this
-    translation <mat-icon color="white">delete</mat-icon></button>
+  <button mat-raised-button color="primary" class="deleteButton" (click)="openTranslationDeleteDialog()">
+    Delete this translation <mat-icon color="white">delete</mat-icon>
+  </button>
   }
 </div>
