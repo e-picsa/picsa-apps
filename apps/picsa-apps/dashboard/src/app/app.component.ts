@@ -42,10 +42,10 @@ export class AppComponent implements AfterViewInit {
     //   label: 'Monitoring Forms',
     //   href: '/monitoring-forms',
     // },
-    // {
-    //   label: 'Translations',
-    //   href: '/translations',
-    // },
+    {
+      label: 'Translations',
+      href: '/translations',
+    },
   ];
 
   globalLinks: INavLink[] = [
