@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TourService } from '@picsa/shared/services/core/tour.service';
 
 import { STATION_CROP_DATA } from '../../data/mock';
 import { IStationRouteQueryParams } from '../../models';
@@ -15,7 +14,7 @@ export class CropProbabilityStationSelectComponent {
 
   @Input() selectedStationId?: string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private tourService: TourService) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   /** When station changes update route query params so that parent can handle updates */
   public handleStationChange(stationId: string) {
