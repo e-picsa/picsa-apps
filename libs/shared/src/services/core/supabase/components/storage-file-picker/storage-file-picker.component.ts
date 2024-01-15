@@ -66,7 +66,7 @@ export class SupabaseStorageFilePickerComponent {
     const entries = await this.storage.list(this.storageBucketName, this.storageFolderPath);
     this.fileEntries = entries
       // filter out metadata files which have filename starting with `.`
-      .filter(({ name }) => !name?.split('/').pop()?.startsWith('.'))
+      .filter(({ name }) => name && !name.split('/').pop()?.startsWith('.'))
       .sort((a, b) => {
         if (!b.name) return 1;
         if (!a.name) return -1;

@@ -197,70 +197,39 @@ export interface Database {
           }
         ]
       }
-      resources_child: {
+      translations: {
         Row: {
-          country_code: string | null
+          context: string | null
           created_at: string
-          id: number
-          language_code: string | null
-          parent: string
-          storage_file: string
-          tag: string | null
+          en: string
+          id: string
+          ke_sw: string | null
+          mw_ny: string | null
+          tj_tg: string | null
+          tool: string
+          zm_ny: string | null
         }
         Insert: {
-          country_code?: string | null
+          context?: string | null
           created_at?: string
-          id?: number
-          language_code?: string | null
-          parent: string
-          storage_file: string
-          tag?: string | null
+          en: string
+          id: string
+          ke_sw?: string | null
+          mw_ny?: string | null
+          tj_tg?: string | null
+          tool: string
+          zm_ny?: string | null
         }
         Update: {
-          country_code?: string | null
+          context?: string | null
           created_at?: string
-          id?: number
-          language_code?: string | null
-          parent?: string
-          storage_file?: string
-          tag?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "resources_child_parent_fkey"
-            columns: ["parent"]
-            referencedRelation: "resources"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resources_child_storage_file_fkey"
-            columns: ["storage_file"]
-            referencedRelation: "objects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resources_child_storage_file_fkey"
-            columns: ["storage_file"]
-            referencedRelation: "storage_objects"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      users: {
-        Row: {
-          created_at: string
-          first_name: string | null
-          id: number
-        }
-        Insert: {
-          created_at?: string
-          first_name?: string | null
-          id?: number
-        }
-        Update: {
-          created_at?: string
-          first_name?: string | null
-          id?: number
+          en?: string
+          id?: string
+          ke_sw?: string | null
+          mw_ny?: string | null
+          tj_tg?: string | null
+          tool?: string
+          zm_ny?: string | null
         }
         Relationships: []
       }
