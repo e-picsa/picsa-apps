@@ -17,7 +17,7 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
   styleUrls: ['./translations.page.scss'],
 })
 export class TranslationsPageComponent implements OnInit {
-  displayedColumns: string[] = ['tool', 'context', 'en', 'mw_ny', 'zm_ny', 'sw', 'tg', 'created_at'];
+  displayedColumns: string[] = ['tool', 'context', 'en', 'mw_ny', 'zm_ny', 'ke_sw', 'tj_tg', 'created_at'];
 
   constructor(public service: TranslationDashboardService, private router: Router) {}
   ngOnInit(): void {

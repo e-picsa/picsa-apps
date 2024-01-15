@@ -18,33 +18,33 @@ import { TranslationDashboardService } from '../../translations.service';
   styleUrls: ['./new-translations.component.scss'],
 })
 export class NewTranslationsComponent {
-  en:string;
-  mw_ny:string;
-  sw:string;
-  tg:string;
-  zm_ny:string;
+  en: string;
+  mw_ny: string;
+  ke_sw: string;
+  tj_tg: string;
+  zm_ny: string;
   editActionFeedbackMessage: string;
   constructor(private service: TranslationDashboardService) {
     this.service.ready();
   }
   submitForm() {
     const data = {
-      en:this.en,
+      en: this.en,
       mw_ny: this.mw_ny,
-      sw:this.sw,
-      tg:this.tg,
-      zm_ny:this.zm_ny,
-     }
-   this.service.addTranslation(data)
-   .then((data) => {
-    if (data === 'Added successfully') {
-      this.editActionFeedbackMessage = 'Added successfully';
-    }
-  })
-  .catch((error) => {
-    console.error('Error adding translation:', error);
-    this.editActionFeedbackMessage = 'Failed to add a translation.';
-  });
-
+      ke_sw: this.ke_sw,
+      tj_tg: this.tj_tg,
+      zm_ny: this.zm_ny,
+    };
+    this.service
+      .addTranslation(data)
+      .then((data) => {
+        if (data === 'Added successfully') {
+          this.editActionFeedbackMessage = 'Added successfully';
+        }
+      })
+      .catch((error) => {
+        console.error('Error adding translation:', error);
+        this.editActionFeedbackMessage = 'Failed to add a translation.';
+      });
   }
 }

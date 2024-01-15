@@ -2,7 +2,6 @@
   <h2>New Translations</h2>
 
   <form class="form-content">
-
     <div class="form-data">
       <label>English</label>
       <input matInput [(ngModel)]="en" name="en" />
@@ -14,12 +13,12 @@
     </div>
 
     <div class="form-data">
-      <label>sw</label>
-      <input matInput [(ngModel)]="sw" name="sw" />
+      <label>ke_sw</label>
+      <input matInput [(ngModel)]="ke_sw" name="ke_sw" />
     </div>
     <div class="form-data">
-      <label>tg</label>
-      <input matInput [(ngModel)]="tg" name="tg" />
+      <label>tj_tg</label>
+      <input matInput [(ngModel)]="tj_tg" name="tj_tg" />
     </div>
     <div class="form-data">
       <label>zm_ny</label>
@@ -29,6 +28,6 @@
   </form>
 
   @if(editActionFeedbackMessage){
-    <div>{{editActionFeedbackMessage}}</div>
+  <div>{{ editActionFeedbackMessage }}</div>
   }
 </div>
