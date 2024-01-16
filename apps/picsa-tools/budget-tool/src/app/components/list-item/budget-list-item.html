@@ -1,10 +1,13 @@
 <mat-card appearance="raised" style="margin-bottom: 10px; padding: 16px; cursor: pointer">
   <div style="display: flex">
     <budget-card-image class="small" [card]="budget.meta.enterprise"></budget-card-image>
-    <div style="flex: 1">
+    <div style="flex: 1; position: relative">
       <mat-card-title>{{ budget.meta.title }}</mat-card-title>
       <mat-card-content>{{ budget.meta.description }}</mat-card-content>
-      <mat-card-subtitle>{{ budget._created | date }}</mat-card-subtitle>
+      <budget-summary [budgetData]="budget"></budget-summary>
+      <mat-card-subtitle style="position: absolute; bottom: 0; right: 0"
+        >{{ budget._created | date }}</mat-card-subtitle
+      >
     </div>
     <button
       mat-icon-button
