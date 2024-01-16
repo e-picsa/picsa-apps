@@ -72,6 +72,12 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
+    if (data.length === 0) {
+      this.notificationService.showUserNotification({
+        matIcon: 'warning',
+        message: 'climate_stations_rows must be imported into database for this feature to work',
+      });
+    }
     this.stations = data || [];
   }
 }

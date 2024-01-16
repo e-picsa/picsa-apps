@@ -71,7 +71,7 @@ export class PicsaMapComponent {
       });
       marker.addTo(this.map);
     });
-    if (fitMap) {
+    if (fitMap && mapMarkers.length > 0) {
       this.fitMapToMarkers(mapMarkers);
     }
   }
