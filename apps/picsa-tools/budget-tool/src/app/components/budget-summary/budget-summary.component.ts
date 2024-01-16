@@ -4,22 +4,22 @@ import { Component, Input, OnInit } from '@angular/core';
   selector: 'budget-summary',
   template: `
     <div class="summary-container">
-      <h2>Budget Summary</h2>
+      <h2>Details</h2>
       <div class="summary-list">
         <p matTooltip="Total Family Labour Hours">
-          TFLH: <span>{{ totalFamilyLabourHours }}</span>
+          TFLH: <b>{{ totalFamilyLabourHours }}</b>
         </p>
         <p matTooltip="Total Inputs Value">
-          TIV: <span>{{ totalInputsValue }}</span>
+          TIV: <b>{{ totalInputsValue }}</b>
         </p>
         <p matTooltip="Total Outputs Value">
-          TOV: <span>{{ totalOutputsValue }}</span>
+          TOV: <b>{{ totalOutputsValue }}</b>
         </p>
         <p matTooltip="Total Produce Consumed">
-          TPC: <span>{{ totalProduceConsumed }}</span>
+          TPC: <b>{{ totalProduceConsumed }}</b>
         </p>
         <p matTooltip="Final Cash Balance">
-          FCB: <span>{{ finalCashBalance }}</span>
+          FCB: <b>{{ finalCashBalance }}</b>
         </p>
       </div>
     </div>
