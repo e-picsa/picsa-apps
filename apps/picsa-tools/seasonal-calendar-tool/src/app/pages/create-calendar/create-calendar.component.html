@@ -2,7 +2,7 @@
   <h2>{{'Crops Seasonal calender' | translate }}</h2>
   <div class="box">
     <h2>{{'Calender name' | translate}}</h2>
-    <input class="inputField"  [(ngModel)]="calenderTitle"  placeholder={{Season of 85}} />
+    <input class="inputField"  [(ngModel)]="calenderTitle"  placeholder="Season of 85" />
     <seasonal-calendar-error-display [displayError]="showMessageFlag && calenderTitle===''" errorMsg="Please add the calender title">
     </seasonal-calendar-error-display>
   </div>
