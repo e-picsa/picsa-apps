@@ -3,8 +3,6 @@
   font-style: normal;
   font-weight: 400;
 
-  // Note, google does not host these fonts directly
-  // Downloaded updated icons from https://github.com/jossef/material-design-icons-iconfont/tree/master/dist/fonts
   src: local('Material Icons'), local('assets/fonts/MaterialIcons-Regular'),
     url(./fonts/MaterialIcons-Regular.woff2) format('woff2');
   // url(./fonts/MaterialIcons-Regular.woff) format('woff'),

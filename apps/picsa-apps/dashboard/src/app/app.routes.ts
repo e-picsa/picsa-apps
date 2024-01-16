@@ -13,4 +13,9 @@ export const appRoutes: Route[] = [
     path: 'translations',
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
+  {
+    path: '',
+    redirectTo: 'resources',
+    pathMatch: 'full',
+  },
 ];

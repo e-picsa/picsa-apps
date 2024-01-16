@@ -1,9 +1,10 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2 style="flex: 1">Climate Data</h2>
-    @if(service.apiStatus; as status){
+    @if(api.meta.serverStatus; as meta){
     <div class="server-status">
-      Server Status <span class="status-code" [attr.data-status]="status">{{ status }}</span>
+      Server Status
+      <span class="status-code" [attr.data-status]="meta.rawResponse?.status">{{ meta.rawResponse?.status }}</span>
     </div>
     }
   </div>

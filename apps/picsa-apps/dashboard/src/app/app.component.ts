@@ -22,10 +22,10 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
 
   navLinks: INavLink[] = [
-    {
-      label: 'Home',
-      href: '/',
-    },
+    // {
+    //   label: 'Home',
+    //   href: '',
+    // },
     {
       label: 'Resources',
       href: '/resources',
