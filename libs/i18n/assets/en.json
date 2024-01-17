@@ -367,11 +367,15 @@
   "Extra information": "Extra information",
   "No available calendars": "No available calendars",
   "Number of Months Needed": "Number of Months Needed",
+  "Please enter the required number of months": "Please enter the required number of months",
+  "Please select a start month": "Please select a start month",
   "Season Crops": "Season Crops",
+  "Season of 85": "Season of 85",
   "Select Activity": "Select Activity",
   "Select start month": "Select start month",
   "Start Month ": "Start Month ",
   "Type other activity": "Type other activity",
   "Update Crops": "Update Crops",
-  "weather condition": "weather condition"
+  "weather condition": "weather condition",
+  "wet,dry...": "wet,dry..."
 }

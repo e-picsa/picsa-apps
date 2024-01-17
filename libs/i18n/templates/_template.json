@@ -1604,7 +1604,19 @@
     "tool": "seasonal-calendar"
   },
   {
+    "text": "Please enter the required number of months",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please select a start month",
+    "tool": "seasonal-calendar"
+  },
+  {
     "text": "Season Crops",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Season of 85",
     "tool": "seasonal-calendar"
   },
   {
@@ -1629,6 +1641,10 @@
   },
   {
     "text": "weather condition",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "wet,dry...",
     "tool": "seasonal-calendar"
   }
 ]
