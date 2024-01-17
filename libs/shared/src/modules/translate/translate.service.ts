@@ -5,7 +5,6 @@ import { Subject, takeUntil } from 'rxjs';
 
 @Injectable()
 export class PicsaTranslateService implements OnDestroy {
-  monthNames: string[] = MONTHS;
   public language = 'en';
   private destroyed$ = new Subject<boolean>();
   constructor(public ngxTranslate: TranslateService, public configurationService: ConfigurationService) {
@@ -23,7 +22,6 @@ export class PicsaTranslateService implements OnDestroy {
       if (language && language !== this.language) {
         this.language = language;
         this.ngxTranslate.use(language);
-        await this.prepareStaticTranslations();
       }
     });
   }
@@ -41,27 +39,4 @@ export class PicsaTranslateService implements OnDestroy {
     const translatedArr = await Promise.all(translatePromises);
     return translatedArr;
   }
-
-  // some methods such as climate tool chart rendering require hardcoded values for callback functions
-  // these are calculated when language changed
-  async prepareStaticTranslations() {
-    this.monthNames = await this.translateArray(MONTHS);
-  }
 }
-
-export const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
-export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
