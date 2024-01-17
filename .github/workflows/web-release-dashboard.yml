@@ -25,7 +25,7 @@ on:
       - 'apps/picsa-apps/dashboard/**'
 
 jobs:
-  web_release:
+  web_release_dashboard:
     runs-on: ubuntu-latest
     environment: dashboard
     steps:
