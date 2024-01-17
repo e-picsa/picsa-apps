@@ -29,4 +29,9 @@ export const EXTRACTED_PROJECTS = [
     path: 'libs',
     name: 'common',
   },
+  // libs
+  {
+    path: 'data',
+    name: 'common',
+  },
 ];
