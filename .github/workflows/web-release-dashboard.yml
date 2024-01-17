@@ -6,7 +6,13 @@
 # - VERCEL_PROJECT_ID
 # - VERCEL_ORG_ID
 
-name: Web Release
+name: Web Release Dashboard
+
+# Only keep one active build per ref (e.g. pr branch, push branch, triggering workflow ref)
+concurrency:
+  group: web-release-dashboard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
