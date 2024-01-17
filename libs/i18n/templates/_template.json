@@ -762,22 +762,6 @@
     "tool": "common"
   },
   {
-    "text": "Beans",
-    "tool": "common"
-  },
-  {
-    "text": "Cassava",
-    "tool": "common"
-  },
-  {
-    "text": "Cotton",
-    "tool": "common"
-  },
-  {
-    "text": "Cowpeas",
-    "tool": "common"
-  },
-  {
     "text": "Demo",
     "tool": "common"
   },
@@ -794,15 +778,7 @@
     "tool": "common"
   },
   {
-    "text": "Groundnuts",
-    "tool": "common"
-  },
-  {
     "text": "Hide Options",
-    "tool": "common"
-  },
-  {
-    "text": "Maize",
     "tool": "common"
   },
   {
@@ -811,18 +787,6 @@
   },
   {
     "text": "New Profile",
-    "tool": "common"
-  },
-  {
-    "text": "Pigeon Peas",
-    "tool": "common"
-  },
-  {
-    "text": "Pumpkins",
-    "tool": "common"
-  },
-  {
-    "text": "Rice",
     "tool": "common"
   },
   {
@@ -838,33 +802,64 @@
     "tool": "common"
   },
   {
-    "text": "Sorghum",
-    "tool": "common"
-  },
-  {
-    "text": "Soya Beans",
-    "tool": "common"
-  },
-  {
-    "text": "Sunflower",
-    "tool": "common"
-  },
-  {
-    "text": "Sweet Potatoes",
-    "tool": "common"
-  },
-  {
-    "text": "Tobacco",
-    "tool": "common"
-  },
-  {
     "text": "Who is using?",
     "tool": "common"
   },
   {
-    "text": "Mon",
-    "tool": "common_days",
-    "context": "day_1"
+    "text": "Beans",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cassava",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cotton",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cowpeas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Groundnuts",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Maize",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Pigeon Peas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Pumpkins",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Rice",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Sorghum",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Soya Beans",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Sunflower",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Sweet Potatoes",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Tobacco",
+    "tool": "common_crops"
   },
   {
     "text": "Monday",
@@ -872,19 +867,9 @@
     "context": "day_1"
   },
   {
-    "text": "Tue",
-    "tool": "common_days",
-    "context": "day_2"
-  },
-  {
     "text": "Tuesday",
     "tool": "common_days",
     "context": "day_2"
-  },
-  {
-    "text": "Wed",
-    "tool": "common_days",
-    "context": "day_3"
   },
   {
     "text": "Wednesday",
@@ -892,19 +877,9 @@
     "context": "day_3"
   },
   {
-    "text": "Thu",
-    "tool": "common_days",
-    "context": "day_4"
-  },
-  {
     "text": "Thursday",
     "tool": "common_days",
     "context": "day_4"
-  },
-  {
-    "text": "Fri",
-    "tool": "common_days",
-    "context": "day_5"
   },
   {
     "text": "Friday",
@@ -912,19 +887,9 @@
     "context": "day_5"
   },
   {
-    "text": "Sat",
-    "tool": "common_days",
-    "context": "day_6"
-  },
-  {
     "text": "Saturday",
     "tool": "common_days",
     "context": "day_6"
-  },
-  {
-    "text": "Sun",
-    "tool": "common_days",
-    "context": "day_7"
   },
   {
     "text": "Sunday",
@@ -932,9 +897,39 @@
     "context": "day_7"
   },
   {
-    "text": "Jan",
-    "tool": "common_months",
-    "context": "month_01"
+    "text": "Mon",
+    "tool": "common_days",
+    "context": "day_short_1"
+  },
+  {
+    "text": "Tue",
+    "tool": "common_days",
+    "context": "day_short_2"
+  },
+  {
+    "text": "Wed",
+    "tool": "common_days",
+    "context": "day_short_3"
+  },
+  {
+    "text": "Thu",
+    "tool": "common_days",
+    "context": "day_short_4"
+  },
+  {
+    "text": "Fri",
+    "tool": "common_days",
+    "context": "day_short_5"
+  },
+  {
+    "text": "Sat",
+    "tool": "common_days",
+    "context": "day_short_6"
+  },
+  {
+    "text": "Sun",
+    "tool": "common_days",
+    "context": "day_short_7"
   },
   {
     "text": "January",
@@ -942,19 +937,9 @@
     "context": "month_01"
   },
   {
-    "text": "Feb",
-    "tool": "common_months",
-    "context": "month_02"
-  },
-  {
     "text": "February",
     "tool": "common_months",
     "context": "month_02"
-  },
-  {
-    "text": "Mar",
-    "tool": "common_months",
-    "context": "month_03"
   },
   {
     "text": "March",
@@ -962,24 +947,9 @@
     "context": "month_03"
   },
   {
-    "text": "Apr",
-    "tool": "common_months",
-    "context": "month_04"
-  },
-  {
     "text": "April",
     "tool": "common_months",
     "context": "month_04"
-  },
-  {
-    "text": "May",
-    "tool": "common_months",
-    "context": "month_05"
-  },
-  {
-    "text": "Jun",
-    "tool": "common_months",
-    "context": "month_06"
   },
   {
     "text": "June",
@@ -987,19 +957,9 @@
     "context": "month_06"
   },
   {
-    "text": "Jul",
-    "tool": "common_months",
-    "context": "month_07"
-  },
-  {
     "text": "July",
     "tool": "common_months",
     "context": "month_07"
-  },
-  {
-    "text": "Aug",
-    "tool": "common_months",
-    "context": "month_08"
   },
   {
     "text": "August",
@@ -1007,19 +967,9 @@
     "context": "month_08"
   },
   {
-    "text": "Sep",
-    "tool": "common_months",
-    "context": "month_09"
-  },
-  {
     "text": "September",
     "tool": "common_months",
     "context": "month_09"
-  },
-  {
-    "text": "Oct",
-    "tool": "common_months",
-    "context": "month_10"
   },
   {
     "text": "October",
@@ -1027,24 +977,74 @@
     "context": "month_10"
   },
   {
-    "text": "Nov",
-    "tool": "common_months",
-    "context": "month_11"
-  },
-  {
     "text": "November",
     "tool": "common_months",
     "context": "month_11"
   },
   {
-    "text": "Dec",
+    "text": "December",
     "tool": "common_months",
     "context": "month_12"
   },
   {
-    "text": "December",
+    "text": "Jan",
     "tool": "common_months",
-    "context": "month_12"
+    "context": "month_short_01"
+  },
+  {
+    "text": "Feb",
+    "tool": "common_months",
+    "context": "month_short_02"
+  },
+  {
+    "text": "Mar",
+    "tool": "common_months",
+    "context": "month_short_03"
+  },
+  {
+    "text": "Apr",
+    "tool": "common_months",
+    "context": "month_short_04"
+  },
+  {
+    "text": "May",
+    "tool": "common_months",
+    "context": "month_short_05"
+  },
+  {
+    "text": "Jun",
+    "tool": "common_months",
+    "context": "month_short_06"
+  },
+  {
+    "text": "Jul",
+    "tool": "common_months",
+    "context": "month_short_07"
+  },
+  {
+    "text": "Aug",
+    "tool": "common_months",
+    "context": "month_short_08"
+  },
+  {
+    "text": "Sep",
+    "tool": "common_months",
+    "context": "month_short_09"
+  },
+  {
+    "text": "Oct",
+    "tool": "common_months",
+    "context": "month_short_10"
+  },
+  {
+    "text": "Nov",
+    "tool": "common_months",
+    "context": "month_short_11"
+  },
+  {
+    "text": "Dec",
+    "tool": "common_months",
+    "context": "month_short_12"
   },
   {
     "text": "All",
