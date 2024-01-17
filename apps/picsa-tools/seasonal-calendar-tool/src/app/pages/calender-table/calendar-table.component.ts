@@ -17,12 +17,10 @@ import { SeasonCalenderService } from './../../services/calender.data.service';
 export class CalendarTableComponent implements OnInit {
   calendarData: any;
   months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
-  // crops: string[] = ['Maize', 'Beans', 'Peas'];
   selectedCrop = '';
   customCrop = '';
   showCropAdder = false;
   userCropNames: string[] = [];
-
 
   constructor(
     private route: ActivatedRoute,
@@ -33,10 +31,9 @@ export class CalendarTableComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    
     await this.service.ready();
     this.route.params.subscribe((params) => {
-      const {id} = params;
+      const { id } = params;
       if (id) {
         this.fetchData(id)
           .then((resData) => {
@@ -137,32 +134,32 @@ export class CalendarTableComponent implements OnInit {
         if (cropIndex !== -1) {
           this.calendarData.crops.splice(cropIndex, 1);
           //update db
-          this.autoDbUpdate()
+          this.autoDbUpdate();
         }
       }
     });
   }
-  autoDbUpdate(){
-     //upadate db
-     this.service.addORUpdateData(this.calendarData, 'update');
-     //refreash crop names
-     this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);  
+  autoDbUpdate() {
+    //upadate db
+    this.service.addORUpdateData(this.calendarData, 'update');
+    //refreash crop names
+    this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);
   }
-  
+
   addNewCrop() {
-    for(let i =0; i<this.userCropNames.length; i++ )
-     //skip crops that already exist
-     if (!this.isCropNameDuplicate(this.userCropNames[i])) {
-      const newCrop: Crop = {
-        name: this.userCropNames[i],
-        months: this.calendarData.timeAndConditions.map((monthData) => ({
-          month: monthData.month,
-          activities: [],
-        })),
-        extraInformation: '',
-      };
-      this.calendarData.crops.push(newCrop);
-    }
+    for (let i = 0; i < this.userCropNames.length; i++)
+      //skip crops that already exist
+      if (!this.isCropNameDuplicate(this.userCropNames[i])) {
+        const newCrop: Crop = {
+          name: this.userCropNames[i],
+          months: this.calendarData.timeAndConditions.map((monthData) => ({
+            month: monthData.month,
+            activities: [],
+          })),
+          extraInformation: '',
+        };
+        this.calendarData.crops.push(newCrop);
+      }
     this.autoDbUpdate();
     this.showCropAdder = false;
   }

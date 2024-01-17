@@ -928,6 +928,10 @@
     "tool": "common"
   },
   {
+    "text": "Demo",
+    "tool": "common"
+  },
+  {
     "text": "Edit Profiles",
     "tool": "common"
   },
@@ -1037,10 +1041,6 @@
   },
   {
     "text": "Days to maturity",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Demo",
     "tool": "crop-probability"
   },
   {

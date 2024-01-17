@@ -1,11 +1,5 @@
-import {
-  NavigationEnd,
-  type ActivatedRoute,
-  type ActivatedRouteSnapshot,
-  type Params,
-  type Route,
-  type Router,
-} from '@angular/router';
+import { NavigationEnd } from '@angular/router';
+import type { ActivatedRoute, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 export function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
@@ -58,7 +52,6 @@ function mergeRouterSnapshots(router: Router) {
  * Subscribe to snapshot across all active routers
  * This may be useful in cases where a service wants to subscribe to route parameter changes
  * (default behaviour would only detect changes to top-most route)
- * 
  * Adapted from https://github.com/angular/angular/issues/46891#issuecomment-1190590046
  */
 export function ngRouterMergedSnapshot$(router: Router) {

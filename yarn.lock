@@ -16472,7 +16472,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 253998170af27f886d05b245c85429767e272647221daaf8d94ff5b86f75b8cbb96cc76a8a88492243166a214bc3b66b3ae704a81f74c862f09ac6c9495f731e
+  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
   languageName: node
   linkType: hard
 
@@ -19086,7 +19086,7 @@ __metadata:
     supabase: 1.115.4
     tailwindcss: ^3.0.2
     ts-jest: 29.1.1
-    ts-node: 10.9.1
+    ts-node: 10.9.2
     tslib: ^2.5.0
     typescript: 5.2.2
     zone.js: 0.14.2
@@ -22176,6 +22176,44 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 090adff1302ab20bd3486e6b4799e90f97726ed39e02b39e566f8ab674fd5bd5f727f43615debbfc580d33c6d9d1c6b1b3ce7d8e3cca3e20530a145ffa232c35
+  languageName: node
+  linkType: hard
+
+"ts-node@npm:10.9.2":
+  version: 10.9.2
+  resolution: "ts-node@npm:10.9.2"
+  dependencies:
+    "@cspotcode/source-map-support": ^0.8.0
+    "@tsconfig/node10": ^1.0.7
+    "@tsconfig/node12": ^1.0.7
+    "@tsconfig/node14": ^1.0.0
+    "@tsconfig/node16": ^1.0.2
+    acorn: ^8.4.1
+    acorn-walk: ^8.1.1
+    arg: ^4.1.0
+    create-require: ^1.1.0
+    diff: ^4.0.1
+    make-error: ^1.1.1
+    v8-compile-cache-lib: ^3.0.1
+    yn: 3.1.1
+  peerDependencies:
+    "@swc/core": ">=1.2.50"
+    "@swc/wasm": ">=1.2.50"
+    "@types/node": "*"
+    typescript: ">=2.7"
+  peerDependenciesMeta:
+    "@swc/core":
+      optional: true
+    "@swc/wasm":
+      optional: true
+  bin:
+    ts-node: dist/bin.js
+    ts-node-cwd: dist/bin-cwd.js
+    ts-node-esm: dist/bin-esm.js
+    ts-node-script: dist/bin-script.js
+    ts-node-transpile-only: dist/bin-transpile.js
+    ts-script: dist/bin-script-deprecated.js
+  checksum: fde256c9073969e234526e2cfead42591b9a2aec5222bac154b0de2fa9e4ceb30efcd717ee8bc785a56f3a119bdd5aa27b333d9dbec94ed254bd26f8944c67ac
   languageName: node
   linkType: hard
 
