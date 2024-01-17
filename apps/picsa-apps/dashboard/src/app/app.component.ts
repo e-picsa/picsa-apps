@@ -22,18 +22,18 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
 
   navLinks: INavLink[] = [
-    {
-      label: 'Home',
-      href: '/',
-    },
+    // {
+    //   label: 'Home',
+    //   href: '',
+    // },
     {
       label: 'Resources',
       href: '/resources',
     },
-    // {
-    //   label: 'Climate Data',
-    //   href: '/climate-data',
-    // },
+    {
+      label: 'Climate Data',
+      href: '/climate-data',
+    },
     // {
     //   label: 'Crop Information',
     //   href: '/crop-information',
@@ -42,10 +42,10 @@ export class AppComponent implements AfterViewInit {
     //   label: 'Monitoring Forms',
     //   href: '/monitoring-forms',
     // },
-    // {
-    //   label: 'Translations',
-    //   href: '/translations',
-    // },
+    {
+      label: 'Translations',
+      href: '/translations',
+    },
   ];
 
   globalLinks: INavLink[] = [

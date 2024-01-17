@@ -7,7 +7,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { IFarmerVideosById, PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/picsa/farmer-videos';
 import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
-import { TourService } from '@picsa/shared/services/core/tour.service';
+import { TourService } from '@picsa/shared/services/core/tour';
 import { jsonNestedProperty } from '@picsa/utils';
 
 import { ACTIVITY_DATA, IActivityEntry } from '../../data';

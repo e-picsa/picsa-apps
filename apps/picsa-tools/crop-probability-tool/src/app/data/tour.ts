@@ -1,5 +1,5 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import type { ITourStep } from '@picsa/shared/services/core/tour.service';
+import type { ITourStep } from '@picsa/shared/services/core/tour';
 import { _wait } from '@picsa/utils';
 
 /**

@@ -2,8 +2,6 @@
 
 **Misc**
 
-- Update legacy docs
-
 - Drop additional kobo_sync columns no longer used (not permanent store of kobo metadata)
 
 - Consider calling proxy directly from app (essentially two separate sync protocols)

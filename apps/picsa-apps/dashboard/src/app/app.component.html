@@ -27,12 +27,7 @@
     <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
       <mat-nav-list>
         @for (link of navLinks; track link.href) {
-        <a
-          mat-list-item
-          [routerLink]="link.href"
-          routerLinkActive="mdc-list-item--activated active-link"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
+        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
           {{ link.label }}
         </a>
         }
@@ -40,12 +35,7 @@
         <div mat-subheader>Global Admin</div>
         <mat-divider></mat-divider>
         @for (link of globalLinks; track link.href) {
-        <a
-          mat-list-item
-          [routerLink]="link.href"
-          routerLinkActive="mdc-list-item--activated active-link"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
+        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
           {{ link.label }}
         </a>
         }

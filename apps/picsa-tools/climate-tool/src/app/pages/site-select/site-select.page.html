@@ -1,10 +1,10 @@
 <div class="page-content no-padding">
   <div style="flex: 1; z-index: 1">
     <picsa-map
-      (onMapReady)="onMapReady($event)"
       (onMarkerClick)="onMarkerClick($event)"
       [mapOptions]="mapOptions"
       [basemapOptions]="basemapOptions"
+      [markers]="mapMarkers"
       #picsaMap
     ></picsa-map>
   </div>
