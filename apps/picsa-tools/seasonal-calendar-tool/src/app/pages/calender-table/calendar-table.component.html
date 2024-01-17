@@ -1,7 +1,9 @@
 <div *ngIf="calendarData" class="table-container">
   <div class="header-section">
-    <h1>{{calendarData?.name}}</h1> <button class="" mat-button mat-raised-button (click)="saveCalendar()"
-      color="primary">Save</button>
+    <h1>{{ calendarData.name }}</h1>
+    <button class="" mat-button mat-raised-button (click)="saveCalendar()" color="primary">
+      {{ 'Save' | translate }}
+    </button>
   </div>
   <table class="calendar-table">
     <thead>
@@ -10,13 +12,12 @@
         <th *ngFor="let month of calendarData.timeAndConditions">
           <div class="y-axis-header">
             <div (click)="openMonthHeading(month)">
-              {{ month.month }} <br />
-              ( {{ month.weather }})
+              {{ month.month | translate }} <br />
+              ( {{ month.weather | translate }})
             </div>
             <mat-icon (click)="deleteMonth(month.month)" class="custom-trash-icon">delete</mat-icon>
           </div>
         </th>
-
       </tr>
     </thead>
     <tbody>
@@ -24,15 +25,18 @@
         <tr>
           <td>
             <div class="y-axis-header">
-              <span> {{ crop.name }} </span>
+              <span> {{ crop.name | translate }} </span>
               <div class="y-axis-actions">
                 <mat-icon (click)="deleteCropData(crop)" class="custom-trash-icon">delete</mat-icon>
                 <mat-icon (click)="openCropDialog(crop)">info</mat-icon>
               </div>
             </div>
           </td>
-          <td class="activities-cell" (click)="openAddActivityDialog(crop, month)"
-            *ngFor="let month of calendarData.timeAndConditions">
+          <td
+            class="activities-cell"
+            (click)="openAddActivityDialog(crop, month)"
+            *ngFor="let month of calendarData.timeAndConditions"
+          >
             <div class="user-activity-list">
               <div class="activity" *ngFor="let activity of getActivitiesForMonthAndCrop(month.month, crop).split(',')">
                 <ng-container *ngIf="activity.trim() !== ''">
@@ -48,7 +52,10 @@
   </table>
   <div class="crop-adder">
     <button mat-button mat-raised-button color="primary" (click)="toggleCropAdder()">
-      {{ showCropAdder ? 'Hide Crop Adder' : 'Show Crop Adder' }}
+      @if (showCropAdder) {<span>{{ 'Hide Crops' | translate }}</span>
+      } @else{
+      <span>{{ 'Add Crop' | translate }}</span
+      >}
     </button>
     <div *ngIf="showCropAdder" class="select-box">
       <!-- <div class="select-input-field">
@@ -72,9 +79,9 @@
       <div class="select-input-field">
         <picsa-form-crop-select [(ngModel)]="userCropNames"></picsa-form-crop-select>
       </div>
-        <button mat-button mat-raised-button color="primary" (click)="addNewCrop()">
-           {{ 'Update Crops' | translate }}
-        </button>
+      <button mat-button mat-raised-button color="primary" (click)="addNewCrop()">
+        {{ 'Update Crops' | translate }}
+      </button>
     </div>
   </div>
 </div>

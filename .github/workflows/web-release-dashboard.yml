@@ -1,0 +1,84 @@
+# Deploy dashboard to vercel hosting
+# https://vercel.com/guides/how-can-i-use-github-actions-with-vercel
+
+# Required Secrets
+# - VERCEL_TOKEN
+# - VERCEL_PROJECT_ID
+# - VERCEL_ORG_ID
+
+name: Web Release Dashboard
+
+# Only keep one active build per ref (e.g. pr branch, push branch, triggering workflow ref)
+concurrency:
+  group: web-release-dashboard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/picsa-apps/dashboard/**'
+
+jobs:
+  web_release_dashboard:
+    runs-on: ubuntu-latest
+    environment: dashboard
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      #############################################################################
+      #         Node Modules
+      # Manually restore any previous cache to speed install
+      # As immutable install will not change cache only save new cache if not hit
+      # Uses fine-grained methods from https://github.com/actions/cache
+      #############################################################################
+      - uses: actions/cache/restore@v3
+        id: cache
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-yarn-v1-
+
+      - name: Install node modules
+        run: yarn install --immutable && npm i -g vercel
+
+      - uses: actions/cache/save@v3
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('yarn.lock') }}
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      # Required build script defined in dashboard project `vercel.json`
+      - name: Build
+        run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # TODO - run supabase db migrations (if required)
+      # TODO - handle staging/preview deploy (if required)
+
+      # NOTE - could also use deployment action to populate additonal metadata (could use cli)
+      # https://github.com/marketplace/actions/vercel-action
+
+      # - uses: amondnet/vercel-action@v20
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     vercel-args: '--local-config=apps/picsa-apps/dashboard/vercel.json --prebuilt --prod'
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}}

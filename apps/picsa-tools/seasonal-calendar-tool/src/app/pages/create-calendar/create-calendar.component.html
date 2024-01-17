@@ -1,62 +1,81 @@
 <div class="container">
-  <h2>Crops Seasonal calender</h2>
+  <h2>{{ 'Crops Seasonal calender' | translate }}</h2>
   <div class="box">
-    <h2>Calender name</h2>
-    <input class="inputField"  [(ngModel)]="calenderTitle"  placeholder="Season of 85" />
-    <seasonal-calendar-error-display [displayError]="showMessageFlag && calenderTitle===''" errorMsg="Please add the calender title">
+    <h2>{{ 'Calender name' | translate }}</h2>
+    <input class="inputField" [(ngModel)]="calenderTitle" [placeholder]="'Season of 85' | translate" />
+    <seasonal-calendar-error-display
+      [displayError]="showMessageFlag && calenderTitle === ''"
+      errorMsg="Please add the calender title"
+    >
     </seasonal-calendar-error-display>
   </div>
 
   <!-- Crops -->
   <div class="box">
-    <h2>Season Crops</h2>
+    <h2>{{ 'Season Crops' | translate }}</h2>
     <div class="select-box">
       <div class="select-input-field">
         <picsa-form-crop-select [(ngModel)]="userCrops"></picsa-form-crop-select>
       </div>
-      <seasonal-calendar-error-display [displayError]="showMessageFlag && userCrops.length<1" errorMsg="Please select a crop">
+      <seasonal-calendar-error-display
+        [displayError]="showMessageFlag && userCrops.length < 1"
+        errorMsg="Please select a crop"
+      >
       </seasonal-calendar-error-display>
     </div>
   </div>
 
   <!-- Calendar Time -->
   <div>
-    <h2>Calendar Time</h2>
+    <h2>{{ 'Calendar Time' | translate }}</h2>
     <div class="calender-box">
       <div>
-      <div class="form-group">
-        <label for="startMonth">Start Month:</label>
-        <select  id="startMonth" [(ngModel)]="startMonth">
-          <option value="" disabled selected>Select start month</option>
-          <option *ngFor="let month of months" [value]="month">{{ month }}</option>
-        </select>
+        <div class="form-group">
+          <label for="startMonth">{{ 'Start Month ' | translate }} :</label>
+          <select id="startMonth" [(ngModel)]="startMonth">
+            <option value="" disabled selected>{{ 'Select start month' | translate }}</option>
+            <option *ngFor="let month of months" [value]="month">{{ month | translate }}</option>
+          </select>
+        </div>
+        <seasonal-calendar-error-display
+          [displayError]="showMessageFlag && startMonth === ''"
+          [errorMsg]="'Please select a start month' | translate"
+        >
+        </seasonal-calendar-error-display>
       </div>
-      <seasonal-calendar-error-display [displayError]="showMessageFlag && startMonth ===''"  errorMsg="Please select a start month">
-      </seasonal-calendar-error-display>
-    </div>
-    <div>
-      <div class="form-group">
-        <label for="numberOfMonths">Number of Months Needed:</label>
-        <input type="number" class="inputField" id="numberOfMonths" [(ngModel)]="numMonths" />
+      <div>
+        <div class="form-group">
+          <label for="numberOfMonths">{{ 'Number of Months Needed' | translate }}:</label>
+          <input type="number" class="inputField" id="numberOfMonths" [(ngModel)]="numMonths" />
+        </div>
+        <seasonal-calendar-error-display
+          [displayError]="showMessageFlag && numMonths < 1"
+          [errorMsg]="'Please enter the required number of months' | translate"
+        >
+        </seasonal-calendar-error-display>
       </div>
-      <seasonal-calendar-error-display [displayError]="showMessageFlag && numMonths <1 " errorMsg="Please enter the required number of months">
-      </seasonal-calendar-error-display>
-    </div>
     </div>
     <h4 *ngIf="calendarMonths.length > 0">{{ "Enter the selected month's weather condition" | translate }}</h4>
     <div class="monthsGrid">
       <div *ngFor="let monthData of calendarMonths" class="month">
-        <div>{{ monthData.month }}</div>
+        <div>{{ monthData.month | translate }}</div>
         <div>
-          <input placeholder="wet,dry..." type="text" class="inputField" [(ngModel)]="monthData.weather" />
+          <input
+            [placeholder]="'wet,dry...' | translate"
+            type="text"
+            class="inputField"
+            [(ngModel)]="monthData.weather"
+          />
         </div>
       </div>
     </div>
   </div>
   <div class="submit-button">
-    <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">Create calender</button>
+    <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">
+      {{ 'Create calender ' | translate }}
+    </button>
   </div>
   <div class="flag-message" *ngIf="showMessageFlag">
-    <p>{{ message }}</p>
+    <p>{{ message | translate }}</p>
   </div>
 </div>

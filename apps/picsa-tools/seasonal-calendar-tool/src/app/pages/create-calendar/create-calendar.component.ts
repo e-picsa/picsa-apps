@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+// import { PicsaTranslateService } from '@picsa/shared/modules';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({

@@ -1,6 +1,5 @@
-import { arrayToHashmap } from '@picsa/utils';
+import { arrayToHashmap } from '@picsa/utils/data';
 import { spawnSync } from 'child_process';
-// import { spawnSync } from 'child_process';
 import {
   emptyDirSync,
   ensureDirSync,
@@ -15,7 +14,7 @@ import { tmpdir } from 'os';
 import { resolve } from 'path';
 
 import { EXTRACTED_PROJECTS, HARDCODED_DATA } from './hardcoded';
-import { ITranslationEntry } from './types';
+import type { ITranslationEntry } from './types';
 
 const I18N_DIR = resolve(__dirname, '../');
 const PROJECT_ROOT = resolve(I18N_DIR, '../../');

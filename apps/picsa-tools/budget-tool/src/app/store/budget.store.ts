@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
+import { MONTH_NAMES } from '@picsa/data';
 import { APP_VERSION } from '@picsa/environments';
 import { IAppMeta } from '@picsa/models';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -9,7 +10,7 @@ import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { PrintProvider } from '@picsa/shared/services/native/print';
 import merge from 'deepmerge';
 import { toJS } from 'mobx';
-import { action, computed, observable } from 'mobx-angular';
+import { action, observable } from 'mobx-angular';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 import {
@@ -22,9 +23,9 @@ import {
   IBudgetValueCounters,
   IBudgetValueScale,
 } from '../models/budget-tool.models';
-import { IBudgetCard, IBudgetCardGrouping, IBudgetCardWithValues } from '../schema';
+import { IBudgetCard, IBudgetCardWithValues } from '../schema';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
-import { MONTHS, NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
+import { NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
 
 type IBudgetCounter = 'large' | 'large-half' | 'medium' | 'medium-half' | 'small' | 'small-half';
 export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
@@ -377,6 +378,7 @@ export class BudgetStore implements OnDestroy {
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
   private generatePeriodLabels(meta: IBudgetMeta): string[] {
     const { lengthScale, lengthTotal, monthStart = 1 } = meta;
+    const months = MONTH_NAMES.map((m) => m.labelShort);
     if (lengthScale === 'weeks') {
       return new Array(lengthTotal).fill(0).map((_, i) => 'Week ' + (i + 1));
     }
@@ -385,7 +387,7 @@ export class BudgetStore implements OnDestroy {
     }
     if (lengthScale === 'months') {
       // duplicate array so that can still slice up to 12 months from dec
-      const base = [...MONTHS, ...MONTHS];
+      const base = [...months, ...months];
       return base.slice(monthStart - 1, lengthTotal + monthStart - 1);
     }
     return [];
