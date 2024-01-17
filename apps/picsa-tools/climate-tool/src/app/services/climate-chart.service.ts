@@ -48,6 +48,9 @@ export class ClimateChartService {
 
   private pointRadius = 8;
 
+  /** List of month names translated */
+  private monthNames: string[] = [];
+
   constructor(
     private translateService: PicsaTranslateService,
     private dataService: ClimateDataService,
@@ -70,6 +73,8 @@ export class ClimateChartService {
     this.station = station;
     this.station$.next(station);
     this.stationData = station?.data || [];
+    // ensure month names are translated
+    this.monthNames = await this.translateService.translateArray(MONTH_NAMES.map((m) => m.labelShort));
     return this.station;
   }
 
@@ -360,7 +365,7 @@ export class ClimateChartService {
         if (isAxisLabel) {
           const monthNumber = Math.round(dayNumber / yMajor) % 12;
           // just want nearest month name
-          label = MONTH_NAMES[monthNumber].labelShort;
+          label = this.monthNames[monthNumber];
         } else {
           //simply converts number to day rough date value (same method as local met office)
           //initialise year from a year with 365 days
@@ -368,7 +373,7 @@ export class ClimateChartService {
           d.setDate(dayNumber);
 
           // just take first 3 letters
-          label = `${d.getDate()}-${MONTH_NAMES[d.getMonth() % 12].labelShort}`;
+          label = `${d.getDate()}-${this.monthNames[d.getMonth() % 12]}`;
         }
         return label;
       }
