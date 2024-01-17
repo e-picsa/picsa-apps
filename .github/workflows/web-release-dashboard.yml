@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - feat/dashboard-deployment
+environment: dashboard
 jobs:
   web_release:
     runs-on: ubuntu-latest
@@ -36,10 +37,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-yarn-v1-
       - name: Install node modules
-        run: yarn install --immutable
+        run: yarn install --immutable && npm i -g vercel
       - uses: actions/cache/save@v3
         if: steps.cache.outputs.cache-hit != 'true'
         with:
           path: ./.yarn/cache
           key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('yarn.lock') }}
-      - run: yarn nx run picsa-apps-dashboard:build:production
+      - run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod
+
+      - uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-args: '--local-config=apps/picsa-apps/dashboard/vercel.json --prebuilt --prod'
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}}
+
+      # npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod
+      # npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod

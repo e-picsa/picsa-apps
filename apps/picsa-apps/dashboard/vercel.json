@@ -1,0 +1,14 @@
+{
+  "buildCommand": "yarn nx run picsa-apps-dashboard:build:production",
+  "installCommand": "yarn install",
+  "outputDirectory": "dist/apps/picsa-apps/dashboard/browser",
+  "github": {
+    "enabled": false
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
