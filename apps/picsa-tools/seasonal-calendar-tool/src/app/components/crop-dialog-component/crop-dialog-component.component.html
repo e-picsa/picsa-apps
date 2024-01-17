@@ -1,9 +1,9 @@
 <div class="dialog-container">
-    <h2 class="dialog-container" >{{ data.name }} Extra information</h2>
+    <h2 class="dialog-container" >{{ data.name }} {{'Extra information' | translate}}</h2>
     <p>{{"Please include any information required about farming this crop."}}</p>
     <input  class="inputField" [(ngModel)]="editedExtraInformation" placeholder="Edit extra information" />
     <div mat-dialog-actions>
-        <button mat-button (click)="onSave()">Save</button>
-        <button mat-button (click)="onClose()">Close</button>
+        <button mat-button (click)="onSave()">{{'Save'|translate}}</button>
+        <button mat-button (click)="onClose()">{{'Close'|translate}}</button>
     </div>
 </div>
