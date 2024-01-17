@@ -55,5 +55,3 @@ export const BUDGET_PERIOD_ROWS: IBudgetPeriodRow[] = [
   { type: 'outputs', label: translateMarker('Outputs'), sublabel: translateMarker('For Sale') },
   { type: 'produceConsumed', label: translateMarker('Produce Consumed') },
 ];
-
-export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

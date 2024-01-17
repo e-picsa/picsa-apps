@@ -5,8 +5,14 @@ import { ITranslationEntry } from '../types';
 import { BUDGET_ENTRIES } from './budget';
 import { CLIMATE_ENTRIES } from './climate';
 import { COMMON_ENTRIES } from './common';
+import { DATA_ENTRIES } from './data';
 
-export const HARDCODED_DATA: ITranslationEntry[] = [...BUDGET_ENTRIES, ...CLIMATE_ENTRIES, ...COMMON_ENTRIES];
+export const HARDCODED_DATA: ITranslationEntry[] = [
+  ...BUDGET_ENTRIES,
+  ...CLIMATE_ENTRIES,
+  ...COMMON_ENTRIES,
+  ...DATA_ENTRIES,
+];
 
 const PROJECT_ROOT = resolve(__dirname, '../../../../');
 
@@ -27,6 +33,11 @@ export const EXTRACTED_PROJECTS = [
   // libs
   {
     path: 'libs',
+    name: 'common',
+  },
+  // libs
+  {
+    path: 'data',
     name: 'common',
   },
 ];

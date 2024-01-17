@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
+import { MONTH_NAMES } from '@picsa/data';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
@@ -47,6 +48,9 @@ export class ClimateChartService {
 
   private pointRadius = 8;
 
+  /** List of month names translated */
+  private monthNames: string[] = [];
+
   constructor(
     private translateService: PicsaTranslateService,
     private dataService: ClimateDataService,
@@ -69,6 +73,8 @@ export class ClimateChartService {
     this.station = station;
     this.station$.next(station);
     this.stationData = station?.data || [];
+    // ensure month names are translated
+    this.monthNames = await this.translateService.translateArray(MONTH_NAMES.map((m) => m.labelShort));
     return this.station;
   }
 
@@ -349,7 +355,7 @@ export class ClimateChartService {
 
   private _formatYAxis(value: number, meta: IChartMeta, isAxisLabel?: boolean) {
     const { yMajor } = meta;
-    const { monthNames } = this.translateService;
+
     let label: string;
     switch (meta.yFormat) {
       case 'date-from-July': {
@@ -359,7 +365,7 @@ export class ClimateChartService {
         if (isAxisLabel) {
           const monthNumber = Math.round(dayNumber / yMajor) % 12;
           // just want nearest month name
-          label = monthNames[monthNumber].substring(0, 3);
+          label = this.monthNames[monthNumber];
         } else {
           //simply converts number to day rough date value (same method as local met office)
           //initialise year from a year with 365 days
@@ -367,7 +373,7 @@ export class ClimateChartService {
           d.setDate(dayNumber);
 
           // just take first 3 letters
-          label = `${d.getDate()}-${monthNames[d.getMonth() % 12].substring(0, 3)}`;
+          label = `${d.getDate()}-${this.monthNames[d.getMonth() % 12]}`;
         }
         return label;
       }

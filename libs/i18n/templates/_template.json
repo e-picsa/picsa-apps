@@ -140,41 +140,6 @@
     "context": "activities"
   },
   {
-    "text": "Monday",
-    "tool": "budget",
-    "context": "day_1"
-  },
-  {
-    "text": "Tuesday",
-    "tool": "budget",
-    "context": "day_2"
-  },
-  {
-    "text": "Wednesday",
-    "tool": "budget",
-    "context": "day_3"
-  },
-  {
-    "text": "Thursday",
-    "tool": "budget",
-    "context": "day_4"
-  },
-  {
-    "text": "Friday",
-    "tool": "budget",
-    "context": "day_5"
-  },
-  {
-    "text": "Saturday",
-    "tool": "budget",
-    "context": "day_6"
-  },
-  {
-    "text": "Sunday",
-    "tool": "budget",
-    "context": "day_7"
-  },
-  {
     "text": "afforestation",
     "tool": "budget",
     "context": "enterprise"
@@ -373,121 +338,6 @@
     "text": "vaccine",
     "tool": "budget",
     "context": "inputs"
-  },
-  {
-    "text": "January",
-    "tool": "budget",
-    "context": "month_1"
-  },
-  {
-    "text": "October",
-    "tool": "budget",
-    "context": "month_10"
-  },
-  {
-    "text": "Oct",
-    "tool": "budget",
-    "context": "month_10_short"
-  },
-  {
-    "text": "November",
-    "tool": "budget",
-    "context": "month_11"
-  },
-  {
-    "text": "Nov",
-    "tool": "budget",
-    "context": "month_11_short"
-  },
-  {
-    "text": "December",
-    "tool": "budget",
-    "context": "month_12"
-  },
-  {
-    "text": "Dec",
-    "tool": "budget",
-    "context": "month_12_short"
-  },
-  {
-    "text": "Jan",
-    "tool": "budget",
-    "context": "month_1_short"
-  },
-  {
-    "text": "February",
-    "tool": "budget",
-    "context": "month_2"
-  },
-  {
-    "text": "Feb",
-    "tool": "budget",
-    "context": "month_2_short"
-  },
-  {
-    "text": "March",
-    "tool": "budget",
-    "context": "month_3"
-  },
-  {
-    "text": "Mar",
-    "tool": "budget",
-    "context": "month_3_short"
-  },
-  {
-    "text": "April",
-    "tool": "budget",
-    "context": "month_4"
-  },
-  {
-    "text": "Apr",
-    "tool": "budget",
-    "context": "month_4_short"
-  },
-  {
-    "text": "May",
-    "tool": "budget",
-    "context": "month_5_short"
-  },
-  {
-    "text": "June",
-    "tool": "budget",
-    "context": "month_6"
-  },
-  {
-    "text": "Jun",
-    "tool": "budget",
-    "context": "month_6_short"
-  },
-  {
-    "text": "July",
-    "tool": "budget",
-    "context": "month_7"
-  },
-  {
-    "text": "Jul",
-    "tool": "budget",
-    "context": "month_7_short"
-  },
-  {
-    "text": "August",
-    "tool": "budget",
-    "context": "month_8"
-  },
-  {
-    "text": "Aug",
-    "tool": "budget",
-    "context": "month_8_short"
-  },
-  {
-    "text": "September",
-    "tool": "budget",
-    "context": "month_9"
-  },
-  {
-    "text": "Sep",
-    "tool": "budget",
-    "context": "month_9_short"
   },
   {
     "text": "add custom",
@@ -912,22 +762,6 @@
     "tool": "common"
   },
   {
-    "text": "Beans",
-    "tool": "common"
-  },
-  {
-    "text": "Cassava",
-    "tool": "common"
-  },
-  {
-    "text": "Cotton",
-    "tool": "common"
-  },
-  {
-    "text": "Cowpeas",
-    "tool": "common"
-  },
-  {
     "text": "Demo",
     "tool": "common"
   },
@@ -944,15 +778,7 @@
     "tool": "common"
   },
   {
-    "text": "Groundnuts",
-    "tool": "common"
-  },
-  {
     "text": "Hide Options",
-    "tool": "common"
-  },
-  {
-    "text": "Maize",
     "tool": "common"
   },
   {
@@ -961,18 +787,6 @@
   },
   {
     "text": "New Profile",
-    "tool": "common"
-  },
-  {
-    "text": "Pigeon Peas",
-    "tool": "common"
-  },
-  {
-    "text": "Pumpkins",
-    "tool": "common"
-  },
-  {
-    "text": "Rice",
     "tool": "common"
   },
   {
@@ -988,28 +802,249 @@
     "tool": "common"
   },
   {
-    "text": "Sorghum",
+    "text": "Who is using?",
     "tool": "common"
+  },
+  {
+    "text": "Beans",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cassava",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cotton",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cowpeas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Groundnuts",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Maize",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Pigeon Peas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Pumpkins",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Rice",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Sorghum",
+    "tool": "common_crops"
   },
   {
     "text": "Soya Beans",
-    "tool": "common"
+    "tool": "common_crops"
   },
   {
     "text": "Sunflower",
-    "tool": "common"
+    "tool": "common_crops"
   },
   {
     "text": "Sweet Potatoes",
-    "tool": "common"
+    "tool": "common_crops"
   },
   {
     "text": "Tobacco",
-    "tool": "common"
+    "tool": "common_crops"
   },
   {
-    "text": "Who is using?",
-    "tool": "common"
+    "text": "Monday",
+    "tool": "common_days",
+    "context": "day_1"
+  },
+  {
+    "text": "Tuesday",
+    "tool": "common_days",
+    "context": "day_2"
+  },
+  {
+    "text": "Wednesday",
+    "tool": "common_days",
+    "context": "day_3"
+  },
+  {
+    "text": "Thursday",
+    "tool": "common_days",
+    "context": "day_4"
+  },
+  {
+    "text": "Friday",
+    "tool": "common_days",
+    "context": "day_5"
+  },
+  {
+    "text": "Saturday",
+    "tool": "common_days",
+    "context": "day_6"
+  },
+  {
+    "text": "Sunday",
+    "tool": "common_days",
+    "context": "day_7"
+  },
+  {
+    "text": "Mon",
+    "tool": "common_days",
+    "context": "day_short_1"
+  },
+  {
+    "text": "Tue",
+    "tool": "common_days",
+    "context": "day_short_2"
+  },
+  {
+    "text": "Wed",
+    "tool": "common_days",
+    "context": "day_short_3"
+  },
+  {
+    "text": "Thu",
+    "tool": "common_days",
+    "context": "day_short_4"
+  },
+  {
+    "text": "Fri",
+    "tool": "common_days",
+    "context": "day_short_5"
+  },
+  {
+    "text": "Sat",
+    "tool": "common_days",
+    "context": "day_short_6"
+  },
+  {
+    "text": "Sun",
+    "tool": "common_days",
+    "context": "day_short_7"
+  },
+  {
+    "text": "January",
+    "tool": "common_months",
+    "context": "month_01"
+  },
+  {
+    "text": "February",
+    "tool": "common_months",
+    "context": "month_02"
+  },
+  {
+    "text": "March",
+    "tool": "common_months",
+    "context": "month_03"
+  },
+  {
+    "text": "April",
+    "tool": "common_months",
+    "context": "month_04"
+  },
+  {
+    "text": "June",
+    "tool": "common_months",
+    "context": "month_06"
+  },
+  {
+    "text": "July",
+    "tool": "common_months",
+    "context": "month_07"
+  },
+  {
+    "text": "August",
+    "tool": "common_months",
+    "context": "month_08"
+  },
+  {
+    "text": "September",
+    "tool": "common_months",
+    "context": "month_09"
+  },
+  {
+    "text": "October",
+    "tool": "common_months",
+    "context": "month_10"
+  },
+  {
+    "text": "November",
+    "tool": "common_months",
+    "context": "month_11"
+  },
+  {
+    "text": "December",
+    "tool": "common_months",
+    "context": "month_12"
+  },
+  {
+    "text": "Jan",
+    "tool": "common_months",
+    "context": "month_short_01"
+  },
+  {
+    "text": "Feb",
+    "tool": "common_months",
+    "context": "month_short_02"
+  },
+  {
+    "text": "Mar",
+    "tool": "common_months",
+    "context": "month_short_03"
+  },
+  {
+    "text": "Apr",
+    "tool": "common_months",
+    "context": "month_short_04"
+  },
+  {
+    "text": "May",
+    "tool": "common_months",
+    "context": "month_short_05"
+  },
+  {
+    "text": "Jun",
+    "tool": "common_months",
+    "context": "month_short_06"
+  },
+  {
+    "text": "Jul",
+    "tool": "common_months",
+    "context": "month_short_07"
+  },
+  {
+    "text": "Aug",
+    "tool": "common_months",
+    "context": "month_short_08"
+  },
+  {
+    "text": "Sep",
+    "tool": "common_months",
+    "context": "month_short_09"
+  },
+  {
+    "text": "Oct",
+    "tool": "common_months",
+    "context": "month_short_10"
+  },
+  {
+    "text": "Nov",
+    "tool": "common_months",
+    "context": "month_short_11"
+  },
+  {
+    "text": "Dec",
+    "tool": "common_months",
+    "context": "month_short_12"
   },
   {
     "text": "All",
@@ -1588,11 +1623,19 @@
     "tool": "seasonal-calendar"
   },
   {
+    "text": "Drying",
+    "tool": "seasonal-calendar"
+  },
+  {
     "text": "Enter the selected month's weather condition",
     "tool": "seasonal-calendar"
   },
   {
     "text": "Extra information",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Harvesting",
     "tool": "seasonal-calendar"
   },
   {
@@ -1604,11 +1647,19 @@
     "tool": "seasonal-calendar"
   },
   {
+    "text": "Other",
+    "tool": "seasonal-calendar"
+  },
+  {
     "text": "Please enter the required number of months",
     "tool": "seasonal-calendar"
   },
   {
     "text": "Please select a start month",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Preparation",
     "tool": "seasonal-calendar"
   },
   {
@@ -1637,6 +1688,10 @@
   },
   {
     "text": "Update Crops",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Weeding",
     "tool": "seasonal-calendar"
   },
   {
