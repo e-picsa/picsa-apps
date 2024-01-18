@@ -4,7 +4,7 @@
     <div style="flex: 1; position: relative">
       <mat-card-title>{{ budget.meta.title }}</mat-card-title>
       <mat-card-content>{{ budget.meta.description }}</mat-card-content>
-      <budget-summary [budgetData]="budget"></budget-summary>
+      <budget-summary [budgetData]="budget" style="margin-bottom: 1.2rem"></budget-summary>
       <mat-card-subtitle style="position: absolute; bottom: 0; right: 0"
         >{{ budget._created | date }}</mat-card-subtitle
       >

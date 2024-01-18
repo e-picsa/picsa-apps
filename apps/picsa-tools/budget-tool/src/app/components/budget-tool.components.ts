@@ -31,6 +31,7 @@ import { BudgetShareDialogComponent } from './share-dialog/share-dialog.componen
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { BudgetTableComponent } from './table/budget-table';
 import { BudgetSummaryComponent } from './budget-summary/budget-summary.component';
+import { MatIconModule } from '@angular/material/icon';
 
 const components = [
   BudgetBalanceLegendComponent,
@@ -69,6 +70,7 @@ const components = [
     PicsaDbModule,
     RouterModule,
     MatTooltipModule,
+    MatIconModule,
   ],
   exports: components,
 })
