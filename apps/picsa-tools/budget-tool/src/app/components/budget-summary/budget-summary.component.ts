@@ -4,7 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
   selector: 'budget-summary',
   template: `
     <div class="summary-container">
-      <h3>Details</h3>
+      <h4>Details</h4>
       <div class="summary-list">
         <p matTooltip="Total Family Labour Hours">
           <mat-icon>groups</mat-icon>: <b>{{ totalFamilyLabourHours }}</b>
