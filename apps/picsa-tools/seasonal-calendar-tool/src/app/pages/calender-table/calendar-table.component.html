@@ -13,7 +13,7 @@
           <div class="y-axis-header">
             <div (click)="openMonthHeading(month)">
               {{ month.month | translate }} <br />
-              ( {{ month.weather | translate }})
+              @if(month.weather){ ( {{ month.weather | translate }}) }
             </div>
             <mat-icon (click)="deleteMonth(month.month)" class="custom-trash-icon">delete</mat-icon>
           </div>

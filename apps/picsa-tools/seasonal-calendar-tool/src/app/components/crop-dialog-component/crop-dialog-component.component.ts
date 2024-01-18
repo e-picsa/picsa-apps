@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { Crop } from '../../schema/schema_v0';
+import { CropEntry } from '../../schema';
 
 @Component({
   selector: 'seasonal-calendar-dialog-component',
@@ -11,10 +11,7 @@ import { Crop } from '../../schema/schema_v0';
 export class CropDialogComponent {
   editedExtraInformation: string;
 
-  constructor(
-    public dialogRef: MatDialogRef<CropDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Crop
-  ) {
+  constructor(public dialogRef: MatDialogRef<CropDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: CropEntry) {
     this.editedExtraInformation = data.extraInformation;
   }
 

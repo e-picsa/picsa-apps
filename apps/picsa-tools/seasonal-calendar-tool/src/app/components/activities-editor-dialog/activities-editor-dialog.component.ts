@@ -1,5 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+
+interface ICropActivity {
+  name: string;
+  label: string;
+}
 
 @Component({
   selector: 'seasonal-calendar-editor-dialog',
@@ -7,10 +13,15 @@ import { MAT_DIALOG_DATA,MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./activities-editor-dialog.component.scss'],
 })
 export class ActivitiesEditorDialogComponent {
-  activities: string[] = ['Preparation', 'Weeding', 'Havesting', 'Drying', 'Other']; 
+  activities: ICropActivity[] = [
+    { name: 'preparation', label: translateMarker('Preparation') },
+    { name: 'weeding', label: translateMarker('Weeding') },
+    { name: 'harvesting', label: translateMarker('Harvesting') },
+    { name: 'drying', label: translateMarker('Drying') },
+    { name: 'other', label: translateMarker('Other') },
+  ];
   selectedActivity = '';
   customActivity = '';
-
 
   constructor(
     public dialogRef: MatDialogRef<ActivitiesEditorDialogComponent>,
@@ -24,7 +35,7 @@ export class ActivitiesEditorDialogComponent {
       if (trimmedCustomActivity !== '') {
         result = trimmedCustomActivity;
       } else {
-        result = null;  
+        result = null;
       }
     }
     this.dialogRef.close(result);
@@ -32,6 +43,4 @@ export class ActivitiesEditorDialogComponent {
   onClose(): void {
     this.dialogRef.close();
   }
-
-
 }

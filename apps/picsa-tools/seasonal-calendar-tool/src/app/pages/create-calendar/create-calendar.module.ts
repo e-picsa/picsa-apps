@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
 
@@ -17,6 +19,8 @@ import { CreateCalendarRoutingModule } from './create-calendar.routing.module';
   imports: [
     CommonModule,
     MatIconModule,
+    MatSelectModule,
+    MatInputModule,
     PicsaTranslateModule,
     SeasonalCalendarMaterialModule,
     FormsModule,
@@ -25,7 +29,7 @@ import { CreateCalendarRoutingModule } from './create-calendar.routing.module';
     MatButtonModule,
     CreateCalendarRoutingModule,
     SeasonalCalendarToolComponentsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
 })
 export class CreateCalendarModule {}

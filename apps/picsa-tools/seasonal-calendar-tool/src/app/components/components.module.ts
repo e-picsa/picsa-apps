@@ -7,13 +7,12 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ActivitiesEditorDialogComponent } from './activities-editor-dialog/activities-editor-dialog.component';
-import { CropDialogComponent  } from './crop-dialog-component/crop-dialog-component.component';
-import { FieldErrorDisplayComponent } from './field-error-display/field-error-display.component';
+import { CropDialogComponent } from './crop-dialog-component/crop-dialog-component.component';
 // Local components
 import { SeasonalCalendarMaterialModule } from './material.module';
 import { MonthDialogComponent } from './month-editor-dialog/crop-dialog-component.component';
 
-const Components = [CropDialogComponent,ActivitiesEditorDialogComponent,MonthDialogComponent,FieldErrorDisplayComponent];
+const Components = [CropDialogComponent, ActivitiesEditorDialogComponent, MonthDialogComponent];
 
 @NgModule({
   imports: [

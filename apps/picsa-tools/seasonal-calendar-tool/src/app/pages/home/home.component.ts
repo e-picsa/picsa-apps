@@ -1,8 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { RxDocumentData } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { CalendarDataEntry } from '../../schema';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
@@ -14,7 +16,7 @@ export class HomeComponent implements OnDestroy {
   editMode = -1;
 
   private componentDestroyed$ = new Subject();
-  public dbCalendars: any = [];
+  public dbCalendars: RxDocumentData<CalendarDataEntry>[] = [];
 
   constructor(
     private router: Router,
@@ -30,7 +32,7 @@ export class HomeComponent implements OnDestroy {
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       const extractedData = docs.map((doc) => doc._data);
-      //console.log(extractedData);
+      console.log({ extractedData });
       this.dbCalendars = extractedData;
     });
   }
@@ -63,7 +65,7 @@ export class HomeComponent implements OnDestroy {
     this.editMode = -1;
   }
 
-  redirectToCalendarTable(id: string, index) {
+  redirectToCalendarTable(id: string) {
     this.router.navigate([`/seasonal-calendar/${id}`]);
   }
 }

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MONTH_NAMES } from '@picsa/data';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { ActivitiesEditorDialogComponent } from '../../components/activities-editor-dialog/activities-editor-dialog.component';
 import { CropDialogComponent } from '../../components/crop-dialog-component/crop-dialog-component.component';
 import { MonthDialogComponent } from '../../components/month-editor-dialog/crop-dialog-component.component';
-import { Crop, MonthData } from '../../schema/schema_v0';
+import { CalendarDataEntry, CalendarPeriod, CropEntry } from '../../schema';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
@@ -15,8 +16,8 @@ import { SeasonCalenderService } from './../../services/calender.data.service';
   styleUrls: ['./calendar-table.component.scss'],
 })
 export class CalendarTableComponent implements OnInit {
-  calendarData: any;
-  months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September'];
+  calendarData: CalendarDataEntry;
+  months = MONTH_NAMES;
   selectedCrop = '';
   customCrop = '';
   showCropAdder = false;
@@ -32,34 +33,20 @@ export class CalendarTableComponent implements OnInit {
 
   async ngOnInit() {
     await this.service.ready();
-    this.route.params.subscribe((params) => {
-      const { id } = params;
-      if (id) {
-        this.fetchData(id)
-          .then((resData) => {
-            //console.log(resData)
-            this.calendarData = resData;
-            //map crop names
-            this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);
-            //console.log(this.userCropNames)
-          })
-          .catch(() => {
-            this.calendarData = null;
-          })
-          .finally(() => {
-            //console.log(this.calendarData);
-            if (!this.calendarData) {
-              this.router.navigate(['/seasonal-calendar']);
-            }
-          });
+    const { id } = this.route.snapshot.params;
+    if (id) {
+      const data = await this.service.getCalenderById(id);
+      if (data) {
+        this.calendarData = data;
+        this.userCropNames = this.calendarData.crops.map((crop) => crop.name);
+        return;
       }
-    });
-  }
-  async fetchData(id: string) {
-    return await this.service.getCalenderById(id);
+    }
+    // redirect to home page if data has not been loaded successfully
+    this.router.navigate(['/seasonal-calendar']);
   }
 
-  getActivitiesForMonthAndCrop(monthName: string, crop: Crop): string {
+  public getActivitiesForMonthAndCrop(monthName: string, crop: CropEntry): string {
     const selectedMonth = crop.months.find((month) => month.month === monthName);
     if (selectedMonth) {
       return selectedMonth.activities.join(',');
@@ -67,7 +54,7 @@ export class CalendarTableComponent implements OnInit {
       return '';
     }
   }
-  deleteActivity(crop: Crop, monthName: string, activity: string) {
+  public deleteActivity(crop: CropEntry, monthName: string, activity: string) {
     const selectedMonth = crop.months.find((month) => month.month === monthName);
     if (selectedMonth) {
       const activityIndex = selectedMonth.activities.indexOf(activity);
@@ -77,7 +64,7 @@ export class CalendarTableComponent implements OnInit {
       }
     }
   }
-  openCropDialog(crop: Crop) {
+  public openCropDialog(crop: CropEntry) {
     const dialogRef = this.dialog.open(CropDialogComponent, {
       data: crop,
     });
@@ -88,9 +75,9 @@ export class CalendarTableComponent implements OnInit {
     });
   }
 
-  openMonthHeading(month: MonthData) {
+  public openMonthHeading(period: CalendarPeriod) {
     const dialogRef = this.dialog.open(MonthDialogComponent, {
-      data: month,
+      data: period,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -98,22 +85,22 @@ export class CalendarTableComponent implements OnInit {
       this.autoDbUpdate();
     });
   }
-  toggleCropAdder() {
+  public toggleCropAdder() {
     this.showCropAdder = !this.showCropAdder;
   }
 
-  openAddActivityDialog(crop: Crop, month: MonthData) {
+  public openAddActivityDialog(crop: CropEntry, period: CalendarPeriod) {
     const dialogRef = this.dialog.open(ActivitiesEditorDialogComponent, {
       data: {
         crop,
-        month,
+        period,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         const activityToAdd = result;
-        const selectedMonth = crop.months.find((m) => m.month === month.month);
+        const selectedMonth = crop.months.find((m) => m.month === period.month);
 
         if (selectedMonth) {
           if (!selectedMonth.activities.includes(activityToAdd)) {
@@ -126,7 +113,7 @@ export class CalendarTableComponent implements OnInit {
       }
     });
   }
-  async deleteCropData(crop: Crop) {
+  public async deleteCropData(crop: CropEntry) {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
@@ -139,36 +126,26 @@ export class CalendarTableComponent implements OnInit {
       }
     });
   }
-  autoDbUpdate() {
-    //upadate db
-    this.service.addORUpdateData(this.calendarData, 'update');
-    //refreash crop names
-    this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);
+
+  public addNewCrop() {
+    // for (let i = 0; i < this.userCropNames.length; i++)
+    //   //skip crops that already exist
+    //   if (!this.isCropNameDuplicate(this.userCropNames[i])) {
+    //     const newCrop: CropEntry = {
+    //       name: this.userCropNames[i],
+    //       months: this.calendarData.timeAndConditions.map((CalendarPeriod) => ({
+    //         period: CalendarPeriod.month,
+    //         activities: [],
+    //       })),
+    //       extraInformation: '',
+    //     };
+    //     this.calendarData.crops.push(newCrop);
+    //   }
+    // this.autoDbUpdate();
+    // this.showCropAdder = false;
   }
 
-  addNewCrop() {
-    for (let i = 0; i < this.userCropNames.length; i++)
-      //skip crops that already exist
-      if (!this.isCropNameDuplicate(this.userCropNames[i])) {
-        const newCrop: Crop = {
-          name: this.userCropNames[i],
-          months: this.calendarData.timeAndConditions.map((monthData) => ({
-            month: monthData.month,
-            activities: [],
-          })),
-          extraInformation: '',
-        };
-        this.calendarData.crops.push(newCrop);
-      }
-    this.autoDbUpdate();
-    this.showCropAdder = false;
-  }
-
-  isCropNameDuplicate(newCropName: string): boolean {
-    return this.calendarData.crops.some((crop) => crop.name === newCropName);
-  }
-
-  async deleteMonth(monthName: string) {
+  public async deleteMonth(monthName: string) {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
@@ -186,9 +163,20 @@ export class CalendarTableComponent implements OnInit {
     });
   }
 
-  saveCalendar() {
+  public saveCalendar() {
     //console.log(this.calendarData);
     this.service.addORUpdateData(this.calendarData, 'update');
     this.router.navigate(['/seasonal-calendar']);
+  }
+
+  private autoDbUpdate() {
+    //upadate db
+    this.service.addORUpdateData(this.calendarData, 'update');
+    //refreash crop names
+    this.userCropNames = this.calendarData.crops.map((crop: any) => crop.name);
+  }
+
+  private isCropNameDuplicate(newCropName: string): boolean {
+    return this.calendarData.crops.some((crop) => crop.name === newCropName);
   }
 }
