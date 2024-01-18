@@ -146,7 +146,7 @@ export class PicsaDatabaseSyncService {
     });
     const table = this.supabaseService.db.table(collection.name);
     const res = await table.upsert(records);
-    if (res.status === 201) {
+    if (res.status === 201 || res.status === 200) {
       // update local collection status where applicatble
       const successUpdate = docs
         .filter((d) => d._data._sync_push_status !== 'complete')
