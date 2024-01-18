@@ -5,6 +5,7 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from './material.module';
+import { CropInformationModule } from './pages/crop-information/crop-information.module';
 
 interface INavLink {
   label: string;
@@ -14,7 +15,7 @@ interface INavLink {
 
 @Component({
   standalone: true,
-  imports: [RouterModule, DashboardMaterialModule, CommonModule],
+  imports: [RouterModule, DashboardMaterialModule, CommonModule, CropInformationModule],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -31,6 +32,10 @@ export class AppComponent implements AfterViewInit {
     //   label: 'Resources',
     //   href: '/resources',
     // },
+    {
+      label: 'Crop Information',
+      href: '/crop-information',
+    },
   ];
 
   constructor(public supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
