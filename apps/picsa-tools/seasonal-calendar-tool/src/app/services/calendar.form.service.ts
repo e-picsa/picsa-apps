@@ -63,7 +63,10 @@ export class SeasonCalendarFormService {
    * https://blog.angular-university.io/angular-form-array/
    * */
   private generateTimeAndConditionsControl(months: string[] = []) {
-    const formArray = this.fb.array<FormGroup<{ month: FormControl<string>; weather: FormControl<string> }>>([]);
+    const formArray = this.fb.array<FormGroup<{ month: FormControl<string>; weather: FormControl<string> }>>(
+      [],
+      Validators.required // use required validator to ensure array non-zero length
+    );
     for (const month of months) {
       const group = this.fb.nonNullable.group({ month, weather: '' });
       formArray.push(group);

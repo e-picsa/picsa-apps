@@ -3,13 +3,19 @@
   gap: 2rem;
 }
 
-.monthsGrid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 800px;
-}
 .submit-button {
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
+.calendar-summary {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  & > div {
+    padding: 8px;
+    border-radius: 4px;
+    width: 80px;
+    background: var(--color-light);
+    height: 40px;
+  }
 }

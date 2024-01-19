@@ -19,7 +19,11 @@
     <div class="calender-box">
       <mat-form-field>
         <mat-label>{{ 'Start Month ' | translate }} :</mat-label>
-        <mat-select id="startMonth" #monthSelect (change)="setTimePeriod(monthSelect.value, totalMonths.value)">
+        <mat-select
+          id="startMonth"
+          #monthSelect
+          (selectionChange)="setTimePeriod(monthSelect.value, totalMonths.value)"
+        >
           <mat-option *ngFor="let month of months; index as i" [value]="i">{{ month.label | translate }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -39,27 +43,18 @@
         </mat-form-field>
         <!-- error message outside form field as not bound to specific controller but more a general error -->
         @if(form.controls.timeAndConditions.touched && form.controls.timeAndConditions.errors){
-        <mat-error>{{ 'Please enter the required number of months' | translate }}</mat-error>
+        <mat-error>{{ 'Please enter start and total months' | translate }}</mat-error>
         }
       </div>
     </div>
-
-    <h2>{{ 'Weather' | translate }}</h2>
-    <div class="monthsGrid" formArrayName="timeAndConditions">
-      <!-- Loop over nested time and conditions forms -->
-      @for (childForm of form.controls.timeAndConditions.controls; track $index) {
-      <div class="month" [formGroup]="childForm">
-        <mat-form-field>
-          <mat-label>{{ childForm.controls.month.value | translate }}</mat-label>
-          <input matInput [placeholder]="'wet,dry...' | translate" type="text" formControlName="weather" />
-          <mat-error>{{ 'Please enter the weather' | translate }}</mat-error>
-        </mat-form-field>
-      </div>
+    <div class="calendar-summary">
+      @for (item of formValue.timeAndConditions; track $index) {
+      <div>{{ monthsByID[item.month].label | translate }}</div>
       }
     </div>
   </div>
   <div class="submit-button">
-    <button class="" mat-button mat-raised-button (click)="onSubmition()" color="primary">
+    <button class="" mat-button mat-raised-button (click)="handleSubmit()" color="primary">
       {{ 'Create calender ' | translate }}
     </button>
   </div>
