@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { RxDocumentData } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -13,28 +13,15 @@ import { SeasonCalenderService } from './../../services/calender.data.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnDestroy {
-  editMode = -1;
+  /** Track current calendar selected from editing from menu popup */
+  editableCalendar: CalendarDataEntry;
 
   private componentDestroyed$ = new Subject();
+
   public dbCalendars: RxDocumentData<CalendarDataEntry>[] = [];
 
-  constructor(
-    private router: Router,
-    private service: SeasonCalenderService,
-    private dialogService: PicsaDialogService
-  ) {
+  constructor(private service: SeasonCalenderService, private dialogService: PicsaDialogService) {
     this.subscribeToDbChanges();
-  }
-
-  private async subscribeToDbChanges() {
-    await this.service.ready();
-
-    const query = this.service.dbUserCollection;
-    query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      const extractedData = docs.map((doc) => doc._data);
-      console.log({ extractedData });
-      this.dbCalendars = extractedData;
-    });
   }
 
   ngOnDestroy(): void {
@@ -42,30 +29,31 @@ export class HomeComponent implements OnDestroy {
     this.componentDestroyed$.complete();
   }
 
-  // ngOnInit() {
-  //  // this.calendars = this.getCalendarsAsArray(this.dataService.calendars)
-  //  console.log(this.dbCalendars)
-  // }
+  public handleMenuClick(e: Event, calendar: CalendarDataEntry) {
+    e.stopPropagation();
+    this.editableCalendar = calendar;
+  }
 
-  public async promptDelete(index: number) {
+  public async promptDelete() {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
-        await this.service.deleteCalenderByName(this.dbCalendars[index].name);
+        await this.service.deleteCalenderByName(this.editableCalendar.name);
       }
     });
   }
 
-  getCalendarsAsArray(calenderObject): any[] {
-    return Object.keys(calenderObject).map((key) => calenderObject[key]);
+  public async copyCalendar() {
+    const calendarCopy = { ...this.editableCalendar, id: generateID() };
+    await this.service.addORUpdateData(calendarCopy, 'add');
   }
 
-  async saveUpdates(calendar: any) {
-    await this.service.addORUpdateData(calendar, 'update');
-    this.editMode = -1;
-  }
-
-  redirectToCalendarTable(id: string) {
-    this.router.navigate([`/seasonal-calendar/${id}`]);
+  private async subscribeToDbChanges() {
+    await this.service.ready();
+    const query = this.service.dbUserCollection;
+    query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
+      const extractedData = docs.map((doc) => doc._data);
+      this.dbCalendars = extractedData;
+    });
   }
 }

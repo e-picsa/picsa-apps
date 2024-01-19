@@ -1,48 +1,39 @@
 <div class="page-content">
-  <div class="create-button">
-    <button class="" mat-button mat-raised-button routerLink="/seasonal-calendar/create" color="primary">
-      {{ 'Create new calender' | translate }}
+  <h2>{{ 'Saved Calendars' | translate }}</h2>
+  <div class="calendar-list">
+    <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">{{ 'No saved calendars' | translate }}</div>
+    <!-- Calendar list items -->
+    @for (calendar of dbCalendars; track calendar.ID) {
+    <mat-card class="calendars-display" [routerLink]="calendar.ID">
+      <mat-card-content>
+        <div style="display: flex">
+          <mat-card-title style="flex: 1">
+            {{ calendar.name }}
+          </mat-card-title>
+          <button mat-icon-button [matMenuTriggerFor]="budgetMenu" (click)="handleMenuClick($event, calendar)">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    }
+  </div>
+  <!-- Create calendar button -->
+  <div class="sticky-footer">
+    <button class="footer-button" routerLink="create" mat-button mat-raised-button color="primary">
+      <mat-icon>add</mat-icon>
+      {{ 'Create Calendar' | translate }}
     </button>
   </div>
-  <h2>{{ 'Categories' | translate }}</h2>
-  <div class="categories-list">
-    <div class="categories-item">{{ 'Crops' | translate }}</div>
-  </div>
-  <h2>{{ 'Calendar Lists' | translate }}</h2>
-  <div class="calendar-list">
-    <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">{{ 'No available calendars' | translate }}</div>
-    <!-- map calenders -->
-    <div *ngIf="dbCalendars.length > 0" class="items-container">
-      <div *ngFor="let calendar of dbCalendars; let i = index" class="calendars-display">
-        <div (click)="editMode !== i ? redirectToCalendarTable(calendar.ID) : null" style="flex: 1">
-          <div *ngIf="editMode !== i; else editField">
-            {{ calendar.name }}
-          </div>
-          <ng-template #editField>
-            <input class="inputField" type="text" [(ngModel)]="calendar.name" />
-          </ng-template>
-        </div>
-        <ng-template #editField>
-          <input class="inputField" type="text" [(ngModel)]="calendar.name" />
-        </ng-template>
-
-        <div class="actions-section">
-          <div>
-            <button
-              *ngIf="editMode === i"
-              (click)="saveUpdates(calendar)"
-              class=""
-              mat-button
-              mat-raised-button
-              color="primary"
-            >
-              {{ 'Save' | translate }}
-            </button>
-            <mat-icon (click)="editMode = i" *ngIf="editMode !== i">edit</mat-icon>
-          </div>
-          <mat-icon class="custom-trash-icon" (click)="promptDelete(i)">delete</mat-icon>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
+
+<!-- Popup menu -->
+<mat-menu #budgetMenu="matMenu">
+  <button mat-menu-item aria-label="Copy" (click)="copyCalendar()">
+    <mat-icon svgIcon="picsa_copy"></mat-icon>Copy
+  </button>
+  <button mat-menu-item aria-label="Delete" color="light" (click)="promptDelete()">
+    <mat-icon svgIcon="picsa_delete">Delete</mat-icon>
+    Delete
+  </button>
+</mat-menu>

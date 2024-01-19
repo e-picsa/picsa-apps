@@ -1,71 +1,15 @@
-.page-content {
-    display: flex;
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-    .create-button {
-      position: absolute;
-      right: 50px;
-    }
-  
-    h2 {
-      margin-top: 30px;
-    }  
-    .categories-list {
-      display: flex;
-      flex-direction: row;
-      padding-left: 1rem;
-    }
-    .categories-item{
-        color: var(--color-primary);
-        border: 1px solid var(--color-primary);
-        border-radius: 5px;
-        padding: .4rem;
-    }
-  
-    .calendar-list {
-      width: 100%;
-      align-items: center;
-      display: flex; 
-    }
-    .feedbackMessage{
-        display: block;
-        text-align: center;
-        width: 100%;
-    }
-    .items-containe{
-      width: 100%;
-    }
-    .calendars-display {
-      width: 90vw;
-      padding-left: 1rem;
-      padding-bottom: 0.5rem;
-      color: #000; 
-      font-size: 23px;
-      font-weight: 600;
-      position: relative;
-      border-bottom: 1px solid #000;
-      margin-bottom: 1rem;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      padding-right: 2rem;
-      cursor: pointer;
-    }
-    .actions-section{
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
-    }
-    .inputField{
-      padding: .5rem;
-      width: 14rem;
-      font-size: 16px;
-      border-radius: 5px;
-  } 
-  .custom-trash-icon {
-    color: red; 
-  }
-  
-  }
-  
+.calendar-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+}
+.feedbackMessage {
+  text-align: center;
+}
+
+mat-card.calendars-display {
+  display: flex;
+  cursor: pointer;
+  width: 100%;
+}
