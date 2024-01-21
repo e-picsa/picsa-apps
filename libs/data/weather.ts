@@ -12,6 +12,9 @@ type IWeatherName = keyof typeof WeatherNameLabels;
 
 export const WEATHER_DATA = Object.entries(WeatherNameLabels).map(([name, label]) => ({
   name: name as IWeatherName,
-  label,
-  icon: `assets/svgs/weather/${name}.svg`,
+  label: label as string,
+  /** Path to shared-assets icon */
+  assetIcon: `assets/svgs/weather/${name}.svg`,
+  /** Name of icon to register within mat-icon registry */
+  svgIcon: `picsa_weather_${name}`,
 }));
