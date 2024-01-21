@@ -19,6 +19,11 @@
           "apps/picsa-tools/seasonal-calendar-tool/src/favicon.ico",
           "apps/picsa-tools/seasonal-calendar-tool/src/assets",
           {
+            "glob": "**/*",
+            "input": "libs/shared-assets/svgs/weather",
+            "output": "assets/svgs/weather"
+          },
+          {
             "glob": "*.json",
             "input": "libs/i18n/assets",
             "output": "assets/i18n"

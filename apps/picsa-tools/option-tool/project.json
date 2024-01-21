@@ -18,6 +18,12 @@
         "assets": [
           "apps/picsa-tools/option-tool/src/favicon.ico",
           "apps/picsa-tools/option-tool/src/assets",
+
+          {
+            "glob": "*.svg",
+            "input": "libs/assets/shared-assets/svgs/weather",
+            "output": "assets/svgs/weather"
+          },
           {
             "glob": "*.json",
             "input": "libs/i18n/assets",

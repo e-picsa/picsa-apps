@@ -25,12 +25,13 @@ export class OptionMaterialModule {
       close: 'close',
       female: 'female',
       male: 'male',
-      rain_high: 'rain-high',
-      rain_low: 'rain-low',
-      rain_medium: 'rain-medium',
-      rain_high_label: 'rain-high-label',
-      rain_low_label: 'rain-low-label',
-      rain_medium_label: 'rain-medium-label',
+      // NOTE - weather icons are copied from shared-assets via project.json
+      rain_high: 'weather/rain_high',
+      rain_low: 'weather/rain_low',
+      rain_medium: 'weather/rain_medium',
+      rain_high_label: 'weather/rain_high_label',
+      rain_low_label: 'weather/rain_low_label',
+      rain_medium_label: 'weather/rain_medium_label',
       risks: 'risks',
     };
     for (const [key, value] of Object.entries(icons)) {
