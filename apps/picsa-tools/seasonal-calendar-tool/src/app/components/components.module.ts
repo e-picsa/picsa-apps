@@ -10,9 +10,8 @@ import { ActivitiesEditorDialogComponent } from './activities-editor-dialog/acti
 import { CropDialogComponent } from './crop-dialog-component/crop-dialog-component.component';
 // Local components
 import { SeasonalCalendarMaterialModule } from './material.module';
-import { MonthDialogComponent } from './month-editor-dialog/crop-dialog-component.component';
 
-const Components = [CropDialogComponent, ActivitiesEditorDialogComponent, MonthDialogComponent];
+const Components = [CropDialogComponent, ActivitiesEditorDialogComponent];
 
 @NgModule({
   imports: [

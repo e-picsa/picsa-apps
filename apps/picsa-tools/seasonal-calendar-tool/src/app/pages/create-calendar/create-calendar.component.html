@@ -30,16 +30,7 @@
       <div>
         <mat-form-field>
           <mat-label>{{ 'Number of Months' | translate }}</mat-label>
-          <input
-            matInput
-            type="number"
-            #totalMonths
-            (change)="setTimePeriod(monthSelect.value, totalMonths.value)"
-            [value]="formValue.timeAndConditions.length || ''"
-            min="1"
-            max="12"
-            [formNoValidate]=""
-          />
+          <input matInput type="number" #totalMonths (change)="setTimePeriod(monthSelect.value, totalMonths.value)" />
         </mat-form-field>
         <!-- error message outside form field as not bound to specific controller but more a general error -->
         @if(form.controls.timeAndConditions.touched && form.controls.timeAndConditions.errors){

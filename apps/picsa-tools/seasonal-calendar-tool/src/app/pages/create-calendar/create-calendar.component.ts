@@ -39,6 +39,8 @@ export class CreateCalendarComponent implements OnInit {
       const start = parseInt(startInput);
       const total = parseInt(totalInput);
       this.formService.setFormTimeAndConditions(start, total);
+    } else {
+      this.formService.setFormTimeAndConditions(0, 0);
     }
   }
 
