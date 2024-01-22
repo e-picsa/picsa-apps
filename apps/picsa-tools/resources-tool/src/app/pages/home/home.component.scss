@@ -18,6 +18,15 @@
 }
 .downloads-button {
   height: 36px;
+  margin-left: 20px;
+  mat-icon {
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+  }
+}
+.search-button {
+  height: 36px;
   mat-icon {
     height: 24px;
     width: 24px;

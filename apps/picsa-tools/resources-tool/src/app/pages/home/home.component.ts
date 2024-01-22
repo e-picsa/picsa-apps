@@ -11,7 +11,9 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
 export class HomeComponent implements OnInit {
   public collections: IResourceCollection[];
 
-  constructor(public service: ResourcesToolService) {}
+  constructor(public service: ResourcesToolService) {
+    console.log("search",this.collections)
+  }
 
   async ngOnInit() {
     await this.service.ready();

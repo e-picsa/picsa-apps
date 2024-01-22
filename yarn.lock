@@ -12907,6 +12907,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fuse.js@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "fuse.js@npm:7.0.0"
+  checksum: d15750efec1808370c0cae92ec9473aa7261c59bca1f15f1cf60039ba6f804b8f95340b5cabd83a4ef55839c1034764856e0128e443921f072aa0d8a20e4cacf
+  languageName: node
+  linkType: hard
+
 "generate-function@npm:^2.0.0":
   version: 2.3.1
   resolution: "generate-function@npm:2.3.1"
@@ -17651,6 +17658,7 @@ __metadata:
     firebase: ^9.16.0
     form-data: ^4.0.0
     fs-extra: ^10.1.0
+    fuse.js: ^7.0.0
     glob: ^8.1.0
     hls.js: ^1.4.12
     html2canvas: ^1.4.1

@@ -73,8 +73,7 @@ export class CollectionComponent implements OnInit, OnDestroy {
     this.collections = this.processDocs(collectionDocs);
     const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
     this.files = this.processDocs(fileDocs);
-  }
-
+  } 
   private processDocs(docs: Map<string, RxDocument<any>>) {
     const entries = [...docs.values()];
     return this.service.filterLocalisedResources(entries).map((d) => d._data);

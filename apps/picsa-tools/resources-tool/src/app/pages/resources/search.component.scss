@@ -1,0 +1,50 @@
+.form-control {
+  width: 50%;
+  padding: 10px;
+  border: 2px solid maroon; 
+  border-radius: 10px; 
+  box-sizing: border-box;
+  font-size: 16px;
+  margin-top: 50px;
+  margin-left: auto; 
+  margin-right: auto;
+  display: block;
+}
+  
+  .form-control:focus {
+    outline: none;
+    border-color: maroon; 
+    box-shadow: 0 0 5px maroon(0, 123, 255, 0.5);
+  }
+  
+  
+  .form-control:focus {
+    outline: none; 
+    box-shadow: 0 0 5px maroon; 
+  }
+
+  .card {
+    width: 50%;
+    border: 1px solid maroon;
+    border-radius: 10px;
+    margin-left: auto; 
+    margin-right: auto; 
+    margin-top: 10px;/* Center the card below the search engine */
+    padding: 10px;
+    box-sizing: border-box;
+    display: block;
+    background-color: white;
+  }
+  
+  .card-content {
+    font-size: 16px;
+    color: maroon;
+    font-weight: bold;
+  }
+  
+  
+  /* Optional: Hover effect for better user experience */
+  .card:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
