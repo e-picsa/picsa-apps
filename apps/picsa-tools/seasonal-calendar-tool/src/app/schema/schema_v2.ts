@@ -1,4 +1,3 @@
-import { MONTH_NAMES } from '@picsa/data';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
@@ -12,8 +11,7 @@ export const CALENDAR_ENTRY_MOCK_v2: CalendarDataEntry_v2 = {
   },
   weather: ['sunny', 'cloudy'],
   meta: {
-    startMonth: 4,
-    timePeriods: 2,
+    months: ['march', 'april'],
     crops: ['cassava'],
   },
 };
@@ -27,8 +25,7 @@ export interface CalendarDataEntry_v2 {
   };
   weather: string[];
   meta: {
-    startMonth: number;
-    timePeriods: number;
+    months: string[];
     crops: string[];
   };
 }
@@ -55,8 +52,7 @@ export const SCHEMA_V2: RxJsonSchema<CalendarDataEntry_v2> = {
     meta: {
       type: 'object',
       properties: {
-        startMonth: { type: 'integer' },
-        timePeriods: { type: 'integer' },
+        months: { type: 'array', items: { type: 'string' } },
         crops: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -74,7 +70,6 @@ export const COLLECTION_V2: IPicsaCollectionCreator<CalendarDataEntry_v2> = {
     ...COLLECTION_V1.migrationStrategies,
     2: (data: CalendarDataEntry_v1): CalendarDataEntry_v2 => {
       const { crops, ID, name, timeAndConditions } = data;
-      const startMonth = MONTH_NAMES.findIndex(({ id }) => id === timeAndConditions[0]?.month) || 0;
       const activities: Record<string, string[]> = {};
       for (const crop of crops) {
         activities[crop.name] = crop.months.map((c) => c.activities[0] || '');
@@ -84,8 +79,7 @@ export const COLLECTION_V2: IPicsaCollectionCreator<CalendarDataEntry_v2> = {
         name,
         activities,
         meta: {
-          startMonth,
-          timePeriods: timeAndConditions.length,
+          months: timeAndConditions.map((t) => t.month),
           crops: crops.map((c) => c.name),
         },
         weather: timeAndConditions.map(({ weather }) => weather),

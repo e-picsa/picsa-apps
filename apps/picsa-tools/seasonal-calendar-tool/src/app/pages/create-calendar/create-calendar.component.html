@@ -16,25 +16,25 @@
   <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   }
 
-  <!-- Calendar Start and Total -->
+  <!-- Months generators -->
   <div>
     <h2>{{ 'Calendar Time' | translate }}</h2>
     <div class="calender-box">
       <mat-form-field>
         <mat-label>{{ 'Start Month ' | translate }} :</mat-label>
-        <mat-select id="startMonth" [formControl]="metaFormControls.startMonth">
+        <mat-select id="startMonth" [formControl]="monthForm.controls.startIndex">
           <mat-option *ngFor="let month of months; index as i" [value]="i">{{ month.label | translate }}</mat-option>
         </mat-select>
         <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{ 'Number of Months' | translate }}</mat-label>
-        <input matInput type="number" [formControl]="metaFormControls.timePeriods" />
+        <input matInput type="number" [formControl]="monthForm.controls.totalCount" />
         <mat-error>{{ 'Please enter total months' | translate }}</mat-error>
       </mat-form-field>
     </div>
     <div class="calendar-summary">
-      @for (month of monthPreview; track $index) {
+      @for (month of formValue.meta.months; track $index) {
       <div>{{ month | translate }}</div>
       }
     </div>

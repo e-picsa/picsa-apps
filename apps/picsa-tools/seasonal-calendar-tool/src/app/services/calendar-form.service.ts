@@ -5,7 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../schema';
 
-export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['create']>;
+export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createFormTemplate']>;
 
 /**
  * The seasonal calendar form service handles logic for interacting with seasonal calendar
@@ -20,6 +20,7 @@ export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['create']
  */
 @Injectable({ providedIn: 'root' })
 export class SeasonCalendarFormService {
+  /** Main form for tracking state of season calendar data */
   public form: ISeasonCalendarForm;
 
   /** Subscribable form used to remove form event subscriptions */
@@ -37,11 +38,14 @@ export class SeasonCalendarFormService {
   /** Create an angular form for tracking seasonal calendar data */
   public create(values: Partial<CalendarDataEntry> = {}) {
     const form = this.createFormTemplate();
-    form.patchValue(values);
     this.formCreated$.next(form);
     this.form = form;
+    // ensure changes subscribed to first to correctly patch controls on load
     this.subscribeToFormChanges();
-    return form;
+
+    // TODO - ensure initial values populate and reload
+    this.form.patchValue(values);
+    return this.form;
   }
 
   /** Initialise a form with bindings for all required db fields */
@@ -52,14 +56,10 @@ export class SeasonCalendarFormService {
       activities: this.generateActivityFormControls([], 0),
       weather: this.generateWeatherFormControls(0),
       meta: this.fb.nonNullable.group({
-        startMonth: new FormControl<number>(null as any, {
-          validators: [Validators.required, Validators.min(0)],
-          nonNullable: true,
-        }),
-        timePeriods: new FormControl<number>(null as any, {
-          validators: [Validators.required, Validators.min(0)],
-          nonNullable: true,
-        }),
+        months: new FormControl<string[]>(
+          { value: [], disabled: false },
+          { nonNullable: true, validators: [Validators.required] }
+        ),
         crops: new FormControl<string[]>(
           { value: [], disabled: false },
           { nonNullable: true, validators: [Validators.required] }
@@ -74,28 +74,31 @@ export class SeasonCalendarFormService {
    * All subscriptions are maintained until next form creation via `takeUntil` pipe
    * */
   private subscribeToFormChanges() {
-    const { crops, timePeriods } = this.form.controls.meta.controls;
+    const { crops, months } = this.form.controls.meta.controls;
+
     // When user changes crops ensure activity entries produced
     crops.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((value) => {
-      const controls = this.generateActivityFormControls(value, timePeriods.value);
+      const controls = this.generateActivityFormControls(value, months.value.length);
       this.form.setControl('activities', controls);
     });
 
     // When user changes time periods ensure weather and activities have correct number
     // of available entries for the time periods
-    // TODO - could consider how to migrate existing data if enabling metadata edit
-    timePeriods.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((value) => {
-      const weatherControls = this.generateWeatherFormControls(value);
+    months.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((monthNames) => {
+      const weatherControls = this.generateWeatherFormControls(monthNames.length);
       this.form.setControl('weather', weatherControls);
-      const activityControls = this.generateActivityFormControls(crops.value, value);
+      const activityControls = this.generateActivityFormControls(crops.value, monthNames.length);
       this.form.setControl('activities', activityControls);
     });
   }
 
   /** Create form controls to store weather responses (string array) for the specified time periods */
   private generateWeatherFormControls(timePeriods: number = 0) {
-    const controls = new Array(timePeriods).fill(new FormControl(''));
-    return this.fb.nonNullable.array<string>(controls, Validators.required);
+    const array = this.fb.nonNullable.array<string>([], Validators.required);
+    for (let i = 0; i < timePeriods; i++) {
+      array.push(new FormControl('', { nonNullable: true }));
+    }
+    return array;
   }
 
   /**
@@ -106,8 +109,11 @@ export class SeasonCalendarFormService {
   private generateActivityFormControls(headings: string[] = [], timePeriods: number = 0) {
     const group: { [id: string]: FormArray<FormControl<string>> } = {};
     for (const heading of headings) {
-      const controls = new Array(timePeriods).fill(new FormControl(''));
-      group[heading] = this.fb.nonNullable.array<string>(controls, Validators.required);
+      const array = this.fb.nonNullable.array<string>([], Validators.required);
+      for (let i = 0; i < timePeriods; i++) {
+        array.push(new FormControl('', { nonNullable: true }));
+      }
+      group[heading] = array;
     }
     return this.fb.group(group);
   }
