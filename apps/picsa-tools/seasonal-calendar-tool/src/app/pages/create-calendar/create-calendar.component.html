@@ -1,5 +1,8 @@
+@if(form){
 <form class="page-content" [formGroup]="form">
   <h2>{{ 'Calender name' | translate }}</h2>
+
+  <!-- Name -->
   <mat-form-field>
     <mat-label>{{ 'Name' | translate }}</mat-label>
     <input matInput formControlName="name" [placeholder]="'Example Calendar' | translate" />
@@ -8,39 +11,31 @@
 
   <!-- Crops -->
   <h2>{{ 'Season Crops' | translate }}</h2>
-  <picsa-form-crop-select formControlName="crops"></picsa-form-crop-select>
-  @if(form.controls.crops.touched && form.controls.crops.errors){
+  <picsa-form-crop-select [formControl]="metaFormControls.crops"></picsa-form-crop-select>
+  @if(metaFormControls.crops.touched && metaFormControls.crops.errors){
   <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   }
 
-  <!-- Calendar Time -->
+  <!-- Calendar Start and Total -->
   <div>
     <h2>{{ 'Calendar Time' | translate }}</h2>
     <div class="calender-box">
       <mat-form-field>
         <mat-label>{{ 'Start Month ' | translate }} :</mat-label>
-        <mat-select
-          id="startMonth"
-          #monthSelect
-          (selectionChange)="setTimePeriod(monthSelect.value, totalMonths.value)"
-        >
+        <mat-select id="startMonth" [formControl]="metaFormControls.startMonth">
           <mat-option *ngFor="let month of months; index as i" [value]="i">{{ month.label | translate }}</mat-option>
         </mat-select>
+        <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
       </mat-form-field>
-      <div>
-        <mat-form-field>
-          <mat-label>{{ 'Number of Months' | translate }}</mat-label>
-          <input matInput type="number" #totalMonths (change)="setTimePeriod(monthSelect.value, totalMonths.value)" />
-        </mat-form-field>
-        <!-- error message outside form field as not bound to specific controller but more a general error -->
-        @if(form.controls.timeAndConditions.touched && form.controls.timeAndConditions.errors){
-        <mat-error>{{ 'Please enter start and total months' | translate }}</mat-error>
-        }
-      </div>
+      <mat-form-field>
+        <mat-label>{{ 'Number of Months' | translate }}</mat-label>
+        <input matInput type="number" [formControl]="metaFormControls.timePeriods" />
+        <mat-error>{{ 'Please enter total months' | translate }}</mat-error>
+      </mat-form-field>
     </div>
     <div class="calendar-summary">
-      @for (item of formValue.timeAndConditions; track $index) {
-      <div>{{ monthsByID[item.month].label | translate }}</div>
+      @for (month of monthPreview; track $index) {
+      <div>{{ month | translate }}</div>
       }
     </div>
   </div>
@@ -50,3 +45,4 @@
     </button>
   </div>
 </form>
+}
