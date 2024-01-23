@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconRegistry } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -15,6 +16,7 @@ const COMPONENTS = [
   MatCardModule,
   MatDialogModule,
   MatIconModule,
+  MatInputModule,
   MatMenuModule,
   MatSelectModule,
   MatStepperModule,
