@@ -29,11 +29,22 @@
 
 <!-- Popup menu -->
 <mat-menu #budgetMenu="matMenu">
-  <button mat-menu-item aria-label="Copy" (click)="copyCalendar()">
+  <button mat-menu-item aria-label="Copy" (click)="dialog.open(copyDialog)">
     <mat-icon svgIcon="picsa_copy"></mat-icon>Copy
   </button>
   <button mat-menu-item aria-label="Delete" color="light" (click)="promptDelete()">
-    <mat-icon svgIcon="picsa_delete">Delete</mat-icon>
+    <mat-icon svgIcon="picsa_delete">{{ 'Delete' | translate }}</mat-icon>
     Delete
   </button>
 </mat-menu>
+
+<!-- Copy Dialog -->
+<ng-template #copyDialog>
+  <mat-form-field>
+    <mat-label>{{ 'Name' | translate }}</mat-label>
+    <input matInput type="text" [formControl]="calendarCopyForm.controls.name" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="saveCopy()">
+    <mat-icon>copy</mat-icon>{{ 'Save Copy' | translate }}
+  </button>
+</ng-template>

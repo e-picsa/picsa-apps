@@ -1,10 +1,12 @@
 import { Component, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
-import { RxDocumentData } from 'rxdb';
+import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../../schema';
+import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
@@ -14,13 +16,19 @@ import { SeasonCalenderService } from './../../services/calender.data.service';
 })
 export class HomeComponent implements OnDestroy {
   /** Track current calendar selected from editing from menu popup */
-  editableCalendar: CalendarDataEntry;
+  public calendarCopyForm: ISeasonCalendarForm;
+  public calendarDeleteDoc: RxDocument<CalendarDataEntry>;
 
   private componentDestroyed$ = new Subject();
 
-  public dbCalendars: RxDocumentData<CalendarDataEntry>[] = [];
+  public dbCalendars: RxDocument<CalendarDataEntry>[] = [];
 
-  constructor(private service: SeasonCalenderService, private dialogService: PicsaDialogService) {
+  constructor(
+    private service: SeasonCalenderService,
+    public dialog: MatDialog,
+    private dialogService: PicsaDialogService,
+    private formService: SeasonCalendarFormService
+  ) {
     this.subscribeToDbChanges();
   }
 
@@ -29,31 +37,32 @@ export class HomeComponent implements OnDestroy {
     this.componentDestroyed$.complete();
   }
 
-  public handleMenuClick(e: Event, calendar: CalendarDataEntry) {
+  /** When opening action menu ensure active calendar saved to track with dialog actions */
+  public handleMenuClick(e: Event, calendar: RxDocument<CalendarDataEntry>) {
     e.stopPropagation();
-    this.editableCalendar = calendar;
+    this.calendarDeleteDoc = calendar;
+    this.calendarCopyForm = this.formService.create({ ...calendar._data, ID: generateID() });
   }
 
   public async promptDelete() {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
-        await this.service.deleteCalenderByName(this.editableCalendar.name);
+        await this.calendarDeleteDoc.remove();
       }
     });
   }
 
-  public async copyCalendar() {
-    const calendarCopy = { ...this.editableCalendar, id: generateID() };
-    await this.service.addORUpdateData(calendarCopy, 'add');
+  public async saveCopy() {
+    await this.service.save(this.calendarCopyForm.getRawValue());
+    this.dialog.closeAll();
   }
 
   private async subscribeToDbChanges() {
     await this.service.ready();
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      const extractedData = docs.map((doc) => doc._data);
-      this.dbCalendars = extractedData;
+      this.dbCalendars = docs;
     });
   }
 }
