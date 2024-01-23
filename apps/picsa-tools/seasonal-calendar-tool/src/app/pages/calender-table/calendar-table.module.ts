@@ -1,30 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { SeasonalCalendarToolComponentsModule } from '../../components/components.module';
-import { SeasonalCalendarMaterialModule } from '../../components/material.module';
 import { CalendarTableComponent } from './calendar-table.component';
-import { CalendarTableRoutingModule } from './calendar-table.routing.module';
+
+const routes: Routes = [
+  {
+    path: ':id',
+    component: CalendarTableComponent,
+  },
+];
 
 @NgModule({
   declarations: [CalendarTableComponent],
   imports: [
     CommonModule,
-    MatIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forChild(routes),
     PicsaFormsModule,
     PicsaTranslateModule,
-    SeasonalCalendarMaterialModule,
     SeasonalCalendarToolComponentsModule,
-    FormsModule,
-    PicsaVideoPlayerModule,
-    MatButtonModule,
-    CalendarTableRoutingModule,
-    PicsaFormsModule,
   ],
 })
 export class CalenderTableModule {}
