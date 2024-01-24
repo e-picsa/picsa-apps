@@ -1,0 +1,60 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IPicsaDataWithIcons } from '../models';
+
+export const CROP_ACTIVITY_HASHMAP = {
+  fertiliser_apply: { label: translateMarker('Apply Fertiliser') },
+  land_preparation: { label: translateMarker('Land Preparation') },
+  sowing: { label: translateMarker('Sowing') },
+  watering: { label: translateMarker('Watering') },
+  weeding: { label: translateMarker('Weeding') },
+} as const;
+
+// Extract list of available weather names
+type CropActivityName = keyof typeof CROP_ACTIVITY_HASHMAP;
+
+// TODO - migrate budget tool to use
+// TODO - organise all data in similar format and add documentation about storing/using images
+
+export const CROP_ACTIVITY_DATA = Object.entries(CROP_ACTIVITY_HASHMAP).map(([id, { label }]) => {
+  const data: IPicsaDataWithIcons = {
+    assetIconPath: `assets/svgs/crop_activity/${id}.svg`,
+    label: label as string,
+    svgIcon: `picsa_crop_activity_${id}`,
+  };
+  return {
+    id: id as CropActivityName,
+    ...data,
+  };
+});
+
+// TODO - should ideally migrate budget and include mapped options
+/**
+ [ 'build-housing',
+  'dipping',
+  'feeding-livestock',
+  'provide-supplements',
+  'provide-water',
+  'relocation',
+  'transport-livestock',
+  'vaccinate',
+  'apply-fertiliser',
+  'apply-pesticide',
+  'bagging',
+  'banding',
+  'compost-manure-making',
+  'harvesting',
+  'land-clearing',
+  'mulching',
+  'ploughing',
+  'post-harvest-handling',
+  'shelling',
+  'sowing',
+  'storage',
+  'threshing',
+  'transport',
+  'watering',
+  'weeding',
+  'marketing-and-selling',
+  'value-addition',
+  'purchase' ]
+ */
