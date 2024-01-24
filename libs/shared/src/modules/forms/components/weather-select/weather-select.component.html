@@ -14,8 +14,8 @@
 <!-- Dialog -->
 <ng-template #inputDialog>
   <div class="select-container">
-    @for(option of selectOptions; track option.name){
-    <div class="option-container" [attr.data-selected]="option.name === selected" (click)="selected = option.name">
+    @for(option of selectOptions; track option.id){
+    <div class="option-container" [attr.data-selected]="option.id === selected" (click)="selected = option.id">
       <div class="weather-label">{{ option.label | translate }}</div>
       <mat-icon class="weather-icon" [svgIcon]="option.svgIcon"></mat-icon>
     </div>

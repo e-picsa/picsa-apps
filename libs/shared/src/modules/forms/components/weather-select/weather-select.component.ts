@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { WEATHER_DATA } from '@picsa/data/weather';
-import { arrayToHashmap } from '@picsa/utils';
+import { WEATHER_DATA, WEATHER_DATA_HASHMAP } from '@picsa/data/weather';
 
 /** Accessor used for binding with ngModel or formgroups */
 export const CONTROL_VALUE_ACCESSOR: Provider = {
@@ -20,6 +19,10 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   multi: true,
 };
 
+/**
+ * Form control to allow visual selection of weather condition
+ * Displays options in a popup and allows single selection
+ */
 @Component({
   selector: 'picsa-form-weather-select',
   templateUrl: './weather-select.component.html',
@@ -30,7 +33,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
 export class FormWeatherSelectComponent {
   protected selectOptions = WEATHER_DATA;
 
-  private optionsById = arrayToHashmap(WEATHER_DATA, 'name');
+  private optionsById = WEATHER_DATA_HASHMAP;
 
   /** Selected value binding */
   @Input()
