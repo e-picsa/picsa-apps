@@ -1,7 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
-import { registerEmbeddedRoutes } from '@picsa/utils';
+import { registerEmbeddedRoutes } from '@picsa/utils/angular';
 
 import { AppComponentEmbedded } from './app.component';
 import { APP_COMMON_IMPORTS } from './app.module';

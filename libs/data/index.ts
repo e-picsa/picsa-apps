@@ -5,5 +5,7 @@ export * from './days';
 export * from './months';
 export * from './weather';
 
-// Services
-export { DataIconRegistry } from './iconRegistry';
+// NOTE - do not include top-level export as angular esm modules
+// break ts-node used in yarn:i18n
+
+// export { DataIconRegistry } from './iconRegistry';

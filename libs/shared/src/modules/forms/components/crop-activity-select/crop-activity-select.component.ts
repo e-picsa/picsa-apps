@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP, DataIconRegistry } from '@picsa/data';
+import { CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP } from '@picsa/data';
 
 /** Accessor used for binding with ngModel or formgroups */
 export const CONTROL_VALUE_ACCESSOR: Provider = {

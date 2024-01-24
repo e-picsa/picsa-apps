@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { DataIconRegistry } from '@picsa/data';
+import { DataIconRegistry } from '@picsa/data/iconRegistry';
 
 import { PicsaTranslateModule } from '../translate';
 import { PICSA_FORM_COMPONENTS } from './components';

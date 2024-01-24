@@ -2,7 +2,7 @@ import { NavigationEnd } from '@angular/router';
 import type { ActivatedRoute, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
-export function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
+function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
   if (parentModule) {
     throw new Error(`${moduleName} has already been loaded. Import ${moduleName} in the AppModule only.`);
   }

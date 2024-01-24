@@ -1,6 +1,6 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IPicsaDataWithIcons } from '../models';
-import { arrayToHashmap } from '@picsa/utils';
+import { arrayToHashmap } from '@picsa/utils/data';
 
 const CROP_ACTIVITY_BASE = {
   fertiliser_apply: { label: translateMarker('Apply Fertiliser') },
