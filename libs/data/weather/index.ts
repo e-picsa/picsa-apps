@@ -7,6 +7,10 @@ export const WEATHER_DATA_HASHMAP = {
   rain_low: { label: translateMarker('Light Rain') },
   rain_medium: { label: translateMarker('Rain') },
   rain_high: { label: translateMarker('Heavy Rain') },
+  // basic icon-only variants
+  rain_low_label: { label: '' },
+  rain_medium_label: { label: '' },
+  rain_high_label: { label: '' },
 } as const;
 
 // Extract list of available weather names

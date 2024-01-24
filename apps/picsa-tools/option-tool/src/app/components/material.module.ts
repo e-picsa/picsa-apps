@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DataIconRegistry } from '@picsa/data';
 
 const COMPONENTS = [MatButtonModule, MatDialogModule, MatIconModule, MatSelectModule, MatStepperModule, MatTableModule];
 // use custom module to make it easier to control what is available through app
@@ -15,8 +16,14 @@ const COMPONENTS = [MatButtonModule, MatDialogModule, MatIconModule, MatSelectMo
   exports: COMPONENTS,
 })
 export class OptionMaterialModule {
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+    dataIconRegistry: DataIconRegistry
+  ) {
     this.registerIcons();
+    // register additional icons provided from shared data lib
+    dataIconRegistry.registerMatIcons('weather');
   }
   // register custom icons from the assets/svgs folder for access within the app
   // icons can be accessed in mat-icon as svgIcon='station_data_${key}'
@@ -25,12 +32,6 @@ export class OptionMaterialModule {
       close: 'close',
       female: 'female',
       male: 'male',
-      rain_high: 'rain-high',
-      rain_low: 'rain-low',
-      rain_medium: 'rain-medium',
-      rain_high_label: 'rain-high-label',
-      rain_low_label: 'rain-low-label',
-      rain_medium_label: 'rain-medium-label',
       risks: 'risks',
     };
     for (const [key, value] of Object.entries(icons)) {
