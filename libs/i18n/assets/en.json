@@ -371,8 +371,19 @@
   "Size": "Size",
   "Title": "Title",
   "Type": "Type",
+  "Calendar Time": "Calendar Time",
+  "Calender name": "Calender name",
   "Create Calendar": "Create Calendar",
+  "Create calender": "Create calender",
+  "Example Calendar": "Example Calendar",
   "No saved calendars": "No saved calendars",
+  "Number of Months": "Number of Months",
+  "Please add the calender title": "Please add the calender title",
+  "Please enter start month": "Please enter start month",
+  "Please enter total months": "Please enter total months",
+  "Please select at least 1 crop": "Please select at least 1 crop",
   "Save Copy": "Save Copy",
-  "Saved Calendars": "Saved Calendars"
+  "Saved Calendars": "Saved Calendars",
+  "Season Crops": "Season Crops",
+  "Start Month ": "Start Month "
 }

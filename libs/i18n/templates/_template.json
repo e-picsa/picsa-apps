@@ -1626,11 +1626,47 @@
     "tool": "resources"
   },
   {
+    "text": "Calendar Time",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Calender name",
+    "tool": "seasonal-calendar"
+  },
+  {
     "text": "Create Calendar",
     "tool": "seasonal-calendar"
   },
   {
+    "text": "Create calender",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Example Calendar",
+    "tool": "seasonal-calendar"
+  },
+  {
     "text": "No saved calendars",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Number of Months",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please add the calender title",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please enter start month",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please enter total months",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please select at least 1 crop",
     "tool": "seasonal-calendar"
   },
   {
@@ -1639,6 +1675,14 @@
   },
   {
     "text": "Saved Calendars",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Season Crops",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Start Month ",
     "tool": "seasonal-calendar"
   }
 ]
