@@ -31,9 +31,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormWeatherSelectComponent {
-  protected selectOptions = WEATHER_DATA;
-
-  private optionsById = WEATHER_DATA_HASHMAP;
+  protected selectOptions = WEATHER_DATA.filter((w) => w.label !== '');
 
   /** Selected value binding */
   @Input()
@@ -51,9 +49,9 @@ export class FormWeatherSelectComponent {
       }
     }
   }
-
-  protected get selectedIconValue() {
-    return this.optionsById[this.selected || '_none']?.svgIcon || '';
+  /** Get full selected entry data */
+  protected get selectedData() {
+    return WEATHER_DATA_HASHMAP[this.selected];
   }
 
   /** Additional event emitter to allow manual bind to <gender-input (selectedChange) /> event*/

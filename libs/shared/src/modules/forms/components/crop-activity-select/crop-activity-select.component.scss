@@ -1,5 +1,5 @@
 .display-container {
-  height: 48px;
+  height: 64px;
 }
 
 .select-container {
@@ -25,7 +25,7 @@
   background-color: var(--color-primary);
 }
 
-.weather-label {
+.option-label {
   height: 2rem;
   display: flex;
   text-align: center;
@@ -34,8 +34,8 @@
   overflow: auto;
   line-height: 1rem;
 }
-mat-icon.weather-icon {
-  width: 48px;
-  height: 48px;
-  font-size: 48px;
+mat-icon.option-icon {
+  width: 64px;
+  height: 64px;
+  font-size: 64px;
 }

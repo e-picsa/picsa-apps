@@ -33,8 +33,6 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
 export class FormCropActivitySelectComponent {
   protected selectOptions = CROP_ACTIVITY_DATA;
 
-  private optionsById = CROP_ACTIVITY_HASHMAP;
-
   /** Selected value binding */
   @Input()
   get selected() {
@@ -52,8 +50,9 @@ export class FormCropActivitySelectComponent {
     }
   }
 
-  protected get selectedIconValue() {
-    return this.optionsById[this.selected || '_none']?.svgIcon || '';
+  /** Get full selected entry data */
+  protected get selectedData() {
+    return CROP_ACTIVITY_HASHMAP[this.selected];
   }
 
   /** Additional event emitter to allow manual bind to <gender-input (selectedChange) /> event*/
