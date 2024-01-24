@@ -111,7 +111,8 @@ export class SeasonCalendarFormService {
     for (const heading of headings) {
       const array = this.fb.nonNullable.array<string>([], Validators.required);
       for (let i = 0; i < timePeriods; i++) {
-        array.push(new FormControl('', { nonNullable: true }));
+        const initialValue = this.form.value.activities?.[heading]?.[i] || '';
+        array.push(new FormControl(initialValue, { nonNullable: true }));
       }
       group[heading] = array;
     }
