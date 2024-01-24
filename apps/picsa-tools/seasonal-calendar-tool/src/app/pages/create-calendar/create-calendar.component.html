@@ -34,14 +34,14 @@
       </mat-form-field>
     </div>
     <div class="calendar-summary">
-      @for (month of formValue.meta.months; track $index) {
+      @for (month of monthLabels; track $index) {
       <div>{{ month | translate }}</div>
       }
     </div>
   </div>
   <div class="submit-button">
     <button class="" mat-button mat-raised-button (click)="handleSubmit()" color="primary">
-      {{ 'Create calender ' | translate }}
+      {{ 'Create calender' | translate }}
     </button>
   </div>
 </form>

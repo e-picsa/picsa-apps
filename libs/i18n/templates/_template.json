@@ -1,5 +1,9 @@
 [
   {
+    "text": "",
+    "tool": "common_weather"
+  },
+  {
     "text": "apply fertiliser",
     "tool": "budget",
     "context": "activities"
@@ -801,6 +805,26 @@
     "tool": "common"
   },
   {
+    "text": "Apply Fertiliser",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Land Preparation",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Sowing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Watering",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Weeding",
+    "tool": "common_crop_activity"
+  },
+  {
     "text": "Beans",
     "tool": "common_crops"
   },
@@ -1418,6 +1442,10 @@
     "tool": "option"
   },
   {
+    "text": "Add",
+    "tool": "option"
+  },
+  {
     "text": "Add Option",
     "tool": "option"
   },
@@ -1598,43 +1626,7 @@
     "tool": "resources"
   },
   {
-    "text": "Add",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Add Activity",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Calendar Time",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Calender name",
-    "tool": "seasonal-calendar"
-  },
-  {
     "text": "Create Calendar",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Create calender ",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Drying",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Example Calendar",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Extra information",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Harvesting",
     "tool": "seasonal-calendar"
   },
   {
@@ -1642,47 +1634,11 @@
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Number of Months",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Other",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please add the calender title",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Preparation",
+    "text": "Save Copy",
     "tool": "seasonal-calendar"
   },
   {
     "text": "Saved Calendars",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Season Crops",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Select Activity",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Start Month ",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Type other activity",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Weeding",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "weather condition",
     "tool": "seasonal-calendar"
   }
 ]

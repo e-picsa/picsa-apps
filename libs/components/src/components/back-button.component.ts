@@ -12,10 +12,10 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   selector: 'back-button',
   template: `
     <button *ngIf="variant === 'primary'" mat-button color="primary" (click)="back()">
-      <mat-icon>arrow_back</mat-icon>Back
+      <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
     </button>
     <button *ngIf="variant === 'white'" mat-button style="color:white" (click)="back()">
-      <mat-icon>arrow_back</mat-icon>Back
+      <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
     </button>
   `,
 })
