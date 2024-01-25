@@ -1,5 +1,9 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
+// TODO - refactor like weather with enums (or like crop_activity_data)
+
+// TODO - make base data format for name, label, icon to be used in general form select models
+
 /** List of all named crops used for type-checking */
 export const CROPS_DATA = [
   { name: 'beans', label: translateMarker('Beans'), icon: 'assets/svgs/crops/beans.svg' },
