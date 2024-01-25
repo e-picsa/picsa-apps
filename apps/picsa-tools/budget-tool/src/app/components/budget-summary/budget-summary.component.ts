@@ -1,17 +1,27 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { IBudget } from '../../models/budget-tool.models';
+import { IBudgetCardWithValues } from '../../schema';
+
+interface ISummaryEntry {
+  label: string;
+  total: number;
+  id: string;
+  imgPath: string;
+}
+
 @Component({
   selector: 'budget-summary',
   templateUrl: './budget-summary.component.html',
   styleUrls: ['./budget-summary.component.scss'],
 })
 export class BudgetSummaryComponent implements OnInit {
-  @Input() budgetData: any;
+  @Input() budgetData: IBudget['data'];
 
   totalFamilyLabourHours: number = 0;
   totalInputsValue: number = 0;
   totalOutputsValue: number = 0;
-  totalProduceSummary: any[] = [];
+  totalProduceSummary: ISummaryEntry[] = [];
   finalCashBalance: number = 0;
 
   ngOnInit(): void {
@@ -19,7 +29,7 @@ export class BudgetSummaryComponent implements OnInit {
   }
 
   calculateSummary() {
-    this.budgetData.data.forEach((item) => {
+    this.budgetData.forEach((item) => {
       item.familyLabour.forEach((member) => {
         this.totalFamilyLabourHours += member.values.quantity;
       });
@@ -40,7 +50,7 @@ export class BudgetSummaryComponent implements OnInit {
     this.finalCashBalance = this.totalOutputsValue - this.totalInputsValue;
   }
 
-  updateProduceSummary(consumed: any) {
+  updateProduceSummary(consumed: IBudgetCardWithValues) {
     const existingProduce = this.totalProduceSummary.find((p) => p.label === consumed.label);
 
     if (existingProduce) {
@@ -50,7 +60,7 @@ export class BudgetSummaryComponent implements OnInit {
         label: consumed.label,
         total: consumed.values.quantity,
         id: consumed.id,
-        extension: consumed.imgType,
+        imgPath: this.getImagePath(consumed.id, consumed.imgType),
       });
     }
   }
