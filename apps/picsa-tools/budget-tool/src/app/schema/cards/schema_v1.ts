@@ -15,7 +15,7 @@ export type IBudgetCard_v1 = {
   groupings?: IBudgetCardGrouping[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
-  imgType?: 'svg' | 'png';
+  imgType: 'svg' | 'png';
   /** Optional image overide (default used card id) */
   imgId?: string;
   _deleted?: boolean;
@@ -62,6 +62,7 @@ export const ENTRY_TEMPLATE_V1 = (options: {
   return {
     id: generateID(),
     customMeta: { imgData, createdBy: '', dateCreated: new Date().toISOString() },
+    imgType: 'svg',
     groupings,
     label,
     type,

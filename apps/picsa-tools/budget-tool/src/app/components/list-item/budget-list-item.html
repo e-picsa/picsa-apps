@@ -6,7 +6,7 @@
       <mat-card-content>{{ budget.meta.description }}</mat-card-content>
       <mat-card-subtitle>{{ budget._created | date }}</mat-card-subtitle>
     </div>
-    <budget-summary style="width: 150px" [budgetData]="budget.data" style="margin-bottom: 1.2rem"></budget-summary>
+    <budget-summary [budgetData]="budget.data" style="margin-bottom: 1.2rem; width: 150px"></budget-summary>
     <button
       mat-icon-button
       [matMenuTriggerFor]="budgetMenu"

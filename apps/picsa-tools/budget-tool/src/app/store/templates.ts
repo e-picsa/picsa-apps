@@ -31,6 +31,7 @@ export const NEW_BUDGET_TEMPLATE: IBudget = {
       label: '',
       type: null as any,
       groupings: [],
+      imgType: 'svg',
     },
     lengthScale: 'months',
     lengthTotal: 5,
