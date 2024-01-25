@@ -2,34 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'budget-summary',
-  template: `
-    <div class="summary-container">
-      <h4>Details</h4>
-      <div class="summary-list">
-        <p matTooltip="Total Family Labour Hours">
-          <img [src]="getImagePath('family', 'svg')" alt="Groups Icon" class="icon" />:
-          <b>{{ totalFamilyLabourHours }}</b>
-        </p>
-        <p matTooltip="Total Inputs Value">
-          <img [src]="getImagePath('inputs', 'svg')" alt="Receipt Icon" class="icon" /> : <b>{{ totalInputsValue }}</b>
-        </p>
-        <p matTooltip="Total Outputs Value">
-          <img [src]="getImagePath('outputs', 'svg')" alt="Monetization Icon" class="icon" />:
-          <b>{{ totalOutputsValue }}</b>
-        </p>
-        <div *ngFor="let produce of totalProduceSummary">
-          <p [matTooltip]="'Total ' + produce.label + ' consumed'">
-            <img [src]="getImagePath(produce.id, produce.extension)" [alt]="produce.label + ' Icon'" class="icon" />
-            : <b>{{ produce.total }}</b>
-          </p>
-        </div>
-        <p matTooltip="Final Cash Balance">
-          <img [src]="getImagePath('cash-balance', 'svg')" alt="Wallet Icon" class="icon" />:
-          <b>{{ finalCashBalance }}</b>
-        </p>
-      </div>
-    </div>
-  `,
+  templateUrl: './budget-summary.component.html',
   styleUrls: ['./budget-summary.component.scss'],
 })
 export class BudgetSummaryComponent implements OnInit {
