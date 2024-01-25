@@ -58,14 +58,22 @@ export class BudgetMaterialModule {
     this.registerIcons();
   }
   registerIcons() {
-    // create mat-icon entries for all budget cards with svg icons listed
-    const budgetCardSVGs = BUDGET_CARDS.filter((b) => b.imgType === 'svg');
-
     if (this.matIconRegistry && this.domSanitizer) {
+      // create mat-icon entries for all budget cards with svg icons in assets/budget-cards folder
+      const budgetCardSVGs = BUDGET_CARDS.filter((b) => b.imgType === 'svg');
       for (const { id } of budgetCardSVGs) {
         this.matIconRegistry.addSvgIcon(
           `picsa_budget_${id}`,
           this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/budget-cards/${id}.svg`)
+        );
+      }
+
+      // create additional entries for custom svgs in assets/svgs folder
+      const svgs = ['cash_balance', 'family', 'inputs', 'outputs'];
+      for (const id of svgs) {
+        this.matIconRegistry.addSvgIcon(
+          `picsa_budget_${id}`,
+          this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${id}.svg`)
         );
       }
     }
