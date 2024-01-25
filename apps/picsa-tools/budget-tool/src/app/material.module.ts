@@ -16,6 +16,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { BUDGET_CARDS } from './data';
+
 // use custom module to make it easier to control what is available through app
 @NgModule({
   imports: [
@@ -56,22 +58,14 @@ export class BudgetMaterialModule {
     this.registerIcons();
   }
   registerIcons() {
-    const BUDGET_ICONS = {
-      download: 'download',
-      delete: 'delete',
-      settings: 'settings',
-      controls: 'controls',
-      copy: 'copy',
-    };
+    // create mat-icon entries for all budget cards with svg icons listed
+    const budgetCardSVGs = BUDGET_CARDS.filter((b) => b.imgType === 'svg');
 
     if (this.matIconRegistry && this.domSanitizer) {
-      for (const [key, value] of Object.entries(BUDGET_ICONS)) {
+      for (const { id } of budgetCardSVGs) {
         this.matIconRegistry.addSvgIcon(
-          `picsa_${key}`,
-          this.domSanitizer.bypassSecurityTrustResourceUrl(
-            // NOTE - svgs are imported from shared lib (see angular.json for config)
-            `assets/images/${value}.svg`
-          )
+          `picsa_budget_${id}`,
+          this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/budget-cards/${id}.svg`)
         );
       }
     }
