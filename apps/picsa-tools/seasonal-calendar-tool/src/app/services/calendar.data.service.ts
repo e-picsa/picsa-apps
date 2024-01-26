@@ -8,14 +8,14 @@ import { CalendarDataEntry, COLLECTION } from '../schema';
 @Injectable({
   providedIn: 'root',
 })
-export class SeasonCalenderService extends PicsaAsyncService {
+export class SeasonCalendarService extends PicsaAsyncService {
   constructor(private dbService: PicsaDatabase_V2_Service) {
     super();
   }
 
   /** Provide database options tool collection (with typings) */
   public get dbCollection() {
-    return this.dbService.db.collections['seasonal_calender_tool'] as RxCollection<CalendarDataEntry>;
+    return this.dbService.db.collections['seasonal_calendar_tool'] as RxCollection<CalendarDataEntry>;
   }
   /** Provide database options tool collection filtered to active user */
   public get dbUserCollection() {
@@ -25,7 +25,7 @@ export class SeasonCalenderService extends PicsaAsyncService {
   /** Initialise collection required for storing data to database */
   public override async init() {
     await this.dbService.ensureCollections({
-      seasonal_calender_tool: COLLECTION,
+      seasonal_calendar_tool: COLLECTION,
     });
   }
 
@@ -33,12 +33,12 @@ export class SeasonCalenderService extends PicsaAsyncService {
     return this.dbCollection.incrementalUpsert(data);
   }
 
-  public async getCalendarById(ID: string) {
+  public async getCalendarById(id: string) {
     try {
       const result = await this.dbCollection
         .findOne({
           selector: {
-            ID: ID,
+            id: id,
           },
         })
         .exec();

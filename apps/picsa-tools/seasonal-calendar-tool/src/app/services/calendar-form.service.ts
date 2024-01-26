@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { generateID } from '@picsa/shared/services/core/db/db.service';
+import { generateid } from '@picsa/shared/services/core/db/db.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../schema';
@@ -50,7 +50,7 @@ export class SeasonCalendarFormService {
   /** Initialise a form with bindings for all required db fields */
   private createFormTemplate() {
     const form = this.fb.nonNullable.group({
-      ID: [generateID(), Validators.required],
+      id: [generateid(), Validators.required],
       name: ['', Validators.required],
       activities: this.generateActivityFormControls(),
       weather: this.generateWeatherFormControls(),
