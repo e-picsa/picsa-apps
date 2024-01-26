@@ -14858,7 +14858,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^8.0.0":
+"husky@npm:^8.0.3":
   version: 8.0.3
   resolution: "husky@npm:8.0.3"
   bin:
@@ -19048,7 +19048,7 @@ __metadata:
     glob: ^8.1.0
     hls.js: ^1.4.12
     html2canvas: ^1.4.1
-    husky: ^8.0.0
+    husky: ^8.0.3
     intro.js: ^7.0.1
     jest: 29.4.3
     jest-circus: ^29.5.0

@@ -7,6 +7,7 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule } from '@picsa/shared/features';
 import { PicsaDbModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { BudgetMaterialModule } from '../material.module';
 // Components
@@ -29,6 +30,8 @@ import { BudgetListItemComponent, BudgetListItemRenameDialog } from './list-item
 import { BudgetShareDialogComponent } from './share-dialog/share-dialog.component';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { BudgetTableComponent } from './table/budget-table';
+import { BudgetSummaryComponent } from './budget-summary/budget-summary.component';
+import { MatIconModule } from '@angular/material/icon';
 
 const components = [
   BudgetBalanceLegendComponent,
@@ -51,6 +54,7 @@ const components = [
   BudgetPeriodSummaryComponent,
   BudgetShareDialogComponent,
   BudgetTableComponent,
+  BudgetSummaryComponent,
 ];
 
 @NgModule({
@@ -65,6 +69,8 @@ const components = [
     MobxAngularModule,
     PicsaDbModule,
     RouterModule,
+    MatTooltipModule,
+    MatIconModule,
   ],
   exports: components,
 })
