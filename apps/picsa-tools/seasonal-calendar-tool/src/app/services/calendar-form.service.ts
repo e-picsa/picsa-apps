@@ -5,7 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../schema';
 
-export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createForm']>;
+export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createFormTemplate']>;
 
 /**
  * The seasonal calendar form service handles logic for interacting with seasonal calendar
@@ -23,21 +23,27 @@ export class SeasonCalendarFormService {
   /** Observable used to manage form event subscriptions */
   private formCreated$ = new Subject<ISeasonCalendarForm>();
 
+  private form: ISeasonCalendarForm;
+
   constructor(private fb: FormBuilder) {}
 
   /** Create an angular form for tracking seasonal calendar data */
   public createForm(values: Partial<CalendarDataEntry> = {}) {
     const form = this.createFormTemplate();
+    // remove any previous form change subscriptions by triggering subject
     this.formCreated$.next(form);
-    // ensure changes subscribed to first to correctly patch controls on load
-    this.subscribeToFormChanges(form);
-    form.patchValue(values);
-    return form;
+    // assign form to class so that full form value can be accessed from form change subscription
+    this.form = form;
+    // subscribed to changes and patch form value (triggering side-effects)
+    this.subscribeToFormChanges(this.form);
+    this.form.patchValue(values);
+
+    return this.form;
   }
 
   /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
-  public getFormValue(form: ISeasonCalendarForm) {
-    const entry: CalendarDataEntry = form.getRawValue();
+  private get formValue() {
+    const entry: CalendarDataEntry = this.form.getRawValue();
     return entry;
   }
 
@@ -50,7 +56,6 @@ export class SeasonCalendarFormService {
       weather: this.generateWeatherFormControls(),
       meta: this.generateMetaFormControls(),
     });
-    // const entry: CalendarDataEntry = form.getRawValue();
     return form;
   }
 
@@ -62,28 +67,63 @@ export class SeasonCalendarFormService {
     const { crops, months } = form.controls.meta.controls;
 
     // When user changes crops ensure activity entries produced
-    crops.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((value) => {
-      const activityControls = this.generateActivityFormControls(value, months.value.length, form.getRawValue());
+    crops.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe(() => {
+      const activityControls = this.generateActivityFormControls(this.formValue);
       form.setControl('activities', activityControls);
     });
 
     // When user changes time periods ensure weather and activities have correct number
     // of available entries for the time periods
-    months.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((monthNames) => {
-      const weatherControls = this.generateWeatherFormControls(monthNames.length);
+    months.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe(() => {
+      const weatherControls = this.generateWeatherFormControls(this.formValue);
       form.setControl('weather', weatherControls);
-      const activityControls = this.generateActivityFormControls(crops.value, monthNames.length, form.getRawValue());
+      const activityControls = this.generateActivityFormControls(this.formValue);
       form.setControl('activities', activityControls);
     });
   }
 
-  /** Create form controls to store weather responses (string array) for the specified time periods */
-  private generateWeatherFormControls(timePeriods: number = 0) {
+  /**
+   * Create form controls to store weather responses (string array) for the specified time periods
+   * @param timePeriods number of time periods allocated, i.e. total number of months
+   * */
+  private generateWeatherFormControls(formValue?: CalendarDataEntry) {
     const array = this.fb.nonNullable.array<string>([], Validators.required);
-    for (let i = 0; i < timePeriods; i++) {
-      array.push(new FormControl('', { nonNullable: true }));
+    if (formValue) {
+      // assign weather controls corresponding to each of the months specified in the form
+      const timePeriods = formValue.meta.months.length || 0;
+      for (let i = 0; i < timePeriods; i++) {
+        const existingValue = formValue.weather[i];
+        array.push(new FormControl(existingValue || '', { nonNullable: true }));
+      }
     }
+
     return array;
+  }
+
+  /**
+   * Create form controls to store activity entries within a list of headings
+   * Entries are stored by heading, with an array of entries for the specified time periods.
+   * See schema mock data for example entry
+   * @param headings list of activity headings, e.g. ids of crops
+   * @param timePeriods number of time periods allocated, i.e. total number of months
+   * */
+  private generateActivityFormControls(formValue?: CalendarDataEntry) {
+    const group: { [id: string]: FormArray<FormControl<string>> } = {};
+    if (formValue) {
+      // assign a group entry for every crop heading, with controls for each month time period
+      const headings = formValue.meta.crops || [];
+      const timePeriods = formValue.meta.months.length || 0;
+      for (const heading of headings) {
+        const array = this.fb.nonNullable.array<string>([], Validators.required);
+        for (let i = 0; i < timePeriods; i++) {
+          const existingValue = formValue.activities?.[heading]?.[i];
+          array.push(new FormControl(existingValue || '', { nonNullable: true }));
+        }
+        group[heading] = array;
+      }
+    }
+
+    return this.fb.group(group);
   }
 
   /** Create nested formgroup to store meta months and crops properties */
@@ -98,29 +138,5 @@ export class SeasonCalendarFormService {
         { nonNullable: true, validators: [Validators.required] }
       ),
     });
-  }
-
-  /**
-   * Create form controls to store activity entries within a list of headings
-   * Entries are stored by heading, with an array of entries for the specified time periods.
-   * See schema mock data for example entry
-   * @param headings list of activity headings, e.g. ids of crops
-   * @param timePeriods number of time periods allocated, i.e. total number of months
-   * */
-  private generateActivityFormControls(
-    headings: string[] = [],
-    timePeriods: number = 0,
-    initialValues: Partial<CalendarDataEntry> = {}
-  ) {
-    const group: { [id: string]: FormArray<FormControl<string>> } = {};
-    for (const heading of headings) {
-      const array = this.fb.nonNullable.array<string>([], Validators.required);
-      for (let i = 0; i < timePeriods; i++) {
-        const initialValue = initialValues.activities?.[heading]?.[i] || '';
-        array.push(new FormControl(initialValue, { nonNullable: true }));
-      }
-      group[heading] = array;
-    }
-    return this.fb.group(group);
   }
 }

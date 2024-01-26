@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
-import { MONTH_NAMES } from '@picsa/data';
+import { MONTH_DATA } from '@picsa/data';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
@@ -74,7 +74,7 @@ export class ClimateChartService {
     this.station$.next(station);
     this.stationData = station?.data || [];
     // ensure month names are translated
-    this.monthNames = await this.translateService.translateArray(MONTH_NAMES.map((m) => m.labelShort));
+    this.monthNames = await this.translateService.translateArray(MONTH_DATA.map((m) => m.labelShort));
     return this.station;
   }
 

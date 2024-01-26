@@ -4,18 +4,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { CalendarEditorComponent } from './calendar-editor/calendar-editor.component';
 // Local components
 import { SeasonalCalendarMaterialModule } from './material.module';
 
-const Components = [];
+const Components = [CalendarEditorComponent];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     PicsaCommonComponentsModule,
+    PicsaFormsModule,
     PicsaTranslateModule,
     ReactiveFormsModule,
     RouterModule,
