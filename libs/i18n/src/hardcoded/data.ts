@@ -23,12 +23,12 @@ const days_short: ITranslationEntry[] = DATA.DAY_NAMES.map((d, i) => ({
   context: `day_short_${i + 1}`,
 }));
 
-const months: ITranslationEntry[] = DATA.MONTH_NAMES.map((m, i) => ({
+const months: ITranslationEntry[] = DATA.MONTH_DATA.map((m, i) => ({
   text: m.label,
   tool: 'common_months',
   context: `month_${pad(i + 1)}`,
 }));
-const months_short: ITranslationEntry[] = DATA.MONTH_NAMES.map((m, i) => ({
+const months_short: ITranslationEntry[] = DATA.MONTH_DATA.map((m, i) => ({
   text: m.labelShort,
   tool: 'common_months',
   context: `month_short_${pad(i + 1)}`,
