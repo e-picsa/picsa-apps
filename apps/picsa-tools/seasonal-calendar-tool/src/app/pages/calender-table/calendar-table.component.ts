@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CROPS_DATA, MONTH_NAMES } from '@picsa/data';
+import { CROPS_DATA, MONTH_DATA } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
@@ -24,7 +24,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
   public editMode = false;
 
   /** Lookup for month labels displayed in header row */
-  private monthsById = arrayToHashmap(MONTH_NAMES, 'id');
+  private monthsById = arrayToHashmap(MONTH_DATA, 'id');
 
   /** Lookup for crop labels displayed in table rows */
   private cropsByName = arrayToHashmap(CROPS_DATA as any as { name: string; label: string }[], 'name');

@@ -44,7 +44,8 @@
     </table>
     <!-- Crops edit -->
     @if(editMode){
-    <picsa-form-crop-select style="margin-top: 1rem" [formControl]="metaFormControls.crops"></picsa-form-crop-select>
+    <seasonal-calendar-editor [form]="form"></seasonal-calendar-editor>
+    <button mat-button>Save</button>
     }
   </form>
   }
