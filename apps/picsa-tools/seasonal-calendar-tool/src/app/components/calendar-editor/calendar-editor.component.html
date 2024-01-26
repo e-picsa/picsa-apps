@@ -1,11 +1,11 @@
 <form [formGroup]="form">
-  <h2>{{ 'Calender name' | translate }}</h2>
+  <h2>{{ 'Calendar name' | translate }}</h2>
 
   <!-- Name -->
   <mat-form-field>
     <mat-label>{{ 'Name' | translate }}</mat-label>
     <input matInput formControlName="name" [placeholder]="'Example Calendar' | translate" />
-    <mat-error>{{ 'Please add the calender title' | translate }}</mat-error>
+    <mat-error>{{ 'Please add title' | translate }}</mat-error>
   </mat-form-field>
 
   <!-- Crops -->

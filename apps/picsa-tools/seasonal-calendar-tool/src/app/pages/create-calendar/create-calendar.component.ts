@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { CalendarEditorComponent } from '../../components/calendar-editor/calendar-editor.component';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
-import { SeasonCalenderService } from './../../services/calender.data.service';
+import { SeasonCalendarService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-create-calender',
@@ -14,7 +14,7 @@ export class CreateCalendarComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private service: SeasonCalenderService,
+    private service: SeasonCalendarService,
     private formService: SeasonCalendarFormService
   ) {}
 
@@ -28,10 +28,12 @@ export class CreateCalendarComponent implements OnInit {
   }
 
   async handleSubmit() {
+    // call the editor validation method to update UI and show any invalid data
     const isValid = this.editor.validate();
     if (isValid) {
-      await this.service.save(this.form.getRawValue());
-      this.router.navigate(['../'], { relativeTo: this.route });
+      const formValue = this.form.getRawValue();
+      await this.service.save(formValue);
+      this.router.navigate(['..', formValue.ID], { relativeTo: this.route, replaceUrl: true });
     }
   }
 }

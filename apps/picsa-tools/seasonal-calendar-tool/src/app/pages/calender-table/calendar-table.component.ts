@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
@@ -7,7 +15,7 @@ import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../../schema';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
-import { SeasonCalenderService } from './../../services/calender.data.service';
+import { SeasonCalendarService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-table',
@@ -25,9 +33,6 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
   /** Toggle whether to enable editing features (names and crops) */
   public editMode = false;
 
-  /** Lookup for crop labels displayed in table rows */
-  private cropsByName = arrayToHashmap(CROPS_DATA as any as { name: string; label: string }[], 'name');
-
   public form: ISeasonCalendarForm;
 
   public get metaFormControls() {
@@ -41,12 +46,15 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     return this.form.getRawValue();
   }
 
+  /** Lookup for crop labels displayed in table rows */
+  private cropsByName = arrayToHashmap(CROPS_DATA as any as { name: string; label: string }[], 'name');
+
   private componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private service: SeasonCalenderService,
+    private service: SeasonCalendarService,
     private formService: SeasonCalendarFormService,
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef
@@ -69,6 +77,18 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
+  }
+
+  /**
+   * Launch a mat-dialog instance to edit calendar properties (same as create page)
+   * @param templateRef Inline html template reference (used instead of standalone component)
+   */
+  public async showEditDialog(templateRef: TemplateRef<HTMLElement>) {
+    const dialog = this.dialog.open(templateRef);
+    dialog.afterClosed().subscribe(() => {
+      // Ensure any form changes are reflected once dialog closed
+      this.cdr.detectChanges();
+    });
   }
 
   private prepareCalendarForm(calendar: CalendarDataEntry) {

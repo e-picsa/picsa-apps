@@ -5,8 +5,8 @@
     <div style="display: flex; align-items: center">
       <h1 style="flex: 1">{{ formValue.name }}</h1>
 
-      <button mat-stroked-button color="primary" (click)="editMode = !editMode">
-        <mat-icon>{{ editMode ? 'edit_off' : 'edit' }}</mat-icon>
+      <button mat-stroked-button color="primary" (click)="showEditDialog(editDialogRef)">
+        <mat-icon>edit</mat-icon>
         {{ 'Edit' | translate }}
       </button>
     </div>
@@ -42,11 +42,16 @@
         }
       </tbody>
     </table>
-    <!-- Crops edit -->
-    @if(editMode){
-    <seasonal-calendar-editor [form]="form"></seasonal-calendar-editor>
-    <button mat-button>Save</button>
-    }
+    <!-- Crops edit dialog -->
+    <ng-template #editDialogRef>
+      @if(form){
+      <div style="overflow: auto; height: 90vh; width: 100%">
+        <seasonal-calendar-editor [form]="form"></seasonal-calendar-editor>
+        <!-- TODO - dialog lcose -->
+        <button mat-raised-button class="footer-button" color="primary" mat-dialog-close>Save</button>
+      </div>
+      }
+    </ng-template>
   </form>
   }
 </div>

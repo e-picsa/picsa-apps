@@ -7,7 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../../schema';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
-import { SeasonCalenderService } from './../../services/calender.data.service';
+import { SeasonCalendarService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-home',
@@ -24,7 +24,7 @@ export class HomeComponent implements OnDestroy {
   public dbCalendars: RxDocument<CalendarDataEntry>[] = [];
 
   constructor(
-    private service: SeasonCalenderService,
+    private service: SeasonCalendarService,
     public dialog: MatDialog,
     private dialogService: PicsaDialogService,
     private formService: SeasonCalendarFormService
