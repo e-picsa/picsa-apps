@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CROPS_DATA, MONTH_DATA } from '@picsa/data';
+import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
+import { CalendarDataEntry } from '../../schema';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
@@ -22,9 +24,6 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
 
   /** Toggle whether to enable editing features (names and crops) */
   public editMode = false;
-
-  /** Lookup for month labels displayed in header row */
-  private monthsById = arrayToHashmap(MONTH_DATA, 'id');
 
   /** Lookup for crop labels displayed in table rows */
   private cropsByName = arrayToHashmap(CROPS_DATA as any as { name: string; label: string }[], 'name');
@@ -49,6 +48,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     private router: Router,
     private service: SeasonCalenderService,
     private formService: SeasonCalendarFormService,
+    public dialog: MatDialog,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -58,20 +58,24 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     if (id) {
       const calendar = await this.service.getCalendarById(id);
       if (calendar) {
-        this.form = this.formService.createForm(calendar);
-        console.log({ calendar, form: this.form, formValue: this.formValue });
-        this.enableFormAutoSave();
-        this.cdr.markForCheck();
-        this.subscribeToFormChanges();
-        return;
+        this.prepareCalendarForm(calendar);
       }
     }
     // redirect to home page if data has not been loaded successfully
-    this.router.navigate(['/seasonal-calendar']);
+    if (!this.form) {
+      this.router.navigate(['/seasonal-calendar']);
+    }
   }
 
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
+  }
+
+  private prepareCalendarForm(calendar: CalendarDataEntry) {
+    this.form = this.formService.createForm(calendar);
+    this.enableFormAutoSave();
+    this.cdr.markForCheck();
+    this.subscribeToFormChanges();
   }
 
   private enableFormAutoSave() {
@@ -85,7 +89,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     this.metaFormControls.months.valueChanges
       .pipe(takeUntil(this.componentDestroyed$), startWith(this.formValue.meta.months))
       .subscribe((months) => {
-        this.columnLabels = months.map((month) => this.monthsById[month]?.label);
+        this.columnLabels = months.map((month) => MONTH_DATA_HASHMAP[month]?.label);
       });
     // Generate array of rowLabels from crops
     this.metaFormControls.crops.valueChanges
@@ -93,14 +97,5 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
       .subscribe((crops) => {
         this.rowLabels = crops.map((crop) => this.cropsByName[crop]?.label);
       });
-  }
-
-  public getActivitiesForMonthAndCrop(monthName: string, crop: any): string {
-    const selectedMonth = crop.months.find((month) => month.month === monthName);
-    if (selectedMonth) {
-      return selectedMonth.activities.join(',');
-    } else {
-      return '';
-    }
   }
 }
