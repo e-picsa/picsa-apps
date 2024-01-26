@@ -2,7 +2,7 @@
   @if(form){
   <seasonal-calendar-editor #editor [form]="form"></seasonal-calendar-editor>
   <div class="submit-button">
-    <button class="footer-button" mat-button mat-raised-button (click)="handleSubmit()" color="primary">
+    <button mat-raised-button class="footer-button" color="primary" (click)="handleSubmit()">
       {{ 'Create Calendar' | translate }}
     </button>
   </div>
