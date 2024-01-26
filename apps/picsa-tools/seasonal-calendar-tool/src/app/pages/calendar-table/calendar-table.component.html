@@ -28,7 +28,7 @@
       </thead>
       <!-- Activity rows -->
       <tbody>
-        @for(crop of formValue.meta.crops; track $index){
+        @for(crop of formValue.meta.enterprises; track $index){
         <tr>
           <td>
             {{ rowLabels[$index] | translate }}
@@ -42,7 +42,7 @@
         }
       </tbody>
     </table>
-    <!-- Crops edit dialog -->
+    <!-- Editor dialog -->
     <ng-template #editDialogRef>
       @if(form){
       <div style="overflow: auto; height: 90vh; width: 100%">

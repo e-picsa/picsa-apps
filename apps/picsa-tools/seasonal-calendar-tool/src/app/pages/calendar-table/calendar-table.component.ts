@@ -104,8 +104,8 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
         this.columnLabels = months.map((month) => MONTH_DATA_HASHMAP[month]?.label);
       });
     // Generate array of rowLabels from crops
-    this.metaFormControls.crops.valueChanges
-      .pipe(takeUntil(this.componentDestroyed$), startWith(this.formValue.meta.crops))
+    this.metaFormControls.enterprises.valueChanges
+      .pipe(takeUntil(this.componentDestroyed$), startWith(this.formValue.meta.enterprises))
       .subscribe((crops) => {
         this.rowLabels = crops.map((crop) => this.cropsByName[crop]?.label);
       });

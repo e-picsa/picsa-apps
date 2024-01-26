@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { generateid } from '@picsa/shared/services/core/db/db.service';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../schema';
@@ -50,7 +50,7 @@ export class SeasonCalendarFormService {
   /** Initialise a form with bindings for all required db fields */
   private createFormTemplate() {
     const form = this.fb.nonNullable.group({
-      id: [generateid(), Validators.required],
+      id: [generateID(), Validators.required],
       name: ['', Validators.required],
       activities: this.generateActivityFormControls(),
       weather: this.generateWeatherFormControls(),
@@ -64,10 +64,10 @@ export class SeasonCalendarFormService {
    * All subscriptions are maintained until next form creation via `takeUntil` pipe
    * */
   private subscribeToFormChanges(form: ISeasonCalendarForm) {
-    const { crops, months } = form.controls.meta.controls;
+    const { enterprises, months } = form.controls.meta.controls;
 
-    // When user changes crops ensure activity entries produced
-    crops.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe(() => {
+    // When user changes enterprises ensure activity entries produced
+    enterprises.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe(() => {
       const activityControls = this.generateActivityFormControls(this.formValue);
       form.setControl('activities', activityControls);
     });
@@ -111,7 +111,7 @@ export class SeasonCalendarFormService {
     const group: { [id: string]: FormArray<FormControl<string>> } = {};
     if (formValue) {
       // assign a group entry for every crop heading, with controls for each month time period
-      const headings = formValue.meta.crops || [];
+      const headings = formValue.meta.enterprises || [];
       const timePeriods = formValue.meta.months.length || 0;
       for (const heading of headings) {
         const array = this.fb.nonNullable.array<string>([], Validators.required);
@@ -126,14 +126,15 @@ export class SeasonCalendarFormService {
     return this.fb.group(group);
   }
 
-  /** Create nested formgroup to store meta months and crops properties */
+  /** Create nested formgroup to store meta months and enterprise properties */
   private generateMetaFormControls() {
     return this.fb.nonNullable.group({
-      months: new FormControl<string[]>(
+      months: new FormControl<CalendarDataEntry['meta']['months']>(
         { value: [], disabled: false },
         { nonNullable: true, validators: [Validators.required] }
       ),
-      crops: new FormControl<string[]>(
+      enterpriseType: new FormControl<CalendarDataEntry['meta']['enterpriseType']>('crop', { nonNullable: true }),
+      enterprises: new FormControl<CalendarDataEntry['meta']['enterprises']>(
         { value: [], disabled: false },
         { nonNullable: true, validators: [Validators.required] }
       ),

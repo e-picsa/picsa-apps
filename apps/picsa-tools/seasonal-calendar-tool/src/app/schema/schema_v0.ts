@@ -60,7 +60,7 @@ export const SCHEMA_V0: RxJsonSchema<CalendarDataEntry_V0> = {
       properties: {
         enterpriseType: { type: 'string' },
         months: { type: 'array', items: { type: 'string' } },
-        crops: { type: 'array', items: { type: 'string' } },
+        enterprises: { type: 'array', items: { type: 'string' } },
       },
     },
   },

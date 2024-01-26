@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaDialogService } from '@picsa/shared/features';
-import { generateid } from '@picsa/shared/services/core/db/db.service';
+import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -41,7 +41,7 @@ export class HomeComponent implements OnDestroy {
   public handleMenuClick(e: Event, calendar: RxDocument<CalendarDataEntry>) {
     e.stopPropagation();
     this.calendarDeleteDoc = calendar;
-    this.calendarCopyForm = this.formService.createForm({ ...calendar._data, id: generateid() });
+    this.calendarCopyForm = this.formService.createForm({ ...calendar._data, id: generateID() });
   }
 
   public async promptDelete() {

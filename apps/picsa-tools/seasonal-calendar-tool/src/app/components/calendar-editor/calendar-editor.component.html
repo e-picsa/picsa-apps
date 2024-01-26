@@ -8,10 +8,10 @@
     <mat-error>{{ 'Please add title' | translate }}</mat-error>
   </mat-form-field>
 
-  <!-- Crops -->
+  <!-- Enterprises -->
   <h2>{{ 'Season Crops' | translate }}</h2>
-  <picsa-form-crop-select [formControl]="metaFormControls.crops"></picsa-form-crop-select>
-  @if(metaFormControls.crops.touched && metaFormControls.crops.errors){
+  <picsa-form-crop-select [formControl]="metaFormControls.enterprises"></picsa-form-crop-select>
+  @if(metaFormControls.enterprises.touched && metaFormControls.enterprises.errors){
   <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   }
 
