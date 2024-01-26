@@ -31,7 +31,7 @@
         @for(crop of formValue.meta.crops; track $index){
         <tr>
           <td>
-            {{ crop | translate }}
+            {{ rowLabels[$index] | translate }}
           </td>
           @for(control of activityFormControls[crop].controls; track $index){
           <td>

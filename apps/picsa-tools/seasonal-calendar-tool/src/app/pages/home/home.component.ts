@@ -41,7 +41,7 @@ export class HomeComponent implements OnDestroy {
   public handleMenuClick(e: Event, calendar: RxDocument<CalendarDataEntry>) {
     e.stopPropagation();
     this.calendarDeleteDoc = calendar;
-    this.calendarCopyForm = this.formService.create({ ...calendar._data, ID: generateID() });
+    this.calendarCopyForm = this.formService.createForm({ ...calendar._data, ID: generateID() });
   }
 
   public async promptDelete() {

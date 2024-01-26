@@ -30,11 +30,11 @@
 <!-- Popup menu -->
 <mat-menu #budgetMenu="matMenu">
   <button mat-menu-item aria-label="Copy" (click)="dialog.open(copyDialog)">
-    <mat-icon svgIcon="picsa_copy"></mat-icon>Copy
+    <mat-icon>content_copy</mat-icon>{{ 'Copy' | translate }}
   </button>
   <button mat-menu-item aria-label="Delete" color="light" (click)="promptDelete()">
-    <mat-icon svgIcon="picsa_delete">{{ 'Delete' | translate }}</mat-icon>
-    Delete
+    <mat-icon>delete</mat-icon>
+    {{ 'Delete' | translate }}
   </button>
 </mat-menu>
 

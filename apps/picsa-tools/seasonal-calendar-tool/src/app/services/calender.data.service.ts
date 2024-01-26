@@ -4,13 +4,12 @@ import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { RxCollection } from 'rxdb';
 
 import { CalendarDataEntry, COLLECTION } from '../schema';
-import { SeasonCalendarFormService } from './calendar-form.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SeasonCalenderService extends PicsaAsyncService {
-  constructor(private dbService: PicsaDatabase_V2_Service, private formService: SeasonCalendarFormService) {
+  constructor(private dbService: PicsaDatabase_V2_Service) {
     super();
   }
 
@@ -34,7 +33,7 @@ export class SeasonCalenderService extends PicsaAsyncService {
     return this.dbCollection.incrementalUpsert(data);
   }
 
-  public async loadCalenderById(ID: string) {
+  public async getCalendarById(ID: string) {
     try {
       const result = await this.dbCollection
         .findOne({
@@ -44,8 +43,6 @@ export class SeasonCalenderService extends PicsaAsyncService {
         })
         .exec();
       const calendar = result?._data;
-      // ensure form matches loaded data
-      this.formService.create(calendar);
       return calendar;
     } catch (err) {
       console.error('Failed to get calendar by name:', err);

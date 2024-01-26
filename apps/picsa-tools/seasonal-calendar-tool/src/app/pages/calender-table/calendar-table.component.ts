@@ -4,7 +4,7 @@ import { CROPS_DATA, MONTH_NAMES } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
-import { SeasonCalendarFormService } from '../../services/calendar-form.service';
+import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
@@ -29,9 +29,8 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
   /** Lookup for crop labels displayed in table rows */
   private cropsByName = arrayToHashmap(CROPS_DATA as any as { name: string; label: string }[], 'name');
 
-  public get form() {
-    return this.formService.form;
-  }
+  public form: ISeasonCalendarForm;
+
   public get metaFormControls() {
     return this.form.controls.meta.controls;
   }
@@ -40,7 +39,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
   }
 
   public get formValue() {
-    return this.formService.value;
+    return this.form.getRawValue();
   }
 
   private componentDestroyed$ = new Subject<boolean>();
@@ -57,9 +56,10 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     await this.service.ready();
     const { id } = this.route.snapshot.params;
     if (id) {
-      const calendar = await this.service.loadCalenderById(id);
-      console.log({ calendar, form: this.formService.form, formValue: this.formService.value });
+      const calendar = await this.service.getCalendarById(id);
       if (calendar) {
+        this.form = this.formService.createForm(calendar);
+        console.log({ calendar, form: this.form, formValue: this.formValue });
         this.enableFormAutoSave();
         this.cdr.markForCheck();
         this.subscribeToFormChanges();

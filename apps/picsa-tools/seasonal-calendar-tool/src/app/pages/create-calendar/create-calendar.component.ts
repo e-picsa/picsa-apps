@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MONTH_NAMES } from '@picsa/data';
 import { Subject, takeUntil } from 'rxjs';
 
-import { SeasonCalendarFormService } from '../../services/calendar-form.service';
+import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
 import { SeasonCalenderService } from './../../services/calender.data.service';
 
 @Component({
@@ -31,21 +31,19 @@ export class CreateCalendarComponent implements OnInit, OnDestroy {
     private fb: FormBuilder
   ) {}
 
-  public get form() {
-    return this.formService.form;
-  }
+  public form: ISeasonCalendarForm;
 
   // get controls of nested `entry.meta` form
   public get metaFormControls() {
     return this.form.controls.meta.controls;
   }
   public get formValue() {
-    return this.formService.value;
+    return this.form.getRawValue();
   }
 
   async ngOnInit() {
     await this.service.ready();
-    this.formService.create();
+    this.form = this.formService.createForm();
   }
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);

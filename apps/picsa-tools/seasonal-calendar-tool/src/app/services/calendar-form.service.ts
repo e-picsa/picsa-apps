@@ -5,7 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../schema';
 
-export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createFormTemplate']>;
+export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createForm']>;
 
 /**
  * The seasonal calendar form service handles logic for interacting with seasonal calendar
@@ -20,32 +20,25 @@ export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createFo
  */
 @Injectable({ providedIn: 'root' })
 export class SeasonCalendarFormService {
-  /** Main form for tracking state of season calendar data */
-  public form: ISeasonCalendarForm;
-
-  /** Subscribable form used to remove form event subscriptions */
+  /** Observable used to manage form event subscriptions */
   private formCreated$ = new Subject<ISeasonCalendarForm>();
-
-  /** Direct access to form value. Use rawValue to ensure data from all formControls used **/
-  public get value() {
-    // Reassign to force ts to check this matches db calendar entry type definition ()
-    const entry: CalendarDataEntry = this.form?.getRawValue();
-    return entry;
-  }
 
   constructor(private fb: FormBuilder) {}
 
   /** Create an angular form for tracking seasonal calendar data */
-  public create(values: Partial<CalendarDataEntry> = {}) {
+  public createForm(values: Partial<CalendarDataEntry> = {}) {
     const form = this.createFormTemplate();
     this.formCreated$.next(form);
-    this.form = form;
     // ensure changes subscribed to first to correctly patch controls on load
-    this.subscribeToFormChanges();
+    this.subscribeToFormChanges(form);
+    form.patchValue(values);
+    return form;
+  }
 
-    // TODO - ensure initial values populate and reload
-    this.form.patchValue(values);
-    return this.form;
+  /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
+  public getFormValue(form: ISeasonCalendarForm) {
+    const entry: CalendarDataEntry = form.getRawValue();
+    return entry;
   }
 
   /** Initialise a form with bindings for all required db fields */
@@ -53,19 +46,11 @@ export class SeasonCalendarFormService {
     const form = this.fb.nonNullable.group({
       ID: [generateID(), Validators.required],
       name: ['', Validators.required],
-      activities: this.generateActivityFormControls([], 0),
-      weather: this.generateWeatherFormControls(0),
-      meta: this.fb.nonNullable.group({
-        months: new FormControl<string[]>(
-          { value: [], disabled: false },
-          { nonNullable: true, validators: [Validators.required] }
-        ),
-        crops: new FormControl<string[]>(
-          { value: [], disabled: false },
-          { nonNullable: true, validators: [Validators.required] }
-        ),
-      }),
+      activities: this.generateActivityFormControls(),
+      weather: this.generateWeatherFormControls(),
+      meta: this.generateMetaFormControls(),
     });
+    // const entry: CalendarDataEntry = form.getRawValue();
     return form;
   }
 
@@ -73,22 +58,22 @@ export class SeasonCalendarFormService {
    * Handle side effects when user updates form values
    * All subscriptions are maintained until next form creation via `takeUntil` pipe
    * */
-  private subscribeToFormChanges() {
-    const { crops, months } = this.form.controls.meta.controls;
+  private subscribeToFormChanges(form: ISeasonCalendarForm) {
+    const { crops, months } = form.controls.meta.controls;
 
     // When user changes crops ensure activity entries produced
     crops.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((value) => {
-      const controls = this.generateActivityFormControls(value, months.value.length);
-      this.form.setControl('activities', controls);
+      const activityControls = this.generateActivityFormControls(value, months.value.length, form.getRawValue());
+      form.setControl('activities', activityControls);
     });
 
     // When user changes time periods ensure weather and activities have correct number
     // of available entries for the time periods
     months.valueChanges.pipe(takeUntil(this.formCreated$)).subscribe((monthNames) => {
       const weatherControls = this.generateWeatherFormControls(monthNames.length);
-      this.form.setControl('weather', weatherControls);
-      const activityControls = this.generateActivityFormControls(crops.value, monthNames.length);
-      this.form.setControl('activities', activityControls);
+      form.setControl('weather', weatherControls);
+      const activityControls = this.generateActivityFormControls(crops.value, monthNames.length, form.getRawValue());
+      form.setControl('activities', activityControls);
     });
   }
 
@@ -101,17 +86,37 @@ export class SeasonCalendarFormService {
     return array;
   }
 
+  /** Create nested formgroup to store meta months and crops properties */
+  private generateMetaFormControls() {
+    return this.fb.nonNullable.group({
+      months: new FormControl<string[]>(
+        { value: [], disabled: false },
+        { nonNullable: true, validators: [Validators.required] }
+      ),
+      crops: new FormControl<string[]>(
+        { value: [], disabled: false },
+        { nonNullable: true, validators: [Validators.required] }
+      ),
+    });
+  }
+
   /**
-   * Create form controls to store activity entries within a list of headings (e.g. crops)
+   * Create form controls to store activity entries within a list of headings
    * Entries are stored by heading, with an array of entries for the specified time periods.
    * See schema mock data for example entry
+   * @param headings list of activity headings, e.g. ids of crops
+   * @param timePeriods number of time periods allocated, i.e. total number of months
    * */
-  private generateActivityFormControls(headings: string[] = [], timePeriods: number = 0) {
+  private generateActivityFormControls(
+    headings: string[] = [],
+    timePeriods: number = 0,
+    initialValues: Partial<CalendarDataEntry> = {}
+  ) {
     const group: { [id: string]: FormArray<FormControl<string>> } = {};
     for (const heading of headings) {
       const array = this.fb.nonNullable.array<string>([], Validators.required);
       for (let i = 0; i < timePeriods; i++) {
-        const initialValue = this.form.value.activities?.[heading]?.[i] || '';
+        const initialValue = initialValues.activities?.[heading]?.[i] || '';
         array.push(new FormControl(initialValue, { nonNullable: true }));
       }
       group[heading] = array;
