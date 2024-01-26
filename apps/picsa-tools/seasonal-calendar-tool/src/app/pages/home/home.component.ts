@@ -1,13 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaDialogService } from '@picsa/shared/features';
-import { generateID } from '@picsa/shared/services/core/db/db.service';
+import { generateid } from '@picsa/shared/services/core/db/db.service';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../../schema';
+import { SeasonCalendarService } from '../../services/calendar.data.service';
 import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/calendar-form.service';
-import { SeasonCalendarService } from './../../services/calender.data.service';
 
 @Component({
   selector: 'seasonal-calendar-home',
@@ -41,7 +41,7 @@ export class HomeComponent implements OnDestroy {
   public handleMenuClick(e: Event, calendar: RxDocument<CalendarDataEntry>) {
     e.stopPropagation();
     this.calendarDeleteDoc = calendar;
-    this.calendarCopyForm = this.formService.createForm({ ...calendar._data, ID: generateID() });
+    this.calendarCopyForm = this.formService.createForm({ ...calendar._data, id: generateid() });
   }
 
   public async promptDelete() {

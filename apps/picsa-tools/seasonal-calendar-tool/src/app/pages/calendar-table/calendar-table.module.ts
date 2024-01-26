@@ -26,4 +26,4 @@ const routes: Routes = [
     SeasonalCalendarToolComponentsModule,
   ],
 })
-export class CalenderTableModule {}
+export class CalendarTableModule {}

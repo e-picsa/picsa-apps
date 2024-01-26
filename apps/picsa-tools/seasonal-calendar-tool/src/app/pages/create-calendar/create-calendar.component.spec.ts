@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { CreateCalendarComponent } from './create-calendar.component';
 
-describe('CreateCalenderComponent', () => {
+describe('CreateCalendarComponent', () => {
   let component: CreateCalendarComponent;
   let fixture: ComponentFixture<CreateCalendarComponent>;
 

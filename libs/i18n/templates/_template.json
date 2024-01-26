@@ -554,11 +554,23 @@
     "tool": "budget"
   },
   {
+    "text": "balance",
+    "tool": "budget"
+  },
+  {
+    "text": "consumed",
+    "tool": "budget"
+  },
+  {
     "text": "description",
     "tool": "budget"
   },
   {
     "text": "fruits",
+    "tool": "budget"
+  },
+  {
+    "text": "hours",
     "tool": "budget"
   },
   {
@@ -1630,15 +1642,15 @@
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Calender name",
+    "text": "Calendar name",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Copy",
     "tool": "seasonal-calendar"
   },
   {
     "text": "Create Calendar",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Create calender",
     "tool": "seasonal-calendar"
   },
   {
@@ -1654,7 +1666,7 @@
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Please add the calender title",
+    "text": "Please add title",
     "tool": "seasonal-calendar"
   },
   {
