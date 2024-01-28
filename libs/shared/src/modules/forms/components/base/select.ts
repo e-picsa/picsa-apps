@@ -1,25 +1,6 @@
-import { ChangeDetectorRef, Component, EventEmitter, forwardRef, Input, Output, Provider } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
-/** Accessor used for binding with ngModel or formgroups */
-export const CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => BaseSelectComponent),
-  multi: true,
-};
-
-/**
- * Abstract component to handle data binding for single select form controls
- *
- * It uses a set of `selectOptions` containing an array of items with an 'id' property
- * These options are separately tracked by a `selectOptionsHashmap` keyed by 'id'
- *
- * Using these properties the control handles selected output controls, outputting the value
- * to associated ngModel or formcControls
- *
- * The selected value can be specified from component by setting the public `selected` property
- * to a string id value
- */
+/** For more information about this base component see local @see./README.md */
 @Component({
   template: '',
 })

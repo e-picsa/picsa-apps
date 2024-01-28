@@ -10,7 +10,7 @@
 
   <!-- Enterprises -->
   <h2>{{ 'Season Crops' | translate }}</h2>
-  <picsa-form-crop-select [formControl]="metaFormControls.enterprises"></picsa-form-crop-select>
+  <picsa-form-crop-select-multiple [formControl]="metaFormControls.enterprises"></picsa-form-crop-select-multiple>
   @if(metaFormControls.enterprises.touched && metaFormControls.enterprises.errors){
   <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   }
