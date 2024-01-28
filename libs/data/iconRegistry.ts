@@ -38,7 +38,7 @@ export class DataIconRegistry {
 
   /**
    * Check whether a registered icon can be retrieved
-   * Prompting error to import missing assets from shared-assets if missing
+   * Prompting error to import missing assets from if missing
    **/
   private checkIconAssetsImported(iconPack: IconPackName) {
     const [{ svgIcon }] = ICON_PACK_DATA[iconPack];
