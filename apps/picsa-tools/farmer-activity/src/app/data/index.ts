@@ -19,12 +19,12 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   {
     label: translateMarker('Resource Allocation Map (RAM)'),
     videoId: 'ram',
-    svgIcon: 'picsa_manual_resource_allocation',
+    svgIcon: 'manual_tool:resource_allocation',
     id: 'ram-activity',
   },
   {
     label: translateMarker('Seasonal Calendar'),
-    svgIcon: 'picsa_seasonal_calendar_tool',
+    svgIcon: 'extension_app:seasonal_calendar_tool',
     videoId: 'seasonal_calendar',
     id: 'calendar-activity',
     tool: {
@@ -33,7 +33,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Historic climate'),
-    svgIcon: 'picsa_climate_tool',
+    svgIcon: 'extension_app:climate_tool',
     videoId: 'historic_climate',
     id: 'historic-climate-activity',
     tool: {
@@ -42,7 +42,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   {
     label: translateMarker('Probability and Risk'),
-    svgIcon: 'picsa_probability_tool',
+    svgIcon: 'extension_app:probability_tool',
     videoId: 'probability_risk',
     id: 'probability-risk-activity',
     tool: {
@@ -51,12 +51,12 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   },
   // {
   //   label: translateMarker('Crop Info'),
-  //   svgIcon: 'picsa_manual_crop',
+  //   svgIcon: 'manual_tool:crop',
   //   id: 'crop-info-activity',
   // },
   {
     label: translateMarker('Options'),
-    svgIcon: 'picsa_option_tool',
+    svgIcon: 'extension_app:option_tool',
     videoId: 'options',
     id: 'options-activity',
     tool: {
@@ -66,7 +66,7 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
   {
     label: translateMarker('Budget'),
     // TODO - change
-    svgIcon: 'picsa_budget_tool',
+    svgIcon: 'extension_app:budget_tool',
     videoId: 'participatory_budget',
     id: 'budget-activity',
     tool: {

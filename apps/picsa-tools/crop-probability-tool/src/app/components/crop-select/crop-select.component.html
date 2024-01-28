@@ -6,7 +6,7 @@
       [attr.data-selected]="crop.name === selected"
       [attr.data-tour-id]="crop.name"
     >
-      <mat-icon [svgIcon]="'picsa_crop_' + crop.name"></mat-icon>
+      <mat-icon [svgIcon]="'picsa_crops:' + crop.svgIcon"></mat-icon>
       <div ngClass="name">{{ crop.label | translate }}</div>
     </div>
   </div>

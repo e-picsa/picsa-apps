@@ -26,18 +26,12 @@ export class OptionMaterialModule {
     dataIconRegistry.registerMatIcons('weather');
   }
   // register custom icons from the assets/svgs folder for access within the app
-  // icons can be accessed in mat-icon as svgIcon='station_data_${key}'
+  // icons can be accessed in mat-icon as svgIcon='options_tool:close'
   registerIcons() {
-    const icons = {
-      close: 'close',
-      female: 'female',
-      male: 'male',
-      risks: 'risks',
-    };
-    for (const [key, value] of Object.entries(icons)) {
-      const iconName = `picsa_options_${key}`;
-      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${value}.svg`);
-      this.matIconRegistry.addSvgIcon(iconName, iconUrl);
+    const icons = ['close', 'female', 'male', 'risks'];
+    for (const icon of icons) {
+      const url = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${icon}.svg`);
+      this.matIconRegistry.addSvgIconInNamespace('options_tool', icon, url);
     }
   }
 }

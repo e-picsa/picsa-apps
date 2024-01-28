@@ -23,7 +23,7 @@ export class ResourceItemLinkComponent {
     /** Facebook links usually have facebook logo in main image so ignore action button */
     facebook: null,
     internal: null,
-    play_store: { svgIcon: 'picsa_play_store' },
+    play_store: { svgIcon: 'resources_tool:play_store' },
     website: null,
     whatsapp: null,
     youtube: null,

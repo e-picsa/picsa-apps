@@ -9,17 +9,17 @@ const PERFORMANCE_CONDITIONS = [
   {
     id: 'lowRf',
     label: translateMarker('Low'),
-    svgIcon: 'picsa_weather_rain_low',
+    svgIcon: 'picsa_weather:rain_low',
   },
   {
     id: 'midRf',
     label: translateMarker('Mid'),
-    svgIcon: 'picsa_weather_rain_medium',
+    svgIcon: 'picsa_weather:rain_medium',
   },
   {
     id: 'highRf',
     label: translateMarker('High'),
-    svgIcon: 'picsa_weather_rain_high',
+    svgIcon: 'picsa_weather:rain_high',
   },
 ];
 
