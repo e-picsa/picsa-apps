@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-
-import { ICropData } from '../../data/crops';
+import { ICropData } from '@picsa/data/crops';
 
 @Component({
   selector: 'crop-probability-crop-select',
@@ -8,7 +7,7 @@ import { ICropData } from '../../data/crops';
   styleUrls: ['./crop-select.component.scss'],
 })
 export class CropSelectComponent implements OnInit {
-  @Input() crops: ICropData[];
+  @Input() options: ICropData[];
 
   /** Default crop to select on init */
   @Input() selectDefault: string;
@@ -24,7 +23,6 @@ export class CropSelectComponent implements OnInit {
   public selected = '';
 
   ngOnInit(): void {
-    console.log('hello crop select', this.selectDefault);
     if (this.selectDefault) {
       this.handleCropSelected(this.selectDefault);
     }

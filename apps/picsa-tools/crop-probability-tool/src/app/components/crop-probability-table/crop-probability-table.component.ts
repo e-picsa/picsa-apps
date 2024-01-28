@@ -20,7 +20,7 @@ export class CropProbabilityTableComponent {
   public dataSource: MatTableDataSource<ITableRow>;
   public station: IStationCropInformation;
   public selectedCropName?: string;
-  public cropIcons: ICropData[] = [];
+  public cropOptions: ICropData[] = [];
 
   private tableData: ITableRow[] = [];
 
@@ -42,7 +42,7 @@ export class CropProbabilityTableComponent {
     const dataSource = new MatTableDataSource(this.tableData);
     // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
     dataSource.filterPredicate = (data, filter) => data.crop.toLowerCase() === filter;
-    this.cropIcons = this.generateCropFilters(this.station.station_data);
+    this.cropOptions = this.generateCropFilters(this.station.station_data);
     if (cropName) {
       dataSource.filter = cropName.toLowerCase();
     }

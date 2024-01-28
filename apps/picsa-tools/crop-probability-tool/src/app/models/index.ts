@@ -1,4 +1,4 @@
-import type { ICropName } from '../data/crops';
+import { ICropName } from '@picsa/data';
 
 export interface IStationCropInformation {
   id: string;

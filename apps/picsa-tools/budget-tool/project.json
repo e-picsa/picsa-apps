@@ -27,7 +27,7 @@
           "apps/picsa-tools/budget-tool/src/assets",
           {
             "glob": "**/*",
-            "input": "libs/shared-assets/svgs/crops/",
+            "input": "libs/data/crops/svgs/",
             "output": "assets/budget-cards/"
           }
         ],
