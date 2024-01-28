@@ -5,7 +5,7 @@
       ngClass="icon"
       [attr.data-selected]="_options.multiple ? selected.includes(crop.name) : selected === crop.name"
     >
-      <mat-icon [svgIcon]="'picsa_crop_' + crop.name"></mat-icon>
+      <mat-icon [svgIcon]="'picsa_crops:' + crop.svgIcon"></mat-icon>
       <div ngClass="name">{{ crop.label | translate }}</div>
     </div>
   </div>

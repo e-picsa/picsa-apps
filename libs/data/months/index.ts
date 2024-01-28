@@ -16,11 +16,11 @@ const MONTH_DATA_BASE = {
   december: { label: translateMarker('December'), labelShort: translateMarker('Dec') },
 } as const;
 
-type IMonthName = keyof typeof MONTH_DATA_BASE;
+type IMonthID = keyof typeof MONTH_DATA_BASE;
 
 export const MONTH_DATA = Object.entries(MONTH_DATA_BASE)
   .map(([id, { label, labelShort }]) => {
-    return { id: id as IMonthName, label: label as string, labelShort: labelShort as string };
+    return { id: id as IMonthID, label: label as string, labelShort: labelShort as string };
   })
   .map((value, index) => ({ ...value, index }));
 

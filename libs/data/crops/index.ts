@@ -1,27 +1,44 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { arrayToHashmap } from '@picsa/utils';
+import { IPicsaDataWithIcons } from '../models';
 
-// TODO - refactor like weather with enums (or like crop_activity_data)
+const CROPS_DATA_BASE = {
+  beans: { label: translateMarker('Beans'), icon: 'assets/svgs/crops/beans.svg' },
+  cassava: { label: translateMarker('Cassava'), icon: 'assets/svgs/crops/cassava.svg' },
+  cotton: { label: translateMarker('Cotton'), icon: 'assets/svgs/crops/cotton.svg' },
+  cowpeas: { label: translateMarker('Cowpeas'), icon: 'assets/svgs/crops/cowpeas.svg' },
+  groundnuts: { label: translateMarker('Groundnuts'), icon: 'assets/svgs/crops/groundnuts.svg' },
+  maize: { label: translateMarker('Maize'), icon: 'assets/svgs/crops/maize.svg' },
+  'pigeon-peas': { label: translateMarker('Pigeon Peas'), icon: 'assets/svgs/crops/pigeon-peas.svg' },
+  pumpkins: { label: translateMarker('Pumpkins'), icon: 'assets/svgs/crops/pumpkins.svg' },
+  rice: { label: translateMarker('Rice'), icon: 'assets/svgs/crops/rice.svg' },
+  sorghum: { label: translateMarker('Sorghum'), icon: 'assets/svgs/crops/sorghum.svg' },
+  'soya-beans': { label: translateMarker('Soya Beans'), icon: 'assets/svgs/crops/soya-beans.svg' },
+  sunflower: { label: translateMarker('Sunflower'), icon: 'assets/svgs/crops/sunflower.svg' },
+  'sweet-potatoes': { label: translateMarker('Sweet Potatoes'), icon: 'assets/svgs/crops/sweet-potatoes.svg' },
+  tobacco: { label: translateMarker('Tobacco'), icon: 'assets/svgs/crops/tobacco.svg' },
+} as const;
 
-// TODO - make base data format for name, label, icon to be used in general form select models
+type ICropID = keyof typeof CROPS_DATA_BASE;
 
 /** List of all named crops used for type-checking */
-export const CROPS_DATA = [
-  { name: 'beans', label: translateMarker('Beans'), icon: 'assets/svgs/crops/beans.svg' },
-  { name: 'cassava', label: translateMarker('Cassava'), icon: 'assets/svgs/crops/cassava.svg' },
-  { name: 'cotton', label: translateMarker('Cotton'), icon: 'assets/svgs/crops/cotton.svg' },
-  { name: 'cowpeas', label: translateMarker('Cowpeas'), icon: 'assets/svgs/crops/cowpeas.svg' },
-  { name: 'groundnuts', label: translateMarker('Groundnuts'), icon: 'assets/svgs/crops/groundnuts.svg' },
-  { name: 'maize', label: translateMarker('Maize'), icon: 'assets/svgs/crops/maize.svg' },
-  { name: 'pigeon-peas', label: translateMarker('Pigeon Peas'), icon: 'assets/svgs/crops/pigeon-peas.svg' },
-  { name: 'pumpkins', label: translateMarker('Pumpkins'), icon: 'assets/svgs/crops/pumpkins.svg' },
-  { name: 'rice', label: translateMarker('Rice'), icon: 'assets/svgs/crops/rice.svg' },
-  { name: 'sorghum', label: translateMarker('Sorghum'), icon: 'assets/svgs/crops/sorghum.svg' },
-  { name: 'soya-beans', label: translateMarker('Soya Beans'), icon: 'assets/svgs/crops/soya-beans.svg' },
-  { name: 'sunflower', label: translateMarker('Sunflower'), icon: 'assets/svgs/crops/sunflower.svg' },
-  { name: 'sweet-potatoes', label: translateMarker('Sweet Potatoes'), icon: 'assets/svgs/crops/sweet-potatoes.svg' },
-  { name: 'tobacco', label: translateMarker('Tobacco'), icon: 'assets/svgs/crops/tobacco.svg' },
-] as const;
+export const CROPS_DATA = Object.entries(CROPS_DATA_BASE).map(([id, entry]) => {
+  const iconData: IPicsaDataWithIcons = {
+    assetIconPath: `assets/svgs/crops/${id}.svg`,
+    svgIcon: id,
+  };
+  return {
+    id: id as ICropID,
+    label: entry.label as string,
+    ...iconData,
+    // hack - legacy data uses 'name' for ids and 'icon' for 'assetIconPath'
+    name: id,
+    icon: `assets/svgs/crops/${id}.svg`,
+  };
+});
+
+export const CROPS_DATA_HASHMAP = arrayToHashmap(CROPS_DATA, 'name');
 
 // type-defintions extracted from hardcoded data
 export type ICropData = typeof CROPS_DATA[number];
-export type ICropName = typeof CROPS_DATA[number]['name'];
+export type ICropName = keyof typeof CROPS_DATA_BASE;

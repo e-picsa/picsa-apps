@@ -15,17 +15,17 @@ const WEATHER_DATA_BASE = {
 } as const;
 
 // Extract list of available weather names
-type IWeatherName = keyof typeof WEATHER_DATA_BASE;
+type IWeatherID = keyof typeof WEATHER_DATA_BASE;
 
 export const WEATHER_DATA = Object.entries(WEATHER_DATA_BASE).map(([id, { label }]) => {
-  const data: IPicsaDataWithIcons = {
+  const iconData: IPicsaDataWithIcons = {
     assetIconPath: `assets/svgs/weather/${id}.svg`,
-    label: label as string,
-    svgIcon: `picsa_weather_${id}`,
+    svgIcon: id,
   };
   return {
-    id: id as IWeatherName,
-    ...data,
+    id: id as IWeatherID,
+    label: label as string,
+    ...iconData,
   };
 });
 export const WEATHER_DATA_HASHMAP = arrayToHashmap(WEATHER_DATA, 'id');

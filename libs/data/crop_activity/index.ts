@@ -14,16 +14,14 @@ const CROP_ACTIVITY_BASE = {
 type CropActivityName = keyof typeof CROP_ACTIVITY_BASE;
 
 // TODO - migrate budget tool to use
-// TODO - organise all data in similar format and add documentation about storing/using images
-
 export const CROP_ACTIVITY_DATA = Object.entries(CROP_ACTIVITY_BASE).map(([id, { label }]) => {
   const data: IPicsaDataWithIcons = {
     assetIconPath: `assets/svgs/crop_activity/${id}.svg`,
-    label: label as string,
-    svgIcon: `picsa_crop_activity_${id}`,
+    svgIcon: id,
   };
   return {
     id: id as CropActivityName,
+    label: label as string,
     ...data,
   };
 });
