@@ -12,7 +12,7 @@ For example, the base select component can be extended to create a custom select
   templateUrl: './my-select-componetn.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MySelectComponent extends BaseSelectComponent<ISelectType>{
+export class MySelectComponent extends PicsaFormBaseSelectComponent<ISelectType>{
      public selectOptions = [...]
      public selectOptionsHashmap = {...}
 

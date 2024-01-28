@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Prov
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CROPS_DATA, CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
 
-import { BaseSelectComponent } from '../base/select';
-import { BaseSelectMultipleComponent } from '../base/select-multiple';
+import { PicsaFormBaseSelectComponent } from '../base/select';
+import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
 
 /**
  * Separate components to allow single and multiple crop select
@@ -27,7 +27,7 @@ export const CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   providers: [CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormCropSelectSingleComponent extends BaseSelectComponent<ICropData> {
+export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {
   public override selectOptions = CROPS_DATA;
   public override selectOptionsHashmap = CROPS_DATA_HASHMAP;
   constructor(cdr: ChangeDetectorRef) {
@@ -60,7 +60,7 @@ export const CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   providers: [CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormCropSelectMultipleComponent extends BaseSelectMultipleComponent<ICropData> {
+export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {
   public override selectOptions = CROPS_DATA;
   public override selectOptionsHashmap = CROPS_DATA_HASHMAP;
   constructor(cdr: ChangeDetectorRef) {

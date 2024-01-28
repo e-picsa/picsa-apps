@@ -3,7 +3,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP, ICropActivityDataEntry } from '@picsa/data';
 
-import { BaseSelectComponent } from '../base/select';
+import { PicsaFormBaseSelectComponent } from '../base/select';
 
 /** Accessor used for binding with ngModel or formgroups */
 export const CONTROL_VALUE_ACCESSOR: Provider = {
@@ -23,7 +23,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   providers: [CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormCropActivitySelectComponent extends BaseSelectComponent<ICropActivityDataEntry> {
+export class FormCropActivitySelectComponent extends PicsaFormBaseSelectComponent<ICropActivityDataEntry> {
   public override selectOptions = CROP_ACTIVITY_DATA;
   public override selectOptionsHashmap = CROP_ACTIVITY_HASHMAP;
 

@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 @Component({
   template: '',
 })
-export abstract class BaseSelectComponent<T = { id: string }> {
+export abstract class PicsaFormBaseSelectComponent<T = { id: string }> {
   public selectOptions: T[] = [];
   public selectOptionsHashmap: Record<string, T> = {};
 
