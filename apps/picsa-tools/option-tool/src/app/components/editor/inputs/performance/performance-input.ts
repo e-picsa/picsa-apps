@@ -57,7 +57,7 @@ export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<IPer
   @Input() options: { readonly?: boolean } = {};
 
   protected get selectedIconValue() {
-    return this.selectedOption?.matIcon || '';
+    return this.selectedOption?.readonlyIcon || '';
   }
 
   constructor(cdr: ChangeDetectorRef) {
