@@ -43,7 +43,6 @@ export class DataIconRegistry {
   private checkIconAssetsImported(iconPack: IconPackName) {
     const [{ svgIcon }] = ICON_PACK_DATA[iconPack];
     const namespace = `picsa_${iconPack}`;
-    console.log('check icon', namespace, ':', svgIcon);
     this.matIconRegistry.getNamedSvgIcon(svgIcon, namespace).subscribe({
       error: (err) => {
         const exampleImport = `\n\n{"glob": "*.svg", "input": "libs/data/${iconPack}/svgs","output": "assets/svgs/${iconPack}"}\n\n`;
