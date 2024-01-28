@@ -28,10 +28,8 @@ export const CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {
-  public override selectOptions = CROPS_DATA;
-  public override selectOptionsHashmap = CROPS_DATA_HASHMAP;
   constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+    super(cdr, CROPS_DATA, CROPS_DATA_HASHMAP);
   }
   public handleSelect(id: string) {
     this.selected = id;
@@ -61,10 +59,8 @@ export const CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {
-  public override selectOptions = CROPS_DATA;
-  public override selectOptionsHashmap = CROPS_DATA_HASHMAP;
   constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+    super(cdr, CROPS_DATA, CROPS_DATA_HASHMAP);
   }
   public handleSelect(id: string) {
     this.toggleSelected(id);

@@ -12,6 +12,8 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   multi: true,
 };
 
+const SELECT_OPTIONS = WEATHER_DATA.filter((w) => w.label !== '');
+
 /**
  * Form control to allow visual selection of weather condition
  * Displays options in a popup and allows single selection
@@ -24,10 +26,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormWeatherSelectComponent extends PicsaFormBaseSelectComponent<IWeatherDataEntry> {
-  public override selectOptions = WEATHER_DATA.filter((w) => w.label !== '');
-  public override selectOptionsHashmap = WEATHER_DATA_HASHMAP;
-
   constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {
-    super(cdr);
+    super(cdr, SELECT_OPTIONS, WEATHER_DATA_HASHMAP);
   }
 }

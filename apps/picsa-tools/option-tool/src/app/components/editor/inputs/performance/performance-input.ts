@@ -28,6 +28,7 @@ const PERFORMANCE_OPTIONS: { [id: string]: IPerformanceOption } = {
     readonlyIcon: 'check',
   },
 };
+const SELECT_OPTIONS = Object.entries(PERFORMANCE_OPTIONS).map(([id, value]) => ({ ...value, id }));
 
 /** Accessor used for binding with ngModel or formgroups */
 export const PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
@@ -50,9 +51,7 @@ export const PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   providers: [PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<IPerformanceOption> {
-  public override selectOptions = Object.entries(PERFORMANCE_OPTIONS).map(([id, value]) => ({ ...value, id }));
-
+export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]> {
   /** Configurable display options (none currently used) */
   @Input() options: { readonly?: boolean } = {};
 
@@ -61,6 +60,6 @@ export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<IPer
   }
 
   constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+    super(cdr, SELECT_OPTIONS);
   }
 }

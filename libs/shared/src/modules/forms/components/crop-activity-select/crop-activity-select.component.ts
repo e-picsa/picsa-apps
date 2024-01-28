@@ -24,10 +24,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropActivitySelectComponent extends PicsaFormBaseSelectComponent<ICropActivityDataEntry> {
-  public override selectOptions = CROP_ACTIVITY_DATA;
-  public override selectOptionsHashmap = CROP_ACTIVITY_HASHMAP;
-
   constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {
-    super(cdr);
+    super(cdr, CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP);
   }
 }

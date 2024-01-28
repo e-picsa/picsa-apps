@@ -47,13 +47,11 @@ export const INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   providers: [INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvestmentInputComponent extends PicsaFormBaseSelectComponent<IInvestmentOption> {
-  public override selectOptions = SELECT_OPTIONS;
-
+export class InvestmentInputComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]> {
   /** Configurable display options (none currently used) */
   @Input() options: { readonly?: boolean } = {};
 
   constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+    super(cdr, SELECT_OPTIONS);
   }
 }

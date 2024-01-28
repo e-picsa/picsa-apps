@@ -1,17 +1,11 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { arrayToHashmap } from '@picsa/utils';
 
 /** For more information about this base component see local @see./README.md */
 @Component({
   template: '',
 })
-export abstract class PicsaFormBaseSelectMultipleComponent<T = { id: string }> implements OnInit {
-  /** List of options to select from. Must contain 'id' property in each array item */
-  public selectOptions: T[] = [];
-
-  /** Overridable hashmap of select options (default will calculate) */
-  public selectOptionsHashmap: Record<string, T>;
-
+export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }> {
   private _selected: string[] = []; // this is the updated value that the class accesses
 
   /** Selected value binding */
@@ -30,15 +24,30 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T = { id: string }> i
       }
     }
   }
+  /** Get full selected entry data */
+  protected get selectedOptions() {
+    if (this.selected) {
+      return this.selected.map((id) => this.selectOptionsHashmap[id]);
+    }
+    return [];
+  }
 
   /** Additional event emitter to allow manual bind to <gender-input (selectedChange) /> event*/
   @Output() selectedChange = new EventEmitter<string[]>();
 
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngOnInit() {
+  /**
+   *
+   * @param cdr - Angular change detector ref
+   * @param selectOptions List of options to select from. Each option should include 'id' property
+   * @param selectOptionsHashmap Hashmap of select options. If not provided will be calculated
+   */
+  constructor(
+    private cdr: ChangeDetectorRef,
+    @Inject('selectOptions') public selectOptions: T[],
+    @Inject('selectOptionsHashmap') public selectOptionsHashmap: Record<string, T> = null as any
+  ) {
     if (!this.selectOptionsHashmap) {
-      this.selectOptionsHashmap = arrayToHashmap<any>(this.selectOptions, 'id');
+      this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');
     }
   }
 

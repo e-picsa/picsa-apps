@@ -8,16 +8,17 @@ For example, the base select component can be extended to create a custom select
 
 ```ts
 import { PicsaFormBaseSelectComponent } from '@picsa/shared/modules/forms/components/base/select';
+
+const SELECT_OPTIONS = [{id:'1',label:'hello'}, {id:'2',label:'world'}]
+
 @Component({
   selector: 'my-select-component',
   templateUrl: './my-select-componetn.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MySelectComponent extends PicsaFormBaseSelectComponent<ISelectType>{
-     public selectOptions = [...]
-
-     constructor(cdr:ChangeDetectorRef){
-        super(cdr)
+export class MySelectComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]>{
+     constructor(cdr:ChangeDetectorRef, ){
+        super(cdr,SELECT_OPTIONS)
      }
 ```
 
@@ -48,6 +49,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
    multi: true,
 };
 @Component({
+  ...
   providers: [CONTROL_VALUE_ACCESSOR],
 })
 ```
@@ -55,6 +57,13 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
 **Optimisation**
 The form will by default create a hashmap of option entries for lookup purposes. If the same component will be used
 in multiple locations it may be beneficial to directly override the `selectOptionsHashmap` to avoid recalculation
+
+```ts
+export class MySelectComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]>{
+     constructor(cdr:ChangeDetectorRef, ){
+        super(cdr,SELECT_OPTIONS, SELECT_OPTIONS_HASHMAP)
+     }
+```
 
 **Further Reading**
 For more information about custom value controllers see:
