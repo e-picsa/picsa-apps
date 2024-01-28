@@ -13,7 +13,7 @@
       (click)="linkClicked(link)"
     >
       <div style="text-align: center">
-        <mat-icon [svgIcon]="link.icon" class="nav-icon"></mat-icon>
+        <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
         <div class="nav-text">{{ link.name | translate }}</div>
       </div>
       @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {

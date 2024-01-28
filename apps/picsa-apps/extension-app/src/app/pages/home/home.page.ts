@@ -14,7 +14,7 @@ import { HOME_TOUR } from './home.tour';
 
 interface IPageLink {
   name: string;
-  icon: string;
+  svgIcon: string;
   url: string;
   /** Element ID used in tours */
   tourId: string;
@@ -25,68 +25,68 @@ interface IPageLink {
 const PAGE_LINKS: IPageLink[] = [
   {
     name: translateMarker('Manual'),
-    icon: 'extension_app:manual_tool',
+    svgIcon: 'extension_app:manual_tool',
     url: '/manual',
     tourId: 'manual',
   },
   {
     name: translateMarker('Farmer Activities'),
-    icon: 'extension_app:farmer_activity',
+    svgIcon: 'extension_app:farmer_activity',
     url: '/farmer-activity',
     tourId: 'farmer',
   },
   {
     name: translateMarker('Resources'),
-    icon: 'extension_app:resources_tool',
+    svgIcon: 'extension_app:resources_tool',
     url: '/resources',
     tourId: 'resources',
   },
   {
     name: translateMarker('Monitoring'),
-    icon: 'extension_app:data_collection',
+    svgIcon: 'extension_app:data_collection',
     url: '/monitoring',
     tourId: 'monitoring',
   },
   {
     name: translateMarker('Climate'),
-    icon: 'extension_app:climate_tool',
+    svgIcon: 'extension_app:climate_tool',
     url: '/climate',
     tourId: 'climate',
   },
   {
     name: translateMarker('Budget'),
-    icon: 'extension_app:budget_tool',
+    svgIcon: 'extension_app:budget_tool',
     url: '/budget',
     tourId: 'budget',
   },
   {
     name: translateMarker('Probability'),
-    icon: 'extension_app:probability_tool',
+    svgIcon: 'extension_app:probability_tool',
     url: '/crop-probability',
     tourId: 'crop-probability',
   },
   {
     name: translateMarker('Options'),
-    icon: 'extension_app:option_tool',
+    svgIcon: 'extension_app:option_tool',
     url: '/option',
     tourId: 'option',
   },
   {
     name: translateMarker('Seasonal Calendar'),
-    icon: 'extension_app:seasonal_calendar_tool',
+    svgIcon: 'extension_app:seasonal_calendar_tool',
     url: '/seasonal-calendar',
     tourId: 'seasonal-calendar',
   },
 
   // {
   //   name: translateMarker('Discussions'),
-  //   icon: 'picsa_discussions',
+  //   svgIcon: 'picsa_discussions',
   //   url: '/discussions',
   // },
 
   // {
   //   name: 'Settings',
-  //   icon: 'picsa_settings',
+  //   svgIcon: 'picsa_settings',
   //   url: '/settings'
   // }
 ];
