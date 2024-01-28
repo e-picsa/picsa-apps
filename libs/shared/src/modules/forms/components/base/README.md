@@ -7,6 +7,7 @@ Base components are designed to be inherited, providing any array of `selectOpti
 For example, the base select component can be extended to create a custom select component
 
 ```ts
+import { PicsaFormBaseSelectComponent } from '@picsa/shared/modules/forms/components/base/select';
 @Component({
   selector: 'my-select-component',
   templateUrl: './my-select-componetn.html',
