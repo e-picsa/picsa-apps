@@ -2,7 +2,7 @@
 
 The base components are designed to make it easier to implement custom form value controls.
 
-Base components are designed to be inherited, providing any array of `selectOptions` where each entry contains a unique `id` property, and then a `selectOptionsHashmap` which contains the same data organised by id.
+Base components are designed to be inherited, providing any array of `selectOptions` where each entry contains a unique `id` property
 
 For example, the base select component can be extended to create a custom select component
 
@@ -14,19 +14,20 @@ For example, the base select component can be extended to create a custom select
 })
 export class MySelectComponent extends PicsaFormBaseSelectComponent<ISelectType>{
      public selectOptions = [...]
-     public selectOptionsHashmap = {...}
 
      constructor(cdr:ChangeDetectorRef){
         super(cdr)
      }
 ```
 
-and used to render the options within a html component
+and used to render the options within a html component. The `selected` variable can be used to set or get the id of
+the option that has been selected. The full item can be retrieved via `selectedOption`
 
 ```html
 @for(option of selectOptions){
 <div (click)="selected = option.id">....</div>
 }
+<div>Selected option: {{selectedOption.label}}</div>
 ```
 
 The process for extending multiple select base is mostly the same, with the exception of a `toggleSelected` method used instead of explicitly setting selected option
@@ -50,6 +51,11 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
 })
 ```
 
+**Optimisation**
+The form will by default create a hashmap of option entries for lookup purposes. If the same component will be used
+in multiple locations it may be beneficial to directly override the `selectOptionsHashmap` to avoid recalculation
+
+**Further Reading**
 For more information about custom value controllers see:
 
 - https://valor-software.com/articles/avoiding-common-pitfalls-with-controlvalueaccessors-in-angular

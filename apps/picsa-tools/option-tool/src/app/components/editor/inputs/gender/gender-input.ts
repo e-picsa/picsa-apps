@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Inpu
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectMultipleComponent } from '@picsa/shared/modules/forms/components/base/select-multiple';
-import { arrayToHashmap } from '@picsa/utils';
 
 const GENDER_OPTIONS: { [id: string]: { label: string; svgIcon: string } } = {
   female: {
@@ -19,7 +18,6 @@ const GENDER_OPTIONS: { [id: string]: { label: string; svgIcon: string } } = {
 const STRINGS = { only: translateMarker('Only'), and: translateMarker('and'), both: translateMarker('Both') };
 
 const SELECT_OPTIONS = Object.entries(GENDER_OPTIONS).map(([id, value]) => ({ ...value, id }));
-const SELECT_OPTIONS_HASHMAP = arrayToHashmap(SELECT_OPTIONS, 'id');
 
 /** Accessor used for binding with ngModel or formgroups */
 export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
@@ -44,7 +42,6 @@ export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
 })
 export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent {
   public override selectOptions = SELECT_OPTIONS;
-  public override selectOptionsHashmap = SELECT_OPTIONS_HASHMAP;
 
   /** Configurable display options */
   @Input() options: { showValueText?: boolean; readonly?: boolean } = {};

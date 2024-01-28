@@ -1,12 +1,16 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { arrayToHashmap } from '@picsa/utils';
 
 /** For more information about this base component see local @see./README.md */
 @Component({
   template: '',
 })
-export abstract class PicsaFormBaseSelectMultipleComponent<T = { id: string }> {
+export abstract class PicsaFormBaseSelectMultipleComponent<T = { id: string }> implements OnInit {
+  /** List of options to select from. Must contain 'id' property in each array item */
   public selectOptions: T[] = [];
-  public selectOptionsHashmap: Record<string, T> = {};
+
+  /** Overridable hashmap of select options (default will calculate) */
+  public selectOptionsHashmap: Record<string, T>;
 
   private _selected: string[] = []; // this is the updated value that the class accesses
 
@@ -31,6 +35,12 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T = { id: string }> {
   @Output() selectedChange = new EventEmitter<string[]>();
 
   constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() {
+    if (!this.selectOptionsHashmap) {
+      this.selectOptionsHashmap = arrayToHashmap<any>(this.selectOptions, 'id');
+    }
+  }
 
   public toggleSelected(id: string) {
     if (id) {
