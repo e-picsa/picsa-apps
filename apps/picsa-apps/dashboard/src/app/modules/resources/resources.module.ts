@@ -23,10 +23,6 @@ import { ResourcesPageComponent } from './pages/home/resources.page';
       {
         path: ':id',
         component: ResourceCreateComponent,
-      },
-      {
-        path:'search',
-        // component:Sear/chComponent,
       }
     ]),
   ],

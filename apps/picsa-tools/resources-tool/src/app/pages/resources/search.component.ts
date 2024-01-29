@@ -6,11 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { DB_COLLECTION_ENTRIES } from '../../data';
 import { DB_LINK_ENTRIES } from '../../data';
 import { ResourcesMaterialModule } from '../../material.module';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'picsa-search',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,MatCardModule],
 templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
 })
