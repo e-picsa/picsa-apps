@@ -5,18 +5,23 @@ import { DB_FILE_ENTRIES } from '../../data';
 import { FormsModule } from '@angular/forms';
 import { DB_COLLECTION_ENTRIES } from '../../data';
 import { DB_LINK_ENTRIES } from '../../data';
-import { ResourcesMaterialModule } from '../../material.module';
 import { MatCardModule } from '@angular/material/card';
 
+
+type SearchResultType = { 
+  item: any,
+  refIndex: number,
+  
+  }
 @Component({
   selector: 'picsa-search',
   standalone: true,
   imports: [CommonModule,FormsModule,MatCardModule],
 templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
-})
+}) 
+
 export class SearchComponent implements OnInit{
-  searchList: any[] = [];
   query: string = '';
 
   fuseOptions = {
@@ -25,7 +30,7 @@ export class SearchComponent implements OnInit{
 
   fuse: any;
 
-  searchResults: any[] = [];
+  searchResults: SearchResultType[] = [];
 
   ngOnInit(): void {
     const allEntries = [
@@ -33,19 +38,14 @@ export class SearchComponent implements OnInit{
       ...DB_COLLECTION_ENTRIES,
       ...DB_LINK_ENTRIES,]
     this.fuse = new Fuse(allEntries, this.fuseOptions);
-    
+   
   }
 
   onSearchInputChange(event: any) {
-    console.log('Query:', this.query);
-  console.log('Data:', DB_FILE_ENTRIES);
   if (this.fuse) {
-    console.log('Fuse Object:', this.fuse);
     this.searchResults = this.fuse.search(this.query);
-    console.log('Search Results:', this.searchResults);
-  } else {
-    console.error('Fuse Object is not initialized.');
-  }
+   
+  } 
   }
  
 }

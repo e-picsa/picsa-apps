@@ -10,7 +10,6 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 const routes: Routes = [{ path: '', component: SearchComponent, title: 'Search' }];
 
 @NgModule({
-    // declarations:[SearchComponent],
     imports: [RouterModule.forChild(routes),
               FormsModule,
               ResourcesMaterialModule,
