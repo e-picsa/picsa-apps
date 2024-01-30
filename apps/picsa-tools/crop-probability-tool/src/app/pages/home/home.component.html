@@ -4,9 +4,6 @@
     style="padding: 1em; margin-top: 1em"
     data-tour-id="station-select"
   ></crop-probability-station-select>
-  <button mat-button class="tour-button" color="primary" (click)="startTour()">
-    <mat-icon class="tour-icon mat-elevation-z4">question_mark</mat-icon>
-    <span>{{ 'Demo' | translate }}</span>
-  </button>
+  <picsa-tour-button [tourId]="activeStation ? 'cropProbabilityTable' : 'cropProbabilitySelect'"></picsa-tour-button>
 </div>
 <crop-probability-table [activeStation]="activeStation" *ngIf="activeStation"></crop-probability-table>

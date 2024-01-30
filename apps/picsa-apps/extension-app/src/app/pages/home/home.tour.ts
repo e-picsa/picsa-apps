@@ -1,4 +1,4 @@
-import type { ITourStep } from '@picsa/shared/services/core/tour.service';
+import type { ITourStep } from '@picsa/shared/services/core/tour';
 
 export const HOME_TOUR: ITourStep[] = [
   {

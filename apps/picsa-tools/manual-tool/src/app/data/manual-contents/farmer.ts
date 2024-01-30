@@ -32,12 +32,12 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Resource Allocation Map (RAM)'),
-            svgIcon: 'picsa_manual_resource_allocation',
+            svgIcon: 'manual_tool:resource_allocation',
             id: 'ram-activity',
           },
           {
             label: translateMarker('Seasonal Calendar'),
-            svgIcon: 'picsa_manual_calender',
+            svgIcon: 'manual_tool:calendar',
             id: 'calendar-activity',
           },
         ],
@@ -54,7 +54,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Historic climate'),
-            svgIcon: 'picsa_manual_temperature',
+            svgIcon: 'manual_tool:temperature',
             id: 'historic-climate-activity',
           },
         ],
@@ -71,7 +71,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Probability and Risk'),
-            svgIcon: 'picsa_manual_campus',
+            svgIcon: 'manual_tool:campus',
             id: 'probability-risk-activity',
           },
         ],
@@ -88,17 +88,17 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Crop Info'),
-            svgIcon: 'picsa_manual_crop',
+            svgIcon: 'manual_tool:crop',
             id: 'crop-info-activity',
           },
           {
             label: translateMarker('Livestock Info'),
-            svgIcon: 'picsa_manual_livestock',
+            svgIcon: 'manual_tool:livestock',
             id: 'livestock-info-activity',
           },
           {
             label: translateMarker('Livelihood Info'),
-            svgIcon: 'picsa_manual_place_holder',
+            svgIcon: 'manual_tool:place_holder',
             id: 'livelihood-info-activity',
           },
         ],
@@ -115,7 +115,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Farmers choose'),
-            svgIcon: 'picsa_manual_place_holder',
+            svgIcon: 'manual_tool:place_holder',
             id: 'farmers-choose-activity',
           },
         ],
@@ -132,7 +132,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Budget'),
-            svgIcon: 'picsa_manual_place_holder',
+            svgIcon: 'manual_tool:place_holder',
             id: 'budget-activity',
           },
         ],
@@ -149,7 +149,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         activities: [
           {
             label: translateMarker('Select and amend'),
-            svgIcon: 'picsa_manual_place_holder',
+            svgIcon: 'manual_tool:place_holder',
             id: 'select-amend-activity',
           },
         ],

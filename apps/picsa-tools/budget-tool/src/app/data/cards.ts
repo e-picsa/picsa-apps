@@ -1,6 +1,7 @@
 import type { IBudgetCard } from '../schema/cards';
 
 // This data is automatically populated on first load and update from live when available
+// TODO - migrate to use svgIcon property and existing iconsets, e.g. `svgIcon: picsa_crop:maize`
 export const BUDGET_CARDS: IBudgetCard[] = [
   {
     type: 'activities',

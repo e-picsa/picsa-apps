@@ -1,0 +1,57 @@
+<div class="page-content">
+  @if(form){
+  <form [formGroup]="form">
+    <!-- Header and edit button -->
+    <div style="display: flex; align-items: center">
+      <h1 style="flex: 1">{{ formValue.name }}</h1>
+
+      <button mat-stroked-button color="primary" (click)="showEditDialog(editDialogRef)">
+        <mat-icon>edit</mat-icon>
+        {{ 'Edit' | translate }}
+      </button>
+    </div>
+
+    <table class="calendar-table">
+      <!-- Monthly weather select header -->
+      <thead>
+        <tr>
+          <th></th>
+          @for (weatherControl of form.controls.weather.controls; track $index) {
+          <th formArrayName="weather">
+            <div style="margin-bottom: 8px">
+              {{ columnLabels[$index] | translate }}
+            </div>
+            <picsa-form-weather-select [formControl]="weatherControl"></picsa-form-weather-select>
+          </th>
+          }
+        </tr>
+      </thead>
+      <!-- Activity rows -->
+      <tbody>
+        @for(crop of formValue.meta.enterprises; track $index){
+        <tr>
+          <td>
+            {{ rowLabels[$index] | translate }}
+          </td>
+          @for(control of activityFormControls[crop].controls; track $index){
+          <td>
+            <picsa-form-crop-activity-select [formControl]="control"></picsa-form-crop-activity-select>
+          </td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+    <!-- Editor dialog -->
+    <ng-template #editDialogRef>
+      @if(form){
+      <div style="overflow: auto; height: 90vh; width: 100%">
+        <seasonal-calendar-editor [form]="form"></seasonal-calendar-editor>
+        <!-- TODO - dialog lcose -->
+        <button mat-raised-button class="footer-button" color="primary" mat-dialog-close>Save</button>
+      </div>
+      }
+    </ng-template>
+  </form>
+  }
+</div>

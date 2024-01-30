@@ -24,7 +24,7 @@ const matModules = [
   MatStepperModule,
   MatTableModule,
   MatTabsModule,
-  MatToolbarModule,
+  MatToolbarModule
 ];
 
 @NgModule({

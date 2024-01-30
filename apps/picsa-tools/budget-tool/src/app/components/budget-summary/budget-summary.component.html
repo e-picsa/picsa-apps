@@ -1,0 +1,25 @@
+<div class="summary-container">
+  <section matTooltip="Total Family Labour Hours">
+    <mat-icon svgIcon="picsa_budget_family-labour" class="summary-icon"></mat-icon>
+    <span class="summary-value">{{ totalFamilyLabourHours }} {{ 'hours' | translate }}</span>
+  </section>
+  <!-- TODO - confirm with UoR if inputs/outputs preferred alongside net cash balance -->
+  <!-- <p matTooltip="Total Inputs Value">
+      <img [src]="getImagePath('inputs', 'svg')" alt="Receipt Icon" class="icon" /> : <b>{{ totalInputsValue }}</b>
+    </p>
+    <p matTooltip="Total Outputs Value">
+      <img [src]="getImagePath('outputs', 'svg')" alt="Monetization Icon" class="icon" />:
+      <b>{{ totalOutputsValue }}</b>
+    </p> -->
+  @for (produce of totalProduceSummary; track produce.id) {
+  <section [matTooltip]="'Total ' + produce.label + ' consumed'">
+    <img [src]="produce.imgPath" [alt]="produce.label + ' Icon'" class="summary-icon" />
+    <span class="summary-value">{{ produce.total }} {{ 'consumed' | translate }}</span>
+  </section>
+  }
+
+  <section matTooltip="Final Cash Balance">
+    <mat-icon svgIcon="picsa_budget_cash_balance" alt="Wallet Icon" class="summary-icon" />
+    <span class="summary-value">{{ finalCashBalance }} {{ 'balance' | translate }}</span>
+  </section>
+</div>

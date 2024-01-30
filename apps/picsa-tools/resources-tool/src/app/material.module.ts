@@ -38,16 +38,10 @@ export class ResourcesMaterialModule {
   }
 
   registerIcons() {
-    const RESOURCE_ICONS = {
-      filetype_document: 'filetype_document',
-      filetype_pdf: 'filetype_pdf',
-      filetype_video: 'filetype_video',
-      play_store: 'play_store',
-    };
-    for (const [key, value] of Object.entries(RESOURCE_ICONS)) {
-      const iconName = `picsa_${key}`;
-      const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/resources/mat-icons/${value}.svg`);
-      this.matIconRegistry.addSvgIcon(iconName, iconUrl);
+    const icons = ['filetype_document', 'filetype_pdf', 'filetype_video', 'play_store'];
+    for (const icon of icons) {
+      const url = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/resources/mat-icons/${icon}.svg`);
+      this.matIconRegistry.addSvgIconInNamespace('resources_tool', icon, url);
     }
   }
 }

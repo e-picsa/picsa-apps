@@ -30,6 +30,7 @@ export class BudgetCardNew {
       label: '',
       type: this.type,
       groupings: groupings as IBudgetCardGrouping[],
+      imgType: 'svg',
     };
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
       width: '250px',

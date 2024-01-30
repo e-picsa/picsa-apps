@@ -4,22 +4,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
 
-import { ActivitiesEditorDialogComponent } from './activities-editor-dialog/activities-editor-dialog.component';
-import { CropDialogComponent  } from './crop-dialog-component/crop-dialog-component.component';
-import { FieldErrorDisplayComponent } from './field-error-display/field-error-display.component';
+import { CalendarEditorComponent } from './calendar-editor/calendar-editor.component';
 // Local components
 import { SeasonalCalendarMaterialModule } from './material.module';
-import { MonthDialogComponent } from './month-editor-dialog/crop-dialog-component.component';
 
-const Components = [CropDialogComponent,ActivitiesEditorDialogComponent,MonthDialogComponent,FieldErrorDisplayComponent];
+const Components = [CalendarEditorComponent];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     PicsaCommonComponentsModule,
+    PicsaFormsModule,
     PicsaTranslateModule,
     ReactiveFormsModule,
     RouterModule,

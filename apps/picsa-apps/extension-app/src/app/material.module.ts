@@ -19,29 +19,29 @@ export class ExtensionToolkitMaterialModule {
     this.registerIcons();
   }
   registerIcons() {
-    const icons = {
+    const icons = [
       // TODO - climate and budget icons should register in lazy-loaded material module
-      budget_tool: 'budget_tool',
-      climate_tool: 'climate_tool',
-      data_collection: 'data_collection',
-      discussions: 'discussions',
-      manual_tool: 'manual_tool',
-      option_tool: 'option_tool',
-      play_store: 'play_store',
-      probability_tool: 'probability_tool',
-      resources_tool: 'resources_tool',
-      seasonal_calendar_tool: 'seasonal_calendar_tool',
-      tutorial: 'tutorial',
-      whatsapp: 'whatsapp',
-      farmer_activity: 'farmer_activity',
-    };
-    for (const [key, value] of Object.entries(icons)) {
-      this.matIconRegistry.addSvgIcon(
-        `picsa_${key}`,
-        this.domSanitizer.bypassSecurityTrustResourceUrl(
-          // NOTE - svgs are imported from shared lib (see angular.json for config)
-          `assets/svgs/${value}.svg`
-        )
+      'budget_tool',
+      'climate_tool',
+      'data_collection',
+      'discussions',
+      'manual_tool',
+      'option_tool',
+      'play_store',
+      'probability_tool',
+      'resources_tool',
+      'seasonal_calendar_tool',
+      'tutorial',
+      'whatsapp',
+      'farmer_activity',
+    ];
+
+    for (const icon of icons) {
+      // NOTE - svgs are imported from shared lib (see angular.json for config)
+      this.matIconRegistry.addSvgIconInNamespace(
+        'extension_app',
+        icon,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${icon}.svg`)
       );
     }
   }

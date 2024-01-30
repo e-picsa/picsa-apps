@@ -4,16 +4,7 @@
 @use '@angular/material' as mat;
 @include mat.core();
 
-$theme-base: mat.define-light-theme(
-  (
-    color: (
-      primary: mat.$indigo-palette,
-      accent: mat.$indigo-palette,
-      warn: mat.$indigo-palette,
-    ),
-  )
-);
-@include mat.all-component-bases($theme-base);
+mat.$theme-ignore-duplication-warnings: true;
 
 @import './picsa-global.scss';
 @import './picsa-mw.scss';

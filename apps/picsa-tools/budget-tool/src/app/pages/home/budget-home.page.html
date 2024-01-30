@@ -1,6 +1,6 @@
 <div class="page-content">
   <div class="button-grid">
-    <button mat-stroked-button color="primary" (click)="createClicked()">
+    <button mat-stroked-button color="primary" (click)="createClicked()" data-tourid="create">
       <div>{{ 'Create New Budget' | translate }}</div>
       <img src="assets/budget-icons/budget-create.svg" />
     </button>
@@ -11,7 +11,7 @@
   </div>
 
   <h2>{{ 'Saved Budgets' | translate }}</h2>
-  <div *mobxAutorun>
+  <div *mobxAutorun data-tourid="create">
     <budget-list-item
       *ngFor="let budget of store.savedBudgets"
       [routerLink]="['./view', budget._key]"

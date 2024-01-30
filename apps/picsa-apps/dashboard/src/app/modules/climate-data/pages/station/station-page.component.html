@@ -1,0 +1,18 @@
+<div class="page-content">
+  @if(station){
+  <h2>{{ station.station_name }}</h2>
+  <table>
+    <tr>
+      @for(key of stationSummary.keys; track $index){
+      <th>{{ key }}</th>
+      }
+    </tr>
+    @for(value of stationSummary.values; track $index){
+    <td>{{ value }}</td>
+    }
+  </table>
+  <dashboard-climate-rainfall-summary style="margin-top: 2rem"></dashboard-climate-rainfall-summary>
+  } @else {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+</div>

@@ -17,7 +17,7 @@
         "tsConfig": "apps/picsa-apps/dashboard/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": ["apps/picsa-apps/dashboard/src/favicon.ico", "apps/picsa-apps/dashboard/src/assets"],
-        "styles": ["apps/picsa-apps/dashboard/src/styles.scss"],
+        "styles": ["apps/picsa-apps/dashboard/src/styles.scss", "node_modules/leaflet/dist/leaflet.css"],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]
         },
@@ -30,12 +30,18 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "2mb"
             },
             {
               "type": "anyComponentStyle",
               "maximumWarning": "2kb",
               "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "libs/environments/src/environment.ts",
+              "with": "libs/environments/src/environment.prod.ts"
             }
           ],
           "outputHashing": "all"

@@ -34,6 +34,67 @@ export interface Database {
   }
   public: {
     Tables: {
+      climate_products: {
+        Row: {
+          created_at: string
+          data: Json
+          id: number
+          station_id: number | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: number
+          station_id?: number | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: number
+          station_id?: number | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "climate_products_station_id_fkey"
+            columns: ["station_id"]
+            referencedRelation: "climate_stations"
+            referencedColumns: ["station_id"]
+          }
+        ]
+      }
+      climate_stations: {
+        Row: {
+          country_code: string | null
+          district: string | null
+          elevation: number | null
+          latitude: number | null
+          longitude: number | null
+          station_id: number
+          station_name: string | null
+        }
+        Insert: {
+          country_code?: string | null
+          district?: string | null
+          elevation?: number | null
+          latitude?: number | null
+          longitude?: number | null
+          station_id?: number
+          station_name?: string | null
+        }
+        Update: {
+          country_code?: string | null
+          district?: string | null
+          elevation?: number | null
+          latitude?: number | null
+          longitude?: number | null
+          station_id?: number
+          station_name?: string | null
+        }
+        Relationships: []
+      }
       kobo_sync: {
         Row: {
           _created: string
@@ -112,29 +173,32 @@ export interface Database {
       resources: {
         Row: {
           created_at: string
-          description: string | null
+          description: string
           id: string
           modified_at: string
           storage_cover: string | null
           storage_file: string | null
+          title: string | null
           type: string
         }
         Insert: {
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
           modified_at?: string
           storage_cover?: string | null
           storage_file?: string | null
+          title?: string | null
           type: string
         }
         Update: {
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
           modified_at?: string
           storage_cover?: string | null
           storage_file?: string | null
+          title?: string | null
           type?: string
         }
         Relationships: [
@@ -164,54 +228,41 @@ export interface Database {
           }
         ]
       }
-      resources_child: {
+      translations: {
         Row: {
-          country_code: string | null
+          context: string | null
           created_at: string
-          id: number
-          language_code: string | null
-          parent: string
-          storage_file: string
-          tag: string | null
+          en: string
+          id: string
+          ke_sw: string | null
+          mw_ny: string | null
+          tj_tg: string | null
+          tool: string
+          zm_ny: string | null
         }
         Insert: {
-          country_code?: string | null
+          context?: string | null
           created_at?: string
-          id?: number
-          language_code?: string | null
-          parent: string
-          storage_file: string
-          tag?: string | null
+          en: string
+          id: string
+          ke_sw?: string | null
+          mw_ny?: string | null
+          tj_tg?: string | null
+          tool: string
+          zm_ny?: string | null
         }
         Update: {
-          country_code?: string | null
+          context?: string | null
           created_at?: string
-          id?: number
-          language_code?: string | null
-          parent?: string
-          storage_file?: string
-          tag?: string | null
+          en?: string
+          id?: string
+          ke_sw?: string | null
+          mw_ny?: string | null
+          tj_tg?: string | null
+          tool?: string
+          zm_ny?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "resources_child_parent_fkey"
-            columns: ["parent"]
-            referencedRelation: "resources"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resources_child_storage_file_fkey"
-            columns: ["storage_file"]
-            referencedRelation: "objects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resources_child_storage_file_fkey"
-            columns: ["storage_file"]
-            referencedRelation: "storage_objects"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
     }
     Views: {

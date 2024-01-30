@@ -19,7 +19,7 @@ export class ManualToolMaterialModule {
 
   registerIcons() {
     const CUSTOM_ICONS: Record<string, string> = {
-      calender: 'calender',
+      calendar: 'calendar',
       campus: 'campus',
       crop: 'crop',
       livestock: 'livestock',
@@ -32,9 +32,8 @@ export class ManualToolMaterialModule {
     };
 
     for (const [key, value] of Object.entries(CUSTOM_ICONS)) {
-      const iconName = `picsa_manual_${key}`;
       const iconUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${value}.svg`);
-      this.matIconRegistry.addSvgIcon(iconName, iconUrl);
+      this.matIconRegistry.addSvgIconInNamespace('manual_tool', key, iconUrl);
     }
   }
 }

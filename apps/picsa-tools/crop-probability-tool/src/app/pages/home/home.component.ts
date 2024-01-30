@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TourService } from '@picsa/shared/services/core/tour.service';
+import { TourService } from '@picsa/shared/services/core/tour';
 import { Subject, takeUntil } from 'rxjs';
 
 import { STATION_CROP_DATA } from '../../data/mock';
@@ -21,6 +21,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToRouteChanges();
+    this.tourService.registerTour('cropProbabilityTable', CROP_PROBABILITY_TABLE_TOUR);
+    this.tourService.registerTour('cropProbabilitySelect', CROP_PROBABILITY_SELECT_TOUR);
   }
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
@@ -41,11 +43,5 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.activeStation = undefined;
         }
       });
-  }
-
-  public startTour() {
-    // If no site is selected show the select tour, otherwise show the table tour
-    const targetTour = this.activeStation ? CROP_PROBABILITY_TABLE_TOUR : CROP_PROBABILITY_SELECT_TOUR;
-    this.tourService.startTour(targetTour);
   }
 }

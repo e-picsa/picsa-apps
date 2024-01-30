@@ -1,0 +1,27 @@
+table.resources-table {
+  max-height: 50vh;
+  display: block;
+  overflow: auto;
+}
+tr.resource-row {
+  cursor: pointer;
+  &:hover {
+    background: whitesmoke;
+  }
+}
+th {
+  font-weight: bold;
+}
+
+td {
+  cursor: pointer;
+}
+
+.disallow-click{
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.allow-click{
+  pointer-events:all;
+  cursor: pointer;
+}
