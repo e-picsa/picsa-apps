@@ -22,6 +22,11 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
       }
     }
   }
+
+  @Input() set filterFn(filterFn: (option: T) => boolean) {
+    this.filteredOptions = this.selectOptions.filter((o) => filterFn(o));
+  }
+
   /** Get full selected entry data */
   protected get selectedOption() {
     if (this.selected) {
@@ -29,6 +34,8 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
     }
     return null;
   }
+
+  protected filteredOptions: T[] = [];
 
   /** Additional event emitter to allow manual bind to <gender-input (selectedChange) /> event*/
   @Output() selectedChange = new EventEmitter<string>();
@@ -43,6 +50,7 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
     if (!this.selectOptionsHashmap) {
       this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');
     }
+    this.filteredOptions = this.selectOptions;
   }
 
   /** Events registered by ngModel and Form Controls */

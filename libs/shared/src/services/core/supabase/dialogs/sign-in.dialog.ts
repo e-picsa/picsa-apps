@@ -13,8 +13,8 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { PICSAFormValidators } from '@picsa/forms';
 
-import { PICSAFormValidators } from '../../../../modules/forms/validators';
 import { PicsaNotificationService } from '../../notification.service';
 import type { SupabaseAuthService } from '../services/supabase-auth.service';
 
