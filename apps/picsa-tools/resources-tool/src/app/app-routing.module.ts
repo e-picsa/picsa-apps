@@ -17,7 +17,7 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: 'search',
-    loadChildren: () => import('./pages/resources/search.module').then((m) => m.SearchModule),
+    loadChildren: () => import('./pages/search/search.module').then((m) => m.SearchModule),
   },
 ];
 /** Routes only registered in standalone mode */
