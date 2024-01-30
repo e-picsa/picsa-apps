@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input, Provider } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { PicsaFormBaseSelectComponent } from '@picsa/shared/modules/forms/components/base/select';
+import { PicsaFormBaseSelectComponent } from '@picsa/forms/components/base/select';
 
 interface IInvestmentOption {
   label: string;

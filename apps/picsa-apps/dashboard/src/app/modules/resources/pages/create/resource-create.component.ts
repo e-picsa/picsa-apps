@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { PICSAFormValidators } from '@picsa/forms';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
-import { PICSAFormValidators } from '@picsa/shared/modules/forms/validators';
 import {
   IUploadResult,
   SupabaseStoragePickerDirective,
