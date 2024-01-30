@@ -6,7 +6,7 @@ import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
-import { ngRouterMergedSnapshot$ } from '@picsa/utils';
+import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
 
 import { ClimateDataApiService } from './climate-data-api.service';
 

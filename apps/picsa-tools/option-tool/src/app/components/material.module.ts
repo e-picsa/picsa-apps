@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DataIconRegistry } from '@picsa/data';
+import { DataIconRegistry } from '@picsa/data/iconRegistry';
 
 const COMPONENTS = [MatButtonModule, MatDialogModule, MatIconModule, MatSelectModule, MatStepperModule, MatTableModule];
 // use custom module to make it easier to control what is available through app

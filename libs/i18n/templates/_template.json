@@ -1,5 +1,9 @@
 [
   {
+    "text": "",
+    "tool": "common_weather"
+  },
+  {
     "text": "apply fertiliser",
     "tool": "budget",
     "context": "activities"
@@ -550,11 +554,23 @@
     "tool": "budget"
   },
   {
+    "text": "balance",
+    "tool": "budget"
+  },
+  {
+    "text": "consumed",
+    "tool": "budget"
+  },
+  {
     "text": "description",
     "tool": "budget"
   },
   {
     "text": "fruits",
+    "tool": "budget"
+  },
+  {
+    "text": "hours",
     "tool": "budget"
   },
   {
@@ -616,11 +632,6 @@
   },
   {
     "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Rain",
     "tool": "climate",
     "context": "chart"
   },
@@ -804,6 +815,26 @@
   {
     "text": "Who is using?",
     "tool": "common"
+  },
+  {
+    "text": "Apply Fertiliser",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Land Preparation",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Sowing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Watering",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Weeding",
+    "tool": "common_crop_activity"
   },
   {
     "text": "Beans",
@@ -1045,6 +1076,26 @@
     "text": "Dec",
     "tool": "common_months",
     "context": "month_short_12"
+  },
+  {
+    "text": "Clear",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Cloudy",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Heavy Rain",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Light Rain",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Rain",
+    "tool": "common_weather"
   },
   {
     "text": "All",
@@ -1403,6 +1454,10 @@
     "tool": "option"
   },
   {
+    "text": "Add",
+    "tool": "option"
+  },
+  {
     "text": "Add Option",
     "tool": "option"
   },
@@ -1583,83 +1638,55 @@
     "tool": "resources"
   },
   {
-    "text": "Add",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Add Activity",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Calendar Lists",
-    "tool": "seasonal-calendar"
-  },
-  {
     "text": "Calendar Time",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Calender name",
+    "text": "Calendar name",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Categories",
+    "text": "Copy",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Create calender ",
+    "text": "Create Calendar",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Create new calender",
+    "text": "Example Calendar",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Crops",
+    "text": "No saved calendars",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Crops Seasonal calender",
+    "text": "Number of Months",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Drying",
+    "text": "Please add title",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Enter the selected month's weather condition",
+    "text": "Please enter start month",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Extra information",
+    "text": "Please enter total months",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Harvesting",
+    "text": "Please select at least 1 crop",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "No available calendars",
+    "text": "Save Copy",
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Number of Months Needed",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Other",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please enter the required number of months",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please select a start month",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Preparation",
+    "text": "Saved Calendars",
     "tool": "seasonal-calendar"
   },
   {
@@ -1667,39 +1694,7 @@
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Season of 85",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Select Activity",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Select start month",
-    "tool": "seasonal-calendar"
-  },
-  {
     "text": "Start Month ",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Type other activity",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Update Crops",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Weeding",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "weather condition",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "wet,dry...",
     "tool": "seasonal-calendar"
   }
 ]

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MONTH_NAMES } from '@picsa/data';
+import { MONTH_DATA } from '@picsa/data';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
@@ -27,7 +27,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   filteredEnterprises: IBudgetCard[] = [];
   periodScaleOptions: IEnterpriseScaleLentgh[] = ['weeks', 'months'];
   periodTotalOptions = new Array(12).fill(0).map((v, i) => i + 1);
-  periodLabelOptions = [...MONTH_NAMES.map((m) => m.labelShort)];
+  periodLabelOptions = [...MONTH_DATA.map((m) => m.labelShort)];
   enterpriseTypeCards: IBudgetCard[] = [];
   private componentDestroyed$ = new Subject<boolean>();
   @ViewChild('stepper', { static: true }) stepper: MatStepper;

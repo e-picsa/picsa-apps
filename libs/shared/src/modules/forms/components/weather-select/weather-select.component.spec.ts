@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { WeatherSelectComponent } from './weather-select.component';
 
-import { CropDialogComponent } from './crop-dialog-component.component';
-
-describe('CropDialogComponent', () => {
-  let component: CropDialogComponent;
-  let fixture: ComponentFixture<CropDialogComponent>;
+describe('WeatherSelectComponent', () => {
+  let component: WeatherSelectComponent;
+  let fixture: ComponentFixture<WeatherSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CropDialogComponent],
+      declarations: [WeatherSelectComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CropDialogComponent);
+    fixture = TestBed.createComponent(WeatherSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,7 +1,8 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IPicsaDataWithIcons } from '../models';
+import { arrayToHashmap } from '@picsa/utils/data';
 
-export const WEATHER_DATA_HASHMAP = {
+const WEATHER_DATA_BASE = {
   clear: { label: translateMarker('Clear') },
   cloudy: { label: translateMarker('Cloudy') },
   rain_low: { label: translateMarker('Light Rain') },
@@ -14,9 +15,9 @@ export const WEATHER_DATA_HASHMAP = {
 } as const;
 
 // Extract list of available weather names
-type IWeatherName = keyof typeof WEATHER_DATA_HASHMAP;
+type IWeatherName = keyof typeof WEATHER_DATA_BASE;
 
-export const WEATHER_DATA = Object.entries(WEATHER_DATA_HASHMAP).map(([id, { label }]) => {
+export const WEATHER_DATA = Object.entries(WEATHER_DATA_BASE).map(([id, { label }]) => {
   const data: IPicsaDataWithIcons = {
     assetIconPath: `assets/svgs/weather/${id}.svg`,
     label: label as string,
@@ -27,3 +28,4 @@ export const WEATHER_DATA = Object.entries(WEATHER_DATA_HASHMAP).map(([id, { lab
     ...data,
   };
 });
+export const WEATHER_DATA_HASHMAP = arrayToHashmap(WEATHER_DATA, 'id');

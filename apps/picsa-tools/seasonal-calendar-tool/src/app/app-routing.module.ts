@@ -14,7 +14,7 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: ':id',
-    loadChildren: () => import('./pages/calender-table/calendar-table.module').then((m) => m.CalenderTableModule),
+    loadChildren: () => import('./pages/calendar-table/calendar-table.module').then((m) => m.CalendarTableModule),
     title: 'Calendar Table',
   },
 ];

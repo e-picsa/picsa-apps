@@ -71,6 +71,12 @@ const PAGE_LINKS: IPageLink[] = [
     url: '/option',
     tourId: 'option',
   },
+  {
+    name: translateMarker('Seasonal Calendar'),
+    icon: 'picsa_seasonal_calendar_tool',
+    url: '/seasonal-calendar',
+    tourId: 'seasonal-calendar',
+  },
 
   // {
   //   name: translateMarker('Discussions'),
@@ -86,17 +92,10 @@ const PAGE_LINKS: IPageLink[] = [
 ];
 
 /** Additional links only available when running in non-production */
-const DEV_PAGE_LINKS: IPageLink[] = [
-  {
-    name: translateMarker('Seasonal Calendar'),
-    icon: 'picsa_seasonal_calendar_tool',
-    url: '/seasonal-calendar',
-    tourId: 'seasonal-calendar',
-    devOnly: true,
-  },
-];
+const DEV_PAGE_LINKS: IPageLink[] = [];
 if (!ENVIRONMENT.production) {
   for (const link of DEV_PAGE_LINKS) {
+    link.devOnly = true;
     PAGE_LINKS.push(link);
   }
 }

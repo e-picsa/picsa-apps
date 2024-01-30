@@ -19,7 +19,7 @@ export class ManualToolMaterialModule {
 
   registerIcons() {
     const CUSTOM_ICONS: Record<string, string> = {
-      calender: 'calender',
+      calendar: 'calendar',
       campus: 'campus',
       crop: 'crop',
       livestock: 'livestock',

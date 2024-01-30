@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ConfigurationService, IConfiguration } from '@picsa/configuration';
-import { MONTH_NAMES } from '@picsa/data';
+import { MONTH_DATA } from '@picsa/data';
 import { APP_VERSION } from '@picsa/environments';
 import { IAppMeta } from '@picsa/models';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -378,7 +378,7 @@ export class BudgetStore implements OnDestroy {
   // create list of labels depending on scale, total and start, e.g. ['week 1','week 2'] or ['Sep','Oct','Nov']
   private generatePeriodLabels(meta: IBudgetMeta): string[] {
     const { lengthScale, lengthTotal, monthStart = 1 } = meta;
-    const months = MONTH_NAMES.map((m) => m.labelShort);
+    const months = MONTH_DATA.map((m) => m.labelShort);
     if (lengthScale === 'weeks') {
       return new Array(lengthTotal).fill(0).map((_, i) => 'Week ' + (i + 1));
     }

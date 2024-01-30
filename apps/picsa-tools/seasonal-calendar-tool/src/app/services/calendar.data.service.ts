@@ -1,0 +1,52 @@
+import { Injectable } from '@angular/core';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { RxCollection } from 'rxdb';
+
+import { CalendarDataEntry, COLLECTION } from '../schema';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SeasonCalendarService extends PicsaAsyncService {
+  constructor(private dbService: PicsaDatabase_V2_Service) {
+    super();
+  }
+
+  /** Provide database options tool collection (with typings) */
+  public get dbCollection() {
+    return this.dbService.db.collections['seasonal_calendar_tool'] as RxCollection<CalendarDataEntry>;
+  }
+  /** Provide database options tool collection filtered to active user */
+  public get dbUserCollection() {
+    return this.dbService.activeUserQuery(this.dbCollection);
+  }
+
+  /** Initialise collection required for storing data to database */
+  public override async init() {
+    await this.dbService.ensureCollections({
+      seasonal_calendar_tool: COLLECTION,
+    });
+  }
+
+  public async save(data: CalendarDataEntry) {
+    return this.dbCollection.incrementalUpsert(data);
+  }
+
+  public async getCalendarById(id: string) {
+    try {
+      const result = await this.dbCollection
+        .findOne({
+          selector: {
+            id: id,
+          },
+        })
+        .exec();
+      const calendar = result?._data;
+      return calendar;
+    } catch (err) {
+      console.error('Failed to get calendar by name:', err);
+      throw err;
+    }
+  }
+}

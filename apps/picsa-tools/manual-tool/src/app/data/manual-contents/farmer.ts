@@ -37,7 +37,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           },
           {
             label: translateMarker('Seasonal Calendar'),
-            svgIcon: 'picsa_manual_calender',
+            svgIcon: 'picsa_manual_calendar',
             id: 'calendar-activity',
           },
         ],

@@ -27,9 +27,9 @@ export const ACTIVITY_DATA: IActivityEntry[] = [
     svgIcon: 'picsa_seasonal_calendar_tool',
     videoId: 'seasonal_calendar',
     id: 'calendar-activity',
-    // tool: {
-    //   url: 'seasonal-calendar',
-    // },
+    tool: {
+      url: 'seasonal-calendar',
+    },
   },
   {
     label: translateMarker('Historic climate'),

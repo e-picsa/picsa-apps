@@ -52,7 +52,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
           },
           {
             label: translateMarker('Seasonal Calendar'),
-            svgIcon: 'picsa_manual_calender',
+            svgIcon: 'picsa_manual_calendar',
             id: 'calendar-activity',
           },
         ],
