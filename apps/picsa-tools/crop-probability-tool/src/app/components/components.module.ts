@@ -5,11 +5,10 @@ import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { CropProbabilityTableComponent } from './crop-probability-table/crop-probability-table.component';
-import { CropSelectComponent } from './crop-select/crop-select.component';
 import { CropProbabilityMaterialModule } from './material.module';
 import { CropProbabilityStationSelectComponent } from './station-select/station-select.component';
 
-const components = [CropProbabilityStationSelectComponent, CropProbabilityTableComponent, CropSelectComponent];
+const components = [CropProbabilityStationSelectComponent, CropProbabilityTableComponent];
 
 @NgModule({
   imports: [CommonModule, FormsModule, CropProbabilityMaterialModule, PicsaTranslateModule, PicsaFormsModule],

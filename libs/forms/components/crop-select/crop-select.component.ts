@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Provider } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input, Provider } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CROPS_DATA, CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
 
@@ -17,7 +17,7 @@ import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
 // Single Select
 export const CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => FormCropSelectMultipleComponent),
+  useExisting: forwardRef(() => FormCropSelectSingleComponent),
   multi: true,
 };
 @Component({
@@ -28,11 +28,17 @@ export const CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {
+  protected isMultiple = false;
+  /** Show reset option button with custom text and matIcon */
+  @Input() resetOption: { text: 'Show All'; matIcon: 'apps' };
   constructor(cdr: ChangeDetectorRef) {
     super(cdr, CROPS_DATA, CROPS_DATA_HASHMAP);
   }
   public handleSelect(id: string) {
     this.selected = id;
+  }
+  public handleReset() {
+    this.selected = '';
   }
 }
 
@@ -59,10 +65,16 @@ export const CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {
+  protected isMultiple = true;
+  /** Show reset option button with custom text and matIcon */
+  public resetOption: { text: string; matIcon: string };
   constructor(cdr: ChangeDetectorRef) {
     super(cdr, CROPS_DATA, CROPS_DATA_HASHMAP);
   }
   public handleSelect(id: string) {
     this.toggleSelected(id);
+  }
+  public handleReset() {
+    this.selected = [];
   }
 }

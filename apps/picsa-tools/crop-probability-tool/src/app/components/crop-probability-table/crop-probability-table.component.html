@@ -1,10 +1,10 @@
-<crop-probability-crop-select
-  [options]="cropOptions"
-  selectDefault="maize"
-  [stationId]="station.id"
-  (cropSelected)="filterData($event)"
+<picsa-form-crop-select
+  [filterFn]="cropFilterFn"
+  (selectedChange)="filterData($event)"
+  [(ngModel)]="selectedCropName"
   style="margin: 1rem"
-></crop-probability-crop-select>
+  [resetOption]="{ text: 'Show All', matIcon: 'apps' }"
+></picsa-form-crop-select>
 
 <section class="table-container mat-mdc-table">
   <!-- Main table -->
