@@ -13,7 +13,7 @@ type SearchResultType = {
   refIndex: number;
 };
 @Component({
-  selector: 'picsa-search',
+  selector: 'resource-search-component',
   standalone: true,
   imports: [CommonModule, FormsModule, MatCardModule],
   templateUrl: './search.component.html',
