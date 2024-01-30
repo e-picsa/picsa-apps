@@ -837,6 +837,10 @@
     "tool": "common_crop_activity"
   },
   {
+    "text": "Avocado",
+    "tool": "common_crops"
+  },
+  {
     "text": "Beans",
     "tool": "common_crops"
   },
@@ -858,6 +862,18 @@
   },
   {
     "text": "Maize",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Mangoes",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Onions",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Paw-paw",
     "tool": "common_crops"
   },
   {
@@ -890,6 +906,10 @@
   },
   {
     "text": "Tobacco",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Tomatoes",
     "tool": "common_crops"
   },
   {

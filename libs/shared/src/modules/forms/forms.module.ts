@@ -1,13 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { Inject, Injectable, ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { DataIconRegistry } from '@picsa/data/iconRegistry';
+import { DataIconRegistry, ICON_PACK_DATA, IconPackName } from '@picsa/data/iconRegistry';
 
 import { PicsaTranslateModule } from '../translate';
 import { PICSA_FORM_COMPONENTS } from './components';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PicsaFormsModuleConfig {
+  public iconPacks: IconPackName[] = Object.keys(ICON_PACK_DATA) as IconPackName[];
+}
 
 /** Input components for use within forms */
 @NgModule({
@@ -24,16 +31,22 @@ import { PICSA_FORM_COMPONENTS } from './components';
   declarations: PICSA_FORM_COMPONENTS,
 })
 export class PicsaFormsModule {
-  constructor(dataIconRegistry: DataIconRegistry) {
-    // Register icons for use with form components
-    dataIconRegistry.registerMatIcons('crop_activity');
-    dataIconRegistry.registerMatIcons('weather');
+  constructor(
+    dataIconRegistry: DataIconRegistry,
+    @Inject(PicsaFormsModuleConfig) private config: PicsaFormsModuleConfig
+  ) {
+    for (const iconPack of config.iconPacks) {
+      dataIconRegistry.registerMatIcons(iconPack);
+    }
   }
 
   /** Use forRoot so that constructor function will be called once when module registered */
-  static forRoot(): ModuleWithProviders<PicsaFormsModule> {
+  static forRoot(
+    config: PicsaFormsModuleConfig = { iconPacks: ['crop', 'crop_activity', 'weather'] }
+  ): ModuleWithProviders<PicsaFormsModule> {
     return {
       ngModule: PicsaFormsModule,
+      providers: [{ provide: PicsaFormsModuleConfig, useValue: config }],
     };
   }
 }

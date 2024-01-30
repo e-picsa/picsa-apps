@@ -54,11 +54,9 @@
             "input": "apps/picsa-tools/budget-tool/src/assets",
             "output": "assets"
           },
-          {
-            "glob": "**/*",
-            "input": "libs/shared-assets/svgs/crops/",
-            "output": "assets/budget-cards/"
-          },
+
+          { "glob": "*.svg", "input": "libs/data/crops/svgs", "output": "assets/budget-cards" },
+          { "glob": "*.svg", "input": "libs/data/crops/svgs", "output": "assets/svgs/crops" },
           { "glob": "*.svg", "input": "libs/data/weather/svgs", "output": "assets/svgs/weather" },
           { "glob": "*.svg", "input": "libs/data/crop_activity/svgs", "output": "assets/svgs/crop_activity" },
           {
