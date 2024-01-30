@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { _wait } from '@picsa/utils';
 import { RxAttachment, RxDocument } from 'rxdb';
 
@@ -20,7 +20,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   public attachment: RxAttachment<IResourceFile> | undefined;
   public fileURI: string;
 
-  constructor(private service: ResourcesToolService) {}
+  constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
 
   async ngOnInit() {
     await this.service.ready();
@@ -47,6 +47,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
       }
     }
     this.attachmentChange.next({ attachment, uri: this.fileURI });
+    this.cdr.markForCheck();
   }
 
   /** Display file in resource link format */
