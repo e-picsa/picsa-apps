@@ -1,25 +1,25 @@
-<div>
-  <input
-    type="search"
-    name="filter"
-    class="form-control"
-    placeholder="Search resources...."
-    [(ngModel)]="query"
-    (input)="onSearchInputChange($event)"
-    autofocus
-  />
-  <div *ngIf="searchResults.length > 0" class="card">
-    <div class="card-content" *ngFor="let result of searchResults">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>{{ result.item.title }}</mat-card-title>
-          <mat-card-subtitle> {{ result.item.description || '' }} </mat-card-subtitle>
-          <img mat-card-avatar *ngIf="result.item.cover?.image" [src]="result.item.cover?.image" />
-        </mat-card-header>
-      </mat-card>
-  <div *ngIf="searchResults.length === 0 && query.length > 0">
-    <div class="card">
-      <div class="card-content">No results found.</div>
+<input
+  type="search"
+  name="filter"
+  class="form-control"
+  placeholder="Search resources...."
+  [(ngModel)]="query"
+  (input)="onSearchInputChange($event)"
+  autofocus
+/>
+<div *ngIf="searchResults.length > 0" class="card">
+  <div class="card-content" *ngFor="let result of searchResults">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ result.item.title }}</mat-card-title>
+        <mat-card-subtitle> {{ result.item.description || '' }} </mat-card-subtitle>
+        <img mat-card-avatar *ngIf="result.item.cover?.image" [src]="result.item.cover?.image" />
+      </mat-card-header>
+    </mat-card>
+    <div *ngIf="searchResults.length === 0 && query.length > 0">
+      <div class="card">
+        <div class="card-content">No results found.</div>
+      </div>
     </div>
   </div>
 </div>
