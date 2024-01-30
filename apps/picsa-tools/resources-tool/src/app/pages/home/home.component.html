@@ -1,11 +1,12 @@
 <div class="page-content">
   <div class="page-columns" *mobxAutorun>
-    <!-- <div class="search-container">
-      <h2>Search</h2>
-    </div> -->
     <div class="content-container">
       <div style="display: flex; align-items: center">
         <h2 style="flex: 1">{{ 'Collections' | translate }}</h2>
+        <button mat-stroked-button color="primary" routerLink="search" style="margin-right: 1rem">
+          <mat-icon>search</mat-icon>
+          {{ 'Search' | translate }}
+        </button>
         <button mat-stroked-button color="primary" class="downloads-button" routerLink="downloads">
           <mat-icon>download</mat-icon>
           {{ 'Manage Downloads' | translate }}

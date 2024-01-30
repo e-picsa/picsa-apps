@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+import { ResourceSearchComponent } from './pages/search/search.component';
+
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
@@ -14,6 +16,10 @@ export const ROUTES_COMMON: Routes = [
   {
     path: 'downloads',
     loadChildren: () => import('./pages/downloads/downloads.module').then((m) => m.DownloadsModule),
+  },
+  {
+    path: 'search',
+    component: ResourceSearchComponent,
   },
 ];
 /** Routes only registered in standalone mode */
