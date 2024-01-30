@@ -4,7 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaFormsModule } from '@picsa/forms';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { CalendarEditorComponent } from './calendar-editor/calendar-editor.component';
 // Local components

@@ -5,8 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { DataIconRegistry, ICON_PACK_DATA, IconPackName } from '@picsa/data/iconRegistry';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
-import { PicsaTranslateModule } from '../translate';
 import { PICSA_FORM_COMPONENTS } from './components';
 
 @Injectable({

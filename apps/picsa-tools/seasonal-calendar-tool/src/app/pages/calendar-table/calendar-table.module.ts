@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaFormsModule } from '@picsa/forms';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { SeasonalCalendarToolComponentsModule } from '../../components/components.module';
 import { CalendarTableComponent } from './calendar-table.component';
