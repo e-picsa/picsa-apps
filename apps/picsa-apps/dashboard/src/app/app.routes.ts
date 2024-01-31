@@ -20,6 +20,6 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'crop-information',
-    loadChildren: () => import('./pages/crop-information/crop-information.module').then((m) => m.CropInformationModule),
+    loadChildren: () => import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
 ];

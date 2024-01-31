@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from './material.module';
-import { CropInformationModule } from './pages/crop-information/crop-information.module';
+import { CropInformationModule } from './modules/crop-information/crop-information.module';
 
 interface INavLink {
   label: string;
