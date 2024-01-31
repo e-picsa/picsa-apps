@@ -1,14 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import {
-  AbstractControl,
   FormControl,
   FormGroup,
   FormGroupDirective,
   FormsModule,
   NgForm,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,11 +14,12 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+import { PICSAFormValidators } from '../../../../modules/forms/validators';
 import { PicsaNotificationService } from '../../notification.service';
-import type { SupabaseService } from '../supabase.service';
+import type { SupabaseAuthService } from '../services/supabase-auth.service';
 
 export interface ISignInDialogData {
-  service: SupabaseService;
+  authService: SupabaseAuthService;
 }
 
 /**
@@ -34,18 +32,6 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
-
-/**
- * Custom form validator to ensure passwords match. Adapted from
- * https://stackoverflow.com/a/51606362/5693245
- */
-const validatePasswordMatch: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  if (!control) return null;
-  const form = control.parent;
-  if (!form) return null;
-  const pass = form.get('password')?.value;
-  return pass === control.value ? null : { notSame: true };
-};
 
 @Component({
   selector: 'picsa-supabase-sign-in-dialog',
@@ -136,7 +122,7 @@ export class SupabaseSignInDialogComponent {
 
   errorMatcher = new showErrorAfterInteraction();
 
-  private service: SupabaseService;
+  private authService: SupabaseAuthService;
 
   public form = new FormGroup<{ email: FormControl; password: FormControl; passwordConfirm?: FormControl }>({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -148,19 +134,22 @@ export class SupabaseSignInDialogComponent {
     @Inject(MAT_DIALOG_DATA) data: ISignInDialogData,
     private notificationService: PicsaNotificationService
   ) {
-    this.service = data.service;
+    this.authService = data.authService;
   }
 
   public enableRegisterMode() {
     this.template = 'register';
     this.title = 'Register';
-    this.form.addControl('passwordConfirm', new FormControl('', [Validators.required, validatePasswordMatch]));
+    this.form.addControl(
+      'passwordConfirm',
+      new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch])
+    );
   }
 
   public async handleSignIn() {
     this.form.disable();
     const { email, password } = this.form.value;
-    const { data, error } = await this.service.signInUser(email, password);
+    const { data, error } = await this.authService.signInUser(email, password);
     console.log({ data, error });
     if (error) {
       console.error(error);
@@ -173,7 +162,7 @@ export class SupabaseSignInDialogComponent {
   public async handleRegister() {
     this.form.disable();
     const { email, password } = this.form.value;
-    const { error } = await this.service.signUpUser(email, password);
+    const { error } = await this.authService.signUpUser(email, password);
     if (error) {
       console.error(error);
       this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });

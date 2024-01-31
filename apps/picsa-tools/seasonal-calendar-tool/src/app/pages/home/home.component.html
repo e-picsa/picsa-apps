@@ -1,42 +1,50 @@
 <div class="page-content">
-  <div class="create-button">
-    <button mat-raised-button routerLink="create" color="primary">Create new calender</button>
-  </div>
-  <h2>Categories</h2>
-  <div class="categories-list">
-    <div class="categories-item">Crops</div>
-  </div>
-  <h2>Calendar Lists</h2>
+  <h2>{{ 'Saved Calendars' | translate }}</h2>
   <div class="calendar-list">
-    <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">No available calendars</div>
-    <!-- map calenders -->
-    <div *ngIf="dbCalendars.length > 0" class="items-container">
-      <div *ngFor="let calendar of dbCalendars; let i = index" class="calendars-display">
-        <div (click)="editMode !== i ? redirectToCalendarTable(calendar.ID, i) : null" style="flex: 1">
-          <div *ngIf="editMode !== i; else editField">
+    <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">{{ 'No saved calendars' | translate }}</div>
+    <!-- Calendar list items -->
+    @for (calendar of dbCalendars; track calendar.id) {
+    <mat-card class="calendars-display" [routerLink]="calendar.id">
+      <mat-card-content>
+        <div style="display: flex">
+          <mat-card-title style="flex: 1">
             {{ calendar.name }}
-          </div>
-          <ng-template #editField>
-            <input class="inputField" type="text" [(ngModel)]="calendar.name" />
-          </ng-template>
+          </mat-card-title>
+          <button mat-icon-button [matMenuTriggerFor]="budgetMenu" (click)="handleMenuClick($event, calendar)">
+            <mat-icon>more_vert</mat-icon>
+          </button>
         </div>
-        <div class="actions-section">
-          <div>
-            <button
-              *ngIf="editMode === i"
-              (click)="saveUpdates(calendar)"
-              class=""
-              mat-button
-              mat-raised-button
-              color="primary"
-            >
-              Save
-            </button>
-            <mat-icon (click)="editMode = i" *ngIf="editMode !== i">edit</mat-icon>
-          </div>
-          <mat-icon class="custom-trash-icon" (click)="promptDelete(i)">delete</mat-icon>
-        </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
+    }
+  </div>
+  <!-- Create calendar button -->
+  <div class="sticky-footer">
+    <button mat-raised-button class="footer-button" color="primary" routerLink="create">
+      <mat-icon>add</mat-icon>
+      {{ 'Create Calendar' | translate }}
+    </button>
   </div>
 </div>
+
+<!-- Popup menu -->
+<mat-menu #budgetMenu="matMenu">
+  <button mat-menu-item aria-label="Copy" (click)="dialog.open(copyDialog)">
+    <mat-icon>content_copy</mat-icon>{{ 'Copy' | translate }}
+  </button>
+  <button mat-menu-item aria-label="Delete" color="light" (click)="promptDelete()">
+    <mat-icon>delete</mat-icon>
+    {{ 'Delete' | translate }}
+  </button>
+</mat-menu>
+
+<!-- Copy Dialog -->
+<ng-template #copyDialog>
+  <mat-form-field>
+    <mat-label>{{ 'Name' | translate }}</mat-label>
+    <input matInput type="text" [formControl]="calendarCopyForm.controls.name" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="saveCopy()">
+    <mat-icon>copy</mat-icon>{{ 'Save Copy' | translate }}
+  </button>
+</ng-template>

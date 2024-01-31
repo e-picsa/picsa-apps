@@ -1,21 +1,27 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import SVGS from './svgs';
 
 @Component({
+  imports: [CommonModule],
   selector: 'picsa-loading',
   templateUrl: './loading.html',
   styleUrls: ['./loading.scss'],
+  standalone: true,
 })
 export class PicsaLoadingComponent {
-  @Input() set name(name: IPicsaLoaders) {
-    // select svg by name (or use default bars)
-    const svg = name && SVGS[name] ? SVGS[name] : SVGS.BARS;
-    this.loaderHtml = this.convertSVGToImageData(svg);
-  }
+  @Input() name: IPicsaLoaders;
   loaderHtml: SafeHtml;
   constructor(private sanitizer: DomSanitizer) {}
+
+  ngOnInit() {
+    const svgName = this.name || 'bars';
+    // select svg by name (or use default bars)
+    const svg = SVGS[svgName] || SVGS.BARS;
+    this.loaderHtml = this.convertSVGToImageData(svg);
+  }
 
   /**********************************************************************
    *  Helper Methods

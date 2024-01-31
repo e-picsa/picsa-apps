@@ -1,0 +1,40 @@
+mat-radio-button {
+  margin-right: 1rem;
+}
+mat-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+picsa-supabase-upload {
+  width: 100%;
+  max-width: 284px;
+}
+dashboard-resources-storage-link {
+  display: inline-block;
+}
+button.file-remove {
+  display: inline;
+  padding: 0;
+  mat-icon {
+    margin-bottom: -4px;
+  }
+}
+textarea.mdc-text-field__input {
+  color: var(--color-primary) !important;
+  font-size: 20px;
+}
+img.cover-preview {
+  width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  border: 1px solid var(--color-light);
+}

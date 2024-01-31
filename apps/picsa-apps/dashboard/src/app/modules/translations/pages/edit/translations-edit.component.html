@@ -1,0 +1,46 @@
+<div class="page-content">
+  <h2>Edit Translations</h2>
+  @if(translationRow){
+  <form class="form-content">
+    <div class="form-data">
+      <label>Date of Creation</label>
+      <div>{{ translationRow.created_at | date: 'mediumDate' }}</div>
+    </div>
+
+    <div class="form-data">
+      <label>English</label>
+      <input matInput [(ngModel)]="translationRow.en" name="en" />
+    </div>
+
+    <div class="form-data">
+      <label>mw_ny</label>
+      <input matInput [(ngModel)]="translationRow.mw_ny" name="mw_ny" />
+    </div>
+
+    <div class="form-data">
+      <label>ke_sw</label>
+      <input matInput [(ngModel)]="translationRow.ke_sw" name="ke_sw" />
+    </div>
+    <div class="form-data">
+      <label>tj_tg</label>
+      <input matInput [(ngModel)]="translationRow.tj_tg" name="tj_tg" />
+    </div>
+    <div class="form-data">
+      <label>zm_ny</label>
+      <input matInput [(ngModel)]="translationRow.zm_ny" name="zm_ny" />
+    </div>
+    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Update</button>
+  </form>
+  } @else if(dataLoadError) {
+  <div>{{ dataLoadError }}</div>
+  } @else {
+  <div>Loading...</div>
+  } @if(editActionFeedbackMessage){
+  <div>{{ editActionFeedbackMessage }}</div>
+  } @if(translationRow){
+  <h2>Delete this Translation</h2>
+  <button mat-raised-button color="primary" class="deleteButton" (click)="openTranslationDeleteDialog()">
+    Delete this translation <mat-icon color="white">delete</mat-icon>
+  </button>
+  }
+</div>

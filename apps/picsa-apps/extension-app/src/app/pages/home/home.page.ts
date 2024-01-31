@@ -6,7 +6,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
-import { TourService } from '@picsa/shared/services/core/tour.service';
+import { TourService } from '@picsa/shared/services/core/tour';
 import { CommunicationService } from '@picsa/shared/services/promptToHomePageService.service';
 import { Subscription } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { HOME_TOUR } from './home.tour';
 
 interface IPageLink {
   name: string;
-  icon: string;
+  svgIcon: string;
   url: string;
   /** Element ID used in tours */
   tourId: string;
@@ -25,78 +25,77 @@ interface IPageLink {
 const PAGE_LINKS: IPageLink[] = [
   {
     name: translateMarker('Manual'),
-    icon: 'picsa_manual_tool',
+    svgIcon: 'extension_app:manual_tool',
     url: '/manual',
     tourId: 'manual',
   },
   {
     name: translateMarker('Farmer Activities'),
-    icon: 'picsa_farmer_activity',
+    svgIcon: 'extension_app:farmer_activity',
     url: '/farmer-activity',
     tourId: 'farmer',
   },
   {
     name: translateMarker('Resources'),
-    icon: 'picsa_resources_tool',
+    svgIcon: 'extension_app:resources_tool',
     url: '/resources',
     tourId: 'resources',
   },
   {
     name: translateMarker('Monitoring'),
-    icon: 'picsa_data_collection',
+    svgIcon: 'extension_app:data_collection',
     url: '/monitoring',
     tourId: 'monitoring',
   },
   {
     name: translateMarker('Climate'),
-    icon: 'picsa_climate_tool',
+    svgIcon: 'extension_app:climate_tool',
     url: '/climate',
     tourId: 'climate',
   },
   {
     name: translateMarker('Budget'),
-    icon: 'picsa_budget_tool',
+    svgIcon: 'extension_app:budget_tool',
     url: '/budget',
     tourId: 'budget',
   },
   {
     name: translateMarker('Probability'),
-    icon: 'picsa_probability_tool',
+    svgIcon: 'extension_app:probability_tool',
     url: '/crop-probability',
     tourId: 'crop-probability',
   },
   {
     name: translateMarker('Options'),
-    icon: 'picsa_option_tool',
+    svgIcon: 'extension_app:option_tool',
     url: '/option',
     tourId: 'option',
+  },
+  {
+    name: translateMarker('Seasonal Calendar'),
+    svgIcon: 'extension_app:seasonal_calendar_tool',
+    url: '/seasonal-calendar',
+    tourId: 'seasonal-calendar',
   },
 
   // {
   //   name: translateMarker('Discussions'),
-  //   icon: 'picsa_discussions',
+  //   svgIcon: 'picsa_discussions',
   //   url: '/discussions',
   // },
 
   // {
   //   name: 'Settings',
-  //   icon: 'picsa_settings',
+  //   svgIcon: 'picsa_settings',
   //   url: '/settings'
   // }
 ];
 
 /** Additional links only available when running in non-production */
-const DEV_PAGE_LINKS: IPageLink[] = [
-  {
-    name: translateMarker('Seasonal Calendar'),
-    icon: 'picsa_seasonal_calendar_tool',
-    url: '/seasonal-calendar',
-    tourId: 'seasonal-calendar',
-    devOnly: true,
-  },
-];
+const DEV_PAGE_LINKS: IPageLink[] = [];
 if (!ENVIRONMENT.production) {
   for (const link of DEV_PAGE_LINKS) {
+    link.devOnly = true;
     PAGE_LINKS.push(link);
   }
 }

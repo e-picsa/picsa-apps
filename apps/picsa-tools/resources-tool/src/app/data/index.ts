@@ -11,7 +11,6 @@ const byId: Record<string, IResourceBase> = {
   ...WEATHER,
   ...PICSA_RESOURCES,
 };
-console.log({ PICSA_RESOURCES });
 
 const typeExports: {
   collection: schemas.IResourceCollection[];

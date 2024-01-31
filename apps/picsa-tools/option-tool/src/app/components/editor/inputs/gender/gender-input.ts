@@ -14,11 +14,11 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 const GENDER_OPTIONS: { [id: string]: { label: string; svgIcon: string } } = {
   female: {
     label: translateMarker('Female'),
-    svgIcon: 'picsa_options_female',
+    svgIcon: 'options_tool:female',
   },
   male: {
     label: translateMarker('Male'),
-    svgIcon: 'picsa_options_male',
+    svgIcon: 'options_tool:male',
   },
 };
 

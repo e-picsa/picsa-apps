@@ -23,6 +23,7 @@ body {
   flex-direction: column;
   position: relative;
   z-index: 1;
+  overflow: auto;
 }
 .no-padding {
   padding: 0 !important;

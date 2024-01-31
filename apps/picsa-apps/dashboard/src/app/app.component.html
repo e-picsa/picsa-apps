@@ -4,9 +4,9 @@
       <mat-icon>menu</mat-icon>
     </button>
     <span style="flex: 1">PICSA Dashboard</span>
-    @if(supabaseService.authUser(); as user){
+    @if(supabaseService.auth.authUser(); as user){
     <div style="position: relative">
-      <button mat-button (click)="supabaseService.signOut()" style="margin-top: 16px">
+      <button mat-button (click)="supabaseService.auth.signOut()" style="margin-top: 16px">
         <mat-icon>person</mat-icon>
         Sign Out
       </button>
@@ -16,7 +16,7 @@
     </div>
 
     } @else {
-    <button mat-button (click)="supabaseService.signInPrompt()" style="margin: 8px 0">
+    <button mat-button (click)="supabaseService.auth.signInPrompt()" style="margin: 8px 0">
       <mat-icon>person</mat-icon>
       Sign In
     </button>
@@ -24,10 +24,20 @@
   </mat-toolbar>
 
   <mat-sidenav-container style="flex: 1">
-    <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="48">
+    <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
       <mat-nav-list>
         @for (link of navLinks; track link.href) {
-        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated">{{ link.label }}</a>
+        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
+          {{ link.label }}
+        </a>
+        }
+        <mat-divider style="margin-top: auto"></mat-divider>
+        <div mat-subheader>Global Admin</div>
+        <mat-divider></mat-divider>
+        @for (link of globalLinks; track link.href) {
+        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
+          {{ link.label }}
+        </a>
         }
       </mat-nav-list>
     </mat-sidenav>

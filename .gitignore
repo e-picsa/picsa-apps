@@ -77,3 +77,4 @@ apps/extension-toolkit/www_sourcemaps
 
 .eslintcache
 .nx/cache
+.vercel

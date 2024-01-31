@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
 import { PicsaTranslateModule } from '../../modules';
-import { PicsaLoadingModule } from '../loading';
+import { PicsaLoadingComponent } from '../loading/loading';
 import { PicsaActionDialog, PicsaDialogComponent, PicsaSelectDialog } from './components/dialog';
 import { PicsaDialogService } from './dialog.service';
 
@@ -18,7 +18,7 @@ import { PicsaDialogService } from './dialog.service';
     MatButtonModule,
     MatIconModule,
     A11yModule,
-    PicsaLoadingModule,
+    PicsaLoadingComponent,
     PicsaTranslateModule,
     CommonModule,
   ],

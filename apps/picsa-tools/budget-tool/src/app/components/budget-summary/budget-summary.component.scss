@@ -1,0 +1,20 @@
+:host {
+  display: block;
+}
+.summary-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+section {
+  display: flex;
+  align-items: center;
+}
+.summary-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+.summary-value {
+  margin-left: 8px;
+}

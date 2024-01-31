@@ -4,6 +4,8 @@
 @use '@angular/material' as mat;
 @include mat.core();
 
+mat.$theme-ignore-duplication-warnings: true;
+
 @import './picsa-global.scss';
 @import './picsa-mw.scss';
 @import './picsa-tj.scss';

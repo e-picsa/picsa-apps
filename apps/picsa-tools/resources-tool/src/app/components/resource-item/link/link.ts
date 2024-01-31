@@ -23,7 +23,7 @@ export class ResourceItemLinkComponent {
     /** Facebook links usually have facebook logo in main image so ignore action button */
     facebook: null,
     internal: null,
-    play_store: { svgIcon: 'picsa_play_store' },
+    play_store: { svgIcon: 'resources_tool:play_store' },
     website: null,
     whatsapp: null,
     youtube: null,
@@ -63,16 +63,19 @@ export class ResourceItemLinkComponent {
 
   /** Internal collection urls may have to replace current page id depending on  */
   private goToCollection(id: string) {
+    // Route from existing collection
     if (this.route.snapshot.paramMap.get('collectionId')) {
-      this.router.navigate([id], {
+      return this.router.navigate([id], {
         relativeTo: this.route,
       });
+    }
+    // Route from /search
+    if (this.route.snapshot.routeConfig?.path?.endsWith('/search')) {
+      return this.router.navigate(['../', 'collection', id], { relativeTo: this.route });
     }
     // Route from base to collection
-    else {
-      this.router.navigate(['collection', id], {
-        relativeTo: this.route,
-      });
-    }
+    return this.router.navigate(['collection', id], {
+      relativeTo: this.route,
+    });
   }
 }

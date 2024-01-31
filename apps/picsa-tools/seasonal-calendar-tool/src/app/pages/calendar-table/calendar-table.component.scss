@@ -1,0 +1,25 @@
+.calendar-table {
+  width: 90%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.calendar-table th,
+.calendar-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.calendar-table th {
+  background-color: whitesmoke;
+  font-weight: bold;
+}
+
+.calendar-table td:first-child {
+  font-weight: bold;
+  text-align: left;
+  background-color: whitesmoke;
+}
