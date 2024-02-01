@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - refactor/release-drafter-template
+  workflow_dispatch:
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
