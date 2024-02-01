@@ -4,7 +4,7 @@
       mat-button
       *ngFor="let option of selectOptions"
       class="select-button"
-      (click)="toggleOptionSelect(option.id)"
+      (click)="toggleSelected(option.id)"
       [attr.data-gender]="option.id"
       [attr.data-selected]="selected.includes(option.id)"
     >

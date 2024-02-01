@@ -1,7 +1,7 @@
 <div class="display-container">
-  @if(selected && selectedData){
+  @if(selected && selectedOption){
   <div (click)="dialog.open(inputDialog)" style="height: 100%; width: 100%">
-    <mat-icon style="height: 100%; width: 100%" [svgIcon]="'picsa_crop_activity:' + selectedData.svgIcon"></mat-icon>
+    <mat-icon style="height: 100%; width: 100%" [svgIcon]="'picsa_crop_activity:' + selectedOption.svgIcon"></mat-icon>
   </div>
   } @else {
   <button style="height: 100%" mat-stroked-button (click)="dialog.open(inputDialog)">
