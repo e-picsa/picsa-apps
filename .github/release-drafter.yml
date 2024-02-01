@@ -18,10 +18,21 @@ categories:
     { title: '🟫Core Maintenance', labels: ['maintenance'] },
   ]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+category-template: '### $TITLE'
 # Replace initial category, e.g. feat: or fix(budget):
 replacers:
-  - search: '/^([a-z()]*):$/gim'
-    replace: ''
+  # Remove inner semantic context, e.g. feat(budget): -> feat: (as already under budget heading)
+  - search: '/\([a-z()-]*\):/gim'
+    replace: ':'
+  # Prefer lower case prefixes
+  - search: 'Feat'
+    replace: 'feat'
+  - search: 'Fix'
+    replace: 'fix'
+  - search: 'Refactor'
+    replace: 'refactor'
+  - search: 'Chore'
+    replace: 'chore'
 template: |
   ## What's Changed
   $CHANGES
