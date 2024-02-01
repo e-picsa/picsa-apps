@@ -20,7 +20,7 @@ categories:
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 # Replace initial category, e.g. feat: or fix(budget):
 replacers:
-  - search: '/^([a-z()]*):$/gi'
+  - search: '/^([a-z()]*):$/gim'
     replace: ''
 template: |
   ## What's Changed
