@@ -1,3 +1,8 @@
+.server-status {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
 .status-code {
   color: white;
   padding: 8px;
@@ -6,6 +11,14 @@
   &[data-status='200'] {
     background: green;
   }
+  width: 32px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+mat-progress-spinner.mat-white {
+  --mdc-circular-progress-active-indicator-color: white;
 }
 
 table.station-table {
