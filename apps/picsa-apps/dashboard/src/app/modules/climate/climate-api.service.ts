@@ -12,8 +12,6 @@ type ICallbackClient = (id:string)=>ReturnType<typeof createClient<paths>>
 /** Type-safe http client with added support for callbacks */
 type IClient = ReturnType<typeof createClient<paths>> & {useMeta:ICallbackClient}
 
-
-
 interface IMetaEntry{
   status:'pending' | 'success' | 'error' | 'unknown',
   rawResponse?:Response,

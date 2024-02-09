@@ -3,8 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { Database } from '@picsa/server-types';
 import {
   IUploadResult,
   SupabaseStoragePickerDirective,
@@ -13,10 +11,9 @@ import {
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { IResourceRow } from '../../../climate/types';
 import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
 import { ResourcesDashboardService } from '../../resources.service';
-
-type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
 @Component({
   selector: 'dashboard-resource-create',
@@ -67,7 +64,7 @@ export class ResourceCreateComponent implements OnInit {
     await this.service.ready();
     const { id } = this.route.snapshot.params;
     if (id) {
-      const { data } = await this.service.table.select<'*', IResourceEntry>('*').eq('id', id);
+      const { data } = await this.service.table.select<'*', IResourceRow>('*').eq('id', id);
       const resource = data?.[0];
       if (resource) {
         this.populateResource(resource);
@@ -86,7 +83,7 @@ export class ResourceCreateComponent implements OnInit {
     console.log({ data, error });
   }
 
-  private populateResource(resource: IResourceEntry) {
+  private populateResource(resource: IResourceRow) {
     this.resourceType = resource.type as any;
     console.log('populate resource', resource);
     switch (resource.type) {

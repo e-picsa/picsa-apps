@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -9,15 +7,12 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
 
 import { ClimateApiService } from './climate-api.service';
-
-export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
+import { IStationRow } from './types';
 
 export interface IResourceStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
 }
-
-export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {

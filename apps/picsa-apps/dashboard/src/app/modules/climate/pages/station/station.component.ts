@@ -5,8 +5,9 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
-import { ClimateService, IStationRow } from '../../climate.service';
+import { ClimateService } from '../../climate.service';
 import { ClimateApiService } from '../../climate-api.service';
+import { IStationRow } from '../../types';
 
 @Component({
   selector: 'dashboard-climate-station-page',
