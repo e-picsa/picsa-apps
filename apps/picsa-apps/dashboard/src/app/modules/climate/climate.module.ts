@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { ClimateDataHomeComponent } from './pages/home/climate-data-home.component';
-import { StationPageComponent } from './pages/station/station-page.component';
+import { StationDetailsPageComponent } from './pages/station-details/station-details.component';
 
 @NgModule({
   declarations: [],
@@ -21,7 +21,7 @@ import { StationPageComponent } from './pages/station/station-page.component';
       },
       {
         path: 'station/:stationId',
-        component: StationPageComponent,
+        component: StationDetailsPageComponent,
       },
     ]),
   ],

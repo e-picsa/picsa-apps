@@ -6,13 +6,13 @@ import { ClimateService } from '../../climate.service';
 import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
 
 @Component({
-  selector: 'dashboard-station-page',
+  selector: 'dashboard-station-details',
   standalone: true,
   imports: [CommonModule, MatProgressBarModule, RainfallSummaryComponent],
-  templateUrl: './station-page.component.html',
-  styleUrls: ['./station-page.component.scss'],
+  templateUrl: './station-details.component.html',
+  styleUrls: ['./station-details.component.scss'],
 })
-export class StationPageComponent implements OnInit {
+export class StationDetailsPageComponent implements OnInit {
   public get station() {
     return this.service.activeStation;
   }
