@@ -8,7 +8,7 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
 
-import { ClimateDataApiService } from './climate-data-api.service';
+import { ClimateApiService } from './climate-api.service';
 
 export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
 
@@ -20,14 +20,14 @@ export interface IResourceStorageEntry extends IStorageEntry {
 export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
 
 @Injectable({ providedIn: 'root' })
-export class ClimateDataDashboardService extends PicsaAsyncService {
+export class ClimateService extends PicsaAsyncService {
   public apiStatus: number;
   public stations: IStationRow[] = [];
   public activeStation: IStationRow;
 
   constructor(
     private supabaseService: SupabaseService,
-    private api: ClimateDataApiService,
+    private api: ClimateApiService,
     private notificationService: PicsaNotificationService,
     private router: Router
   ) {

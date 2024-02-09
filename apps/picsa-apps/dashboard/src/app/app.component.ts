@@ -33,7 +33,7 @@ export class AppComponent implements AfterViewInit {
     },
     {
       label: 'Climate',
-      href: '/climate-data',
+      href: '/climate',
       children: [
         {
           label: 'Station Data',

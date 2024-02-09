@@ -26,4 +26,4 @@ import { StationPageComponent } from './pages/station/station-page.component';
     ]),
   ],
 })
-export class ClimateDataModule {}
+export class ClimateModule {}
