@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -15,6 +16,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 const matModules = [
   MatButtonModule,
   MatChipsModule,
+  MatExpansionModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
@@ -24,7 +26,7 @@ const matModules = [
   MatStepperModule,
   MatTableModule,
   MatTabsModule,
-  MatToolbarModule
+  MatToolbarModule,
 ];
 
 @NgModule({

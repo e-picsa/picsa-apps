@@ -12,10 +12,15 @@ import { StationPageComponent } from './pages/station/station-page.component';
     RouterModule.forChild([
       {
         path: '',
+        redirectTo: 'station',
+        pathMatch: 'full',
+      },
+      {
+        path: 'station',
         component: ClimateDataHomeComponent,
       },
       {
-        path: ':stationId',
+        path: 'station/:stationId',
         component: StationPageComponent,
       },
     ]),
