@@ -63,6 +63,7 @@ export class RainfallSummaryComponent implements AfterViewInit {
         summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
       },
     });
+    this.cdr.markForCheck();
     if (error) throw error;
     this.loadData(data as any);
     // TODO - generalise way to persist db updates from api queries
