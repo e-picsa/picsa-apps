@@ -9,7 +9,6 @@ interface INavLink {
   label: string;
   href: string;
   children?: INavLink[];
-  isActive?: boolean;
 }
 
 @Component({
@@ -23,10 +22,6 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
 
   navLinks: INavLink[] = [
-    // {
-    //   label: 'Home',
-    //   href: '',
-    // },
     {
       label: 'Resources',
       href: '/resources',
@@ -41,7 +36,7 @@ export class AppComponent implements AfterViewInit {
         },
         {
           label: 'Forecasts',
-          href: '/forecasts',
+          href: '/forecast',
         },
       ],
     },
