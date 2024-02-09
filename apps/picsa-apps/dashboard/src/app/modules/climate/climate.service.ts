@@ -39,7 +39,7 @@ export class ClimateService extends PicsaAsyncService {
     await this.supabaseService.ready();
     await this.listStations();
     // Initialise other services without await to allow parallel requests
-    this.checkApiStatus();
+    // this.checkApiStatus();
     this.subscribeToRouteChanges();
   }
 
