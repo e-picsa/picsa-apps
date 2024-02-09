@@ -8,7 +8,7 @@ export interface paths {
   "/v1/status/": {
     /**
      * Get Status
-     * @description Check server up and authorized to access data
+     * @description Check server up
      */
     get: operations["get_status_v1_status__get"];
   };
@@ -49,12 +49,25 @@ export interface paths {
     get: operations["read_stations_v1_station__country___station_id__get"];
   };
   "/v1/forecasts/": {
-    /** Get Forecasts */
-    get: operations["get_forecasts_v1_forecasts__get"];
+    /**
+     * List Endpoints
+     * @description List available forecast endpoints
+     */
+    get: operations["list_endpoints_v1_forecasts__get"];
   };
-  "/v1/forecasts/{country}/{file_name}": {
-    /** Get Forecasts */
-    get: operations["get_forecasts_v1_forecasts__country___file_name__get"];
+  "/v1/forecasts/{country_code}": {
+    /**
+     * List Forecasts
+     * @description Get available forecasts for country
+     */
+    get: operations["list_forecasts_v1_forecasts__country_code__get"];
+  };
+  "/v1/forecasts/{country_code}/{file_name}": {
+    /**
+     * Get Forecast
+     * @description Get forecast file
+     */
+    get: operations["get_forecast_v1_forecasts__country_code___file_name__get"];
   };
 }
 
@@ -155,6 +168,30 @@ export interface components {
        */
       summaries?: ("extremes_rain" | "extremes_tmin" | "extremes_tmax")[];
     };
+    /** Forecast */
+    Forecast: {
+      /**
+       * Date Modified
+       * Format: date-time
+       */
+      date_modified: string;
+      /** District */
+      district?: string;
+      /** Filename */
+      filename: string;
+      /** Id */
+      id: string;
+      /**
+       * Language Code
+       * @enum {string}
+       */
+      language_code?: "en" | "ny";
+      /**
+       * Type
+       * @enum {string}
+       */
+      type?: "downscale_forecast" | "annual_forecast";
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -243,7 +280,7 @@ export interface operations {
 
   /**
    * Get Status
-   * @description Check server up and authorized to access data
+   * @description Check server up
    */
   get_status_v1_status__get: {
     responses: {
@@ -443,22 +480,53 @@ export interface operations {
       };
     };
   };
-  /** Get Forecasts */
-  get_forecasts_v1_forecasts__get: {
+  /**
+   * List Endpoints
+   * @description List available forecast endpoints
+   */
+  list_endpoints_v1_forecasts__get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": string[];
         };
       };
     };
   };
-  /** Get Forecasts */
-  get_forecasts_v1_forecasts__country___file_name__get: {
+  /**
+   * List Forecasts
+   * @description Get available forecasts for country
+   */
+  list_forecasts_v1_forecasts__country_code__get: {
     parameters: {
       path: {
-        country: "zm" | "mw";
+        country_code: "zm" | "mw";
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Forecast"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Forecast
+   * @description Get forecast file
+   */
+  get_forecast_v1_forecasts__country_code___file_name__get: {
+    parameters: {
+      path: {
+        country_code: "zm" | "mw";
         file_name: string;
       };
     };
