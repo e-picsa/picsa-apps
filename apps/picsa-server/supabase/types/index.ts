@@ -36,32 +36,32 @@ export interface Database {
     Tables: {
       climate_forecasts: {
         Row: {
-          country: string | null
+          country_code: string | null
           date_modified: string
           district: string | null
           filename: string
           id: string
-          language: string
+          language_code: string | null
           storage_file: string | null
           type: string | null
         }
         Insert: {
-          country?: string | null
+          country_code?: string | null
           date_modified: string
           district?: string | null
           filename: string
           id: string
-          language: string
+          language_code?: string | null
           storage_file?: string | null
           type?: string | null
         }
         Update: {
-          country?: string | null
+          country_code?: string | null
           date_modified?: string
           district?: string | null
           filename?: string
           id?: string
-          language?: string
+          language_code?: string | null
           storage_file?: string | null
           type?: string | null
         }
