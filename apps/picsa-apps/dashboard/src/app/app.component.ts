@@ -8,6 +8,7 @@ import { DashboardMaterialModule } from './material.module';
 interface INavLink {
   label: string;
   href: string;
+  children?: INavLink[];
   isActive?: boolean;
 }
 
@@ -31,8 +32,18 @@ export class AppComponent implements AfterViewInit {
       href: '/resources',
     },
     {
-      label: 'Climate Data',
+      label: 'Climate',
       href: '/climate-data',
+      children: [
+        {
+          label: 'Station Data',
+          href: '/station',
+        },
+        {
+          label: 'Forecasts',
+          href: '/forecasts',
+        },
+      ],
     },
     // {
     //   label: 'Crop Information',
