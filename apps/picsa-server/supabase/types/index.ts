@@ -34,26 +34,69 @@ export interface Database {
   }
   public: {
     Tables: {
+      climate_forecasts: {
+        Row: {
+          country: string | null
+          date_modified: string
+          district: string | null
+          filename: string
+          id: string
+          language: string
+          storage_file: string | null
+          type: string | null
+        }
+        Insert: {
+          country?: string | null
+          date_modified: string
+          district?: string | null
+          filename: string
+          id: string
+          language: string
+          storage_file?: string | null
+          type?: string | null
+        }
+        Update: {
+          country?: string | null
+          date_modified?: string
+          district?: string | null
+          filename?: string
+          id?: string
+          language?: string
+          storage_file?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "climate_forecasts_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "climate_forecasts_storage_file_fkey"
+            columns: ["storage_file"]
+            referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       climate_products: {
         Row: {
           created_at: string
           data: Json
-          id: number
-          station_id: number | null
+          station_id: number
           type: string
         }
         Insert: {
           created_at?: string
           data: Json
-          id?: number
-          station_id?: number | null
+          station_id: number
           type: string
         }
         Update: {
           created_at?: string
           data?: Json
-          id?: number
-          station_id?: number | null
+          station_id?: number
           type?: string
         }
         Relationships: [
@@ -314,7 +357,6 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
-          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -327,7 +369,6 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
-          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -340,7 +381,6 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
-          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
