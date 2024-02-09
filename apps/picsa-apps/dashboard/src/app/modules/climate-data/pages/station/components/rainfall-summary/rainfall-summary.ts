@@ -56,14 +56,14 @@ export class RainfallSummaryComponent implements AfterViewInit {
 
   public async refreshData() {
     const { station_id, country_code } = this.service.activeStation;
-    const { response, data, error } = await this.api.useMeta('rainfallSummary').POST('/v1/annual_rainfall_summaries/', {
+    const { data, error } = await this.api.useMeta('rainfallSummary').POST('/v1/annual_rainfall_summaries/', {
       body: {
         country: `${country_code}` as any,
         station_id: `${station_id}`,
         summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
       },
     });
-    console.log('rainfallSummary', { response, data, error });
+    if (error) throw error;
     this.loadData(data as any);
     // TODO - generalise way to persist db updates from api queries
     const dbRes = await this.supabase.db.table('climate_products').upsert({
