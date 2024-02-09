@@ -37,8 +37,9 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
-    await this.checkStatus();
     await this.listStations();
+    // Initialise other services without await to allow parallel requests
+    this.checkApiStatus();
     this.subscribeToRouteChanges();
   }
 
@@ -54,30 +55,36 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
 
   private subscribeToRouteChanges() {
     // Use merged router as service cannot access route params directly like component
-    ngRouterMergedSnapshot$(this.router).subscribe(({ params }) => {
+    ngRouterMergedSnapshot$(this.router).subscribe(async ({ params }) => {
       if (params.stationId) {
+        await this.ready();
         this.setActiveStation(parseInt(params.stationId));
       }
     });
   }
 
-  private async checkStatus() {
+  private async checkApiStatus() {
     await this.api.useMeta('serverStatus').GET('/v1/status/');
   }
 
-  private async listStations() {
+  private async listStations(allowRefresh = true) {
     // HACK - endpoint not operational
     // TODO - when running should refresh from server as cron task
     const { data, error } = await this.supabaseService.db.table('climate_stations').select<'*', IStationRow>('*');
     if (error) {
       throw error;
     }
-    if (data.length === 0) {
-      this.notificationService.showUserNotification({
-        matIcon: 'warning',
-        message: 'climate_stations_rows must be imported into database for this feature to work',
-      });
+    if (data.length === 0 && allowRefresh) {
+      await this.refreshStationList();
+      return this.listStations(false);
     }
     this.stations = data || [];
+  }
+  private async refreshStationList() {
+    const { data, error } = await this.api.useMeta('station').GET('/v1/station/');
+    if (error) throw error;
+    // TODO - general mapping doc
+    const stations: IStationRow[] = data;
+    await this.supabaseService.db.table('climate_stations').upsert<IStationRow>(stations);
   }
 }

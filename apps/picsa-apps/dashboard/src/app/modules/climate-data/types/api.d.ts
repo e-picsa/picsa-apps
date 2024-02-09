@@ -32,19 +32,29 @@ export interface paths {
     /** Get Season Start Probabilities */
     post: operations["get_season_start_probabilities_v1_season_start_probabilities__post"];
   };
+  "/v1/extremes_summaries/": {
+    /** Get Extremes Summaries */
+    post: operations["get_extremes_summaries_v1_extremes_summaries__post"];
+  };
   "/v1/station/": {
-    /**
-     * Read Stations
-     * @description Retrieve stations.
-     */
+    /** Read Stations */
     get: operations["read_stations_v1_station__get"];
   };
-  "/v1/station/{id}": {
-    /**
-     * Read Station
-     * @description Get station by ID.
-     */
-    get: operations["read_station_v1_station__id__get"];
+  "/v1/station/{country}": {
+    /** Read Stations */
+    get: operations["read_stations_v1_station__country__get"];
+  };
+  "/v1/station/{country}/{station_id}": {
+    /** Read Stations */
+    get: operations["read_stations_v1_station__country___station_id__get"];
+  };
+  "/v1/forecasts/": {
+    /** Get Forecasts */
+    get: operations["get_forecasts_v1_forecasts__get"];
+  };
+  "/v1/forecasts/{country}/{file_name}": {
+    /** Get Forecasts */
+    get: operations["get_forecasts_v1_forecasts__country___file_name__get"];
   };
 }
 
@@ -122,6 +132,29 @@ export interface components {
       /** Start Before Season */
       start_before_season?: boolean;
     };
+    /** ExtremesSummariesParameters */
+    ExtremesSummariesParameters: {
+      /**
+       * Country
+       * @default zm
+       * @enum {string}
+       */
+      country?: "zm" | "mw";
+      /**
+       * Station Id
+       * @default test_1
+       */
+      station_id?: string;
+      /**
+       * Summaries
+       * @default [
+       *   "extremes_rain",
+       *   "extremes_tmin",
+       *   "extremes_tmax"
+       * ]
+       */
+      summaries?: ("extremes_rain" | "extremes_tmin" | "extremes_tmax")[];
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -164,6 +197,26 @@ export interface components {
       station_id?: string;
       /** Start Dates */
       start_dates?: number[];
+    };
+    /** Station */
+    Station: {
+      /**
+       * Country Code
+       * @enum {string}
+       */
+      country_code: "zm" | "mw";
+      /** District */
+      district: string;
+      /** Elevation */
+      elevation: number;
+      /** Latitude */
+      latitude: number;
+      /** Longitude */
+      longitude: number;
+      /** Station Id */
+      station_id: number;
+      /** Station Name */
+      station_name: string;
     };
     /** ValidationError */
     ValidationError: {
@@ -312,11 +365,86 @@ export interface operations {
       };
     };
   };
-  /**
-   * Read Stations
-   * @description Retrieve stations.
-   */
+  /** Get Extremes Summaries */
+  get_extremes_summaries_v1_extremes_summaries__post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ExtremesSummariesParameters"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Read Stations */
   read_stations_v1_station__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Station"][];
+        };
+      };
+    };
+  };
+  /** Read Stations */
+  read_stations_v1_station__country__get: {
+    parameters: {
+      path: {
+        country: "zm" | "mw";
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Read Stations */
+  read_stations_v1_station__country___station_id__get: {
+    parameters: {
+      path: {
+        country: "zm" | "mw";
+        station_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Forecasts */
+  get_forecasts_v1_forecasts__get: {
     responses: {
       /** @description Successful Response */
       200: {
@@ -326,14 +454,12 @@ export interface operations {
       };
     };
   };
-  /**
-   * Read Station
-   * @description Get station by ID.
-   */
-  read_station_v1_station__id__get: {
+  /** Get Forecasts */
+  get_forecasts_v1_forecasts__country___file_name__get: {
     parameters: {
       path: {
-        id: number;
+        country: "zm" | "mw";
+        file_name: string;
       };
     };
     responses: {
