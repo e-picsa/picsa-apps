@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { ClimateDataDashboardService } from '../../climate-data.service';
+import { ClimateService } from '../../climate.service';
 import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
 
 @Component({
@@ -24,7 +24,7 @@ export class StationPageComponent implements OnInit {
     };
   }
 
-  constructor(private service: ClimateDataDashboardService) {}
+  constructor(private service: ClimateService) {}
 
   async ngOnInit() {
     await this.service.ready();

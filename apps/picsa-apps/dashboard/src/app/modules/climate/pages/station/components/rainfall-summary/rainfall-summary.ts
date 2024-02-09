@@ -6,8 +6,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
-import { ClimateDataDashboardService } from '../../../../climate-data.service';
-import { ClimateDataApiService } from '../../../../climate-data-api.service';
+import { ClimateService } from '../../../../climate.service';
+import { ClimateApiService } from '../../../../climate-api.service';
 
 interface IRainfallSummary {
   data: any[];
@@ -25,8 +25,8 @@ interface IRainfallSummary {
 export class RainfallSummaryComponent implements AfterViewInit {
   public summary: IRainfallSummary = { data: [], metadata: {} };
   constructor(
-    public api: ClimateDataApiService,
-    private service: ClimateDataDashboardService,
+    public api: ClimateApiService,
+    private service: ClimateService,
     private cdr: ChangeDetectorRef,
     private supabase: SupabaseService
   ) {}

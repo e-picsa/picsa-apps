@@ -35,7 +35,7 @@ interface IMetaEntry{
  * ```
  * */
 @Injectable({ providedIn: 'root' })
-export class ClimateDataApiService {
+export class ClimateApiService {
 
   /** Request additional meta by id */
   public meta:Record<string ,IMetaEntry>={}
