@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { ClimateDataHomeComponent } from './pages/home/climate-data-home.component';
+import { ClimateStationPageComponent } from './pages/station/station.component';
 import { StationDetailsPageComponent } from './pages/station-details/station-details.component';
 
 @NgModule({
@@ -17,7 +17,7 @@ import { StationDetailsPageComponent } from './pages/station-details/station-det
       },
       {
         path: 'station',
-        component: ClimateDataHomeComponent,
+        component: ClimateStationPageComponent,
       },
       {
         path: 'station/:stationId',

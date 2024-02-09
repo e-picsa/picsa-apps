@@ -9,13 +9,13 @@ import { ClimateService, IStationRow } from '../../climate.service';
 import { ClimateApiService } from '../../climate-api.service';
 
 @Component({
-  selector: 'dashboard-climate-data-home',
+  selector: 'dashboard-climate-station-page',
   standalone: true,
   imports: [CommonModule, MatTableModule, RouterModule, PicsaMapComponent, MatProgressSpinnerModule],
-  templateUrl: './climate-data-home.component.html',
-  styleUrls: ['./climate-data-home.component.scss'],
+  templateUrl: './station.component.html',
+  styleUrls: ['./station.component.scss'],
 })
-export class ClimateDataHomeComponent implements OnInit {
+export class ClimateStationPageComponent implements OnInit {
   public displayedColumns: (keyof IStationRow)[] = ['station_id', 'station_name'];
 
   public mapMarkers: IMapMarker[];
