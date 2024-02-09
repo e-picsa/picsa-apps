@@ -3,8 +3,14 @@
     <h2 style="flex: 1">Climate Data</h2>
     @if(api.meta.serverStatus; as meta){
     <div class="server-status">
-      Server Status
-      <span class="status-code" [attr.data-status]="meta.rawResponse?.status">{{ meta.rawResponse?.status }}</span>
+      <span>Server Status </span>
+      <span class="status-code" [attr.data-status]="meta.rawResponse?.status">
+        @if(meta.rawResponse; as response){
+        {{ response.status }}
+        } @else {
+        <mat-progress-spinner mode="indeterminate" diameter="22" color="white"> </mat-progress-spinner>
+        }
+      </span>
     </div>
     }
   </div>
