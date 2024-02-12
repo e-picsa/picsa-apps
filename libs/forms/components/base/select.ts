@@ -1,38 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  forwardRef,
-  Input,
-  Output,
-  Provider,
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP } from '@picsa/data';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { arrayToHashmap } from '@picsa/utils';
 
-/** Accessor used for binding with ngModel or formgroups */
-export const CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => FormCropActivitySelectComponent),
-  multi: true,
-};
-
-/**
- * Form control to allow visual selection of crop-activity condition
- * Displays options in a popup and allows single selection
- */
+/** For more information about this base component see local @see./README.md */
 @Component({
-  selector: 'picsa-form-crop-activity-select',
-  templateUrl: './crop-activity-select.component.html',
-  styleUrls: ['./crop-activity-select.component.scss'],
-  providers: [CONTROL_VALUE_ACCESSOR],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '',
 })
-export class FormCropActivitySelectComponent {
-  protected selectOptions = CROP_ACTIVITY_DATA;
-
+export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
   /** Selected value binding */
   @Input()
   get selected() {
@@ -50,17 +23,35 @@ export class FormCropActivitySelectComponent {
     }
   }
 
-  /** Get full selected entry data */
-  protected get selectedData() {
-    return CROP_ACTIVITY_HASHMAP[this.selected];
+  @Input() set filterFn(filterFn: (option: T) => boolean) {
+    this.filteredOptions = this.selectOptions.filter((o) => filterFn(o));
   }
+
+  /** Get full selected entry data */
+  protected get selectedOption() {
+    if (this.selected) {
+      return this.selectOptionsHashmap[this.selected];
+    }
+    return null;
+  }
+
+  protected filteredOptions: T[] = [];
 
   /** Additional event emitter to allow manual bind to <gender-input (selectedChange) /> event*/
   @Output() selectedChange = new EventEmitter<string>();
 
   private _selected = ''; // this is the updated value that the class accesses
 
-  constructor(public dialog: MatDialog, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    @Inject('selectOptions') public selectOptions: T[],
+    @Inject('selectOptionsHashmap') public selectOptionsHashmap: Record<string, T> = null as any
+  ) {
+    if (!this.selectOptionsHashmap) {
+      this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');
+    }
+    this.filteredOptions = this.selectOptions;
+  }
 
   /** Events registered by ngModel and Form Controls */
   // eslint-disable-next-line @typescript-eslint/member-ordering

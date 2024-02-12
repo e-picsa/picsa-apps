@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { PicsaFormsModule, PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaFormsModule } from '@picsa/forms';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { SeasonalCalendarToolComponentsModule } from '../../components/components.module';
 import { CreateCalendarComponent } from './create-calendar.component';

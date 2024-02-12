@@ -3,12 +3,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import {
-  PicsaDb_V2_Module,
-  PicsaFormsModule,
-  PicsaTranslateModule,
-  PicsaTranslateService,
-} from '@picsa/shared/modules';
+import { PicsaFormsModule } from '@picsa/forms';
+import { PicsaDb_V2_Module, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';

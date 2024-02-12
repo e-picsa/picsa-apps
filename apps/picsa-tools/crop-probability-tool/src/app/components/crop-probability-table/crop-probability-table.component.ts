@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CROPS_DATA, ICropData } from '@picsa/data';
+import { ICropData } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { IStationCropData, IStationCropDataItem, IStationCropInformation } from '../../models';
@@ -19,15 +19,14 @@ export class CropProbabilityTableComponent {
 
   public dataSource: MatTableDataSource<ITableRow>;
   public station: IStationCropInformation;
-  public selectedCropName?: string;
-  public cropOptions: ICropData[] = [];
+  public selectedCropName = 'maize';
 
   private tableData: ITableRow[] = [];
 
   @Input() set activeStation(activeStation: IStationCropInformation) {
     this.station = activeStation;
     this.tableData = this.prepareTableRows(activeStation);
-    this.filterData('');
+    this.filterData(this.selectedCropName);
   }
 
   constructor(private router: Router, private route: ActivatedRoute) {}
@@ -35,6 +34,7 @@ export class CropProbabilityTableComponent {
   public handleStationChange() {
     this.router.navigate([], { relativeTo: this.route, queryParams: { stationId: this.station?.id } });
   }
+  public cropFilterFn: (option: ICropData) => boolean;
 
   filterData(cropName = '') {
     this.selectedCropName = cropName;
@@ -42,7 +42,7 @@ export class CropProbabilityTableComponent {
     const dataSource = new MatTableDataSource(this.tableData);
     // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
     dataSource.filterPredicate = (data, filter) => data.crop.toLowerCase() === filter;
-    this.cropOptions = this.generateCropFilters(this.station.station_data);
+    this.generateCropFilters(this.station.station_data);
     if (cropName) {
       dataSource.filter = cropName.toLowerCase();
     }
@@ -57,7 +57,7 @@ export class CropProbabilityTableComponent {
   /** Generate list of crops for filtering that exist in the data */
   private generateCropFilters(stationData: IStationCropData[]) {
     const availableCrops = arrayToHashmap(stationData, 'crop');
-    return CROPS_DATA.filter(({ name }) => name in availableCrops);
+    this.cropFilterFn = ({ name }) => name in availableCrops;
   }
 
   /**

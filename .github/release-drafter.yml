@@ -4,19 +4,35 @@ categories:
   #     - 'feature'
   #     - 'enhancement'
   [
-    { title: ' Budget Tool', labels: ['Tool: Budget'] },
-    { title: ' Climate Tool', labels: ['Tool: Climate'] },
-    { title: ' Crop Probability Tool', labels: ['Tool: Crop Probability'] },
-    { title: ' Farmer Activity Tool', labels: ['Tool: Farmer Activity'] },
-    { title: ' Manual Tool', labels: ['Tool: Manual'] },
-    { title: ' Monitoring Tool', labels: ['Tool: Monitoring'] },
-    { title: ' Option Tool', labels: ['Tool: Option'] },
-    { title: ' Resources Tool', labels: ['Tool: Resources'] },
-    { title: ' Seasonal Calendar Tool', labels: ['Tool: Seasonal Calendar'] },
-    { title: ' Dashboard App', labels: ['App: Dashboard'] },
-    { title: ' Server App', labels: ['App: Server'] },
+    { title: '🟦Budget Tool', labels: ['Tool: Budget'] },
+    { title: '🟦Climate Tool', labels: ['Tool: Climate'] },
+    { title: '🟦Crop Probability Tool', labels: ['Tool: Crop Probability'] },
+    { title: '🟦Farmer Activity Tool', labels: ['Tool: Farmer Activity'] },
+    { title: '🟦Manual Tool', labels: ['Tool: Manual'] },
+    { title: '🟦Monitoring Tool', labels: ['Tool: Monitoring'] },
+    { title: '🟦Option Tool', labels: ['Tool: Option'] },
+    { title: '🟦Resources Tool', labels: ['Tool: Resources'] },
+    { title: '🟦Seasonal Calendar Tool', labels: ['Tool: Seasonal Calendar'] },
+    { title: '🟪Dashboard App', labels: ['App: Dashboard'] },
+    { title: '🟪Server App', labels: ['App: Server'] },
+    { title: '🟫Core Maintenance', labels: ['maintenance'] },
   ]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+category-template: '### $TITLE'
+# Replace initial category, e.g. feat: or fix(budget):
+replacers:
+  # Remove inner semantic context, e.g. feat(budget): -> feat: (as already under budget heading)
+  - search: '/\([a-z()-]*\):/gim'
+    replace: ':'
+  # Prefer lower case prefixes
+  - search: 'Feat'
+    replace: 'feat'
+  - search: 'Fix'
+    replace: 'fix'
+  - search: 'Refactor'
+    replace: 'refactor'
+  - search: 'Chore'
+    replace: 'chore'
 template: |
-  ## What’s Changed
+  ## What's Changed
   $CHANGES
