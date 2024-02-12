@@ -3,28 +3,30 @@ import '@uppy/dashboard/dist/style.min.css';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { UppyAngularDashboardModule } from '@uppy/angular';
-import Uppy from '@uppy/core';
+import { Router } from '@angular/router';
 
 import { DashboardMaterialModule } from '../../material.module';
+import { CropProbabilityDashboardService } from './crop-information.service';
 
 @Component({
   selector: 'dashboard-resources-page',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, UppyAngularDashboardModule],
+  imports: [CommonModule, DashboardMaterialModule],
   templateUrl: '../crop-information/crop-information.component.html',
   styleUrls: ['../crop-information/crop-information.component.scss'],
 })
 export class CropInformationPageComponent implements OnInit {
-  uppy: Uppy = new Uppy({ debug: true, autoProceed: true });
 
-  constructor(public supabaseService: SupabaseService) {}
+  constructor(public service: CropProbabilityDashboardService, private router: Router) {}
 
-  async ngOnInit() {
-    const table = this.supabaseService.db.table('crop-information');
+  ngOnInit(): void {
+    this.service.ready();
+    this.refreshCropInformation();
+  }
 
-    const { data, error } = await table.select();
-    console.log({ data, error });
+  refreshCropInformation() {
+    this.service.listCropProbabilities().catch((error) => {
+      console.error('Error fetching crop probabilities:', error);
+    });
   }
 }
