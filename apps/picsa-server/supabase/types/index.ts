@@ -38,22 +38,19 @@ export interface Database {
         Row: {
           created_at: string
           data: Json
-          id: number
-          station_id: number | null
+          station_id: number
           type: string
         }
         Insert: {
           created_at?: string
           data: Json
-          id?: number
-          station_id?: number | null
+          station_id: number
           type: string
         }
         Update: {
           created_at?: string
           data?: Json
-          id?: number
-          station_id?: number | null
+          station_id?: number
           type?: string
         }
         Relationships: [
@@ -94,6 +91,49 @@ export interface Database {
           station_name?: string | null
         }
         Relationships: []
+      }
+      crop_data: {
+        Row: {
+          created_at: string
+          days: string | null
+          id: number
+          length_lower: number | null
+          length_upper: number | null
+          station_data: number | null
+          variety: string | null
+          "water _lower": number | null
+          "water _upper": number | null
+        }
+        Insert: {
+          created_at?: string
+          days?: string | null
+          id?: number
+          length_lower?: number | null
+          length_upper?: number | null
+          station_data?: number | null
+          variety?: string | null
+          "water _lower"?: number | null
+          "water _upper"?: number | null
+        }
+        Update: {
+          created_at?: string
+          days?: string | null
+          id?: number
+          length_lower?: number | null
+          length_upper?: number | null
+          station_data?: number | null
+          variety?: string | null
+          "water _lower"?: number | null
+          "water _upper"?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crop_data_station_data_fkey"
+            columns: ["station_data"]
+            referencedRelation: "station_data"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       kobo_sync: {
         Row: {
@@ -224,6 +264,67 @@ export interface Database {
             foreignKeyName: "resources_storage_file_fkey"
             columns: ["storage_file"]
             referencedRelation: "storage_objects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      station_crop_information: {
+        Row: {
+          created_at: string
+          id: number
+          length_lower: number | null
+          length_upper: number | null
+          station_name: string | null
+          station_notes: string[] | null
+          water_lower: number | null
+          water_upper: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          length_lower?: number | null
+          length_upper?: number | null
+          station_name?: string | null
+          station_notes?: string[] | null
+          water_lower?: number | null
+          water_upper?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          length_lower?: number | null
+          length_upper?: number | null
+          station_name?: string | null
+          station_notes?: string[] | null
+          water_lower?: number | null
+          water_upper?: number | null
+        }
+        Relationships: []
+      }
+      station_data: {
+        Row: {
+          created_at: string
+          crop_name: string | null
+          id: number
+          station: number | null
+        }
+        Insert: {
+          created_at?: string
+          crop_name?: string | null
+          id?: number
+          station?: number | null
+        }
+        Update: {
+          created_at?: string
+          crop_name?: string | null
+          id?: number
+          station?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "station_data_station_fkey"
+            columns: ["station"]
+            referencedRelation: "station_crop_information"
             referencedColumns: ["id"]
           }
         ]
