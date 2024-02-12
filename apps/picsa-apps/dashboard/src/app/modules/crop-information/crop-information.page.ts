@@ -13,8 +13,8 @@ import { DashboardMaterialModule } from '../../material.module';
   selector: 'dashboard-resources-page',
   standalone: true,
   imports: [CommonModule, DashboardMaterialModule, UppyAngularDashboardModule],
-  templateUrl: './crop-information.page.html',
-  styleUrls: ['./crop-information.page.scss'],
+  templateUrl: '../crop-information/crop-information.component.html',
+  styleUrls: ['../crop-information/crop-information.component.scss'],
 })
 export class CropInformationPageComponent implements OnInit {
   uppy: Uppy = new Uppy({ debug: true, autoProceed: true });
