@@ -47,6 +47,10 @@ export class AppComponent implements AfterViewInit {
       label: 'Translations',
       href: '/translations',
     },
+    {
+      label: 'Crop Probability',
+      href: '/crop-probability',
+    },
   ];
 
   globalLinks: INavLink[] = [
@@ -58,10 +62,6 @@ export class AppComponent implements AfterViewInit {
     //   label: 'Users',
     //   href: '/users',
     // },
-    {
-      label: 'Crop Information',
-      href: '/crop-information',
-    },
   ];
 
   constructor(public supabaseService: SupabaseService) {}

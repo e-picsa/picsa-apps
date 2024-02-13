@@ -19,7 +19,7 @@ export const appRoutes: Route[] = [
     pathMatch: 'full',
   },
   {
-    path: 'crop-information',
+    path: 'crop-probability',
     loadChildren: () => import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
 ];
