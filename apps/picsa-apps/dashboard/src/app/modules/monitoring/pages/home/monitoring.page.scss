@@ -17,11 +17,17 @@ td {
   cursor: pointer;
 }
 
-.disallow-click{
+.disallow-click {
   pointer-events: none;
   cursor: not-allowed;
 }
-.allow-click{
-  pointer-events:all;
+.allow-click {
+  pointer-events: all;
   cursor: pointer;
+}
+.long-text-rows {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 13rem;
 }

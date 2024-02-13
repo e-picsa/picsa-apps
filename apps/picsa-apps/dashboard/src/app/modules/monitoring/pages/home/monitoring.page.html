@@ -1,3 +1,65 @@
 <div class="page-content">
- This is the monitoring page
+    <div style="display: flex; align-items: center">
+        <h2 style="flex: 1">Monitoring Froms</h2>
+        <!-- <button mat-raised-button color="primary" routerLink="/translations/new">Add New Form</button> -->
+    </div>
+    @if(service.forms){
+    <table mat-table [dataSource]="service.forms">
+        <!-- 'title' Column -->
+        <ng-container matColumnDef="title" clickable>
+            <th mat-header-cell *matHeaderCellDef>Title</th>
+            <td mat-cell *matCellDef="let element">{{ element.title }}</td>
+        </ng-container>
+
+        <!-- 'description' Column -->
+        <ng-container matColumnDef="description" clickable>
+            <th mat-header-cell *matHeaderCellDef>description</th>
+            <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+        </ng-container>
+
+        <!-- 'definition meta data' Column -->
+        <!-- <ng-container matColumnDef="enketoDefinition" clickable>
+        <th mat-header-cell *matHeaderCellDef>Enketo Definition</th>
+        <td mat-cell *matCellDef="let element">{{ element.enketoDefinition.hash }}</td>
+      </ng-container> -->
+
+        <!-- 'form' Column -->
+        <ng-container matColumnDef="enketoForm">
+            <th mat-header-cell *matHeaderCellDef>Form Html</th>
+            <td mat-cell class="long-text-rows" *matCellDef="let element">{{ element.enketoForm }}</td>
+        </ng-container>
+
+        <!-- 'fields' Column -->
+        <ng-container matColumnDef="summaryFields">
+            <th mat-header-cell *matHeaderCellDef>Fields Summary</th>
+            <td mat-cell *matCellDef="let element">
+                @for (item of element.summaryFields; track $index) {
+                {{ item['label'] }}<br>
+                }
+            </td>
+        </ng-container>
+
+        <!-- 'countries' Column -->
+        <ng-container matColumnDef="appCountries">
+            <th mat-header-cell *matHeaderCellDef>App Countries</th>
+            <td mat-cell *matCellDef="let element">{{ element.appCountries.join(',') }}</td>
+        </ng-container>
+
+        <!-- 'model' Column -->
+        <ng-container matColumnDef="enketoModel">
+            <th mat-header-cell *matHeaderCellDef>Model</th>
+            <td mat-cell class="long-text-rows" *matCellDef="let element">{{ element.enketoModel }}</td>
+        </ng-container>
+
+        <!-- 'created_at' Column -->
+        <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.created_at | date: 'mediumDate' }}</td>
+        </ng-container>
+
+        <!-- Table Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    }
 </div>

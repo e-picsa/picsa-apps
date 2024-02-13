@@ -4,34 +4,32 @@ import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { TranslationDashboardService } from '../../monitoring.service';
+import { MonitoringFormsDashboardService } from '../../monitoring.service';
 
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
   selector: 'dashboard-translations-page',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, RouterModule],
+  imports: [CommonModule, DashboardMaterialModule, RouterModule, PicsaDataTableComponent],
   templateUrl: './monitoring.page.html',
   styleUrls: ['./monitoring.page.scss'],
 })
 export class MonitoringPageComponent implements OnInit {
-  displayedColumns: string[] = ['tool', 'context', 'en', 'mw_ny', 'zm_ny', 'ke_sw', 'tj_tg', 'created_at'];
+  displayedColumns: string[] = [ 'title', 'description', 'summaryFields', 'appCountries', 'enketoForm', 'enketoModel', 'created_at'];
 
-  constructor(public service: TranslationDashboardService, private router: Router) {}
+  constructor(public service: MonitoringFormsDashboardService, private router: Router) {}
+  public tableOptions: IDataTableOptions = {
+    paginatorSizes: [25, 50],
+  };
   ngOnInit(): void {
     this.service.ready();
-    this.refreshTranslations();
+    console.log(this.service.forms)
   }
 
-  goToRecord(row: ITranslationRow) {
-    this.router.navigate([`/translations`, row.id]);
-  }
-
-  refreshTranslations() {
-    this.service.listTranslations().catch((error) => {
-      console.error('Error fetching translations:', error);
-    });
-  }
+  
+  
+  
 }

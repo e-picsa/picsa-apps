@@ -145,7 +145,7 @@ export interface Database {
           enketoModel: string | null
           id: number
           summaryFields: Json[] | null
-          tittle: string
+          title: string
         }
         Insert: {
           appCountries?: string[] | null
