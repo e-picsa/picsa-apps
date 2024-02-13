@@ -66,6 +66,7 @@ export class SupabaseStorageFilePickerComponent {
     const entries = await this.storage.list(this.storageBucketName, this.storageFolderPath);
     this.fileEntries = entries
       // filter out metadata files which have filename starting with `.`
+      // not sure why I keep getting a run time error here with a reset data base
       .filter((storageEntry) => storageEntry.name && !storageEntry.name.split('/').pop()?.startsWith('.'))
       .sort((a, b) => {
         if (!b.name) return 1;
