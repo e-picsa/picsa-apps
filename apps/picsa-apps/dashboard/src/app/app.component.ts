@@ -46,6 +46,10 @@ export class AppComponent implements AfterViewInit {
       label: 'Translations',
       href: '/translations',
     },
+    {
+      label: 'Monitoring',
+      href: '/monitoring',
+    },
   ];
 
   globalLinks: INavLink[] = [

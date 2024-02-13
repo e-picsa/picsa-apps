@@ -134,6 +134,45 @@ export interface Database {
         }
         Relationships: []
       }
+      monitoring_forms: {
+        Row: {
+          appCountries: string[] | null
+          cover: Json | null
+          created_at: string
+          description: string | null
+          enketoDefinition: Json | null
+          enketoForm: string | null
+          enketoModel: string | null
+          id: number
+          summaryFields: Json[] | null
+          tittle: string
+        }
+        Insert: {
+          appCountries?: string[] | null
+          cover?: Json | null
+          created_at?: string
+          description?: string | null
+          enketoDefinition?: Json | null
+          enketoForm?: string | null
+          enketoModel?: string | null
+          id?: number
+          summaryFields?: Json[] | null
+          tittle: string
+        }
+        Update: {
+          appCountries?: string[] | null
+          cover?: Json | null
+          created_at?: string
+          description?: string | null
+          enketoDefinition?: Json | null
+          enketoForm?: string | null
+          enketoModel?: string | null
+          id?: number
+          summaryFields?: Json[] | null
+          tittle?: string
+        }
+        Relationships: []
+      }
       monitoring_tool_submissions: {
         Row: {
           _app_user_id: string
