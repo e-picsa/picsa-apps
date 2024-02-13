@@ -36,7 +36,14 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    console.log('List probabilities',data, error);
     this.cropProbabilities = data || [];
+  }
+
+  public async addCropProbability(cropProbability: Partial<ICropInformationRow>): Promise<string> {
+    const { data, error } = await this.supabaseService.db.table('station_crop_information').insert([cropProbability]);
+    if (error) {
+      throw error;
+    }
+    return 'Added successfully';
   }
 }

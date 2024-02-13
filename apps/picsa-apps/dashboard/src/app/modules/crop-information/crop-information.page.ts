@@ -16,8 +16,16 @@ import { CropProbabilityDashboardService } from './crop-information.service';
   styleUrls: ['../crop-information/crop-information.component.scss'],
 })
 export class CropInformationPageComponent implements OnInit {
-
   constructor(public service: CropProbabilityDashboardService, private router: Router) {}
+
+  displayedColumns: string[] = [
+    'station_name',
+    'water_lower',
+    'water_upper',
+    'length_lower',
+    'length_upper',
+    'station_notes',
+  ];
 
   ngOnInit(): void {
     this.service.ready();
@@ -28,5 +36,9 @@ export class CropInformationPageComponent implements OnInit {
     this.service.listCropProbabilities().catch((error) => {
       console.error('Error fetching crop probabilities:', error);
     });
+  }
+
+  navigateToEntryPage(){
+    this.router.navigate(['/crop-probability/entry'])
   }
 }
