@@ -1,0 +1,35 @@
+<div class="page-content">
+  <button mat-stroked-button color="primary" (click)="routeBack()"><mat-icon> Back </mat-icon></button>
+  <h2>New Crop Probability Entry</h2>
+
+  <form class="form-content">
+    <div class="form-data">
+      <label>Station Name</label>
+      <input matInput [(ngModel)]="station_name" name="station_name" />
+    </div>
+    <div class="form-data">
+      <label>Water Upper</label>
+      <input matInput [(ngModel)]="water_upper" name="water_upper" />
+    </div>
+    <div class="form-data">
+      <label>Water Lower</label>
+      <input matInput [(ngModel)]="water_lower" name="water_lower" />
+    </div>
+    <div class="form-data">
+      <label>Length Upper</label>
+      <input matInput [(ngModel)]="length_upper" name="length_upper" />
+    </div>
+    <div class="form-data">
+      <label>Length Lower</label>
+      <input matInput [(ngModel)]="length_lower" name="length_lower" />
+    </div>
+    <div class="form-data">
+      <label>Station Notes</label>
+      <input matInput [(ngModel)]="station_notes" name="station_notes" />
+    </div>
+    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Submit</button>
+  </form>
+  @if(ActionFeedbackMessage){
+  <div>{{ ActionFeedbackMessage }}</div>
+  }
+</div>
