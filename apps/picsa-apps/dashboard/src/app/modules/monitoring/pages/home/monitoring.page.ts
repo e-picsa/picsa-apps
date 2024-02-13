@@ -19,7 +19,6 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
 })
 export class MonitoringPageComponent implements OnInit {
   displayedColumns: string[] = [ 'title', 'description', 'summaryFields', 'appCountries', 'enketoForm', 'enketoModel', 'created_at'];
-
   constructor(public service: MonitoringFormsDashboardService, private router: Router) {}
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],
@@ -28,8 +27,4 @@ export class MonitoringPageComponent implements OnInit {
     this.service.ready();
     console.log(this.service.forms)
   }
-
-  
-  
-  
 }
