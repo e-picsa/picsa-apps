@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -18,7 +18,11 @@ export interface IApiStatusOptions {
   events?: {
     refresh?: () => void;
   };
+  showStatusCode?: boolean;
 }
+const DEFAULT_OPTIONS: IApiStatusOptions = {
+  showStatusCode: true,
+};
 
 /**
  * Component used to display status of ongoing API requests
@@ -34,7 +38,7 @@ export interface IApiStatusOptions {
   styleUrls: ['./api-status.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardClimateApiStatusComponent implements OnDestroy {
+export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
   public status: IStatus = 'pending';
   public code?: number;
 
@@ -48,7 +52,7 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  @Input() options: IApiStatusOptions = {};
+  @Input() options: Partial<IApiStatusOptions> = {};
 
   /** Unique id of API request to monitor for status updates */
   @Input() set clientId(id: string) {
@@ -67,6 +71,9 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
         this.showCustomFetchErrorMessage(id, response);
       }
     });
+  }
+  ngOnInit() {
+    this.options = { ...DEFAULT_OPTIONS, ...this.options };
   }
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
@@ -88,9 +95,9 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
     try {
       const json = await clone.json();
       const errorText = json.detail || 'failed, see console logs for details';
+      console.error(clone);
       this.notificationService.showUserNotification({ matIcon: 'error', message: `[${id}] ${errorText}` });
     } catch (error) {
-      console.error(error);
       console.error('Fetch Error', error);
       this.notificationService.showUserNotification({
         matIcon: 'error',

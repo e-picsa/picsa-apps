@@ -1,1 +1,9 @@
-<div class="page-content"></div>
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2 style="flex: 1">Forecasts</h2>
+    <dashboard-climate-api-status [options]="apiStatusOptions" clientId="forecasts/mw"></dashboard-climate-api-status>
+  </div>
+  <picsa-data-table [data]="forecastData" [options]="tableOptions" [valueTemplates]="{ date_modified }">
+    <ng-template #date_modified let-value> {{ value | date }} </ng-template>
+  </picsa-data-table>
+</div>
