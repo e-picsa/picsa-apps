@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -16,7 +8,17 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { ClimateService } from '../../climate.service';
 import { ClimateApiService } from '../../climate-api.service';
 
-export type IStatus = 'pending' | 'success' | 'error' | 'unknown';
+export type IStatus = 'pending' | 'success' | 'error' | 'ready';
+
+export interface IApiStatusOptions {
+  labels?: {
+    ready?: string;
+    error?: string;
+  };
+  events?: {
+    refresh?: () => void;
+  };
+}
 
 /**
  * Component used to display status of ongoing API requests
@@ -39,14 +41,14 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
   private componentDestroyed$ = new Subject();
   private subscription: Subscription;
 
-  @Output() handleRefresh = new EventEmitter<boolean>();
-
   constructor(
     public api: ClimateApiService,
     public service: ClimateService,
     private notificationService: PicsaNotificationService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  @Input() options: IApiStatusOptions = {};
 
   /** Unique id of API request to monitor for status updates */
   @Input() set clientId(id: string) {
@@ -56,7 +58,10 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
     const client = this.api.getObservableClient(id);
     this.subscription = client.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((response) => {
       this.status = this.getCallbackStatus(response?.status);
-      this.code = response?.status;
+      // only assign success and error codes
+      if (this.status === 'error' || this.status === 'success') {
+        this.code = response?.status;
+      }
       this.cdr.markForCheck();
       if (response && this.status === 'error') {
         this.showCustomFetchErrorMessage(id, response);
@@ -69,11 +74,11 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
   }
 
   private getCallbackStatus(statusCode?: number): IStatus {
-    if (!statusCode) return 'unknown';
+    if (!statusCode) return 'ready';
     if (100 <= statusCode && statusCode <= 199) return 'pending';
     if (200 <= statusCode && statusCode <= 299) return 'success';
     if (400 <= statusCode && statusCode <= 599) return 'error';
-    return 'unknown';
+    return 'ready';
   }
 
   /** Show error message when using custom fetch with callbacks */
