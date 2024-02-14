@@ -60,7 +60,7 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
     if (this.subscription) this.subscription.unsubscribe();
     // subscribe to any requests sent via client and update UI accordingly
     const client = this.api.getObservableClient(id);
-    this.subscription = client.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((response) => {
+    this.subscription = client.$.pipe(takeUntil(this.componentDestroyed$)).subscribe(async (response) => {
       this.status = this.getCallbackStatus(response?.status);
       // only assign success and error codes
       if (this.status === 'error' || this.status === 'success') {
@@ -69,6 +69,11 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
       if (response && this.status === 'error') {
         this.showCustomFetchErrorMessage(id, response);
+      }
+      // console log response body (debug purposes)
+      if (response && this.status === 'success') {
+        const resJson = await this.getResponseBodyJson(response);
+        console.log(`[API] ${id}`, resJson);
       }
     });
   }
@@ -90,19 +95,21 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
 
   /** Show error message when using custom fetch with callbacks */
   private async showCustomFetchErrorMessage(id: string, response: Response) {
+    const resJson = await this.getResponseBodyJson(response);
+    const errorText = resJson.detail || 'failed, see console logs for details';
+    console.error(response);
+    this.notificationService.showUserNotification({ matIcon: 'error', message: `[${id}] ${errorText}` });
+  }
+
+  private async getResponseBodyJson(response: Response) {
     // clone body so that open-api can still consume when constructing full fetch response
     const clone = response.clone();
     try {
       const json = await clone.json();
-      const errorText = json.detail || 'failed, see console logs for details';
-      console.error(clone);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: `[${id}] ${errorText}` });
+      return json;
     } catch (error) {
-      console.error('Fetch Error', error);
-      this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: `[${id}] 'failed, see console logs for details'`,
-      });
+      console.error('Response body parse error', error);
+      return {};
     }
   }
 }

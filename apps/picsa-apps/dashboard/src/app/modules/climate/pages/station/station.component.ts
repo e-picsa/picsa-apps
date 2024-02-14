@@ -30,8 +30,8 @@ export class ClimateStationPageComponent implements OnInit {
   public mapMarkers: IMapMarker[];
 
   public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.getApiStatus() },
-    labels: { ready: 'Server Status' },
+    events: { refresh: () => this.service.fromAPI.station() },
+    showStatusCode: false,
   };
 
   constructor(public service: ClimateService, public api: ClimateApiService) {}
@@ -42,10 +42,5 @@ export class ClimateStationPageComponent implements OnInit {
       latlng: [m.latitude as number, m.longitude as number],
       number: m.station_id,
     }));
-    this.getApiStatus();
-  }
-
-  public getApiStatus() {
-    this.api.getObservableClient('serverStatus').GET('/v1/status/');
   }
 }
