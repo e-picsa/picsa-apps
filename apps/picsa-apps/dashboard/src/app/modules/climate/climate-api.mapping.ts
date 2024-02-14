@@ -16,7 +16,7 @@ export type IApiMappingName = keyof IApiMapping;
 export const ApiMapping = (api: ClimateApiService, db: SupabaseService['db']) => {
   return {
     rainfallSummaries: async (country_code: string, station_id: number) => {
-      // TODO - add model type definitions for server rainfall summary
+      // TODO - add model type definitions for server rainfall summary response body
       const { data, error } = await api
         .getObservableClient(`rainfallSummary_${country_code}_${station_id}`)
         .POST('/v1/annual_rainfall_summaries/', {
