@@ -52,7 +52,7 @@ export class ClimateForecastPageComponent implements OnInit {
   }
 
   public async refreshData() {
-    const data = await this.service.fromAPI.forecasts('mw');
+    const data = await this.service.loadFromAPI.forecasts('mw');
     this.loadForecastData(data);
   }
 }

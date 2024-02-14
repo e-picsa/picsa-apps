@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateService } from '../../climate.service';
-import { ClimateApiService } from '../../climate-api.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
 import { IStationRow } from '../../types';
 
@@ -30,11 +29,11 @@ export class ClimateStationPageComponent implements OnInit {
   public mapMarkers: IMapMarker[];
 
   public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.service.fromAPI.station() },
+    events: { refresh: () => this.service.loadFromAPI.station() },
     showStatusCode: false,
   };
 
-  constructor(public service: ClimateService, public api: ClimateApiService) {}
+  constructor(public service: ClimateService) {}
 
   async ngOnInit() {
     await this.service.ready();

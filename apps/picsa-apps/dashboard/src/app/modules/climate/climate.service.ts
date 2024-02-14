@@ -6,6 +6,7 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
 
+import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
 import { IStationRow } from './types';
 
@@ -19,6 +20,9 @@ export class ClimateService extends PicsaAsyncService {
   public apiStatus: number;
   public stations: IStationRow[] = [];
   public activeStation: IStationRow;
+
+  /** Trigger API request that includes mapping response to local database */
+  public loadFromAPI = ApiMapping(this.api, this.supabaseService.db);
 
   constructor(
     private supabaseService: SupabaseService,
@@ -58,28 +62,16 @@ export class ClimateService extends PicsaAsyncService {
     });
   }
 
-  private async checkApiStatus() {
-    await this.api.useMeta('serverStatus').GET('/v1/status/');
-  }
-
   private async listStations(allowRefresh = true) {
-    // HACK - endpoint not operational
     // TODO - when running should refresh from server as cron task
     const { data, error } = await this.supabaseService.db.table('climate_stations').select<'*', IStationRow>('*');
     if (error) {
       throw error;
     }
     if (data.length === 0 && allowRefresh) {
-      await this.refreshStationList();
+      await this.loadFromAPI.station();
       return this.listStations(false);
     }
     this.stations = data || [];
-  }
-  private async refreshStationList() {
-    const { data, error } = await this.api.useMeta('station').GET('/v1/station/');
-    if (error) throw error;
-    // TODO - general mapping doc
-    const stations: IStationRow[] = data;
-    await this.supabaseService.db.table('climate_stations').upsert<IStationRow>(stations);
   }
 }
