@@ -1,18 +1,7 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2 style="flex: 1">Climate Data</h2>
-    @if(api.meta.serverStatus; as meta){
-    <div class="server-status">
-      <span>Server Status </span>
-      <span class="status-code" [attr.data-status]="meta.rawResponse?.status">
-        @if(meta.rawResponse; as response){
-        {{ response.status }}
-        } @else {
-        <mat-progress-spinner mode="indeterminate" diameter="22" color="white"> </mat-progress-spinner>
-        }
-      </span>
-    </div>
-    }
+    <dashboard-climate-api-status clientId="serverStatus" [options]="apiStatusOptions"></dashboard-climate-api-status>
   </div>
   <h3>Stations</h3>
   <div style="display: flex; gap: 1rem">

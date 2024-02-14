@@ -7,12 +7,20 @@ import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateService } from '../../climate.service';
 import { ClimateApiService } from '../../climate-api.service';
+import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
 import { IStationRow } from '../../types';
 
 @Component({
   selector: 'dashboard-climate-station-page',
   standalone: true,
-  imports: [CommonModule, MatTableModule, RouterModule, PicsaMapComponent, MatProgressSpinnerModule],
+  imports: [
+    CommonModule,
+    DashboardClimateApiStatusComponent,
+    MatTableModule,
+    RouterModule,
+    PicsaMapComponent,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.scss'],
 })
@@ -20,6 +28,11 @@ export class ClimateStationPageComponent implements OnInit {
   public displayedColumns: (keyof IStationRow)[] = ['station_id', 'station_name'];
 
   public mapMarkers: IMapMarker[];
+
+  public apiStatusOptions: IApiStatusOptions = {
+    events: { refresh: () => this.getApiStatus() },
+    labels: { ready: 'Server Status' },
+  };
 
   constructor(public service: ClimateService, public api: ClimateApiService) {}
 
@@ -29,5 +42,10 @@ export class ClimateStationPageComponent implements OnInit {
       latlng: [m.latitude as number, m.longitude as number],
       number: m.station_id,
     }));
+    this.getApiStatus();
+  }
+
+  public getApiStatus() {
+    this.api.getObservableClient('serverStatus').GET('/v1/status/');
   }
 }

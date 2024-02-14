@@ -1,9 +1,6 @@
 <div style="display: flex; align-items: center">
   <h3 style="flex: 1">Rainfall Summary</h3>
-  <button mat-stroked-button (click)="refreshData()" [disabled]="res.status==='pending'">
-    <mat-icon [class.spin]="res.status==='pending'">autorenew</mat-icon>
-    Refresh Data
-  </button>
+  <dashboard-climate-api-status [clientId]="apiClientId" (handleRefresh)="refreshData()" />
 </div>
 <mat-tab-group preserveContent>
   <mat-tab>
