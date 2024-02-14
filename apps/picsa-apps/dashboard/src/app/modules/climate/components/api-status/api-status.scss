@@ -1,3 +1,53 @@
+.status-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-label,
+button.status-refresh-button,
+.status-code {
+  --border-color: var(--color-light);
+  height: 30px;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+}
+
+.status-code {
+  width: 24px;
+  color: white;
+  background: var(--color-light);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  &[data-status='success'] {
+    --border-color: hsl(120, 25%, 50%);
+    background: hsl(120, 25%, 50%);
+  }
+  &[data-status='error'] {
+    --border-color: hsl(0, 60%, 65%);
+    background: hsl(0, 60%, 65%);
+  }
+}
+.status-label {
+  border-right: 1px solid var(--border-color);
+}
+
+button.status-refresh-button {
+  --mdc-icon-button-state-layer-size: 40px;
+  border-right: 1px solid var(--border-color);
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+// mat-progress-spinner.mat-white {
+//   --mdc-circular-progress-active-indicator-color: white;
+// }
+
 mat-icon.spin {
   animation: spin 2s linear infinite;
 }
