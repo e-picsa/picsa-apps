@@ -1,0 +1,6 @@
+<!-- ready status template -->
+<button mat-stroked-button [disabled]="status === 'pending'" (click)="handleRefresh.next(true)">
+  <mat-icon [class.spin]="status === 'pending'">autorenew</mat-icon>
+  Refresh Data
+</button>
+<!-- TODO error status template and numerical code style -->
