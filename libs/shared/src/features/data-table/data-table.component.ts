@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  Pipe,
+  PipeTransform,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { capitalise } from '@picsa/utils';
 import download from 'downloadjs';
 import { unparse } from 'papaparse';
 
@@ -21,15 +32,50 @@ export interface IDataTableOptions {
   search?: boolean;
   /** Specify whether to include column sort headers (default true) */
   sort?: boolean;
+  /** Apply custom formatter to header values. Default replaces underscore with space and capitalises each word */
+  formatHeader?: (value: string) => string;
   /** Bind to row click events */
   handleRowClick?: (row: any) => void;
 }
 
 /**
+ * Simple pipe that allows providing a custom formatter function,
+ * used to modify cell values in a pure way
+ */
+@Pipe({
+  standalone: true,
+  name: 'formatValue',
+})
+export class FormatValuePipe implements PipeTransform {
+  transform<T, U = T>(value: T, formatter: (v: T) => U) {
+    if (!formatter) return value;
+    return formatter(value);
+  }
+}
+
+/**
  * The `picsa-data-table` component is a lightweight wrapper around `mat-table`, used
  * to simplify display of basic tables.
- *
- * By default the table has support for sort, pagination and data search (filter)
+ * @example
+ * ```
+ * <picsa-data-table [data]="myData"></picsa-data-table>
+ * ```
+ * The table has support for sort, pagination and data search (filter),
+ * enabled by default and configurable by an options input @see IDataTableOptions
+ * @example
+ * ```
+ * <picsa-data-table [data]="myData" [options]="{search:false}"></picsa-data-table>
+ * ```
+ * The table will display all cell values directly, without any additional formatting
+ * If needing to render values within a custom template this can be done via `valueTemplates`
+ * @example
+ * ```
+ * <picsa-data-table [data]="myData" [valueTemplates]={col1:col1Template}>
+ *  <ng-template #col1Template let-value>
+ *    <span class='some-custom-class'>{{value | modifierPipe}}</span>
+ *  </ng-template>
+ * </picsa-data-table>
+ * ```
  *
  * For more advanced use cases such as custom column display prefer to directly use `mat-table`
  */
@@ -38,6 +84,7 @@ export interface IDataTableOptions {
   standalone: true,
   imports: [
     CommonModule,
+    FormatValuePipe,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -56,6 +103,13 @@ export class PicsaDataTableComponent implements OnChanges {
   /** User option overrides */
   @Input() options: IDataTableOptions = {};
 
+  /**
+   * Optional <ng-template> references to display specific column values in a custom template,
+   * indexed by column name. E.g. `{colA: myCustomTemplate}`
+   * https://angular.io/guide/content-projection#conditional-content-projection
+   */
+  @Input() valueTemplates: Record<string, TemplateRef<{ $implicit: any }>> = {};
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -66,6 +120,7 @@ export class PicsaDataTableComponent implements OnChanges {
     search: true,
     sort: true,
     handleRowClick: () => null,
+    formatHeader: (v) => v.split('_').map(capitalise).join(' '),
   };
 
   public dataSource: MatTableDataSource<any>;
