@@ -8,7 +8,7 @@ create table
     length_lower double precision null,
     length_upper double precision null,
     crop_id bigint not null,
-    constraint station_crop_information_pkey primary key (id),
+    constraint station_crop_data_pkey primary key (id),
     constraint climate_station_crop_data_station_id_fkey foreign key (station_id) references climate_stations (station_id) on delete cascade,
     constraint climate_station_crop_data_crop_id_fkey foreign key (crop_id) references crop_data (id) on delete cascade
   ) tablespace pg_default;
