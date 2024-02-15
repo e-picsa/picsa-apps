@@ -22,7 +22,7 @@ export class ClimateService extends PicsaAsyncService {
   public activeStation: IStationRow;
 
   /** Trigger API request that includes mapping response to local database */
-  public loadFromAPI = ApiMapping(this.api, this.supabaseService.db);
+  public loadFromAPI = ApiMapping(this.api, this.supabaseService.db, this.supabaseService.storage);
 
   constructor(
     private supabaseService: SupabaseService,
