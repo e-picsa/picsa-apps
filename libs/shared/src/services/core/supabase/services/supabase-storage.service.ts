@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
-import { FileObject } from '@supabase/storage-js';
+import { FileObject, FileOptions } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { PicsaNotificationService } from '../../notification.service';
@@ -75,6 +75,20 @@ export class SupabaseStorageService {
     const defaults = { folderPath: '' };
     const { bucketId, filename, folderPath } = { ...defaults, ...options };
     const { data, error } = await this.storage.from(bucketId).list(folderPath, { limit: 1, search: filename });
+    if (error) {
+      throw error;
+    }
+    return data?.[0] || null;
+  }
+
+  public async putFile(
+    options: { bucketId: string; filename: string; fileBlob: Blob; folderPath?: string },
+    fileOptions: FileOptions = { upsert: false }
+  ) {
+    const defaults = { folderPath: '' };
+    const { bucketId, fileBlob, filename, folderPath } = { ...defaults, ...options };
+    const filePath = folderPath ? `${folderPath}/${filename}` : `${filename}`;
+    const { data, error } = await this.storage.from(bucketId).upload(filePath, fileBlob, fileOptions);
     if (error) {
       throw error;
     }

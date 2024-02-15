@@ -56,9 +56,21 @@ export class ClimateApiService {
     const customFetch = async (...args:Parameters<typeof window['fetch']>)=>{
       // send a custom response with 102 status code to inform that request has been sent but is pending
       $.next({status:102} as Response)
-      const response = await window.fetch(...args);
-      $.next(response)      
-      return response
+      try {
+        const response = await window.fetch(...args);
+        $.next(response)      
+        return response
+      } catch (error:any) {
+        // Likely internal server error thrown
+        console.error(args)
+        console.error(error)
+        const message = error.message
+        const blob = new Blob([JSON.stringify({message}, null, 2)], {type : 'application/json'});
+        const errorRes = new Response(blob,{status:500,statusText:message})
+        $.next(errorRes)
+        return errorRes
+      }
+     
     }
     const baseClient = createClient<paths>({ baseUrl: API_ENDPOINT,mode:'cors',fetch:customFetch });
     const client:IApiClient ={...baseClient, $}
