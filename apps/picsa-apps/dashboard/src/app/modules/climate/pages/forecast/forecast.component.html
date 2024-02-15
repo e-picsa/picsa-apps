@@ -3,7 +3,22 @@
     <h2 style="flex: 1">Forecasts</h2>
     <dashboard-climate-api-status [options]="apiStatusOptions" clientId="forecasts/mw"></dashboard-climate-api-status>
   </div>
-  <picsa-data-table [data]="forecastData" [options]="tableOptions" [valueTemplates]="{ date_modified }">
+  <picsa-data-table [data]="forecastData" [options]="tableOptions" [valueTemplates]="{ date_modified,storage_file }">
     <ng-template #date_modified let-value> {{ value | date }} </ng-template>
+    <ng-template #storage_file let-value let-row="row">
+      <button
+        mat-icon-button
+        (click)="handleStorageClick(row)"
+        [disabled]="activeDownloads[row.filename] === 'pending'"
+      >
+        @if(value || activeDownloads[row.filename]==='complete'){
+        <mat-icon>open_in_new</mat-icon>
+        } @else if(activeDownloads[row.filename]==='pending'){
+        <mat-icon class="spin">autorenew</mat-icon>
+        } @else {
+        <mat-icon>download</mat-icon>
+        }
+      </button>
+    </ng-template>
   </picsa-data-table>
 </div>
