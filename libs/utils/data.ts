@@ -84,3 +84,9 @@ export function jsonNestedProperty<T>(obj: any, nestedPath: string) {
 export function base64ToBlob(base64String, mimetype: string) {
   return createBlobFromBase64(base64String, mimetype);
 }
+
+/** Capitalise the first letter of a string */
+export function capitalise(str: string) {
+  if (typeof str !== 'string') return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
