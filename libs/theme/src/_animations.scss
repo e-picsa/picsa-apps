@@ -1,7 +1,4 @@
-:host {
-  display: block;
-}
-
+// Provide perpetual spin animation to any mat-icon
 mat-icon.spin {
   animation: spin 2s linear infinite;
 }

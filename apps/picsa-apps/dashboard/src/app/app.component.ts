@@ -8,7 +8,7 @@ import { DashboardMaterialModule } from './material.module';
 interface INavLink {
   label: string;
   href: string;
-  isActive?: boolean;
+  children?: INavLink[];
 }
 
 @Component({
@@ -22,17 +22,23 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
 
   navLinks: INavLink[] = [
-    // {
-    //   label: 'Home',
-    //   href: '',
-    // },
     {
       label: 'Resources',
       href: '/resources',
     },
     {
-      label: 'Climate Data',
-      href: '/climate-data',
+      label: 'Climate',
+      href: '/climate',
+      children: [
+        {
+          label: 'Station Data',
+          href: '/station',
+        },
+        {
+          label: 'Forecasts',
+          href: '/forecast',
+        },
+      ],
     },
     // {
     //   label: 'Crop Information',

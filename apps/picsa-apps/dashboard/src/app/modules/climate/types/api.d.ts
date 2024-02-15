@@ -8,7 +8,7 @@ export interface paths {
   "/v1/status/": {
     /**
      * Get Status
-     * @description Check server up and authorized to access data
+     * @description Check server up
      */
     get: operations["get_status_v1_status__get"];
   };
@@ -32,19 +32,42 @@ export interface paths {
     /** Get Season Start Probabilities */
     post: operations["get_season_start_probabilities_v1_season_start_probabilities__post"];
   };
+  "/v1/extremes_summaries/": {
+    /** Get Extremes Summaries */
+    post: operations["get_extremes_summaries_v1_extremes_summaries__post"];
+  };
   "/v1/station/": {
-    /**
-     * Read Stations
-     * @description Retrieve stations.
-     */
+    /** Read Stations */
     get: operations["read_stations_v1_station__get"];
   };
-  "/v1/station/{id}": {
+  "/v1/station/{country}": {
+    /** Read Stations */
+    get: operations["read_stations_v1_station__country__get"];
+  };
+  "/v1/station/{country}/{station_id}": {
+    /** Read Stations */
+    get: operations["read_stations_v1_station__country___station_id__get"];
+  };
+  "/v1/forecasts/": {
     /**
-     * Read Station
-     * @description Get station by ID.
+     * List Endpoints
+     * @description List available forecast endpoints
      */
-    get: operations["read_station_v1_station__id__get"];
+    get: operations["list_endpoints_v1_forecasts__get"];
+  };
+  "/v1/forecasts/{country_code}": {
+    /**
+     * List Forecasts
+     * @description Get available forecasts for country
+     */
+    get: operations["list_forecasts_v1_forecasts__country_code__get"];
+  };
+  "/v1/forecasts/{country_code}/{file_name}": {
+    /**
+     * Get Forecast
+     * @description Get forecast file
+     */
+    get: operations["get_forecast_v1_forecasts__country_code___file_name__get"];
   };
 }
 
@@ -122,6 +145,53 @@ export interface components {
       /** Start Before Season */
       start_before_season?: boolean;
     };
+    /** ExtremesSummariesParameters */
+    ExtremesSummariesParameters: {
+      /**
+       * Country
+       * @default zm
+       * @enum {string}
+       */
+      country?: "zm" | "mw";
+      /**
+       * Station Id
+       * @default test_1
+       */
+      station_id?: string;
+      /**
+       * Summaries
+       * @default [
+       *   "extremes_rain",
+       *   "extremes_tmin",
+       *   "extremes_tmax"
+       * ]
+       */
+      summaries?: ("extremes_rain" | "extremes_tmin" | "extremes_tmax")[];
+    };
+    /** Forecast */
+    Forecast: {
+      /**
+       * Date Modified
+       * Format: date-time
+       */
+      date_modified: string;
+      /** District */
+      district?: string;
+      /** Filename */
+      filename: string;
+      /** Id */
+      id: string;
+      /**
+       * Language Code
+       * @enum {string}
+       */
+      language_code?: "en" | "ny";
+      /**
+       * Type
+       * @enum {string}
+       */
+      type?: "downscale_forecast" | "annual_forecast";
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -165,6 +235,26 @@ export interface components {
       /** Start Dates */
       start_dates?: number[];
     };
+    /** Station */
+    Station: {
+      /**
+       * Country Code
+       * @enum {string}
+       */
+      country_code: "zm" | "mw";
+      /** District */
+      district: string;
+      /** Elevation */
+      elevation: number;
+      /** Latitude */
+      latitude: number;
+      /** Longitude */
+      longitude: number;
+      /** Station Id */
+      station_id: number;
+      /** Station Name */
+      station_name: string;
+    };
     /** ValidationError */
     ValidationError: {
       /** Location */
@@ -190,7 +280,7 @@ export interface operations {
 
   /**
    * Get Status
-   * @description Check server up and authorized to access data
+   * @description Check server up
    */
   get_status_v1_status__get: {
     responses: {
@@ -312,11 +402,13 @@ export interface operations {
       };
     };
   };
-  /**
-   * Read Stations
-   * @description Retrieve stations.
-   */
-  read_stations_v1_station__get: {
+  /** Get Extremes Summaries */
+  get_extremes_summaries_v1_extremes_summaries__post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ExtremesSummariesParameters"];
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -324,16 +416,118 @@ export interface operations {
           "application/json": unknown;
         };
       };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Read Stations */
+  read_stations_v1_station__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Station"][];
+        };
+      };
+    };
+  };
+  /** Read Stations */
+  read_stations_v1_station__country__get: {
+    parameters: {
+      path: {
+        country: "zm" | "mw";
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Read Stations */
+  read_stations_v1_station__country___station_id__get: {
+    parameters: {
+      path: {
+        country: "zm" | "mw";
+        station_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
   };
   /**
-   * Read Station
-   * @description Get station by ID.
+   * List Endpoints
+   * @description List available forecast endpoints
    */
-  read_station_v1_station__id__get: {
+  list_endpoints_v1_forecasts__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": string[];
+        };
+      };
+    };
+  };
+  /**
+   * List Forecasts
+   * @description Get available forecasts for country
+   */
+  list_forecasts_v1_forecasts__country_code__get: {
     parameters: {
       path: {
-        id: number;
+        country_code: "zm" | "mw";
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Forecast"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Forecast
+   * @description Get forecast file
+   */
+  get_forecast_v1_forecasts__country_code___file_name__get: {
+    parameters: {
+      path: {
+        country_code: "zm" | "mw";
+        file_name: string;
       };
     };
     responses: {

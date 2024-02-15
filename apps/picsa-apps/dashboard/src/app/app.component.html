@@ -26,11 +26,36 @@
   <mat-sidenav-container style="flex: 1">
     <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
       <mat-nav-list>
-        @for (link of navLinks; track link.href) {
+        @for (link of navLinks; track link.href) { @if(link.children){
+        <!-- Nested nav items -->
+        <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive">
+          <mat-expansion-panel-header
+            style="padding: 0 16px"
+            [routerLink]="link.href"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: false }"
+          >
+            <mat-panel-title>
+              {{ link.label }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          @for(child of link.children || []; track $index){
+          <a
+            mat-list-item
+            [routerLink]="link.href + child.href"
+            routerLinkActive="mdc-list-item--activated active-link"
+          >
+            {{ child.label }}</a
+          >
+          }
+        </mat-expansion-panel>
+        } @else {
+        <!-- Single nav item -->
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
           {{ link.label }}
         </a>
-        }
+        } }
         <mat-divider style="margin-top: auto"></mat-divider>
         <div mat-subheader>Global Admin</div>
         <mat-divider></mat-divider>

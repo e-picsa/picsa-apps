@@ -6,8 +6,8 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/resources/resources.module').then((m) => m.ResourcesPageModule),
   },
   {
-    path: 'climate-data',
-    loadChildren: () => import('./modules/climate-data/climate-data.module').then((m) => m.ClimateDataModule),
+    path: 'climate',
+    loadChildren: () => import('./modules/climate/climate.module').then((m) => m.ClimateModule),
   },
   {
     path: 'translations',

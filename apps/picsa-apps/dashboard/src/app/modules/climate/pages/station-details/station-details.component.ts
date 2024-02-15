@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { ClimateDataDashboardService } from '../../climate-data.service';
+import { ClimateService } from '../../climate.service';
 import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
 
 @Component({
-  selector: 'dashboard-station-page',
+  selector: 'dashboard-station-details',
   standalone: true,
   imports: [CommonModule, MatProgressBarModule, RainfallSummaryComponent],
-  templateUrl: './station-page.component.html',
-  styleUrls: ['./station-page.component.scss'],
+  templateUrl: './station-details.component.html',
+  styleUrls: ['./station-details.component.scss'],
 })
-export class StationPageComponent implements OnInit {
+export class StationDetailsPageComponent implements OnInit {
   public get station() {
     return this.service.activeStation;
   }
@@ -24,7 +24,7 @@ export class StationPageComponent implements OnInit {
     };
   }
 
-  constructor(private service: ClimateDataDashboardService) {}
+  constructor(private service: ClimateService) {}
 
   async ngOnInit() {
     await this.service.ready();

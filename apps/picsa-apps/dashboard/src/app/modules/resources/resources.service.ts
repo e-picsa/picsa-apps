@@ -7,18 +7,18 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { arrayToHashmap } from '@picsa/utils';
 
+import { IResourceRow } from '../climate/types';
+
 export interface IResourceStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
 }
 
-export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
-
 @Injectable({ providedIn: 'root' })
 export class ResourcesDashboardService extends PicsaAsyncService {
   private storageFiles: IResourceStorageEntry[] = [];
   public storageFilesHashmap: Record<string, IResourceStorageEntry> = {};
-  public readonly resources = signal<IResourceEntry[]>([]);
+  public readonly resources = signal<IResourceRow[]>([]);
 
   public get table() {
     return this.supabaseService.db.table('resources');
@@ -104,7 +104,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   }
 
   private async listResources() {
-    const { data, error } = await this.supabaseService.db.table('resources').select<'*', IResourceEntry>('*');
+    const { data, error } = await this.supabaseService.db.table('resources').select<'*', IResourceRow>('*');
     if (error) {
       throw error;
     }

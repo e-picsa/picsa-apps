@@ -1,33 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
 
-import { ClimateDataApiService } from './climate-data-api.service';
-
-export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
+import { ApiMapping } from './climate-api.mapping';
+import { ClimateApiService } from './climate-api.service';
+import { IStationRow } from './types';
 
 export interface IResourceStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
 }
 
-export type IResourceEntry = Database['public']['Tables']['resources']['Row'];
-
 @Injectable({ providedIn: 'root' })
-export class ClimateDataDashboardService extends PicsaAsyncService {
+export class ClimateService extends PicsaAsyncService {
   public apiStatus: number;
   public stations: IStationRow[] = [];
   public activeStation: IStationRow;
 
+  /** Trigger API request that includes mapping response to local database */
+  public loadFromAPI = ApiMapping(this.api, this.supabaseService.db, this.supabaseService.storage);
+
   constructor(
     private supabaseService: SupabaseService,
-    private api: ClimateDataApiService,
+    private api: ClimateApiService,
     private notificationService: PicsaNotificationService,
     private router: Router
   ) {
@@ -37,8 +36,9 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
-    await this.checkStatus();
     await this.listStations();
+    // Initialise other services without await to allow parallel requests
+    // this.checkApiStatus();
     this.subscribeToRouteChanges();
   }
 
@@ -54,29 +54,23 @@ export class ClimateDataDashboardService extends PicsaAsyncService {
 
   private subscribeToRouteChanges() {
     // Use merged router as service cannot access route params directly like component
-    ngRouterMergedSnapshot$(this.router).subscribe(({ params }) => {
+    ngRouterMergedSnapshot$(this.router).subscribe(async ({ params }) => {
       if (params.stationId) {
+        await this.ready();
         this.setActiveStation(parseInt(params.stationId));
       }
     });
   }
 
-  private async checkStatus() {
-    await this.api.useMeta('serverStatus').GET('/v1/status/');
-  }
-
-  private async listStations() {
-    // HACK - endpoint not operational
+  private async listStations(allowRefresh = true) {
     // TODO - when running should refresh from server as cron task
     const { data, error } = await this.supabaseService.db.table('climate_stations').select<'*', IStationRow>('*');
     if (error) {
       throw error;
     }
-    if (data.length === 0) {
-      this.notificationService.showUserNotification({
-        matIcon: 'warning',
-        message: 'climate_stations_rows must be imported into database for this feature to work',
-      });
+    if (data.length === 0 && allowRefresh) {
+      await this.loadFromAPI.station();
+      return this.listStations(false);
     }
     this.stations = data || [];
   }
