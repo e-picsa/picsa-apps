@@ -72,8 +72,8 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
       }
       // console log response body (debug purposes)
       if (response && this.status === 'success') {
-        const resJson = await this.getResponseBodyJson(response);
-        console.log(`[API] ${id}`, resJson);
+        const body = await this.parseResponseBody(response);
+        console.log(`[API] ${id}`, body);
       }
     });
   }
@@ -95,21 +95,32 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
 
   /** Show error message when using custom fetch with callbacks */
   private async showCustomFetchErrorMessage(id: string, response: Response) {
-    const resJson = await this.getResponseBodyJson(response);
-    const errorText = resJson.detail || 'failed, see console logs for details';
+    const body = await this.parseResponseBody(response);
+    const errorText = body.detail || 'failed, see console logs for details';
     console.error(response);
     this.notificationService.showUserNotification({ matIcon: 'error', message: `[${id}] ${errorText}` });
   }
 
-  private async getResponseBodyJson(response: Response) {
-    // clone body so that open-api can still consume when constructing full fetch response
+  /**
+   * Parse response body and format as JSON, nesting blob and text content types as custom properties
+   * in cases where response is not json type
+   */
+  private async parseResponseBody(response: Response): Promise<Record<string, any>> {
+    // if (!response.bodyUsed) return {};
     const clone = response.clone();
-    try {
-      const json = await clone.json();
-      return json;
-    } catch (error) {
-      console.error('Response body parse error', error);
-      return {};
+    const contentType = response.headers.get('content-type');
+    switch (contentType) {
+      case 'application/json':
+        return clone.json();
+      case 'application/pdf': {
+        const blob = await clone.blob();
+        return { blob };
+      }
+      default: {
+        console.warn('No parser for response content', contentType);
+        const text = await clone.text();
+        return { text };
+      }
     }
   }
 }
