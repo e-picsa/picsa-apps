@@ -17,20 +17,20 @@
 
 <!-- Main Table -->
 <table mat-table matSort [dataSource]="dataSource" [matSortDisabled]="!tableOptions.sort">
-  @for(column of tableOptions.displayColumns; track column){
+  @for(column of tableOptions.displayColumns; track column; let index=$index){
   <ng-container [matColumnDef]="column">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column | formatValue: tableOptions.formatHeader }}</th>
 
-    <td mat-cell *matCellDef="let el">
+    <td mat-cell *matCellDef="let row">
       @if(valueTemplates[column]){
       <!-- custom value templates  -->
       <ng-container
         [ngTemplateOutlet]="valueTemplates[column]"
-        [ngTemplateOutletContext]="{ $implicit: el[column] }"
+        [ngTemplateOutletContext]="$any({ $implicit: row[column], row: row, column: column })"
       ></ng-container>
       } @else {
       <!-- Default value template -->
-      {{ el[column] }}
+      {{ row[column] }}
       }
     </td>
   </ng-container>
