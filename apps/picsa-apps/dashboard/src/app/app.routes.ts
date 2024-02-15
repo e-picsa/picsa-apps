@@ -14,12 +14,13 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
   {
+    path: 'crop',
+    loadChildren: () =>
+      import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
+  },
+  {
     path: '',
     redirectTo: 'resources',
     pathMatch: 'full',
-  },
-  {
-    path: 'crop-probability',
-    loadChildren: () => import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
 ];

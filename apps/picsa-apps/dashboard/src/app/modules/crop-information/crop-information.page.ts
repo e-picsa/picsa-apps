@@ -38,7 +38,7 @@ export class CropInformationPageComponent implements OnInit {
     });
   }
 
-  navigateToEntryPage(){
-    this.router.navigate(['/crop-probability/entry'])
+  navigateToEntryPage() {
+    this.router.navigate(['/crop/entry']);
   }
 }

@@ -48,8 +48,8 @@ export class AppComponent implements AfterViewInit {
       href: '/translations',
     },
     {
-      label: 'Crop Probability',
-      href: '/crop-probability',
+      label: 'Crop Information',
+      href: '/crop',
     },
   ];
 
