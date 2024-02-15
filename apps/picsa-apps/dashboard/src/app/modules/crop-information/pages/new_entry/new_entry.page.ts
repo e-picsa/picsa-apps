@@ -49,7 +49,7 @@ export class NewEntryPageComponent implements OnInit {
         this.ActionFeedbackMessage = 'Failed to add a translation.';
       });
   }
-  routeBack(){
-    this.router.navigate(['/crop-probability'])
+  routeBack() {
+    this.router.navigate(['/crop']);
   }
 }

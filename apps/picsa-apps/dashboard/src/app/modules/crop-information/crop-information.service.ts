@@ -17,7 +17,7 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
   public cropProbabilities: ICropInformationRow[] = [];
 
   public get table() {
-    return this.supabaseService.db.table('station_crop_information');
+    return this.supabaseService.db.table('crop_data');
   }
 
   constructor(private supabaseService: SupabaseService) {
@@ -30,9 +30,7 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
   }
 
   public async listCropProbabilities() {
-    const { data, error } = await this.supabaseService.db
-      .table('station_crop_information')
-      .select<'*', ICropInformationRow>('*');
+    const { data, error } = await this.supabaseService.db.table('crop_data').select<'*', ICropInformationRow>('*');
     if (error) {
       throw error;
     }
@@ -40,7 +38,7 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
   }
 
   public async addCropProbability(cropProbability: Partial<ICropInformationRow>): Promise<string> {
-    const { data, error } = await this.supabaseService.db.table('station_crop_information').insert([cropProbability]);
+    const { data, error } = await this.supabaseService.db.table('crop_data').insert([cropProbability]);
     if (error) {
       throw error;
     }
