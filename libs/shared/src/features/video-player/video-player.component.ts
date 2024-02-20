@@ -50,6 +50,8 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Track any created object urls to dispose on destroy */
   private objectUrl: string;
 
+  private pauseTime: number = 0;
+
   constructor(private elementRef: ElementRef<HTMLDivElement>) {}
 
   async ngOnDestroy() {
@@ -67,10 +69,17 @@ export class VideoPlayerComponent implements OnDestroy {
   public async playVideo() {
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
+    if (Capacitor.isNativePlatform()) {
+      await this.videoPlayer.stopAllPlayers();
+      this.initialised = false;
+    }
+
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
-    await this.videoPlayer.stopAllPlayers();
     await this.videoPlayer.play({ playerId: this.playerId });
+    if (this.pauseTime > 0) {
+      await this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime: this.pauseTime });
+    }
   }
 
   private async initPlayer() {
@@ -149,8 +158,12 @@ export class VideoPlayerComponent implements OnDestroy {
       this.showPlayButton = false;
     }
   }
-  private async handlePlayerPause() {
-    this.showPlayButton = true;
+
+  private handlePlayerPause(e: { fromPlayerId: string; currentTime: number }) {
+    if (e.fromPlayerId === this.playerId) {
+      this.pauseTime = e.currentTime;
+      this.showPlayButton = true;
+    }
   }
 
   private handlePlayerEnded() {
@@ -158,6 +171,9 @@ export class VideoPlayerComponent implements OnDestroy {
   }
   private handlePlayerExit() {
     this.showPlayButton = true;
+    if (Capacitor.isNativePlatform()) {
+      this.initialised = false;
+    }
   }
 }
 

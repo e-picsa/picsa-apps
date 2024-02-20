@@ -44,7 +44,7 @@ const config: CapacitorConfig = {
      * See notes at https://docs.picsa.app/advanced/testing
      **/
 
-    // url: 'http://192.168.50.67:4200',
+    // url: 'http://192.168.0.107:4200',
     androidScheme: 'http',
 
     /**
