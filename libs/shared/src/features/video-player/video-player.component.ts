@@ -70,16 +70,20 @@ export class VideoPlayerComponent implements OnDestroy {
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
     if (Capacitor.isNativePlatform()) {
+      const storedPauseTime = this.pauseTime;
       await this.videoPlayer.stopAllPlayers();
       this.initialised = false;
+      this.pauseTime = storedPauseTime;
     }
-
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
-    await this.videoPlayer.play({ playerId: this.playerId });
-    if (this.pauseTime > 0) {
-      await this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime: this.pauseTime });
-    }
+    this.videoPlayer.play({ playerId: this.playerId }).then(() => {
+      if (this.pauseTime > 0) {
+        setTimeout(() => {
+          this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime: this.pauseTime });
+        }, 500);
+      }
+    });
   }
 
   private async initPlayer() {
@@ -169,11 +173,9 @@ export class VideoPlayerComponent implements OnDestroy {
   private handlePlayerEnded() {
     this.showPlayButton = true;
   }
-  private handlePlayerExit() {
+  private handlePlayerExit(e: { currentTime: number }) {
     this.showPlayButton = true;
-    if (Capacitor.isNativePlatform()) {
-      this.initialised = false;
-    }
+    this.pauseTime = e.currentTime;
   }
 }
 
