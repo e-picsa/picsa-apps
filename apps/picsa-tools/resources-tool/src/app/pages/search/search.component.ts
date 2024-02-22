@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import Fuse, { FuseResult, IFuseOptions } from 'fuse.js';
 
 import { ResourcesComponentsModule } from '../../components/components.module';
 import { IResourceBase, IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
-import { ActivatedRoute, Router, Params } from '@angular/router';
 
 interface ISearchResultsByType {
   collection: IResourceCollection[];
@@ -48,34 +48,35 @@ export class ResourceSearchComponent implements OnInit {
   public totalResults?: number;
 
   constructor(
-    private service: ResourcesToolService, 
+    private service: ResourcesToolService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private route: ActivatedRoute) {}
+    private route: ActivatedRoute
+  ) {}
 
-    async ngOnInit() {
-      await this.initializeServiceData();
-      this.subscribeToQueryParams();
-    }
-  
-    private async initializeServiceData() {
-      await this.service.ready();
-      const fileDocs = await this.service.dbFiles.find().exec();
-      const linkDocs = await this.service.dbLinks.find().exec();
-      const collectionDocs = await this.service.dbCollections.find().exec();
-      const allResources = [...fileDocs, ...linkDocs, ...collectionDocs].map((doc) => doc._data);
-      // TODO - add support for translations
-      this.fuse = new Fuse(allResources, this.fuseOptions);
-    }
-  
-    private subscribeToQueryParams() {
-      this.route.queryParams.subscribe((params: Params) => {
-        if (params.searchText) {
-          this.query = params.searchText;
-          this.onSearchInputChange()
-        }
-      });
-    }
+  async ngOnInit() {
+    await this.initializeServiceData();
+    this.subscribeToQueryParams();
+  }
+
+  private async initializeServiceData() {
+    await this.service.ready();
+    const fileDocs = await this.service.dbFiles.find().exec();
+    const linkDocs = await this.service.dbLinks.find().exec();
+    const collectionDocs = await this.service.dbCollections.find().exec();
+    const allResources = [...fileDocs, ...linkDocs, ...collectionDocs].map((doc) => doc._data);
+    // TODO - add support for translations
+    this.fuse = new Fuse(allResources, this.fuseOptions);
+  }
+
+  private subscribeToQueryParams() {
+    this.route.queryParams.subscribe((params: Params) => {
+      if (params.searchText) {
+        this.query = params.searchText;
+        this.onSearchInputChange();
+      }
+    });
+  }
 
   onSearchInputChange() {
     // Only display search results if user has typed more than 2 characters
@@ -90,9 +91,7 @@ export class ResourceSearchComponent implements OnInit {
       this.updateRoute(true);
     }
     this.cdr.markForCheck();
-
   }
-
 
   private setSearchResultsByType(results: FuseResult<IResourceBase>[]) {
     const searchResults: ISearchResultsByType = { collection: [], file: [], link: [] };
@@ -116,8 +115,8 @@ export class ResourceSearchComponent implements OnInit {
   }
 
   goSearch() {
-    this.router.navigate(['/search'], { 
-      queryParams: { searchText: this.query }
+    this.router.navigate(['/search'], {
+      queryParams: { searchText: this.query },
     });
   }
 }
