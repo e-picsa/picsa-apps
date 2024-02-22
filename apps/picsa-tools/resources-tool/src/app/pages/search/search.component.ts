@@ -90,11 +90,11 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
       const searchResults = this.fuse.search(this.query);
       this.setSearchResultsByType(searchResults);
       this.totalResults = searchResults.length;
-      this.updateRoute();
+      this.setRouteSearchParam(this.query);
     } else {
       this.searchResults = { collection: [], file: [], link: [] };
       this.totalResults = undefined;
-      this.updateRoute(true);
+      this.setRouteSearchParam(undefined);
     }
     this.cdr.markForCheck();
   }
@@ -115,14 +115,9 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
     this.searchResults = searchResults;
   }
 
-  private updateRoute(removeParam: boolean = false) {
-    const queryParams = removeParam ? {} : { searchText: this.query };
+  /** Update route param to match search text. Passing undefined will remove the param */
+  private setRouteSearchParam(searchText?: string) {
+    const queryParams = { searchText };
     this.router.navigate([], { relativeTo: this.route, queryParams });
-  }
-
-  goSearch() {
-    this.router.navigate(['/search'], {
-      queryParams: { searchText: this.query },
-    });
   }
 }
