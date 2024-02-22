@@ -118,6 +118,6 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
   /** Update route param to match search text. Passing undefined will remove the param */
   private setRouteSearchParam(searchText?: string) {
     const queryParams = { searchText };
-    this.router.navigate([], { relativeTo: this.route, queryParams });
+    this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
   }
 }
