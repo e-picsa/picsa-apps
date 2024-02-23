@@ -70,11 +70,9 @@ export class VideoPlayerComponent implements OnDestroy {
   public async playVideo() {
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
+    await this.videoPlayer.stopAllPlayers();
     if (Capacitor.isNativePlatform()) {
-      const storedPauseTime = this.pauseTime;
-      await this.videoPlayer.stopAllPlayers();
       this.initialised = false;
-      this.pauseTime = storedPauseTime;
     }
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
