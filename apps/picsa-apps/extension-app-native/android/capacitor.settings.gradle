@@ -31,3 +31,6 @@ project(':capacitor-community-firebase-crashlytics').projectDir = new File('../.
 
 include ':capacitor-firebase-performance'
 project(':capacitor-firebase-performance').projectDir = new File('../../../../node_modules/@capacitor-firebase/performance/android')
+
+include ':capacitor-screen-orientation'
+project(':capacitor-screen-orientation').projectDir = new File('../../../../node_modules/@capacitor/screen-orientation/android')

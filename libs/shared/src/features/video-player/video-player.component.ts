@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 // Fix listeners missing from type
@@ -173,9 +174,13 @@ export class VideoPlayerComponent implements OnDestroy {
   private handlePlayerEnded() {
     this.showPlayButton = true;
   }
-  private handlePlayerExit(e: { currentTime: number }) {
+  private async handlePlayerExit(e: { currentTime: number }) {
     this.showPlayButton = true;
     this.pauseTime = e.currentTime;
+    // Ensure player does not stay stuck in landscape mode
+    if (Capacitor.isNativePlatform()) {
+      await ScreenOrientation.unlock();
+    }
   }
 }
 

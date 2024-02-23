@@ -2336,6 +2336,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/screen-orientation@npm:^5.0.7":
+  version: 5.0.7
+  resolution: "@capacitor/screen-orientation@npm:5.0.7"
+  peerDependencies:
+    "@capacitor/core": ^5.0.0
+  checksum: 0ae635df7c4c2cea494d3a746ec257327568b66210b8acf16e8e4f6ce696c8eeca5fdb465d6cd756a2f2e4469cb918bab6b74b4abfeffad8cc6946f2ab15c248
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -9428,7 +9437,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:^5.0.3":
+"capacitor-video-player@npm:^5.5.1":
   version: 5.5.1
   resolution: "capacitor-video-player@npm:5.5.1"
   peerDependencies:
@@ -17527,6 +17536,7 @@ __metadata:
     "@capacitor/device": ^5.0.6
     "@capacitor/filesystem": ^5.1.4
     "@capacitor/network": ^5.0.6
+    "@capacitor/screen-orientation": ^5.0.7
     "@ngx-translate/core": ~15.0.0
     "@ngx-translate/http-loader": ~8.0.0
     "@nx/angular": 17.1.2
@@ -17570,7 +17580,7 @@ __metadata:
     autoprefixer: ^10.4.0
     c3: ^0.7.20
     capacitor-blob-writer: ^1.1.14
-    capacitor-video-player: ^5.0.3
+    capacitor-video-player: ^5.5.1
     cordova-plugin-codeplay-share-own-apk: 0.0.7
     cordova-plugin-file: ^8.0.1
     cordova-plugin-file-opener2: ^4.0.0

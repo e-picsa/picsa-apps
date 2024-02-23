@@ -29,6 +29,7 @@ const config: CapacitorConfig = {
     '@capacitor-community/firebase-analytics',
     '@capacitor-community/firebase-crashlytics',
     '@capacitor-firebase/performance',
+    '@capacitor/screen-orientation',
   ],
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http
@@ -44,7 +45,7 @@ const config: CapacitorConfig = {
      * See notes at https://docs.picsa.app/advanced/testing
      **/
 
-    // url: 'http://192.168.0.107:4200',
+    // url: 'http://192.168.50.67:4200',
     androidScheme: 'http',
 
     /**
