@@ -40,12 +40,6 @@ const config: CapacitorConfig = {
   //   },
   // },
   server: {
-    /**
-     * Uncomment and replace with local ip to serve live-reload
-     * See notes at https://docs.picsa.app/advanced/testing
-     **/
-
-    // url: 'http://192.168.50.67:4200',
     androidScheme: 'http',
 
     /**
@@ -55,5 +49,13 @@ const config: CapacitorConfig = {
     cleartext: true,
   },
 };
+
+/**
+ * Additional configuration used to support live-reloading the app from a dev server
+ * See notes at https://docs.picsa.app/advanced/testing
+ **/
+if (process.env.SERVER_URL) {
+  config.server = { ...config.server, url: process.env.SERVER_URL };
+}
 
 export default config;

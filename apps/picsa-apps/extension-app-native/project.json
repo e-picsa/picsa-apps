@@ -16,12 +16,15 @@
     },
     "serve": {
       "executor": "nx:run-commands",
-      "description": "Serve extension app in external mode to connect. NOTE - need to update capacitor.config.ts before build",
+      "description": "Serve extension app in external mode to support live-reload",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["nx run picsa-apps-extension-app:serve --configuration=external"]
+        "commands": ["npx cap sync", "nx run picsa-apps-extension-app:serve --configuration=external"],
+        "cwd": "apps/picsa-apps/extension-app-native",
+        "parallel": false
       }
     },
+
     "resources": {
       "executor": "nx:run-commands",
       "description": "Populate splash and icon from resources files. NOTE - may have to run manually from directory",
