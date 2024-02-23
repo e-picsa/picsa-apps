@@ -21,7 +21,8 @@
 		"capacitor-video-player",
 		"@capacitor-community/firebase-analytics",
 		"@capacitor-community/firebase-crashlytics",
-		"@capacitor-firebase/performance"
+		"@capacitor-firebase/performance",
+		"@capacitor/screen-orientation"
 	],
 	"server": {
 		"androidScheme": "http",

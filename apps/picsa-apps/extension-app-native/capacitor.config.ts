@@ -29,6 +29,7 @@ const config: CapacitorConfig = {
     '@capacitor-community/firebase-analytics',
     '@capacitor-community/firebase-crashlytics',
     '@capacitor-firebase/performance',
+    '@capacitor/screen-orientation',
   ],
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http

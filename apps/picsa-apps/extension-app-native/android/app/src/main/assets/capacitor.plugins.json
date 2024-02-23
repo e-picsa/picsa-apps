@@ -38,5 +38,9 @@
 	{
 		"pkg": "@capacitor-firebase/performance",
 		"classpath": "io.capawesome.capacitorjs.plugins.firebase.performance.FirebasePerformancePlugin"
+	},
+	{
+		"pkg": "@capacitor/screen-orientation",
+		"classpath": "com.capacitorjs.plugins.screenorientation.ScreenOrientationPlugin"
 	}
 ]
