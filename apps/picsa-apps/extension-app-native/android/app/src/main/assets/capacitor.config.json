@@ -21,10 +21,10 @@
 		"capacitor-video-player",
 		"@capacitor-community/firebase-analytics",
 		"@capacitor-community/firebase-crashlytics",
-		"@capacitor-firebase/performance"
+		"@capacitor-firebase/performance",
+		"@capacitor/screen-orientation"
 	],
 	"server": {
-		"url": "http://192.168.0.107:4200",
 		"androidScheme": "http",
 		"cleartext": true
 	}

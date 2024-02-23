@@ -19,6 +19,7 @@ dependencies {
     implementation project(':capacitor-community-firebase-analytics')
     implementation project(':capacitor-community-firebase-crashlytics')
     implementation project(':capacitor-firebase-performance')
+    implementation project(':capacitor-screen-orientation')
     implementation "androidx.webkit:webkit:1.4.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 }
