@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 // Fix listeners missing from type
@@ -53,7 +54,7 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private pauseTime: number = 0;
 
-  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
+  constructor(private elementRef: ElementRef<HTMLDivElement>, private analyticsService: AnalyticsService) {}
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
@@ -74,6 +75,8 @@ export class VideoPlayerComponent implements OnDestroy {
     if (Capacitor.isNativePlatform()) {
       this.initialised = false;
     }
+    // track video play event
+    this.analyticsService.trackVideoPlay(this.playerId);
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
     this.videoPlayer.play({ playerId: this.playerId }).then(() => {
