@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { NavigationEnd,Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
-import { APP_VERSION,ENVIRONMENT } from '@picsa/environments';
+import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -33,6 +33,22 @@ export class AnalyticsService {
           params: { screen_name: location.pathname, app_version: APP_VERSION },
         });
       }
+    });
+  }
+
+  // Method to track when users play a video
+  public trackVideoPlay(videoId: string) {
+    this.firebaseAnalytics.logEvent({
+      name: 'video_play',
+      params: { video_id: videoId, app_version: APP_VERSION },
+    });
+  }
+
+  // Method to track when users opens resource file
+  public trackResourceOpen() {
+    this.firebaseAnalytics.logEvent({
+      name: 'open_resource_file',
+      params: { app_version: APP_VERSION },
     });
   }
 }
