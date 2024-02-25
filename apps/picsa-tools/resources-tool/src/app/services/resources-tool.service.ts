@@ -4,6 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
@@ -21,7 +22,8 @@ export class ResourcesToolService extends PicsaAsyncService {
     private dbAttachmentService: PicsaDatabaseAttachmentService,
     private configurationService: ConfigurationService,
     private nativeStorageService: NativeStorageService,
-    private fileService: FileService
+    private fileService: FileService,
+    private analyticsService: AnalyticsService
   ) {
     super();
   }
@@ -71,6 +73,8 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public async openFileResource(uri: string, mimetype: string) {
+    // track the resource open event
+    this.analyticsService.trackResourceOpen();
     if (Capacitor.isNativePlatform()) {
       try {
         this.nativeStorageService.openFileURI(uri, mimetype);

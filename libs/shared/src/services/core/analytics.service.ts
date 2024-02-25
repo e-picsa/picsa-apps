@@ -43,4 +43,12 @@ export class AnalyticsService {
       params: { video_id: videoId, app_version: APP_VERSION },
     });
   }
+
+  // Method to track when users open a resource file
+  public trackResourceOpen() {
+    this.firebaseAnalytics.logEvent({
+      name: 'open_resource_file',
+      params: { app_version: APP_VERSION },
+    });
+  }
 }
