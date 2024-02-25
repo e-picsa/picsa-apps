@@ -1,3 +1,5 @@
+// eslint-disable-next-line simple-import-sort/imports
+import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
@@ -53,7 +55,7 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private pauseTime: number = 0;
 
-  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
+  constructor(private elementRef: ElementRef<HTMLDivElement>, private analyticsService: AnalyticsService) {}
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
@@ -74,6 +76,8 @@ export class VideoPlayerComponent implements OnDestroy {
     if (Capacitor.isNativePlatform()) {
       this.initialised = false;
     }
+    // Track video play event
+    this.analyticsService.trackVideoPlay(this.playerId);
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
     this.videoPlayer.play({ playerId: this.playerId }).then(() => {
