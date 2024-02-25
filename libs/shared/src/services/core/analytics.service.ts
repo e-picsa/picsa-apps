@@ -44,7 +44,7 @@ export class AnalyticsService {
     });
   }
 
-  // Method to track when users open a resource file
+  // Method to track when users opens resource file
   public trackResourceOpen() {
     this.firebaseAnalytics.logEvent({
       name: 'open_resource_file',
