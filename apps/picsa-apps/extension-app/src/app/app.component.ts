@@ -30,10 +30,9 @@ export class AppComponent {
   private async init() {
     this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
     this.crashlyticsService.ready().then(() => null);
-    // if (ENVIRONMENT.production) {
-    //   this.analyticsService.init(this.router);
-    // }
-    this.analyticsService.init(this.router);
+    if (ENVIRONMENT.production) {
+      this.analyticsService.init(this.router);
+    }
     // eagerly load resources service to populate hardcoded resources
     this.resourcesService.ready();
     // eagerly load monitoring service to sync form data
