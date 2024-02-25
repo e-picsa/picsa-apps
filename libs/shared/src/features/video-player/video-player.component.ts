@@ -1,8 +1,7 @@
-/* eslint-disable simple-import-sort/imports */
-import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 // Fix listeners missing from type
