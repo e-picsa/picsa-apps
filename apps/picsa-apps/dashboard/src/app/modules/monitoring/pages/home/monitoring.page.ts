@@ -9,7 +9,6 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 import { DashboardMaterialModule } from '../../../../material.module';
 import { MonitoringFormsDashboardService } from '../../monitoring.service';
 
-export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
   selector: 'dashboard-translations-page',
   standalone: true,
@@ -18,7 +17,7 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
   styleUrls: ['./monitoring.page.scss'],
 })
 export class MonitoringPageComponent implements OnInit {
-  displayedColumns: string[] = [ 'title', 'description', 'summaryFields', 'appCountries', 'enketoForm', 'enketoModel', 'created_at'];
+  displayedColumns: string[] = [ 'title', 'description', 'summary_fields', 'app_countries', 'enketo_form', 'enketo_model', 'created_at'];
   constructor(public service: MonitoringFormsDashboardService, private router: Router) {}
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],

@@ -7,71 +7,68 @@
   <h2>PICSA Table</h2>
   <picsa-data-table
     [data]="service.forms"
-    [valueTemplates]="{summaryFields:summaryFieldTemplate}"
+    [valueTemplates]="{summary_fields:summaryFieldTemplate, enketo_form:enketoFormTemplete, enketo_model:enketoModelTemplate }"
     [options]="{displayColumns:displayedColumns}"
   >
     <ng-template #summaryFieldTemplate let-values>
       @for (item of values; track $index) { {{ item['label'] }}<br />
       }
     </ng-template>
+    <ng-template #enketoFormTemplete let-values>
+        <div class="long-text-rows" >
+            {{values}}
+        </div>
+    </ng-template>
+    <ng-template #enketoModelTemplate class="long-text-rows" let-values>
+        <div class="long-text-rows" >
+            {{values}}
+        </div>
+    </ng-template>
   </picsa-data-table>
 
-  <h2>Legacy Table</h2>
+  <!-- <h2>Legacy Table</h2>
   <table mat-table [dataSource]="service.forms">
-    <!-- 'title' Column -->
     <ng-container matColumnDef="title" clickable>
       <th mat-header-cell *matHeaderCellDef>Title</th>
       <td mat-cell *matCellDef="let element">{{ element.title }}</td>
     </ng-container>
-
-    <!-- 'description' Column -->
     <ng-container matColumnDef="description" clickable>
       <th mat-header-cell *matHeaderCellDef>description</th>
       <td mat-cell *matCellDef="let element">{{ element.description }}</td>
     </ng-container>
 
-    <!-- 'definition meta data' Column -->
-    <!-- <ng-container matColumnDef="enketoDefinition" clickable>
-        <th mat-header-cell *matHeaderCellDef>Enketo Definition</th>
-        <td mat-cell *matCellDef="let element">{{ element.enketoDefinition.hash }}</td>
-      </ng-container> -->
-
-    <!-- 'form' Column -->
-    <ng-container matColumnDef="enketoForm">
+ 
+    <ng-container matColumnDef="enketo_form">
       <th mat-header-cell *matHeaderCellDef>Form Html</th>
-      <td mat-cell class="long-text-rows" *matCellDef="let element">{{ element.enketoForm }}</td>
+      <td mat-cell class="long-text-rows" *matCellDef="let element">{{ element.enketo_form }}</td>
     </ng-container>
 
-    <!-- 'fields' Column -->
-    <ng-container matColumnDef="summaryFields">
+    <ng-container matColumnDef="summary_fields">
       <th mat-header-cell *matHeaderCellDef>Fields Summary</th>
       <td mat-cell *matCellDef="let element">
-        @for (item of element.summaryFields; track $index) { {{ item['label'] }}<br />
+        @for (item of element.summary_fields; track $index) { {{ item['label'] }}<br />
         }
       </td>
     </ng-container>
 
-    <!-- 'countries' Column -->
-    <ng-container matColumnDef="appCountries">
+    <ng-container matColumnDef="app_countries">
       <th mat-header-cell *matHeaderCellDef>App Countries</th>
-      <td mat-cell *matCellDef="let element">{{ element.appCountries.join(',') }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.app_countries.join(',') }}</td>
     </ng-container>
 
-    <!-- 'model' Column -->
-    <ng-container matColumnDef="enketoModel">
+    <ng-container matColumnDef="enketo_model">
       <th mat-header-cell *matHeaderCellDef>Model</th>
-      <td mat-cell class="long-text-rows" *matCellDef="let element">{{ element.enketoModel }}</td>
+      <td mat-cell class="long-text-rows" *matCellDef="let element">{{ element.enketo_model }}</td>
     </ng-container>
 
-    <!-- 'created_at' Column -->
     <ng-container matColumnDef="created_at">
       <th mat-header-cell *matHeaderCellDef>Date</th>
       <td mat-cell *matCellDef="let element">{{ element.created_at | date: 'mediumDate' }}</td>
     </ng-container>
 
-    <!-- Table Rows -->
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+  </table> -->
   }
 </div>
