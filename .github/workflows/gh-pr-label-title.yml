@@ -1,12 +1,15 @@
-name: Github PR Labeler
+# Automatically apply labels to PR based on title (if written in semantic format)
+name: Github PR Label Title
 on:
-  # TODO - replace with pull_request_target when working in master
+  # TODO - replace with pull_request_target when working in main
   pull_request:
+    # https://frontside.com/blog/2020-05-26-github-actions-pull_request/
     types:
       - opened
       - edited
 jobs:
   label:
+    if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
     runs-on: ubuntu-latest
     steps:
       # Checkout repo to access local templates (if updated)
