@@ -1,7 +1,6 @@
 # Automatically apply labels to PR based on title (if written in semantic format)
 name: Github PR Label Title
 on:
-  # TODO - replace with pull_request_target when working in main
   pull_request:
     # https://frontside.com/blog/2020-05-26-github-actions-pull_request/
     types:

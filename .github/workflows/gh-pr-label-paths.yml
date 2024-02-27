@@ -1,13 +1,10 @@
 # Automatically apply labels to PR based on filepaths of modified files
 name: Github PR Label Paths
-# TODO - replace with pull_request_target when working in main
 on:
   pull_request:
-    branches:
-      - main
 jobs:
-  if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
   label:
+    if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
     permissions:
       contents: read
       pull-requests: write
@@ -22,3 +19,4 @@ jobs:
         uses: actions/labeler@v5
         with:
           configuration-path: .github/pr-labeler.config.yml
+          sync-labels: false
