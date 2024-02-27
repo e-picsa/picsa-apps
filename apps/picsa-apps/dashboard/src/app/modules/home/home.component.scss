@@ -1,0 +1,34 @@
+.link-container {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 764px;
+}
+
+mat-card:hover {
+  cursor: pointer;
+  font-weight: bold;
+
+  mat-card-header.link-label {
+    background: var(--color-primary-50);
+  }
+  mat-icon.link-icon {
+    transform: scale(1.05);
+  }
+}
+mat-card-header.link-label {
+  padding: 0.5rem;
+  justify-content: center;
+  background: whitesmoke;
+}
+mat-icon.link-icon {
+  display: block;
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin: auto;
+  transition: all 0.3s ease-out;
+}
+mat-card-content {
+  padding: 1rem;
+}
