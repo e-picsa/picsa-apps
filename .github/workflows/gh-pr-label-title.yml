@@ -36,7 +36,13 @@ jobs:
               "docs": "documentation",
               "feat": "feature",
               "fix": "fix",
-              "refactor": "maintenance"
+              "refactor": "maintenance",
+              "Breaking": "breaking",
+              "Chore": "maintenance",
+              "Docs": "documentation",
+              "Feat": "feature",
+              "Fix": "fix",
+              "Refactor": "maintenance"
             }
           # Do not ignore any labels (default ignores chore:)
           ignored_types: '[]'
