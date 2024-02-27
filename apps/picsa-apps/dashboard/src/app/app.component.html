@@ -37,7 +37,12 @@
             [routerLinkActiveOptions]="{ exact: false }"
           >
             <mat-panel-title>
-              {{ link.label }}
+              <div class="nav-item">
+                @if(link.matIcon){
+                <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+                }
+                <span>{{ link.label }}</span>
+              </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
           @for(child of link.children || []; track $index){
@@ -53,7 +58,12 @@
         } @else {
         <!-- Single nav item -->
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
-          {{ link.label }}
+          <div class="nav-item">
+            @if(link.matIcon){
+            <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+            }
+            <span>{{ link.label }}</span>
+          </div>
         </a>
         } }
         <mat-divider style="margin-top: auto"></mat-divider>
