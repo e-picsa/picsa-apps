@@ -1,25 +1,36 @@
 # Apps
 'App: Dashboard':
-  - apps/picsa-apps/dashboard/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-apps/dashboard/**/*'
 'App: Server':
-  - apps/picsa-apps/server/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-apps/server/**/*'
 
 # Tools
 'Tool: Budget':
-  - apps/picsa-tools/budget-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/budget-tool/**/*'
 'Tool: Climate':
-  - apps/picsa-tools/climate-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/climate-tool/**/*'
 'Tool: Crop Probability':
-  - apps/picsa-tools/crop-probability-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/crop-probability-tool/**/*'
 'Tool: Farmer Activity':
-  - apps/picsa-tools/farmer-activity/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/farmer-activity/**/*'
 'Tool: Manual':
-  - apps/picsa-tools/manual-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/manual-tool/**/*'
 'Tool: Monitoring':
-  - apps/picsa-tools/monitoring-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/monitoring-tool/**/*'
 'Tool: Option':
-  - apps/picsa-tools/option-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/option-tool/**/*'
 'Tool: Resources':
-  - apps/picsa-tools/resources-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/resources-tool/**/*'
 'Tool: Seasonal Calendar':
-  - apps/picsa-tools/seasonal-calendar-tool/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/seasonal-calendar-tool/**/*'
