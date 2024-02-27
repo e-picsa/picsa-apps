@@ -52,7 +52,7 @@ const config: CapacitorConfig = {
 
 /**
  * Additional configuration used to support live-reloading the app from a dev server
- * See notes at https://docs.picsa.app/advanced/testing
+ * See https://docs.picsa.app/advanced/testing
  **/
 if (process.env.SERVER_URL) {
   config.server = { ...config.server, url: process.env.SERVER_URL };
