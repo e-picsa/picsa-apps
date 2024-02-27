@@ -1,0 +1,62 @@
+<div class="page-content">
+  <h2>View Monitoring Form</h2>
+  @if(form){
+  <form class="form-content">
+    <div class="form-data">
+      <label>Date of Creation</label>
+      <div>{{ form.created_at | date: 'mediumDate' }}</div>
+    </div>
+    <div class="form-data">
+      <label>Title</label>
+      <div class="data-container">{{ form.title}}</div>
+    </div>
+    <div class="form-data">
+      <label>Description</label>
+      <div class="data-container">{{ form.description}}</div>
+    </div>
+    <div class="form-data">
+      <label>App Countries</label>
+      <div class="data-container">{{form.app_countries?.join(',')}}</div>
+    </div>
+
+    <div class="form-data">
+      <label>Summary Fields</label>
+      <div class="data-container">
+      @if(form.summary_fields && form.summary_fields.length > 0){
+      @for (field of form.summary_fields; track $index) {
+      @if( field){
+      <strong>{{ field['label'] }}:</strong> {{ field['field'] }}
+      }
+      }
+      }
+    </div>
+    <div class="form-data">
+      <label>Enketo Definition</label>
+      <div  class="data-container" >
+        <ngx-json-viewer [json]="form.enketo_definition"></ngx-json-viewer>
+      </div>
+    </div>
+    </div>
+    <div class="form-data">
+      <label>Enketo Form</label>
+      <!-- <div class="data-container" [innerHTML]="form.enketo_form"></div> -->
+      <div class="data-container" >
+        {{form.enketo_form}}
+      </div>
+    </div>
+    <div class="form-data">
+      <label>Enketo Model</label>
+      <div class="data-container" >
+        {{form.enketo_model}}
+      </div>
+    </div>
+    
+    
+
+  </form>
+  } @else if(dataLoadError) {
+  <div>{{ dataLoadError }}</div>
+  } @else {
+  <div>Loading...</div>
+  }
+</div>

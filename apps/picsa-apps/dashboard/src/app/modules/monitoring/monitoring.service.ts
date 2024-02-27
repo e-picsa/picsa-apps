@@ -40,7 +40,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
   }
 
   // Fetch a form record by ID
-  public async getTranslationById(id: string): Promise<IMonitoringFormsRow> {
+  public async getFormById(id: string): Promise<IMonitoringFormsRow> {
     const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).select('*').eq('id', id).single();
     if (error) {
       throw error;

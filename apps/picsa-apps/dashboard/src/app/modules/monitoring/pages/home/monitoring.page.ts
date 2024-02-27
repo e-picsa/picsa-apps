@@ -8,9 +8,11 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { MonitoringFormsDashboardService } from '../../monitoring.service';
+export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
+
 
 @Component({
-  selector: 'dashboard-translations-page',
+  selector: 'dashboard-monitoring-page',
   standalone: true,
   imports: [CommonModule, DashboardMaterialModule, RouterModule, PicsaDataTableComponent],
   templateUrl: './monitoring.page.html',
@@ -18,12 +20,18 @@ import { MonitoringFormsDashboardService } from '../../monitoring.service';
 })
 export class MonitoringPageComponent implements OnInit {
   displayedColumns: string[] = [ 'title', 'description', 'summary_fields', 'app_countries', 'enketo_form', 'enketo_model', 'created_at'];
+
   constructor(public service: MonitoringFormsDashboardService, private router: Router) {}
+
   public tableOptions: IDataTableOptions = {
-    paginatorSizes: [25, 50],
+    paginatorSizes: [25, 50]
   };
   ngOnInit(): void {
     this.service.ready();
-    console.log(this.service.forms)
   }
+  //this was returning undefined for "this.router" before I made it an arrow funtion, any idea why?
+  onRowClick = (row: IMonitoringFormsRow) => {
+     this.router.navigate([`/monitoring`, row.id]);
+  }
+
 }

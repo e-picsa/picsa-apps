@@ -7,22 +7,24 @@
   <h2>PICSA Table</h2>
   <picsa-data-table
     [data]="service.forms"
-    [valueTemplates]="{summary_fields:summaryFieldTemplate, enketo_form:enketoFormTemplete, enketo_model:enketoModelTemplate }"
-    [options]="{displayColumns:displayedColumns}"
+    [valueTemplates]="{summary_fields:summaryFieldTemplate, enketo_form:enketoFormTemplete, enketo_model:enketoModelTemplate,created_at:dateTemplate }"
+    [options]="{displayColumns:displayedColumns,handleRowClick:onRowClick}"
   >
     <ng-template #summaryFieldTemplate let-values>
-      @for (item of values; track $index) { {{ item['label'] }}<br />
-      }
+      @for (item of values; track $index) { {{ item['label'] }}<br />}
     </ng-template>
     <ng-template #enketoFormTemplete let-values>
         <div class="long-text-rows" >
             {{values}}
         </div>
     </ng-template>
-    <ng-template #enketoModelTemplate class="long-text-rows" let-values>
+    <ng-template #enketoModelTemplate  let-values>
         <div class="long-text-rows" >
             {{values}}
         </div>
+    </ng-template>
+    <ng-template #dateTemplate  let-value>
+        {{ value | date: 'mediumDate' }}
     </ng-template>
   </picsa-data-table>
 

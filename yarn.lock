@@ -16400,6 +16400,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ngx-json-viewer@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "ngx-json-viewer@npm:3.2.1"
+  dependencies:
+    tslib: ^2.3.0
+  checksum: 6eec613c4bdf7550ed934781e8ded691cbe9b9599ec9bb10564d3a42ea94df663555a1e5063d5a66124bc6e7c1dc265645d79b3cdf7a8a11dbad37baabbbfc21
+  languageName: node
+  linkType: hard
+
 "ngx-lottie@npm:^10.0.0":
   version: 10.0.0
   resolution: "ngx-lottie@npm:10.0.0"
@@ -17624,6 +17633,7 @@ __metadata:
     mobx-angular: ^4.7.1
     ng-packagr: 17.0.1
     ngx-extended-pdf-viewer: ^18.1.7
+    ngx-json-viewer: ^3.2.1
     ngx-lottie: ^10.0.0
     nx: 17.1.2
     openapi-fetch: ^0.8.2

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { MonitoringPageComponent } from './pages/home/monitoring.page';
-import { NewMonitoringFormsComponent } from './pages/new/new-monitoring-forms.component';
+import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms.component';
 
 @NgModule({
   declarations: [],
@@ -16,7 +16,7 @@ import { NewMonitoringFormsComponent } from './pages/new/new-monitoring-forms.co
       },
       {
         path: ':id',
-        component: NewMonitoringFormsComponent,
+        component: ViewMonitoringFormsComponent,
       }
     ]),
   ],
