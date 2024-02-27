@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - chore/pr-label-semantic
-  - pull_request_target
+  pull_request_target:
 jobs:
   if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
   label:
