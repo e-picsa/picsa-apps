@@ -1,13 +1,15 @@
-name: Github PR Labeler
+# Automatically apply labels to PR based on title (if written in semantic format)
+name: Github PR Label Title
 on:
-  # TODO - replace with pull_request_target when working in master
+  # TODO - replace with pull_request_target when working in main
   pull_request:
+    # https://frontside.com/blog/2020-05-26-github-actions-pull_request/
     types:
       - opened
       - edited
-      - synchronize
 jobs:
   label:
+    if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
     runs-on: ubuntu-latest
     steps:
       # Checkout repo to access local templates (if updated)
@@ -34,12 +36,13 @@ jobs:
               "docs": "documentation",
               "feat": "feature",
               "fix": "fix",
-              "refactor": "maintenance"
+              "refactor": "maintenance",
+              "Breaking": "breaking",
+              "Chore": "maintenance",
+              "Docs": "documentation",
+              "Feat": "feature",
+              "Fix": "fix",
+              "Refactor": "maintenance"
             }
           # Do not ignore any labels (default ignores chore:)
           ignored_types: '[]'
-      # Assign labels based on files modified
-      - name: Assign PR path Labels
-        uses: actions/labeler@v4
-        with:
-          configuration-path: .github/pr-labeler.config.yml
