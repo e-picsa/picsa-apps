@@ -1,8 +1,10 @@
 # Automatically apply labels to PR based on filepaths of modified files
 name: Github PR Label Paths
+# TODO - replace with pull_request_target when working in main
 on:
-  # TODO - replace with pull_request_target when working in main
   pull_request:
+    branches:
+      - main
 jobs:
   if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
   label:
