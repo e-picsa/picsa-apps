@@ -1,0 +1,21 @@
+name: Github PR Labeler
+on:
+  # TODO - replace with pull_request_target when working in master
+  pull_request:
+    # https://frontside.com/blog/2020-05-26-github-actions-pull_request/
+    types:
+      - opened
+      - edited
+      - synchronize
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repo to access local templates (if updated)
+      - name: checkout
+        uses: actions/checkout@main
+      # Assign labels based on files modified
+      - name: Assign PR path Labels
+        uses: actions/labeler@v4
+        with:
+          configuration-path: .github/pr-labeler.config.yml
