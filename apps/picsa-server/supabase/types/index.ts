@@ -179,40 +179,40 @@ export interface Database {
       }
       monitoring_forms: {
         Row: {
-          appCountries: string[] | null
+          app_countries: string[] | null
           cover: Json | null
           created_at: string
           description: string | null
-          enketoDefinition: Json | null
-          enketoForm: string | null
-          enketoModel: string | null
+          enketo_definition: Json | null
+          enketo_form: string | null
+          enketo_model: string | null
           id: number
-          summaryFields: Json[] | null
+          summary_fields: Json[] | null
           title: string
         }
         Insert: {
-          appCountries?: string[] | null
+          app_countries?: string[] | null
           cover?: Json | null
           created_at?: string
           description?: string | null
-          enketoDefinition?: Json | null
-          enketoForm?: string | null
-          enketoModel?: string | null
+          enketo_definition?: Json | null
+          enketo_form?: string | null
+          enketo_model?: string | null
           id?: number
-          summaryFields?: Json[] | null
-          tittle: string
+          summary_fields?: Json[] | null
+          title: string
         }
         Update: {
-          appCountries?: string[] | null
+          app_countries?: string[] | null
           cover?: Json | null
           created_at?: string
           description?: string | null
-          enketoDefinition?: Json | null
-          enketoForm?: string | null
-          enketoModel?: string | null
+          enketo_definition?: Json | null
+          enketo_form?: string | null
+          enketo_model?: string | null
           id?: number
-          summaryFields?: Json[] | null
-          tittle?: string
+          summary_fields?: Json[] | null
+          title?: string
         }
         Relationships: []
       }
@@ -357,6 +357,7 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
+          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -369,6 +370,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -381,6 +383,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null

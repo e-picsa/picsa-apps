@@ -4,11 +4,11 @@ create table
     created_at timestamp with time zone not null default now(),
     title text not null,
     description character varying null,
-    "enketoDefinition" jsonb null,
-    "summaryFields" jsonb[] null,
-    "appCountries" text[] null,
-    "enketoForm" text null,
-    "enketoModel" text null,
+    enketo_definition jsonb null,
+    summary_fields jsonb[] null,
+    app_countries text[] null,
+    enketo_form text null,
+    enketo_model text null,
     cover jsonb null,
     constraint monitoring_forms_pkey primary key (id)
   ) tablespace pg_default;
