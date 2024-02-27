@@ -30,8 +30,13 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
 export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
+
+  // Video id
+  @Input() id: string;
+
   /** Video source - can be string url or data blob */
   @Input() source?: string;
+
   /** Optional image shown as preview */
   @Input() thumbnail?: string;
 
@@ -39,7 +44,9 @@ export class VideoPlayerComponent implements OnDestroy {
   @Input() playInModal = false;
 
   // Bind player id to host element to support element query when initialising player
-  @HostBinding('attr.data-player-id') playerId = `videoPlayer_${generateID(5)}`;
+  @HostBinding('attr.data-player-id') get playerId() {
+    return this.id;
+  }
 
   protected showPlayButton = true;
 
@@ -187,10 +194,10 @@ export class VideoPlayerComponent implements OnDestroy {
 }
 
 // HACK - adapted from db method
-function generateID(length = 20, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
-  let autoId = '';
-  for (let i = 0; i < length; i++) {
-    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return autoId;
-}
+// function generateID(length = 20, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+//   let autoId = '';
+//   for (let i = 0; i < length; i++) {
+//     autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+//   }
+//   return autoId;
+// }

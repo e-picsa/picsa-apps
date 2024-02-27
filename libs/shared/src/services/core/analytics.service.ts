@@ -40,15 +40,15 @@ export class AnalyticsService {
   public trackVideoPlay(videoId: string) {
     this.firebaseAnalytics.logEvent({
       name: 'video_play',
-      params: { video_id: videoId, app_version: APP_VERSION },
+      params: { video_id: videoId },
     });
   }
 
   // Method to track when users opens resource file
-  public trackResourceOpen() {
+  public trackResourceOpen(resourceId: string) {
     this.firebaseAnalytics.logEvent({
       name: 'open_resource_file',
-      params: { app_version: APP_VERSION },
+      params: { resource_id: resourceId },
     });
   }
 }

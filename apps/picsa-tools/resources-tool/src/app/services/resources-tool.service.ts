@@ -72,9 +72,9 @@ export class ResourcesToolService extends PicsaAsyncService {
     });
   }
 
-  public async openFileResource(uri: string, mimetype: string) {
+  public async openFileResource(uri: string, mimetype: string, id: string) {
     // track the resource open event
-    this.analyticsService.trackResourceOpen();
+    this.analyticsService.trackResourceOpen(id);
     if (Capacitor.isNativePlatform()) {
       try {
         this.nativeStorageService.openFileURI(uri, mimetype);
