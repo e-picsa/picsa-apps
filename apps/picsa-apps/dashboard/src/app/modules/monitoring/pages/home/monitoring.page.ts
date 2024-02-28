@@ -31,7 +31,7 @@ export class MonitoringPageComponent implements OnInit {
   }
   //this was returning undefined for "this.router" before I made it an arrow funtion, any idea why?
   onRowClick = (row: IMonitoringFormsRow) => {
-     this.router.navigate([`/monitoring`, row.id]);
+     this.router.navigate([`/monitoring-forms`, row.id]);
   }
 
 }

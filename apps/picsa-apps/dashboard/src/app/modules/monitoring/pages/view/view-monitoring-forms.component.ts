@@ -37,6 +37,6 @@ export class ViewMonitoringFormsComponent {
     });
   }
   openSubmissions = async (formId:string) => {
-    this.router.navigate([`/monitoring/${this.form.id}/submissions`, formId]);
+    this.router.navigate([`/monitoring-forms/${this.form.id}/submissions`, formId]);
   };
 }
