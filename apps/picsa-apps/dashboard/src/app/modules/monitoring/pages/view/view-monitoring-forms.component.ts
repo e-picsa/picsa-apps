@@ -14,7 +14,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 @Component({
   selector: 'dashboard-monitoring-view',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule,NgxJsonViewerModule],
+  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, NgxJsonViewerModule],
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
 })
@@ -31,9 +31,12 @@ export class ViewMonitoringFormsComponent {
           this.form = data;
         })
         .catch((error) => {
-          console.error('Error fetching translation:', error);
-          this.dataLoadError = 'Failed to fetch translation.';
+          console.error('Error fetching Form:', error);
+          this.dataLoadError = 'Failed to fetch Form.';
         });
     });
   }
+  openSubmissions = async (formId:string) => {
+    this.router.navigate([`/monitoring/${this.form.id}/submissions`, formId]);
+  };
 }

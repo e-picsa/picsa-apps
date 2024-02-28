@@ -183,6 +183,7 @@ export interface Database {
           cover: Json | null
           created_at: string
           description: string | null
+          device_form_id: string | null
           enketo_definition: Json | null
           enketo_form: string | null
           enketo_model: string | null
@@ -195,6 +196,7 @@ export interface Database {
           cover?: Json | null
           created_at?: string
           description?: string | null
+          device_form_id?: string | null
           enketo_definition?: Json | null
           enketo_form?: string | null
           enketo_model?: string | null
@@ -207,6 +209,7 @@ export interface Database {
           cover?: Json | null
           created_at?: string
           description?: string | null
+          device_form_id?: string | null
           enketo_definition?: Json | null
           enketo_form?: string | null
           enketo_model?: string | null

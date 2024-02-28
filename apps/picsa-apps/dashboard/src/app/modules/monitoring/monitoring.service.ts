@@ -17,6 +17,7 @@ export interface IMonitoringStorageEntry extends IStorageEntry {
 export class MonitoringFormsDashboardService extends PicsaAsyncService {
   public forms: IMonitoringFormsRow[] = [];
   public TABLE_NAME = 'monitoring_forms'
+  public SUBMISSIONS_TABLE_NAME = 'monitoring_tool_submissions'
 
   public get table() {
     return this.supabaseService.db.table(this.TABLE_NAME);
@@ -46,6 +47,14 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
       throw error;
     }
     return data;
+  }
+
+  public async getSubmissionsByLocalFormId(id: string){
+    const { data, error } = await this.supabaseService.db.table(this.SUBMISSIONS_TABLE_NAME).select('*').eq('formId', id);
+    if (error) {
+      throw error;
+    }
+    return {data, error};
   }
 
 }

@@ -10,5 +10,6 @@ create table
     enketo_form text null,
     enketo_model text null,
     cover jsonb null,
+    device_form_id character varying null,
     constraint monitoring_forms_pkey primary key (id)
   ) tablespace pg_default;

@@ -1,10 +1,15 @@
 <div class="page-content">
-  <h2>View Monitoring Form</h2>
+  <div style="display: flex; align-items: center">
+    <h2 style="flex: 1">Monitoring Form View</h2>
+    @if(form && form.device_form_id){
+    <button mat-raised-button color="primary" (click)="openSubmissions(form.device_form_id)">View Submissions</button>
+    }
+  </div>
   @if(form){
   <form class="form-content">
     <div class="form-data">
       <label>Date of Creation</label>
-      <div>{{ form.created_at | date: 'mediumDate' }}</div>
+      <div class="data-container">{{ form.created_at | date: 'mediumDate' }}</div>
     </div>
     <div class="form-data">
       <label>Title</label>
@@ -51,8 +56,6 @@
       </div>
     </div>
     
-    
-
   </form>
   } @else if(dataLoadError) {
   <div>{{ dataLoadError }}</div>
