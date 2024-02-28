@@ -1,0 +1,9 @@
+id,country_code,label,org_code,configuration,variant,access_key_md5,public
+demo_admin,,Admin Demo,demo,{},extension,,true
+global,,Global,,{},extension,,true
+global_translators,,Translators,translators,{},extension,,true
+mw_extension,mw,Extension,,{},extension,,true
+mw_farmer,mw,Farmer,,{},farmer,,true
+zm_extension,zm,Zambia,,{},extension,,true
+zm_extension_demo,,ZM Admin Demo,demo,{},extension,,true
+zm_farmer,zm,Farmer,,{},farmer,,true
