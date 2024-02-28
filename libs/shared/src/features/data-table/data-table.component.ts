@@ -38,6 +38,9 @@ export interface IDataTableOptions {
   handleRowClick?: (row: any) => void;
 }
 
+/** Default header formatter. Splits '_' column names and capitalises each word */
+export const formatHeaderDefault = (v: string) => v.split('_').map(capitalise).join(' ');
+
 /**
  * Simple pipe that allows providing a custom formatter function,
  * used to modify cell values in a pure way
@@ -120,7 +123,7 @@ export class PicsaDataTableComponent implements OnChanges {
     search: true,
     sort: true,
     handleRowClick: () => null,
-    formatHeader: (v) => v.split('_').map(capitalise).join(' '),
+    formatHeader: formatHeaderDefault,
   };
 
   public dataSource: MatTableDataSource<any>;

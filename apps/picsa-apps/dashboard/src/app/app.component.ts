@@ -19,10 +19,11 @@ export class AppComponent implements AfterViewInit {
   navLinks = DASHBOARD_NAV_LINKS;
 
   globalLinks: INavLink[] = [
-    // {
-    //   label: 'Deployments',
-    //   href: '/deployments',
-    // },
+    {
+      label: 'Deployments',
+      href: '/deployment',
+      matIcon: 'apps',
+    },
     // {
     //   label: 'Users',
     //   href: '/users',

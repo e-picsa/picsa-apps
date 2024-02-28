@@ -139,7 +139,6 @@ export interface Database {
           country_code: string | null;
           id: string;
           label: string;
-          org_code: string | null;
           public: boolean;
           variant: string | null;
         };
@@ -149,7 +148,6 @@ export interface Database {
           country_code?: string | null;
           id: string;
           label: string;
-          org_code?: string | null;
           public?: boolean;
           variant?: string | null;
         };
@@ -159,7 +157,6 @@ export interface Database {
           country_code?: string | null;
           id?: string;
           label?: string;
-          org_code?: string | null;
           public?: boolean;
           variant?: string | null;
         };
