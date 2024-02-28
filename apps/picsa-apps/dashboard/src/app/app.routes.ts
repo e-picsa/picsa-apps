@@ -22,11 +22,7 @@ export const appRoutes: Route[] = [
   // unmatched routes fallback to home
   {
     path: 'monitoring-forms',
-    loadChildren: () => import('./modules/monitoring/monitoring.module').then((m) => m.MonitoringPageModule),
-  },
-  {
-    path: '',
-    redirectTo: 'resources',
+    loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
   },
   {
     path: '**',

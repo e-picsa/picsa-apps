@@ -26,4 +26,4 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
     ]),
   ],
 })
-export class MonitoringPageModule {}
+export class MonitoringFormsPageModule {}
