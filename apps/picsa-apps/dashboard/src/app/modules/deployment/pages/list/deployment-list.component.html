@@ -18,7 +18,7 @@
   <picsa-data-table
     [data]="data"
     [options]="tableOptions"
-    [valueTemplates]="{public,access_key_md5}"
+    [valueTemplates]="{public,access_key_md5,icon_path}"
   ></picsa-data-table>
 </ng-template>
 
@@ -29,4 +29,10 @@
 
 <ng-template #access_key_md5 let-access_key_md5>
   <mat-icon>{{ access_key_md5 ? 'password' : 'horizontal_rule' }}</mat-icon>
+</ng-template>
+
+<ng-template #icon_path let-icon_path>
+  @if(icon_path){
+  <img [src]="icon_path | storagePath" style="height: 50px" />
+  }
 </ng-template>

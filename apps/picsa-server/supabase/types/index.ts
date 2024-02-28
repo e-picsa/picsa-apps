@@ -137,6 +137,7 @@ export interface Database {
           access_key_md5: string | null;
           configuration: Json;
           country_code: string | null;
+          icon_path: string | null;
           id: string;
           label: string;
           public: boolean;
@@ -146,6 +147,7 @@ export interface Database {
           access_key_md5?: string | null;
           configuration?: Json;
           country_code?: string | null;
+          icon_path?: string | null;
           id: string;
           label: string;
           public?: boolean;
@@ -155,12 +157,20 @@ export interface Database {
           access_key_md5?: string | null;
           configuration?: Json;
           country_code?: string | null;
+          icon_path?: string | null;
           id?: string;
           label?: string;
           public?: boolean;
           variant?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'deployments_icon_path_fkey';
+            columns: ['icon_path'];
+            referencedRelation: 'objects';
+            referencedColumns: ['path'];
+          }
+        ];
       };
       kobo_sync: {
         Row: {
@@ -465,6 +475,7 @@ export interface Database {
           name: string | null;
           owner: string | null;
           owner_id: string | null;
+          path: string | null;
           path_tokens: string[] | null;
           updated_at: string | null;
           version: string | null;
@@ -478,6 +489,7 @@ export interface Database {
           name?: string | null;
           owner?: string | null;
           owner_id?: string | null;
+          path?: string | null;
           path_tokens?: string[] | null;
           updated_at?: string | null;
           version?: string | null;
@@ -491,6 +503,7 @@ export interface Database {
           name?: string | null;
           owner?: string | null;
           owner_id?: string | null;
+          path?: string | null;
           path_tokens?: string[] | null;
           updated_at?: string | null;
           version?: string | null;

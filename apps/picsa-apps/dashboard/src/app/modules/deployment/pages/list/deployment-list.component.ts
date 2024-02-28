@@ -5,7 +5,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
-import { DashboardStorageLinkComponent } from '../../../../components/storage-link/storage-link.component';
 import { DeploymentDashboardService } from '../../deployment.service';
 import { IDeploymentRow } from '../../types';
 
@@ -14,14 +13,7 @@ const DISPLAYED_COLUMNS: (keyof IDeploymentRow)[] = ['country_code', 'label', 'p
 @Component({
   selector: 'dashboard-deployment-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    DashboardStorageLinkComponent,
-    MatIconModule,
-    MatTabsModule,
-    PicsaDataTableComponent,
-    StoragePathPipe,
-  ],
+  imports: [CommonModule, MatIconModule, MatTabsModule, PicsaDataTableComponent, StoragePathPipe],
   templateUrl: './deployment-list.component.html',
   styleUrls: ['./deployment-list.component.scss'],
 })
