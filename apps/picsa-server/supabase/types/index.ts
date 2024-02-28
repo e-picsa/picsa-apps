@@ -360,7 +360,6 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
-          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -373,7 +372,6 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
-          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -386,7 +384,6 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
-          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null

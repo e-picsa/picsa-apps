@@ -1,6 +1,12 @@
 import { Route } from '@angular/router';
 
+import { DashboardHomeComponent } from './modules/home/home.component';
+
 export const appRoutes: Route[] = [
+  {
+    path: 'home',
+    component: DashboardHomeComponent,
+  },
   {
     path: 'resources',
     loadChildren: () => import('./modules/resources/resources.module').then((m) => m.ResourcesPageModule),
@@ -13,6 +19,7 @@ export const appRoutes: Route[] = [
     path: 'translations',
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
+  // unmatched routes fallback to home
   {
     path: 'monitoring',
     loadChildren: () => import('./modules/monitoring/monitoring.module').then((m) => m.MonitoringPageModule),
@@ -20,6 +27,10 @@ export const appRoutes: Route[] = [
   {
     path: '',
     redirectTo: 'resources',
+  },
+  {
+    path: '**',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
 ];
