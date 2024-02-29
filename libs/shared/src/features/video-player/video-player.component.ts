@@ -31,7 +31,7 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
 
-  // Video id
+  /** Unique video id, used for analytics and handling multiple videos */
   @Input() id: string;
 
   /** Video source - can be string url or data blob */
@@ -45,6 +45,10 @@ export class VideoPlayerComponent implements OnDestroy {
 
   // Bind player id to host element to support element query when initialising player
   @HostBinding('attr.data-player-id') get playerId() {
+    if (!this.id) {
+      console.warn('No id provided to <picsa-video-player> component');
+      this.id = `videoPlayer_${generateID(5)}`;
+    }
     return this.id;
   }
 
@@ -191,4 +195,13 @@ export class VideoPlayerComponent implements OnDestroy {
       await ScreenOrientation.unlock();
     }
   }
+}
+
+// HACK - adapted from db method
+function generateID(length = 20, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+  let autoId = '';
+  for (let i = 0; i < length; i++) {
+    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return autoId;
 }
