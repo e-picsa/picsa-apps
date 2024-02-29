@@ -3,7 +3,8 @@
     <button mat-icon-button (click)="sidenav.opened = !sidenav.opened">
       <mat-icon>menu</mat-icon>
     </button>
-    <span style="flex: 1">PICSA Dashboard</span>
+    <dashboard-deployment-select />
+    <span style="flex: 1; text-align: center;">PICSA Dashboard</span>
     @if(supabaseService.auth.authUser(); as user){
     <div style="position: relative">
       <button mat-button (click)="supabaseService.auth.signOut()" style="margin-top: 16px">

@@ -5,10 +5,11 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DASHBOARD_NAV_LINKS, INavLink } from './data';
 import { DashboardMaterialModule } from './material.module';
+import { DeploymentSelectComponent } from './modules/deployment/components';
 
 @Component({
   standalone: true,
-  imports: [RouterModule, DashboardMaterialModule, CommonModule],
+  imports: [RouterModule, DashboardMaterialModule, DeploymentSelectComponent, CommonModule],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

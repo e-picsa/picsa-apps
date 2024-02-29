@@ -1,9 +1,10 @@
-id,country_code,label,configuration,variant,access_key_md5,public
-demo_admin,,Admin Demo,{},other,,true
-global,,Global,{},extension,,true
-global_translators,,Translators,{},other,,true
-mw_extension,mw,Extension,{},extension,,true
-mw_farmer,mw,Farmer,{},farmer,,true
-zm_extension,zm,Zambia,{},extension,,true
-zm_extension_demo,zm,ZM Admin Demo,{},other,,true
-zm_farmer,zm,Farmer,{},farmer,,true
+id,country_code,label,configuration,variant,access_key_md5,public,icon_path
+demo_admin,,Admin Demo,{},other,,true,global/images/flags/global.svg
+global,,Extension,{},extension,,true,global/images/flags/global.svg
+global_translators,,Translators,{},other,,true,global/images/flags/global.svg
+mw_admin_demo,mw,Admin Demo,{},other,,true,global/images/flags/mw.svg
+mw_extension,mw,Extension,{},extension,,true,global/images/flags/mw.svg
+mw_farmer,mw,Farmer,{},farmer,,true,global/images/flags/mw.svg
+zm_admin_demo,zm,Admin Demo,{},other,,true,global/images/flags/zm.svg
+zm_extension,zm,Extension,{},extension,,true,global/images/flags/zm.svg
+zm_farmer,zm,Farmer,{},farmer,,true,global/images/flags/zm.svg
