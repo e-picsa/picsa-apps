@@ -40,12 +40,6 @@ const config: CapacitorConfig = {
   //   },
   // },
   server: {
-    /**
-     * Uncomment and replace with local ip to serve live-reload
-     * See notes at https://docs.picsa.app/advanced/testing
-     **/
-
-    // url: 'http://192.168.50.67:4200',
     androidScheme: 'http',
 
     /**
@@ -55,5 +49,20 @@ const config: CapacitorConfig = {
     cleartext: true,
   },
 };
+
+/**
+ * Additional configuration used to support live-reloading the app from a dev server
+ * See https://docs.picsa.app/advanced/testing
+ **/
+if (process.env.NX_TASK_TARGET_TARGET === 'serve') {
+  const url = process.env.SERVER_URL;
+  if (!url) {
+    const errMessage = `Local url required to serve. See notes at \nhttps://docs.picsa.app/advanced/testing#running-on-a-device`;
+    console.log('\x1b[31m%s\x1b[0m', `\n[error]\n${errMessage}\n`);
+    process.exit(1);
+  }
+  console.log('\x1b[32m%s\x1b[0m', `Preparing to serve at url\n${url}\n`);
+  config.server = { ...config.server, url };
+}
 
 export default config;

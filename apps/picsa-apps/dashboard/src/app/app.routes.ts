@@ -16,9 +16,14 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/climate/climate.module').then((m) => m.ClimateModule),
   },
   {
+    path: 'deployment',
+    loadChildren: () => import('./modules/deployment/deployment.module').then((m) => m.DeploymentModule),
+  },
+  {
     path: 'translations',
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
+
   // unmatched routes fallback to home
   {
     path: 'monitoring-forms',

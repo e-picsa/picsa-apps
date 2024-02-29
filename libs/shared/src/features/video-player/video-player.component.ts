@@ -3,6 +3,8 @@ import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
+import { AnalyticsService } from '../../services/core/analytics.service';
+
 // Fix listeners missing from type
 // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#listeners
 type IVideoEvent =
@@ -28,8 +30,13 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
 export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
+
+  /** Unique video id, used for analytics and handling multiple videos */
+  @Input() id: string;
+
   /** Video source - can be string url or data blob */
   @Input() source?: string;
+
   /** Optional image shown as preview */
   @Input() thumbnail?: string;
 
@@ -37,7 +44,13 @@ export class VideoPlayerComponent implements OnDestroy {
   @Input() playInModal = false;
 
   // Bind player id to host element to support element query when initialising player
-  @HostBinding('attr.data-player-id') playerId = `videoPlayer_${generateID(5)}`;
+  @HostBinding('attr.data-player-id') get playerId() {
+    if (!this.id) {
+      console.warn('No id provided to <picsa-video-player> component');
+      this.id = `videoPlayer_${generateID(5)}`;
+    }
+    return this.id;
+  }
 
   protected showPlayButton = true;
 
@@ -53,7 +66,7 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private pauseTime: number = 0;
 
-  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
+  constructor(private elementRef: ElementRef<HTMLDivElement>, private analyticsService: AnalyticsService) {}
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
@@ -74,6 +87,8 @@ export class VideoPlayerComponent implements OnDestroy {
     if (Capacitor.isNativePlatform()) {
       this.initialised = false;
     }
+    // Track video play event
+    this.analyticsService.trackVideoPlay(this.playerId);
     // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
     await this.initPlayer();
     this.videoPlayer.play({ playerId: this.playerId }).then(() => {

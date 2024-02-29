@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { NavigationEnd,Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { FirebaseAnalytics } from '@capacitor-community/firebase-analytics';
-import { APP_VERSION,ENVIRONMENT } from '@picsa/environments';
+import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -12,11 +12,13 @@ import { APP_VERSION,ENVIRONMENT } from '@picsa/environments';
 export class AnalyticsService {
   public firebaseAnalytics = FirebaseAnalytics;
 
-  public init(router: Router) {
+  public async init(router: Router) {
     if (!Capacitor.isNativePlatform()) {
       // initialise for web (not required on android)
-      FirebaseAnalytics.initializeFirebase(ENVIRONMENT.firebase);
+      await FirebaseAnalytics.initializeFirebase(ENVIRONMENT.firebase);
     }
+    // disable analytics collection when running in dev
+    await this.firebaseAnalytics.setCollectionEnabled({ enabled: ENVIRONMENT.production });
     this.trackScreenView(router);
   }
   /**
@@ -29,10 +31,26 @@ export class AnalyticsService {
       if (e instanceof NavigationEnd) {
         this.firebaseAnalytics.setScreenName({ screenName: location.pathname });
         this.firebaseAnalytics.logEvent({
-          name: 'screen_view',
+          name: 'picsa_screen_view',
           params: { screen_name: location.pathname, app_version: APP_VERSION },
         });
       }
+    });
+  }
+
+  // Method to track when users play a video
+  public trackVideoPlay(videoId: string) {
+    this.firebaseAnalytics.logEvent({
+      name: 'picsa_video_play',
+      params: { video_id: videoId },
+    });
+  }
+
+  // Method to track when users opens resource file
+  public trackResourceOpen(resourceId: string) {
+    this.firebaseAnalytics.logEvent({
+      name: 'picsa_resource_open',
+      params: { resource_id: resourceId },
     });
   }
 }
