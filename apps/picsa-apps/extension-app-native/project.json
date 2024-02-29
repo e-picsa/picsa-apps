@@ -7,6 +7,7 @@
   "implicitDependencies": ["picsa-apps-extension-app"],
   "targets": {
     "build": {
+      "cache": false,
       "executor": "nx:run-commands",
       "outputs": [],
       "options": {
@@ -15,11 +16,12 @@
       }
     },
     "serve": {
+      "cache": false,
       "executor": "nx:run-commands",
       "description": "Serve extension app in external mode to support live-reload",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
-        "commands": ["npx cap sync", "nx run picsa-apps-extension-app:serve --configuration=external"],
+        "commands": ["npx cap sync && nx run picsa-apps-extension-app:serve --configuration=external"],
         "cwd": "apps/picsa-apps/extension-app-native",
         "parallel": false
       }

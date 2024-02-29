@@ -54,8 +54,15 @@ const config: CapacitorConfig = {
  * Additional configuration used to support live-reloading the app from a dev server
  * See https://docs.picsa.app/advanced/testing
  **/
-if (process.env.SERVER_URL) {
-  config.server = { ...config.server, url: process.env.SERVER_URL };
+if (process.env.NX_TASK_TARGET_TARGET === 'serve') {
+  const url = process.env.SERVER_URL;
+  if (!url) {
+    const errMessage = `Local url required to serve. See notes at \nhttps://docs.picsa.app/advanced/testing#running-on-a-device`;
+    console.log('\x1b[31m%s\x1b[0m', `\n[error]\n${errMessage}\n`);
+    process.exit(1);
+  }
+  console.log('\x1b[32m%s\x1b[0m', `Preparing to serve at url\n${url}\n`);
+  config.server = { ...config.server, url };
 }
 
 export default config;
