@@ -11,6 +11,7 @@
   { 'color': 'e4e669', 'description': "This doesn't seem right", 'name': 'invalid' },
   { 'color': 'd876e3', 'description': 'Further information is requested', 'name': 'question' },
   { 'color': 'ffffff', 'description': 'This will not be worked on', 'name': 'wontfix' },
+  { 'color': 'ffffff', 'description': 'Disable PR autolabel actions', 'name': 'no-autolabel' },
   { 'color': '0366d6', 'description': 'Pull requests that update a dependency file', 'name': 'dependencies' },
   { 'color': 'CF3458', 'description': '', 'name': 'Feedback Discussion' },
   { 'color': 'ffffff', 'description': '', 'name': 'Test - Preview' },

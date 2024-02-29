@@ -11,9 +11,9 @@ import {
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { IResourceRow } from '../../../climate/types';
 import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
 import { ResourcesDashboardService } from '../../resources.service';
+import { IResourceRow } from '../../types';
 
 @Component({
   selector: 'dashboard-resource-create',
