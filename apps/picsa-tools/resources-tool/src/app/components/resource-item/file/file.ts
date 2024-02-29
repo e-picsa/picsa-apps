@@ -62,6 +62,6 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
 
   /** Generic file opener */
   public async handleFileLinkClick(e: Event) {
-    this.service.openFileResource(this.fileURI, this.attachment!.type);
+    this.service.openFileResource(this.fileURI, this.attachment!.type, this.resource.id);
   }
 }

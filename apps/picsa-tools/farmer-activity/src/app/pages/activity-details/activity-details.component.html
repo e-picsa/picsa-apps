@@ -22,7 +22,7 @@
           [style.display]="videoUri ? 'none' : 'block'"
         ></resource-item-file>
         <h2 *ngIf="videoUri">{{ videoResource.title | translate }}</h2>
-        <picsa-video-player #videoPlayer *ngIf="videoUri" [source]="videoUri"></picsa-video-player>
+        <picsa-video-player #videoPlayer *ngIf="videoUri" [id]="videoResource.id" [source]="videoUri"></picsa-video-player>
         <p>
           {{ 'In this video you will learn about the PICSA step:' | translate }}
           {{ activity!.label | translate }}
