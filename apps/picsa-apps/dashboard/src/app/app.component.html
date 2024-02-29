@@ -3,7 +3,8 @@
     <button mat-icon-button (click)="sidenav.opened = !sidenav.opened">
       <mat-icon>menu</mat-icon>
     </button>
-    <span style="flex: 1">PICSA Dashboard</span>
+    <dashboard-deployment-select />
+    <span style="flex: 1; text-align: center;">PICSA Dashboard</span>
     @if(supabaseService.auth.authUser(); as user){
     <div style="position: relative">
       <button mat-button (click)="supabaseService.auth.signOut()" style="margin-top: 16px">
@@ -37,12 +38,7 @@
             [routerLinkActiveOptions]="{ exact: false }"
           >
             <mat-panel-title>
-              <div class="nav-item">
-                @if(link.matIcon){
-                <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
-                }
-                <span>{{ link.label }}</span>
-              </div>
+              <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
             </mat-panel-title>
           </mat-expansion-panel-header>
           @for(child of link.children || []; track $index){
@@ -58,12 +54,7 @@
         } @else {
         <!-- Single nav item -->
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
-          <div class="nav-item">
-            @if(link.matIcon){
-            <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
-            }
-            <span>{{ link.label }}</span>
-          </div>
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
         </a>
         } }
         <mat-divider style="margin-top: auto"></mat-divider>
@@ -71,7 +62,7 @@
         <mat-divider></mat-divider>
         @for (link of globalLinks; track link.href) {
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
-          {{ link.label }}
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
         </a>
         }
       </mat-nav-list>
@@ -81,3 +72,12 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
+
+<ng-template #linkTemplate let-link>
+  <div class="nav-item">
+    @if(link.matIcon){
+    <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+    }
+    <span>{{ link.label }}</span>
+  </div>
+</ng-template>
