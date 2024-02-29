@@ -17,6 +17,9 @@
   { 'color': 'ffffff', 'description': '', 'name': 'Test - Preview' },
   { 'color': '0ADC3B', 'description': '', 'name': 'ready for review' },
   { 'color': 'FEF2C0', 'description': '', 'name': 'work in progress' },
+  { 'color': 'ededed', 'description': '', 'name': 'feature' },
+  { 'color': 'ededed', 'description': '', 'name': 'fix' },
+  { 'color': 'ededed', 'description': '', 'name': 'maintenance' },
   # PICSA Tools
   { 'color': '000000', 'description': 'Updates related to Budget tool', 'name': 'Tool: Budget' },
   { 'color': '000000', 'description': 'Updates related to Climate tool', 'name': 'Tool: Climate' },
