@@ -16,7 +16,6 @@ import { DeploymentSelectComponent } from './modules/deployment/components';
 })
 export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
-
   navLinks = DASHBOARD_NAV_LINKS;
 
   globalLinks: INavLink[] = [

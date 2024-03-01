@@ -15147,7 +15147,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: ff548d48c7562be501934f81303061204450e037005ef08591049951adb3044778a6e9c97daa6bac57827ce8864d4637046a8a5669fab5ab43feec7bb3bed86f
+  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
   languageName: node
   linkType: hard
 
@@ -16400,6 +16400,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ngx-json-viewer@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "ngx-json-viewer@npm:3.2.1"
+  dependencies:
+    tslib: ^2.3.0
+  checksum: 6eec613c4bdf7550ed934781e8ded691cbe9b9599ec9bb10564d3a42ea94df663555a1e5063d5a66124bc6e7c1dc265645d79b3cdf7a8a11dbad37baabbbfc21
+  languageName: node
+  linkType: hard
+
 "ngx-lottie@npm:^10.0.0":
   version: 10.0.0
   resolution: "ngx-lottie@npm:10.0.0"
@@ -17624,6 +17633,7 @@ __metadata:
     mobx-angular: ^4.7.1
     ng-packagr: 17.0.1
     ngx-extended-pdf-viewer: ^18.1.7
+    ngx-json-viewer: ^3.2.1
     ngx-lottie: ^10.0.0
     nx: 17.1.2
     openapi-fetch: ^0.8.2

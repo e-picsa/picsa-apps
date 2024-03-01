@@ -211,6 +211,58 @@ export interface Database {
         };
         Relationships: [];
       };
+      monitoring_forms: {
+        Row: {
+          cover_image: string | null;
+          created_at: string;
+          description: string | null;
+          enketo_definition: Json | null;
+          enketo_form: string | null;
+          enketo_model: string | null;
+          form_xlsx: string | null;
+          id: string;
+          summary_fields: Json[] | null;
+          title: string;
+        };
+        Insert: {
+          cover_image?: string | null;
+          created_at?: string;
+          description?: string | null;
+          enketo_definition?: Json | null;
+          enketo_form?: string | null;
+          enketo_model?: string | null;
+          form_xlsx?: string | null;
+          id: string;
+          summary_fields?: Json[] | null;
+          title: string;
+        };
+        Update: {
+          cover_image?: string | null;
+          created_at?: string;
+          description?: string | null;
+          enketo_definition?: Json | null;
+          enketo_form?: string | null;
+          enketo_model?: string | null;
+          form_xlsx?: string | null;
+          id?: string;
+          summary_fields?: Json[] | null;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'monitoring_forms_cover_image_fkey';
+            columns: ['cover_image'];
+            referencedRelation: 'objects';
+            referencedColumns: ['path'];
+          },
+          {
+            foreignKeyName: 'monitoring_forms_form_xlsx_fkey';
+            columns: ['form_xlsx'];
+            referencedRelation: 'objects';
+            referencedColumns: ['path'];
+          }
+        ];
+      };
       monitoring_tool_submissions: {
         Row: {
           _app_user_id: string;
