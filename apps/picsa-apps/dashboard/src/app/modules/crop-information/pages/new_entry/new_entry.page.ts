@@ -50,6 +50,6 @@ export class NewEntryPageComponent implements OnInit {
       });
   }
   routeBack() {
-    this.router.navigate(['/crop']);
+    this.router.navigate(['/crop-information']);
   }
 }

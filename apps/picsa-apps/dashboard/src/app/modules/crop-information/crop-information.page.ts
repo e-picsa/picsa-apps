@@ -39,6 +39,6 @@ export class CropInformationPageComponent implements OnInit {
   }
 
   navigateToEntryPage() {
-    this.router.navigate(['/crop/entry']);
+    this.router.navigate(['/crop-information/entry']);
   }
 }

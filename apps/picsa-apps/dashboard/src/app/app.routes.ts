@@ -26,7 +26,7 @@ export const appRoutes: Route[] = [
 
   // unmatched routes fallback to home
   {
-    path: 'crop',
+    path: 'crop-information',
     loadChildren: () =>
       import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
   },
