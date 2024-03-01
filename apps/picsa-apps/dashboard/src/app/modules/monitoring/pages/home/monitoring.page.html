@@ -1,0 +1,23 @@
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2 style="flex: 1">Monitoring Forms</h2>
+  </div>
+  @if(service.forms){
+  <picsa-data-table
+    [data]="service.forms"
+    [valueTemplates]="{summary_fields:summaryFieldTemplate, enketo_form:enketoFormTemplete, enketo_model:enketoModelTemplate,created_at:dateTemplate }"
+    [options]="{displayColumns:displayedColumns,handleRowClick:onRowClick}"
+  >
+    <ng-template #summaryFieldTemplate let-values>
+      @for (item of values; track $index) { {{ item['label'] }}<br />}
+    </ng-template>
+    <ng-template #enketoFormTemplete let-values>
+      <div class="long-text-rows">{{values}}</div>
+    </ng-template>
+    <ng-template #enketoModelTemplate let-values>
+      <div class="long-text-rows">{{values}}</div>
+    </ng-template>
+    <ng-template #dateTemplate let-value> {{ value | date: 'mediumDate' }} </ng-template>
+  </picsa-data-table>
+  }
+</div>

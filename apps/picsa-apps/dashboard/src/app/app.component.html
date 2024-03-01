@@ -3,7 +3,8 @@
     <button mat-icon-button (click)="sidenav.opened = !sidenav.opened">
       <mat-icon>menu</mat-icon>
     </button>
-    <span style="flex: 1">PICSA Dashboard</span>
+    <dashboard-deployment-select />
+    <span style="flex: 1; text-align: center;">PICSA Dashboard</span>
     @if(supabaseService.auth.authUser(); as user){
     <div style="position: relative">
       <button mat-button (click)="supabaseService.auth.signOut()" style="margin-top: 16px">
@@ -26,17 +27,42 @@
   <mat-sidenav-container style="flex: 1">
     <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
       <mat-nav-list>
-        @for (link of navLinks; track link.href) {
+        @for (link of navLinks; track link.href) { @if(link.children){
+        <!-- Nested nav items -->
+        <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive">
+          <mat-expansion-panel-header
+            style="padding: 0 16px"
+            [routerLink]="link.href"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: false }"
+          >
+            <mat-panel-title>
+              <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          @for(child of link.children || []; track $index){
+          <a
+            mat-list-item
+            [routerLink]="link.href + child.href"
+            routerLinkActive="mdc-list-item--activated active-link"
+          >
+            {{ child.label }}</a
+          >
+          }
+        </mat-expansion-panel>
+        } @else {
+        <!-- Single nav item -->
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
-          {{ link.label }}
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
         </a>
-        }
+        } }
         <mat-divider style="margin-top: auto"></mat-divider>
         <div mat-subheader>Global Admin</div>
         <mat-divider></mat-divider>
         @for (link of globalLinks; track link.href) {
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
-          {{ link.label }}
+          <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
         </a>
         }
       </mat-nav-list>
@@ -46,3 +72,12 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
+
+<ng-template #linkTemplate let-link>
+  <div class="nav-item">
+    @if(link.matIcon){
+    <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
+    }
+    <span>{{ link.label }}</span>
+  </div>
+</ng-template>

@@ -61,6 +61,7 @@
     "@capacitor/device": "^5.0.6",
     "@capacitor/filesystem": "^5.1.4",
     "@capacitor/network": "^5.0.6",
+    "@capacitor/screen-orientation": "^5.0.7",
     "@ngx-translate/core": "~15.0.0",
     "@ngx-translate/http-loader": "~8.0.0",
     "@nx/angular": "17.1.2",
@@ -75,7 +76,7 @@
     "@uppy/tus": "^3.4.0",
     "c3": "^0.7.20",
     "capacitor-blob-writer": "^1.1.14",
-    "capacitor-video-player": "^5.0.3",
+    "capacitor-video-player": "^5.5.1",
     "cordova-plugin-codeplay-share-own-apk": "0.0.7",
     "cordova-plugin-file": "^8.0.1",
     "cordova-plugin-file-opener2": "^4.0.0",
@@ -98,6 +99,7 @@
     "mobx": "^6.7.0",
     "mobx-angular": "^4.7.1",
     "ngx-extended-pdf-viewer": "^18.1.7",
+    "ngx-json-viewer": "^3.2.1",
     "ngx-lottie": "^10.0.0",
     "openapi-fetch": "^0.8.2",
     "papaparse": "^5.3.2",
@@ -191,7 +193,7 @@
   },
   "packageManager": "yarn@3.6.3",
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    "*.ts": "eslint --cache --fix",
+    "*.{ts,scss}": "prettier --write"
   }
 }

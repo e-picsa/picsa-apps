@@ -1,0 +1,14 @@
+table.station-table {
+  max-height: 50vh;
+  display: block;
+  overflow: auto;
+}
+tr.station-row {
+  cursor: pointer;
+  &:hover {
+    background: whitesmoke;
+  }
+}
+th {
+  font-weight: bold;
+}
