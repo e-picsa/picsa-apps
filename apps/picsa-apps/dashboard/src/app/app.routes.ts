@@ -26,7 +26,7 @@ export const appRoutes: Route[] = [
 
   // unmatched routes fallback to home
   {
-    path: 'monitoring-forms',
+    path: 'monitoring',
     loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
   },
   {

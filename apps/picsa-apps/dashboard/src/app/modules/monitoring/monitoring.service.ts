@@ -7,8 +7,6 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 
 export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
 
-
-
 export interface IMonitoringStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
@@ -16,8 +14,8 @@ export interface IMonitoringStorageEntry extends IStorageEntry {
 @Injectable({ providedIn: 'root' })
 export class MonitoringFormsDashboardService extends PicsaAsyncService {
   public forms: IMonitoringFormsRow[] = [];
-  public TABLE_NAME = 'monitoring_forms'
-  public SUBMISSIONS_TABLE_NAME = 'monitoring_tool_submissions'
+  public TABLE_NAME = 'monitoring_forms';
+  public SUBMISSIONS_TABLE_NAME = 'monitoring_tool_submissions';
 
   public get table() {
     return this.supabaseService.db.table(this.TABLE_NAME);
@@ -49,12 +47,14 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return data;
   }
 
-  public async getSubmissionsByLocalFormId(id: string){
-    const { data, error } = await this.supabaseService.db.table(this.SUBMISSIONS_TABLE_NAME).select('*').eq('formId', id);
+  public async getSubmissions(formId: string) {
+    const { data, error } = await this.supabaseService.db
+      .table(this.SUBMISSIONS_TABLE_NAME)
+      .select('*')
+      .eq('formId', formId);
     if (error) {
       throw error;
     }
-    return {data, error};
+    return { data, error };
   }
-
 }

@@ -20,9 +20,9 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
         component: ViewMonitoringFormsComponent,
       },
       {
-        path: ':id/submissions/:slug',
+        path: ':id/submissions',
         component: FormSubmissionsComponent,
-      }
+      },
     ]),
   ],
 })

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
@@ -14,16 +14,17 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 @Component({
   selector: 'dashboard-monitoring-view',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, NgxJsonViewerModule],
+  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule, NgxJsonViewerModule],
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
 })
-export class ViewMonitoringFormsComponent {
+export class ViewMonitoringFormsComponent implements OnInit {
   public form: IMonitoringFormsRow;
   dataLoadError: string;
-  constructor(private service: MonitoringFormsDashboardService, private route: ActivatedRoute, private router: Router) {
-    this.service.ready();
-    this.route.params.subscribe((params) => {
+  constructor(private service: MonitoringFormsDashboardService, private route: ActivatedRoute) {}
+  async ngOnInit() {
+    await this.service.ready();
+    this.route.params.subscribe(async (params) => {
       const id = params['id'];
       this.service
         .getFormById(id)
@@ -36,7 +37,4 @@ export class ViewMonitoringFormsComponent {
         });
     });
   }
-  openSubmissions = async (formId:string) => {
-    this.router.navigate([`/monitoring-forms/${this.form.id}/submissions`, formId]);
-  };
 }

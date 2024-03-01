@@ -1,19 +1,18 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
-    <h2 style="flex: 1">Form Submissions</h2>
+    <h2 style="flex: 1">
+      @if(form){
+      {{ form.title }}
+      }
+    </h2>
   </div>
   @if(submissions){
-  <picsa-data-table
-    [data]="submissions"
-    [valueTemplates]="{}"
-    [options]="{displayColumns:displayedColumns}"
-  > </picsa-data-table>
+  <h3>Submissions</h3>
+  <picsa-data-table [data]="submissions" [valueTemplates]="{}" [options]="{ displayColumns: displayedColumns }">
+  </picsa-data-table>
+  } @else if(dataLoadError){
+  <div>{{ dataLoadError }}</div>
+  } @else {
+  <div>Loading...</div>
   }
-  @else if(dataLoadError){
-    <div>{{ dataLoadError }}</div>
-  }
-  @else {
-    <div>Loading...</div>
-  }
-
 </div>

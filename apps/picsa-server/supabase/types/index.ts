@@ -213,45 +213,55 @@ export interface Database {
       };
       monitoring_forms: {
         Row: {
-          app_countries: string[] | null;
-          cover: Json | null;
+          cover_image: string | null;
           created_at: string;
           description: string | null;
-          device_form_id: string | null;
           enketo_definition: Json | null;
           enketo_form: string | null;
           enketo_model: string | null;
-          id: number;
+          form_xlsx: string | null;
+          id: string;
           summary_fields: Json[] | null;
           title: string;
         };
         Insert: {
-          app_countries?: string[] | null;
-          cover?: Json | null;
+          cover_image?: string | null;
           created_at?: string;
           description?: string | null;
-          device_form_id?: string | null;
           enketo_definition?: Json | null;
           enketo_form?: string | null;
           enketo_model?: string | null;
-          id?: number;
+          form_xlsx?: string | null;
+          id: string;
           summary_fields?: Json[] | null;
           title: string;
         };
         Update: {
-          app_countries?: string[] | null;
-          cover?: Json | null;
+          cover_image?: string | null;
           created_at?: string;
           description?: string | null;
-          device_form_id?: string | null;
           enketo_definition?: Json | null;
           enketo_form?: string | null;
           enketo_model?: string | null;
-          id?: number;
+          form_xlsx?: string | null;
+          id?: string;
           summary_fields?: Json[] | null;
           title?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'monitoring_forms_cover_image_fkey';
+            columns: ['cover_image'];
+            referencedRelation: 'objects';
+            referencedColumns: ['path'];
+          },
+          {
+            foreignKeyName: 'monitoring_forms_form_xlsx_fkey';
+            columns: ['form_xlsx'];
+            referencedRelation: 'objects';
+            referencedColumns: ['path'];
+          }
+        ];
       };
       monitoring_tool_submissions: {
         Row: {

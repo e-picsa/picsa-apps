@@ -37,8 +37,8 @@ export const DASHBOARD_NAV_LINKS = [
   // },
   {
     label: 'Monitoring Forms',
-    href: '/monitoring-forms',
-    matIcon: 'library_books',
+    href: '/monitoring',
+    matIcon: 'poll',
   },
   {
     label: 'Translations',
