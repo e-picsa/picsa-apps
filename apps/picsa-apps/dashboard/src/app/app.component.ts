@@ -7,12 +7,6 @@ import { DASHBOARD_NAV_LINKS, INavLink } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { DeploymentSelectComponent } from './modules/deployment/components';
 
-interface INavLink {
-  label: string;
-  href: string;
-  isActive?: boolean;
-}
-
 @Component({
   standalone: true,
   imports: [RouterModule, DashboardMaterialModule, DeploymentSelectComponent, CommonModule],
