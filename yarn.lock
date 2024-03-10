@@ -15147,7 +15147,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
+  checksum: b2280f200f5ea410e33cc5feb500d67d86cb5f16b294eea1306da055614ffc906be7de6dbc9bbf4db6e6e5d27d0396e4701a3b6c4c920548d2aac94b8223879f
   languageName: node
   linkType: hard
 
@@ -17475,6 +17475,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"perfect-freehand@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "perfect-freehand@npm:1.2.2"
+  checksum: e1c4f3b6c9e61a3ba4a5375d7cbe05d88fb4885b2bbd6c7dd38437c25ce2e5af1102d46c9b8ccfd1e4f5cf9c7855605f8e6cda073157f9bf68beea85bd98d48b
+  languageName: node
+  linkType: hard
+
 "performance-now@npm:^2.1.0":
   version: 2.1.0
   resolution: "performance-now@npm:2.1.0"
@@ -17640,6 +17647,7 @@ __metadata:
     openapi-typescript: ^6.7.3
     papaparse: ^5.3.2
     parse: 3.4.2
+    perfect-freehand: ^1.2.2
     postcss: ^8.4.5
     postcss-import: ~14.1.0
     postcss-url: ~10.1.3
