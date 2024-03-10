@@ -3,12 +3,12 @@ import '@uppy/dashboard/dist/style.min.css';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PicsaNotificationService } from '../../../../../../../libs/shared/src/services/core/notification.service';
+import { RouterModule } from '@angular/router';
+import { PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../material.module';
 import { CropProbabilityDashboardService } from './crop-information.service';
-import { PicsaDataTableComponent } from '../../../../../../../libs/shared/src/features';
 
 @Component({
   selector: 'dashboard-resources-page',
