@@ -1,33 +1,31 @@
 <div class="page-content">
-  <button mat-stroked-button color="primary" (click)="routeBack()"><mat-icon> Back </mat-icon></button>
   <h2>New Crop Probability Entry</h2>
-
-  <form class="form-content">
+  <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
     <div class="form-data">
-      <label>Station Name</label>
-      <input matInput [(ngModel)]="station_name" name="station_name" />
+      <label for="crop">Crop Name: </label>
+      <input id="crop" type="text" formControlName="crop" />
     </div>
     <div class="form-data">
-      <label>Water Upper</label>
-      <input matInput [(ngModel)]="water_upper" name="water_upper" />
+      <label for="variety">Crop Variety:</label>
+      <input id="variety" type="text" formControlName="variety" />
     </div>
     <div class="form-data">
-      <label>Water Lower</label>
-      <input matInput [(ngModel)]="water_lower" name="water_lower" />
+      <label for="water_upper">Water Upper:</label>
+      <input id="water_upper" type="number" formControlName="water_upper" />
     </div>
     <div class="form-data">
-      <label>Length Upper</label>
-      <input matInput [(ngModel)]="length_upper" name="length_upper" />
+      <label for="water_lower">Water Lower:</label>
+      <input id="water_lower" type="number" formControlName="water_lower" />
     </div>
     <div class="form-data">
-      <label>Length Lower</label>
-      <input matInput [(ngModel)]="length_lower" name="length_lower" />
+      <label for="length_upper">Length Upper:</label>
+      <input id="length_upper" type="number" formControlName="length_upper" />
     </div>
     <div class="form-data">
-      <label>Station Notes</label>
-      <input matInput [(ngModel)]="station_notes" name="station_notes" />
+      <label for="length_lower">Length Lower:</label>
+      <input id="lenght_lower" type="number" formControlName="length_lower" />
     </div>
-    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Submit</button>
+    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">Submit</button>
   </form>
   @if(ActionFeedbackMessage){
   <div>{{ ActionFeedbackMessage }}</div>
