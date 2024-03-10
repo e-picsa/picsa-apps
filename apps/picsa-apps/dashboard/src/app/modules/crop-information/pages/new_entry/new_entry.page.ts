@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder,FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -16,8 +15,8 @@ import { CropProbabilityDashboardService } from '../../crop-information.service'
 })
 export class NewEntryPageComponent implements OnInit {
   entryForm = this.formBuilder.group({
-    crop: [''],
-    variety: [''],
+    crop: ['', Validators.required],
+    variety: ['', Validators.required],
     water_lower: [0],
     water_upper: [0],
     length_lower: [0],
