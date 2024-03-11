@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder,FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { CropProbabilityDashboardService } from '../../crop-information.service';
@@ -24,7 +24,12 @@ export class NewEntryPageComponent implements OnInit {
   });
   ActionFeedbackMessage: string;
 
-  constructor(private service: CropProbabilityDashboardService, private formBuilder: FormBuilder) {
+  constructor(
+    private service: CropProbabilityDashboardService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.service.ready();
   }
 
@@ -37,7 +42,7 @@ export class NewEntryPageComponent implements OnInit {
       .addCropProbability(formData)
       .then((data) => {
         if (data === 'Added successfully') {
-          this.ActionFeedbackMessage = 'Entry added successfully';
+          this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
         }
       })
       .catch((error) => {
