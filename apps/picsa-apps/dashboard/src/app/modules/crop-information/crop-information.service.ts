@@ -39,7 +39,17 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
   }
 
   public async addCropProbability(cropProbability: ICropInformationInsert) {
-    const { data, error } = await this.supabaseService.db.table('crop_data').upsert([cropProbability]);
+    const { data, error } = await this.supabaseService.db.table('crop_data').insert(cropProbability);
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+  public async updateCropProbability(cropProbability: ICropInformationInsert) {
+    const { data, error } = await this.supabaseService.db
+      .table('crop_data')
+      .update(cropProbability)
+      .eq('id', cropProbability.id);
     if (error) {
       throw error;
     }

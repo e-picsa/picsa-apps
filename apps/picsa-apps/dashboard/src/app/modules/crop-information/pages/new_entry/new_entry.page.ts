@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -14,7 +15,7 @@ import {
 @Component({
   selector: 'dashboard-new-entry',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, DashboardMaterialModule, RouterModule, FormsModule, PicsaFormsModule, ReactiveFormsModule],
   templateUrl: './new_entry.component.html',
   styleUrls: ['./new_entry.component.scss'],
 })
@@ -54,11 +55,14 @@ export class NewEntryPageComponent implements OnInit {
   }
 
   async submitForm() {
-    const data = this.formValue;
-    // remove `null` id generated if not editing
-    if (data.id === null) delete data.id;
     try {
-      await this.service.addCropProbability(data);
+      if (this.formValue.id) {
+        await this.service.updateCropProbability(this.formValue);
+      } else {
+        // remove null id when adding crop probability
+        const { id, ...data } = this.formValue;
+        await this.service.addCropProbability(data);
+      }
       // navigate back after successful addition
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
     } catch (error: any) {

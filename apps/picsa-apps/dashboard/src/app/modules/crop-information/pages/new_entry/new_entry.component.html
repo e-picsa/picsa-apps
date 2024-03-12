@@ -2,8 +2,7 @@
   <h2>New Crop Probability Entry</h2>
   <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
     <div class="form-data">
-      <label for="crop">Crop Name: </label>
-      <input id="crop" type="text" formControlName="crop" />
+      <picsa-form-crop-select formControlName="crop"></picsa-form-crop-select>
     </div>
     <div class="form-data">
       <label for="variety">Crop Variety:</label>
