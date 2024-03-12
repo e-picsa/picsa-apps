@@ -31,10 +31,11 @@ export const DASHBOARD_NAV_LINKS = [
       },
     ],
   },
-  // {
-  //   label: 'Crop Information',
-  //   href: '/crop-information',
-  // },
+  {
+    label: 'Crop Information',
+    href: '/crop-information',
+    matIcon: 'spa',
+  },
   {
     label: 'Monitoring Forms',
     href: '/monitoring',

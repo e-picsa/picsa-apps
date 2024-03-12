@@ -1,0 +1,9 @@
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2 style="flex: 1">Crop Probabilities</h2>
+    <button mat-stroked-button color="primary" routerLink="entry"><mat-icon>add</mat-icon>Add New Entry</button>
+  </div>
+  @if(service.cropProbabilities){
+  <picsa-data-table [data]="service.cropProbabilities" [options]="tableOptions"></picsa-data-table>
+  }
+</div>

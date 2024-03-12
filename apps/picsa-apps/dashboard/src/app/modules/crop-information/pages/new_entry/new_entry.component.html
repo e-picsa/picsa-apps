@@ -1,0 +1,31 @@
+<div class="page-content">
+  <h2>New Crop Probability Entry</h2>
+  <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
+    <div class="form-data">
+      <picsa-form-crop-select formControlName="crop"></picsa-form-crop-select>
+    </div>
+    <div class="form-data">
+      <label for="variety">Crop Variety:</label>
+      <input id="variety" type="text" formControlName="variety" />
+    </div>
+    <div class="form-data">
+      <label for="water_upper">Water Upper:</label>
+      <input id="water_upper" type="number" formControlName="water_upper" />
+    </div>
+    <div class="form-data">
+      <label for="water_lower">Water Lower:</label>
+      <input id="water_lower" type="number" formControlName="water_lower" />
+    </div>
+    <div class="form-data">
+      <label for="length_upper">Length Upper:</label>
+      <input id="length_upper" type="number" formControlName="length_upper" />
+    </div>
+    <div class="form-data">
+      <label for="length_lower">Length Lower:</label>
+      <input id="lenght_lower" type="number" formControlName="length_lower" />
+    </div>
+    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">
+      Submit
+    </button>
+  </form>
+</div>

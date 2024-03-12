@@ -102,6 +102,52 @@ export interface Database {
           }
         ];
       };
+      climate_station_crop_data: {
+        Row: {
+          created_at: string;
+          crop_id: number;
+          id: number;
+          length_lower: number | null;
+          length_upper: number | null;
+          station_id: number;
+          water_lower: number | null;
+          water_upper: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          crop_id: number;
+          id?: number;
+          length_lower?: number | null;
+          length_upper?: number | null;
+          station_id: number;
+          water_lower?: number | null;
+          water_upper?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          crop_id?: number;
+          id?: number;
+          length_lower?: number | null;
+          length_upper?: number | null;
+          station_id?: number;
+          water_lower?: number | null;
+          water_upper?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'climate_station_crop_data_crop_id_fkey';
+            columns: ['crop_id'];
+            referencedRelation: 'crop_data';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'climate_station_crop_data_station_id_fkey';
+            columns: ['station_id'];
+            referencedRelation: 'climate_stations';
+            referencedColumns: ['station_id'];
+          }
+        ];
+      };
       climate_stations: {
         Row: {
           country_code: string | null;
@@ -129,6 +175,42 @@ export interface Database {
           longitude?: number | null;
           station_id?: number;
           station_name?: string | null;
+        };
+        Relationships: [];
+      };
+      crop_data: {
+        Row: {
+          created_at: string;
+          crop: string;
+          id: number;
+          label: string | null;
+          length_lower: number;
+          length_upper: number;
+          variety: string;
+          water_lower: number;
+          water_upper: number;
+        };
+        Insert: {
+          created_at?: string;
+          crop: string;
+          id?: number;
+          label?: string | null;
+          length_lower: number;
+          length_upper: number;
+          variety: string;
+          water_lower: number;
+          water_upper: number;
+        };
+        Update: {
+          created_at?: string;
+          crop?: string;
+          id?: number;
+          label?: string | null;
+          length_lower?: number;
+          length_upper?: number;
+          variety?: string;
+          water_lower?: number;
+          water_upper?: number;
         };
         Relationships: [];
       };
