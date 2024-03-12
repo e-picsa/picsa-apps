@@ -25,9 +25,8 @@
       <label for="length_lower">Length Lower:</label>
       <input id="lenght_lower" type="number" formControlName="length_lower" />
     </div>
-    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">Submit</button>
+    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">
+      Submit
+    </button>
   </form>
-  @if(ActionFeedbackMessage){
-  <div>{{ ActionFeedbackMessage }}</div>
-  }
 </div>

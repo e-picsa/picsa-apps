@@ -3,12 +3,12 @@ import '@uppy/dashboard/dist/style.min.css';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../material.module';
-import { CropProbabilityDashboardService } from './crop-information.service';
+import { CropProbabilityDashboardService, ICropInformationRow } from './crop-information.service';
 
 @Component({
   selector: 'dashboard-resources-page',
@@ -21,6 +21,8 @@ export class CropInformationPageComponent implements OnInit {
   constructor(
     public service: CropProbabilityDashboardService,
     private notificationService: PicsaNotificationService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   displayedColumns: string[] = [
@@ -30,12 +32,14 @@ export class CropInformationPageComponent implements OnInit {
     'water_upper',
     'length_lower',
     'length_upper',
-    'label'
+    'label',
   ];
 
   tableOptions = {
     displayColumns: this.displayedColumns,
-    handleRowClick: () => null,
+    handleRowClick: (row: ICropInformationRow) => {
+      this.router.navigate([row.id], { relativeTo: this.route });
+    },
   };
 
   async ngOnInit() {

@@ -38,11 +38,11 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
     this.cropProbabilities = data || [];
   }
 
-  public async addCropProbability(cropProbability: Partial<ICropInformationRow>): Promise<string> {
-    const { data, error } = await this.supabaseService.db.table('crop_data').insert([cropProbability]);
+  public async addCropProbability(cropProbability: ICropInformationInsert) {
+    const { data, error } = await this.supabaseService.db.table('crop_data').upsert([cropProbability]);
     if (error) {
       throw error;
     }
-    return 'Added successfully';
+    return data;
   }
 }

@@ -14,8 +14,14 @@ import { NewEntryPageComponent } from './pages/new_entry/new_entry.page';
         path: '',
         component: CropInformationPageComponent,
       },
+      // new entry
       {
         path: 'entry',
+        component: NewEntryPageComponent,
+      },
+      // editable entry
+      {
+        path: ':id',
         component: NewEntryPageComponent,
       },
     ]),
