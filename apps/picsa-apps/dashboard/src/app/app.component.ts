@@ -22,7 +22,7 @@ export class AppComponent implements AfterViewInit {
     {
       label: 'Deployments',
       href: '/deployment',
-      // matIcon: 'apps',
+      matIcon: 'apps',
     },
     // {
     //   label: 'Users',

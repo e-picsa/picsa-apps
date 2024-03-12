@@ -34,7 +34,7 @@ export const DASHBOARD_NAV_LINKS = [
   {
     label: 'Crop Information',
     href: '/crop-information',
-    matIcon:'spa'
+    matIcon: 'spa',
   },
   {
     label: 'Monitoring Forms',
