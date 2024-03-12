@@ -5,7 +5,8 @@ import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
-export type ICropInformationRow = Database['public']['Tables']['climate_station_crop_data']['Insert'];
+export type ICropInformationRow = Database['public']['Tables']['crop_data']['Row'];
+export type ICropInformationInsert = Database['public']['Tables']['crop_data']['Insert'];
 
 export interface IResourceStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */

@@ -4,7 +4,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { CropProbabilityDashboardService } from '../../crop-information.service';
+import { CropProbabilityDashboardService, ICropInformationInsert } from '../../crop-information.service';
 
 @Component({
   selector: 'dashboard-new-entry',
@@ -14,7 +14,7 @@ import { CropProbabilityDashboardService } from '../../crop-information.service'
   styleUrls: ['./new_entry.component.scss'],
 })
 export class NewEntryPageComponent implements OnInit {
-  entryForm = this.formBuilder.group({
+  entryForm = this.formBuilder.nonNullable.group({
     crop: ['', Validators.required],
     variety: ['', Validators.required],
     water_lower: [0],
@@ -23,6 +23,12 @@ export class NewEntryPageComponent implements OnInit {
     length_upper: [0],
   });
   ActionFeedbackMessage: string;
+
+  /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
+  private get formValue() {
+    const entry: ICropInformationInsert = this.entryForm.getRawValue();
+    return entry;
+  }
 
   constructor(
     private service: CropProbabilityDashboardService,
@@ -37,9 +43,8 @@ export class NewEntryPageComponent implements OnInit {
     this.service.ready();
   }
   submitForm() {
-    const formData = this.entryForm.value;
     this.service
-      .addCropProbability(formData)
+      .addCropProbability(this.formValue)
       .then((data) => {
         if (data === 'Added successfully') {
           this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
