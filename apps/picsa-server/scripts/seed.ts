@@ -50,7 +50,7 @@ class SupabaseSeed {
     await this.importDBRows();
   }
 
-  /** Use the supabase cli to automatically detect credentials of server unning locally */
+  /** Use the supabase cli to automatically detect credentials of server running locally */
   private getCredentials() {
     const supabaseCLIPath = resolve(ROOT_DIR, 'node_modules', '.bin', 'supabase');
     const res = execSync(`${supabaseCLIPath} status --output json`, { cwd: SUPABASE_DIR });
@@ -63,6 +63,10 @@ class SupabaseSeed {
     }
   }
 
+  /**
+   * Import all files in local supabase/data/storage folder into supabase storage
+   * Creates new buckets as required and populates files to nested paths
+   */
   private async importStorageObjects() {
     console.log('\n', '\n', 'Storage');
     const { storage } = this.client;
@@ -102,6 +106,10 @@ class SupabaseSeed {
     console.table(results);
   }
 
+  /**
+   * Import csv files in local supabase/data folder into supabase db
+   * Table names will be assumed from csv filename (as exported from supabase)
+   */
   private async importDBRows() {
     console.log('\n', '\n', 'DB');
     const csvFileNames = readdirSync(SEED_DIR, { withFileTypes: true })
@@ -114,7 +122,6 @@ class SupabaseSeed {
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
       const parsedRows = parseCSVRows(csvRows);
-      // TODO - drop existing data? possible not
       const { error, data } = await this.client.from(tableName).upsert(parsedRows).select('*');
       if (error) {
         console.error(`[${tableName}] import failed`, csvRows);
