@@ -9075,7 +9075,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bin-links@npm:^4.0.1":
+"bin-links@npm:^4.0.3":
   version: 4.0.3
   resolution: "bin-links@npm:4.0.3"
   dependencies:
@@ -16511,7 +16511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^3.2.10":
+"node-fetch@npm:^3.3.2":
   version: 3.3.2
   resolution: "node-fetch@npm:3.3.2"
   dependencies:
@@ -17653,7 +17653,7 @@ __metadata:
     save-svg-as-png: ^1.4.17
     sharp: ^0.31.3
     stacktrace-js: ^2.0.2
-    supabase: 1.115.4
+    supabase: ^1.148.6
     tailwindcss: ^3.0.2
     ts-jest: 29.1.1
     ts-node: 10.9.2
@@ -20172,17 +20172,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supabase@npm:1.115.4":
-  version: 1.115.4
-  resolution: "supabase@npm:1.115.4"
+"supabase@npm:^1.148.6":
+  version: 1.149.1
+  resolution: "supabase@npm:1.149.1"
   dependencies:
-    bin-links: ^4.0.1
+    bin-links: ^4.0.3
     https-proxy-agent: ^7.0.2
-    node-fetch: ^3.2.10
+    node-fetch: ^3.3.2
     tar: 6.2.0
   bin:
     supabase: bin/supabase
-  checksum: 1456333e74d15420b2ad7ea0090a4e4687817d11b5ea4f3aaf341e8b7a9ed39b6bc883b0b57aa66e67ef658f06e57c5d8478fa911dcdf77fbbc85954c0c8d49d
+  checksum: 32e91100c72fcf3773efe29b84dbb49337da4ee7f064f79df017e1ffaa586cdc9ab84aa4ed49a6e84c1c1c9c734a7c3846299ab62116ab1a6b5a62a6722a2c26
   languageName: node
   linkType: hard
 
