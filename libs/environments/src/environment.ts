@@ -10,7 +10,7 @@ const ENVIRONMENT: IEnvironment = {
   production: false,
   supabase: {
     ...PRODUCTION_ENVIRONMENT.supabase,
-    load: loadSupabaseDevEnvironment,
+    load: () => loadSupabaseDevEnvironment(),
   },
 };
 
@@ -30,16 +30,16 @@ async function loadSupabaseDevEnvironment(): Promise<{ anonKey: string; apiUrl: 
     apiUrl: 'http://localhost:54321',
   };
   return new Promise((resolve) => {
-    try {
-      // Use a variable filename so that compiler bundles all files in folder
-      // regardless of whether specific config file exists or not
-      const filename = 'config.json';
-      import(`./supabase/${filename}`).then((res) => {
+    // Use a variable filename so that compiler bundles all files in folder
+    // regardless of whether specific config file exists or not
+    const filename = 'config.json';
+    import(`./supabase/${filename}`)
+      .then((res) => {
         resolve({ ...defaultConfig, ...res.default });
+      })
+      .catch(() => {
+        console.warn('[Supabase] Dev config not provided\nlibs/environments/src/supabase/config.json');
+        resolve(defaultConfig);
       });
-    } catch (error) {
-      console.warn('[Supabase] Dev config not provided\nlibs/environments/src/supabase/config.json');
-      resolve(defaultConfig);
-    }
   });
 }
