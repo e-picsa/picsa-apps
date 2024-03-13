@@ -1,4 +1,5 @@
 import { createBlobFromBase64 } from 'rxdb';
+import { ParseLocalConfig, ParseRemoteConfig, parse as parseCSV } from 'papaparse';
 
 /**
  * Convert an object array into a json object, with keys corresponding to array entries
@@ -89,4 +90,25 @@ export function base64ToBlob(base64String, mimetype: string) {
 export function capitalise(str: string) {
   if (typeof str !== 'string') return str;
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Load data from csv
+ * @param ref - CSV reference data
+ * If downloading from remote source (on web) should include {download: true} in config
+ * On node remote content will need to be downloaded first and passed as csvString instead
+ */
+export function loadCSV<T>(ref: string, config: Partial<ParseRemoteConfig | ParseLocalConfig>): Promise<T[]> {
+  return new Promise((resolve, reject) => {
+    parseCSV(ref as any, {
+      complete: (res) => {
+        resolve(res.data as T[]);
+      },
+      error: function (err) {
+        console.error('Could not parse CSV', ref, err.message);
+        resolve([]);
+      },
+      ...config,
+    });
+  });
 }
