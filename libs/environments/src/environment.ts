@@ -33,13 +33,19 @@ async function loadSupabaseDevEnvironment(): Promise<{ anonKey: string; apiUrl: 
     // Use a variable filename so that compiler bundles all files in folder
     // regardless of whether specific config file exists or not
     const filename = 'config.json';
-    import(`./supabase/${filename}`)
-      .then((res) => {
-        resolve({ ...defaultConfig, ...res.default });
-      })
-      .catch(() => {
-        console.warn('[Supabase] Dev config not provided\nlibs/environments/src/supabase/config.json');
-        resolve(defaultConfig);
-      });
+    // use try-catch (web) and promise catch (node)
+    try {
+      import(`./supabase/${filename}`)
+        .then((res) => {
+          resolve({ ...defaultConfig, ...res.default });
+        })
+        .catch(() => {
+          console.warn('[Supabase] Dev config not provided\nlibs/environments/src/supabase/config.json');
+          resolve(defaultConfig);
+        });
+    } catch (error) {
+      console.warn('[Supabase] Dev config not provided\nlibs/environments/src/supabase/config.json');
+      resolve(defaultConfig);
+    }
   });
 }
