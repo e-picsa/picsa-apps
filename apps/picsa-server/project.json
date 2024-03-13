@@ -7,7 +7,6 @@
   "targets": {
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": [],
       "outputs": [],
       "options": {
         "commands": ["npx supabase start"],
@@ -47,6 +46,21 @@
       "outputs": [],
       "options": {
         "commands": ["npx supabase gen types typescript --local > supabase/types/index.ts"],
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "reset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn nx run picsa-server:supabase db reset",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "seed": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/supabase/data"],
+      "options": {
+        "command": "yarn ts-node -r tsconfig-paths/register scripts/seed.ts",
         "cwd": "apps/picsa-server"
       }
     },
