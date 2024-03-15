@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
@@ -21,7 +22,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return this.supabaseService.db.table(this.TABLE_NAME);
   }
 
-  constructor(private supabaseService: SupabaseService) {
+  constructor(private supabaseService: SupabaseService, private http: HttpClient) {
     super();
   }
 
@@ -57,4 +58,33 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     }
     return { data, error };
   }
+
+  public async updateFormById(id: string, updatedForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow> {
+    const { data, error } = await this.supabaseService.db
+      .table(this.TABLE_NAME)
+      .update(updatedForm)
+      .eq('id', id)
+      .single();
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+
+   submitFormToConvertXlsToXForm(formData: FormData) {
+    const url = 'http://localhost:5262/api/convert_xls_to_xml'; 
+    //should alow the browser to set this header so it can automatically with the boundary
+
+    // const headers = new HttpHeaders({
+    //   'Content-Type': 'multipart/form-data' 
+    // });
+
+    return this.http.post(url, formData);
+  }
+  submitFormToConvertXFormToEnketo(formData: FormData) {
+    const url = 'http://localhost:5261/api/xlsform-to-enketo'; 
+
+    return this.http.post(url, formData);
+  }
+
 }
