@@ -7382,6 +7382,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/mime-types@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "@types/mime-types@npm:2.1.4"
+  checksum: f8c521c54ee0c0b9f90a65356a80b1413ed27ccdc94f5c7ebb3de5d63cedb559cd2610ea55b4100805c7349606a920d96e54f2d16b2f0afa6b7cd5253967ccc9
+  languageName: node
+  linkType: hard
+
 "@types/mime@npm:*":
   version: 3.0.4
   resolution: "@types/mime@npm:3.0.4"
@@ -15828,7 +15835,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime-types@npm:^2.1.12, mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:~2.1.17, mime-types@npm:~2.1.19, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
+"mime-types@npm:^2.1.12, mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:^2.1.35, mime-types@npm:~2.1.17, mime-types@npm:~2.1.19, mime-types@npm:~2.1.24, mime-types@npm:~2.1.34":
   version: 2.1.35
   resolution: "mime-types@npm:2.1.35"
   dependencies:
@@ -17558,6 +17565,7 @@ __metadata:
     "@types/intro.js": ^5.1.1
     "@types/jest": 29.4.4
     "@types/leaflet": ^1.9.4
+    "@types/mime-types": ^2.1.4
     "@types/node": ^18.14.2
     "@types/papaparse": ^5.3.2
     "@types/parse": ^2.18.16
@@ -17616,6 +17624,7 @@ __metadata:
     leaflet: ^1.9.4
     lint-staged: ^13.2.1
     lottie-web: ^5.10.2
+    mime-types: ^2.1.35
     mobx: ^6.7.0
     mobx-angular: ^4.7.1
     ng-packagr: 17.0.1
