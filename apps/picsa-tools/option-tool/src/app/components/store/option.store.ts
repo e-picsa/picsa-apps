@@ -14,7 +14,7 @@ import { PrintProvider } from '@picsa/shared/services/native/print';
       ) { }
 
       public async shareAsImage() {
-        return this.printPrvdr.shareHtmlDom('#options', 'Options','Options');
+        return this.printPrvdr.shareHtmlDom('#options', 'Options','');
       }
       ngOnDestroy(): void {
         this.destroyed$.next(true);
