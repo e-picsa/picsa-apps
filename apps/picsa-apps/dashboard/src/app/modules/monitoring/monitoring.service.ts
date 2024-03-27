@@ -1,4 +1,4 @@
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
@@ -71,13 +71,12 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return data;
   }
 
-   submitFormToConvertXlsToXForm(file: any) {
-    const url = 'https://xform-converter.picsa.app/api/v1/convert'; 
+  submitFormToConvertXlsToXForm(file: any) {
+    const url = 'https://xform-converter.picsa.app/api/v1/convert';
     return this.http.post(url, file);
   }
   submitFormToConvertXFormToEnketo(formData: FormData) {
-    const url = 'https://enketo-converter.picsa.app/api/xlsform-to-enketo'; 
+    const url = 'https://enketo-converter.picsa.app/api/xlsform-to-enketo';
     return this.http.post(url, formData);
   }
-
 }

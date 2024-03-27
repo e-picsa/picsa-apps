@@ -57,7 +57,7 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     if (res.length === 0) {
       return;
     }
-    this.uploading = true
+    this.uploading = true;
     const [{ entry }] = res;
     const [{ data }] = res;
     this.service.submitFormToConvertXlsToXForm(data).subscribe({
@@ -74,8 +74,8 @@ export class UpdateMonitoringFormsComponent implements OnInit {
             const convertedContent = response['convertedFiles'][0]['content'];
             //since path is not returned and it is what the relation requires
             //SUGGESTION: we could make this reference the entry's id instead
-            if(entry){
-              this.form.form_xlsx =  `resources/${controlName}/${entry.name}`
+            if (entry) {
+              this.form.form_xlsx = `resources/${controlName}/${entry.name}`;
             }
             if (this.form.enketo_definition) {
               this.form.enketo_definition['theme'] = convertedContent.theme;

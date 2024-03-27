@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UpdateMonitoringFormsComponent } from './update-monitoring-forms.component'
+
+import { UpdateMonitoringFormsComponent } from './update-monitoring-forms.component';
 
 describe('UpdateMonitoringFormsComponent', () => {
   let component: UpdateMonitoringFormsComponent;

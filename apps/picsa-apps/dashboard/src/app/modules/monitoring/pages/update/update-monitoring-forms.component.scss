@@ -1,28 +1,28 @@
-.form-content{
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
 }
-.submitButton{
-    width: 7rem;
-    margin-bottom: 1rem;
+.submitButton {
+  width: 7rem;
+  margin-bottom: 1rem;
 }
-.form-data{
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.form-data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.data-container{
-    margin-left: 2rem;
-    max-height: 25rem;
-    overflow-y: auto;
+.data-container {
+  margin-left: 2rem;
+  max-height: 25rem;
+  overflow-y: auto;
 }
-label{
-    font-weight: 700;
+label {
+  font-weight: 700;
 }
-.action-button-section{
-    display: flex;
-    flex-direction: row;
-    gap:5px
+.action-button-section {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
 }
