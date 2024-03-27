@@ -6,7 +6,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
-
+import { _wait } from '@picsa/utils';
+import { OptionStore } from '../../components/store/option.store';
 @Component({
   selector: 'option-home',
   templateUrl: './home.component.html',
@@ -27,11 +28,34 @@ export class HomeComponent implements OnDestroy {
   private editorIndex = 0;
   private componentDestroyed$ = new Subject();
 
+  public status = '';
+  public disabled = false;
+  public shareCode: string;
+
   @ViewChild(EditorComponent) editorComponent: EditorComponent;
 
-  constructor(private service: OptionsToolService) {
+  constructor(private service: OptionsToolService, public store: OptionStore) {
     this.subscribeToDbChanges();
     this.addSubheaderColumns();
+  }
+
+
+/**
+ * Initiates image sharing process, updating UI accordingly.
+ */
+  public async sharePicture() {
+    this.disabled = true;
+    this.status = 'Preparing image....';
+    await _wait(200);
+
+    try {
+      await this.store.shareAsImage();
+      this.disabled = false;
+      this.status = '';
+    } catch (error: any) {
+      this.status = error?.message || 'Unable to share';
+      this.disabled = false;
+    }
   }
 
   /** Initialise service and subscribe to data changes */
