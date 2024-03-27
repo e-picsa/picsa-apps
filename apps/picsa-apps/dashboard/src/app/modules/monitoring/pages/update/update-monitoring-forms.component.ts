@@ -35,6 +35,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 export class UpdateMonitoringFormsComponent implements OnInit {
   public form: IMonitoringFormsRow;
   public updateFeedbackMessage = '';
+  public uploading = false;
   public allowedFileTypes = ['xlsx', 'xls'].map((ext) => `.${ext}`);
   constructor(private service: MonitoringFormsDashboardService, private route: ActivatedRoute) {}
   async ngOnInit() {
@@ -56,15 +57,12 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     if (res.length === 0) {
       return;
     }
+    this.uploading = true
     const [{ entry }] = res;
     const [{ data }] = res;
-    console.log(entry)
-    const formData = new FormData();
-    formData.append('files', data, data instanceof File ? data.name : 'blob_storage_file');
-    this.service.submitFormToConvertXlsToXForm(formData).subscribe({
+    this.service.submitFormToConvertXlsToXForm(data).subscribe({
       next: (response) => {
-        console.log('POST request successful!', response);
-        const xFormResponse = response['xml_file'];
+        const xFormResponse = response['result'];
         const blob = new Blob([xFormResponse], { type: 'text/xml' });
 
         const xmlFile = new File([blob], 'form.xml', { type: 'text/xml' });
@@ -91,21 +89,25 @@ export class UpdateMonitoringFormsComponent implements OnInit {
               .then((data) => {
                 this.form = data;
                 this.updateFeedbackMessage = 'Form updated successfully!';
+                this.uploading = false;
               })
               .catch((error) => {
                 console.error('Failed to update form in database:', error);
                 this.updateFeedbackMessage = 'Failed to update form. Please try again.';
+                this.uploading = false;
               });
           },
           error: (error) => {
             console.error('Error occurred while converting to enketo:', error);
             this.updateFeedbackMessage = 'Failed to convert form to Enketo. Please try again.';
+            this.uploading = false;
           },
         });
       },
       error: (error) => {
         console.error('Error occurred while converting to xform:', error);
         this.updateFeedbackMessage = 'Failed to convert form to XForm. Please try again.';
+        this.uploading = false;
       },
     });
   }
