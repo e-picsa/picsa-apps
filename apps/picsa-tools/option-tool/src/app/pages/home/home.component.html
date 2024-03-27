@@ -1,18 +1,11 @@
 <div class="page-content" [class.HideOverflow]="matStepperOpen">
   <div style="overflow: auto; flex: 1">
-    <div >
-      <button
-      class="button-margin"
-      mobileHeader
-      mat-button
-      color="primary"
-      aria-label="Share"
-      (click)="sharePicture()"
-    >
-      <mat-icon>share</mat-icon>{{'Share' | translate }}
-    </button>
-     </div>
-    <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8"  id="options">
+    <div>
+      <button class="button-margin" mobileHeader mat-button color="primary" aria-label="Share" (click)="sharePicture()">
+        <mat-icon>share</mat-icon>{{ 'Share' | translate }}
+      </button>
+    </div>
+    <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8" id="options">
       <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
