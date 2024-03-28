@@ -28,9 +28,8 @@ export class HomeComponent implements OnDestroy {
   private editorIndex = 0;
   private componentDestroyed$ = new Subject();
 
-  public status = '';
-  public disabled = false;
-  public shareCode: string;
+  public status = 'share';
+  public shareDisabled = false;
 
   @ViewChild(EditorComponent) editorComponent: EditorComponent;
 
@@ -44,17 +43,17 @@ export class HomeComponent implements OnDestroy {
  * Initiates image sharing process, updating UI accordingly.
  */
   public async sharePicture() {
-    this.disabled = true;
+    this.shareDisabled = true;
     this.status = 'Preparing image....';
     await _wait(200);
 
     try {
       await this.store.shareAsImage();
-      this.disabled = false;
-      this.status = '';
+      this.shareDisabled = false;
+      this.status = 'share';
     } catch (error: any) {
       this.status = error?.message || 'Unable to share';
-      this.disabled = false;
+      this.shareDisabled = false;
     }
   }
 

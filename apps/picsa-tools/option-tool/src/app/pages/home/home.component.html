@@ -8,8 +8,9 @@
       color="primary"
       aria-label="Share"
       (click)="sharePicture()"
+      [disabled]="shareDisabled"
     >
-      <mat-icon>share</mat-icon>{{'Share' | translate }}
+      <mat-icon>share</mat-icon>{{status | translate }}
     </button>
      </div>
     <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8"  id="options">
