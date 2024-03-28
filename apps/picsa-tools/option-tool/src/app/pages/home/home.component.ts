@@ -1,13 +1,13 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
+import { OptionStore } from '../../components/store/option.store';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
-import { _wait } from '@picsa/utils';
-import { OptionStore } from '../../components/store/option.store';
 @Component({
   selector: 'option-home',
   templateUrl: './home.component.html',
@@ -38,10 +38,9 @@ export class HomeComponent implements OnDestroy {
     this.addSubheaderColumns();
   }
 
-
-/**
- * Initiates image sharing process, updating UI accordingly.
- */
+  /**
+   * Initiates image sharing process, updating UI accordingly.
+   */
   public async sharePicture() {
     this.shareDisabled = true;
     this.status = 'Preparing image....';
