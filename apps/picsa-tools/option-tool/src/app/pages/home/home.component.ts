@@ -1,4 +1,7 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { DomPortal } from '@angular/cdk/portal';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -6,13 +9,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
-
 @Component({
   selector: 'option-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnDestroy {
+export class HomeComponent implements AfterViewInit, OnDestroy {
   public optionsDisplayList: IOptionsToolEntry[] = [];
 
   /** List of columns to display in table. Note, order will match template keys */
@@ -27,11 +29,40 @@ export class HomeComponent implements OnDestroy {
   private editorIndex = 0;
   private componentDestroyed$ = new Subject();
 
-  @ViewChild(EditorComponent) editorComponent: EditorComponent;
+  public status = 'share';
+  public shareDisabled = false;
 
-  constructor(private service: OptionsToolService) {
+  @ViewChild(EditorComponent) editorComponent: EditorComponent;
+  @ViewChild('headerContent')
+  headerContent: ElementRef<HTMLElement>;
+
+  constructor(private service: OptionsToolService, private componentService: PicsaCommonComponentsService) {
     this.subscribeToDbChanges();
     this.addSubheaderColumns();
+  }
+
+  ngAfterViewInit() {
+    this.componentService.patchHeader({
+      endContent: new DomPortal(this.headerContent),
+    });
+  }
+
+  /**
+   * Initiates image sharing process, updating UI accordingly.
+   */
+  public async sharePicture() {
+    this.shareDisabled = true;
+    this.status = 'Preparing image....';
+    await _wait(200);
+
+    try {
+      await this.service.shareAsImage();
+      this.shareDisabled = false;
+      this.status = 'share';
+    } catch (error: any) {
+      this.status = error?.message || 'Unable to share';
+      this.shareDisabled = false;
+    }
   }
 
   /** Initialise service and subscribe to data changes */

@@ -144,3 +144,16 @@ th.split-values {
   justify-content: center;
   gap: 10px;
 }
+
+// Print Layout
+#options.print-mode {
+  background: white;
+  padding: 1em;
+  border: 1px solid #e2e2e2;
+  z-index: 2;
+  min-height: 600px;
+  min-width: 900x;
+  table {
+    box-shadow: unset;
+  }
+}
