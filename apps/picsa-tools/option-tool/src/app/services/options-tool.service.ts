@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { PrintProvider } from '@picsa/shared/services/native';
 import { RxCollection, RxDocument } from 'rxdb';
 
 import { COLLECTION, IOptionsToolEntry } from '../schemas';
 
 @Injectable({ providedIn: 'root' })
 export class OptionsToolService {
-  constructor(private dbService: PicsaDatabase_V2_Service) {}
+  constructor(private dbService: PicsaDatabase_V2_Service, private printPrvdr: PrintProvider) {}
 
   /** Provide database options tool collection (with typings) */
   public get dbCollection() {
@@ -38,5 +39,9 @@ export class OptionsToolService {
 
   public async deleteOption(option: RxDocument<IOptionsToolEntry>) {
     await option.remove();
+  }
+
+  public async shareAsImage() {
+    return this.printPrvdr.shareHtmlDom('#options', 'Options', 'PICSA - Options');
   }
 }
