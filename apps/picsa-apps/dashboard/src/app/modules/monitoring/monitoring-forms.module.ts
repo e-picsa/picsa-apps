@@ -25,7 +25,7 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
         component: FormSubmissionsComponent,
       },
       {
-        path: ':id/update',
+        path: ':id/edit',
         component: UpdateMonitoringFormsComponent,
       },
     ]),
