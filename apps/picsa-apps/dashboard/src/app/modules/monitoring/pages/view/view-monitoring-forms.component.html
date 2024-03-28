@@ -2,7 +2,10 @@
   <div style="display: flex; align-items: center">
     <h2 style="flex: 1">Monitoring Form View</h2>
     @if(form){
-    <button mat-raised-button color="primary" routerLink="submissions">View Submissions</button>
+    <div class="action-button-section">
+      <button mat-raised-button color="primary" routerLink="edit">Edit Form</button>
+      <button mat-raised-button color="primary" routerLink="submissions">View Submissions</button>
+    </div>
     }
   </div>
   @if(form){

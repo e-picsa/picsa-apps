@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { FormSubmissionsComponent } from './pages/form-submissions/form-submissions.component';
 import { MonitoringPageComponent } from './pages/home/monitoring.page';
+import { UpdateMonitoringFormsComponent } from './pages/update/update-monitoring-forms.component';
 import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms.component';
 
 @NgModule({
@@ -22,6 +23,10 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
       {
         path: ':id/submissions',
         component: FormSubmissionsComponent,
+      },
+      {
+        path: ':id/edit',
+        component: UpdateMonitoringFormsComponent,
       },
     ]),
   ],

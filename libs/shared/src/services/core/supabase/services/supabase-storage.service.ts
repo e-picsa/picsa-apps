@@ -95,6 +95,10 @@ export class SupabaseStorageService {
     return data?.[0] || null;
   }
 
+  public async deleteFile(bucketId: string, filePath: string) {
+    return this.storage.from(bucketId).remove([filePath]);
+  }
+
   /** Return the link to a file in a public bucket */
   public getPublicLink(bucketId: string, objectPath: string) {
     return this.storage.from(bucketId).getPublicUrl(objectPath).data.publicUrl;
