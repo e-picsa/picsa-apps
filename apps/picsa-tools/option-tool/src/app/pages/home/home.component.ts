@@ -1,11 +1,12 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { DomPortal } from '@angular/cdk/portal';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 // import { Observable } from 'rxjs';
 import { EditorComponent } from '../../components/editor/editor.component';
-import { OptionStore } from '../../components/store/option.store';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
 import { OptionsToolService } from '../../services/options-tool.service';
 @Component({
@@ -13,7 +14,7 @@ import { OptionsToolService } from '../../services/options-tool.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnDestroy {
+export class HomeComponent implements AfterViewInit, OnDestroy {
   public optionsDisplayList: IOptionsToolEntry[] = [];
 
   /** List of columns to display in table. Note, order will match template keys */
@@ -32,10 +33,18 @@ export class HomeComponent implements OnDestroy {
   public shareDisabled = false;
 
   @ViewChild(EditorComponent) editorComponent: EditorComponent;
+  @ViewChild('headerContent')
+  headerContent: ElementRef<HTMLElement>;
 
-  constructor(private service: OptionsToolService, public store: OptionStore) {
+  constructor(private service: OptionsToolService, private componentService: PicsaCommonComponentsService) {
     this.subscribeToDbChanges();
     this.addSubheaderColumns();
+  }
+
+  ngAfterViewInit() {
+    this.componentService.patchHeader({
+      endContent: new DomPortal(this.headerContent),
+    });
   }
 
   /**
@@ -47,7 +56,7 @@ export class HomeComponent implements OnDestroy {
     await _wait(200);
 
     try {
-      await this.store.shareAsImage();
+      await this.service.shareAsImage();
       this.shareDisabled = false;
       this.status = 'share';
     } catch (error: any) {
