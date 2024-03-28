@@ -9,7 +9,13 @@ import { svgAsPngUri } from 'save-svg-as-png';
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
   constructor(private socialSharing: SocialSharing) {}
-
+  
+/**
+   * Convert HTML content to an image and share
+   * @param domSelector html selector of content to share, queried using document.querySelector
+   * @param filename name of file to output, `.png` will be added to the end of the name provided
+   * @param title optional title to be added to the top of the generated image
+   */
   public async shareHtmlDom(
     domSelector: string,
     filename: string,

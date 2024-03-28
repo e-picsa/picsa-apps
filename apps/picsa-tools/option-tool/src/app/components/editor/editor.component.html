@@ -172,7 +172,7 @@
           style="margin-bottom: 16px; margin-top: -16px"
           (click)="values.risk.push('')"
           mat-button
-          [disabled]="values.risk.length > 0 && !values.risk[values.benefits.length - 1]"
+          [disabled]="values.risk.length > 0 && !values.risk[values.risk.length - 1]"
         >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
         </button>
