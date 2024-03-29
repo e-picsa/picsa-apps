@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { Database } from '@picsa/server-types';
 import { FileObject, FileOptions } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { firstValueFrom, Subject } from 'rxjs';
 
+import { PicsaAsyncService } from '../../../asyncService.service';
 import { PicsaNotificationService } from '../../notification.service';
 
 type IStorageDB = Database['storage']['Tables']['objects']['Row'];
@@ -29,20 +31,29 @@ export interface IStorageEntrySDK extends FileObject {}
  * Utility class for interacting with supabase storage client
  **/
 @Injectable({ providedIn: 'root' })
-export class SupabaseStorageService {
-  private supabaseClient: SupabaseClient;
+export class SupabaseStorageService extends PicsaAsyncService {
+  private storage: SupabaseClient['storage'];
+  private client: SupabaseClient;
 
-  constructor(private notificationService: PicsaNotificationService) {}
+  /** Track parent service registration */
+  private register$ = new Subject<SupabaseClient>();
 
-  private get storage() {
-    if (!this.supabaseClient) {
-      throw new Error('Supabase client not registered in storage');
+  constructor(private notificationService: PicsaNotificationService) {
+    super();
+  }
+
+  public override async init(): Promise<void> {
+    // wait for service to have supabase client registered (done in app module)
+    if (!this.storage) {
+      await firstValueFrom(this.register$);
     }
-    return this.supabaseClient.storage;
   }
 
   public registerSupabaseClient(client: SupabaseClient) {
-    this.supabaseClient = client;
+    this.storage = client.storage;
+    this.client = client;
+    this.register$.next(client);
+    this.register$.complete();
   }
 
   /**
@@ -53,7 +64,7 @@ export class SupabaseStorageService {
    * */
   public async list(bucketId: string, folderPath?: string) {
     // NOTE - access via storage table instead of storage api as does not support recursive list
-    let query = this.supabaseClient.from(`storage_objects`).select<'*', IStorageEntry>('*').eq('bucket_id', bucketId);
+    let query = this.client.from(`storage_objects`).select<'*', IStorageEntry>('*').eq('bucket_id', bucketId);
 
     if (folderPath) {
       query = query.like('name', `${folderPath}/%`);

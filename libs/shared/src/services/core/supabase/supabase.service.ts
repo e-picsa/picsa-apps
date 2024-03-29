@@ -25,12 +25,14 @@ export class SupabaseService extends PicsaAsyncService {
     const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
     this.supabase = createClient(apiUrl, anonKey, {});
 
+    this.db = { table: (relation: string) => this.supabase.from(relation) };
+
     // register supabase instance with child services
     this.storage.registerSupabaseClient(this.supabase);
     this.auth.registerSupabaseClient(this.supabase);
 
-    this.db = { table: (relation: string) => this.supabase.from(relation) };
-
-    await this.auth.ready();
+    // trigger child service initialisers optimistically
+    this.auth.ready();
+    this.storage.ready();
   }
 }
