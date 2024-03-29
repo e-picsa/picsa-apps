@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/crop-probability-tool/src",
   "prefix": "picsa",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser-esbuild",
@@ -69,13 +70,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/crop-probability-tool/**/*.ts",
-          "apps/picsa-tools/crop-probability-tool/**/*.html"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -84,6 +79,5 @@
         "jestConfig": "apps/picsa-tools/crop-probability-tool/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

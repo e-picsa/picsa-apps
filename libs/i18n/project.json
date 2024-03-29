@@ -3,13 +3,11 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/i18n/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/i18n/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "build": {
       "executor": "nx:run-commands",
@@ -33,6 +31,5 @@
         "jestConfig": "libs/i18n/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

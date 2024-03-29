@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/option-tool/src",
   "prefix": "picsa",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser-esbuild",
@@ -18,7 +19,11 @@
         "assets": [
           "apps/picsa-tools/option-tool/src/favicon.ico",
           "apps/picsa-tools/option-tool/src/assets",
-          { "glob": "*.svg", "input": "libs/data/weather/svgs", "output": "assets/svgs/weather" },
+          {
+            "glob": "*.svg",
+            "input": "libs/data/weather/svgs",
+            "output": "assets/svgs/weather"
+          },
           {
             "glob": "*.json",
             "input": "libs/i18n/assets",
@@ -75,10 +80,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/picsa-tools/option-tool/**/*.ts", "apps/picsa-tools/option-tool/**/*.html"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -87,6 +89,5 @@
         "jestConfig": "apps/picsa-tools/option-tool/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

@@ -3,12 +3,12 @@
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "sourceRoot": "libs/webcomponents/src",
   "projectType": "library",
+  "tags": [],
   "generators": {
     "@nxext/stencil:component": {
       "style": "css"
     }
   },
-  "tags": [],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
@@ -74,10 +74,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/webcomponents/**/*.tsx"]
-      }
+      "outputs": ["{options.outputFile}"]
     }
   }
 }

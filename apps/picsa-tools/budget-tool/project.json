@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/budget-tool/src",
   "prefix": "budget",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser-esbuild",
@@ -81,10 +82,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["apps/picsa-tools/budget-tool/**/*.ts", "apps/picsa-tools/budget-tool/**/*.html"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -93,6 +91,5 @@
         "jestConfig": "apps/picsa-tools/budget-tool/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }
