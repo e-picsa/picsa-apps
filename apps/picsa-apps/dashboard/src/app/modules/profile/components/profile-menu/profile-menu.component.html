@@ -1,0 +1,29 @@
+@if(authService.authUser(); as user){
+<div style="position: absolute; top: 4px; right: 8px; font-size: 12px">
+  {{ user.email }}
+</div>
+<button mat-button [matMenuTriggerFor]="beforeMenu" style="margin-top: 16px">
+  User
+  <mat-icon iconPositionEnd>account_circle</mat-icon>
+</button>
+<mat-menu #beforeMenu="matMenu" xPosition="before">
+  <button mat-menu-item>
+    <mat-icon>person</mat-icon>
+    Profile
+  </button>
+  <button mat-menu-item (click)="authService.signOut()">
+    <mat-icon>logout</mat-icon>
+    Sign Out
+  </button>
+</mat-menu>
+
+<!-- <div style="position: relative">
+ 
+</div> -->
+
+} @else {
+<button mat-button (click)="promptSignIn()" style="margin: 8px 0">
+  <mat-icon>person</mat-icon>
+  Sign In
+</button>
+}
