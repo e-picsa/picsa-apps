@@ -7,4 +7,8 @@
 
 /.nx/cache
 
-libs/webcomponents/src/components/enketo-webform/libs/**/*
+libs/webcomponents/src/components/enketo-webform/libs
+
+.vercel
+apps/_deprecated
+apps/picsa-apps/extension-app-native
