@@ -6,3 +6,5 @@
 .angular
 
 /.nx/cache
+
+libs/webcomponents/src/components/enketo-webform/libs/**/*

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
-import { DB_SCHEMA, DB_VERSION,IDBDoc, IDBEndpoint } from '@picsa/models';
+import { DB_SCHEMA, DB_VERSION, IDBDoc, IDBEndpoint } from '@picsa/models';
 import Dexie from 'dexie';
 
 import { upgradeDatabases } from './_cache.upgrade.db';
@@ -33,10 +33,7 @@ export class DBCacheService implements AbstractDBService {
   }
 
   // NOTE - if no doc found will return undefined
-  public async getDoc<IDBDoc>(
-    endpoint: IDBEndpoint,
-    key: string
-  ): Promise<IDBDoc | undefined> {
+  public async getDoc<IDBDoc>(endpoint: IDBEndpoint, key: string): Promise<IDBDoc | undefined> {
     try {
       const doc = await db.table<IDBDoc>(endpoint).get(key);
       return doc;

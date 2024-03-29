@@ -1,3 +1,3 @@
-import { generateDBMeta,PicsaDbService } from './db.service';
+import { generateDBMeta, PicsaDbService } from './db.service';
 
-export { generateDBMeta,PicsaDbService };
+export { generateDBMeta, PicsaDbService };

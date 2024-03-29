@@ -1,29 +1,27 @@
-.form-content{
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
 }
-.submitButton{
-    width: 7rem;
-    margin-bottom: 1rem;
+.submitButton {
+  width: 7rem;
+  margin-bottom: 1rem;
 }
-.deleteButton{
-    width: 15rem;
+.deleteButton {
+  width: 15rem;
 }
-.form-data{
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-
+.form-data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 input {
-    padding: 8px;
-    color: var(--color-primary);
-    outline-color: var(--color-primary);
-    max-width: 300px;
-    display: block;
-    font-size: 0.9rem;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-   
-  }
+  padding: 8px;
+  color: var(--color-primary);
+  outline-color: var(--color-primary);
+  max-width: 300px;
+  display: block;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

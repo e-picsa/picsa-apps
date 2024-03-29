@@ -1,31 +1,31 @@
-.form-content{
-    border: 0.6px solid #eeeeee;
+.form-content {
+  border: 0.6px solid #eeeeee;
+  display: flex;
+  flex-direction: column;
+  .form-data {
     display: flex;
-    flex-direction: column;
-    .form-data{
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-evenly;
-        flex-wrap: wrap;
-        padding: 12px 0;
-        border:0.6px solid #eeeeee ;
-        label{
-            font-weight: 500;
-        }
-        input{
-            border: 1px solid rgb(119, 127, 122);
-            height:30px;
-            border-radius: 6px;
-            width: 180px;
-            padding: 0 12px;
-        }
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    padding: 12px 0;
+    border: 0.6px solid #eeeeee;
+    label {
+      font-weight: 500;
     }
-    button{
-        margin: 20px 0;
-        display: flex;
-        align-self: center;
-        border: 0px;
-        width: 180px;
+    input {
+      border: 1px solid rgb(119, 127, 122);
+      height: 30px;
+      border-radius: 6px;
+      width: 180px;
+      padding: 0 12px;
     }
+  }
+  button {
+    margin: 20px 0;
+    display: flex;
+    align-self: center;
+    border: 0px;
+    width: 180px;
+  }
 }
