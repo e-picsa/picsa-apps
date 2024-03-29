@@ -1,4 +1,4 @@
-<button mat-button [matMenuTriggerFor]="menu" [style.visibility]="deployments.length > 0 ? 'visible' : 'hidden'">
+<button mat-button [matMenuTriggerFor]="menu" [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'">
   @if(service.activeDeployment(); as deployment){
   <ng-container *ngTemplateOutlet="deploymentSummary; context: { $implicit: deployment }"></ng-container>
   } @else {
@@ -8,7 +8,7 @@
 </button>
 
 <mat-menu #menu="matMenu">
-  @for(deployment of deployments; track deployment.id){
+  @for(deployment of userDeployments(); track deployment.id){
   <button mat-menu-item class="menu-button" (click)="service.setActiveDeployment(deployment.id)">
     <ng-container *ngTemplateOutlet="deploymentSummary; context: { $implicit: deployment }"></ng-container>
   </button>

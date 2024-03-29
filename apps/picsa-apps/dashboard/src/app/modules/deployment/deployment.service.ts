@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 import { IDeploymentRow } from './types';
 
@@ -14,12 +14,13 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     return this.supabaseService.db.table('deployments');
   }
 
-  constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {
+  constructor(private supabaseService: SupabaseService, private authService: SupabaseAuthService) {
     super();
   }
 
   public override async init() {
     await this.supabaseService.ready();
+    await this.authService.ready();
     await this.listDeployments();
     this.loadStoredDeployment();
   }

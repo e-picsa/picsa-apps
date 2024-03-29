@@ -6,6 +6,7 @@ import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { DASHBOARD_NAV_LINKS, INavLink } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { DeploymentSelectComponent } from './modules/deployment/components';
+import { DeploymentDashboardService } from './modules/deployment/deployment.service';
 import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
 
 @Component({
@@ -31,10 +32,11 @@ export class AppComponent implements AfterViewInit {
     // },
   ];
 
-  constructor(public supabaseService: SupabaseService) {}
+  constructor(public supabaseService: SupabaseService, private deploymentService: DeploymentDashboardService) {}
 
   async ngAfterViewInit() {
-    // eagerly initialise supabase service to ensure available
+    // eagerly initialise supabase and deployment services to ensure available
     await this.supabaseService.ready();
+    await this.deploymentService.ready();
   }
 }

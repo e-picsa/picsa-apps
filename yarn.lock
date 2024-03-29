@@ -15075,6 +15075,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jwt-decode@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jwt-decode@npm:4.0.0"
+  checksum: 390e2edcb31a92e86c8cbdd1edeea4c0d62acd371f8a8f0a8878e499390c0ecf4c658b365c4e941e4ef37d0170e4ca650aaa49f99a45c0b9695a235b210154b0
+  languageName: node
+  linkType: hard
+
 "karma-source-map-support@npm:1.4.0":
   version: 1.4.0
   resolution: "karma-source-map-support@npm:1.4.0"
@@ -17621,6 +17628,7 @@ __metadata:
     jest-preset-angular: 13.1.4
     jetifier: ^2.0.0
     jsonc-eslint-parser: ^2.4.0
+    jwt-decode: ^4.0.0
     leaflet: ^1.9.4
     lint-staged: ^13.2.1
     lottie-web: ^5.10.2
