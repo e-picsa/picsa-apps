@@ -18,11 +18,11 @@ interface ISummaryEntry {
 export class BudgetSummaryComponent implements OnInit {
   @Input() budgetData: IBudget['data'];
 
-  totalFamilyLabourHours: number = 0;
-  totalInputsValue: number = 0;
-  totalOutputsValue: number = 0;
+  totalFamilyLabourHours = 0;
+  totalInputsValue = 0;
+  totalOutputsValue = 0;
   totalProduceSummary: ISummaryEntry[] = [];
-  finalCashBalance: number = 0;
+  finalCashBalance = 0;
 
   ngOnInit(): void {
     this.calculateSummary();

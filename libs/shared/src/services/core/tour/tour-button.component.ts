@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -35,11 +35,9 @@ import { TourService } from './tour.service';
     `,
   ],
 })
-export class PicsaTourButton implements OnInit {
+export class PicsaTourButton {
   @Input() tourId: string;
   constructor(private service: TourService) {}
-
-  ngOnInit() {}
 
   public startTour() {
     if (!this.tourId) {

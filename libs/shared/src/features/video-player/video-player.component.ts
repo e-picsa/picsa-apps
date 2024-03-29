@@ -64,7 +64,7 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Track any created object urls to dispose on destroy */
   private objectUrl: string;
 
-  private pauseTime: number = 0;
+  private pauseTime = 0;
 
   constructor(private elementRef: ElementRef<HTMLDivElement>, private analyticsService: AnalyticsService) {}
 

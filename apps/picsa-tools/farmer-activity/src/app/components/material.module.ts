@@ -8,6 +8,4 @@ const COMPONENTS = [MatIconModule, MatTabsModule];
   imports: COMPONENTS,
   exports: COMPONENTS,
 })
-export class FarmerActivityMaterialModule {
-  constructor() {}
-}
+export class FarmerActivityMaterialModule {}
