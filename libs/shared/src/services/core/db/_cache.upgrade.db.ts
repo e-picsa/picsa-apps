@@ -1,6 +1,6 @@
 // important, every version in use needs to be exposed and upgrade provided
 import { ENVIRONMENT } from '@picsa/environments';
-import { DB_VERSION, DEFAULT_STORE_SCHEMA,keyReplace } from '@picsa/models';
+import { DB_VERSION, DEFAULT_STORE_SCHEMA, keyReplace } from '@picsa/models';
 import Dexie from 'dexie';
 
 // import existing open DB to ensure working with db of same name

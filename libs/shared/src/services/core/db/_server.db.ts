@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { IDBDoc,IDBEndpoint } from '@picsa/models';
+import type { IDBDoc, IDBEndpoint } from '@picsa/models';
 import {
   collection,
   doc,
@@ -61,11 +61,7 @@ export class DBServerService implements AbstractDBService {
 
   // NOTE - this will not delete subcollection docs
   // TODO - support subcollection deletion
-  public async deleteDocs(
-    endpoint: IDBEndpoint,
-    keys: string[],
-    subcollection?: string
-  ) {
+  public async deleteDocs(endpoint: IDBEndpoint, keys: string[], subcollection?: string) {
     const batch = writeBatch(this.firestore);
     for (const key of keys) {
       const ref = doc(this.firestore, endpoint, key);

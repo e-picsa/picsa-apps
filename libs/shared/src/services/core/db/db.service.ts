@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
-import { IDBDoc,IDBEndpoint } from '@picsa/models';
+import { IDBDoc, IDBEndpoint } from '@picsa/models';
 
 import { DBCacheService } from './_cache.db';
 import { DBServerService } from './_server.db';
@@ -19,26 +19,14 @@ type IDBSource = 'cache' | 'server';
  ***********************************************************************/
 @Injectable({ providedIn: 'root' })
 export class PicsaDbService implements AbstractDBService {
-  constructor(
-    private cache: DBCacheService,
-    private server: DBServerService,
-    private sync: DBSyncService
-  ) {}
-  getCollection<IDBDoc>(
-    endpoint: IDBEndpoint,
-    src: IDBSource = 'cache',
-    newerThan = ''
-  ) {
+  constructor(private cache: DBCacheService, private server: DBServerService, private sync: DBSyncService) {}
+  getCollection<IDBDoc>(endpoint: IDBEndpoint, src: IDBSource = 'cache', newerThan = '') {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
       ? this.cache.getCollection<IDBDoc>(endpoint)
       : this.server.getCollection<IDBDoc>(endpoint, newerThan);
   }
-  getDoc<T = IDBDoc>(
-    endpoint: IDBEndpoint,
-    key: string,
-    src: IDBSource = 'cache'
-  ) {
+  getDoc<T = IDBDoc>(endpoint: IDBEndpoint, key: string, src: IDBSource = 'cache') {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
       ? (this.cache.getDoc<T>(endpoint, key) as Promise<T>)
@@ -46,12 +34,7 @@ export class PicsaDbService implements AbstractDBService {
   }
   // when setting any doc update meta and return full doc after complete
   // optional sync makes a copy of the document online
-  async setDoc<T>(
-    endpoint: IDBEndpoint,
-    doc: T,
-    sync = false,
-    keepModified = false
-  ) {
+  async setDoc<T>(endpoint: IDBEndpoint, doc: T, sync = false, keepModified = false) {
     endpoint = this._mapEndpoint(endpoint);
     const dbDoc = { ...doc, ...generateDBMeta(doc, keepModified) };
     await this.cache.setDoc(endpoint, dbDoc);
@@ -63,12 +46,7 @@ export class PicsaDbService implements AbstractDBService {
   }
 
   // allow batch set functionality
-  async setDocs<T>(
-    endpoint: IDBEndpoint,
-    docs: T[],
-    sync = false,
-    keepModified = false
-  ): Promise<(T & IDBDoc)[]> {
+  async setDocs<T>(endpoint: IDBEndpoint, docs: T[], sync = false, keepModified = false): Promise<(T & IDBDoc)[]> {
     endpoint = this._mapEndpoint(endpoint);
     const dbDocs = docs.map((doc) => {
       const meta = generateDBMeta(doc, keepModified);
@@ -162,10 +140,7 @@ export const generateDBMeta = (
 
 // taken from firestore generation methods
 // https://github.com/firebase/firebase-js-sdk/blob/73a586c92afe3f39a844b2be86086fddb6877bb7/packages/firestore/src/util/misc.ts#L36
-export function generateID(
-  length = 20,
-  chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-) {
+export function generateID(length = 20, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
   let autoId = '';
   for (let i = 0; i < length; i++) {
     autoId += chars.charAt(Math.floor(Math.random() * chars.length));

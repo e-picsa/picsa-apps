@@ -13,9 +13,7 @@ export async function dbImport() {
   const dbUrl = supabaseDBUrl();
   const __dirname = dirname(fromFileUrl(import.meta.url));
 
-  const targets = [
-    { filename: 'schema.sql', arg: '' },
-  ];
+  const targets = [{ filename: 'schema.sql', arg: '' }];
   for (const { filename, arg } of targets) {
     const schemaInput = resolve(__dirname, filename);
     const args = ['db', 'dump', '--db-url', dbUrl, '-f', schemaOutput, arg];

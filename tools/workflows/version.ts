@@ -3,10 +3,7 @@ import prompts from 'prompts';
 import { resolve } from 'path';
 import { PATHS } from './paths';
 const MAIN_PACKAGE_PATH = resolve(PATHS.rootDir, 'package.json');
-const APP_BUILD_GRADLE_PATH = resolve(
-  PATHS.extensionAppNative,
-  'android/app/build.gradle'
-);
+const APP_BUILD_GRADLE_PATH = resolve(PATHS.extensionAppNative, 'android/app/build.gradle');
 
 /***************************************************************************************
  * Main Methods
@@ -29,14 +26,8 @@ function updateGradleBuild(newVersionName: string) {
     encoding: 'utf-8',
   });
   const newVersionCode = _generateVersionCode(newVersionName);
-  gradleBuildFile = gradleBuildFile.replace(
-    /versionCode [0-9]+/g,
-    `versionCode ${newVersionCode}`
-  );
-  gradleBuildFile = gradleBuildFile.replace(
-    /versionName "[0-9]+\.[0-9]+\.[0-9]+"/g,
-    `versionName "${newVersionName}"`
-  );
+  gradleBuildFile = gradleBuildFile.replace(/versionCode [0-9]+/g, `versionCode ${newVersionCode}`);
+  gradleBuildFile = gradleBuildFile.replace(/versionName "[0-9]+\.[0-9]+\.[0-9]+"/g, `versionName "${newVersionName}"`);
   fs.writeFileSync(APP_BUILD_GRADLE_PATH, gradleBuildFile, {
     encoding: 'utf-8',
   });
@@ -53,10 +44,7 @@ async function updatePackageJson(newVersion: string) {
  * alongside the date the update was published (used when setting db hardcoded data)
  */
 async function updateLibEnvVersion() {
-  const versionFilePath = resolve(
-    PATHS.rootDir,
-    'libs/environments/src/version.ts'
-  );
+  const versionFilePath = resolve(PATHS.rootDir, 'libs/environments/src/version.ts');
   const versionFileTxt = fs.readFileSync(versionFilePath, {
     encoding: 'utf-8',
   });

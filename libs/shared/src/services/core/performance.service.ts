@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FirebasePerformance } from '@capacitor-firebase/performance';
-import {
-  FirebasePerformance as IFirebasePerformance,
-  getPerformance,
-} from '@firebase/performance';
+import { FirebasePerformance as IFirebasePerformance, getPerformance } from '@firebase/performance';
 
 import { PicsaFirebaseService } from './firebase.service';
 

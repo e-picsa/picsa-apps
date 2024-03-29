@@ -3,71 +3,70 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
-  "/v1/status/": {
+  '/v1/status/': {
     /**
      * Get Status
      * @description Check server up
      */
-    get: operations["get_status_v1_status__get"];
+    get: operations['get_status_v1_status__get'];
   };
-  "/v1/annual_rainfall_summaries/": {
+  '/v1/annual_rainfall_summaries/': {
     /** Get Annual Rainfall Summaries */
-    post: operations["get_annual_rainfall_summaries_v1_annual_rainfall_summaries__post"];
+    post: operations['get_annual_rainfall_summaries_v1_annual_rainfall_summaries__post'];
   };
-  "/v1/annual_temperature_summaries/": {
+  '/v1/annual_temperature_summaries/': {
     /** Get Annual Temperature Summaries */
-    post: operations["get_annual_temperature_summaries_v1_annual_temperature_summaries__post"];
+    post: operations['get_annual_temperature_summaries_v1_annual_temperature_summaries__post'];
   };
-  "/v1/crop_success_probabilities/": {
+  '/v1/crop_success_probabilities/': {
     /** Get Crop Success Probabilities */
-    post: operations["get_crop_success_probabilities_v1_crop_success_probabilities__post"];
+    post: operations['get_crop_success_probabilities_v1_crop_success_probabilities__post'];
   };
-  "/v1/monthly_temperature_summaries/": {
+  '/v1/monthly_temperature_summaries/': {
     /** Get Monthly Temperature Summaries */
-    post: operations["get_monthly_temperature_summaries_v1_monthly_temperature_summaries__post"];
+    post: operations['get_monthly_temperature_summaries_v1_monthly_temperature_summaries__post'];
   };
-  "/v1/season_start_probabilities/": {
+  '/v1/season_start_probabilities/': {
     /** Get Season Start Probabilities */
-    post: operations["get_season_start_probabilities_v1_season_start_probabilities__post"];
+    post: operations['get_season_start_probabilities_v1_season_start_probabilities__post'];
   };
-  "/v1/extremes_summaries/": {
+  '/v1/extremes_summaries/': {
     /** Get Extremes Summaries */
-    post: operations["get_extremes_summaries_v1_extremes_summaries__post"];
+    post: operations['get_extremes_summaries_v1_extremes_summaries__post'];
   };
-  "/v1/station/": {
+  '/v1/station/': {
     /** Read Stations */
-    get: operations["read_stations_v1_station__get"];
+    get: operations['read_stations_v1_station__get'];
   };
-  "/v1/station/{country}": {
+  '/v1/station/{country}': {
     /** Read Stations */
-    get: operations["read_stations_v1_station__country__get"];
+    get: operations['read_stations_v1_station__country__get'];
   };
-  "/v1/station/{country}/{station_id}": {
+  '/v1/station/{country}/{station_id}': {
     /** Read Stations */
-    get: operations["read_stations_v1_station__country___station_id__get"];
+    get: operations['read_stations_v1_station__country___station_id__get'];
   };
-  "/v1/forecasts/": {
+  '/v1/forecasts/': {
     /**
      * List Endpoints
      * @description List available forecast endpoints
      */
-    get: operations["list_endpoints_v1_forecasts__get"];
+    get: operations['list_endpoints_v1_forecasts__get'];
   };
-  "/v1/forecasts/{country_code}": {
+  '/v1/forecasts/{country_code}': {
     /**
      * List Forecasts
      * @description Get available forecasts for country
      */
-    get: operations["list_forecasts_v1_forecasts__country_code__get"];
+    get: operations['list_forecasts_v1_forecasts__country_code__get'];
   };
-  "/v1/forecasts/{country_code}/{file_name}": {
+  '/v1/forecasts/{country_code}/{file_name}': {
     /**
      * Get Forecast
      * @description Get forecast file
      */
-    get: operations["get_forecast_v1_forecasts__country_code___file_name__get"];
+    get: operations['get_forecast_v1_forecasts__country_code___file_name__get'];
   };
 }
 
@@ -82,7 +81,7 @@ export interface components {
        * @default zm
        * @enum {string}
        */
-      country?: "zm" | "mw";
+      country?: 'zm' | 'mw';
       /**
        * Station Id
        * @default 01122
@@ -99,7 +98,7 @@ export interface components {
        *   "seasonal_length"
        * ]
        */
-      summaries?: ("annual_rain" | "start_rains" | "end_rains" | "end_season" | "seasonal_rain" | "seasonal_length")[];
+      summaries?: ('annual_rain' | 'start_rains' | 'end_rains' | 'end_season' | 'seasonal_rain' | 'seasonal_length')[];
     };
     /** AnnualTemperatureSummariesParameters */
     AnnualTemperatureSummariesParameters: {
@@ -108,7 +107,7 @@ export interface components {
        * @default zm
        * @enum {string}
        */
-      country?: "zm" | "mw";
+      country?: 'zm' | 'mw';
       /**
        * Station Id
        * @default 16
@@ -121,7 +120,7 @@ export interface components {
        *   "mean_tmax"
        * ]
        */
-      summaries?: ("mean_tmin" | "mean_tmax")[];
+      summaries?: ('mean_tmin' | 'mean_tmax')[];
     };
     /** CropSuccessProbabilitiesParameters */
     CropSuccessProbabilitiesParameters: {
@@ -130,7 +129,7 @@ export interface components {
        * @default zm
        * @enum {string}
        */
-      country?: "zm" | "mw";
+      country?: 'zm' | 'mw';
       /**
        * Station Id
        * @default 16
@@ -152,7 +151,7 @@ export interface components {
        * @default zm
        * @enum {string}
        */
-      country?: "zm" | "mw";
+      country?: 'zm' | 'mw';
       /**
        * Station Id
        * @default test_1
@@ -166,7 +165,7 @@ export interface components {
        *   "extremes_tmax"
        * ]
        */
-      summaries?: ("extremes_rain" | "extremes_tmin" | "extremes_tmax")[];
+      summaries?: ('extremes_rain' | 'extremes_tmin' | 'extremes_tmax')[];
     };
     /** Forecast */
     Forecast: {
@@ -185,17 +184,17 @@ export interface components {
        * Language Code
        * @enum {string}
        */
-      language_code?: "en" | "ny";
+      language_code?: 'en' | 'ny';
       /**
        * Type
        * @enum {string}
        */
-      type?: "downscale_forecast" | "annual_forecast";
+      type?: 'downscale_forecast' | 'annual_forecast';
     };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
-      detail?: components["schemas"]["ValidationError"][];
+      detail?: components['schemas']['ValidationError'][];
     };
     /** MonthlyTemperatureSummariesParameters */
     MonthlyTemperatureSummariesParameters: {
@@ -204,7 +203,7 @@ export interface components {
        * @default zm
        * @enum {string}
        */
-      country?: "zm" | "mw";
+      country?: 'zm' | 'mw';
       /**
        * Station Id
        * @default 16
@@ -217,7 +216,7 @@ export interface components {
        *   "mean_tmax"
        * ]
        */
-      summaries?: ("mean_tmin" | "mean_tmax")[];
+      summaries?: ('mean_tmin' | 'mean_tmax')[];
     };
     /** SeasonStartProbabilitiesParameters */
     SeasonStartProbabilitiesParameters: {
@@ -226,7 +225,7 @@ export interface components {
        * @default zm
        * @enum {string}
        */
-      country?: "zm" | "mw";
+      country?: 'zm' | 'mw';
       /**
        * Station Id
        * @default 16
@@ -241,7 +240,7 @@ export interface components {
        * Country Code
        * @enum {string}
        */
-      country_code: "zm" | "mw";
+      country_code: 'zm' | 'mw';
       /** District */
       district: string;
       /** Elevation */
@@ -277,7 +276,6 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
-
   /**
    * Get Status
    * @description Check server up
@@ -287,7 +285,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
     };
@@ -296,20 +294,20 @@ export interface operations {
   get_annual_rainfall_summaries_v1_annual_rainfall_summaries__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AnnualRainfallSummariesParameters"];
+        'application/json': components['schemas']['AnnualRainfallSummariesParameters'];
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -318,20 +316,20 @@ export interface operations {
   get_annual_temperature_summaries_v1_annual_temperature_summaries__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AnnualTemperatureSummariesParameters"];
+        'application/json': components['schemas']['AnnualTemperatureSummariesParameters'];
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -340,20 +338,20 @@ export interface operations {
   get_crop_success_probabilities_v1_crop_success_probabilities__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CropSuccessProbabilitiesParameters"];
+        'application/json': components['schemas']['CropSuccessProbabilitiesParameters'];
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -362,20 +360,20 @@ export interface operations {
   get_monthly_temperature_summaries_v1_monthly_temperature_summaries__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["MonthlyTemperatureSummariesParameters"];
+        'application/json': components['schemas']['MonthlyTemperatureSummariesParameters'];
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -384,20 +382,20 @@ export interface operations {
   get_season_start_probabilities_v1_season_start_probabilities__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SeasonStartProbabilitiesParameters"];
+        'application/json': components['schemas']['SeasonStartProbabilitiesParameters'];
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -406,20 +404,20 @@ export interface operations {
   get_extremes_summaries_v1_extremes_summaries__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ExtremesSummariesParameters"];
+        'application/json': components['schemas']['ExtremesSummariesParameters'];
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -430,7 +428,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Station"][];
+          'application/json': components['schemas']['Station'][];
         };
       };
     };
@@ -439,20 +437,20 @@ export interface operations {
   read_stations_v1_station__country__get: {
     parameters: {
       path: {
-        country: "zm" | "mw";
+        country: 'zm' | 'mw';
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -461,7 +459,7 @@ export interface operations {
   read_stations_v1_station__country___station_id__get: {
     parameters: {
       path: {
-        country: "zm" | "mw";
+        country: 'zm' | 'mw';
         station_id: string;
       };
     };
@@ -469,13 +467,13 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -489,7 +487,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": string[];
+          'application/json': string[];
         };
       };
     };
@@ -501,20 +499,20 @@ export interface operations {
   list_forecasts_v1_forecasts__country_code__get: {
     parameters: {
       path: {
-        country_code: "zm" | "mw";
+        country_code: 'zm' | 'mw';
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Forecast"][];
+          'application/json': components['schemas']['Forecast'][];
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };
@@ -526,7 +524,7 @@ export interface operations {
   get_forecast_v1_forecasts__country_code___file_name__get: {
     parameters: {
       path: {
-        country_code: "zm" | "mw";
+        country_code: 'zm' | 'mw';
         file_name: string;
       };
     };
@@ -534,13 +532,13 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          'application/json': unknown;
         };
       };
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };

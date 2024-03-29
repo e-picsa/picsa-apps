@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/climate-tool/src",
   "prefix": "picsa",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser-esbuild",
@@ -81,10 +82,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["apps/picsa-tools/climate-tool/**/*.ts", "apps/picsa-tools/climate-tool/**/*.html"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -93,6 +91,5 @@
         "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

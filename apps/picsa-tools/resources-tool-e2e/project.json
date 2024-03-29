@@ -3,6 +3,8 @@
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "sourceRoot": "apps/picsa-tools/resources-tool-e2e/src",
   "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["picsa-tools-resources-tool"],
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
@@ -18,12 +20,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/picsa-tools/resources-tool-e2e/**/*.{js,ts}"]
-      }
+      "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["picsa-tools-resources-tool"]
+  }
 }

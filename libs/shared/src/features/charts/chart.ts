@@ -1,22 +1,10 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  SimpleChanges,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, Input, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IChartConfig } from '@picsa/models';
 import * as c3 from 'c3';
 
 @Component({
   selector: 'picsa-chart',
-  template: `<div
-    data-cy="chart-container"
-    #chart
-    class="chart-container"
-  ></div>`,
+  template: `<div data-cy="chart-container" #chart class="chart-container"></div>`,
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
   encapsulation: ViewEncapsulation.None,

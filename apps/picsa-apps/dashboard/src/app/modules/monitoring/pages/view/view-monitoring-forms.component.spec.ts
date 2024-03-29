@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ViewMonitoringFormsComponent } from './view-monitoring-forms.component'
+
+import { ViewMonitoringFormsComponent } from './view-monitoring-forms.component';
 
 describe('ViewMonitoringFormsComponent', () => {
   let component: ViewMonitoringFormsComponent;

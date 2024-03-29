@@ -45,14 +45,8 @@ export interface IAppMeta {
   value: string;
 }
 
-export function keyReplace(
-  obj: { [key: string]: string },
-  searchVal: string,
-  replaceVal: string
-) {
+export function keyReplace(obj: { [key: string]: string }, searchVal: string, replaceVal: string) {
   const rep = {};
-  Object.keys(obj).forEach(
-    (k) => (rep[k.replace(searchVal, replaceVal)] = obj[k])
-  );
+  Object.keys(obj).forEach((k) => (rep[k.replace(searchVal, replaceVal)] = obj[k]));
   return rep;
 }
