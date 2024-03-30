@@ -16,7 +16,7 @@ export class PicsaDialogComponent {
 @Component({
   selector: 'picsa-action-dialog',
   templateUrl: './action-dialog.html',
-  styleUrls: ['./dialog.scss']
+  styleUrls: ['./dialog.scss'],
 })
 export class PicsaActionDialog extends PicsaDialogComponent {}
 
@@ -24,7 +24,7 @@ export class PicsaActionDialog extends PicsaDialogComponent {}
 @Component({
   selector: 'picsa-image-select-dialog',
   templateUrl: './image-select.html',
-  styleUrls: ['./dialog.scss']
+  styleUrls: ['./dialog.scss'],
 })
 export class PicsaSelectDialog extends PicsaDialogComponent {
   select(option: IPicsaDialogSelectOption) {

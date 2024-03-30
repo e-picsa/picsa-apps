@@ -25,7 +25,7 @@ export interface IStorageEntry extends IStorageDB {
 }
 
 /** Data populated when storage object retrieved via SDK (as opposed to storage table direct) */
-export interface IStorageEntrySDK extends FileObject {}
+export type IStorageEntrySDK = FileObject;
 
 /**
  * Utility class for interacting with supabase storage client

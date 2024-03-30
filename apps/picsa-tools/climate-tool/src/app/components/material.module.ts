@@ -34,6 +34,4 @@ const modules = [
   imports: modules,
   exports: modules,
 })
-export class PicsaClimateMaterialModule {
-  constructor() {}
-}
+export class PicsaClimateMaterialModule {}

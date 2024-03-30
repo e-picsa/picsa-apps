@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/resources-tool/src",
   "prefix": "picsa",
+  "tags": [],
   "targets": {
     "deploy": {
       "executor": "./tools/executors/execa:commandSync",
@@ -106,10 +107,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["apps/picsa-tools/resources-tool/**/*.ts", "apps/picsa-tools/resources-tool/**/*.html"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -118,6 +116,5 @@
         "jestConfig": "apps/picsa-tools/resources-tool/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

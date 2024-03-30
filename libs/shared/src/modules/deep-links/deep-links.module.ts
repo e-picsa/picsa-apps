@@ -16,9 +16,7 @@ export class PicsaDeepLinksModule {
     deepLinksService.init();
   }
   // https://angular.io/guide/singleton-services#providing-a-singleton-service
-  static forRoot(
-    config: DeepLinksServiceConfig
-  ): ModuleWithProviders<PicsaDeepLinksModule> {
+  static forRoot(config: DeepLinksServiceConfig): ModuleWithProviders<PicsaDeepLinksModule> {
     return {
       ngModule: PicsaDeepLinksModule,
       providers: [{ provide: DeepLinksServiceConfig, useValue: config }],

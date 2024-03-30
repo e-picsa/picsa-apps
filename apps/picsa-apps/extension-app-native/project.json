@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-apps/extension-app-native",
   "prefix": "picsa",
+  "tags": [],
   "implicitDependencies": ["picsa-apps-extension-app"],
   "targets": {
     "build": {
@@ -26,7 +27,6 @@
         "parallel": false
       }
     },
-
     "resources": {
       "executor": "nx:run-commands",
       "description": "Populate splash and icon from resources files. NOTE - may have to run manually from directory",
@@ -60,6 +60,5 @@
         "cwd": "apps/picsa-apps/extension-app-native"
       }
     }
-  },
-  "tags": []
+  }
 }

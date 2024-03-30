@@ -8,10 +8,7 @@ import { commandSync } from 'execa';
  * https://github.com/nrwl/nx/issues/8269
  *
  */
-export default async function buildExecutor(options: {
-  commands: string[];
-  cwd?: string;
-}) {
+export default async function buildExecutor(options: { commands: string[]; cwd?: string }) {
   options.commands.forEach((command) => {
     console.info(command);
     commandSync(command, {
