@@ -1,5 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { Database } from '@picsa/server-types';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
@@ -9,9 +11,9 @@ import { PicsaAsyncService } from '../../../asyncService.service';
 import { PicsaNotificationService } from '../../notification.service';
 
 type IDeploymentAuthRoles = {
-  [deployment_id: string]: IAuthRoles;
+  [deployment_id: string]: IAuthRole[];
 };
-export type IAuthRoles = { [feature: string]: 'viewer' | 'author' | 'admin' };
+export type IAuthRole = Database['public']['Enums']['app_role'];
 
 export type IAuthUser = User & { picsa_roles: IDeploymentAuthRoles };
 

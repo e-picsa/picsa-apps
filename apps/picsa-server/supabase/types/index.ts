@@ -1,6 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export interface Database {
+export type Database = {
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -63,12 +63,14 @@ export interface Database {
           {
             foreignKeyName: 'climate_forecasts_storage_file_fkey';
             columns: ['storage_file'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'climate_forecasts_storage_file_fkey';
             columns: ['storage_file'];
+            isOneToOne: false;
             referencedRelation: 'storage_objects';
             referencedColumns: ['id'];
           }
@@ -97,6 +99,7 @@ export interface Database {
           {
             foreignKeyName: 'climate_products_station_id_fkey';
             columns: ['station_id'];
+            isOneToOne: false;
             referencedRelation: 'climate_stations';
             referencedColumns: ['station_id'];
           }
@@ -137,12 +140,14 @@ export interface Database {
           {
             foreignKeyName: 'climate_station_crop_data_crop_id_fkey';
             columns: ['crop_id'];
+            isOneToOne: false;
             referencedRelation: 'crop_data';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'climate_station_crop_data_station_id_fkey';
             columns: ['station_id'];
+            isOneToOne: false;
             referencedRelation: 'climate_stations';
             referencedColumns: ['station_id'];
           }
@@ -249,6 +254,7 @@ export interface Database {
           {
             foreignKeyName: 'deployments_icon_path_fkey';
             columns: ['icon_path'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['path'];
           }
@@ -334,12 +340,14 @@ export interface Database {
           {
             foreignKeyName: 'monitoring_forms_cover_image_fkey';
             columns: ['cover_image'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['path'];
           },
           {
             foreignKeyName: 'monitoring_forms_form_xlsx_fkey';
             columns: ['form_xlsx'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['path'];
           }
@@ -416,24 +424,28 @@ export interface Database {
           {
             foreignKeyName: 'resources_storage_cover_fkey';
             columns: ['storage_cover'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'resources_storage_cover_fkey';
             columns: ['storage_cover'];
+            isOneToOne: false;
             referencedRelation: 'storage_objects';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'resources_storage_file_fkey';
             columns: ['storage_file'];
+            isOneToOne: false;
             referencedRelation: 'objects';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'resources_storage_file_fkey';
             columns: ['storage_file'];
+            isOneToOne: false;
             referencedRelation: 'storage_objects';
             referencedColumns: ['id'];
           }
@@ -474,6 +486,45 @@ export interface Database {
           zm_ny?: string | null;
         };
         Relationships: [];
+      };
+      user_roles: {
+        Row: {
+          created_at: string;
+          deployment_id: string;
+          id: number;
+          roles: Database['public']['Enums']['app_role'][];
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          deployment_id: string;
+          id?: number;
+          roles?: Database['public']['Enums']['app_role'][];
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          deployment_id?: string;
+          id?: number;
+          roles?: Database['public']['Enums']['app_role'][];
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'public_user_roles_deployment_id_fkey';
+            columns: ['deployment_id'];
+            isOneToOne: false;
+            referencedRelation: 'deployments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_user_roles_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
       };
     };
     Views: {
@@ -521,6 +572,7 @@ export interface Database {
           {
             foreignKeyName: 'objects_bucketId_fkey';
             columns: ['bucket_id'];
+            isOneToOne: false;
             referencedRelation: 'buckets';
             referencedColumns: ['id'];
           }
@@ -528,10 +580,15 @@ export interface Database {
       };
     };
     Functions: {
-      [_ in never]: never;
+      custom_access_token_hook: {
+        Args: {
+          event: Json;
+        };
+        Returns: Json;
+      };
     };
     Enums: {
-      [_ in never]: never;
+      app_role: 'resources.viewer' | 'resources.author' | 'resources.admin';
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -646,6 +703,7 @@ export interface Database {
           {
             foreignKeyName: 'objects_bucketId_fkey';
             columns: ['bucket_id'];
+            isOneToOne: false;
             referencedRelation: 'buckets';
             referencedColumns: ['id'];
           }
@@ -718,4 +776,76 @@ export interface Database {
       [_ in never]: never;
     };
   };
-}
+};
+
+type PublicSchema = Database[Extract<keyof Database, 'public'>];
+
+export type Tables<
+  PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] & PublicSchema['Views']) | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+        Database[PublicTableNameOrOptions['schema']]['Views'])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+      Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] & PublicSchema['Views'])
+  ? (PublicSchema['Tables'] & PublicSchema['Views'])[PublicTableNameOrOptions] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : never;
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends keyof PublicSchema['Tables'] | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+  ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : never;
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends keyof PublicSchema['Tables'] | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+  ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : never;
+
+export type Enums<
+  PublicEnumNameOrOptions extends keyof PublicSchema['Enums'] | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
+  ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+  : never;

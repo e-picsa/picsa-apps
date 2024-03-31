@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import { IAuthRole, SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 import { IDeploymentRow } from './types';
 
@@ -9,6 +9,7 @@ import { IDeploymentRow } from './types';
 export class DeploymentDashboardService extends PicsaAsyncService {
   public readonly deployments = signal<IDeploymentRow[]>([]);
   public readonly activeDeployment = signal<IDeploymentRow | null>(null);
+  public readonly authRoles = signal<IAuthRole[]>([]);
 
   public get table() {
     return this.supabaseService.db.table('deployments');
@@ -31,8 +32,25 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     // provide server update
     // TODO - subscribe to realtime updates
     const { data } = await this.table.select<'*', IDeploymentRow>('*').eq('id', id).limit(1).single();
+    this.setAuthRoles(id);
     this.activeDeployment.set(data);
     this.storeDeployment(data?.id);
+  }
+
+  private setAuthRoles(deploymentId: string) {
+    const authRoles = this.authService.authUser()?.picsa_roles[deploymentId] || [];
+    const implicitRoles: IAuthRole[] = [];
+    for (const role of authRoles) {
+      const [feature, level] = role.split('.');
+      // assign implicit auth roles (anything lower than current level)
+      if (level === 'admin') {
+        implicitRoles.push(`${feature}.author` as IAuthRole);
+      }
+      if (level === 'admin' || level === 'author') {
+        implicitRoles.push(`${feature}.viewer` as IAuthRole);
+      }
+    }
+    this.authRoles.set([...authRoles, ...implicitRoles]);
   }
 
   private async listDeployments() {
