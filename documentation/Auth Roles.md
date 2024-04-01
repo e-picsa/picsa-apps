@@ -1,14 +1,18 @@
 ## TODO
 
+- [x] DB types and table to support auth roles
+- [x] DB function to assign user JWT token based on auth roles
+- [x] UI directive to limit access dependent on roles
+- [x] Dashboard pages to view current user role
+- [x] Deployment default role settings
+
 - [ ] Subscribe to user_role updates (for logged in user) and refresh token on change
       https://lasse-skaalum.medium.com/implementing-rbac-with-next-js-and-supabase-5dd20adaaeba
 - [ ] Update seed scripts to include means to assign roles to demo users
-- [ ] Dashboard pages to view current user role
 - [ ] Dashboard pages to update user roles
 - [ ] Super-admin priviledges for setting user roles
 - [ ] Enable hook once deployed to production
 - [ ] Add created_by to all tables to allow users to edit own content
-- [ ] Add UI components/directive to limit access dependent on roles
 - [ ] Migrate to docs repo
 
 # Auth Roles

@@ -35,8 +35,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   private auth: SupabaseAuthClient;
 
-  private supabaseClient: SupabaseClient;
-
   constructor(private notificationService: PicsaNotificationService) {
     super();
   }
@@ -51,7 +49,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   /** As the auth service is a child of the main supabase service provide way to register parent client */
   public registerSupabaseClient(client: SupabaseClient) {
-    this.supabaseClient = client;
     this.auth = client.auth;
     this.register$.next(client);
     this.register$.complete();
