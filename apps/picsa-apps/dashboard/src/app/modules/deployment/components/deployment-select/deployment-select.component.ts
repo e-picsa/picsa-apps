@@ -4,15 +4,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
-import { IAuthUser, SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+import { IAuthUser } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
+import { DashboardAuthService } from '../../../auth/services/auth.service';
 import { DeploymentDashboardService } from '../../deployment.service';
 import { IDeploymentRow } from '../../types';
+import { DeploymentItemComponent } from '../deployment-item/deployment-item.component';
 
 @Component({
   selector: 'dashboard-deployment-select',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, StoragePathPipe],
+  imports: [CommonModule, DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule, StoragePathPipe],
   templateUrl: './deployment-select.component.html',
   styleUrls: ['./deployment-select.component.scss'],
 })
@@ -26,11 +28,11 @@ export class DeploymentSelectComponent implements OnInit {
     }
     return [];
   });
-  constructor(public service: DeploymentDashboardService, private authService: SupabaseAuthService) {}
+  constructor(public service: DeploymentDashboardService, private authService: DashboardAuthService) {}
 
   async ngOnInit() {
     await this.service.ready();
-    this.authService.authUser();
+    await this.authService.ready();
   }
 
   /** Filter list of all deployments to only include those which are public or where user has auth roles */

@@ -1,6 +1,7 @@
 -- -- Custom types
 create type public.app_role as enum ('resources.viewer','resources.author', 'resources.admin');
-
+alter type public.app_role ADD VALUE 'deployments.admin'
+alter type public.app_role ADD VALUE 'translations.viewer'
 -- -- Future roles can also be created via
 -- -- alter type public.app_role ADD VALUE 'custom.value';
 
