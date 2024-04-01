@@ -588,7 +588,12 @@ export type Database = {
       };
     };
     Enums: {
-      app_role: 'resources.viewer' | 'resources.author' | 'resources.admin';
+      app_role:
+        | 'resources.viewer'
+        | 'resources.author'
+        | 'resources.admin'
+        | 'deployments.admin'
+        | 'translations.viewer';
     };
     CompositeTypes: {
       [_ in never]: never;
