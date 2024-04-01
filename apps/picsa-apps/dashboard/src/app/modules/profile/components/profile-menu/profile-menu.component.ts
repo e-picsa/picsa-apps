@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { RouterModule } from '@angular/router';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component';
@@ -11,22 +12,21 @@ import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.
 @Component({
   selector: 'dashboard-profile-menu',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.scss'],
 })
 export class ProfileMenuComponent implements AfterViewInit {
-  constructor(public authService: SupabaseAuthService, private dialog: MatDialog) {}
+  constructor(public supabaseAuthService: SupabaseAuthService, private dialog: MatDialog) {}
 
   async ngAfterViewInit() {
-    await this.authService.ready();
-    await this.authService.signInDefaultUser();
+    await this.supabaseAuthService.ready();
+    await this.supabaseAuthService.signInDefaultUser();
   }
   public signOut() {
     console.log('signing out');
   }
   public promptSignIn() {
-    // TODO - make dialog inline?
     this.dialog.open(SupabaseSignInDialogComponent);
   }
 }

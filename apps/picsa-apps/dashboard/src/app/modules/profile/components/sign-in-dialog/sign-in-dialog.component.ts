@@ -53,7 +53,7 @@ export class SupabaseSignInDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<SupabaseSignInDialogComponent>,
     private notificationService: PicsaNotificationService,
-    private authService: SupabaseAuthService
+    private supabaseAuthService: SupabaseAuthService
   ) {}
 
   public enableRegisterMode() {
@@ -68,7 +68,7 @@ export class SupabaseSignInDialogComponent {
   public async handleSignIn() {
     this.form.disable();
     const { email, password } = this.form.value;
-    const { data, error } = await this.authService.signInUser(email, password);
+    const { data, error } = await this.supabaseAuthService.signInUser(email, password);
     console.log({ data, error });
     if (error) {
       console.error(error);
@@ -81,7 +81,7 @@ export class SupabaseSignInDialogComponent {
   public async handleRegister() {
     this.form.disable();
     const { email, password } = this.form.value;
-    const { error } = await this.authService.signUpUser(email, password);
+    const { error } = await this.supabaseAuthService.signUpUser(email, password);
     if (error) {
       console.error(error);
       this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });

@@ -1,4 +1,4 @@
-@if(authService.authUser(); as user){
+@if(supabaseAuthService.authUser(); as user){
 <div style="position: absolute; top: 4px; right: 8px; font-size: 12px">
   {{ user.email }}
 </div>
@@ -7,19 +7,15 @@
   <mat-icon iconPositionEnd>account_circle</mat-icon>
 </button>
 <mat-menu #beforeMenu="matMenu" xPosition="before">
-  <button mat-menu-item>
+  <button mat-menu-item routerLink="/profile">
     <mat-icon>person</mat-icon>
     Profile
   </button>
-  <button mat-menu-item (click)="authService.signOut()">
+  <button mat-menu-item (click)="supabaseAuthService.signOut()">
     <mat-icon>logout</mat-icon>
     Sign Out
   </button>
 </mat-menu>
-
-<!-- <div style="position: relative">
- 
-</div> -->
 
 } @else {
 <button mat-button (click)="promptSignIn()" style="margin: 8px 0">

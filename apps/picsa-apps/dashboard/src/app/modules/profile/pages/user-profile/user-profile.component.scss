@@ -1,0 +1,37 @@
+.deployments-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1em;
+  max-width: 650px;
+}
+.deployment-card {
+  padding: 4px;
+}
+dashboard-deployment-item {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  &[data-active='true'] {
+    padding: 2px 6px;
+    border: 2px solid var(--color-primary);
+  }
+}
+table.permissions-table {
+  width: 400px;
+  border-collapse: collapse;
+  border: 1px solid var(--color-primary);
+  th {
+    padding: 8px;
+    border-bottom: 1px solid var(--color-primary);
+    text-transform: capitalize;
+  }
+  td {
+    text-align: center;
+    text-transform: capitalize;
+  }
+  td:nth-of-type(1),
+  th:nth-of-type(1) {
+    border-right: 1px solid var(--color-primary);
+  }
+}
