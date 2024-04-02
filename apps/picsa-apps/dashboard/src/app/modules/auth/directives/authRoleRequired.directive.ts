@@ -1,7 +1,7 @@
 import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
-import { DeploymentDashboardService } from '../../deployment/deployment.service';
+import { DashboardAuthService } from '../services/auth.service';
 
 /**
  * Structural directive used to show/hide UI content based on required deployment auth roles
@@ -24,7 +24,7 @@ export class AuthRoleRequiredDirective {
   /** Input signal to track role required for view */
   public roleRequired = input<IAuthRole>();
 
-  constructor(service: DeploymentDashboardService) {
+  constructor(service: DashboardAuthService) {
     // recalcuate user view permissions whenever requiredRole or deploymentRoles change
     effect(() => {
       const requiredRole = this.roleRequired();

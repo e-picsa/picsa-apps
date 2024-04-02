@@ -6,9 +6,10 @@
 - [x] Dashboard pages to view current user role
 - [x] Deployment default role settings
 
+- [ ] Update all existing UI to restrict features as required
+- [ ] Update seed scripts to include means to assign roles to demo users
 - [ ] Subscribe to user_role updates (for logged in user) and refresh token on change
       https://lasse-skaalum.medium.com/implementing-rbac-with-next-js-and-supabase-5dd20adaaeba
-- [ ] Update seed scripts to include means to assign roles to demo users
 - [ ] Dashboard pages to update user roles
 - [ ] Super-admin priviledges for setting user roles
 - [ ] Enable hook once deployed to production

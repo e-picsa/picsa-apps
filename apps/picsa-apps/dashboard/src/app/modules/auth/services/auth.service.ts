@@ -29,6 +29,7 @@ export class DashboardAuthService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseAuthService.ready();
+    await this.deploymentService.ready();
   }
 
   private getAuthRoles(deployment: IDeploymentRow | null, user: IAuthUser | undefined) {
