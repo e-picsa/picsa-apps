@@ -1,0 +1,6 @@
+<div style="display: flex; align-items: center">
+  @if(deployment.icon_path){
+  <img [src]="deployment.icon_path | storagePath" class="deployment-image" />
+  }
+  <span>{{ deployment.label }}</span>
+</div>

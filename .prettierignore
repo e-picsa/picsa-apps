@@ -12,3 +12,5 @@ libs/webcomponents/src/components/enketo-webform/libs
 .vercel
 apps/_deprecated
 apps/picsa-apps/extension-app-native
+# Invalid token versions
+apps/picsa-server/supabase/types/index.ts

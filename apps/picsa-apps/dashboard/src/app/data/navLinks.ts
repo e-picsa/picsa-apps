@@ -1,11 +1,14 @@
+import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+
 export interface INavLink {
   label: string;
   href: string;
   matIcon?: string;
   children?: INavLink[];
+  roleRequired?: IAuthRole;
 }
 
-export const DASHBOARD_NAV_LINKS = [
+export const DASHBOARD_NAV_LINKS: INavLink[] = [
   {
     label: 'Home',
     href: '/home',
@@ -45,5 +48,14 @@ export const DASHBOARD_NAV_LINKS = [
     label: 'Translations',
     href: '/translations',
     matIcon: 'translate',
+  },
+];
+
+export const GLOBAL_NAV_LINKS: INavLink[] = [
+  {
+    label: 'Deployments',
+    href: '/deployment',
+    matIcon: 'apps',
+    roleRequired: 'deployments.admin',
   },
 ];

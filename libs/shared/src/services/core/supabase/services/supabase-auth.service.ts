@@ -1,40 +1,57 @@
 import { Injectable, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ENVIRONMENT } from '@picsa/environments';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { Database } from '@picsa/server-types';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
+import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { firstValueFrom, Subject } from 'rxjs';
 
 import { PicsaAsyncService } from '../../../asyncService.service';
 import { PicsaNotificationService } from '../../notification.service';
-import { SupabaseSignInDialogComponent } from '../dialogs/sign-in.dialog';
 
+type IDeploymentAuthRoles = {
+  [deployment_id: string]: IAuthRole[];
+};
+export type IAuthRole = Database['public']['Enums']['app_role'];
+
+export type IAuthUser = User & { picsa_roles: IDeploymentAuthRoles };
+
+interface ICustomAuthJWTPayload extends JwtPayload {
+  picsa_roles: IDeploymentAuthRoles;
+}
+
+/**
+ * Child service used to manage auth-specific operations from supabase
+ * Requires parent service to initialise with main supabase client
+ */
 @Injectable({ providedIn: 'root' })
 export class SupabaseAuthService extends PicsaAsyncService {
   /** Authenticated user */
-  public authUser = signal<User | undefined>(undefined);
+  public authUser = signal<IAuthUser | undefined>(undefined);
 
-  private supabaseClient: SupabaseClient;
+  /** Track parent supabase client registration */
+  private register$ = new Subject<SupabaseClient>();
 
-  private get auth() {
-    if (!this.supabaseClient) {
-      throw new Error('Supabase client not registered in auth');
-    }
-    return this.supabaseClient.auth;
-  }
+  private auth: SupabaseAuthClient;
 
-  constructor(private dialog: MatDialog, private notificationService: PicsaNotificationService) {
+  constructor(private notificationService: PicsaNotificationService) {
     super();
   }
 
   public override async init(): Promise<void> {
+    // wait for service to have supabase client registered (done when main client initialised)
+    if (!this.auth) {
+      await firstValueFrom(this.register$);
+    }
     this.subscribeToAuthChanges();
   }
 
+  /** As the auth service is a child of the main supabase service provide way to register parent client */
   public registerSupabaseClient(client: SupabaseClient) {
-    this.supabaseClient = client;
-  }
-
-  public async signInPrompt() {
-    this.dialog.open(SupabaseSignInDialogComponent, { data: { service: this } });
+    this.auth = client.auth;
+    this.register$.next(client);
+    this.register$.complete();
   }
 
   public async signInUser(email: string, password: string) {
@@ -106,11 +123,17 @@ export class SupabaseAuthService extends PicsaAsyncService {
   }
 
   private subscribeToAuthChanges() {
-    this.auth.onAuthStateChange((_event, session) => {
-      const user = session?.user;
-      if (user?.id !== this.authUser()?.id) {
-        this.authUser.set(session?.user);
+    // Subscribe to authenticated user changes
+    this.auth.onAuthStateChange(async (_event, session) => {
+      const user = session?.user as IAuthUser;
+      if (session) {
+        // ignore INITIAL_SESSION as also 'SIGNED_IN' event will be triggered
+        if (_event === 'INITIAL_SESSION') return;
+        const { picsa_roles } = jwtDecode(session.access_token) as ICustomAuthJWTPayload;
+        user.picsa_roles = picsa_roles || {};
       }
+      this.authUser.set(user);
     });
+    // TODO - trigger auth token refresh on permissions change
   }
 }

@@ -94,6 +94,7 @@
     "hls.js": "^1.4.12",
     "html2canvas": "^1.4.1",
     "intro.js": "^7.0.1",
+    "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "lottie-web": "^5.10.2",
     "mobx": "^6.7.0",

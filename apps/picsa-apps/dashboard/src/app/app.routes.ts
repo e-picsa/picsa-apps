@@ -35,6 +35,10 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
   },
   {
+    path: 'profile',
+    loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),
+  },
+  {
     path: '**',
     redirectTo: 'home',
     pathMatch: 'full',
