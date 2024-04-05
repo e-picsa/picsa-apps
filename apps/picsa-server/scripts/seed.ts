@@ -1,11 +1,13 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { loadCSV } from '@picsa/utils/data';
+import { _wait } from '@picsa/utils/browser.utils';
 import { readFileSync, readdirSync } from 'fs';
 import { globSync } from 'glob';
 import { lookup } from 'mime-types';
 
 import { resolve } from 'path';
 import { execSync } from 'child_process';
+
 const ROOT_DIR = resolve(__dirname, '../../../');
 const SUPABASE_DIR = resolve(__dirname, '../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
@@ -46,6 +48,7 @@ class SupabaseSeed {
     // log into supabase using service role to allow storage bucket manipulation
     const { SERVICE_ROLE_KEY, API_URL } = this.getCredentials();
     this.client = createClient(API_URL, SERVICE_ROLE_KEY, {});
+    await this.ensureClientReady();
     // import storage objects first as some db rows depend on storage db entry ref
     await this.importStorageObjects();
     await this.importDBRows();
@@ -61,6 +64,24 @@ class SupabaseSeed {
     } catch (error) {
       console.error({ res, error });
       throw 'Could not retrieve supabase credentials';
+    }
+  }
+
+  /**
+   * If calling seed operation immediately after reset the container may not be started
+   * Attempt to access storage bucket list method, retrying in 5s intervals if not available
+   */
+  private async ensureClientReady(retryCount = 0) {
+    const { error } = await this.client.storage.listBuckets();
+    if (error) {
+      console.log('wait error', error.name, error.message);
+      if (retryCount < 3 && error.message.includes('An invalid response was received from the upstream server')) {
+        console.log('Storage api not available, retrying in 5s...');
+        await _wait(5000);
+        return this.ensureClientReady(retryCount + 1);
+      }
+      console.error(error);
+      process.exit(1);
     }
   }
 

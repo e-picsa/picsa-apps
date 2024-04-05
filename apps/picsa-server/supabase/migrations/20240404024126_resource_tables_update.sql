@@ -23,7 +23,7 @@ create table public.resource_files (
     id text not null default gen_random_uuid (),
     created_at timestamp with time zone not null default now(),
     modified_at timestamp with time zone not null default now(),
-    description text not null default ''::text,
+    description text,
     storage_file text null,
     cover_image text null,
     title text null,
@@ -36,17 +36,20 @@ create table public.resource_files (
     );
 
 
-create table public.resource_links (
+create table
+  public.resource_links (
     id text not null default gen_random_uuid (),
     created_at timestamp with time zone not null default now(),
     modified_at timestamp with time zone not null default now(),
-    description text not null default ''::text,
+    description text,
     cover_image text null,
     title text null,
     sort_order real not null default '-1'::real,
+    type text null,
+    url text not null,
     constraint resource_links_pkey primary key (id),
     constraint resource_links_cover_image_fkey foreign key (cover_image) references storage.objects (path) on update cascade on delete set null
-    );
+  ) tablespace pg_default;
 
 -- delete legacy combined resources table
 DROP table public.resources;
