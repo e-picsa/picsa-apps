@@ -131,13 +131,24 @@ function writeOutputJson(entries: ITranslationEntry[]) {
 /** Convert json to csv and output (adapted from https://stackoverflow.com/a/31536517) */
 function writeOutputCSV(entries: ITranslationEntry[]) {
   const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
-  const replacer = (key: string, value: string) => (value === null ? '' : value); // specify how you want to handle null values here
   const header: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
   const csv = [
     header.join(','), // header row first
-    ...entries.map((row) => header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(',')),
+    ...entries.map((row) => header.map((fieldName) => csvOutputValue(row[fieldName])).join(',')),
   ].join('\r\n');
   writeFileSync(target, csv);
+}
+
+/** Convert value for csv output. Stringifies json, converts array to string with custom escape */
+function csvOutputValue(v: any) {
+  const replacer = (key: string, value: string) => (value === null ? '' : value); // specify how you want to handle null values here
+
+  if (Array.isArray(v)) {
+    if (v.length === 0) return null;
+    // HACK - use double quotes to un-escape csv
+    return `"[${v.map((el) => `""${el}""`).join(',')}]"`;
+  }
+  return JSON.stringify(v, replacer);
 }
 
 /**
