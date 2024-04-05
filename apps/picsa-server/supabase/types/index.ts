@@ -395,65 +395,239 @@ export type Database = {
         }
         Relationships: []
       }
-      resources: {
+      resource_collections: {
         Row: {
+          collection_parent: string | null
+          cover_image: string | null
           created_at: string
-          description: string
+          description: string | null
           id: string
           modified_at: string
-          storage_cover: string | null
-          storage_file: string | null
-          title: string | null
-          type: string
+          resource_collections: string[] | null
+          resource_files: string[] | null
+          resource_links: string[] | null
+          sort_order: number
+          title: string
         }
         Insert: {
+          collection_parent?: string | null
+          cover_image?: string | null
           created_at?: string
-          description?: string
+          description?: string | null
           id?: string
           modified_at?: string
-          storage_cover?: string | null
-          storage_file?: string | null
-          title?: string | null
-          type: string
+          resource_collections?: string[] | null
+          resource_files?: string[] | null
+          resource_links?: string[] | null
+          sort_order?: number
+          title: string
         }
         Update: {
+          collection_parent?: string | null
+          cover_image?: string | null
           created_at?: string
-          description?: string
+          description?: string | null
           id?: string
           modified_at?: string
-          storage_cover?: string | null
-          storage_file?: string | null
-          title?: string | null
-          type?: string
+          resource_collections?: string[] | null
+          resource_files?: string[] | null
+          resource_links?: string[] | null
+          sort_order?: number
+          title?: string
         }
         Relationships: [
           {
-            foreignKeyName: "resources_storage_cover_fkey"
-            columns: ["storage_cover"]
+            foreignKeyName: "public_resource_collection_cover_image_fkey"
+            columns: ["cover_image"]
             isOneToOne: false
             referencedRelation: "objects"
-            referencedColumns: ["id"]
+            referencedColumns: ["path"]
           },
+        ]
+      }
+      resource_files: {
+        Row: {
+          cover_image: string | null
+          created_at: string
+          description: string | null
+          external_url: string | null
+          filename: string | null
+          id: string
+          language_code: string | null
+          md5_checksum: string | null
+          mimetype: string | null
+          modified_at: string
+          size_kb: number | null
+          sort_order: number
+          storage_file: string | null
+          title: string | null
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          external_url?: string | null
+          filename?: string | null
+          id?: string
+          language_code?: string | null
+          md5_checksum?: string | null
+          mimetype?: string | null
+          modified_at?: string
+          size_kb?: number | null
+          sort_order?: number
+          storage_file?: string | null
+          title?: string | null
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          external_url?: string | null
+          filename?: string | null
+          id?: string
+          language_code?: string | null
+          md5_checksum?: string | null
+          mimetype?: string | null
+          modified_at?: string
+          size_kb?: number | null
+          sort_order?: number
+          storage_file?: string | null
+          title?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "resources_storage_cover_fkey"
-            columns: ["storage_cover"]
+            foreignKeyName: "resource_files_cover_image_fkey"
+            columns: ["cover_image"]
             isOneToOne: false
-            referencedRelation: "storage_objects"
-            referencedColumns: ["id"]
+            referencedRelation: "objects"
+            referencedColumns: ["path"]
           },
           {
-            foreignKeyName: "resources_storage_file_fkey"
+            foreignKeyName: "resource_files_storage_file_fkey"
             columns: ["storage_file"]
             isOneToOne: false
             referencedRelation: "objects"
+            referencedColumns: ["path"]
+          },
+        ]
+      }
+      resource_files_child: {
+        Row: {
+          cover_image: string | null
+          created_at: string
+          description: string | null
+          external_url: string | null
+          filename: string | null
+          id: string
+          language_code: string | null
+          md5_checksum: string | null
+          mimetype: string | null
+          modified_at: string
+          resource_file_id: string | null
+          size_kb: number | null
+          sort_order: number
+          storage_file: string | null
+          title: string | null
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          external_url?: string | null
+          filename?: string | null
+          id?: string
+          language_code?: string | null
+          md5_checksum?: string | null
+          mimetype?: string | null
+          modified_at?: string
+          resource_file_id?: string | null
+          size_kb?: number | null
+          sort_order?: number
+          storage_file?: string | null
+          title?: string | null
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          external_url?: string | null
+          filename?: string | null
+          id?: string
+          language_code?: string | null
+          md5_checksum?: string | null
+          mimetype?: string | null
+          modified_at?: string
+          resource_file_id?: string | null
+          size_kb?: number | null
+          sort_order?: number
+          storage_file?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_resource_files_child_resource_file_id_fkey"
+            columns: ["resource_file_id"]
+            isOneToOne: false
+            referencedRelation: "resource_files"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "resources_storage_file_fkey"
+            foreignKeyName: "resource_files_child_cover_image_fkey"
+            columns: ["cover_image"]
+            isOneToOne: false
+            referencedRelation: "objects"
+            referencedColumns: ["path"]
+          },
+          {
+            foreignKeyName: "resource_files_child_storage_file_fkey"
             columns: ["storage_file"]
             isOneToOne: false
-            referencedRelation: "storage_objects"
-            referencedColumns: ["id"]
+            referencedRelation: "objects"
+            referencedColumns: ["path"]
+          },
+        ]
+      }
+      resource_links: {
+        Row: {
+          cover_image: string | null
+          created_at: string
+          description: string | null
+          id: string
+          modified_at: string
+          sort_order: number
+          title: string | null
+          type: string | null
+          url: string
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          modified_at?: string
+          sort_order?: number
+          title?: string | null
+          type?: string | null
+          url: string
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          modified_at?: string
+          sort_order?: number
+          title?: string | null
+          type?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_links_cover_image_fkey"
+            columns: ["cover_image"]
+            isOneToOne: false
+            referencedRelation: "objects"
+            referencedColumns: ["path"]
           },
         ]
       }
