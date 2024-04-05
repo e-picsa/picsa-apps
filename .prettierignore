@@ -14,3 +14,5 @@ apps/_deprecated
 apps/picsa-apps/extension-app-native
 # Invalid token versions
 apps/picsa-server/supabase/types/index.ts
+# Generated file
+apps/picsa-apps/dashboard/src/app/modules/climate/types/api.d.ts
