@@ -19,22 +19,50 @@ create table
 
 
 
-create table public.resource_files (
+create table
+  public.resource_files (
     id text not null default gen_random_uuid (),
     created_at timestamp with time zone not null default now(),
     modified_at timestamp with time zone not null default now(),
-    description text,
+    description text null,
     storage_file text null,
+    external_url text null,
     cover_image text null,
     title text null,
-    resource_parent text,
-    language_code text,
+    language_code text null,
     sort_order real not null default '-1'::real,
+    filename text null,
+    size_kb integer null,
+    mimetype text null,
+    md5_checksum text null,
     constraint resource_files_pkey primary key (id),
     constraint resource_files_cover_image_fkey foreign key (cover_image) references storage.objects (path) on update cascade on delete set null,
     constraint resource_files_storage_file_fkey foreign key (storage_file) references storage.objects (path) on update cascade on delete set null
-    );
+  ) tablespace pg_default;
 
+create table
+  public.resource_files_child (
+    id text not null default gen_random_uuid (),
+    resource_file_id text null,
+    created_at timestamp with time zone not null default now(),
+    modified_at timestamp with time zone not null default now(),
+    description text null,
+    storage_file text null,
+    external_url text null,
+    cover_image text null,
+    title text null,
+    language_code text null,
+    sort_order real not null default '-1'::real,
+    filename text null,
+    size_kb integer null,
+    mimetype text null,
+    md5_checksum text null,
+    constraint resource_files_child_pkey primary key (id),
+    constraint resource_files_child_cover_image_fkey foreign key (cover_image) references storage.objects (path) on update cascade on delete set null,
+    constraint resource_files_child_storage_file_fkey foreign key (storage_file) references storage.objects (path) on update cascade on delete set null,
+    constraint public_resource_files_child_resource_file_id_fkey foreign key (resource_file_id) references resource_files (id) on delete cascade
+  ) tablespace pg_default;
+COMMENT ON TABLE public.resource_files_child IS 'Resource file child variants, such as alternate language or';
 
 create table
   public.resource_links (
