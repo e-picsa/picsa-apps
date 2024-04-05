@@ -53,7 +53,7 @@
     "reset": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn nx run picsa-server:supabase db reset",
+        "command": "yarn nx run picsa-server:supabase db reset && yarn nx run picsa-server:seed",
         "cwd": "apps/picsa-server"
       }
     },
