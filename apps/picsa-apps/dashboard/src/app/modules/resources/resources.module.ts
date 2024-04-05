@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { ResourceCollectionsComponent } from './pages/collections/resource-collections.component';
 import { ResourceCreateComponent } from './pages/create/resource-create.component';
-import { ResourcesPageComponent } from './pages/home/resources.page';
+import { ResourceFilesComponent } from './pages/files/resource-files.component';
+import { ResourceLinksComponent } from './pages/links/resource-links.component';
 
 @NgModule({
   declarations: [],
@@ -12,14 +14,28 @@ import { ResourcesPageComponent } from './pages/home/resources.page';
     RouterModule.forChild([
       {
         path: '',
-        component: ResourcesPageComponent,
+        redirectTo: 'files',
+        pathMatch: 'full',
       },
       {
-        path: 'create',
+        path: 'files',
+        component: ResourceFilesComponent,
+      },
+      {
+        path: 'collections',
+        component: ResourceCollectionsComponent,
+      },
+      {
+        path: 'links',
+        component: ResourceLinksComponent,
+      },
+
+      {
+        path: 'files/create',
         component: ResourceCreateComponent,
       },
       {
-        path: ':id',
+        path: 'files/:id',
         component: ResourceCreateComponent,
       },
     ]),

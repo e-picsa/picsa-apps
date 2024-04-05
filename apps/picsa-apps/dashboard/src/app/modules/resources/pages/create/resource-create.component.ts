@@ -13,7 +13,7 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
 import { ResourcesDashboardService } from '../../resources.service';
-import { IResourceRow } from '../../types';
+import { IResourceFileRow } from '../../types';
 
 @Component({
   selector: 'dashboard-resource-create',
@@ -64,7 +64,7 @@ export class ResourceCreateComponent implements OnInit {
     await this.service.ready();
     const { id } = this.route.snapshot.params;
     if (id) {
-      const { data } = await this.service.table.select<'*', IResourceRow>('*').eq('id', id);
+      const { data } = await this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
       const resource = data?.[0];
       if (resource) {
         this.populateResource(resource);
@@ -79,23 +79,23 @@ export class ResourceCreateComponent implements OnInit {
     if (values.id === null) {
       delete values.id;
     }
-    const { data, error } = await this.service.table.upsert(values);
+    const { data, error } = await this.service.tables.files.upsert(values);
     console.log({ data, error });
   }
 
-  private populateResource(resource: IResourceRow) {
-    this.resourceType = resource.type as any;
-    console.log('populate resource', resource);
-    switch (resource.type) {
-      case 'file':
-        this.fileForm.patchValue(resource);
-        break;
-      case 'link':
-        this.linkForm.patchValue(resource);
-        break;
-      default:
-        console.warn('Resource type not supported', resource.type);
-    }
+  private populateResource(resource: any) {
+    // this.resourceType = resource.type as any;
+    // console.log('populate resource', resource);
+    // switch (resource.type) {
+    //   case 'file':
+    //     this.fileForm.patchValue(resource);
+    //     break;
+    //   case 'link':
+    //     this.linkForm.patchValue(resource);
+    //     break;
+    //   default:
+    //     console.warn('Resource type not supported', resource.type);
+    // }
   }
 
   public async handleUploadComplete(res: IUploadResult[], controlName: 'storage_file' | 'storage_cover') {

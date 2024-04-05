@@ -23,8 +23,4 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row class="resource-row" [routerLink]="row.id" *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-
-  <h2>Super Admin</h2>
-  <button mat-stroked-button color="primary" (click)="service.migrateHardcodedResources()">Import</button>
-  <button mat-stroked-button color="primary">Export</button>
 </div>
