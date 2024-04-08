@@ -9,11 +9,11 @@ import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceLinkRow } from '../../types';
 
 const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
-  'cover_image',
   'type',
+  'cover_image',
   'title',
   'description',
-  'sort_order',
+  // 'sort_order',
   'url',
   'modified_at',
 ];

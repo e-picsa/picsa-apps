@@ -26,7 +26,8 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   public links = signal<IResourceLinkRow[]>([]);
   private files_child = signal<IResourceFileChildRow[]>([]);
 
-  private collectionsById = computed(() => arrayToHashmap(this.collections(), 'id'));
+  // Hashmap variants for lookup
+  public collectionsById = computed(() => arrayToHashmap(this.collections(), 'id'));
   private filesById = computed(() => arrayToHashmap(this.files(), 'id'));
   private linksById = computed(() => arrayToHashmap(this.links(), 'id'));
   private filesChildByParentId = computed(() => arrayToHashmapArray(this.files_child(), 'resource_file_id'));
@@ -88,7 +89,6 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       publicUrl: this.storageService.getPublicLink(file.bucket_id as string, file.name as string),
     }));
     this.storageFilesHashmap = arrayToHashmap(this.storageFiles, 'id');
-    console.log('storage files', this.storageFilesHashmap);
   }
 
   private async listResources() {

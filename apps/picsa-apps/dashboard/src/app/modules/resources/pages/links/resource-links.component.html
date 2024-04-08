@@ -22,14 +22,23 @@
     [data]="links"
     [options]="tableOptions"
     [valueTemplates]="{
+      type: typeTemplate,
       modified_at: modifiedAtTemplate,
       cover_image: coverImageTemplate,
       url: urlTemplate
     }"
   >
-    <!-- modified date -->
-    <ng-template #modifiedAtTemplate let-date>
-      {{ date | date: 'mediumDate' }}
+    <!-- type -->
+    <ng-template #typeTemplate let-type>
+      @switch (type) { @case ('social') {
+      <mat-icon>groups</mat-icon>
+      } @case ('web') {
+      <mat-icon>language</mat-icon>
+      } @case ('app') {
+      <mat-icon>phone_android</mat-icon>
+      } @default {
+      <div style="text-transform: capitalize">{{ type }}</div>
+      } }
     </ng-template>
     <!-- cover image -->
     <ng-template #coverImageTemplate let-coverImage>
@@ -42,6 +51,10 @@
           <mat-icon>open_in_new</mat-icon>
         </button>
       </a>
+    </ng-template>
+    <!-- modified date -->
+    <ng-template #modifiedAtTemplate let-date>
+      {{ date | date: 'mediumDate' }}
     </ng-template>
   </picsa-data-table>
 </div>

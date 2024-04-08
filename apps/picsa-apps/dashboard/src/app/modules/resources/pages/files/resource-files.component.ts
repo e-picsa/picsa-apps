@@ -25,6 +25,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   'collections',
   'external_url',
   'modified_at',
+  // sort_order
 ];
 
 @Component({

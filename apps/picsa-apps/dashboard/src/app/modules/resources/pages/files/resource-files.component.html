@@ -56,7 +56,7 @@
       <div style="display: flex; gap: 4px">
         @for(collection of collections; track collection.id;){
         <div class="collection-cover-container" [matTooltip]="collection.title">
-          <img class="collection-cover" [src]="collection.cover_image | storagePath" />
+          <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
         </div>
         }
       </div>

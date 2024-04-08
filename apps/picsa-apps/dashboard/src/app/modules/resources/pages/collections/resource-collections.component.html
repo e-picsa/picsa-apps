@@ -24,33 +24,24 @@
     [valueTemplates]="{
       modified_at: modifiedAtTemplate,
       cover_image: coverImageTemplate,
-      resource_collections: resourceCollectionsTemplate,
-      resource_files: resourceFilesTemplate,
-      resource_links: resourceLinksTemplate
+      collection_parent: collectionParentTemplate
     }"
   >
     <!-- cover image -->
     <ng-template #coverImageTemplate let-coverImage>
       <img class="cover-image" [src]="coverImage | storagePath" />
     </ng-template>
-    <!-- resource collections -->
-    <ng-template #resourceCollectionsTemplate let-collections>
-      @for(collection of collections; track collection){
-      <div>{{ collection }}</div>
+    <!-- parent collection -->
+    <ng-template #collectionParentTemplate let-collection>
+      @if(collection){
+      <img
+        class="cover-image color-on-hover"
+        [src]="collection.cover_image | storagePath"
+        [matTooltip]="collection.title"
+      />
       }
     </ng-template>
-    <!-- resource files -->
-    <ng-template #resourceFilesTemplate let-files>
-      @for(file of files; track file){
-      <div>{{ file }}</div>
-      }
-    </ng-template>
-    <!-- resource links -->
-    <ng-template #resourceLinksTemplate let-links>
-      @for(link of links; track link){
-      <div>{{ link }}</div>
-      }
-    </ng-template>
+
     <!-- modified date -->
     <ng-template #modifiedAtTemplate let-date>
       {{ date | date: 'mediumDate' }}

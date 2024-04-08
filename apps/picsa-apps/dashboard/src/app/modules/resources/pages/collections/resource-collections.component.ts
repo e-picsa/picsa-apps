@@ -8,15 +8,19 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow } from '../../types';
 
-const DISPLAY_COLUMNS: (keyof IResourceCollectionRow)[] = [
+interface IMergedCollection extends Omit<IResourceCollectionRow, 'collection_parent'> {
+  collection_parent?: IResourceCollectionRow;
+}
+
+const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
   'cover_image',
   'title',
   'description',
-  'resource_collections',
-  'resource_files',
-  'resource_links',
+  // 'resource_collections',
+  // 'resource_files',
+  // 'resource_links',
   'collection_parent',
-  'sort_order',
+  // 'sort_order',
   'modified_at',
 ];
 
@@ -35,11 +39,11 @@ const DISPLAY_COLUMNS: (keyof IResourceCollectionRow)[] = [
   styleUrl: './resource-collections.component.scss',
 })
 export class ResourceCollectionsComponent implements OnInit {
-  public collections: IResourceCollectionRow[] = [];
+  public collections: IMergedCollection[] = [];
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
     formatHeader: (v) => {
-      switch (v as keyof IResourceCollectionRow) {
+      switch (v as keyof IMergedCollection) {
         case 'resource_collections':
           return 'Child Collections';
         case 'resource_files':
@@ -56,12 +60,31 @@ export class ResourceCollectionsComponent implements OnInit {
 
   constructor(private service: ResourcesDashboardService) {
     effect(() => {
-      const collections = service.collections();
-      this.collections = collections.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
+      const collectionsHashmap = this.service.collectionsById();
+      const collections = service.collections().map((c) => this.mergeCollectionData(c, collectionsHashmap));
+      this.collections = collections.sort(this.sortCollections);
     });
   }
   async ngOnInit() {
     await this.service.ready();
+  }
+
+  private mergeCollectionData(
+    collection: IResourceCollectionRow,
+    collectionsHashmap: Record<string, IResourceCollectionRow>
+  ): IMergedCollection {
+    return {
+      ...collection,
+      collection_parent: collectionsHashmap[collection.collection_parent || ''],
+    };
+  }
+
+  /** Sort collections first by name of parent (root collections first), then by modified date   */
+  private sortCollections(a: IMergedCollection, b: IMergedCollection) {
+    if (a.collection_parent === b.collection_parent) {
+      return b.modified_at > a.modified_at ? 1 : -1;
+    }
+    return (b.collection_parent || '') > (a.collection_parent || '') ? -1 : 1;
   }
 
   private getCollectionTree(collections: IResourceCollectionRow[]) {
