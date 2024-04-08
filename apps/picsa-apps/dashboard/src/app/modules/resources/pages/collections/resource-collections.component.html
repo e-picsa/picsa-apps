@@ -1,0 +1,50 @@
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2>Resource Collections</h2>
+    <button
+      mat-stroked-button
+      color="primary"
+      routerLink="create"
+      style="margin-top: 1rem; margin-left: auto"
+      [disabled]="true"
+    >
+      <mat-icon>add</mat-icon>
+      Add Collection
+    </button>
+  </div>
+  <p>
+    Here you can find resources that have been grouped to form a collection.
+    <br />
+    Collections can also contain nested sub-collections
+  </p>
+
+  <picsa-data-table
+    [data]="collections"
+    [options]="tableOptions"
+    [valueTemplates]="{
+      modified_at: modifiedAtTemplate,
+      cover_image: coverImageTemplate,
+      collection_parent: collectionParentTemplate
+    }"
+  >
+    <!-- cover image -->
+    <ng-template #coverImageTemplate let-coverImage>
+      <img class="cover-image" [src]="coverImage | storagePath" />
+    </ng-template>
+    <!-- parent collection -->
+    <ng-template #collectionParentTemplate let-collection>
+      @if(collection){
+      <img
+        class="cover-image color-on-hover"
+        [src]="collection.cover_image | storagePath"
+        [matTooltip]="collection.title"
+      />
+      }
+    </ng-template>
+
+    <!-- modified date -->
+    <ng-template #modifiedAtTemplate let-date>
+      {{ date | date: 'mediumDate' }}
+    </ng-template></picsa-data-table
+  >
+</div>

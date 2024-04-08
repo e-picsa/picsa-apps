@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResourcesPageComponent } from './resources.page';
+import { ResourceFilesComponent } from './resource-files.component';
 
-describe('ResourcesPageComponent', () => {
-  let component: ResourcesPageComponent;
-  let fixture: ComponentFixture<ResourcesPageComponent>;
+describe('ResourceFilesComponent', () => {
+  let component: ResourceFilesComponent;
+  let fixture: ComponentFixture<ResourceFilesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResourcesPageComponent],
+      imports: [ResourceFilesComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ResourcesPageComponent);
+    fixture = TestBed.createComponent(ResourceFilesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

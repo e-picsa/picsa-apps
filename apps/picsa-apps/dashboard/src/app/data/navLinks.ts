@@ -18,6 +18,20 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     label: 'Resources',
     href: '/resources',
     matIcon: 'library_books',
+    children: [
+      {
+        label: 'Collections',
+        href: '/collections',
+      },
+      {
+        label: 'Files',
+        href: '/files',
+      },
+      {
+        label: 'Links',
+        href: '/links',
+      },
+    ],
   },
   {
     label: 'Climate',

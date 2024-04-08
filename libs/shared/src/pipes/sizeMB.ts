@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'sizeMB',
+  standalone: true,
 })
 /** Convert file size in kb to MB (1 decimal place) */
 export class SizeMBPipe implements PipeTransform {

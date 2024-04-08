@@ -1,0 +1,7 @@
+//
+.color-on-hover {
+  filter: grayscale(1);
+  &:hover {
+    filter: grayscale(0);
+  }
+}
