@@ -1,1 +1,47 @@
-<p>resource-links works!</p>
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2>Resource Links</h2>
+    <button
+      mat-stroked-button
+      color="primary"
+      routerLink="create"
+      style="margin-top: 1rem; margin-left: auto"
+      [disabled]="true"
+    >
+      <mat-icon>add</mat-icon>
+      Add Link
+    </button>
+  </div>
+  <p>
+    Here you can find links to external resources.
+    <br />
+    These include websites, apps and social media
+  </p>
+
+  <picsa-data-table
+    [data]="links"
+    [options]="tableOptions"
+    [valueTemplates]="{
+      modified_at: modifiedAtTemplate,
+      cover_image: coverImageTemplate,
+      url: urlTemplate
+    }"
+  >
+    <!-- modified date -->
+    <ng-template #modifiedAtTemplate let-date>
+      {{ date | date: 'mediumDate' }}
+    </ng-template>
+    <!-- cover image -->
+    <ng-template #coverImageTemplate let-coverImage>
+      <img class="cover-image" [src]="coverImage | storagePath" />
+    </ng-template>
+    <!-- externalUrl -->
+    <ng-template #urlTemplate let-url>
+      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow">
+        <button mat-icon-button style="color: black; margin: auto; display: block">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </a>
+    </ng-template>
+  </picsa-data-table>
+</div>

@@ -14,17 +14,18 @@ import { ResourceLinksComponent } from './pages/links/resource-links.component';
     RouterModule.forChild([
       {
         path: '',
-        redirectTo: 'files',
+        redirectTo: 'collections',
         pathMatch: 'full',
-      },
-      {
-        path: 'files',
-        component: ResourceFilesComponent,
       },
       {
         path: 'collections',
         component: ResourceCollectionsComponent,
       },
+      {
+        path: 'files',
+        component: ResourceFilesComponent,
+      },
+
       {
         path: 'links',
         component: ResourceLinksComponent,

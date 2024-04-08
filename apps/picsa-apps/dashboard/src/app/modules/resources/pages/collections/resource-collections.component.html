@@ -1,1 +1,59 @@
-<p>resource-collections works!</p>
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2>Resource Collections</h2>
+    <button
+      mat-stroked-button
+      color="primary"
+      routerLink="create"
+      style="margin-top: 1rem; margin-left: auto"
+      [disabled]="true"
+    >
+      <mat-icon>add</mat-icon>
+      Add Collection
+    </button>
+  </div>
+  <p>
+    Here you can find resources that have been grouped to form a collection.
+    <br />
+    Collections can also contain nested sub-collections
+  </p>
+
+  <picsa-data-table
+    [data]="collections"
+    [options]="tableOptions"
+    [valueTemplates]="{
+      modified_at: modifiedAtTemplate,
+      cover_image: coverImageTemplate,
+      resource_collections: resourceCollectionsTemplate,
+      resource_files: resourceFilesTemplate,
+      resource_links: resourceLinksTemplate
+    }"
+  >
+    <!-- cover image -->
+    <ng-template #coverImageTemplate let-coverImage>
+      <img class="cover-image" [src]="coverImage | storagePath" />
+    </ng-template>
+    <!-- resource collections -->
+    <ng-template #resourceCollectionsTemplate let-collections>
+      @for(collection of collections; track collection){
+      <div>{{ collection }}</div>
+      }
+    </ng-template>
+    <!-- resource files -->
+    <ng-template #resourceFilesTemplate let-files>
+      @for(file of files; track file){
+      <div>{{ file }}</div>
+      }
+    </ng-template>
+    <!-- resource links -->
+    <ng-template #resourceLinksTemplate let-links>
+      @for(link of links; track link){
+      <div>{{ link }}</div>
+      }
+    </ng-template>
+    <!-- modified date -->
+    <ng-template #modifiedAtTemplate let-date>
+      {{ date | date: 'mediumDate' }}
+    </ng-template></picsa-data-table
+  >
+</div>
