@@ -5,7 +5,7 @@ create table
     modified_at timestamp with time zone not null default now(),
     description text null,
     title text not null,
-    cover_image text null,
+    cover_image text default 'global/images/placeholder.svg',
     resource_collections text[] default array[]::text[],
     resource_files text[] default array[]::text[],
     resource_links text[] default array[]::text[],
@@ -27,7 +27,7 @@ create table
     description text null,
     storage_file text null,
     external_url text null,
-    cover_image text null,
+    cover_image text default 'global/images/placeholder.svg',
     title text null,
     language_code text null,
     country_code text null,
@@ -44,7 +44,7 @@ create table
 create table
   public.resource_files_child (
     id text not null default gen_random_uuid (),
-    resource_file_id text null,
+    resource_file_id text not null,
     created_at timestamp with time zone not null default now(),
     modified_at timestamp with time zone not null default now(),
     description text null,
@@ -66,16 +66,18 @@ create table
   ) tablespace pg_default;
 COMMENT ON TABLE public.resource_files_child IS 'Resource file child variants, such as alternate language or';
 
+create type public.resource_link_type as enum ('app','social', 'web');
+
 create table
   public.resource_links (
     id text not null default gen_random_uuid (),
     created_at timestamp with time zone not null default now(),
     modified_at timestamp with time zone not null default now(),
     description text,
-    cover_image text null,
+    cover_image text default 'global/images/placeholder.svg',
     title text null,
     sort_order real not null default '-1'::real,
-    type text null,
+    type resource_link_type not null,
     url text not null,
     constraint resource_links_pkey primary key (id),
     constraint resource_links_cover_image_fkey foreign key (cover_image) references storage.objects (path) on update cascade on delete set null
