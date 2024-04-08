@@ -1,7 +1,13 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2>File Resources</h2>
-    <button mat-stroked-button color="primary" routerLink="create" style="margin-top: 1rem; margin-left: auto">
+    <button
+      mat-stroked-button
+      color="primary"
+      routerLink="create"
+      style="margin-top: 1rem; margin-left: auto"
+      [disabled]="true"
+    >
       <mat-icon>add</mat-icon>
       Add Resource
     </button>
@@ -20,7 +26,8 @@
       mimetype: mimetypeTemplate,
       language_codes: languageCodesTemplate,
       modified_at: modifiedAtTemplate,
-      collections: collectionsTemplate
+      collections: collectionsTemplate,
+      external_url: externalUrlTemplate
     }"
   >
     <!-- size in MB -->
@@ -28,10 +35,11 @@
     <!-- mimetype icons -->
     <ng-template #mimetypeTemplate let-mimetype>
       @switch (mimetype) { @case (('application/pdf')) {
-      <mat-icon svgIcon="dashboard:filetype_pdf"></mat-icon>
+      <mat-icon svgIcon="dashboard:filetype_pdf" [matTooltip]="mimetype"></mat-icon>
       } @case ('video/mp4') {
-      <mat-icon svgIcon="dashboard:filetype_video"></mat-icon>
-      } @default {<mat-icon svgIcon="dashboard:filetype_document"></mat-icon>} }
+      <mat-icon svgIcon="dashboard:filetype_video" [matTooltip]="mimetype"></mat-icon>
+      } @default {
+      <mat-icon svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>} }
     </ng-template>
     <!-- language codes -->
     <ng-template #languageCodesTemplate let-codes>
@@ -46,17 +54,22 @@
     <!-- collections -->
     <ng-template #collectionsTemplate let-collections>
       <div style="display: flex; gap: 4px">
-        @for(collection of collections; track collection.id;){ @if(collection.cover_image){
+        @for(collection of collections; track collection.id;){
         <div class="collection-cover-container" [matTooltip]="collection.title">
           <img class="collection-cover" [src]="collection.cover_image | storagePath" />
         </div>
-        } @else {
-        <button mat-stroked-button [matTooltip]="collection.title">
-          {{ $index + 1 }}
-        </button>
-
-        } }
+        }
       </div>
+    </ng-template>
+    <!-- externalUrl -->
+    <ng-template #externalUrlTemplate let-url>
+      @if(url){
+      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow">
+        <button mat-icon-button style="color: black; margin: auto; display: block">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </a>
+      }
     </ng-template>
   </picsa-data-table>
 </div>

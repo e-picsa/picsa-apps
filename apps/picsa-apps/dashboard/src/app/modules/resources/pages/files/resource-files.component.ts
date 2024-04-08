@@ -1,7 +1,6 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PicsaInfoTooltipComponent } from '@picsa/components';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -23,19 +22,18 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   'title',
   'size_kb',
   'language_codes',
-  'modified_at',
   'collections',
+  'external_url',
+  'modified_at',
 ];
 
 @Component({
   selector: 'dashboard-resource-files',
   standalone: true,
   imports: [
-    DatePipe,
     CommonModule,
     DashboardMaterialModule,
     DashboardResourcesStorageLinkComponent,
-    PicsaInfoTooltipComponent,
     PicsaDataTableComponent,
     RouterModule,
     StoragePathPipe,
@@ -67,6 +65,10 @@ export class ResourceFilesComponent implements OnInit {
     });
   }
 
+  async ngOnInit() {
+    await this.service.ready();
+  }
+
   /** */
   private getMergedResources(resources: IResourceFileRow[]): IMergedResources[] {
     return resources.map((r) => {
@@ -87,9 +89,5 @@ export class ResourceFilesComponent implements OnInit {
 
       return { ...r, language_codes, children, collections };
     });
-  }
-
-  async ngOnInit() {
-    await this.service.ready();
   }
 }
