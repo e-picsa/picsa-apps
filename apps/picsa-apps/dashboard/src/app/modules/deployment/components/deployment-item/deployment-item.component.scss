@@ -7,3 +7,10 @@
   object-fit: contain;
   margin-right: 8px;
 }
+
+// HACK - invert demo deployment black svg image when active
+[data-active][data-deployment*='demo'] {
+  img {
+    filter: invert(1);
+  }
+}
