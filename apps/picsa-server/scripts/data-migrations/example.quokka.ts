@@ -13,18 +13,18 @@ const mapped = data.map((entry) => {
   return {};
 });
 
-// write to local csv
-function writeOutputCSV() {
-  if (mapped.length === 0) return;
-  const header = Object.keys(mapped[0]);
+/** Convert json to csv  (adapted from https://stackoverflow.com/a/31536517) */
+function jsonToCSV(data: any[], headers?: string[]) {
+  if (data.length === 0) return '';
+  // generate headers from first row of data if not provided
+  if (!headers) {
+    headers = Object.keys(data[0]);
+  }
   const csv = [
-    header.join(','), // header row first
-    ...mapped.map((row) => header.map((fieldName) => valueCSV(row[fieldName])).join(',')),
+    headers.join(','), // header row first
+    ...data.map((row) => headers.map((fieldName) => valueCSV(row[fieldName])).join(',')),
   ].join('\r\n');
-  const fs = require('fs');
-  const path = require('path');
-  const outputPath = path.resolve(__dirname, 'apps/picsa-server/scripts/output.csv');
-  fs.writeFileSync(outputPath, csv);
+  return csv;
 }
 
 function valueCSV(v: any) {
@@ -39,4 +39,9 @@ function valueCSV(v: any) {
   return JSON.stringify(v);
 }
 
-writeOutputCSV();
+const fs = require('fs');
+const path = require('path');
+const outputPath = path.resolve(__dirname, 'apps/picsa-server/scripts/data-migrations/output.csv');
+
+const csv = jsonToCSV(mapped);
+fs.writeFileSync(outputPath, csv);

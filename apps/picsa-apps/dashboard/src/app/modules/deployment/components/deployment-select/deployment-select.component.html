@@ -1,4 +1,4 @@
-<button mat-button [matMenuTriggerFor]="menu" [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'">
+<button mat-button class="select-button" [matMenuTriggerFor]="menu" [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'">
   @if(service.activeDeployment(); as deployment){
     <dashboard-deployment-item [deployment]="deployment" [active]="true" />
   } @else {
