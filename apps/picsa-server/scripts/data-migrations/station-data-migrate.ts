@@ -1,3 +1,12 @@
+/**
+ * NOTE
+ * Due to inconsistencies in source data migrations not possible
+ * - lack of station id for mw data
+ * - duplicate entries for many crop variety (e.g. pan4m-19)
+ * - multiple probability entries from unclear params (e.g. 2-8/10)
+ * - zm nested requirements, e.g. green/dry
+ */
+
 const STATION_ID_MAPPING = {
   chipata: 1,
   petauke: 33,
