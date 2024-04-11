@@ -13,6 +13,18 @@ const mapped = data.map((entry) => {
   return {};
 });
 
+const fs = require('fs');
+const path = require('path');
+const outputPath = path.resolve(__dirname, 'apps/picsa-server/scripts/data-migrations/output.csv');
+
+fs.writeFileSync(outputPath.replace('.csv', '.json'), JSON.stringify(mapped, null, 2));
+const csv = jsonToCSV(mapped);
+fs.writeFileSync(outputPath, csv);
+
+/***************************************************************************************************
+ * Utility Methods
+ ***************************************************************************************************/
+
 /** Convert json to csv  (adapted from https://stackoverflow.com/a/31536517) */
 function jsonToCSV(data: any[], headers?: string[]) {
   if (data.length === 0) return '';
@@ -33,15 +45,24 @@ function valueCSV(v: any) {
   }
   if (Array.isArray(v)) {
     if (v.length === 0) return null;
-    // HACK - use double quotes to un-escape csv
-    return `"[${v.map((el) => `""${el}""`).join(',')}]"`;
+    return `"[${escapeCSVArray(v)}]"`;
   }
   return JSON.stringify(v);
 }
 
-const fs = require('fs');
-const path = require('path');
-const outputPath = path.resolve(__dirname, 'apps/picsa-server/scripts/data-migrations/output.csv');
-
-const csv = jsonToCSV(mapped);
-fs.writeFileSync(outputPath, csv);
+// TODO - update existing utility scripts
+// TODO - check doesn't break previous scirpts
+function escapeCSVArray(arr: any[]) {
+  return arr
+    .map((el) => {
+      if (typeof el === 'string') {
+        return `""${el}""`;
+      }
+      // handle nested array of arrays
+      if (Array.isArray(el)) {
+        return `[${escapeCSVArray(el)}]`;
+      }
+      return `${el}`;
+    })
+    .join(',');
+}
