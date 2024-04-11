@@ -1,4 +1,3 @@
-/***************************************************************************** */
 const STATION_ID_MAPPING = {
   chipata: 1,
   petauke: 33,
@@ -11,7 +10,7 @@ const STATION_ID_MAPPING = {
  * for main crop-data table. This simply contains crop and variety names, along with labels
  */
 function migrateCropData(data: any[]) {
-  const stationEntries = extractAllStationsData(data);
+  const stationEntries = extractNestedVarieties(data);
   const uniqueEntryHashmap = mergeStationEntries(stationEntries);
   return Object.values(uniqueEntryHashmap);
 }
@@ -21,7 +20,7 @@ function migrateCropData(data: any[]) {
  * station-specific differences against base table data
  */
 function migrateCropStationData(data: any[]) {
-  const stationEntries = extractAllStationsData(data);
+  const stationEntries = extractNestedVarieties(data);
   return stationEntries.map((entry) => {
     const cleaned = cleanCropStationData(entry);
     const { crop, variety, label, ...rest } = cleaned;
@@ -95,15 +94,24 @@ function cleanCropStationData(entry: any) {
  * Extract crop data from station data. Reformats water and day upper/lower bounds,
  * and generates individual entries where varieties previously merged (same water and day requirements)
  */
-function extractAllStationsData(data: any[]) {
+function extractNestedVarieties(data: any[]) {
   const entries: any[] = [];
   for (const { id, station_data } of data) {
     // merge parent station_id
     const station_id = STATION_ID_MAPPING[id];
     for (const { variety, ...rest } of station_data) {
-      // split multiple variety strings to single entries
-      const varietyNames = variety.replace(/ or /gi, ',').split(',');
-
+      // split multiple variety strings to unique, single entries
+      const varietyNames: string[] = [
+        ...new Set<string>(
+          variety
+            .replace(/ or/gi, ' or ') // hack, fix missing spaces "varietyA orVarietyB"
+            .replace(/ or /gi, ',') // hack, replace or statements for comma
+            .split(',')
+            .map((v) => v.trim())
+            .filter((v) => v !== '' && v !== '-') // hack, remove (mostly) empty entries
+        ),
+      ];
+      console.log('names', varietyNames);
       const labelRegex = /\([a-z]*\)/gi;
       for (const varietyName of varietyNames) {
         const entry = {
@@ -117,7 +125,7 @@ function extractAllStationsData(data: any[]) {
           entry.variety = varietyName.replace(label, '').trim();
           entry.label = label.replace(/[()]/gi, '');
         }
-        // clean variety names to remove non-alphanumeric and case-sensitivities
+
         entry.variety = entry.variety
           .trim()
           .replace(/[^0-9a-z-]/gi, '-')
@@ -143,4 +151,3 @@ function mergeCropEntries(a: any, b: any = {}) {
     label: [...new Set([a.label, b.label])].filter((v) => v).join(',') || '',
   };
 }
-/***************************************************************************** */
