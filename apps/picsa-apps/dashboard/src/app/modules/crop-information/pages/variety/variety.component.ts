@@ -1,23 +1,23 @@
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
-import { DashboardMaterialModule } from '../../material.module';
-import { CropProbabilityDashboardService, ICropInformationRow } from './crop-information.service';
+import { DashboardMaterialModule } from '../../../../material.module';
+import { CropProbabilityDashboardService, ICropInformationRow } from '../../crop-information.service';
+
+// import '@uppy/core/dist/style.min.css';
+// import '@uppy/dashboard/dist/style.min.css';
 
 @Component({
-  selector: 'dashboard-resources-page',
+  selector: 'dashboard-crop-variety',
   standalone: true,
   imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
-  templateUrl: '../crop-information/crop-information.component.html',
-  styleUrls: ['../crop-information/crop-information.component.scss'],
+  templateUrl: './variety.component.html',
+  styleUrl: './variety.component.scss',
 })
-export class CropInformationPageComponent implements OnInit {
+export class CropVarietyComponent implements OnInit {
   constructor(
     public service: CropProbabilityDashboardService,
     private notificationService: PicsaNotificationService,
@@ -28,11 +28,11 @@ export class CropInformationPageComponent implements OnInit {
   displayedColumns: string[] = [
     'crop',
     'variety',
-    'water_lower',
-    'water_upper',
-    'length_lower',
-    'length_upper',
     'label',
+    // 'water_lower',
+    // 'water_upper',
+    // 'length_lower',
+    // 'length_upper',
   ];
 
   tableOptions = {

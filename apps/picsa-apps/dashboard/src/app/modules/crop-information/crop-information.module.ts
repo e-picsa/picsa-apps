@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { CropInformationPageComponent } from './crop-information.page';
 import { NewEntryPageComponent } from './pages/new_entry/new_entry.page';
+import { CropVarietyComponent } from './pages/variety/variety.component';
 
 @NgModule({
   declarations: [],
@@ -12,7 +12,12 @@ import { NewEntryPageComponent } from './pages/new_entry/new_entry.page';
     RouterModule.forChild([
       {
         path: '',
-        component: CropInformationPageComponent,
+        redirectTo: 'variety',
+        pathMatch: 'full',
+      },
+      {
+        path: 'variety',
+        component: CropVarietyComponent,
       },
       // new entry
       {
