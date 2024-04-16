@@ -12,6 +12,8 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
     return this._selected;
   }
   set selected(selected: string) {
+    // avoid setting value if control disabled
+    if (this.disabled) return;
     selected ??= '';
     if (this.selected !== selected) {
       this._selected = selected;
@@ -26,6 +28,8 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
   @Input() set filterFn(filterFn: (option: T) => boolean) {
     this.filteredOptions = this.selectOptions.filter((o) => filterFn(o));
   }
+
+  disabled = false;
 
   /** Get full selected entry data */
   protected get selectedOption() {
@@ -69,5 +73,9 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
 
   registerOnTouched(fn: (value: string) => void) {
     this._onTouched = fn; // <-- save the function
+  }
+
+  setDisabledState(disabled: boolean) {
+    this.disabled = disabled;
   }
 }
