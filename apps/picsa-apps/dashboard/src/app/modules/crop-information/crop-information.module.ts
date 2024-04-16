@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { CropProbabilityComponent } from './pages/probability/probability.component';
 import { CropVarietyComponent } from './pages/variety/variety.component';
-import { VarietyDetailsComponent } from './pages/variety-details/variety-details.component';
+import { CropVarietyDetailsComponent } from './pages/variety-details/variety-details.component';
 
 @NgModule({
   declarations: [],
@@ -22,18 +22,12 @@ import { VarietyDetailsComponent } from './pages/variety-details/variety-details
       },
       {
         path: 'variety/:id',
-        component: VarietyDetailsComponent,
+        component: CropVarietyDetailsComponent,
       },
       {
         path: 'probability',
         component: CropProbabilityComponent,
       },
-      // new entry
-      // {
-      //   path: 'entry',
-      //   component: NewEntryPageComponent,
-      // },
-      // editable entry
     ]),
   ],
 })
