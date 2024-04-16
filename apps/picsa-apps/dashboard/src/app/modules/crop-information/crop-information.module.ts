@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { NewEntryPageComponent } from './pages/new_entry/new_entry.page';
+import { CropProbabilityComponent } from './pages/probability/probability.component';
 import { CropVarietyComponent } from './pages/variety/variety.component';
+import { VarietyDetailsComponent } from './pages/variety-details/variety-details.component';
 
 @NgModule({
   declarations: [],
@@ -19,16 +20,20 @@ import { CropVarietyComponent } from './pages/variety/variety.component';
         path: 'variety',
         component: CropVarietyComponent,
       },
+      {
+        path: 'variety/:id',
+        component: VarietyDetailsComponent,
+      },
+      {
+        path: 'probability',
+        component: CropProbabilityComponent,
+      },
       // new entry
-      {
-        path: 'entry',
-        component: NewEntryPageComponent,
-      },
+      // {
+      //   path: 'entry',
+      //   component: NewEntryPageComponent,
+      // },
       // editable entry
-      {
-        path: ':id',
-        component: NewEntryPageComponent,
-      },
     ]),
   ],
 })

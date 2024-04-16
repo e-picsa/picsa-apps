@@ -38,7 +38,7 @@ export class CropVarietyComponent implements OnInit {
   tableOptions = {
     displayColumns: this.displayedColumns,
     handleRowClick: (row: ICropInformationRow) => {
-      this.router.navigate([row.id], { relativeTo: this.route });
+      this.router.navigate(['./', row.id], { relativeTo: this.route });
     },
   };
 
