@@ -14,7 +14,7 @@ export interface IResourceStorageEntry extends IStorageEntry {
 }
 
 @Injectable({ providedIn: 'root' })
-export class CropProbabilityDashboardService extends PicsaAsyncService {
+export class CropInformationService extends PicsaAsyncService {
   public cropProbabilities: ICropInformationRow[] = [];
 
   public get table() {
@@ -31,7 +31,7 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
   }
 
   public async listCropProbabilities() {
-    const { data, error } = await this.supabaseService.db.table('crop_data').select<'*', ICropInformationRow>('*');
+    const { data, error } = await this.table.select<'*', ICropInformationRow>('*');
     if (error) {
       throw error;
     }
@@ -39,7 +39,7 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
   }
 
   public async addCropProbability(cropProbability: ICropInformationInsert) {
-    const { data, error } = await this.supabaseService.db.table('crop_data').insert(cropProbability);
+    const { data, error } = await this.table.insert(cropProbability);
     if (error) {
       throw error;
     }

@@ -5,10 +5,7 @@ import { PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { CropProbabilityDashboardService, ICropInformationRow } from '../../crop-information.service';
-
-// import '@uppy/core/dist/style.min.css';
-// import '@uppy/dashboard/dist/style.min.css';
+import { CropInformationService, ICropInformationRow } from '../../services';
 
 @Component({
   selector: 'dashboard-crop-variety',
@@ -19,21 +16,13 @@ import { CropProbabilityDashboardService, ICropInformationRow } from '../../crop
 })
 export class CropVarietyComponent implements OnInit {
   constructor(
-    public service: CropProbabilityDashboardService,
+    public service: CropInformationService,
     private notificationService: PicsaNotificationService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
-  displayedColumns: string[] = [
-    'crop',
-    'variety',
-    'label',
-    // 'water_lower',
-    // 'water_upper',
-    // 'length_lower',
-    // 'length_upper',
-  ];
+  displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'label'];
 
   tableOptions = {
     displayColumns: this.displayedColumns,
