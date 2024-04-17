@@ -3,8 +3,7 @@
   <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
     <mat-form-field appearance="outline" floatLabel="always">
       <mat-label>Crop</mat-label>
-      <input matInput formControlName="crop" style="display: none" />
-      <picsa-form-crop-select formControlName="crop" style="margin-top: 1rem"></picsa-form-crop-select>
+      <picsa-form-crop-select formControlName="crop"></picsa-form-crop-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Variety</mat-label>

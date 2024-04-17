@@ -1,4 +1,4 @@
-<div ngClass="icons-container">
+<div ngClass="icons-container" [attr.data-disabled]="disabled" tabindex="0">
   @for(crop of filteredOptions; track crop.id){
   <div ngClass="filter-icons">
     <div

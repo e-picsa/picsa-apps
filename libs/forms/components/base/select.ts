@@ -1,11 +1,35 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Inject,
+  Input,
+  OnDestroy,
+  Output,
+} from '@angular/core';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { arrayToHashmap } from '@picsa/utils';
+import { Subject } from 'rxjs';
 
 /** For more information about this base component see local @see./README.md */
 @Component({
   template: '',
+  // Map host events to functions (same as using @HostListener)
+  // NOTE - will only work if child component includes focusable element
+  // This can be any input element, or div with tabindex=0 applied
+  // https://web.dev/articles/control-focus-with-tabindex
+
+  host: {
+    '(focusin)': 'onFocusIn($event)',
+    '(focusout)': 'onFocusOut($event)',
+  },
 })
-export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
+export abstract class PicsaFormBaseSelectComponent<T extends { id: string }>
+  implements ControlValueAccessor, MatFormFieldControl<string>, OnDestroy
+{
   /** Selected value binding */
   @Input()
   get selected() {
@@ -28,8 +52,6 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
   @Input() set filterFn(filterFn: (option: T) => boolean) {
     this.filteredOptions = this.selectOptions.filter((o) => filterFn(o));
   }
-
-  disabled = false;
 
   /** Get full selected entry data */
   protected get selectedOption() {
@@ -78,4 +100,99 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }> {
   setDisabledState(disabled: boolean) {
     this.disabled = disabled;
   }
+
+  /********************************************************************
+   * Mat-form-field bindings
+   * https://material.angular.io/guide/creating-a-custom-form-field-control#id
+   *********************************************************************/
+  stateChanges = new Subject<void>();
+  @Input()
+  get value() {
+    return this.selected;
+  }
+  set value(selected: string) {
+    this.selected = selected;
+    this.stateChanges.next();
+  }
+  ngOnDestroy() {
+    this.stateChanges.complete();
+  }
+
+  // @HostListener('focusin', ['$event'])
+  // onFocusin(e: FocusEvent) {
+  //   this.onFocusIn(e);
+  // }
+  // @HostListener('focusout', ['$event'])
+  // onFocusout(e: FocusEvent) {
+  //   this.onFocusOut(e);
+  // }
+  focused = false;
+  onFocusIn(e: FocusEvent) {
+    if (!this.focused) {
+      this.focused = true;
+      this.stateChanges.next();
+    }
+  }
+  onFocusOut(event: FocusEvent) {
+    // if (!this._elementRef.nativeElement.contains(event.relatedTarget as Element)) {
+    // this.touched = true;
+    this.focused = false;
+    // this.onTouched();
+    this.stateChanges.next();
+    // }
+  }
+  static nextId = 0;
+  @HostBinding() id = `picsa-select-input-${PicsaFormBaseSelectComponent.nextId++}`;
+  @Input()
+  get placeholder() {
+    return this._placeholder;
+  }
+  set placeholder(plh) {
+    this._placeholder = plh;
+    this.stateChanges.next();
+  }
+  private _placeholder: string;
+
+  get empty() {
+    return !this.selected;
+  }
+  @HostBinding('class.floating')
+  get shouldLabelFloat() {
+    return this.focused || !this.empty;
+  }
+  @Input()
+  get required() {
+    return this._required;
+  }
+  set required(req: boolean) {
+    this._required = coerceBooleanProperty(req);
+    this.stateChanges.next();
+  }
+  private _required = false;
+  @Input()
+  get disabled(): boolean {
+    return this._disabled;
+  }
+  set disabled(value: BooleanInput) {
+    this._disabled = coerceBooleanProperty(value);
+    // this._disabled ? this.parts.disable() : this.parts.enable();
+    this.stateChanges.next();
+  }
+  private _disabled = false;
+  get errorState(): boolean {
+    return false;
+  }
+  controlType = 'picsa-select';
+  @Input('aria-describedby') userAriaDescribedBy: string;
+  setDescribedByIds(ids: string[]) {
+    // const controlElement = this._elementRef.nativeElement.querySelector('.picsa-select-input-container')!;
+    // controlElement.setAttribute('aria-describedby', ids.join(' '));
+  }
+  onContainerClick(event: MouseEvent) {
+    // if ((event.target as Element).tagName.toLowerCase() != 'input') {
+    //   this._elementRef.nativeElement.querySelector('input').focus();
+    // }
+  }
+  // provided by parent component
+  ngControl: NgControl = null as any;
 }

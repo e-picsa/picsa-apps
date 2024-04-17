@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input, Provider } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { CROPS_DATA, CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
 
 import { PicsaFormBaseSelectComponent } from '../base/select';
@@ -15,16 +16,23 @@ import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
  */
 
 // Single Select
-export const CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => FormCropSelectSingleComponent),
-  multi: true,
-};
+
 @Component({
   selector: 'picsa-form-crop-select',
   templateUrl: './crop-select.component.html',
   styleUrls: ['./crop-select.component.scss'],
-  providers: [CROP_SELECT_SINGLE_INPUT_CONTROL_VALUE_ACCESSOR],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormCropSelectSingleComponent),
+      multi: true,
+    },
+    {
+      provide: MatFormFieldControl,
+      useExisting: FormCropSelectSingleComponent,
+      multi: true,
+    },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {
@@ -42,13 +50,6 @@ export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<
   }
 }
 
-// Multiple Select
-export const CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => FormCropSelectMultipleComponent),
-  multi: true,
-};
-
 /**
  * Custom input element designed for use with angular Ng-model or standalone syntax
  * @example
@@ -61,7 +62,18 @@ export const CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   selector: 'picsa-form-crop-select-multiple',
   templateUrl: './crop-select.component.html',
   styleUrls: ['./crop-select.component.scss'],
-  providers: [CROP_SELECT_MULTIPLE_INPUT_CONTROL_VALUE_ACCESSOR],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormCropSelectMultipleComponent),
+      multi: true,
+    },
+    {
+      provide: MatFormFieldControl,
+      useExisting: FormCropSelectMultipleComponent,
+      multi: true,
+    },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {
