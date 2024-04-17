@@ -118,14 +118,6 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }>
     this.stateChanges.complete();
   }
 
-  // @HostListener('focusin', ['$event'])
-  // onFocusin(e: FocusEvent) {
-  //   this.onFocusIn(e);
-  // }
-  // @HostListener('focusout', ['$event'])
-  // onFocusout(e: FocusEvent) {
-  //   this.onFocusOut(e);
-  // }
   focused = false;
   onFocusIn(e: FocusEvent) {
     if (!this.focused) {
