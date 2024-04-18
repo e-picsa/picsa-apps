@@ -1,5 +1,6 @@
-import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2/models/index';
 import { RxJsonSchema } from 'rxdb';
+
+import type { IPicsaCollectionCreator } from '../../../services/core/db_v2/models/index';
 
 export interface IVideoPlayback {
   videoId: string;

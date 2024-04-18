@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { IVideoPlayback, videoPlayback } from '@picsa/shared/features/video-player/schema/schema';
-import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { RxCollection } from 'rxdb';
+
+import { IVideoPlayback, videoPlayback } from '../features/video-player/schema/schema';
+import { PicsaAsyncService } from './asyncService.service';
+import { PicsaDatabase_V2_Service } from './core/db_v2';
 
 @Injectable({
   providedIn: 'root',
