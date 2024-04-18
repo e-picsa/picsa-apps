@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewEntryPageComponent } from './new_entry.page';
+import { CropVarietyComponent } from './variety.component';
 
-describe('NewEntryComponent', () => {
-  let component: NewEntryPageComponent;
-  let fixture: ComponentFixture<NewEntryPageComponent>;
+describe('CropVarietyComponent', () => {
+  let component: CropVarietyComponent;
+  let fixture: ComponentFixture<CropVarietyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewEntryPageComponent],
+      imports: [CropVarietyComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NewEntryPageComponent);
+    fixture = TestBed.createComponent(CropVarietyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

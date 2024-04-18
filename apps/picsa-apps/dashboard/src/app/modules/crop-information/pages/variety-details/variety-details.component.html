@@ -1,0 +1,55 @@
+<div class="page-content">
+  <h2>Edit Details</h2>
+  <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Crop</mat-label>
+      <picsa-form-crop-select formControlName="crop"></picsa-form-crop-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Variety</mat-label>
+      <input matInput formControlName="variety" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Label</mat-label>
+      <input matInput placeholder="E.g. local name" formControlName="label" />
+    </mat-form-field>
+
+    <!-- <div class="form-data">
+      <label for="water_upper">Water Upper:</label>
+      <input id="water_upper" type="number" formControlName="water_upper" />
+    </div>
+    <div class="form-data">
+      <label for="water_lower">Water Lower:</label>
+      <input id="water_lower" type="number" formControlName="water_lower" />
+    </div>
+    <div class="form-data">
+      <label for="length_upper">Length Upper:</label>
+      <input id="length_upper" type="number" formControlName="length_upper" />
+    </div>
+    <div class="form-data">
+      <label for="length_lower">Length Lower:</label>
+      <input id="lenght_lower" type="number" formControlName="length_lower" />
+    </div> -->
+    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">
+      Submit
+    </button>
+  </form>
+  @if(entryForm.value.id){
+  <button mat-button style="margin-top: 3rem; margin-left: auto" (click)="dialog.open(deleteDialog)">
+    <mat-icon>delete</mat-icon>
+    Delete
+  </button>
+  }
+</div>
+
+<ng-template #deleteDialog>
+  <h2 mat-dialog-title style="margin-bottom: 2rem; font-size: 1.5rem">Delete Entry</h2>
+  <mat-dialog-content>
+    Are you sure you want to delete this variety?<br />
+    <b>This action cannot be undone</b>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" (click)="handleDelete()" cdkFocusInitial>Delete</button>
+  </mat-dialog-actions>
+</ng-template>

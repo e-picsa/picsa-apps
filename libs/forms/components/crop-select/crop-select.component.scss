@@ -9,6 +9,11 @@ $icon-size: 48px;
   flex-flow: row wrap;
   gap: 8px;
 }
+.icons-container[data-disabled='true'] {
+  .icon[data-selected='false'] {
+    opacity: 0.5;
+  }
+}
 
 .filter-icons {
   div.icon {

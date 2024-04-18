@@ -7,6 +7,7 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 
 export type ICropInformationRow = Database['public']['Tables']['crop_data']['Row'];
 export type ICropInformationInsert = Database['public']['Tables']['crop_data']['Insert'];
+export type ICropInformationUpdate = Database['public']['Tables']['crop_data']['Update'];
 
 export interface IResourceStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
@@ -14,7 +15,7 @@ export interface IResourceStorageEntry extends IStorageEntry {
 }
 
 @Injectable({ providedIn: 'root' })
-export class CropProbabilityDashboardService extends PicsaAsyncService {
+export class CropInformationService extends PicsaAsyncService {
   public cropProbabilities: ICropInformationRow[] = [];
 
   public get table() {
@@ -27,29 +28,27 @@ export class CropProbabilityDashboardService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
-    await this.listCropProbabilities();
+    await this.list();
   }
 
-  public async listCropProbabilities() {
-    const { data, error } = await this.supabaseService.db.table('crop_data').select<'*', ICropInformationRow>('*');
+  public async list() {
+    const { data, error } = await this.table.select<'*', ICropInformationRow>('*');
     if (error) {
       throw error;
     }
     this.cropProbabilities = data || [];
   }
 
-  public async addCropProbability(cropProbability: ICropInformationInsert) {
-    const { data, error } = await this.supabaseService.db.table('crop_data').insert(cropProbability);
+  public async insert(cropInfo: ICropInformationInsert) {
+    const { data, error } = await this.table.insert(cropInfo);
     if (error) {
       throw error;
     }
     return data;
   }
-  public async updateCropProbability(cropProbability: ICropInformationInsert) {
-    const { data, error } = await this.supabaseService.db
-      .table('crop_data')
-      .update(cropProbability)
-      .eq('id', cropProbability.id);
+  public async update(cropInfo: ICropInformationUpdate) {
+    const { id, ...update } = cropInfo;
+    const { data, error } = await this.supabaseService.db.table('crop_data').update(update).eq('id', id);
     if (error) {
       throw error;
     }
