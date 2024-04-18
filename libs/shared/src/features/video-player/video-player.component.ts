@@ -67,7 +67,25 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private pauseTime = 0;
 
-  constructor(private elementRef: ElementRef<HTMLDivElement>, private analyticsService: AnalyticsService) {}
+  playbackPercentage: number;
+
+  constructor(
+    private elementRef: ElementRef<HTMLDivElement>,
+    private analyticsService: AnalyticsService,
+    private playerService: VideoPlayerService
+  ) {}
+
+  // async ngOnInit() {
+  //   await this.loadVideoState();
+  // }
+
+  // private async loadVideoState() {
+  //   const videoState = await this.playerService.getVideoState(this.playerId);
+  //   if (videoState) {
+  //     this.pauseTime = videoState.currentTime;
+  //     this.playbackPercentage = videoState.playbackPercentage;
+  //   }
+  // }
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
@@ -77,11 +95,32 @@ export class VideoPlayerComponent implements OnDestroy {
     }
   }
 
+  private async saveVideoState() {
+    // Get the total time of the video
+    const totalTimeResult = await this.videoPlayer.getDuration({ playerId: this.playerId });
+    const totalTime = totalTimeResult.value;
+
+    // Calculate the playback percentage
+    this.playbackPercentage = (this.pauseTime / totalTime) * 100;
+
+    // Save the video state
+    const videoState = {
+      videoId: this.playerId,
+      currentTime: this.pauseTime || 0,
+      totalTime: totalTime || 0,
+      playbackPercentage: this.playbackPercentage || 0,
+    };
+    console.log('Video State:', videoState);
+    // await this.playerService.updateVideoState(videoState);
+  }
+
   public async pauseVideo() {
     return this.videoPlayer.pause({ playerId: this.playerId });
   }
 
   public async playVideo() {
+    await this.saveVideoState();
+
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
     await this.videoPlayer.stopAllPlayers();
@@ -178,10 +217,11 @@ export class VideoPlayerComponent implements OnDestroy {
     }
   }
 
-  private handlePlayerPause(e: { fromPlayerId: string; currentTime: number }) {
+  private async handlePlayerPause(e: { fromPlayerId: string; currentTime: number }) {
     if (e.fromPlayerId === this.playerId) {
       this.pauseTime = e.currentTime;
       this.showPlayButton = true;
+      await this.saveVideoState();
     }
   }
 
@@ -191,6 +231,7 @@ export class VideoPlayerComponent implements OnDestroy {
   private async handlePlayerExit(e: { currentTime: number }) {
     this.showPlayButton = true;
     this.pauseTime = e.currentTime;
+    await this.saveVideoState();
     // Ensure player does not stay stuck in landscape mode
     if (Capacitor.isNativePlatform()) {
       await ScreenOrientation.unlock();

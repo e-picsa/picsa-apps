@@ -15,6 +15,12 @@ $playerWidth: 854px;
     margin-right: -1rem;
   }
 }
+.placeholderContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
 .placeholder,
 .thumbnail {
   width: 100%;
@@ -23,7 +29,6 @@ $playerWidth: 854px;
 }
 .placeholder {
   position: relative;
-  margin-bottom: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,4 +68,11 @@ $icon-size: 3rem;
   border-radius: 4px;
   background: #ffffff;
   color: var(--color-warn);
+}
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: 99;
 }

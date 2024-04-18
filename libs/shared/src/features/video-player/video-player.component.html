@@ -1,6 +1,18 @@
-<div class="placeholder" [id]="playerId" #playerEl slot="fixed">
-  <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div>
-  <button *ngIf="showPlayButton" mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!source">
-    <mat-icon>play_arrow</mat-icon>
-  </button>
+<div class="placeholderContainer">
+  <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
+    <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div>
+    <button
+      *ngIf="showPlayButton"
+      mat-fab
+      color="primary"
+      class="play-button"
+      (click)="playVideo()"
+      [disabled]="!source"
+    >
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+  </div>
+  <div *ngIf="playbackPercentage > 0 && showPlayButton" class="progress-bar">
+    <mat-progress-bar mode="determinate" [value]="playbackPercentage"></mat-progress-bar>
+  </div>
 </div>
