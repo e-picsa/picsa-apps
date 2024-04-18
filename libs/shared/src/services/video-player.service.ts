@@ -1,22 +1,58 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { IVideoPlayback, videoPlayback } from '@picsa/shared/features/video-player/schema/schema';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { RxCollection } from 'rxdb';
 
 @Injectable({
   providedIn: 'root',
 })
-export class VideoPlayerService {
-  private videoState = new BehaviorSubject({
-    videoId: null,
-    currentTime: 0,
-    totalTime: 0,
-    playbackPercentage: 0,
-  });
+export class VideoPlayerService extends PicsaAsyncService {
+  private dbService: PicsaDatabase_V2_Service;
+  private collection: RxCollection<IVideoPlayback>;
 
-  getVideoState() {
-    return this.videoState.asObservable();
+  constructor(dbService: PicsaDatabase_V2_Service) {
+    super();
+    this.dbService = dbService;
   }
 
-  updateVideoState(state) {
-    this.videoState.next(state);
+  async init() {
+    try {
+      await this.dbService.ensureCollections({
+        'video-playback': videoPlayback,
+      });
+      this.collection = this.dbService.db.collections['video-playback'] as RxCollection<IVideoPlayback>;
+    } catch (error) {
+      console.error('Failed to initialize database:', error);
+    }
+  }
+
+  async updateVideoState(state: IVideoPlayback) {
+    try {
+      const playback = await this.collection.findOne(state.videoId).exec();
+
+      if (!playback) {
+        await this.collection.insert(state);
+      } else {
+        await playback.update({
+          $set: {
+            currentTime: state.currentTime,
+            totalTime: state.totalTime,
+            playbackPercentage: state.playbackPercentage,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Failed to update video state:', error);
+    }
+  }
+
+  async getVideoState(videoId: string) {
+    try {
+      return await this.collection.findOne(videoId).exec();
+    } catch (error) {
+      console.error('Failed to get video state:', error);
+      return null;
+    }
   }
 }
