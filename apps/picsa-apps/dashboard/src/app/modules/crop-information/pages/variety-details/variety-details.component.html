@@ -34,4 +34,22 @@
       Submit
     </button>
   </form>
+  @if(entryForm.value.id){
+  <button mat-button style="margin-top: 3rem; margin-left: auto" (click)="dialog.open(deleteDialog)">
+    <mat-icon>delete</mat-icon>
+    Delete
+  </button>
+  }
 </div>
+
+<ng-template #deleteDialog>
+  <h2 mat-dialog-title style="margin-bottom: 2rem; font-size: 1.5rem">Delete Entry</h2>
+  <mat-dialog-content>
+    Are you sure you want to delete this variety?<br />
+    <b>This action cannot be undone</b>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" (click)="handleDelete()" cdkFocusInitial>Delete</button>
+  </mat-dialog-actions>
+</ng-template>
