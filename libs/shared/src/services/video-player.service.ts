@@ -17,7 +17,7 @@ export class VideoPlayerService extends PicsaAsyncService {
     this.dbService = dbService;
   }
 
-  async init() {
+  override async init() {
     try {
       await this.dbService.ensureCollections({
         'video-playback': videoPlayback,
