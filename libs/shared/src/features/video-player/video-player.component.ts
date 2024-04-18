@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { VideoPlayerService } from '@picsa/shared/services/video-player.service';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 import { AnalyticsService } from '../../services/core/analytics.service';
