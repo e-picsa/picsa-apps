@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, RxCollection } from 'rxdb';
-import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
+import { RxCollection } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '../../services/core/db_v2';
 import * as Schema from './schema';
-
-addRxPlugin(RxDBUpdatePlugin);
 
 @Injectable({
   providedIn: 'root',
@@ -31,17 +28,15 @@ export class VideoPlayerService extends PicsaAsyncService {
 
   async updateVideoState(state: Schema.IVideoPlayerEntry) {
     try {
-      const playback = await this.collection.findOne(state.videoId).exec();
+      const videoPlayerDoc = await this.collection.findOne(state.videoId).exec();
 
-      if (!playback) {
+      if (!videoPlayerDoc) {
         await this.collection.insert(state);
       } else {
-        await playback.update({
-          $set: {
-            currentTime: state.currentTime,
-            totalTime: state.totalTime,
-            playbackPercentage: state.playbackPercentage,
-          },
+        await videoPlayerDoc.incrementalPatch({
+          currentTime: state.currentTime,
+          totalTime: state.totalTime,
+          playbackPercentage: state.playbackPercentage,
         });
       }
     } catch (error) {
