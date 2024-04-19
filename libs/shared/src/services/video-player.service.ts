@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { RxCollection } from 'rxdb';
+import { addRxPlugin, RxCollection } from 'rxdb';
+import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 
 import { IVideoPlayback, videoPlayback } from '../features/video-player/schema/schema';
 import { PicsaAsyncService } from './asyncService.service';
 import { PicsaDatabase_V2_Service } from './core/db_v2';
+
+addRxPlugin(RxDBUpdatePlugin);
 
 @Injectable({
   providedIn: 'root',

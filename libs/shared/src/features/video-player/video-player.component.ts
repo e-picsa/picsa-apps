@@ -75,17 +75,18 @@ export class VideoPlayerComponent implements OnDestroy {
     private playerService: VideoPlayerService
   ) {}
 
-  // async ngOnInit() {
-  //   await this.loadVideoState();
-  // }
+  async ngOnInit() {
+    await this.loadVideoState();
+  }
 
-  // private async loadVideoState() {
-  //   const videoState = await this.playerService.getVideoState(this.playerId);
-  //   if (videoState) {
-  //     this.pauseTime = videoState.currentTime;
-  //     this.playbackPercentage = videoState.playbackPercentage;
-  //   }
-  // }
+  private async loadVideoState() {
+    await this.playerService.init();
+    const videoState = await this.playerService.getVideoState(this.playerId);
+    if (videoState) {
+      this.pauseTime = videoState.currentTime;
+      this.playbackPercentage = videoState.playbackPercentage;
+    }
+  }
 
   async ngOnDestroy() {
     await this.videoPlayer.stopAllPlayers();
@@ -96,22 +97,21 @@ export class VideoPlayerComponent implements OnDestroy {
   }
 
   private async saveVideoState() {
-    // Get the total time of the video
+    // Getting the total time of the video
     const totalTimeResult = await this.videoPlayer.getDuration({ playerId: this.playerId });
     const totalTime = totalTimeResult.value;
 
-    // Calculate the playback percentage
+    // Calculating the playback percentage
     this.playbackPercentage = (this.pauseTime / totalTime) * 100;
 
-    // Save the video state
+    // Saving the video state
     const videoState = {
       videoId: this.playerId,
       currentTime: this.pauseTime || 0,
       totalTime: totalTime || 0,
       playbackPercentage: this.playbackPercentage || 0,
     };
-    console.log('Video State:', videoState);
-    // await this.playerService.updateVideoState(videoState);
+    await this.playerService.updateVideoState(videoState);
   }
 
   public async pauseVideo() {
