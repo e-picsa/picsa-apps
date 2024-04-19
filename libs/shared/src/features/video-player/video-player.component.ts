@@ -67,6 +67,8 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private pauseTime = 0;
 
+  totalTime: number;
+
   playbackPercentage: number;
 
   constructor(
@@ -99,16 +101,16 @@ export class VideoPlayerComponent implements OnDestroy {
   private async saveVideoState() {
     // Getting the total time of the video
     const totalTimeResult = await this.videoPlayer.getDuration({ playerId: this.playerId });
-    const totalTime = totalTimeResult.value;
+    this.totalTime = totalTimeResult.value || this.totalTime;
 
     // Calculating the playback percentage
-    this.playbackPercentage = (this.pauseTime / totalTime) * 100;
+    this.playbackPercentage = (this.pauseTime / this.totalTime) * 100;
 
     // Saving the video state
     const videoState = {
       videoId: this.playerId,
       currentTime: this.pauseTime || 0,
-      totalTime: totalTime || 0,
+      totalTime: this.totalTime || 0,
       playbackPercentage: this.playbackPercentage || 0,
     };
     await this.playerService.updateVideoState(videoState);
