@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { addRxPlugin, RxCollection } from 'rxdb';
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 
-import { IVideoPlayback, videoPlayback } from '../features/video-player/schema/schema';
-import { PicsaAsyncService } from './asyncService.service';
-import { PicsaDatabase_V2_Service } from './core/db_v2';
+import { PicsaAsyncService } from '../../services/asyncService.service';
+import { PicsaDatabase_V2_Service } from '../../services/core/db_v2';
+import { IVideoPlayback, videoPlayback } from './schema/schema';
 
 addRxPlugin(RxDBUpdatePlugin);
 
@@ -23,9 +23,9 @@ export class VideoPlayerService extends PicsaAsyncService {
   override async init() {
     try {
       await this.dbService.ensureCollections({
-        'video-playback': videoPlayback,
+        video_player: videoPlayback,
       });
-      this.collection = this.dbService.db.collections['video-playback'] as RxCollection<IVideoPlayback>;
+      this.collection = this.dbService.db.collections['video_player'] as RxCollection<IVideoPlayback>;
     } catch (error) {
       console.error('Failed to initialize database:', error);
     }
