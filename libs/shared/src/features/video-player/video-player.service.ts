@@ -4,7 +4,7 @@ import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '../../services/core/db_v2';
-import { IVideoPlayback, videoPlayback } from './schema/schema';
+import * as Schema from './schema';
 
 addRxPlugin(RxDBUpdatePlugin);
 
@@ -13,7 +13,7 @@ addRxPlugin(RxDBUpdatePlugin);
 })
 export class VideoPlayerService extends PicsaAsyncService {
   private dbService: PicsaDatabase_V2_Service;
-  private collection: RxCollection<IVideoPlayback>;
+  private collection: RxCollection<Schema.IVideoPlayerEntry>;
 
   constructor(dbService: PicsaDatabase_V2_Service) {
     super();
@@ -22,16 +22,14 @@ export class VideoPlayerService extends PicsaAsyncService {
 
   override async init() {
     try {
-      await this.dbService.ensureCollections({
-        video_player: videoPlayback,
-      });
-      this.collection = this.dbService.db.collections['video_player'] as RxCollection<IVideoPlayback>;
+      await this.dbService.ensureCollections({ [Schema.COLLECTION_NAME]: Schema.COLLECTION });
+      this.collection = this.dbService.db.collections[Schema.COLLECTION_NAME] as RxCollection<Schema.IVideoPlayerEntry>;
     } catch (error) {
       console.error('Failed to initialize database:', error);
     }
   }
 
-  async updateVideoState(state: IVideoPlayback) {
+  async updateVideoState(state: Schema.IVideoPlayerEntry) {
     try {
       const playback = await this.collection.findOne(state.videoId).exec();
 
