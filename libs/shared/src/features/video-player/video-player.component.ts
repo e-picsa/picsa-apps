@@ -4,7 +4,7 @@ import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 import { AnalyticsService } from '../../services/core/analytics.service';
-import { VideoPlayerService } from '../../services/video-player.service';
+import { VideoPlayerService } from './video-player.service';
 
 // Fix listeners missing from type
 // https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#listeners
