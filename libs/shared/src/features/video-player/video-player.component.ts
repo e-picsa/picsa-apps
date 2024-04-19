@@ -109,9 +109,9 @@ export class VideoPlayerComponent implements OnDestroy {
     // Saving the video state
     const videoState = {
       videoId: this.playerId,
-      currentTime: this.pauseTime || 0,
-      totalTime: this.totalTime || 0,
-      playbackPercentage: this.playbackPercentage || 0,
+      currentTime: Math.round(this.pauseTime || 0),
+      totalTime: Math.round(this.totalTime || 0),
+      playbackPercentage: Math.round(this.playbackPercentage || 0),
     };
     await this.playerService.updateVideoState(videoState);
   }
