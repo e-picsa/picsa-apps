@@ -33,19 +33,8 @@ export class VideoPlayerService extends PicsaAsyncService {
 
   async updateVideoState(state: IVideoPlayback) {
     try {
-      const playback = await this.collection.findOne(state.videoId).exec();
-
-      if (!playback) {
-        await this.collection.insert(state);
-      } else {
-        await playback.update({
-          $set: {
-            currentTime: state.currentTime,
-            totalTime: state.totalTime,
-            playbackPercentage: state.playbackPercentage,
-          },
-        });
-      }
+      // Upsert the document
+      await this.collection.upsert(state);
     } catch (error) {
       console.error('Failed to update video state:', error);
     }
