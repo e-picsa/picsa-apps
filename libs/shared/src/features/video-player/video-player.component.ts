@@ -79,6 +79,22 @@ export class VideoPlayerComponent implements OnDestroy {
     private playerService: VideoPlayerService
   ) {}
 
+  async ngOnInit() {
+    await this.loadVideoState();
+  }
+
+  private async loadVideoState() {
+    await this.playerService.init();
+    const videoState = await this.playerService.getVideoState(this.playerId);
+    const videoID = videoState?._data.videoId;
+    if (videoState && videoID === this.playerId) {
+      this.videoID = videoID;
+      this.pauseTime = videoState.currentTime;
+      this.playbackPercentage = videoState.playbackPercentage;
+      this.totalDuration = videoState.totalTime;
+    }
+  }
+
   private async saveVideoState() {
     this.totalDuration = (await this.videoPlayer.getDuration({ playerId: this.playerId })).value;
 
@@ -95,22 +111,6 @@ export class VideoPlayerComponent implements OnDestroy {
       playbackPercentage: this.playbackPercentage || 0,
     };
     await this.playerService.updateVideoState(videoState);
-  }
-
-  async ngOnInit() {
-    await this.loadVideoState();
-  }
-
-  private async loadVideoState() {
-    await this.playerService.init();
-    const videoState = await this.playerService.getVideoState(this.playerId);
-    const videoID = videoState?._data.videoId;
-    if (videoState && videoID === this.playerId) {
-      this.videoID = videoID;
-      this.pauseTime = videoState.currentTime;
-      this.playbackPercentage = videoState.playbackPercentage;
-      this.totalDuration = videoState.totalTime;
-    }
   }
 
   async ngOnDestroy() {
