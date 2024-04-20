@@ -78,11 +78,11 @@ export class VideoPlayerComponent implements OnDestroy {
   ) {}
 
   async ngOnInit() {
+    await this.playerService.ready();
     await this.loadVideoState();
   }
 
   private async loadVideoState() {
-    await this.playerService.init();
     const videoState = await this.playerService.getVideoState(this.playerId);
     if (videoState) {
       this.pauseTime = videoState.currentTime;
@@ -100,8 +100,10 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private async saveVideoState() {
     // Getting the total time of the video
+    const currenttime = await this.videoPlayer.getCurrentTime({ playerId: this.playerId });
     const totalTimeResult = await this.videoPlayer.getDuration({ playerId: this.playerId });
-    this.totalTime = totalTimeResult.value || this.totalTime;
+    this.pauseTime = currenttime.value || this.pauseTime;
+    this.totalTime = totalTimeResult.value || this.totalTime || 1;
 
     // Calculating the playback percentage
     this.playbackPercentage = (this.pauseTime / this.totalTime) * 100;
@@ -109,9 +111,9 @@ export class VideoPlayerComponent implements OnDestroy {
     // Saving the video state
     const videoState = {
       videoId: this.playerId,
-      currentTime: Math.round(this.pauseTime || 0),
-      totalTime: Math.round(this.totalTime || 0),
-      playbackPercentage: Math.round(this.playbackPercentage || 0),
+      currentTime: this.pauseTime,
+      totalTime: this.totalTime,
+      playbackPercentage: this.playbackPercentage,
     };
     await this.playerService.updateVideoState(videoState);
   }
@@ -121,29 +123,64 @@ export class VideoPlayerComponent implements OnDestroy {
   }
 
   public async playVideo() {
-    await this.saveVideoState();
-
     // Remove thumbnail from future playback
     this.thumbnail = undefined;
+    // Stop playback from any other players
     await this.videoPlayer.stopAllPlayers();
-    if (Capacitor.isNativePlatform()) {
-      this.initialised = false;
-    }
     // Track video play event
     this.analyticsService.trackVideoPlay(this.playerId);
-    // Initialise player any time playback triggered in case url updated (e.g. downloaded after init)
-    await this.initPlayer();
-    this.videoPlayer.play({ playerId: this.playerId }).then(() => {
-      if (this.pauseTime > 0) {
-        setTimeout(() => {
-          this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime: this.pauseTime });
-        }, 500);
+
+    if (!this.initialised) {
+      await this.initPlayer();
+    }
+
+    if (this.pauseTime) {
+      await this.setPlayerInitialTime(this.pauseTime);
+    }
+    await this.videoPlayer.play({ playerId: this.playerId });
+  }
+
+  /** Set the initial time for video player feedback */
+  private async setPlayerInitialTime(seektime = 0) {
+    if (Capacitor.isNativePlatform()) {
+      // Hack - on android the seek time can only be set after confirmation the player is ready
+      await this.waitForPlayerReady();
+      await this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime });
+    } else {
+      // HACK - on web the setCurrentTime method does not work unless video already running
+      // so manually detect video element and set time
+      const videoEl = this.getWebVideoEl();
+      if (videoEl) {
+        videoEl.currentTime = seektime;
       }
+    }
+  }
+  private getWebVideoEl() {
+    const containerEl = document.querySelector(`#vc_${this.id}`);
+    if (containerEl) {
+      const videoEl = containerEl.querySelector('video');
+      return videoEl;
+    }
+    return null;
+  }
+
+  /**
+   * Detect when player ready event has been fired
+   * Used on android when triggering a full screen video
+   */
+  private async waitForPlayerReady() {
+    return new Promise((resolve) => {
+      const playerReadyCalback = (e: capVideoListener) => {
+        if (e.fromPlayerId === this.playerId) {
+          this.videoPlayer.removeListener('jeepCapVideoPlayerReady', playerReadyCalback);
+          resolve(true);
+        }
+      };
+      this.videoPlayer.addListener('jeepCapVideoPlayerReady', playerReadyCalback);
     });
   }
 
   private async initPlayer() {
-    if (this.initialised) return;
     if (!this.source) return;
     const url = this.convertSourceToUrl(this.source);
     const { clientWidth } = this.elementRef.nativeElement;
@@ -165,9 +202,13 @@ export class VideoPlayerComponent implements OnDestroy {
     }
     // Merge default options with user override
     this.playerOptions = { ...defaultOptions, ...this.options };
-    await this.videoPlayer.initPlayer(this.playerOptions);
+    const res = await this.videoPlayer.initPlayer(this.playerOptions);
     this.addListeners();
-    this.initialised = true;
+    // HACK - on web play only needs to initialise once but on Android needs to init every playback
+    if (!Capacitor.isNativePlatform()) {
+      this.initialised = true;
+    }
+    return res;
   }
 
   /** Video player requires url source, handle conversion from blob or internal asset url */
@@ -189,55 +230,106 @@ export class VideoPlayerComponent implements OnDestroy {
    * Currently mostly just used for toggling play button display
    *********************************************************************************/
 
-  /**
-   * Add listener for play events
-   * Use named functions to allow removal on destroy
-   */
-  private addListeners() {
-    this.videoPlayer.addListener('jeepCapVideoPlayerReady', this.handlePlayerReady.bind(this));
-    this.videoPlayer.addListener('jeepCapVideoPlayerPlay', this.handlePlayerPlay.bind(this));
-    this.videoPlayer.addListener('jeepCapVideoPlayerPause', this.handlePlayerPause.bind(this));
-    this.videoPlayer.addListener('jeepCapVideoPlayerEnded', this.handlePlayerEnded.bind(this));
-    this.videoPlayer.addListener('jeepCapVideoPlayerExit', this.handlePlayerExit.bind(this));
-  }
-
-  /** Remove all event listeners */
-  private removeListeners() {
-    this.videoPlayer.removeListener('jeepCapVideoPlayerReady', this.handlePlayerReady);
-    this.videoPlayer.removeListener('jeepCapVideoPlayerPlay', this.handlePlayerPlay);
-    this.videoPlayer.removeListener('jeepCapVideoPlayerPause', this.handlePlayerPause);
-    this.videoPlayer.removeListener('jeepCapVideoPlayerEnded', this.handlePlayerEnded);
-    this.videoPlayer.removeListener('jeepCapVideoPlayerExit', this.handlePlayerExit);
-  }
   private handlePlayerReady() {
+    // console.log('[Video Player] ready');
     this.showPlayButton = true;
   }
-  private handlePlayerPlay(e: { fromPlayerId: string }) {
-    // Events can be emitted from any player, so only update play button of current player id
-    if (e.fromPlayerId === this.playerId) {
-      this.showPlayButton = false;
-    }
+  private handlePlayerPlay() {
+    // console.log('[Video Player] play');
+
+    this.showPlayButton = false;
   }
 
-  private async handlePlayerPause(e: { fromPlayerId: string; currentTime: number }) {
-    if (e.fromPlayerId === this.playerId) {
-      this.pauseTime = e.currentTime;
-      this.showPlayButton = true;
-      await this.saveVideoState();
-    }
-  }
+  private async handlePlayerPause(currentTime: number) {
+    // console.log('[Video Player] pause', currentTime);
 
-  private handlePlayerEnded() {
+    this.pauseTime = currentTime;
     this.showPlayButton = true;
-  }
-  private async handlePlayerExit(e: { currentTime: number }) {
-    this.showPlayButton = true;
-    this.pauseTime = e.currentTime;
     await this.saveVideoState();
+  }
+
+  private async handlePlayerEnded(currentTime: number) {
+    // console.log('[Video Player] ended', currentTime);
+    this.showPlayButton = true;
+    await this.saveVideoState();
+  }
+
+  private async handlePlayerExit() {
+    // console.log('[Video Player] exit');
+    // HACK - player exit event not bound to specific player instance so do not update video state
+    // this means that progress state cannot be saved if user exits video without first pausing
+    // (this only applies to fullscreen videos played on native devices)
+
     // Ensure player does not stay stuck in landscape mode
     if (Capacitor.isNativePlatform()) {
       await ScreenOrientation.unlock();
     }
+    this.showPlayButton = true;
+  }
+
+  private listeners: { event: IVideoEvent; callback: (e: capVideoListener) => void }[] = [];
+
+  /**
+   * Add listener for play events
+   * Use named functions to allow removal on destroy
+   *
+   * Events can be emitted from any player, so only all events only trigger callback
+   * when matching player ID
+   */
+  private addListeners() {
+    // Ensure no previous listeners remain (on android listeners need to be registered every time playback starts)
+    this.removeListeners();
+
+    // Ready
+    const jeepCapVideoPlayerReady = (e: capVideoListener) => {
+      if (e.fromPlayerId === this.playerId) {
+        this.handlePlayerReady();
+      }
+    };
+    this.videoPlayer.addListener('jeepCapVideoPlayerReady', jeepCapVideoPlayerReady);
+    this.listeners.push({ event: 'jeepCapVideoPlayerReady', callback: jeepCapVideoPlayerReady });
+
+    // Play
+    const jeepCapVideoPlayerPlay = (e: capVideoListener) => {
+      if (e.fromPlayerId === this.playerId) {
+        this.handlePlayerPlay();
+      }
+    };
+    this.videoPlayer.addListener('jeepCapVideoPlayerPlay', jeepCapVideoPlayerPlay);
+    this.listeners.push({ event: 'jeepCapVideoPlayerPlay', callback: jeepCapVideoPlayerPlay });
+
+    // Pause
+    const jeepCapVideoPlayerPause = (e: capVideoListener) => {
+      if (e.fromPlayerId === this.playerId) {
+        this.handlePlayerPause(e.currentTime);
+      }
+    };
+    this.videoPlayer.addListener('jeepCapVideoPlayerPause', jeepCapVideoPlayerPause);
+    this.listeners.push({ event: 'jeepCapVideoPlayerPause', callback: jeepCapVideoPlayerPause });
+
+    // Ended
+    const jeepCapVideoPlayerEnded = (e: capVideoListener) => {
+      if (e.fromPlayerId === this.playerId) {
+        this.handlePlayerEnded(e.currentTime);
+      }
+    };
+    this.videoPlayer.addListener('jeepCapVideoPlayerEnded', jeepCapVideoPlayerEnded);
+    this.listeners.push({ event: 'jeepCapVideoPlayerEnded', callback: jeepCapVideoPlayerEnded });
+
+    // Exit - NOTE - different callback
+    const jeepCapVideoPlayerExit = (e: { dismiss?: boolean; currentTime: number }) => {
+      this.handlePlayerExit();
+    };
+    this.videoPlayer.addListener('jeepCapVideoPlayerExit', jeepCapVideoPlayerExit);
+    this.listeners.push({ event: 'jeepCapVideoPlayerExit', callback: jeepCapVideoPlayerExit });
+  }
+
+  /** Remove all event listeners */
+  private removeListeners() {
+    for (const { event, callback } of this.listeners) {
+      this.videoPlayer.removeListener(event, callback);
+    }
+    this.listeners = [];
   }
 }
 
