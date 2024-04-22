@@ -51,7 +51,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
     this.downloadStatus = 'pending';
     this.downloadProgress = 0;
 
-    const downloadQueue = [...this.resources];
+    const downloadQueue = [...this._resources];
     const downloadNext = () => {
       if (downloadQueue.length === 0) {
         this.downloadStatus = 'complete';
