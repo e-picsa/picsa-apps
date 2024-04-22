@@ -1,16 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { StorageFilePickerComponent } from './storage-file-picker.component';
 
-describe('StorageFilePickerComponent', () => {
-  let component: StorageFilePickerComponent;
-  let fixture: ComponentFixture<StorageFilePickerComponent>;
+import { SupabaseStoragePickerDirective } from './storage-file-picker.component';
+
+describe('SupabaseStoragePickerDirective', () => {
+  let component: SupabaseStoragePickerDirective;
+  let fixture: ComponentFixture<SupabaseStoragePickerDirective>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StorageFilePickerComponent],
+      imports: [SupabaseStoragePickerDirective],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(StorageFilePickerComponent);
+    fixture = TestBed.createComponent(SupabaseStoragePickerDirective);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,16 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DrawingComponent } from './drawing.component';
+
+import { PicsaDrawingComponent } from './drawing.component';
 
 describe('DrawingComponent', () => {
-  let component: DrawingComponent;
-  let fixture: ComponentFixture<DrawingComponent>;
+  let component: PicsaDrawingComponent;
+  let fixture: ComponentFixture<PicsaDrawingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DrawingComponent],
+      imports: [PicsaDrawingComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DrawingComponent);
+    fixture = TestBed.createComponent(PicsaDrawingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
