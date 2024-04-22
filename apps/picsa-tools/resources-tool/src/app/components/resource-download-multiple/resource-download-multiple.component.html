@@ -1,41 +1,33 @@
-<button
-  mat-stroked-button
-  color="primary"
-  class="downloads-button"
-  (click)="downloadAllResources()"
-  *ngIf="downloadStatus === 'ready'"
-  [attr.data-style-variant]="styleVariant"
->
+@switch (downloadStatus) { @case ('ready') {
+<button mat-stroked-button color="primary" class="downloads-button" (click)="downloadAllResources()">
   <mat-icon>download</mat-icon>
   {{ 'Download All' | translate }}
   {{ totalSize | sizeMB }} MB
 </button>
+} @case ('pending') {
 
-<div class="download-progress" *ngIf="downloadStatus === 'pending'">
-  <mat-progress-spinner
-    [class]="'spinner' + styleVariant"
-    color="primary"
-    [mode]="downloadProgress > 0 ? 'determinate' : 'indeterminate'"
-    [value]="downloadProgress"
-    [diameter]="size"
-    [attr.data-style-variant]="styleVariant"
-  >
-  </mat-progress-spinner>
-  <button
-    mat-button
-    class="download-cancel"
-    (click)="cancelDownload()"
-    [disabled]="downloadProgress === 100"
-    [attr.data-style-variant]="styleVariant"
-  >
+<button mat-stroked-button (click)="cancelDownload()">
+  <div class="download-progress">
+    <mat-progress-spinner
+      color="primary"
+      [mode]="downloadProgress > 0 ? 'determinate' : 'indeterminate'"
+      [value]="downloadProgress"
+      [diameter]="16"
+    >
+    </mat-progress-spinner>
+    <span>{{ downloadCount }} / {{ totalCount }}</span>
+
     <mat-icon>close</mat-icon>
-  </button>
-</div>
+  </div>
+</button>
+
+} @case ('complete') {
 <button
   mat-icon-button
   *ngIf="downloadStatus === 'complete'"
-  [attr.data-style-variant]="styleVariant"
   [style.visibility]="hideOnComplete ? 'hidden' : 'visible'"
 >
   <mat-icon>check</mat-icon>
 </button>
+
+} }

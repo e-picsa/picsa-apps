@@ -27,11 +27,7 @@
     <div style="margin-top: 2rem" class="child-resources" *ngIf="files.length > 0">
       <div style="display: flex">
         <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
-        <resource-download-multiple
-          [size]="48"
-          [resources]="files"
-          style="margin-left: auto"
-        ></resource-download-multiple>
+        <resource-download-multiple [resources]="files" style="margin-left: auto"></resource-download-multiple>
       </div>
 
       <div class="list-container">
