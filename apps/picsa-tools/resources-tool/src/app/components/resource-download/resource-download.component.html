@@ -3,9 +3,14 @@
   (click)="downloadResource()"
   *ngIf="downloadStatus === 'ready'"
   [attr.data-style-variant]="styleVariant"
->
-  <mat-icon>download</mat-icon>
+> 
+  <mat-icon style="font-size: 30px;">download</mat-icon><span style="font-size: 15px; align-items: center;
+  justify-content: center; display: flex">
+    {{ totalSize }}MB
+    </span>
+ 
 </button>
+
 <div class="download-progress" *ngIf="downloadStatus === 'pending'">
   <mat-progress-spinner
     [class]="'spinner' + styleVariant"

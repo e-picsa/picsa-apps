@@ -8,7 +8,16 @@
     <mat-card-title>{{ collection.title | translate }}</mat-card-title>
     <mat-card-subtitle> {{ collection.description || '' }} </mat-card-subtitle>
     <img mat-card-avatar *ngIf="collection.cover?.image" [src]="collection.cover?.image" />
+    <picsa-resource-download-multiple
+    [size]="48" 
+    [dbDoc] ="files"
+    *ngIf="files"
+    class="total-size"
+    [styleVariant]="styleVariant"
+    [hideOnComplete]="hideOnComplete"
+></picsa-resource-download-multiple>
   </mat-card-header>
+  
   <!-- Contents -->
   <mat-card-content>
     <div *ngIf="collection.language" style="margin-top: 2em">

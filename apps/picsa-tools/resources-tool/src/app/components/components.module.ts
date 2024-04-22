@@ -12,6 +12,7 @@ import {
   ResourceItemLinkComponent,
   ResourceItemVideoComponent,
 } from './resource-item';
+import { ResourceDownloadMultipleComponent } from './resource-download-multiple/resource-download-multiple.component';
 
 const components = [
   ResourceDownloadComponent,
@@ -19,11 +20,12 @@ const components = [
   ResourceItemFileComponent,
   ResourceItemLinkComponent,
   ResourceItemVideoComponent,
+  ResourceDownloadMultipleComponent
 ];
 
 @NgModule({
   imports: [CommonModule, PicsaTranslateModule, PicsaVideoPlayerModule, ResourcesMaterialModule, RouterModule],
-  exports: [...components, ResourcesMaterialModule, PicsaTranslateModule],
+  exports: [...components, ResourcesMaterialModule, PicsaTranslateModule,],
   declarations: components,
   providers: [],
 })
