@@ -67,9 +67,41 @@ function generateTranslationTemplates() {
     return comparator ? 1 : -1;
   });
   writeOutputJson(sorted);
-  writeOutputCSV(sorted);
+  // write output csv
+  const headers: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
+  const csv = jsonToCSV(sorted, headers);
+  const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
+  writeFileSync(target, csv);
+
   console.log('Templates generated', GENERATED_TEMPLATES_DIR);
   console.log('Assets generated', GENERATED_ASSETS_DIR);
+}
+
+/** Convert json to csv  (adapted from https://stackoverflow.com/a/31536517) */
+function jsonToCSV(data: any[], headers?: string[]) {
+  if (data.length === 0) return '';
+  // generate headers from first row of data if not provided
+  if (!headers) {
+    headers = Object.keys(data[0]);
+  }
+  const csv = [
+    headers.join(','), // header row first
+    ...data.map((row) => headers.map((fieldName) => valueCSV(row[fieldName])).join(',')),
+  ].join('\r\n');
+  return csv;
+}
+
+/** Convert value for csv output. Stringifies json, converts array to string with custom escape */
+function valueCSV(v: any) {
+  if (typeof v === 'string') {
+    v = v.replace(/"/g, '');
+  }
+  if (Array.isArray(v)) {
+    if (v.length === 0) return null;
+    // HACK - use double quotes to un-escape csv
+    return `"[${v.map((el) => `""${el}""`).join(',')}]"`;
+  }
+  return JSON.stringify(v);
 }
 
 /**
@@ -126,18 +158,6 @@ function writeOutputJson(entries: ITranslationEntry[]) {
     enJson[text] = text;
   }
   writeFileSync(enJsonPath, JSON.stringify(enJson, null, 2));
-}
-
-/** Convert json to csv and output (adapted from https://stackoverflow.com/a/31536517) */
-function writeOutputCSV(entries: ITranslationEntry[]) {
-  const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
-  const replacer = (key: string, value: string) => (value === null ? '' : value); // specify how you want to handle null values here
-  const header: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
-  const csv = [
-    header.join(','), // header row first
-    ...entries.map((row) => header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(',')),
-  ].join('\r\n');
-  writeFileSync(target, csv);
 }
 
 /**

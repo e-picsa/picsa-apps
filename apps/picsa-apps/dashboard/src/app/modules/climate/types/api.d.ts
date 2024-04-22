@@ -75,6 +75,32 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /** AnnualRain */
+    AnnualRain: {
+      /** Annual Rain */
+      annual_rain?: boolean;
+      /** N Rain */
+      n_rain?: boolean;
+      /** Na Rm */
+      na_rm?: boolean;
+      /** Na Prop */
+      na_prop?: number;
+      /** Na N */
+      na_n?: number;
+      /** Na Consec */
+      na_consec?: number;
+      /** Na N Non */
+      na_n_non?: number;
+    };
+    /** AnnualRainfallSummariesMetadata */
+    AnnualRainfallSummariesMetadata: {
+      annual_rain?: components["schemas"]["AnnualRain"];
+      start_rains?: components["schemas"]["StartRains"];
+      end_rains?: components["schemas"]["EndRains"];
+      end_season?: components["schemas"]["EndSeason"];
+      seasonal_rain?: components["schemas"]["SeasonalRain"];
+      seasonal_length?: components["schemas"]["SeasonalLength"];
+    };
     /** AnnualRainfallSummariesParameters */
     AnnualRainfallSummariesParameters: {
       /**
@@ -85,7 +111,7 @@ export interface components {
       country?: "zm" | "mw";
       /**
        * Station Id
-       * @default 01122
+       * @default test_1
        */
       station_id?: string;
       /**
@@ -101,6 +127,58 @@ export interface components {
        */
       summaries?: ("annual_rain" | "start_rains" | "end_rains" | "end_season" | "seasonal_rain" | "seasonal_length")[];
     };
+    /** AnnualRainfallSummariesResponce */
+    AnnualRainfallSummariesResponce: {
+      metadata: components["schemas"]["AnnualRainfallSummariesMetadata"];
+      /** Data */
+      data: components["schemas"]["AnnualRainfallSummariesdata"][];
+    };
+    /** AnnualRainfallSummariesdata */
+    AnnualRainfallSummariesdata: {
+      /** Station */
+      station: string;
+      /** Year */
+      year: number;
+      /** Start Rains Doy */
+      start_rains_doy?: number;
+      /** Start Rains Date */
+      start_rains_date?: unknown;
+      /** End Rains Doy */
+      end_rains_doy?: number;
+      /** End Rains Date */
+      end_rains_date?: unknown;
+      /** End Season Doy */
+      end_season_doy?: number;
+      /** End Season Date */
+      end_season_date?: unknown;
+      /** N Seasonal Rain */
+      n_seasonal_rain?: number;
+      /** Season Length */
+      season_length?: number;
+      /** Annual Rain */
+      annual_rain?: number;
+      /** N Rain */
+      n_rain?: number;
+    };
+    /** AnnualTempartureSummariesdata */
+    AnnualTempartureSummariesdata: {
+      /** Station */
+      station: string;
+      /** Year */
+      year: number;
+      /** Mean Tmin */
+      mean_tmin?: number;
+      /** Mean Tmax */
+      mean_tmax?: number;
+      /** Min Tmin */
+      min_tmin?: number;
+      /** Min Tmax */
+      min_tmax?: number;
+      /** Max Tmin */
+      max_tmin?: number;
+      /** Max Tmax */
+      max_tmax?: number;
+    };
     /** AnnualTemperatureSummariesParameters */
     AnnualTemperatureSummariesParameters: {
       /**
@@ -111,17 +189,33 @@ export interface components {
       country?: "zm" | "mw";
       /**
        * Station Id
-       * @default 16
+       * @default test_1
        */
       station_id?: string;
       /**
        * Summaries
        * @default [
        *   "mean_tmin",
-       *   "mean_tmax"
+       *   "mean_tmax",
+       *   "min_tmin",
+       *   "min_tmax",
+       *   "max_tmin",
+       *   "max_tmax"
        * ]
        */
-      summaries?: ("mean_tmin" | "mean_tmax")[];
+      summaries?: ("mean_tmin" | "mean_tmax" | "min_tmin" | "min_tmax" | "max_tmin" | "max_tmax")[];
+    };
+    /** AnnualTemperatureSummariesResponce */
+    AnnualTemperatureSummariesResponce: {
+      metadata: components["schemas"]["TemperatureSummariesMetadata"];
+      /** Data */
+      data: components["schemas"]["AnnualTempartureSummariesdata"][];
+    };
+    /** CropSuccessProbabilitiesMetadata */
+    CropSuccessProbabilitiesMetadata: {
+      start_rains?: components["schemas"]["StartRains"];
+      end_rains?: components["schemas"]["EndRains"];
+      crops_success?: components["schemas"]["CropsSuccess"];
     };
     /** CropSuccessProbabilitiesParameters */
     CropSuccessProbabilitiesParameters: {
@@ -133,17 +227,108 @@ export interface components {
       country?: "zm" | "mw";
       /**
        * Station Id
-       * @default 16
+       * @default 1
        */
       station_id?: string;
-      /** Water Requirements */
+      /**
+       * Water Requirements
+       * @default [
+       *   100,
+       *   200,
+       *   300
+       * ]
+       */
       water_requirements?: number[];
-      /** Planting Length */
+      /**
+       * Planting Length
+       * @default [
+       *   20
+       * ]
+       */
       planting_length?: number[];
-      /** Planting Dates */
+      /**
+       * Planting Dates
+       * @default [
+       *   25,
+       *   50,
+       *   75
+       * ]
+       */
       planting_dates?: number[];
-      /** Start Before Season */
+      /**
+       * Start Before Season
+       * @default true
+       */
       start_before_season?: boolean;
+    };
+    /** CropSuccessProbabilitiesResponce */
+    CropSuccessProbabilitiesResponce: {
+      metadata: components["schemas"]["CropSuccessProbabilitiesMetadata"];
+      /** Data */
+      data: components["schemas"]["CropSuccessProbabilitiesdata"][];
+    };
+    /** CropSuccessProbabilitiesdata */
+    CropSuccessProbabilitiesdata: {
+      /** Station */
+      station: string;
+      /** Rain Total */
+      rain_total: number;
+      /** Plant Day */
+      plant_day: number;
+      /** Plant Length */
+      plant_length: number;
+      /** Prop Success */
+      prop_success: number;
+    };
+    /** CropsSuccess */
+    CropsSuccess: {
+      /** Water Requirements */
+      water_requirements?: {
+        [key: string]: number;
+      };
+      /** Planting Dates */
+      planting_dates?: {
+        [key: string]: number;
+      };
+      /** Planting Length */
+      planting_length?: {
+        [key: string]: number;
+      };
+      /** Start Check */
+      start_check?: boolean;
+    };
+    /** EndRains */
+    EndRains: {
+      /** Start Day */
+      start_day?: number;
+      /** End Day */
+      end_day?: number;
+      /** Interval Length */
+      interval_length?: number;
+      /** Min Rainfall */
+      min_rainfall?: number;
+    };
+    /** EndSeason */
+    EndSeason: {
+      /** Start Day */
+      start_day?: number;
+      /** End Day */
+      end_day?: number;
+      /** Capacity */
+      capacity?: number;
+      /** Water Balance Max */
+      water_balance_max?: number;
+      /** Evaporation */
+      evaporation?: string;
+      /** Evaporation Value */
+      evaporation_value?: number;
+    };
+    /** ExtremesRain */
+    ExtremesRain: {
+      /** Type */
+      type?: string;
+      /** Value */
+      value?: number;
     };
     /** ExtremesSummariesParameters */
     ExtremesSummariesParameters: {
@@ -168,6 +353,15 @@ export interface components {
        */
       summaries?: ("extremes_rain" | "extremes_tmin" | "extremes_tmax")[];
     };
+    /** ExtremesTemp */
+    ExtremesTemp: {
+      /** Direction */
+      direction?: string;
+      /** Type */
+      type?: string;
+      /** Value */
+      value?: number;
+    };
     /** Forecast */
     Forecast: {
       /**
@@ -190,12 +384,33 @@ export interface components {
        * Type
        * @enum {string}
        */
-      type?: "downscale_forecast" | "annual_forecast";
+      type?: "downscaled_forecast" | "annual_forecast";
     };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
+    };
+    /** MonthlyTempartureSummariesdata */
+    MonthlyTempartureSummariesdata: {
+      /** Station */
+      station: string;
+      /** Year */
+      year: number;
+      /** Mean Tmin */
+      mean_tmin?: number;
+      /** Mean Tmax */
+      mean_tmax?: number;
+      /** Min Tmin */
+      min_tmin?: number;
+      /** Min Tmax */
+      min_tmax?: number;
+      /** Max Tmin */
+      max_tmin?: number;
+      /** Max Tmax */
+      max_tmax?: number;
+      /** Month */
+      month: number;
     };
     /** MonthlyTemperatureSummariesParameters */
     MonthlyTemperatureSummariesParameters: {
@@ -207,7 +422,7 @@ export interface components {
       country?: "zm" | "mw";
       /**
        * Station Id
-       * @default 16
+       * @default test_1
        */
       station_id?: string;
       /**
@@ -219,6 +434,19 @@ export interface components {
        */
       summaries?: ("mean_tmin" | "mean_tmax")[];
     };
+    /** MonthlyTemperatureSummariesResponce */
+    MonthlyTemperatureSummariesResponce: {
+      metadata: components["schemas"]["TemperatureSummariesMetadata"];
+      /** Data */
+      data: components["schemas"]["MonthlyTempartureSummariesdata"][];
+    };
+    /** SeasonStartProbabilities */
+    SeasonStartProbabilities: {
+      /** Specified Day */
+      specified_day?: {
+        [key: string]: number;
+      };
+    };
     /** SeasonStartProbabilitiesParameters */
     SeasonStartProbabilitiesParameters: {
       /**
@@ -229,14 +457,94 @@ export interface components {
       country?: "zm" | "mw";
       /**
        * Station Id
-       * @default 16
+       * @default test_1
        */
       station_id?: string;
-      /** Start Dates */
+      /**
+       * Start Dates
+       * @default [
+       *   200,
+       *   220,
+       *   250,
+       *   270,
+       *   300,
+       *   320
+       * ]
+       */
       start_dates?: number[];
     };
-    /** Station */
-    Station: {
+    /** SeasonalLength */
+    SeasonalLength: {
+      /** End Type */
+      end_type?: string;
+    };
+    /** SeasonalRain */
+    SeasonalRain: {
+      /** Total Rain */
+      total_rain?: number | boolean;
+      /** End Type */
+      end_type?: string;
+      /** N Rain */
+      n_rain?: boolean;
+      /** Rain Day */
+      rain_day?: number;
+      /** Na Rm */
+      na_rm?: boolean;
+      /** Na Prop */
+      na_prop?: number;
+      /** Na N */
+      na_n?: number;
+      /** Na Consec */
+      na_consec?: number;
+      /** Na N Non */
+      na_n_non?: number;
+    };
+    /** SeasonalTotalRainfall */
+    SeasonalTotalRainfall: {
+      /** Na Prop */
+      na_prop?: number;
+    };
+    /** StartRains */
+    StartRains: {
+      /** Threshold */
+      threshold?: number;
+      /** Start Day */
+      start_day?: number;
+      /** End Day */
+      end_day?: number;
+      /** Total Rainfall */
+      total_rainfall?: boolean;
+      /** Amount Rain */
+      amount_rain?: number;
+      /** Over Days */
+      over_days?: number;
+      /** Proportion */
+      proportion?: boolean;
+      /** Prob Rain Day */
+      prob_rain_day?: number;
+      /** Number Rain Days */
+      number_rain_days?: boolean;
+      /** Min Rain Days */
+      min_rain_days?: number;
+      /** Rain Day Interval */
+      rain_day_interval?: number;
+      /** Dry Spell */
+      dry_spell?: boolean;
+      /** Spell Max Dry Days */
+      spell_max_dry_days?: number;
+      /** Spell Interval */
+      spell_interval?: number;
+      /** Dry Period */
+      dry_period?: boolean;
+      /** Period Interval */
+      period_interval?: number;
+      /** Max Rain */
+      max_rain?: number;
+      /** Period Max Dry Days */
+      period_max_dry_days?: number;
+    };
+    /** StationAndDefintionResponce */
+    StationAndDefintionResponce: {
       /**
        * Country Code
        * @enum {string}
@@ -254,6 +562,62 @@ export interface components {
       station_id: number;
       /** Station Name */
       station_name: string;
+      data: components["schemas"]["StationDefinitionDataResponce"];
+    };
+    /** StationDataResponce */
+    StationDataResponce: {
+      /**
+       * Country Code
+       * @enum {string}
+       */
+      country_code: "zm" | "mw";
+      /** District */
+      district: string;
+      /** Elevation */
+      elevation: number;
+      /** Latitude */
+      latitude: number;
+      /** Longitude */
+      longitude: number;
+      /** Station Id */
+      station_id: number;
+      /** Station Name */
+      station_name: string;
+    };
+    /** StationDefinitionDataResponce */
+    StationDefinitionDataResponce: {
+      start_rains?: components["schemas"]["StartRains"];
+      end_rains?: components["schemas"]["EndRains"];
+      end_season?: components["schemas"]["EndSeason"];
+      seasonal_length?: components["schemas"]["SeasonalLength"];
+      seasonal_total_rainfall?: components["schemas"]["SeasonalTotalRainfall"];
+      mean_tmax?: components["schemas"]["Temp"];
+      mean_tmin?: components["schemas"]["Temp"];
+      max_tmax?: components["schemas"]["Temp"];
+      min_tmin?: components["schemas"]["Temp"];
+      annual_rain?: components["schemas"]["AnnualRain"];
+      season_start_probabilities?: components["schemas"]["SeasonStartProbabilities"];
+      seasonal_rain?: components["schemas"]["SeasonalRain"];
+      extremes_tmin?: components["schemas"]["ExtremesTemp"];
+      extremes_tmax?: components["schemas"]["ExtremesTemp"];
+      extremes_rain?: components["schemas"]["ExtremesRain"];
+      crops_success?: components["schemas"]["CropsSuccess"];
+    };
+    /** Temp */
+    Temp: {
+      /** To */
+      to?: string;
+      /** Na Rm */
+      na_rm?: boolean;
+    };
+    /** TemperatureSummariesMetadata */
+    TemperatureSummariesMetadata: {
+      mean_tmin?: components["schemas"]["Temp"];
+      mean_tmax?: components["schemas"]["Temp"];
+      min_tmin?: components["schemas"]["Temp"];
+      min_tmax?: components["schemas"]["Temp"];
+      max_tmin?: components["schemas"]["Temp"];
+      max_tmax?: components["schemas"]["Temp"];
     };
     /** ValidationError */
     ValidationError: {
@@ -303,7 +667,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["AnnualRainfallSummariesResponce"];
         };
       };
       /** @description Validation Error */
@@ -325,7 +689,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["AnnualTemperatureSummariesResponce"];
         };
       };
       /** @description Validation Error */
@@ -347,7 +711,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["CropSuccessProbabilitiesResponce"];
         };
       };
       /** @description Validation Error */
@@ -369,7 +733,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["MonthlyTemperatureSummariesResponce"];
         };
       };
       /** @description Validation Error */
@@ -430,7 +794,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Station"][];
+          "application/json": components["schemas"]["StationDataResponce"][];
         };
       };
     };
@@ -446,7 +810,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["StationDataResponce"][];
         };
       };
       /** @description Validation Error */
@@ -469,7 +833,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["StationAndDefintionResponce"];
         };
       };
       /** @description Validation Error */

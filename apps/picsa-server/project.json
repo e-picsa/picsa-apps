@@ -4,10 +4,10 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-server/docker",
   "prefix": "picsa",
+  "tags": [],
   "targets": {
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": [],
       "outputs": [],
       "options": {
         "commands": ["npx supabase start"],
@@ -50,6 +50,21 @@
         "cwd": "apps/picsa-server"
       }
     },
+    "reset": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn nx run picsa-server:supabase db reset && yarn nx run picsa-server:seed",
+        "cwd": "apps/picsa-server"
+      }
+    },
+    "seed": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/supabase/data"],
+      "options": {
+        "command": "yarn ts-node -r tsconfig-paths/register scripts/seed.ts",
+        "cwd": "apps/picsa-server"
+      }
+    },
     "stop": {
       "executor": "nx:run-commands",
       "dependsOn": [],
@@ -68,6 +83,5 @@
         "cwd": "apps/picsa-server"
       }
     }
-  },
-  "tags": []
+  }
 }

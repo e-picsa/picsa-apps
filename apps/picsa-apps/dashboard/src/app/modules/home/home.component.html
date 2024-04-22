@@ -3,7 +3,7 @@
   <p>Use the links below to administer the PICSA App:</p>
   <div class="link-container">
     @for (link of links; track $index) {
-    <mat-card [routerLink]="link.href">
+    <mat-card [routerLink]="link.href" *roleRequired="link.roleRequired">
       <mat-card-header class="link-label">
         <div>{{ link.label }}</div>
       </mat-card-header>

@@ -16,12 +16,32 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-apps/dashboard/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/picsa-apps/dashboard/src/favicon.ico", "apps/picsa-apps/dashboard/src/assets"],
-        "styles": ["apps/picsa-apps/dashboard/src/styles.scss", "node_modules/leaflet/dist/leaflet.css"],
+        "assets": [
+          "apps/picsa-apps/dashboard/src/favicon.ico",
+          "apps/picsa-apps/dashboard/src/assets",
+          {
+            "glob": "*.svg",
+            "input": "libs/data/crop_activity/svgs",
+            "output": "assets/svgs/crop_activity"
+          },
+          {
+            "glob": "*.svg",
+            "input": "libs/data/crops/svgs",
+            "output": "assets/svgs/crops"
+          },
+          {
+            "glob": "*.svg",
+            "input": "libs/data/weather/svgs",
+            "output": "assets/svgs/weather"
+          }
+        ],
+        "styles": [
+          "apps/picsa-apps/dashboard/src/styles.scss",
+          "node_modules/leaflet/dist/leaflet.css"
+        ],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]
         },
-
         "scripts": []
       },
       "configurations": {
@@ -74,10 +94,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/picsa-apps/dashboard/**/*.ts", "apps/picsa-apps/dashboard/**/*.html"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",

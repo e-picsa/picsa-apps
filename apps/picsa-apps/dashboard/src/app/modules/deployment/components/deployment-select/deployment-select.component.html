@@ -1,6 +1,6 @@
-<button mat-button [matMenuTriggerFor]="menu" [style.visibility]="deployments.length > 0 ? 'visible' : 'hidden'">
+<button mat-button class="select-button" [matMenuTriggerFor]="menu" [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'">
   @if(service.activeDeployment(); as deployment){
-  <ng-container *ngTemplateOutlet="deploymentSummary; context: { $implicit: deployment }"></ng-container>
+    <dashboard-deployment-item [deployment]="deployment" [active]="true" />
   } @else {
   <div>Select Deployment</div>
   }
@@ -8,22 +8,10 @@
 </button>
 
 <mat-menu #menu="matMenu">
-  @for(deployment of deployments; track deployment.id){
+  @for(deployment of userDeployments(); track deployment.id){
   <button mat-menu-item class="menu-button" (click)="service.setActiveDeployment(deployment.id)">
-    <ng-container *ngTemplateOutlet="deploymentSummary; context: { $implicit: deployment }"></ng-container>
+      <dashboard-deployment-item [deployment]="deployment" />
   </button>
 
   }
 </mat-menu>
-
-<ng-template #deploymentSummary let-deployment>
-  <div style="display: flex; align-items: center">
-    @if(deployment.icon_path){
-    <img
-      [src]="deployment.icon_path | storagePath"
-      style="height: 30px; width: 30px; object-fit: contain; margin-right: 8px"
-    />
-    }
-    <span>{{ deployment.label }}</span>
-  </div>
-</ng-template>

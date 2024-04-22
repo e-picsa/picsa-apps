@@ -1,0 +1,22 @@
+<div class="page-content">
+  <div style="display: flex; align-items: center">
+    <h2 style="flex: 1">Update Form</h2>
+  </div>
+  @if(form){
+  <form class="form-content">
+    <h2 style="flex: 1">Upload new Form excel file</h2>
+    <picsa-supabase-upload
+      [fileTypes]="allowedFileTypes"
+      [autoUpload]="false"
+      [storageBucketName]="storageBucketName"
+      [storageFolderPath]="storageFolderPath"
+      (uploadComplete)="handleUploadComplete($event)"
+    >
+    </picsa-supabase-upload>
+  </form>
+  } @if(updateFeedbackMessage) {
+  <div>{{ updateFeedbackMessage }}</div>
+  } @if(uploading===true) {
+  <div>Uploading form...</div>
+  }
+</div>

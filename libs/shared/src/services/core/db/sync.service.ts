@@ -27,9 +27,7 @@ export class DBSyncService {
   }
 
   public async getPendingWrites() {
-    const pending = await this.cache.getCollection<IPendingBatchRef>(
-      '_pendingWrites'
-    );
+    const pending = await this.cache.getCollection<IPendingBatchRef>('_pendingWrites');
     this.pending$.next(pending.length);
     return pending;
   }
@@ -74,10 +72,7 @@ export class DBSyncService {
   }
 
   private _generateRandom() {
-    return (
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15)
-    );
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
 }
 

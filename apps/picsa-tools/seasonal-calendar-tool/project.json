@@ -18,7 +18,11 @@
         "assets": [
           "apps/picsa-tools/seasonal-calendar-tool/src/favicon.ico",
           "apps/picsa-tools/seasonal-calendar-tool/src/assets",
-          { "glob": "*.svg", "input": "libs/data/weather/svgs", "output": "assets/svgs/weather" },
+          {
+            "glob": "*.svg",
+            "input": "libs/data/weather/svgs",
+            "output": "assets/svgs/weather"
+          },
           {
             "glob": "*.json",
             "input": "libs/i18n/assets",
@@ -75,13 +79,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "apps/picsa-tools/seasonal-calendar-tool/**/*.ts",
-          "apps/picsa-tools/seasonal-calendar-tool/**/*.html"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",

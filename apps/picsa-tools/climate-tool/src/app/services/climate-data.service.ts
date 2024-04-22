@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
-import { arrayToHashmap } from '@picsa/utils';
-import * as Papa from 'papaparse';
+import { arrayToHashmap, loadCSV } from '@picsa/utils';
 
 import * as DATA from '../data';
 
@@ -30,24 +29,11 @@ export class ClimateDataService {
     return this.dataByStation[stationID];
   }
   private async loadStationSummaries(stationID: string) {
-    return this.loadCSV<IStationData>(`assets/summaries/${stationID}.csv`);
-  }
-
-  private async loadCSV<T>(filePath: string): Promise<T[]> {
-    return new Promise((resolve, reject) => {
-      Papa.parse(filePath, {
-        download: true,
-        dynamicTyping: true,
-        header: true,
-        complete: function (res, file) {
-          // resolve(this.site);
-          resolve(res.data as T[]);
-        }.bind(this),
-        error: function (err) {
-          console.error('Could not parse CSV', filePath, err.message);
-          resolve([]);
-        },
-      });
+    // TODO - ensure still working
+    return loadCSV<IStationData>(`assets/summaries/${stationID}.csv`, {
+      download: true,
+      dynamicTyping: true,
+      header: true,
     });
   }
 }

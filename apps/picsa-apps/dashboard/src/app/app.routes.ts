@@ -26,8 +26,17 @@ export const appRoutes: Route[] = [
 
   // unmatched routes fallback to home
   {
+    path: 'crop',
+    loadChildren: () =>
+      import('./modules/crop-information/crop-information.module').then((m) => m.CropInformationModule),
+  },
+  {
     path: 'monitoring',
     loadChildren: () => import('./modules/monitoring/monitoring-forms.module').then((m) => m.MonitoringFormsPageModule),
+  },
+  {
+    path: 'profile',
+    loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),
   },
   {
     path: '**',

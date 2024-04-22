@@ -5,23 +5,8 @@
     </button>
     <dashboard-deployment-select />
     <span style="flex: 1; text-align: center;">PICSA Dashboard</span>
-    @if(supabaseService.auth.authUser(); as user){
-    <div style="position: relative">
-      <button mat-button (click)="supabaseService.auth.signOut()" style="margin-top: 16px">
-        <mat-icon>person</mat-icon>
-        Sign Out
-      </button>
-      <div style="position: absolute; top: 4px; right: 0; font-size: 12px">
-        {{ user.email }}
-      </div>
-    </div>
-
-    } @else {
-    <button mat-button (click)="supabaseService.auth.signInPrompt()" style="margin: 8px 0">
-      <mat-icon>person</mat-icon>
-      Sign In
-    </button>
-    }
+    <dashboard-profile-menu />
+    
   </mat-toolbar>
 
   <mat-sidenav-container style="flex: 1">
@@ -29,7 +14,7 @@
       <mat-nav-list>
         @for (link of navLinks; track link.href) { @if(link.children){
         <!-- Nested nav items -->
-        <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive">
+        <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive" *roleRequired="link.roleRequired">
           <mat-expansion-panel-header
             style="padding: 0 16px"
             [routerLink]="link.href"
@@ -46,6 +31,7 @@
             mat-list-item
             [routerLink]="link.href + child.href"
             routerLinkActive="mdc-list-item--activated active-link"
+            *roleRequired="link.roleRequired"
           >
             {{ child.label }}</a
           >
@@ -61,7 +47,7 @@
         <div mat-subheader>Global Admin</div>
         <mat-divider></mat-divider>
         @for (link of globalLinks; track link.href) {
-        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link">
+        <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link" *roleRequired="link.roleRequired">
           <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
         </a>
         }
@@ -74,7 +60,7 @@
 </div>
 
 <ng-template #linkTemplate let-link>
-  <div class="nav-item">
+  <div class="nav-item" >
     @if(link.matIcon){
     <mat-icon style="margin-right: 8px">{{ link.matIcon }}</mat-icon>
     }

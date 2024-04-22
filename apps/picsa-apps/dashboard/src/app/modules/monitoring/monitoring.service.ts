@@ -1,9 +1,12 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import { firstValueFrom, Observable } from 'rxjs';
 
 export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
 
@@ -21,7 +24,11 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return this.supabaseService.db.table(this.TABLE_NAME);
   }
 
-  constructor(private supabaseService: SupabaseService) {
+  constructor(
+    private supabaseService: SupabaseService,
+    private http: HttpClient,
+    private notificationService: PicsaNotificationService
+  ) {
     super();
   }
 
@@ -57,4 +64,74 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     }
     return { data, error };
   }
+
+  public async updateFormById(id: string, updatedForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow> {
+    const { data, error } = await this.supabaseService.db
+      .table(this.TABLE_NAME)
+      .update(updatedForm)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+
+  /**
+   * Convert an xls form to xml-xform standard
+   * @param file xls file representation
+   * @returns xml string of converted form
+   */
+  async submitFormToConvertXlsToXForm(file: File) {
+    const url = 'https://xform-converter.picsa.app/api/v1/convert';
+    try {
+      const { result } = await firstValueFrom(this.http.post(url, file) as Observable<XFormConvertRes>);
+      return result;
+    } catch (error: any) {
+      console.error(error);
+      this.notificationService.showUserNotification({ matIcon: 'error', message: error?.message || error });
+      return null;
+    }
+  }
+  /**
+   * Convert
+   * @param formData formData object with 'files' property that includes xml xform read as a File
+   * @returns enketo entry of converted xmlform
+   */
+  async submitFormToConvertXFormToEnketo(formData: FormData) {
+    const url = 'https://enketo-converter.picsa.app/api/xlsform-to-enketo';
+    try {
+      const { convertedFiles } = await firstValueFrom(this.http.post(url, formData) as Observable<IEnketoConvertRes>);
+      return convertedFiles[0]?.content;
+    } catch (error: any) {
+      console.error(error);
+      this.notificationService.showUserNotification({ matIcon: 'error', message: error?.message || error });
+      return null;
+    }
+  }
+}
+/** Response model returned from xform-converter */
+interface XFormConvertRes {
+  /** http error if thrown */
+  error: any;
+  /** xml string of converted  */
+  result: string;
+  /** https status code, 200 indicates success */
+  status: number;
+}
+/** Response model returned from enketo-converter */
+interface IEnketoConvertRes {
+  convertedFiles: {
+    content: IEnketoConvertContent;
+    filename: string;
+  }[];
+  message: string;
+}
+interface IEnketoConvertContent {
+  form: string;
+  languageMap: any;
+  model: string;
+  theme: string;
+  transformerVersion: string;
 }

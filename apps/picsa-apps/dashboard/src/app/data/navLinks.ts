@@ -1,11 +1,14 @@
+import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
+
 export interface INavLink {
   label: string;
   href: string;
   matIcon?: string;
   children?: INavLink[];
+  roleRequired?: IAuthRole;
 }
 
-export const DASHBOARD_NAV_LINKS = [
+export const DASHBOARD_NAV_LINKS: INavLink[] = [
   {
     label: 'Home',
     href: '/home',
@@ -15,6 +18,20 @@ export const DASHBOARD_NAV_LINKS = [
     label: 'Resources',
     href: '/resources',
     matIcon: 'library_books',
+    children: [
+      {
+        label: 'Collections',
+        href: '/collections',
+      },
+      {
+        label: 'Files',
+        href: '/files',
+      },
+      {
+        label: 'Links',
+        href: '/links',
+      },
+    ],
   },
   {
     label: 'Climate',
@@ -31,12 +48,23 @@ export const DASHBOARD_NAV_LINKS = [
       },
     ],
   },
-  // {
-  //   label: 'Crop Information',
-  //   href: '/crop-information',
-  // },
   {
-    label: 'Monitoring Forms',
+    label: 'Crop',
+    href: '/crop',
+    matIcon: 'spa',
+    children: [
+      {
+        label: 'Variety',
+        href: '/variety',
+      },
+      {
+        label: 'Probability',
+        href: '/probability',
+      },
+    ],
+  },
+  {
+    label: 'Monitoring',
     href: '/monitoring',
     matIcon: 'poll',
   },
@@ -44,5 +72,14 @@ export const DASHBOARD_NAV_LINKS = [
     label: 'Translations',
     href: '/translations',
     matIcon: 'translate',
+  },
+];
+
+export const GLOBAL_NAV_LINKS: INavLink[] = [
+  {
+    label: 'Deployments',
+    href: '/deployment',
+    matIcon: 'apps',
+    roleRequired: 'deployments.admin',
   },
 ];

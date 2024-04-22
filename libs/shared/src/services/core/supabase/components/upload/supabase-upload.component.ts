@@ -205,7 +205,7 @@ export class SupabaseUploadComponent {
 
   private async checkDuplicateUpload(file: UppyFile) {
     const storageFile = await this.storageService.getFile({
-      bucketId: 'resources',
+      bucketId: this.storageBucketName,
       filename: file.name,
       folderPath: this.storageFolderPath || '',
     });

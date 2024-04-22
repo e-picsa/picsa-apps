@@ -25,7 +25,7 @@ interface ISearchResultsByType {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceSearchComponent implements OnInit, OnDestroy {
-  query: string = '';
+  query = '';
 
   // https://www.fusejs.io/api/options.html
   fuseOptions: IFuseOptions<IResourceBase> = {

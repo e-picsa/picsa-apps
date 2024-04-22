@@ -2,36 +2,28 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { debounce, filter, interval, Subject, takeUntil } from 'rxjs';
 
-import {
-  IBreadcrumbOptions,
-  PicsaCommonComponentsService,
-} from '../services/components.service';
+import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/components.service';
 
 @Component({
   selector: 'picsa-breadcrumbs',
   template: `
-    <div
-      class="breadcrumbs-container"
-      *ngIf="options.enabled && breadcrumbs.length > 2"
-    >
+    <div class="breadcrumbs-container" *ngIf="options.enabled && breadcrumbs.length > 2">
       <div *ngFor="let breadcrumb of breadcrumbs; last as isLast">
         <button mat-button [routerLink]="breadcrumb.path">
           {{ breadcrumb.label }}
         </button>
-        <mat-icon *ngIf="!isLast" style="line-height:36px"
-          >chevron_right</mat-icon
-        >
+        <mat-icon *ngIf="!isLast" style="line-height:36px">chevron_right</mat-icon>
       </div>
     </div>
   `,
   styles: [
     `
-           .breadcrumbs-container {
-             padding: 0 1rem;
-             display: flex;
-             flex-wrap: wrap;
-           }
-         `,
+      .breadcrumbs-container {
+        padding: 0 1rem;
+        display: flex;
+        flex-wrap: wrap;
+      }
+    `,
   ],
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
@@ -40,10 +32,7 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   public options: IBreadcrumbOptions = { hideOnPaths: {}, enabled: false };
   private destroyed$ = new Subject<boolean>();
   private rebuild$ = new Subject<boolean>();
-  constructor(
-    private componentsService: PicsaCommonComponentsService,
-    private router: Router
-  ) {}
+  constructor(private componentsService: PicsaCommonComponentsService, private router: Router) {}
 
   ngOnInit() {
     this.constructBreadcrumbAliases();
@@ -86,22 +75,18 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   }
   /** Listen to changes to title triggered directly service */
   private listenToServiceChanges() {
-    this.componentsService.headerOptions$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ title }) => {
-        if (title) {
-          if (this.getAlias(location.pathname) !== title) {
-            this.setAlias(location.pathname, title);
-            this.rebuild$.next(true);
-          }
+    this.componentsService.headerOptions$.pipe(takeUntil(this.destroyed$)).subscribe(({ title }) => {
+      if (title) {
+        if (this.getAlias(location.pathname) !== title) {
+          this.setAlias(location.pathname, title);
+          this.rebuild$.next(true);
         }
-      });
-    this.componentsService.breadcrumbOptions$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((options) => {
-        this.options = options;
-        //
-      });
+      }
+    });
+    this.componentsService.breadcrumbOptions$.pipe(takeUntil(this.destroyed$)).subscribe((options) => {
+      this.options = options;
+      //
+    });
   }
   /********************************************************************************
    * Breadcrumbs

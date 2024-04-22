@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { VideoPlayerComponent } from './video-player.component';
 
 @NgModule({
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressBarModule],
   exports: [VideoPlayerComponent],
   declarations: [VideoPlayerComponent],
   providers: [],

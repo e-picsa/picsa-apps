@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/picsa-tools/monitoring-tool/src",
   "prefix": "picsa",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser-esbuild",
@@ -71,10 +72,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["apps/picsa-tools/monitoring-tool/**/*.ts", "apps/picsa-tools/monitoring-tool/**/*.html"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -83,6 +81,5 @@
         "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

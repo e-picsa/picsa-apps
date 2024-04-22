@@ -1,6 +1,3 @@
-
 import * as d from './components';
 
-export const DIRECTIVES = [
-  d.EnketoWebform
-];
+export const DIRECTIVES = [d.EnketoWebform];

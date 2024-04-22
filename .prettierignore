@@ -6,3 +6,14 @@
 .angular
 
 /.nx/cache
+
+libs/webcomponents/src/components/enketo-webform/libs
+
+.vercel
+apps/_deprecated
+apps/picsa-apps/extension-app-native
+# Invalid token versions
+apps/picsa-server/supabase/types/index.ts
+# Generated files
+apps/picsa-apps/dashboard/src/app/modules/climate/types/api.d.ts
+libs/webcomponents/src/components.d.ts
