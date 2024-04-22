@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { FileService } from '@picsa/shared/services/core/file.service';
-import { RxAttachment } from 'rxdb';
-import { Subject, Subscription } from 'rxjs';
+import { RxDocument } from 'rxdb';
+import { lastValueFrom, Subject, Subscription } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
-
-type IDownloadStatus = 'ready' | 'pending' | 'complete' | 'error';
+import { IDownloadStatus, ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({
   selector: 'resource-download-multiple',
@@ -14,76 +13,101 @@ type IDownloadStatus = 'ready' | 'pending' | 'complete' | 'error';
 })
 export class ResourceDownloadMultipleComponent implements OnDestroy {
   private _resources: IResourceFile[];
-  public attachment?: RxAttachment<IResourceFile>;
+  private pendingDocs: RxDocument<IResourceFile>[] = [];
 
-  downloadStatus: IDownloadStatus = 'ready';
+  downloadStatus: IDownloadStatus;
   downloadProgress = 0;
+  downloadCount = 0;
   totalSize = 0;
+  totalCount = 0;
 
   private componentDestroyed$ = new Subject();
   private downloadSubscription?: Subscription;
-
-  @Output() downloadCompleted = new EventEmitter<void>();
-
-  @Input() styleVariant: 'primary' | 'white' = 'primary';
-
-  @Input() size = 48;
 
   @Input() hideOnComplete = false;
 
   @Input() set resources(resources: IResourceFile[]) {
     this._resources = resources;
-    this.calculateTotalSize(resources);
+    this.totalCount = resources.length;
+    this.getPendingDownloads(resources);
   }
 
-  constructor(private fileService: FileService) {}
+  constructor(private service: ResourcesToolService, private fileService: FileService) {}
 
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
   }
 
-  public calculateTotalSize(resources: IResourceFile[]): void {
-    this.totalSize = resources.reduce((acc, doc) => acc + doc.size_kb, 0);
+  /**
+   * Iterate over list of input resources, checking which already have attachments downloaded
+   * and generating summary of pending downloads with total size
+   */
+  public async getPendingDownloads(resources: IResourceFile[]) {
+    let totalSize = 0;
+    let totalCount = 0;
+    let downloadCount = 0;
+    const pendingDocs: RxDocument<IResourceFile>[] = [];
+    for (const resource of resources) {
+      const dbDoc = await this.service.dbFiles.findOne(resource.id).exec();
+      if (dbDoc) {
+        totalCount++;
+        // check
+        const attachment = dbDoc.getAttachment(dbDoc.filename);
+        if (attachment) {
+          downloadCount++;
+        } else {
+          pendingDocs.push(dbDoc);
+          totalSize += dbDoc.size_kb;
+        }
+      }
+    }
+    this.totalCount = totalCount;
+    this.totalSize = totalSize;
+    this.downloadCount = downloadCount;
+    this.pendingDocs = pendingDocs;
+    this.downloadStatus = totalSize > 0 ? 'ready' : 'complete';
   }
 
-  public downloadAllResources(): void {
+  public async downloadAllResources() {
+    // recalc sizes to ensure pending docs correct (in case of single file download)
+    await this.getPendingDownloads(this._resources);
+
+    // handle all downloads
     this.downloadStatus = 'pending';
-    this.downloadProgress = 0;
 
-    const downloadQueue = [...this._resources];
-    const downloadNext = () => {
-      if (downloadQueue.length === 0) {
-        this.downloadStatus = 'complete';
-        this.downloadCompleted.emit();
-        return;
-      }
-
-      const resource = downloadQueue.shift();
-      if (resource) {
-        this.fileService.downloadFile(resource.url, 'blob').subscribe({
-          next: ({ progress }) => {
-            this.downloadProgress = progress;
-          },
-          error: (error) => {
-            this.downloadStatus = 'error';
-            console.error(error);
-          },
-          complete: () => {
-            downloadNext();
-          },
-        });
-      }
-    };
-
-    downloadNext();
+    for (const doc of this.pendingDocs) {
+      await this.downloadNextResource(doc);
+    }
+    // refresh UI
+    await this.getPendingDownloads(this._resources);
+    this.downloadStatus = 'complete';
+    return;
   }
 
+  /**
+   * Trigger next download
+   * Updates download progress and waits until download complete
+   */
+  private async downloadNextResource(doc: RxDocument<IResourceFile>) {
+    // Only download if pending status given (will be set to 'ready' if cancelled)
+    if (this.downloadStatus === 'pending') {
+      const { download$, progress$, status$ } = this.service.triggerResourceDownload(doc);
+      this.downloadSubscription = download$;
+      progress$.subscribe((progress) => (this.downloadProgress = progress));
+      const endStatus = await lastValueFrom(status$);
+      if (endStatus === 'complete') {
+        this.downloadCount++;
+      }
+    }
+  }
   public cancelDownload(): void {
+    // cancel active download
     if (this.downloadSubscription) {
       this.downloadSubscription.unsubscribe();
       this.downloadSubscription = undefined;
     }
+    // change the download status which will prevent nextResourceDownload trigger
     this.downloadStatus = 'ready';
     this.downloadProgress = 0;
   }
