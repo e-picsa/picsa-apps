@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { FileService } from '@picsa/shared/services/core/file.service';
 import { RxDocument } from 'rxdb';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 
@@ -29,10 +28,10 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
   @Input() set resources(resources: IResourceFile[]) {
     this._resources = resources;
     this.totalCount = resources.length;
-    this.getPendingDownloads(resources);
+    this.getPendingDownloads();
   }
 
-  constructor(private service: ResourcesToolService, private fileService: FileService) {}
+  constructor(private service: ResourcesToolService) {}
 
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
@@ -43,12 +42,12 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
    * Iterate over list of input resources, checking which already have attachments downloaded
    * and generating summary of pending downloads with total size
    */
-  public async getPendingDownloads(resources: IResourceFile[]) {
+  public async getPendingDownloads() {
     let totalSize = 0;
     let totalCount = 0;
     let downloadCount = 0;
     const pendingDocs: RxDocument<IResourceFile>[] = [];
-    for (const resource of resources) {
+    for (const resource of this._resources) {
       const dbDoc = await this.service.dbFiles.findOne(resource.id).exec();
       if (dbDoc) {
         totalCount++;
@@ -67,11 +66,12 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
     this.downloadCount = downloadCount;
     this.pendingDocs = pendingDocs;
     this.downloadStatus = totalSize > 0 ? 'ready' : 'complete';
+    console.log('pending', { totalCount, totalSize, downloadCount, pendingDocs });
   }
 
   public async downloadAllResources() {
     // recalc sizes to ensure pending docs correct (in case of single file download)
-    await this.getPendingDownloads(this._resources);
+    await this.getPendingDownloads();
 
     // handle all downloads
     this.downloadStatus = 'pending';
@@ -80,7 +80,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
       await this.downloadNextResource(doc);
     }
     // refresh UI
-    await this.getPendingDownloads(this._resources);
+    await this.getPendingDownloads();
     this.downloadStatus = 'complete';
     return;
   }
@@ -101,7 +101,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
       }
     }
   }
-  public cancelDownload(): void {
+  public async cancelDownload() {
     // cancel active download
     if (this.downloadSubscription) {
       this.downloadSubscription.unsubscribe();
@@ -110,5 +110,6 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
     // change the download status which will prevent nextResourceDownload trigger
     this.downloadStatus = 'ready';
     this.downloadProgress = 0;
+    await this.getPendingDownloads();
   }
 }
