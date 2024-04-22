@@ -1,119 +1,90 @@
-import { Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output, } from '@angular/core';
-import { RxAttachment} from 'rxdb';
-import { IResourceFile } from '../../schemas';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { FileService } from '@picsa/shared/services/core/file.service';
+import { RxAttachment } from 'rxdb';
+import { Subject, Subscription } from 'rxjs';
 
+import { IResourceFile } from '../../schemas';
 
 type IDownloadStatus = 'ready' | 'pending' | 'complete' | 'error';
 
 @Component({
-  selector: 'picsa-resource-download-multiple',
+  selector: 'resource-download-multiple',
   templateUrl: './resource-download-multiple.component.html',
   styleUrl: './resource-download-multiple.component.scss',
 })
-
 export class ResourceDownloadMultipleComponent implements OnDestroy {
-    private _dbDoc: IResourceFile[] =[];
-    public attachment?: RxAttachment<IResourceFile>;
-    
-     downloadStatus: IDownloadStatus = 'ready';
-     downloadProgress = 0;
-    totalSize = 0;
-    totalSizeMB = 0;
-  
-    private componentDestroyed$ = new Subject();
-    private downloadSubscription?: Subscription;
+  private _resources: IResourceFile[];
+  public attachment?: RxAttachment<IResourceFile>;
 
-    @Output() downloadCompleted = new EventEmitter<void>();
+  downloadStatus: IDownloadStatus = 'ready';
+  downloadProgress = 0;
+  totalSize = 0;
 
-    @Input() styleVariant: 'primary' | 'white' = 'primary';
+  private componentDestroyed$ = new Subject();
+  private downloadSubscription?: Subscription;
 
-    @Input() size = 48;
+  @Output() downloadCompleted = new EventEmitter<void>();
 
-    @Input() hideOnComplete = false;
+  @Input() styleVariant: 'primary' | 'white' = 'primary';
 
-    @Input() set dbDoc(dbDoc: IResourceFile[]) {
-      this._dbDoc = dbDoc;
-      }
-    
-    
-    constructor(
-      private fileService: FileService,
-    ) {}
-  
-    public get sizePx() {
-      return `${this.size}px`;
-    }
-  
-    public get resource() {
-      return this._dbDoc
-      ;
-    }
+  @Input() size = 48;
 
-    ngOnInit(): void {
-      this.calculateTotalSize();
-    }
+  @Input() hideOnComplete = false;
 
-    ngOnDestroy(): void {
-      this.componentDestroyed$.next(true);
-      this.componentDestroyed$.complete();
-    }
-  
-    public calculateTotalSize(): void {
-      if (!this._dbDoc || this._dbDoc.length === 0) {
-        console.log('No resources available');
-        return;
-      }
-      
-      this.totalSize = this._dbDoc.reduce((acc, doc) => acc + doc.size_kb, 0);
-      const totalSizeMB = this.totalSize / 1024;
-      this.totalSizeMB = +totalSizeMB.toFixed(2);
-    }
-  
-    public downloadAllResources(): void {
-      this.downloadStatus = 'pending';
-      this.downloadProgress = 0;
-  
-      const downloadQueue = [...this.resource];
-      const downloadNext = () => {
-        if (downloadQueue.length === 0) {
-          this.downloadStatus = 'complete';
-          this.downloadCompleted.emit();
-          return;
-        }
-  
-        const resource = downloadQueue.shift();
-        if (resource) {
-          this.fileService.downloadFile(resource.url, 'blob').subscribe({
-            next: ({ progress }) => {
-              this.downloadProgress = progress;
-            },
-            error: (error) => {
-              this.downloadStatus = 'error';
-              console.error(error);
-            },
-            complete: () => {
-              downloadNext();
-            }
-          });
-        }
-      };
-  
-      downloadNext();
-    }
-  
-    public cancelDownload(): void {
-      if (this.downloadSubscription) {
-        this.downloadSubscription.unsubscribe();
-        this.downloadSubscription = undefined;
-      }
-      this.downloadStatus = 'ready';
-      this.downloadProgress = 0;
-    }
+  @Input() set resources(resources: IResourceFile[]) {
+    this._resources = resources;
+    this.calculateTotalSize(resources);
   }
 
+  constructor(private fileService: FileService) {}
+
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
+  }
+
+  public calculateTotalSize(resources: IResourceFile[]): void {
+    this.totalSize = resources.reduce((acc, doc) => acc + doc.size_kb, 0);
+  }
+
+  public downloadAllResources(): void {
+    this.downloadStatus = 'pending';
+    this.downloadProgress = 0;
+
+    const downloadQueue = [...this.resources];
+    const downloadNext = () => {
+      if (downloadQueue.length === 0) {
+        this.downloadStatus = 'complete';
+        this.downloadCompleted.emit();
+        return;
+      }
+
+      const resource = downloadQueue.shift();
+      if (resource) {
+        this.fileService.downloadFile(resource.url, 'blob').subscribe({
+          next: ({ progress }) => {
+            this.downloadProgress = progress;
+          },
+          error: (error) => {
+            this.downloadStatus = 'error';
+            console.error(error);
+          },
+          complete: () => {
+            downloadNext();
+          },
+        });
+      }
+    };
+
+    downloadNext();
+  }
+
+  public cancelDownload(): void {
+    if (this.downloadSubscription) {
+      this.downloadSubscription.unsubscribe();
+      this.downloadSubscription = undefined;
+    }
+    this.downloadStatus = 'ready';
+    this.downloadProgress = 0;
+  }
+}
