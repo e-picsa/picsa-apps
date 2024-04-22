@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { RxDocument } from 'rxdb';
@@ -12,7 +12,6 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   templateUrl: './collection.component.html',
   styleUrls: ['./collection.component.scss'],
 })
-
 export class CollectionComponent implements OnInit, OnDestroy {
   public collection: IResourceCollection | undefined;
   public files: IResourceFile[] = [];

@@ -31,11 +31,14 @@ export class ResourceDownloadComponent implements OnDestroy {
   private _dbDoc: RxDocument<IResourceFile>;
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
-  totalSize = 0;
+
+  /** Show size text */
+  @Input() showSize: boolean;
 
   @Input() styleVariant: 'primary' | 'white' = 'primary';
 
   @Input() size = 48;
+
   @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
     this._dbDoc = dbDoc;
     if (dbDoc) {
@@ -73,19 +76,9 @@ export class ResourceDownloadComponent implements OnDestroy {
     });
   }
 
-  ngOnInit(): void {
-    this.calculateTotalSize();
-  }
-  
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
-  }
-
-  public calculateTotalSize(): void {
-    this.totalSize = this.resource.size_kb / 1024; // Convert KB to MB
-    this.totalSize = +this.totalSize.toFixed(1);
-    console.log(this.totalSize)
   }
 
   public downloadResource() {

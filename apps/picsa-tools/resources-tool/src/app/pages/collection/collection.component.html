@@ -8,16 +8,7 @@
     <mat-card-title>{{ collection.title | translate }}</mat-card-title>
     <mat-card-subtitle> {{ collection.description || '' }} </mat-card-subtitle>
     <img mat-card-avatar *ngIf="collection.cover?.image" [src]="collection.cover?.image" />
-    <picsa-resource-download-multiple
-    [size]="48" 
-    [dbDoc] ="files"
-    *ngIf="files"
-    class="total-size"
-    [styleVariant]="styleVariant"
-    [hideOnComplete]="hideOnComplete"
-></picsa-resource-download-multiple>
   </mat-card-header>
-  
   <!-- Contents -->
   <mat-card-content>
     <div *ngIf="collection.language" style="margin-top: 2em">
@@ -34,7 +25,15 @@
       </div>
     </div>
     <div style="margin-top: 2rem" class="child-resources" *ngIf="files.length > 0">
-      <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
+      <div style="display: flex">
+        <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
+        <resource-download-multiple
+          [size]="48"
+          [resources]="files"
+          style="margin-left: auto"
+        ></resource-download-multiple>
+      </div>
+
       <div class="list-container">
         <resource-item-file *ngFor="let resource of files" [resource]="resource" style="margin-bottom: 8px">
         </resource-item-file>

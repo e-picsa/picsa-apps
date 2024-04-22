@@ -3,12 +3,13 @@
   (click)="downloadResource()"
   *ngIf="downloadStatus === 'ready'"
   [attr.data-style-variant]="styleVariant"
-> 
-  <mat-icon style="font-size: 30px;">download</mat-icon><span style="font-size: 15px; align-items: center;
-  justify-content: center; display: flex">
-    {{ totalSize }}MB
-    </span>
- 
+>
+  <div class="download-button-inner">
+    <mat-icon style="font-size: 30px">download</mat-icon>
+    @if(showSize){
+    <span class="resource-size"> {{ resource.size_kb | sizeMB }} MB </span>
+    }
+  </div>
 </button>
 
 <div class="download-progress" *ngIf="downloadStatus === 'pending'">
