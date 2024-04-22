@@ -20,3 +20,22 @@ mat-progress-spinner[data-style-variant='white'] {
 button[data-style-variant='white'] {
   color: white;
 }
+
+// HACK - allow for custom icon + text placement within button that is 72px x 72px (12px padding)
+.download-button-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 72px;
+  width: 72px;
+  top: -12px;
+  left: -12px;
+  overflow: hidden;
+}
+.resource-size {
+  font-size: 16px;
+  margin-top: 8px;
+  margin-bottom: -4px;
+}

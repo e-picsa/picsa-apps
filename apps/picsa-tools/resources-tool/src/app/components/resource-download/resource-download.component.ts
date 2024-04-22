@@ -7,15 +7,11 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { FileService } from '@picsa/shared/services/core/file.service';
-import { _wait } from '@picsa/utils';
 import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
-import { ResourcesToolService } from '../../services/resources-tool.service';
-
-type IDownloadStatus = 'ready' | 'pending' | 'complete' | 'error';
+import { IDownloadStatus, ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({
   selector: 'resource-download',
@@ -31,6 +27,9 @@ export class ResourceDownloadComponent implements OnDestroy {
   private _dbDoc: RxDocument<IResourceFile>;
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
+
+  /** Show size text */
+  @Input() showSize: boolean;
 
   @Input() styleVariant: 'primary' | 'white' = 'primary';
 
@@ -48,11 +47,7 @@ export class ResourceDownloadComponent implements OnDestroy {
   /** Emit downloaded file updates */
   @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
 
-  constructor(
-    private service: ResourcesToolService,
-    private fileService: FileService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
 
   public get sizePx() {
     return `${this.size}px`;
@@ -79,36 +74,16 @@ export class ResourceDownloadComponent implements OnDestroy {
   }
 
   public downloadResource() {
-    this.downloadStatus = 'pending';
-    this.downloadProgress = 0;
-    let downloadData: Blob;
-    this.download$ = this.fileService.downloadFile(this.resource.url, 'blob').subscribe({
-      next: ({ progress, data }) => {
-        this.downloadProgress = progress;
-        // NOTE - might be called multiple times before completing so avoid persisting data here
-        if (progress === 100) {
-          downloadData = data as Blob;
-        }
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        this.downloadStatus = 'error';
-        this.cdr.markForCheck();
-        console.error(error);
-        throw error;
-      },
-      complete: async () => {
-        // give small timeout to allow UI to update
-        await _wait(100);
-        this.persistDownload(downloadData);
-      },
+    const { download$, progress$, status$ } = this.service.triggerResourceDownload(this._dbDoc);
+    progress$.subscribe((progress) => {
+      this.downloadProgress = progress;
+      this.cdr.markForCheck();
     });
-  }
-
-  private async persistDownload(data: Blob) {
-    await this.service.putFileAttachment(this._dbDoc, data);
-    this.downloadStatus = 'complete';
-    this.cdr.markForCheck();
+    status$.subscribe((status) => {
+      this.downloadStatus = status;
+      this.cdr.markForCheck();
+    });
+    this.download$ = download$;
   }
 
   /** Cancel ongoing download */
