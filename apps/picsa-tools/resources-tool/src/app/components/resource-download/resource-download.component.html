@@ -1,9 +1,6 @@
-<button
-  mat-icon-button
-  (click)="downloadResource()"
-  *ngIf="downloadStatus === 'ready'"
-  [attr.data-style-variant]="styleVariant"
->
+<!-- Ready -->
+@if(downloadStatus==='ready'){
+<button mat-icon-button (click)="downloadResource()" [attr.data-style-variant]="styleVariant">
   <div class="download-button-inner">
     <mat-icon style="font-size: 30px">download</mat-icon>
     @if(showSize){
@@ -11,8 +8,10 @@
     }
   </div>
 </button>
-
-<div class="download-progress" *ngIf="downloadStatus === 'pending'">
+}
+<!-- Pending -->
+@if(downloadStatus==='pending'){
+<div class="download-progress">
   <mat-progress-spinner
     [class]="'spinner' + styleVariant"
     color="primary"
@@ -36,11 +35,21 @@
     <mat-icon>close</mat-icon>
   </button>
 </div>
+}
+<!-- Finalizing (write to disk) -->
+@if(downloadStatus==='finalizing'){
+<button mat-icon-button [attr.data-style-variant]="styleVariant">
+  <mat-icon>pending</mat-icon>
+</button>
+}
+
+<!-- Complete -->
+@if(downloadStatus==='complete'){
 <button
   mat-icon-button
-  *ngIf="downloadStatus === 'complete'"
   [attr.data-style-variant]="styleVariant"
   [style.visibility]="hideOnComplete ? 'hidden' : 'visible'"
 >
-  <mat-icon>check</mat-icon>
+  <mat-icon>download_done</mat-icon>
 </button>
+}
