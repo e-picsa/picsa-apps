@@ -111,54 +111,6 @@ export type Database = {
           },
         ]
       }
-      climate_station_crop_data: {
-        Row: {
-          created_at: string
-          crop_id: number
-          id: number
-          length_lower: number | null
-          length_upper: number | null
-          station_id: number
-          water_lower: number | null
-          water_upper: number | null
-        }
-        Insert: {
-          created_at?: string
-          crop_id: number
-          id?: number
-          length_lower?: number | null
-          length_upper?: number | null
-          station_id: number
-          water_lower?: number | null
-          water_upper?: number | null
-        }
-        Update: {
-          created_at?: string
-          crop_id?: number
-          id?: number
-          length_lower?: number | null
-          length_upper?: number | null
-          station_id?: number
-          water_lower?: number | null
-          water_upper?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "climate_station_crop_data_crop_id_fkey"
-            columns: ["crop_id"]
-            isOneToOne: false
-            referencedRelation: "crop_data"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "climate_station_crop_data_station_id_fkey"
-            columns: ["station_id"]
-            isOneToOne: false
-            referencedRelation: "climate_stations"
-            referencedColumns: ["station_id"]
-          },
-        ]
-      }
       climate_stations: {
         Row: {
           country_code: string | null
@@ -193,37 +145,73 @@ export type Database = {
         Row: {
           created_at: string
           crop: string
-          id: number
+          id: string | null
           label: string | null
-          length_lower: number
-          length_upper: number
           variety: string
+        }
+        Insert: {
+          created_at?: string
+          crop: string
+          id?: string | null
+          label?: string | null
+          variety: string
+        }
+        Update: {
+          created_at?: string
+          crop?: string
+          id?: string | null
+          label?: string | null
+          variety?: string
+        }
+        Relationships: []
+      }
+      crop_station_data: {
+        Row: {
+          created_at: string
+          crop_id: string
+          days_lower: number
+          days_upper: number
+          probabilities: number[] | null
+          station_id: number
           water_lower: number
           water_upper: number
         }
         Insert: {
           created_at?: string
-          crop: string
-          id?: number
-          label?: string | null
-          length_lower: number
-          length_upper: number
-          variety: string
+          crop_id: string
+          days_lower: number
+          days_upper: number
+          probabilities?: number[] | null
+          station_id: number
           water_lower: number
           water_upper: number
         }
         Update: {
           created_at?: string
-          crop?: string
-          id?: number
-          label?: string | null
-          length_lower?: number
-          length_upper?: number
-          variety?: string
+          crop_id?: string
+          days_lower?: number
+          days_upper?: number
+          probabilities?: number[] | null
+          station_id?: number
           water_lower?: number
           water_upper?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_crop_station_data_crop_id_fkey"
+            columns: ["crop_id"]
+            isOneToOne: false
+            referencedRelation: "crop_data"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_crop_station_data_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "climate_stations"
+            referencedColumns: ["station_id"]
+          },
+        ]
       }
       deployments: {
         Row: {
@@ -447,6 +435,7 @@ export type Database = {
       }
       resource_files: {
         Row: {
+          country_code: string | null
           cover_image: string | null
           created_at: string
           description: string | null
@@ -463,6 +452,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
+          country_code?: string | null
           cover_image?: string | null
           created_at?: string
           description?: string | null
@@ -479,6 +469,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
+          country_code?: string | null
           cover_image?: string | null
           created_at?: string
           description?: string | null
@@ -513,6 +504,7 @@ export type Database = {
       }
       resource_files_child: {
         Row: {
+          country_code: string | null
           cover_image: string | null
           created_at: string
           description: string | null
@@ -523,13 +515,14 @@ export type Database = {
           md5_checksum: string | null
           mimetype: string | null
           modified_at: string
-          resource_file_id: string | null
+          resource_file_id: string
           size_kb: number | null
           sort_order: number
           storage_file: string | null
           title: string | null
         }
         Insert: {
+          country_code?: string | null
           cover_image?: string | null
           created_at?: string
           description?: string | null
@@ -540,13 +533,14 @@ export type Database = {
           md5_checksum?: string | null
           mimetype?: string | null
           modified_at?: string
-          resource_file_id?: string | null
+          resource_file_id: string
           size_kb?: number | null
           sort_order?: number
           storage_file?: string | null
           title?: string | null
         }
         Update: {
+          country_code?: string | null
           cover_image?: string | null
           created_at?: string
           description?: string | null
@@ -557,7 +551,7 @@ export type Database = {
           md5_checksum?: string | null
           mimetype?: string | null
           modified_at?: string
-          resource_file_id?: string | null
+          resource_file_id?: string
           size_kb?: number | null
           sort_order?: number
           storage_file?: string | null
@@ -596,7 +590,7 @@ export type Database = {
           modified_at: string
           sort_order: number
           title: string | null
-          type: string | null
+          type: Database["public"]["Enums"]["resource_link_type"]
           url: string
         }
         Insert: {
@@ -607,7 +601,7 @@ export type Database = {
           modified_at?: string
           sort_order?: number
           title?: string | null
-          type?: string | null
+          type: Database["public"]["Enums"]["resource_link_type"]
           url: string
         }
         Update: {
@@ -618,7 +612,7 @@ export type Database = {
           modified_at?: string
           sort_order?: number
           title?: string | null
-          type?: string | null
+          type?: Database["public"]["Enums"]["resource_link_type"]
           url?: string
         }
         Relationships: [
@@ -774,6 +768,7 @@ export type Database = {
         | "resources.admin"
         | "deployments.admin"
         | "translations.viewer"
+      resource_link_type: "app" | "social" | "web"
     }
     CompositeTypes: {
       [_ in never]: never

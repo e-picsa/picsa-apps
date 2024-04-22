@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { CropInformationPageComponent } from './crop-information.page';
-import { NewEntryPageComponent } from './pages/new_entry/new_entry.page';
+import { CropProbabilityComponent } from './pages/probability/probability.component';
+import { CropVarietyComponent } from './pages/variety/variety.component';
+import { CropVarietyDetailsComponent } from './pages/variety-details/variety-details.component';
 
 @NgModule({
   declarations: [],
@@ -12,17 +13,20 @@ import { NewEntryPageComponent } from './pages/new_entry/new_entry.page';
     RouterModule.forChild([
       {
         path: '',
-        component: CropInformationPageComponent,
+        redirectTo: 'variety',
+        pathMatch: 'full',
       },
-      // new entry
       {
-        path: 'entry',
-        component: NewEntryPageComponent,
+        path: 'variety',
+        component: CropVarietyComponent,
       },
-      // editable entry
       {
-        path: ':id',
-        component: NewEntryPageComponent,
+        path: 'variety/:id',
+        component: CropVarietyDetailsComponent,
+      },
+      {
+        path: 'probability',
+        component: CropProbabilityComponent,
       },
     ]),
   ],

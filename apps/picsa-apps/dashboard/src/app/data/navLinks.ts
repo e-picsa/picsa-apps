@@ -49,12 +49,22 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     ],
   },
   {
-    label: 'Crop Information',
-    href: '/crop-information',
+    label: 'Crop',
+    href: '/crop',
     matIcon: 'spa',
+    children: [
+      {
+        label: 'Variety',
+        href: '/variety',
+      },
+      {
+        label: 'Probability',
+        href: '/probability',
+      },
+    ],
   },
   {
-    label: 'Monitoring Forms',
+    label: 'Monitoring',
     href: '/monitoring',
     matIcon: 'poll',
   },

@@ -1,44 +1,33 @@
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
-import { DashboardMaterialModule } from '../../material.module';
-import { CropProbabilityDashboardService, ICropInformationRow } from './crop-information.service';
+import { DashboardMaterialModule } from '../../../../material.module';
+import { CropInformationService, ICropInformationRow } from '../../services';
 
 @Component({
-  selector: 'dashboard-resources-page',
+  selector: 'dashboard-crop-variety',
   standalone: true,
   imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
-  templateUrl: '../crop-information/crop-information.component.html',
-  styleUrls: ['../crop-information/crop-information.component.scss'],
+  templateUrl: './variety.component.html',
+  styleUrl: './variety.component.scss',
 })
-export class CropInformationPageComponent implements OnInit {
+export class CropVarietyComponent implements OnInit {
   constructor(
-    public service: CropProbabilityDashboardService,
+    public service: CropInformationService,
     private notificationService: PicsaNotificationService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
-  displayedColumns: string[] = [
-    'crop',
-    'variety',
-    'water_lower',
-    'water_upper',
-    'length_lower',
-    'length_upper',
-    'label',
-  ];
+  displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'label'];
 
   tableOptions = {
     displayColumns: this.displayedColumns,
     handleRowClick: (row: ICropInformationRow) => {
-      this.router.navigate([row.id], { relativeTo: this.route });
+      this.router.navigate(['./', row.id], { relativeTo: this.route });
     },
   };
 
@@ -48,7 +37,7 @@ export class CropInformationPageComponent implements OnInit {
   }
 
   refreshCropInformation() {
-    this.service.listCropProbabilities().catch((error) => {
+    this.service.list().catch((error) => {
       this.notificationService.showUserNotification({
         matIcon: 'error',
         message: 'Error fetching crop probabilities:' + error.message,

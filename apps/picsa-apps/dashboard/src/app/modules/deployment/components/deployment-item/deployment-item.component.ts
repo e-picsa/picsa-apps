@@ -14,4 +14,6 @@ import { IDeploymentRow } from '../../types';
 })
 export class DeploymentItemComponent {
   @Input() deployment: IDeploymentRow;
+  /** Specify whether the current deployment item is actively selected */
+  @Input() active: boolean;
 }

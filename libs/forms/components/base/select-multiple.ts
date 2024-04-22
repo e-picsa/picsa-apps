@@ -14,6 +14,8 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
     return this._selected;
   }
   set selected(selected: string[]) {
+    // avoid setting value if control disabled
+    if (this.disabled) return;
     if (!selected) selected = [];
     if (selected.join(',') !== this._selected.join(',')) {
       this._selected = selected;
@@ -28,6 +30,8 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
   @Input() set filterFn(filterFn: (option: T) => boolean) {
     this.filteredOptions = this.selectOptions.filter((o) => filterFn(o));
   }
+
+  disabled = false;
 
   /** Get full selected entry data */
   protected get selectedOptions() {
@@ -86,5 +90,9 @@ export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: strin
 
   registerOnTouched(fn: (value: string[]) => void) {
     this._onTouched = fn; // <-- save the function
+  }
+
+  setDisabledState(disabled: boolean) {
+    this.disabled = disabled;
   }
 }
