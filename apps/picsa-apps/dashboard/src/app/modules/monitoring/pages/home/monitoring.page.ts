@@ -24,7 +24,7 @@ export class MonitoringPageComponent implements OnInit {
     'summary_fields',
     'enketo_form',
     'enketo_model',
-    'created_at',
+    'created_at'
   ];
 
   constructor(public service: MonitoringFormsDashboardService, private router: Router, private route: ActivatedRoute) {}

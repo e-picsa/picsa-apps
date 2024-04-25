@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import {
@@ -35,28 +36,57 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 })
 export class UpdateMonitoringFormsComponent implements OnInit {
   public form: IMonitoringFormsRow;
-  public updateFeedbackMessage = '';
+  public convertXlsxFeedbackMessage = '';
   public uploading = false;
   public allowedFileTypes = ['xlsx', 'xls'].map((ext) => `.${ext}`);
+  public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
   public storageBucketName = 'global';
   public storageFolderPath = 'monitoring/forms';
+  public coverImageStorageFolder = 'monitoring/cover_images';
+  public formID = null;
+  public xformConversionSuccess = false;
+  public loadingNewForm = false;
+
+  public fileForm = this.formBuilder.nonNullable.group({
+    title: ['', Validators.required],
+    description: ['', Validators.required],
+    cover_image: [''],
+    form_xlsx: [''],
+    enketo_form: [''],
+    enketo_model: [''],
+    enketo_definition: {},
+  });
+
   constructor(
     private service: MonitoringFormsDashboardService,
     private route: ActivatedRoute,
-    private storageService: SupabaseStorageService
+    private storageService: SupabaseStorageService,
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {}
   async ngOnInit() {
     await this.service.ready();
     this.route.params.subscribe(async (params) => {
-      const id = params['id'];
-      this.service
-        .getFormById(id)
-        .then((data) => {
-          this.form = data;
-        })
-        .catch((error) => {
-          console.error('Error fetching Form:', error);
-        });
+      this.formID = params['id'];
+      if (this.formID) {
+        this.service
+          .getFormById(this.formID)
+          .then((data) => {
+            this.form = data;
+            this.fileForm.patchValue({
+              title: data.title ?? '', // Use empty string as a fallback if data.title is null
+              cover_image: data.cover_image ?? '',
+              description: data.description ?? '',
+              form_xlsx: data.form_xlsx ?? '',
+              enketo_form: data.enketo_form ?? '',
+              enketo_model: data.enketo_model ?? '',
+              enketo_definition: data.enketo_definition ?? {},
+            });
+          })
+          .catch((error) => {
+            console.error('Error fetching Form:', error);
+          });
+      }
     });
   }
 
@@ -66,7 +96,7 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     }
     // As conversion is a 2-step process (xls file -> xml form -> enketo form) track progress
     // so that uploaded file can be removed if not successful
-    let xformConversionSuccess = false;
+
     this.uploading = true;
     const [{ data, entry }] = res;
 
@@ -81,23 +111,64 @@ export class UpdateMonitoringFormsComponent implements OnInit {
       const enketoContent = await this.service.submitFormToConvertXFormToEnketo(formData);
       if (enketoContent) {
         const { form, languageMap, model, theme } = enketoContent;
-        // Update db entry with form_xlsx
-        this.form = await this.service.updateFormById(this.form.id, {
+        this.fileForm.patchValue({
           form_xlsx: `${this.storageBucketName}/${this.storageFolderPath}/${entry.name}`,
           enketo_form: form,
           enketo_model: model,
-          enketo_definition: { ...(this.form.enketo_definition as any), languageMap, theme },
+          enketo_definition: { ...languageMap, theme },
         });
-        this.updateFeedbackMessage = 'Form updated successfully!';
+        this.convertXlsxFeedbackMessage = 'Form updated successfully!';
         this.uploading = false;
-        xformConversionSuccess = true;
+        this.xformConversionSuccess = true;
       }
     }
     // If conversion not successful delete file from storage
-    if (!xformConversionSuccess) {
+    if (!this.xformConversionSuccess) {
       const storagePath = `${this.storageFolderPath}/${entry.name}`;
       const { error } = await this.storageService.deleteFile(this.storageBucketName, storagePath);
       if (error) throw error;
     }
+  }
+
+  public async handleCoverUploadComplete(res: IUploadResult[], controlName: 'storage_file' | 'cover_image') {
+    if (res.length === 0) {
+      return;
+    }
+    const [{ entry }] = res;
+    this.fileForm.patchValue({
+      [controlName]: `${this.storageBucketName}/${this.coverImageStorageFolder}/${entry.name}`,
+    });
+  }
+  public async handleSubmitForm() {
+    const isUpdatingForm = !!this.formID;
+
+    this.loadingNewForm = true;
+
+    const values = this.fileForm.getRawValue();
+    if (!values.title) {
+      this.loadingNewForm = false;
+      return;
+    }
+    if (isUpdatingForm) {
+      const updatedValues = Object.fromEntries(Object.entries(values).filter(([key, value]) => value !== ''));
+      await this.service.updateFormById(this.form.id, updatedValues);
+      this.loadingNewForm = false;
+      this.router.navigate([`/monitoring/${this.form.id}`]);
+      return;
+    }
+
+    if (!this.xformConversionSuccess) {
+      this.convertXlsxFeedbackMessage = 'Please upload a new excel form to convert!';
+      this.loadingNewForm = false;
+      return;
+    }
+
+    if (!isUpdatingForm) {
+      await this.service.createForm(values);
+      this.loadingNewForm = false;
+      this.router.navigate([`/monitoring/${this.form.id}`]);
+      return;
+    }
+    
   }
 }

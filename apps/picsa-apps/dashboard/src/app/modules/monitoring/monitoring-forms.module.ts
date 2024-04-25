@@ -17,6 +17,10 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
         component: MonitoringPageComponent,
       },
       {
+        path: 'create',
+        component: UpdateMonitoringFormsComponent,
+      },
+      {
         path: ':id',
         component: ViewMonitoringFormsComponent,
       },
@@ -27,7 +31,7 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
       {
         path: ':id/edit',
         component: UpdateMonitoringFormsComponent,
-      },
+      }
     ]),
   ],
 })

@@ -1,22 +1,42 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
+    @if(formID){
     <h2 style="flex: 1">Update Form</h2>
+    } @else {
+    <h2 style="flex: 1">Add Form</h2>
+    }
   </div>
-  @if(form){
-  <form class="form-content">
-    <h2 style="flex: 1">Upload new Form excel file</h2>
-    <picsa-supabase-upload
-      [fileTypes]="allowedFileTypes"
-      [autoUpload]="false"
-      [storageBucketName]="storageBucketName"
-      [storageFolderPath]="storageFolderPath"
-      (uploadComplete)="handleUploadComplete($event)"
-    >
-    </picsa-supabase-upload>
+  <form [formGroup]="fileForm" class="form-content">
+
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input type="text" matInput formControlName="title" style="text-align: start;" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <input type="text" matInput formControlName="description" style="text-align: start;" />
+    </mat-form-field>
+    <div>
+      <h2 style="flex: 1">Upload cover image (optional)</h2>
+      <picsa-supabase-upload [fileTypes]="allowedCoverTypes" [fileDropHeight]="128" [autoUpload]="true"
+        [storageBucketName]="storageBucketName" [storageFolderPath]="coverImageStorageFolder"
+        (uploadComplete)="handleCoverUploadComplete($event, 'cover_image')"></picsa-supabase-upload>
+    </div>
+
+    <div>
+      <h2 style="flex: 1">Upload new Form excel file</h2>
+      <picsa-supabase-upload [fileTypes]="allowedFileTypes" [autoUpload]="false" [storageBucketName]="storageBucketName"
+        [storageFolderPath]="storageFolderPath" (uploadComplete)="handleUploadComplete($event)">
+      </picsa-supabase-upload>
+      @if(convertXlsxFeedbackMessage) {
+      <div>{{ convertXlsxFeedbackMessage }}</div>
+      } @if(uploading===true) {
+      <div>Uploading form...</div>
+      }
+    </div>
+
+    <button mat-raised-button color="primary"  (click)="handleSubmitForm()">{{loadingNewForm ? "saving..." : "Save Form"}}</button>
+
   </form>
-  } @if(updateFeedbackMessage) {
-  <div>{{ updateFeedbackMessage }}</div>
-  } @if(uploading===true) {
-  <div>Uploading form...</div>
-  }
+
 </div>
