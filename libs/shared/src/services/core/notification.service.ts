@@ -24,7 +24,7 @@ export class PicsaNotificationService {
   selector: 'picsa-snack-bar-with-icon-component',
   template: ` <div class="message-container">
     <mat-icon>{{ data.matIcon }}</mat-icon>
-    <span style="margin:0 16px; flex:1">{{ data.message }}</span>
+    <span style="margin:0 16px; flex:1; overflow-wrap: anywhere;">{{ data.message }}</span>
     <button mat-stroked-button color="accent" (click)="snackRef.dismiss()">{{ data.buttonText || 'dismiss' }}</button>
   </div>`,
   styles: [
