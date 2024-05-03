@@ -78,21 +78,21 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return data;
   }
   public async createForm(newForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow> {
-    newForm.id =  this.generateId(newForm.title?newForm.title:null);
-    const { data, error } = await this.supabaseService.db
-      .table(this.TABLE_NAME)
-      .insert(newForm)
-      .single();
+    newForm.id = this.generateId(newForm.title ? newForm.title : null);
+    const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).insert(newForm).single();
     if (error) {
       throw error;
     }
     return data;
   }
-   
+
   // adopting this id genrating funtion
-  private generateId(title: string|null) {
-    const cleanedText = title?.toLowerCase().replace(/[^a-z ]/gi, '').replace(/\s+/g, '_');
-    return title ? cleanedText : ''
+  private generateId(title: string | null) {
+    const cleanedText = title
+      ?.toLowerCase()
+      .replace(/[^a-z ]/gi, '')
+      .replace(/\s+/g, '_');
+    return title ? cleanedText : '';
   }
   /**
    * Convert an xls form to xml-xform standard

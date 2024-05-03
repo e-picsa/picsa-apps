@@ -31,7 +31,7 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
       {
         path: ':id/edit',
         component: UpdateMonitoringFormsComponent,
-      }
+      },
     ]),
   ],
 })

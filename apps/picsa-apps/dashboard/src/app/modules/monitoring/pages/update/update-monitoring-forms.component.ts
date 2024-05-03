@@ -169,6 +169,5 @@ export class UpdateMonitoringFormsComponent implements OnInit {
       this.router.navigate([`/monitoring/${this.form.id}`]);
       return;
     }
-    
   }
 }
