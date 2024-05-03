@@ -83,6 +83,7 @@ export class SupabaseUploadComponent {
   }
 
   @Output() uploadComplete = new EventEmitter<IUploadResult[]>();
+  @Output() fileChanged = new EventEmitter<UppyFile>();
 
   public uppy: Uppy;
 
@@ -90,6 +91,11 @@ export class SupabaseUploadComponent {
     proudlyDisplayPoweredByUppy: false,
     hideUploadButton: true,
   };
+
+  /** Access files currently loaded into uppy uploader */
+  public get files() {
+    return this.uppy.getFiles();
+  }
 
   private uppyOptions: UppyOptions = {
     debug: false,
@@ -117,7 +123,7 @@ export class SupabaseUploadComponent {
 
   public async startUpload() {
     // remove duplicates
-    for (const file of this.uppy.getFiles()) {
+    for (const file of this.files) {
       const objectName = this.storageFolderPath ? `${this.storageFolderPath}/${file.name}` : file.name;
       const meta: IUploadMeta = {
         ...file.meta,
@@ -131,7 +137,7 @@ export class SupabaseUploadComponent {
     }
     const res = await this.uppy.upload();
     await this.handleUploadComplete(res);
-    this.storageFolderPath = '';
+    return res;
   }
 
   private async handleUploadComplete(res: UploadResult) {
@@ -180,9 +186,11 @@ export class SupabaseUploadComponent {
     });
     // Use file-added hook to update metadata used by supabase for managing file metadata
     // NOTE - additional hooks can also be added to observe upload progress, errors etc.
-    this.uppy.on('file-added', (file) => this.handleFileAdded());
+    this.uppy.on('file-added', () => this.handleFileAdded());
+    this.uppy.on('file-removed', () => this.fileChanged.next(this.files[0]));
   }
   private handleFileAdded() {
+    this.fileChanged.next(this.files[0]);
     if (this.autoUpload) {
       this.startUpload();
     }
@@ -207,7 +215,7 @@ export class SupabaseUploadComponent {
     const storageFile = await this.storageService.getFile({
       bucketId: this.storageBucketName,
       filename: file.name,
-      folderPath: this.storageFolderPath || '',
+      folderPath: this.storageFolderPath,
     });
     if (storageFile) {
       this.notificationService.showUserNotification({
