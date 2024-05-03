@@ -9005,6 +9005,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^9.0.8":
+  version: 9.0.8
+  resolution: "@types/uuid@npm:9.0.8"
+  checksum: b8c60b7ba8250356b5088302583d1704a4e1a13558d143c549c408bf8920535602ffc12394ede77f8a8083511b023704bc66d1345792714002bfa261b17c5275
+  languageName: node
+  linkType: hard
+
 "@types/webidl-conversions@npm:*":
   version: 7.0.3
   resolution: "@types/webidl-conversions@npm:7.0.3"
@@ -19333,6 +19340,7 @@ __metadata:
     "@types/parse": ^2.18.16
     "@types/prompts": ^2.0.14
     "@types/sharp": ^0.30.5
+    "@types/uuid": ^9.0.8
     "@typescript-eslint/eslint-plugin": 7.3.0
     "@typescript-eslint/parser": 7.3.0
     "@uppy/angular": ^0.6.1
@@ -19418,6 +19426,7 @@ __metadata:
     ts-node: 10.9.2
     tslib: ^2.5.0
     typescript: 5.4.3
+    uuid: ^9.0.1
     zone.js: 0.14.4
   languageName: unknown
   linkType: soft
@@ -23085,6 +23094,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "uuid@npm:9.0.1"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 39931f6da74e307f51c0fb463dc2462807531dc80760a9bff1e35af4316131b4fc3203d16da60ae33f07fdca5b56f3f1dd662da0c99fea9aaeab2004780cc5f4
   languageName: node
   linkType: hard
 
