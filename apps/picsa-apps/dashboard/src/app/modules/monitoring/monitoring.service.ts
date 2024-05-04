@@ -34,7 +34,6 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
-    await this.listMonitoringForms();
   }
 
   public async listMonitoringForms() {
@@ -74,6 +73,13 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
       .single();
     if (error) {
       throw error;
+    }
+    return data;
+  }
+  public async createForm(newForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow | null> {
+    const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).insert(newForm).single();
+    if (error) {
+      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
     }
     return data;
   }

@@ -1,7 +1,8 @@
 .form-content {
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
+  gap: 1.5rem;
+  max-width: 800px;
 }
 .submitButton {
   width: 7rem;
@@ -25,4 +26,8 @@ label {
   display: flex;
   flex-direction: row;
   gap: 5px;
+}
+
+picsa-supabase-upload {
+  width: 256px;
 }

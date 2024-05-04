@@ -1,22 +1,76 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
+    @if(formID){
     <h2 style="flex: 1">Update Form</h2>
+    } @else {
+    <h2 style="flex: 1">Add Form</h2>
+    }
   </div>
-  @if(form){
-  <form class="form-content">
-    <h2 style="flex: 1">Upload new Form excel file</h2>
-    <picsa-supabase-upload
-      [fileTypes]="allowedFileTypes"
-      [autoUpload]="false"
-      [storageBucketName]="storageBucketName"
-      [storageFolderPath]="storageFolderPath"
-      (uploadComplete)="handleUploadComplete($event)"
-    >
-    </picsa-supabase-upload>
+  <form [formGroup]="form" class="form-content">
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input type="text" matInput formControlName="title" style="text-align: start" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <input type="text" matInput formControlName="description" style="text-align: start" />
+    </mat-form-field>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px">
+      <!-- Form upload -->
+      <div style="flex: 1">
+        <h3 style="flex: 1">Upload new Form excel file</h3>
+        <picsa-supabase-upload
+          #formUploader
+          [fileTypes]="allowedFileTypes"
+          [fileDropHeight]="196"
+          [autoUpload]="false"
+          [storageBucketName]="storageBucketName"
+          [storageFolderPath]="storageFolderPath"
+          (fileChanged)="handleFormFileChanged($event)"
+          [style.display]="convertXlsxFeedbackMessage ? 'none' : 'block'"
+        >
+        </picsa-supabase-upload>
+
+        <div
+          style="display: flex; gap: 8px; align-items: center"
+          [style.display]="convertXlsxFeedbackMessage ? 'block' : 'none'"
+        >
+          <picsa-loading></picsa-loading>
+          {{ convertXlsxFeedbackMessage }}
+        </div>
+      </div>
+      <!-- Cover Upload -->
+      <div style="flex: 1">
+        <h3 style="flex: 1">Upload cover image (optional)</h3>
+        <div style="display: flex; gap: 16px">
+          <picsa-supabase-upload
+            #coverUploader
+            [fileTypes]="allowedCoverTypes"
+            [fileDropHeight]="196"
+            [autoUpload]="true"
+            [storageBucketName]="storageBucketName"
+            [storageFolderPath]="coverImageStorageFolder"
+            (uploadComplete)="handleCoverUploadComplete($event)"
+          ></picsa-supabase-upload>
+
+          <button
+            mat-button
+            color="primary"
+            supabaseStoragePicker
+            storageBucketName="resources"
+            [storageFolderPath]="coverImageStorageFolder"
+            (storageFileSelected)="handleCoverFileSelected($event)"
+            style="margin-top: 4px"
+          >
+            <mat-icon>perm_media</mat-icon>
+            Select existing file
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="handleSubmitForm()" [disabled]="form.invalid">
+      {{ loadingNewForm ? 'saving...' : 'Save Form' }}
+    </button>
   </form>
-  } @if(updateFeedbackMessage) {
-  <div>{{ updateFeedbackMessage }}</div>
-  } @if(uploading===true) {
-  <div>Uploading form...</div>
-  }
 </div>

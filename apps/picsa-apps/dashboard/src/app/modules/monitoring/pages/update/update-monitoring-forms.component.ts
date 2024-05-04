@@ -1,16 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
+import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import {
   IUploadResult,
   SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import { UppyFile } from '@uppy/core';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { v4 as uuidV4 } from 'uuid';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { MonitoringFormsDashboardService } from '../../monitoring.service';
@@ -29,75 +33,143 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
     NgxJsonViewerModule,
     SupabaseUploadComponent,
     SupabaseStoragePickerDirective,
+    PicsaLoadingComponent,
   ],
   templateUrl: './update-monitoring-forms.component.html',
   styleUrls: ['./update-monitoring-forms.component.scss'],
 })
 export class UpdateMonitoringFormsComponent implements OnInit {
-  public form: IMonitoringFormsRow;
-  public updateFeedbackMessage = '';
-  public uploading = false;
+  public convertXlsxFeedbackMessage = '';
   public allowedFileTypes = ['xlsx', 'xls'].map((ext) => `.${ext}`);
+  public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
   public storageBucketName = 'global';
   public storageFolderPath = 'monitoring/forms';
+  public coverImageStorageFolder = 'monitoring/cover_images';
+  public formID: string | null = null;
+  public loadingNewForm = false;
+
+  private monitoringRow: IMonitoringFormsRow;
+
+  public form = this.formBuilder.group({
+    title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    description: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    cover_image: new FormControl<string>(''),
+    form_xlsx: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    enketo_form: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    enketo_model: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    enketo_definition: new FormControl<any>({}, { nonNullable: true, validators: Validators.required }),
+  });
+
+  @ViewChild('formUploader') formUploader: SupabaseUploadComponent;
+
   constructor(
     private service: MonitoringFormsDashboardService,
     private route: ActivatedRoute,
-    private storageService: SupabaseStorageService
+    private storageService: SupabaseStorageService,
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {}
   async ngOnInit() {
     await this.service.ready();
     this.route.params.subscribe(async (params) => {
-      const id = params['id'];
-      this.service
-        .getFormById(id)
-        .then((data) => {
-          this.form = data;
-        })
-        .catch((error) => {
-          console.error('Error fetching Form:', error);
-        });
+      this.formID = params['id'];
+      if (this.formID) {
+        this.service
+          .getFormById(this.formID)
+          .then((data) => {
+            this.monitoringRow = data;
+            this.form.patchValue(data as any);
+          })
+          .catch((error) => {
+            console.error('Error fetching Form:', error);
+          });
+      }
     });
   }
 
-  public async handleUploadComplete(res: IUploadResult[]) {
-    if (res.length === 0) {
-      return;
+  public async handleFormFileChanged(file?: UppyFile) {
+    if (file) {
+      await this.handleFormConversion(file.data as File);
+    } else {
+      // TODO - remove uploaded file and reset form
+      console.log('TODO - remove form entry', this.form.value);
+      //   const storagePath = `${this.storageFolderPath}/${entry.name}`;
+      //   const { error } = await this.storageService.deleteFile(this.storageBucketName, storagePath);
+      //   if (error) throw error;
     }
-    // As conversion is a 2-step process (xls file -> xml form -> enketo form) track progress
-    // so that uploaded file can be removed if not successful
-    let xformConversionSuccess = false;
-    this.uploading = true;
-    const [{ data, entry }] = res;
+  }
 
-    const xform = await this.service.submitFormToConvertXlsToXForm(data as File);
+  public handleCoverFileSelected(e) {
+    // TODO - fix picker and bindings
+  }
 
+  /**
+   * When the user drops an xlsx file for upload first verify it can be converted to
+   * xlsform and enketo versions before uploading to supabase and marking form
+   */
+  private async handleFormConversion(file: File) {
+    this.form.disable();
+
+    // Step 1 - xlsx convert to xform
+    this.convertXlsxFeedbackMessage = 'Preparing xform...';
+    const xform = await this.service.submitFormToConvertXlsToXForm(file as File);
+
+    // Step 2 - xform convert to enketo
     if (xform) {
+      this.convertXlsxFeedbackMessage = 'Preparing enketo form...';
       const blob = new Blob([xform], { type: 'text/xml' });
       const xmlFile = new File([blob], 'form.xml', { type: 'text/xml' });
       const formData = new FormData();
       formData.append('files', xmlFile);
-
       const enketoContent = await this.service.submitFormToConvertXFormToEnketo(formData);
+
+      // Step 3 - upload form to supabase
       if (enketoContent) {
-        const { form, languageMap, model, theme } = enketoContent;
-        // Update db entry with form_xlsx
-        this.form = await this.service.updateFormById(this.form.id, {
-          form_xlsx: `${this.storageBucketName}/${this.storageFolderPath}/${entry.name}`,
-          enketo_form: form,
-          enketo_model: model,
-          enketo_definition: { ...(this.form.enketo_definition as any), languageMap, theme },
-        });
-        this.updateFeedbackMessage = 'Form updated successfully!';
-        this.uploading = false;
-        xformConversionSuccess = true;
+        this.convertXlsxFeedbackMessage = 'Uploading to storage...';
+        const { successful, failed } = await this.formUploader.startUpload();
+        const [entry] = successful;
+
+        // Step 4 - update form values
+        if (entry) {
+          const { form, languageMap, model, theme } = enketoContent;
+          this.form.patchValue({
+            enketo_form: form,
+            enketo_model: model,
+            enketo_definition: { ...languageMap, theme },
+            form_xlsx: `${this.storageBucketName}/${this.storageFolderPath}/${entry.name}`,
+          });
+          this.convertXlsxFeedbackMessage = 'Form uploaded successfully!';
+        }
       }
     }
-    // If conversion not successful delete file from storage
-    if (!xformConversionSuccess) {
-      const storagePath = `${this.storageFolderPath}/${entry.name}`;
-      const { error } = await this.storageService.deleteFile(this.storageBucketName, storagePath);
-      if (error) throw error;
+
+    this.convertXlsxFeedbackMessage = '';
+    this.form.enable();
+  }
+
+  public async handleCoverUploadComplete(res: IUploadResult[]) {
+    if (res.length === 0) {
+      return;
     }
+    const [{ entry }] = res;
+    this.form.patchValue({
+      cover_image: `${this.storageBucketName}/${this.coverImageStorageFolder}/${entry.name}`,
+    });
+  }
+  public async handleSubmitForm() {
+    const values = this.form.getRawValue();
+    console.log('submit form', values);
+    // handle update
+    if (this.formID) {
+      const updatedValues = Object.fromEntries(Object.entries(values).filter(([key, value]) => value !== ''));
+      await this.service.updateFormById(this.monitoringRow.id, updatedValues);
+      this.router.navigate([`/monitoring/${this.monitoringRow.id}`]);
+    }
+    // handle create
+    else {
+      this.formID = uuidV4();
+      await this.service.createForm({ ...values, id: this.formID });
+    }
+    this.router.navigate([`/monitoring/${this.formID}`]);
   }
 }
