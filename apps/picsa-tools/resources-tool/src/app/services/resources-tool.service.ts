@@ -67,13 +67,13 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public filterLocalisedResources<T extends schemas.IResourceBase>(docs: T[]) {
-    const { code } = this.configurationService.activeConfiguration.localisation.country;
+    const { country_code } = this.configurationService.deploymentSettings();
     // global deployment code "" not filtered
-    if (!code) return docs;
+    if (!country_code) return docs;
     return docs.filter((doc) => {
       const filterCountries = doc.filter?.countries;
       if (!filterCountries) return true;
-      return filterCountries.includes(code);
+      return filterCountries.includes(country_code);
     });
   }
 
