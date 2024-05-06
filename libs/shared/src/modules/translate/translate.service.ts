@@ -1,11 +1,14 @@
 import { effect, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { ILanguageCode } from '@picsa/data/deployments';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PicsaTranslateService {
-  public language = 'en';
+  public language: ILanguageCode = 'gb_en';
   constructor(public ngxTranslate: TranslateService, configurationService: ConfigurationService) {
+    ngxTranslate.setDefaultLang('gb_en');
     effect(() => {
       const { language_code } = configurationService.userSettings();
       if (language_code && language_code !== this.language) {
@@ -19,8 +22,7 @@ export class PicsaTranslateService {
   // outside of html templates (where pipe method used instead)
   async translateText(text = '') {
     if (!text) return text;
-    const translation = await this.ngxTranslate.get(text).toPromise();
-    return translation;
+    return firstValueFrom(this.ngxTranslate.get(text));
   }
 
   async translateArray(arr: string[]) {
