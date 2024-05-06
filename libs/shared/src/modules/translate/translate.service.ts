@@ -1,27 +1,16 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { Subject, takeUntil } from 'rxjs';
 
 @Injectable()
-export class PicsaTranslateService implements OnDestroy {
+export class PicsaTranslateService {
   public language = 'en';
-  private destroyed$ = new Subject<boolean>();
-  constructor(public ngxTranslate: TranslateService, public configurationService: ConfigurationService) {
-    this.subscribeToConfigLanguageChanges();
-  }
-
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
-  }
-
-  private subscribeToConfigLanguageChanges() {
-    this.configurationService.activeConfiguration$.pipe(takeUntil(this.destroyed$)).subscribe(async (config) => {
-      const language = config.localisation.language.selected?.code;
-      if (language && language !== this.language) {
-        this.language = language;
-        this.ngxTranslate.use(language);
+  constructor(public ngxTranslate: TranslateService, configurationService: ConfigurationService) {
+    effect(() => {
+      const { language_code } = configurationService.userSettings();
+      if (language_code && language_code !== this.language) {
+        this.language = language_code;
+        this.ngxTranslate.use(language_code);
       }
     });
   }
