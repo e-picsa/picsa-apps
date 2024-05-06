@@ -1,6 +1,7 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IPicsaDataWithIcons } from '../models';
 import { arrayToHashmap } from '@picsa/utils/data';
+import { IStationMeta, IStationMetaDB } from '@picsa/models/src';
 
 /*******************************************************************
  * Language Settings
@@ -42,7 +43,10 @@ export interface IDeploymentSettings {
     /** Unit represented by a single dot, should be power of 10 closest to $1 equivalent (e.g. MK 1000, ZMK 10, GBP 1) */
     currencyBaseValue: number;
   };
-  climateTool: { station_filter?: (station: any) => boolean };
+  climateTool: {
+    /** Filter function for stations. Default filter by country_code (defined in site-select.page.ts) */
+    station_filter?: (station: IStationMetaDB) => boolean;
+  };
   theme: string;
 }
 
@@ -52,18 +56,20 @@ const DEPLOYMENT_DEFAULTS: IDeploymentSettings = {
   country_code: '',
   language_codes: Object.keys(LANGUAGES_BASE) as ILanguageCode[],
   budgetTool: { currency: '$', currencyBaseValue: 1 },
-  climateTool: { station_filter: (station: any) => true },
+  climateTool: {},
   theme: 'picsa-default',
 };
 
-// Utility to combine settings with defaults
-function combine(settings: Partial<IDeploymentSettings>) {
-  return { ...DEPLOYMENT_DEFAULTS, ...settings };
+// Utility to generate settings with defaults
+function generate(settings: Partial<IDeploymentSettings>) {
+  const combined: IDeploymentSettings = { ...DEPLOYMENT_DEFAULTS, ...settings };
+  return combined;
 }
 
 const DEPLOYMENTS_BASE = {
-  global: combine({ label: 'Global' }),
-  mw: combine({
+  global: generate({ label: 'Global', climateTool: { station_filter: () => true } }),
+  mw: generate({
+    country_code: 'mw',
     label: 'Malawi',
     language_codes: ['mw_ny', 'en'],
     budgetTool: {
@@ -72,7 +78,8 @@ const DEPLOYMENTS_BASE = {
     },
     theme: 'picsa-mw',
   }),
-  zm: combine({
+  zm: generate({
+    country_code: 'zm',
     label: 'Zambia',
     language_codes: ['zm_ny', 'en'],
     budgetTool: {
@@ -81,7 +88,8 @@ const DEPLOYMENTS_BASE = {
     },
     theme: 'picsa-zm',
   }),
-  tj: combine({
+  tj: generate({
+    country_code: 'tj',
     label: 'Tajikistan',
     language_codes: ['tj_tg', 'en'],
     budgetTool: {
@@ -100,7 +108,6 @@ export const DEPLOYMENT_DATA = Object.entries(DEPLOYMENTS_BASE).map(([id, data])
     id: id as IDeploymentId,
     ...data,
     assetIconPath: data.assetIconPath || `assets/images/flags/${id}.svg`,
-    country_code: data.country_code || id,
   };
 });
 
