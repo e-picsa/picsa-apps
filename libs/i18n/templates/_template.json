@@ -1118,10 +1118,6 @@
     "tool": "common_weather"
   },
   {
-    "text": "All",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
     "tool": "crop-probability"
   },
@@ -1199,6 +1195,10 @@
   },
   {
     "text": "Budget",
+    "tool": "extension"
+  },
+  {
+    "text": "Choose language",
     "tool": "extension"
   },
   {
@@ -1634,7 +1634,19 @@
     "tool": "resources"
   },
   {
+    "text": "Download All",
+    "tool": "resources"
+  },
+  {
+    "text": "Downloaded",
+    "tool": "resources"
+  },
+  {
     "text": "Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Input at least 3 letters to search",
     "tool": "resources"
   },
   {
@@ -1643,6 +1655,18 @@
   },
   {
     "text": "Manage Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "No results found",
+    "tool": "resources"
+  },
+  {
+    "text": "Search",
+    "tool": "resources"
+  },
+  {
+    "text": "Search Resources",
     "tool": "resources"
   },
   {
