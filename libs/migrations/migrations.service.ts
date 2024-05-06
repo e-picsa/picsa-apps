@@ -7,20 +7,17 @@ export class PicsaMigrationService {
 
   public async runMigrations(injector: Injector): Promise<void> {
     this.migrationHistory = this.loadMigrationHistory();
-    const pending = Object.entries(MIGRATIONS)
-      .filter(([name]) => !Object.prototype.hasOwnProperty.call(this.migrationHistory, name))
-      .sort((a, b) => (a[0] > b[0] ? 1 : -1));
+    const pending = MIGRATIONS.filter(({ id }) => !Object.prototype.hasOwnProperty.call(this.migrationHistory, id));
     const timestamp = new Date().toLocaleString();
     if (pending.length > 0) {
       console.group('[Migrations]');
-      for (const [name, migration] of pending) {
-        console.log(`Exec ${name}`);
+      for (const { id, label, up } of pending) {
+        console.log(`Exec ${id} - ${label}`);
         try {
-          console.log(`[Migration] ${name}`);
-          const result = await migration.up(injector);
-          this.migrationHistory[name] = { timestamp, result };
+          const result = await up(injector);
+          this.migrationHistory[id] = { timestamp, result };
         } catch (error) {
-          this.migrationHistory[name] = { timestamp, error: (error as any)?.message };
+          this.migrationHistory[id] = { timestamp, error: (error as any)?.message };
         }
       }
       console.log('Results', this.migrationHistory);
