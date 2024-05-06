@@ -76,17 +76,18 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
    * with fallback to default video set
    */
   private getVideoResource(activity: IActivityEntry) {
-    const { language, country } = this.configurationService.activeConfiguration.localisation;
+    const { language_code } = this.configurationService.userSettings();
+    const { country_code } = this.configurationService.deploymentSettings();
     const localisedVideos = jsonNestedProperty<IFarmerVideosById>(
       PICSA_FARMER_VIDEO_RESOURCES,
-      `${language.selected?.code}.360p`
+      `${language_code}.360p`
     );
     if (localisedVideos?.[activity.videoId]) {
       return localisedVideos[activity.videoId];
     }
     // HACK - Use default fallbacks for ZM or MW
     // TODO - add english versions and make default fallback
-    return country.code === 'zm'
+    return country_code === 'zm'
       ? PICSA_FARMER_VIDEO_RESOURCES.zm_ny['360p'][activity.videoId]
       : PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'][activity.videoId];
   }
