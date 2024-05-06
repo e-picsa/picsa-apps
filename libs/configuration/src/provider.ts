@@ -1,7 +1,6 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DEPLOYMENT_DATA_HASHMAP, IDeploymentId, ILanguageCode } from '@picsa/data/deployments';
-import { ENVIRONMENT } from '@picsa/environments';
 import { debounceTime } from 'rxjs';
 
 export interface IUserSettings {
@@ -15,7 +14,7 @@ export interface IUserSettings {
 }
 
 const USER_CONFIGURATION_DEFAULT: IUserSettings = {
-  deployment_id: ENVIRONMENT.deploymentDefault,
+  deployment_id: 'global',
   language_code: 'en',
   variant: 'extension',
   first_load: true,
