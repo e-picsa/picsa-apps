@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaAnimationsModule } from '@picsa/shared/features';
+import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import {
   PicsaDb_V2_Module,
   PicsaDbModule,
@@ -34,6 +35,7 @@ import { AppRoutingModule } from './app-routing.module';
       baseUrl: 'https://picsa.app',
       appDynamicLink: 'https://picsa.page.link/dynamic',
     }),
+    PicsaLoadingComponent,
     PicsaTranslateModule,
     PicsaAnimationsModule.forRoot(),
     PicsaCommonComponentsModule,

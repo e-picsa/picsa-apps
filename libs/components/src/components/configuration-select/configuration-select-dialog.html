@@ -2,22 +2,22 @@
 <h2 style="margin-top: 0">{{'Select Country' | translate}}</h2>
 <div class="country-select-container">
   <div
-    *ngFor="let option of options"
+    *ngFor="let option of deploymentOptions"
     class="select-option"
-    [class.selected]="option.country.code===selected.country.code ? true : undefined"
+    [class.selected]="option.id===deploymentSelected ? true : undefined"
     (click)="setLocalisation(option)"
   >
-    <img [src]="option.country.image" class="language-select-flag" />
-    <div style="text-align: center">{{ option.country.label }}</div>
+    <img [src]="option.assetIconPath" class="language-select-flag" />
+    <div style="text-align: center">{{ option.label }}</div>
   </div>
 </div>
 
 <h2>{{'Select Language' | translate}}</h2>
-<div class="language-select-container" *ngIf="selected.language">
+<div class="language-select-container" *ngIf="languageSelected">
   <div
-    *ngFor="let language of selected.language.options"
+    *ngFor="let language of languageOptions"
     class="select-option language"
-    [class.selected]="selected.language.selected?.code ===language.code ? true : undefined"
+    [class.selected]="languageSelected ===language.id ? true : undefined"
     (click)="setLanguage(language)"
   >
     <div>{{ language.label | translate }}</div>

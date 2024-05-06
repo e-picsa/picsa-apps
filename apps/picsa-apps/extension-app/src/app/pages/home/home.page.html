@@ -1,37 +1,14 @@
-<div #headerContent style="margin-right: 8px; display: flex; justify-content: flex-end">
-  <picsa-profile-select></picsa-profile-select>
-</div>
+<!-- @if (configurationService.userSettings().first_load) {
+  <picsa-welcome></picsa-welcome>
 
-<div class="page-content background-image">
-  <div class="link-grid">
-    @for (link of links; track $index) {
-    <div
-      [attr.data-tour-id]="link.tourId"
-      [attr.data-dev-only]="link.devOnly"
-      data-cy="link"
-      class="grid-tile"
-      (click)="linkClicked(link)"
-    >
-      <div style="text-align: center">
-        <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
-        <div class="nav-text">{{ link.name | translate }}</div>
-      </div>
-      @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
-      <div class="tile-badge mat-elevation-z8">{{monitoringService.pendingSyncCount}}</div>
-      }
-    </div>
-    }
-    <div class="grid-tile" (click)="startTour()" style="position: relative">
-      <div style="text-align: center">
-        <mat-icon svgIcon="extension_app:tutorial" class="nav-icon"></mat-icon>
-        <div class="nav-text">{{ 'Take App Tour' | translate }}</div>
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    <picsa-configuration-select></picsa-configuration-select>
-    <a routerLink="privacy" class="privacy-policy">{{'Privacy Policy' | translate}}</a>
-    <div class="version-info">v{{ version.number }}</div>
-  </footer>
-</div>
+  } @else {  -->
+@switch (configurationService.userSettings().variant) { @case ('extension') {
+<picsa-extension-home />
+} @case ('farmer') {
+<!-- TODO -->
+<div>Farmer Variant</div>
+} @default {
+<!-- revert to onboarding screen if variant removed -->
+<picsa-welcome></picsa-welcome>
+} }
+<!-- } -->

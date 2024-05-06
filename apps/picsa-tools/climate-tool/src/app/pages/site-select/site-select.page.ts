@@ -57,12 +57,12 @@ export class SiteSelectPage implements OnInit {
 
   populateSites() {
     let stations = HARDCODED_STATIONS;
-    const { climateTool, localisation } = this.configurationService.activeConfiguration;
-    const filterFn = climateTool?.stationFilter;
+    const { climateTool, country_code } = this.configurationService.deploymentSettings();
+    const filterFn = climateTool?.station_filter;
     if (filterFn) {
       stations = stations.filter((station) => filterFn(station));
     } else {
-      stations = stations.filter((station) => station.countryCode === localisation.country.code);
+      stations = stations.filter((station) => station.countryCode === country_code);
     }
     const markers: IMapMarker[] = stations.map((s, i) => {
       return {

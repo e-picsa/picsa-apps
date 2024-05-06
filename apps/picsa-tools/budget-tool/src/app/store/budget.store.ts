@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { effect, Injectable, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ConfigurationService, IConfiguration } from '@picsa/configuration';
-import { MONTH_DATA } from '@picsa/data';
+import { ConfigurationService } from '@picsa/configuration';
+import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
 import { APP_VERSION } from '@picsa/environments';
 import { IAppMeta } from '@picsa/models';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -11,7 +11,7 @@ import { PrintProvider } from '@picsa/shared/services/native/print';
 import merge from 'deepmerge';
 import { toJS } from 'mobx';
 import { action, observable } from 'mobx-angular';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import {
   IBudget,
@@ -33,10 +33,9 @@ export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
 @Injectable({
   providedIn: 'root',
 })
-export class BudgetStore implements OnDestroy {
+export class BudgetStore {
   changes = new BehaviorSubject<[number, string]>([null, null] as any);
-  public settings: IConfiguration.IBudgetToolSettings;
-  private destroyed$ = new Subject<boolean>();
+  public settings: IDeploymentSettings['budgetTool'];
   public counterSVGIcons: IBudgetCounterSVGIcons;
 
   /** Budget column editor mode */
@@ -90,14 +89,10 @@ export class BudgetStore implements OnDestroy {
     private dialogService: PicsaDialogService
   ) {
     this.counterSVGIcons = this.createBudgetCounterSVGs();
-    // TODO store never destroyed so would be good to limit listeners
-    this.configurationService.activeConfiguration$.pipe(takeUntil(this.destroyed$)).subscribe((v) => {
-      this.settings = this.configurationService.activeConfiguration.budgetTool;
+    effect(() => {
+      const { budgetTool } = configurationService.deploymentSettings();
+      this.settings = budgetTool;
     });
-  }
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
   }
 
   /**************************************************************************

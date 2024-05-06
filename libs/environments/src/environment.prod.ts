@@ -8,7 +8,6 @@ const productionEnvironment: IEnvironment = {
   firebase: FirebaseConfig,
   group: GROUPS.GLOBAL,
   production: true,
-  defaultConfiguration: 'global',
   // TODO - load from CI
   supabase: {
     appUser: { email: 'anonymous_user@picsa.app' },
