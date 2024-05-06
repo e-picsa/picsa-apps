@@ -1,4 +1,12 @@
+@if(ready()){
 <div class="page">
   <picsa-header></picsa-header>
   <router-outlet></router-outlet>
 </div>
+}
+<!-- Loading spinner -->
+@if(showLoader()) {
+<div class="loading-container">
+  <picsa-loading></picsa-loading>
+</div>
+}
