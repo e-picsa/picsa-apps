@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { PicsaConfigurationSummaryComponent } from '@picsa/configuration/src';
+import { PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent } from '@picsa/configuration';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';
@@ -32,7 +32,7 @@ const components = [
   ProfileSelectComponent,
 ];
 
-const standalone = [PicsaConfigurationSummaryComponent];
+const standalone = [PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent];
 
 @NgModule({
   declarations: components,

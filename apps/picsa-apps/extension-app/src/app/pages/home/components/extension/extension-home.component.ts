@@ -105,7 +105,7 @@ if (!ENVIRONMENT.production) {
 @Component({
   selector: 'picsa-extension-home',
   standalone: true,
-  imports: [CommonModule, MatIconModule, PicsaTranslateModule, PicsaCommonComponentsModule, RouterModule],
+  imports: [CommonModule, MatIconModule, PicsaCommonComponentsModule, PicsaTranslateModule, RouterModule],
   templateUrl: './extension-home.component.html',
   styleUrl: './extension-home.component.scss',
 })

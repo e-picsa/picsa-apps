@@ -1,5 +1,5 @@
 @if (showFirstLoadScreen()) {
-<picsa-welcome></picsa-welcome>
+<picsa-configuration-select></picsa-configuration-select>
 } @else { @switch (configurationService.userSettings().user_type) { @case ('extension') {
 <picsa-extension-home />
 } @case ('farmer') {
@@ -7,5 +7,5 @@
 <div>Farmer Variant</div>
 } @default {
 <!-- revert to onboarding screen if variant removed -->
-<picsa-welcome></picsa-welcome>
+<picsa-configuration-select></picsa-configuration-select>
 } } }

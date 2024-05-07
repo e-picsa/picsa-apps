@@ -4,11 +4,9 @@ import { ChangeDetectionStrategy, Component, computed, ViewChild } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { ConfigurationService, IUserSettings } from '@picsa/configuration/src';
 import {
   COUNTRIES_DATA,
   DEPLOYMENT_DATA,
@@ -17,16 +15,18 @@ import {
   ILanguageCode,
   LANGUAGES_DATA,
 } from '@picsa/data';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { ConfigurationService, IUserSettings } from '../../provider';
+
 @Component({
-  selector: 'picsa-welcome',
+  selector: 'picsa-configuration-select',
   standalone: true,
   imports: [
     CommonModule,
     PicsaTranslateModule,
     MatButtonModule,
-    MatCheckboxModule,
     MatIconModule,
     MatRadioModule,
     MatStepperModule,
@@ -40,11 +40,11 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
       useValue: { displayDefaultIndicatorType: false },
     },
   ],
-  templateUrl: './welcome.component.html',
-  styleUrl: './welcome.component.scss',
+  templateUrl: './configuration-select.component.html',
+  styleUrl: './configuration-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PicsaWelcomeComponent {
+export class PicsaConfigurationSelectComponent {
   // mat-stepper prefers individual forms per step
   public countryForm = this.fb.group({
     country_code: new FormControl<IUserSettings['country_code']>(null as any, {
