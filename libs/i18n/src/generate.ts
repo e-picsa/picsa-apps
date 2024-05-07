@@ -153,7 +153,7 @@ function writeOutputJson(entries: ITranslationEntry[]) {
   writeFileSync(TEMPLATE_PATH, JSON.stringify(entries, null, 2));
   // write additional en version where key just matches value
   const enJson = {};
-  const enJsonPath = resolve(GENERATED_ASSETS_DIR, 'en.json');
+  const enJsonPath = resolve(GENERATED_ASSETS_DIR, 'gb_en.json');
   for (const { text } of Object.values(entries)) {
     enJson[text] = text;
   }

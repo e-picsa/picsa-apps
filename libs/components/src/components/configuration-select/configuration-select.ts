@@ -23,7 +23,7 @@ export class ConfigurationSelectComponent {
       const { assetIconPath, label } = this.configurationService.deploymentSettings();
       const { language_code } = this.configurationService.userSettings();
       const languageMeta = LANGUAGES_DATA_HASHMAP[language_code];
-      this.label = `${label} - ${languageMeta.label}`;
+      this.label = `${label} - ${languageMeta.language_label}`;
       this.image = assetIconPath;
       this.cdr.markForCheck();
     });

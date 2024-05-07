@@ -15,11 +15,11 @@
 <h2>{{'Select Language' | translate}}</h2>
 <div class="language-select-container" *ngIf="languageSelected">
   <div
-    *ngFor="let language of languageOptions"
+    *ngFor="let option of languageOptions"
     class="select-option language"
-    [class.selected]="languageSelected ===language.id ? true : undefined"
-    (click)="setLanguage(language)"
+    [class.selected]="languageSelected ===option.id ? true : undefined"
+    (click)="setLanguage(option)"
   >
-    <div>{{ language.label | translate }}</div>
+    <div>{{ option.language_label | translate }}</div>
   </div>
 </div>

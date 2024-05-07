@@ -20,6 +20,9 @@ button.mat-mdc-button > .mat-icon {
   width: 24px;
   height: 24px;
 }
+button > .mdc-button__label {
+  width: 100%;
+}
 
 mat-card.link {
   cursor: pointer;

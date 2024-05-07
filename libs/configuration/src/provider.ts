@@ -8,16 +8,14 @@ export interface IUserSettings {
   deployment_id: IDeploymentId;
   /** ID of selected language */
   language_code: ILanguageCode;
-  /** Specify if using farmer or extension app variants */
-  variant: 'farmer' | 'extension';
-  first_load: boolean;
+  /** Specify if using farmer or extension app user_type */
+  user_type: 'farmer' | 'extension';
 }
 
 const USER_CONFIGURATION_DEFAULT: IUserSettings = {
   deployment_id: 'global',
-  language_code: 'en',
-  variant: 'extension',
-  first_load: true,
+  language_code: '' as any,
+  user_type: '' as any,
 };
 
 @Injectable({ providedIn: 'root' })

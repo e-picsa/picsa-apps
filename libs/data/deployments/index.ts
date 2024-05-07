@@ -1,22 +1,29 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { IPicsaDataWithIcons } from '../models';
 import { arrayToHashmap } from '@picsa/utils/data';
-import { IStationMeta, IStationMetaDB } from '@picsa/models/src';
+import { IStationMetaDB } from '@picsa/models/src';
 
 /*******************************************************************
  * Language Settings
  ********************************************************************/
+interface ILanguageMeta {
+  language_code: string;
+  language_label: string;
+  country_code: string;
+  country_label: string;
+  flag_path?: string;
+}
 const LANGUAGES_BASE = {
-  en: { label: 'English' },
-  mw_ny: { label: 'Chichewa' },
-  zm_ny: { label: 'Chichewa' },
-  tj_tg: { label: 'Тоҷикӣ' },
+  gb_en: { language_code: 'en', language_label: 'English', country_code: 'gb', country_label: '' },
+  mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw', country_label: 'Malawi' },
+  zm_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'zm', country_label: 'Zambia' },
+  tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj', country_label: 'Tajikistan' },
 } as const;
 
 export type ILanguageCode = keyof typeof LANGUAGES_BASE;
-const LANGUAGES_DATA = Object.entries(LANGUAGES_BASE).map(([id, { label }]) => ({
+export const LANGUAGES_DATA = Object.entries(LANGUAGES_BASE).map(([id, data]) => ({
   id: id as ILanguageCode,
-  label: label as string,
+  flag_path: `assets/images/flags/${data.country_code}.svg`,
+  ...(data as ILanguageMeta),
 }));
 
 export type ILanguageDataEntry = typeof LANGUAGES_DATA[0];
@@ -71,7 +78,7 @@ const DEPLOYMENTS_BASE = {
   mw: generate({
     country_code: 'mw',
     label: 'Malawi',
-    language_codes: ['mw_ny', 'en'],
+    language_codes: ['mw_ny', 'gb_en'],
     budgetTool: {
       currency: 'MK',
       currencyBaseValue: 10000,
@@ -81,7 +88,7 @@ const DEPLOYMENTS_BASE = {
   zm: generate({
     country_code: 'zm',
     label: 'Zambia',
-    language_codes: ['zm_ny', 'en'],
+    language_codes: ['zm_ny', 'gb_en'],
     budgetTool: {
       currency: 'ZMK',
       currencyBaseValue: 10,
@@ -91,7 +98,7 @@ const DEPLOYMENTS_BASE = {
   tj: generate({
     country_code: 'tj',
     label: 'Tajikistan',
-    language_codes: ['tj_tg', 'en'],
+    language_codes: ['tj_tg', 'gb_en'],
     budgetTool: {
       currency: 'TJS',
       currencyBaseValue: 10,
