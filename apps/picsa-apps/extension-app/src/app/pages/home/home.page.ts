@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/configuration';
 
 import { PicsaExtensionHomeComponent } from './components/extension/extension-home.component';
+import { PicsaFarmerHomeComponent } from './components/farmer/farmer-home.component';
 
 @Component({
   selector: 'picsa-app-home',
@@ -10,7 +11,7 @@ import { PicsaExtensionHomeComponent } from './components/extension/extension-ho
   styleUrls: ['./home.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, PicsaConfigurationSelectComponent, PicsaExtensionHomeComponent],
+  imports: [CommonModule, PicsaConfigurationSelectComponent, PicsaExtensionHomeComponent, PicsaFarmerHomeComponent],
 })
 export class HomePageComponent {
   showFirstLoadScreen = computed(() => {

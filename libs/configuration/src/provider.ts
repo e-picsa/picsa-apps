@@ -38,8 +38,14 @@ export class ConfigurationService {
     this.loadUserSettings();
 
     effect(() => {
-      /** HACK - update theme on config change (better in own service) */
-      document.body.dataset['theme'] = this.deploymentSettings().theme;
+      /** HACK - update theme on config change for extension version (better in own service) */
+      const { theme } = this.deploymentSettings();
+      const { user_type } = this.userSettings();
+      if (user_type === 'extension' && theme) {
+        document.body.dataset['theme'] = theme;
+      } else {
+        document.body.dataset['theme'] = 'picsa-default';
+      }
     });
   }
 
