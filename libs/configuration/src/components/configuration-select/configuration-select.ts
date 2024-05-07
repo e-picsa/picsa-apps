@@ -1,14 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect } from '@angular/core';
-import { ConfigurationService } from '@picsa/configuration/src';
+import { MatButtonModule } from '@angular/material/button';
 import { COUNTRIES_DATA_HASHMAP, LANGUAGES_DATA_HASHMAP } from '@picsa/data/deployments';
+
+import { ConfigurationService } from '../../provider';
 
 @Component({
   selector: 'picsa-configuration-select',
   templateUrl: 'configuration-select.html',
-  styleUrls: ['./configuration-select.scss'],
+  styleUrl: './configuration-select.scss',
+  imports: [CommonModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
-export class ConfigurationSelectComponent {
+export class PicsaConfigurationSelectComponent {
   public label = '';
   public image = '';
   constructor(public configurationService: ConfigurationService, private cdr: ChangeDetectorRef) {

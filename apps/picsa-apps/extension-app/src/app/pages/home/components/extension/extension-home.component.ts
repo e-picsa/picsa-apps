@@ -10,7 +10,6 @@ import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { TourService } from '@picsa/shared/services/core/tour';
-import { CommunicationService } from '@picsa/shared/services/promptToHomePageService.service';
 import { Subscription } from 'rxjs';
 
 import { HOME_TOUR } from './extension-home.tour';
