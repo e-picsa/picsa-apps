@@ -86,7 +86,7 @@ function generate(settings: Partial<IDeploymentSettings>) {
 }
 
 const DEPLOYMENTS_BASE = {
-  global: generate({ climateTool: { station_filter: () => true } }),
+  global: generate({ country_code: 'global', climateTool: { station_filter: () => true } }),
   mw: generate({
     country_code: 'mw',
     budgetTool: {
