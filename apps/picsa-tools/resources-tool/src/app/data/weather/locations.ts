@@ -1,7 +1,9 @@
+import { ICountryCode } from '@picsa/data/deployments';
+
 export interface IWeatherLocation {
   id: string;
   label: string;
-  countryCode: string;
+  countryCode: ICountryCode;
   /**
    * ID assigned by meteoblue site, e.g.
    * https://www.meteoblue.com/en/weather/14-days/petauke_zambia_899825
