@@ -57,12 +57,7 @@ export const LANGUAGES_DATA_HASHMAP = arrayToHashmap(LANGUAGES_DATA, 'id') as {
 
 export interface IDeploymentSettings {
   /** Country to associate deployment with */
-  country_code: string;
-  /** */
-  label: string;
-  /** Path to deployment icon asset */
-  assetIconPath: string;
-
+  country_code: ICountryCode;
   /** Budget tool custom settings */
   budgetTool: {
     /** Label assigned to currency value */
@@ -78,9 +73,7 @@ export interface IDeploymentSettings {
 }
 
 const DEPLOYMENT_DEFAULTS: IDeploymentSettings = {
-  label: '',
-  assetIconPath: '',
-  country_code: '',
+  country_code: null as any,
   budgetTool: { currency: '$', currencyBaseValue: 1 },
   climateTool: {},
   theme: 'picsa-default',
@@ -93,10 +86,9 @@ function generate(settings: Partial<IDeploymentSettings>) {
 }
 
 const DEPLOYMENTS_BASE = {
-  global: generate({ label: 'Global', climateTool: { station_filter: () => true } }),
+  global: generate({ climateTool: { station_filter: () => true } }),
   mw: generate({
     country_code: 'mw',
-    label: 'Malawi',
     budgetTool: {
       currency: 'MK',
       currencyBaseValue: 10000,
@@ -105,7 +97,6 @@ const DEPLOYMENTS_BASE = {
   }),
   zm: generate({
     country_code: 'zm',
-    label: 'Zambia',
     budgetTool: {
       currency: 'ZMK',
       currencyBaseValue: 10,
@@ -114,7 +105,6 @@ const DEPLOYMENTS_BASE = {
   }),
   tj: generate({
     country_code: 'tj',
-    label: 'Tajikistan',
     budgetTool: {
       currency: 'TJS',
       currencyBaseValue: 10,
@@ -130,7 +120,6 @@ export const DEPLOYMENT_DATA = Object.entries(DEPLOYMENTS_BASE).map(([id, data])
   return {
     id: id as IDeploymentId,
     ...data,
-    assetIconPath: data.assetIconPath || `assets/images/flags/${id}.svg`,
   };
 });
 
