@@ -5,15 +5,16 @@ import { COUNTRIES_DATA_HASHMAP, LANGUAGES_DATA_HASHMAP } from '@picsa/data/depl
 
 import { ConfigurationService } from '../../provider';
 
+/** UI button that displays summary of current configuration and launches dialog to change */
 @Component({
-  selector: 'picsa-configuration-select',
-  templateUrl: 'configuration-select.html',
-  styleUrl: './configuration-select.scss',
+  selector: 'picsa-configuration-summary',
+  templateUrl: 'configuration-summary.html',
+  styleUrl: './configuration-summary.scss',
   imports: [CommonModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
-export class PicsaConfigurationSelectComponent {
+export class PicsaConfigurationSummaryComponent {
   public label = '';
   public image = '';
   constructor(public configurationService: ConfigurationService, private cdr: ChangeDetectorRef) {
