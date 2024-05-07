@@ -125,7 +125,6 @@ export class PicsaWelcomeComponent {
     const { country_code } = this.countryForm.value;
     if (user_type && country_code) {
       const matchedDeployments = DEPLOYMENT_DATA.filter((d) => d.country_code === country_code);
-      console.log({ matchedDeployments, user_type, country_code });
       if (matchedDeployments.length === 1) {
         // trigger configuration service update after small delay (will handle home screen change)
         setTimeout(() => {
