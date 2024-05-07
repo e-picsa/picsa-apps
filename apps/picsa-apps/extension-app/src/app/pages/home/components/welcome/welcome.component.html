@@ -1,53 +1,52 @@
 <div class="page-content" style="align-items: center">
   <form [formGroup]="languageForm" style="width: 100%; max-width: 500px">
     <mat-stepper style="width: 100%" animationDuration="750" linear>
-      <!-- Language Select -->
-      <mat-step label="Language" state="language" [stepControl]="languageForm">
-        <h2>{{ 'Choose language' | translate }}</h2>
-        <div class="language-select-container">
-          @for(option of languageOptions; track option.id){
-          <button mat-button class="language-select-button" (click)="setLanguage(option)">
+      <!-- Country Select -->
+      <mat-step label="Country" state="country" [stepControl]="countryForm">
+        <h2>{{ 'Choose country' | translate }}</h2>
+        <mat-radio-group class="options-container" [formControl]="countryForm.controls.country_code">
+          @for(option of countryOptions; track option.id){
+          <button mat-button class="options-button" (click)="setCountry(option.id)">
             <div style="display: flex; align-items: center; gap: 8px">
-              <mat-radio-button
-                color="primary"
-                [checked]="languageForm.value.language_code === option.id"
-              ></mat-radio-button>
+              <mat-radio-button color="primary" [value]="option.id"></mat-radio-button>
               <img class="flag-icon" [src]="option.flag_path" />
               <div style="margin-left: 8px">
-                <div>{{ option.language_label }}</div>
-                @if(option.country_label){
-                <div style="font-size: 14px">{{ option.country_label }}</div>
-                }
+                <div>{{ option.label }}</div>
               </div>
             </div>
           </button>
           }
-        </div>
+        </mat-radio-group>
       </mat-step>
 
-      <!-- User Type -->
+      <!-- Language Select -->
+      <mat-step label="Language" state="language" [stepControl]="languageForm">
+        <h2>{{ 'Choose language' | translate }}</h2>
+        <mat-radio-group class="options-container" [formControl]="languageForm.controls.language_code">
+          @for(option of languageOptions(); track option.id){
+          <button mat-button class="options-button" (click)="setLanguage(option.id)">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <mat-radio-button color="primary" [value]="option.id">{{ option.language_label }}</mat-radio-button>
+            </div>
+          </button>
+          }
+        </mat-radio-group>
+      </mat-step>
+
+      <!-- User Type Select -->
       <mat-step label="User" state="user" [stepControl]="userTypeForm">
         <h2>{{ 'What best describes you?' | translate }}</h2>
-        <div class="language-select-container">
-          <button mat-button class="language-select-button" (click)="setUserType('farmer')">
-            <div style="display: flex; align-items: center; gap: 8px">
-              <mat-radio-button
-                color="primary"
-                [checked]="userTypeForm.value.user_type === 'farmer'"
-              ></mat-radio-button>
-              <span>{{ "I'm a farmer" | translate }}</span>
+        <mat-radio-group class="options-container" [formControl]="userTypeForm.controls.user_type">
+          @for(option of userTypeOptions; track option.id){
+          <button mat-button class="options-button" style="text-align: left" (click)="setUserType(option.id)">
+            <div style="display: flex; align-items: center">
+              <mat-radio-button color="primary" [value]="option.id">
+                <span>{{ option.label | translate }}</span>
+              </mat-radio-button>
             </div>
           </button>
-          <button mat-button class="language-select-button" (click)="setUserType('extension')">
-            <div style="display: flex; align-items: center; gap: 8px">
-              <mat-radio-button
-                color="primary"
-                [checked]="userTypeForm.value.user_type === 'extension'"
-              ></mat-radio-button>
-              <span>{{ "I'm an extension worker" | translate }}</span>
-            </div>
-          </button>
-        </div>
+          }
+        </mat-radio-group>
       </mat-step>
 
       <!-- Icon overrides. -->

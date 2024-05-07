@@ -3,7 +3,7 @@ import { DomPortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
@@ -106,7 +106,7 @@ if (!ENVIRONMENT.production) {
 @Component({
   selector: 'picsa-extension-home',
   standalone: true,
-  imports: [CommonModule, MatIconModule, PicsaTranslateModule, PicsaCommonComponentsModule],
+  imports: [CommonModule, MatIconModule, PicsaTranslateModule, PicsaCommonComponentsModule, RouterModule],
   templateUrl: './extension-home.component.html',
   styleUrl: './extension-home.component.scss',
 })
@@ -124,7 +124,6 @@ export class PicsaExtensionHomeComponent implements OnDestroy, AfterViewInit {
     public monitoringService: MonitoringToolService,
     private router: Router,
     private componentsService: PicsaCommonComponentsService,
-    private communicationService: CommunicationService,
     private tourService: TourService
   ) {}
 

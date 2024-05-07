@@ -9,8 +9,8 @@ import { ConfigurationService } from '@picsa/configuration';
 })
 export class HomePage {
   showFirstLoadScreen = computed(() => {
-    const { language_code, user_type } = this.configurationService.userSettings();
-    return language_code && user_type ? false : true;
+    const { deployment_id } = this.configurationService.userSettings();
+    return deployment_id ? false : true;
   });
 
   constructor(public configurationService: ConfigurationService) {}

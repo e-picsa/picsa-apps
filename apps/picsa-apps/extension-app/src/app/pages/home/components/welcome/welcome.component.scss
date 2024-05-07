@@ -4,13 +4,13 @@
 h2 {
   text-align: center;
 }
-.language-select-container {
+.options-container {
   display: grid;
   grid-auto-rows: 64px;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
 }
-button.language-select-button {
+button.options-button {
   background: var(--color-primary-50);
   height: 100%;
   font-size: 16px;

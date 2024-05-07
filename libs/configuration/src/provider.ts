@@ -1,11 +1,13 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { DEPLOYMENT_DATA_HASHMAP, IDeploymentId, ILanguageCode } from '@picsa/data/deployments';
+import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILanguageCode } from '@picsa/data/deployments';
 import { debounceTime } from 'rxjs';
 
 export interface IUserSettings {
   /** ID of selected deployment configuration */
   deployment_id: IDeploymentId;
+  /** Selected country */
+  country_code: ICountryCode;
   /** ID of selected language */
   language_code: ILanguageCode;
   /** Specify if using farmer or extension app user_type */
@@ -13,9 +15,10 @@ export interface IUserSettings {
 }
 
 const USER_CONFIGURATION_DEFAULT: IUserSettings = {
-  deployment_id: 'global',
-  language_code: '' as any,
-  user_type: '' as any,
+  country_code: null as any,
+  deployment_id: null as any,
+  language_code: null as any,
+  user_type: null as any,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -38,6 +41,10 @@ export class ConfigurationService {
       /** HACK - update theme on config change (better in own service) */
       document.body.dataset['theme'] = this.deploymentSettings().theme;
     });
+  }
+
+  public resetUserSettings() {
+    this.userSettings.set(USER_CONFIGURATION_DEFAULT);
   }
 
   public updateUserSettings(update: Partial<IUserSettings>) {

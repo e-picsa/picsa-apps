@@ -1,6 +1,26 @@
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { arrayToHashmap } from '@picsa/utils/data';
 import { IStationMetaDB } from '@picsa/models/src';
+
+/*******************************************************************
+ * Country Settings
+ ********************************************************************/
+const COUNTRIES_BASE = {
+  global: { label: 'Global' },
+  mw: { label: 'Malawi' },
+  zm: { label: 'Zambia' },
+  tj: { label: 'Tajikistan' },
+} as const;
+
+export type ICountryCode = keyof typeof COUNTRIES_BASE;
+export const COUNTRIES_DATA = Object.entries(COUNTRIES_BASE).map(([id, { label }]) => ({
+  id: id as ICountryCode,
+  label: label as string,
+  flag_path: `assets/images/flags/${id}.svg`,
+}));
+export type ICountriesDataEntry = typeof COUNTRIES_DATA[0];
+export const COUNTRIES_DATA_HASHMAP = arrayToHashmap(COUNTRIES_DATA, 'id') as {
+  [code in ICountryCode]: ICountriesDataEntry;
+};
 
 /*******************************************************************
  * Language Settings
@@ -8,15 +28,15 @@ import { IStationMetaDB } from '@picsa/models/src';
 interface ILanguageMeta {
   language_code: string;
   language_label: string;
-  country_code: string;
+  country_code: ICountryCode;
   country_label: string;
   flag_path?: string;
 }
 const LANGUAGES_BASE = {
-  gb_en: { language_code: 'en', language_label: 'English', country_code: 'gb', country_label: '' },
-  mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw', country_label: 'Malawi' },
-  zm_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'zm', country_label: 'Zambia' },
-  tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj', country_label: 'Tajikistan' },
+  global_en: { language_code: 'en', language_label: 'English', country_code: 'global' },
+  mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw' },
+  zm_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'zm' },
+  tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj' },
 } as const;
 
 export type ILanguageCode = keyof typeof LANGUAGES_BASE;
@@ -36,13 +56,13 @@ export const LANGUAGES_DATA_HASHMAP = arrayToHashmap(LANGUAGES_DATA, 'id') as {
  ********************************************************************/
 
 export interface IDeploymentSettings {
+  /** Country to associate deployment with */
+  country_code: string;
+  /** */
   label: string;
   /** Path to deployment icon asset */
   assetIconPath: string;
-  /** Country to associate deployment with */
-  country_code: string;
-  /** List of available language codes */
-  language_codes: ILanguageCode[];
+
   /** Budget tool custom settings */
   budgetTool: {
     /** Label assigned to currency value */
@@ -61,7 +81,6 @@ const DEPLOYMENT_DEFAULTS: IDeploymentSettings = {
   label: '',
   assetIconPath: '',
   country_code: '',
-  language_codes: Object.keys(LANGUAGES_BASE) as ILanguageCode[],
   budgetTool: { currency: '$', currencyBaseValue: 1 },
   climateTool: {},
   theme: 'picsa-default',
@@ -78,7 +97,6 @@ const DEPLOYMENTS_BASE = {
   mw: generate({
     country_code: 'mw',
     label: 'Malawi',
-    language_codes: ['mw_ny', 'gb_en'],
     budgetTool: {
       currency: 'MK',
       currencyBaseValue: 10000,
@@ -88,7 +106,6 @@ const DEPLOYMENTS_BASE = {
   zm: generate({
     country_code: 'zm',
     label: 'Zambia',
-    language_codes: ['zm_ny', 'gb_en'],
     budgetTool: {
       currency: 'ZMK',
       currencyBaseValue: 10,
@@ -98,7 +115,6 @@ const DEPLOYMENTS_BASE = {
   tj: generate({
     country_code: 'tj',
     label: 'Tajikistan',
-    language_codes: ['tj_tg', 'gb_en'],
     budgetTool: {
       currency: 'TJS',
       currencyBaseValue: 10,

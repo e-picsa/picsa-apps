@@ -6,9 +6,9 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PicsaTranslateService {
-  public language: ILanguageCode = 'gb_en';
+  public language: ILanguageCode = 'global_en';
   constructor(public ngxTranslate: TranslateService, configurationService: ConfigurationService) {
-    ngxTranslate.setDefaultLang('gb_en');
+    ngxTranslate.setDefaultLang('global_en');
     effect(() => {
       const { language_code } = configurationService.userSettings();
       if (language_code && language_code !== this.language) {
