@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./option-list.component.scss'],
 })
 export class OptionListComponent {
-  options = ['crop', 'livestock', 'Livelihood'];
+  options = ['Crop', 'Livestock', 'Livelihood'];
 }
