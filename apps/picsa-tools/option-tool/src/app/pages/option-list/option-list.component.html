@@ -1,0 +1,6 @@
+<div class="page-container">
+  <h2>{{ 'Select Enterprise' | translate }}</h2>
+  <div *ngFor="let option of options">
+    <a [routerLink]="[option]">{{ option }}</a>
+  </div>
+</div>

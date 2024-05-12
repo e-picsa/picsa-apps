@@ -1,5 +1,6 @@
 import { DomPortal } from '@angular/cdk/portal';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
@@ -32,11 +33,18 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   public status = 'share';
   public shareDisabled = false;
 
+  /** Option name from route */
+  option: string;
+
   @ViewChild(EditorComponent) editorComponent: EditorComponent;
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
 
-  constructor(private service: OptionsToolService, private componentService: PicsaCommonComponentsService) {
+  constructor(
+    private service: OptionsToolService,
+    private componentService: PicsaCommonComponentsService,
+    private route: ActivatedRoute
+  ) {
     this.subscribeToDbChanges();
     this.addSubheaderColumns();
   }
@@ -45,6 +53,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     this.componentService.patchHeader({
       endContent: new DomPortal(this.headerContent),
     });
+    this.option = this.route.snapshot.paramMap.get('optionName') || '';
   }
 
   /**
