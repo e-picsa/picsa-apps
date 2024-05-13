@@ -1,1 +1,5 @@
-<svg></svg>
+<div class="svg-container">
+  <svg (mousedown)="handlePointerDown($event)" (mousemove)="handlePointerMove($event)" class="svg" *ngIf="points">
+    <path [attr.d]="pathData" />
+  </svg>
+</div>

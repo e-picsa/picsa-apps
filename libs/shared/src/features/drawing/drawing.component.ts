@@ -9,7 +9,7 @@ import { getStroke } from 'perfect-freehand';
   templateUrl: './drawing.component.html',
   styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent {
+export class PicsaDrawingComponent {
   options = {
     size: 32,
     thinning: 0.5,
@@ -27,8 +27,17 @@ export class DrawingComponent {
       cap: true,
     },
   };
+  public points: any[] = [];
+  public stroke;
+  public pathData;
 
-  getSvgPathFromStroke(stroke) {
+  constructor() {
+    this.stroke = getStroke(this.points, this.options);
+    this.pathData = this.getSvgPathFromStroke(this.stroke);
+  }
+
+  public getSvgPathFromStroke(stroke) {
+    console.log('This is the stroke received:', stroke);
     if (!stroke.length) return '';
 
     const d = stroke.reduce(
@@ -41,6 +50,21 @@ export class DrawingComponent {
     );
 
     d.push('Z');
+    console.log('Path:', d);
     return d.join(' ');
+  }
+
+  handlePointerDown(event) {
+    event.target.setPointerCapture(event.pointerId);
+    this.points = [[event.pageX, event.pageY, 0.5]];
+  }
+
+  handlePointerMove(event) {
+    if (event.buttons !== 1) return;
+    this.points = [...this.points, [event.pageX, event.pageY, 0.5]];
+    console.log('Points:', this.points);
+    this.stroke = getStroke(this.points, this.options);
+    console.log('Stroke:', this.stroke);
+    this.pathData = this.getSvgPathFromStroke(this.stroke);
   }
 }
