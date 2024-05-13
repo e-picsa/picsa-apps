@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaDialogsModule } from '@picsa/shared/features';
+import { PicsaDialogsModule, PicsaDrawingComponent } from '@picsa/shared/features';
 import { PicsaDbModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -32,6 +32,7 @@ import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { BudgetTableComponent } from './table/budget-table';
 import { BudgetSummaryComponent } from './budget-summary/budget-summary.component';
 import { MatIconModule } from '@angular/material/icon';
+import { BudgetDrawComponent } from './budget-draw/budget-draw.component';
 
 const components = [
   BudgetBalanceLegendComponent,
@@ -71,6 +72,7 @@ const components = [
     RouterModule,
     MatTooltipModule,
     MatIconModule,
+    PicsaDrawingComponent
   ],
   exports: components,
 })

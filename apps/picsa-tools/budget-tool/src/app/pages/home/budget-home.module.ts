@@ -9,6 +9,7 @@ import { MobxAngularModule } from 'mobx-angular';
 import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
 import { BudgetMaterialModule } from '../../material.module';
 import { BudgetHomePage } from './budget-home.page';
+import { BudgetDrawComponent } from '../../components/budget-draw/budget-draw.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
     BudgetMaterialModule,
     BudgetToolComponentsModule,
     MobxAngularModule,
+    BudgetDrawComponent
   ],
   declarations: [BudgetHomePage],
 })
