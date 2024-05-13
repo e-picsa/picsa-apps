@@ -50,25 +50,33 @@ export class PicsaDrawingComponent {
     target.setPointerCapture(event.pointerId);
     this.calculateContainerOffset();
     this.addPointToPath(event.pageX, event.pageY);
+    this.renderPath();
   }
 
   handlePointerMove(event: PointerEvent) {
     if (event.buttons !== 1) return;
     this.addPointToPath(event.pageX, event.pageY);
+    this.renderPath();
   }
 
+  /** Add a point to the current path, adjusting absolute position for relative container */
   private addPointToPath(x: number, y: number, pressure = 0.5) {
     const [left, top] = this.containerOffset;
     this.points.push([x - left, y - top, pressure]);
-    const stroke = getStroke(this.points);
-    const svgPath = this.getSvgPathFromStroke(stroke);
-    this.pathData.set(svgPath);
   }
 
+  /** Determine current positioning of svg drawing container to use for path offsets */
   private calculateContainerOffset() {
     const svgEl = this.svgElement.nativeElement;
     const { left, top } = svgEl.getBoundingClientRect();
     this.containerOffset = [left, top];
+  }
+
+  /** Render an svg path element generated from current list of points */
+  private renderPath() {
+    const stroke = getStroke(this.points);
+    const svgPath = this.getSvgPathFromStroke(stroke);
+    this.pathData.set(svgPath);
   }
 
   /**
