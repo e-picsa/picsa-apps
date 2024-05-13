@@ -1,8 +1,8 @@
-.svg-container{
-    border: 1px solid #eeeeee;
-    border-radius: 4px;
-}
-svg.svg{
-    width: 100%;
-    touch-action: none;
+.svg-dialog-container {
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+  box-sizing: border-box;
+  // mat-dialog has max-width 80vw and includes 24px padding so just fit max
+  width: calc(80vw - 48px);
+  height: 80vh;
 }

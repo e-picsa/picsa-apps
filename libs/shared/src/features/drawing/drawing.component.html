@@ -1,5 +1,18 @@
-<div class="svg-container">
-  <svg (mousedown)="handlePointerDown($event)" (mousemove)="handlePointerMove($event)" class="svg" *ngIf="points">
-    <path [attr.d]="pathData" />
-  </svg>
-</div>
+<button mat-button (click)="dialog.open(editorDialog)">Draw</button>
+
+<ng-template #editorDialog>
+  <div class="svg-dialog-container">
+    <svg
+      #svgElement
+      width="100%"
+      height="100%"
+      (pointerdown)="handlePointerDown($event)"
+      (pointermove)="handlePointerMove($event)"
+      style="touch-action: none"
+    >
+      @if(points){
+      <path [attr.d]="pathData()" id="path-1" />
+      }
+    </svg>
+  </div>
+</ng-template>
