@@ -773,6 +773,14 @@
     "tool": "common"
   },
   {
+    "text": "Choose country",
+    "tool": "common"
+  },
+  {
+    "text": "Choose language",
+    "tool": "common"
+  },
+  {
     "text": "Demo",
     "tool": "common"
   },
@@ -801,15 +809,11 @@
     "tool": "common"
   },
   {
-    "text": "Select Country",
-    "tool": "common"
-  },
-  {
-    "text": "Select Language",
-    "tool": "common"
-  },
-  {
     "text": "Show Options",
+    "tool": "common"
+  },
+  {
+    "text": "What best describes you?",
     "tool": "common"
   },
   {
@@ -1195,10 +1199,6 @@
   },
   {
     "text": "Budget",
-    "tool": "extension"
-  },
-  {
-    "text": "Choose language",
     "tool": "extension"
   },
   {
