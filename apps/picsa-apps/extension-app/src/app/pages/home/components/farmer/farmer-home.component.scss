@@ -7,9 +7,17 @@
   padding: 1.25em 0;
   align-items: center;
 }
-.step-image {
-  width: 128px;
-  height: 128px;
+.step-image-container {
+  width: 96px;
+  height: 96px;
+  padding: 16px;
+  background: var(--color-primary-50);
+  border-radius: 8px;
+}
+img.step-image {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
 }
 
 .step-number {
@@ -28,6 +36,11 @@
   margin: 0 24px;
   flex: 1;
 }
+.step-title {
+  text-transform: capitalize;
+  font-weight: bold;
+  color: var(--color-secondary);
+}
 button.mat-mdc-icon-button.nav-button {
   height: 60px;
   width: 60px;
@@ -37,4 +50,22 @@ button.mat-mdc-icon-button.nav-button {
     width: 36px;
     color: var(--color-secondary);
   }
+}
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.tag {
+  background: var(--tag-background, black);
+  padding: 8px;
+  color: white;
+  .step-tag {
+  }
+}
+.tag.tool-tag {
+  --tag-background: var(--color-primary);
+}
+.tag.step-tag {
+  --tag-background: var(--color-secondary);
 }

@@ -2,16 +2,18 @@
   @for(step of farmerSteps; track step.id){
   <div class="step-container">
     <div style="position: relative">
-      <img class="step-image" />
+      <div class="step-image-container">
+        <img class="step-image" [src]="step.icon_path" />
+      </div>
       <div class="step-number">{{ step.step_number }}</div>
     </div>
     <div class="step-content">
       <h2 class="step-title">{{ step.title }}</h2>
-      <div class="step-tags-container">
+      <div class="tags-container">
         @for(tag of step.tags; track tag){
-        <span class="step-tag">{{ tag }}</span>
+        <span class="tag step-tag">{{ tag.label | translate }}</span>
         } @for(tool of step.tools; track tool){
-        <span class="step-tag">{{ tool }}</span>
+        <span class="tag tool-tag">{{ tool.label | translate }}</span>
         }
       </div>
     </div>

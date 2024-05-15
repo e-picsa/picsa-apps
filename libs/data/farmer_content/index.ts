@@ -39,7 +39,6 @@ const { seasonal_calendar, resource_allocation_map, climate, probability_and_ris
 const FARMER_CONTENT_BASE = {
   intro: {
     slug: 'intro',
-    icon_path: '',
     step_number: 1,
     title: translateMarker('What is PICSA?'),
     tools: [],
@@ -47,7 +46,6 @@ const FARMER_CONTENT_BASE = {
   },
   what_does_the_farmer_do: {
     slug: 'what-do-you-currently-do',
-    icon_path: '',
     step_number: 2,
     title: 'What do you currently do?',
     tools: [seasonal_calendar, resource_allocation_map],
@@ -55,7 +53,6 @@ const FARMER_CONTENT_BASE = {
   },
   climate_change: {
     slug: 'is-the-climate-changing',
-    icon_path: '',
     step_number: 3,
     title: translateMarker('Is your climate changing?'),
     tools: [climate],
@@ -63,7 +60,6 @@ const FARMER_CONTENT_BASE = {
   },
   opportunities_risks: {
     slug: 'opportunities-and-risk',
-    icon_path: '',
     step_number: 4,
     title: translateMarker('What are the opportunities and risk?'),
     tools: [probability_and_risk],
@@ -71,7 +67,6 @@ const FARMER_CONTENT_BASE = {
   },
   what_are_the_options: {
     slug: 'what-are-the-options',
-    icon_path: '',
     step_number: 5,
     title: 'What changes can you make?',
     tools: [options],
@@ -79,7 +74,6 @@ const FARMER_CONTENT_BASE = {
   },
   compare_options: {
     slug: 'compare-options',
-    icon_path: '',
     step_number: 5,
     title: 'Are the changes a good idea?',
     tools: [],
@@ -89,6 +83,7 @@ const FARMER_CONTENT_BASE = {
 export type IFarmerContentId = keyof typeof FARMER_CONTENT_BASE;
 export const FARMER_CONTENT_DATA: IFarmerContent[] = Object.entries(FARMER_CONTENT_BASE).map(([id, data]) => ({
   ...data,
+  icon_path: `assets/svgs/farmer_content/${id}.svg`,
   id: id as IFarmerContentId,
 }));
 export const FARMER_CONTENT_DATA_HASHMAP = arrayToHashmap(FARMER_CONTENT_DATA, 'id') as {
