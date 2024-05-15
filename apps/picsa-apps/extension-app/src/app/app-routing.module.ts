@@ -5,6 +5,7 @@ import { BudgetToolModule } from '@picsa/budget/src/app/app.module-embedded';
 import { ClimateToolModule } from '@picsa/climate/src/app/app.module-embedded';
 import { CropProbabilityToolModule } from '@picsa/crop-probability/src/app/app.module-embedded';
 import { FarmerActivityModule } from '@picsa/farmer-activity/src/app/app.module-embedded';
+import { appRoutes as farmerAppRoutes } from '@picsa/farmer-content/src/app/app.routes';
 import { ManualToolModule } from '@picsa/manual/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
@@ -27,6 +28,18 @@ const routes: Routes = [
     loadChildren: () =>
       import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
   },
+
+  //
+  ...farmerAppRoutes.map((route) => {
+    const { path } = route;
+    route.path = path ? `farmer/${route.path}` : `farmer`;
+    return route;
+  }),
+  // {
+  //   path: 'farmer',
+
+  //   loadComponent: () => import('@picsa/farmer-content/src/app/app.component').then((mod) => mod.PicsaFarmerContent),
+  // },
   {
     path: 'farmer-activity',
     loadChildren: () =>
