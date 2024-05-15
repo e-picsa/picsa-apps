@@ -1,6 +1,16 @@
 :host {
   display: contents;
 }
+.step-grid {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  display: grid;
+  gap: 0 128px;
+  grid-auto-rows: max-content;
+  grid-template-columns: repeat(auto-fit, minmax(384px, 1fr));
+}
 .step-container {
   display: flex;
   border-bottom: 1px solid var(--color-primary-50);
