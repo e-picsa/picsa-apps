@@ -1,10 +1,3 @@
-@if (showFirstLoadScreen()) {
+@if(showContent()){
 <picsa-configuration-select />
-} @else { @switch (configurationService.userSettings().user_type) { @case ('extension') {
-<picsa-extension-home />
-} @case ('farmer') {
-<picsa-farmer-home />
-} @default {
-<!-- revert to onboarding screen if variant removed -->
-<picsa-configuration-select />
-} } }
+}

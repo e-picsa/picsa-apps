@@ -8,7 +8,10 @@
 # HACK - for now farmer pages are contained within extension app, to refactor in future
 'App: Farmer':
   - changed-files:
-      - any-glob-to-any-file: 'apps/picsa-apps/extension-app/**/farmer/**/*'
+      - any-glob-to-any-file: 'apps/picsa-tools/farmer-content/**/*'
+'App: Extension':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-tools/extension-content/**/*'
 
 # Tools
 'Tool: Budget':

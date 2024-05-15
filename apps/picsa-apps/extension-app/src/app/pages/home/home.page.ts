@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/configuration';
-
-import { PicsaExtensionHomeComponent } from './components/extension/extension-home.component';
-import { PicsaFarmerHomeComponent } from './components/farmer/farmer-home.component';
 
 @Component({
   selector: 'picsa-app-home',
@@ -11,13 +9,24 @@ import { PicsaFarmerHomeComponent } from './components/farmer/farmer-home.compon
   styleUrls: ['./home.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, PicsaConfigurationSelectComponent, PicsaExtensionHomeComponent, PicsaFarmerHomeComponent],
+  imports: [CommonModule, PicsaConfigurationSelectComponent],
 })
 export class HomePageComponent {
-  showFirstLoadScreen = computed(() => {
-    const { deployment_id } = this.configurationService.userSettings();
-    return deployment_id ? false : true;
-  });
+  // use a signal to only show content after potential redirects evaluated
+  showContent = signal(false);
 
-  constructor(public configurationService: ConfigurationService) {}
+  constructor(public configurationService: ConfigurationService, router: Router) {
+    effect(
+      () => {
+        // navigate to /extension or /farmer tool home if configured
+        const { deployment_id, user_type } = this.configurationService.userSettings();
+        if (deployment_id && user_type) {
+          router.navigate(['/', user_type], { replaceUrl: true });
+        } else {
+          this.showContent.set(true);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
 }
