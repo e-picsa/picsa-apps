@@ -1,5 +1,3 @@
-$fontFamily: Roboto, 'Helvetica Neue', sans-serif;
-
 // fix height styles lost since angular/material 17 updates
 // NOTE - these may have been fixed since inclusion of `mat.all-component-bases`
 body {
@@ -13,12 +11,14 @@ body {
 button.mdc-button {
   font-size: 14px;
   font-weight: 500;
-  font-family: $fontFamily;
 }
 button.mat-mdc-button > .mat-icon {
   font-size: 24px;
   width: 24px;
   height: 24px;
+}
+button > .mdc-button__label {
+  width: 100%;
 }
 
 mat-card.link {
@@ -38,6 +38,11 @@ mat-card-content.mat-mdc-card-content {
 // Add padding to all dialogs by default
 .mat-mdc-dialog-surface {
   padding: 24px;
+}
+// Allow dialog content to scroll (e.g. configuration select)
+mat-dialog-container.mat-mdc-dialog-container {
+  max-height: 100vh;
+  overflow: auto;
 }
 // Add override to remove dialog padding
 .cdk-overlay-pane.no-padding {

@@ -9,6 +9,8 @@ $primary: (
   700: #990e35,
   800: #900b2d,
   900: #7f061f,
+  // custom 950 exported from figma 700
+  950: #5e1326,
   A100: #ffaeba,
   A200: #ff7b8e,
   A400: #ff4863,
@@ -88,6 +90,7 @@ body[data-theme='picsa-default'] {
   @include mat.all-component-themes($theme-default);
   --color-primary: #{map-get($palette-primary, 500)};
   --color-primary-50: #{map-get($palette-primary, 50)};
+  --color-primary-950: #{map-get($palette-primary, 950)};
   --color-secondary: #{map-get($palette-accent, 500)};
   --color-warn: #{map-get($palette-warn, 500)};
   --color-black: #1a2138;

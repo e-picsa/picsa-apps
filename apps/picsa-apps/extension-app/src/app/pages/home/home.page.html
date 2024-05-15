@@ -1,14 +1,10 @@
-<!-- @if (configurationService.userSettings().first_load) {
-  <picsa-welcome></picsa-welcome>
-
-  } @else {  -->
-@switch (configurationService.userSettings().variant) { @case ('extension') {
+@if (showFirstLoadScreen()) {
+<picsa-configuration-select />
+} @else { @switch (configurationService.userSettings().user_type) { @case ('extension') {
 <picsa-extension-home />
 } @case ('farmer') {
-<!-- TODO -->
-<div>Farmer Variant</div>
+<picsa-farmer-home />
 } @default {
 <!-- revert to onboarding screen if variant removed -->
-<picsa-welcome></picsa-welcome>
-} }
-<!-- } -->
+<picsa-configuration-select />
+} } }

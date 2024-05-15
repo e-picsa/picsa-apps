@@ -1,0 +1,25 @@
+<div class="page-content">
+  @for(step of farmerSteps; track step.id){
+  <div class="step-container">
+    <div style="position: relative">
+      <img class="step-image" />
+      <div class="step-number">{{ step.step_number }}</div>
+    </div>
+    <div class="step-content">
+      <h2 class="step-title">{{ step.title }}</h2>
+      <div class="step-tags-container">
+        @for(tag of step.tags; track tag){
+        <span class="step-tag">{{ tag }}</span>
+        } @for(tool of step.tools; track tool){
+        <span class="step-tag">{{ tool }}</span>
+        }
+      </div>
+    </div>
+    <button class="nav-button" mat-icon-button color="secondary">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  }
+  <picsa-configuration-summary style="margin: 1em auto 0 auto; padding: 8px"></picsa-configuration-summary>
+</div>

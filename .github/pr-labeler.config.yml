@@ -5,6 +5,10 @@
 'App: Server':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-apps/server/**/*'
+# HACK - for now farmer pages are contained within extension app, to refactor in future
+'App: Farmer':
+  - changed-files:
+      - any-glob-to-any-file: 'apps/picsa-apps/extension-app/**/farmer/**/*'
 
 # Tools
 'Tool: Budget':

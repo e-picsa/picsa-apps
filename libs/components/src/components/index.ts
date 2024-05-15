@@ -1,6 +1,5 @@
 export * from './alert-box/alert-box.component';
 export * from './back-button.component';
-export * from './configuration-select/configuration-select';
 export * from './info-tooltip/info-tooltip.component';
 export * from './picsa-breadcrumbs.component';
 export * from './picsa-header.component';

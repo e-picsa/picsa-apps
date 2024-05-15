@@ -68,8 +68,8 @@ export class ResourcesToolService extends PicsaAsyncService {
 
   public filterLocalisedResources<T extends schemas.IResourceBase>(docs: T[]) {
     const { country_code } = this.configurationService.deploymentSettings();
-    // global deployment code "" not filtered
-    if (!country_code) return docs;
+    // global deployment code not filtered
+    if (country_code === 'global') return docs;
     return docs.filter((doc) => {
       const filterCountries = doc.filter?.countries;
       if (!filterCountries) return true;
