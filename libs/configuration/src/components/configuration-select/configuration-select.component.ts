@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 import {
   COUNTRIES_DATA,
   DEPLOYMENT_DATA,
@@ -105,7 +106,8 @@ export class PicsaConfigurationSelectComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private configurationService: ConfigurationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -166,11 +168,17 @@ export class PicsaConfigurationSelectComponent implements OnInit {
    * Save form values to configuration service
    */
   private saveFormValues(deployment_id: IDeploymentId) {
+    const { language_code } = this.languageForm.value;
+    const { user_type } = this.userTypeForm.value;
     this.configurationService.updateUserSettings({
-      language_code: this.languageForm.value.language_code,
-      user_type: this.userTypeForm.value.user_type,
+      language_code,
+      user_type,
       deployment_id,
     });
     this.selectionChange.next(this.configurationService.userSettings());
+    // handle routing to corresponding user type home page
+    if (user_type && deployment_id) {
+      this.router.navigate(['/', user_type], { replaceUrl: true });
+    }
   }
 }

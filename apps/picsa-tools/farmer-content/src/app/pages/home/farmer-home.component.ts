@@ -7,7 +7,7 @@ import { FARMER_CONTENT_DATA } from '@picsa/data';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 @Component({
-  selector: 'picsa-farmer-home',
+  selector: 'farmer-home',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, PicsaConfigurationSummaryComponent, PicsaTranslateModule],
   templateUrl: './farmer-home.component.html',

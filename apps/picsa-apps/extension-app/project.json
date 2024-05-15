@@ -77,6 +77,11 @@
           },
           {
             "glob": "*.svg",
+            "input": "libs/data/extension_content/svgs",
+            "output": "assets/svgs/extension_content"
+          },
+          {
+            "glob": "*.svg",
             "input": "libs/data/farmer_content/svgs",
             "output": "assets/svgs/farmer_content"
           },

@@ -41,7 +41,7 @@ export class ExtensionToolkitMaterialModule {
       this.matIconRegistry.addSvgIconInNamespace(
         'extension_app',
         icon,
-        this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${icon}.svg`)
+        this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/extension_content/${icon}.svg`)
       );
     }
   }

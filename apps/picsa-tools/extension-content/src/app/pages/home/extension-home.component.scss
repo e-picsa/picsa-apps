@@ -13,7 +13,7 @@
 }
 // note - could use media breakpoints for different images
 .background-image::before {
-  background-image: url('../../../../../assets/images/cover.jpg');
+  background-image: url('../../../assets/images/cover.jpg');
   background-size: cover;
   background-position: center;
   content: '';

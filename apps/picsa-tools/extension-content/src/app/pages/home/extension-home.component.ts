@@ -10,8 +10,8 @@ import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { TourService } from '@picsa/shared/services/core/tour';
-import { Subscription } from 'rxjs';
 
+import { ExtensionToolkitMaterialModule } from '../../material.module';
 import { HOME_TOUR } from './extension-home.tour';
 
 interface IPageLink {
@@ -103,18 +103,23 @@ if (!ENVIRONMENT.production) {
 }
 
 @Component({
-  selector: 'picsa-extension-home',
+  selector: 'extension-home',
   standalone: true,
-  imports: [CommonModule, MatIconModule, PicsaCommonComponentsModule, PicsaTranslateModule, RouterModule],
+  imports: [
+    CommonModule,
+    ExtensionToolkitMaterialModule,
+    MatIconModule,
+    PicsaCommonComponentsModule,
+    PicsaTranslateModule,
+    RouterModule,
+  ],
   templateUrl: './extension-home.component.html',
   styleUrl: './extension-home.component.scss',
 })
-export class PicsaExtensionHomeComponent implements OnDestroy, AfterViewInit {
+export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   /** List of home page display links, filtered when running in production */
   public links = PAGE_LINKS;
   public version = APP_VERSION;
-
-  private userEventSubscription: Subscription;
 
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
@@ -132,17 +137,12 @@ export class PicsaExtensionHomeComponent implements OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.componentsService.patchHeader({ endContent: undefined });
-    // this.userEventSubscription.unsubscribe();
   }
 
   ngAfterViewInit() {
     this.componentsService.patchHeader({
       endContent: new DomPortal(this.headerContent),
     });
-    // this.userEventSubscription = this.communicationService.userEvent$.subscribe(() => {
-    //   // Trigger the guided tour when the prompt event occurs
-    //   this.startTour();
-    // });
   }
 
   public startTour() {

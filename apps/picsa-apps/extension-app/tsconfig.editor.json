@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../../picsa-tools/extension-content/src/app/material.module.ts"],
   "compilerOptions": {
     "types": ["jest", "node"]
   }
