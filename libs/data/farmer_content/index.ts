@@ -28,7 +28,6 @@ interface IFarmerContent {
   id: IFarmerContentId;
   slug: string;
   icon_path: string;
-  step_number: number;
   title: string;
   tools: IToolData[];
   tags: { label: string }[];
@@ -39,42 +38,36 @@ const { seasonal_calendar, resource_allocation_map, climate, probability_and_ris
 const FARMER_CONTENT_BASE = {
   intro: {
     slug: 'intro',
-    step_number: 1,
     title: translateMarker('What is PICSA?'),
     tools: [],
     tags: [{ label: translateMarker('Tutorials') }],
   },
   what_does_the_farmer_do: {
     slug: 'what-do-you-currently-do',
-    step_number: 2,
     title: 'What do you currently do?',
     tools: [seasonal_calendar, resource_allocation_map],
     tags: [],
   },
   climate_change: {
     slug: 'is-the-climate-changing',
-    step_number: 3,
     title: translateMarker('Is your climate changing?'),
     tools: [climate],
     tags: [],
   },
   opportunities_risks: {
     slug: 'opportunities-and-risk',
-    step_number: 4,
     title: translateMarker('What are the opportunities and risk?'),
     tools: [probability_and_risk],
     tags: [],
   },
   what_are_the_options: {
     slug: 'what-are-the-options',
-    step_number: 5,
     title: 'What changes can you make?',
     tools: [options],
     tags: [],
   },
   compare_options: {
     slug: 'compare-options',
-    step_number: 5,
     title: 'Are the changes a good idea?',
     tools: [],
     tags: [],
