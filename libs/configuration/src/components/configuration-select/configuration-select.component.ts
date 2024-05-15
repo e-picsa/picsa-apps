@@ -1,6 +1,15 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  computed,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,7 +53,9 @@ import { ConfigurationService, IUserSettings } from '../../provider';
   styleUrl: './configuration-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PicsaConfigurationSelectComponent {
+export class PicsaConfigurationSelectComponent implements OnInit {
+  @Output() selectionChange = new EventEmitter<IUserSettings>();
+
   // mat-stepper prefers individual forms per step
   public countryForm = this.fb.group({
     country_code: new FormControl<IUserSettings['country_code']>(null as any, {
@@ -91,7 +102,20 @@ export class PicsaConfigurationSelectComponent {
 
   @ViewChild(MatStepper) stepper: MatStepper;
 
-  constructor(private fb: FormBuilder, private configurationService: ConfigurationService) {}
+  constructor(
+    private fb: FormBuilder,
+    private configurationService: ConfigurationService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    const { country_code, language_code, user_type } = this.configurationService.userSettings();
+    this.countryForm.patchValue({ country_code });
+    this.languageForm.patchValue({ language_code });
+    this.userTypeForm.patchValue({ user_type });
+    this.cdr.markForCheck();
+  }
+
   public setCountry(country_code: ICountryCode) {
     this.countryForm.patchValue({ country_code });
     this.configurationService.updateUserSettings({ country_code });
@@ -103,6 +127,7 @@ export class PicsaConfigurationSelectComponent {
     this.configurationService.updateUserSettings({ language_code });
     this.goToNextStep();
   }
+
   public setUserType(user_type: IUserSettings['user_type']) {
     this.userTypeForm.patchValue({ user_type });
     this.loadDeploymentFromSelections();
@@ -146,5 +171,6 @@ export class PicsaConfigurationSelectComponent {
       user_type: this.userTypeForm.value.user_type,
       deployment_id,
     });
+    this.selectionChange.next(this.configurationService.userSettings());
   }
 }

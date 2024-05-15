@@ -39,6 +39,11 @@ mat-card-content.mat-mdc-card-content {
 .mat-mdc-dialog-surface {
   padding: 24px;
 }
+// Allow dialog content to scroll (e.g. configuration select)
+mat-dialog-container.mat-mdc-dialog-container {
+  max-height: 100vh;
+  overflow: auto;
+}
 // Add override to remove dialog padding
 .cdk-overlay-pane.no-padding {
   .mat-mdc-dialog-surface {
