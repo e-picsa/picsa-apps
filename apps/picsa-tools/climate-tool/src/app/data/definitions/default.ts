@@ -1,6 +1,6 @@
+import { IChartDefinitions, IChartMeta } from '@picsa/models';
 import merge from 'deepmerge';
 
-import { IChartDefinitions, IChartMeta } from '@picsa/models';
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS } from '../../components/chart-tools/line-tool/line-tool.model';
 import { PROBABILITY_TOOL_OPTIONS } from '../../components/chart-tools/probability-tool/probabililty-tool.model';
 
@@ -133,6 +133,5 @@ const DEFINITIONS = () => {
   const chartDefinitions: IChartDefinitions = JSON.parse(JSON.stringify(definitions));
   return chartDefinitions;
 };
-// {name: "Combined Probability", image: "assets/images/combined-probability.png", page: "CombinedProbabilityPage", tools: { line: false }},
 
 export default DEFINITIONS;

@@ -25,6 +25,9 @@ jobs:
         # Assign labels based on conventional PR title
         # https://github.com/marketplace/actions/conventional-release-labels
       - name: Assign PR Name Labels
+        # Avoid re-label if title not changed
+        # https://github.com/orgs/community/discussions/101695
+        if: event.type == 'opened' || event.changes.title.from
         uses: bcoe/conventional-release-labels@v1.3.1
         with:
           # Labels assigned based on pr name prefix

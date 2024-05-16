@@ -15,6 +15,7 @@ button.mdc-button {
 button.mat-mdc-button > .mat-icon {
   font-size: 24px;
   width: 24px;
+  min-width: 24px; // climate share icon not showing without
   height: 24px;
 }
 button > .mdc-button__label {
@@ -55,6 +56,11 @@ mat-dialog-container.mat-mdc-dialog-container {
 div.mdc-dialog__actions {
   padding-left: 0;
   padding-right: 0;
+}
+// Display sidebar content in flex column with light background
+.mat-drawer-inner-container {
+  display: flex;
+  flex-direction: column;
 }
 // Increase size and set primary colour for text inputs, remove inset
 input.mat-mdc-input-element.mdc-text-field__input {

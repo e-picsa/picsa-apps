@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PicsaFarmerHomeComponent } from './farmer-home.component';
+import { FarmerContentHomeComponent } from './farmer-home.component';
 
 describe('FarmerHomeComponent', () => {
-  let component: PicsaFarmerHomeComponent;
-  let fixture: ComponentFixture<PicsaFarmerHomeComponent>;
+  let component: FarmerContentHomeComponent;
+  let fixture: ComponentFixture<FarmerContentHomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PicsaFarmerHomeComponent],
+      imports: [FarmerContentHomeComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PicsaFarmerHomeComponent);
+    fixture = TestBed.createComponent(FarmerContentHomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

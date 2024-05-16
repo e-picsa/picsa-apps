@@ -22,16 +22,30 @@ const TOOLS_DATA: IToolData[] = Object.entries(TOOLS_BASE).map(([id, data]) => (
 const TOOLS_DATA_HASHMAP: Record<IToolId, IToolData> = arrayToHashmap(TOOLS_DATA, 'id');
 
 /*******************************************************************
- * Farmer Steps
+ * Farmer Content
  ********************************************************************/
-interface IFarmerContent {
+export interface IFarmerContent {
   id: IFarmerContentId;
   slug: string;
   icon_path: string;
   title: string;
   tools: IToolData[];
   tags: { label: string }[];
+  steps: IFarmerContentStepVideo[];
 }
+
+interface IFarmerContentStepVideo {
+  type: 'video';
+}
+
+const CONTENT_STEPS: { [id in IFarmerContentId]: any } = {
+  climate_change: [],
+  compare_options: [],
+  intro: [],
+  opportunities_risks: [],
+  what_are_the_options: [],
+  what_does_the_farmer_do: [],
+};
 
 const { seasonal_calendar, resource_allocation_map, climate, probability_and_risk, options } = TOOLS_DATA_HASHMAP;
 
@@ -44,7 +58,7 @@ const FARMER_CONTENT_BASE = {
   },
   what_does_the_farmer_do: {
     slug: 'what-do-you-currently-do',
-    title: 'What do you currently do?',
+    title: translateMarker('What do you currently do?'),
     tools: [seasonal_calendar, resource_allocation_map],
     tags: [],
   },
@@ -62,13 +76,13 @@ const FARMER_CONTENT_BASE = {
   },
   what_are_the_options: {
     slug: 'what-are-the-options',
-    title: 'What changes can you make?',
+    title: translateMarker('What changes can you make?'),
     tools: [options],
     tags: [],
   },
   compare_options: {
     slug: 'compare-options',
-    title: 'Are the changes a good idea?',
+    title: translateMarker('Are the changes a good idea?'),
     tools: [],
     tags: [],
   },
@@ -78,7 +92,8 @@ export const FARMER_CONTENT_DATA: IFarmerContent[] = Object.entries(FARMER_CONTE
   ...data,
   icon_path: `assets/svgs/farmer_content/${id}.svg`,
   id: id as IFarmerContentId,
+  steps: CONTENT_STEPS[id],
 }));
-export const FARMER_CONTENT_DATA_HASHMAP = arrayToHashmap(FARMER_CONTENT_DATA, 'id') as {
+export const FARMER_CONTENT_DATA_BY_SLUG = arrayToHashmap(FARMER_CONTENT_DATA, 'slug') as {
   [code in IFarmerContentId]: IFarmerContent;
 };
