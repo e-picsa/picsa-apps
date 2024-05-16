@@ -16,8 +16,8 @@ export class ScrollRestoreService {
 
 /**
  * Directive to restore an element's scrollTop position following navigation events
- * This differs to angulars in-built scrollPositionRestoration router configuration which
- * only applies to main body (whereas app content scrolls inside page-content div)
+ * This differs to angulars in-built scrollPositionRestoration router configuration or
+ * withInMemoryScrolling which only applies to body (app content uses scrollable page-content div)
  *
  * The directive tracks scroll position for current page, and restores on revisit,
  * E.g. if the user moves to a new page and then comes back
