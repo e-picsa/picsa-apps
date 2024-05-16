@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   COUNTRIES_DATA,
   DEPLOYMENT_DATA,
@@ -93,11 +94,11 @@ export class PicsaConfigurationSelectComponent implements OnInit {
   public userTypeOptions = [
     {
       id: 'farmer',
-      label: "I'm a farmer",
+      label: translateMarker("I'm a farmer"),
     },
     {
       id: 'extension',
-      label: "I'm an extension worker",
+      label: translateMarker("I'm an extension worker"),
     },
   ] as const;
 
