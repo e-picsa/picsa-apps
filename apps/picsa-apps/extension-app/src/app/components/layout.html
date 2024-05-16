@@ -1,5 +1,14 @@
 <mat-drawer-container class="example-container" [hasBackdrop]="true">
-  <mat-drawer #drawer mode="over" style="width: 300px">I'm a drawer</mat-drawer>
+  <mat-drawer #drawer mode="over">
+    <div class="page-content draw-content">
+      <button mat-icon-button (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
+      <picsa-configuration-summary style="margin-top: auto" (click)="drawer.close()" />
+      <footer>
+        <a routerLink="/privacy" class="privacy-policy">{{ 'Privacy Policy' | translate }}</a>
+        <div class="version-info">v{{ version.number }}</div>
+      </footer>
+    </div>
+  </mat-drawer>
   <mat-drawer-content>
     <div class="page">
       <picsa-header>

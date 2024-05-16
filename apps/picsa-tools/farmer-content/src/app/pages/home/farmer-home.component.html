@@ -1,4 +1,4 @@
-<div class="page-content" style="padding-top: 0" scrollRestore>
+<div class="page-content" style="padding-top: 0" scrollRestore @fadeInOut>
   <div class="step-grid">
     @for(step of content; track step.id){
     <div class="step-container" matRipple [routerLink]="step.slug">
@@ -25,6 +25,4 @@
 
     }
   </div>
-
-  <picsa-configuration-summary style="margin: 1em auto 0 auto; padding: 8px"></picsa-configuration-summary>
 </div>

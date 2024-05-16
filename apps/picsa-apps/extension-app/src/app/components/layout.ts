@@ -4,9 +4,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { APP_VERSION } from '@picsa/environments';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { filter, map } from 'rxjs';
 
 @Component({
@@ -20,8 +22,10 @@ import { filter, map } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     RouterOutlet,
+    RouterModule,
     PicsaLoadingComponent,
     PicsaCommonComponentsModule,
+    PicsaTranslateModule,
   ],
 })
 export class AppLayoutComponent {
@@ -34,6 +38,7 @@ export class AppLayoutComponent {
       map(({ url }) => ['/farmer'].includes(url))
     )
   );
+  public version = APP_VERSION;
 
   constructor(private router: Router) {}
 }

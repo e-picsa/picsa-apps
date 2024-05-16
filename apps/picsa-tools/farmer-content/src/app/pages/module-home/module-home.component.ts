@@ -3,6 +3,7 @@ import { Component, effect, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
+import { FadeInOut } from '@picsa/shared/animations';
 
 @Component({
   selector: 'farmer-content-module-home',
@@ -10,6 +11,7 @@ import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
   imports: [CommonModule],
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
+  animations: [FadeInOut({ inSpeed: 200, inDelay: 100 })],
 })
 export class FarmerContentModuleHomeComponent {
   private params = toSignal(this.route.params);

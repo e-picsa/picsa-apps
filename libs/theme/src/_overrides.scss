@@ -57,6 +57,11 @@ div.mdc-dialog__actions {
   padding-left: 0;
   padding-right: 0;
 }
+// Display sidebar content in flex column with light background
+.mat-drawer-inner-container {
+  display: flex;
+  flex-direction: column;
+}
 // Increase size and set primary colour for text inputs, remove inset
 input.mat-mdc-input-element.mdc-text-field__input {
   font-size: 30px;

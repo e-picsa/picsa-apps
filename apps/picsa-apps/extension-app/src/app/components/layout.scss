@@ -1,3 +1,9 @@
+.loading-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 button#menuButton {
   padding: 8px;
   width: 48px;
@@ -9,9 +15,18 @@ button#menuButton {
   font-size: 32px;
   line-height: 32px;
 }
-.loading-container {
-  height: 100vh;
+.draw-content {
+  width: 300px;
+  background: var(--color-primary-50);
+}
+.close-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+footer {
+  margin-top: 1em;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
 }
