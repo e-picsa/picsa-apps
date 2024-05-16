@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
+import { ActivatedRoute } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaDialogService } from '@picsa/shared/features';
 
@@ -84,16 +85,23 @@ const STEPPER_STEPS = [
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent {
+export class EditorComponent implements OnInit {
   public values = ENTRY_TEMPLATE();
   public performanceConditions = PERFORMANCE_CONDITIONS;
   public investmentTypes = INVESTMENT_TYPES;
   public stepperSteps = STEPPER_STEPS;
 
+  /** Option key from route */
+  option: string;
+
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
 
-  constructor(private dialog: PicsaDialogService) {}
+  constructor(private dialog: PicsaDialogService, private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.option = this.route.snapshot.paramMap.get('optionName') || '';
+  }
 
   public handleRemovingBenefits(index: number) {
     this.values.benefits.splice(index, 1);
@@ -107,14 +115,23 @@ export class EditorComponent {
 
   public async submitForm() {
     // minimum for auto save should be at least a name
-    if (!this.values.practice) {
+    if (!this.values.practice || !this.option) {
       this.dataTransfer.emit(null);
       return;
     }
+    // Set 'enterprise' field and '_created_at' field
+    this.values.enterprise = this.option;
+    // Emit the values
     this.dataTransfer.emit(this.values);
+    // Reset form
+    this.resetForm();
+  }
+
+  private resetForm() {
     this.resetVariables();
     this.resetStepper();
   }
+
   // Allow update from home copmonent
   public presetVariables(rowData: IOptionsToolEntry) {
     this.values = rowData;

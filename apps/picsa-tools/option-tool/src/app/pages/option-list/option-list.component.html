@@ -1,6 +1,6 @@
 <div class="page-content">
   <h2>{{ 'Select Enterprise' | translate }}</h2>
   <div *ngFor="let option of options" class="options-container">
-    <a [routerLink]="[option.toLowerCase()]">{{ option }}</a>
+    <a [routerLink]="[option.id]">{{ option.label }}</a>
   </div>
 </div>

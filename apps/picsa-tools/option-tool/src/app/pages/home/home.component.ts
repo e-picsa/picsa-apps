@@ -19,7 +19,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   public optionsDisplayList: IOptionsToolEntry[] = [];
 
   /** List of columns to display in table. Note, order will match template keys */
-  public displayedColumns = Object.keys(ENTRY_TEMPLATE()).filter((key) => !key.startsWith('_'));
+  public displayedColumns = Object.keys(ENTRY_TEMPLATE()).filter((key) => !key.startsWith('_') && key !== 'enterprise');
 
   /** List of columns to display subheader row for */
   public subheaderColumns: string[];
@@ -45,15 +45,16 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     private componentService: PicsaCommonComponentsService,
     private route: ActivatedRoute
   ) {
-    this.subscribeToDbChanges();
     this.addSubheaderColumns();
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.componentService.patchHeader({
       endContent: new DomPortal(this.headerContent),
     });
     this.option = this.route.snapshot.paramMap.get('optionName') || '';
+    await this.service.initialise();
+    this.subscribeToDbChanges();
   }
 
   /**
@@ -75,13 +76,13 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
 
   /** Initialise service and subscribe to data changes */
-  private async subscribeToDbChanges() {
-    await this.service.initialise();
+  private subscribeToDbChanges() {
     // create a live query to retrieve all docs on data change
     // pipe subscription to complete when component destroyed (avoids memory leak)
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      this.dbDataDocs = docs;
+      // Filter the documents based on the 'option' value and 'enterprise' field
+      this.dbDataDocs = docs.filter((doc) => doc.enterprise === this.option);
     });
   }
 
