@@ -58,7 +58,7 @@ const FARMER_CONTENT_BASE = {
   },
   what_does_the_farmer_do: {
     slug: 'what-do-you-currently-do',
-    title: 'What do you currently do?',
+    title: translateMarker('What do you currently do?'),
     tools: [seasonal_calendar, resource_allocation_map],
     tags: [],
   },
@@ -76,13 +76,13 @@ const FARMER_CONTENT_BASE = {
   },
   what_are_the_options: {
     slug: 'what-are-the-options',
-    title: 'What changes can you make?',
+    title: translateMarker('What changes can you make?'),
     tools: [options],
     tags: [],
   },
   compare_options: {
     slug: 'compare-options',
-    title: 'Are the changes a good idea?',
+    title: translateMarker('Are the changes a good idea?'),
     tools: [],
     tags: [],
   },

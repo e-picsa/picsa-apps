@@ -9,7 +9,7 @@
         <div class="step-number">{{ $index + 1 }}</div>
       </div>
       <div class="step-content">
-        <h2 class="step-title">{{ step.title }}</h2>
+        <h2 class="step-title">{{ step.title | translate }}</h2>
         <div class="tags-container">
           @for(tag of step.tags; track tag){
           <span class="tag step-tag">{{ tag.label | translate }}</span>

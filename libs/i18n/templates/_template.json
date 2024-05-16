@@ -769,6 +769,10 @@
     "context": "buttons"
   },
   {
+    "text": "Are the changes a good idea?",
+    "tool": "common"
+  },
+  {
     "text": "Are you sure you want to delete?",
     "tool": "common"
   },
@@ -854,6 +858,14 @@
   },
   {
     "text": "What best describes you?",
+    "tool": "common"
+  },
+  {
+    "text": "What changes can you make?",
+    "tool": "common"
+  },
+  {
+    "text": "What do you currently do?",
     "tool": "common"
   },
   {

@@ -4,11 +4,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { FadeInOut } from '@picsa/shared/animations';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 @Component({
   selector: 'farmer-content-module-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PicsaTranslateModule],
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 })],
