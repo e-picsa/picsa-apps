@@ -1,0 +1,11 @@
+<button mat-button color="primary" (click)="dialog.open(selectDialog)">
+  <div style="display: flex; align-items: center">
+    <img class="language-summary-flag" [src]="image" />
+    <span class="language-label">{{ label }}</span>
+  </div>
+</button>
+
+<!-- Dialog -->
+<ng-template #selectDialog>
+  <picsa-configuration-select (selectionChange)="dialog.closeAll()"></picsa-configuration-select>
+</ng-template>

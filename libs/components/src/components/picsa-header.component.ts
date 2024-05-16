@@ -115,8 +115,8 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
             this.style = style;
           }
           this.setEndPortal(endContent);
-          // hide back button when set or if on homepage
-          this.hideBackButton = hideBackButton || location.pathname === '/';
+          // hide back button when set or if on farmer or extension homepages
+          this.hideBackButton = hideBackButton || ['/', '/farmer', '/extension'].includes(location.pathname);
         });
       });
   }

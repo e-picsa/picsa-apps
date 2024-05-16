@@ -773,6 +773,14 @@
     "tool": "common"
   },
   {
+    "text": "Choose country",
+    "tool": "common"
+  },
+  {
+    "text": "Choose language",
+    "tool": "common"
+  },
+  {
     "text": "Demo",
     "tool": "common"
   },
@@ -801,15 +809,11 @@
     "tool": "common"
   },
   {
-    "text": "Select Country",
-    "tool": "common"
-  },
-  {
-    "text": "Select Language",
-    "tool": "common"
-  },
-  {
     "text": "Show Options",
+    "tool": "common"
+  },
+  {
+    "text": "What best describes you?",
     "tool": "common"
   },
   {
@@ -1116,10 +1120,6 @@
   {
     "text": "Rain",
     "tool": "common_weather"
-  },
-  {
-    "text": "All",
-    "tool": "crop-probability"
   },
   {
     "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
@@ -1634,7 +1634,19 @@
     "tool": "resources"
   },
   {
+    "text": "Download All",
+    "tool": "resources"
+  },
+  {
+    "text": "Downloaded",
+    "tool": "resources"
+  },
+  {
     "text": "Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Input at least 3 letters to search",
     "tool": "resources"
   },
   {
@@ -1643,6 +1655,18 @@
   },
   {
     "text": "Manage Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "No results found",
+    "tool": "resources"
+  },
+  {
+    "text": "Search",
+    "tool": "resources"
+  },
+  {
+    "text": "Search Resources",
     "tool": "resources"
   },
   {

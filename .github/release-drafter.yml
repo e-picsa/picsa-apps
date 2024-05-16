@@ -13,6 +13,8 @@ categories:
     { title: '🟦Option Tool', labels: ['Tool: Option'] },
     { title: '🟦Resources Tool', labels: ['Tool: Resources'] },
     { title: '🟦Seasonal Calendar Tool', labels: ['Tool: Seasonal Calendar'] },
+    { title: '🟪Extension App', labels: ['App: Extension'] },
+    { title: '🟪Farmer App', labels: ['App: Farmer'] },
     { title: '🟪Dashboard App', labels: ['App: Dashboard'] },
     { title: '🟪Server App', labels: ['App: Server'] },
     { title: '🟫Core Maintenance', labels: ['maintenance'] },

@@ -1,22 +1,49 @@
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { IPicsaDataWithIcons } from '../models';
 import { arrayToHashmap } from '@picsa/utils/data';
-import { IStationMeta, IStationMetaDB } from '@picsa/models/src';
+import { IStationMetaDB } from '@picsa/models/src';
+
+/*******************************************************************
+ * Country Settings
+ ********************************************************************/
+const COUNTRIES_BASE = {
+  global: { label: 'Global' },
+  mw: { label: 'Malawi' },
+  zm: { label: 'Zambia' },
+  tj: { label: 'Tajikistan' },
+} as const;
+
+export type ICountryCode = keyof typeof COUNTRIES_BASE;
+export const COUNTRIES_DATA = Object.entries(COUNTRIES_BASE).map(([id, { label }]) => ({
+  id: id as ICountryCode,
+  label: label as string,
+  flag_path: `assets/images/flags/${id}.svg`,
+}));
+export type ICountriesDataEntry = typeof COUNTRIES_DATA[0];
+export const COUNTRIES_DATA_HASHMAP = arrayToHashmap(COUNTRIES_DATA, 'id') as {
+  [code in ICountryCode]: ICountriesDataEntry;
+};
 
 /*******************************************************************
  * Language Settings
  ********************************************************************/
+interface ILanguageMeta {
+  language_code: string;
+  language_label: string;
+  country_code: ICountryCode;
+  country_label: string;
+  flag_path?: string;
+}
 const LANGUAGES_BASE = {
-  en: { label: 'English' },
-  mw_ny: { label: 'Chichewa' },
-  zm_ny: { label: 'Chichewa' },
-  tj_tg: { label: 'Тоҷикӣ' },
+  global_en: { language_code: 'en', language_label: 'English', country_code: 'global' },
+  mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw' },
+  zm_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'zm' },
+  tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj' },
 } as const;
 
 export type ILanguageCode = keyof typeof LANGUAGES_BASE;
-const LANGUAGES_DATA = Object.entries(LANGUAGES_BASE).map(([id, { label }]) => ({
+export const LANGUAGES_DATA = Object.entries(LANGUAGES_BASE).map(([id, data]) => ({
   id: id as ILanguageCode,
-  label: label as string,
+  flag_path: `assets/images/flags/${data.country_code}.svg`,
+  ...(data as ILanguageMeta),
 }));
 
 export type ILanguageDataEntry = typeof LANGUAGES_DATA[0];
@@ -29,13 +56,8 @@ export const LANGUAGES_DATA_HASHMAP = arrayToHashmap(LANGUAGES_DATA, 'id') as {
  ********************************************************************/
 
 export interface IDeploymentSettings {
-  label: string;
-  /** Path to deployment icon asset */
-  assetIconPath: string;
   /** Country to associate deployment with */
-  country_code: string;
-  /** List of available language codes */
-  language_codes: ILanguageCode[];
+  country_code: ICountryCode;
   /** Budget tool custom settings */
   budgetTool: {
     /** Label assigned to currency value */
@@ -51,10 +73,7 @@ export interface IDeploymentSettings {
 }
 
 const DEPLOYMENT_DEFAULTS: IDeploymentSettings = {
-  label: '',
-  assetIconPath: '',
-  country_code: '',
-  language_codes: Object.keys(LANGUAGES_BASE) as ILanguageCode[],
+  country_code: null as any,
   budgetTool: { currency: '$', currencyBaseValue: 1 },
   climateTool: {},
   theme: 'picsa-default',
@@ -67,11 +86,9 @@ function generate(settings: Partial<IDeploymentSettings>) {
 }
 
 const DEPLOYMENTS_BASE = {
-  global: generate({ label: 'Global', climateTool: { station_filter: () => true } }),
+  global: generate({ country_code: 'global', climateTool: { station_filter: () => true } }),
   mw: generate({
     country_code: 'mw',
-    label: 'Malawi',
-    language_codes: ['mw_ny', 'en'],
     budgetTool: {
       currency: 'MK',
       currencyBaseValue: 10000,
@@ -80,8 +97,6 @@ const DEPLOYMENTS_BASE = {
   }),
   zm: generate({
     country_code: 'zm',
-    label: 'Zambia',
-    language_codes: ['zm_ny', 'en'],
     budgetTool: {
       currency: 'ZMK',
       currencyBaseValue: 10,
@@ -90,8 +105,6 @@ const DEPLOYMENTS_BASE = {
   }),
   tj: generate({
     country_code: 'tj',
-    label: 'Tajikistan',
-    language_codes: ['tj_tg', 'en'],
     budgetTool: {
       currency: 'TJS',
       currencyBaseValue: 10,
@@ -107,7 +120,6 @@ export const DEPLOYMENT_DATA = Object.entries(DEPLOYMENTS_BASE).map(([id, data])
   return {
     id: id as IDeploymentId,
     ...data,
-    assetIconPath: data.assetIconPath || `assets/images/flags/${id}.svg`,
   };
 });
 
