@@ -1,0 +1,25 @@
+<mat-drawer-container class="example-container" [hasBackdrop]="true">
+  <mat-drawer #drawer mode="over" style="width: 300px">I'm a drawer</mat-drawer>
+  <mat-drawer-content>
+    <div class="page">
+      <picsa-header>
+        @if(showMenuButton()){
+        <button id="menuButton" mat-icon-button (click)="drawer.toggle()" class="menu-button">
+          <mat-icon id="menuIcon">menu</mat-icon>
+        </button>
+        <!-- NOTE - back button currently handled in header itself -->
+
+        }
+      </picsa-header>
+      @if(ready){
+      <router-outlet></router-outlet>
+      }
+    </div>
+    <!-- Loading spinner -->
+    @if(showLoader) {
+    <div class="loading-container">
+      <picsa-loading></picsa-loading>
+    </div>
+    }
+  </mat-drawer-content>
+</mat-drawer-container>

@@ -17,8 +17,10 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   template: `
     <header [attr.data-style]="style">
       <div class="start-content">
+        <!-- HACK - menu button passed as content but back-button hardcoded -->
+        <ng-content></ng-content>
         <back-button
-          [style.visibility]="hideBackButton ? 'hidden' : 'visible'"
+          [style.display]="hideBackButton ? 'none' : 'block'"
           [variant]="style === 'primary' ? 'white' : 'primary'"
         ></back-button>
       </div>
