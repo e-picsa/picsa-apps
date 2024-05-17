@@ -1,7 +1,11 @@
 <div class="page-content">
   <h2>{{ 'Select Enterprise' | translate }}</h2>
-  <div *ngFor="let option of options" class="options-container">
-    <a [routerLink]="[option.id]">{{ option.label }}</a>
+  <div class="cards-container">
+    <div *ngFor="let option of options" class="card" [routerLink]="[option.id]">
+      <div class="card-image">
+        <img [src]="'../../../assets/svgs/' + option.id + '-enterprise.svg'" alt="{{ option.label | translate }}" />
+      </div>
+      <div class="card-label">{{ option.label | translate }}</div>
+    </div>
   </div>
-  <mat-icon svgIcon="picsa_enterprise:crop"></mat-icon>
 </div>
