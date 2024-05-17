@@ -18,6 +18,7 @@ import { MobxAngularModule } from 'mobx-angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AppLayoutComponent } from './components/layout';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,6 +41,7 @@ import { AppRoutingModule } from './app-routing.module';
     PicsaAnimationsModule.forRoot(),
     PicsaCommonComponentsModule,
     HttpClientModule,
+    AppLayoutComponent,
     AppRoutingModule,
   ],
   bootstrap: [AppComponent],

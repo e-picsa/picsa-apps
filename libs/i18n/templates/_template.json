@@ -769,6 +769,10 @@
     "context": "buttons"
   },
   {
+    "text": "Are the changes a good idea?",
+    "tool": "common"
+  },
+  {
     "text": "Are you sure you want to delete?",
     "tool": "common"
   },
@@ -778,6 +782,10 @@
   },
   {
     "text": "Choose language",
+    "tool": "common"
+  },
+  {
+    "text": "Climate",
     "tool": "common"
   },
   {
@@ -801,6 +809,18 @@
     "tool": "common"
   },
   {
+    "text": "I'm a farmer",
+    "tool": "common"
+  },
+  {
+    "text": "I'm an extension worker",
+    "tool": "common"
+  },
+  {
+    "text": "Is your climate changing?",
+    "tool": "common"
+  },
+  {
     "text": "Name",
     "tool": "common"
   },
@@ -809,11 +829,47 @@
     "tool": "common"
   },
   {
+    "text": "Options",
+    "tool": "common"
+  },
+  {
+    "text": "Probability and Risk",
+    "tool": "common"
+  },
+  {
+    "text": "Resource Allocation Map",
+    "tool": "common"
+  },
+  {
+    "text": "Seasonal Calendar",
+    "tool": "common"
+  },
+  {
     "text": "Show Options",
     "tool": "common"
   },
   {
+    "text": "Tutorials",
+    "tool": "common"
+  },
+  {
+    "text": "What are the opportunities and risk?",
+    "tool": "common"
+  },
+  {
     "text": "What best describes you?",
+    "tool": "common"
+  },
+  {
+    "text": "What changes can you make?",
+    "tool": "common"
+  },
+  {
+    "text": "What do you currently do?",
+    "tool": "common"
+  },
+  {
+    "text": "What is PICSA?",
     "tool": "common"
   },
   {
@@ -1198,31 +1254,31 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Budget",
-    "tool": "extension"
-  },
-  {
-    "text": "Click on the button below to retry",
-    "tool": "extension"
-  },
-  {
-    "text": "Climate",
-    "tool": "extension"
-  },
-  {
     "text": "Farmer Activities",
-    "tool": "extension"
+    "tool": "extension-content"
   },
   {
     "text": "Manual",
-    "tool": "extension"
+    "tool": "extension-content"
   },
   {
     "text": "Monitoring",
-    "tool": "extension"
+    "tool": "extension-content"
   },
   {
-    "text": "Options",
+    "text": "Probability",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Resources",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Take App Tour",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Click on the button below to retry",
     "tool": "extension"
   },
   {
@@ -1230,27 +1286,11 @@
     "tool": "extension"
   },
   {
-    "text": "Probability",
-    "tool": "extension"
-  },
-  {
     "text": "Reload",
     "tool": "extension"
   },
   {
-    "text": "Resources",
-    "tool": "extension"
-  },
-  {
-    "text": "Seasonal Calendar",
-    "tool": "extension"
-  },
-  {
     "text": "Something went wrong...",
-    "tool": "extension"
-  },
-  {
-    "text": "Take App Tour",
     "tool": "extension"
   },
   {
@@ -1279,6 +1319,10 @@
   },
   {
     "text": "After the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Budget",
     "tool": "manual"
   },
   {
@@ -1343,10 +1387,6 @@
   },
   {
     "text": "PICSA",
-    "tool": "manual"
-  },
-  {
-    "text": "Probability and Risk",
     "tool": "manual"
   },
   {
