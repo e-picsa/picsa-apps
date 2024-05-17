@@ -28,6 +28,7 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     this.activeDeployment.set(this.deployments().find((d) => d.id === id) || null);
     // provide server update
     // TODO - subscribe to realtime updates
+    // TODO - consider just using hardcoded deployments to prevent need for optimistic updates
     const { data } = await this.table.select<'*', IDeploymentRow>('*').eq('id', id).limit(1).single();
     this.activeDeployment.set(data);
     this.storeDeployment(data?.id);
