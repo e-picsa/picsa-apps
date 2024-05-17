@@ -52,9 +52,9 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     this.componentService.patchHeader({
       endContent: new DomPortal(this.headerContent),
     });
-    this.option = this.route.snapshot.paramMap.get('optionName') || '';
-    await this.service.initialise();
-    this.subscribeToDbChanges();
+    const enterprise = this.route.snapshot.paramMap.get('enterprise');
+    await this.service.ready();
+    this.subscribeToDbChanges((enterprise as IOptionsToolEntry['enterprise']) || 'crop');
   }
 
   /**
@@ -76,13 +76,13 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
 
   /** Initialise service and subscribe to data changes */
-  private subscribeToDbChanges() {
+  private subscribeToDbChanges(enterprise: IOptionsToolEntry['enterprise']) {
     // create a live query to retrieve all docs on data change
     // pipe subscription to complete when component destroyed (avoids memory leak)
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       // Filter the documents based on the 'option' value and 'enterprise' field
-      this.dbDataDocs = docs.filter((doc) => doc.enterprise === this.option);
+      this.dbDataDocs = docs.filter((doc) => doc.enterprise === enterprise);
     });
   }
 
@@ -111,6 +111,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
   async onDataTransfer(data: IOptionsToolEntry | null) {
     if (data) {
+      console.log('transfer', { data });
       await this.service.addORUpdateData(data);
     } else {
       // remove any existing entry entry if no data passed back

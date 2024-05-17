@@ -91,8 +91,7 @@ export class EditorComponent implements OnInit {
   public investmentTypes = INVESTMENT_TYPES;
   public stepperSteps = STEPPER_STEPS;
 
-  /** Option key from route */
-  option: string;
+  private enterprise: IOptionsToolEntry['enterprise'];
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
@@ -100,7 +99,8 @@ export class EditorComponent implements OnInit {
   constructor(private dialog: PicsaDialogService, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.option = this.route.snapshot.paramMap.get('optionName') || '';
+    const enterprise = this.route.snapshot.paramMap.get('enterprise');
+    this.enterprise = (enterprise as IOptionsToolEntry['enterprise']) || 'crop';
   }
 
   public handleRemovingBenefits(index: number) {
@@ -114,13 +114,12 @@ export class EditorComponent implements OnInit {
   }
 
   public async submitForm() {
+    this.values.enterprise = this.enterprise;
     // minimum for auto save should be at least a name
-    if (!this.values.practice || !this.option) {
+    if (!this.values.practice) {
       this.dataTransfer.emit(null);
       return;
     }
-    // Set 'enterprise' field and '_created_at' field
-    this.values.enterprise = this.option;
     // Emit the values
     this.dataTransfer.emit(this.values);
     // Reset form

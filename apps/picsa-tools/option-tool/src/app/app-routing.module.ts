@@ -8,9 +8,9 @@ export const ROUTES_COMMON: Routes = [
     title: 'Options',
   },
   {
-    path: ':optionName',
+    path: ':enterprise',
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
-    title: 'Option Details',
+    title: 'Options',
   },
 ];
 

@@ -14,7 +14,7 @@ const generateTimestamp = (): string => {
  * ADD 'enterprise' and '_created_at' properties
  */
 export interface IOptionsToolEntry_v4 extends IOptionsToolEntry_v3 {
-  enterprise: string;
+  enterprise: 'crop' | 'livestock' | 'livelihood';
   _created_at: string;
 }
 
@@ -25,6 +25,7 @@ export const SCHEMA_V4: RxJsonSchema<IOptionsToolEntry_v4> = {
     ...SCHEMA_V3.properties,
     enterprise: {
       type: 'string',
+      enum: ['crop', 'livestock', 'livelihood'],
     },
     _created_at: {
       type: 'string',
