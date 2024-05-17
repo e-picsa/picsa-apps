@@ -4,7 +4,8 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/option-list/option-list.module').then((m) => m.OptionListModule),
+    loadChildren: () =>
+      import('./pages/enterprise-select/enterprise-select.module').then((m) => m.EnterpriseSelectModule),
     title: 'Options',
   },
   {

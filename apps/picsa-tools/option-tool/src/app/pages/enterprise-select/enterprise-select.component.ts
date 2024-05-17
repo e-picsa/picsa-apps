@@ -18,9 +18,9 @@ const OPTIONS = [
 
 @Component({
   selector: 'option-list',
-  templateUrl: './option-list.component.html',
-  styleUrls: ['./option-list.component.scss'],
+  templateUrl: './enterprise-select.component.html',
+  styleUrls: ['./enterprise-select.component.scss'],
 })
-export class OptionListComponent {
+export class EnterpriseSelectComponent {
   options = OPTIONS;
 }
