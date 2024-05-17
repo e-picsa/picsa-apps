@@ -1,3 +1,6 @@
+@use 'mixins';
+@use '@angular/material' as mat;
+
 $primary: (
   50: #e8ecf2,
   100: #c5d0e0,
@@ -88,12 +91,5 @@ $theme-dashboard: mat.define-light-theme(
 
 body[data-theme='picsa-dashboard'] {
   @include mat.all-component-themes($theme-dashboard);
-  --color-primary: #{map-get($palette-primary, 500)};
-  --color-primary-50: #{map-get($palette-primary, 50)};
-  --color-primary-950: #{map-get($palette-primary, 950)};
-  --color-secondary: #{map-get($palette-accent, 500)};
-  --color-warn: #{map-get($palette-warn, 500)};
-  --color-black: #1a2138;
-  --color-light: #d8d8d8;
-  --color-white: #ffffff;
+  @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
 }

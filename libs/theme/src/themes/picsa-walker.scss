@@ -1,3 +1,6 @@
+@use 'mixins';
+@use '@angular/material' as mat;
+
 $primary: (
   50: #f1e5e9,
   100: #dcbec7,
@@ -88,11 +91,5 @@ body[data-theme='picsa-walker'] {
   // https://github.com/angular/components/blob/main/src/material/core/theming/_all-theme.scss
   // @include mat.all-component-themes($theme-walker);
   @include mat.all-component-themes($theme-walker);
-  --color-primary: #{map-get($palette-primary, 500)};
-  --color-primary-50: #{map-get($palette-primary, 50)};
-  --color-secondary: #{map-get($palette-accent, 500)};
-  --color-warn: #{map-get($palette-warn, 500)};
-  --color-black: #1a2138;
-  --color-light: #d8d8d8;
-  --color-white: #ffffff;
+  @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
 }
