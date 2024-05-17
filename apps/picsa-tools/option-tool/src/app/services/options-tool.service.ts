@@ -18,7 +18,7 @@ export class OptionsToolService extends PicsaAsyncService {
   }
   /** Provide database options tool collection filtered to active user */
   public get dbUserCollection() {
-    return this.dbService.activeUserQuery(this.dbCollection);
+    return this.dbService.activeUserQuery(this.dbCollection).sort({ _created_at: 'desc' });
   }
 
   /** Initialise collection required for storing data to database */
