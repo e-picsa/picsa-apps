@@ -86,6 +86,10 @@ $theme-default: mat.define-light-theme(
       accent: $palette-accent,
       warn: $palette-warn,
     ),
+    typography:
+      mat.define-typography-config(
+        $font-family: 'Noto Sans',
+      ),
   )
 );
 
