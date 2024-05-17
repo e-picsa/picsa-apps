@@ -11,6 +11,7 @@ h2 {
   gap: 1rem;
 }
 button.options-button {
+  justify-content: start;
   background: var(--color-primary-50);
   height: 100%;
   font-size: 16px;
