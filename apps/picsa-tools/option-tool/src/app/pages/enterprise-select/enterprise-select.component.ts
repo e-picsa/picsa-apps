@@ -1,20 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-const OPTIONS = [
-  {
-    id: 'crop',
-    label: translateMarker('Crop'),
-  },
-  {
-    id: 'livestock',
-    label: translateMarker('Livestock'),
-  },
-  {
-    id: 'livelihood',
-    label: translateMarker('Livelihood'),
-  },
-];
+import { ENTERPRISE_DATA } from '../../data';
 
 @Component({
   selector: 'option-list',
@@ -22,5 +8,5 @@ const OPTIONS = [
   styleUrls: ['./enterprise-select.component.scss'],
 })
 export class EnterpriseSelectComponent {
-  options = OPTIONS;
+  options = ENTERPRISE_DATA;
 }

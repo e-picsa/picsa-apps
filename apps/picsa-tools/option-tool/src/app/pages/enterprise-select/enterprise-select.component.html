@@ -3,7 +3,7 @@
   <div class="cards-container">
     <div *ngFor="let option of options" class="card" [routerLink]="[option.id]">
       <div class="card-image">
-        <img [src]="'../../../assets/svgs/' + option.id + '-enterprise.svg'" alt="{{ option.label | translate }}" />
+        <img [src]="option.image" alt="{{ option.label | translate }}" />
       </div>
       <div class="card-label">{{ option.label | translate }}</div>
     </div>
