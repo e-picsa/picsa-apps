@@ -1,84 +1,11 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 
+import { ENTERPRISES_BY_ID, INVESTMENT_TYPES, PERFORMANCE_CONDITIONS, STEPPER_STEPS } from '../../data';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
-
-const PERFORMANCE_CONDITIONS = [
-  {
-    id: 'lowRf',
-    label: translateMarker('Low'),
-    svgIcon: 'picsa_weather:rain_low',
-  },
-  {
-    id: 'midRf',
-    label: translateMarker('Mid'),
-    svgIcon: 'picsa_weather:rain_medium',
-  },
-  {
-    id: 'highRf',
-    label: translateMarker('High'),
-    svgIcon: 'picsa_weather:rain_high',
-  },
-];
-
-const INVESTMENT_TYPES = [
-  {
-    id: 'money',
-    label: translateMarker('Money'),
-    matIcon: 'payments',
-  },
-  {
-    id: 'time',
-    label: translateMarker('Time'),
-    matIcon: 'schedule',
-  },
-];
-
-const STEPPER_STEPS = [
-  {
-    id: 'practice',
-    label: translateMarker('Practice'),
-    title: translateMarker('Name of practice'),
-  },
-  {
-    id: 'gender_decisions',
-    label: translateMarker('Decisions'),
-    title: translateMarker('Who makes decisions'),
-  },
-  {
-    id: 'gender_activities',
-    label: translateMarker('Activities'),
-    title: translateMarker('Who does the activity'),
-  },
-  {
-    id: 'benefits',
-    label: translateMarker('Benefits'),
-    title: translateMarker('Benefits and who'),
-  },
-  {
-    id: 'performance',
-    label: translateMarker('Performance'),
-    title: translateMarker('Performance in high, mid and low rainfall'),
-  },
-  {
-    id: 'investment',
-    label: translateMarker('Investment'),
-    title: translateMarker('Investment in terms of money and time'),
-  },
-  {
-    id: 'time',
-    label: translateMarker('Time'),
-    title: translateMarker('Time to start benefiting'),
-  },
-  {
-    id: 'risk',
-    label: translateMarker('Risk'),
-    title: translateMarker('Risks or disadvantages'),
-  },
-];
 
 @Component({
   selector: 'option-editor',
@@ -96,11 +23,19 @@ export class EditorComponent implements OnInit {
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
 
-  constructor(private dialog: PicsaDialogService, private route: ActivatedRoute) {}
+  constructor(
+    private dialog: PicsaDialogService,
+    private route: ActivatedRoute,
+    private componentService: PicsaCommonComponentsService
+  ) {}
 
   ngOnInit() {
-    const enterprise = this.route.snapshot.paramMap.get('enterprise');
-    this.enterprise = (enterprise as IOptionsToolEntry['enterprise']) || 'crop';
+    const enterpriseID = this.route.snapshot.paramMap.get('enterprise');
+    if (enterpriseID) {
+      const enterpriseData = ENTERPRISES_BY_ID[enterpriseID];
+      this.enterprise = enterpriseData.id;
+      this.componentService.patchHeader({ title: enterpriseData.title });
+    }
   }
 
   public handleRemovingBenefits(index: number) {
