@@ -4,10 +4,17 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
+    loadChildren: () =>
+      import('./pages/enterprise-select/enterprise-select.module').then((m) => m.EnterpriseSelectModule),
+    title: 'Options',
+  },
+  {
+    path: ':enterprise',
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
     title: 'Options',
   },
 ];
+
 /** Routes only registered in standalone mode */
 const ROUTES_STANDALONE: Routes = [{ path: '**', redirectTo: '' }];
 

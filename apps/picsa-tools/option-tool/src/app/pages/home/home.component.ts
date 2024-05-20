@@ -1,5 +1,6 @@
 import { DomPortal } from '@angular/cdk/portal';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
@@ -18,7 +19,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   public optionsDisplayList: IOptionsToolEntry[] = [];
 
   /** List of columns to display in table. Note, order will match template keys */
-  public displayedColumns = Object.keys(ENTRY_TEMPLATE()).filter((key) => !key.startsWith('_'));
+  public displayedColumns = Object.keys(ENTRY_TEMPLATE()).filter((key) => !key.startsWith('_') && key !== 'enterprise');
 
   /** List of columns to display subheader row for */
   public subheaderColumns: string[];
@@ -32,19 +33,28 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   public status = 'share';
   public shareDisabled = false;
 
+  /** Option name from route */
+  option: string;
+
   @ViewChild(EditorComponent) editorComponent: EditorComponent;
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
 
-  constructor(private service: OptionsToolService, private componentService: PicsaCommonComponentsService) {
-    this.subscribeToDbChanges();
+  constructor(
+    private service: OptionsToolService,
+    private componentService: PicsaCommonComponentsService,
+    private route: ActivatedRoute
+  ) {
     this.addSubheaderColumns();
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.componentService.patchHeader({
       endContent: new DomPortal(this.headerContent),
     });
+    const enterprise = this.route.snapshot.paramMap.get('enterprise');
+    await this.service.ready();
+    this.subscribeToDbChanges((enterprise as IOptionsToolEntry['enterprise']) || 'crop');
   }
 
   /**
@@ -66,13 +76,13 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
 
   /** Initialise service and subscribe to data changes */
-  private async subscribeToDbChanges() {
-    await this.service.initialise();
+  private subscribeToDbChanges(enterprise: IOptionsToolEntry['enterprise']) {
     // create a live query to retrieve all docs on data change
     // pipe subscription to complete when component destroyed (avoids memory leak)
     const query = this.service.dbUserCollection;
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      this.dbDataDocs = docs;
+      // Filter the documents based on the 'option' value and 'enterprise' field
+      this.dbDataDocs = docs.filter((doc) => doc.enterprise === enterprise);
     });
   }
 
@@ -101,6 +111,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
   async onDataTransfer(data: IOptionsToolEntry | null) {
     if (data) {
+      console.log('transfer', { data });
       await this.service.addORUpdateData(data);
     } else {
       // remove any existing entry entry if no data passed back
