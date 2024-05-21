@@ -1,99 +1,42 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { ActivatedRoute } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 
+import { ENTERPRISES_BY_ID, INVESTMENT_TYPES, PERFORMANCE_CONDITIONS, STEPPER_STEPS } from '../../data';
 import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
-
-const PERFORMANCE_CONDITIONS = [
-  {
-    id: 'lowRf',
-    label: translateMarker('Low'),
-    svgIcon: 'picsa_weather:rain_low',
-  },
-  {
-    id: 'midRf',
-    label: translateMarker('Mid'),
-    svgIcon: 'picsa_weather:rain_medium',
-  },
-  {
-    id: 'highRf',
-    label: translateMarker('High'),
-    svgIcon: 'picsa_weather:rain_high',
-  },
-];
-
-const INVESTMENT_TYPES = [
-  {
-    id: 'money',
-    label: translateMarker('Money'),
-    matIcon: 'payments',
-  },
-  {
-    id: 'time',
-    label: translateMarker('Time'),
-    matIcon: 'schedule',
-  },
-];
-
-const STEPPER_STEPS = [
-  {
-    id: 'practice',
-    label: translateMarker('Practice'),
-    title: translateMarker('Name of practice'),
-  },
-  {
-    id: 'gender_decisions',
-    label: translateMarker('Decisions'),
-    title: translateMarker('Who makes decisions'),
-  },
-  {
-    id: 'gender_activities',
-    label: translateMarker('Activities'),
-    title: translateMarker('Who does the activity'),
-  },
-  {
-    id: 'benefits',
-    label: translateMarker('Benefits'),
-    title: translateMarker('Benefits and who'),
-  },
-  {
-    id: 'performance',
-    label: translateMarker('Performance'),
-    title: translateMarker('Performance in high, mid and low rainfall'),
-  },
-  {
-    id: 'investment',
-    label: translateMarker('Investment'),
-    title: translateMarker('Investment in terms of money and time'),
-  },
-  {
-    id: 'time',
-    label: translateMarker('Time'),
-    title: translateMarker('Time to start benefiting'),
-  },
-  {
-    id: 'risk',
-    label: translateMarker('Risk'),
-    title: translateMarker('Risks or disadvantages'),
-  },
-];
 
 @Component({
   selector: 'option-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent {
+export class EditorComponent implements OnInit {
   public values = ENTRY_TEMPLATE();
   public performanceConditions = PERFORMANCE_CONDITIONS;
   public investmentTypes = INVESTMENT_TYPES;
   public stepperSteps = STEPPER_STEPS;
 
+  private enterprise: IOptionsToolEntry['enterprise'];
+
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
 
-  constructor(private dialog: PicsaDialogService) {}
+  constructor(
+    private dialog: PicsaDialogService,
+    private route: ActivatedRoute,
+    private componentService: PicsaCommonComponentsService
+  ) {}
+
+  ngOnInit() {
+    const enterpriseID = this.route.snapshot.paramMap.get('enterprise');
+    if (enterpriseID) {
+      const enterpriseData = ENTERPRISES_BY_ID[enterpriseID];
+      this.enterprise = enterpriseData.id;
+      this.componentService.patchHeader({ title: enterpriseData.title });
+    }
+  }
 
   public handleRemovingBenefits(index: number) {
     this.values.benefits.splice(index, 1);
@@ -106,15 +49,23 @@ export class EditorComponent {
   }
 
   public async submitForm() {
+    this.values.enterprise = this.enterprise;
     // minimum for auto save should be at least a name
     if (!this.values.practice) {
       this.dataTransfer.emit(null);
       return;
     }
+    // Emit the values
     this.dataTransfer.emit(this.values);
+    // Reset form
+    this.resetForm();
+  }
+
+  private resetForm() {
     this.resetVariables();
     this.resetStepper();
   }
+
   // Allow update from home copmonent
   public presetVariables(rowData: IOptionsToolEntry) {
     this.values = rowData;
