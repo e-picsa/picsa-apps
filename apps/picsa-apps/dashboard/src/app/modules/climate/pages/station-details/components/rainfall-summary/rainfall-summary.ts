@@ -7,7 +7,7 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { ClimateService } from '../../../../climate.service';
-import { DashboardClimateApiStatusComponent } from '../../../../components/api-status/api-status';
+import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
 import { IClimateProductRow } from '../../../../types';
 
 interface IRainfallSummary {
@@ -38,6 +38,11 @@ export class RainfallSummaryComponent implements AfterViewInit {
 
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],
+  };
+
+  public apiStatusOptions: IApiStatusOptions = {
+    events: { refresh: () => this.refreshData() },
+    showStatusCode: true,
   };
 
   private get db() {
