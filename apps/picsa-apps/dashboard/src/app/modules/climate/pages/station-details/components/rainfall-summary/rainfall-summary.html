@@ -1,6 +1,6 @@
 <div style="display: flex; align-items: center">
   <h3 style="flex: 1">Rainfall Summary</h3>
-  <dashboard-climate-api-status [clientId]="apiClientId" (handleRefresh)="refreshData()" />
+  <dashboard-climate-api-status [clientId]="apiClientId" [options]="apiStatusOptions" />
 </div>
 <mat-tab-group preserveContent>
   <mat-tab>
