@@ -8,7 +8,11 @@ on:
       - edited
 jobs:
   label:
-    if: ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}}
+    # Avoid re-label if title not changed or using custom label to prevent
+    # https://github.com/orgs/community/discussions/101695
+    if: |
+      ${{ !contains(github.event.pull_request.labels.*.name , 'no-autolabel')}} &&
+      (event.type == 'opened' || event.changes.title.from)
     runs-on: ubuntu-latest
     steps:
       # Checkout repo to access local templates (if updated)
@@ -25,9 +29,6 @@ jobs:
         # Assign labels based on conventional PR title
         # https://github.com/marketplace/actions/conventional-release-labels
       - name: Assign PR Name Labels
-        # Avoid re-label if title not changed
-        # https://github.com/orgs/community/discussions/101695
-        if: event.type == 'opened' || event.changes.title.from
         uses: bcoe/conventional-release-labels@v1.3.1
         with:
           # Labels assigned based on pr name prefix
