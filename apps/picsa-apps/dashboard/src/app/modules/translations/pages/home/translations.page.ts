@@ -6,6 +6,7 @@ import { ILanguageDataEntry, LANGUAGES_DATA, LANGUAGES_DATA_HASHMAP } from '@pic
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -17,7 +18,7 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
 @Component({
   selector: 'dashboard-translations-page',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
+  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, PicsaLoadingComponent, RouterModule],
   templateUrl: './translations.page.html',
   styleUrls: ['./translations.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -11,12 +11,22 @@ import { TranslationsPageComponent } from './pages/home/translations.page';
     CommonModule,
     RouterModule.forChild([
       {
-        path: '',
+        path: 'list',
         component: TranslationsPageComponent,
       },
       {
-        path: ':id',
+        path: 'import',
+        loadComponent: () =>
+          import('./pages/import/translations-import.component').then((mod) => mod.TranslationsImportComponent),
+      },
+      {
+        path: 'edit/:id',
         component: TranslationsEditComponent,
+      },
+      {
+        path: '',
+        redirectTo: 'list',
+        pathMatch: 'full',
       },
     ]),
   ],

@@ -1,8 +1,9 @@
 <div class="page-content">
-  @if(tableOptions){
+  @if(tableOptions && tableData().length>0){
   <picsa-data-table [data]="tableData()" [options]="tableOptions" [valueTemplates]="{created_at}">
     <ng-template #created_at let-value> {{value | date: 'mediumDate' }} </ng-template>
   </picsa-data-table>
-
+  } @else {
+  <picsa-loading style="margin: auto"></picsa-loading>
   }
 </div>
