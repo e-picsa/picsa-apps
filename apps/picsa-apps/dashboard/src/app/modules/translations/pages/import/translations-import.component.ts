@@ -107,7 +107,9 @@ export class TranslationsImportComponent {
   }
 
   /**
-   *
+   * Check the dropped file to see if it contains translation entries and review
+   * what database actions are required for each when comparing to values
+   * that already exist on server (i.e. update, skip, archive, restore)
    */
   private async prepareSourceActions(entries: ITranslationEntry[]) {
     if (!Array.isArray(entries)) {
@@ -122,6 +124,7 @@ export class TranslationsImportComponent {
     await this.service.ready();
     const serverHashmap = arrayToHashmap(this.service.translations, 'id');
     let summary = this.generateSourceSummary(localHashmap, serverHashmap);
+    // When running locally allow one-time migration of existing translations from i18n folder
     if (!ENVIRONMENT.production) {
       summary = await this.hackLookupLegacyTranslations(summary);
     }
@@ -160,7 +163,11 @@ export class TranslationsImportComponent {
     return summary;
   }
 
-  /** */
+  /**
+   * Previously translations were stored in individual json files as exported from google drive
+   * Read the file contents of this drive to allow a one-time migration to include translated
+   * strings with newly populated database entries
+   */
   private async hackLookupLegacyTranslations(summary: ImportActionSummary) {
     const hardcodedTranslations = {
       zm_ny: async () => (await import('../../../../../../../../../libs/i18n/source/zm_ny.json')).default,
@@ -169,13 +176,14 @@ export class TranslationsImportComponent {
       tj_tg: async () => (await import('../../../../../../../../../libs/i18n/source/tj_tg.json')).default,
     };
     for (const [language_code, importer] of Object.entries(hardcodedTranslations)) {
+      // Import source json file contents
       const imported = await importer();
-      //
+      // Extract list of existing translations, using non-case-sensitive lookup keys
       const translationsHashmap: Record<string, string> = {};
       for (const [key, value] of Object.entries(imported)) {
         translationsHashmap[textToLookupKey(key)] = value;
       }
-      //
+      // Populate existing translations where they exist
       summary.add = summary.add.map((entry) => {
         const translatedValue = translationsHashmap[textToLookupKey(entry.text)];
         if (translatedValue) {
