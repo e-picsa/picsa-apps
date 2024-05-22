@@ -1,6 +1,6 @@
 <div class="page-content">
   @if(tableOptions){
-  <picsa-data-table [data]="service.translations" [options]="tableOptions" [valueTemplates]="{created_at}">
+  <picsa-data-table [data]="tableData()" [options]="tableOptions" [valueTemplates]="{created_at}">
     <ng-template #created_at let-value> {{value | date: 'mediumDate' }} </ng-template>
   </picsa-data-table>
 

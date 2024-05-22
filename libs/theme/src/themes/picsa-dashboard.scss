@@ -73,7 +73,7 @@ $accent: (
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $palette-primary: mat.define-palette($primary);
-$palette-accent: mat.define-palette($accent, A200, A100, A400);
+$palette-accent: mat.define-palette($accent, 500, 200, 950);
 
 // The warn palette is optional (defaults to red).
 $palette-warn: mat.define-palette(mat.$red-palette);

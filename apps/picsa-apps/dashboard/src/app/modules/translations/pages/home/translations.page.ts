@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { ILanguageDataEntry, LANGUAGES_DATA, LANGUAGES_DATA_HASHMAP } from '@picsa/data';
@@ -27,6 +27,10 @@ export class TranslationsPageComponent {
   public tableOptions: IDataTableOptions;
 
   public languageHashmap = LANGUAGES_DATA_HASHMAP;
+
+  public tableData = computed(() => {
+    return this.service.translations.filter((entry) => !entry.archived);
+  });
 
   /** Common table options used independent of deployment selected */
   private tableOptionsBase: IDataTableOptions = {
@@ -77,13 +81,13 @@ export class TranslationsPageComponent {
     if (country_code === 'global') {
       return LANGUAGES_DATA;
     }
-    return LANGUAGES_DATA.filter((o) => o.country_code === 'global' || o.country_code === country_code);
+    return LANGUAGES_DATA.filter((o) => o.country_code === country_code);
   }
 
   private generateTableOptions(languageCodes: string[]): IDataTableOptions {
     return {
       ...this.tableOptionsBase,
-      displayColumns: ['tool', 'context', ...languageCodes, 'created_at'],
+      displayColumns: ['tool', 'context', 'text', ...languageCodes, 'created_at'],
     };
   }
 
