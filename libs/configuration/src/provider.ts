@@ -70,7 +70,6 @@ export class ConfigurationService {
   }
 
   private loadUserSettings() {
-    console.log('loading user settings');
     const storedSettings = localStorage.getItem('picsa_user_settings');
     // merge with defaults
     if (storedSettings) {

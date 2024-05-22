@@ -44,6 +44,7 @@ export const LANGUAGES_DATA = Object.entries(LANGUAGES_BASE).map(([id, data]) =>
   id: id as ILanguageCode,
   flag_path: `assets/images/flags/${data.country_code}.svg`,
   ...(data as ILanguageMeta),
+  country_label: COUNTRIES_DATA_HASHMAP[data.country_code]?.label,
 }));
 
 export type ILanguageDataEntry = typeof LANGUAGES_DATA[0];

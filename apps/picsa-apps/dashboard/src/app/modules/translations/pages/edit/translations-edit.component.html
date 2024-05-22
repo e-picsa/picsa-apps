@@ -8,8 +8,8 @@
     </div>
 
     <div class="form-data">
-      <label>English</label>
-      <input matInput [(ngModel)]="translationRow.en" name="en" />
+      <label>Text</label>
+      <input matInput [(ngModel)]="translationRow.text" name="en" />
     </div>
 
     <div class="form-data">
@@ -37,10 +37,5 @@
   <div>Loading...</div>
   } @if(editActionFeedbackMessage){
   <div>{{ editActionFeedbackMessage }}</div>
-  } @if(translationRow){
-  <h2>Delete this Translation</h2>
-  <button mat-raised-button color="primary" class="deleteButton" (click)="openTranslationDeleteDialog()">
-    Delete this translation <mat-icon color="white">delete</mat-icon>
-  </button>
   }
 </div>

@@ -1,3 +1,6 @@
+@use 'mixins';
+@use '@angular/material' as mat;
+
 $primary: (
   50: #fdefe0,
   100: #fad8b3,
@@ -85,11 +88,5 @@ $theme-zm: mat.define-light-theme(
 
 body[data-theme='picsa-zm'] {
   @include mat.all-component-themes($theme-zm);
-  --color-primary: #{map-get($palette-primary, 500)};
-  --color-primary-50: #{map-get($palette-primary, 50)};
-  --color-secondary: #{map-get($palette-accent, 500)};
-  --color-warn: #{map-get($palette-warn, 500)};
-  --color-black: #1a2138;
-  --color-light: #d8d8d8;
-  --color-white: #ffffff;
+  @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
 }

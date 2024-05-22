@@ -1,61 +1,9 @@
 <div class="page-content">
-  <div style="display: flex; align-items: center">
-    <h2 style="flex: 1">Translations</h2>
-    <button mat-raised-button color="primary" routerLink="/translations/new">Add New Translation</button>
-  </div>
-  @if(service.translations){
-  <table mat-table [dataSource]="service.translations">
-    <!-- 'tool' Column -->
-    <ng-container matColumnDef="tool" clickable>
-      <th mat-header-cell *matHeaderCellDef>Tool</th>
-      <td mat-cell *matCellDef="let element">{{ element.tool }}</td>
-    </ng-container>
-
-    <!-- 'context' Column -->
-    <ng-container matColumnDef="context" clickable>
-      <th mat-header-cell *matHeaderCellDef>Context</th>
-      <td mat-cell *matCellDef="let element">{{ element.context }}</td>
-    </ng-container>
-
-    <!-- 'en' Column -->
-    <ng-container matColumnDef="en" clickable>
-      <th mat-header-cell *matHeaderCellDef>en</th>
-      <td mat-cell *matCellDef="let element">{{ element.en }}</td>
-    </ng-container>
-
-    <!-- 'mw_ny' Column -->
-    <ng-container matColumnDef="mw_ny">
-      <th mat-header-cell *matHeaderCellDef>mw_ny</th>
-      <td mat-cell *matCellDef="let element">{{ element.mw_ny }}</td>
-    </ng-container>
-
-    <!-- 'zm_ny' Column -->
-    <ng-container matColumnDef="zm_ny">
-      <th mat-header-cell *matHeaderCellDef>zm_ny</th>
-      <td mat-cell *matCellDef="let element">{{ element.zm_ny }}</td>
-    </ng-container>
-
-    <!-- 'ke_sw' Column -->
-    <ng-container matColumnDef="ke_sw">
-      <th mat-header-cell *matHeaderCellDef>ke_sw</th>
-      <td mat-cell *matCellDef="let element">{{ element.ke_sw }}</td>
-    </ng-container>
-
-    <!-- 'tg' Column -->
-    <ng-container matColumnDef="tj_tg">
-      <th mat-header-cell *matHeaderCellDef>tj_tg</th>
-      <td mat-cell *matCellDef="let element">{{ element.tj_tg }}</td>
-    </ng-container>
-
-    <!-- 'created_at' Column -->
-    <ng-container matColumnDef="created_at">
-      <th mat-header-cell *matHeaderCellDef>Date</th>
-      <td mat-cell *matCellDef="let element">{{ element.created_at | date: 'mediumDate' }}</td>
-    </ng-container>
-
-    <!-- Table Rows -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToRecord(row)"></tr>
-  </table>
+  @if(tableOptions && tableData().length>0){
+  <picsa-data-table [data]="tableData()" [options]="tableOptions" [valueTemplates]="{created_at}">
+    <ng-template #created_at let-value> {{value | date: 'mediumDate' }} </ng-template>
+  </picsa-data-table>
+  } @else {
+  <picsa-loading style="margin: auto"></picsa-loading>
   }
 </div>
