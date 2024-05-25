@@ -1,6 +1,10 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+// import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { RxDocument } from 'rxdb';
 import { Subject } from 'rxjs';
 
@@ -8,6 +12,7 @@ import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'];
+
 
 @Component({
   selector: 'resource-downloads',
@@ -22,7 +27,12 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(public service: ResourcesToolService) {}
+  constructor(
+    public service: ResourcesToolService, 
+    private notificationService: PicsaNotificationService,
+    private clipboard: Clipboard,
+    // private router: Router
+  ) {}
 
   async ngOnInit() {
     await this.service.ready();
@@ -40,5 +50,26 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
 
   public async deleteDownload(doc: RxDocument<IResourceFile>) {
     return this.service.removeFileAttachment(doc);
+  }
+  public async shareDocument(doc: RxDocument<IResourceFile>) {
+    // console.log(doc)
+    if (Capacitor.isNativePlatform()) {
+      console.log('native device')
+      
+    }else{
+      try {
+        // could share the link but they are protected and the page will not open
+        // const fullLink = window.location.href + this.router.url;
+        // Copy resource URL
+        //TODO: Probably add and use a URL shortener service
+        await this.clipboard.copy(doc._data.url);
+        this.notificationService.showUserNotification({ matIcon: 'copy', message: "Download link copied to clipboard" });
+      } catch (error) {
+        console.error('Error copying link or showing notification:', error);
+        this.notificationService.showUserNotification({ matIcon: 'error', message: "Failed to copy link" }); 
+      }
+    }
+    
+    
   }
 }
