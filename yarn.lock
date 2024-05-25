@@ -3397,6 +3397,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/share@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor/share@npm:6.0.0"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+  checksum: bdeed48aac00f9ead31187c621d5b2281e997d330b32e402830685d0d703cd5b5ba0fc5c3284a4fe8eaabf6d2c03fb161b851f7258bb55d081e64057b15211af
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -16916,7 +16925,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: b08b88994769667f11f2b6a8937656c89cea34dafd4661abab0b48b4b97f3bddbdce7b23ddfdb8d7c6335e065530e32a70e281314afa34afa134bf68597945fc
+  checksum: 253998170af27f886d05b245c85429767e272647221daaf8d94ff5b86f75b8cbb96cc76a8a88492243166a214bc3b66b3ae704a81f74c862f09ac6c9495f731e
   languageName: node
   linkType: hard
 
@@ -19318,6 +19327,7 @@ __metadata:
     "@capacitor/filesystem": ^5.1.4
     "@capacitor/network": ^5.0.6
     "@capacitor/screen-orientation": ^5.0.7
+    "@capacitor/share": ^6.0.0
     "@ngx-translate/core": ~15.0.0
     "@ngx-translate/http-loader": ~8.0.0
     "@nx/angular": 18.2.1
