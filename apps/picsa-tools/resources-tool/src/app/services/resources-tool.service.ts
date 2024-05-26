@@ -11,9 +11,12 @@ import { NativeStorageService } from '@picsa/shared/services/native';
 import { _wait, arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
+import { IResourceFile } from '../schemas';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
@@ -28,7 +31,9 @@ export class ResourcesToolService extends PicsaAsyncService {
     private configurationService: ConfigurationService,
     private nativeStorageService: NativeStorageService,
     private fileService: FileService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private clipboard: Clipboard,
+    private notificationService: PicsaNotificationService,
   ) {
     super();
   }
@@ -228,4 +233,24 @@ export class ResourcesToolService extends PicsaAsyncService {
   private setAssetResourcesVersion() {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
+
+  public async shareResourse(doc: RxDocument<IResourceFile>) {
+    // console.log(doc)
+    if (Capacitor.isNativePlatform()) {
+      console.log('native device')
+      
+    }else{
+      try {
+        // could share the link but they are protected and the page will not open
+        // const fullLink = window.location.href + this.router.url;
+        // Copy resource URL
+        //TODO: Probably add and use a URL shortener service
+        await this.clipboard.copy(doc._data.url);
+        this.notificationService.showUserNotification({ matIcon: 'copy', message: "Download link copied to clipboard" });
+      } catch (error) {
+        console.error('Error copying link or showing notification:', error);
+        this.notificationService.showUserNotification({ matIcon: 'error', message: "Failed to copy link" }); 
+      }
+    }
+  }  
 }
