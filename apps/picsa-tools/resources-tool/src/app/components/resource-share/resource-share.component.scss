@@ -1,0 +1,17 @@
+.share-button{
+  background-color: var(--color-primary);
+  border-radius: 8px;
+  width: 70px; height: 70px;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+}
+.share-button-text{
+  position: relative;
+  left: -6px;
+  margin-top: 4px;
+  font-size: 15px;
+  width: fit-content;
+  font-weight: 500;
+  color: white;
+}
