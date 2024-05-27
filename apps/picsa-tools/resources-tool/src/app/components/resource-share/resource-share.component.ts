@@ -10,7 +10,7 @@ import {
 import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
-import { IResourceFile } from '../../schemas';
+import { IResourceFile, IResourceLink } from '../../schemas';
 import {  ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({
@@ -25,15 +25,24 @@ export class ResourceShareComponent implements OnDestroy {
   public attachment?: RxAttachment<IResourceFile>;
 
   private _dbDoc: RxDocument<IResourceFile>;
+  private _dbLink: IResourceLink;
   // private download$?: Subscription;
   private componentDestroyed$ = new Subject();
   
   @Input() styleVariant: 'primary' | 'white' = 'primary';
   // type of resourse
-  @Input() resourceType: 'file';
+  @Input() resourceType: 'file' | 'link';
 
   @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
     this._dbDoc = dbDoc;
+    // if (dbDoc) {
+    //   this.subscribeToAttachmentChanges(dbDoc);
+    // }
+  }
+   //for when we have a link
+  @Input() set dbLink(dbLink: IResourceLink) {
+    console.log(dbLink)
+    this._dbLink = dbLink;
     // if (dbDoc) {
     //   this.subscribeToAttachmentChanges(dbDoc);
     // }
@@ -48,5 +57,10 @@ export class ResourceShareComponent implements OnDestroy {
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
+  }
+  public async shareDocument() {
+    if(this.resourceType==='file'){
+      this.service.shareResourse(this._dbDoc)
+    }
   }
 }

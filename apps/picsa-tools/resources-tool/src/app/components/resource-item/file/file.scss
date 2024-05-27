@@ -10,10 +10,15 @@
   z-index: 4;
   background: #fbfbfb91;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
-  flex-direction: row;
- 
+  // flex-direction: row;
+}
+.share-button-section{
+  position: relative;
+  top: 36px;
+  z-index: 10;
+  left: 85%;
 }
 .download-overlay[data-file-type='video'] {
   max-width: 854px;

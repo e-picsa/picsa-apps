@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
@@ -7,16 +8,14 @@ import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
 import { _wait, arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
-import { IResourceFile } from '../schemas';
-import { Clipboard } from '@angular/cdk/clipboard';
 
 export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
@@ -234,7 +233,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
 
-  public async shareResourse(doc: RxDocument<IResourceFile>) {
+  public async shareResourse(doc: RxDocument<schemas.IResourceFile>) {
     // console.log(doc)
     if (Capacitor.isNativePlatform()) {
       console.log('native device')

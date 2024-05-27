@@ -1,9 +1,13 @@
+:host {
+  display: block;
+  width: 40px;
+}
 .share-button{
   background-color: var(--color-primary);
   border-radius: 8px;
-  width: 70px; height: 70px;
+  width: 30px; height: 30px;
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: center;
 }
 .share-button-text{
