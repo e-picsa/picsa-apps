@@ -233,23 +233,22 @@ export class ResourcesToolService extends PicsaAsyncService {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
 
-  public async shareResourse(doc: RxDocument<schemas.IResourceFile>) {
-    // console.log(doc)
+  public async shareResource(resource: any, resourceType: string) { 
     if (Capacitor.isNativePlatform()) {
-      console.log('native device')
-      
-    }else{
+      console.log('native device');
+    } else {
       try {
-        // could share the link but they are protected and the page will not open
-        // const fullLink = window.location.href + this.router.url;
-        // Copy resource URL
-        //TODO: Probably add and use a URL shortener service
-        await this.clipboard.copy(doc._data.url);
+        // it is either link or file
+        let url = resourceType==='file' ? resource._data.url : resource.url; 
+        if(resourceType==='link' && resource?.subtype==="play_store"){
+          url =`https://play.google.com/store/apps/details?id=${url}`
+        }
+        await this.clipboard.copy(url);
         this.notificationService.showUserNotification({ matIcon: 'copy', message: "Download link copied to clipboard" });
       } catch (error) {
         console.error('Error copying link or showing notification:', error);
-        this.notificationService.showUserNotification({ matIcon: 'error', message: "Failed to copy link" }); 
+        this.notificationService.showUserNotification({ matIcon: 'error', message: "Failed to copy link" });
       }
     }
-  }  
+  }
 }

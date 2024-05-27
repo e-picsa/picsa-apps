@@ -35,32 +35,30 @@ export class ResourceShareComponent implements OnDestroy {
 
   @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
     this._dbDoc = dbDoc;
-    // if (dbDoc) {
-    //   this.subscribeToAttachmentChanges(dbDoc);
-    // }
   }
    //for when we have a link
   @Input() set dbLink(dbLink: IResourceLink) {
     console.log(dbLink)
     this._dbLink = dbLink;
-    // if (dbDoc) {
-    //   this.subscribeToAttachmentChanges(dbDoc);
-    // }
   }
 
   constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
   
-  public get resource() {
-    return this._dbDoc._data;
-  }
+  // public get resource() {
+  //   return this._dbDoc._data;
+  // }
 
   ngOnDestroy() {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
   }
   public async shareDocument() {
+    
     if(this.resourceType==='file'){
-      this.service.shareResourse(this._dbDoc)
+      this.service.shareResource(this._dbDoc,'file')
+    }
+    if(this.resourceType==='link'){
+      this.service.shareResource(this._dbLink,'link')
     }
   }
 }

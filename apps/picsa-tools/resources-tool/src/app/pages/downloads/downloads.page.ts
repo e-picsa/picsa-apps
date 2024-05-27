@@ -45,8 +45,8 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
   public async deleteDownload(doc: RxDocument<IResourceFile>) {
     return this.service.removeFileAttachment(doc);
   }
-  
+
   public async shareDocument(doc: RxDocument<IResourceFile>) {
-    this.service.shareResourse(doc)
+    this.service.shareResource(doc,'file')
   }
 }
