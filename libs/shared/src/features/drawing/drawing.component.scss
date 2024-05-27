@@ -6,3 +6,9 @@
   width: calc(80vw - 48px);
   height: 80vh;
 }
+
+.flex.flex-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
