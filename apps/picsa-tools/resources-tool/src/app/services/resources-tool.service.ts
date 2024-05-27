@@ -2,6 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -32,7 +33,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     private fileService: FileService,
     private analyticsService: AnalyticsService,
     private clipboard: Clipboard,
-    private notificationService: PicsaNotificationService,
+    private notificationService: PicsaNotificationService
   ) {
     super();
   }
@@ -233,21 +234,42 @@ export class ResourcesToolService extends PicsaAsyncService {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
 
-  public async shareResource(resource: any, resourceType: string) { 
+  public async shareResource(resource: any, resourceType: string) {
+    const isShareContent = await Share.canShare();
+    // it is either link or file
+    let url = resourceType === 'file' ? resource._data.url : resource.url;
+    if (resourceType === 'link' && resource?.subtype === 'play_store') {
+      url = `https://play.google.com/store/apps/details?id=${url}`;
+    }
     if (Capacitor.isNativePlatform()) {
-      console.log('native device');
+      try {
+        await Share.share({
+          title: 'Share Resource',
+          url: url,
+          dialogTitle: 'Share Resource Link',
+        });
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       try {
-        // it is either link or file
-        let url = resourceType==='file' ? resource._data.url : resource.url; 
-        if(resourceType==='link' && resource?.subtype==="play_store"){
-          url =`https://play.google.com/store/apps/details?id=${url}`
+        //api is not compatible with some browser versions
+        if (isShareContent.value) {
+          await Share.share({
+            title: 'Share Resource',
+            url: url,
+            dialogTitle: 'Share Resource Link',
+          });
+        } else {
+          //simply copy the link to clipboard
+          await this.clipboard.copy(url);
+          this.notificationService.showUserNotification({
+            matIcon: 'success',
+            message: 'Link to this resource has been copied for you to share.',
+          });
         }
-        await this.clipboard.copy(url);
-        this.notificationService.showUserNotification({ matIcon: 'copy', message: "Download link copied to clipboard" });
       } catch (error) {
         console.error('Error copying link or showing notification:', error);
-        this.notificationService.showUserNotification({ matIcon: 'error', message: "Failed to copy link" });
       }
     }
   }
