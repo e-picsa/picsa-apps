@@ -23,12 +23,17 @@ header[data-style='inverted'] {
 }
 
 .central-content {
+  // use absolute position so content can still be central despite start/end content
+  position: absolute;
+  left: 64px;
+  width: calc(100% - 128px);
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .end-content {
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;

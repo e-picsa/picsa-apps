@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.40.0",
+  "version": "3.41.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -107,11 +107,12 @@
     "parse": "3.4.2",
     "perfect-freehand": "^1.2.2",
     "rxdb": "^14.11.1",
-    "rxjs": "~7.8.0",
+    "rxjs": "~7.8.1",
     "save-svg-as-png": "^1.4.17",
     "sharp": "^0.31.3",
     "stacktrace-js": "^2.0.2",
     "tslib": "^2.5.0",
+    "uuid": "^9.0.1",
     "zone.js": "0.14.4"
   },
   "devDependencies": {
@@ -141,6 +142,7 @@
     "@stencil/sass": "^3.0.2",
     "@swc-node/register": "1.8.0",
     "@swc/core": "~1.3.85",
+    "@swc/helpers": "~0.5.2",
     "@types/c3": "^0.7.8",
     "@types/downloadjs": "^1.4.6",
     "@types/hammerjs": "^2.0.41",
@@ -153,6 +155,7 @@
     "@types/parse": "^2.18.16",
     "@types/prompts": "^2.0.14",
     "@types/sharp": "^0.30.5",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "7.3.0",
     "@typescript-eslint/parser": "7.3.0",
     "@vendure/ngx-translate-extract": "^9.0.3",

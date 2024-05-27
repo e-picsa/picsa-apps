@@ -1,0 +1,34 @@
+<mat-drawer-container class="example-container" [hasBackdrop]="true">
+  <mat-drawer #drawer mode="over">
+    <div class="page-content draw-content">
+      <button mat-icon-button (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
+      <picsa-configuration-summary style="margin-top: auto" (click)="drawer.close()" />
+      <footer>
+        <a routerLink="/privacy" class="privacy-policy">{{ 'Privacy Policy' | translate }}</a>
+        <div class="version-info">v{{ version.number }}</div>
+      </footer>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div class="page">
+      <picsa-header>
+        @if(showMenuButton()){
+        <button id="menuButton" mat-icon-button (click)="drawer.toggle()" class="menu-button">
+          <mat-icon id="menuIcon">menu</mat-icon>
+        </button>
+        <!-- NOTE - back button currently handled in header itself -->
+
+        }
+      </picsa-header>
+      @if(ready){
+      <router-outlet></router-outlet>
+      }
+    </div>
+    <!-- Loading spinner -->
+    @if(showLoader) {
+    <div class="loading-container">
+      <picsa-loading></picsa-loading>
+    </div>
+    }
+  </mat-drawer-content>
+</mat-drawer-container>

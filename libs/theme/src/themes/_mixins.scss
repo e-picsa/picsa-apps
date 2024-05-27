@@ -1,0 +1,11 @@
+@mixin setColorVariables($primary, $accent, $warn) {
+  --color-primary: #{map-get($primary, 500)};
+  --color-primary-50: #{map-get($primary, 50)};
+  --color-primary-950: #{map-get($primary, 950)};
+  --color-secondary: #{map-get($accent, 500)};
+  --color-secondary-50: #{map-get($accent, 50)};
+  --color-warn: #{map-get($warn, 500)};
+  --color-black: #1a2138;
+  --color-light: #d8d8d8;
+  --color-white: #ffffff;
+}

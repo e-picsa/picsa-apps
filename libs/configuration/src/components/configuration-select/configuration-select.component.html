@@ -1,0 +1,64 @@
+<div class="page-content" style="align-items: center">
+  <form [formGroup]="languageForm" style="width: 100%; max-width: 500px">
+    <mat-stepper style="width: 100%" animationDuration="750" linear>
+      <!-- Country Select -->
+      <mat-step label="Country" state="country" [stepControl]="countryForm">
+        <h2>{{ 'Choose country' | translate }}</h2>
+        <mat-radio-group class="options-container" [formControl]="countryForm.controls.country_code">
+          @for(option of countryOptions; track option.id){
+          <button mat-button class="options-button" (click)="setCountry(option.id)">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <mat-radio-button color="primary" [value]="option.id"></mat-radio-button>
+              <img class="flag-icon" [src]="option.flag_path" />
+              <div style="margin-left: 8px">
+                <div>{{ option.label }}</div>
+              </div>
+            </div>
+          </button>
+          }
+        </mat-radio-group>
+      </mat-step>
+
+      <!-- Language Select -->
+      <mat-step label="Language" state="language" [stepControl]="languageForm">
+        <h2>{{ 'Choose language' | translate }}</h2>
+        <mat-radio-group class="options-container" [formControl]="languageForm.controls.language_code">
+          @for(option of languageOptions(); track option.id){
+          <button mat-button class="options-button" (click)="setLanguage(option.id)">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <mat-radio-button color="primary" [value]="option.id">{{ option.language_label }}</mat-radio-button>
+            </div>
+          </button>
+          }
+        </mat-radio-group>
+      </mat-step>
+
+      <!-- User Type Select -->
+      <mat-step label="User" state="user" [stepControl]="userTypeForm">
+        <h2>{{ 'What best describes you?' | translate }}</h2>
+        <mat-radio-group class="options-container" [formControl]="userTypeForm.controls.user_type">
+          @for(option of userTypeOptions; track option.id){
+          <button mat-button class="options-button" style="text-align: left" (click)="setUserType(option.id)">
+            <div style="display: flex; align-items: center">
+              <mat-radio-button color="primary" [value]="option.id">
+                <span>{{ option.label | translate }}</span>
+              </mat-radio-button>
+            </div>
+          </button>
+          }
+        </mat-radio-group>
+      </mat-step>
+
+      <!-- Icon overrides. -->
+      <ng-template matStepperIcon="country">
+        <mat-icon>public</mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="language">
+        <mat-icon>translate</mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="user">
+        <mat-icon>person</mat-icon>
+      </ng-template>
+    </mat-stepper>
+  </form>
+</div>

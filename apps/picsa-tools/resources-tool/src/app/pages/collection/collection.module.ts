@@ -16,7 +16,7 @@ import { CollectionRoutingModule } from './collection-routing.module';
     PicsaTranslateModule,
     PicsaCommonComponentsModule,
     ResourcesComponentsModule,
-    ResourcesMaterialModule,
+    ResourcesMaterialModule
   ],
 })
 export class CollectionModule {}

@@ -8,15 +8,20 @@ import { AnalyticsService } from '@picsa/shared/services/core/analytics.service'
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
-import { arrayToHashmap } from '@picsa/utils';
+import { _wait, arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
-import { lastValueFrom } from 'rxjs';
+import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
 
+export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
+
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {
+  /** Track active downloadStatus by resource ID */
+  public downloads: Record<string, { progress: number; status: string }> = {};
+
   constructor(
     private dbService: PicsaDatabase_V2_Service,
     private dbAttachmentService: PicsaDatabaseAttachmentService,
@@ -62,13 +67,13 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public filterLocalisedResources<T extends schemas.IResourceBase>(docs: T[]) {
-    const { code } = this.configurationService.activeConfiguration.localisation.country;
-    // global deployment code "" not filtered
-    if (!code) return docs;
+    const { country_code } = this.configurationService.deploymentSettings();
+    // global deployment code not filtered
+    if (country_code === 'global') return docs;
     return docs.filter((doc) => {
       const filterCountries = doc.filter?.countries;
       if (!filterCountries) return true;
-      return filterCountries.includes(code);
+      return filterCountries.includes(country_code);
     });
   }
 
@@ -108,6 +113,39 @@ export class ResourcesToolService extends PicsaAsyncService {
 
   public removeFileAttachment(doc: RxDocument<schemas.IResourceFile>) {
     return this.dbAttachmentService.removeAttachment(doc, doc.filename);
+  }
+
+  public triggerResourceDownload(doc: RxDocument<schemas.IResourceFile>) {
+    let downloadData: Blob;
+    // Create observables that can be subscribed to from component that triggers method
+    const progress$ = new BehaviorSubject(0);
+    const status$ = new BehaviorSubject<IDownloadStatus>('pending');
+    // Handle download, also passing back subscription so that component can cancel if required
+    const download$ = this.fileService.downloadFile(doc.url, 'blob').subscribe({
+      next: ({ progress, data }) => {
+        progress$.next(progress);
+        // NOTE - might be called multiple times before completing so avoid persisting data here
+        if (progress === 100) {
+          downloadData = data as Blob;
+          status$.next('finalizing');
+        }
+      },
+      error: (error) => {
+        status$.next('error');
+        console.error(error);
+        throw error;
+      },
+      complete: async () => {
+        // give small timeout to allow UI to update
+        await _wait(100);
+        // persist to document attachment
+        await this.putFileAttachment(doc, downloadData);
+        status$.next('complete');
+        status$.complete();
+        progress$.complete();
+      },
+    });
+    return { progress$, status$, download$ };
   }
 
   private async populateHardcodedResources() {

@@ -3,6 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, O
 import { ActivatedRoute } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { ILanguageCode } from '@picsa/data/deployments';
 import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
@@ -42,7 +43,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     extension: null,
   };
 
-  public localisation: string;
+  public languageCode: ILanguageCode;
 
   public page?: number = undefined;
   public pdfSrc?: string;
@@ -73,7 +74,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     });
     const version = this.getManualVersion();
     this.initialTabIndex = TAB_MAPPING[version];
-    this.localisation = this.ConfigurationService.activeConfiguration.localisation.language.selected?.code || 'en';
+    this.languageCode = this.ConfigurationService.userSettings().language_code;
   }
 
   async ngAfterViewInit() {
@@ -97,7 +98,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   private async loadManual() {
     await this.resourcesService.ready();
     const version = this.getManualVersion();
-    const manualResource = LOCALISED_VERSIONS[version][this.localisation] || LOCALISED_VERSIONS[version].en;
+    const manualResource = LOCALISED_VERSIONS[version][this.languageCode] || LOCALISED_VERSIONS[version].en;
     if (this.pdfSrc) {
       return;
     }

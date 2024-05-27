@@ -16,7 +16,7 @@
       <ng-container *ngTemplateOutlet="manualDownload; context: { version: 'extension' }"></ng-container>
       <picsa-manual-steps-container
         [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
-        [pageMapping]="localisation"
+        [pageMapping]="languageCode"
         [stepData]="contents.extension"
         [@fadeInOut]="extensionTab.isActive ? 'in' : 'out'"
       ></picsa-manual-steps-container>
@@ -27,7 +27,7 @@
       <ng-container *ngTemplateOutlet="manualDownload; context: { version: 'farmer' }"></ng-container>
       <picsa-manual-steps-container
         [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
-        [pageMapping]="localisation"
+        [pageMapping]="languageCode"
         [stepData]="contents.farmer"
         [@fadeInOut]="farmerTab.isActive ? 'in' : 'out'"
       ></picsa-manual-steps-container>

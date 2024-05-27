@@ -6,14 +6,12 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { MobxAngularModule } from 'mobx-angular';
 
-import { ComponentsModule } from '../../components/components.module';
-import { ExtensionToolkitMaterialModule } from '../../material.module';
-import { HomePage } from './home.page';
+import { HomePageComponent } from './home.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomePage,
+    component: HomePageComponent,
   },
 ];
 
@@ -23,11 +21,9 @@ const routes: Routes = [
     FormsModule,
     MobxAngularModule,
     RouterModule.forChild(routes),
-    ComponentsModule,
-    ExtensionToolkitMaterialModule,
     PicsaTranslateModule,
     PicsaCommonComponentsModule,
+    HomePageComponent,
   ],
-  declarations: [HomePage],
 })
 export class HomePageModule {}

@@ -48,6 +48,5 @@ export interface IEnvironment {
   production: boolean;
   firebase: IFirebaseConfig;
   group: IGroupSettings;
-  defaultConfiguration: string;
   supabase: ISupabaseConfig;
 }

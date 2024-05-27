@@ -1,0 +1,10 @@
+<div class="page-content">
+  @if(content(); as content){
+  <div @fadeInOut>
+    <div class="top-banner">
+      <img class="content-icon" [src]="content.icon_path" />
+      <h2 class="title">{{ content.title | translate }}</h2>
+    </div>
+  </div>
+  }
+</div>

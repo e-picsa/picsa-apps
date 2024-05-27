@@ -1,18 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule, PicsaDrawingComponent } from '@picsa/shared/features';
 import { PicsaDbModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { BudgetMaterialModule } from '../material.module';
 // Components
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
+import { BudgetDrawComponent } from './budget-draw/budget-draw.component';
+import { BudgetSummaryComponent } from './budget-summary/budget-summary.component';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
 import { BudgetCardNew } from './card/card-new/card-new';
@@ -30,9 +33,6 @@ import { BudgetListItemComponent, BudgetListItemRenameDialog } from './list-item
 import { BudgetShareDialogComponent } from './share-dialog/share-dialog.component';
 import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { BudgetTableComponent } from './table/budget-table';
-import { BudgetSummaryComponent } from './budget-summary/budget-summary.component';
-import { MatIconModule } from '@angular/material/icon';
-import { BudgetDrawComponent } from './budget-draw/budget-draw.component';
 
 const components = [
   BudgetBalanceLegendComponent,

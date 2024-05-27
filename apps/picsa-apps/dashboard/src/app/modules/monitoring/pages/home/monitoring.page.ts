@@ -32,8 +32,9 @@ export class MonitoringPageComponent implements OnInit {
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],
   };
-  ngOnInit(): void {
-    this.service.ready();
+  async ngOnInit() {
+    await this.service.ready();
+    await this.service.listMonitoringForms();
   }
   //this was returning undefined for "this.router" before I made it an arrow funtion, any idea why?
   onRowClick = (row: IMonitoringFormsRow) => {

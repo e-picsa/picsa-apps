@@ -2,6 +2,8 @@
 export * from './crops';
 export * from './crop_activity';
 export * from './days';
+export * from './deployments';
+export * from './farmer_content';
 export * from './months';
 export * from './weather';
 

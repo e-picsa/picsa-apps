@@ -1,0 +1,99 @@
+@use 'mixins';
+@use '@angular/material' as mat;
+
+$primary: (
+  50: #e8ecf2,
+  100: #c5d0e0,
+  200: #9eb1cb,
+  300: #7791b6,
+  400: #597aa6,
+  500: #3c6296,
+  600: #365a8e,
+  700: #2e5083,
+  800: #274679,
+  900: #1a3468,
+  A100: #a3c0ff,
+  A200: #709dff,
+  A400: #3d79ff,
+  A700: #2468ff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+
+$accent: (
+  50: #f5e3e9,
+  100: #e6b8c7,
+  200: #d589a2,
+  300: #c45a7c,
+  400: #b73660,
+  500: #aa1344,
+  600: #a3113e,
+  700: #990e35,
+  800: #900b2d,
+  900: #7f061f,
+  // custom 950 exported from figma 700
+  950: #5e1326,
+  A100: #ffaeba,
+  A200: #ff7b8e,
+  A400: #ff4863,
+  A700: #ff2e4d,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #ffffff,
+  ),
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$palette-primary: mat.define-palette($primary);
+$palette-accent: mat.define-palette($accent, 500, 200, 950);
+
+// The warn palette is optional (defaults to red).
+$palette-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme-dashboard: mat.define-light-theme(
+  (
+    color: (
+      primary: $palette-primary,
+      accent: $palette-accent,
+      warn: $palette-warn,
+    ),
+    typography:
+      mat.define-typography-config(
+        $font-family: 'Noto Sans',
+      ),
+  )
+);
+
+body[data-theme='picsa-dashboard'] {
+  @include mat.all-component-themes($theme-dashboard);
+  @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
+}

@@ -59,10 +59,8 @@ function generateTranslationTemplates() {
     entries.push(entry);
   }
   // sort and remove duplicates
-  const unique = Object.values(arrayToHashmap(entries, 'text'));
+  const unique = Object.values(arrayToHashmap(entries, 'text')).filter(({ text }) => text !== '');
   const sorted = unique.sort((a, b) => {
-    // sort empty strings to top, then by tool-context-text
-    if (a.text === '' || b.text === '') return a.text > b.text ? 1 : -1;
     const comparator = `${a.tool}-${a.context}-${a.text}` > `${b.tool}-${b.context}-${b.text}`;
     return comparator ? 1 : -1;
   });
@@ -153,7 +151,7 @@ function writeOutputJson(entries: ITranslationEntry[]) {
   writeFileSync(TEMPLATE_PATH, JSON.stringify(entries, null, 2));
   // write additional en version where key just matches value
   const enJson = {};
-  const enJsonPath = resolve(GENERATED_ASSETS_DIR, 'en.json');
+  const enJsonPath = resolve(GENERATED_ASSETS_DIR, 'global_en.json');
   for (const { text } of Object.values(entries)) {
     enJson[text] = text;
   }

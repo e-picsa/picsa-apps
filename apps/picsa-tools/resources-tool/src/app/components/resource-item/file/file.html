@@ -16,19 +16,18 @@
         styleVariant="white"
         [size]="36"
         [hideOnComplete]="true"
+        [showSize]="true"
         (attachmentChange)="handleAttachmentChange($event)"
       ></resource-download>
     </div>
   </div>
 
-  <ng-container [ngSwitch]="resource.subtype">
-    <resource-item-video *ngSwitchCase="'video'" [resource]="resource" [fileURI]="fileURI"></resource-item-video>
-    <resource-item-link
-      *ngSwitchDefault
-      [resource]="resourceLink"
-      (click)="handleFileLinkClick($event)"
-      style="height: 100%"
-    >
-    </resource-item-link>
-  </ng-container>
+  @switch (resource.subtype) { @case ('video') {
+  <resource-item-video [resource]="resource" [fileURI]="fileURI"></resource-item-video>
+
+  } @default {
+  <resource-item-link [resource]="resourceLink" (click)="handleFileLinkClick($event)" style="height: 100%">
+  </resource-item-link>
+
+  } }
 </div>

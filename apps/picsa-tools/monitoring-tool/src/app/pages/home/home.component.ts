@@ -27,11 +27,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     // pipe subscription to complete when component destroyed (avoids memory leak)
     const query = this.service.dbFormCollection.find();
     query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
-      const { code } = this.configurationService.activeConfiguration.localisation.country;
+      const { country_code } = this.configurationService.deploymentSettings();
       // filter forms to include only active config country forms
       this.forms = docs
         .map((doc) => doc._data)
-        .filter((form) => !form.appCountries || form.appCountries.includes(code));
+        .filter((form) => !form.appCountries || form.appCountries.includes(country_code));
     });
   }
 

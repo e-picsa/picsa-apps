@@ -1,4 +1,7 @@
 <div class="page-content">
+  <div style="margin-left: auto; margin-bottom: 1rem">
+    <resource-download-multiple [resources]="fileResources" style="margin-left: auto"></resource-download-multiple>
+  </div>
   <table mat-table matSort [dataSource]="fileResourceDocs" class="mat-elevation-z8">
     <ng-container matColumnDef="mimetype">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Type' | translate }}</th>

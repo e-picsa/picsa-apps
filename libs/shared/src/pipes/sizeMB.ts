@@ -8,6 +8,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class SizeMBPipe implements PipeTransform {
   transform(value: number, ...args: any[]): any {
     const mb = value / 1024;
-    return Math.round(mb * 10) / 10;
+    // round to 1 decimal place if less than 10MB
+    const power = mb < 10 ? 10 : 1;
+    return Math.round(mb * power) / power;
   }
 }

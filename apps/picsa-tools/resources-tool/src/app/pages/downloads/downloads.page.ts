@@ -16,7 +16,7 @@ const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'
 })
 export class DownloadsPageComponent implements OnInit, OnDestroy {
   private componentDestroyed$ = new Subject();
-
+  public fileResources: IResourceFile[] = [];
   public fileResourceDocs: MatTableDataSource<RxDocument<IResourceFile>>;
   public displayedColumns = [...DISPLAY_COLUMNS, 'download_button', 'menu_options'];
 
@@ -31,6 +31,7 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
     const filteredDocs = this.service.filterLocalisedResources(resourceFileDocs);
     this.fileResourceDocs = new MatTableDataSource<RxDocument<IResourceFile>>(filteredDocs);
     this.fileResourceDocs.sort = this.sort;
+    this.fileResources = this.fileResourceDocs.data.map((d) => d._data as IResourceFile);
   }
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
