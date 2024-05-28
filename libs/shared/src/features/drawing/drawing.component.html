@@ -1,24 +1,26 @@
 <button mat-raised-button (click)="dialog.open(editorDialog)">Click to Draw</button>
 
 <ng-template #editorDialog>
-  <div className="flex flex-row">
-    <button mat-stroked-button (click)="undoSvgStroke()">Undo</button>
-  <button mat-stroked-button (click)="redoSvgStroke()">Redo</button>
-  </div>
-  <div class="svg-dialog-container">
-    <svg
-      #svgElement
-      width="100%"
-      height="100%"
-      (pointerdown)="handlePointerDown($event)"
-      (pointermove)="handlePointerMove($event)"
-      (pointerup)="handlePointerUp()"
-      style="touch-action: none"
-    >
-      @if(points){
-      <path [attr.d]="pathData()" id="path-1" />
-      }
-    </svg>
+  <div class="svg-container">
+    <div className="flex flex-row">
+      <button mat-stroked-button (click)="undoSvgStroke()">Undo</button>
+      <button mat-stroked-button (click)="redoSvgStroke()">Redo</button>
+    </div>
+    <div class="svg-dialog-container">
+      <svg
+        #svgElement
+        width="100%"
+        height="100%"
+        (pointerdown)="handlePointerDown($event)"
+        (pointermove)="handlePointerMove($event)"
+        (pointerup)="handlePointerUp()"
+        style="touch-action: none"
+      >
+        @if(segments){
+        <path [attr.d]="pathData()" id="path-1" />
+        }
+      </svg>
+    </div>
     <button mat-stroked-button (click)="clearDraw()">Clear All</button>
   </div>
 </ng-template>

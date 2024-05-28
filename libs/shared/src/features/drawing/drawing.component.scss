@@ -4,11 +4,15 @@
   box-sizing: border-box;
   // mat-dialog has max-width 80vw and includes 24px padding so just fit max
   width: calc(80vw - 48px);
-  height: 80vh;
+  height: 70vh;
 }
 
 .flex.flex-row{
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+}
+
+.svg-container{
+  height: 100%;
 }
