@@ -12,13 +12,13 @@
       height="100%"
       (pointerdown)="handlePointerDown($event)"
       (pointermove)="handlePointerMove($event)"
-      (pointerup)="handlePointerUp($event)"
+      (pointerup)="handlePointerUp()"
       style="touch-action: none"
     >
       @if(points){
       <path [attr.d]="pathData()" id="path-1" />
       }
     </svg>
-    <button mat-stroked-button (click)="clearDraw()">Clear</button>
+    <button mat-stroked-button (click)="clearDraw()">Clear All</button>
   </div>
 </ng-template>
