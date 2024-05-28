@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, signal, ViewChild } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { getStroke } from 'perfect-freehand';
 
+type Point = [number, number, number];
+type Segment = Point[];
 @Component({
   selector: 'picsa-custom-drawing',
   standalone: true,
@@ -30,15 +31,15 @@ export class PicsaDrawingComponent {
       cap: true,
     },
   };
+
   /** [x,y,pressure] point representation */
-  public points: [number, number, number][] = [];
+  public points: Segment = [];
+  public segments: Segment[] = [];
+  public undoStack: Segment[][] = [];
+  public redoStack: Segment[][] = [];
 
   /** SVG representation of active path segment */
   public pathData = signal<string>('');
-
-  private undoStack: [number, number, number][][] = [];
-
-  private redoStack: [number, number, number][][] = [];
 
   /**
    * When the svg is rendered in a parent element track position
@@ -62,17 +63,18 @@ export class PicsaDrawingComponent {
     if (event.buttons !== 1) return;
     this.addPointToPath(event.pageX, event.pageY);
     this.renderPath();
+    this._pushToUndo();
   }
 
-  handlePointerUp(event: PointerEvent) {
-    this._pushToUndo();
-    this._endCurrentStroke(event);
+  handlePointerUp() {
+    this._endCurrentStroke();
   }
 
   /** Add a point to the current path, adjusting absolute position for relative container */
   private addPointToPath(x: number, y: number, pressure = 0.5) {
     const [left, top] = this.containerOffset;
     this.points.push([x - left, y - top, pressure]);
+    this.segments.push(this.points);
   }
 
   /** Determine current positioning of svg drawing container to use for path offsets */
@@ -84,10 +86,8 @@ export class PicsaDrawingComponent {
 
   /** Render an svg path element generated from current list of points */
   private renderPath() {
-    const stroke = getStroke(this.points);
-    const svgPath = this.getSvgPathFromStroke(stroke);
-    this.pathData.set(svgPath);
-    this._pushToUndo();
+    const allPaths = this.segments.flatMap((segment) => this.getSvgPathFromStroke(getStroke(segment))).join(' ');
+    this.pathData.set(allPaths);
   }
 
   /**
@@ -110,28 +110,47 @@ export class PicsaDrawingComponent {
 
   /* Push to Undo Stack */
   private _pushToUndo() {
-    this.undoStack.push([...this.points]);
+    if (this.points.length > 0) {
+      this.undoStack.push([...this.segments]);
+      this.redoStack = [];
+    }
   }
 
   /* Clear Draw */
-  clearDraw() {
+  public clearDraw() {
+    this.segments = [];
     this.points = [];
     this.renderPath();
+    this._pushToUndo();
   }
 
   /* Undo previous Stroke render */
   public undoSvgStroke() {
-    if (this.undoStack.length) {
-      const currentState = this.undoStack.pop();
-      if (currentState) {
-        this.redoStack.push(currentState);
-        this.points = currentState;
-        const stroke = getStroke(this.points);
-        const svgPath = this.getSvgPathFromStroke(stroke);
-        this.pathData.set(svgPath);
+    if (this.undoStack.length > 0) {
+      //   const currentState = this.undoStack.pop();
+      //   this.redoStack.push(currentState as Segment[]);
+      //   if (currentState && currentState.length > 0) {
+      //     this.segments = currentState;
+      //     const allPaths = this.segments.map((segment) => this.getSvgPathFromStroke(getStroke(segment)));
+      //     this.pathData.set(allPaths.join(' '));
+      //   }
+      // } else {
+      //   return;
+      // }
+
+      const previousState = this.undoStack.pop();
+      previousState ? this.redoStack.push(previousState): null;
+      
+
+      if (previousState) {
+        this.undoStack[this.undoStack.length - 1];
+        this.segments = previousState;
+        console.log(this.segments);
+        // Re-render all paths
+        const allPaths = this.segments.flatMap((segment) => this.getSvgPathFromStroke(getStroke(segment)));
+            this.pathData.set(allPaths.join(' '));
+        // this.renderPath();
       }
-    } else {
-      return;
     }
   }
 
@@ -141,27 +160,21 @@ export class PicsaDrawingComponent {
       const currentState = this.redoStack.pop();
       if (currentState) {
         this.undoStack.push(currentState);
-        this.points = currentState;
-        const stroke = getStroke(this.points);
-        const svgPath = this.getSvgPathFromStroke(stroke);
-        this.pathData.set(svgPath);
+        this.segments = currentState;
+        this.renderPath();
       }
     } else {
       return;
     }
   }
 
-  public _startNewStroke() {
+  /* End the current stroke */
+  public _endCurrentStroke() {
     if (this.points.length > 0) {
-      this._pushToUndo(); // Save the current stroke before starting a new one
+      this.segments.push([...this.points]);
+      this._pushToUndo();
     }
-    this.points = []; // Clear the points for the new stroke
-  }
-
-  // Method to end the current stroke
-  public _endCurrentStroke(event: PointerEvent) {
-    // this.addPointToPath(event.pageX, event.pageY);
-    // this.points = null as never
-    // this.points.push([0, 0, 0])
+    this.points = [];
+    this.renderPath();
   }
 }
