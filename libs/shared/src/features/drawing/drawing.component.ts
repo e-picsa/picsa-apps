@@ -127,30 +127,13 @@ export class PicsaDrawingComponent {
   /* Undo previous Stroke render */
   public undoSvgStroke() {
     if (this.undoStack.length > 0) {
-      //   const currentState = this.undoStack.pop();
-      //   this.redoStack.push(currentState as Segment[]);
-      //   if (currentState && currentState.length > 0) {
-      //     this.segments = currentState;
-      //     const allPaths = this.segments.map((segment) => this.getSvgPathFromStroke(getStroke(segment)));
-      //     this.pathData.set(allPaths.join(' '));
-      //   }
-      // } else {
-      //   return;
-      // }
-
       const previousState = this.undoStack.pop();
-      previousState ? this.redoStack.push(previousState): null;
-      
+      previousState ? this.redoStack.push(previousState as Segment[]) : null;
 
-      if (previousState) {
-        this.undoStack[this.undoStack.length - 1];
-        this.segments = previousState;
-        console.log(this.segments);
-        // Re-render all paths
-        const allPaths = this.segments.flatMap((segment) => this.getSvgPathFromStroke(getStroke(segment)));
-            this.pathData.set(allPaths.join(' '));
-        // this.renderPath();
-      }
+      this.segments = this.undoStack[this.undoStack.length - 1];
+      const allPaths = this.segments.flatMap((segment) => this.getSvgPathFromStroke(getStroke(segment)));
+      this.pathData.set(allPaths.join(' '));
+      // this.renderPath();
     }
   }
 
