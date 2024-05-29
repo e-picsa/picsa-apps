@@ -1,17 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { PicsaAnimationsModule, PicsaChartsModule } from '@picsa/shared/features';
+import { PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
-import { ClimateSiteViewComponent } from './site-view.page';
+import { ClimateForecastPage } from './forecast.page';
 
 const routes: Routes = [
   {
-    path: '',
-    component: ClimateSiteViewComponent,
+    path: '/forecast',
+    component: ClimateForecastPage,
   },
 ];
 
@@ -21,13 +20,8 @@ const routes: Routes = [
     ClimateToolComponentsModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
-    PicsaChartsModule,
-    FormsModule,
-    PicsaAnimationsModule,
+    PicsaMapComponent,
   ],
-  declarations: [ClimateSiteViewComponent],
+  declarations: [ClimateForecastPage],
 })
-export class ClimateSiteViewPageModule {
-
-  
-}
+export class ClimateForecastPageModule {}

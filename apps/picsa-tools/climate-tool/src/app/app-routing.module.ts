@@ -16,6 +16,13 @@ export const ROUTES_COMMON: Routes = [
     },
   },
   {
+    path: 'forecast',
+    loadChildren: () => import('./pages/forecast/forecast.module').then((mod) => mod.ClimateForecastPageModule),
+    data: {
+      headerStyle: 'Forecast',
+    },
+  },
+  {
     path: 'site',
     redirectTo: '',
     pathMatch: 'full',
