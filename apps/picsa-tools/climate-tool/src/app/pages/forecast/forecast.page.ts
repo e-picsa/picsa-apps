@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./forecast.page.scss'],
 })
 export class ClimateForecastPage {
+  forecastTypes = ['Annual', 'Downscaled'];
   constructor(
     private route: ActivatedRoute,
   ) {}

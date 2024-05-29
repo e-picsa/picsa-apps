@@ -9,8 +9,9 @@ import { ClimateForecastPage } from './forecast.page';
 
 const routes: Routes = [
   {
-    path: '/forecast',
+    path: '',
     component: ClimateForecastPage,
+    title: 'Climate Forecast'
   },
 ];
 

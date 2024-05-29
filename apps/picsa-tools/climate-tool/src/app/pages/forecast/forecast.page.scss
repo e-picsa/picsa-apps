@@ -1,0 +1,29 @@
+.card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 50px;
+  width: 60%;
+}
+
+.page-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 50vh;
+}
+.mat-card{
+  width: 14rem;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+.card-content{
+ display: flex;
+ padding: 1rem;
+ width: 100%;
+ align-items: center;
+ justify-content: center;
+}
