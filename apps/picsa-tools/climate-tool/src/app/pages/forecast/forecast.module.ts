@@ -6,6 +6,7 @@ import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
 import { ClimateForecastPage } from './forecast.page';
+import { PdfViewerComponent } from '@picsa/shared/features';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     PicsaTranslateModule,
     PicsaMapComponent,
+    PdfViewerComponent,
   ],
   declarations: [ClimateForecastPage],
 })
