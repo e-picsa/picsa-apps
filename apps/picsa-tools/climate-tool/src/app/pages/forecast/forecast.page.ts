@@ -10,6 +10,7 @@ export class ClimateForecastPage {
   forecastTypes = ['Annual', 'Downscaled'];
   //always 0 or undefined
   public page: number | undefined = undefined;
+  //dummy testing pdf
   pdfSrc = '/assets/forecast-assets/forecastDoc.pdf'
   constructor(
     private route: ActivatedRoute,
