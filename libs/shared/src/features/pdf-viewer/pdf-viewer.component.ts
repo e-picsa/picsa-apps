@@ -1,12 +1,16 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
+import { CommonModule } from '@angular/common';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 @Component({
   selector: 'picsa-pdf-viewer',
   templateUrl: './pdf-viewer.component.html',
   styleUrls: ['./pdf-viewer.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone:true,
+  imports:[NgxExtendedPdfViewerModule,CommonModule]
 })
 export class PdfViewerComponent {
   legacyBrowser = true;
