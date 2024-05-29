@@ -27,7 +27,4 @@ const routes: Routes = [
   ],
   declarations: [ClimateSiteViewComponent],
 })
-export class ClimateSiteViewPageModule {
-
-  
-}
+export class ClimateSiteViewPageModule {}
