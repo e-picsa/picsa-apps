@@ -13,11 +13,18 @@
         height="100%"
         (pointerdown)="handlePointerDown($event)"
         (pointermove)="handlePointerMove($event)"
+        (mouseup)="handlePointerUp()"
         (pointerup)="handlePointerUp()"
         style="touch-action: none"
       >
-        @if(segments){
-        <path [attr.d]="pathData()" id="path-1" />
+        <!-- Previously rendered segments -->
+        @for(segment of segments; track segment.id){
+        <path [attr.d]="segment.path()" id="path-1" />
+        }
+
+        <!-- Active segment -->
+        @if(activeSegment){
+        <path [attr.d]="activeSegment.path()" id="path-1" />
         }
       </svg>
     </div>
