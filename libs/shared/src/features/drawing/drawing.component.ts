@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  output,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { getStroke, StrokeOptions } from 'perfect-freehand';
@@ -26,6 +34,9 @@ type Segment = {
 export class PicsaDrawingComponent {
   /** Number of pixel difference required to record new point */
   private tolerance = 5;
+
+  /** Number of decimal places svg path calculated to */
+  private precision = 2;
 
   /** Perfect-freehand configuration */
   strokeOptions: StrokeOptions = {
@@ -63,11 +74,14 @@ export class PicsaDrawingComponent {
 
   @ViewChild('svgElement') svgElement: ElementRef<SVGElement>;
 
+  onSave = output<string[]>();
+
   constructor(public dialog: MatDialog) {}
 
-  private createNewSegment() {
-    const segment: Segment = { id: generateID(5), path: signal(''), points: [] };
-    return segment;
+  public async save() {
+    // emit list of all generated path segments as final svg
+    const pathSegments = this.segments.map((s) => s.path());
+    this.onSave.emit(pathSegments);
   }
 
   handlePointerDown(event: PointerEvent) {
@@ -96,6 +110,11 @@ export class PicsaDrawingComponent {
     this.finaliseActiveSegment();
   }
 
+  private createNewSegment() {
+    const segment: Segment = { id: generateID(5), path: signal(''), points: [] };
+    return segment;
+  }
+
   /** Add a point to the current path, adjusting absolute position for relative container */
   private addPointToActiveSegment(x: number, y: number, pressure = 0.5) {
     // calculate svg point position relative to container
@@ -121,26 +140,8 @@ export class PicsaDrawingComponent {
   /** Render an svg path element generated from current list of points */
   private renderActiveSegment() {
     const stroke = getStroke(this.activeSegment.points, this.strokeOptions);
-    const path = this.getSvgPathFromStroke(stroke);
+    const path = getSvgPathFromStroke(stroke, this.precision);
     this.activeSegment.path.set(path);
-  }
-
-  /**
-   * Generate an svg path from array of [x,y] point arrays
-   * Copied from https://github.com/steveruizok/perfect-freehand
-   * */
-  private getSvgPathFromStroke(stroke: number[][]) {
-    if (!stroke.length) return '';
-    const d = stroke.reduce(
-      (acc, [x0, y0], i, arr) => {
-        const [x1, y1] = arr[(i + 1) % arr.length];
-        acc.push(x0, y0, (x0 + x1) / 2, (y0 + y1) / 2);
-        return acc;
-      },
-      ['M', ...stroke[0], 'Q']
-    );
-    d.push('Z');
-    return d.join(' ');
   }
 
   /* Clear Draw */
@@ -172,4 +173,38 @@ export class PicsaDrawingComponent {
       this.activeSegment = this.createNewSegment();
     }
   }
+}
+
+const average = (a: number, b: number) => (a + b) / 2;
+
+/**
+ * Generate an svg path from array of [x,y] point arrays
+ * Copied from https://github.com/steveruizok/perfect-freehand
+ * */
+function getSvgPathFromStroke(points: number[][], precision = 2, closed = true) {
+  const len = points.length;
+
+  if (len < 2) {
+    return ``;
+  }
+
+  let a = points[0];
+  let b = points[1];
+  const c = points[2];
+
+  let result = `M${a[0].toFixed(precision)},${a[1].toFixed(precision)} Q${b[0].toFixed(precision)},${b[1].toFixed(
+    precision
+  )} ${average(b[0], c[0]).toFixed(precision)},${average(b[1], c[1]).toFixed(precision)} T`;
+
+  for (let i = 2, max = len - 1; i < max; i++) {
+    a = points[i];
+    b = points[i + 1];
+    result += `${average(a[0], b[0]).toFixed(precision)},${average(a[1], b[1]).toFixed(precision)} `;
+  }
+
+  if (closed) {
+    result += 'Z';
+  }
+
+  return result;
 }
