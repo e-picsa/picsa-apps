@@ -1,33 +1,37 @@
-<button mat-raised-button (click)="dialog.open(editorDialog)">Click to Draw</button>
-
-<ng-template #editorDialog>
-  <div class="svg-container">
-    <div className="flex flex-row">
-      <button mat-stroked-button (click)="undoSvgStroke()">Undo</button>
-      <button mat-stroked-button (click)="redoSvgStroke()">Redo</button>
-    </div>
-    <div class="svg-dialog-container">
-      <svg
-        #svgElement
-        width="100%"
-        height="100%"
-        (pointerdown)="handlePointerDown($event)"
-        (pointermove)="handlePointerMove($event)"
-        (mouseup)="handlePointerUp()"
-        (pointerup)="handlePointerUp()"
-        style="touch-action: none"
-      >
-        <!-- Previously rendered segments -->
-        @for(segment of segments; track segment.id){
-        <path [attr.d]="segment.path()" id="path-1" />
-        }
-
-        <!-- Active segment -->
-        @if(activeSegment){
-        <path [attr.d]="activeSegment.path()" id="path-1" />
-        }
-      </svg>
-    </div>
-    <button mat-stroked-button (click)="clearDraw()">Clear All</button>
+<div class="dialog-container">
+  <div class="edit-buttons">
+    <button mat-stroked-button (click)="undoSvgStroke()"><mat-icon>undo</mat-icon>{{ 'Undo' | translate }}</button>
+    <button mat-stroked-button (click)="redoSvgStroke()"><mat-icon>redo</mat-icon>{{ 'Redo' | translate }}</button>
+    <button mat-stroked-button style="margin-left: auto" (click)="clearDraw()">{{ 'Clear All' | translate }}</button>
   </div>
-</ng-template>
+  <div class="svg-container">
+    <svg
+      #svgElement
+      width="100%"
+      height="100%"
+      (pointerdown)="handlePointerDown($event)"
+      (pointermove)="handlePointerMove($event)"
+      (mouseup)="handlePointerUp()"
+      (pointerup)="handlePointerUp()"
+      style="touch-action: none"
+    >
+      <!-- Previously rendered segments -->
+      @for(segment of segments; track segment.id){
+      <path [attr.d]="segment.path()" id="path-1" />
+      }
+
+      <!-- Active segment -->
+      @if(activeSegment){
+      <path [attr.d]="activeSegment.path()" id="path-1" />
+      }
+    </svg>
+    <!-- Draw Prompt Logo -->
+    @if(!activeSegment){
+    <div class="draw-logo">
+      <mat-icon>draw</mat-icon>
+      <div>{{ 'Draw Here' | translate }}</div>
+    </div>
+
+    }
+  </div>
+</div>

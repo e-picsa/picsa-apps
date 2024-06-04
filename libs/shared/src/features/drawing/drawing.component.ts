@@ -10,8 +10,10 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { getStroke, StrokeOptions } from 'perfect-freehand';
 
+import { PicsaTranslateModule } from '../../modules';
 import { generateID } from '../../services/core/db/db.service';
 
 type Segment = {
@@ -26,7 +28,7 @@ type Segment = {
 @Component({
   selector: 'picsa-custom-drawing',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
   templateUrl: './drawing.component.html',
   styleUrls: ['./drawing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,7 +42,7 @@ export class PicsaDrawingComponent {
 
   /** Perfect-freehand configuration */
   strokeOptions: StrokeOptions = {
-    size: 32,
+    size: 24,
     thinning: 0.5,
     smoothing: 0.5,
     streamline: 0.5,
@@ -58,7 +60,7 @@ export class PicsaDrawingComponent {
   };
 
   /** List of segment currently being drawn */
-  public activeSegment = this.createNewSegment();
+  public activeSegment: Segment;
 
   /** List of all saved segments */
   public segments: Segment[] = [];
@@ -74,15 +76,9 @@ export class PicsaDrawingComponent {
 
   @ViewChild('svgElement') svgElement: ElementRef<SVGElement>;
 
-  onSave = output<string[]>();
+  onChange = output<string[]>();
 
   constructor(public dialog: MatDialog) {}
-
-  public async save() {
-    // emit list of all generated path segments as final svg
-    const pathSegments = this.segments.map((s) => s.path());
-    this.onSave.emit(pathSegments);
-  }
 
   handlePointerDown(event: PointerEvent) {
     // Set svg element as target for future pointer events (will release automatically on pointerup)
@@ -92,6 +88,10 @@ export class PicsaDrawingComponent {
 
     // Ensure all points are calculated relative to svg container
     this.calculateContainerOffset();
+
+    if (!this.activeSegment) {
+      this.activeSegment = this.createNewSegment();
+    }
 
     // ensure previous segment finalised (in case pointerup not fired) and start new segment
     if (this.activeSegment?.points.length > 0) {
@@ -108,6 +108,9 @@ export class PicsaDrawingComponent {
 
   handlePointerUp() {
     this.finaliseActiveSegment();
+    // output current full svg
+    const pathSegments = this.segments.map((s) => s.path());
+    this.onChange.emit(pathSegments);
   }
 
   private createNewSegment() {
@@ -146,7 +149,7 @@ export class PicsaDrawingComponent {
 
   /* Clear Draw */
   public clearDraw() {
-    this.activeSegment = this.createNewSegment();
+    this.activeSegment = undefined as any;
     this.segments = [];
   }
 
