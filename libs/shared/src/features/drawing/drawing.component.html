@@ -21,12 +21,12 @@
       }
 
       <!-- Active segment -->
-      @if(activeSegment){
+      @if(activeSegment.path()){
       <path [attr.d]="activeSegment.path()" id="path-1" />
       }
     </svg>
     <!-- Draw Prompt Logo -->
-    @if(!activeSegment){
+    @if(segments.length===0 && !activeSegment.path()){
     <div class="draw-logo">
       <mat-icon>draw</mat-icon>
       <div>{{ 'Draw Here' | translate }}</div>

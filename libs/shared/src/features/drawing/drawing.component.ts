@@ -60,7 +60,7 @@ export class PicsaDrawingComponent {
   };
 
   /** List of segment currently being drawn */
-  public activeSegment: Segment;
+  public activeSegment = this.createNewSegment();
 
   /** List of all saved segments */
   public segments: Segment[] = [];
@@ -89,14 +89,9 @@ export class PicsaDrawingComponent {
     // Ensure all points are calculated relative to svg container
     this.calculateContainerOffset();
 
-    if (!this.activeSegment) {
-      this.activeSegment = this.createNewSegment();
-    }
-
     // ensure previous segment finalised (in case pointerup not fired) and start new segment
-    if (this.activeSegment?.points.length > 0) {
-      this.finaliseActiveSegment();
-    }
+    this.finaliseActiveSegment();
+
     // ensure initial point set on active segment
     this.addPointToActiveSegment(event.pageX, event.pageY);
   }
@@ -107,7 +102,9 @@ export class PicsaDrawingComponent {
   }
 
   handlePointerUp() {
-    this.finaliseActiveSegment();
+    if (this.activeSegment.points.length > 0) {
+      this.finaliseActiveSegment();
+    }
     // output current full svg
     const pathSegments = this.segments.map((s) => s.path());
     this.onChange.emit(pathSegments);
@@ -149,7 +146,7 @@ export class PicsaDrawingComponent {
 
   /* Clear Draw */
   public clearDraw() {
-    this.activeSegment = undefined as any;
+    this.activeSegment = this.createNewSegment();
     this.segments = [];
   }
 
