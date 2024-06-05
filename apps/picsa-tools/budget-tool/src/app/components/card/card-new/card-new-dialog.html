@@ -1,10 +1,13 @@
-<mat-card appearance="outlined" mat-elevation-z4 class="budget-card selectable">
+<!-- <mat-card appearance="outlined" mat-elevation-z4 class="budget-card selectable">
   <budget-card-image [card]="card"></budget-card-image>
   <div class="card-title">{{ card.label | translate }}</div>
-</mat-card>
-<mat-form-field>
+</mat-card> -->
+
+<picsa-custom-drawing (onChange)="setBudgetDrawing($event)"></picsa-custom-drawing>
+<mat-form-field class="label-input">
+  <mat-label>{{'Card Label' | translate}}</mat-label>
   <input matInput [(ngModel)]="card.label" />
 </mat-form-field>
-<button mat-stroked-button (click)="save()" [disabled]="card.label === ''" style="margin-top: 1em; width: 70%">
+<button mat-stroked-button (click)="save()" [disabled]="!card.label || !imgData" style="margin-top: 1em; width: 70%">
   <mat-icon>check</mat-icon>{{ 'Save' | translate }}
 </button>

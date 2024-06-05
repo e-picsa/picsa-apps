@@ -19247,6 +19247,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"perfect-freehand@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "perfect-freehand@npm:1.2.2"
+  checksum: e1c4f3b6c9e61a3ba4a5375d7cbe05d88fb4885b2bbd6c7dd38437c25ce2e5af1102d46c9b8ccfd1e4f5cf9c7855605f8e6cda073157f9bf68beea85bd98d48b
+  languageName: node
+  linkType: hard
+
 "performance-now@npm:^2.1.0":
   version: 2.1.0
   resolution: "performance-now@npm:2.1.0"
@@ -19417,6 +19424,7 @@ __metadata:
     openapi-typescript: ^6.7.3
     papaparse: ^5.3.2
     parse: 3.4.2
+    perfect-freehand: ^1.2.2
     postcss: ^8.4.5
     postcss-import: ~14.1.0
     postcss-url: ~10.1.3
