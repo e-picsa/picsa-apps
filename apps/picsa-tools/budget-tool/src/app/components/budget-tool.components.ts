@@ -14,7 +14,6 @@ import { BudgetMaterialModule } from '../material.module';
 // Components
 import { BudgetBalanceDotValueComponent } from './balance/balance-dot-value/dot-value';
 import { BudgetBalanceLegendComponent } from './balance/balance-legend/balance-legend';
-import { BudgetDrawComponent } from './budget-draw/budget-draw.component';
 import { BudgetSummaryComponent } from './budget-summary/budget-summary.component';
 import { BudgetCardComponent } from './card/budget-card';
 import { BudgetCardImageComponent } from './card/card-image/budget-card-image';
@@ -72,7 +71,7 @@ const components = [
     RouterModule,
     MatTooltipModule,
     MatIconModule,
-    PicsaDrawingComponent
+    PicsaDrawingComponent,
   ],
   exports: components,
 })

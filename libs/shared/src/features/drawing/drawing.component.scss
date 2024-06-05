@@ -1,18 +1,28 @@
-.svg-dialog-container {
+.dialog-container {
+  text-align: center;
+}
+.svg-container {
   border: 1px solid #eeeeee;
   border-radius: 4px;
   box-sizing: border-box;
-  // mat-dialog has max-width 80vw and includes 24px padding so just fit max
-  width: calc(80vw - 48px);
-  height: 70vh;
+  position: relative;
+  overflow: hidden;
+}
+.draw-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-light);
+  mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+  }
 }
 
-.flex.flex-row{
+.edit-buttons {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-}
-
-.svg-container{
-  height: 100%;
+  gap: 8px;
+  margin-bottom: 8px;
 }
