@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
+  input,
   output,
   signal,
   ViewChild,
@@ -34,6 +36,28 @@ type Segment = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaDrawingComponent {
+  /** SVG drawing viewbox and container size */
+  size = input(384);
+
+  viewbox = computed(() => `0 0 ${this.size()} ${this.size()}`);
+
+  public onChange = output<string>();
+
+  /** List of segment currently being drawn */
+  public activeSegment = this.createNewSegment();
+
+  /** List of all saved segments */
+  public segments: Segment[] = [];
+
+  /** List of segments removed pending redo */
+  private redoStack: Segment[] = [];
+
+  /**
+   * When the svg is rendered in a parent element track position
+   * to use to offset
+   */
+  private containerOffset = [0, 0];
+
   /** Number of pixel difference required to record new point */
   private tolerance = 5;
 
@@ -41,7 +65,7 @@ export class PicsaDrawingComponent {
   private precision = 2;
 
   /** Perfect-freehand configuration */
-  strokeOptions: StrokeOptions = {
+  private strokeOptions: StrokeOptions = {
     size: 24,
     thinning: 0.5,
     smoothing: 0.5,
@@ -59,24 +83,7 @@ export class PicsaDrawingComponent {
     },
   };
 
-  /** List of segment currently being drawn */
-  public activeSegment = this.createNewSegment();
-
-  /** List of all saved segments */
-  public segments: Segment[] = [];
-
-  /** List of segments removed pending redo */
-  private redoStack: Segment[] = [];
-
-  /**
-   * When the svg is rendered in a parent element track position
-   * to use to offset
-   */
-  private containerOffset = [0, 0];
-
   @ViewChild('svgElement') svgElement: ElementRef<SVGElement>;
-
-  onChange = output<string[]>();
 
   constructor(public dialog: MatDialog) {}
 
@@ -106,8 +113,18 @@ export class PicsaDrawingComponent {
       this.finaliseActiveSegment();
     }
     // output current full svg
-    const pathSegments = this.segments.map((s) => s.path());
-    this.onChange.emit(pathSegments);
+    const data = this.sanitizeOutputSVG();
+    this.onChange.emit(data);
+  }
+
+  /** Replace ngcontent, inserted classes and comments from svg */
+  private sanitizeOutputSVG() {
+    const svgEl = this.svgElement.nativeElement.outerHTML;
+    return svgEl
+      .replace(/_ngcontent(\S)* /gi, '')
+      .replace(/class="[^"]*"/gi, '')
+      .replace(/<!--(.*?)-->/gi, '')
+      .replace('style="touch-action: none;"', '');
   }
 
   private createNewSegment() {

@@ -4,11 +4,12 @@
     <button mat-stroked-button (click)="redoSvgStroke()"><mat-icon>redo</mat-icon>{{ 'Redo' | translate }}</button>
     <button mat-stroked-button style="margin-left: auto" (click)="clearDraw()">{{ 'Clear All' | translate }}</button>
   </div>
-  <div class="svg-container">
+  <div class="svg-container" [style.width]="size() + 'px'" [style.height]="size() + 'px'">
     <svg
+      [attr.viewBox]="viewbox()"
+      [attr.height]="size()"
+      [attr.width]="size()"
       #svgElement
-      width="100%"
-      height="100%"
       (pointerdown)="handlePointerDown($event)"
       (pointermove)="handlePointerMove($event)"
       (mouseup)="handlePointerUp()"
@@ -17,12 +18,12 @@
     >
       <!-- Previously rendered segments -->
       @for(segment of segments; track segment.id){
-      <path [attr.d]="segment.path()" id="path-1" />
+      <path [attr.d]="segment.path()" [id]="segment.id" />
       }
 
       <!-- Active segment -->
       @if(activeSegment.path()){
-      <path [attr.d]="activeSegment.path()" id="path-1" />
+      <path [attr.d]="activeSegment.path()" [id]="activeSegment.id" />
       }
     </svg>
     <!-- Draw Prompt Logo -->

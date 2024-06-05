@@ -5,12 +5,8 @@
   border: 1px solid #eeeeee;
   border-radius: 4px;
   box-sizing: border-box;
-  // mat-dialog has max-width 80vw and includes 24px padding so just fit max
-  width: calc(80vw - 48px);
-  height: calc(80vw - 48px);
-  max-width: 66vh;
-  max-height: 66vh;
   position: relative;
+  overflow: hidden;
 }
 .draw-logo {
   position: absolute;
