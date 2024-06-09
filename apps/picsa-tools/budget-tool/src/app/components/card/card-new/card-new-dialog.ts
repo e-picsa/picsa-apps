@@ -9,15 +9,24 @@ import { IBudgetCard } from '../../../schema';
   templateUrl: './card-new-dialog.html',
   styleUrls: ['./card-new-dialog.scss'],
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetCardNewDialog {
   public card: IBudgetCard;
   constructor(public dialogRef: MatDialogRef<BudgetCardNewDialog>, @Inject(MAT_DIALOG_DATA) card: IBudgetCard) {
     this.card = card;
   }
+
+  public imgData: string;
+
+  public setBudgetDrawing(svgData: string) {
+    if (svgData) {
+      this.imgData = `data:image/svg+xml;base64,${btoa(svgData)}`;
+    }
+  }
   save() {
-    this.card.id = this.card.label.replace(/\s+/g, '-').toLowerCase();
+    this.card.id = `custom_${this.card.label.replace(/\s+/g, '-').toLowerCase()}`;
     this.card.customMeta = {
-      imgData: this.generateImage(this.card.label),
+      imgData: this.imgData,
       dateCreated: new Date().toISOString(),
       createdBy: '',
     };
@@ -26,7 +35,7 @@ export class BudgetCardNewDialog {
 
   // return an svg circle with text in the middle
   // text is either first 2 initials (if multiple words) or first 2 letters (if one word)
-  generateImage(text: string) {
+  private generateImage(text: string) {
     const byWord = text.split(' ');
     const abbr = byWord.length > 1 ? `${byWord[0].charAt(0)}.${byWord[1].charAt(0)}` : text.substring(0, 2);
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"

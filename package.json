@@ -106,6 +106,7 @@
     "openapi-fetch": "^0.8.2",
     "papaparse": "^5.3.2",
     "parse": "3.4.2",
+    "perfect-freehand": "^1.2.2",
     "rxdb": "^14.11.1",
     "rxjs": "~7.8.1",
     "save-svg-as-png": "^1.4.17",
