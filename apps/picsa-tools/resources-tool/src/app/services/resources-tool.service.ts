@@ -235,12 +235,15 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public async shareResource(resource: any, resourceType: string) {
+
+
+    try{
     const isShareContent = await Share.canShare();
     // it is either link or file
     let url = resourceType === 'file' ? resource._data.url : resource.url;
     if (resourceType === 'link' && resource?.subtype === 'play_store') {
       url = `https://play.google.com/store/apps/details?id=${url}`;
-    }
+    } 
     if (Capacitor.isNativePlatform()) {
       try {
         await Share.share({
@@ -248,6 +251,7 @@ export class ResourcesToolService extends PicsaAsyncService {
           url: url,
           dialogTitle: 'Share Resource Link',
         });
+    
       } catch (error) {
         console.error(error);
       }
@@ -272,5 +276,8 @@ export class ResourcesToolService extends PicsaAsyncService {
         console.error('Error copying link or showing notification:', error);
       }
     }
+  } catch (error) {
+    console.error('Error copying link or showing notification:', error);
+  }
   }
 }
