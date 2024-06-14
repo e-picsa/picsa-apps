@@ -1,4 +1,14 @@
-<button mat-raised-button class="photo-button" color="primary">
-  <mat-icon>add</mat-icon>
-  {{ 'Add Photo' | translate }}
-</button>
+<div>
+  <div class="uploads-section">
+    <h2>Uploaded Photos</h2>
+    <!-- For showing uploaded photos -->
+  </div>
+  <div class="sticky-footer">
+    <button mat-button mat-raised-button class="footer-button" color="primary">
+      <mat-icon>add_a_photo</mat-icon>
+      <span>
+        {{ 'Add Photo' | translate }}
+      </span>
+    </button>
+  </div>
+</div>
