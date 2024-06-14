@@ -34,7 +34,10 @@
         <mat-icon class="tab-icon">edit_square</mat-icon>
         {{ 'Activity' | translate }}
       </ng-template>
-      <div class="tab-content">Coming soon...</div>
+      <div class="tab-content">
+        Coming soon...
+        <farmer-activity-photo-input />
+      </div>
     </mat-tab>
 
     <mat-tab *ngIf="activity.tool">
