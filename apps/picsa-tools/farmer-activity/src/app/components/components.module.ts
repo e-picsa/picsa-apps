@@ -11,7 +11,7 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { FarmerActivityMaterialModule } from './material.module';
 import { PhotoInputComponent } from './photo-input/photo-input.component';
 
-const Components = [];
+const Components = [PhotoInputComponent];
 
 @NgModule({
   imports: [
@@ -23,15 +23,8 @@ const Components = [];
     ReactiveFormsModule,
     RouterModule,
     FarmerActivityMaterialModule,
-    PhotoInputComponent,
   ],
-  exports: [
-    PicsaCommonComponentsModule,
-    PhotoInputComponent,
-    FarmerActivityMaterialModule,
-    PicsaVideoPlayerModule,
-    ...Components,
-  ],
+  exports: [...Components, PicsaCommonComponentsModule, FarmerActivityMaterialModule, PicsaVideoPlayerModule],
   declarations: [Components],
   providers: [],
 })
