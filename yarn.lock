@@ -19325,7 +19325,6 @@ __metadata:
     "@capacitor/filesystem": ^5.1.4
     "@capacitor/network": ^5.0.6
     "@capacitor/screen-orientation": ^5.0.7
-    "@capacitor/share": ^6.0.0
     "@ngx-translate/core": ~15.0.0
     "@ngx-translate/http-loader": ~8.0.0
     "@nx/angular": 18.2.1
