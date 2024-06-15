@@ -22,7 +22,6 @@ import { IReactionPublic } from 'mobx';
 
 export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
-
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {
   /** Track active downloadStatus by resource ID */
@@ -264,6 +263,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   private async shareFileNative(resource: RxDocument<schemas.IResourceFile>, url: string) {
     try {
       const file = await this.getFileAttachmentURI(resource);
+      //if file is downloaded from before
       if (file) {
         const res = await lastValueFrom(this.fileService.downloadFile(url, 'blob'));
         if (res?.data) {
@@ -282,6 +282,7 @@ export class ResourcesToolService extends PicsaAsyncService {
           matIcon: 'success',
           message: 'Please wait as the file is being downloaded for sharing.',
         });
+        //TODO: complete use case when file is not downloaded
       }
     } catch (error) {
       this.notificationService.showUserNotification({
@@ -291,16 +292,18 @@ export class ResourcesToolService extends PicsaAsyncService {
       console.error(error);
     }
   }
-  
-  
-  public async shareResource(resource: RxDocument<schemas.IResourceFile> | RxDocument<schemas.IResourceLink >, resourceType: string) {
+
+  public async shareResource(
+    resource: RxDocument<schemas.IResourceFile> | RxDocument<schemas.IResourceLink>,
+    resourceType: string
+  ) {
     try {
       const isShareContent = await Share.canShare();
       let url = resourceType === 'file' ? resource._data.url : resource.url;
       if (resourceType === 'link' && resource?.subtype === 'play_store') {
         url = `https://play.google.com/store/apps/details?id=${url}`;
       }
-      
+
       if (Capacitor.isNativePlatform()) {
         if (resource.type === 'file') {
           await this.shareFileNative(resource as RxDocument<schemas.IResourceFile>, url);
@@ -308,7 +311,8 @@ export class ResourcesToolService extends PicsaAsyncService {
           await this.shareLink(url, isShareContent.value);
         }
       } else {
-        await this.shareLink(url, isShareContent.value);
+        // await this.shareLink(url, isShareContent.value);
+        
       }
     } catch (error) {
       console.error('Error sharing resource:', error);
@@ -318,8 +322,4 @@ export class ResourcesToolService extends PicsaAsyncService {
       });
     }
   }
-  
-  
-  
-  
 }
