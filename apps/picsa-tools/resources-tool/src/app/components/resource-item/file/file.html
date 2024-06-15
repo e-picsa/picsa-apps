@@ -2,26 +2,21 @@
 
 <!-- TODO - should be able to refactor video item to be included here -->
 <div style="position: relative">
-  <div class="share-button-section">
-    <resource-share *ngIf="dbDoc" [dbDoc]="dbDoc" styleVariant="white" [resourceType]="'file'"></resource-share>
-  </div>
+  @if(dbDoc){
+  <resource-share style="position: relative;
+    top: 36px;
+    z-index: 10;
+    left: 85%;
+    width: 30px;" styleVariant="white" [dbDoc]="dbDoc"  [resourceType]="'file'"></resource-share>
+    }
+
   <!-- Download overlay -->
-  <div
-    class="download-overlay"
-    [style.visibility]="attachment ? 'hidden' : 'visible'"
-    [attr.data-file-type]="dbDoc?.subtype || null"
-  >
+  <div class="download-overlay" [style.visibility]="attachment ? 'hidden' : 'visible'"
+    [attr.data-file-type]="dbDoc?.subtype || null">
     <div class="mat-elevation-z8; border-radius: 8px;">
-      <resource-download
-        *ngIf="dbDoc"
-        [dbDoc]="dbDoc"
-        class="download-button"
-        styleVariant="white"
-        [size]="36"
-        [hideOnComplete]="true"
-        [showSize]="true"
-        (attachmentChange)="handleAttachmentChange($event)"
-      ></resource-download>
+      <resource-download *ngIf="dbDoc" [dbDoc]="dbDoc" class="download-button" styleVariant="white" [size]="36"
+        [hideOnComplete]="true" [showSize]="true"
+        (attachmentChange)="handleAttachmentChange($event)"></resource-download>
     </div>
   </div>
 
@@ -34,5 +29,5 @@
   </resource-item-link>
 
   } }
- 
+
 </div>

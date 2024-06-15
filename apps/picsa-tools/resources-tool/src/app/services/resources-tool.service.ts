@@ -2,6 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { Directory,Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
@@ -19,6 +20,7 @@ import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data
 import * as schemas from '../schemas';
 
 export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
+
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {
@@ -235,8 +237,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public async shareResource(resource: any, resourceType: string) {
-
-
+   
     try{
     const isShareContent = await Share.canShare();
     // it is either link or file
@@ -246,13 +247,35 @@ export class ResourcesToolService extends PicsaAsyncService {
     } 
     if (Capacitor.isNativePlatform()) {
       try {
-        await Share.share({
-          title: 'Share Resource',
-          url: url,
-          dialogTitle: 'Share Resource Link',
-        });
-    
+        // check if it was downloaded
+         const file =  await this.getFileAttachmentURI(resource)       
+        if(file){
+        const res = await lastValueFrom(this.fileService.downloadFile(url , 'blob'));
+        console.log(res)
+          if (res?.data) {
+            const blob = res.data as Blob;
+             const cachedFile = await this.nativeStorageService.writeFile(blob,`picsa-resource/${resource.filename}`)
+             console.log(cachedFile?.uri)
+            if (cachedFile){
+              await Share.share({
+                title: 'Share Resource',
+                url: cachedFile.uri,
+                dialogTitle: 'Share Resource Link',
+              });
+            }
+          }
+        }else{
+          this.notificationService.showUserNotification({
+            matIcon: 'success',
+            message: 'Please wait as the file is being dowloaded for sharing.',
+          });
+          // await this.triggerResourceDownload(resource)
+          // const file =  await this.getFileAttachmentURI(resource)
+          
+        }
+        
       } catch (error) {
+        console.log('failed')
         console.error(error);
       }
     } else {
@@ -275,9 +298,14 @@ export class ResourcesToolService extends PicsaAsyncService {
       } catch (error) {
         console.error('Error copying link or showing notification:', error);
       }
+     
     }
   } catch (error) {
-    console.error('Error copying link or showing notification:', error);
+    console.error('Error copying link :', error);
+    this.notificationService.showUserNotification({
+      matIcon: 'success',
+      message: 'Error copying link',
+    });
   }
   }
 }
