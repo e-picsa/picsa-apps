@@ -45,11 +45,6 @@ export class ResourceShareComponent implements OnDestroy {
     this.componentDestroyed$.complete();
   }
   public async shareDocument() {
-    if(this.resourceType==='file'){
-      this.service.shareResource(this._dbDoc,'file')
-    }
-    if(this.resourceType==='link'){
-      this.service.shareResource(this._dbLink,'link')
-    }
+      this.service.shareResource(this._dbDoc,this.resourceType)
   }
 }

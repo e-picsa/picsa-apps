@@ -3,12 +3,14 @@
 <!-- TODO - should be able to refactor video item to be included here -->
 <div style="position: relative">
   @if(dbDoc){
-  <resource-share style="position: relative;
-    top: 36px;
-    z-index: 10;
-    left: 85%;
-    width: 30px;" styleVariant="white" [dbDoc]="dbDoc"  [resourceType]="'file'"></resource-share>
-    }
+  <div style="position: relative;
+   top: 36px;
+   z-index: 10;
+   left: 85%;
+   width: 30px;">
+    <resource-share styleVariant="white" [dbDoc]="dbDoc" [resourceType]="'file'"></resource-share>
+  </div>
+  }
 
   <!-- Download overlay -->
   <div class="download-overlay" [style.visibility]="attachment ? 'hidden' : 'visible'"

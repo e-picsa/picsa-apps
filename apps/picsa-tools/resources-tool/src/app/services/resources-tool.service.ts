@@ -2,7 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { Directory,Filesystem } from '@capacitor/filesystem';
+// import { Directory,Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
@@ -18,6 +18,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
+import { IReactionPublic } from 'mobx';
 
 export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
@@ -236,76 +237,89 @@ export class ResourcesToolService extends PicsaAsyncService {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
 
-  public async shareResource(resource: any, resourceType: string) {
-   
-    try{
-    const isShareContent = await Share.canShare();
-    // it is either link or file
-    let url = resourceType === 'file' ? resource._data.url : resource.url;
-    if (resourceType === 'link' && resource?.subtype === 'play_store') {
-      url = `https://play.google.com/store/apps/details?id=${url}`;
-    } 
-    if (Capacitor.isNativePlatform()) {
-      try {
-        // check if it was downloaded
-         const file =  await this.getFileAttachmentURI(resource)       
-        if(file){
-        const res = await lastValueFrom(this.fileService.downloadFile(url , 'blob'));
-        console.log(res)
-          if (res?.data) {
-            const blob = res.data as Blob;
-             const cachedFile = await this.nativeStorageService.writeFile(blob,`picsa-resource/${resource.filename}`)
-             console.log(cachedFile?.uri)
-            if (cachedFile){
-              await Share.share({
-                title: 'Share Resource',
-                url: cachedFile.uri,
-                dialogTitle: 'Share Resource Link',
-              });
-            }
-          }
-        }else{
-          this.notificationService.showUserNotification({
-            matIcon: 'success',
-            message: 'Please wait as the file is being dowloaded for sharing.',
-          });
-          // await this.triggerResourceDownload(resource)
-          // const file =  await this.getFileAttachmentURI(resource)
-          
-        }
-        
-      } catch (error) {
-        console.log('failed')
-        console.error(error);
+  private async shareLink(url: string, isShareContent: boolean) {
+    try {
+      if (isShareContent) {
+        await Share.share({
+          title: 'Share Resource',
+          url: url,
+          dialogTitle: 'Share Resource Link',
+        });
+      } else {
+        // Simply copy the link to clipboard
+        await this.clipboard.copy(url);
+        this.notificationService.showUserNotification({
+          matIcon: 'success',
+          message: 'Link to this resource has been copied for you to share.',
+        });
       }
-    } else {
-      try {
-        //api is not compatible with some browser versions
-        if (isShareContent.value) {
-          await Share.share({
-            title: 'Share Resource',
-            url: url,
-            dialogTitle: 'Share Resource Link',
-          });
-        } else {
-          //simply copy the link to clipboard
-          await this.clipboard.copy(url);
-          this.notificationService.showUserNotification({
-            matIcon: 'success',
-            message: 'Link to this resource has been copied for you to share.',
-          });
-        }
-      } catch (error) {
-        console.error('Error copying link or showing notification:', error);
-      }
-     
+    } catch (error) {
+      console.error('Error sharing link or showing notification:', error);
+      this.notificationService.showUserNotification({
+        matIcon: 'error',
+        message: 'Failed to share link.',
+      });
     }
-  } catch (error) {
-    console.error('Error copying link :', error);
-    this.notificationService.showUserNotification({
-      matIcon: 'success',
-      message: 'Error copying link',
-    });
   }
+  private async shareFileNative(resource: RxDocument<schemas.IResourceFile>, url: string) {
+    try {
+      const file = await this.getFileAttachmentURI(resource);
+      if (file) {
+        const res = await lastValueFrom(this.fileService.downloadFile(url, 'blob'));
+        if (res?.data) {
+          const blob = res.data as Blob;
+          const cachedFile = await this.nativeStorageService.writeFile(blob, `picsa-resource/${resource.filename}`);
+          if (cachedFile) {
+            await Share.share({
+              title: 'Share Resource',
+              url: cachedFile.uri,
+              dialogTitle: 'Share Resource Link',
+            });
+          }
+        }
+      } else {
+        this.notificationService.showUserNotification({
+          matIcon: 'success',
+          message: 'Please wait as the file is being downloaded for sharing.',
+        });
+      }
+    } catch (error) {
+      this.notificationService.showUserNotification({
+        matIcon: 'error',
+        message: 'Failed to share resource on native platform.',
+      });
+      console.error(error);
+    }
   }
+  
+  
+  public async shareResource(resource: RxDocument<schemas.IResourceFile> | RxDocument<schemas.IResourceLink >, resourceType: string) {
+    try {
+      const isShareContent = await Share.canShare();
+      let url = resourceType === 'file' ? resource._data.url : resource.url;
+      if (resourceType === 'link' && resource?.subtype === 'play_store') {
+        url = `https://play.google.com/store/apps/details?id=${url}`;
+      }
+      
+      if (Capacitor.isNativePlatform()) {
+        if (resource.type === 'file') {
+          await this.shareFileNative(resource as RxDocument<schemas.IResourceFile>, url);
+        } else {
+          await this.shareLink(url, isShareContent.value);
+        }
+      } else {
+        await this.shareLink(url, isShareContent.value);
+      }
+    } catch (error) {
+      console.error('Error sharing resource:', error);
+      this.notificationService.showUserNotification({
+        matIcon: 'error',
+        message: 'Error sharing resource',
+      });
+    }
+  }
+  
+  
+  
+  
 }
