@@ -10,10 +10,8 @@
   z-index: 4;
   background: #fbfbfb91;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
-  flex-direction: row;
- 
 }
 .download-overlay[data-file-type='video'] {
   max-width: 854px;
@@ -31,22 +29,4 @@
     background: white;
     color: var(--color-primary);
   }
-}
-// to be moved 
-.share-button{
-  background-color: var(--color-primary);
-  border-radius: 8px;
-  width: 70px; height: 70px;
-  display: flex;
-  align-items: start;
-  justify-content: center;
-}
-.share-button-text{
-  position: relative;
-  left: -6px;
-  margin-top: 4px;
-  font-size: 15px;
-  width: fit-content;
-  font-weight: 500;
-  color: white;
 }

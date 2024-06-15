@@ -3397,15 +3397,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/share@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@capacitor/share@npm:6.0.0"
-  peerDependencies:
-    "@capacitor/core": ^6.0.0
-  checksum: bdeed48aac00f9ead31187c621d5b2281e997d330b32e402830685d0d703cd5b5ba0fc5c3284a4fe8eaabf6d2c03fb161b851f7258bb55d081e64057b15211af
-  languageName: node
-  linkType: hard
-
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
