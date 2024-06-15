@@ -311,8 +311,7 @@ export class ResourcesToolService extends PicsaAsyncService {
           await this.shareLink(url, isShareContent.value);
         }
       } else {
-        // await this.shareLink(url, isShareContent.value);
-        
+        await this.shareLink(url, isShareContent.value);
       }
     } catch (error) {
       console.error('Error sharing resource:', error);
