@@ -1,30 +1,31 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PdfViewerComponent } from '@picsa/shared/features';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
+
+import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
 
 @Component({
   selector: 'climate-forecast',
   templateUrl: './forecast.page.html',
   styleUrls: ['./forecast.page.scss'],
+  standalone: true,
+  imports: [CommonModule, ClimateToolComponentsModule, PicsaTranslateModule, PdfViewerComponent],
 })
-export class ClimateForecastPage {
+export class ClimateForecastComponent {
   forecastTypes = ['Annual', 'Downscaled'];
-  //always 0 or undefined
-  public page: number | undefined = undefined;
-  //dummy testing pdf
-  pdfSrc = '/assets/forecast-assets/forecastDoc.pdf'
-  constructor(
-    private route: ActivatedRoute,
-  ) {}
+  public page = 1;
+  public pdfSrc?: string;
+  constructor(private route: ActivatedRoute) {}
   // ngOnInit() {}
-  openAnnualForeCast(){
-   this.page = 1;
+  openAnnualForeCast() {
+    this.pdfSrc = '/assets/forecast-assets/forecastDoc.pdf';
   }
-  openDownscaledForeCast(){
-
-    this.page = 1;
-   }
-   clearPdf(){
-
-    this.page = undefined;
-   }
+  openDownscaledForeCast() {
+    this.pdfSrc = '/assets/forecast-assets/forecastDoc.pdf';
+  }
+  clearPdf() {
+    this.pdfSrc = undefined;
+  }
 }

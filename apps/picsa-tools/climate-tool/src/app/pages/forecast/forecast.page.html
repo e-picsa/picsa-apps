@@ -1,27 +1,28 @@
-<div class="page-container">
-  <div class="pdf-container slide-in" *ngIf="page">
-    <picsa-pdf-viewer [page]="page" [src]="pdfSrc" *ngIf="pdfSrc">
-      <button style="margin-right: 8px" mat-button color="primary" (click)="clearPdf()" >Close</button>
+<div class="page-content">
+  <div class="pdf-container slide-in" [class.active]="pdfSrc ? true : false">
+    @if(pdfSrc){
+    <picsa-pdf-viewer [page]="page" [src]="pdfSrc">
+      <button style="margin-right: 8px" mat-button color="primary" (click)="clearPdf()">{{'Close' | translate}}</button>
     </picsa-pdf-viewer>
+    }
   </div>
-  <div class="card-container">
-      <mat-card class="mat-card" (click)="openAnnualForeCast()" >
-        <mat-card-header  >
-          <div>Annual Forecast</div>
-        </mat-card-header>
-        <mat-card-content class="card-content">
-          <mat-icon >assessment</mat-icon>
-        </mat-card-content>
-      </mat-card>
-      <mat-card  class="mat-card" (click)="openAnnualForeCast()" >
-        <mat-card-header>
-          <div>Downscaled Forecast</div>
-        </mat-card-header>
-        <mat-card-content class="card-content">
-          <mat-icon>map</mat-icon>
-        </mat-card-content>
-      </mat-card>
-    </div>
- 
 
+  <div class="card-container">
+    <mat-card class="mat-card" (click)="openAnnualForeCast()">
+      <mat-card-header>
+        <div>{{'Annual Forecast' | translate}}</div>
+      </mat-card-header>
+      <mat-card-content class="card-content">
+        <mat-icon>assessment</mat-icon>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="mat-card" (click)="openAnnualForeCast()">
+      <mat-card-header>
+        <div>{{'Downscaled Forecast' | translate}}</div>
+      </mat-card-header>
+      <mat-card-content class="card-content">
+        <mat-icon>map</mat-icon>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

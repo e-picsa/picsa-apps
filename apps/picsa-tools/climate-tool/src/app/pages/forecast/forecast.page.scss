@@ -2,30 +2,23 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 50px;
-  width: 60%;
+  gap: 48px;
+  flex-wrap: wrap;
 }
 
-.page-container{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 50vh;
-}
-.mat-card{
-  width: 14rem;
+.mat-card {
+  min-width: 200px;
   display: flex;
   cursor: pointer;
   justify-content: center;
   align-items: center;
 }
-.card-content{
- display: flex;
- padding: 1rem;
- width: 100%;
- align-items: center;
- justify-content: center;
+.card-content {
+  display: flex;
+  padding: 1rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 .pdf-container {
   position: fixed;
@@ -37,4 +30,9 @@
 }
 .slide-in {
   transition: transform 0.3s ease-in-out;
+  transform: translateY(100vh);
+}
+
+.slide-in.active {
+  transform: translateY(0);
 }
