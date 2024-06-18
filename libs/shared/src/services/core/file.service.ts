@@ -48,7 +48,7 @@ export class FileService {
     }
     return contents;
   }
-  
+
   /** Observable method to download a file from url   */
   public downloadFile(url: string, responseType: 'blob' | 'base64' = 'base64', headers = {}) {
     // If downloading from local assets ignore cache

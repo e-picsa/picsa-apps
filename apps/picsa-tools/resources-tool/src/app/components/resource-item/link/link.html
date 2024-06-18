@@ -1,9 +1,13 @@
 <!-- Base resource display -->
 <mat-card appearance="raised" class="resource-card link" (click)="handleClick()">
-  <div class="card-layout"  >
+  <div class="card-layout">
     <!-- Side Image -->
-    <div *ngIf="resource.cover?.image" class="background-image"
-      [style.background-image]="'url(' + resource.cover?.image + ')'" [attr.data-fit]="resource.cover?.imageFit"></div>
+    <div
+      *ngIf="resource.cover?.image"
+      class="background-image"
+      [style.background-image]="'url(' + resource.cover?.image + ')'"
+      [attr.data-fit]="resource.cover?.imageFit"
+    ></div>
     <!-- Main content -->
     <div class="central-content">
       <mat-card-header>
@@ -13,8 +17,11 @@
         <p *ngIf="resource.description">{{ resource.description | translate }}</p>
         <!-- Child Content -->
         <ng-content></ng-content>
-        <div class="action-button" *ngIf="actionButtons[resource.subtype] as actionButton"
-          [attr.data-type]="resource.subtype">
+        <div
+          class="action-button"
+          *ngIf="actionButtons[resource.subtype] as actionButton"
+          [attr.data-type]="resource.subtype"
+        >
           <mat-icon *ngIf="actionButton.svgIcon" [svgIcon]="actionButton.svgIcon"></mat-icon>
           <mat-icon *ngIf="actionButton.matIcon">{{actionButton.matIcon}}</mat-icon>
         </div>
@@ -25,9 +32,13 @@
     </div>
     <!-- Assumption here is internal links are collections, to make sure we share the individual file or link, they are being skipped -->
     <div *ngIf="this.resource.subtype!=='internal'" class="share-button-section">
-      <resource-share *ngIf="resource" [dbLink]="resource" styleVariant="white"
-        [resourceType]="'link'" (click)="$event.stopPropagation()"></resource-share>
+      <resource-share
+        *ngIf="resource"
+        [dbLink]="resource"
+        styleVariant="white"
+        [resourceType]="'link'"
+        (click)="$event.stopPropagation()"
+      ></resource-share>
     </div>
   </div>
-
 </mat-card>

@@ -1,12 +1,13 @@
-.share-button{
+.share-button {
   background-color: var(--color-primary);
   border-radius: 8px;
-  width: 30px; height: 30px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.share-button-text{
+.share-button-text {
   position: relative;
   left: -6px;
   margin-top: 4px;

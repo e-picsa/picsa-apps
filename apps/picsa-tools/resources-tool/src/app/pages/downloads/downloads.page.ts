@@ -1,4 +1,3 @@
-
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -9,7 +8,6 @@ import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'];
-
 
 @Component({
   selector: 'resource-downloads',
@@ -24,9 +22,7 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(
-    public service: ResourcesToolService, 
-  ) {}
+  constructor(public service: ResourcesToolService) {}
 
   async ngOnInit() {
     await this.service.ready();
@@ -47,6 +43,6 @@ export class DownloadsPageComponent implements OnInit, OnDestroy {
   }
 
   public async shareDocument(doc: RxDocument<IResourceFile>) {
-    this.service.shareResource(doc,'file')
+    this.service.shareResource(doc, 'file');
   }
 }
