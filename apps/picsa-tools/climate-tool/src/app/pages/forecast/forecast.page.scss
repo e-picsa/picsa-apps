@@ -1,0 +1,38 @@
+.card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.mat-card {
+  min-width: 200px;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+.card-content {
+  display: flex;
+  padding: 1rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.pdf-container {
+  position: fixed;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+.slide-in {
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100vh);
+}
+
+.slide-in.active {
+  transform: translateY(0);
+}

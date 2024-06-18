@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SupabaseUploadComponent } from './supabase-upload.component';
+import { PicsaDrawingComponent } from './drawing.component';
 
-describe('SupabaseUploadComponent', () => {
-  let component: SupabaseUploadComponent;
-  let fixture: ComponentFixture<SupabaseUploadComponent>;
+describe('DrawingComponent', () => {
+  let component: PicsaDrawingComponent;
+  let fixture: ComponentFixture<PicsaDrawingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SupabaseUploadComponent],
+      imports: [PicsaDrawingComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SupabaseUploadComponent);
+    fixture = TestBed.createComponent(PicsaDrawingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
