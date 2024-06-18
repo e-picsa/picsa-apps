@@ -16,6 +16,11 @@ export const ROUTES_COMMON: Routes = [
     },
   },
   {
+    path: 'forecast',
+    loadComponent: () => import('./pages/forecast/forecast.page').then((mod) => mod.ClimateForecastComponent),
+    title: translateMarker('Forecast'),
+  },
+  {
     path: 'site',
     redirectTo: '',
     pathMatch: 'full',
