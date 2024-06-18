@@ -18,7 +18,6 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
-import { IReactionPublic } from 'mobx';
 
 export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
