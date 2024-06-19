@@ -12,14 +12,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  // flex-direction: row;
-}
-.share-button-section {
-  position: relative;
-  top: 36px;
-  z-index: 10;
-  left: 85%;
-  width: 30px;
 }
 .download-overlay[data-file-type='video'] {
   max-width: 854px;

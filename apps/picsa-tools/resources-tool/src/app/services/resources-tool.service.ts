@@ -2,7 +2,6 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-import { CopyOptions, Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
@@ -261,8 +260,14 @@ export class ResourcesToolService extends PicsaAsyncService {
     // https://capacitorjs.com/docs/v5/apis/share#android
     // https://capawesome.io/plugins/file-opener/#android
     const cacheFileUri = await this.nativeStorageService.copyFileToCache(uri);
+    const filename = uri.split('/').pop() as string;
     if (cacheFileUri) {
-      await Share.share({ files: [cacheFileUri] });
+      await Share.share({
+        files: [cacheFileUri],
+        title: filename,
+        dialogTitle: 'Share File',
+        text: 'Shared from Picsa App',
+      });
       // NOTE - sharing callback will return after delegating task (e.g. open whatsapp to share),
       // so do not delete cache file as no guarantee target task completed
 
