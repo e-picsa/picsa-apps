@@ -240,26 +240,18 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public async shareLink(url: string) {
-    try {
-      if (this.canShare) {
-        await Share.share({
-          title: 'Share Resource',
-          url: url,
-          dialogTitle: 'Share Resource Link',
-        });
-      } else {
-        // Simply copy the link to clipboard
-        this.clipboard.copy(url);
-        this.notificationService.showUserNotification({
-          matIcon: 'success',
-          message: 'Link to this resource has been copied for you to share.',
-        });
-      }
-    } catch (error) {
-      console.error('Error sharing link or showing notification:', error);
+    if (this.canShare) {
+      await Share.share({
+        title: 'Share Resource',
+        url: url,
+        dialogTitle: 'Share Resource Link',
+      });
+    } else {
+      // Simply copy the link to clipboard
+      this.clipboard.copy(url);
       this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: 'Failed to share link.',
+        matIcon: 'success',
+        message: 'Link to this resource has been copied for you to share.',
       });
     }
   }
@@ -271,7 +263,10 @@ export class ResourcesToolService extends PicsaAsyncService {
     const cacheFileUri = await this.nativeStorageService.copyFileToCache(uri);
     if (cacheFileUri) {
       await Share.share({ files: [cacheFileUri] });
-      await Filesystem.deleteFile({ path: cacheFileUri, directory: Directory.Cache });
+      // NOTE - sharing callback will return after delegating task (e.g. open whatsapp to share),
+      // so do not delete cache file as no guarantee target task completed
+
+      // await Filesystem.deleteFile({ path: cacheFileUri, directory: Directory.Cache });
     }
   }
 }

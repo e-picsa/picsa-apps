@@ -3,36 +3,36 @@
   <div class="card-layout">
     <!-- Side Image -->
     <div
-      *ngIf="resource.cover?.image"
+      *ngIf="resource().cover?.image"
       class="background-image"
-      [style.background-image]="'url(' + resource.cover?.image + ')'"
-      [attr.data-fit]="resource.cover?.imageFit"
+      [style.background-image]="'url(' + resource().cover?.image + ')'"
+      [attr.data-fit]="resource().cover?.imageFit"
     ></div>
     <!-- Main content -->
     <div class="central-content">
       <mat-card-header>
-        <mat-card-title style="margin-top: 12px">{{ resource.title | translate }}</mat-card-title>
+        <mat-card-title style="margin-top: 12px">{{ resource().title | translate }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p *ngIf="resource.description">{{ resource.description | translate }}</p>
+        <p *ngIf="description()">{{ description() | translate }}</p>
         <!-- Child Content -->
         <ng-content></ng-content>
         <div
           class="action-button"
-          *ngIf="actionButtons[resource.subtype] as actionButton"
-          [attr.data-type]="resource.subtype"
+          *ngIf="actionButtons[resource().subtype] as actionButton"
+          [attr.data-type]="resource().subtype"
         >
           <mat-icon *ngIf="actionButton.svgIcon" [svgIcon]="actionButton.svgIcon"></mat-icon>
           <mat-icon *ngIf="actionButton.matIcon">{{actionButton.matIcon}}</mat-icon>
         </div>
-        <div *ngIf="resource.language" style="margin-top: 2em">
-          <span class="language-code">{{ resource.language.toUpperCase() }}</span>
+        <div *ngIf="language()" style="margin-top: 2em">
+          <span class="language-code">{{language().toUpperCase() }}</span>
         </div>
       </mat-card-content>
     </div>
     <!-- Assumption here is internal links are collections, to make sure we share the individual file or link, they are being skipped -->
-    @if(resource.subtype!=='internal'){
-    <resource-share [link]="resource.url" (click)="$event.stopPropagation()"></resource-share>
+    @if(shareUrl()){
+    <resource-share [link]="shareUrl()" (click)="$event.stopPropagation()"></resource-share>
     }
   </div>
 </mat-card>
