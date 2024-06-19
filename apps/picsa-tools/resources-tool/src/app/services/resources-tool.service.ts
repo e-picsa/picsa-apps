@@ -2,7 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
-// import { Directory,Filesystem } from '@capacitor/filesystem';
+import { CopyOptions, Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
@@ -39,6 +39,8 @@ export class ResourcesToolService extends PicsaAsyncService {
     super();
   }
 
+  private canShare: boolean;
+
   /**
    * Initialisation method automatically called on instantiation
    * Await completed state via the service `ready()` property
@@ -51,6 +53,8 @@ export class ResourcesToolService extends PicsaAsyncService {
     }
     await this.dbInit();
     await this.populateHardcodedResources();
+    const { value: canShareValue } = await Share.canShare();
+    this.canShare = canShareValue;
   }
 
   private async dbInit() {
@@ -235,9 +239,9 @@ export class ResourcesToolService extends PicsaAsyncService {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
   }
 
-  private async shareLink(url: string, isShareContent: boolean) {
+  public async shareLink(url: string) {
     try {
-      if (isShareContent) {
+      if (this.canShare) {
         await Share.share({
           title: 'Share Resource',
           url: url,
@@ -245,7 +249,7 @@ export class ResourcesToolService extends PicsaAsyncService {
         });
       } else {
         // Simply copy the link to clipboard
-        await this.clipboard.copy(url);
+        this.clipboard.copy(url);
         this.notificationService.showUserNotification({
           matIcon: 'success',
           message: 'Link to this resource has been copied for you to share.',
@@ -259,65 +263,15 @@ export class ResourcesToolService extends PicsaAsyncService {
       });
     }
   }
-  private async shareFileNative(resource: RxDocument<schemas.IResourceFile>, url: string) {
-    try {
-      const file = await this.getFileAttachmentURI(resource);
-      //if file is downloaded from before
-      if (file) {
-        const res = await lastValueFrom(this.fileService.downloadFile(url, 'blob'));
-        if (res?.data) {
-          const blob = res.data as Blob;
-          const cachedFile = await this.nativeStorageService.writeFile(blob, `picsa-resource/${resource.filename}`);
-          if (cachedFile) {
-            await Share.share({
-              title: 'Share Resource',
-              url: cachedFile.uri,
-              dialogTitle: 'Share Resource Link',
-            });
-          }
-        }
-      } else {
-        this.notificationService.showUserNotification({
-          matIcon: 'success',
-          message: 'Please wait as the file is being downloaded for sharing.',
-        });
-        //TODO: complete use case when file is not downloaded
-      }
-    } catch (error) {
-      this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: 'Failed to share resource on native platform.',
-      });
-      console.error(error);
-    }
-  }
-
-  public async shareResource(
-    resource: RxDocument<schemas.IResourceFile> | RxDocument<schemas.IResourceLink>,
-    resourceType: string
-  ) {
-    try {
-      const isShareContent = await Share.canShare();
-      let url = resourceType === 'file' ? resource._data.url : resource.url;
-      if (resourceType === 'link' && resource?.subtype === 'play_store') {
-        url = `https://play.google.com/store/apps/details?id=${url}`;
-      }
-
-      if (Capacitor.isNativePlatform()) {
-        if (resource.type === 'file') {
-          await this.shareFileNative(resource as RxDocument<schemas.IResourceFile>, url);
-        } else {
-          await this.shareLink(url, isShareContent.value);
-        }
-      } else {
-        await this.shareLink(url, isShareContent.value);
-      }
-    } catch (error) {
-      console.error('Error sharing resource:', error);
-      this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: 'Error sharing resource',
-      });
+  public async shareFileNative(uri: string) {
+    // HACK - files can only be shared from the cache folder (unless specific permissions granted)
+    // Copy to cache folder, share and delete from cache
+    // https://capacitorjs.com/docs/v5/apis/share#android
+    // https://capawesome.io/plugins/file-opener/#android
+    const cacheFileUri = await this.nativeStorageService.copyFileToCache(uri);
+    if (cacheFileUri) {
+      await Share.share({ files: [cacheFileUri] });
+      await Filesystem.deleteFile({ path: cacheFileUri, directory: Directory.Cache });
     }
   }
 }
