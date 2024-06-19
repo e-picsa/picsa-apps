@@ -1,14 +1,33 @@
 <div>
-  <div class="uploads-section">
+  <div class="header-section">
     <h2>Uploaded Photos</h2>
-    <!-- For showing uploaded photos -->
+    <button
+      mat-button
+      mat-raised-button
+      class="delete-all-button"
+      color="warn"
+      (click)="removeAllPhotos()"
+      *ngIf="photos.length > 1"
+    >
+      <mat-icon>delete_sweep</mat-icon>
+      <span>
+        {{ 'Delete All' | translate }}
+      </span>
+    </button>
+  </div>
+  <div class="uploads-section">
+    <div *ngFor="let photo of photos; let i = index" class="photo-container">
+      <img [src]="photo.webPath" />
+      <mat-icon class="close-icon" (click)="removePhoto(i)">close</mat-icon>
+    </div>
   </div>
   <div class="sticky-footer">
-    <button mat-button mat-raised-button class="footer-button" color="primary">
-      <mat-icon>add_a_photo</mat-icon>
+    <button mat-button mat-raised-button class="footer-button" color="primary" (click)="takeOrChoosePicture()">
       <span>
+        <mat-icon class="photo-icon">add_a_photo</mat-icon>
         {{ 'Add Photo' | translate }}
       </span>
     </button>
+    <input type="file" (change)="processWebPicture($event)" *ngIf="isWebPlatform" hidden #fileInput />
   </div>
 </div>

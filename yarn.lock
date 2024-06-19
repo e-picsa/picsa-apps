@@ -3324,6 +3324,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/camera@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@capacitor/camera@npm:6.0.1"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+  checksum: ae9f23b3e532369f2da48eb0c9aa551945a30ea9df8fa3549fd4bbab65d57ef3e9968b8524d4d8ea111bc35570f208e44a3bf9e64f45e90ecf6cbcbc4ebd5a9b
+  languageName: node
+  linkType: hard
+
 "@capacitor/cli@npm:5.5.1":
   version: 5.5.1
   resolution: "@capacitor/cli@npm:5.5.1"
@@ -19312,6 +19321,7 @@ __metadata:
     "@capacitor/android": 5.5.1
     "@capacitor/app": ^5.0.6
     "@capacitor/browser": ^5.1.0
+    "@capacitor/camera": ^6.0.1
     "@capacitor/cli": 5.5.1
     "@capacitor/core": 5.5.1
     "@capacitor/device": ^5.0.6
