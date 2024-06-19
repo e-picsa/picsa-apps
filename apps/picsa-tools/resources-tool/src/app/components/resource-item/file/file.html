@@ -2,10 +2,8 @@
 
 <!-- TODO - should be able to refactor video item to be included here -->
 <div style="position: relative">
-  @if(dbDoc){
-  <div style="position: relative; top: 36px; z-index: 10; left: 85%; width: 30px">
-    <resource-share styleVariant="white" [dbDoc]="dbDoc" [resourceType]="'file'"></resource-share>
-  </div>
+  @if(fileURI){
+  <resource-share class="share-link" [link]="dbDoc.url" [uri]="fileURI"></resource-share>
   }
 
   <!-- Download overlay -->

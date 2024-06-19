@@ -31,14 +31,8 @@
       </mat-card-content>
     </div>
     <!-- Assumption here is internal links are collections, to make sure we share the individual file or link, they are being skipped -->
-    <div *ngIf="this.resource.subtype!=='internal'" class="share-button-section">
-      <resource-share
-        *ngIf="resource"
-        [dbLink]="resource"
-        styleVariant="white"
-        [resourceType]="'link'"
-        (click)="$event.stopPropagation()"
-      ></resource-share>
-    </div>
+    @if(resource.subtype!=='internal'){
+    <resource-share [link]="resource.url" (click)="$event.stopPropagation()"></resource-share>
+    }
   </div>
 </mat-card>

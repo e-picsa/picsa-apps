@@ -38,3 +38,9 @@
     color: var(--color-primary);
   }
 }
+.share-link {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  z-index: 2;
+}
