@@ -1,6 +1,7 @@
-<div style="display: flex; align-items: center" [attr.data-deployment]="deployment.id" [attr.data-active]="active">
+<div class="container" [attr.data-deployment]="deployment.id" [attr.data-active]="active">
   @if(deployment.icon_path){
   <img [src]="deployment.icon_path | storagePath" class="deployment-image" />
+  <div class="country-code">{{ deployment.country_code }}</div>
   }
-  <span>{{ deployment.label }}</span>
+  <div class="label">{{ deployment.label }}</div>
 </div>
