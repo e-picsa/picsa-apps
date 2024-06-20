@@ -217,7 +217,7 @@ export type Database = {
         Row: {
           access_key_md5: string | null
           configuration: Json
-          country_code: string | null
+          country_code: string
           icon_path: string | null
           id: string
           label: string
@@ -227,7 +227,7 @@ export type Database = {
         Insert: {
           access_key_md5?: string | null
           configuration?: Json
-          country_code?: string | null
+          country_code: string
           icon_path?: string | null
           id: string
           label: string
@@ -237,7 +237,7 @@ export type Database = {
         Update: {
           access_key_md5?: string | null
           configuration?: Json
-          country_code?: string | null
+          country_code?: string
           icon_path?: string | null
           id?: string
           label?: string
@@ -1056,6 +1056,10 @@ export type Database = {
           metadata: Json
           updated_at: string
         }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       search: {
         Args: {
