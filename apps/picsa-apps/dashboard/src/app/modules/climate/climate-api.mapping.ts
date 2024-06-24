@@ -1,6 +1,7 @@
 import type { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
+import { IDeploymentRow } from '../deployment/types';
 import type { ClimateApiService } from './climate-api.service';
 import { IClimateProductInsert, IClimateProductRow, IForecastInsert, IForecastRow, IStationRow } from './types';
 
@@ -15,7 +16,12 @@ export type IApiMappingName = keyof IApiMapping;
  * Mapping functions that handle processing of data loaded from API server endpoints,
  * and populating entries to supabase DB
  */
-export const ApiMapping = (api: ClimateApiService, db: SupabaseService['db'], storage: SupabaseStorageService) => {
+export const ApiMapping = (
+  api: ClimateApiService,
+  db: SupabaseService['db'],
+  storage: SupabaseStorageService,
+  deployment: IDeploymentRow
+) => {
   return {
     rainfallSummaries: async (country_code: string, station_id: number) => {
       // TODO - add model type definitions for server rainfall summary response body
@@ -45,7 +51,10 @@ export const ApiMapping = (api: ClimateApiService, db: SupabaseService['db'], st
     },
     //
     station: async () => {
-      const { data, error } = await api.getObservableClient('station').GET('/v1/station/');
+      const { country_code } = deployment;
+      const { data, error } = await api
+        .getObservableClient('station')
+        .GET(`/v1/station/{country}`, { params: { path: { country: country_code as any } } });
       if (error) throw error;
       // TODO - fix climate api bindigns to avoid data.data
       console.log('station data', data);
@@ -64,7 +73,11 @@ export const ApiMapping = (api: ClimateApiService, db: SupabaseService['db'], st
         .getObservableClient(`forecasts/${country_code}`)
         .GET(`/v1/forecasts/{country_code}`, { params: { path: { country_code } } });
       if (error) throw error;
-      const forecasts = data.map((d): IForecastInsert => ({ ...d, country_code }));
+      const forecasts = data.map((d): IForecastInsert => {
+        const { date, filename, format, type } = d;
+        // TODO - handle format
+        return { date_modified: date, filename, country_code, type, id: filename.split('/').pop() as string };
+      });
       const { error: dbError, data: dbData } = await db
         .table('climate_forecasts')
         .upsert<IForecastInsert>(forecasts)
@@ -74,12 +87,10 @@ export const ApiMapping = (api: ClimateApiService, db: SupabaseService['db'], st
     },
     forecast_file: async (row: IForecastRow) => {
       const { country_code, filename } = row;
-      const { data, error } = await api
-        .getObservableClient(`forecasts/${filename}`)
-        .GET(`/v1/forecasts/{country_code}/{file_name}`, {
-          params: { path: { country_code: country_code as any, file_name: filename } },
-          parseAs: 'blob',
-        });
+      const { data, error } = await api.getObservableClient(`forecasts/${filename}`).GET(`/v1/forecasts/{file_name}`, {
+        params: { path: { file_name: filename } },
+        parseAs: 'blob',
+      });
       if (error) throw error;
       // setup metadata
       const fileBlob = data as Blob;
