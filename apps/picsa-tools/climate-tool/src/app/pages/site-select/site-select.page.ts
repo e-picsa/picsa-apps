@@ -115,12 +115,12 @@ export class SiteSelectPage implements OnInit {
       }
     });
 
-    if (closestStation) {
-      console.log('Closest station selected:', closestStation);
-      this.ngZone.run(() => {
-        this.activeStation = closestStation;
-      });
-    }
+     if (closestStation) {
+    console.log('Closest station selected:', closestStation);
+    this.ngZone.run(() => {
+      this.activeStation = closestStation;
+    });
+  }
   }
 
   calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
