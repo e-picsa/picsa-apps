@@ -1,10 +1,12 @@
 import { effect, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
+import { map } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
@@ -31,6 +33,10 @@ export class ClimateService extends PicsaAsyncService {
     this.deploymentSevice.activeDeployment() as IDeploymentRow
   );
 
+  // Create a signal to represent current stationId as defined by route params
+  private activeStationId = toSignal(ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => params.stationId)));
+  private activeCountryCode: string;
+
   constructor(
     private supabaseService: SupabaseService,
     private api: ClimateApiService,
@@ -40,18 +46,18 @@ export class ClimateService extends PicsaAsyncService {
   ) {
     super();
     this.ready();
-    // Update list of available stations for deployment country code on change
+    // Update list of available stations for deployment country code and station id on change
     effect(async () => {
       const deployment = this.deploymentSevice.activeDeployment();
+      const activeStationId = this.activeStationId();
       if (deployment) {
-        await this.listStations(deployment.country_code);
+        await this.loadData(deployment, activeStationId);
       }
     });
   }
 
   public override async init() {
     await this.supabaseService.ready();
-    this.subscribeToRouteChanges();
   }
 
   public async refreshData() {
@@ -62,7 +68,20 @@ export class ClimateService extends PicsaAsyncService {
     }
   }
 
-  private setActiveStation(id: number) {
+  private async loadData(deployment: IDeploymentRow, stationId?: string) {
+    // refresh list of stations on deployment country code change
+    if (deployment.country_code !== this.activeCountryCode) {
+      this.activeCountryCode = deployment.country_code;
+      await this.ready();
+      await this.listStations(deployment.country_code);
+    }
+    // set active station if deployment and active station id selected
+    if (stationId) {
+      this.setActiveStation(stationId);
+    }
+  }
+
+  private setActiveStation(id: string) {
     const station = this.stations.find((station) => station.station_id === id);
     if (station) {
       this.activeStation = station;
@@ -70,16 +89,6 @@ export class ClimateService extends PicsaAsyncService {
       this.activeStation = undefined as any;
       this.notificationService.showUserNotification({ matIcon: 'error', message: `Station data not found` });
     }
-  }
-
-  private subscribeToRouteChanges() {
-    // Use merged router as service cannot access route params directly like component
-    ngRouterMergedSnapshot$(this.router).subscribe(async ({ params }) => {
-      if (params.stationId) {
-        await this.ready();
-        this.setActiveStation(parseInt(params.stationId));
-      }
-    });
   }
 
   private async listStations(country_code: string, allowRefresh = true) {

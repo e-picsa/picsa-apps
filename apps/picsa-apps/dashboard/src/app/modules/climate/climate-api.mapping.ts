@@ -23,7 +23,7 @@ export const ApiMapping = (
   deployment: IDeploymentRow
 ) => {
   return {
-    rainfallSummaries: async (country_code: string, station_id: number) => {
+    rainfallSummaries: async (country_code: string, station_id: string) => {
       // TODO - add model type definitions for server rainfall summary response body
       const { data, error } = await api
         .getObservableClient(`rainfallSummary_${country_code}_${station_id}`)
@@ -56,11 +56,12 @@ export const ApiMapping = (
         .getObservableClient('station')
         .GET(`/v1/station/{country}`, { params: { path: { country: country_code as any } } });
       if (error) throw error;
-      // TODO - fix climate api bindigns to avoid data.data
       console.log('station data', data);
       const dbData = data.map(
         (d): IStationRow => ({
           ...d,
+          id: `${d.country_code}/${d.station_id}`,
+          station_id: `${d.station_id}`,
         })
       );
       const { error: dbError } = await db.table('climate_stations').upsert<IStationRow>(dbData);
