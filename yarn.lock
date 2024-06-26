@@ -3397,6 +3397,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/share@npm:^5.0.0":
+  version: 5.0.8
+  resolution: "@capacitor/share@npm:5.0.8"
+  peerDependencies:
+    "@capacitor/core": ^5.0.0
+  checksum: 64cd437c9a648a59cfeceadf6f9ab9ee642bae553eb3a37d24082fa201f37c36f94797454ead82d95142657b0fab73a616fcbbfa082d9117db9619276bee5a92
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -19325,6 +19334,7 @@ __metadata:
     "@capacitor/filesystem": ^5.1.4
     "@capacitor/network": ^5.0.6
     "@capacitor/screen-orientation": ^5.0.7
+    "@capacitor/share": ^5.0.0
     "@ngx-translate/core": ~15.0.0
     "@ngx-translate/http-loader": ~8.0.0
     "@nx/angular": 18.2.1
