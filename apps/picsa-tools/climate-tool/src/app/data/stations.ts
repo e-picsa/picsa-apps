@@ -1,8 +1,7 @@
+import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
 import type { IStationMetaDB } from '@picsa/models';
 import { generateMockDBMeta } from '@picsa/utils';
 import merge from 'deepmerge';
-
-import { DEFINITIONS_MW, DEFINITIONS_ZM } from './definitions';
 
 const _created = new Date('2019-07-23').toISOString();
 
@@ -17,7 +16,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -15.796432,
     longitude: 35.026425,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -29,7 +28,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -15.679203,
     longitude: 34.967697,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -41,7 +40,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -13.7050735,
     longitude: 35.037632,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -53,7 +52,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -14.4821775,
     longitude: 35.2352141,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -65,7 +64,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -14.0806369,
     longitude: 34.9062036,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -77,7 +76,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -14.3530807,
     longitude: 35.4706477,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -89,7 +88,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -13.78157,
     longitude: 34.4568,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -101,7 +100,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -12.92842,
     longitude: 34.283192,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   {
     ...generateMockDBMeta({
@@ -113,7 +112,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -13.03681,
     longitude: 33.48123,
     countryCode: 'mw',
-    definitions: DEFINITIONS_MW,
+    definitions: CLIMATE_CHART_DEFINTIONS.mw,
   },
   // Zambia
   {
@@ -126,7 +125,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -13.3843,
     longitude: 32.3847,
     countryCode: 'zm',
-    definitions: DEFINITIONS_ZM,
+    definitions: CLIMATE_CHART_DEFINTIONS.zm,
   },
   {
     ...generateMockDBMeta({
@@ -138,7 +137,7 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: -14.24474,
     longitude: 31.327641,
     countryCode: 'zm',
-    definitions: merge(DEFINITIONS_ZM, {
+    definitions: merge(CLIMATE_CHART_DEFINTIONS.zm, {
       extreme_rainfall_days: { definition: 'For Petauke the 95th percentile calculated to be 41.35mm' },
     }),
   },
@@ -152,6 +151,6 @@ export const HARDCODED_STATIONS: IStationMetaDB[] = [
     latitude: 38.557671,
     longitude: 68.775917,
     countryCode: 'tj',
-    definitions: DEFINITIONS_ZM,
+    definitions: CLIMATE_CHART_DEFINTIONS.zm,
   },
 ];

@@ -1,8 +1,7 @@
 import { IChartDefinitions, IChartMeta } from '@picsa/models';
 import merge from 'deepmerge';
 
-import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS } from '../../components/chart-tools/line-tool/line-tool.model';
-import { PROBABILITY_TOOL_OPTIONS } from '../../components/chart-tools/probability-tool/probabililty-tool.model';
+import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
 
 const tools: IChartMeta['tools'] = {
   line: LINE_TOOL_OPTIONS,
