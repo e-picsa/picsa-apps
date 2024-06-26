@@ -50,12 +50,12 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   async ngAfterViewInit() {
-    const { station_id } = this.service.activeStation;
+    const { id } = this.service.activeStation;
     // Load data stored in supabase db if available. Otherwise load from api
     // TODO - nicer if could include db lookups as part of mapping doc
     const { data } = await this.db
       .select<'*', IClimateProductRow>('*')
-      .eq('station_id', station_id)
+      .eq('station_id', id)
       .eq('type', 'rainfallSummary')
       .single();
     if (data) {
