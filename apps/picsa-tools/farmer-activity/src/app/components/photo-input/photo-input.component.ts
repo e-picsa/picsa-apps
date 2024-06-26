@@ -1,8 +1,7 @@
-import { Platform } from '@angular/cdk/platform';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 
-// Temporary service to simulate the photo service that will handle the photo input and output.
 import { PhotoService } from '../../services/photo-input.service';
 
 interface Photo {
@@ -14,19 +13,16 @@ interface Photo {
   templateUrl: './photo-input.component.html',
   styleUrls: ['./photo-input.component.scss'],
 })
-export class PhotoInputComponent implements OnInit {
+export class PhotoInputComponent {
   @ViewChild('fileInput') fileInput: ElementRef;
   photos: Photo[] = [];
-  isWebPlatform: boolean;
 
-  constructor(private platform: Platform, private photoService: PhotoService) {}
-
-  ngOnInit() {
-    this.isWebPlatform = this.platform.isBrowser;
-  }
+  constructor(private photoService: PhotoService) {}
 
   async takeOrChoosePicture() {
-    const source = this.isWebPlatform ? CameraSource.Photos : CameraSource.Prompt;
+    const platform = Capacitor.getPlatform();
+    const source = platform === 'web' ? CameraSource.Photos : CameraSource.Prompt;
+
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
