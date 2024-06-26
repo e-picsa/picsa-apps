@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router, NavigationStart } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -23,5 +24,12 @@ export class AudioService {
 
   isPlaying(): boolean {
     return !this.audio.paused;
+  }
+
+  stop(): void {
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+    }
   }
 }
