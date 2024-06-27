@@ -1,7 +1,9 @@
 import { MONTH_DATA } from '@picsa/data';
 import { IChartConfig, IChartMeta, IStationData } from '@picsa/models/src';
 
-const MONTH_NAMES = MONTH_DATA.map((m) => m.labelShort);
+// expose global variable to allow override by translated month names
+// (used in both axis labels and tooltip)
+let MONTH_NAMES: string[];
 
 interface IGridMeta {
   xTicks: number[];
@@ -14,7 +16,10 @@ interface IGridMeta {
  * Generate a c3 chart config with series loaded for all station data, and
  * active definition series displayed
  */
-export async function generateChartConfig(data: IStationData[], definition: IChartMeta) {
+export async function generateChartConfig(data: IStationData[], definition: IChartMeta, monthNames?: string[]) {
+  // HACK - override monthnames if passed from translation system
+  MONTH_NAMES = monthNames || MONTH_DATA.map((m) => m.labelShort);
+
   // recalculate axes min/max bounds from data
   definition.axes = {
     ...definition.axes,
