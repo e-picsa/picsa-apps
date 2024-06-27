@@ -1,12 +1,23 @@
 import { IChartDefinitions, IChartMeta } from '@picsa/models';
 import merge from 'deepmerge';
 
-import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS } from '../../components/chart-tools/line-tool/line-tool.model';
-import { PROBABILITY_TOOL_OPTIONS } from '../../components/chart-tools/probability-tool/probabililty-tool.model';
+import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
 
 const tools: IChartMeta['tools'] = {
   line: LINE_TOOL_OPTIONS,
   probability: PROBABILITY_TOOL_OPTIONS,
+};
+
+// Default bounds (will be replaced by bounds generated from data)
+const AXES_DEFAULT: IChartMeta['axes'] = {
+  yMin: null as unknown as number,
+  yMax: null as unknown as number,
+  xMin: null as unknown as number,
+  xMax: null as unknown as number,
+  xMinor: 1,
+  xMajor: 2,
+  yMinor: 10,
+  yMajor: 50,
 };
 
 const definitions: IChartDefinitions = {
@@ -14,17 +25,19 @@ const definitions: IChartDefinitions = {
     _id: 'rainfall',
     name: 'Seasonal Rainfall',
     shortname: 'Rain',
-    image: 'assets/images/season-rainfall.png',
+    image: 'assets/climate-icons/season-rainfall.png',
     keys: ['Rainfall'],
     colors: ['#377eb8'],
     yFormat: 'value',
     yLabel: 'Seasonal Total Rainfall (mm)',
     xLabel: '',
     xVar: 'Year',
-    xMinor: 1,
-    xMajor: 2,
-    yMinor: 100,
-    yMajor: 200,
+    axes: {
+      ...AXES_DEFAULT,
+      yMin: 0,
+      yMinor: 100,
+      yMajor: 200,
+    },
     tools,
     units: 'mm',
     definition:
@@ -34,18 +47,19 @@ const definitions: IChartDefinitions = {
     _id: 'start',
     name: 'Start of Season',
     shortname: 'Start',
-    image: 'assets/images/season-start.png',
+    image: 'assets/climate-icons/season-start.png',
     keys: ['Start'],
     colors: ['#e41a1c'],
     yFormat: 'date-from-July',
     yLabel: 'Start of Season',
     xLabel: '',
     xVar: 'Year',
-    xMinor: 1,
-    xMajor: 2,
-    // assume 367 days in a year (366 leap + 1 for 0 index), mark weekly and mid month
-    yMinor: 365 / 48,
-    yMajor: 365 / 12,
+    axes: {
+      ...AXES_DEFAULT,
+      // assume 367 days in a year (366 leap + 1 for 0 index), mark weekly and mid month
+      yMinor: 365 / 48,
+      yMajor: 365 / 12,
+    },
     tools: merge(tools, {
       // start of season focuses more on values below line. Use different colors to emphasise change
       line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
@@ -63,17 +77,19 @@ const definitions: IChartDefinitions = {
     _id: 'end',
     name: 'End of Season',
     shortname: 'End',
-    image: 'assets/images/season-end.png',
+    image: 'assets/climate-icons/season-end.png',
     keys: ['End'],
     colors: ['#984ea3'],
     yFormat: 'date-from-July',
     yLabel: 'End of Season',
     xLabel: '',
     xVar: 'Year',
-    xMinor: 1,
-    xMajor: 2,
-    yMinor: 365 / 48,
-    yMajor: 365 / 12,
+    axes: {
+      ...AXES_DEFAULT,
+      yMinor: 365 / 48,
+      yMajor: 365 / 12,
+    },
+
     tools: merge(tools, {
       // start of season focuses more on values below line. Use different colors to emphasise change
       line: { above: { color: LINE_TOOL_COLORS.red }, below: { color: LINE_TOOL_COLORS.purple } },
@@ -91,17 +107,18 @@ const definitions: IChartDefinitions = {
     _id: 'length',
     name: 'Length of Season',
     shortname: 'Length',
-    image: 'assets/images/season-length.png',
+    image: 'assets/climate-icons/season-length.png',
     keys: ['Length'],
     colors: ['#4daf4a'],
     yFormat: 'value',
     yLabel: 'Length of Season',
     xLabel: '',
     xVar: 'Year',
-    xMinor: 1,
-    xMajor: 2,
-    yMinor: 10,
-    yMajor: 50,
+    axes: {
+      ...AXES_DEFAULT,
+      yMinor: 10,
+      yMajor: 50,
+    },
     tools,
     units: 'days',
     definition:
@@ -111,17 +128,18 @@ const definitions: IChartDefinitions = {
     _id: 'extreme_rainfall_days',
     name: 'Extreme Rainfall',
     shortname: 'Extreme',
-    image: 'assets/images/extreme-rainfall.svg',
+    image: 'assets/climate-icons/extreme-rainfall.svg',
     keys: ['Extreme_events'],
     colors: ['#0a3a62'],
     yFormat: 'value',
     yLabel: 'Frequency of Extreme',
     xLabel: 'Year',
     xVar: 'Year',
-    xMinor: 1,
-    xMajor: 2,
-    yMinor: 0.5,
-    yMajor: 1,
+    axes: {
+      ...AXES_DEFAULT,
+      yMinor: 0.5,
+      yMajor: 1,
+    },
     tools,
     units: 'days',
     definition: 'Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile',

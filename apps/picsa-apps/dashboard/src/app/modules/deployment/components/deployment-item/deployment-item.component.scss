@@ -2,10 +2,11 @@
   display: block;
 }
 .deployment-image {
-  height: 30px;
-  width: 30px;
+  height: 36px;
+  width: 36px;
   object-fit: contain;
   margin-right: 8px;
+  margin-top: -8px;
 }
 
 // HACK - invert demo deployment black svg image when active
@@ -13,4 +14,20 @@
   img {
     filter: invert(1);
   }
+}
+.container {
+  display: flex;
+  align-items: center;
+  width: 200px;
+}
+
+.country-code {
+  position: absolute;
+  bottom: -16px;
+  left: -8px;
+  font-size: 10px;
+  width: 52px;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
