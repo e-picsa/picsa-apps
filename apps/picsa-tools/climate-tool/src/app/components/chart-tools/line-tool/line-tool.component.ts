@@ -70,7 +70,7 @@ export class LineToolComponent implements OnInit, OnDestroy {
     const { chartConfig: config, chartDefinition: definition } = this.chartService;
     if (config && definition) {
       this.options = definition.tools.line;
-      this.step = definition.yMinor;
+      this.step = definition.axes.yMinor;
       if (definition.yFormat === 'value') {
         this.inputType = 'number';
       } else {
