@@ -3266,12 +3266,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-community/firebase-analytics@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@capacitor-community/firebase-analytics@npm:5.0.1"
+"@capacitor-community/firebase-analytics@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor-community/firebase-analytics@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: 08e1c36d93a05a21f5c5e7e8131feddc13c18b5a74598e33bf6d183014725487e0653085ef73f43dd3b11eae27feefcb0d00c50f22a95ff444e1e721ea1fbfbd
+    "@capacitor/core": ^6.0.0
+  checksum: 8c9a5689c4c7e7f46eafe0ece0b081279b033f0388761946731917018d1f4eec92cf4248fb70b88d548f17e656e5ee64c3ec6c4fe90e54e6c03f7ef4f627faf0
   languageName: node
   linkType: hard
 
@@ -3284,20 +3284,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-firebase/performance@npm:^5.1.0":
-  version: 5.3.0
-  resolution: "@capacitor-firebase/performance@npm:5.3.0"
+"@capacitor-firebase/performance@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor-firebase/performance@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-    firebase: ^9.0.0 || ^10.0.0
+    "@capacitor/core": ^6.0.0
+    firebase: ^10.9.0
   peerDependenciesMeta:
     firebase:
       optional: true
-  checksum: 2e6cdf90f6eb189c2d32c4bdc0fb5199bfe3b31cd801e5e9adbc2c9bf0c5e9e02a7da43202a3cd24b5a3e25534b3acbb837aff7cdf1e1984ce642fe54fe44155
+  checksum: 7932ffd4e90935b0eedf9d4c4ab4c535b4cdfa60833c15b26de9ad336360d597c22a02646cb7c50ac64f5104493337c350bbe6e737d7dc5e079c2134592febe5
   languageName: node
   linkType: hard
 
-"@capacitor/android@npm:^6.0.0":
+"@capacitor/android@npm:^6.1.0":
   version: 6.1.0
   resolution: "@capacitor/android@npm:6.1.0"
   peerDependencies:
@@ -3315,7 +3315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/browser@npm:^6.0.0":
+"@capacitor/browser@npm:^6.0.1":
   version: 6.0.1
   resolution: "@capacitor/browser@npm:6.0.1"
   peerDependencies:
@@ -3324,7 +3324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/camera@npm:^6.0.0":
+"@capacitor/camera@npm:^6.0.1":
   version: 6.0.1
   resolution: "@capacitor/camera@npm:6.0.1"
   peerDependencies:
@@ -3362,7 +3362,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/core@npm:^6.0.0":
+"@capacitor/core@npm:^6.1.0":
   version: 6.1.0
   resolution: "@capacitor/core@npm:6.1.0"
   dependencies:
@@ -3389,7 +3389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/network@npm:^6.0.0":
+"@capacitor/network@npm:^6.0.1":
   version: 6.0.1
   resolution: "@capacitor/network@npm:6.0.1"
   peerDependencies:
@@ -3398,7 +3398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/screen-orientation@npm:^6.0.0":
+"@capacitor/screen-orientation@npm:^6.0.1":
   version: 6.0.1
   resolution: "@capacitor/screen-orientation@npm:6.0.1"
   peerDependencies:
@@ -11119,13 +11119,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-blob-writer@npm:^1.1.14":
-  version: 1.1.14
-  resolution: "capacitor-blob-writer@npm:1.1.14"
+"capacitor-blob-writer@npm:^1.1.16":
+  version: 1.1.16
+  resolution: "capacitor-blob-writer@npm:1.1.16"
   peerDependencies:
     "@capacitor/core": ">=3.0.0"
     "@capacitor/filesystem": ">=1.0.0"
-  checksum: 5af741c985ec7ac3e73b2fd5ebd091a63428e51df453fdb868fbfd43ea4b50bb67cdacc904a9ace581501d739648650db68edc3bb5251297aa117c37ce707d7c
+  checksum: 9fea391b8ac8370ded9a039034920b67b0e10349d6e33288d735206ad35b184c8200bedfbf066207ddb9f181d42f56b3da7446a130951b9358dcb0fdedc72dbf
   languageName: node
   linkType: hard
 
@@ -19386,19 +19386,19 @@ __metadata:
     "@awesome-cordova-plugins/network": ^6.4.0
     "@awesome-cordova-plugins/social-sharing": ^6.4.0
     "@biesbjerg/ngx-translate-extract-marker": ^1.0.0
-    "@capacitor-community/firebase-analytics": ^5.0.1
+    "@capacitor-community/firebase-analytics": ^6.0.0
     "@capacitor-community/firebase-crashlytics": ^3.0.0
-    "@capacitor-firebase/performance": ^5.1.0
-    "@capacitor/android": ^6.0.0
+    "@capacitor-firebase/performance": ^6.0.0
+    "@capacitor/android": ^6.1.0
     "@capacitor/app": ^6.0.0
-    "@capacitor/browser": ^6.0.0
-    "@capacitor/camera": ^6.0.0
+    "@capacitor/browser": ^6.0.1
+    "@capacitor/camera": ^6.0.1
     "@capacitor/cli": latest
-    "@capacitor/core": ^6.0.0
+    "@capacitor/core": ^6.1.0
     "@capacitor/device": ^6.0.0
     "@capacitor/filesystem": ^6.0.0
-    "@capacitor/network": ^6.0.0
-    "@capacitor/screen-orientation": ^6.0.0
+    "@capacitor/network": ^6.0.1
+    "@capacitor/screen-orientation": ^6.0.1
     "@ngx-translate/core": ~15.0.0
     "@ngx-translate/http-loader": ~8.0.0
     "@nx/angular": 18.2.1
@@ -19444,7 +19444,7 @@ __metadata:
     "@vendure/ngx-translate-extract": ^9.0.3
     autoprefixer: ^10.4.0
     c3: ^0.7.20
-    capacitor-blob-writer: ^1.1.14
+    capacitor-blob-writer: ^1.1.16
     capacitor-video-player: ^5.5.1
     cordova-plugin-codeplay-share-own-apk: 0.0.7
     cordova-plugin-file: ^8.0.1
