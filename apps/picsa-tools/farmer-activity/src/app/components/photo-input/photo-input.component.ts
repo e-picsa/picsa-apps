@@ -1,19 +1,25 @@
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
-import { PhotoService } from '../../services/photo-input.service';
+import { PhotoService } from './photo-input.service';
 
 interface Photo {
   webPath?: string;
 }
 
 @Component({
-  selector: 'farmer-activity-photo-input',
+  selector: 'picsa-photo-input',
   templateUrl: './photo-input.component.html',
   styleUrls: ['./photo-input.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
-export class PhotoInputComponent {
+export class PicsaPhotoInputComponent {
   @ViewChild('fileInput') fileInput: ElementRef;
   photos: Photo[] = [];
 

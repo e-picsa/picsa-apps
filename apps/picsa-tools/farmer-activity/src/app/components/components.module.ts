@@ -9,22 +9,29 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 // Local components
 import { FarmerActivityMaterialModule } from './material.module';
-import { PhotoInputComponent } from './photo-input/photo-input.component';
+import { PicsaPhotoInputComponent } from './photo-input/photo-input.component';
 
-const Components = [PhotoInputComponent];
+const Components = [];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     PicsaCommonComponentsModule,
+    PicsaPhotoInputComponent,
     PicsaTranslateModule,
     PicsaVideoPlayerModule,
     ReactiveFormsModule,
     RouterModule,
     FarmerActivityMaterialModule,
   ],
-  exports: [...Components, PicsaCommonComponentsModule, FarmerActivityMaterialModule, PicsaVideoPlayerModule],
+  exports: [
+    FarmerActivityMaterialModule,
+    PicsaCommonComponentsModule,
+    PicsaPhotoInputComponent,
+    PicsaVideoPlayerModule,
+    ...Components,
+  ],
   declarations: [Components],
   providers: [],
 })
