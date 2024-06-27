@@ -17,6 +17,8 @@ export class PhotoInputComponent {
   @ViewChild('fileInput') fileInput: ElementRef;
   photos: Photo[] = [];
 
+  public isWebPlatform = Capacitor.getPlatform() === 'web';
+
   constructor(private photoService: PhotoService) {}
 
   async takeOrChoosePicture() {
