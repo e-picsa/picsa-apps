@@ -33,7 +33,6 @@ export class BudgetCardNew {
       imgType: 'svg',
     };
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
-      width: '250px',
       data: card,
     });
 

@@ -11,3 +11,7 @@
 tr:hover {
   background: whitesmoke;
 }
+th.mat-mdc-header-cell {
+  background: var(--color-primary-50);
+  font-weight: bold;
+}

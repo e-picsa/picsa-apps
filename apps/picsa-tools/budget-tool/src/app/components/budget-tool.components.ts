@@ -6,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaDialogsModule } from '@picsa/shared/features';
+import { PicsaDialogsModule, PicsaDrawingComponent } from '@picsa/shared/features';
 import { PicsaDbModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
 
@@ -71,6 +71,7 @@ const components = [
     RouterModule,
     MatTooltipModule,
     MatIconModule,
+    PicsaDrawingComponent,
   ],
   exports: components,
 })

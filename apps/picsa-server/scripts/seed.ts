@@ -140,14 +140,18 @@ class SupabaseSeed {
    */
   private async importDBRows() {
     console.log('\n', '\n', 'DB');
+    // specify tables that should be loaded with priority
+    // e.g. ensure populated if linked table seed data references
+    const priority = { climate_stations_rows: 1, resource_files_rows: 1 };
     const csvFileNames = readdirSync(SEED_DIR, { withFileTypes: true })
       .filter((f) => f.isFile() && f.name.endsWith('_rows.csv'))
       .map((f) => f.name)
       // ensure child rows processed after parent
       .sort((a, b) => {
-        if (b.includes('_child')) return -1;
-        if (a.includes('_child')) return 1;
-        return a > b ? 1 : -1;
+        // ensure tables with priority are processed before those without
+        const aPriority = priority[a] || 0;
+        const bPriority = priority[b] || 0;
+        return aPriority > bPriority ? 1 : -1;
       });
     const results: any[] = [];
     console.log(csvFileNames);

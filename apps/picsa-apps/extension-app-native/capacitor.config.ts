@@ -31,6 +31,7 @@ const config: CapacitorConfig = {
     '@capacitor-firebase/performance',
     '@capacitor/screen-orientation',
     '@capacitor/camera',
+    "@capacitor/share",
   ],
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http

@@ -86,19 +86,19 @@ export type Database = {
         Row: {
           created_at: string
           data: Json
-          station_id: number
+          station_id: string
           type: string
         }
         Insert: {
           created_at?: string
           data: Json
-          station_id: number
+          station_id: string
           type: string
         }
         Update: {
           created_at?: string
           data?: Json
-          station_id?: number
+          station_id?: string
           type?: string
         }
         Relationships: [
@@ -107,36 +107,39 @@ export type Database = {
             columns: ["station_id"]
             isOneToOne: false
             referencedRelation: "climate_stations"
-            referencedColumns: ["station_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
       climate_stations: {
         Row: {
-          country_code: string | null
+          country_code: string
           district: string | null
           elevation: number | null
+          id: string | null
           latitude: number | null
           longitude: number | null
-          station_id: number
+          station_id: string
           station_name: string | null
         }
         Insert: {
-          country_code?: string | null
+          country_code: string
           district?: string | null
           elevation?: number | null
+          id?: string | null
           latitude?: number | null
           longitude?: number | null
-          station_id?: number
+          station_id: string
           station_name?: string | null
         }
         Update: {
-          country_code?: string | null
+          country_code?: string
           district?: string | null
           elevation?: number | null
+          id?: string | null
           latitude?: number | null
           longitude?: number | null
-          station_id?: number
+          station_id?: string
           station_name?: string | null
         }
         Relationships: []
@@ -172,7 +175,7 @@ export type Database = {
           days_lower: number
           days_upper: number
           probabilities: number[] | null
-          station_id: number
+          station_id: string
           water_lower: number
           water_upper: number
         }
@@ -182,7 +185,7 @@ export type Database = {
           days_lower: number
           days_upper: number
           probabilities?: number[] | null
-          station_id: number
+          station_id: string
           water_lower: number
           water_upper: number
         }
@@ -192,7 +195,7 @@ export type Database = {
           days_lower?: number
           days_upper?: number
           probabilities?: number[] | null
-          station_id?: number
+          station_id?: string
           water_lower?: number
           water_upper?: number
         }
@@ -209,7 +212,7 @@ export type Database = {
             columns: ["station_id"]
             isOneToOne: false
             referencedRelation: "climate_stations"
-            referencedColumns: ["station_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -217,7 +220,7 @@ export type Database = {
         Row: {
           access_key_md5: string | null
           configuration: Json
-          country_code: string | null
+          country_code: string
           icon_path: string | null
           id: string
           label: string
@@ -227,7 +230,7 @@ export type Database = {
         Insert: {
           access_key_md5?: string | null
           configuration?: Json
-          country_code?: string | null
+          country_code: string
           icon_path?: string | null
           id: string
           label: string
@@ -237,7 +240,7 @@ export type Database = {
         Update: {
           access_key_md5?: string | null
           configuration?: Json
-          country_code?: string | null
+          country_code?: string
           icon_path?: string | null
           id?: string
           label?: string
@@ -627,34 +630,37 @@ export type Database = {
       }
       translations: {
         Row: {
+          archived: boolean | null
           context: string | null
           created_at: string
-          en: string
           id: string
           ke_sw: string | null
           mw_ny: string | null
+          text: string
           tj_tg: string | null
           tool: string
           zm_ny: string | null
         }
         Insert: {
+          archived?: boolean | null
           context?: string | null
           created_at?: string
-          en: string
           id: string
           ke_sw?: string | null
           mw_ny?: string | null
+          text: string
           tj_tg?: string | null
           tool: string
           zm_ny?: string | null
         }
         Update: {
+          archived?: boolean | null
           context?: string | null
           created_at?: string
-          en?: string
           id?: string
           ke_sw?: string | null
           mw_ny?: string | null
+          text?: string
           tj_tg?: string | null
           tool?: string
           zm_ny?: string | null
@@ -889,6 +895,101 @@ export type Database = {
           },
         ]
       }
+      s3_multipart_uploads: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          id: string
+          in_progress_size: number
+          key: string
+          owner_id: string | null
+          upload_signature: string
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          id: string
+          in_progress_size?: number
+          key: string
+          owner_id?: string | null
+          upload_signature: string
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          id?: string
+          in_progress_size?: number
+          key?: string
+          owner_id?: string | null
+          upload_signature?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      s3_multipart_uploads_parts: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          etag: string
+          id: string
+          key: string
+          owner_id: string | null
+          part_number: number
+          size: number
+          upload_id: string
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          etag: string
+          id?: string
+          key: string
+          owner_id?: string | null
+          part_number: number
+          size?: number
+          upload_id: string
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          etag?: string
+          id?: string
+          key?: string
+          owner_id?: string | null
+          part_number?: number
+          size?: number
+          upload_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "s3_multipart_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -927,6 +1028,41 @@ export type Database = {
           size: number
           bucket_id: string
         }[]
+      }
+      list_multipart_uploads_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          next_key_token?: string
+          next_upload_token?: string
+        }
+        Returns: {
+          key: string
+          id: string
+          created_at: string
+        }[]
+      }
+      list_objects_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          start_after?: string
+          next_token?: string
+        }
+        Returns: {
+          name: string
+          id: string
+          metadata: Json
+          updated_at: string
+        }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       search: {
         Args: {

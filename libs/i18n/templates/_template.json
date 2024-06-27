@@ -1,9 +1,5 @@
 [
   {
-    "text": "",
-    "tool": "common_weather"
-  },
-  {
     "text": "apply fertiliser",
     "tool": "budget",
     "context": "activities"
@@ -515,10 +511,6 @@
   },
   {
     "text": "Select",
-    "tool": "budget"
-  },
-  {
-    "text": "Select Enterprise",
     "tool": "budget"
   },
   {
@@ -1186,10 +1178,6 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Crop",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Crop Information",
     "tool": "crop-probability"
   },
@@ -1538,6 +1526,14 @@
     "tool": "option"
   },
   {
+    "text": "Crop",
+    "tool": "option"
+  },
+  {
+    "text": "Crop Options",
+    "tool": "option"
+  },
+  {
     "text": "Days",
     "tool": "option"
   },
@@ -1567,6 +1563,22 @@
   },
   {
     "text": "Investment in terms of money and time",
+    "tool": "option"
+  },
+  {
+    "text": "Livelihood",
+    "tool": "option"
+  },
+  {
+    "text": "Livelihood Options",
+    "tool": "option"
+  },
+  {
+    "text": "Livestock",
+    "tool": "option"
+  },
+  {
+    "text": "Livestock Options",
     "tool": "option"
   },
   {
@@ -1627,6 +1639,10 @@
   },
   {
     "text": "Risks or disadvantages",
+    "tool": "option"
+  },
+  {
+    "text": "Select Enterprise",
     "tool": "option"
   },
   {
