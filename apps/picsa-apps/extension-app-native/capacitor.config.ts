@@ -27,7 +27,7 @@ const config: CapacitorConfig = {
     'capacitor-blob-writer',
     'capacitor-video-player',
     '@capacitor-community/firebase-analytics',
-    '@capacitor-community/firebase-crashlytics',
+    '@capacitor-firebase/crashlytics',
     '@capacitor-firebase/performance',
     '@capacitor/screen-orientation',
     '@capacitor/camera',

@@ -3275,12 +3275,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-community/firebase-crashlytics@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@capacitor-community/firebase-crashlytics@npm:3.0.0"
+"@capacitor-firebase/crashlytics@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor-firebase/crashlytics@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: 60b612896cd077dae0cbb9103bca3a2660199e13463a15e28bbf1260d9dd76148fee65f643cc8df3888b43dfccb7b7aad006f142397a23deec8cf266cdc7d07a
+    "@capacitor/core": ^6.0.0
+  peerDependenciesMeta:
+    firebase:
+      optional: true
+  checksum: 55ff292d7a7bb631105456256ee7437158746830c2986fe26a89add8ccca9b21b0125635c7e2557d2f1948684374293ee3dc2ad14055b85a18ee7e84791ee428
   languageName: node
   linkType: hard
 
@@ -19403,7 +19406,7 @@ __metadata:
     "@awesome-cordova-plugins/social-sharing": ^6.4.0
     "@biesbjerg/ngx-translate-extract-marker": ^1.0.0
     "@capacitor-community/firebase-analytics": ^6.0.0
-    "@capacitor-community/firebase-crashlytics": ^3.0.0
+    "@capacitor-firebase/crashlytics": ^6.0.0
     "@capacitor-firebase/performance": ^6.0.0
     "@capacitor/android": ^6.1.0
     "@capacitor/app": ^6.0.0

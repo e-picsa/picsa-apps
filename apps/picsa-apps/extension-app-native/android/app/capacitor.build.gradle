@@ -17,7 +17,7 @@ dependencies {
     implementation project(':capacitor-blob-writer')
     implementation project(':capacitor-video-player')
     implementation project(':capacitor-community-firebase-analytics')
-    implementation project(':capacitor-community-firebase-crashlytics')
+    implementation project(':capacitor-firebase-crashlytics')
     implementation project(':capacitor-firebase-performance')
     implementation project(':capacitor-screen-orientation')
     implementation project(':capacitor-camera')
