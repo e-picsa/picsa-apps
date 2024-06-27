@@ -1,1 +1,1 @@
-export * from './drawing.component'
+export * from './drawing.component';
