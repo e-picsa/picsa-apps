@@ -6,7 +6,9 @@
         <div class="step-image-container">
           <img class="step-image" [src]="step.icon_path" />
         </div>
-        <div class="step-number">{{ $index + 1 }}</div>
+        @if($index>0){
+        <div class="step-number">{{ $index }}</div>
+        }
       </div>
       <div class="step-content">
         <h2 class="step-title">{{ step.title | translate }}</h2>
