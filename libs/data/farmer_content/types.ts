@@ -1,3 +1,5 @@
+import type { IResourceFile } from '@picsa/resources/src/app/schemas';
+
 import type { IFarmerContentId } from './data/content';
 
 import type { IToolId } from './data/tools';
@@ -9,11 +11,10 @@ export interface IToolData {
 
 interface IFarmerContentStepVideo {
   type: 'video';
+  resource: IResourceFile;
 }
 
-interface IFarmerContentStepVideo {
-  type: 'video';
-}
+export type IFarmerContentStep = IFarmerContentStepVideo;
 
 export interface IFarmerContent {
   id: IFarmerContentId;
@@ -22,5 +23,5 @@ export interface IFarmerContent {
   title: string;
   tools: IToolData[];
   tags: { label: string }[];
-  steps: IFarmerContentStepVideo[];
+  steps: IFarmerContentStep[];
 }

@@ -1,10 +1,48 @@
 <div class="page-content">
   @if(content(); as content){
-  <div @fadeInOut>
-    <div class="top-banner">
-      <img class="content-icon" [src]="content.icon_path" />
-      <h2 class="title">{{ content.title | translate }}</h2>
-    </div>
+  <div @fadeInOut class="content-container">
+    <mat-tab-group
+      (selectedTabChange)="handleTabChange($event)"
+      class="height-fill"
+      style="height: 100%; width: 100%; flex: 1"
+      headerPosition="below"
+      preserveContent
+    >
+      <!-- intro -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">home</mat-icon>
+          {{ 'Intro' | translate }}
+        </ng-template>
+        <div class="tab-content">
+          <div class="top-banner">
+            <img class="content-icon" [src]="content.icon_path" />
+            <h2 class="title">{{ content.title | translate }}</h2>
+          </div>
+        </div>
+      </mat-tab>
+      <!-- content -->
+      @for(step of steps(); track $index){
+      <mat-tab>
+        @switch (step.type){
+        <!-- video -->
+        @case ("video") {
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">slideshow</mat-icon>
+          {{ 'Video' | translate }}
+        </ng-template>
+        <div class="tab-content">
+          @if(step.resource){
+          <resource-item-file [resource]="step.resource"></resource-item-file>
+          } @else {
+          <div>Video resource not found</div>
+          }
+        </div>
+
+        } }
+      </mat-tab>
+      }
+    </mat-tab-group>
   </div>
   }
 </div>
