@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaChartsModule, PicsaDialogsModule } from '@picsa/shared/features';
+import { PicsaChartComponent, PicsaDialogsModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { PicsaSharedPipesModule } from '@picsa/shared/pipes';
 
@@ -44,7 +44,7 @@ const Components = [
     FormsModule,
     PicsaTranslateModule,
     PicsaCommonComponentsModule,
-    PicsaChartsModule,
+    PicsaChartComponent,
     PicsaDialogsModule,
     PicsaSharedPipesModule,
     ReactiveFormsModule,

@@ -9,6 +9,7 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 // Local components
 import { FarmerActivityMaterialModule } from './material.module';
+import { PicsaPhotoInputComponent } from './photo-input/photo-input.component';
 
 const Components = [];
 
@@ -17,13 +18,20 @@ const Components = [];
     CommonModule,
     FormsModule,
     PicsaCommonComponentsModule,
+    PicsaPhotoInputComponent,
     PicsaTranslateModule,
     PicsaVideoPlayerModule,
     ReactiveFormsModule,
     RouterModule,
     FarmerActivityMaterialModule,
   ],
-  exports: [PicsaCommonComponentsModule, FarmerActivityMaterialModule, PicsaVideoPlayerModule, ...Components],
+  exports: [
+    FarmerActivityMaterialModule,
+    PicsaCommonComponentsModule,
+    PicsaPhotoInputComponent,
+    PicsaVideoPlayerModule,
+    ...Components,
+  ],
   declarations: [Components],
   providers: [],
 })

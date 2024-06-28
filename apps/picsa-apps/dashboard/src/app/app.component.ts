@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
@@ -29,11 +29,16 @@ export class AppComponent implements AfterViewInit {
   navLinks = DASHBOARD_NAV_LINKS;
   globalLinks = GLOBAL_NAV_LINKS;
 
+  public deployment = this.deploymentService.activeDeployment;
+
+  public initComplete = signal(false);
+
   constructor(public supabaseService: SupabaseService, private deploymentService: DeploymentDashboardService) {}
 
   async ngAfterViewInit() {
     // eagerly initialise supabase and deployment services to ensure available
     await this.supabaseService.ready();
     await this.deploymentService.ready();
+    this.initComplete.set(true);
   }
 }
