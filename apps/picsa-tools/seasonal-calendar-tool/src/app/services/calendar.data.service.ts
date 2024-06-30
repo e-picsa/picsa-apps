@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { PrintProvider } from '@picsa/shared/services/native';
 import { RxCollection } from 'rxdb';
 
 import { CalendarDataEntry, COLLECTION } from '../schema';
@@ -9,7 +10,7 @@ import { CalendarDataEntry, COLLECTION } from '../schema';
   providedIn: 'root',
 })
 export class SeasonCalendarService extends PicsaAsyncService {
-  constructor(private dbService: PicsaDatabase_V2_Service) {
+  constructor(private dbService: PicsaDatabase_V2_Service, private printPrvdr: PrintProvider) {
     super();
   }
 
@@ -48,5 +49,10 @@ export class SeasonCalendarService extends PicsaAsyncService {
       console.error('Failed to get calendar by name:', err);
       throw err;
     }
+  }
+
+  public async shareAsImage() {
+    console.log('shareAsImage called');
+    return this.printPrvdr.shareHtmlDom('#seasonalCalendar', 'Seasonal Calendar', 'PICSA - Seasonal Calendar');
   }
 }

@@ -1,6 +1,6 @@
 <div class="page-content">
   @if(form){
-  <form [formGroup]="form">
+  <form [formGroup]="form" >
     <!-- Header and edit button -->
     <div style="display: flex; align-items: center">
       <h1 style="flex: 1">{{ formValue.name }}</h1>
@@ -9,39 +9,47 @@
         <mat-icon>edit</mat-icon>
         {{ 'Edit' | translate }}
       </button>
+
+      <button mat-stroked-button color="primary" (click)="sharePicture()">
+        <mat-icon>share</mat-icon>
+        {{ 'Share' | translate }}
+      </button>
     </div>
 
-    <table class="calendar-table">
-      <!-- Monthly weather select header -->
-      <thead>
-        <tr>
-          <th></th>
-          @for (weatherControl of form.controls.weather.controls; track $index) {
-          <th formArrayName="weather">
-            <div style="margin-bottom: 8px">
-              {{ columnLabels[$index] | translate }}
-            </div>
-            <picsa-form-weather-select [formControl]="weatherControl"></picsa-form-weather-select>
-          </th>
+    <div id="seasonalCalendar">
+      <table class="calendar-table" >
+        <!-- Monthly weather select header -->
+        <thead>
+          <tr>
+            <th></th>
+            @for (weatherControl of form.controls.weather.controls; track $index) {
+            <th formArrayName="weather">
+              <div style="margin-bottom: 8px">
+                {{ columnLabels[$index] | translate }}
+              </div>
+              <picsa-form-weather-select [formControl]="weatherControl"></picsa-form-weather-select>
+            </th>
+            }
+          </tr>
+        </thead>
+        <!-- Activity rows -->
+        <tbody>
+          @for(crop of formValue.meta.enterprises; track $index){
+          <tr>
+            <td>
+              {{ rowLabels[$index] | translate }}
+            </td>
+            @for(control of activityFormControls[crop].controls; track $index){
+            <td>
+              <picsa-form-crop-activity-select [formControl]="control"></picsa-form-crop-activity-select>
+            </td>
+            }
+          </tr>
           }
-        </tr>
-      </thead>
-      <!-- Activity rows -->
-      <tbody>
-        @for(crop of formValue.meta.enterprises; track $index){
-        <tr>
-          <td>
-            {{ rowLabels[$index] | translate }}
-          </td>
-          @for(control of activityFormControls[crop].controls; track $index){
-          <td>
-            <picsa-form-crop-activity-select [formControl]="control"></picsa-form-crop-activity-select>
-          </td>
-          }
-        </tr>
-        }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
+   
     <!-- Editor dialog -->
     <ng-template #editDialogRef>
       @if(form){

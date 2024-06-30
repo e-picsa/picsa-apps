@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
+import { _wait } from '@picsa/utils/browser.utils';
 
 import { CalendarDataEntry } from '../../schema';
 import { SeasonCalendarService } from '../../services/calendar.data.service';
@@ -27,6 +28,9 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
 
   public form: ISeasonCalendarForm;
 
+  public status = 'share';
+  public shareDisabled = false;
+
   public get metaFormControls() {
     return this.form.controls.meta.controls;
   }
@@ -49,7 +53,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     private service: SeasonCalendarService,
     private formService: SeasonCalendarFormService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {
@@ -110,4 +114,26 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
         this.rowLabels = crops.map((crop) => this.cropsByName[crop]?.label);
       });
   }
-}
+
+    /**
+   * Initiates image sharing process, updating UI accordingly.
+   */
+    public async sharePicture() {
+      console.log('sharePicture called');
+      this.shareDisabled = true;
+      this.status = 'Preparing image....';
+      await _wait(200);
+  
+      try {
+        console.log('Calling shareAsImage');
+        await this.service.shareAsImage();
+        this.shareDisabled = false;
+        this.status = 'share';
+      } catch (error: any) {
+        console.error('Error sharing image:', error);
+        this.status = error?.message || 'Unable to share';
+        this.shareDisabled = false;
+      }
+    }
+  }
+  
