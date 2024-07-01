@@ -54,7 +54,15 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <router-outlet></router-outlet>
+      <!-- Only show router content if active deployment selected and init complete -->
+      @if(initComplete()){
+        @if(deployment()){
+          <router-outlet></router-outlet>
+        }
+        @else {
+          <div class="deployment-select-banner">Select a deployment to view content</div>
+        }
+      }
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

@@ -1,12 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
+import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
+import { Subject, takeUntil } from 'rxjs';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import { calcPercentile, ClimateToolService } from '../../../services/climate-tool.service';
 import { LineDatePickerSelectionStrategy } from './line-date-picker';
 import { LineDatePickerHeaderComponent } from './line-date-picker-header';
-import { Subject, takeUntil } from 'rxjs';
-import { LINE_TOOL_OPTIONS } from './line-tool.model';
 
 @Component({
   selector: 'climate-line-tool',
@@ -70,7 +70,7 @@ export class LineToolComponent implements OnInit, OnDestroy {
     const { chartConfig: config, chartDefinition: definition } = this.chartService;
     if (config && definition) {
       this.options = definition.tools.line;
-      this.step = definition.yMinor;
+      this.step = definition.axes.yMinor;
       if (definition.yFormat === 'value') {
         this.inputType = 'number';
       } else {

@@ -1,6 +1,6 @@
-station_id,station_name,latitude,longitude,elevation,district,country_code
-1,Chipata,-13.56,32.59,1025,Chipata,zm
-16,Lundazi,-12.29,33.18,1138,Lundazi,zm
-23,Mfuwe,-13.25,31.93,557,Mambwe,zm
-28,Msekera,-13.65,32.56,1011,Chipata,zm
-33,Petauke,-14.25,31.34,1022,Petauke,zm
+station_id,country_code,station_name,latitude,longitude,elevation,district
+1,zm_test,Chipata,-13.56,32.59,1025,Chipata
+16,zm_test,Lundazi,-12.29,33.18,1138,Lundazi
+23,zm_test,Mfuwe,-13.25,31.93,557,Mambwe
+28,zm_test,Msekera,-13.65,32.56,1011,Chipata
+33,zm_test,Petauke,-14.25,31.34,1022,Petauke

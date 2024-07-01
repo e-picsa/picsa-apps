@@ -55,10 +55,18 @@ export interface IChartMeta {
   tools: { line: ILineToolOptions; probability: IProbabilityToolOptions };
   units: string;
   definition: string;
-  xMinor: number;
-  xMajor: number;
-  yMinor: number;
-  yMajor: number;
+  axes: {
+    /** Min/max values (default calculate from data) */
+    yMin: number;
+    yMax: number;
+    xMin: number;
+    xMax: number;
+    /** Major/minor gridlines */
+    xMinor: number;
+    xMajor: number;
+    yMinor: number;
+    yMajor: number;
+  };
 }
 
 /*************************************************************************

@@ -4,10 +4,12 @@ import * as c3 from 'c3';
 
 @Component({
   selector: 'picsa-chart',
-  template: `<div data-cy="chart-container" #chart class="chart-container"></div>`,
+  template: ` <div data-cy="chart-container" #chart class="chart-container"></div> `,
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [],
 })
 /*  angular wrapper for c3.js lib
     see https://github.com/emn178/angular2-chartjs/blob/master/src/chart.component.ts
@@ -19,6 +21,11 @@ export class PicsaChartComponent {
   @ViewChild('chart', { static: true })
   chartContainer: ElementRef<HTMLDivElement>;
 
+  /**
+   * Optional data override to trigger force unload/reload
+   * NOTE - initial data should be populated while generated config
+   * TODO - review if still required (data usually populated to config)
+   */
   @Input() data: c3.Data = {
     columns: [],
   };
@@ -53,7 +60,7 @@ export class PicsaChartComponent {
   // note, only detects object change, not content (so array push ignored)
   // see: https://stackoverflow.com/questions/43223582/why-angular-2-ngonchanges-not-responding-to-input-array-push
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.config.currentValue) {
+    if (changes.config?.currentValue) {
       if (this.chart) {
         if (changes['config']) {
           // handle core changes which require chart rebuild
@@ -75,10 +82,10 @@ export class PicsaChartComponent {
 
   // use create method to populate div which will also be available before viewInit
   private create() {
-    this.chart = this.chart = c3.generate({
+    this.chart = c3.generate({
       ...this.config,
       bindto: this.chartContainer.nativeElement,
-      data: this.config.data ? this.config.data : this.data,
+      data: this.config.data || this.data,
       size: this.config.size || {
         height: this.elementRef.nativeElement.offsetHeight - 32, // include extra pxs for labels
       },

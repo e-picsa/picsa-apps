@@ -2,12 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { IChartId } from '@picsa/models/src';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
-import { IChartId } from '@picsa/models/src';
 import { ClimateToolService } from '../../services/climate-tool.service';
 
 @Component({

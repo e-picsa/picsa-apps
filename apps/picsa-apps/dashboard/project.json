@@ -33,12 +33,19 @@
             "glob": "*.svg",
             "input": "libs/data/weather/svgs",
             "output": "assets/svgs/weather"
+          },
+          {
+            "glob": "*.*",
+            "input": "libs/data/climate/svgs",
+            "output": "assets/svgs/weather"
+          },
+          {
+            "glob": "*.*",
+            "input": "apps/picsa-tools/climate-tool/src/assets/climate-icons",
+            "output": "assets/climate-icons"
           }
         ],
-        "styles": [
-          "apps/picsa-apps/dashboard/src/styles.scss",
-          "node_modules/leaflet/dist/leaflet.css"
-        ],
+        "styles": ["apps/picsa-apps/dashboard/src/styles.scss", "node_modules/leaflet/dist/leaflet.css"],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]
         },
