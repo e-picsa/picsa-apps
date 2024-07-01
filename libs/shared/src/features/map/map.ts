@@ -21,6 +21,7 @@ export class PicsaMapComponent {
 
   @Input() mapOptions: L.MapOptions = {};
   @Input() basemapOptions: Partial<IBasemapOptions> = {};
+  @Input() shortestDistanceMark : any;
 
   private _markers: IMapMarker[];
   @Input() set markers(markers: IMapMarker[]) {
@@ -49,6 +50,25 @@ export class PicsaMapComponent {
     const basemap = L.tileLayer(basemapOptions.src, basemapOptions);
     const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions };
     this._mapOptions = { ...mapOptions, layers: [basemap] };
+    this.markOffClosestStation()
+    
+  }
+
+  private markOffClosestStation(){
+    const inactiveIcon = L.icon({
+      ...ICON_DEFAULTS,
+    });
+    const activeIcon = L.icon({
+      ...ACTIVE_ICON_DEFAULTS,
+    });
+
+    if (this._activeMarker && this.shortestDistanceMark) {
+      this._activeMarker.setIcon(inactiveIcon);
+     
+    }
+    this.shortestDistanceMark.setIcon(activeIcon);
+    this._activeMarker = this.shortestDistanceMark;
+    console.log(this.shortestDistanceMark)
   }
 
   private addMarkers(mapMarkers: IMapMarker[], fitMap = true) {
