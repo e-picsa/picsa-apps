@@ -23,6 +23,8 @@ export class SiteSelectPage implements OnInit {
   };
   mapMarkers: IMapMarker[] = [];
 
+  shortestDistanceMark:IMapMarker;
+
   constructor(
     private ngZone: NgZone,
     private router: Router,
@@ -32,6 +34,7 @@ export class SiteSelectPage implements OnInit {
 
   ngOnInit() {
     this.populateSites();
+    this.getUserLocationAndSelectClosestStation();
   }
 
   onMarkerClick(marker: IMapMarker) {
@@ -73,5 +76,60 @@ export class SiteSelectPage implements OnInit {
     });
     this.mapMarkers = markers;
     return { stations, markers };
+  }
+
+  getUserLocationAndSelectClosestStation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          this.selectClosestStation(userLat, userLng);
+        },
+        (error) => {
+          console.error('Error getting user location', error);
+          // Fallback if location is not available
+          this.selectFallbackStation();
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+      // Fallback if geolocation is not supported
+      this.selectFallbackStation();
+    }
+  }
+
+  selectClosestStation(userLat: number, userLng: number) {
+    let closestStation;
+    let minDistance = Number.MAX_VALUE;
+
+    this.mapMarkers.forEach(marker => {
+      const stationLat = marker.latlng[0];
+      const stationLng = marker.latlng[1];
+      const distance = this.calculateDistance(userLat, userLng, stationLat, stationLng);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestStation = marker;
+      }
+    });
+     if (closestStation) {
+    this.ngZone.run(() => {
+      this.activeStation = closestStation.data;
+      this.shortestDistanceMark = closestStation;
+    });
+  }
+  }
+
+  calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const deltaX = lat2 - lat1;
+    const deltaY = lng2 - lng1;
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  }
+
+  selectFallbackStation() {
+    if (this.mapMarkers.length > 0) {
+      this.activeStation = this.mapMarkers[0].data;
+    }
   }
 }
