@@ -119,21 +119,26 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
    * Initiates image sharing process, updating UI accordingly.
    */
     public async sharePicture() {
-      console.log('sharePicture called');
       this.shareDisabled = true;
       this.status = 'Preparing image....';
-      await _wait(200);
-  
+
+      this.cdr.markForCheck();
+      console.log(this.status)
+      await _wait(100);
+
       try {
-        console.log('Calling shareAsImage');
         await this.service.shareAsImage();
         this.shareDisabled = false;
         this.status = 'share';
-      } catch (error: any) {
-        console.error('Error sharing image:', error);
+        console.log(this.status)
+        } catch (error: any) {
         this.status = error?.message || 'Unable to share';
         this.shareDisabled = false;
       }
+      this.cdr.detectChanges();
+    }
+    ngAfterViewChecked() {
+      this.cdr.detectChanges();
     }
   }
   

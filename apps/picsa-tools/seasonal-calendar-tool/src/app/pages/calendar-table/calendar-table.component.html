@@ -10,9 +10,9 @@
         {{ 'Edit' | translate }}
       </button>
 
-      <button mat-stroked-button color="primary" (click)="sharePicture()">
+      <button mat-button color="primary" aria-label="Share" (click)="sharePicture()" class="button-spacing" [disabled]="shareDisabled" >
         <mat-icon>share</mat-icon>
-        {{ 'Share' | translate }}
+        {{ status | translate }}
       </button>
     </div>
 
