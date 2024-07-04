@@ -7,6 +7,7 @@ import type { IToolId } from './data/tools';
 export interface IToolData {
   id: IToolId;
   label: string;
+  tabLabel?: string;
 }
 
 interface IFarmerContentStepVideo {
@@ -24,4 +25,5 @@ export interface IFarmerContent {
   tools: IToolData[];
   tags: { label: string }[];
   steps: IFarmerContentStep[];
+  disabled?: boolean;
 }
