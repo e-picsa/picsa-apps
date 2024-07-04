@@ -1,64 +1,24 @@
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { TOOLS_DATA_HASHMAP } from '../tools';
 import { IFarmerContent } from '../../types';
 import { arrayToHashmap } from '@picsa/utils';
 
+import intro from './0_intro';
 import what_you_do from './1_what_you_do';
-
-const { budget, climate, options, probability_and_risk, resource_allocation_map, seasonal_calendar } =
-  TOOLS_DATA_HASHMAP;
+import climate_change from './2_climate_change';
+import opportunities_risks from './3_opportunities_risks';
+import what_are_the_options from './4_what_are_the_options';
+import compare_options from './5_compare_options';
+import decide_and_plan from './6_decide_and_plan';
+import use_forecasts from './7_use_forecasts';
 
 const FARMER_CONTENT_BASE = {
-  '0_intro': {
-    slug: 'intro',
-    title: translateMarker('What is PICSA?'),
-    tools: [],
-    tags: [{ label: translateMarker('Tutorials') }],
-    steps: [],
-  },
+  '0_intro': intro,
   '1_what_you_do': what_you_do,
-  '2_climate_change': {
-    slug: 'is-the-climate-changing',
-    title: translateMarker('What is happening to the climate in your area?'),
-    tools: [climate],
-    tags: [],
-    steps: [],
-  },
-  '3_opportunities_risks': {
-    slug: 'opportunities-and-risk',
-    title: translateMarker('What are the opportunities and risk?'),
-    tools: [probability_and_risk],
-    tags: [],
-    steps: [],
-  },
-  '4_what_are_the_options': {
-    slug: 'what-are-the-options',
-    title: translateMarker('What changes can you make?'),
-    tools: [options],
-    tags: [],
-    steps: [],
-  },
-  '5_compare_options': {
-    slug: 'compare-options',
-    title: translateMarker('Are the changes a good idea?'),
-    tools: [budget],
-    tags: [],
-    steps: [],
-  },
-  '6_decide_and_plan': {
-    slug: 'decide-and-plan',
-    title: translateMarker('You decide and make a plan'),
-    tools: [],
-    tags: [],
-    steps: [],
-  },
-  '7_use_forecasts': {
-    slug: 'use-forecasts',
-    title: translateMarker('Use the forecasts to update and adapt your plans'),
-    tools: [],
-    tags: [],
-    steps: [],
-  },
+  '2_climate_change': climate_change,
+  '3_opportunities_risks': opportunities_risks,
+  '4_what_are_the_options': what_are_the_options,
+  '5_compare_options': compare_options,
+  '6_decide_and_plan': decide_and_plan,
+  '7_use_forecasts': use_forecasts,
 };
 
 export type IFarmerContentId = keyof typeof FARMER_CONTENT_BASE;

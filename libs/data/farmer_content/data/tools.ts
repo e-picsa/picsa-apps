@@ -13,7 +13,7 @@ const TOOLS_BASE = {
   climate: { label: translateMarker('Climate') },
   options: { label: translateMarker('Options') },
   probability_and_risk: { label: translateMarker('Probability and Risk') },
-  resource_allocation_map: { label: translateMarker('Resource Allocation Map') },
+  // resource_allocation_map: { label: translateMarker('Resource Allocation Map'), tabLabel: translateMarker('RAM Tool') },
   seasonal_calendar: { label: translateMarker('Seasonal Calendar') },
 };
 

@@ -4,23 +4,19 @@ import { PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/pics
 import { IFarmerContent, IFarmerContentStep } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
 
-const { seasonal_calendar } = TOOLS_DATA_HASHMAP;
+const { probability_and_risk } = TOOLS_DATA_HASHMAP;
 
 const steps: IFarmerContentStep[] = [
   {
     type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].ram,
-  },
-  {
-    type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].seasonal_calendar,
+    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].probability_risk,
   },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
-  slug: 'what-do-you-currently-do',
-  title: translateMarker('What do you currently do?'),
-  tools: [seasonal_calendar],
+  slug: 'opportunities-and-risk',
+  title: translateMarker('What are the opportunities and risk?'),
+  tools: [probability_and_risk],
   tags: [],
   steps,
 };

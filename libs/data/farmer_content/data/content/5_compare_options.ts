@@ -4,23 +4,19 @@ import { PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/pics
 import { IFarmerContent, IFarmerContentStep } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
 
-const { seasonal_calendar } = TOOLS_DATA_HASHMAP;
+const { budget } = TOOLS_DATA_HASHMAP;
 
 const steps: IFarmerContentStep[] = [
   {
     type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].ram,
-  },
-  {
-    type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].seasonal_calendar,
+    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].participatory_budget,
   },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
-  slug: 'what-do-you-currently-do',
-  title: translateMarker('What do you currently do?'),
-  tools: [seasonal_calendar],
+  slug: 'compare-options',
+  title: translateMarker('Are the changes a good idea?'),
+  tools: [budget],
   tags: [],
   steps,
 };
