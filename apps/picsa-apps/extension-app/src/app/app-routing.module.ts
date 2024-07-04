@@ -13,23 +13,7 @@ import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
 import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
 import { SeasonalCalendarToolModule } from '@picsa/seasonal-calendar/src/app/app.module-embedded';
 
-const routes: Routes = [
-  // Updated syntax for standalone components (other routes could be migrated in similar way)
-  // Import farmer-content routes which lazy-load on /farmer endpoint
-  // Use component-less top route to enforce route guard on all child routes
-  {
-    path: 'farmer',
-    canActivate: [],
-    children: farmerContentRoutes,
-    title: 'PICSA',
-  },
-  {
-    path: 'extension',
-    canActivate: [],
-    children: extensionContentRoutes,
-    title: 'PICSA',
-  },
-
+export const TOOL_ROUTES: Routes = [
   // support embed of budget tool app
   // see: https://medium.com/disney-streaming/combining-multiple-angular-applications-into-a-single-one-e87d530d6527
   {
@@ -72,6 +56,25 @@ const routes: Routes = [
     loadChildren: () =>
       import('@picsa/seasonal-calendar/src/app/app.module-embedded').then((mod) => mod.SeasonalCalendarToolModule),
   },
+];
+
+const APP_ROUTES: Routes = [
+  // Updated syntax for standalone components (other routes could be migrated in similar way)
+  // Import farmer-content routes which lazy-load on /farmer endpoint
+  // Use component-less top route to enforce route guard on all child routes
+  {
+    path: 'farmer',
+    canActivate: [],
+    children: farmerContentRoutes,
+    title: 'PICSA',
+  },
+  {
+    path: 'extension',
+    canActivate: [],
+    children: extensionContentRoutes,
+    title: 'PICSA',
+  },
+
   // NOTE - Home not currently working as standalone component so keeping as module
   // (possibly needs to import router-outlet or similar for setup)
   {
@@ -95,7 +98,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot([...APP_ROUTES, ...TOOL_ROUTES]),
     BudgetToolModule.forRoot({ urlPrefix: 'budget' }),
     ClimateToolModule.forRoot({ urlPrefix: 'climate' }),
     CropProbabilityToolModule.forRoot({ urlPrefix: 'crop-probability' }),
