@@ -7,6 +7,8 @@ import type { IToolId } from './data/tools';
 export interface IToolData {
   id: IToolId;
   label: string;
+  /** base url to access tool within app */
+  href: string;
   tabLabel?: string;
 }
 

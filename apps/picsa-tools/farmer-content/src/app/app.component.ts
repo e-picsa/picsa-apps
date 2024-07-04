@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
-  standalone: true,
-  imports: [RouterOutlet],
+  // TODO - see if possible to use standalone with tool routing
+  // standalone: true,
+  // imports: [RouterOutlet],
+
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'picsa-farmer-content',
   templateUrl: './app.component.html',

@@ -9,7 +9,7 @@
       preserveContent
     >
       <!-- intro -->
-      <mat-tab>
+      <!-- <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">home</mat-icon>
           {{ 'Intro' | translate }}
@@ -20,7 +20,7 @@
             <h2 class="title">{{ content.title | translate }}</h2>
           </div>
         </div>
-      </mat-tab>
+      </mat-tab> -->
       <!-- content -->
       @for(step of steps(); track $index){
       <mat-tab>
@@ -42,6 +42,33 @@
         } }
       </mat-tab>
       }
+      <!-- tools HACK - use hardcoded placeholders as cannot create loop of named router outlets -->
+      @if(tools()[0]; as tool_0){
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">smartphone</mat-icon>
+          {{ tool_0.tabLabel || 'Tool' | translate }}
+        </ng-template>
+        <div class="tab-content router-tab">
+          <div class="page">
+            <router-outlet #toolRouter class="tool-router"></router-outlet>
+          </div>
+        </div>
+      </mat-tab>
+      }
+      <!-- @if(tools()[1]; as tool_1){
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">smartphone</mat-icon>
+          {{ tool_1.tabLabel || 'Tool' | translate }}
+        </ng-template>
+        <div class="tab-content router-tab">
+          <div class="page">
+            <router-outlet #toolRouter1 class="tool-router"></router-outlet>
+          </div>
+        </div>
+      </mat-tab>
+      } -->
     </mat-tab-group>
   </div>
   }
