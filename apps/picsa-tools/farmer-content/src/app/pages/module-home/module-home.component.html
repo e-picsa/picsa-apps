@@ -29,7 +29,7 @@
         @case ("video") {
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">slideshow</mat-icon>
-          {{ 'Video' | translate }}
+          {{ step.tabLabel || 'video' | translate }}
         </ng-template>
         <div class="tab-content">
           @if(step.resource){

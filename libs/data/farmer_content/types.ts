@@ -15,6 +15,8 @@ export interface IToolData {
 interface IFarmerContentStepVideo {
   type: 'video';
   resource: IResourceFile;
+  /** Label to show when selecting content from tab */
+  tabLabel?: string;
 }
 
 export type IFarmerContentStep = IFarmerContentStepVideo;
