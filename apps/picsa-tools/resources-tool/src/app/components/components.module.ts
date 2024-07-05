@@ -14,9 +14,11 @@ import {
   ResourceItemLinkComponent,
   ResourceItemVideoComponent,
 } from './resource-item';
+import { ResourceShareComponent } from './resource-share/resource-share.component';
 
 const components = [
   ResourceDownloadComponent,
+  ResourceShareComponent,
   ResourceItemCollectionComponent,
   ResourceItemFileComponent,
   ResourceItemLinkComponent,

@@ -2,8 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ICropRequirement } from '@picsa/models';
 
-import * as DATA from '../../../data';
-
 @Component({
   selector: 'climate-crop-analysis',
   templateUrl: './crop-analysis.html',
@@ -17,7 +15,8 @@ export class CropAnalysisComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.cropGroups = this._generateCropGroups(DATA.CROP_REQUIREMENTS);
+    // Removed CC 2024-06 hardcoded cropdata list
+    this.cropGroups = this._generateCropGroups([]);
   }
 
   toggleCropVariety(crop: ICropRequirement) {
