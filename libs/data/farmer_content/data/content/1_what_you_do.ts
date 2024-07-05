@@ -10,10 +10,12 @@ const steps: IFarmerContentStep[] = [
   {
     type: 'video',
     resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].ram,
+    tabLabel: translateMarker('Ram'),
   },
   {
     type: 'video',
     resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].seasonal_calendar,
+    tabLabel: translateMarker('Calendar'),
   },
 ];
 
