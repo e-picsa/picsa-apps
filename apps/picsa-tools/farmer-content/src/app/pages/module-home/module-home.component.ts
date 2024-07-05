@@ -17,7 +17,8 @@ import { TourService } from '@picsa/shared/services/core/tour';
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 })],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // Ensure url changes update in nested tools by using default change detection
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FarmerContentModuleHomeComponent {
   private params = toSignal(this.route.params);
@@ -30,7 +31,6 @@ export class FarmerContentModuleHomeComponent {
       (onCleanup) => {
         const { slug } = this.params() || {};
         this.loadContentBySlug(slug);
-
         // update the tour service to allow triggering tour from inside mat-tab component
         this.tourService.useInMatTab = true;
         onCleanup(() => {
