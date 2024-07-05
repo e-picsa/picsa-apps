@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
-import { FirebaseCrashlytics, RecordExceptionOptions } from '@capacitor-community/firebase-crashlytics';
+import { FirebaseCrashlytics, RecordExceptionOptions } from '@capacitor-firebase/crashlytics';
 import { ENVIRONMENT } from '@picsa/environments';
 
 import { PicsaAsyncService } from '../asyncService.service';
@@ -24,23 +24,23 @@ export class CrashlyticsService extends PicsaAsyncService {
   }
   public override async init() {
     if (this.enabled) {
-      const { setEnabled, setUserId, setContext, sendUnsentReports } = FirebaseCrashlytics;
+      const { setEnabled, setUserId, sendUnsentReports, setCustomKey } = FirebaseCrashlytics;
       await setEnabled({ enabled: true });
       const { identifier: uuid } = await Device.getId();
       await setUserId({ userId: uuid });
       // populate webview useragent info
       const { webViewVersion } = await Device.getInfo();
-      await setContext({
+      await setCustomKey({
         key: 'userAgent',
         type: 'string',
         value: navigator.userAgent || '',
       });
-      await setContext({
+      await setCustomKey({
         key: 'webViewVersion',
         type: 'string',
         value: webViewVersion || '',
       });
-      await setContext({
+      await setCustomKey({
         key: 'pathname',
         type: 'string',
         value: location.pathname || '',

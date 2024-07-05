@@ -86,19 +86,19 @@ export type Database = {
         Row: {
           created_at: string
           data: Json
-          station_id: number
+          station_id: string
           type: string
         }
         Insert: {
           created_at?: string
           data: Json
-          station_id: number
+          station_id: string
           type: string
         }
         Update: {
           created_at?: string
           data?: Json
-          station_id?: number
+          station_id?: string
           type?: string
         }
         Relationships: [
@@ -107,36 +107,39 @@ export type Database = {
             columns: ["station_id"]
             isOneToOne: false
             referencedRelation: "climate_stations"
-            referencedColumns: ["station_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
       climate_stations: {
         Row: {
-          country_code: string | null
+          country_code: string
           district: string | null
           elevation: number | null
+          id: string | null
           latitude: number | null
           longitude: number | null
-          station_id: number
+          station_id: string
           station_name: string | null
         }
         Insert: {
-          country_code?: string | null
+          country_code: string
           district?: string | null
           elevation?: number | null
+          id?: string | null
           latitude?: number | null
           longitude?: number | null
-          station_id?: number
+          station_id: string
           station_name?: string | null
         }
         Update: {
-          country_code?: string | null
+          country_code?: string
           district?: string | null
           elevation?: number | null
+          id?: string | null
           latitude?: number | null
           longitude?: number | null
-          station_id?: number
+          station_id?: string
           station_name?: string | null
         }
         Relationships: []
@@ -172,7 +175,7 @@ export type Database = {
           days_lower: number
           days_upper: number
           probabilities: number[] | null
-          station_id: number
+          station_id: string
           water_lower: number
           water_upper: number
         }
@@ -182,7 +185,7 @@ export type Database = {
           days_lower: number
           days_upper: number
           probabilities?: number[] | null
-          station_id: number
+          station_id: string
           water_lower: number
           water_upper: number
         }
@@ -192,7 +195,7 @@ export type Database = {
           days_lower?: number
           days_upper?: number
           probabilities?: number[] | null
-          station_id?: number
+          station_id?: string
           water_lower?: number
           water_upper?: number
         }
@@ -209,7 +212,7 @@ export type Database = {
             columns: ["station_id"]
             isOneToOne: false
             referencedRelation: "climate_stations"
-            referencedColumns: ["station_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -217,7 +220,7 @@ export type Database = {
         Row: {
           access_key_md5: string | null
           configuration: Json
-          country_code: string | null
+          country_code: string
           icon_path: string | null
           id: string
           label: string
@@ -227,7 +230,7 @@ export type Database = {
         Insert: {
           access_key_md5?: string | null
           configuration?: Json
-          country_code?: string | null
+          country_code: string
           icon_path?: string | null
           id: string
           label: string
@@ -237,7 +240,7 @@ export type Database = {
         Update: {
           access_key_md5?: string | null
           configuration?: Json
-          country_code?: string | null
+          country_code?: string
           icon_path?: string | null
           id?: string
           label?: string
@@ -1056,6 +1059,10 @@ export type Database = {
           metadata: Json
           updated_at: string
         }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       search: {
         Args: {
