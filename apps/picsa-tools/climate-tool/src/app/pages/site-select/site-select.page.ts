@@ -32,6 +32,7 @@ export class SiteSelectPage implements OnInit {
 
   ngOnInit() {
     this.populateSites();
+    this.getUserLocationAndSelectClosestStation();
   }
 
   onMarkerClick(marker: IMapMarker) {
@@ -64,14 +65,60 @@ export class SiteSelectPage implements OnInit {
     } else {
       stations = stations.filter((station) => station.countryCode === country_code);
     }
-    const markers: IMapMarker[] = stations.map((s, i) => {
+    const markers: IMapMarker[] = stations.map((station, _index) => {
       return {
-        latlng: [s.latitude, s.longitude],
-        data: s,
-        number: i + 1,
+        latlng: [station.latitude, station.longitude],
+        data: station,
+        number: _index + 1,
+        _index,
       };
     });
     this.mapMarkers = markers;
     return { stations, markers };
+  }
+
+  private getUserLocationAndSelectClosestStation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          this.selectClosestStation(userLat, userLng);
+          this.picsaMap.setLocationMarker(userLat, userLng);
+        },
+        (error) => {
+          console.error('Error getting user location', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }
+
+  private selectClosestStation(userLat: number, userLng: number) {
+    let minDistance = Number.MAX_VALUE;
+    const nearest = this.mapMarkers.reduce((previous, current) => {
+      const stationLat = current.latlng[0];
+      const stationLng = current.latlng[1];
+      const distance = this.calculateDistance(userLat, userLng, stationLat, stationLng);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        return current;
+      }
+      return previous;
+    });
+    if (nearest) {
+      this.ngZone.run(() => {
+        this.activeStation = nearest.data;
+        this.picsaMap.setActiveMarker(nearest);
+      });
+    }
+  }
+
+  private calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const deltaX = lat2 - lat1;
+    const deltaY = lng2 - lng1;
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
   }
 }

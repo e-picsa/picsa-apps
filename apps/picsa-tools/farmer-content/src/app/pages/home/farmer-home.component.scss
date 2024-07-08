@@ -20,11 +20,16 @@
   padding: 1.25em 0;
   align-items: center;
   cursor: pointer;
+  &[data-disabled='true'] {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(1);
+  }
 }
 .step-image-container {
-  width: 96px;
-  height: 96px;
-  padding: 16px;
+  width: 128px;
+  height: 128px;
+  padding: 8px;
   background: var(--color-primary-50);
   border-radius: 8px;
 }

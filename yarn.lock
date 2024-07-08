@@ -3392,6 +3392,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/geolocation@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor/geolocation@npm:6.0.0"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+  checksum: 588f5cfd24a0fde309470b3c2e893c13b9be54412f44d1464c1a4f9029b196c37303c24888f6ed5786ec97e7eae2c5dfc5b0fd1a28b57371c71766eb040b2482
+  languageName: node
+  linkType: hard
+
 "@capacitor/network@npm:^6.0.1":
   version: 6.0.1
   resolution: "@capacitor/network@npm:6.0.1"
@@ -19416,6 +19425,7 @@ __metadata:
     "@capacitor/core": ^6.1.0
     "@capacitor/device": ^6.0.0
     "@capacitor/filesystem": ^6.0.0
+    "@capacitor/geolocation": ^6.0.0
     "@capacitor/network": ^6.0.1
     "@capacitor/screen-orientation": ^6.0.1
     "@capacitor/share": ^6.0.1
