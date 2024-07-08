@@ -84,6 +84,7 @@ export class SiteSelectPage implements OnInit {
           const userLat = position.coords.latitude;
           const userLng = position.coords.longitude;
           this.selectClosestStation(userLat, userLng);
+          this.picsaMap.setLocationMarker(userLat, userLng);
         },
         (error) => {
           console.error('Error getting user location', error);
