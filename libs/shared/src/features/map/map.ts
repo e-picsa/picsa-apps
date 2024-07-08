@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {  Component, EventEmitter, Input, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { Feature, GeoJsonObject, Geometry } from 'geojson';
 import * as L from 'leaflet';
@@ -21,7 +21,7 @@ export class PicsaMapComponent {
 
   @Input() mapOptions: L.MapOptions = {};
   @Input() basemapOptions: Partial<IBasemapOptions> = {};
-  @Input() shortestDistanceMark : any;
+  @Input() shortestDistanceMark: any;
 
   private _markers: IMapMarker[];
   @Input() set markers(markers: IMapMarker[]) {
@@ -51,7 +51,6 @@ export class PicsaMapComponent {
     const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions };
     this._mapOptions = { ...mapOptions, layers: [basemap] };
     // this.markOffClosestStation()
-    
   }
   ngOnChanges(changes: SimpleChanges) {
     if (changes['shortestDistanceMark']) {
@@ -59,43 +58,42 @@ export class PicsaMapComponent {
     }
   }
 
-    private markOffClosestStation() {
-      console.log(this.shortestDistanceMark)
-      if (this.shortestDistanceMark) {
-        const inactiveIcon = L.icon({
-          ...ICON_DEFAULTS,
-          iconUrl: this.shortestDistanceMark.iconUrl || STATION_ICON_WHITE,
-        });
-        const activeIcon = L.icon({
-          ...ACTIVE_ICON_DEFAULTS,
-          iconUrl: this.shortestDistanceMark.iconUrl || STATION_ICON_WHITE,
-        });
-    
-        // If there is an active marker, set it back to inactive
-        if (this._activeMarker) {
-          this._activeMarker.setIcon(inactiveIcon);
-        }
-        // Create a new marker for the shortest distance mark
-        const marker = L.marker(this.shortestDistanceMark.latlng, { icon: inactiveIcon }); 
-    
-        // If the marker has a number, bind a tooltip to it
-        if (this.shortestDistanceMark.number) {
-          const toolTip = L.tooltip(NUMBER_TOOLTIP_DEFAULTS);
-          marker.bindTooltip(toolTip).setTooltipContent(`${this.shortestDistanceMark.number}`).openTooltip();
-          marker.on({
-            click: () => this._onMarkerClick(this.shortestDistanceMark, marker, activeIcon, inactiveIcon),
-          });
-        }
-    
-        // Set the new marker to active
-        marker.setIcon(activeIcon);
-        marker.addTo(this.map);
-    
-        // Update the active marker reference
-        this._activeMarker = marker;
+  private markOffClosestStation() {
+    console.log(this.shortestDistanceMark);
+    if (this.shortestDistanceMark) {
+      const inactiveIcon = L.icon({
+        ...ICON_DEFAULTS,
+        iconUrl: this.shortestDistanceMark.iconUrl || STATION_ICON_WHITE,
+      });
+      const activeIcon = L.icon({
+        ...ACTIVE_ICON_DEFAULTS,
+        iconUrl: this.shortestDistanceMark.iconUrl || STATION_ICON_WHITE,
+      });
+
+      // If there is an active marker, set it back to inactive
+      if (this._activeMarker) {
+        this._activeMarker.setIcon(inactiveIcon);
       }
+      // Create a new marker for the shortest distance mark
+      const marker = L.marker(this.shortestDistanceMark.latlng, { icon: inactiveIcon });
+
+      // If the marker has a number, bind a tooltip to it
+      if (this.shortestDistanceMark.number) {
+        const toolTip = L.tooltip(NUMBER_TOOLTIP_DEFAULTS);
+        marker.bindTooltip(toolTip).setTooltipContent(`${this.shortestDistanceMark.number}`).openTooltip();
+        marker.on({
+          click: () => this._onMarkerClick(this.shortestDistanceMark, marker, activeIcon, inactiveIcon),
+        });
+      }
+
+      // Set the new marker to active
+      marker.setIcon(activeIcon);
+      marker.addTo(this.map);
+
+      // Update the active marker reference
+      this._activeMarker = marker;
     }
-    
+  }
 
   private addMarkers(mapMarkers: IMapMarker[], fitMap = true) {
     mapMarkers.forEach((m, i) => {

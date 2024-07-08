@@ -23,7 +23,7 @@ export class SiteSelectPage implements OnInit {
   };
   mapMarkers: IMapMarker[] = [];
 
-  shortestDistanceMark:IMapMarker;
+  shortestDistanceMark: IMapMarker;
 
   constructor(
     private ngZone: NgZone,
@@ -103,7 +103,7 @@ export class SiteSelectPage implements OnInit {
     let closestStation;
     let minDistance = Number.MAX_VALUE;
 
-    this.mapMarkers.forEach(marker => {
+    this.mapMarkers.forEach((marker) => {
       const stationLat = marker.latlng[0];
       const stationLng = marker.latlng[1];
       const distance = this.calculateDistance(userLat, userLng, stationLat, stationLng);
@@ -113,12 +113,12 @@ export class SiteSelectPage implements OnInit {
         closestStation = marker;
       }
     });
-     if (closestStation) {
-    this.ngZone.run(() => {
-      this.activeStation = closestStation.data;
-      this.shortestDistanceMark = closestStation;
-    });
-  }
+    if (closestStation) {
+      this.ngZone.run(() => {
+        this.activeStation = closestStation.data;
+        this.shortestDistanceMark = closestStation;
+      });
+    }
   }
 
   calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
