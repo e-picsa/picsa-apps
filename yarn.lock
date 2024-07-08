@@ -3266,21 +3266,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-community/firebase-analytics@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@capacitor-community/firebase-analytics@npm:5.0.1"
+"@capacitor-community/firebase-analytics@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor-community/firebase-analytics@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: 08e1c36d93a05a21f5c5e7e8131feddc13c18b5a74598e33bf6d183014725487e0653085ef73f43dd3b11eae27feefcb0d00c50f22a95ff444e1e721ea1fbfbd
-  languageName: node
-  linkType: hard
-
-"@capacitor-community/firebase-crashlytics@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@capacitor-community/firebase-crashlytics@npm:3.0.0"
-  peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: 60b612896cd077dae0cbb9103bca3a2660199e13463a15e28bbf1260d9dd76148fee65f643cc8df3888b43dfccb7b7aad006f142397a23deec8cf266cdc7d07a
+    "@capacitor/core": ^6.0.0
+  checksum: 8c9a5689c4c7e7f46eafe0ece0b081279b033f0388761946731917018d1f4eec92cf4248fb70b88d548f17e656e5ee64c3ec6c4fe90e54e6c03f7ef4f627faf0
   languageName: node
   linkType: hard
 
@@ -3296,16 +3287,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor-firebase/performance@npm:^5.1.0":
-  version: 5.4.1
-  resolution: "@capacitor-firebase/performance@npm:5.4.1"
+"@capacitor-firebase/performance@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor-firebase/performance@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-    firebase: ^9.0.0 || ^10.0.0
+    "@capacitor/core": ^6.0.0
+    firebase: ^10.9.0
   peerDependenciesMeta:
     firebase:
       optional: true
-  checksum: 4acab35032bf54f3d65e1e93496d4c7d7b23860876ac73022e3158a2b6debfd019d417ebd8e211b280bd17722f117a07147d3450826ce4d83668746f58072674
+  checksum: 7932ffd4e90935b0eedf9d4c4ab4c535b4cdfa60833c15b26de9ad336360d597c22a02646cb7c50ac64f5104493337c350bbe6e737d7dc5e079c2134592febe5
   languageName: node
   linkType: hard
 
@@ -3318,21 +3309,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/app@npm:^5.0.6":
-  version: 5.0.8
-  resolution: "@capacitor/app@npm:5.0.8"
+"@capacitor/app@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor/app@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: f378ae71693879cb4a6d9dc222ab5a99fd7d821b532ccc90aa007126785bcc8e5b317752beee9019bb73993d872856ddbe5f4ff771381194a0b3790622ec522d
+    "@capacitor/core": ^6.0.0
+  checksum: 87856f16e8bc0fb9874c294f98c87c39c3fed2caa8697696b6ea42c0900b4f6cefda25b28cb8180cb71846ab1978a15b70e39ed3cf695a97ba862d64a9880816
   languageName: node
   linkType: hard
 
-"@capacitor/browser@npm:^5.1.0":
-  version: 5.2.1
-  resolution: "@capacitor/browser@npm:5.2.1"
+"@capacitor/browser@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@capacitor/browser@npm:6.0.1"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: c5569452039f9cc172ff1bcd41a96c4bf65aa9ec0eddd25174f22cf5821f46b0ef3ee45ff34b43c22c025ea58a61c1af463f7f82072e7f95b8ca6e45b0f2c507
+    "@capacitor/core": ^6.0.0
+  checksum: a9187842e013baec60bd60098424bf111968e33052c47877981a00f00f7aa122144d8a0b97cde2c9f15723cb4a2b4b45db41315772960ad2f6fc2fa61d897cc6
   languageName: node
   linkType: hard
 
@@ -3374,30 +3365,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/core@npm:5.5.1":
-  version: 5.5.1
-  resolution: "@capacitor/core@npm:5.5.1"
+"@capacitor/core@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@capacitor/core@npm:6.1.0"
   dependencies:
     tslib: ^2.1.0
-  checksum: 6b729965f5a67c6d88018ea09bcc043b09c87a2128eb5b79160de26e2ea1e49ca68d332875a2c60b32a42996d2abd83339f2dbb4fa7295581c44e37965c264e9
+  checksum: 6d40a8bc2f339dc80538bc838dd3a1d5a302c5d55af608196425b9d09e79eaef4c481ba29189180dd2841cfa116951686d9e7020580d64e4a39570c13dbb7089
   languageName: node
   linkType: hard
 
-"@capacitor/device@npm:^5.0.6":
-  version: 5.0.8
-  resolution: "@capacitor/device@npm:5.0.8"
+"@capacitor/device@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor/device@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: ff56d48ea843c890e39020b5abcb66de1a771adf6bbde583faad4b9d91d323c103f3216ba48711e3d34faf5109c0c90e7a6982366db423ba2069eeba74575bdf
+    "@capacitor/core": ^6.0.0
+  checksum: e7c4bf96be9271051ffd787e962ec1246521a85b4a2a453f252032be6774dd69398dd25a699dc44e83fe443251e6e08eda9de5044819260d9f9f623c0d08a3ea
   languageName: node
   linkType: hard
 
-"@capacitor/filesystem@npm:^5.1.4":
-  version: 5.2.2
-  resolution: "@capacitor/filesystem@npm:5.2.2"
+"@capacitor/filesystem@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@capacitor/filesystem@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.1.1
-  checksum: c5fdae61fc0bd5df3c5aef28e8504aa85e14b49f9b1bcace5933e0d66be265ff49d7ad669a14782f342e79bc695fc85952d0320fe4bb64b7aabd66a8e7497af0
+    "@capacitor/core": ^6.0.0
+  checksum: 7254d5786bd022ce7793d75cf021d20deb90d8fef311858af13cac0b89d8073e4599102a8fd09e39d3124020463d706735c5a32d6ccdc6c78837dc073e32b6e0
   languageName: node
   linkType: hard
 
@@ -3410,21 +3401,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/network@npm:^5.0.6":
-  version: 5.0.8
-  resolution: "@capacitor/network@npm:5.0.8"
+"@capacitor/network@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@capacitor/network@npm:6.0.1"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: 46759ca1b63254fd9c385290ce4e7d11555dc1742d2175b25b5193b406dfe7369b1c85e9e7d34a692c4dd37386e03621ca004739fd92a212558515128b782394
+    "@capacitor/core": ^6.0.0
+  checksum: 1d7d2aa61fefb7adc146c5d63c847642a6912c2b78d4eaca4848ab55a132c17d9a52b13336ef0335859261f46778ef81dc6646f99631e00bdefb6ce9816de17d
   languageName: node
   linkType: hard
 
-"@capacitor/screen-orientation@npm:^5.0.7":
-  version: 5.0.8
-  resolution: "@capacitor/screen-orientation@npm:5.0.8"
+"@capacitor/screen-orientation@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@capacitor/screen-orientation@npm:6.0.1"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
-  checksum: 4833167f20c44507efc161f84649c60531e19e270daecc90b0d6159a4790037dd61007e63997a08aeaaeeb6061cde53395d9932bfae9600ad1a2f1078fb8d2ab
+    "@capacitor/core": ^6.0.0
+  checksum: 2428fc02185c9c570fb91375103fecb438022b0d90d6cacdf1ad8c69e4901b57dc9f8ade4091b9cd7404c1025440e7364a886c4da5b8f41e35469864a195db6a
   languageName: node
   linkType: hard
 
@@ -19423,21 +19414,20 @@ __metadata:
     "@awesome-cordova-plugins/network": ^6.4.0
     "@awesome-cordova-plugins/social-sharing": ^6.4.0
     "@biesbjerg/ngx-translate-extract-marker": ^1.0.0
-    "@capacitor-community/firebase-analytics": ^5.0.1
-    "@capacitor-community/firebase-crashlytics": ^3.0.0
+    "@capacitor-community/firebase-analytics": ^6.0.0
     "@capacitor-firebase/crashlytics": ^6.0.0
-    "@capacitor-firebase/performance": ^5.1.0
+    "@capacitor-firebase/performance": ^6.0.0
     "@capacitor/android": ^6.1.0
-    "@capacitor/app": ^5.0.6
-    "@capacitor/browser": ^5.1.0
+    "@capacitor/app": ^6.0.0
+    "@capacitor/browser": ^6.0.1
     "@capacitor/camera": ^6.0.1
     "@capacitor/cli": ^6.1.0
-    "@capacitor/core": 5.5.1
-    "@capacitor/device": ^5.0.6
-    "@capacitor/filesystem": ^5.1.4
+    "@capacitor/core": ^6.1.0
+    "@capacitor/device": ^6.0.0
+    "@capacitor/filesystem": ^6.0.0
     "@capacitor/geolocation": ^6.0.0
-    "@capacitor/network": ^5.0.6
-    "@capacitor/screen-orientation": ^5.0.7
+    "@capacitor/network": ^6.0.1
+    "@capacitor/screen-orientation": ^6.0.1
     "@capacitor/share": ^6.0.1
     "@ngx-translate/core": ~15.0.0
     "@ngx-translate/http-loader": ~8.0.0
