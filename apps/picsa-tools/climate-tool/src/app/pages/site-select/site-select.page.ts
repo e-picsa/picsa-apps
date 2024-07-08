@@ -23,8 +23,6 @@ export class SiteSelectPage implements OnInit {
   };
   mapMarkers: IMapMarker[] = [];
 
-  shortestDistanceMark: IMapMarker;
-
   constructor(
     private ngZone: NgZone,
     private router: Router,
@@ -67,18 +65,19 @@ export class SiteSelectPage implements OnInit {
     } else {
       stations = stations.filter((station) => station.countryCode === country_code);
     }
-    const markers: IMapMarker[] = stations.map((s, i) => {
+    const markers: IMapMarker[] = stations.map((station, _index) => {
       return {
-        latlng: [s.latitude, s.longitude],
-        data: s,
-        number: i + 1,
+        latlng: [station.latitude, station.longitude],
+        data: station,
+        number: _index + 1,
+        _index,
       };
     });
     this.mapMarkers = markers;
     return { stations, markers };
   }
 
-  getUserLocationAndSelectClosestStation() {
+  private getUserLocationAndSelectClosestStation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -88,48 +87,37 @@ export class SiteSelectPage implements OnInit {
         },
         (error) => {
           console.error('Error getting user location', error);
-          // Fallback if location is not available
-          this.selectFallbackStation();
         }
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
-      // Fallback if geolocation is not supported
-      this.selectFallbackStation();
     }
   }
 
-  selectClosestStation(userLat: number, userLng: number) {
-    let closestStation;
+  private selectClosestStation(userLat: number, userLng: number) {
     let minDistance = Number.MAX_VALUE;
-
-    this.mapMarkers.forEach((marker) => {
-      const stationLat = marker.latlng[0];
-      const stationLng = marker.latlng[1];
+    const nearest = this.mapMarkers.reduce((previous, current) => {
+      const stationLat = current.latlng[0];
+      const stationLng = current.latlng[1];
       const distance = this.calculateDistance(userLat, userLng, stationLat, stationLng);
 
       if (distance < minDistance) {
         minDistance = distance;
-        closestStation = marker;
+        return current;
       }
+      return previous;
     });
-    if (closestStation) {
+    if (nearest) {
       this.ngZone.run(() => {
-        this.activeStation = closestStation.data;
-        this.shortestDistanceMark = closestStation;
+        this.activeStation = nearest.data;
+        this.picsaMap.setActiveMarker(nearest);
       });
     }
   }
 
-  calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  private calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
     const deltaX = lat2 - lat1;
     const deltaY = lng2 - lng1;
     return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-  }
-
-  selectFallbackStation() {
-    if (this.mapMarkers.length > 0) {
-      this.activeStation = this.mapMarkers[0].data;
-    }
   }
 }

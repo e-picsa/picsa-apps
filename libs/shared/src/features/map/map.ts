@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { Feature, GeoJsonObject, Geometry } from 'geojson';
 import * as L from 'leaflet';
@@ -21,9 +21,10 @@ export class PicsaMapComponent {
 
   @Input() mapOptions: L.MapOptions = {};
   @Input() basemapOptions: Partial<IBasemapOptions> = {};
-  @Input() shortestDistanceMark: any;
 
+  /** Stored list of input marker data */
   private _markers: IMapMarker[];
+  /** Handle adding map markers on input change */
   @Input() set markers(markers: IMapMarker[]) {
     if (markers) {
       this._markers = markers;
@@ -33,6 +34,9 @@ export class PicsaMapComponent {
       }
     }
   }
+
+  /** List of rendered markers with map data */
+  private renderedMarkers: L.Marker[] = [];
 
   // make native map element available directly
   public map: L.Map;
@@ -52,68 +56,27 @@ export class PicsaMapComponent {
     this._mapOptions = { ...mapOptions, layers: [basemap] };
     // this.markOffClosestStation()
   }
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['shortestDistanceMark']) {
-      this.markOffClosestStation();
-    }
-  }
 
-  private markOffClosestStation() {
-    console.log(this.shortestDistanceMark);
-    if (this.shortestDistanceMark) {
-      const inactiveIcon = L.icon({
-        ...ICON_DEFAULTS,
-        iconUrl: this.shortestDistanceMark.iconUrl || STATION_ICON_WHITE,
-      });
-      const activeIcon = L.icon({
-        ...ACTIVE_ICON_DEFAULTS,
-        iconUrl: this.shortestDistanceMark.iconUrl || STATION_ICON_WHITE,
-      });
-
-      // If there is an active marker, set it back to inactive
-      if (this._activeMarker) {
-        this._activeMarker.setIcon(inactiveIcon);
-      }
-      // Create a new marker for the shortest distance mark
-      const marker = L.marker(this.shortestDistanceMark.latlng, { icon: inactiveIcon });
-
-      // If the marker has a number, bind a tooltip to it
-      if (this.shortestDistanceMark.number) {
-        const toolTip = L.tooltip(NUMBER_TOOLTIP_DEFAULTS);
-        marker.bindTooltip(toolTip).setTooltipContent(`${this.shortestDistanceMark.number}`).openTooltip();
-        marker.on({
-          click: () => this._onMarkerClick(this.shortestDistanceMark, marker, activeIcon, inactiveIcon),
-        });
-      }
-
-      // Set the new marker to active
-      marker.setIcon(activeIcon);
-      marker.addTo(this.map);
-
-      // Update the active marker reference
-      this._activeMarker = marker;
-    }
+  /** Programatically set the active map marker and trigger click callback */
+  public setActiveMarker(marker: IMapMarker) {
+    const { _index } = marker;
+    this._onMarkerClick(this._markers[_index], this.renderedMarkers[_index]);
   }
 
   private addMarkers(mapMarkers: IMapMarker[], fitMap = true) {
+    this.renderedMarkers = [];
     mapMarkers.forEach((m, i) => {
-      const icon = L.icon({
-        ...ICON_DEFAULTS,
-        iconUrl: m.iconUrl || STATION_ICON_WHITE,
-      });
-      const activeIcon = L.icon({
-        ...ACTIVE_ICON_DEFAULTS,
-        iconUrl: m.iconUrl || STATION_ICON_WHITE,
-      });
+      const { icon } = this.getMarkerIcons(m);
       const marker = L.marker(m.latlng, { icon });
       if (m.number) {
         const toolTip = L.tooltip(NUMBER_TOOLTIP_DEFAULTS);
         marker.bindTooltip(toolTip).setTooltipContent(`${m.number}`).openTooltip();
       }
       marker.on({
-        click: () => this._onMarkerClick(m, marker, activeIcon, icon),
+        click: () => this._onMarkerClick(m, marker),
       });
       marker.addTo(this.map);
+      this.renderedMarkers.push(marker);
     });
     if (fitMap && mapMarkers.length > 0) {
       this.fitMapToMarkers(mapMarkers);
@@ -137,6 +100,19 @@ export class PicsaMapComponent {
     this.map.fitBounds(bounds, { maxZoom: 8, padding: [10, 10] });
   }
 
+  /** Generate default (inactive) and active icons for a marker */
+  private getMarkerIcons(marker: IMapMarker) {
+    const icon = L.icon({
+      ...ICON_DEFAULTS,
+      iconUrl: marker.iconUrl || STATION_ICON_WHITE,
+    });
+    const activeIcon = L.icon({
+      ...ACTIVE_ICON_DEFAULTS,
+      iconUrl: marker.iconUrl || STATION_ICON_WHITE,
+    });
+    return { icon, activeIcon };
+  }
+
   // zoom in on layer click and emit event.
   // NOTE L.Layer doesn't recognize _bounds prop so just pass as any
   protected _onLayerClick(layer: any) {
@@ -145,11 +121,14 @@ export class PicsaMapComponent {
     this.onLayerClick.emit(layer);
   }
 
-  // when marker is clicked notifiy event with original marker data
-  protected _onMarkerClick(m: IMapMarker, marker: L.Marker, activeIcon: L.Icon, inactiveIcon: L.Icon) {
+  // when marker is clicked zoom in map on marker, update icon and emit event
+  protected _onMarkerClick(m: IMapMarker, marker: L.Marker) {
+    const { activeIcon, icon } = this.getMarkerIcons(m);
     if (this._activeMarker) {
-      this._activeMarker.setIcon(inactiveIcon);
+      this._activeMarker.setIcon(icon);
     }
+    const [lat, lng] = m.latlng;
+    this.map.flyTo([lat, lng], 10);
     marker.setIcon(activeIcon);
     this._activeMarker = marker;
     this.onMarkerClick.emit(m);
@@ -236,6 +215,8 @@ export interface IMapMarker {
   /** Display number with icon */
   number?: number;
   data?: any;
+  /** Index of station when rendered */
+  _index: number;
 }
 export interface IBasemapOptions extends L.TileLayerOptions {
   src: string;
