@@ -135,6 +135,24 @@ mat-tab-group.height-fill {
     flex: 1;
   }
 }
+// Allow tabs which have bottom header absolute positioned
+mat-tab-group.sticky-header-bottom {
+  position: relative;
+  & > mat-tab-header {
+    background: green;
+    position: fixed;
+    bottom: 0;
+    // HACK - ensure farmer content aligns on larger screen sizes
+    width: calc(100% - 32px);
+    background: white;
+    z-index: 2;
+    // HACK - use with farmer content that has max width (hard to inherit)
+    max-width: 800px;
+  }
+  & > .mat-mdc-tab-body-wrapper {
+    margin-bottom: 32px;
+  }
+}
 
 /******************************************************************
 Enketo Form
