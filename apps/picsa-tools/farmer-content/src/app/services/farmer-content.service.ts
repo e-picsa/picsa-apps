@@ -8,7 +8,7 @@ const TOOL_PREFIXES = TOOLS_DATA.map((t) => t.href);
 export class FarmerContentService {
   /**
    * Add support for rendering any existing page of the app within a child route.
-   * This is used to show tools such as the budget tool (/budget) within a tabbed child route (/farmer-activity/budget/budget)
+   * This is used to show tools such as the budget tool (/budget) within a tabbed child route (/farmer/budget/budget)
    * This method should ideally be run before any pages have loaded, e.g. as part of forRoot module initialisation
    */
   public createNestedToolRoutes(router: Router) {
@@ -16,7 +16,6 @@ export class FarmerContentService {
       const prefix = route.path?.split('/')[0] as string;
       return TOOL_PREFIXES.includes(prefix);
     });
-    console.log({ embeddedRoutes });
     router.resetConfig([
       ...router.config.map((route) => {
         // Create embedded routes for all paths except home and farmer activity pages

@@ -11,6 +11,7 @@ export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () => import('./pages/home/farmer-home.component').then((mod) => mod.FarmerContentHomeComponent),
+    title: 'PICSA',
   },
   {
     path: 'tool',
@@ -23,6 +24,7 @@ export const appRoutes: Route[] = [
         },
       ];
     },
+    title: 'PICSA',
   },
   {
     path: ':slug',

@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
@@ -34,7 +35,7 @@ const PAGE_LINKS: IPageLink[] = [
   {
     name: translateMarker('Farmer Activities'),
     svgIcon: 'extension_app:farmer_activity',
-    url: '/farmer-activity',
+    url: '/farmer',
     tourId: 'farmer',
   },
   {
@@ -128,11 +129,16 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
     public monitoringService: MonitoringToolService,
     private router: Router,
     private componentsService: PicsaCommonComponentsService,
-    private tourService: TourService
+    private tourService: TourService,
+    private configurationService: ConfigurationService
   ) {}
 
   linkClicked(link: IPageLink) {
     this.router.navigate([link.url]);
+    // hack - ensure farmer version enabled if navigating to it
+    if (link.url === '/farmer') {
+      this.configurationService.updateUserSettings({ user_type: 'farmer' });
+    }
   }
 
   ngOnDestroy(): void {
