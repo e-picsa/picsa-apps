@@ -2,24 +2,29 @@
   <mat-drawer #drawer mode="over">
     <div class="page-content draw-content">
       <button mat-icon-button (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
-      <div style="margin-top: 3rem"></div>
+      <div style="margin-top: 4rem"></div>
       <!-- Version toggle -->
       <mat-nav-list>
-        <a mat-list-item (click)="toggleUserType()" style="padding: 0">
+        @if(userType()==='farmer'){
+        <a mat-list-item (click)="toggleUserType()">
           <div style="display: flex; align-items: center">
             <mat-icon style="margin-right: 8px">switch_account</mat-icon>
-            @if(userType()==='farmer'){
-            <span>{{ 'Switch to Extension' }}</span> }
-            <!--  -->
-            @if(userType()==='extension') {
-            <span>{{ 'Switch to Farmer' }}</span> }
+            <span>{{ 'Switch to Extension' | translate}}</span>
           </div>
         </a>
+        } @if(userType()==='extension') {
+        <a mat-list-item (click)="toggleUserType()">
+          <div style="display: flex; align-items: center">
+            <mat-icon style="margin-right: 8px">switch_account</mat-icon>
+            <span>{{ 'Switch to Farmer'| translate }}</span>
+          </div>
+        </a>
+        }
       </mat-nav-list>
-      <picsa-configuration-summary style="margin-top: auto" (click)="drawer.close()" />
+      <picsa-configuration-summary style="margin-top: auto; padding: 4px" (click)="drawer.close()" />
       <footer>
-        <a routerLink="/privacy" class="privacy-policy">{{ 'Privacy Policy' | translate }}</a>
-        <div class="version-info">v{{ version.number }}</div>
+        <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
+        <div>v{{ version.number }}</div>
       </footer>
     </div>
   </mat-drawer>
