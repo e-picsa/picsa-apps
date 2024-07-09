@@ -16,7 +16,6 @@ export class FarmerContentService {
       const prefix = route.path?.split('/')[0] as string;
       return TOOL_PREFIXES.includes(prefix);
     });
-    console.log({ embeddedRoutes });
     router.resetConfig([
       ...router.config.map((route) => {
         // Create embedded routes for all paths except home and farmer activity pages
