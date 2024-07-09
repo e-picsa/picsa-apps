@@ -38,3 +38,10 @@ img.cover-preview {
   object-fit: contain;
   border: 1px solid var(--color-light);
 }
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  max-width: 600px;
+}

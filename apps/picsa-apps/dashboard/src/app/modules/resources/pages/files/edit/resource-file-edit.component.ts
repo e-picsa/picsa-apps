@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LANGUAGES_DATA, LANGUAGES_DATA_HASHMAP } from '@picsa/data';
 import { PICSAFormValidators } from '@picsa/forms';
 import {
   IUploadResult,
@@ -10,13 +11,14 @@ import {
 } from '@picsa/shared/services/core/supabase';
 import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
-import { DashboardMaterialModule } from '../../../../material.module';
-import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
-import { ResourcesDashboardService } from '../../resources.service';
-import { IResourceFileRow } from '../../types';
+import { DashboardMaterialModule } from '../../../../../material.module';
+import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
+import { DashboardResourcesStorageLinkComponent } from '../../../components/storage-link/storage-link.component';
+import { ResourcesDashboardService } from '../../../resources.service';
+import { IResourceFileRow } from '../../../types';
 
 @Component({
-  selector: 'dashboard-resource-create',
+  selector: 'dashboard-resource-file-edit',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,38 +29,41 @@ import { IResourceFileRow } from '../../types';
     SupabaseStoragePickerDirective,
     SupabaseUploadComponent,
   ],
-  templateUrl: './resource-create.component.html',
-  styleUrls: ['./resource-create.component.scss'],
+  templateUrl: './resource-file-edit.component.html',
+  styleUrl: './resource-file-edit.component.scss',
 })
-export class ResourceCreateComponent implements OnInit {
+export class ResourceFileEditComponent implements OnInit {
   constructor(
     private service: ResourcesDashboardService,
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private deploymentService: DeploymentDashboardService
   ) {}
 
-  public resourceType: 'file' | 'link';
+  /** List of languages used in deployment available for resources */
+  public languagesAvailable = computed(() => {
+    const deployment = this.deploymentService.activeDeployment();
+    if (deployment) {
+      const languages = LANGUAGES_DATA.filter(
+        (l) => l.country_code === deployment.country_code || l.country_code === 'global'
+      );
+      return languages;
+    }
+    return [];
+  });
 
   public allowedFileTypes = ['pdf', 'mp4', 'mp3', 'jpg', 'jpeg', 'svg', 'png', 'webp'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
 
-  public linkForm = this.formBuilder.group({
-    id: new FormControl<string | null>(null),
-    type: ['link'],
-    url: ['', PICSAFormValidators.isUrl],
-  });
-  public fileForm = this.formBuilder.group({
+  public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
     type: ['file'],
+    language: ['', Validators.required],
     title: ['', Validators.required],
     description: [''],
     storage_file: ['', Validators.required],
     storage_cover: [''],
   });
-
-  private get form() {
-    return this.resourceType === 'file' ? this.fileForm : this.linkForm;
-  }
 
   async ngOnInit() {
     await this.service.ready();
@@ -83,12 +88,13 @@ export class ResourceCreateComponent implements OnInit {
     console.log({ data, error });
   }
 
-  private populateResource(resource: any) {
+  private populateResource(resource: IResourceFileRow) {
+    console.log('populate resource', resource);
     // this.resourceType = resource.type as any;
     // console.log('populate resource', resource);
     // switch (resource.type) {
     //   case 'file':
-    //     this.fileForm.patchValue(resource);
+    //     this.form.patchValue(resource);
     //     break;
     //   case 'link':
     //     this.linkForm.patchValue(resource);
@@ -103,10 +109,10 @@ export class ResourceCreateComponent implements OnInit {
       return;
     }
     const [{ entry }] = res;
-    this.fileForm.patchValue({ [controlName]: entry.id });
+    this.form.patchValue({ [controlName]: entry.id });
   }
 
   public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'storage_cover') {
-    this.fileForm.patchValue({ [controlName]: entry?.id });
+    this.form.patchValue({ [controlName]: entry?.id });
   }
 }

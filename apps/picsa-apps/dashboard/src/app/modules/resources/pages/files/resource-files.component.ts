@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -49,7 +49,7 @@ export class ResourceFilesComponent implements OnInit {
   public readonly tableOptions: IDataTableOptions = {
     displayColumns: TABLE_COLUMNS,
     handleRowClick: (resource: IResourceFileRow) => {
-      console.log('click', resource);
+      this.router.navigate([resource.id], { relativeTo: this.route });
     },
     formatHeader(value) {
       if (value === 'mimetype') return 'Type';
@@ -59,7 +59,7 @@ export class ResourceFilesComponent implements OnInit {
       return formatHeaderDefault(value);
     },
   };
-  constructor(private service: ResourcesDashboardService) {
+  constructor(private service: ResourcesDashboardService, private router: Router, private route: ActivatedRoute) {
     effect(() => {
       const resources = service.files();
       this.resources = this.getMergedResources(resources).sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
