@@ -1,7 +1,21 @@
-<mat-drawer-container class="example-container" [hasBackdrop]="true">
+<mat-drawer-container [hasBackdrop]="true">
   <mat-drawer #drawer mode="over">
     <div class="page-content draw-content">
       <button mat-icon-button (click)="drawer.close()" class="close-button"><mat-icon>close</mat-icon></button>
+      <div style="margin-top: 3rem"></div>
+      <!-- Version toggle -->
+      <mat-nav-list>
+        <a mat-list-item (click)="toggleUserType()" style="padding: 0">
+          <div style="display: flex; align-items: center">
+            <mat-icon style="margin-right: 8px">switch_account</mat-icon>
+            @if(userType()==='farmer'){
+            <span>{{ 'Switch to Extension' }}</span> }
+            <!--  -->
+            @if(userType()==='extension') {
+            <span>{{ 'Switch to Farmer' }}</span> }
+          </div>
+        </a>
+      </mat-nav-list>
       <picsa-configuration-summary style="margin-top: auto" (click)="drawer.close()" />
       <footer>
         <a routerLink="/privacy" class="privacy-policy">{{ 'Privacy Policy' | translate }}</a>
