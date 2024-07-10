@@ -1,12 +1,12 @@
 import { effect, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { ILanguageCode } from '@picsa/data/deployments';
+import { ILocaleCode } from '@picsa/data/deployments';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PicsaTranslateService {
-  public language: ILanguageCode = 'global_en';
+  public language: ILocaleCode = 'global_en';
   constructor(public ngxTranslate: TranslateService, configurationService: ConfigurationService) {
     ngxTranslate.setDefaultLang('global_en');
     effect(() => {

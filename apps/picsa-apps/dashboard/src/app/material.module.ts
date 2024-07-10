@@ -8,6 +8,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
@@ -26,6 +27,7 @@ const matModules = [
   MatInputModule,
   MatListModule,
   MatRadioModule,
+  MatSelectModule,
   MatSidenavModule,
   MatStepperModule,
   MatTableModule,
