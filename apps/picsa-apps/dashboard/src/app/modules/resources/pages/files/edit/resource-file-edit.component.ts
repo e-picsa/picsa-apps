@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { LANGUAGES_DATA, LANGUAGES_DATA_HASHMAP } from '@picsa/data';
+import { LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { PICSAFormValidators } from '@picsa/forms';
 import {
   IUploadResult,
@@ -44,9 +44,10 @@ export class ResourceFileEditComponent implements OnInit {
   public languagesAvailable = computed(() => {
     const deployment = this.deploymentService.activeDeployment();
     if (deployment) {
-      const languages = LANGUAGES_DATA.filter(
+      const languages = LOCALES_DATA.filter(
         (l) => l.country_code === deployment.country_code || l.country_code === 'global'
       );
+      console.log('languages available', languages);
       return languages;
     }
     return [];
@@ -58,7 +59,7 @@ export class ResourceFileEditComponent implements OnInit {
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
     type: ['file'],
-    language: ['', Validators.required],
+    language_code: ['', Validators.required],
     title: ['', Validators.required],
     description: [''],
     storage_file: ['', Validators.required],
@@ -90,18 +91,8 @@ export class ResourceFileEditComponent implements OnInit {
 
   private populateResource(resource: IResourceFileRow) {
     console.log('populate resource', resource);
-    // this.resourceType = resource.type as any;
-    // console.log('populate resource', resource);
-    // switch (resource.type) {
-    //   case 'file':
-    //     this.form.patchValue(resource);
-    //     break;
-    //   case 'link':
-    //     this.linkForm.patchValue(resource);
-    //     break;
-    //   default:
-    //     console.warn('Resource type not supported', resource.type);
-    // }
+    this.form.patchValue(resource);
+    console.log('formValue', this.form.value);
   }
 
   public async handleUploadComplete(res: IUploadResult[], controlName: 'storage_file' | 'storage_cover') {

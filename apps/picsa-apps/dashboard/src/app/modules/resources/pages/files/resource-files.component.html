@@ -18,7 +18,7 @@
     [valueTemplates]="{
       size_kb: sizeKbTemplate,
       mimetype: mimetypeTemplate,
-      language_codes: languageCodesTemplate,
+      languages: languagesTemplate,
       modified_at: modifiedAtTemplate,
       collections: collectionsTemplate,
       external_url: externalUrlTemplate
@@ -36,9 +36,9 @@
       <mat-icon svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>} }
     </ng-template>
     <!-- language codes -->
-    <ng-template #languageCodesTemplate let-codes>
-      @for(code of codes; track code){
-      <div>{{ code }}</div>
+    <ng-template #languagesTemplate let-languages>
+      @for(language of languages; track language.id){
+      <div>{{ language.language_label }}</div>
       }
     </ng-template>
     <!-- modified date -->
