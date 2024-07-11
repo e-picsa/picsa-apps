@@ -49,7 +49,11 @@
     <ng-template #collectionsTemplate let-collections>
       <div style="display: flex; gap: 4px">
         @for(collection of collections; track collection.id;){
-        <div class="collection-cover-container" [matTooltip]="collection.title">
+        <div
+          class="collection-cover-container"
+          [matTooltip]="collection.title"
+          (click)="handleCollectionClick($event, collection)"
+        >
           <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
         </div>
         }

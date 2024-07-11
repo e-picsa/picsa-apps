@@ -26,7 +26,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   'size_kb',
   'languages',
   'collections',
-  'external_url',
+  // 'external_url',
   'modified_at',
   // sort_order
 ];
@@ -83,6 +83,11 @@ export class ResourceFilesComponent implements OnInit {
 
   async ngOnInit() {
     await this.service.ready();
+  }
+
+  public handleCollectionClick(e: Event, collection: IResourceCollectionRow) {
+    e.stopImmediatePropagation();
+    this.router.navigate(['..', 'collections', collection.id], { relativeTo: this.route });
   }
 
   private filterDeploymentResource(r: IResourceFileRow, deployment: IDeploymentRow) {

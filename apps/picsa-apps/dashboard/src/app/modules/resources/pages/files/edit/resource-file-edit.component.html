@@ -8,7 +8,19 @@
     <!-- <mat-tab [label]="item.label">  -->
     <div class="form-content">
       <div style="display: flex; flex-wrap: wrap; gap: 2em">
-        <!-- Storage file -->
+        <!-- External URL -->
+        @if(form.value.external_url; as external_url){
+        <div style="flex: 1">
+          <label>External URL</label>
+          <a mat-stroked-button [href]="external_url" target="_blank" rel="noopener noreferrer nofollow">
+            <mat-icon>open_in_new</mat-icon>
+            View Resource
+          </a>
+        </div>
+        }
+
+        <!-- Storage file / External Url -->
+        @if(!form.value.external_url){
         <div>
           <label>Resource</label>
           @if(form.value.storage_file ){
@@ -24,16 +36,16 @@
             [fileTypes]="allowedFileTypes"
             [fileDropHeight]="128"
             [autoUpload]="true"
-            storageBucketName="resources"
-            [storageFolderPath]="item.code"
+            [storageBucketName]="item.code"
+            storageFolderPath="resources"
             (uploadComplete)="handleUploadComplete($event, 'storage_file')"
           ></picsa-supabase-upload>
           <button
             mat-button
             color="primary"
             supabaseStoragePicker
-            storageBucketName="resources"
-            [storageFolderPath]="item.code"
+            [storageBucketName]="item.code"
+            storageFolderPath="resources"
             (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
             style="margin-top: 4px"
           >
@@ -42,16 +54,18 @@
           </button>
           }
         </div>
-        <!-- Storage cover -->
+
+        }
+        <!-- Cover Image -->
         <div style="flex: 1">
           <label>Cover Image</label>
-          @if(form.value.storage_cover ){
+          @if(form.value.cover_image ){
           <dashboard-resources-storage-link
             #storageLink
-            [id]="form.value.storage_cover"
+            [id]="form.value.cover_image"
             displayStyle="button"
           ></dashboard-resources-storage-link>
-          <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'storage_cover')">
+          <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
             <mat-icon>close</mat-icon>
           </button>
           <img class="cover-preview" [src]="storageLink.entry?.publicUrl" style="margin-top: 8px" />
@@ -61,17 +75,17 @@
             [fileTypes]="allowedCoverTypes"
             [fileDropHeight]="128"
             [autoUpload]="true"
-            storageBucketName="resources"
-            storageFolderPath="covers"
-            (uploadComplete)="handleUploadComplete($event, 'storage_cover')"
+            storageBucketName="global"
+            storageFolderPath="resources/covers"
+            (uploadComplete)="handleUploadComplete($event, 'cover_image')"
           ></picsa-supabase-upload>
           <button
             mat-button
             color="primary"
             supabaseStoragePicker
-            storageBucketName="resources"
-            storageFolderPath="covers"
-            (storageFileSelected)="handleStorageFileSelected($event, 'storage_cover')"
+            storageBucketName="global"
+            storageFolderPath="resources/covers"
+            (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
             style="margin-top: 4px"
           >
             <mat-icon>perm_media</mat-icon>
