@@ -120,7 +120,7 @@
     "@angular-eslint/eslint-plugin": "17.3.0",
     "@angular-eslint/eslint-plugin-template": "17.3.0",
     "@angular-eslint/template-parser": "17.3.0",
-    "@angular/cli": "~17.3.0",
+    "@angular/cli": "^18.0.7",
     "@angular/compiler-cli": "17.3.2",
     "@angular/language-service": "17.3.2",
     "@biesbjerg/ngx-translate-extract-marker": "^1.0.0",

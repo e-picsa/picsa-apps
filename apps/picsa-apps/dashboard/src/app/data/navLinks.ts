@@ -73,6 +73,11 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     href: '/translations',
     matIcon: 'translate',
   },
+  {
+    label: 'Form View',
+    href: '/form-preview',
+    matIcon: 'assignment',
+  },
 ];
 
 export const GLOBAL_NAV_LINKS: INavLink[] = [

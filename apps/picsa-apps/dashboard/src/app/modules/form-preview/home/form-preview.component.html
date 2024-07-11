@@ -1,0 +1,13 @@
+<p>Form Preview works</p>
+<div class="page-content">
+  @if (formInitial) {
+    <ng-container >
+      <enketo-webform
+        [form]="formInitial.form"
+        [model]="formInitial.model"
+      ></enketo-webform>
+   
+    </ng-container>
+  }
+  </div>
+  
