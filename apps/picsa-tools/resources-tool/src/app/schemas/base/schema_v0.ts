@@ -1,3 +1,4 @@
+import { ICountryCode } from '@picsa/data/deployments';
 import { RxJsonSchema } from 'rxdb';
 
 export interface IResourceBase_v0 {
@@ -14,7 +15,7 @@ export interface IResourceBase_v0 {
   };
   /** Restrict availability by country */
   filter?: {
-    countries?: string[];
+    countries?: ICountryCode[];
   };
   /** Language of resource */
   language?: string;

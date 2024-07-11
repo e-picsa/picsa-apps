@@ -1,3 +1,6 @@
+@use 'mixins';
+@use '@angular/material' as mat;
+
 $primary: (
   50: #f4e3e4,
   100: #e3b8bd,
@@ -31,26 +34,26 @@ $primary: (
   ),
 );
 $accent: (
-  50: #f8e8e6,
-  100: #edc6c2,
-  200: #e1a099,
-  300: #d57970,
-  400: #cc5d51,
-  500: #c34032,
-  600: #bd3a2d,
-  700: #b53226,
-  800: #ae2a1f,
-  900: #a11c13,
-  A100: #ffd5d3,
-  A200: #ffa5a0,
-  A400: #ff746d,
-  A700: #ff5c53,
+  50: #e6f1f8,
+  100: #c2dbed,
+  200: #99c3e1,
+  300: #70abd5,
+  400: #5199cc,
+  500: #3287c3,
+  600: #2d7fbd,
+  700: #2674b5,
+  800: #1f6aae,
+  900: #1357a1,
+  A100: #d3e6ff,
+  A200: #a0caff,
+  A400: #6daeff,
+  A700: #539fff,
   contrast: (
     50: #000000,
     100: #000000,
     200: #000000,
     300: #000000,
-    400: #ffffff,
+    400: #000000,
     500: #ffffff,
     600: #ffffff,
     700: #ffffff,
@@ -85,11 +88,5 @@ $theme-mw: mat.define-light-theme(
 
 body[data-theme='picsa-mw'] {
   @include mat.all-component-themes($theme-mw);
-  --color-primary: #{map-get($palette-primary, 500)};
-  --color-primary-50: #{map-get($palette-primary, 50)};
-  --color-secondary: #{map-get($palette-accent, 500)};
-  --color-warn: #{map-get($palette-warn, 500)};
-  --color-black: #1a2138;
-  --color-light: #d8d8d8;
-  --color-white: #ffffff;
+  @include mixins.setColorVariables($palette-primary, $palette-accent, $palette-warn);
 }

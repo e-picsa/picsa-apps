@@ -76,6 +76,24 @@ export class NativeStorageService extends PicsaAsyncService {
     return FileInfo;
   }
 
+  /**
+   * Copy a file from data folder to cache folder.
+   * This is required if sharing files and explicit permission not granted for data folder
+   **/
+  public async copyFileToCache(uri: string) {
+    // determine the relative filepath (with subfolders) as written to data directory
+    const fileDirectory = await Filesystem.getUri({ directory: Directory.Data, path: '' });
+    const relativePath = uri.replace(fileDirectory.uri, '');
+    // copy file to cache, ignoring nested folder structures (just keep flat)
+    const { uri: cacheFileUri } = await Filesystem.copy({
+      from: relativePath,
+      directory: Directory.Data,
+      to: relativePath.split('/').pop() as string,
+      toDirectory: Directory.Cache,
+    });
+    return cacheFileUri;
+  }
+
   public async deleteFile(relativePath: string) {
     const directory = Directory.Data;
     const path = `${this.cacheName}/${relativePath}`;

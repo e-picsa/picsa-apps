@@ -10,7 +10,7 @@ import { DataPoint } from 'c3';
 import { getDayOfYear } from 'date-fns';
 import { BehaviorSubject, firstValueFrom, Subject } from 'rxjs';
 
-import { DATA_RANGES_DEFAULT, IDataRanges, IGridMeta } from '../models/chart-data.models';
+import { generateChartConfig } from '../utils';
 import { ClimateDataService } from './climate-data.service';
 
 @Injectable({ providedIn: 'root' })
@@ -79,129 +79,37 @@ export class ClimateChartService {
   }
 
   public async setChart(id?: IChartId) {
-    const chart = id ? this.station?.definitions[id] : undefined;
-    this.chartDefinition = chart;
+    const definition = id ? this.station?.definitions[id] : undefined;
+    this.chartDefinition = definition;
     this.chartDefinition$.next(this.chartDefinition);
-    if (chart) {
-      await this.generateChartConfig();
+    if (definition) {
+      // apply translations
+      definition.name = await this.translateService.translateText(definition.name);
+      if (this.station) {
+        definition.name = this.station.name;
+      }
+      definition.yLabel = await this.translateService.translateText(definition.yLabel);
+      definition.xLabel = await this.translateService.translateText(definition.xLabel);
+      // generate config and apply custom onrendered callback
+      // these are not included in base methods as they are used by both extension and dashboard tools
+      const config = await generateChartConfig(this.stationData, definition, this.monthNames);
+      config.onrendered = () => {
+        this.chartRendered$.next();
+      };
+      config.data!.color = (_, d) => this.getPointColour(d as DataPoint) || definition.colors[0];
+      config.point!.r = (d) => {
+        return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id) ? 0 : this.pointRadius;
+      };
+      // TODO - ensure month names translated (removed from method)
+
+      this.chartConfig = config;
+      this.chartConfig$.next(config);
+      // update data used by tools
       this.chartSeriesData = this.stationData.map((v) => v[this.chartDefinition!.keys[0]] as number);
       this.chartSeriesData$.next(this.chartSeriesData);
     } else {
       console.warn('No chart found', id, this.station);
     }
-  }
-
-  /*****************************************************************************
-   *   Chart Config
-   ****************************************************************************/
-
-  /**
-   * Generate a c3 chart config with series loaded for all station data, and
-   * active definition series displayed
-   */
-  private async generateChartConfig() {
-    const data = this.stationData;
-    const definition = this.chartDefinition as IChartMeta;
-    // configure major and minor ticks, labels and gridlines
-    const ranges = this.calculateDataRanges(data, definition);
-    const gridMeta = this.calculateGridMeta(definition, ranges);
-
-    // configur text and translations
-    const chartName = await this.translateService.translateText(definition.name);
-    const yLabel = await this.translateService.translateText(definition.yLabel);
-    const xLabel = await this.translateService.translateText(definition.xLabel);
-
-    // configure chart
-    this.chartConfig = {
-      // ensure axis labels fit
-      padding: {
-        right: 10,
-        left: 60,
-      },
-      data: {
-        json: data as any,
-        keys: {
-          value: [...definition.keys, definition.xVar],
-        },
-        x: 'Year',
-        classes: { LineTool: 'LineTool' },
-        color: (_, d) => this.getPointColour(d as DataPoint) || definition.colors[0],
-      },
-      ['title' as any]: {
-        text: `${this.station?.name} | ${chartName}`,
-      },
-      tooltip: {
-        grouped: false,
-        format: {
-          value: (value) => this._getTooltipFormat(value as any, definition),
-          // HACK - reformat missing  titles (lost when passing "" values back from axis)
-          // i marked ? as incorrect typings
-          title: (x, i?) => this._formatXAxis(data[i as number][definition.xVar] as any),
-        },
-      },
-      axis: {
-        x: {
-          label: xLabel,
-          min: ranges.xMin,
-          max: ranges.xMax,
-          tick: {
-            rotate: 75,
-            multiline: false,
-            values: gridMeta.xTicks,
-            format: (d) => (gridMeta.xLines.includes(d as any) ? this._formatXAxis(d as any) : ''),
-          },
-          height: 60,
-        },
-        y: {
-          label: { position: 'outer-middle', text: yLabel },
-          tick: {
-            values: gridMeta.yTicks,
-            format: (d: any) =>
-              gridMeta.yLines.includes(d as any) ? this._formatYAxis(d as any, definition, true) : '',
-          },
-          min: ranges.yMin,
-          max: ranges.yMax,
-          padding: {
-            bottom: 0,
-            top: 10,
-          },
-        },
-      },
-      // add custom gridlines to only show on 'major' ticks
-      grid: {
-        y: {
-          lines: gridMeta.yLines.map((l) => {
-            return { value: l, class: 'picsa-gridline', text: '' };
-          }),
-        },
-        x: {
-          lines: gridMeta.xLines.map((l) => {
-            return { value: l, class: 'picsa-gridline', text: '' };
-          }),
-        },
-        // destructured as typings incorrect
-        ...{
-          lines: {
-            front: false,
-          },
-        },
-      },
-      legend: {
-        show: false,
-      },
-      point: {
-        r: (d) => {
-          return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id) ? 0 : this.pointRadius;
-        },
-        // make it easier to select points when tapping outside
-        // TODO - could vary depending on screen size
-        sensitivity: 16,
-      },
-      onrendered: () => {
-        this.chartRendered$.next();
-      },
-    };
-    this.chartConfig$.next(this.chartConfig);
   }
 
   /*****************************************************************************
@@ -294,102 +202,5 @@ export class ClimateChartService {
       return dayNumber > 183 ? dayNumber - 183 : dayNumber + 183;
     }
     return dayNumber;
-  }
-
-  // iterate over data and calculate min/max values for xVar and multiple yVars
-  private calculateDataRanges(data: IStationData[], definition: IChartMeta) {
-    let { yMin, yMax, xMin, xMax } = DATA_RANGES_DEFAULT;
-    const { xMajor, yMajor } = definition;
-    data.forEach((d) => {
-      const xVal = d[definition.xVar] as number;
-      // take all possible yValues and filter out undefined
-      const yVals = definition.keys.map((k) => d[k]).filter((v) => typeof v === 'number') as number[];
-      xMax = xVal ? Math.max(xMax, xVal) : xMax;
-      xMin = xVal ? Math.min(xMin, xVal) : xMin;
-      yMax = Math.max(yMax, ...yVals);
-      yMin = Math.min(yMin, ...yVals);
-    });
-    // NOTE - yAxis hardcoded to 0 start currently for rainfall chart
-    if (definition.yFormat === 'value') {
-      yMin = 0;
-    }
-    // Note - xAxis hardcoded to end at this year for all year charts
-    if (definition.xVar === 'Year') {
-      xMax = new Date().getFullYear();
-    }
-    return {
-      // round max up and min down to the nearest interval
-      yMin: Math.floor(yMin / yMajor) * yMajor,
-      yMax: Math.ceil(yMax / yMajor) * yMajor,
-      xMin: Math.floor(xMin / xMajor) * xMajor,
-      xMax: Math.ceil(xMax / xMajor) * xMajor,
-    };
-  }
-
-  // calculate grid ticks, lines and label meta data
-  private calculateGridMeta(meta: IChartMeta, ranges: IDataRanges): IGridMeta {
-    const { xMin, xMax, yMin, yMax } = ranges;
-    const { xMajor, yMajor, xMinor, yMinor } = meta;
-    return {
-      xTicks: this._getAxisValues(xMin, xMax, xMinor) as number[],
-      xLines: this._getAxisValues(xMin, xMax, xMajor) as number[],
-      yTicks: this._getAxisValues(yMin, yMax, yMinor) as number[],
-      yLines: this._getAxisValues(yMin, yMax, yMajor) as number[],
-    };
-  }
-
-  // sometimes want to manually specify axis values so that y-axis can start at 0,
-  // or so x-axis can extend beyond range of dates to current year
-  private _getAxisValues(min: number, max: number, interval: number) {
-    const values: number[] = [];
-    for (let i = 0; i <= (max - min) / interval; i++) {
-      values.push(min + i * interval);
-    }
-    return values;
-  }
-
-  // now all ticks are displayed we only want values for every 5
-  private _formatXAxis(value: number): string {
-    return `${value} - ${(value + 1).toString().substring(2, 4)}`;
-  }
-
-  private _formatYAxis(value: number, meta: IChartMeta, isAxisLabel?: boolean) {
-    const { yMajor } = meta;
-
-    let label: string;
-    switch (meta.yFormat) {
-      case 'date-from-July': {
-        // previously 181 based on local met +182 and -1 for index starting at 0
-        // now simply half of standard year 365 + 1 for index
-        const dayNumber = (value + 183) % 366;
-        if (isAxisLabel) {
-          const monthNumber = Math.round(dayNumber / yMajor) % 12;
-          // just want nearest month name
-          label = this.monthNames[monthNumber];
-        } else {
-          //simply converts number to day rough date value (same method as local met office)
-          //initialise year from a year with 365 days
-          const d = new Date(2015, 0);
-          d.setDate(dayNumber);
-
-          // just take first 3 letters
-          label = `${d.getDate()}-${this.monthNames[d.getMonth() % 12]}`;
-        }
-        return label;
-      }
-      case 'date':
-        // TODO
-        return `${value}`;
-      default:
-        return `${value}`;
-    }
-  }
-
-  private _getTooltipFormat(value: number, meta: IChartMeta) {
-    if (meta.yFormat == 'value') {
-      return `${Math.round(value).toString()} ${meta.units}`;
-    } else {
-      return `${this._formatYAxis(value, meta, false)} ${meta.units}`;
-    }
   }
 }

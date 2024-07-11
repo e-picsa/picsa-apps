@@ -1,27 +1,19 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { Subject, takeUntil } from 'rxjs';
+import { ILanguageCode } from '@picsa/data/deployments';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class PicsaTranslateService implements OnDestroy {
-  public language = 'en';
-  private destroyed$ = new Subject<boolean>();
-  constructor(public ngxTranslate: TranslateService, public configurationService: ConfigurationService) {
-    this.subscribeToConfigLanguageChanges();
-  }
-
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
-  }
-
-  private subscribeToConfigLanguageChanges() {
-    this.configurationService.activeConfiguration$.pipe(takeUntil(this.destroyed$)).subscribe(async (config) => {
-      const language = config.localisation.language.selected?.code;
-      if (language && language !== this.language) {
-        this.language = language;
-        this.ngxTranslate.use(language);
+export class PicsaTranslateService {
+  public language: ILanguageCode = 'global_en';
+  constructor(public ngxTranslate: TranslateService, configurationService: ConfigurationService) {
+    ngxTranslate.setDefaultLang('global_en');
+    effect(() => {
+      const { language_code } = configurationService.userSettings();
+      if (language_code && language_code !== this.language) {
+        this.language = language_code;
+        this.ngxTranslate.use(language_code);
       }
     });
   }
@@ -30,8 +22,7 @@ export class PicsaTranslateService implements OnDestroy {
   // outside of html templates (where pipe method used instead)
   async translateText(text = '') {
     if (!text) return text;
-    const translation = await this.ngxTranslate.get(text).toPromise();
-    return translation;
+    return firstValueFrom(this.ngxTranslate.get(text));
   }
 
   async translateArray(arr: string[]) {

@@ -1,5 +1,3 @@
-$fontFamily: Roboto, 'Helvetica Neue', sans-serif;
-
 // fix height styles lost since angular/material 17 updates
 // NOTE - these may have been fixed since inclusion of `mat.all-component-bases`
 body {
@@ -13,11 +11,11 @@ body {
 button.mdc-button {
   font-size: 14px;
   font-weight: 500;
-  font-family: $fontFamily;
 }
 button.mat-mdc-button > .mat-icon {
   font-size: 24px;
   width: 24px;
+  min-width: 24px; // climate share icon not showing without
   height: 24px;
 }
 
@@ -39,6 +37,11 @@ mat-card-content.mat-mdc-card-content {
 .mat-mdc-dialog-surface {
   padding: 24px;
 }
+// Allow dialog content to scroll (e.g. configuration select)
+mat-dialog-container.mat-mdc-dialog-container {
+  max-height: 100vh;
+  overflow: auto;
+}
 // Add override to remove dialog padding
 .cdk-overlay-pane.no-padding {
   .mat-mdc-dialog-surface {
@@ -50,6 +53,11 @@ mat-card-content.mat-mdc-card-content {
 div.mdc-dialog__actions {
   padding-left: 0;
   padding-right: 0;
+}
+// Display sidebar content in flex column with light background
+.mat-drawer-inner-container {
+  display: flex;
+  flex-direction: column;
 }
 // Increase size and set primary colour for text inputs, remove inset
 input.mat-mdc-input-element.mdc-text-field__input {
@@ -125,6 +133,24 @@ mat-tab-group.height-fill {
   flex: 1;
   .mat-mdc-tab-body-wrapper {
     flex: 1;
+  }
+}
+// Allow tabs which have bottom header absolute positioned
+mat-tab-group.sticky-header-bottom {
+  position: relative;
+  & > mat-tab-header {
+    background: green;
+    position: fixed;
+    bottom: 0;
+    // HACK - ensure farmer content aligns on larger screen sizes
+    width: calc(100% - 32px);
+    background: white;
+    z-index: 2;
+    // HACK - use with farmer content that has max width (hard to inherit)
+    max-width: 800px;
+  }
+  & > .mat-mdc-tab-body-wrapper {
+    margin-bottom: 32px;
   }
 }
 

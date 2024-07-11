@@ -3,6 +3,7 @@
 }
 .card-layout {
   display: flex;
+  position: relative;
   height: 100%;
 }
 
@@ -16,6 +17,7 @@
 .central-content {
   display: flex;
   flex-direction: column;
+  position: relative;
   mat-card-content {
     flex: 1;
     display: flex;

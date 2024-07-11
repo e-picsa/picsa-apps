@@ -52,20 +52,4 @@ export class TranslationsEditComponent {
         this.editActionFeedbackMessage = 'Failed to edit translation.';
       });
   }
-  deleteTranslation(id: string) {
-    this.service
-      .deleteTranslationById(id)
-      .then((data) => {
-        if (data === 'Deleted Successfully') {
-          this.router.navigate([`/translations`]);
-        }
-      })
-      .catch((error) => {
-        console.error('Error deleting translation:', error);
-      });
-  }
-  async openTranslationDeleteDialog() {
-    //failed attempt to use a shared delete model
-    this.deleteTranslation(this.translationRow.id);
-  }
 }

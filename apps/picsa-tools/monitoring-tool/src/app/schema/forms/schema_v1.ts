@@ -1,3 +1,4 @@
+import { ICountryCode } from '@picsa/data/deployments';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
@@ -16,7 +17,7 @@ export interface IMonitoringForm_v1 {
   title: string;
   description: string;
   /** List of app configuration countries where resource shown (default all) */
-  appCountries?: string[];
+  appCountries?: ICountryCode[];
   enketoDefinition: IEnketoFormDefinition;
   /** List of fields to display in table summary */
   summaryFields: ISummaryField[];

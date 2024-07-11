@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Browser } from '@capacitor/browser';
 
@@ -10,7 +10,23 @@ import { IResourceLink } from '../../../schemas';
   styleUrls: ['link.scss'],
 })
 export class ResourceItemLinkComponent {
-  @Input() resource: IResourceLink;
+  resource = input.required<IResourceLink>();
+
+  shareUrl = computed<string>(() => {
+    const { url, subtype } = this.resource();
+    // ignore internal links
+    if (subtype === 'internal') return '';
+    // add play store url prefix
+    if (subtype === 'play_store') return `https://play.google.com/store/apps/details?id=${url}`;
+    return url as string;
+  });
+
+  description = computed<string>(() => {
+    return this.resource().description || '';
+  });
+  language = computed<string>(() => {
+    return this.resource().language || '';
+  });
 
   /** Check if any existing click handlers already bound to element to use as override */
   // eslint-disable-next-line @angular-eslint/no-output-native
@@ -32,14 +48,14 @@ export class ResourceItemLinkComponent {
   public handleClick() {
     // If (click) binding present on element ignore own methods
     if (this.click.observed) return;
-    switch (this.resource.subtype) {
+    switch (this.resource().subtype) {
       case 'internal':
-        return this.handleInternalLink(this.resource.url);
+        return this.handleInternalLink(this.resource().url);
       case 'play_store': {
-        return this.goToApp(this.resource.url);
+        return this.goToApp(this.resource().url);
       }
       default:
-        return this.handleExternalLink(this.resource.url);
+        return this.handleExternalLink(this.resource().url);
     }
   }
 

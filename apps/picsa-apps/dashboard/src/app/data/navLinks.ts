@@ -72,6 +72,16 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     label: 'Translations',
     href: '/translations',
     matIcon: 'translate',
+    children: [
+      {
+        label: 'List',
+        href: '/list',
+      },
+      {
+        label: 'Import',
+        href: '/import',
+      },
+    ],
   },
   {
     label: 'Form View',

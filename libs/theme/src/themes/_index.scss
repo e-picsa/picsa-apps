@@ -5,8 +5,9 @@
 @include mat.core();
 
 mat.$theme-ignore-duplication-warnings: true;
-
-@import './picsa-global.scss';
+@import './picsa-default.scss';
+@import './picsa-dashboard.scss';
 @import './picsa-mw.scss';
 @import './picsa-tj.scss';
+@import './picsa-walker.scss';
 @import './picsa-zm.scss';

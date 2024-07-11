@@ -30,7 +30,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{ 'Number of Months' | translate }}</mat-label>
-        <input matInput type="number" [formControl]="monthForm.controls.totalCount" />
+        <input matInput type="number" [formControl]="monthForm.controls.totalCount" max="24" min="1" />
         <mat-error>{{ 'Please enter total months' | translate }}</mat-error>
       </mat-form-field>
     </div>

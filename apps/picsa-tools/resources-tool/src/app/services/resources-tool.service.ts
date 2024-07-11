@@ -1,12 +1,15 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { FileService } from '@picsa/shared/services/core/file.service';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
 import { _wait, arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
@@ -28,10 +31,14 @@ export class ResourcesToolService extends PicsaAsyncService {
     private configurationService: ConfigurationService,
     private nativeStorageService: NativeStorageService,
     private fileService: FileService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private clipboard: Clipboard,
+    private notificationService: PicsaNotificationService
   ) {
     super();
   }
+
+  private canShare: boolean;
 
   /**
    * Initialisation method automatically called on instantiation
@@ -45,6 +52,8 @@ export class ResourcesToolService extends PicsaAsyncService {
     }
     await this.dbInit();
     await this.populateHardcodedResources();
+    const { value: canShareValue } = await Share.canShare();
+    this.canShare = canShareValue;
   }
 
   private async dbInit() {
@@ -67,13 +76,13 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   public filterLocalisedResources<T extends schemas.IResourceBase>(docs: T[]) {
-    const { code } = this.configurationService.activeConfiguration.localisation.country;
-    // global deployment code "" not filtered
-    if (!code) return docs;
+    const { country_code } = this.configurationService.deploymentSettings();
+    // global deployment code not filtered
+    if (country_code === 'global') return docs;
     return docs.filter((doc) => {
       const filterCountries = doc.filter?.countries;
       if (!filterCountries) return true;
-      return filterCountries.includes(code);
+      return filterCountries.includes(country_code);
     });
   }
 
@@ -227,5 +236,42 @@ export class ResourcesToolService extends PicsaAsyncService {
 
   private setAssetResourcesVersion() {
     return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
+  }
+
+  public async shareLink(url: string) {
+    if (this.canShare) {
+      await Share.share({
+        title: 'Share Resource',
+        url: url,
+        dialogTitle: 'Share Resource Link',
+      });
+    } else {
+      // Simply copy the link to clipboard
+      this.clipboard.copy(url);
+      this.notificationService.showUserNotification({
+        matIcon: 'success',
+        message: 'Link to this resource has been copied for you to share.',
+      });
+    }
+  }
+  public async shareFileNative(uri: string) {
+    // HACK - files can only be shared from the cache folder (unless specific permissions granted)
+    // Copy to cache folder, share and delete from cache
+    // https://capacitorjs.com/docs/v5/apis/share#android
+    // https://capawesome.io/plugins/file-opener/#android
+    const cacheFileUri = await this.nativeStorageService.copyFileToCache(uri);
+    const filename = uri.split('/').pop() as string;
+    if (cacheFileUri) {
+      await Share.share({
+        files: [cacheFileUri],
+        title: filename,
+        dialogTitle: 'Share File',
+        text: 'Shared from Picsa App',
+      });
+      // NOTE - sharing callback will return after delegating task (e.g. open whatsapp to share),
+      // so do not delete cache file as no guarantee target task completed
+
+      // await Filesystem.deleteFile({ path: cacheFileUri, directory: Directory.Cache });
+    }
   }
 }

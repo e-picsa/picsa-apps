@@ -1,6 +1,6 @@
 <div style="display: flex; align-items: center">
   <h3 style="flex: 1">Rainfall Summary</h3>
-  <dashboard-climate-api-status [clientId]="apiClientId" (handleRefresh)="refreshData()" />
+  <dashboard-climate-api-status [clientId]="apiClientId" [options]="apiStatusOptions" />
 </div>
 <mat-tab-group preserveContent>
   <mat-tab>
@@ -8,19 +8,29 @@
       <mat-icon>view_list</mat-icon>
       Table
     </ng-template>
-    <picsa-data-table [data]="summary.data" [options]="tableOptions"></picsa-data-table>
+    <picsa-data-table [data]="summaryData" [options]="tableOptions"></picsa-data-table>
   </mat-tab>
-  <!-- <mat-tab>
+  <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon>show_chart</mat-icon>
-      Chart
+      Charts
     </ng-template>
-  </mat-tab> -->
+    <!-- chart -->
+    <div class="chart-list">
+      @for(definition of chartDefintions; track definition._id){
+      <div class="chart-card" (click)="setActiveChart(definition)">
+        <img [src]="definition.image" class="chart-card-image" />
+        <div class="chart-card-label">{{definition.name}}</div>
+      </div>
+      }
+    </div>
+    <picsa-chart #picsaChart [config]="activeChartConfig" style="margin-top: 1rem; height: 500px"></picsa-chart>
+  </mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon>description</mat-icon>
       Definition
     </ng-template>
-    <pre>{{summary.metadata | json}}</pre>
+    <pre>{{summaryMetadata | json}}</pre>
   </mat-tab>
 </mat-tab-group>

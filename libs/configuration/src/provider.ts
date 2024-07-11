@@ -1,131 +1,86 @@
-import { Injectable } from '@angular/core';
-import { ENVIRONMENT } from '@picsa/environments';
-import { BehaviorSubject } from 'rxjs';
+import { computed, effect, Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILanguageCode } from '@picsa/data/deployments';
+import { debounceTime } from 'rxjs';
 
-import { CONFIGURATIONS } from './configurations';
-import type { IConfiguration } from './types';
+export interface IUserSettings {
+  /** ID of selected deployment configuration */
+  deployment_id: IDeploymentId;
+  /** Selected country */
+  country_code: ICountryCode;
+  /** ID of selected language */
+  language_code: ILanguageCode;
+  /** Specify if using farmer or extension app user_type */
+  user_type: 'farmer' | 'extension';
+}
+
+const USER_CONFIGURATION_DEFAULT: IUserSettings = {
+  country_code: null as any,
+  deployment_id: null as any,
+  language_code: null as any,
+  user_type: null as any,
+};
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
-  public activeConfiguration: IConfiguration.Settings;
+  /** User-specific configuration */
+  public userSettings = signal<IUserSettings>(USER_CONFIGURATION_DEFAULT);
 
-  /** Change observer */
-  public activeConfiguration$ = new BehaviorSubject<IConfiguration.Settings>(null as any);
-
-  public configurationOptions: IConfiguration.Settings[];
-
-  private userConfigOverrides = { id: ENVIRONMENT.defaultConfiguration };
+  /** Deployment-specific configuration */
+  public deploymentSettings = computed(() => {
+    const { deployment_id } = this.userSettings();
+    const deployment = DEPLOYMENT_DATA_HASHMAP[deployment_id] || DEPLOYMENT_DATA_HASHMAP.global;
+    return deployment;
+  });
 
   constructor() {
-    this.loadActiveConfig();
-  }
+    this.enableLocalStorageSync();
+    this.loadUserSettings();
 
-  getUserConfiguration(setting: keyof IConfiguration.Settings) {
-    return this.activeConfiguration[setting];
-  }
-
-  setUserConfiguration(id: string) {
-    if (id) {
-      this.userConfigOverrides.id = id;
-      this.storeUserConfiguration();
-    }
-  }
-
-  public updateUserConfiguration(setting: keyof IConfiguration.Settings, value: any) {
-    const extracted = extractSelectedOptions(value);
-    if (extracted) {
-      this.userConfigOverrides[setting] = extracted;
-      this.storeUserConfiguration();
-    } else {
-      console.log('no value to extract', value);
-    }
-  }
-  private storeUserConfiguration() {
-    const configuration = JSON.stringify(this.userConfigOverrides);
-    localStorage.setItem('picsa_userConfig', configuration);
-    this.loadActiveConfig();
-  }
-
-  private loadActiveConfig() {
-    try {
-      const storedConfig = JSON.parse(localStorage.getItem('picsa_userConfig') as any);
-      if (storedConfig && storedConfig.id) {
-        this.userConfigOverrides = storedConfig;
+    effect(() => {
+      /** HACK - update theme on config change for extension version (better in own service) */
+      const { theme } = this.deploymentSettings();
+      const { user_type } = this.userSettings();
+      if (user_type === 'extension' && theme) {
+        document.body.dataset['theme'] = theme;
+      } else {
+        document.body.dataset['theme'] = 'picsa-default';
       }
-    } catch (error) {
-      //
-    }
-
-    const { selected, options } = populateSelectedOptions(
-      { options: CONFIGURATIONS, selected: undefined },
-      this.userConfigOverrides
-    );
-    this.configurationOptions = options;
-    this.activeConfiguration = selected as any;
-    this.activeConfiguration$.next(this.activeConfiguration);
-    console.log('active config', this.activeConfiguration);
-    this.hackSetTheme();
+    });
   }
 
-  /** Update theme on config change (better in own service) */
-  private hackSetTheme() {
-    document.body.dataset['theme'] = this.activeConfiguration.theme;
+  public resetUserSettings() {
+    this.userSettings.set(USER_CONFIGURATION_DEFAULT);
   }
-}
 
-/**
- * Global settings contain options that user can select from
- * Lookup any user selected options, and if they match replace option with selected
- */
-function populateSelectedOptions<T extends { options?: any[]; selected?: any }>(
-  data: T,
-  userData: { id?: string } = {}
-) {
-  if (isObject(data)) {
-    // First pass - replace any nested
-    for (const [key, value] of Object.entries(data)) {
-      if (isObject(value)) {
-        data[key] = populateSelectedOptions(data[key], userData[key]);
+  public updateUserSettings(update: Partial<IUserSettings>) {
+    this.userSettings.set({ ...this.userSettings(), ...update });
+  }
+
+  /**
+   * Automatically store user settings in localstorage on update
+   * Use small debounce to avoid blocking UI if triggering multiple updates
+   * **/
+  private enableLocalStorageSync() {
+    toObservable(this.userSettings)
+      .pipe(debounceTime(1000))
+      .subscribe((settings) => {
+        localStorage.setItem('picsa_user_settings', JSON.stringify(settings));
+      });
+  }
+
+  private loadUserSettings() {
+    const storedSettings = localStorage.getItem('picsa_user_settings');
+    // merge with defaults
+    if (storedSettings) {
+      const parsed = JSON.parse(storedSettings) as IUserSettings;
+      const merged = { ...USER_CONFIGURATION_DEFAULT };
+      // TODO - consider safeguards/migrations to ensure compatible
+      // TODO - consider using rxdb with user profile db entries instead of settings
+      for (const [key, value] of Object.entries(parsed)) {
+        merged[key] = value;
       }
-    }
-    // Second pass - replace selected
-    if (data.options) {
-      data.selected = data.options![0];
-      const foundOption = data.options!.find((option: any) => option.id === userData.id);
-      if (foundOption !== undefined) {
-        data.selected = foundOption;
-      }
-      data.selected = populateSelectedOptions(data.selected, userData);
+      this.userSettings.set(merged);
     }
   }
-  return data;
-}
-
-/**
- * Inverse of populateSelectedOptions, takes input configuration and extracts a nested json
- * object containing only the selected ids of options
- */
-function extractSelectedOptions(data: any) {
-  const userSettings: any = {};
-  if (isObject(data)) {
-    // First pass - replace any nested
-    for (const [key, value] of Object.entries(data)) {
-      if (isObject(value)) {
-        const extracted = extractSelectedOptions(data[key]);
-        if (extracted) {
-          userSettings[key] = extracted;
-        }
-      }
-    }
-    // Second pass - replace selected
-    if (data.options && data.selected) {
-      userSettings.id = data.selected.id;
-    }
-    if (Object.keys(userSettings).length === 0) return;
-  }
-  return userSettings;
-}
-
-function isObject(v: any) {
-  return v && v.constructor === {}.constructor;
 }

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import DEFAULT_DEFINITIONS from '@picsa/climate/src/app/data/definitions/default';
+import DEFAULT_DEFINITIONS from '@picsa/data/climate/chart_definitions/default';
 
 import type { ITranslationEntry } from '../types';
 

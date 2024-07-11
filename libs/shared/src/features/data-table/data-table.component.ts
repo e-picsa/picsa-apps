@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { capitalise } from '@picsa/utils';
@@ -94,7 +94,7 @@ export class FormatValuePipe implements PipeTransform {
     MatInputModule,
     MatSortModule,
     MatTableModule,
-    MatPaginator,
+    MatPaginatorModule,
   ],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
@@ -155,11 +155,15 @@ export class PicsaDataTableComponent implements OnChanges {
 
     this.dataSource = new MatTableDataSource(data);
 
+    // HACK - detect datasource changes first to enable pagination and sort options
+    // https://stackoverflow.com/a/55021197
+
+    this.cdr.detectChanges();
+
     // apply data sort and paginate if enabled
     if (mergedOptions.paginatorSizes.length > 0) {
       this.dataSource.paginator = this.paginator;
     }
-
     // sort will be disabled in html template if not included
     this.dataSource.sort = this.sort;
     this.cdr.markForCheck();

@@ -1,4 +1,4 @@
-$fontFamily: Roboto, 'Helvetica Neue', sans-serif;
+$fontFamily: 'Noto Sans', sans-serif;
 
 body {
   font-family: $fontFamily;
@@ -10,4 +10,8 @@ h1 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+h2 {
+  font-weight: normal;
 }

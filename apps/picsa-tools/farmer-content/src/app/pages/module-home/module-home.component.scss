@@ -1,0 +1,59 @@
+.content-container {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  flex: 1;
+}
+.top-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-secondary);
+}
+.content-icon {
+  width: 128px;
+  height: 128px;
+  background: rgba(255, 255, 255, 0.65);
+  padding: 8px;
+}
+.title {
+  flex: 1;
+  text-align: center;
+  color: var(--color-secondary);
+  font-weight: bold;
+  text-transform: capitalize;
+  padding: 16px;
+}
+
+.tab-icon {
+  margin-right: 4px;
+}
+
+.tab-content {
+  padding: 16px;
+}
+.tab-content.router-tab {
+  padding: 0;
+  height: 100%;
+  // background: yellow;
+  display: flex;
+  flex-direction: column;
+  // Some styles also inherited from main .page
+  .page {
+    overflow: auto;
+    max-height: calc(100vh - 136px);
+  }
+}
+// Force child-router tab to fill screen and provide page region
+// .tab-content.router-tab {
+//   padding: 0;
+//   height: calc(100% - 32px);
+//   // background: yellow;
+//   display: flex;
+//   flex-direction: column;
+//   // Some styles also inherited from main .page
+//   .page {
+//     overflow: auto;
+//     max-height: calc(100vh - 104px);
+//   }
+// }

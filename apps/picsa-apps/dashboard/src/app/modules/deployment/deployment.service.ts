@@ -1,6 +1,8 @@
 import { Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { firstValueFrom } from 'rxjs';
 
 import { IDeploymentRow } from './types';
 
@@ -8,6 +10,9 @@ import { IDeploymentRow } from './types';
 export class DeploymentDashboardService extends PicsaAsyncService {
   public readonly deployments = signal<IDeploymentRow[]>([]);
   public readonly activeDeployment = signal<IDeploymentRow | null>(null);
+
+  /** Observable activeDeployment used to monitor changes (ensure deployment selected) */
+  private activeDeployment$ = toObservable(this.activeDeployment);
 
   public get table() {
     return this.supabaseService.db.table('deployments');
@@ -23,14 +28,26 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     this.loadStoredDeployment();
   }
 
-  public async setActiveDeployment(id: string) {
+  public async setActiveDeployment(id: string, opts = { forceReload: true }) {
+    const previousId = this.activeDeployment()?.id;
+    if (id === previousId) return;
     // provide optimistic update
     this.activeDeployment.set(this.deployments().find((d) => d.id === id) || null);
     // provide server update
     // TODO - subscribe to realtime updates
+    // TODO - consider just using hardcoded deployments to prevent need for optimistic updates
     const { data } = await this.table.select<'*', IDeploymentRow>('*').eq('id', id).limit(1).single();
     this.activeDeployment.set(data);
     this.storeDeployment(data?.id);
+    // Hack - when changing deployment from UI component force reload to ensure data updated
+    if (previousId && opts.forceReload) {
+      location.reload();
+    }
+  }
+
+  /** Promise that resolves only once an active deployment has been selected */
+  public async ensureActiveDeployment() {
+    return this.activeDeployment() || firstValueFrom(this.activeDeployment$);
   }
 
   private async listDeployments() {
@@ -54,7 +71,7 @@ export class DeploymentDashboardService extends PicsaAsyncService {
   private loadStoredDeployment() {
     const id = localStorage.getItem('picsa_dashboard_deployment');
     if (id) {
-      this.setActiveDeployment(id);
+      this.setActiveDeployment(id, { forceReload: false });
     }
   }
 }

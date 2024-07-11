@@ -1,9 +1,5 @@
 [
   {
-    "text": "",
-    "tool": "common_weather"
-  },
-  {
     "text": "apply fertiliser",
     "tool": "budget",
     "context": "activities"
@@ -414,6 +410,10 @@
     "tool": "budget"
   },
   {
+    "text": "Card Label",
+    "tool": "budget"
+  },
+  {
     "text": "Consumed",
     "tool": "budget"
   },
@@ -515,10 +515,6 @@
   },
   {
     "text": "Select",
-    "tool": "budget"
-  },
-  {
-    "text": "Select Enterprise",
     "tool": "budget"
   },
   {
@@ -666,23 +662,11 @@
     "context": "chart"
   },
   {
-    "text": "Above",
-    "tool": "climate"
-  },
-  {
     "text": "Analyse",
     "tool": "climate"
   },
   {
-    "text": "Below",
-    "tool": "climate"
-  },
-  {
-    "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "climate"
-  },
-  {
-    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
+    "text": "Annual Forecast",
     "tool": "climate"
   },
   {
@@ -690,7 +674,11 @@
     "tool": "climate"
   },
   {
-    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "text": "Downscaled Forecast",
+    "tool": "climate"
+  },
+  {
+    "text": "Forecast",
     "tool": "climate"
   },
   {
@@ -699,10 +687,6 @@
   },
   {
     "text": "Print Version",
-    "tool": "climate"
-  },
-  {
-    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
     "tool": "climate"
   },
   {
@@ -769,11 +753,59 @@
     "context": "buttons"
   },
   {
+    "text": "Above",
+    "tool": "common"
+  },
+  {
+    "text": "Are the changes a good idea?",
+    "tool": "common"
+  },
+  {
     "text": "Are you sure you want to delete?",
     "tool": "common"
   },
   {
+    "text": "Below",
+    "tool": "common"
+  },
+  {
+    "text": "Budget",
+    "tool": "common"
+  },
+  {
+    "text": "Calculated with the date range of Start of rains and End of the rains",
+    "tool": "common"
+  },
+  {
+    "text": "Calendar",
+    "tool": "common"
+  },
+  {
+    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
+    "tool": "common"
+  },
+  {
+    "text": "Choose country",
+    "tool": "common"
+  },
+  {
+    "text": "Choose language",
+    "tool": "common"
+  },
+  {
+    "text": "Clear All",
+    "tool": "common"
+  },
+  {
+    "text": "Climate",
+    "tool": "common"
+  },
+  {
     "text": "Demo",
+    "tool": "common"
+  },
+  {
+    "text": "Draw Here",
     "tool": "common"
   },
   {
@@ -789,7 +821,19 @@
     "tool": "common"
   },
   {
+    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "tool": "common"
+  },
+  {
     "text": "Hide Options",
+    "tool": "common"
+  },
+  {
+    "text": "I'm a farmer",
+    "tool": "common"
+  },
+  {
+    "text": "I'm an extension worker",
     "tool": "common"
   },
   {
@@ -801,11 +845,27 @@
     "tool": "common"
   },
   {
-    "text": "Select Country",
+    "text": "Options",
     "tool": "common"
   },
   {
-    "text": "Select Language",
+    "text": "Probability and Risk",
+    "tool": "common"
+  },
+  {
+    "text": "Ram",
+    "tool": "common"
+  },
+  {
+    "text": "Redo",
+    "tool": "common"
+  },
+  {
+    "text": "Seasonal Calendar",
+    "tool": "common"
+  },
+  {
+    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
     "tool": "common"
   },
   {
@@ -813,7 +873,51 @@
     "tool": "common"
   },
   {
+    "text": "Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Tutorials",
+    "tool": "common"
+  },
+  {
+    "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Use the forecasts to update and adapt your plans",
+    "tool": "common"
+  },
+  {
+    "text": "What are the opportunities and risk?",
+    "tool": "common"
+  },
+  {
+    "text": "What best describes you?",
+    "tool": "common"
+  },
+  {
+    "text": "What changes can you make?",
+    "tool": "common"
+  },
+  {
+    "text": "What do you currently do?",
+    "tool": "common"
+  },
+  {
+    "text": "What is PICSA?",
+    "tool": "common"
+  },
+  {
+    "text": "What is happening to the climate in your area?",
+    "tool": "common"
+  },
+  {
     "text": "Who is using?",
+    "tool": "common"
+  },
+  {
+    "text": "You decide and make a plan",
     "tool": "common"
   },
   {
@@ -1118,19 +1222,11 @@
     "tool": "common_weather"
   },
   {
-    "text": "All",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
     "tool": "crop-probability"
   },
   {
     "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Crop",
     "tool": "crop-probability"
   },
   {
@@ -1198,31 +1294,31 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Budget",
-    "tool": "extension"
-  },
-  {
-    "text": "Click on the button below to retry",
-    "tool": "extension"
-  },
-  {
-    "text": "Climate",
-    "tool": "extension"
-  },
-  {
     "text": "Farmer Activities",
-    "tool": "extension"
+    "tool": "extension-content"
   },
   {
     "text": "Manual",
-    "tool": "extension"
+    "tool": "extension-content"
   },
   {
     "text": "Monitoring",
-    "tool": "extension"
+    "tool": "extension-content"
   },
   {
-    "text": "Options",
+    "text": "Probability",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Resources",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Take App Tour",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Click on the button below to retry",
     "tool": "extension"
   },
   {
@@ -1230,19 +1326,7 @@
     "tool": "extension"
   },
   {
-    "text": "Probability",
-    "tool": "extension"
-  },
-  {
     "text": "Reload",
-    "tool": "extension"
-  },
-  {
-    "text": "Resources",
-    "tool": "extension"
-  },
-  {
-    "text": "Seasonal Calendar",
     "tool": "extension"
   },
   {
@@ -1250,28 +1334,12 @@
     "tool": "extension"
   },
   {
-    "text": "Take App Tour",
+    "text": "Switch to Extension",
     "tool": "extension"
   },
   {
-    "text": "Activity",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "After watching continue to the activity",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "In this video you will learn about the PICSA step:",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "Intro",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "Tool",
-    "tool": "farmer-activity"
+    "text": "Switch to Farmer",
+    "tool": "extension"
   },
   {
     "text": "Activity Flow Chart",
@@ -1343,10 +1411,6 @@
   },
   {
     "text": "PICSA",
-    "tool": "manual"
-  },
-  {
-    "text": "Probability and Risk",
     "tool": "manual"
   },
   {
@@ -1498,6 +1562,14 @@
     "tool": "option"
   },
   {
+    "text": "Crop",
+    "tool": "option"
+  },
+  {
+    "text": "Crop Options",
+    "tool": "option"
+  },
+  {
     "text": "Days",
     "tool": "option"
   },
@@ -1527,6 +1599,22 @@
   },
   {
     "text": "Investment in terms of money and time",
+    "tool": "option"
+  },
+  {
+    "text": "Livelihood",
+    "tool": "option"
+  },
+  {
+    "text": "Livelihood Options",
+    "tool": "option"
+  },
+  {
+    "text": "Livestock",
+    "tool": "option"
+  },
+  {
+    "text": "Livestock Options",
     "tool": "option"
   },
   {
@@ -1590,6 +1678,10 @@
     "tool": "option"
   },
   {
+    "text": "Select Enterprise",
+    "tool": "option"
+  },
+  {
     "text": "Time",
     "tool": "option"
   },
@@ -1634,7 +1726,19 @@
     "tool": "resources"
   },
   {
+    "text": "Download All",
+    "tool": "resources"
+  },
+  {
+    "text": "Downloaded",
+    "tool": "resources"
+  },
+  {
     "text": "Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Input at least 3 letters to search",
     "tool": "resources"
   },
   {
@@ -1643,6 +1747,18 @@
   },
   {
     "text": "Manage Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "No results found",
+    "tool": "resources"
+  },
+  {
+    "text": "Search",
+    "tool": "resources"
+  },
+  {
+    "text": "Search Resources",
     "tool": "resources"
   },
   {
@@ -1667,6 +1783,10 @@
   },
   {
     "text": "Copy",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Create",
     "tool": "seasonal-calendar"
   },
   {

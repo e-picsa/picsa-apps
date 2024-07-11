@@ -76,13 +76,18 @@
             "output": "assets/svgs/crop_activity"
           },
           {
-            "glob": "**/*",
-            "input": "apps/picsa-tools/climate-tool/src/assets",
-            "output": "assets"
+            "glob": "*.svg",
+            "input": "libs/data/extension_content/svgs",
+            "output": "assets/svgs/extension_content"
+          },
+          {
+            "glob": "*.svg",
+            "input": "libs/data/farmer_content/svgs",
+            "output": "assets/svgs/farmer_content"
           },
           {
             "glob": "**/*",
-            "input": "apps/picsa-tools/farmer-activity/src/assets",
+            "input": "apps/picsa-tools/climate-tool/src/assets",
             "output": "assets"
           },
           {

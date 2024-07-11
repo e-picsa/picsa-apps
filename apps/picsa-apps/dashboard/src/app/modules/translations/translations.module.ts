@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 
 import { TranslationsEditComponent } from './pages/edit/translations-edit.component';
 import { TranslationsPageComponent } from './pages/home/translations.page';
-import { NewTranslationsComponent } from './pages/new/new-translations.component';
 
 @NgModule({
   declarations: [],
@@ -12,16 +11,22 @@ import { NewTranslationsComponent } from './pages/new/new-translations.component
     CommonModule,
     RouterModule.forChild([
       {
-        path: '',
+        path: 'list',
         component: TranslationsPageComponent,
       },
       {
-        path: 'new',
-        component: NewTranslationsComponent,
+        path: 'import',
+        loadComponent: () =>
+          import('./pages/import/translations-import.component').then((mod) => mod.TranslationsImportComponent),
       },
       {
-        path: ':id',
+        path: 'edit/:id',
         component: TranslationsEditComponent,
+      },
+      {
+        path: '',
+        redirectTo: 'list',
+        pathMatch: 'full',
       },
     ]),
   ],

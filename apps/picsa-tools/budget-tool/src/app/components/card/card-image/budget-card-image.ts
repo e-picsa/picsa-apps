@@ -61,17 +61,15 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   // so convert to html that embeds within an <img> tag and div innerhtml
   private convertSVGToImageData(svgTag: string) {
     const encodedSVG = this._encodeSVG(svgTag);
-    const Html = `<img class='card-image' style='width:100%;height:100%;' src="data:image/svg+xml,${encodedSVG}"/>`;
+    const Html = `<img class='card-image' style='width:100%;height:100%;' src="${encodedSVG}"/>`;
     return this.sanitizer.bypassSecurityTrustHtml(Html);
   }
 
   // method taken from http://yoksel.github.io/url-encoder/
   // applies selective replacement of uri characters
   private _encodeSVG(data: string): string {
-    const symbols = /[\r\n%#()<>?[\\\]^`{|}]/g;
-    data = data.replace(/"/g, "'");
-    data = data.replace(/>\s{1,}</g, '><');
-    data = data.replace(/\s{2,}/g, ' ');
-    return data.replace(symbols, encodeURIComponent);
+    // ignore already encoded
+    if (data.startsWith('data:')) return data;
+    return `data:image/svg+xml;base64,${btoa(data)}`;
   }
 }
