@@ -44,8 +44,8 @@
   "covers/facebook.svg": {
     "relativePath": "covers/facebook.svg",
     "size_kb": 1.1,
-    "md5Checksum": "8626bc9119bd6b8bc0fa04e8a20b6e74",
-    "modifiedTime": "2022-09-28T20:19:52.986Z"
+    "md5Checksum": "a09b2f44f6b44b5b6e29aedba9f92029",
+    "modifiedTime": "2024-07-09T05:50:32.430Z"
   },
   "covers/gap.jpg": {
     "relativePath": "covers/gap.jpg",
@@ -61,9 +61,9 @@
   },
   "covers/gender-equality.svg": {
     "relativePath": "covers/gender-equality.svg",
-    "size_kb": 5.5,
-    "md5Checksum": "0b6599c4d8b3a87b787910b18a9d8851",
-    "modifiedTime": "2022-11-01T20:27:18.286Z"
+    "size_kb": 5.4,
+    "md5Checksum": "95af38f37c2179d4ad0c5288cbb236ed",
+    "modifiedTime": "2024-07-09T05:50:32.430Z"
   },
   "covers/gras-nelk.jpg": {
     "relativePath": "covers/gras-nelk.jpg",
@@ -110,8 +110,8 @@
   "covers/spreadsheet.svg": {
     "relativePath": "covers/spreadsheet.svg",
     "size_kb": 2.8,
-    "md5Checksum": "a03a4bfb0a1791fda8e232a8b032715b",
-    "modifiedTime": "2022-09-30T09:35:53.529Z"
+    "md5Checksum": "0a1bc91188bbc03fda0a7cb2bc1aa6ce",
+    "modifiedTime": "2024-07-09T05:50:32.432Z"
   },
   "covers/twitter.png": {
     "relativePath": "covers/twitter.png",
@@ -121,15 +121,15 @@
   },
   "covers/videos.svg": {
     "relativePath": "covers/videos.svg",
-    "size_kb": 3.5,
-    "md5Checksum": "9bee23e2f74d07bd0cdd27bdc286e777",
-    "modifiedTime": "2023-09-25T18:01:08.322Z"
+    "size_kb": 3.4,
+    "md5Checksum": "37516a0c19e20344d02960c6368dde62",
+    "modifiedTime": "2024-07-09T05:50:32.432Z"
   },
   "covers/weather.svg": {
     "relativePath": "covers/weather.svg",
     "size_kb": 3.1,
-    "md5Checksum": "db07c7d20d9520124c251c810c5817fd",
-    "modifiedTime": "2022-09-28T19:22:58.064Z"
+    "md5Checksum": "ca87f24916d258b8b8b5dd8343d4305b",
+    "modifiedTime": "2024-07-09T05:50:32.432Z"
   },
   "covers/whatsapp.svg": {
     "relativePath": "covers/whatsapp.svg",

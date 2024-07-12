@@ -26,7 +26,8 @@ import { IStationRow } from '../../types';
 export class ClimateStationPageComponent implements OnInit {
   public displayedColumns: (keyof IStationRow)[] = ['station_id', 'station_name'];
 
-  public mapMarkers: IMapMarker[];
+  //this was preventing the dashboard build from working
+  public mapMarkers: any[] ;
 
   public apiStatusOptions: IApiStatusOptions = {
     events: { refresh: () => this.service.loadFromAPI.station() },

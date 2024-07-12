@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA,OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute,  RouterModule } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
@@ -17,6 +17,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule, NgxJsonViewerModule],
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })
 export class ViewMonitoringFormsComponent implements OnInit {
   public form: IMonitoringFormsRow;

@@ -45,6 +45,16 @@
         {{ form.enketo_form }}
       </div>
     </div>
+    <p>this is supposed to workkkk</p>
+    <div>
+      <ng-container >
+        <enketo-webform
+          [form]="form.enketo_form"
+          [model]="form.enketo_model"
+        ></enketo-webform>
+     
+      </ng-container>   
+     </div>
     <div class="form-data">
       <label>Enketo Model</label>
       <div class="data-container">
