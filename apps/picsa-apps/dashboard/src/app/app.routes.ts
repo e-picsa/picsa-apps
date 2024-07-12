@@ -23,11 +23,6 @@ export const appRoutes: Route[] = [
     path: 'translations',
     loadChildren: () => import('./modules/translations/translations.module').then((m) => m.TranslationsPageModule),
   },
-  {
-    path: 'form-preview',
-    loadChildren:() => import('./modules/form-preview/form-preview.module').then((m) => m.FormPreviewModule)
-  },
-
   // unmatched routes fallback to home
   {
     path: 'crop',
