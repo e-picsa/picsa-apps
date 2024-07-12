@@ -3,16 +3,10 @@ import { computed, Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { arrayToHashmap, arrayToHashmapArray } from '@picsa/utils';
 
 import { DashboardStorageService } from '../storage';
 import { IResourceCollectionRow, IResourceFileChildRow, IResourceFileRow, IResourceLinkRow } from './types';
-
-export interface IResourceStorageEntry extends IStorageEntry {
-  /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
-  publicUrl: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesDashboardService extends PicsaAsyncService {

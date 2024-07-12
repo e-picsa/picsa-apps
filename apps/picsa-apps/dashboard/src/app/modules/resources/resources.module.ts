@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { ResourceCollectionEditComponent } from './pages/collections/edit/resource-collection-edit.component';
 import { ResourceCollectionsComponent } from './pages/collections/resource-collections.component';
 import { ResourceFileEditComponent } from './pages/files/edit/resource-file-edit.component';
 import { ResourceFilesComponent } from './pages/files/resource-files.component';
@@ -45,6 +46,14 @@ import { ResourceLinksComponent } from './pages/links/resource-links.component';
       {
         path: 'collections',
         component: ResourceCollectionsComponent,
+      },
+      {
+        path: 'collections/create',
+        component: ResourceCollectionEditComponent,
+      },
+      {
+        path: 'collections/:id',
+        component: ResourceCollectionEditComponent,
       },
     ]),
   ],

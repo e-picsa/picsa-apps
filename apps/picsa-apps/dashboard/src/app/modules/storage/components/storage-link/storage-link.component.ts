@@ -3,8 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { DashboardStorageService } from '../../../storage';
-import { IResourceStorageEntry } from '../../resources.service';
+import { DashboardStorageService, IDashboardStorageEntry } from '../../../storage';
 
 /**
  * Mat icons used to represent various filetype extensions
@@ -31,7 +30,7 @@ const filetypeIconMapping = {
  * Minimal component that takes a storage file id input and returns a link
  * to the public url of the file, as populated from resources store cache
  */
-export class DashboardResourcesStorageLinkComponent implements OnInit {
+export class DashboardStorageLinkComponent implements OnInit {
   /** Resource storage id */
   @Input() id: string;
 
@@ -39,7 +38,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
 
   constructor(private service: DashboardStorageService) {}
 
-  public entry?: IResourceStorageEntry;
+  public entry?: IDashboardStorageEntry;
 
   public notFound = false;
 
@@ -60,7 +59,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
     window.open(url, '_blank', 'noopener');
   }
 
-  private getFileTypeIcon(entry: IResourceStorageEntry) {
+  private getFileTypeIcon(entry: IDashboardStorageEntry) {
     const extension = entry.name?.split('.').pop();
     if (!extension) return 'document';
     return filetypeIconMapping[extension] || 'document';

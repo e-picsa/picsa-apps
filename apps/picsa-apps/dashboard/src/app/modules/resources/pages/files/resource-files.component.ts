@@ -9,7 +9,7 @@ import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { IDeploymentRow } from '../../../deployment/types';
-import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
+import { DashboardStorageLinkComponent } from '../../../storage';
 import { ResourcesDashboardService } from '../../resources.service';
 import { IResourceCollectionRow, IResourceFileRow } from '../../types';
 
@@ -37,7 +37,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   imports: [
     CommonModule,
     DashboardMaterialModule,
-    DashboardResourcesStorageLinkComponent,
+    DashboardStorageLinkComponent,
     PicsaDataTableComponent,
     RouterModule,
     StoragePathPipe,

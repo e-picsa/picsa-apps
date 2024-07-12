@@ -13,7 +13,7 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
-import { DashboardResourcesStorageLinkComponent } from '../../../components/storage-link/storage-link.component';
+import { DashboardStorageLinkComponent } from '../../../../storage';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceFileRow } from '../../../types';
 
@@ -23,7 +23,7 @@ import { IResourceFileRow } from '../../../types';
   imports: [
     CommonModule,
     DashboardMaterialModule,
-    DashboardResourcesStorageLinkComponent,
+    DashboardStorageLinkComponent,
     FormsModule,
     ReactiveFormsModule,
     SupabaseStoragePickerDirective,

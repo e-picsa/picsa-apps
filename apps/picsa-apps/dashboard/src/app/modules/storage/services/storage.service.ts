@@ -6,10 +6,11 @@ import {
 } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { arrayToHashmap } from '@picsa/utils';
 
-import { DeploymentDashboardService } from '../deployment/deployment.service';
+import { DeploymentDashboardService } from '../../deployment/deployment.service';
 
-interface IDashboardStorageEntry extends IStorageEntry {
+export interface IDashboardStorageEntry extends IStorageEntry {
   name: string;
+  /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
 }
 
