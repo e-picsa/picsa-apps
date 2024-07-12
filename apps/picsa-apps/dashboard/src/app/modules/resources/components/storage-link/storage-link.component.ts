@@ -47,9 +47,11 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
   async ngOnInit() {
     const entry = await this.service.getStorageFileById(this.id);
     this.entry = entry;
-    this.notFound = entry ? false : true;
     if (entry) {
       this.fileTypeIcon = this.getFileTypeIcon(entry);
+    } else {
+      this.notFound = true;
+      console.error(`[Storage] entry not found: `, this.id);
     }
   }
 

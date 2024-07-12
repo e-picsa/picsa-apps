@@ -40,7 +40,7 @@
   <tr
     mat-row
     *matRowDef="let row; columns: tableOptions.displayColumns"
-    (click)="tableOptions.handleRowClick(row)"
+    (click)="tableOptions.handleRowClick(row, $event)"
   ></tr>
 </table>
 

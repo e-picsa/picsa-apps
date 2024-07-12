@@ -42,6 +42,8 @@ export class ResourceFileEditComponent implements OnInit {
     private notificationService: PicsaNotificationService
   ) {}
 
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment()!.country_code);
+
   /** List of languages used in deployment available for resources */
   public languagesAvailable = computed(() => {
     const deployment = this.deploymentService.activeDeployment();
@@ -135,29 +137,31 @@ export class ResourceFileEditComponent implements OnInit {
       const { size, type: mimetype, name: filename } = data as File;
       // TODO - get md5 checksum (or use supabase etag)
       this.form.patchValue({
-        storage_file: `global/resources/${entry.name}`,
+        storage_file: `${this.storageBucketName()}/resources/${entry.name}`,
         size_kb: Math.round(size / 1024),
         mimetype,
         filename,
       });
     } else {
-      this.form.patchValue({ cover_image: `global/resources/covers/${entry.name}` });
+      this.form.patchValue({ cover_image: `${this.storageBucketName()}/resources/covers/${entry.name}` });
     }
   }
 
   public handleStorageFileSelected(entry: IStorageEntry | undefined, controlName: 'storage_file' | 'cover_image') {
     if (entry) {
+      const { bucket_id, name } = entry;
+      const storagePath = `${bucket_id}/${name}`;
       if (controlName === 'storage_file') {
-        const { metadata, name } = entry;
+        const { metadata } = entry;
         const { mimetype, size } = metadata;
         this.form.patchValue({
-          storage_file: `global/${entry.name}`,
+          storage_file: storagePath,
           size_kb: Math.round(size / 1024),
-          filename: name!.split('/').pop(),
+          filename: storagePath.split('/').pop(),
           mimetype,
         });
       } else {
-        this.form.patchValue({ cover_image: `global/${entry.name}` });
+        this.form.patchValue({ cover_image: storagePath });
       }
     } else {
       this.form.patchValue({ [controlName]: '' });

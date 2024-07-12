@@ -36,7 +36,7 @@
             [fileTypes]="allowedFileTypes"
             [fileDropHeight]="128"
             [autoUpload]="true"
-            [storageBucketName]="item.code"
+            [storageBucketName]="storageBucketName()"
             storageFolderPath="resources"
             (uploadComplete)="handleUploadComplete($event, 'storage_file')"
           ></picsa-supabase-upload>
@@ -44,7 +44,7 @@
             mat-button
             color="primary"
             supabaseStoragePicker
-            [storageBucketName]="item.code"
+            [storageBucketName]="storageBucketName()"
             storageFolderPath="resources"
             (storageFileSelected)="handleStorageFileSelected($event, 'storage_file')"
             style="margin-top: 4px"
@@ -75,7 +75,7 @@
             [fileTypes]="allowedCoverTypes"
             [fileDropHeight]="128"
             [autoUpload]="true"
-            storageBucketName="global"
+            [storageBucketName]="storageBucketName()"
             storageFolderPath="resources/covers"
             (uploadComplete)="handleUploadComplete($event, 'cover_image')"
           ></picsa-supabase-upload>
@@ -83,7 +83,7 @@
             mat-button
             color="primary"
             supabaseStoragePicker
-            storageBucketName="global"
+            [storageBucketName]="storageBucketName()"
             storageFolderPath="resources/covers"
             (storageFileSelected)="handleStorageFileSelected($event, 'cover_image')"
             style="margin-top: 4px"
