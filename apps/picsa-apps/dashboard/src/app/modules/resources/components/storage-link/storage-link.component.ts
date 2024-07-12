@@ -3,7 +3,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IResourceStorageEntry, ResourcesDashboardService } from '../../resources.service';
+import { DashboardStorageService } from '../../../storage';
+import { IResourceStorageEntry } from '../../resources.service';
 
 /**
  * Mat icons used to represent various filetype extensions
@@ -36,7 +37,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
 
   @Input() displayStyle: 'button' | 'link' | 'default' = 'default';
 
-  constructor(private service: ResourcesDashboardService) {}
+  constructor(private service: DashboardStorageService) {}
 
   public entry?: IResourceStorageEntry;
 

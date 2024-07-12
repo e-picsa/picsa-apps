@@ -3,12 +3,10 @@ import { computed, Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import {
-  IStorageEntry,
-  SupabaseStorageService,
-} from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { arrayToHashmap, arrayToHashmapArray } from '@picsa/utils';
 
+import { DashboardStorageService } from '../storage';
 import { IResourceCollectionRow, IResourceFileChildRow, IResourceFileRow, IResourceLinkRow } from './types';
 
 export interface IResourceStorageEntry extends IStorageEntry {
@@ -18,9 +16,6 @@ export interface IResourceStorageEntry extends IStorageEntry {
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesDashboardService extends PicsaAsyncService {
-  private storageFiles: IResourceStorageEntry[] = [];
-  public storageFilesHashmap: Record<string, IResourceStorageEntry> = {};
-
   public collections = signal<IResourceCollectionRow[]>([]);
   public files = signal<IResourceFileRow[]>([]);
   public links = signal<IResourceLinkRow[]>([]);
@@ -49,7 +44,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
 
   constructor(
     private supabaseService: SupabaseService,
-    private storageService: SupabaseStorageService,
+    private storageService: DashboardStorageService,
     private notificationService: PicsaNotificationService
   ) {
     super();
@@ -58,17 +53,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   public override async init() {
     await this.supabaseService.ready();
     await this.storageService.ready();
-    await this.listStorageFiles();
     await this.listResources();
-  }
-
-  /** Retrieve storage db meta for a file */
-  public async getStorageFileById(id: string) {
-    // Refresh storage file cache if id not found
-    if (!this.storageFilesHashmap[id]) {
-      await this.listStorageFiles();
-    }
-    return this.storageFilesHashmap[id];
   }
 
   /** Retrieve all child resources with a given parent resource id */
@@ -80,15 +65,6 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   public getResourceCollections(type: 'collections' | 'links' | 'files', resourceId: string) {
     const collectionIds = this.resourceCollectionMap()[type][resourceId] || [];
     return collectionIds.map((id) => this.collectionsById()[id]);
-  }
-
-  private async listStorageFiles() {
-    const storageFiles = await this.storageService.list('resources');
-    this.storageFiles = storageFiles.map((file) => ({
-      ...file,
-      publicUrl: this.storageService.getPublicLink(file.bucket_id as string, file.name as string),
-    }));
-    this.storageFilesHashmap = arrayToHashmap(this.storageFiles, 'id');
   }
 
   private async listResources() {
