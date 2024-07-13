@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
+import { PicsaDialogService } from '@picsa/shared/features/dialog/dialog.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import {
   IUploadResult,
@@ -39,7 +40,8 @@ export class ResourceFileEditComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
+    private dialog: PicsaDialogService
   ) {}
 
   public storageBucketName = computed(() => this.deploymentService.activeDeployment()!.country_code);
@@ -69,6 +71,7 @@ export class ResourceFileEditComponent implements OnInit {
     filename: [''],
     mimetype: [''],
     size_kb: [0],
+    id: new FormControl(),
   });
 
   // HACK - temporary lookup to compare form values with db entry
@@ -78,7 +81,6 @@ export class ResourceFileEditComponent implements OnInit {
       // assume all new resources are shared globally
       // TODO - should link to deployment in future
       country_code: 'global',
-      id: '',
       created_at: '',
       md5_checksum: '',
       modified_at: '',
@@ -92,11 +94,8 @@ export class ResourceFileEditComponent implements OnInit {
     await this.service.ready();
     const { id } = this.route.snapshot.params;
     if (id) {
-      const { data } = await this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
-      const resource = data?.[0];
-      if (resource) {
-        this.populateResource(resource);
-      }
+      if (id === 'create') return;
+      this.populateResource(id);
     }
   }
 
@@ -111,7 +110,10 @@ export class ResourceFileEditComponent implements OnInit {
     const { data, error } = await this.service.tables.files.upsert(values).select<'*', IResourceFileRow>();
     if (data && data.length > 0) {
       const [{ id }] = data;
-      this.notificationService.showUserNotification({ matIcon: 'verified', message: 'Resource Saved' });
+      this.notificationService.showSuccessNotification('Resource Saved');
+      // HACK - reinit all resources to ensure update populated
+      // TODO - could be made more efficient
+      await this.service.init();
       this.router.navigate(['../', id], { relativeTo: this.route, replaceUrl: true });
     }
     if (error) {
@@ -124,8 +126,37 @@ export class ResourceFileEditComponent implements OnInit {
     window.open(url, '_blank', 'noopener noreferrer nofollow');
   }
 
-  private populateResource(resource: IResourceFileRow) {
-    this.form.patchValue({ ...resource });
+  public async promptDelete() {
+    const dialog = await this.dialog.open('delete');
+    dialog.afterClosed().subscribe(async (v) => {
+      if (v) {
+        this.form.disable();
+        const res = await this.service.tables.files.delete().eq('id', this.form.value.id);
+        if (res.error) {
+          this.notificationService.showErrorNotification(res.error.message);
+          this.form.enable();
+        } else {
+          this.notificationService.showSuccessNotification('Resource deleted successfully');
+          this.router.navigate(['../'], { relativeTo: this.route });
+          // HACK - re-init service to populate list without deleted resource
+          // TODO - make more efficient
+          await this.service.init();
+        }
+        //
+      }
+    });
+  }
+
+  private async populateResource(id: string) {
+    const { data } = await this.service.tables.files.select<'*', IResourceFileRow>('*').eq('id', id);
+    const resource = data?.[0];
+    if (resource) {
+      this.form.patchValue(resource);
+    } else {
+      // navigate back to list page if resource not found
+      // TODO - show better message
+      this.router.navigate(['..'], { relativeTo: this.route });
+    }
   }
 
   public async handleUploadComplete(res: IUploadResult[], controlName: 'storage_file' | 'cover_image') {
