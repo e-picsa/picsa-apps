@@ -218,10 +218,7 @@ export class SupabaseUploadComponent {
       folderPath: this.storageFolderPath,
     });
     if (storageFile) {
-      this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: `Resource with name ${file.name} already exists`,
-      });
+      this.notificationService.showErrorNotification(`Resource with name ${file.name} already exists`);
       this.uppy.removeFile(file.id);
     }
   }

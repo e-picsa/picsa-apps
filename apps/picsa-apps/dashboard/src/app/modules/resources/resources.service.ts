@@ -73,7 +73,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       const { data, error } = await table.select('*');
       if (error) {
         console.error(error);
-        this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+        this.notificationService.showErrorNotification(error.message);
       }
       serverData[name] = data;
     });

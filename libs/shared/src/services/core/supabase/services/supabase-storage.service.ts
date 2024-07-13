@@ -77,7 +77,7 @@ export class SupabaseStorageService extends PicsaAsyncService {
 
     if (error) {
       console.error(error);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+      this.notificationService.showErrorNotification(error.message);
     }
     return data || [];
   }

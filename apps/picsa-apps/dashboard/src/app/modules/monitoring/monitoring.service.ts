@@ -79,7 +79,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
   public async createForm(newForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow | null> {
     const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).insert(newForm).single();
     if (error) {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+      this.notificationService.showErrorNotification(error.message);
     }
     return data;
   }
@@ -96,7 +96,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
       return result;
     } catch (error: any) {
       console.error(error);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error?.message || error });
+      this.notificationService.showErrorNotification(error?.message || error);
       return null;
     }
   }
@@ -112,7 +112,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
       return convertedFiles[0]?.content;
     } catch (error: any) {
       console.error(error);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error?.message || error });
+      this.notificationService.showErrorNotification(error?.message || error);
       return null;
     }
   }

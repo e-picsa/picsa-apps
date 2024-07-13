@@ -81,7 +81,7 @@ export class ClimateService extends PicsaAsyncService {
       this.activeStation = station;
     } else {
       this.activeStation = undefined as any;
-      this.notificationService.showUserNotification({ matIcon: 'error', message: `Station data not found` });
+      this.notificationService.showErrorNotification(`Station data not found`);
     }
   }
 

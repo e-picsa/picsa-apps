@@ -38,10 +38,7 @@ export class CropVarietyComponent implements OnInit {
 
   refreshCropInformation() {
     this.service.list().catch((error) => {
-      this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: 'Error fetching crop probabilities:' + error.message,
-      });
+      this.notificationService.showErrorNotification('Error fetching crop probabilities:' + error.message);
     });
   }
 }

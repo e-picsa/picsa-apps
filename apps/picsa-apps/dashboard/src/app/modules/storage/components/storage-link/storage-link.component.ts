@@ -20,7 +20,7 @@ const filetypeIconMapping = {
 };
 
 @Component({
-  selector: 'dashboard-resources-storage-link',
+  selector: 'dashboard-storage-link',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './storage-link.component.html',
@@ -45,7 +45,7 @@ export class DashboardStorageLinkComponent implements OnInit {
   public fileTypeIcon = 'description';
 
   async ngOnInit() {
-    const entry = await this.service.getStorageFileById(this.id);
+    const entry = await this.service.getStorageFileByPath(this.id);
     this.entry = entry;
     if (entry) {
       this.fileTypeIcon = this.getFileTypeIcon(entry);
