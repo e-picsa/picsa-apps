@@ -61,13 +61,17 @@ export class SupabaseStorageService extends PicsaAsyncService {
    * Uses custom table view as by default js sdk appears to only return top-level files/folders
    * and not recursive children
    * Requires custom view created (see example resources migration)
+   * @param namePath - folder of file path used to query subset of files
    * */
-  public async list(bucketId: string, folderPath?: string) {
+  public async list(bucketId?: string, namePath?: string) {
     // NOTE - access via storage table instead of storage api as does not support recursive list
-    let query = this.client.from(`storage_objects`).select<'*', IStorageEntry>('*').eq('bucket_id', bucketId);
+    let query = this.client.from(`storage_objects`).select<'*', IStorageEntry>('*');
+    if (bucketId) {
+      query = query.eq('bucket_id', bucketId);
+    }
 
-    if (folderPath) {
-      query = query.like('name', `${folderPath}/%`);
+    if (namePath) {
+      query = query.like('name', `${namePath}/%`);
     }
     const { data, error } = await query;
 

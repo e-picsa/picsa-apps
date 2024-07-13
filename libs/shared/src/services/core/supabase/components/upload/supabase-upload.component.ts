@@ -60,10 +60,10 @@ export class SupabaseUploadComponent {
   @Input() fileDropHeight = 300;
 
   /** Name of storage bucket for upload. Must already exist with required access permissions */
-  @Input() storageBucketName = 'default';
+  @Input() storageBucketName = 'global';
 
   /** Nested folder path within storage bucket */
-  @Input() storageFolderPath = '';
+  @Input() storageFolderPath = 'uploads';
 
   /** Specify if storage folder path can be manually edited */
   @Input() storageFolderPathEditable = false;
@@ -152,7 +152,7 @@ export class SupabaseUploadComponent {
           folderPath: meta.objectName.split('/').slice(0, -1).join('/'),
         });
         if (!entry) {
-          console.warn('Storage entry not found', meta);
+          console.warn('[Upload] entry not found', meta);
           throw new Error(`Storage entry not found`);
         }
         return { data: res.data, entry };
