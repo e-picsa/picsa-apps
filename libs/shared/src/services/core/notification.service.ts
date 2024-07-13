@@ -13,8 +13,9 @@ interface IUserNotificationData {
 export class PicsaNotificationService {
   constructor(private snackBar: MatSnackBar) {}
 
-  /** Show a user notification with an error icon */
-  public showErrorNotification(message: string, config: MatSnackBarConfig = {}) {
+  /** Show a user notification with an error icon (dismiss after 2s) */
+  public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 2000 }) {
+    console.error(message);
     return this.showUserNotification({ message, matIcon: 'error' }, config);
   }
 

@@ -48,8 +48,7 @@ export class DashboardStorageService extends PicsaAsyncService {
   /** Retrieve latest storage data from the server for a given path */
   private async refreshEntry(path: string) {
     const hashmap = this.storageHashmap();
-    const [bucketId, namePath] = path.split('/');
-    const [entry] = await this.storageService.list(bucketId, namePath);
+    const entry = await this.storageService.getFile(path);
     // entry updated
     if (entry) {
       hashmap[path] = this.addEntryMeta(entry);

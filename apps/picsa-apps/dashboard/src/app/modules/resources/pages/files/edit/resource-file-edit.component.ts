@@ -163,18 +163,20 @@ export class ResourceFileEditComponent implements OnInit {
     if (res.length === 0) {
       return;
     }
-    const [{ entry, data }] = res;
+    const [{ meta, data }] = res;
+    const { bucketName, objectName } = meta;
+    const storagePath = `${bucketName}/${objectName}`;
     if (controlName === 'storage_file') {
       const { size, type: mimetype, name: filename } = data as File;
       // TODO - get md5 checksum (or use supabase etag)
       this.form.patchValue({
-        storage_file: `${this.storageBucketName()}/resources/${entry.name}`,
+        storage_file: storagePath,
         size_kb: Math.round(size / 1024),
         mimetype,
         filename,
       });
     } else {
-      this.form.patchValue({ cover_image: `${this.storageBucketName()}/resources/covers/${entry.name}` });
+      this.form.patchValue({ cover_image: storagePath });
     }
   }
 
