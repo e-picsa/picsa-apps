@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { COUNTRIES_DATA_HASHMAP, LANGUAGES_DATA_HASHMAP } from '@picsa/data/deployments';
+import { COUNTRIES_DATA_HASHMAP, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 
 import { ConfigurationService } from '../../provider';
 import { PicsaConfigurationSelectComponent } from '../configuration-select/configuration-select.component';
@@ -31,7 +31,7 @@ export class PicsaConfigurationSummaryComponent {
         const { flag_path, label } = countryMeta;
         this.label = label;
         const { language_code } = this.configurationService.userSettings();
-        const languageMeta = LANGUAGES_DATA_HASHMAP[language_code];
+        const languageMeta = LOCALES_DATA_HASHMAP[language_code];
         if (languageMeta) {
           this.label += ` - ${languageMeta.language_label}`;
         }

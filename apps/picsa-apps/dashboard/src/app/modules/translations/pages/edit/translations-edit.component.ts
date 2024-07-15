@@ -7,7 +7,6 @@ import { RouterModule } from '@angular/router';
 import type { Database } from '@picsa/server-types';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-// import { DashboardResourcesStorageLinkComponent } from '../../components/storage-link/storage-link.component';
 import { TranslationDashboardService } from '../../translations.service';
 
 type ITranslationEntry = Database['public']['Tables']['translations']['Row'];

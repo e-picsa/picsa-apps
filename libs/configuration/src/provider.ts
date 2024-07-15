@@ -1,6 +1,6 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILanguageCode } from '@picsa/data/deployments';
+import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILocaleCode } from '@picsa/data/deployments';
 import { debounceTime } from 'rxjs';
 
 export interface IUserSettings {
@@ -9,7 +9,7 @@ export interface IUserSettings {
   /** Selected country */
   country_code: ICountryCode;
   /** ID of selected language */
-  language_code: ILanguageCode;
+  language_code: ILocaleCode;
   /** Specify if using farmer or extension app user_type */
   user_type: 'farmer' | 'extension';
 }

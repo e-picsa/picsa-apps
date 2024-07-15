@@ -1,10 +1,10 @@
 id,country_code,label,configuration,variant,access_key_md5,public,icon_path
-demo_extension,demo,Extension DEMO,{},extension,,TRUE,global/images/tutorial.svg
-demo_farmer,demo,Farmer DEMO,{},farmer,,TRUE,global/images/tutorial.svg
+mw_workshop,mw,Malawi Workshop,{},extension,,TRUE,global/images/flags/mw.svg
+zm_workshop,zm,Zambia Workshop,{},extension,,TRUE,global/images/flags/zm.svg
 global_extension,global,Extension,{},extension,,FALSE,global/images/flags/global.svg
 global_farmer,global,Farmer,{},farmer,,FALSE,global/images/flags/global.svg
-mw_extension,mw,Extension,{},extension,,TRUE,global/images/flags/mw.svg
-mw_farmer,mw,Farmer,{},farmer,,TRUE,global/images/flags/mw.svg
-zm_extension,zm,Extension,{},extension,,TRUE,global/images/flags/zm.svg
-zm_farmer,zm,Farmer,{},farmer,,TRUE,global/images/flags/zm.svg
-zm_test,zm_test,Extension (Test),{},extension,,TRUE,global/images/flags/zm.svg
+mw_extension,mw,Extension,{},extension,,FALSE,global/images/flags/mw.svg
+mw_farmer,mw,Farmer,{},farmer,,FALSE,global/images/flags/mw.svg
+zm_extension,zm,Extension,{},extension,,FALSE,global/images/flags/zm.svg
+zm_farmer,zm,Farmer,{},farmer,,FALSE,global/images/flags/zm.svg
+demo_dev,demo,Extension,{},extension,,FALSE,global/images/tutorial.svg

@@ -18,14 +18,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import {
-  COUNTRIES_DATA,
-  DEPLOYMENT_DATA,
-  ICountryCode,
-  IDeploymentId,
-  ILanguageCode,
-  LANGUAGES_DATA,
-} from '@picsa/data';
+import { COUNTRIES_DATA, DEPLOYMENT_DATA, ICountryCode, IDeploymentId, ILocaleCode, LOCALES_DATA } from '@picsa/data';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
@@ -86,9 +79,9 @@ export class PicsaConfigurationSelectComponent implements OnInit {
   public languageOptions = computed(() => {
     const country_code = this.countrySelected();
     if (country_code === 'global') {
-      return LANGUAGES_DATA;
+      return LOCALES_DATA;
     }
-    return LANGUAGES_DATA.filter((o) => o.country_code === 'global' || o.country_code === country_code);
+    return LOCALES_DATA.filter((o) => o.country_code === 'global' || o.country_code === country_code);
   });
 
   public userTypeOptions = [
@@ -125,7 +118,7 @@ export class PicsaConfigurationSelectComponent implements OnInit {
     this.goToNextStep();
   }
 
-  public setLanguage(language_code: ILanguageCode) {
+  public setLanguage(language_code: ILocaleCode) {
     this.languageForm.patchValue({ language_code });
     this.configurationService.updateUserSettings({ language_code });
     this.goToNextStep();

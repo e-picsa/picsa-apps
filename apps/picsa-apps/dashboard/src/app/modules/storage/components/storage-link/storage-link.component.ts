@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IResourceStorageEntry, ResourcesDashboardService } from '../../resources.service';
+import { DashboardStorageService, IDashboardStorageEntry } from '../../../storage';
 
 /**
  * Mat icons used to represent various filetype extensions
@@ -20,7 +20,7 @@ const filetypeIconMapping = {
 };
 
 @Component({
-  selector: 'dashboard-resources-storage-link',
+  selector: 'dashboard-storage-link',
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './storage-link.component.html',
@@ -30,26 +30,28 @@ const filetypeIconMapping = {
  * Minimal component that takes a storage file id input and returns a link
  * to the public url of the file, as populated from resources store cache
  */
-export class DashboardResourcesStorageLinkComponent implements OnInit {
+export class DashboardStorageLinkComponent implements OnInit {
   /** Resource storage id */
   @Input() id: string;
 
   @Input() displayStyle: 'button' | 'link' | 'default' = 'default';
 
-  constructor(private service: ResourcesDashboardService) {}
+  constructor(private service: DashboardStorageService) {}
 
-  public entry?: IResourceStorageEntry;
+  public entry?: IDashboardStorageEntry;
 
   public notFound = false;
 
   public fileTypeIcon = 'description';
 
   async ngOnInit() {
-    const entry = await this.service.getStorageFileById(this.id);
+    const entry = await this.service.getStorageFileByPath(this.id);
     this.entry = entry;
-    this.notFound = entry ? false : true;
     if (entry) {
       this.fileTypeIcon = this.getFileTypeIcon(entry);
+    } else {
+      this.notFound = true;
+      console.error(`[Storage] entry not found: `, this.id);
     }
   }
 
@@ -57,7 +59,7 @@ export class DashboardResourcesStorageLinkComponent implements OnInit {
     window.open(url, '_blank', 'noopener');
   }
 
-  private getFileTypeIcon(entry: IResourceStorageEntry) {
+  private getFileTypeIcon(entry: IDashboardStorageEntry) {
     const extension = entry.name?.split('.').pop();
     if (!extension) return 'document';
     return filetypeIconMapping[extension] || 'document';

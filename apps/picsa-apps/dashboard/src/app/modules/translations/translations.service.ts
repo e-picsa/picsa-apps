@@ -4,14 +4,9 @@ import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 // import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 
-export interface IResourceStorageEntry extends IStorageEntry {
-  /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
-  publicUrl: string;
-}
 @Injectable({ providedIn: 'root' })
 export class TranslationDashboardService extends PicsaAsyncService {
   public translations: ITranslationRow[] = [];

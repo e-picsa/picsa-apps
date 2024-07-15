@@ -77,7 +77,7 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
       // navigate back after successful addition
       return this.goToVarietyListPage();
     } catch (error: any) {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+      this.notificationService.showErrorNotification('error');
     }
   }
 
@@ -109,7 +109,7 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
       this.entryForm.patchValue(data);
     }
     if (error) {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+      this.notificationService.showErrorNotification('error');
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
     }
   }

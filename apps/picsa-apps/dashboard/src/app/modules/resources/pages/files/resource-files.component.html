@@ -1,13 +1,7 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2>File Resources</h2>
-    <button
-      mat-stroked-button
-      color="primary"
-      routerLink="create"
-      style="margin-top: 1rem; margin-left: auto"
-      [disabled]="true"
-    >
+    <button mat-stroked-button color="primary" routerLink="create" style="margin-top: 1rem; margin-left: auto">
       <mat-icon>add</mat-icon>
       Add Resource
     </button>
@@ -24,7 +18,7 @@
     [valueTemplates]="{
       size_kb: sizeKbTemplate,
       mimetype: mimetypeTemplate,
-      language_codes: languageCodesTemplate,
+      languages: languagesTemplate,
       modified_at: modifiedAtTemplate,
       collections: collectionsTemplate,
       external_url: externalUrlTemplate
@@ -42,9 +36,9 @@
       <mat-icon svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>} }
     </ng-template>
     <!-- language codes -->
-    <ng-template #languageCodesTemplate let-codes>
-      @for(code of codes; track code){
-      <div>{{ code }}</div>
+    <ng-template #languagesTemplate let-languages>
+      @for(language of languages; track language.id){
+      <div>{{ language.language_label }}</div>
       }
     </ng-template>
     <!-- modified date -->
@@ -55,7 +49,11 @@
     <ng-template #collectionsTemplate let-collections>
       <div style="display: flex; gap: 4px">
         @for(collection of collections; track collection.id;){
-        <div class="collection-cover-container" [matTooltip]="collection.title">
+        <div
+          class="collection-cover-container"
+          [matTooltip]="collection.title"
+          (click)="handleCollectionClick($event, collection)"
+        >
           <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
         </div>
         }
@@ -64,7 +62,7 @@
     <!-- externalUrl -->
     <ng-template #externalUrlTemplate let-url>
       @if(url){
-      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow">
+      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow" (click)="$event.stopImmediatePropagation()">
         <button mat-icon-button style="color: black; margin: auto; display: block">
           <mat-icon>open_in_new</mat-icon>
         </button>

@@ -4,6 +4,8 @@
 }
 .error-message {
   color: var(--color-warn);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 mat-icon {
   overflow: visible;

@@ -151,14 +151,13 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     if (res.length === 0) {
       return;
     }
-    const [{ entry }] = res;
+    const [{ meta }] = res;
     this.form.patchValue({
-      cover_image: `${this.storageBucketName}/${this.coverImageStorageFolder}/${entry.name}`,
+      cover_image: `${meta.bucketName}/${meta.objectName}`,
     });
   }
   public async handleSubmitForm() {
     const values = this.form.getRawValue();
-    console.log('submit form', values);
     // handle update
     if (this.formID) {
       const updatedValues = Object.fromEntries(Object.entries(values).filter(([key, value]) => value !== ''));
