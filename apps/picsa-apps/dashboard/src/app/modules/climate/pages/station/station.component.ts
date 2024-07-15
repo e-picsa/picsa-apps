@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
@@ -26,10 +26,13 @@ import { IStationRow } from '../../types';
 export class ClimateStationPageComponent implements OnInit {
   public displayedColumns: (keyof IStationRow)[] = ['station_id', 'station_name'];
 
-  public mapMarkers: IMapMarker[];
+  public mapMarkers = computed<IMapMarker[]>(() => {
+    const stations = this.service.stations();
+    return this.calcMapMarkers(stations);
+  });
 
   public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.service.loadFromAPI.station() },
+    events: { refresh: () => this.service.loadFromAPI.station(this.service.apiCountryCode) },
     showStatusCode: false,
   };
 
@@ -37,10 +40,13 @@ export class ClimateStationPageComponent implements OnInit {
 
   async ngOnInit() {
     await this.service.ready();
-    this.mapMarkers = this.service.stations.map((m, _index) => ({
+  }
+
+  private calcMapMarkers(stations: IStationRow[]): IMapMarker[] {
+    return stations.map((s, _index) => ({
       _index,
-      latlng: [m.latitude as number, m.longitude as number],
-      number: parseInt(m.station_id),
+      latlng: [s.latitude as number, s.longitude as number],
+      number: parseInt(s.station_id),
     }));
   }
 }
