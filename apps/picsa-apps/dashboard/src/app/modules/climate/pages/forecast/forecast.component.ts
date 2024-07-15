@@ -38,6 +38,7 @@ export class ClimateForecastPageComponent implements OnInit {
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
+    handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
   };
   public apiStatusOptions: IApiStatusOptions = {
     events: { refresh: () => this.refreshData() },
