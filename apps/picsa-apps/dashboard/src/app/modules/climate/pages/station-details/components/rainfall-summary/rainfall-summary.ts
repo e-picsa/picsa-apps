@@ -77,11 +77,13 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   public async refreshData() {
-    const { station_id, country_code } = this.service.activeStation;
-    if (station_id && country_code) {
-      this.apiClientId = `rainfallSummary_${country_code}_${station_id}`;
+    const { apiCountryCode, activeStation } = this.service;
+    const { station_id } = activeStation;
+
+    if (station_id && apiCountryCode) {
+      this.apiClientId = `rainfallSummary_${apiCountryCode}_${station_id}`;
       this.cdr.markForCheck();
-      const data = await this.service.loadFromAPI.rainfallSummaries(country_code, station_id);
+      const data = await this.service.loadFromAPI.rainfallSummaries(apiCountryCode, station_id);
       const summary = data?.[0];
       if (summary) {
         this.loadData(summary.data as any);

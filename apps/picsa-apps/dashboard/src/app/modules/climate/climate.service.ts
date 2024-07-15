@@ -1,4 +1,4 @@
-import { effect, Injectable } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -9,15 +9,17 @@ import { map } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
-import { ApiMapping } from './climate-api.mapping';
+import { ApiMapping, IAPICountryCode } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
 import { IStationRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {
   public apiStatus: number;
-  public stations: IStationRow[] = [];
+  public stations = signal<IStationRow[]>([]);
   public activeStation: IStationRow;
+  /** Country code used for api requests */
+  public apiCountryCode: IAPICountryCode;
 
   /** Trigger API request that includes mapping response to local database */
   public loadFromAPI = ApiMapping(
@@ -29,7 +31,6 @@ export class ClimateService extends PicsaAsyncService {
 
   // Create a signal to represent current stationId as defined by route params
   private activeStationId = toSignal(ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => params.stationId)));
-  private activeCountryCode: string;
 
   constructor(
     private supabaseService: SupabaseService,
@@ -63,11 +64,14 @@ export class ClimateService extends PicsaAsyncService {
   }
 
   private async loadData(deployment: IDeploymentRow, stationId?: string) {
+    // allow configuration override for country_code
+    const configuration = deployment.configuration as any;
+    const targetCode = configuration.climate_country_code || deployment.country_code;
     // refresh list of stations on deployment country code change
-    if (deployment.country_code !== this.activeCountryCode) {
-      this.activeCountryCode = deployment.country_code;
+    if (targetCode !== this.apiCountryCode) {
+      this.apiCountryCode = targetCode;
       await this.ready();
-      await this.listStations(deployment.country_code);
+      await this.listStations(targetCode);
     }
     // set active station if deployment and active station id selected
     if (stationId) {
@@ -76,12 +80,12 @@ export class ClimateService extends PicsaAsyncService {
   }
 
   private setActiveStation(id: string) {
-    const station = this.stations.find((station) => station.station_id === id);
+    const station = this.stations().find((station) => station.station_id === id);
     if (station) {
       this.activeStation = station;
     } else {
       this.activeStation = undefined as any;
-      this.notificationService.showErrorNotification(`Station data not found`);
+      throw new Error(`Station data not found`);
     }
   }
 
@@ -95,9 +99,9 @@ export class ClimateService extends PicsaAsyncService {
       throw error;
     }
     if (data.length === 0 && allowRefresh) {
-      await this.loadFromAPI.station();
+      await this.loadFromAPI.station(country_code);
       return this.listStations(country_code, false);
     }
-    this.stations = data || [];
+    this.stations.set(data || []);
   }
 }
