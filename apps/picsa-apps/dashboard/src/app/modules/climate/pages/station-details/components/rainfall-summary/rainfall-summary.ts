@@ -61,33 +61,30 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   async ngAfterViewInit() {
-    const { id } = this.service.activeStation;
+    const { activeStation } = this.service;
     // Load data stored in supabase db if available. Otherwise load from api
     // TODO - nicer if could include db lookups as part of mapping doc
-    const { data } = await this.db
+    const { data, error } = await this.db
       .select<'*', IClimateProductRow>('*')
-      .eq('station_id', id)
+      .eq('station_id', activeStation.id)
       .eq('type', 'rainfallSummary')
       .single();
     if (data) {
-      this.loadData((data?.data as any) || { data: [], metadata: {} });
+      this.loadData((data.data as any) || { data: [], metadata: {} });
+      this.cdr.markForCheck();
     } else {
       await this.refreshData();
+      this.cdr.markForCheck();
     }
   }
 
   public async refreshData() {
-    const { apiCountryCode, activeStation } = this.service;
-    const { station_id } = activeStation;
-
-    if (station_id && apiCountryCode) {
-      this.apiClientId = `rainfallSummary_${apiCountryCode}_${station_id}`;
-      this.cdr.markForCheck();
-      const data = await this.service.loadFromAPI.rainfallSummaries(apiCountryCode, station_id);
+    if (this.service.activeStation) {
+      this.apiClientId = `rainfallSummary_${this.service.activeStation.id}`;
+      const data = await this.service.loadFromAPI.rainfallSummaries(this.service.activeStation);
       const summary = data?.[0];
       if (summary) {
         this.loadData(summary.data as any);
-        this.cdr.markForCheck();
       }
     }
   }
@@ -100,6 +97,7 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   private loadData(summary: IRainfallSummary) {
+    console.log('load data', summary);
     this.tableOptions.exportFilename = `${this.service.activeStation.station_name}_rainfallSummary.csv`;
     const { data, metadata } = summary;
     this.summaryData = this.convertAPIDataToLegacyFormat(data);
@@ -107,7 +105,6 @@ export class RainfallSummaryComponent implements AfterViewInit {
     const { country_code } = this.service.activeStation;
     const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
     this.chartDefintions = Object.values(definitions);
-    this.cdr.markForCheck();
   }
 
   // TODO - refactor components to use modern format

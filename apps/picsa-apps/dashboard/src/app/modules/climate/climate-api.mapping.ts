@@ -3,7 +3,14 @@ import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/ser
 
 import { IDeploymentRow } from '../deployment/types';
 import type { ClimateApiService } from './climate-api.service';
-import { IClimateProductInsert, IClimateProductRow, IForecastInsert, IForecastRow, IStationInsert } from './types';
+import {
+  IClimateProductInsert,
+  IClimateProductRow,
+  IForecastInsert,
+  IForecastRow,
+  IStationInsert,
+  IStationRow,
+} from './types';
 import type { components as ApiComponents } from './types/api';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
@@ -26,10 +33,11 @@ export const ApiMapping = (
   deployment: IDeploymentRow
 ) => {
   return {
-    rainfallSummaries: async (country_code: IAPICountryCode, station_id: string) => {
+    rainfallSummaries: async (station: IStationRow) => {
+      const { country_code, station_id, id } = station;
       // TODO - add model type definitions for server rainfall summary response body
       const { data, error } = await api
-        .getObservableClient(`rainfallSummary_${country_code}_${station_id}`)
+        .getObservableClient(`rainfallSummary_${id}`)
         .POST('/v1/annual_rainfall_summaries/', {
           body: {
             country: `${country_code}` as any,
@@ -40,14 +48,14 @@ export const ApiMapping = (
       if (error) throw error;
       console.log('summary data', data);
       // TODO - gen types and handle mapping
-      const mappedData = data as any;
+      const entry: IClimateProductInsert = {
+        data: data as any,
+        station_id: id as string,
+        type: 'rainfallSummary',
+      };
       const { data: dbData, error: dbError } = await db
         .table('climate_products')
-        .upsert<IClimateProductInsert>({
-          data: mappedData,
-          station_id,
-          type: 'rainfallSummary',
-        })
+        .upsert<IClimateProductInsert>(entry)
         .select<'*', IClimateProductRow>('*');
       if (dbError) throw dbError;
       return dbData || [];

@@ -85,7 +85,7 @@ export class ClimateService extends PicsaAsyncService {
       this.activeStation = station;
     } else {
       this.activeStation = undefined as any;
-      throw new Error(`Station data not found`);
+      throw new Error(`[Climate Station] data not found: ${id}`);
     }
   }
 
