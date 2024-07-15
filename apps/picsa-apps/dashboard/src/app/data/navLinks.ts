@@ -83,11 +83,6 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
       },
     ],
   },
-  {
-    label: 'Form View',
-    href: '/form-preview',
-    matIcon: 'assignment',
-  },
 ];
 
 export const GLOBAL_NAV_LINKS: INavLink[] = [
