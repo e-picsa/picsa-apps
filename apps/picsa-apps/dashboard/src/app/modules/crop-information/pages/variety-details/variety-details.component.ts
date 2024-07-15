@@ -66,19 +66,15 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
   }
 
   async submitForm() {
-    try {
-      if (this.formValue.id) {
-        await this.service.update(this.formValue);
-      } else {
-        // remove null id when adding crop probability
-        const { id, ...data } = this.formValue;
-        await this.service.insert(data);
-      }
-      // navigate back after successful addition
-      return this.goToVarietyListPage();
-    } catch (error: any) {
-      this.notificationService.showErrorNotification('error');
+    if (this.formValue.id) {
+      await this.service.update(this.formValue);
+    } else {
+      // remove null id when adding crop probability
+      const { id, ...data } = this.formValue;
+      await this.service.insert(data);
     }
+    // navigate back after successful addition
+    return this.goToVarietyListPage();
   }
 
   public async handleDelete() {
@@ -109,7 +105,7 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
       this.entryForm.patchValue(data);
     }
     if (error) {
-      this.notificationService.showErrorNotification('error');
+      throw new Error('error');
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
     }
   }

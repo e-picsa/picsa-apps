@@ -10,7 +10,7 @@ export class DashboardErrorHandler extends ErrorHandler {
   override handleError(error: Error) {
     console.error(error);
     // Ensure UI loaded before throwing errors
-    this.notificationService.showErrorNotification(error.message);
+    throw new Error(error.message);
     super.handleError(error);
   }
 }
