@@ -109,12 +109,13 @@ export class ResourceFileEditComponent implements OnInit {
     }
     const { data, error } = await this.service.tables.files.upsert(values).select<'*', IResourceFileRow>();
     if (data && data.length > 0) {
-      const [{ id }] = data;
       this.notificationService.showSuccessNotification('Resource Saved');
       // HACK - reinit all resources to ensure update populated
       // TODO - could be made more efficient
       await this.service.init();
-      this.router.navigate(['../', id], { relativeTo: this.route, replaceUrl: true });
+
+      // TODO - Add readonly view to navigate to
+      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
     }
     if (error) {
       this.form.enable();
