@@ -72,15 +72,13 @@ export class ResourceFileEditComponent implements OnInit {
     mimetype: [''],
     size_kb: [0],
     id: new FormControl(),
+    country_code: [this.deploymentService.activeDeployment()?.country_code as string, Validators.required],
   });
 
   // HACK - temporary lookup to compare form values with db entry
   private get mergedValue() {
     const formValues = this.form.getRawValue();
     const value: IResourceFileRow = {
-      // assume all new resources are shared globally
-      // TODO - should link to deployment in future
-      country_code: 'global',
       created_at: '',
       md5_checksum: '',
       modified_at: '',
