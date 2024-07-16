@@ -1,41 +1,21 @@
-<div class="page-content">
-  <h2>Edit Translations</h2>
-  @if(translationRow){
-  <form class="form-content">
-    <div class="form-data">
-      <label>Date of Creation</label>
-      <div>{{ translationRow.created_at | date: 'mediumDate' }}</div>
-    </div>
+<form [formGroup]="form">
+  <!-- Short text input -->
+  @if(text.length<20){
+  <mat-form-field style="width: 320px">
+    <mat-label>{{ text }}</mat-label>
+    <input matInput formControlName="value" cdkFocusInitial />
+  </mat-form-field>
 
-    <div class="form-data">
-      <label>Text</label>
-      <input matInput [(ngModel)]="translationRow.text" name="en" />
-    </div>
-
-    <div class="form-data">
-      <label>mw_ny</label>
-      <input matInput [(ngModel)]="translationRow.mw_ny" name="mw_ny" />
-    </div>
-
-    <div class="form-data">
-      <label>ke_sw</label>
-      <input matInput [(ngModel)]="translationRow.ke_sw" name="ke_sw" />
-    </div>
-    <div class="form-data">
-      <label>tj_tg</label>
-      <input matInput [(ngModel)]="translationRow.tj_tg" name="tj_tg" />
-    </div>
-    <div class="form-data">
-      <label>zm_ny</label>
-      <input matInput [(ngModel)]="translationRow.zm_ny" name="zm_ny" />
-    </div>
-    <button mat-raised-button color="primary" class="submitButton" (click)="submitForm()">Update</button>
-  </form>
-  } @else if(dataLoadError) {
-  <div>{{ dataLoadError }}</div>
   } @else {
-  <div>Loading...</div>
-  } @if(editActionFeedbackMessage){
-  <div>{{ editActionFeedbackMessage }}</div>
+  <!-- Longer textarea input -->
+  <mat-form-field style="width: 320px">
+    <p>{{ text }}</p>
+    <textarea matInput formControlName="value" cdkFocusInitial></textarea>
+  </mat-form-field>
   }
-</div>
+  <!-- Action buttons -->
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button mat-dialog-close (click)="save()" [disabled]="form.invalid || form.pristine">Save</button>
+  </mat-dialog-actions>
+</form>

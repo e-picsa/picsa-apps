@@ -32,12 +32,14 @@ export class TranslationDashboardService extends PicsaAsyncService {
     this.translations.set(data || []);
   }
   // update a translation record by ID
-  public async updateTranslationById(id: string, updatedData: Partial<ITranslationRow>): Promise<string> {
-    const { data, error } = await this.supabaseService.db.table('translations').update(updatedData).eq('id', id);
-    if (error) {
-      throw error;
-    }
-    return 'Updated successfully';
+  public async updateTranslationById(id: string, updatedData: Partial<ITranslationRow>) {
+    const { error, data } = await this.supabaseService.db
+      .table('translations')
+      .update(updatedData)
+      .eq('id', id)
+      .select<'*', ITranslationRow>('*');
+    if (error) throw new Error(error.message);
+    return data;
   }
 
   // Fetch a translation record by ID

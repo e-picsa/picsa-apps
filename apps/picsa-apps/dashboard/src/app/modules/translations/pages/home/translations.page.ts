@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { COUNTRIES_DATA_HASHMAP, ILocaleDataEntry, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -13,8 +10,10 @@ import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from 
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { capitalise } from '@picsa/utils';
 
+import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { TranslationDashboardService } from '../../translations.service';
+import { TranslationsEditComponent } from '../edit/translations-edit.component';
 
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
@@ -23,10 +22,7 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
   imports: [
     CommonModule,
     FormsModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatProgressBarModule,
-    MatSelectModule,
+    DashboardMaterialModule,
     PicsaDataTableComponent,
     PicsaLoadingComponent,
     RouterModule,
@@ -91,38 +87,22 @@ export class TranslationsPageComponent {
     });
   }
 
-  /** Common table options used independent of deployment selected */
-  private tableOptionsBase: IDataTableOptions = {
-    displayColumns: [],
-    exportFilename: 'translations',
-    formatHeader: (v) => {
-      const languageData: ILocaleDataEntry = LOCALES_DATA_HASHMAP[v];
-      if (languageData) {
-        const { language_label, country_code } = languageData;
-        const { label: country_label } = COUNTRIES_DATA_HASHMAP[country_code];
-        if (country_code === 'global') return capitalise(language_label);
-        return capitalise(country_label) + ' - ' + capitalise(language_label);
-      }
-      return formatHeaderDefault(v);
-    },
-    paginatorSizes: [10, 50, 100],
-    handleRowClick: (row) => this.showEditDialog(row),
-  };
-
   /** Track active country code to avoid refreshing list when toggling between different country versions */
   private activeCountryCode: string;
 
-  constructor(public service: TranslationDashboardService, deploymentService: DeploymentDashboardService) {
+  constructor(
+    public service: TranslationDashboardService,
+    public dialog: MatDialog,
+    deploymentService: DeploymentDashboardService
+  ) {
     effect(
       async () => {
         const deployment = deploymentService.activeDeployment();
         if (deployment) {
           const { country_code } = deployment;
-          if (country_code && country_code !== this.activeCountryCode) {
-            this.activeCountryCode = country_code;
-            await this.loadTranslationMeta(country_code);
-            await this.refreshTranslations();
-          }
+          this.activeCountryCode = country_code;
+          await this.loadTranslationMeta(country_code);
+          await this.refreshTranslations();
         }
       },
       { allowSignalWrites: true }
@@ -130,8 +110,7 @@ export class TranslationsPageComponent {
   }
 
   public showEditDialog(row: ITranslationRow) {
-    console.log('show edit dialog', row);
-    // this.router.navigate([`/translations`, row.id]);
+    this.dialog.open(TranslationsEditComponent, { data: { row, locale: this.locale() } });
   }
 
   private async loadTranslationMeta(country_code: string) {
@@ -150,7 +129,19 @@ export class TranslationsPageComponent {
 
   private generateTableOptions(locale: string): IDataTableOptions {
     return {
-      ...this.tableOptionsBase,
+      exportFilename: 'translations',
+      formatHeader: (v) => {
+        const languageData: ILocaleDataEntry = LOCALES_DATA_HASHMAP[v];
+        if (languageData) {
+          const { language_label, country_code } = languageData;
+          const { label: country_label } = COUNTRIES_DATA_HASHMAP[country_code];
+          if (country_code === 'global') return capitalise(language_label);
+          return capitalise(country_label) + ' - ' + capitalise(language_label);
+        }
+        return formatHeaderDefault(v);
+      },
+      paginatorSizes: [10, 50, 100],
+      handleRowClick: (row) => this.showEditDialog(row),
       displayColumns: ['tool', 'context', 'text', locale, 'created_at'],
     };
   }
