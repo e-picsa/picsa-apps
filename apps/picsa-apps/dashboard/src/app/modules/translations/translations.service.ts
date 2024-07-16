@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -9,7 +9,7 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
 
 @Injectable({ providedIn: 'root' })
 export class TranslationDashboardService extends PicsaAsyncService {
-  public translations: ITranslationRow[] = [];
+  public translations = signal<ITranslationRow[]>([]);
 
   public get table() {
     return this.supabaseService.db.table('translations');
@@ -29,7 +29,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    this.translations = data || [];
+    this.translations.set(data || []);
   }
   // update a translation record by ID
   public async updateTranslationById(id: string, updatedData: Partial<ITranslationRow>): Promise<string> {
