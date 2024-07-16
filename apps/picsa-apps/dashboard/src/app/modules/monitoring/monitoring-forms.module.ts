@@ -1,18 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { EnketoWebform } from '@picsa/webcomponents-ngx/src/lib/generated/components';
 
+// import { EnketoWebform } from '@picsa/webcomponents-ngx/src/lib/generated/components';
 import { FormSubmissionsComponent } from './pages/form-submissions/form-submissions.component';
 import { MonitoringPageComponent } from './pages/home/monitoring.page';
 import { UpdateMonitoringFormsComponent } from './pages/update/update-monitoring-forms.component';
 import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms.component';
 
 @NgModule({
-  declarations: [EnketoWebform],
+  declarations: [],
   imports: [
     CommonModule,
-    EnketoWebform,
     RouterModule.forChild([
       {
         path: '',

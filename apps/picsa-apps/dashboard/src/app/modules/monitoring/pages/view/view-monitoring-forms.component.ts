@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA,OnInit } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute,  RouterModule } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
+import { EnketoWebform } from '@picsa/webcomponents-ngx/src/lib/generated/components';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -14,10 +15,11 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 @Component({
   selector: 'dashboard-monitoring-view',
   standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule, NgxJsonViewerModule],
+  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule, NgxJsonViewerModule,
+    EnketoWebform
+  ],
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })
 export class ViewMonitoringFormsComponent implements OnInit {
   public form: IMonitoringFormsRow;
