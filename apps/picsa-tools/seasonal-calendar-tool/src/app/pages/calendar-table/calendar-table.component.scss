@@ -24,6 +24,20 @@
   background-color: whitesmoke;
 }
 
-.button-spacing {
-  margin-left: 10px;
+.calendar-container.print-mode {
+  // align content centrally
+  padding: 16px;
+  min-width: 900px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  // Hide empty placeholders
+  picsa-form-weather-select[data-hasValue='false'] {
+    visibility: hidden;
+  }
+  picsa-form-crop-activity-select[data-hasValue='false'] {
+    visibility: hidden;
+  }
 }
