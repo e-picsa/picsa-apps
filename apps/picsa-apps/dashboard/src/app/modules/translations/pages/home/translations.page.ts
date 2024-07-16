@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-import { ILanguageDataEntry, LANGUAGES_DATA, LANGUAGES_DATA_HASHMAP } from '@picsa/data';
+import { COUNTRIES_DATA_HASHMAP, ILocaleDataEntry, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -27,7 +27,7 @@ export class TranslationsPageComponent {
   /** Table options specific to active deployment (display columns vary depending on country) */
   public tableOptions: IDataTableOptions;
 
-  public languageHashmap = LANGUAGES_DATA_HASHMAP;
+  public languageHashmap = LOCALES_DATA_HASHMAP;
 
   public tableData = computed(() => {
     return this.service.translations.filter((entry) => !entry.archived);
@@ -38,9 +38,10 @@ export class TranslationsPageComponent {
     displayColumns: [],
     exportFilename: 'translations',
     formatHeader: (v) => {
-      const languageData: ILanguageDataEntry = LANGUAGES_DATA_HASHMAP[v];
+      const languageData: ILocaleDataEntry = LOCALES_DATA_HASHMAP[v];
       if (languageData) {
-        const { country_label, language_label, country_code } = languageData;
+        const { language_label, country_code } = languageData;
+        const { label: country_label } = COUNTRIES_DATA_HASHMAP[country_code];
         if (country_code === 'global') return capitalise(language_label);
         return capitalise(country_label) + ' - ' + capitalise(language_label);
       }
@@ -80,9 +81,9 @@ export class TranslationsPageComponent {
 
   private getTargetTranslationLanguages(country_code: string) {
     if (country_code === 'global') {
-      return LANGUAGES_DATA;
+      return LOCALES_DATA;
     }
-    return LANGUAGES_DATA.filter((o) => o.country_code === country_code);
+    return LOCALES_DATA.filter((o) => o.country_code === country_code);
   }
 
   private generateTableOptions(languageCodes: string[]): IDataTableOptions {

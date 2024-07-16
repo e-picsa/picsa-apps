@@ -100,7 +100,7 @@ export const ApiMapping = (
       // upload to storage
       await storage.putFile({ bucketId, fileBlob, filename, folderPath });
       // TODO - handle error if filename already exists
-      const storageEntry = await storage.getFile({ bucketId, filename, folderPath });
+      const storageEntry = await storage.getFileAlt({ bucketId, filename, folderPath });
       if (storageEntry) {
         const { error: dbError } = await db
           .table('climate_forecasts')

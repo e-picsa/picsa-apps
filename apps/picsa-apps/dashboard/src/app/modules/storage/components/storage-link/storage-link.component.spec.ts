@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DashboardResourcesStorageLinkComponent } from './storage-link.component';
+import { DashboardStorageLinkComponent } from './storage-link.component';
 
 describe('StorageLinkComponent', () => {
-  let component: DashboardResourcesStorageLinkComponent;
-  let fixture: ComponentFixture<DashboardResourcesStorageLinkComponent>;
+  let component: DashboardStorageLinkComponent;
+  let fixture: ComponentFixture<DashboardStorageLinkComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardResourcesStorageLinkComponent],
+      imports: [DashboardStorageLinkComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DashboardResourcesStorageLinkComponent);
+    fixture = TestBed.createComponent(DashboardStorageLinkComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

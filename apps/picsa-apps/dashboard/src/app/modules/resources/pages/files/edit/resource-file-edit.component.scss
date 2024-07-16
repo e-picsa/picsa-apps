@@ -18,7 +18,7 @@ picsa-supabase-upload {
   width: 100%;
   max-width: 284px;
 }
-dashboard-resources-storage-link {
+dashboard-storage-link {
   display: inline-block;
 }
 button.file-remove {
@@ -37,4 +37,11 @@ img.cover-preview {
   max-height: 200px;
   object-fit: contain;
   border: 1px solid var(--color-light);
+}
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  max-width: 600px;
 }

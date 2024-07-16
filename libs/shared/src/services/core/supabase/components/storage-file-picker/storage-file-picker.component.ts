@@ -46,7 +46,7 @@ export class SupabaseStoragePickerDirective {
 })
 export class SupabaseStorageFilePickerComponent {
   @Output() fileSelected = new EventEmitter<IStorageEntry | undefined>();
-  @Input() storageBucketName = 'default';
+  @Input() storageBucketName = 'global';
   @Input() storageFolderPath?: string;
 
   public fileEntries: IStorageEntry[] = [];
@@ -74,7 +74,7 @@ export class SupabaseStorageFilePickerComponent {
       });
   }
   public compareFn(a: IStorageEntry, b: IStorageEntry) {
-    return a.id === b.id;
+    return a.name === b.name;
   }
 
   public handleFileSelect() {

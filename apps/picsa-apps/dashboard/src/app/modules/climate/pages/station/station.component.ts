@@ -38,7 +38,8 @@ export class ClimateStationPageComponent implements OnInit {
 
   async ngOnInit() {
     await this.service.ready();
-    this.mapMarkers = this.service.stations.map((m) => ({
+    this.mapMarkers = this.service.stations.map((m, _index) => ({
+      _index,
       latlng: [m.latitude as number, m.longitude as number],
       number: parseInt(m.station_id),
     }));

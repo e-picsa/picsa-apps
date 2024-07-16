@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DASHBOARD_NAV_LINKS, GLOBAL_NAV_LINKS } from './data';
@@ -34,7 +35,14 @@ export class AppComponent implements AfterViewInit {
 
   public initComplete = signal(false);
 
-  constructor(public supabaseService: SupabaseService, private deploymentService: DeploymentDashboardService) {}
+  constructor(
+    public supabaseService: SupabaseService,
+    private deploymentService: DeploymentDashboardService,
+    dialogService: PicsaDialogService
+  ) {
+    // HACK - disable translation in dialog to prevent loading extension app config service theme
+    dialogService.useTranslation = false;
+  }
 
   async ngAfterViewInit() {
     // eagerly initialise supabase and deployment services to ensure available
