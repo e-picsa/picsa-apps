@@ -72,8 +72,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     const promises = Object.entries(this.tables).map(async ([name, table]) => {
       const { data, error } = await table.select('*');
       if (error) {
-        console.error(error);
-        this.notificationService.showErrorNotification(error.message);
+        throw new Error(error.message);
       }
       serverData[name] = data;
     });

@@ -132,7 +132,7 @@ export class ResourceFileEditComponent implements OnInit {
         this.form.disable();
         const res = await this.service.tables.files.delete().eq('id', this.form.value.id);
         if (res.error) {
-          this.notificationService.showErrorNotification(res.error.message);
+          throw new Error(res.error.message);
           this.form.enable();
         } else {
           this.notificationService.showSuccessNotification('Resource deleted successfully');

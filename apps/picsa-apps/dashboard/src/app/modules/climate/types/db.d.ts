@@ -8,3 +8,4 @@ export type IForecastRow = Database['public']['Tables']['climate_forecasts']['Ro
 export type IForecastInsert = Database['public']['Tables']['climate_forecasts']['Insert'];
 
 export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
+export type IStationInsert = Database['public']['Tables']['climate_stations']['Insert'];

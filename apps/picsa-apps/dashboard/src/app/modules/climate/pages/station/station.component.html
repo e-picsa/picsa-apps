@@ -3,10 +3,10 @@
     <h2 style="flex: 1">Climate Data</h2>
     <dashboard-climate-api-status clientId="station" [options]="apiStatusOptions"></dashboard-climate-api-status>
   </div>
-  <h3>Stations</h3>
+  <h3>Stations ({{ service.apiCountryCode }})</h3>
   <div style="display: flex; gap: 1rem">
     <div style="flex: 1">
-      <table mat-table class="stations-table" [dataSource]="service.stations" style="width: 200px">
+      <table mat-table class="stations-table" [dataSource]="service.stations()" style="width: 200px">
         <ng-container matColumnDef="station_id">
           <th mat-header-cell *matHeaderCellDef>station_id</th>
           <td mat-cell *matCellDef="let station">{{ station.station_id }}</td>
@@ -24,6 +24,6 @@
         ></tr>
       </table>
     </div>
-    <picsa-map style="height: 500px; width: 500px" [markers]="mapMarkers"></picsa-map>
+    <picsa-map style="height: 500px; width: 500px" [markers]="mapMarkers()"></picsa-map>
   </div>
 </div>

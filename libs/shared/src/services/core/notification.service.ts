@@ -14,7 +14,7 @@ export class PicsaNotificationService {
   constructor(private snackBar: MatSnackBar) {}
 
   /** Show a user notification with an error icon (dismiss after 2s) */
-  public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 2000 }) {
+  public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 3000 }) {
     console.error(message);
     return this.showUserNotification({ message, matIcon: 'error' }, config);
   }
