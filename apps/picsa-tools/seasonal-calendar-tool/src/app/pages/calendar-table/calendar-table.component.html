@@ -1,6 +1,6 @@
 <div class="page-content">
   @if(form){
-  <form [formGroup]="form" >
+  <form [formGroup]="form">
     <!-- Header and edit button -->
     <div style="display: flex; align-items: center">
       <h1 style="flex: 1">{{ formValue.name }}</h1>
@@ -10,14 +10,21 @@
         {{ 'Edit' | translate }}
       </button>
 
-      <button mat-button color="primary" aria-label="Share" (click)="sharePicture()" class="button-spacing" [disabled]="shareDisabled" >
+      <button
+        mat-button
+        color="primary"
+        aria-label="Share"
+        (click)="sharePicture()"
+        class="button-spacing"
+        [disabled]="shareDisabled"
+      >
         <mat-icon>share</mat-icon>
         {{ status | translate }}
       </button>
     </div>
 
     <div id="seasonalCalendar">
-      <table class="calendar-table" >
+      <table class="calendar-table">
         <!-- Monthly weather select header -->
         <thead>
           <tr>
@@ -49,7 +56,7 @@
         </tbody>
       </table>
     </div>
-   
+
     <!-- Editor dialog -->
     <ng-template #editDialogRef>
       @if(form){

@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
-import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 import { _wait } from '@picsa/utils/browser.utils';
+import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../../schema';
 import { SeasonCalendarService } from '../../services/calendar.data.service';
@@ -53,7 +53,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     private service: SeasonCalendarService,
     private formService: SeasonCalendarFormService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -115,30 +115,29 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
       });
   }
 
-    /**
+  /**
    * Initiates image sharing process, updating UI accordingly.
    */
-    public async sharePicture() {
-      this.shareDisabled = true;
-      this.status = 'Preparing image....';
+  public async sharePicture() {
+    this.shareDisabled = true;
+    this.status = 'Preparing image....';
 
-      this.cdr.markForCheck();
-      console.log(this.status)
-      await _wait(100);
+    this.cdr.markForCheck();
+    console.log(this.status);
+    await _wait(100);
 
-      try {
-        await this.service.shareAsImage();
-        this.shareDisabled = false;
-        this.status = 'share';
-        console.log(this.status)
-        } catch (error: any) {
-        this.status = error?.message || 'Unable to share';
-        this.shareDisabled = false;
-      }
-      this.cdr.detectChanges();
+    try {
+      await this.service.shareAsImage();
+      this.shareDisabled = false;
+      this.status = 'share';
+      console.log(this.status);
+    } catch (error: any) {
+      this.status = error?.message || 'Unable to share';
+      this.shareDisabled = false;
     }
-    ngAfterViewChecked() {
-      this.cdr.detectChanges();
-    }
+    this.cdr.detectChanges();
   }
-  
+  ngAfterViewChecked() {
+    this.cdr.detectChanges();
+  }
+}
