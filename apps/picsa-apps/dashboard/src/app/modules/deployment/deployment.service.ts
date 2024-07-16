@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, map } from 'rxjs';
 
 import { IDeploymentRow } from './types';
 
@@ -46,8 +46,17 @@ export class DeploymentDashboardService extends PicsaAsyncService {
   }
 
   /** Promise that resolves only once an active deployment has been selected */
-  public async ensureActiveDeployment() {
-    return this.activeDeployment() || firstValueFrom(this.activeDeployment$);
+  public async ensureActiveDeployment(): Promise<IDeploymentRow> {
+    const deployment = this.activeDeployment();
+    if (deployment) {
+      return deployment;
+    }
+    return firstValueFrom(
+      this.activeDeployment$.pipe(
+        filter((d) => d !== null),
+        map((d) => d as IDeploymentRow)
+      )
+    );
   }
 
   private async listDeployments() {

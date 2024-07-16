@@ -23,9 +23,6 @@
 'Tool: Crop Probability':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/crop-probability-tool/**/*'
-'Tool: Farmer Activity':
-  - changed-files:
-      - any-glob-to-any-file: 'apps/picsa-tools/farmer-activity/**/*'
 'Tool: Manual':
   - changed-files:
       - any-glob-to-any-file: 'apps/picsa-tools/manual-tool/**/*'

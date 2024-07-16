@@ -71,8 +71,7 @@ export class SupabaseSignInDialogComponent {
     const { data, error } = await this.supabaseAuthService.signInUser(email, password);
     console.log({ data, error });
     if (error) {
-      console.error(error);
-      this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });
+      throw new Error(error.message);
       this.form.enable();
     } else {
       this.dialogRef.close();
@@ -83,8 +82,7 @@ export class SupabaseSignInDialogComponent {
     const { email, password } = this.form.value;
     const { error } = await this.supabaseAuthService.signUpUser(email, password);
     if (error) {
-      console.error(error);
-      this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });
+      throw new Error(error.message);
       this.form.enable();
     } else {
       this.dialogRef.close();

@@ -13,8 +13,19 @@ interface IUserNotificationData {
 export class PicsaNotificationService {
   constructor(private snackBar: MatSnackBar) {}
 
+  /** Show a user notification with an error icon (dismiss after 2s) */
+  public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 3000 }) {
+    console.error(message);
+    return this.showUserNotification({ message, matIcon: 'error' }, config);
+  }
+
+  /** Show a user notification with a success icon (dismiss after 2s) */
+  public showSuccessNotification(message: string, config: MatSnackBarConfig = { duration: 2000 }) {
+    return this.showUserNotification({ message, matIcon: 'success' }, config);
+  }
+
   /** Present a dismissable notification snack bar */
-  showUserNotification(data: IUserNotificationData, config: MatSnackBarConfig = {}) {
+  public showUserNotification(data: IUserNotificationData, config: MatSnackBarConfig = {}) {
     const snackBarRef = this.snackBar.openFromComponent(SnackBarWithIconComponent, { data, ...config });
     return snackBarRef;
   }

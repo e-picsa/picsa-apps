@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { PicsaTranslateService } from '../../modules';
+import { PicsaTranslateService } from '../../modules/translate/translate.service';
 import DIALOG_TEMPLATES, { ICustomTemplate } from './components/TEMPLATES';
 import { IPicsaDialogConfig, IPicsaDialogData } from './dialog.models';
 
@@ -9,7 +9,13 @@ import { IPicsaDialogConfig, IPicsaDialogData } from './dialog.models';
   providedIn: 'root',
 })
 export class PicsaDialogService {
-  constructor(private dialog: MatDialog, private translateService: PicsaTranslateService) {}
+  constructor(private dialog: MatDialog, private injector: Injector) {}
+
+  /**
+   * Specify whether to use translation (default true)
+   * HACK - dashboard omits translations to avoid loading extension app config service and theme
+   * */
+  public useTranslation = true;
 
   /**********************************************************************
    *  Public Methods
@@ -27,9 +33,12 @@ export class PicsaDialogService {
       ...customConfig,
       data: { ...templateConfig.data, ...customData },
     };
-    // ensure dialog title translated
-    if (config.data.title) {
-      config.data.title = await this.translateService.translateText(config.data.title);
+    // ensure dialog title translated (if enabled)
+    if (config.data.title && this.useTranslation) {
+      const translateService = this.injector.get(PicsaTranslateService);
+      if (translateService) {
+        config.data.title = await translateService.translateText(config.data.title);
+      }
     }
     const dialogRef = this.dialog.open(config.component, config);
     return dialogRef;

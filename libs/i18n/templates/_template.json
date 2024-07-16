@@ -410,6 +410,10 @@
     "tool": "budget"
   },
   {
+    "text": "Card Label",
+    "tool": "budget"
+  },
+  {
     "text": "Consumed",
     "tool": "budget"
   },
@@ -658,23 +662,11 @@
     "context": "chart"
   },
   {
-    "text": "Above",
-    "tool": "climate"
-  },
-  {
     "text": "Analyse",
     "tool": "climate"
   },
   {
-    "text": "Below",
-    "tool": "climate"
-  },
-  {
-    "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "climate"
-  },
-  {
-    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
+    "text": "Annual Forecast",
     "tool": "climate"
   },
   {
@@ -682,7 +674,11 @@
     "tool": "climate"
   },
   {
-    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "text": "Downscaled Forecast",
+    "tool": "climate"
+  },
+  {
+    "text": "Forecast",
     "tool": "climate"
   },
   {
@@ -691,10 +687,6 @@
   },
   {
     "text": "Print Version",
-    "tool": "climate"
-  },
-  {
-    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
     "tool": "climate"
   },
   {
@@ -761,11 +753,35 @@
     "context": "buttons"
   },
   {
+    "text": "Above",
+    "tool": "common"
+  },
+  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
   {
     "text": "Are you sure you want to delete?",
+    "tool": "common"
+  },
+  {
+    "text": "Below",
+    "tool": "common"
+  },
+  {
+    "text": "Budget",
+    "tool": "common"
+  },
+  {
+    "text": "Calculated with the date range of Start of rains and End of the rains",
+    "tool": "common"
+  },
+  {
+    "text": "Calendar",
+    "tool": "common"
+  },
+  {
+    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
     "tool": "common"
   },
   {
@@ -777,11 +793,19 @@
     "tool": "common"
   },
   {
+    "text": "Clear All",
+    "tool": "common"
+  },
+  {
     "text": "Climate",
     "tool": "common"
   },
   {
     "text": "Demo",
+    "tool": "common"
+  },
+  {
+    "text": "Draw Here",
     "tool": "common"
   },
   {
@@ -797,6 +821,10 @@
     "tool": "common"
   },
   {
+    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "tool": "common"
+  },
+  {
     "text": "Hide Options",
     "tool": "common"
   },
@@ -806,10 +834,6 @@
   },
   {
     "text": "I'm an extension worker",
-    "tool": "common"
-  },
-  {
-    "text": "Is your climate changing?",
     "tool": "common"
   },
   {
@@ -829,7 +853,11 @@
     "tool": "common"
   },
   {
-    "text": "Resource Allocation Map",
+    "text": "Ram",
+    "tool": "common"
+  },
+  {
+    "text": "Redo",
     "tool": "common"
   },
   {
@@ -837,11 +865,27 @@
     "tool": "common"
   },
   {
+    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
+    "tool": "common"
+  },
+  {
     "text": "Show Options",
     "tool": "common"
   },
   {
+    "text": "Tool",
+    "tool": "common"
+  },
+  {
     "text": "Tutorials",
+    "tool": "common"
+  },
+  {
+    "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Use the forecasts to update and adapt your plans",
     "tool": "common"
   },
   {
@@ -865,7 +909,15 @@
     "tool": "common"
   },
   {
+    "text": "What is happening to the climate in your area?",
+    "tool": "common"
+  },
+  {
     "text": "Who is using?",
+    "tool": "common"
+  },
+  {
+    "text": "You decide and make a plan",
     "tool": "common"
   },
   {
@@ -1282,24 +1334,12 @@
     "tool": "extension"
   },
   {
-    "text": "Activity",
-    "tool": "farmer-activity"
+    "text": "Switch to Extension",
+    "tool": "extension"
   },
   {
-    "text": "After watching continue to the activity",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "In this video you will learn about the PICSA step:",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "Intro",
-    "tool": "farmer-activity"
-  },
-  {
-    "text": "Tool",
-    "tool": "farmer-activity"
+    "text": "Switch to Farmer",
+    "tool": "extension"
   },
   {
     "text": "Activity Flow Chart",
@@ -1307,10 +1347,6 @@
   },
   {
     "text": "After the season",
-    "tool": "manual"
-  },
-  {
-    "text": "Budget",
     "tool": "manual"
   },
   {
@@ -1747,6 +1783,10 @@
   },
   {
     "text": "Copy",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Create",
     "tool": "seasonal-calendar"
   },
   {

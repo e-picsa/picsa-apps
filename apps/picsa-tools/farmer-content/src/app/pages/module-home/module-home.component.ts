@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IFarmerContentStep, IToolData } from '@picsa/data';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
@@ -26,7 +27,12 @@ export class FarmerContentModuleHomeComponent {
   public steps = signal<IFarmerContentStep[]>([]);
   public tools = signal<IToolData[]>([]);
 
-  constructor(private route: ActivatedRoute, private tourService: TourService, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private componentService: PicsaCommonComponentsService,
+    private tourService: TourService
+  ) {
     effect(
       (onCleanup) => {
         const { slug } = this.params() || {};
@@ -42,7 +48,19 @@ export class FarmerContentModuleHomeComponent {
   }
 
   public handleTabChange(e: MatTabChangeEvent) {
-    // TODO - handle tool loading for case of multiple
+    const content = this.content();
+    if (content) {
+      const { steps, tools } = content;
+      // HACK - assume 1 tool which is last tab
+      if (e.index === steps.length) {
+        const [tool] = tools;
+        this.loadToolTab(tool);
+      }
+      // HACK - clear any headers set from within tool
+      else {
+        this.componentService.patchHeader({ title: ' ' });
+      }
+    }
   }
 
   private loadContentBySlug(slug: string | undefined) {
@@ -52,12 +70,6 @@ export class FarmerContentModuleHomeComponent {
         this.content.set(content);
         this.steps.set(content.steps);
         this.tools.set(content.tools);
-        const [tool] = content.tools;
-        // HACK - assuming only 1 tool in use can include in url immediately
-        // Otherwise may have to use tab change event
-        if (tool) {
-          this.loadToolTab(tool);
-        }
         return;
       }
     }
@@ -67,6 +79,8 @@ export class FarmerContentModuleHomeComponent {
 
   /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
   private loadToolTab(tool: IToolData) {
-    this.router.navigate([tool.href], { relativeTo: this.route, replaceUrl: true });
+    if (!location.pathname.endsWith(tool.href)) {
+      this.router.navigate([tool.href], { relativeTo: this.route, replaceUrl: true });
+    }
   }
 }

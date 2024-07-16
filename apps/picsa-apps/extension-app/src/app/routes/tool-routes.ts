@@ -16,12 +16,6 @@ export const TOOL_ROUTES: Routes = [
     loadChildren: () =>
       import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
   },
-
-  {
-    path: 'farmer-activity',
-    loadChildren: () =>
-      import('@picsa/farmer-activity/src/app/app.module-embedded').then((mod) => mod.FarmerActivityModule),
-  },
   {
     path: 'monitoring',
     loadChildren: () => import('@picsa/monitoring/src/app/app.module-embedded').then((mod) => mod.MonitoringToolModule),
