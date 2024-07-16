@@ -1,29 +1,40 @@
 <div class="page-content">
-  <h2 style="text-transform: capitalize">Import Translations</h2>
-  <div style="display: flex; align-items: center">
-    <button
-      mat-raised-button
-      color="accent"
-      style="margin-left: auto; color: white"
-      [disabled]="importTotal() <= 0 || importCounter() > 0"
-      (click)="processImport()"
-    >
-      <span>Import</span>
-      @if(importTotal()>0){
-      <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
-      }
-    </button>
-  </div>
+  <div style="display: flex; gap: 64px; flex-wrap: wrap">
+    <!-- Import translation source strings -->
+    <div style="flex: 1; min-width: 320px">
+      <h2>JSON Source</h2>
+      <p>Import a <code>template.json</code> file to add new strings for translation</p>
+      <div style="display: flex; align-items: center">
+        <button
+          mat-raised-button
+          color="accent"
+          style="margin-left: auto; color: white"
+          [disabled]="importTotal() <= 0 || importCounter() > 0"
+          (click)="processImport()"
+        >
+          <span>Import</span>
+          @if(importTotal()>0){
+          <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
+          }
+        </button>
+      </div>
 
-  @if (importTotal()===-1) {
-  <div #dragDrop></div>
-  } @else {
-  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-    @for(table of summaryTables(); track table.key){
-    <mat-tab [label]="table.label">
-      <picsa-data-table [options]="tableOptions" [data]="table.data"></picsa-data-table>
-    </mat-tab>
-    }
-  </mat-tab-group>
-  }
+      @if (importTotal()===-1) {
+      <div #dragDrop></div>
+      } @else {
+      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+        @for(table of summaryTables(); track table.key){
+        <mat-tab [label]="table.label">
+          <picsa-data-table [options]="tableOptions" [data]="table.data"></picsa-data-table>
+        </mat-tab>
+        }
+      </mat-tab-group>
+      }
+    </div>
+    <!-- Import translated strings -->
+    <div style="flex: 1; min-width: 320px">
+      <h2>CSV Translations</h2>
+      <p>Coming soon...</p>
+    </div>
+  </div>
 </div>

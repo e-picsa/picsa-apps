@@ -114,6 +114,7 @@ export class TranslationsImportComponent {
   private async prepareSourceActions(entries: ITranslationEntry[]) {
     if (!Array.isArray(entries)) {
       this.uppy.cancelAll();
+      console.error(entries);
       throw new Error('Data is not formatted correctly');
     }
     const localHashmap: Record<string, ITranslationEntry> = {};
@@ -122,7 +123,7 @@ export class TranslationsImportComponent {
       localHashmap[id] = entry;
     }
     await this.service.ready();
-    const serverHashmap = arrayToHashmap(this.service.translations, 'id');
+    const serverHashmap = arrayToHashmap(this.service.translations(), 'id');
     let summary = this.generateSourceSummary(localHashmap, serverHashmap);
     // When running locally allow one-time migration of existing translations from i18n folder
     if (!ENVIRONMENT.production) {
