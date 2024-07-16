@@ -28,7 +28,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
 
   public form: ISeasonCalendarForm;
 
-  public status = 'share';
+  public shareStatus = 'share';
   public shareDisabled = false;
 
   public get metaFormControls() {
@@ -120,24 +120,16 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
    */
   public async sharePicture() {
     this.shareDisabled = true;
-    this.status = 'Preparing image....';
-
     this.cdr.markForCheck();
-    console.log(this.status);
     await _wait(100);
-
     try {
-      await this.service.shareAsImage();
-      this.shareDisabled = false;
-      this.status = 'share';
-      console.log(this.status);
+      await this.service.shareAsImage(this.formValue.name);
+      this.shareStatus = 'share';
     } catch (error: any) {
-      this.status = error?.message || 'Unable to share';
+      this.shareStatus = error?.message || 'Share Failed';
+    } finally {
       this.shareDisabled = false;
     }
-    this.cdr.detectChanges();
-  }
-  ngAfterViewChecked() {
     this.cdr.detectChanges();
   }
 }

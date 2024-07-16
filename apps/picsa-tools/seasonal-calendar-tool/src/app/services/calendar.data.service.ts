@@ -51,7 +51,7 @@ export class SeasonCalendarService extends PicsaAsyncService {
     }
   }
 
-  public async shareAsImage() {
-    return this.printPrvdr.shareHtmlDom('#seasonalCalendar', 'Seasonal Calendar', 'PICSA - Seasonal Calendar');
+  public async shareAsImage(title: string) {
+    return this.printPrvdr.shareHtmlDom('#seasonalCalendar', 'Seasonal Calendar', title);
   }
 }
