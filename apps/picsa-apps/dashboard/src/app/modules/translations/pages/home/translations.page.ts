@@ -78,13 +78,15 @@ export class TranslationsPageComponent {
     // HACK - ignore list when default translations set
     if (localeId === LOCALES_DATA_HASHMAP.global_en.id) return [];
     // Filter entries to only include those not already translated or archived
-    return entries.filter((entry) => {
-      if (entry.archived) return false;
-      if (!includeTranslated) {
-        return entry[localeId] ? false : true;
-      }
-      return true;
-    });
+    return entries
+      .filter((entry) => {
+        if (entry.archived) return false;
+        if (!includeTranslated) {
+          return entry[localeId] ? false : true;
+        }
+        return true;
+      })
+      .sort((a, b) => (a.id > b.id ? 1 : -1));
   }
 
   /** Track active country code to avoid refreshing list when toggling between different country versions */

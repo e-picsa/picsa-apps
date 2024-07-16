@@ -18,7 +18,7 @@ import { ITranslationRow, TranslationDashboardService } from '../../translations
 export class TranslationsEditComponent {
   public text: string;
 
-  public form = this.fb.group({ value: ['', Validators.required] });
+  public form = this.fb.group({ value: [''] });
 
   constructor(
     private service: TranslationDashboardService,
@@ -36,13 +36,8 @@ export class TranslationsEditComponent {
 
   async save() {
     await this.service.ready();
-    console.log('saving');
     const { id } = this.data.row;
     const { value } = this.form.value;
-    const res = await this.service.updateTranslationById(id, { [this.data.locale]: value });
-    console.log('res', res);
-    // TODO - refresh translation list ( or from parent?)
-    // TODO - remove legacy service code
-    // TODO - notify success
+    await this.service.updateTranslationById(id, { [this.data.locale]: value });
   }
 }
