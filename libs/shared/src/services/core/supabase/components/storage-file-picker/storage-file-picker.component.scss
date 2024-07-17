@@ -1,3 +1,10 @@
+.content-layout {
+  display: flex;
+  gap: 32px;
+  mat-tab-group {
+    width: 300px;
+  }
+}
 .preview-image {
   height: 200px;
   width: 200px;
