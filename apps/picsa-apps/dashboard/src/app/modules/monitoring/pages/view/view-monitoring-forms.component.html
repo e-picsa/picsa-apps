@@ -9,6 +9,9 @@
     }
   </div>
   @if(form){
+  <label>Enketo Form</label>
+  <enketo-webform [form]="enketoForm" [model]="enketoModel"></enketo-webform>
+
   <form class="form-content">
     <div class="form-data">
       <label>Date of Creation</label>
@@ -31,27 +34,18 @@
         <strong>{{ field['label'] }}:</strong> {{ field['field'] }}
         } } }
       </div>
-      <div class="form-data">
-        <label>Enketo Definition</label>
-        <div class="data-container">
-          <ngx-json-viewer [json]="form.enketo_definition"></ngx-json-viewer>
-        </div>
-      </div>
     </div>
     <div class="form-data">
-      <label>Enketo Form</label>
-      <!-- <div class="data-container" [innerHTML]="form.enketo_form"></div> -->
-      <div class="data-container">
-        {{ form.enketo_form }}
-      </div>
+      <!-- <enketo-webform [form]="form.enketo_form" [model]="form.enketo_model"></enketo-webform> -->
     </div>
-    <div class="form-data">
-      <label>Enketo Model</label>
+    <!-- <div class="form-data">
+      <label>Enketo Definition</label>
       <div class="data-container">
-        {{ form.enketo_model }}
+        <ngx-json-viewer [json]="form.enketo_definition"></ngx-json-viewer>
       </div>
-    </div>
+    </div> -->
   </form>
+  <button mat-button color="warning" (click)="promptDelete()">Delete Form</button>
   } @else if(dataLoadError) {
   <div>{{ dataLoadError }}</div>
   } @else {

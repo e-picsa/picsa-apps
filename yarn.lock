@@ -56,6 +56,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-devkit/architect@npm:0.1703.8":
+  version: 0.1703.8
+  resolution: "@angular-devkit/architect@npm:0.1703.8"
+  dependencies:
+    "@angular-devkit/core": 17.3.8
+    rxjs: 7.8.1
+  checksum: 827b213314fdaf0a6a1b7adc22e36c38b567edfc702152f7870142be7febb72b65de68ec2811ce3bd4379a1e10c3c923ba861a8da919ce86a77ca922d72ee098
+  languageName: node
+  linkType: hard
+
 "@angular-devkit/build-angular@npm:17.3.2":
   version: 17.3.2
   resolution: "@angular-devkit/build-angular@npm:17.3.2"
@@ -218,6 +228,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular-devkit/core@npm:17.3.8":
+  version: 17.3.8
+  resolution: "@angular-devkit/core@npm:17.3.8"
+  dependencies:
+    ajv: 8.12.0
+    ajv-formats: 2.1.1
+    jsonc-parser: 3.2.1
+    picomatch: 4.0.1
+    rxjs: 7.8.1
+    source-map: 0.7.4
+  peerDependencies:
+    chokidar: ^3.5.2
+  peerDependenciesMeta:
+    chokidar:
+      optional: true
+  checksum: c6d41c56fcfa560f592c0fa8ec30addb50e77bf3be543ad3bee2ed01b7932457156d5ca72d008678a83101a3dcd125c44f2d45063c8685e6e6c914e925b69c26
+  languageName: node
+  linkType: hard
+
 "@angular-devkit/schematics@npm:16.0.1":
   version: 16.0.1
   resolution: "@angular-devkit/schematics@npm:16.0.1"
@@ -241,6 +270,19 @@ __metadata:
     ora: 5.4.1
     rxjs: 7.8.1
   checksum: 6fb3e64ac5e52174c4fc3207f865eea460dc4c39a58d0b09b9aaa161823c3a0da9577f7dfc0efd2d34b0ae7c3fe71020393ff26b2bc30960930f868fc172a954
+  languageName: node
+  linkType: hard
+
+"@angular-devkit/schematics@npm:17.3.8":
+  version: 17.3.8
+  resolution: "@angular-devkit/schematics@npm:17.3.8"
+  dependencies:
+    "@angular-devkit/core": 17.3.8
+    jsonc-parser: 3.2.1
+    magic-string: 0.30.8
+    ora: 5.4.1
+    rxjs: 7.8.1
+  checksum: a7e2aedb0970a8a243924b122ae030c33dfd5cb9acd818ff7cb3be132b73f048448003152fe1898bd34926580d4f293e9ec8597a9fc45c965460642012489235
   languageName: node
   linkType: hard
 
@@ -336,13 +378,13 @@ __metadata:
   linkType: hard
 
 "@angular/cli@npm:~17.3.0":
-  version: 17.3.2
-  resolution: "@angular/cli@npm:17.3.2"
+  version: 17.3.8
+  resolution: "@angular/cli@npm:17.3.8"
   dependencies:
-    "@angular-devkit/architect": 0.1703.2
-    "@angular-devkit/core": 17.3.2
-    "@angular-devkit/schematics": 17.3.2
-    "@schematics/angular": 17.3.2
+    "@angular-devkit/architect": 0.1703.8
+    "@angular-devkit/core": 17.3.8
+    "@angular-devkit/schematics": 17.3.8
+    "@schematics/angular": 17.3.8
     "@yarnpkg/lockfile": 1.1.0
     ansi-colors: 4.1.3
     ini: 4.1.2
@@ -359,7 +401,7 @@ __metadata:
     yargs: 17.7.2
   bin:
     ng: bin/ng.js
-  checksum: 56209d67142bbd77520b11314ba7646b33ba86da4ca20131f59d20709f3ea9bae7e3b87f80cf6d2b7a89515c4336ffaf11d23c9ea9442c637e0184855dac6478
+  checksum: 8543102c69aa1381f1b35ff582adae061d4fe5a3d1545cffa8e015317304299d3076c6ec6c844ae90c708891c334fc7ad67a9f553f1037f3dbc06c3efd8a1d0f
   languageName: node
   linkType: hard
 
@@ -6497,6 +6539,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@npmcli/package-json@npm:^5.0.0":
+  version: 5.2.0
+  resolution: "@npmcli/package-json@npm:5.2.0"
+  dependencies:
+    "@npmcli/git": ^5.0.0
+    glob: ^10.2.2
+    hosted-git-info: ^7.0.0
+    json-parse-even-better-errors: ^3.0.0
+    normalize-package-data: ^6.0.0
+    proc-log: ^4.0.0
+    semver: ^7.5.3
+  checksum: 8df289c45b52cca88826cc737195cabf21757008e11d90b1f62d5400ff65834c0e9bcb552f235ba560c3af436a1ca3fc553b23b5cb5da8330ae56929065a6988
+  languageName: node
+  linkType: hard
+
 "@npmcli/promise-spawn@npm:^7.0.0":
   version: 7.0.0
   resolution: "@npmcli/promise-spawn@npm:7.0.0"
@@ -6506,16 +6563,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@npmcli/redact@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@npmcli/redact@npm:1.1.0"
+  checksum: f200d40c485aea6fdf0487ddfed258ec13a217701261d9115f9c82b65f341403b3dfc7aaa1f5bd0b51b09f7dee03d89b86d99314356faed370bada8d0f000836
+  languageName: node
+  linkType: hard
+
 "@npmcli/run-script@npm:^7.0.0":
-  version: 7.0.2
-  resolution: "@npmcli/run-script@npm:7.0.2"
+  version: 7.0.4
+  resolution: "@npmcli/run-script@npm:7.0.4"
   dependencies:
     "@npmcli/node-gyp": ^3.0.0
+    "@npmcli/package-json": ^5.0.0
     "@npmcli/promise-spawn": ^7.0.0
     node-gyp: ^10.0.0
-    read-package-json-fast: ^3.0.0
     which: ^4.0.0
-  checksum: 15bf62b7bbe2dd5f619c445dc32f0f5af2be512dbb09d40b2dabbf9c4fa00c2c3e653834352d3c5e28a9df93800165d8b4236af6ffe896efd075b9685dcc766d
+  checksum: c44d6874cffb0a2f6d947e230083b605b6f253450e24aa185ef28391dc366b10807cd4ca113fe367057b8b5310add36391894f9d782af15424830658ee386dfb
   languageName: node
   linkType: hard
 
@@ -7835,6 +7899,17 @@ __metadata:
     "@angular-devkit/schematics": 17.3.2
     jsonc-parser: 3.2.1
   checksum: b4159c0994e96e3bd4f15d7181ec4db93d169e34357617eb64bdd4ff9b6d8ba81e14f5e40777dc2120c683795823ecddcb521283b56dfaea319eb6a76c0e17d4
+  languageName: node
+  linkType: hard
+
+"@schematics/angular@npm:17.3.8":
+  version: 17.3.8
+  resolution: "@schematics/angular@npm:17.3.8"
+  dependencies:
+    "@angular-devkit/core": 17.3.8
+    "@angular-devkit/schematics": 17.3.8
+    jsonc-parser: 3.2.1
+  checksum: f3fdad7569d2b4c119e1e7d725f8e0701476006a33d141ee6d7fd1781f09b69e80b22486513280c0cd6d5e901a201e4bfa9efb15c6566f135e5e57f6fc3d2512
   languageName: node
   linkType: hard
 
@@ -18558,17 +18633,18 @@ __metadata:
   linkType: hard
 
 "npm-registry-fetch@npm:^16.0.0":
-  version: 16.1.0
-  resolution: "npm-registry-fetch@npm:16.1.0"
+  version: 16.2.1
+  resolution: "npm-registry-fetch@npm:16.2.1"
   dependencies:
+    "@npmcli/redact": ^1.1.0
     make-fetch-happen: ^13.0.0
     minipass: ^7.0.2
     minipass-fetch: ^3.0.0
     minipass-json-stream: ^1.0.1
     minizlib: ^2.1.2
     npm-package-arg: ^11.0.0
-    proc-log: ^3.0.0
-  checksum: 6aa8483973aaf8c8543753d415983eb6722ecba0703030f3b152074eaa1106df75ffd084e483f30a33c81203c7ec07555bcc9e45fc07f7c0904501506c0929a2
+    proc-log: ^4.0.0
+  checksum: 0c606dffcddecbccdc9539571ffbacd35b2d70c265841c9a4094042010c68de72c44915154d0a01038ce469ead2fec2ffb5c5225c8bb419a4824b050844d2fdb
   languageName: node
   linkType: hard
 
@@ -20255,6 +20331,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proc-log@npm:^4.0.0":
+  version: 4.2.0
+  resolution: "proc-log@npm:4.2.0"
+  checksum: 98f6cd012d54b5334144c5255ecb941ee171744f45fca8b43b58ae5a0c1af07352475f481cadd9848e7f0250376ee584f6aa0951a856ff8f021bdfbff4eb33fc
+  languageName: node
+  linkType: hard
+
 "process-nextick-args@npm:~2.0.0":
   version: 2.0.1
   resolution: "process-nextick-args@npm:2.0.1"
@@ -20571,14 +20654,14 @@ __metadata:
   linkType: hard
 
 "read-package-json@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "read-package-json@npm:7.0.0"
+  version: 7.0.1
+  resolution: "read-package-json@npm:7.0.1"
   dependencies:
     glob: ^10.2.2
     json-parse-even-better-errors: ^3.0.0
     normalize-package-data: ^6.0.0
     npm-normalize-package-bin: ^3.0.0
-  checksum: 9b6e3ebba0b44bb72ab42031f02e0a46c95873cd302f151e35841e075464f0f4d1404da2333cb491c5c83599bb917c32b23b86d4df8337237d4d1a37c6db1517
+  checksum: b0f469dcd0ff91ec14ac177aed1e9ebd5f1b9d3760c06e42b52cff51018b25768685490b5e33a2643e5f27854fc965890c2c33e041852f58dd93dcf1bcb4f080
   languageName: node
   linkType: hard
 
