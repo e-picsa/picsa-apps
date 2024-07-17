@@ -9,6 +9,9 @@
     }
   </div>
   @if(form){
+  <label>Enketo Form</label>
+  <enketo-webform [form]="enketoForm" [model]="enketoModel"></enketo-webform>
+
   <form class="form-content">
     <div class="form-data">
       <label>Date of Creation</label>
@@ -33,8 +36,7 @@
       </div>
     </div>
     <div class="form-data">
-      <label>Enketo Form</label>
-      <enketo-webform [form]="form.enketo_form" [model]="form.enketo_model"></enketo-webform>
+      <!-- <enketo-webform [form]="form.enketo_form" [model]="form.enketo_model"></enketo-webform> -->
     </div>
     <!-- <div class="form-data">
       <label>Enketo Definition</label>
@@ -43,6 +45,7 @@
       </div>
     </div> -->
   </form>
+  <button mat-button color="warning" (click)="promptDelete()">Delete Form</button>
   } @else if(dataLoadError) {
   <div>{{ dataLoadError }}</div>
   } @else {
