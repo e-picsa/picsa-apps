@@ -1,6 +1,5 @@
 /* tslint:disable */
 /* auto-generated angular directive proxies */
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone } from '@angular/core';
 import { Components } from '@picsa/webcomponents';
 
@@ -11,8 +10,6 @@ import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
 })
 @Component({
   selector: 'enketo-webform',
-  standalone: true,
-  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
