@@ -77,7 +77,7 @@ export class SupabaseStorageService extends PicsaAsyncService {
     console.log('storage list', { bucketId, subfolder });
     if (error) {
       console.error(error);
-      this.notificationService.showErrorNotification(error.message);
+      throw new Error(error.message);
     }
     return data || [];
   }

@@ -1,6 +1,24 @@
 <div class="page-content">
-  @if(tableOptions && tableData().length>0){
-  <picsa-data-table [data]="tableData()" [options]="tableOptions" [valueTemplates]="{created_at}">
+  <!-- Language Select -->
+  <mat-form-field>
+    <mat-label>Language</mat-label>
+    <mat-select [(ngModel)]="locale">
+      @for(locale of localeOptions(); track locale.id){
+      <mat-option [value]="locale.id">{{locale.language_label}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Progress -->
+  <div style="display: flex; justify-content: center; align-items: center; gap: 8px">
+    <mat-progress-bar mode="determinate" [value]="translationProgress()" style="flex: 1"></mat-progress-bar>
+    <div>{{countTranslated}} / {{countTotal}}</div>
+    <mat-checkbox [(ngModel)]="includeTranslated">Show All</mat-checkbox>
+  </div>
+
+  <!-- Table -->
+  @if(tableOptions() && tableData().length>0){
+  <picsa-data-table [data]="tableData()" [options]="tableOptions()" [valueTemplates]="{created_at}">
     <ng-template #created_at let-value> {{value | date: 'mediumDate' }} </ng-template>
   </picsa-data-table>
   } @else {

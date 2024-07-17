@@ -3,10 +3,20 @@ import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/ser
 
 import { IDeploymentRow } from '../deployment/types';
 import type { ClimateApiService } from './climate-api.service';
-import { IClimateProductInsert, IClimateProductRow, IForecastInsert, IForecastRow, IStationRow } from './types';
+import {
+  IClimateProductInsert,
+  IClimateProductRow,
+  IForecastInsert,
+  IForecastRow,
+  IStationInsert,
+  IStationRow,
+} from './types';
+import type { components as ApiComponents } from './types/api';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
 export type IApiMappingName = keyof IApiMapping;
+
+export type IAPICountryCode = ApiComponents['schemas']['StationAndDefintionResponce']['country_code'];
 
 // TODO - certain amount of boilerplate could be reduced
 // TODO - depends on climate api updates
@@ -23,10 +33,11 @@ export const ApiMapping = (
   deployment: IDeploymentRow
 ) => {
   return {
-    rainfallSummaries: async (country_code: string, station_id: string) => {
+    rainfallSummaries: async (station: IStationRow) => {
+      const { country_code, station_id, id } = station;
       // TODO - add model type definitions for server rainfall summary response body
       const { data, error } = await api
-        .getObservableClient(`rainfallSummary_${country_code}_${station_id}`)
+        .getObservableClient(`rainfallSummary_${id}`)
         .POST('/v1/annual_rainfall_summaries/', {
           body: {
             country: `${country_code}` as any,
@@ -37,39 +48,37 @@ export const ApiMapping = (
       if (error) throw error;
       console.log('summary data', data);
       // TODO - gen types and handle mapping
-      const mappedData = data as any;
+      const entry: IClimateProductInsert = {
+        data: data as any,
+        station_id: id as string,
+        type: 'rainfallSummary',
+      };
       const { data: dbData, error: dbError } = await db
         .table('climate_products')
-        .upsert<IClimateProductInsert>({
-          data: mappedData,
-          station_id,
-          type: 'rainfallSummary',
-        })
+        .upsert<IClimateProductInsert>(entry)
         .select<'*', IClimateProductRow>('*');
       if (dbError) throw dbError;
       return dbData || [];
     },
     //
-    station: async () => {
-      const { country_code } = deployment;
+    station: async (country_code: string) => {
       const { data, error } = await api
         .getObservableClient('station')
         .GET(`/v1/station/{country}`, { params: { path: { country: country_code as any } } });
       if (error) throw error;
       console.log('station data', data);
-      const dbData = data.map(
-        (d): IStationRow => ({
+      const dbData = data.data.map(
+        (d): IStationInsert => ({
           ...d,
-          id: `${d.country_code}/${d.station_id}`,
           station_id: `${d.station_id}`,
         })
       );
-      const { error: dbError } = await db.table('climate_stations').upsert<IStationRow>(dbData);
+      const { error: dbError } = await db.table('climate_stations').upsert<IStationInsert>(dbData);
       if (dbError) throw dbError;
       return dbData;
     },
     //
-    forecasts: async (country_code: 'zm' | 'mw') => {
+    forecasts: async (country_code: IAPICountryCode) => {
       const { data, error } = await api
         .getObservableClient(`forecasts/${country_code}`)
         .GET(`/v1/forecasts/{country_code}`, { params: { path: { country_code } } });
