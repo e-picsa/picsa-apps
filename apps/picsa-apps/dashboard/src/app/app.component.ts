@@ -11,7 +11,6 @@ import { DeploymentSelectComponent } from './modules/deployment/components';
 import { DeploymentDashboardService } from './modules/deployment/deployment.service';
 import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
 
-
 @Component({
   standalone: true,
   imports: [
