@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -13,7 +14,7 @@ export class PhotoService {
   }
 
   // This method will save the photo to the database.
-  savePhoto(photo: any) {
+  savePhoto() {
     return;
   }
 
