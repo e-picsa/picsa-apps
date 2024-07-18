@@ -4,12 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { PicsaPhotoInputModule, PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 // Local components
 import { FarmerActivityMaterialModule } from './material.module';
-import { PicsaPhotoInputComponent } from './photo-input/photo-input.component';
 
 const Components = [];
 
@@ -18,7 +17,7 @@ const Components = [];
     CommonModule,
     FormsModule,
     PicsaCommonComponentsModule,
-    PicsaPhotoInputComponent,
+    PicsaPhotoInputModule,
     PicsaTranslateModule,
     PicsaVideoPlayerModule,
     ReactiveFormsModule,
@@ -28,7 +27,7 @@ const Components = [];
   exports: [
     FarmerActivityMaterialModule,
     PicsaCommonComponentsModule,
-    PicsaPhotoInputComponent,
+    PicsaPhotoInputModule,
     PicsaVideoPlayerModule,
     ...Components,
   ],
