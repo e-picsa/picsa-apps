@@ -24,6 +24,10 @@
         ></tr>
       </table>
     </div>
-    <picsa-map style="height: 500px; width: 500px" [markers]="mapMarkers()"></picsa-map>
+    <picsa-map
+      style="height: 500px; width: 500px"
+      [markers]="mapMarkers()"
+      (onMarkerClick)="handleMarkerClick($event)"
+    ></picsa-map>
   </div>
 </div>

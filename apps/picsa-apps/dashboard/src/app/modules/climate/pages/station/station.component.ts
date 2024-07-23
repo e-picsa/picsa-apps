@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateService } from '../../climate.service';
@@ -36,10 +36,16 @@ export class ClimateStationPageComponent implements OnInit {
     showStatusCode: false,
   };
 
-  constructor(public service: ClimateService) {}
+  constructor(public service: ClimateService, private router: Router, private route: ActivatedRoute) {}
 
   async ngOnInit() {
     await this.service.ready();
+  }
+
+  public handleMarkerClick(marker: IMapMarker) {
+    const { _index } = marker;
+    const station = this.service.stations()[_index];
+    this.router.navigate(['./', station.station_id], { relativeTo: this.route });
   }
 
   private calcMapMarkers(stations: IStationRow[]): IMapMarker[] {
