@@ -72,6 +72,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('@picsa/seasonal-calendar/src/app/app.module-embedded').then((mod) => mod.SeasonalCalendarToolModule),
   },
+  {
+    path: 'photos',
+    loadComponent: () =>
+      import('@picsa/shared/features/photo-list/photo-list.component').then((mod) => mod.PhotoListComponent),
+  },
   // NOTE - Home not currently working as standalone component so keeping as module
   // (possibly needs to import router-outlet or similar for setup)
   {
