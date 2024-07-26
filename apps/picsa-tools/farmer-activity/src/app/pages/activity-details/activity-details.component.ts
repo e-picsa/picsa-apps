@@ -19,6 +19,7 @@ import { ACTIVITY_DATA, IActivityEntry } from '../../data';
 })
 export class ActivityDetailsComponent implements OnInit, OnDestroy {
   activity: IActivityEntry;
+  activityId: string;
 
   public videoResource: IResourceFile;
   public videoUri: string;
@@ -40,9 +41,9 @@ export class ActivityDetailsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     //  Ensure route config updated before init
     const { params } = this.route.snapshot;
-    const activityId = params?.id;
-    if (activityId) {
-      const activity = this.getActivityById(activityId);
+    this.activityId = params?.id;
+    if (this.activityId) {
+      const activity = this.getActivityById(this.activityId);
       if (activity) {
         this.activity = activity;
         this.componentsService.setHeader({ title: activity.label });

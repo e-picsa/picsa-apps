@@ -7,15 +7,21 @@ const PHOTO_SCHEMA_VERSION = 0;
 
 export interface IPhotoEntry_V0 {
   id: string;
-  photoData: string; // This could be a URL or base64 string
-  timestamp: number; // Unix timestamp
-  custom_meta?: any; // Optional field for any additional data
+  photoData: string;
+  timestamp: number;
+  activity: string;
+  custom_meta?: any;
 }
 
-export const PHOTO_ENTRY_TEMPLATE_V0: (id: string, photoData: string) => IPhotoEntry_V0 = (id, photoData) => ({
+export const PHOTO_ENTRY_TEMPLATE_V0: (id: string, photoData: string, activity: string) => IPhotoEntry_V0 = (
+  id,
+  photoData,
+  activity
+) => ({
   id,
   photoData,
   timestamp: Date.now(),
+  activity,
   custom_meta: {},
 });
 
@@ -34,11 +40,15 @@ export const PHOTO_SCHEMA_V0: RxJsonSchema<IPhotoEntry_V0> = {
     timestamp: {
       type: 'number',
     },
+    activity: {
+      type: 'string',
+    },
     custom_meta: {
       type: 'object',
     },
   },
-  required: ['id', 'photoData', 'timestamp'],
+  required: ['id', 'photoData', 'timestamp', 'activity'],
+  attachments: {},
 };
 
 export const PHOTO_COLLECTION_V0: IPicsaCollectionCreator<IPhotoEntry_V0> = {
