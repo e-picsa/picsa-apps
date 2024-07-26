@@ -70,7 +70,7 @@ export class PhotoService extends PicsaAsyncService {
       const attachment = photo.getAttachment(photo.id);
       console.info('Attachment:', attachment);
       if (attachment) {
-        const uri = await this.attachmentService.getFileAttachmentURI(photo, true);
+        const uri = await this.attachmentService.getFileAttachmentURI(attachment.doc, true);
 
         console.info('Photos to display with image url:', uri);
         if (uri) {
