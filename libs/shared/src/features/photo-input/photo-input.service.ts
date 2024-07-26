@@ -31,10 +31,23 @@ export class PhotoService extends PicsaAsyncService {
     }
   }
 
+  async clearPhotosCollection() {
+    try {
+      const allDocs = await this.collection.find().exec();
+      for (const doc of allDocs) {
+        await doc.remove();
+      }
+      console.info('All photos deleted from the collection');
+    } catch (error) {
+      console.error('Failed to clear photos collection:', error);
+    }
+  }
+
   // this method will save the photo to the database.
   async savePhoto(photo: Schema.IPhotoEntry) {
     try {
-      const photoBlob = await this.getPhotoBlob(photo.photoData);
+      const response = await fetch(photo.photoData);
+      const photoBlob = await response.blob();
       const doc = await this.collection.insert(photo);
       console.info('Document inserted:', doc);
       await this.attachmentService.putAttachment(doc, photo.id, photoBlob);
@@ -54,9 +67,15 @@ export class PhotoService extends PicsaAsyncService {
 
     const photos: Photo[] = [];
     for (const photo of allPhotos) {
-      const uri = await this.attachmentService.getFileAttachmentURI(photo, true);
-      if (uri) {
-        photos.push({ webPath: uri });
+      const attachment = photo.getAttachment(photo.id);
+      console.info('Attachment:', attachment);
+      if (attachment) {
+        const uri = await this.attachmentService.getFileAttachmentURI(photo, true);
+
+        console.info('Photos to display with image url:', uri);
+        if (uri) {
+          photos.push({ webPath: uri });
+        }
       }
     }
     return photos;
@@ -64,17 +83,21 @@ export class PhotoService extends PicsaAsyncService {
 
   // this method will delete a photo from the database.
   async deletePhoto(id: string) {
-    return;
+    const doc = await this.collection.findOne(id).exec();
+    if (doc) {
+      await this.attachmentService.removeAttachment(doc, id);
+      await doc.remove();
+      console.info('Photo deleted:', id);
+    }
   }
 
   // this method will delete all photos from the database.
   async deleteAllPhotos() {
-    return;
-  }
-
-  // this method will get the photo as a Blob.
-  private async getPhotoBlob(photoData: string): Promise<Blob> {
-    const response = await fetch(photoData);
-    return response.blob();
+    const docs = await this.collection.find().exec();
+    for (const doc of docs) {
+      await this.attachmentService.removeAttachment(doc, doc.id);
+      await doc.remove();
+    }
+    console.info('All photos deleted');
   }
 }

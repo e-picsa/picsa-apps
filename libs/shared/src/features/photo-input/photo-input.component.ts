@@ -26,7 +26,6 @@ export class PicsaPhotoInputComponent {
   async ngOnInit() {
     await this.photoService.init();
     await this.loadPhotos();
-    console.info('Photos:', this.photos);
   }
 
   // this method will be called when a user clicks the camera button
@@ -81,15 +80,18 @@ export class PicsaPhotoInputComponent {
   }
 
   removePhoto(index: number) {
-    return;
+    const photo = this.photos[index];
+    this.photos.splice(index, 1);
+    if (photo.webPath) this.photoService.deletePhoto(photo.webPath);
   }
 
   removeAllPhotos() {
-    return;
+    this.photos = [];
+    this.photoService.deleteAllPhotos();
   }
 }
 
-// this function will generate a random
+// this function will generate a random ID
 function generateID(length = 20, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
   let autoId = '';
   for (let i = 0; i < length; i++) {
