@@ -64,30 +64,12 @@ export class PhotoService extends PicsaAsyncService {
 
   // this method will delete a photo from the database.
   async deletePhoto(id: string) {
-    try {
-      const doc = await this.collection.findOne(id).exec();
-      if (doc) {
-        await this.attachmentService.removeAttachment(doc, id);
-        await doc.remove();
-        console.info('Photo deleted:', id);
-      }
-    } catch (error) {
-      console.error('Failed to delete photo:', error);
-    }
+    return;
   }
 
   // this method will delete all photos from the database.
   async deleteAllPhotos() {
-    try {
-      const docs = await this.collection.find().exec();
-      for (const doc of docs) {
-        await this.attachmentService.removeAttachment(doc, doc.id);
-        await doc.remove();
-      }
-      console.info('All photos deleted');
-    } catch (error) {
-      console.error('Failed to delete all photos:', error);
-    }
+    return;
   }
 
   // this method will get the photo as a Blob.

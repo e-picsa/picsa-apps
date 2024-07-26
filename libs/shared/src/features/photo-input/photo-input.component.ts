@@ -81,11 +81,11 @@ export class PicsaPhotoInputComponent {
   }
 
   removePhoto(index: number) {
-    this.photos.splice(index, 1);
+    return;
   }
 
   removeAllPhotos() {
-    this.photos = [];
+    return;
   }
 }
 
