@@ -52,7 +52,7 @@ export class ClimateStationPageComponent implements OnInit {
     return stations.map((s, _index) => ({
       _index,
       latlng: [s.latitude as number, s.longitude as number],
-      number: parseInt(s.station_id),
+      number: _index + 1,
     }));
   }
 }
