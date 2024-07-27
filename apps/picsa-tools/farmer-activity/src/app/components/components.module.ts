@@ -4,34 +4,27 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // Shared modules
 import { PicsaCommonComponentsModule } from '@picsa/components';
-import { PicsaPhotoInputModule, PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { PicsaPhotoInputComponent, PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 // Local components
 import { FarmerActivityMaterialModule } from './material.module';
 
-const Components = [];
+const Components = [PicsaPhotoInputComponent];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     PicsaCommonComponentsModule,
-    PicsaPhotoInputModule,
     PicsaTranslateModule,
     PicsaVideoPlayerModule,
     ReactiveFormsModule,
     RouterModule,
     FarmerActivityMaterialModule,
-  ],
-  exports: [
-    FarmerActivityMaterialModule,
-    PicsaCommonComponentsModule,
-    PicsaPhotoInputModule,
-    PicsaVideoPlayerModule,
     ...Components,
   ],
-  declarations: [Components],
+  exports: [FarmerActivityMaterialModule, PicsaCommonComponentsModule, PicsaVideoPlayerModule, ...Components],
   providers: [],
 })
 export class FarmerActivityComponentsModule {}

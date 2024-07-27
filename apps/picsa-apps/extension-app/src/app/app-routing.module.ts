@@ -74,8 +74,7 @@ const routes: Routes = [
   },
   {
     path: 'photos',
-    loadComponent: () =>
-      import('@picsa/shared/features/photo-list/photo-list.component').then((mod) => mod.PhotoListComponent),
+    loadComponent: () => import('@picsa/shared/features/photo').then((mod) => mod.PicsaPhotoListComponent),
   },
   // NOTE - Home not currently working as standalone component so keeping as module
   // (possibly needs to import router-outlet or similar for setup)

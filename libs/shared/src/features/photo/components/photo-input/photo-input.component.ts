@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
-import { PhotoService } from './photo-input.service';
+import { PhotoService } from '../../photo.service';
 
 interface Photo {
   webPath?: string;
@@ -13,6 +16,8 @@ interface Photo {
   selector: 'picsa-photo-input',
   templateUrl: './photo-input.component.html',
   styleUrls: ['./photo-input.component.scss'],
+  standalone: true,
+  imports: [PicsaTranslateModule, MatButtonModule, MatIconModule],
 })
 export class PicsaPhotoInputComponent {
   @ViewChild('fileInput') fileInput: ElementRef;
