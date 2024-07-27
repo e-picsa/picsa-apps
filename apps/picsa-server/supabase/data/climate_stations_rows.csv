@@ -1,5 +1,6 @@
 station_id,country_code,station_name,latitude,longitude,elevation,district
-zambia_eastern,zm_workshops,Zambia_Eastern,-21.8,20.2,557,Test
-chipata,zm_workshops,Chipata,-13.6,32.6,1025,Chipata
-Nkhotakota,mw_workshops,Nkhotakota,-12.9,34.28,500,Nhkotakota
-Kasungu,mw_workshops,Kasungu,-13.02,33.47,1300,Kasungu
+Chipata Met,zm_workshops,Chipata Met,-13.6,32.6,1025,Chipata
+Lundazi Met,zm_workshops,Lundazi Met,-12.28,33.2,1143,Lundazi
+Mfuwe Met,zm_workshops,Mfuwe Met,-13.26,31.93,570,Mambwe
+Msekera Agromet,zm_workshops,Msekera Agromet,-13.65,32.56,1025,Chipata
+Petauke Met,zm_workshops,Petauke Met,-14.25,31.28,1036,Petauke
