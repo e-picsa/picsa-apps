@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { generateID } from '@picsa/shared/services/core/db/db.service';
-import { generateTimestamp } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
+import { generateID } from '../../../services/core/db/db.service';
+import { generateTimestamp } from '../../../services/core/db_v2';
 import type { IPicsaCollectionCreator } from '../../../services/core/db_v2/models/index';
 
 const PHOTO_SCHEMA_VERSION = 0;

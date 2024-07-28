@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { PicsaTranslateModule } from '../../../../modules';
 import { PhotoService } from '../../photo.service';
 import { PhotoViewComponent } from '../photo-view/photo-view.component';
 
