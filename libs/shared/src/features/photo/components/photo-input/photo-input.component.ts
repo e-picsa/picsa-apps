@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ElementRef, Input, input, ViewChild } from '@angular/core';
+import { Component, ElementRef, input, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { PicsaTranslateModule } from '../../../../modules/translate';
 import { PhotoService } from '../../photo.service';
 import { ENTRY_TEMPLATE } from '../../schema';
 

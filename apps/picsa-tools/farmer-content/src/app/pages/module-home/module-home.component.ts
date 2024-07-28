@@ -8,11 +8,9 @@ import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IFarmerContentStep, IToolD
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { FadeInOut } from '@picsa/shared/animations';
-import { PhotoInputComponent, PhotoViewComponent } from '@picsa/shared/features';
+import { PhotoInputComponent, PhotoListComponent,PhotoViewComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
-
-import { PhotoListComponent } from '../../../../../../../libs/shared/src/features/photo/components/photo-list/photo-list.component';
 
 @Component({
   selector: 'farmer-content-module-home',
