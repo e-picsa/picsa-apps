@@ -56,6 +56,20 @@
         </div>
       </mat-tab>
       }
+      <!-- User photos -->
+      @if(photoAlbum(); as album){
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">perm_media</mat-icon>
+          {{ 'Review' | translate }}
+        </ng-template>
+        <div class="tab-content router-tab">
+          <picsa-photo-list [album]="album"></picsa-photo-list>
+          <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
+        </div>
+      </mat-tab>
+
+      }
       <!-- @if(tools()[1]; as tool_1){
       <mat-tab>
         <ng-template mat-tab-label>

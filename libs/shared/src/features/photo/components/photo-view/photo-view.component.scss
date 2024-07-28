@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  position: relative;
+}
+img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+button.delete-button.mat-mdc-icon-button.mat-mdc-button-base {
+  --mdc-icon-button-state-layer-size: 32px;
+  padding: 4px;
+  border-radius: 0;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: rgb(0 0 0 / 50%);
+  background: rgb(255 255 255 / 20%);
+}
+.error-msg {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  border: 1px solid var(--color-light);
+}
