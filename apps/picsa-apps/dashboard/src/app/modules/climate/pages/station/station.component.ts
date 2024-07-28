@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateService } from '../../climate.service';
@@ -26,20 +26,33 @@ import { IStationRow } from '../../types';
 export class ClimateStationPageComponent implements OnInit {
   public displayedColumns: (keyof IStationRow)[] = ['station_id', 'station_name'];
 
-  public mapMarkers: IMapMarker[];
+  public mapMarkers = computed<IMapMarker[]>(() => {
+    const stations = this.service.stations();
+    return this.calcMapMarkers(stations);
+  });
 
   public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.service.loadFromAPI.station() },
+    events: { refresh: () => this.service.loadFromAPI.station(this.service.apiCountryCode) },
     showStatusCode: false,
   };
 
-  constructor(public service: ClimateService) {}
+  constructor(public service: ClimateService, private router: Router, private route: ActivatedRoute) {}
 
   async ngOnInit() {
     await this.service.ready();
-    this.mapMarkers = this.service.stations.map((m) => ({
-      latlng: [m.latitude as number, m.longitude as number],
-      number: parseInt(m.station_id),
+  }
+
+  public handleMarkerClick(marker: IMapMarker) {
+    const { _index } = marker;
+    const station = this.service.stations()[_index];
+    this.router.navigate(['./', station.station_id], { relativeTo: this.route });
+  }
+
+  private calcMapMarkers(stations: IStationRow[]): IMapMarker[] {
+    return stations.map((s, _index) => ({
+      _index,
+      latlng: [s.latitude as number, s.longitude as number],
+      number: _index + 1,
     }));
   }
 }

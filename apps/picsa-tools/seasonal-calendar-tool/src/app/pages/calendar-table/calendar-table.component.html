@@ -2,46 +2,58 @@
   @if(form){
   <form [formGroup]="form">
     <!-- Header and edit button -->
-    <div style="display: flex; align-items: center">
+    <div style="display: flex; align-items: center; gap: 16px">
       <h1 style="flex: 1">{{ formValue.name }}</h1>
-
+      <button mat-button color="primary" aria-label="Share" (click)="sharePicture()" [disabled]="shareDisabled">
+        <mat-icon>share</mat-icon>
+        {{ shareStatus | translate }}
+      </button>
       <button mat-stroked-button color="primary" (click)="showEditDialog(editDialogRef)">
         <mat-icon>edit</mat-icon>
         {{ 'Edit' | translate }}
       </button>
     </div>
+    <!-- Nest table inside container div for easier image export/share -->
+    <div class="calendar-container" id="seasonalCalendar">
+      <table class="calendar-table">
+        <!-- Monthly weather select header -->
+        <thead>
+          <tr>
+            <th></th>
+            @for (weatherControl of form.controls.weather.controls; track $index) {
+            <th formArrayName="weather">
+              <div style="margin-bottom: 8px">
+                {{ columnLabels[$index] | translate }}
+              </div>
+              <picsa-form-weather-select
+                [formControl]="weatherControl"
+                [attr.data-hasValue]="weatherControl.value ? true : false"
+              ></picsa-form-weather-select>
+            </th>
+            }
+          </tr>
+        </thead>
+        <!-- Activity rows -->
+        <tbody>
+          @for(crop of formValue.meta.enterprises; track $index){
+          <tr>
+            <td>
+              {{ rowLabels[$index] | translate }}
+            </td>
+            @for(control of activityFormControls[crop].controls; track $index){
+            <td>
+              <picsa-form-crop-activity-select
+                [formControl]="control"
+                [attr.data-hasValue]="control.value ? true : false"
+              ></picsa-form-crop-activity-select>
+            </td>
+            }
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-    <table class="calendar-table">
-      <!-- Monthly weather select header -->
-      <thead>
-        <tr>
-          <th></th>
-          @for (weatherControl of form.controls.weather.controls; track $index) {
-          <th formArrayName="weather">
-            <div style="margin-bottom: 8px">
-              {{ columnLabels[$index] | translate }}
-            </div>
-            <picsa-form-weather-select [formControl]="weatherControl"></picsa-form-weather-select>
-          </th>
-          }
-        </tr>
-      </thead>
-      <!-- Activity rows -->
-      <tbody>
-        @for(crop of formValue.meta.enterprises; track $index){
-        <tr>
-          <td>
-            {{ rowLabels[$index] | translate }}
-          </td>
-          @for(control of activityFormControls[crop].controls; track $index){
-          <td>
-            <picsa-form-crop-activity-select [formControl]="control"></picsa-form-crop-activity-select>
-          </td>
-          }
-        </tr>
-        }
-      </tbody>
-    </table>
     <!-- Editor dialog -->
     <ng-template #editDialogRef>
       @if(form){

@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, computed, Input, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListItem, MatNavList } from '@angular/material/list';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -21,6 +23,8 @@ import { filter, map } from 'rxjs';
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,
+    MatNavList,
+    MatListItem,
     RouterOutlet,
     RouterModule,
     PicsaLoadingComponent,
@@ -31,14 +35,23 @@ import { filter, map } from 'rxjs';
 export class AppLayoutComponent {
   @Input() showLoader: boolean;
   @Input() ready: boolean;
+  public drawer = viewChild.required(MatDrawer);
   public showMenuButton = toSignal(
     this.router.events.pipe(
       filter((e: any) => e instanceof NavigationEnd),
-      // only show sidebar on farmer home
-      map(({ url }) => ['/farmer'].includes(url))
+      // show sidebar on both farmer and extension home screens
+      map(({ url }) => ['/farmer', '/extension'].includes(url))
     )
   );
+  public userType = computed(() => this.configurationService.userSettings().user_type);
   public version = APP_VERSION;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private configurationService: ConfigurationService) {}
+
+  public toggleUserType() {
+    const targetType = this.userType() === 'extension' ? 'farmer' : 'extension';
+    this.configurationService.updateUserSettings({ user_type: targetType });
+    this.router.navigate(['/', targetType]);
+    this.drawer().close();
+  }
 }

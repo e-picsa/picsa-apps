@@ -27,7 +27,7 @@ button {
 }
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background-color: var(--color-secondary);
+  background-color: var(--color-primary);
 }
 .leaflet-popup-close-button {
   pointer-events: none;
@@ -39,12 +39,18 @@ button {
   // box-sizing: border-box;
 }
 .leaflet-marker-icon {
-  background: var(--color-secondary);
+  background: var(--color-primary);
   border-radius: 4px;
+}
+.leaflet-marker-icon.secondary {
+  background: var(--color-secondary);
+}
+.leaflet-marker-icon.location-icon {
+  color: white;
 }
 .number-tooltip {
   background: white;
-  color: var(--color-secondary);
+  color: var(--color-primary);
   font-weight: bold;
   border: none;
   border-radius: 50%;

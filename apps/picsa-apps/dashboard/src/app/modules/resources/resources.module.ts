@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { ResourceCollectionEditComponent } from './pages/collections/edit/resource-collection-edit.component';
 import { ResourceCollectionsComponent } from './pages/collections/resource-collections.component';
-import { ResourceCreateComponent } from './pages/create/resource-create.component';
+import { ResourceFileEditComponent } from './pages/files/edit/resource-file-edit.component';
 import { ResourceFilesComponent } from './pages/files/resource-files.component';
+import { ResourceLinkEditComponent } from './pages/links/edit/resource-link-edit.component';
 import { ResourceLinksComponent } from './pages/links/resource-links.component';
 
 @NgModule({
@@ -14,30 +16,44 @@ import { ResourceLinksComponent } from './pages/links/resource-links.component';
     RouterModule.forChild([
       {
         path: '',
-        redirectTo: 'collections',
+        redirectTo: 'files',
         pathMatch: 'full',
+      },
+      {
+        path: 'files',
+        component: ResourceFilesComponent,
+      },
+      {
+        path: 'files/create',
+        component: ResourceFileEditComponent,
+      },
+      {
+        path: 'files/:id',
+        component: ResourceFileEditComponent,
+      },
+      {
+        path: 'links',
+        component: ResourceLinksComponent,
+      },
+      {
+        path: 'links/create',
+        component: ResourceLinkEditComponent,
+      },
+      {
+        path: 'links/:id',
+        component: ResourceLinkEditComponent,
       },
       {
         path: 'collections',
         component: ResourceCollectionsComponent,
       },
       {
-        path: 'files',
-        component: ResourceFilesComponent,
-      },
-
-      {
-        path: 'links',
-        component: ResourceLinksComponent,
-      },
-
-      {
-        path: 'files/create',
-        component: ResourceCreateComponent,
+        path: 'collections/create',
+        component: ResourceCollectionEditComponent,
       },
       {
-        path: 'files/:id',
-        component: ResourceCreateComponent,
+        path: 'collections/:id',
+        component: ResourceCollectionEditComponent,
       },
     ]),
   ],

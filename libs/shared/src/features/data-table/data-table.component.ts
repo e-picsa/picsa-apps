@@ -35,7 +35,7 @@ export interface IDataTableOptions {
   /** Apply custom formatter to header values. Default replaces underscore with space and capitalises each word */
   formatHeader?: (value: string) => string;
   /** Bind to row click events */
-  handleRowClick?: (row: any) => void;
+  handleRowClick?: (row: any, event: Event) => void;
 }
 
 /** Default header formatter. Splits '_' column names and capitalises each word */

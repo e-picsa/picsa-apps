@@ -97,8 +97,7 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
   private async showCustomFetchErrorMessage(id: string, response: Response) {
     const body = await this.parseResponseBody(response);
     const errorText = body.detail || 'failed, see console logs for details';
-    console.error(response);
-    this.notificationService.showUserNotification({ matIcon: 'error', message: `[${id}] ${errorText}` });
+    throw new Error(`[${id}] ${errorText}`);
   }
 
   /**

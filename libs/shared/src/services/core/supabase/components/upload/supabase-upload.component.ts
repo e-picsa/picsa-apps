@@ -15,21 +15,23 @@ import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
 
 import { PicsaNotificationService } from '../../../notification.service';
-import { IStorageEntrySDK, SupabaseStorageService } from '../../services/supabase-storage.service';
+import { SupabaseStorageService } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
 
 /** Metadata populated to uploads so that supabase can process correctly */
 interface IUploadMeta extends InternalMetadata {
+  /** Name of bucket object stored in */
   bucketName: string;
   cacheControl: number;
   contentType?: string;
+  /** Path to object within bucket */
   objectName: string;
 }
 
 /** Storage entry data returned following upload */
 export interface IUploadResult {
   data: File | Blob;
-  entry: IStorageEntrySDK;
+  meta: IUploadMeta;
 }
 
 /**
@@ -60,10 +62,10 @@ export class SupabaseUploadComponent {
   @Input() fileDropHeight = 300;
 
   /** Name of storage bucket for upload. Must already exist with required access permissions */
-  @Input() storageBucketName = 'default';
+  @Input() storageBucketName = 'global';
 
   /** Nested folder path within storage bucket */
-  @Input() storageFolderPath = '';
+  @Input() storageFolderPath = 'uploads';
 
   /** Specify if storage folder path can be manually edited */
   @Input() storageFolderPathEditable = false;
@@ -143,19 +145,11 @@ export class SupabaseUploadComponent {
   private async handleUploadComplete(res: UploadResult) {
     const uploads = await Promise.all(
       res.successful.map(async (res) => {
+        const data = res.data as File;
         const meta: IUploadMeta = res.meta as any;
-        // HACK - manually retrieve db data associated with file. In future this may be handled automatically
-        // https://github.com/orgs/supabase/discussions/4303
-        const entry = await this.storageService.getFile({
-          bucketId: meta.bucketName,
-          filename: meta.name,
-          folderPath: meta.objectName.split('/').slice(0, -1).join('/'),
-        });
-        if (!entry) {
-          console.warn('Storage entry not found', meta);
-          throw new Error(`Storage entry not found`);
-        }
-        return { data: res.data, entry };
+
+        const result: IUploadResult = { data, meta };
+        return result;
       })
     );
     this.uploadComplete.next(uploads);
@@ -212,16 +206,14 @@ export class SupabaseUploadComponent {
   }
 
   private async checkDuplicateUpload(file: UppyFile) {
-    const storageFile = await this.storageService.getFile({
-      bucketId: this.storageBucketName,
-      filename: file.name,
-      folderPath: this.storageFolderPath,
-    });
+    let storagePath = `${this.storageBucketName}`;
+    if (this.storageFolderPath) {
+      storagePath += `/${this.storageFolderPath}`;
+    }
+    storagePath += `/${file.name}`;
+    const storageFile = await this.storageService.getFile(storagePath);
     if (storageFile) {
-      this.notificationService.showUserNotification({
-        matIcon: 'error',
-        message: `Resource with name ${file.name} already exists`,
-      });
+      throw new Error(`Resource with name ${file.name} already exists`);
       this.uppy.removeFile(file.id);
     }
   }

@@ -18,9 +18,10 @@ export class StationDetailsPageComponent implements OnInit {
   }
 
   public get stationSummary() {
+    const entries = Object.entries(this.station || {}).filter(([key]) => !['id', 'country_code'].includes(key));
     return {
-      keys: Object.keys(this.station || {}),
-      values: Object.values(this.station || {}),
+      keys: entries.map(([key]) => key),
+      values: entries.map(([, value]) => value),
     };
   }
 

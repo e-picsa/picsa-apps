@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, O
 import { ActivatedRoute } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { ILanguageCode } from '@picsa/data/deployments';
+import { ILocaleCode } from '@picsa/data/deployments';
 import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
@@ -43,7 +43,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     extension: null,
   };
 
-  public languageCode: ILanguageCode;
+  public languageCode: ILocaleCode;
 
   public page?: number = undefined;
   public pdfSrc?: string;

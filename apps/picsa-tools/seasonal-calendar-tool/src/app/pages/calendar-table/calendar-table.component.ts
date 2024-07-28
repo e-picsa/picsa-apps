@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
+import { _wait } from '@picsa/utils/browser.utils';
 import { debounceTime, startWith, Subject, takeUntil } from 'rxjs';
 
 import { CalendarDataEntry } from '../../schema';
@@ -26,6 +27,9 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
   public editMode = false;
 
   public form: ISeasonCalendarForm;
+
+  public shareStatus = 'share';
+  public shareDisabled = false;
 
   public get metaFormControls() {
     return this.form.controls.meta.controls;
@@ -109,5 +113,23 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
       .subscribe((crops) => {
         this.rowLabels = crops.map((crop) => this.cropsByName[crop]?.label);
       });
+  }
+
+  /**
+   * Initiates image sharing process, updating UI accordingly.
+   */
+  public async sharePicture() {
+    this.shareDisabled = true;
+    this.cdr.markForCheck();
+    await _wait(100);
+    try {
+      await this.service.shareAsImage(this.formValue.name);
+      this.shareStatus = 'share';
+    } catch (error: any) {
+      this.shareStatus = error?.message || 'Share Failed';
+    } finally {
+      this.shareDisabled = false;
+    }
+    this.cdr.detectChanges();
   }
 }

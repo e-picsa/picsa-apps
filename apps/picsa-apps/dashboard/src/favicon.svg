@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="p-logo-dashboard.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs16" />
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="3.6518596"
+     inkscape:cx="27.383309"
+     inkscape:cy="72.565769"
+     inkscape:window-width="1920"
+     inkscape:window-height="1094"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg12" />
+  <text
+     xml:space="preserve"
+     style="font-size:96px;display:none;fill:#ffffff;fill-opacity:1;stroke:#f9f9f9;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+     x="31.695999"
+     y="98.272003"
+     id="text168"
+     inkscape:label="p-text-noto-sans-72pt"><tspan
+       sodipodi:role="line"
+       id="tspan166"
+       x="31.695999"
+       y="98.272003"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:96px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Ultra-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">P</tspan></text>
+  <rect
+     style="fill:#3c6296;fill-opacity:1"
+     id="rect2512"
+     width="128"
+     height="128"
+     x="-0.2738331"
+     y="0.54766619"
+     inkscape:label="rect2512" />
+  <path
+     d="m 61.935555,16.451193 q 18.247023,0 26.904368,7.991396 8.790541,7.858207 8.790541,21.976341 0,6.393117 -1.864663,12.253475 -1.86466,5.727167 -6.259928,10.255626 -4.262078,4.528458 -11.321145,7.192257 -6.925876,2.663799 -17.181503,2.663799 H 53.011829 V 111.54881 H 30.369538 V 16.451193 Z m -0.79914,18.513402 h -8.124586 v 25.306089 h 5.993548 q 4.661647,0 8.124586,-1.331899 3.596128,-1.331899 5.593977,-4.262078 1.99785,-2.930179 1.99785,-7.591827 0,-5.860357 -3.329749,-8.923726 -3.329748,-3.196559 -10.255626,-3.196559 z"
+     style="font-weight:800;font-size:96px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Ultra-Bold';display:inline;fill:#ffffff;stroke:#f9f9f9;stroke-width:1.3874"
+     id="path170"
+     inkscape:label="p-text-path" />
+</svg>
