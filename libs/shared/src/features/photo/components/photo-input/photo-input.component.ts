@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, input, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -7,10 +7,7 @@ import { Capacitor } from '@capacitor/core';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { PhotoService } from '../../photo.service';
-
-interface Photo {
-  webPath?: string;
-}
+import { ENTRY_TEMPLATE } from '../../schema';
 
 @Component({
   selector: 'picsa-photo-input',
@@ -19,18 +16,20 @@ interface Photo {
   standalone: true,
   imports: [PicsaTranslateModule, MatButtonModule, MatIconModule],
 })
-export class PicsaPhotoInputComponent {
+export class PhotoInputComponent {
   @ViewChild('fileInput') fileInput: ElementRef;
-  @Input() activityId: string;
-  photos: Photo[] = [];
-
-  public isWebPlatform = Capacitor.getPlatform() === 'web';
+  /** Store photo within a specific named album */
+  album = input.required<string>();
+  /**
+   * Name to store photo as. If unspecified will be randomly generated
+   * If duplicate will override
+   */
+  name = input<string>();
 
   constructor(private photoService: PhotoService) {}
 
   async ngOnInit() {
     await this.photoService.init();
-    await this.loadPhotos();
   }
 
   // this method will be called when a user clicks the camera button
@@ -45,62 +44,11 @@ export class PicsaPhotoInputComponent {
       source: source,
     });
 
-    this.photos.push({
-      webPath: image.webPath,
-    });
-
-    // Save the photo to the database
-    const photoEntry = {
-      id: `${this.activityId}_${generateID()}`,
-      activity: this.activityId,
-      photoData: image.webPath || '',
-      timestamp: Date.now(),
-    };
-    await this.photoService.savePhoto(photoEntry);
+    if (image.webPath) {
+      const fetchRes = await fetch(image.webPath);
+      const blob = await fetchRes.blob();
+      const entry = ENTRY_TEMPLATE(this.album(), this.name());
+      await this.photoService.savePhoto(entry, blob);
+    }
   }
-
-  // this method will be called when a user selects a photo from the file input
-  processWebPicture(event: any) {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const photo = { webPath: e.target?.result as string };
-      this.photos.push(photo);
-
-      // Save the photo to the database
-      const photoEntry = {
-        id: `${this.activityId}_${generateID()}`,
-        activity: this.activityId,
-        photoData: photo.webPath,
-        timestamp: Date.now(),
-      };
-      await this.photoService.savePhoto(photoEntry);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // this method will load the photos from the database
-  async loadPhotos() {
-    this.photos = await this.photoService.getAllPhotos(this.activityId);
-  }
-
-  removePhoto(index: number) {
-    const photo = this.photos[index];
-    this.photos.splice(index, 1);
-    if (photo.webPath) this.photoService.deletePhoto(photo.webPath);
-  }
-
-  removeAllPhotos() {
-    this.photos = [];
-    this.photoService.deleteAllPhotos();
-  }
-}
-
-// this function will generate a random ID
-function generateID(length = 20, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
-  let autoId = '';
-  for (let i = 0; i < length; i++) {
-    autoId += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return autoId;
 }

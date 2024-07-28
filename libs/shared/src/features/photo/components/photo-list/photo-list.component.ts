@@ -1,14 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, computed, input } from '@angular/core';
 
-import { PicsaPhotoInputComponent } from '../photo-input/photo-input.component';
+import { PhotoService } from '../../photo.service';
+import { PhotoViewComponent } from '../photo-view/photo-view.component';
 
 @Component({
   selector: 'picsa-photo-list',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, PicsaPhotoInputComponent],
+  imports: [PhotoViewComponent],
   templateUrl: './photo-list.component.html',
   styleUrl: './photo-list.component.scss',
 })
-export class PicsaPhotoListComponent {}
+export class PhotoListComponent {
+  album = input<string>();
+
+  photos = computed(() => {
+    const album = this.album();
+    const photoDocs = this.service.photos();
+    return album ? photoDocs.filter((d) => d.album === album) : photoDocs;
+  });
+
+  constructor(private service: PhotoService) {}
+}

@@ -1,0 +1,10 @@
+@if(uri()){
+<img [src]="uri()" />
+<!-- TODO - show delete option on long press -->
+<button mat-icon-button (click)="promptDelete()" color="secondary" class="delete-button">
+  <mat-icon>close</mat-icon>
+</button>
+
+} @if(errorMsg()){
+<div class="error-msg">{{ errorMsg() }}</div>
+}

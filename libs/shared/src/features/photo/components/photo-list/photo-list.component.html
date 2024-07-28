@@ -1,5 +1,8 @@
-<div class="page-content">
-  <h2>Photos</h2>
-  <picsa-photo-input />
+<div class="photo-grid">
+  @for(photo of photos(); track photo.id;){
+  <picsa-photo-view [photo]="photo"></picsa-photo-view>
+  }
 </div>
-
+@if(photos().length ===0){
+<div class="no-photos-message">No photos uploaded yet</div>
+}
