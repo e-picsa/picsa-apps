@@ -19,6 +19,11 @@ export const APP_ROUTES: Routes = [
     children: extensionContentRoutes,
     title: 'PICSA',
   },
+  // Photos debug page
+  {
+    path: 'photos',
+    loadComponent: () => import('@picsa/shared/features/photo').then((mod) => mod.PhotoDebugComponent),
+  },
 
   // NOTE - Home not currently working as standalone component so keeping as module
   // (possibly needs to import router-outlet or similar for setup)

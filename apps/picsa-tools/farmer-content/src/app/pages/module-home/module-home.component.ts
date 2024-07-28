@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -8,13 +8,25 @@ import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IFarmerContentStep, IToolD
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { FadeInOut } from '@picsa/shared/animations';
+import { PhotoInputComponent, PhotoViewComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
+
+import { PhotoListComponent } from '../../../../../../../libs/shared/src/features/photo/components/photo-list/photo-list.component';
 
 @Component({
   selector: 'farmer-content-module-home',
   standalone: true,
-  imports: [CommonModule, PicsaTranslateModule, ResourcesComponentsModule, MatTabsModule, RouterOutlet],
+  imports: [
+    CommonModule,
+    PicsaTranslateModule,
+    ResourcesComponentsModule,
+    MatTabsModule,
+    PhotoInputComponent,
+    PhotoViewComponent,
+    RouterOutlet,
+    PhotoListComponent,
+  ],
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
   animations: [FadeInOut({ inSpeed: 200, inDelay: 100 })],
@@ -26,6 +38,15 @@ export class FarmerContentModuleHomeComponent {
   public content = signal<IFarmerContent | null>(null);
   public steps = signal<IFarmerContentStep[]>([]);
   public tools = signal<IToolData[]>([]);
+
+  /** Store any user-generated photos within a folder named after module */
+  public photoAlbum = computed(() => {
+    const content = this.content();
+    if (content) {
+      return `farmer-activity/${content.id}`;
+    }
+    return undefined;
+  });
 
   constructor(
     private route: ActivatedRoute,

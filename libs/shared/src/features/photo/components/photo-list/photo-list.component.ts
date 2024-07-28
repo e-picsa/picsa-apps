@@ -1,4 +1,5 @@
 import { Component, computed, input } from '@angular/core';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { PhotoService } from '../../photo.service';
 import { PhotoViewComponent } from '../photo-view/photo-view.component';
@@ -6,7 +7,7 @@ import { PhotoViewComponent } from '../photo-view/photo-view.component';
 @Component({
   selector: 'picsa-photo-list',
   standalone: true,
-  imports: [PhotoViewComponent],
+  imports: [PhotoViewComponent, PicsaTranslateModule],
   templateUrl: './photo-list.component.html',
   styleUrl: './photo-list.component.scss',
 })
