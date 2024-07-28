@@ -9,4 +9,4 @@ export const SCHEMA = schema.PHOTO_SCHEMA_V0;
 // Ensure blank templates always recreated from scratch
 export const ENTRY_TEMPLATE = schema.PHOTO_ENTRY_TEMPLATE_V0;
 
-export const COLLECTION_NAME = 'photo_storage';
+export const COLLECTION_NAME = 'photos';
