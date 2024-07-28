@@ -51,7 +51,12 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
    * @param convertNativeSrc - Convert to src usable within web content (e.g as image or pdf src)
    **/
   public async getFileAttachmentURI(doc: RxDocument<any>, convertNativeSrc = false) {
-    const attachment = await this.getAttachment(doc, doc.filename);
+    const attachmentName = doc.filename || doc.id;
+    if (!attachmentName) {
+      console.error(doc);
+      throw new Error(`No attachment name provided`);
+    }
+    const attachment = await this.getAttachment(doc, attachmentName);
     if (!attachment) return null;
     if (attachment) {
       if (Capacitor.isNativePlatform()) {
@@ -63,22 +68,23 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
       // On web data stored as base64 string, convert to blob and generate object url
       if (attachment.data) {
         const blob = await base64ToBlob(attachment.data, attachment.type);
-        this.objectURLs[doc.filename] = URL.createObjectURL(blob);
-        return this.objectURLs[doc.filename];
+        this.objectURLs[attachmentName] = URL.createObjectURL(blob);
+        return this.objectURLs[attachmentName];
       }
     }
     return null;
   }
   /**
    * Release a file attachment URI when no longer required
-   * @param filenames specific resource filenames to revoke (default all)
+   * @param attachmentNames specific resource attachmentNames to revoke
+   * These will usually be the doc.filename property (if exists) or doc.id
    * */
-  public async revokeFileAttachmentURIs(filenames: string[]) {
-    for (const filename of filenames) {
-      const url = this.objectURLs[filename];
+  public async revokeFileAttachmentURIs(attachmentNames: string[]) {
+    for (const attachmentName of attachmentNames) {
+      const url = this.objectURLs[attachmentName];
       if (url) {
         URL.revokeObjectURL(url);
-        delete this.objectURLs[filename];
+        delete this.objectURLs[attachmentName];
       }
     }
   }
