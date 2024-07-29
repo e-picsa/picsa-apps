@@ -13,7 +13,7 @@ import { IPhotoEntry } from '../../schema';
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './photo-view.component.html',
-  styleUrls: ['./photo-view.component.scss'],
+  styleUrl: './photo-view.component.scss',
 })
 export class PhotoViewComponent {
   /** Input photo document ref */
