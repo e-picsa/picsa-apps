@@ -1,10 +1,21 @@
 @if(uri()){
-<img [src]="uri()" />
+<img [src]="uri()" (click)="openPhotoDialog()" />
 <!-- TODO - show delete option on long press -->
 <button mat-icon-button (click)="promptDelete()" color="secondary" class="delete-button">
   <mat-icon>close</mat-icon>
 </button>
-
 } @if(errorMsg()){
 <div class="error-msg">{{ errorMsg() }}</div>
 }
+
+<ng-template #dialogTemplate let-data>
+  <div class="photo-dialog">
+    <img [src]="data.uri" [alt]="data.photo.title" />
+    <button mat-icon-button class="close-button" (click)="photoDialog.closeAll()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button mat-icon-button (click)="promptDelete()" color="warn" class="delete-button">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</ng-template>
