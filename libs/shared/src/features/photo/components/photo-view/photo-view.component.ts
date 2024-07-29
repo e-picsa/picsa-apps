@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, effect, Input, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Capacitor } from '@capacitor/core';
 
 import { PicsaDialogService } from '../../../dialog';
 import { PhotoService } from '../../photo.service';
@@ -45,14 +45,8 @@ export class PhotoViewComponent {
   }
 
   openPhotoDialog() {
-    const isMobilePlatform = Capacitor.getPlatform() === 'ios' || Capacitor.getPlatform() === 'android';
     this.photoDialog.open(this.dialogTemplate, {
       data: { photo: this.photo, uri: this.uri() },
-      width: isMobilePlatform ? '100%' : 'auto',
-      height: isMobilePlatform ? '100%' : 'auto',
-      maxHeight: '100%',
-      maxWidth: '100%',
-      panelClass: 'photo-dialog',
     });
   }
 

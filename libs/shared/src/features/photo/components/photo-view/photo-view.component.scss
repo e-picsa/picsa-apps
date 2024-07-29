@@ -42,18 +42,3 @@ button.delete-button.mat-mdc-icon-button.mat-mdc-button-base {
     object-fit: contain;
   }
 }
-
-.photo-dialog .close-button {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  display: flex;
-  gap: 10px;
-}
-
-.delete-button {
-  position: relative;
-  top: 5px;
-  cursor: pointer;
-  color: red;
-}

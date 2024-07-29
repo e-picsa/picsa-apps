@@ -10,11 +10,15 @@
 
 <ng-template #dialogTemplate let-data>
   <div class="photo-dialog">
-    <img [src]="data.uri" [alt]="data.photo.title" />
-    <button mat-icon-button class="close-button" (click)="photoDialog.closeAll()">
+    <div
+      mat-icon-button
+      (click)="photoDialog.closeAll()"
+      style="cursor: pointer; width: 100%; display: flex; justify-content: end"
+    >
       <mat-icon>close</mat-icon>
-    </button>
-    <div (click)="promptDelete()" class="delete-button">
+    </div>
+    <img [src]="data.uri" [alt]="data.photo.title" />
+    <div (click)="promptDelete()" style="cursor: pointer; color: red; margin-top: 5px">
       <mat-icon>delete</mat-icon>
     </div>
   </div>
