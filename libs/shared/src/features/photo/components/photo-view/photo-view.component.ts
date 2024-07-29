@@ -1,8 +1,8 @@
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, effect, Input, signal, TemplateRef,ViewChild } from '@angular/core';
+import { Component, effect, Input, signal, TemplateRef, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { Capacitor } from '@capacitor/core';
 
 import { PicsaDialogService } from '../../../dialog';
 import { PhotoService } from '../../photo.service';
@@ -22,16 +22,10 @@ export class PhotoViewComponent {
   uri = signal('');
   /** Error message to display */
   errorMsg = signal('');
-  isMobile = signal(false);
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
-  constructor(
-    private service: PhotoService,
-    private dialog: PicsaDialogService,
-    public photoDialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
-  ) {
+  constructor(private service: PhotoService, private dialog: PicsaDialogService, public photoDialog: MatDialog) {
     effect(
       async (onCleanup) => {
         const photo = this.photo;
@@ -48,16 +42,17 @@ export class PhotoViewComponent {
       },
       { allowSignalWrites: true }
     );
-
-    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe((result) => {
-      this.isMobile.set(result.matches);
-    });
   }
 
   openPhotoDialog() {
+    const isMobilePlatform = Capacitor.getPlatform() === 'ios' || Capacitor.getPlatform() === 'android';
     this.photoDialog.open(this.dialogTemplate, {
       data: { photo: this.photo, uri: this.uri() },
-      panelClass: this.isMobile() ? 'full-screen-dialog' : '',
+      width: isMobilePlatform ? '100%' : 'auto',
+      height: isMobilePlatform ? '100%' : 'auto',
+      maxHeight: '100%',
+      maxWidth: '100%',
+      panelClass: 'photo-dialog',
     });
   }
 
