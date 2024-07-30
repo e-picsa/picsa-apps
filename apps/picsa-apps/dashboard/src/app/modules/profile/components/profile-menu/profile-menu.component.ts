@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
+import { ENVIRONMENT } from '@picsa/environments/src';
 import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.component';
@@ -21,7 +22,10 @@ export class ProfileMenuComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     await this.supabaseAuthService.ready();
-    await this.supabaseAuthService.signInDefaultUser();
+    // HACK - use anonymous user when running in dev
+    if (!ENVIRONMENT.production) {
+      await this.supabaseAuthService.signInDefaultUser();
+    }
   }
   public signOut() {
     console.log('signing out');
