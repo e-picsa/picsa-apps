@@ -26,3 +26,23 @@ button.delete-button.mat-mdc-icon-button.mat-mdc-button-base {
   height: 100%;
   border: 1px solid var(--color-light);
 }
+
+.photo-dialog {
+  position: relative;
+  flex: 1;
+  // HACK - fix vertical scroll appearing at 100vh
+  max-height: calc(100vh - 6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    object-fit: contain;
+  }
+  .dialog-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
