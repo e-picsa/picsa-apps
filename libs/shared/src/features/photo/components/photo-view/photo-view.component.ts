@@ -47,7 +47,6 @@ export class PhotoViewComponent {
 
   openPhotoDialog() {
     this.photoDialog.open(this.dialogTemplate, {
-      data: { photo: this.photo, uri: this.uri() },
       width: '100vw',
       height: '100vh',
       maxWidth: '100vw',
