@@ -49,7 +49,8 @@
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",
           "node_modules/leaflet/dist/leaflet.css",
-          "@uppy/core/dist/style.min.css"
+          "@uppy/core/dist/style.min.css",
+          "@uppy/dashboard/dist/style.min.css"
         ],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]
