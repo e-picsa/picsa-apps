@@ -757,6 +757,10 @@
     "tool": "common"
   },
   {
+    "text": "Add Photo",
+    "tool": "common"
+  },
+  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
@@ -842,6 +846,10 @@
   },
   {
     "text": "New Profile",
+    "tool": "common"
+  },
+  {
+    "text": "No photos added",
     "tool": "common"
   },
   {
