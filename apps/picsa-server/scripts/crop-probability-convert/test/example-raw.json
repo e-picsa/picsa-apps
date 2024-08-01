@@ -1,0 +1,5137 @@
+{
+  "?xml": "",
+  "w:document": {
+    "w:body": {
+      "w:tbl": {
+        "w:tblPr": {
+          "w:tblW": "",
+          "w:tblInd": "",
+          "w:tblBorders": {
+            "w:top": "",
+            "w:left": "",
+            "w:bottom": "",
+            "w:right": "",
+            "w:insideH": "",
+            "w:insideV": ""
+          },
+          "w:tblLook": ""
+        },
+        "w:tblGrid": {
+          "w:gridCol": ["", "", "", "", "", "", "", "", ""]
+        },
+        "w:tr": [
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:gridSpan": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": [
+                    {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": "",
+                        "w:lang": ""
+                      },
+                      "w:t": "MNDANDANDA WA MBEWU"
+                    },
+                    {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "â CHIKWAWA DISTRICT, CHAPANANGA MET STATION"
+                    }
+                  ]
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": ""
+                    },
+                    "w:t": "20-Nov"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": ""
+                    },
+                    "w:t": "30-Nov"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": ""
+                    },
+                    "w:t": "10-Dec"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": ""
+                    },
+                    "w:t": "20-Dec"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": ""
+                    },
+                    "w:t": "30-Dec"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:gridSpan": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:gridSpan": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Kuthekera kwa mvula kuyamba pa tsiku lasonyezedwa mâmwambali or tsikuli lisanafike"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:gridSpan": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "7/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "8/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Mbewu"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Mtundu wa Mbewu"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": [
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:jc": "",
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Masiku omwe"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:jc": "",
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Mbewu imatenga"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Kuti ikhwime"
+                    }
+                  }
+                ]
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": [
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:jc": "",
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Kuchuluka"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:jc": "",
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "kwa madzi"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:jc": "",
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "ofunikira pa"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:rFonts": "",
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "mbewu(mm)"
+                    }
+                  }
+                ]
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:gridSpan": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Ngati mvula yayamba kugwa patsiku lili mâmwambamu, Kuthekera kolandira mvula yokwanira kufikira mbewu itakhwima`"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": [
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Chimanga"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "SC304 (Kalulu)"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 80
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 304
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "6/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "DKC 8033 or SC 403, SC 423 (Kanyani), PAN 67"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 90
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 342
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "DKC 9089, DKC8033"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 120
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 456
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "SC719, 725 Njovu"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 158
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 600
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:rFonts": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "MH 26, MH30, ZM 623, MH26, Peacock 10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 140
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 532
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:shd": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "PAN 67"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 140
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 532
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "ZM 309"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 115
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 437
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "ZM 523"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 125
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 475
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "PAN 57, PAN 63"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 144
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 547
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "PAN 53"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 145
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 551
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Mpunga"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Pilira 1 or Pilira 2"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 90
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 288
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Naliyeta"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 100
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 400
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Kaphulira"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 105
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 420
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Kenya, Semusa, Mugamba, Salera, Kakoma, Nyamoyo, Anaakwanire, Mathuthu, Chipika, Kadyaubwelere, Kamchiputu"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 150
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 600
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": [
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Mapira"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Mbatata"
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:lastRenderedPageBreak": "",
+                    "w:t": "Manyokola, Kalawe,"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 300
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Mbundumali"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "12-18 months"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Chinangwa"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": "",
+                      "w:highlight": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Chimbamba"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": "",
+                      "w:highlight": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 86
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": "",
+                      "w:highlight": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 327
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Nua Beans"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 72
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 274
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "6/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "5/10"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Nyemba"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "CG7"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 105
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 399
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Chalimbana"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 150
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 570
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": "",
+                      "w:lang": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Malimba"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 120
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 456
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:bottom": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:b": "",
+                      "w:bCs": "",
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Ntedza"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Nthawa June"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 120
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 456
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "1/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:vMerge": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Mwaiwathualimi (ICEAP00557)"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 160
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 608
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": "",
+                  "w:tcBorders": {
+                    "w:tr2bl": ""
+                  }
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "w:trPr": {
+              "w:trHeight": ""
+            },
+            "w:tc": [
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": [
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    }
+                  },
+                  {
+                    "w:pPr": {
+                      "w:spacing": "",
+                      "w:rPr": {
+                        "w:sz": "",
+                        "w:szCs": ""
+                      }
+                    },
+                    "w:r": {
+                      "w:rPr": {
+                        "w:b": "",
+                        "w:bCs": "",
+                        "w:sz": "",
+                        "w:szCs": ""
+                      },
+                      "w:t": "Nandolo"
+                    }
+                  }
+                ]
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": "Sudan 1"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 90
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    },
+                    "w:t": 342
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "4/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "3/10"
+                  }
+                }
+              },
+              {
+                "w:tcPr": {
+                  "w:tcW": ""
+                },
+                "w:p": {
+                  "w:pPr": {
+                    "w:spacing": "",
+                    "w:jc": "",
+                    "w:rPr": {
+                      "w:sz": "",
+                      "w:szCs": ""
+                    }
+                  },
+                  "w:r": {
+                    "w:t": "2/10"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "w:p": [
+        {
+          "w:pPr": {
+            "w:spacing": "",
+            "w:ind": "",
+            "w:rPr": {
+              "w:i": "",
+              "w:sz": "",
+              "w:szCs": ""
+            }
+          },
+          "w:r": {
+            "w:rPr": {
+              "w:i": "",
+              "w:sz": "",
+              "w:szCs": ""
+            },
+            "w:t": "Note: Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0, Using Chapananga Met Station (Lat: -â¦, Lon: â¦, Alt: â¦)"
+          }
+        },
+        {
+          "w:pPr": {
+            "w:spacing": "",
+            "w:ind": "",
+            "w:rPr": {
+              "w:i": "",
+              "w:sz": "",
+              "w:szCs": ""
+            }
+          }
+        }
+      ],
+      "w:sectPr": {
+        "w:pgSz": "",
+        "w:pgMar": "",
+        "w:cols": "",
+        "w:docGrid": ""
+      }
+    }
+  }
+}
