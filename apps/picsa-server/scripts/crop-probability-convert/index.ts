@@ -1,7 +1,7 @@
 // npx tsx watch apps\picsa-server\scripts\crop-probability-convert\index.ts
 
 import { emptyDirSync, ensureDirSync, readdirSync } from 'fs-extra';
-import { basename, extname, resolve } from 'path';
+import { basename, extname, relative, resolve } from 'path';
 import { loadAsync } from 'jszip';
 import { readFileSync, writeFileSync } from 'fs';
 import { xmlToJson } from '../../../../libs/utils/xml';
@@ -63,7 +63,8 @@ interface IWordXMLJSON {
  */
 class DocExtractor {
   public async extract(path: string) {
-    console.log(path);
+    const logName = relative(inputDir, path);
+    console.log(logName + '\n');
     if (!path.endsWith('.docx')) {
       console.error(path);
       throw new Error(`Only docx files supported`);
@@ -86,7 +87,11 @@ class DocExtractor {
       ensureWrite(jsonTmpPath, JSON.stringify(json, null, 2));
 
       // extract row content from deeply nested row xml
-      const table = json['w:document']['w:body']['w:tbl'];
+      let table = json['w:document']['w:body']['w:tbl'];
+      // hack - usually a single table element but sometimes defined in array
+      if (Array.isArray(table)) {
+        table = table[0];
+      }
       const tableRows = table['w:tr'];
       for (const tableRow of tableRows) {
         const rowData: string[] = [];
@@ -100,8 +105,6 @@ class DocExtractor {
             .filter(([key]) => key.endsWith('w:t'))
             .map(([key, value]) => value)
             .join('\n');
-          // TODO - sort as arrays
-          // TODO - handle merged cells (?)
           rowData.push(cellData);
         }
         tableData.push(rowData);
@@ -179,6 +182,7 @@ async function main() {
     const outputPath = path.replace('input', 'output').replace('.docx', '.json');
     ensureWrite(outputPath, JSON.stringify(output, null, 2));
   }
+  console.log('Conversion complete\n' + outputDir);
 }
 
 main();
