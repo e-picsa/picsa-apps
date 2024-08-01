@@ -3,6 +3,7 @@ import { ICropName } from '@picsa/data';
 export interface IStationCropInformation {
   id: string;
   station_name: string;
+  station_district?: string;
   station_data: IStationCropData[];
   notes: string[];
   dates: string[];

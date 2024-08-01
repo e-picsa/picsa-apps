@@ -4,6 +4,11 @@ import { emptyDirSync, ensureDirSync, readdirSync } from 'fs-extra';
 import { basename, extname, relative, resolve } from 'path';
 import { loadAsync } from 'jszip';
 import { readFileSync, writeFileSync } from 'fs';
+import {
+  IStationCropData,
+  IStationCropDataItem,
+  IStationCropInformation,
+} from '../../../picsa-tools/crop-probability-tool/src/app/models';
 import { xmlToJson } from '../../../../libs/utils/xml';
 
 const inputDir = resolve(__dirname, 'input');
@@ -144,6 +149,16 @@ class DocParser {
   public run() {
     const meta = this.extractTableMeta();
     const cropData = this.extractCropProbabilities();
+    const entry: IStationCropInformation = {
+      // TODO - extract district and name from filenames
+      id: `{district}/{station_name}`,
+      station_district: '{district}',
+      station_name: '{station_name}',
+      dates: meta.startDates,
+      notes: [], // TODO - could extract from child p elements
+      season_probabilities: meta.startProbabilities,
+      station_data: [],
+    };
     return { ...meta, cropData };
   }
   private extractTableMeta() {
@@ -154,17 +169,23 @@ class DocParser {
     return { title, startDates, startProbabilities };
   }
   private extractCropProbabilities() {
-    const cropData: { cropGroup: string; variety: string; days: number; water: number; probabilities: string[] }[] = [];
-    let cropGroup = '';
+    const cropData: Record<string, IStationCropDataItem[]> = {};
+    let currentCropType = '';
     for (const row of this.rowData) {
-      const [group, variety, days, water, ...probabilities] = row;
+      const [cropType, variety, days, water, ...probabilities] = row;
       // only the first row in a crop group contains the name, so track for next
-      if (group) {
-        cropGroup = group;
+      if (cropType) {
+        cropData[cropType] = [];
+        currentCropType = cropType;
       }
-      cropData.push({ cropGroup, variety, days: parseInt(days), water: parseInt(water), probabilities });
+      // store data within groups
+      cropData[currentCropType].push({ days, variety, probabilities, water: [water] });
     }
-    return cropData;
+    return Object.entries(cropData).map(([crop, data]) => {
+      // TODO - handle crops that have been translated
+      const entry: IStationCropData = { crop: crop as any, data };
+      return entry;
+    });
   }
 }
 
