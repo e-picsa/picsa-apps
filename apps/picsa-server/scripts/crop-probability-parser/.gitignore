@@ -1,0 +1,5 @@
+input/*
+!input/.gitkeep
+tmp
+output/*
+!output/.gitkeep
