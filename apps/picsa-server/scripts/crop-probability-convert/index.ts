@@ -1,4 +1,4 @@
-// npx tsx watch apps\picsa-server\scripts\crop-probability-convert\xml-parser-test.ts
+// npx tsx watch apps\picsa-server\scripts\crop-probability-convert\index.ts
 
 import { emptyDirSync, ensureDirSync, readdirSync } from 'fs-extra';
 import { basename, extname, resolve } from 'path';
@@ -8,6 +8,7 @@ import { xmlToJson } from '../../../../libs/utils/xml';
 
 const inputDir = resolve(__dirname, 'input');
 const outputDir = resolve(__dirname, 'output');
+const tmpDir = resolve(__dirname, 'tmp');
 
 // Example word xml tags at: http://officeopenxml.com/WPtableCell.php
 interface IWordXMLJSONTableRow {
@@ -77,7 +78,13 @@ class DocExtractor {
 
     if (docFile) {
       const xmlContent = await docFile.async('string');
+      const xmlTmpPath = path.replace('input', 'tmp').replace('.docx', '.xml');
+      ensureWrite(xmlTmpPath, xmlContent);
+
       const json: IWordXMLJSON = xmlToJson(xmlContent);
+      const jsonTmpPath = path.replace('input', 'tmp').replace('.docx', '.json');
+      ensureWrite(jsonTmpPath, JSON.stringify(json, null, 2));
+
       // extract row content from deeply nested row xml
       const table = json['w:document']['w:body']['w:tbl'];
       const tableRows = table['w:tr'];
@@ -161,6 +168,8 @@ class DocParser {
 async function main() {
   ensureDirSync(outputDir);
   emptyDirSync(outputDir);
+  ensureDirSync(tmpDir);
+  emptyDirSync(tmpDir);
   const extractor = new DocExtractor();
   const docPaths = extractor.list(inputDir);
   for (const path of docPaths) {
@@ -168,13 +177,23 @@ async function main() {
     const parsed = new DocParser(extracted).run();
     const output = { _filename: basename(path), ...parsed };
     const outputPath = path.replace('input', 'output').replace('.docx', '.json');
-    ensureDirSync(resolve(outputPath, '../'));
-    writeFileSync(outputPath, JSON.stringify(output, null, 2));
+    ensureWrite(outputPath, JSON.stringify(output, null, 2));
   }
 }
 
 main();
 
+/**
+ * Take a nested json object and flatten so that all properties appear
+ * within top-level keys.
+ * Copied from https://stackoverflow.com/a/19101235
+ * @example
+ * ```
+ * flattenJson({parent: {child: 'value'}})
+ * // returns
+ * {"parent.child":"value"}
+ * ```
+ */
 function flattenJSON(data: any) {
   var result = {};
   function recurse(cur, prop) {
@@ -194,4 +213,10 @@ function flattenJSON(data: any) {
   }
   recurse(data, '');
   return result;
+}
+
+/** Utility to ensure parent folder exists when writing to file */
+function ensureWrite(path: string, data: string) {
+  ensureDirSync(resolve(path, '../'));
+  writeFileSync(path, data);
 }
