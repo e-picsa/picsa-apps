@@ -33,9 +33,15 @@
   justify-content: center;
   overflow: auto;
   line-height: 1rem;
+  text-transform: capitalize;
 }
 mat-icon.option-icon {
   width: 64px;
   height: 64px;
   font-size: 64px;
+}
+.option-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
 }
