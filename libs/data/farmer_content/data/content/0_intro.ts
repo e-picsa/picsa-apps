@@ -1,9 +1,9 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/picsa/farmer-videos';
 import { IFarmerContent, IFarmerContentStep } from '../../types';
+import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
-const steps: IFarmerContentStep[] = [];
+const steps: IFarmerContentStep[] = [{ type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro }];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'intro',
@@ -11,6 +11,5 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   tools: [],
   tags: [{ label: translateMarker('Tutorials') }],
   steps,
-  disabled: true,
 };
 export default content;

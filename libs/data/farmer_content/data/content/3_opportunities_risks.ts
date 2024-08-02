@@ -1,15 +1,15 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/picsa/farmer-videos';
 import { IFarmerContent, IFarmerContentStep } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
+import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
 const { probability_and_risk } = TOOLS_DATA_HASHMAP;
 
 const steps: IFarmerContentStep[] = [
   {
     type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].probability_risk,
+    video: PICSA_FARMER_VIDEOS_HASHMAP.probability_risk,
   },
 ];
 
