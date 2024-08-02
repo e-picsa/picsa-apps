@@ -1,24 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IFarmerContentStep, IToolData } from '@picsa/data';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { FadeInOut } from '@picsa/shared/animations';
-import { PhotoInputComponent, PhotoListComponent,PhotoViewComponent } from '@picsa/shared/features';
+import { PhotoInputComponent, PhotoListComponent, PhotoViewComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
+
+import { FarmerStepVideoComponent } from '../../components/step-video/step-video.component';
 
 @Component({
   selector: 'farmer-content-module-home',
   standalone: true,
   imports: [
     CommonModule,
+    FarmerStepVideoComponent,
     PicsaTranslateModule,
-    ResourcesComponentsModule,
+    MatIconModule,
     MatTabsModule,
     PhotoInputComponent,
     PhotoViewComponent,

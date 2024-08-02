@@ -1,8 +1,7 @@
-import type { IResourceFile } from '@picsa/resources/src/app/schemas';
-
 import type { IFarmerContentId } from './data/content';
 
 import type { IToolId } from './data/tools';
+import { IPicsaVideoData } from '../resources';
 
 export interface IToolData {
   id: IToolId;
@@ -14,7 +13,7 @@ export interface IToolData {
 
 interface IFarmerContentStepVideo {
   type: 'video';
-  resource: IResourceFile;
+  video: IPicsaVideoData;
   /** Label to show when selecting content from tab */
   tabLabel?: string;
 }

@@ -32,10 +32,8 @@
           {{ step.tabLabel || 'video' | translate }}
         </ng-template>
         <div class="tab-content">
-          @if(step.resource){
-          <resource-item-file [resource]="step.resource"></resource-item-file>
-          } @else {
-          <div>Video resource not found</div>
+          @if(step.video){
+          <farmer-step-video [videoData]="step.video"></farmer-step-video>
           }
         </div>
 

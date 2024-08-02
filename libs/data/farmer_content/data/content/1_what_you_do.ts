@@ -1,20 +1,20 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { PICSA_FARMER_VIDEO_RESOURCES } from '@picsa/resources/src/app/data/picsa/farmer-videos';
 import { IFarmerContent, IFarmerContentStep } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
+import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
 const { seasonal_calendar } = TOOLS_DATA_HASHMAP;
 
 const steps: IFarmerContentStep[] = [
   {
     type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].ram,
+    video: PICSA_FARMER_VIDEOS_HASHMAP.ram,
     tabLabel: translateMarker('Ram'),
   },
   {
     type: 'video',
-    resource: PICSA_FARMER_VIDEO_RESOURCES.mw_ny['360p'].seasonal_calendar,
+    video: PICSA_FARMER_VIDEOS_HASHMAP.seasonal_calendar,
     tabLabel: translateMarker('Calendar'),
   },
 ];
