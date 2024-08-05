@@ -5,7 +5,7 @@ Scripts to support parsing crop probability tables from docx files
 Run directly with live-reload
 
 ```sh
-npx tsx watch apps/picsa-server/scripts/crop-probability-parser/index.ts
+npx tsx watch apps/picsa-server/scripts/crop-probability-parser/src/index.ts
 ```
 
 ## TODO
