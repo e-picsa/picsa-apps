@@ -41,7 +41,7 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 })
 export class SupabaseSignInDialogComponent {
   public title = 'Sign In';
-  public template: 'signIn' | 'register' = 'signIn';
+  public template: 'signIn' | 'register' | 'reset' = 'signIn';
 
   errorMatcher = new showErrorAfterInteraction();
 
@@ -55,6 +55,18 @@ export class SupabaseSignInDialogComponent {
     private notificationService: PicsaNotificationService,
     private supabaseAuthService: SupabaseAuthService
   ) {}
+
+  public enableResetMode() {
+    this.template = 'reset';
+    this.title = 'Reset Password';
+    this.form.removeControl('passwordConfirm');
+  }
+
+  public enableSignInMode() {
+    this.template = 'signIn';
+    this.title = 'Sign In';
+    this.form.removeControl('passwordConfirm');
+  }
 
   public enableRegisterMode() {
     this.template = 'register';
@@ -81,6 +93,17 @@ export class SupabaseSignInDialogComponent {
     this.form.disable();
     const { email, password } = this.form.value;
     const { error } = await this.supabaseAuthService.signUpUser(email, password);
+    if (error) {
+      throw new Error(error.message);
+      this.form.enable();
+    } else {
+      this.dialogRef.close();
+    }
+  }
+  public async handleReset() {
+     this.form.disable();
+    const { email } = this.form.value;
+    const { error } = await this.supabaseAuthService.resetEmailPassword(email);
     if (error) {
       throw new Error(error.message);
       this.form.enable();
