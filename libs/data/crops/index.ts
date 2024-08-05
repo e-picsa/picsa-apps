@@ -13,8 +13,7 @@ const CROPS_DATA_BASE = {
   mangoes: { label: translateMarker('Mangoes'), icon: 'assets/svgs/crops/mangoes.svg' },
   onions: { label: translateMarker('Onions'), icon: 'assets/svgs/crops/onions.svg' },
   paprika: { label: translateMarker('Paprika'), icon: 'assets/svgs/crops/paprika.svg' },
-  // TODO - add icon
-  'pearl-millet': { label: translateMarker('Pearl Millet'), icon: '' },
+  'pearl-millet': { label: translateMarker('Pearl Millet'), icon: 'assets/svgs/crops/pearl-millet.svg' },
   'paw-paw': { label: translateMarker('Paw-paw'), icon: 'assets/svgs/crops/paw-paw.svg' },
   'pigeon-peas': { label: translateMarker('Pigeon Peas'), icon: 'assets/svgs/crops/pigeon-peas.svg' },
   potato: { label: translateMarker('Potatoes'), icon: 'assets/svgs/crops/potato.svg' },
