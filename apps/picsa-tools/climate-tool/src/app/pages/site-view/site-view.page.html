@@ -1,7 +1,7 @@
 <climate-print-layout *ngIf="chartService.chartPng"></climate-print-layout>
 
 <div class="page-content">
-  <picsa-sidenav-layout #snav>
+  <picsa-sidenav-layout #snav [initialOpen]="true">
     <button desktopHeader mat-button color="primary" (click)="showShareDialog()">
       <mat-icon>share</mat-icon>{{ 'Share' | translate }}
     </button>
