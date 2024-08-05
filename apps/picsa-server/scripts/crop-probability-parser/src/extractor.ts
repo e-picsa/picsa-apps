@@ -6,6 +6,7 @@ import { xmlToJson } from '../../../../../libs/utils/xml';
 import { IWordXMLJSON } from './types';
 import { PATHS } from './paths';
 import { ensureWrite, flattenJSON } from './utils';
+import { DISTRICTS } from './data/districts';
 
 const { inputDir } = PATHS;
 
@@ -70,22 +71,71 @@ export class DocExtractor {
    * These consist of doc and docx files (ignoring temp files)
    **/
   public list(basePath: string) {
-    let docPaths: string[] = [];
+    let allPaths: { country: string; district: string; location: string; filename: string; sheetPath: string }[] = [];
     // Attempt to extract any file with .doc or .docx extensions.
     // .doc files will require upgrade to docx (error thrown during processing)
     const EXTENSIONS = ['.doc', '.docx', '.DOC', '.DOCX'];
 
-    const docFolders = readdirSync(basePath, { withFileTypes: true })
-      .filter((dir) => dir.isDirectory())
-      .map((dir) => resolve(dir.path, dir.name));
-    for (const folder of docFolders) {
-      const docs = readdirSync(folder)
-        .filter((docName) => EXTENSIONS.includes(extname(docName)) && !docName.startsWith('~$'))
-        .map((docName) => resolve(folder, docName));
-      for (const doc of docs) {
-        docPaths.push(doc);
+    const countryFolders = readdirSync(basePath, { withFileTypes: true }).filter((dir) => dir.isDirectory());
+
+    for (const countryFolder of countryFolders) {
+      const districtFolderPath = resolve(countryFolder.path, countryFolder.name);
+
+      const districtFolders = readdirSync(districtFolderPath, { withFileTypes: true }).filter((dir) =>
+        dir.isDirectory()
+      );
+      for (const districtFolder of districtFolders) {
+        const sheetsFolderPath = resolve(districtFolder.path, districtFolder.name);
+        const sheetNames = readdirSync(sheetsFolderPath).filter(
+          (docName) => EXTENSIONS.includes(extname(docName)) && !docName.startsWith('~$')
+        );
+        for (const sheetName of sheetNames) {
+          const sheetPath = resolve(sheetsFolderPath, sheetName);
+          const country = this.extractCountryId(countryFolder.name);
+          const district = this.extractDistrictId(country, districtFolder.name);
+          const location = this.extractLocationName(country, district, sheetName);
+          allPaths.push({ country, district, location, sheetPath, filename: sheetName });
+        }
       }
     }
-    return docPaths;
+    return allPaths;
+  }
+
+  private extractCountryId(text: string) {
+    if (text.length !== 2) throw new Error(`Expected 2-letter country code, received "${text}"`);
+    return text.toLowerCase();
+  }
+
+  /**
+   *
+   * NOTE - this is not currently a strict requirement as location names extracted from
+   * docx contents are displayed in the app instead of filename-based names
+   */
+  private extractLocationName(countryId: string, districtId: string, text: string) {
+    const cleaned = text
+      .toLowerCase()
+      .replace(countryId, '')
+      .replace(districtId, '')
+      // replace commonly reused terms
+      .replace(/crop|information|sheet|translated|updated|docx/g, '')
+      .replace(/[^a-z]/g, '_')
+      // remove start and end trailing underscores
+      .replace(/^[^a-z]*/, '')
+      .replace(/[^a-z]*$/, '');
+
+    // if no sublocation just use district
+    return cleaned || districtId;
+  }
+
+  /** */
+  private extractDistrictId(countryId: string, text: string) {
+    if (countryId !== 'mw')
+      throw new Error(`No district information available for "${countryId}"\nPlease include in local data folder`);
+
+    const districts = Object.values(DISTRICTS.mw);
+    const matchText = text.toLowerCase().replace(/[^a-z]/g, '_');
+    const matched = districts.find(({ id }) => matchText.indexOf(id) > -1);
+    if (!matched) throw new Error(`Coud not find matching district for "${matchText}"`);
+    return matched.id;
   }
 }
