@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject,Injectable, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
@@ -35,7 +36,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   private auth: SupabaseAuthClient;
 
-  constructor(private notificationService: PicsaNotificationService) {
+  constructor(@Inject(DOCUMENT) private document: Document, private notificationService: PicsaNotificationService) {
     super();
   }
 
@@ -61,6 +62,21 @@ export class SupabaseAuthService extends PicsaAsyncService {
   public async signUpUser(email: string, password: string) {
     return this.auth.signUp({ email, password });
   }
+
+  public async resetEmailPassword(email: string) {
+    const baseUrl = this.document.location.origin;
+    const redirectToUrl = `${baseUrl}/profile/password-reset`;
+    return this.auth.resetPasswordForEmail(email,  {
+      redirectTo: redirectToUrl,
+    });
+  }
+
+
+  // this works automatically since the access token is saved in cookies (really cool)
+  public async resetResetUserPassword(newPassword: string) {
+    return this.auth.updateUser({ password: newPassword });
+  }
+
 
   public async signOut() {
     return this.auth.signOut();
@@ -136,4 +152,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
     });
     // TODO - trigger auth token refresh on permissions change
   }
+
+  
 }
