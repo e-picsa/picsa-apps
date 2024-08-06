@@ -1,4 +1,4 @@
-import { PICSA_FARMER_VIDEO_RESOURCES_HASHMAP } from '@picsa/data/resources';
+import { PICSA_FARMER_VIDEO_RESOURCES_HASHMAP, PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP } from '@picsa/data/resources';
 
 import { IResourceCollection } from '../../schemas';
 
@@ -15,4 +15,8 @@ const picsa_videos_farmer: IResourceCollection = {
   parentCollection: 'picsa_videos',
 };
 
-export default { ...PICSA_FARMER_VIDEO_RESOURCES_HASHMAP, picsa_videos_farmer };
+export default {
+  ...PICSA_FARMER_VIDEO_RESOURCES_HASHMAP,
+  ...PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP,
+  picsa_videos_farmer,
+};

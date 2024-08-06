@@ -37,7 +37,7 @@ export class FarmerStepVideoComponent {
 
   private selectDefaultVideo(locale_code: ILocaleCode, videos: IPicsaVideo[]) {
     // prioritise video in same locale
-    const localeVideo = videos.find((v) => v.locale_code === locale_code);
+    const localeVideo = videos.find((v) => v.locale_codes.includes(locale_code));
     if (localeVideo) return localeVideo;
 
     // TODO - fallback video to same language different locale
