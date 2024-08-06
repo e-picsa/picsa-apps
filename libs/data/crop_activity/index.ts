@@ -49,5 +49,4 @@ export const CROP_ACTIVITY_DATA = Object.entries(CROP_ACTIVITY_BASE)
   })
   .sort((a, b) => (a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1));
 
-console.log({ CROP_ACTIVITY_DATA });
 export const CROP_ACTIVITY_HASHMAP = arrayToHashmap(CROP_ACTIVITY_DATA, 'id');
