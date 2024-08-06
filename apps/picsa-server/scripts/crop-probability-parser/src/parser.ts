@@ -40,7 +40,7 @@ export class DocParser {
       }
       // store data within groups
       cropData[currentCropType].push({
-        variety: removeLinebreaks(variety),
+        variety: removeLinebreaks(variety, ' '),
         days,
         water: [water],
         probabilities: this.parseProbabilities(probabilities),
@@ -69,6 +69,6 @@ export class DocParser {
     return entries.map((text) => removeLinebreaks(text));
   }
 }
-function removeLinebreaks(text: string) {
-  return text.replace(/\n/g, '');
+function removeLinebreaks(text: string, replaceText = '') {
+  return text.replace(/\n/g, replaceText);
 }

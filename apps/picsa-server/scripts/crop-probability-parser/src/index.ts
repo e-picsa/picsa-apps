@@ -1,11 +1,10 @@
 import { emptyDirSync, ensureDirSync } from 'fs-extra';
-import { basename, resolve } from 'path';
+import { resolve } from 'path';
 
 import { DocExtractor } from './extractor';
 import { PATHS } from './paths';
 import { ensureWrite } from './utils';
 import { DocParser } from './parser';
-import { IStationCropInformation } from '../../../../picsa-tools/crop-probability-tool/src/app/models';
 
 const { inputDir, outputDir, tmpDir } = PATHS;
 
