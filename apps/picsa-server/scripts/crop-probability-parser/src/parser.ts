@@ -9,15 +9,17 @@ export class DocParser {
 
   public run() {
     const meta = this.extractTableMeta();
-    const cropData = this.extractCropProbabilities();
-    const entry = {
-      // TODO - extract district and name from filenames
-      dates: meta.startDates,
+    const data = this.extractCropProbabilities();
+    const entry: IStationCropInformation = {
+      id: '', // populated later
+      station_district_id: '', // populated later
+      station_name: removeLinebreaks(meta.title),
+      dates: this.parseDates(meta.startDates),
+      season_probabilities: this.parseProbabilities(meta.startProbabilities),
       notes: [], // TODO - could extract from child p elements
-      season_probabilities: meta.startProbabilities,
-      station_data: [],
+      data,
     };
-    return { ...meta, cropData };
+    return entry;
   }
   private extractTableMeta() {
     // Process and remove the first 4 rows of data which contain various metadata
@@ -33,11 +35,16 @@ export class DocParser {
       const [cropType, variety, days, water, ...probabilities] = row;
       // only the first row in a crop group contains the name, so track for next
       if (cropType) {
-        cropData[cropType] = [];
-        currentCropType = cropType;
+        currentCropType = this.parseCropType(cropType);
+        cropData[currentCropType] = [];
       }
       // store data within groups
-      cropData[currentCropType].push({ days, variety, probabilities, water: [water] });
+      cropData[currentCropType].push({
+        variety: removeLinebreaks(variety, ' '),
+        days,
+        water: [water],
+        probabilities: this.parseProbabilities(probabilities),
+      });
     }
     return Object.entries(cropData).map(([crop, data]) => {
       // TODO - handle crops that have been translated
@@ -46,8 +53,22 @@ export class DocParser {
     });
   }
 
-  /** HACK -  */
-  private extractCropType() {
-    //
+  /** Ensure crops formatted in lower-case without spaces (use `-`) */
+  private parseCropType(text: string) {
+    const lower = text.toLowerCase().trim();
+    return removeLinebreaks(lower).replace(/ /g, '-');
   }
+
+  /** Ensure linebreaks remove from probabilities */
+  private parseProbabilities(entries: string[]) {
+    return entries.map((text) => removeLinebreaks(text));
+  }
+
+  /** Ensure linebreaks removed from dates */
+  private parseDates(entries: string[]) {
+    return entries.map((text) => removeLinebreaks(text));
+  }
+}
+function removeLinebreaks(text: string, replaceText = '') {
+  return text.replace(/\n/g, replaceText);
 }
