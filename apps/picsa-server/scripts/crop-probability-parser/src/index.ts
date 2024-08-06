@@ -23,18 +23,10 @@ async function main() {
     outputs[country] ??= [];
     const id = `${country}/${district_id}/${location}`;
 
-    const data = new DocParser(extracted).run();
-    const { cropData, startDates, startProbabilities, title } = data;
+    const output = new DocParser(extracted).run();
+    output.id = id;
+    output.station_district_id = district_id;
 
-    const output: IStationCropInformation = {
-      id,
-      station_district_id: district_id,
-      dates: startDates,
-      season_probabilities: startProbabilities,
-      station_name: title,
-      data: cropData,
-      notes: [],
-    };
     outputs[country].push(output);
   }
   for (const [country_id, output] of Object.entries(outputs)) {

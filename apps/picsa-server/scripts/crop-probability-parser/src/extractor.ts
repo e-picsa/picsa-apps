@@ -117,7 +117,7 @@ export class DocExtractor {
       .replace(countryId, '')
       .replace(districtId, '')
       // replace commonly reused terms
-      .replace(/crop|information|sheet|translated|updated|docx/g, '')
+      .replace(/crop|information|sheet|translated|updated|docx|water|requirement|english|met|station/g, '')
       .replace(/[^a-z]/g, '_')
       // remove start and end trailing underscores
       .replace(/^[^a-z]*/, '')
