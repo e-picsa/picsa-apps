@@ -66,10 +66,15 @@ export class SupabaseAuthService extends PicsaAsyncService {
   public async resetEmailPassword(email: string) {
     const baseUrl = this.document.location.origin;
     const redirectToUrl = `${baseUrl}/profile/password-reset`;
-    console.log('redirectToUrl', redirectToUrl);
     return this.auth.resetPasswordForEmail(email,  {
       redirectTo: redirectToUrl,
     });
+  }
+
+
+  // this works automatically since the access token is saved in cookies (really cool)
+  public async resetResetUserPassword(newPassword: string) {
+    return this.auth.updateUser({ password: newPassword });
   }
 
 
@@ -147,4 +152,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
     });
     // TODO - trigger auth token refresh on permissions change
   }
+
+  
 }

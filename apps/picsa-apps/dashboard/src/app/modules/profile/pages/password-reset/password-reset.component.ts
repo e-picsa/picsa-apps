@@ -11,9 +11,12 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import { SupabaseAuthService } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 export class showErrorAfterInteraction implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -36,16 +39,23 @@ export class PasswordResetComponent {
     password: new FormControl('', Validators.required),
   });
  
-  // constructor(public authService: DashboardAuthService, public deploymentService: DeploymentDashboardService) {
-  //   effect(() => {
-  //     const authRoleFeatures: string[] = [];
+  constructor ( private route: ActivatedRoute,
+    private router: Router, private supabaseAuthService: SupabaseAuthService, private notificationService: PicsaNotificationService
+  ) {}
 
-  //     const roles = this.authService.authRoles();
-  //     for (const role of roles) {
-  //       const [feature, level] = role.split('.');
-  //       if (!authRoleFeatures.includes(feature)) authRoleFeatures.push(feature);
-  //     }
-  //     this.authRoleFeatures = authRoleFeatures;
-  //   });
-  // }
+  public async handlePasswordReset(){
+    if(this.form.value.password !== this.form.value.confirmPassword) {
+      this.notificationService.showErrorNotification('Make sure your passwords match');
+      return;
+    }
+    this.form.disable();
+    const { error} = await  this.supabaseAuthService.resetResetUserPassword(this.form.value.password)
+    if (error) {
+      this.form.enable();
+      throw new Error(error.message);
+    } else {
+      this.notificationService.showSuccessNotification('Password reset successful');
+      this.router.navigate(['/login']);
+    }
+  }
 }
