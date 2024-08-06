@@ -64,6 +64,6 @@ export class CropProbabilityStationSelectComponent {
   /** When station changes update route query params so that parent can handle updates */
   public handleStationChange(stationId: string) {
     const queryParams: IStationRouteQueryParams = { stationId };
-    this.router.navigate([], { relativeTo: this.route, queryParams });
+    this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
   }
 }
