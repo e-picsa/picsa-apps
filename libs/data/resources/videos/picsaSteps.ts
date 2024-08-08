@@ -16,11 +16,17 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
     children: [
       {
         id: '',
-        locale_codes: ['mw_ny'],
+        locale_codes: ['mw_ny', 'global_en'],
         resolution: '360p',
         size_kb: 12900,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Intro.mp4?t=2024-08-02T05%3A17%3A54.946Z',
+        supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Intro.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny', 'global_en'],
+        resolution: '360p',
+        size_kb: 12630,
+        supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Intro.mp4',
       },
     ],
   },
