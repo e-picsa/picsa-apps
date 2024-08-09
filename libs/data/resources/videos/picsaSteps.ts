@@ -1,6 +1,5 @@
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
-import { hackGenerateLegacyResources } from './utils';
 
 type IPicsaFarmerVideoId =
   | 'intro'

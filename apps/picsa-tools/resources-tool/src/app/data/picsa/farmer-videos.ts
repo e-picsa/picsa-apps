@@ -1,4 +1,4 @@
-import { PICSA_FARMER_VIDEO_RESOURCES_HASHMAP, PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP } from '@picsa/data/resources';
+import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 
 import { IResourceCollection } from '../../schemas';
 
@@ -9,10 +9,7 @@ import { IResourceCollection } from '../../schemas';
  * TODO - migrate all resources to use modern format so code below can be removed
  ***************************************************************************/
 
-const files = [
-  ...Object.keys(PICSA_FARMER_VIDEO_RESOURCES_HASHMAP),
-  ...Object.keys(PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP),
-];
+const files = Object.keys(RESOURCE_VIDEO_HASHMAP);
 
 /**
  * Create a collection to store all farmer videos populated to hardcoded data
@@ -28,7 +25,6 @@ const picsa_videos_farmer: IResourceCollection = {
 };
 
 export default {
-  ...PICSA_FARMER_VIDEO_RESOURCES_HASHMAP,
-  ...PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP,
+  ...RESOURCE_VIDEO_HASHMAP,
   picsa_videos_farmer,
 };

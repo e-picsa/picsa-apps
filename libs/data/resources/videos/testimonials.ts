@@ -1,23 +1,31 @@
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
-import { hackGenerateLegacyResources } from './utils';
 
-type ITestimonialId = 'victoria_ngombe' | 'john_tembo' | 'jackline_nkhoma' | 'dani_chambwe';
+type ITestimonialId = 'male' | 'female';
 
 const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData, 'id'>> = {
-  victoria_ngombe: {
+  female: {
     title: '',
     children: [
       {
-        id: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/victoria_ngombe.mp4',
+        id: '',
         locale_codes: ['mw_ny', 'global_en'],
         resolution: '360p',
         size_kb: 5080,
-        supabase_url: '',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/victoria_ngombe.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny', 'global_en'],
+        resolution: '360p',
+        size_kb: 6740,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/jackline_nkhoma.mp4',
       },
     ],
   },
-  dani_chambwe: {
+  male: {
     title: '',
     children: [
       {
@@ -28,11 +36,6 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/dani_chambwe.mp4',
       },
-    ],
-  },
-  john_tembo: {
-    title: '',
-    children: [
       {
         id: '',
         locale_codes: ['zm_ny', 'global_en'],
@@ -40,19 +43,6 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
         size_kb: 10150,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/john_tembo.mp4',
-      },
-    ],
-  },
-  jackline_nkhoma: {
-    title: '',
-    children: [
-      {
-        id: '',
-        locale_codes: ['zm_ny', 'global_en'],
-        resolution: '360p',
-        size_kb: 6740,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/jackline_nkhoma.mp4',
       },
     ],
   },

@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ILocaleCode } from '@picsa/data';
+import { ICountryCode } from '@picsa/data/deployments';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
-import { PICSA_FARMER_VIDEO_RESOURCES_HASHMAP } from '@picsa/data/resources';
+import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 
 /**
@@ -25,25 +26,46 @@ export class FarmerStepVideoComponent {
   videoData = input.required<IPicsaVideoData>();
 
   videoResource = computed(() => {
-    const { language_code } = this.configurationService.userSettings();
+    // HACK - when identifying video to show user cannot rely solely on language_code as
+    // that populates 'global_en' when different country used (should be zm_en)
+    // So instead use country_code specified and language part of localeCode
+
+    const { country_code: userCountry, language_code } = this.configurationService.userSettings();
+    const [_, userLanguage] = language_code.split('_');
     const availableVideos = this.videoData().children;
-    const video = this.selectDefaultVideo(language_code, availableVideos);
+    const video = this.selectDefaultVideo(userCountry, userLanguage, availableVideos);
     // HACK - lookup resource entry which should be given by same id
-    const resource = PICSA_FARMER_VIDEO_RESOURCES_HASHMAP[video.id];
+    const resource = RESOURCE_VIDEO_HASHMAP[video.id];
     return resource;
   });
 
   constructor(private configurationService: ConfigurationService) {}
 
-  private selectDefaultVideo(locale_code: ILocaleCode, videos: IPicsaVideo[]) {
-    // prioritise video in same locale
-    const localeVideo = videos.find((v) => v.locale_codes.includes(locale_code));
-    if (localeVideo) return localeVideo;
-
-    // TODO - fallback video to same language different locale
-    // TODO - track preference for video size (when supported in future, currently all 360p)
+  private selectDefaultVideo(userCountry: string, userLanguage: string, videos: IPicsaVideo[] = []) {
+    const rankedVideos = videos
+      .map((v) => ({ ...v, _rank: getVideoRank(userCountry, userLanguage, v) }))
+      .filter(({ _rank }) => _rank > 0)
+      .sort((a, b) => a._rank - b._rank);
 
     // default fallback to first video entry
-    return videos[0];
+    return rankedVideos[0] || videos[0];
   }
+}
+
+function getVideoRank(userCountry: string, userLanguage: string, video: IPicsaVideo) {
+  const [audio, subtitle] = video.locale_codes;
+  const [audioCountry, audioLanguage] = audio.split('_');
+  const subtitleLanguage = subtitle?.split('_')[1];
+
+  // 1 - same country and audio
+  if (audioCountry === userCountry && audioLanguage === userLanguage) return 1;
+  // 2 - same country and user language subtitle
+  if (audioCountry === userCountry && subtitleLanguage === userLanguage) return 2;
+  // 3 - global video with user language audio
+  if (audioCountry === 'global' && audioLanguage === userLanguage) return 3;
+  // 4 - global video with user language subtitle
+  if (audioCountry === 'global' && subtitleLanguage === userLanguage) return 4;
+  // 5 - return all videos for global users
+  if (userCountry === 'global') return 5;
+  return -1;
 }

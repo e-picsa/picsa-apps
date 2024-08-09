@@ -10,11 +10,13 @@ import { hackGenerateLegacyResources } from './utils';
  * TODO - migrate all resources to use modern format so code below can be removed
  ***************************************************************************/
 
-const PICSA_FARMER_VIDEO_RESOURCES = hackGenerateLegacyResources(PICSA_FARMER_VIDEOS_DATA);
-const PICSA_VIDEO_TESTIMONIAL_RESOURCES = hackGenerateLegacyResources(PICSA_VIDEO_TESTIMONIAL_DATA);
+const steps = hackGenerateLegacyResources(PICSA_FARMER_VIDEOS_DATA);
+const testimonials = hackGenerateLegacyResources(PICSA_VIDEO_TESTIMONIAL_DATA);
 
-export const PICSA_FARMER_VIDEO_RESOURCES_HASHMAP = arrayToHashmap(PICSA_FARMER_VIDEO_RESOURCES, 'id');
-export const PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP = arrayToHashmap(PICSA_VIDEO_TESTIMONIAL_RESOURCES, 'id');
+export const RESOURCE_VIDEO_HASHMAP = {
+  ...arrayToHashmap(steps, 'id'),
+  ...arrayToHashmap(testimonials, 'id'),
+};
 
 export * from './picsaSteps';
 export * from './testimonials';
