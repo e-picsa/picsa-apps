@@ -19,5 +19,6 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   tools: [climate],
   tags: [],
   steps,
+  showReviewSection: true,
 };
 export default content;

@@ -25,5 +25,6 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   tools: [seasonal_calendar],
   tags: [],
   steps,
+  showReviewSection: true,
 };
 export default content;

@@ -28,15 +28,26 @@
         <!-- video -->
         @case ("video") {
         <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">slideshow</mat-icon>
+          <mat-icon class="tab-icon">{{ step.tabMatIcon || 'slideshow' }}</mat-icon>
           {{ step.tabLabel || 'video' | translate }}
         </ng-template>
         <div class="tab-content">
           @if(step.video){
-          <farmer-step-video [step]="step"></farmer-step-video>
+          <farmer-step-video [videoData]="step.video"></farmer-step-video>
           }
         </div>
-
+        }
+        <!-- video playlist -->
+        @case ("video_playlist") {
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">{{ step.tabMatIcon || 'slideshow' }}</mat-icon>
+          {{ step.tabLabel || 'video' | translate }}
+        </ng-template>
+        <div class="tab-content">
+          @for(video of step.videos; track video.id){
+          <farmer-step-video [videoData]="video"></farmer-step-video>
+          }
+        </div>
         } }
       </mat-tab>
       }
@@ -55,7 +66,7 @@
       </mat-tab>
       }
       <!-- User photos -->
-      @if(photoAlbum(); as album){
+      @if(content.showReviewSection){ @if(photoAlbum(); as album){
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">perm_media</mat-icon>
@@ -67,7 +78,7 @@
         </div>
       </mat-tab>
 
-      }
+      } }
       <!-- @if(tools()[1]; as tool_1){
       <mat-tab>
         <ng-template mat-tab-label>

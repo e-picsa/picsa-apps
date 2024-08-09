@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { IFarmerContentStep, ILocaleCode } from '@picsa/data';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
@@ -22,21 +21,20 @@ import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/c
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
-  step = input.required<IFarmerContentStep>();
+  videoData = input.required<IPicsaVideoData>();
 
-  videoResources = computed(() => {
+  videoResource = computed(() => {
     // HACK - when identifying video to show user cannot rely solely on language_code as
     // that populates 'global_en' when different country used (should be zm_en)
     // So instead use country_code specified and language part of localeCode
 
     const { country_code: userCountry, language_code } = this.configurationService.userSettings();
     const [_, userLanguage] = language_code.split('_');
-    const availableVideos = this.step().video.children;
+    const availableVideos = this.videoData().children;
     const videos = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
     // HACK - lookup resource entry which should be given by same id
     const resources = videos.map((video) => RESOURCE_VIDEO_HASHMAP[video.id]);
-    // HACK - limit max number of videos if not expecting multiple
-    return this.step().multiple ? resources : [resources[0]];
+    return resources[0];
   });
 
   constructor(private configurationService: ConfigurationService) {}

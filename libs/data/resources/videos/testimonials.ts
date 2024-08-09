@@ -1,10 +1,10 @@
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
-type ITestimonialId = 'combined';
+type ITestimonialId = 'male' | 'female';
 
 const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData, 'id'>> = {
-  combined: {
+  female: {
     title: '',
     children: [
       {
@@ -23,6 +23,11 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/jackline_nkhoma.mp4',
       },
+    ],
+  },
+  male: {
+    title: '',
+    children: [
       {
         id: '',
         locale_codes: ['mw_ny', 'global_en'],

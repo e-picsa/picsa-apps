@@ -6,10 +6,10 @@ import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_VIDEO_TESTIMONIAL_HASHMAP } from '@p
 const steps: IFarmerContentStep[] = [
   { type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro, tabLabel: translateMarker('Intro') },
   {
-    type: 'video',
-    video: PICSA_VIDEO_TESTIMONIAL_HASHMAP.combined,
+    type: 'video_playlist',
+    videos: [PICSA_VIDEO_TESTIMONIAL_HASHMAP.female, PICSA_VIDEO_TESTIMONIAL_HASHMAP.male],
     tabLabel: translateMarker('Testimonials'),
-    multiple: true,
+    tabMatIcon: 'people',
   },
 ];
 
