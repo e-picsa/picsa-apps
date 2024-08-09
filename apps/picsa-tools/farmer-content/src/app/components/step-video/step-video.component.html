@@ -1,5 +1,8 @@
-@if(videoResource()){
-<resource-item-file [resource]="videoResource()"></resource-item-file>
-} @else {
+@for(resource of videoResources(); track resource.id){
+<resource-item-file [resource]="resource"></resource-item-file>
+
+}
+<!-- No videos found -->
+@if(videoResources().length ===0 ) {
 <p>Video not found</p>
 }

@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ILocaleCode } from '@picsa/data';
-import { ICountryCode } from '@picsa/data/deployments';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
@@ -25,7 +24,7 @@ import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/c
 export class FarmerStepVideoComponent {
   videoData = input.required<IPicsaVideoData>();
 
-  videoResource = computed(() => {
+  videoResources = computed(() => {
     // HACK - when identifying video to show user cannot rely solely on language_code as
     // that populates 'global_en' when different country used (should be zm_en)
     // So instead use country_code specified and language part of localeCode
@@ -33,22 +32,22 @@ export class FarmerStepVideoComponent {
     const { country_code: userCountry, language_code } = this.configurationService.userSettings();
     const [_, userLanguage] = language_code.split('_');
     const availableVideos = this.videoData().children;
-    const video = this.selectDefaultVideo(userCountry, userLanguage, availableVideos);
+    const videos = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
     // HACK - lookup resource entry which should be given by same id
-    const resource = RESOURCE_VIDEO_HASHMAP[video.id];
-    return resource;
+    const resources = videos.map((video) => RESOURCE_VIDEO_HASHMAP[video.id]);
+    return resources;
   });
 
   constructor(private configurationService: ConfigurationService) {}
 
-  private selectDefaultVideo(userCountry: string, userLanguage: string, videos: IPicsaVideo[] = []) {
+  private filterAvailableVideos(userCountry: string, userLanguage: string, videos: IPicsaVideo[] = []) {
     const rankedVideos = videos
       .map((v) => ({ ...v, _rank: getVideoRank(userCountry, userLanguage, v) }))
       .filter(({ _rank }) => _rank > 0)
       .sort((a, b) => a._rank - b._rank);
 
     // default fallback to first video entry
-    return rankedVideos[0] || videos[0];
+    return rankedVideos;
   }
 }
 
