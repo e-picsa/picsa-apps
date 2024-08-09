@@ -64,7 +64,7 @@ export const PICSA_VIDEO_TESTIMONIAL_DATA: IPicsaVideoData[] = Object.entries(PI
     children: entry.children.map((child) => {
       const { locale_codes, resolution } = child;
       const [locale_code] = locale_codes;
-      child.id = `farmer_${id}_${locale_code}_${resolution}`;
+      child.id = `farmer_testimonial_${id}_${locale_code}_${resolution}`;
       return child;
     }),
   })
@@ -74,14 +74,3 @@ export const PICSA_VIDEO_TESTIMONIAL_HASHMAP: Record<ITestimonialId, IPicsaVideo
   PICSA_VIDEO_TESTIMONIAL_DATA,
   'id'
 );
-
-/**************************************************************************
- * Legacy Resource Format
- * Support legacy resources system where each resource child has own db entry
- *
- * TODO - migrate all resources to use modern format so code below can be removed
- ***************************************************************************/
-
-export const PICSA_VIDEO_TESTIMONIAL_RESOURCES = hackGenerateLegacyResources(PICSA_VIDEO_TESTIMONIAL_DATA);
-
-export const PICSA_VIDEO_TESTIMONIAL_RESOURCES_HASHMAP = arrayToHashmap(PICSA_VIDEO_TESTIMONIAL_RESOURCES, 'id');
