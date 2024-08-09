@@ -5,7 +5,12 @@ import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_VIDEO_TESTIMONIAL_HASHMAP } from '@p
 
 const steps: IFarmerContentStep[] = [
   { type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro, tabLabel: translateMarker('Intro') },
-  { type: 'video', video: PICSA_VIDEO_TESTIMONIAL_HASHMAP.combined, tabLabel: translateMarker('Testimonials') },
+  {
+    type: 'video',
+    video: PICSA_VIDEO_TESTIMONIAL_HASHMAP.combined,
+    tabLabel: translateMarker('Testimonials'),
+    multiple: true,
+  },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {

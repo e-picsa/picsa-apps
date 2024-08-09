@@ -16,6 +16,8 @@ interface IFarmerContentStepVideo {
   video: IPicsaVideoData;
   /** Label to show when selecting content from tab */
   tabLabel?: string;
+  /** Show multiple videos (playlist) */
+  multiple?: boolean;
 }
 
 export type IFarmerContentStep = IFarmerContentStepVideo;

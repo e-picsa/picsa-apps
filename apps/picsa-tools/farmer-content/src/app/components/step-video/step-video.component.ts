@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { ILocaleCode } from '@picsa/data';
+import { IFarmerContentStep, ILocaleCode } from '@picsa/data';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
@@ -22,7 +22,7 @@ import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/c
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
-  videoData = input.required<IPicsaVideoData>();
+  step = input.required<IFarmerContentStep>();
 
   videoResources = computed(() => {
     // HACK - when identifying video to show user cannot rely solely on language_code as
@@ -31,11 +31,12 @@ export class FarmerStepVideoComponent {
 
     const { country_code: userCountry, language_code } = this.configurationService.userSettings();
     const [_, userLanguage] = language_code.split('_');
-    const availableVideos = this.videoData().children;
+    const availableVideos = this.step().video.children;
     const videos = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
     // HACK - lookup resource entry which should be given by same id
     const resources = videos.map((video) => RESOURCE_VIDEO_HASHMAP[video.id]);
-    return resources;
+    // HACK - limit max number of videos if not expecting multiple
+    return this.step().multiple ? resources : [resources[0]];
   });
 
   constructor(private configurationService: ConfigurationService) {}
@@ -66,5 +67,7 @@ function getVideoRank(userCountry: string, userLanguage: string, video: IPicsaVi
   if (audioCountry === 'global' && subtitleLanguage === userLanguage) return 4;
   // 5 - return all videos for global users
   if (userCountry === 'global') return 5;
+  // 6 - return global fallback
+  if (audioCountry === 'global' && audioLanguage === 'en') return 6;
   return -1;
 }
