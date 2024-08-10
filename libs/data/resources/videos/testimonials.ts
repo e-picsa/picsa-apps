@@ -1,11 +1,9 @@
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
-type ITestimonialId = 'male' | 'female';
-
-const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData, 'id'>> = {
-  female: {
-    title: '',
+const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> = {
+  victoria_ngombe: {
+    title: "Victoria Ng'ombe",
     children: [
       {
         id: '',
@@ -15,6 +13,11 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/victoria_ngombe.mp4',
       },
+    ],
+  },
+  jackline_nkhoma: {
+    title: 'Jackline Nkhoma',
+    children: [
       {
         id: '',
         locale_codes: ['zm_ny', 'global_en'],
@@ -25,8 +28,9 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
       },
     ],
   },
-  male: {
-    title: '',
+
+  dani_chambwe: {
+    title: 'Dani Chambwe',
     children: [
       {
         id: '',
@@ -36,13 +40,17 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/dani_chambwe.mp4',
       },
+    ],
+  },
+  john_tembo: {
+    title: 'John Tembo',
+    children: [
       {
         id: '',
         locale_codes: ['zm_ny', 'global_en'],
         resolution: '360p',
         size_kb: 10150,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/john_tembo.mp4',
+        supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/.mp4',
       },
     ],
   },
@@ -50,7 +58,8 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<ITestimonialId, Omit<IPicsaVideoData,
 
 export const PICSA_VIDEO_TESTIMONIAL_DATA: IPicsaVideoData[] = Object.entries(PICSA_VIDEO_TESTIMONIAL_BASE).map(
   ([id, entry]) => ({
-    id: id as ITestimonialId,
+    ...entry,
+    id,
     children: entry.children.map((child) => {
       const { locale_codes, resolution } = child;
       const [locale_code] = locale_codes;
@@ -60,7 +69,7 @@ export const PICSA_VIDEO_TESTIMONIAL_DATA: IPicsaVideoData[] = Object.entries(PI
   })
 );
 
-export const PICSA_VIDEO_TESTIMONIAL_HASHMAP: Record<ITestimonialId, IPicsaVideoData> = arrayToHashmap(
+export const PICSA_VIDEO_TESTIMONIAL_HASHMAP: Record<string, IPicsaVideoData> = arrayToHashmap(
   PICSA_VIDEO_TESTIMONIAL_DATA,
   'id'
 );

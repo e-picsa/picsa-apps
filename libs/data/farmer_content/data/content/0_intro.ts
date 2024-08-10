@@ -7,7 +7,7 @@ const steps: IFarmerContentStep[] = [
   { type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro, tabLabel: translateMarker('Intro') },
   {
     type: 'video_playlist',
-    videos: [PICSA_VIDEO_TESTIMONIAL_HASHMAP.female, PICSA_VIDEO_TESTIMONIAL_HASHMAP.male],
+    videos: Object.values(PICSA_VIDEO_TESTIMONIAL_HASHMAP),
     tabLabel: translateMarker('Testimonials'),
     tabMatIcon: 'people',
   },

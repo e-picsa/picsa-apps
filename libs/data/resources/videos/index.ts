@@ -17,6 +17,5 @@ export const RESOURCE_VIDEO_HASHMAP = {
   ...arrayToHashmap(steps, 'id'),
   ...arrayToHashmap(testimonials, 'id'),
 };
-
 export * from './picsaSteps';
 export * from './testimonials';

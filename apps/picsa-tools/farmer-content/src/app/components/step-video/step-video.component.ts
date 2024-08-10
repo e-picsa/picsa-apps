@@ -27,14 +27,17 @@ export class FarmerStepVideoComponent {
     // HACK - when identifying video to show user cannot rely solely on language_code as
     // that populates 'global_en' when different country used (should be zm_en)
     // So instead use country_code specified and language part of localeCode
-
     const { country_code: userCountry, language_code } = this.configurationService.userSettings();
     const [_, userLanguage] = language_code.split('_');
     const availableVideos = this.videoData().children;
-    const videos = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
-    // HACK - lookup resource entry which should be given by same id
-    const resources = videos.map((video) => RESOURCE_VIDEO_HASHMAP[video.id]);
-    return resources[0];
+    // HACK - select best video recommendation. TODO - show toggle options in future
+    const [video] = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
+    if (video) {
+      // HACK - lookup resource entry which should be given by same id
+      const resource = RESOURCE_VIDEO_HASHMAP[video.id];
+      return resource;
+    }
+    return undefined;
   });
 
   constructor(private configurationService: ConfigurationService) {}
