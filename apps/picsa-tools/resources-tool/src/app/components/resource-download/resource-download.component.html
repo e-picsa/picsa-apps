@@ -1,5 +1,5 @@
 <!-- Ready -->
-@if(downloadStatus==='ready'){
+@if(downloadStatus==='ready' || downloadStatus==='error'){
 <button mat-icon-button (click)="downloadResource()" [attr.data-style-variant]="styleVariant">
   <div class="download-button-inner">
     <mat-icon style="font-size: 30px">download</mat-icon>

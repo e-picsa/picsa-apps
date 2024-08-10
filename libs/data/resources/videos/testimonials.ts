@@ -50,7 +50,8 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         locale_codes: ['zm_ny', 'global_en'],
         resolution: '360p',
         size_kb: 10150,
-        supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/.mp4',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/john_tembo.mp4',
       },
     ],
   },
