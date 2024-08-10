@@ -17,7 +17,6 @@ const TOOLS_BASE = {
     href: 'crop-probability',
     tabLabel: translateMarker('Tool'),
   },
-  // resource_allocation_map: { label: translateMarker('Resource Allocation Map'), tabLabel: translateMarker('RAM Tool') },
   seasonal_calendar: {
     label: translateMarker('Seasonal Calendar'),
     href: 'seasonal-calendar',

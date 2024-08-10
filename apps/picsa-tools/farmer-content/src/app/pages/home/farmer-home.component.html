@@ -14,9 +14,9 @@
         <h2 class="step-title">{{ step.title | translate }}</h2>
         <div class="tags-container">
           @for(tag of step.tags; track tag){
-          <span class="tag step-tag">{{ tag.label | translate }}</span>
+          <span class="tag" [attr.data-color]="tag.color">{{ tag.label | translate }}</span>
           } @for(tool of step.tools; track tool){
-          <span class="tag tool-tag">{{ tool.label | translate }}</span>
+          <span class="tag">{{ tool.label | translate }}</span>
           }
         </div>
       </div>

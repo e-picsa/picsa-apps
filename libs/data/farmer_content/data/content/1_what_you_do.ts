@@ -23,7 +23,7 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'what-do-you-currently-do',
   title: translateMarker('What do you currently do?'),
   tools: [seasonal_calendar],
-  tags: [],
+  tags: [{ label: translateMarker('Resource Allocation Map') }],
   steps,
   showReviewSection: true,
 };

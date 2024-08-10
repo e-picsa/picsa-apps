@@ -37,7 +37,7 @@ export interface IFarmerContent {
   icon_path: string;
   title: string;
   tools: IToolData[];
-  tags: { label: string }[];
+  tags: { label: string; color?: 'primary' | 'secondary' }[];
   steps: IFarmerContentStep[];
   disabled?: boolean;
   /** Include a photo-input section as part of review */

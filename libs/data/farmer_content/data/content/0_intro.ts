@@ -17,7 +17,7 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'intro',
   title: translateMarker('What is PICSA?'),
   tools: [],
-  tags: [{ label: translateMarker('Tutorials') }],
+  tags: [{ label: translateMarker('Tutorials'), color: 'secondary' }],
   steps,
 };
 export default content;

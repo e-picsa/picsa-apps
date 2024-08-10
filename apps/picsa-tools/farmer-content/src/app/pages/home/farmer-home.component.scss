@@ -79,12 +79,10 @@ button.mat-mdc-icon-button.nav-button {
   background: var(--tag-background, black);
   padding: 8px;
   color: white;
-  .step-tag {
-  }
 }
-.tag.tool-tag {
+.tag {
   --tag-background: var(--color-primary);
 }
-.tag.step-tag {
+.tag[data-color='secondary'] {
   --tag-background: var(--color-secondary);
 }
