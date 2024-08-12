@@ -4,7 +4,7 @@ import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { APP_VERSION } from '@picsa/environments/src';
+import { APP_VERSION, ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
@@ -162,9 +162,9 @@ export class ResourcesToolService extends PicsaAsyncService {
     // TODO - process after cache check
     await this.deleteRemovedResources();
 
-    // Use caching system to only populate once per app version launch
+    // Use caching system to only populate once per app version launch in production
     const assetsCacheVersion = this.getAssetResourcesVersion();
-    if (assetsCacheVersion === APP_VERSION.number) {
+    if (ENVIRONMENT.production && assetsCacheVersion === APP_VERSION.number) {
       return;
     }
     // Update DB with hardcoded entries

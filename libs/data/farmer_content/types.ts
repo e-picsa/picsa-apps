@@ -11,14 +11,25 @@ export interface IToolData {
   tabLabel?: string;
 }
 
-interface IFarmerContentStepVideo {
-  type: 'video';
-  video: IPicsaVideoData;
+interface IContentStepBase {
+  type: string;
   /** Label to show when selecting content from tab */
   tabLabel?: string;
+  /** Icon to show in tab */
+  tabMatIcon?: string;
 }
 
-export type IFarmerContentStep = IFarmerContentStepVideo;
+interface IFarmerContentStepVideo extends IContentStepBase {
+  type: 'video';
+  video: IPicsaVideoData;
+}
+
+interface IFarmerContentStepVideoPlaylist extends IContentStepBase {
+  type: 'video_playlist';
+  videos: IPicsaVideoData[];
+}
+
+export type IFarmerContentStep = IFarmerContentStepVideo | IFarmerContentStepVideoPlaylist;
 
 export interface IFarmerContent {
   id: IFarmerContentId;
@@ -26,7 +37,9 @@ export interface IFarmerContent {
   icon_path: string;
   title: string;
   tools: IToolData[];
-  tags: { label: string }[];
+  tags: { label: string; color?: 'primary' | 'secondary' }[];
   steps: IFarmerContentStep[];
   disabled?: boolean;
+  /** Include a photo-input section as part of review */
+  showReviewSection?: boolean;
 }

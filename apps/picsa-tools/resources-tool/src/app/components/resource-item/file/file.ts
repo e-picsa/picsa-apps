@@ -32,7 +32,9 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy() {
     // ensure any created file attachment uris disposed of
-    this.service.revokeFileAttachmentURIs([this.dbDoc.filename]);
+    if (this.dbDoc) {
+      this.service.revokeFileAttachmentURIs([this.dbDoc.filename]);
+    }
   }
 
   /** When attachment state changed attempt to get URI to downloaded file resource */

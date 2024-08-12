@@ -14,5 +14,6 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   tags: [],
   steps,
   disabled: true,
+  showReviewSection: true,
 };
 export default content;

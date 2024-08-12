@@ -1,1 +1,8 @@
-<resource-item-file [resource]="videoResource()"></resource-item-file>
+@if(videoData()){
+<!-- Ignore case where video entry exists but ranking empty (e.g. playlist with multi-country videos)  -->
+@if(videoResource(); as resource){
+<resource-item-file [resource]="resource"></resource-item-file>
+
+} } @else {
+<p>Video not found</p>
+}
