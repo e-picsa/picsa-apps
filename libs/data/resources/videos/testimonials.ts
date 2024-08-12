@@ -7,11 +7,11 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
     children: [
       {
         id: '',
-        locale_codes: ['mw_ny', 'global_en'],
+        locale_codes: ['zm_ny', 'global_en'],
         resolution: '360p',
         size_kb: 5080,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/victoria_ngombe.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/victoria_ngombe.mp4',
       },
     ],
   },
@@ -20,11 +20,11 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
     children: [
       {
         id: '',
-        locale_codes: ['zm_ny', 'global_en'],
+        locale_codes: ['mw_ny', 'global_en'],
         resolution: '360p',
         size_kb: 6740,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/jackline_nkhoma.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/testimonials/jackline_nkhoma.mp4',
       },
     ],
   },
