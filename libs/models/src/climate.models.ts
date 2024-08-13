@@ -1,7 +1,5 @@
 import * as c3 from 'c3';
 
-import { IDBDoc } from './db.models';
-
 export interface ICropRequirement {
   crop: string;
   variety: string;
@@ -14,6 +12,7 @@ export interface ICropRequirement {
 }
 
 export interface IStationMeta {
+  id: string;
   name: string;
   latitude: number;
   longitude: number;
@@ -23,7 +22,6 @@ export interface IStationMeta {
   /** Definitions for charts */
   definitions: IChartDefinitions;
 }
-export type IStationMetaDB = IStationMeta & IDBDoc;
 
 export interface IStationData {
   Year: number;

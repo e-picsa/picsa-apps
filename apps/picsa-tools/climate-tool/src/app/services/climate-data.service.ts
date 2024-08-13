@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
+import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { arrayToHashmap, loadCSV } from '@picsa/utils';
 
 import * as DATA from '../data';
@@ -9,17 +9,17 @@ export class ClimateDataService {
   public activeChart: IChartMeta;
   public yValues: number[];
 
-  public dataByStation: { [name: string]: IStationMetaDB } = {};
+  public dataByStation: { [name: string]: IStationMeta } = {};
 
   constructor() {
-    this.dataByStation = arrayToHashmap(DATA.HARDCODED_STATIONS, '_key');
+    this.dataByStation = arrayToHashmap(DATA.HARDCODED_STATIONS, 'id');
   }
 
-  public async getStationMeta(stationID: string): Promise<IStationMetaDB> {
+  public async getStationMeta(stationID: string): Promise<IStationMeta> {
     const station = this.dataByStation[stationID];
     if (!station) {
       console.error('No data for station');
-      return { data: [] as any[], name: 'Data not found' } as IStationMetaDB;
+      return { data: [] as any[], name: 'Data not found' } as IStationMeta;
     }
     if (!station.data) {
       console.log('[Climate] Load Data', stationID);

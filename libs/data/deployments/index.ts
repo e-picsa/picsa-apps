@@ -1,5 +1,5 @@
 import { arrayToHashmap } from '@picsa/utils/data';
-import { IStationMetaDB } from '@picsa/models/src';
+import { IStationMeta } from '@picsa/models/src';
 import { ICountryCode } from './countries';
 
 export * from './countries';
@@ -21,7 +21,7 @@ export interface IDeploymentSettings {
   };
   climateTool: {
     /** Filter function for stations. Default filter by country_code (defined in site-select.page.ts) */
-    station_filter?: (station: IStationMetaDB) => boolean;
+    station_filter?: (station: IStationMeta) => boolean;
   };
   theme: string;
 }
