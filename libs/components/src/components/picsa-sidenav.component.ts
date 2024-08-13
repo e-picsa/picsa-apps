@@ -145,8 +145,8 @@ export class PicsaSidenavComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     setTimeout(() => {
-      const endContent = new DomPortal(this.headerContent);
-      this.componentsService.patchHeader({ endContent });
+      const cdkPortalEnd = new DomPortal(this.headerContent);
+      this.componentsService.patchHeader({ cdkPortalEnd });
       this.headerAttached = true;
     }, 50);
   }

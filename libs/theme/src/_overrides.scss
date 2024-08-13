@@ -75,10 +75,8 @@ mat-form-field.no-padding {
   }
   .mat-mdc-form-field-infix {
     margin-left: 0;
+    padding: 0;
   }
-}
-// Reduce padding and remove inset from fields with custom .no,padding class
-mat-form-field.no-padding {
 }
 
 // Remove bottom hint placeholder (used in hints)

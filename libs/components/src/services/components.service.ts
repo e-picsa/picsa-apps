@@ -1,12 +1,14 @@
-import { Portal } from '@angular/cdk/portal';
+import { DomPortal, TemplatePortal } from '@angular/cdk/portal';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-interface IHeaderOptions {
+export interface IHeaderOptions {
   title?: string;
   style?: 'inverted' | 'primary';
-  /** Use angular portal cdk to inject component into header slot */
-  endContent?: Portal<any>;
+  /** Angular portal cdk to inject component into header central slot */
+  cdkPortalEnd?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
+  cdkPortalCenter?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
+
   hideBackButton?: boolean;
 }
 export interface IBreadcrumbOptions {
