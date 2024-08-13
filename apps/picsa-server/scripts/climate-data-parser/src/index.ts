@@ -25,6 +25,7 @@ function main() {
         definitions: null,
       });
     }
+    // TODO - QC checks (e.g. 0mm rainfall)
     stationData[id].push({ Year: s_year, Rainfall: sum_Rain, Start: start_rain, End: end_rains, Length: length });
   }
 
