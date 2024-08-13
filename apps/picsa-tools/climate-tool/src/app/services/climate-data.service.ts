@@ -26,7 +26,8 @@ export class ClimateDataService {
       const summaries = await this.loadStationSummaries(stationID);
       this.dataByStation[stationID].data = summaries;
     }
-    return this.dataByStation[stationID];
+    // HACK - ensure chart definitions don't persist across sites
+    return JSON.parse(JSON.stringify(this.dataByStation[stationID]));
   }
   private async loadStationSummaries(stationID: string) {
     // TODO - ensure still working

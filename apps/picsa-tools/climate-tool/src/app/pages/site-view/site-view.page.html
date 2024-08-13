@@ -1,5 +1,26 @@
 <climate-print-layout *ngIf="chartService.chartPng"></climate-print-layout>
 
+<!-- Header to inject into global header component -->
+<ng-template #headerPortal>
+  <div style="position: relative; display: flex; align-items: center">
+    <button mat-button color="primary" (click)="select.open()" style="font-size: 32px; height: 40px">
+      @if(chartService.station){ {{chartService.station.name}} }
+      <mat-icon iconPositionEnd>expand_more</mat-icon>
+    </button>
+    <!-- Use a hidden select that opens from button (instead of using full select form component) -->
+    <mat-select
+      style="width: 250px; position: absolute; right: 0; visibility: hidden"
+      #select
+      (selectionChange)="handleStationSelect(select.value)"
+      [value]="chartService.station?.id"
+    >
+      @for(option of stationSelectOptions; track option.value){
+      <mat-option [value]="option.value">{{option.label}}</mat-option>
+      }
+    </mat-select>
+  </div>
+</ng-template>
+
 <div class="page-content">
   <picsa-sidenav-layout #snav [initialOpen]="true">
     <button desktopHeader mat-button color="primary" (click)="showShareDialog()">
