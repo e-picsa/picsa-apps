@@ -32,7 +32,7 @@ export class ClimateStationPageComponent implements OnInit {
   });
 
   public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.service.loadFromAPI.station(this.service.apiCountryCode) },
+    events: { refresh: async () => this.service.loadFromAPI.station(this.service.apiCountryCode) },
     showStatusCode: false,
   };
 
