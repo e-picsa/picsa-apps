@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
-import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMetaDB } from '@picsa/models';
+import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PrintProvider } from '@picsa/shared/services/native';
@@ -24,7 +24,7 @@ export class ClimateChartService {
   public chartSeriesData: number[];
 
   /** Actively selected station */
-  public station?: IStationMetaDB;
+  public station?: IStationMeta;
   /** Observable subject for active station */
 
   public stationData: IStationData[];
@@ -38,7 +38,7 @@ export class ClimateChartService {
   /** Observable properties for config above */
   public chartConfig$ = new BehaviorSubject<IChartConfig | undefined>(undefined);
   public chartDefinition$ = new BehaviorSubject<IChartMeta | undefined>(undefined);
-  public station$ = new BehaviorSubject<IStationMetaDB | undefined>(undefined);
+  public station$ = new BehaviorSubject<IStationMeta | undefined>(undefined);
   public chartSeriesData$ = new BehaviorSubject<number[]>([]);
 
   public chartRendered$ = new Subject<void>();

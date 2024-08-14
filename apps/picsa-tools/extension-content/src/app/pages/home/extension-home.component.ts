@@ -142,12 +142,12 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.componentsService.patchHeader({ endContent: undefined });
+    this.componentsService.patchHeader({ cdkPortalEnd: undefined });
   }
 
   ngAfterViewInit() {
     this.componentsService.patchHeader({
-      endContent: new DomPortal(this.headerContent),
+      cdkPortalEnd: new DomPortal(this.headerContent),
     });
   }
 

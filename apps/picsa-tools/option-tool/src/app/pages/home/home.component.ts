@@ -50,7 +50,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit() {
     this.componentService.patchHeader({
-      endContent: new DomPortal(this.headerContent),
+      cdkPortalEnd: new DomPortal(this.headerContent),
     });
     const enterprise = this.route.snapshot.paramMap.get('enterprise');
     await this.service.ready();
