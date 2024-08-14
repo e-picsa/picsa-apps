@@ -2,6 +2,7 @@ import type { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { IDeploymentRow } from '../deployment/types';
+import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
 import {
   IClimateProductInsert,
@@ -28,20 +29,23 @@ export type IAPICountryCode = ApiComponents['schemas']['StationAndDefintionRespo
  */
 export const ApiMapping = (
   api: ClimateApiService,
+  service: ClimateService,
   db: SupabaseService['db'],
   storage: SupabaseStorageService,
   deployment: IDeploymentRow
 ) => {
   return {
     rainfallSummaries: async (station: IStationRow) => {
-      const { country_code, station_id, id } = station;
+      const { country_code, station_id, station_name, id } = station;
       // TODO - add model type definitions for server rainfall summary response body
       const { data, error } = await api
         .getObservableClient(`rainfallSummary_${id}`)
         .POST('/v1/annual_rainfall_summaries/', {
           body: {
             country: `${country_code}` as any,
-            station_id: `${station_id}`,
+            // HACK - API uses the value stored as station_name (instead of sanitized id)
+            // TODO - Push for api to use safer ID values
+            station_id: `${station_name}`,
             summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
           },
         });
@@ -67,15 +71,22 @@ export const ApiMapping = (
         .GET(`/v1/station/{country}`, { params: { path: { country: country_code as any } } });
       if (error) throw error;
       console.log('station data', data);
-      const dbData = data.data.map(
+      const update = data.data.map(
         (d): IStationInsert => ({
           ...d,
-          station_id: `${d.station_id}`,
+          // HACK - clean IDs as currently just free text input
+          // TODO - Push for api to use safer ID values
+          station_id: `${d.station_id.toLowerCase().replace(/[^a-z]/gi, '_')}`,
         })
       );
-      const { error: dbError } = await db.table('climate_stations').upsert<IStationInsert>(dbData);
+      const { error: dbError, data: dbData } = await db
+        .table('climate_stations')
+        .upsert<IStationInsert>(update)
+        .select();
       if (dbError) throw dbError;
-      return dbData;
+      if (dbData?.length > 0) {
+        service.stations.set(dbData);
+      }
     },
     //
     forecasts: async (country_code: IAPICountryCode) => {

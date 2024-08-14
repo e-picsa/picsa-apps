@@ -14,7 +14,7 @@ import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall
 })
 export class StationDetailsPageComponent implements OnInit {
   public get station() {
-    return this.service.activeStation;
+    return this.service.activeStation();
   }
 
   public get stationSummary() {
