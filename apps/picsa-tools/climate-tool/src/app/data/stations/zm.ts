@@ -21,6 +21,14 @@ const stations: IStationMeta[] = [
       extreme_rainfall_days: { definition: 'For Petauke the 95th percentile calculated to be 41.35mm' },
     }),
   },
+  {
+    id: 'mansa',
+    name: 'Mansa',
+    latitude: -11.1,
+    longitude: 28.85,
+    countryCode: 'zm',
+    definitions: CLIMATE_CHART_DEFINTIONS.zm,
+  },
 ];
 
 export default stations;
