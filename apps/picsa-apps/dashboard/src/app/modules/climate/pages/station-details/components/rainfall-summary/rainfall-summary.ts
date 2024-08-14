@@ -66,7 +66,7 @@ export class RainfallSummaryComponent implements AfterViewInit {
     // TODO - nicer if could include db lookups as part of mapping doc
     const { data, error } = await this.db
       .select<'*', IClimateProductRow>('*')
-      .eq('station_id', activeStation.id)
+      .eq('station_id', activeStation().id)
       .eq('type', 'rainfallSummary')
       .single();
     if (data) {
@@ -80,8 +80,8 @@ export class RainfallSummaryComponent implements AfterViewInit {
 
   public async refreshData() {
     if (this.service.activeStation) {
-      this.apiClientId = `rainfallSummary_${this.service.activeStation.id}`;
-      const data = await this.service.loadFromAPI.rainfallSummaries(this.service.activeStation);
+      this.apiClientId = `rainfallSummary_${this.service.activeStation().id}`;
+      const data = await this.service.loadFromAPI.rainfallSummaries(this.service.activeStation());
       const summary = data?.[0];
       if (summary) {
         this.loadData(summary.data as any);
@@ -98,11 +98,11 @@ export class RainfallSummaryComponent implements AfterViewInit {
 
   private loadData(summary: IRainfallSummary) {
     console.log('load data', summary);
-    this.tableOptions.exportFilename = `${this.service.activeStation.station_name}_rainfallSummary.csv`;
+    this.tableOptions.exportFilename = `${this.service.activeStation().station_name}_rainfallSummary.csv`;
     const { data, metadata } = summary;
     this.summaryData = this.convertAPIDataToLegacyFormat(data);
     this.summaryMetadata = metadata;
-    const { country_code } = this.service.activeStation;
+    const { country_code } = this.service.activeStation();
     const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
     this.chartDefintions = Object.values(definitions);
   }
@@ -111,10 +111,13 @@ export class RainfallSummaryComponent implements AfterViewInit {
   private convertAPIDataToLegacyFormat(apiData: AnnualRainfallSummariesdata[] = []) {
     const data: Partial<IStationData>[] = apiData.map((el) => ({
       Year: el.year,
-      End: el.end_rains_doy,
+      // HACK - use either end_rains or end_season depending on which has data populated
+      // TODO - push for single value to be populated at api level
+      End: el.end_rains_doy || el.end_season_doy,
       Extreme_events: 0,
       Length: el.season_length,
-      Rainfall: el.annual_rain,
+      // HACK - replace 0mm with null value
+      Rainfall: el.annual_rain || undefined,
       Start: el.start_rains_doy,
     }));
     return data;
