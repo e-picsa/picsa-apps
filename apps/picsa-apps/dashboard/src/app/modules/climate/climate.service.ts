@@ -25,7 +25,10 @@ export class ClimateService extends PicsaAsyncService {
     if (stations.length > 0) {
       const station = stations.find((station) => station.station_id === activeStationId);
       if (station) return station;
-      else this.notificationService.showErrorNotification(`[Climate Station] data not found: ${activeStationId}`);
+      else {
+        this.router.navigate(['climate', 'station']);
+        this.notificationService.showErrorNotification(`[Climate Station] data not found: ${activeStationId}`);
+      }
     }
     // UI components aren't rendered unless station defined so can safely ignore this return type
     return null as any;
