@@ -114,7 +114,7 @@ export class RainfallSummaryComponent implements AfterViewInit {
       // HACK - use either end_rains or end_season depending on which has data populated
       // TODO - push for single value to be populated at api level
       End: el.end_rains_doy || el.end_season_doy,
-      Extreme_events: 0,
+      Extreme_events: null as any,
       Length: el.season_length,
       // HACK - replace 0mm with null value
       Rainfall: el.annual_rain || undefined,
