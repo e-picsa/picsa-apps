@@ -1,5 +1,16 @@
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
 import type { IStationMeta } from '@picsa/models';
+/** Draft Stations (pending data validation)
+
+Chiradzulu: remove the high value (2015-16) and keep
+Luwazi: I would suggest we keep and start at 1968 as all the 0s are before that date
+Kamuona: last year is very low and this is often as the data are incomplete. I think remove the last year please
+Kasiya: there is a very high value 2015-16 that we should remove if possible please
+Mtakataka: same as above but start from 1947-48
+Mzandu: I would remove the last year
+Nalunga: I would remove the last year
+
+ */
 
 const stations: IStationMeta[] = [
   // 2021-2023 legacy station data
@@ -115,6 +126,7 @@ const stations: IStationMeta[] = [
     longitude: 35.18,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'dowa_agr',
@@ -139,6 +151,7 @@ const stations: IStationMeta[] = [
     longitude: 33.53,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'kia',
@@ -187,6 +200,7 @@ const stations: IStationMeta[] = [
     longitude: 34.2,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'mtakataka',
@@ -195,6 +209,7 @@ const stations: IStationMeta[] = [
     longitude: 34.52,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'ndakwera',
@@ -227,6 +242,7 @@ const stations: IStationMeta[] = [
     longitude: 34.3,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'mzandu',
@@ -235,6 +251,7 @@ const stations: IStationMeta[] = [
     longitude: 34.5,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'nalunga',
@@ -243,6 +260,7 @@ const stations: IStationMeta[] = [
     longitude: 34.066,
     countryCode: 'mw',
     definitions: CLIMATE_CHART_DEFINTIONS.mw,
+    draft: true,
   },
   {
     id: 'bunda',

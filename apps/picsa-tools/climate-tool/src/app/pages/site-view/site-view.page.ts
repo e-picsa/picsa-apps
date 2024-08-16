@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   effect,
   OnDestroy,
   TemplateRef,
@@ -39,12 +40,12 @@ interface ISiteViewParams {
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   public showRotateAnimation = false;
 
-  public stationSelectOptions = Object.entries(this.dataService.dataByStation)
-    .map(([id, data]) => ({
-      value: id,
-      label: data.name,
-    }))
-    .sort((a, b) => (a.label > b.label ? 1 : -1));
+  public stationSelectOptions = computed(() => {
+    const stations = this.dataService.stations();
+    return stations
+      .map(({ id, name, draft }) => ({ value: id, label: name, draft }))
+      .sort((a, b) => (a.label > b.label ? 1 : -1));
+  });
 
   private viewId = toSignal(this.route.queryParams.pipe(map(({ view }: ISiteViewQueryParams) => view)));
   private siteId = toSignal(this.route.params.pipe(map(({ siteId }: ISiteViewParams) => siteId)));

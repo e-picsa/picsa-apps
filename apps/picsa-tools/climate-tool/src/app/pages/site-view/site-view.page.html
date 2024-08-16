@@ -14,8 +14,8 @@
       (selectionChange)="handleStationSelect(select.value)"
       [value]="chartService.station?.id"
     >
-      @for(option of stationSelectOptions; track option.value){
-      <mat-option [value]="option.value">{{option.label}}</mat-option>
+      @for(option of stationSelectOptions(); track option.value){
+      <mat-option [value]="option.value" [attr.data-draft]="option.draft">{{option.label}}</mat-option>
       }
     </mat-select>
   </div>

@@ -1,10 +1,9 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigurationService } from '@picsa/configuration';
 import { IStationMeta } from '@picsa/models';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
-import { HARDCODED_STATIONS } from '../../data';
+import { ClimateDataService } from '../../services/climate-data.service';
 
 @Component({
   selector: 'climate-site-select',
@@ -21,17 +20,25 @@ export class SiteSelectPage implements OnInit {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
   };
-  mapMarkers: IMapMarker[] = [];
+  public mapMarkers = computed(() => {
+    const stations = this.dataService.stations();
+    const markers: IMapMarker[] = stations.map((station, _index) => ({
+      latlng: [station.latitude, station.longitude],
+      data: station,
+      number: _index + 1,
+      _index,
+    }));
+    return markers;
+  });
 
   constructor(
     private ngZone: NgZone,
     private router: Router,
     private route: ActivatedRoute,
-    private configurationService: ConfigurationService
+    private dataService: ClimateDataService
   ) {}
 
   ngOnInit() {
-    this.populateSites();
     this.getUserLocationAndSelectClosestStation();
   }
 
@@ -56,27 +63,6 @@ export class SiteSelectPage implements OnInit {
     });
   }
 
-  populateSites() {
-    let stations = HARDCODED_STATIONS;
-    const { climateTool, country_code } = this.configurationService.deploymentSettings();
-    const filterFn = climateTool?.station_filter;
-    if (filterFn) {
-      stations = stations.filter((station) => filterFn(station));
-    } else {
-      stations = stations.filter((station) => station.countryCode === country_code);
-    }
-    const markers: IMapMarker[] = stations.map((station, _index) => {
-      return {
-        latlng: [station.latitude, station.longitude],
-        data: station,
-        number: _index + 1,
-        _index,
-      };
-    });
-    this.mapMarkers = markers;
-    return { stations, markers };
-  }
-
   private getUserLocationAndSelectClosestStation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -97,7 +83,7 @@ export class SiteSelectPage implements OnInit {
 
   private selectClosestStation(userLat: number, userLng: number) {
     let minDistance = Number.MAX_VALUE;
-    const nearest = this.mapMarkers.reduce((previous, current) => {
+    const nearest = this.mapMarkers().reduce((previous, current) => {
       const stationLat = current.latlng[0];
       const stationLng = current.latlng[1];
       const distance = this.calculateDistance(userLat, userLng, stationLat, stationLng);

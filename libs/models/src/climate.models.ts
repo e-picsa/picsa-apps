@@ -21,6 +21,11 @@ export interface IStationMeta {
   data?: IStationData[];
   /** Definitions for charts */
   definitions: IChartDefinitions;
+  /**
+   * Mark station in draft state (e.g. pending data approval)
+   * Draft stations appear in global deployment but not country-specific
+   **/
+  draft?: boolean;
 }
 
 export interface IStationData {
