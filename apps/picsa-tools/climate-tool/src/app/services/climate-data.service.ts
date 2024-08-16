@@ -20,7 +20,7 @@ export class ClimateDataService {
     if (filterFn) {
       return DATA.HARDCODED_STATIONS.filter((station) => filterFn(station));
     } else {
-      return DATA.HARDCODED_STATIONS.filter((station) => station.countryCode === country_code);
+      return DATA.HARDCODED_STATIONS.filter((station) => station.countryCode === country_code && !station.draft);
     }
   });
 

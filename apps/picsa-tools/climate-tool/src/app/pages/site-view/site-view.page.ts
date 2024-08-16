@@ -42,7 +42,9 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
 
   public stationSelectOptions = computed(() => {
     const stations = this.dataService.stations();
-    return stations.map(({ id, name }) => ({ value: id, label: name })).sort((a, b) => (a.label > b.label ? 1 : -1));
+    return stations
+      .map(({ id, name, draft }) => ({ value: id, label: name, draft }))
+      .sort((a, b) => (a.label > b.label ? 1 : -1));
   });
 
   private viewId = toSignal(this.route.queryParams.pipe(map(({ view }: ISiteViewQueryParams) => view)));
