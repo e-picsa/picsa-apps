@@ -24,8 +24,9 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         id: '',
         locale_codes: ['zm_ny', 'global_en'],
         resolution: '360p',
-        size_kb: 12630,
-        supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Intro.mp4',
+        size_kb: 12170,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Intro%202024-08.mp4',
       },
     ],
   },
@@ -39,6 +40,22 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/PICSA%20Steps/1a%20%20Resource%20Allocation%20Map.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 18910,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Steps/1a%20Resource%20Allocation%20Map.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 17710,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/1a%20Resource%20Allocation%20Map.mp4',
+      },
     ],
   },
   seasonal_calendar: {
@@ -50,6 +67,22 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         resolution: '360p',
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/PICSA%20Steps/1b%20%20Seasonal%20Calendar.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 16780,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Steps/1b%20Seasonal%20Calendar.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 15300,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/1b%20Seasonal%20Calendar.mp4',
       },
     ],
   },
@@ -63,6 +96,22 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/PICSA%20Steps/2%20%20Historical%20Climate%20Information.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 31310,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Steps/2%20Historical%20Climate%20Information.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 26490,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/2%20Historical%20Climate%20Information.mp4',
+      },
     ],
   },
   probability_risk: {
@@ -74,6 +123,22 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         resolution: '360p',
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/PICSA%20Steps/3%20%20What%20are%20the%20risks%20and%20opportunities.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 29280,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Steps/3%20What%20are%20the%20risks%20and%20opportunities.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 25200,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/3%20What%20are%20the%20risks%20and%20opportunities.mp4',
       },
     ],
   },
@@ -87,6 +152,22 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/PICSA%20Steps/4%20%20Crop,%20Livestock%20and%20Livelihood%20Options.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 30580,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Steps/4%20Crop,%20Livestock%20and%20Livelihood%20Options.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 30020,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/4%20Crop,%20Livestock%20and%20Livelihood%20Options.mp4',
+      },
     ],
   },
   participatory_budget: {
@@ -98,6 +179,22 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         resolution: '360p',
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/PICSA%20Steps/5%20%20Particpatory%20Budget.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 22040,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Steps/5%20Participatory%20Budgets.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 22500,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/5%20Participatory%20Budgets.mp4',
       },
     ],
   },
