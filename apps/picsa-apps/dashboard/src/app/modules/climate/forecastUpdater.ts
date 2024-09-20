@@ -1,12 +1,12 @@
-import { ENVIRONMENT } from '@picsa/environments/src';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.38.1';
 
-import { ApiMapping } from './climate-api.mapping';
-import { IAPICountryCode } from './climate-api.mapping';
-import { ClimateApiService } from './climate-api.service';
+import { ENVIRONMENT } from '../../../../../../../libs/environments/src/index.ts';
+import { PicsaNotificationService } from '../../../../../../../libs/shared/src/services/core/notification.service.ts';
+import { SupabaseStorageService } from '../../../../../../../libs/shared/src/services/core/supabase/services/supabase-storage.service.ts';
+import { ApiMapping } from './climate-api.mapping.ts';
+import { IAPICountryCode } from './climate-api.mapping.ts';
+import { ClimateApiService } from './climate-api.service.ts';
 
 // Helper function to initialize the Supabase client
 const initializeSupabaseClient = async (): Promise<SupabaseClient> => {
