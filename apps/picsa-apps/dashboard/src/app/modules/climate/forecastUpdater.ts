@@ -48,7 +48,6 @@ const handleForecastUpdate = async (countryCode: string) => {
       throw new Error('Error updating database');
     }
 
-    // Return success response
     return new Response('Forecast data updated successfully', { status: 200 });
   } catch (err: any) {
     return new Response('Error: ' + err.message, { status: 500 });
