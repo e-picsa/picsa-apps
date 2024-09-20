@@ -1,11 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.1';
+import { getClient } from '../_shared/client.ts';
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SUPABASE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const API_URL = 'https://api.epicsa.idems.international/v1/forecasts';
+const API_URL = 'https://api.epicsa.idems.international/v1/forecasts/';
 
 interface IForecastInsert {
   date_modified: string;
@@ -30,17 +26,20 @@ const formatForecastData = (data: any, country_code: string): IForecastInsert[] 
 };
 
 // function to handle fetching and updating forecast data
-const handleForecastUpdate = async (countryCode: string) => {
+const handleForecastUpdate = async (countryCode: string, req: Request) => {
   try {
-    // fetch forecast data from the external API
+    // fetching forecast data
     const response = await fetch(`${API_URL}/${countryCode}`);
     if (!response.ok) {
       throw new Error('Failed to fetch forecast data');
     }
+    console.log('forecastData', response);
 
     const forecastData = await response.json();
 
     const formattedData = formatForecastData(forecastData, countryCode);
+
+    const supabase = getClient(req);
 
     const { error } = await supabase.from('climate_forecasts').upsert(formattedData);
 
@@ -50,6 +49,7 @@ const handleForecastUpdate = async (countryCode: string) => {
 
     return new Response('Forecast data updated successfully', { status: 200 });
   } catch (err: any) {
+    console.log(err);
     return new Response('Error: ' + err.message, { status: 500 });
   }
 };
@@ -59,5 +59,5 @@ serve(async (req) => {
   const url = new URL(req.url);
   const country_code = url.searchParams.get('country_code') || 'zw';
 
-  return await handleForecastUpdate(country_code);
+  return await handleForecastUpdate(country_code, req);
 });
