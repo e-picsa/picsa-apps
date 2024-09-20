@@ -1,4 +1,3 @@
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
@@ -9,22 +8,21 @@ import { ApiMapping } from './climate-api.mapping';
 import { IAPICountryCode } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
 
-// helper function to initialize the Supabase client and services
+// Helper function to initialize the Supabase client
 const initializeSupabaseClient = async (): Promise<SupabaseClient> => {
   const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
   return createClient(apiUrl, anonKey);
 };
 
-// helper function to initialize services
+// Helper function to initialize the necessary services
 const initializeServices = (supabase: SupabaseClient) => {
-  const mockMatSnackBar: Partial<MatSnackBar> = {
-    open: (message: string, action: string, config?: MatSnackBarConfig) => {
+  const mockMatSnackBar = {
+    open: (message: string) => {
       console.log(`Mock Notification: ${message}`);
-      return {} as MatSnackBarRef<any>;
     },
   };
 
-  const notificationService = new PicsaNotificationService(mockMatSnackBar as MatSnackBar);
+  const notificationService = new PicsaNotificationService(mockMatSnackBar as any);
   const storageService = new SupabaseStorageService(notificationService);
   storageService.registerSupabaseClient(supabase);
 
@@ -32,14 +30,15 @@ const initializeServices = (supabase: SupabaseClient) => {
   return { apiService, storageService };
 };
 
-// edge function handler for processing forecasts
+// Simplified handler to process the forecasts
 const handleForecastUpdate = async (country_code: IAPICountryCode) => {
   try {
     const supabase = await initializeSupabaseClient();
     const { apiService, storageService } = initializeServices(supabase);
-    const apiMapping = ApiMapping(apiService, {}, supabase, storageService, {});
 
-    // Fetch and store the forecast data for the given country code
+    // Use ApiMapping's forecasts method to handle fetching and storing
+    const apiMapping = ApiMapping(apiService, {} as any, supabase, storageService, {} as any);
+
     await apiMapping.forecasts(country_code);
     return new Response('Forecasts updated successfully', { status: 200 });
   } catch (error: any) {
@@ -48,7 +47,7 @@ const handleForecastUpdate = async (country_code: IAPICountryCode) => {
   }
 };
 
-// main server function
+// Main server function to trigger the forecast update
 serve(async (req) => {
   const url = new URL(req.url);
   const country_code = (url.searchParams.get('country_code') || 'zw') as IAPICountryCode;
