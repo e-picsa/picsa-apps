@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2022",
+    "noEmit": true,
     "allowImportingTsExtensions": true,
     "useDefineForClassFields": false,
     "esModuleInterop": true,

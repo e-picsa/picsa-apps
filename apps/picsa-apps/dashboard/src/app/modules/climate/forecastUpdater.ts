@@ -8,13 +8,13 @@ import { ApiMapping } from './climate-api.mapping.ts';
 import { IAPICountryCode } from './climate-api.mapping.ts';
 import { ClimateApiService } from './climate-api.service.ts';
 
-// Helper function to initialize the Supabase client
+// function to initialize the Supabase client
 const initializeSupabaseClient = async (): Promise<SupabaseClient> => {
   const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
   return createClient(apiUrl, anonKey);
 };
 
-// Helper function to initialize the necessary services
+// function to initialize the necessary services
 const initializeServices = (supabase: SupabaseClient) => {
   const mockMatSnackBar = {
     open: (message: string) => {
@@ -30,13 +30,13 @@ const initializeServices = (supabase: SupabaseClient) => {
   return { apiService, storageService };
 };
 
-// Simplified handler to process the forecasts
+// handler to process the forecasts
 const handleForecastUpdate = async (country_code: IAPICountryCode) => {
   try {
     const supabase = await initializeSupabaseClient();
     const { apiService, storageService } = initializeServices(supabase);
 
-    // Use ApiMapping's forecasts method to handle fetching and storing
+    // ApiMappings forecasts method to handle fetching and storing
     const apiMapping = ApiMapping(apiService, {} as any, supabase, storageService, {} as any);
 
     await apiMapping.forecasts(country_code);
