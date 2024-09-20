@@ -9,13 +9,13 @@ import { ApiMapping } from './climate-api.mapping';
 import { IAPICountryCode } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
 
-// ** Helper function to initialize the Supabase client and services **
+// helper function to initialize the Supabase client and services
 const initializeSupabaseClient = async (): Promise<SupabaseClient> => {
   const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
   return createClient(apiUrl, anonKey);
 };
 
-// ** Helper function to initialize services **
+// helper function to initialize services
 const initializeServices = (supabase: SupabaseClient) => {
   const mockMatSnackBar: Partial<MatSnackBar> = {
     open: (message: string, action: string, config?: MatSnackBarConfig) => {
@@ -32,7 +32,7 @@ const initializeServices = (supabase: SupabaseClient) => {
   return { apiService, storageService };
 };
 
-// ** Edge function handler for processing forecasts **
+// edge function handler for processing forecasts
 const handleForecastUpdate = async (country_code: IAPICountryCode) => {
   try {
     const supabase = await initializeSupabaseClient();
@@ -40,7 +40,7 @@ const handleForecastUpdate = async (country_code: IAPICountryCode) => {
     const apiMapping = ApiMapping(apiService, {}, supabase, storageService, {});
 
     // Fetch and store the forecast data for the given country code
-    const result = await apiMapping.forecasts(country_code);
+    await apiMapping.forecasts(country_code);
     return new Response('Forecasts updated successfully', { status: 200 });
   } catch (error: any) {
     console.error('Error fetching or storing forecast:', error);
