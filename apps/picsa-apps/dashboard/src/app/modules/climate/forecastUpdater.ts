@@ -20,7 +20,7 @@ const initializeServices = (supabase: SupabaseClient) => {
   const mockMatSnackBar: Partial<MatSnackBar> = {
     open: (message: string, action: string, config?: MatSnackBarConfig) => {
       console.log(`Mock Notification: ${message}`);
-      return {} as MatSnackBarRef<any>; // Mock return object
+      return {} as MatSnackBarRef<any>;
     },
   };
 
@@ -48,12 +48,9 @@ const handleForecastUpdate = async (country_code: IAPICountryCode) => {
   }
 };
 
-// ** Main server function **
+// main server function
 serve(async (req) => {
-  // Extract country_code from query parameters or default to 'zw'
   const url = new URL(req.url);
   const country_code = (url.searchParams.get('country_code') || 'zw') as IAPICountryCode;
-
-  // Call the forecast handler
   return await handleForecastUpdate(country_code);
 });
