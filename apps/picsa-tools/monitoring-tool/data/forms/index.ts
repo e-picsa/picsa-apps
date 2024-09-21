@@ -1,6 +1,7 @@
 import { IMonitoringForm } from '../../src/app/schema/forms';
 import demoKitchenForm from './demo-kitchen.form';
 import ewMonitoringFormMW from './ew-monitoring-mw.form';
+import ewMonitoringFormTest from './ew-monitoring-test.form';
 import ewMonitoringFormZM from './ew-monitoring-zm.form';
 
 export const HARDCODED_FORMS: IMonitoringForm[] = [
@@ -49,5 +50,25 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     cover: {
       icon: '',
     },
+  },
+
+  {
+    _id: 'ew_monitoring_test',
+    title: 'Testing form',
+    description: 'Just testing',
+    enketoDefinition: ewMonitoringFormTest,
+    summaryFields: [
+      { field: 'date', label: 'Date' },
+      { field: 'district', label: 'District' },
+      { field: 'EPA', label: 'EPA' },
+      { field: 'section', label: 'Section' },
+      { field: 'total_farmers', label: 'Total Farmers' },
+    ],
+    appCountries: ['mw', 'global'],
+    cover: {
+      icon: 'assets/svgs/monitoring-forms/ew-monitoring.svg',
+    },
+    access_code: 'testMe',
+    access_unlocked: false,
   },
 ];
