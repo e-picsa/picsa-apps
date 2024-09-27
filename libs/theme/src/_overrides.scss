@@ -48,6 +48,10 @@ mat-dialog-container.mat-mdc-dialog-container {
     padding: 0;
   }
 }
+// Increase dialog overlay width on small devices (600px)
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  --mat-dialog-container-small-max-width: calc(100vw - theme(spacing.4));
+}
 
 // Remove padding from dialog action buttons
 div.mdc-dialog__actions {
