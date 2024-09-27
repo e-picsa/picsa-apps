@@ -1,3 +1,14 @@
+:host {
+  --footer-height: 36px;
+  --footer-height-sm: 48px;
+  --footer-height-md: 60px;
+
+  // Adjust farmer tabs to compensate for header,
+  // @apply sm:p-4 md:p-8;
+  --tab-height: calc(100vh - var(--footer-height));
+  --tab-height-sm: calc(100vh - var(--footer-height-sm) - theme(spacing.4));
+  --tab-height-md: calc(100vh - var(--footer-height-md) - theme(spacing.8));
+}
 .content-container {
   width: 100%;
   max-width: 800px;
@@ -29,10 +40,6 @@
   margin-right: 4px;
 }
 
-.tab-content {
-  padding: 16px;
-}
-
 .tab-content.router-tab {
   padding: 0;
   height: 100%;
@@ -41,25 +48,36 @@
   flex-direction: column;
   // Some styles also inherited from main .page
   .page {
-    // Adjust farmer tabs to compensate for header,
-    // @apply sm:p-4 md:p-8;
-    --tab-height: calc(100vh - 104px);
-    --tab-height-sm: calc(100vh - 104px - theme(spacing.4));
-    --tab-height-md: calc(100vh - 104px - theme(spacing.8));
     overflow: auto;
     @apply max-h-[var(--tab-height)] sm:max-h-[var(--tab-height-sm)] md:max-h-[var(--tab-height-md)];
   }
 }
-// Force child-router tab to fill screen and provide page region
-// .tab-content.router-tab {
-//   padding: 0;
-//   height: calc(100% - 32px);
-//   // background: yellow;
-//   display: flex;
-//   flex-direction: column;
-//   // Some styles also inherited from main .page
-//   .page {
-//     overflow: auto;
-//     max-height: calc(100vh - 104px);
-//   }
-// }
+
+.custom-tab-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  @apply h-[var(--footer-height)] sm:h-[var(--footer-height-sm)] md:h-[var(--footer-height-md)];
+  @apply min-h-[var(--footer-height)] sm:min-h-[var(--footer-height-sm)] md:min-h-[var(--footer-height-md)];
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  --mdc-text-button-label-text-color: white;
+  color: white;
+  background: var(--color-secondary);
+  z-index: 10;
+}
+.footer-nav-buttons {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > button {
+    flex: 1;
+  }
+}
+.footer-tab-counter {
+  flex: 1;
+  text-align: center;
+}

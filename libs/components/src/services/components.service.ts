@@ -1,5 +1,5 @@
 import { DomPortal, TemplatePortal } from '@angular/cdk/portal';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export interface IHeaderOptions {
@@ -10,6 +10,7 @@ export interface IHeaderOptions {
   cdkPortalCenter?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
 
   hideBackButton?: boolean;
+  hideHeader?: boolean;
 }
 export interface IBreadcrumbOptions {
   enabled?: boolean;
@@ -18,7 +19,7 @@ export interface IBreadcrumbOptions {
 
 @Injectable({ providedIn: 'root' })
 export class PicsaCommonComponentsService {
-  headerOptions$ = new BehaviorSubject<IHeaderOptions>({});
+  headerOptions = signal<IHeaderOptions>({});
   breadcrumbOptions$ = new BehaviorSubject<IBreadcrumbOptions>({});
 
   /** Track navigation history - used by back-button components (multi-instance) */
@@ -26,11 +27,11 @@ export class PicsaCommonComponentsService {
 
   /** Programatically set the header options such as title and style */
   public setHeader(options: Partial<IHeaderOptions>) {
-    this.headerOptions$.next(options);
+    this.headerOptions.set(options);
   }
   /** Update partial header options, retaining existing options where not defined */
   public patchHeader(update: Partial<IHeaderOptions>) {
-    this.setHeader({ ...this.headerOptions$.value, ...update });
+    this.setHeader({ ...this.headerOptions(), ...update });
   }
 
   public updateBreadcrumbOptions(update: Partial<IBreadcrumbOptions>) {

@@ -2,14 +2,82 @@
   @if(content(); as content){
   <div @fadeInOut class="content-container">
     <mat-tab-group
-      (selectedTabChange)="handleTabChange($event)"
-      class="height-fill sticky-header-bottom"
+      [selectedIndex]="selectedIndex()"
+      class="height-fill no-header padding-responsive"
       style="height: 100%; width: 100%; flex: 1"
       headerPosition="below"
       preserveContent
     >
-      <!-- intro -->
-      <!-- <mat-tab>
+      <!-- content -->
+      @for(tab of tabs(); track $index){
+      <mat-tab>
+        <!-- TODO - refactor separate tab types -->
+        <!-- NOTE - not using switch currently as used in step tab -->
+
+        <!-- Step Tab -->
+        @if(tab.type==='step'){ @if(tab.data; as step){ @switch (step.type){
+        <!-- video -->
+        @case ("video") {
+
+        <div class="tab-content">
+          @if(step.video){
+          <farmer-step-video [videoData]="step.video"></farmer-step-video>
+          }
+        </div>
+        }
+        <!-- video playlist -->
+        @case ("video_playlist") {
+
+        <div class="tab-content">
+          @for(video of step.videos; track video.id){
+          <farmer-step-video [videoData]="video"></farmer-step-video>
+          }
+        </div>
+        } } } }
+        <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
+        @if(tab.type==='tool'){ @if(tab.data; as tool){
+
+        <div class="tab-content router-tab">
+          <div class="page">
+            <router-outlet #toolRouter class="tool-router"></router-outlet>
+          </div>
+        </div>
+        } } @if(tab.type==='review'){ @if(photoAlbum(); as album){
+
+        <div class="tab-content router-tab">
+          <picsa-photo-list [album]="album"></picsa-photo-list>
+          <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
+        </div>
+
+        } }
+      </mat-tab>
+      }
+
+      <!-- User photos -->
+    </mat-tab-group>
+  </div>
+  <div class="custom-tab-footer">
+    <button mat-button color="white" style="margin-right: auto">
+      <mat-icon>home</mat-icon>
+      {{ 'Home' | translate }}
+    </button>
+    <div class="footer-nav-buttons">
+      <button mat-button color="white" (click)="previousTab()" [disabled]="selectedIndex() === 0">
+        {{ 'Previous' | translate }}
+      </button>
+      <!-- Tab counter - could consider labels/icons although not as much space on mobile -->
+      <span class="footer-tab-counter">{{ selectedIndex() + 1 }} / {{ tabs().length }}</span>
+
+      <button mat-button color="white" (click)="nextTab()" [disabled]="selectedIndex() === tabs().length - 1">
+        {{ 'Next' | translate }}
+      </button>
+    </div>
+  </div>
+  }
+</div>
+
+<!-- intro -->
+<!-- <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">home</mat-icon>
           {{ 'Intro' | translate }}
@@ -21,65 +89,8 @@
           </div>
         </div>
       </mat-tab> -->
-      <!-- content -->
-      @for(step of steps(); track $index){
-      <mat-tab>
-        @switch (step.type){
-        <!-- video -->
-        @case ("video") {
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">{{ step.tabMatIcon || 'slideshow' }}</mat-icon>
-          {{ step.tabLabel || 'video' | translate }}
-        </ng-template>
-        <div class="tab-content">
-          @if(step.video){
-          <farmer-step-video [videoData]="step.video"></farmer-step-video>
-          }
-        </div>
-        }
-        <!-- video playlist -->
-        @case ("video_playlist") {
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">{{ step.tabMatIcon || 'slideshow' }}</mat-icon>
-          {{ step.tabLabel || 'video' | translate }}
-        </ng-template>
-        <div class="tab-content">
-          @for(video of step.videos; track video.id){
-          <farmer-step-video [videoData]="video"></farmer-step-video>
-          }
-        </div>
-        } }
-      </mat-tab>
-      }
-      <!-- tools HACK - use hardcoded placeholders as cannot create loop of named router outlets -->
-      @if(tools()[0]; as tool_0){
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">smartphone</mat-icon>
-          {{ tool_0.tabLabel || 'Tool' | translate }}
-        </ng-template>
-        <div class="tab-content router-tab">
-          <div class="page">
-            <router-outlet #toolRouter class="tool-router"></router-outlet>
-          </div>
-        </div>
-      </mat-tab>
-      }
-      <!-- User photos -->
-      @if(content.showReviewSection){ @if(photoAlbum(); as album){
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">perm_media</mat-icon>
-          {{ 'Review' | translate }}
-        </ng-template>
-        <div class="tab-content router-tab">
-          <picsa-photo-list [album]="album"></picsa-photo-list>
-          <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-        </div>
-      </mat-tab>
 
-      } }
-      <!-- @if(tools()[1]; as tool_1){
+<!-- @if(tools()[1]; as tool_1){
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon class="tab-icon">smartphone</mat-icon>
@@ -92,7 +103,3 @@
         </div>
       </mat-tab>
       } -->
-    </mat-tab-group>
-  </div>
-  }
-</div>
