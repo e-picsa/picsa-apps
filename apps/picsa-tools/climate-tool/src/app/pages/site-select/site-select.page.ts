@@ -52,7 +52,7 @@ export class SiteSelectPage implements OnInit {
 
   goToSite(site: IStationMeta) {
     // record current map bound positions for returning back
-    const mapBounds = this.picsaMap.map.getBounds();
+    const mapBounds = this.picsaMap.map().getBounds();
     localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));
     // navigate
     this.router.navigate(['./', 'site', site.id], {
