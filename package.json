@@ -79,7 +79,7 @@
     "@uppy/tus": "^3.4.0",
     "c3": "^0.7.20",
     "capacitor-blob-writer": "^1.1.16",
-    "capacitor-video-player": "^5.5.1",
+    "capacitor-video-player": "^6.0.0",
     "cordova-plugin-codeplay-share-own-apk": "0.0.7",
     "cordova-plugin-file": "^8.0.1",
     "cordova-plugin-file-opener2": "^4.0.0",

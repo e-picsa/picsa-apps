@@ -195,6 +195,8 @@ export class VideoPlayerComponent implements OnDestroy {
       width: clientWidth,
       height: Math.round((clientWidth * 9) / 16),
       displayMode: 'landscape',
+      bkmodeEnabled: false,
+      pipEnabled: false,
     };
     if (Capacitor.isNativePlatform()) {
       defaultOptions.mode = 'fullscreen';

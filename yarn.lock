@@ -11264,13 +11264,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:^5.5.1":
-  version: 5.5.1
-  resolution: "capacitor-video-player@npm:5.5.1"
+"capacitor-video-player@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "capacitor-video-player@npm:6.0.0"
   peerDependencies:
-    "@capacitor/core": ^5.0.0
+    "@capacitor/core": ^6.0.0
     hls.js: ^1.4.0
-  checksum: 63636a02d4927c4795e448d9913aa2f5ce86b856da4fe6b4f6c38322a31506ac951b1c5a595ddf6f2af2ebbb1ce693abaa4c205fa305358d4b021ba7adff69fe
+  checksum: 815fa67bd455f408c7258eecf357d7588730b4760987b8002aae320b7f873f844b63582e4f36041d794fdd39c260ee463d2e5743b62791712d17936c7259e8d3
   languageName: node
   linkType: hard
 
@@ -19662,7 +19662,7 @@ __metadata:
     autoprefixer: ^10.4.20
     c3: ^0.7.20
     capacitor-blob-writer: ^1.1.16
-    capacitor-video-player: ^5.5.1
+    capacitor-video-player: ^6.0.0
     cordova-plugin-codeplay-share-own-apk: 0.0.7
     cordova-plugin-file: ^8.0.1
     cordova-plugin-file-opener2: ^4.0.0
