@@ -58,6 +58,7 @@ libs/**/*.ngsummary.json
 libs/environments/environment.prod.ts
 libs/environments/firebase/config.prod.ts
 
+!libs/theme/src/tailwind.config.js
 !libs/webcomponents/**
 
 # map tiles   

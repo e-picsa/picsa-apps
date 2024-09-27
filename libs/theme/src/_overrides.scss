@@ -137,11 +137,11 @@ mat-tab-group.height-fill {
 mat-tab-group.sticky-header-bottom {
   position: relative;
   & > mat-tab-header {
-    background: green;
     position: fixed;
     bottom: 0;
-    // HACK - ensure farmer content aligns on larger screen sizes
-    width: calc(100% - 32px);
+    // HACK - ensure farmer content reduces width to account for padding
+    // @apply sm:p-4 md:p-8;
+    @apply w-full sm:w-[calc(100%-theme(spacing.4))] md:w-[calc(100%-theme(spacing.8))];
     background: white;
     z-index: 2;
     // HACK - use with farmer content that has max width (hard to inherit)

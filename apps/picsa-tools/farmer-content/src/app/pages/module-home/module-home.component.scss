@@ -32,6 +32,7 @@
 .tab-content {
   padding: 16px;
 }
+
 .tab-content.router-tab {
   padding: 0;
   height: 100%;
@@ -40,8 +41,13 @@
   flex-direction: column;
   // Some styles also inherited from main .page
   .page {
+    // Adjust farmer tabs to compensate for header,
+    // @apply sm:p-4 md:p-8;
+    --tab-height: calc(100vh - 104px);
+    --tab-height-sm: calc(100vh - 104px - theme(spacing.4));
+    --tab-height-md: calc(100vh - 104px - theme(spacing.8));
     overflow: auto;
-    max-height: calc(100vh - 136px);
+    @apply max-h-[var(--tab-height)] sm:max-h-[var(--tab-height-sm)] md:max-h-[var(--tab-height-md)];
   }
 }
 // Force child-router tab to fill screen and provide page region
