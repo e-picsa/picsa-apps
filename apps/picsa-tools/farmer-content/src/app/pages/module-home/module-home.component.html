@@ -16,9 +16,9 @@
 
           <!-- Text -->
           @case ('text') { @if(block.title){
-          <h2>{{ block.title | translate }}</h2>
+          <h2 class="px-4">{{ block.title | translate }}</h2>
           } @if(block.text) {
-          <p>{{ block.text | translate }}</p>
+          <p class="px-4">{{ block.text | translate }}</p>
           } }
           <!-- Video -->
           @case('video'){
@@ -27,6 +27,7 @@
 
           <!-- Review tab -->
           @case ('review') { @if(photoAlbum(); as album){
+          <h2>{{ 'Review' | translate }}</h2>
           <picsa-photo-list [album]="album"></picsa-photo-list>
           <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
           } }

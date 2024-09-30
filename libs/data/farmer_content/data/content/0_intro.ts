@@ -6,12 +6,14 @@ import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_VIDEO_TESTIMONIAL_DATA } from '@pics
 const title = translateMarker('What is PICSA?');
 
 const steps: IFarmerContent['steps'] = [
-  [{ type: 'text', title }],
-  [{ type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro }],
+  [
+    { type: 'text', title },
+    { type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro },
+  ],
   [
     {
       type: 'text',
-      text: translateMarker('Testimonials'),
+      title: translateMarker('Testimonials'),
     },
     ...PICSA_VIDEO_TESTIMONIAL_DATA.map(
       (video): IFarmerContentStep => ({
