@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -12,9 +10,10 @@ import { PhotoInputComponent, PhotoListComponent, PhotoViewComponent } from '@pi
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
 
-import { FarmerStepVideoComponent } from '../../components/step-video/step-video.component';
+import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
+import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
 
-type ITabContent = IStepTab | IReviewTab | IToolTab;
+export type ITabContent = IStepTab | IReviewTab | IToolTab;
 
 type IStepTab = { type: 'step'; data: IFarmerContentStep };
 type IReviewTab = { type: 'review' };
@@ -25,10 +24,9 @@ type IToolTab = { type: 'tool'; data: IToolData };
   standalone: true,
   imports: [
     CommonModule,
+    FarmerModuleFooterComponent,
     FarmerStepVideoComponent,
     PicsaTranslateModule,
-    MatButtonModule,
-    MatIconModule,
     MatTabsModule,
     PhotoInputComponent,
     PhotoViewComponent,
@@ -43,7 +41,11 @@ type IToolTab = { type: 'tool'; data: IToolData };
 })
 export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   private params = toSignal(this.route.params);
-  public content = signal<IFarmerContent | null>(null);
+
+  public content = computed<IFarmerContent | undefined>(() => {
+    const { slug } = this.params() || {};
+    return this.loadContentBySlug(slug);
+  });
 
   /** Content to display within mat-tabs */
   public tabs = computed(() => {
@@ -52,7 +54,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   });
 
   /** Selected tab index. Used to programatically change tabs from custom footer */
-  public selectedIndex = signal(0);
+  public selectedIndex = model(0);
 
   /** Store any user-generated photos within a folder named after module */
   public photoAlbum = computed(() => {
@@ -69,7 +71,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     private componentService: PicsaCommonComponentsService,
     private tourService: TourService
   ) {
-    // handle loading content and fix tour implementation
+    // load content on slug change and fix tour implementation
     effect(
       (onCleanup) => {
         const { slug } = this.params() || {};
@@ -82,7 +84,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
       },
       { allowSignalWrites: true }
     );
-    // handle loading tool tab if selected
+    // If tool tab selected handle side-effects
     effect(() => {
       const selectedTabIndex = this.selectedIndex();
       const tabContent = this.tabs()[selectedTabIndex];
@@ -95,20 +97,13 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.hideAppHeader();
+    this.componentService.patchHeader({ hideHeader: true });
   }
   ngOnDestroy() {
-    this.showAppHeader();
+    this.componentService.patchHeader({ hideHeader: false });
   }
 
-  public nextTab() {
-    this.selectedIndex.update((v) => v + 1);
-  }
-  public previousTab() {
-    this.selectedIndex.update((v) => v - 1);
-  }
-
-  private generateContentTabs(content: IFarmerContent | null) {
+  private generateContentTabs(content?: IFarmerContent) {
     const tabs: ITabContent[] = [];
     if (content) {
       const { steps, tools, showReviewSection } = content;
@@ -125,23 +120,16 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     return tabs;
   }
 
-  private hideAppHeader() {
-    this.componentService.patchHeader({ hideHeader: true });
-  }
-  private showAppHeader() {
-    this.componentService.patchHeader({ hideHeader: false });
-  }
-
   private loadContentBySlug(slug: string | undefined) {
     if (slug) {
       const content: IFarmerContent = FARMER_CONTENT_DATA_BY_SLUG[slug];
       if (content) {
-        this.content.set(content);
-        return;
+        return content;
       }
     }
-    // if content not loaded simply navigate back to parent
+    // If content not loaded simply navigate back to parent.
     this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+    return undefined;
   }
 
   /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
