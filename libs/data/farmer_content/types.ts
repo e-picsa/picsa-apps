@@ -11,35 +11,37 @@ export interface IToolData {
   tabLabel?: string;
 }
 
-interface IContentStepBase {
-  type: string;
-  /** Label to show when selecting content from tab */
-  tabLabel?: string;
-  /** Icon to show in tab */
-  tabMatIcon?: string;
+interface StepText {
+  type: 'text';
+  text?: string;
+  title?: string;
 }
 
-interface IFarmerContentStepVideo extends IContentStepBase {
+export interface StepTool {
+  type: 'tool';
+  tool: IToolData;
+}
+interface StepVideo {
   type: 'video';
   video: IPicsaVideoData;
 }
 
-interface IFarmerContentStepVideoPlaylist extends IContentStepBase {
-  type: 'video_playlist';
-  videos: IPicsaVideoData[];
+interface StepReview {
+  type: 'review';
 }
 
-export type IFarmerContentStep = IFarmerContentStepVideo | IFarmerContentStepVideoPlaylist;
+export type IFarmerContentStep = StepReview | StepVideo | StepText | StepTool;
 
 export interface IFarmerContent {
   id: IFarmerContentId;
   slug: string;
   icon_path: string;
   title: string;
-  tools: IToolData[];
+
+  /** Steps contain dynamic content blocks, grouped within a mat-stepper **/
+  steps: IFarmerContentStep[][];
+
   tags: { label: string; color?: 'primary' | 'secondary' }[];
-  steps: IFarmerContentStep[];
+
   disabled?: boolean;
-  /** Include a photo-input section as part of review */
-  showReviewSection?: boolean;
 }

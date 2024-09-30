@@ -6,13 +6,10 @@
   // Adjust farmer tabs to compensate for header,
   // @apply sm:p-4 md:p-8;
   --tab-height: calc(100vh - var(--footer-height));
-  --tab-height-sm: calc(100vh - var(--footer-height-sm) - theme(spacing.4));
-  --tab-height-md: calc(100vh - var(--footer-height-md) - theme(spacing.8));
+  --tab-height-sm: calc(100vh - var(--footer-height-sm) - 2 * theme(spacing.4));
+  --tab-height-md: calc(100vh - var(--footer-height-md) - 2 * theme(spacing.8));
 }
 .content-container {
-  width: 100%;
-  max-width: 800px;
-  margin: auto;
   flex: 1;
 }
 .top-banner {
@@ -40,15 +37,14 @@
   margin-right: 4px;
 }
 
-.tab-content.router-tab {
+.tab-content {
   padding: 0;
   height: 100%;
   // background: yellow;
   display: flex;
   flex-direction: column;
-  // Some styles also inherited from main .page
-  .page {
-    overflow: auto;
-    @apply max-h-[var(--tab-height)] sm:max-h-[var(--tab-height-sm)] md:max-h-[var(--tab-height-md)];
-  }
+  @apply max-w-screen-md m-auto;
+  @apply p-0 sm:p-4 md:p-8;
+  @apply max-h-[var(--tab-height)] sm:max-h-[var(--tab-height-sm)] md:max-h-[var(--tab-height-md)];
+  overflow: auto;
 }

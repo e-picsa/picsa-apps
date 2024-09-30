@@ -137,36 +137,10 @@ mat-tab-group.height-fill {
     flex: 1;
   }
 }
-// Allow tabs which have bottom header absolute positioned
-// NOTE - this is no longer visible when no-header class in use
-mat-tab-group.sticky-header-bottom {
-  position: relative;
-  & > mat-tab-header {
-    position: fixed;
-    bottom: 0;
-    // HACK - ensure farmer content reduces width to account for padding
-    // @apply sm:p-4 md:p-8;
-    @apply w-full sm:w-[calc(100%-theme(spacing.4))] md:w-[calc(100%-theme(spacing.8))];
-    background: white;
-    z-index: 2;
-    // HACK - use with farmer content that has max width (hard to inherit)
-    max-width: 800px;
-  }
-  & > .mat-mdc-tab-body-wrapper {
-    margin-bottom: 32px;
-  }
-}
 
 mat-tab-group.no-header {
   & > mat-tab-header {
     display: none;
-  }
-}
-mat-tab-group.padding-responsive {
-  // match tab-content padding to standard page content padding
-  .tab-content {
-    @apply p-0 sm:p-4 md:p-8;
-    overflow: auto;
   }
 }
 

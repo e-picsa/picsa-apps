@@ -3,53 +3,48 @@
   <div @fadeInOut class="content-container">
     <mat-tab-group
       [selectedIndex]="selectedIndex()"
-      class="height-fill no-header padding-responsive"
+      class="height-fill no-header"
       style="height: 100%; width: 100%; flex: 1"
       headerPosition="below"
       preserveContent
     >
       <!-- content -->
-      @for(tab of tabs(); track $index){
+      @for(step of content.steps; track $index){
       <mat-tab>
-        <!-- TODO - refactor separate tab types -->
-        <!-- NOTE - not using switch currently as used in step tab -->
-        <div class="tab-content" [class.router-tab]="tab.type === 'tool'">
-          <!-- show title on first tab -->
-          @if($first){
-          <h2>{{ content.title | translate }}</h2>
+        <div class="tab-content">
+          @for(block of step; track $index){ @switch (block.type) {
+
+          <!-- Text -->
+          @case ('text') { @if(block.title){
+          <h2>{{ block.title | translate }}</h2>
+          } @if(block.text) {
+          <p>{{ block.text | translate }}</p>
+          } }
+          <!-- Video -->
+          @case('video'){
+          <farmer-step-video [videoData]="block.video"></farmer-step-video>
           }
 
-          <!-- Step Tab -->
-          @if(tab.type==='step'){ @if(tab.data; as step){
-          <!-- Step Content -->
-          @switch (step.type){
-          <!-- video -->
-          @case ("video") { @if(step.title){ } @if(step.video){
-          <farmer-step-video [videoData]="step.video"></farmer-step-video>
-          } }
-          <!-- video playlist -->
-          @case ("video_playlist") { @for(video of step.videos; track video.id){
-          <farmer-step-video [videoData]="video"></farmer-step-video>
-          } } } } }
-
-          <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
-          @if(tab.type==='tool'){ @if(tab.data; as tool){
-          <div class="page">
-            <router-outlet #toolRouter class="tool-router"></router-outlet>
-          </div>
-          } }
-
           <!-- Review tab -->
-          @if(tab.type==='review'){ @if(photoAlbum(); as album){
+          @case ('review') { @if(photoAlbum(); as album){
           <picsa-photo-list [album]="album"></picsa-photo-list>
           <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
           } }
+
+          <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
+          @case ('tool') {
+          <div class="page">
+            <router-outlet #toolRouter class="tool-router"></router-outlet>
+          </div>
+          } } }
+          <!-- show title on first tab -->
+          @if($first){ }
         </div>
       </mat-tab>
       }
     </mat-tab-group>
   </div>
-  <farmer-module-footer [tabs]="tabs()" [(selectedIndex)]="selectedIndex"></farmer-module-footer>
+  <farmer-module-footer [totalSections]="tabs().length" [(selectedIndex)]="selectedIndex"></farmer-module-footer>
 
   }
 </div>

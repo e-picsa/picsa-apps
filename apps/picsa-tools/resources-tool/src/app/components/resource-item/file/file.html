@@ -1,7 +1,7 @@
 <!-- TODO - should remove overlay and css from component to use in parent instead -->
 
 <!-- TODO - should be able to refactor video item to be included here -->
-<div style="position: relative">
+<div style="position: relative; max-width: 854px; margin: auto">
   @if(fileURI){
   <resource-share class="share-link" [link]="dbDoc.url" [uri]="fileURI"></resource-share>
   }

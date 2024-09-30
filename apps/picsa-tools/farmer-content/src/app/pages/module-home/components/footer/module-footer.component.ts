@@ -5,8 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
-import type { ITabContent } from '../../module-home.component';
-
 @Component({
   selector: 'farmer-module-footer',
   standalone: true,
@@ -15,7 +13,7 @@ import type { ITabContent } from '../../module-home.component';
   styleUrl: './module-footer.component.scss',
 })
 export class FarmerModuleFooterComponent {
-  public tabs = input.required<ITabContent[]>();
+  public totalSections = input.required<number>();
 
   public selectedIndex = model.required<number>();
 
@@ -25,11 +23,11 @@ export class FarmerModuleFooterComponent {
 
   constructor(private router: Router) {}
 
-  public nextTab() {
+  public next() {
     this.selectedIndex.update((v) => v + 1);
   }
 
-  public previousTab() {
+  public previous() {
     this.selectedIndex.update((v) => v - 1);
   }
 }

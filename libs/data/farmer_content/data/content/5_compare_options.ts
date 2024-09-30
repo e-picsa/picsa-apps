@@ -1,24 +1,36 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IFarmerContent, IFarmerContentStep } from '../../types';
+import { IFarmerContent } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
 import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
-const { budget } = TOOLS_DATA_HASHMAP;
+const title = translateMarker('Are the changes a good idea?');
 
-const steps: IFarmerContentStep[] = [
-  {
-    type: 'video',
-    video: PICSA_FARMER_VIDEOS_HASHMAP.participatory_budget,
-  },
+const steps: IFarmerContent['steps'] = [
+  [
+    { type: 'text', title },
+    {
+      type: 'video',
+      video: PICSA_FARMER_VIDEOS_HASHMAP.participatory_budget,
+    },
+  ],
+  [
+    {
+      type: 'tool',
+      tool: TOOLS_DATA_HASHMAP.budget,
+    },
+  ],
+  [
+    {
+      type: 'review',
+    },
+  ],
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'compare-options',
-  title: translateMarker('Are the changes a good idea?'),
-  tools: [budget],
-  tags: [],
+  title,
+  tags: [{ label: TOOLS_DATA_HASHMAP.budget.label }],
   steps,
-  showReviewSection: true,
 };
 export default content;

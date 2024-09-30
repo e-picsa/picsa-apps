@@ -1,19 +1,16 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IFarmerContent, IFarmerContentStep } from '../../types';
-import { TOOLS_DATA_HASHMAP } from '../tools';
+import { IFarmerContent } from '../../types';
 
-const {} = TOOLS_DATA_HASHMAP;
+const title = translateMarker('You decide and make a plan');
 
-const steps: IFarmerContentStep[] = [];
+const steps: IFarmerContent['steps'] = [];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'decide-and-plan',
-  title: translateMarker('You decide and make a plan'),
-  tools: [],
+  title,
   tags: [],
   steps,
   disabled: true,
-  showReviewSection: true,
 };
 export default content;
