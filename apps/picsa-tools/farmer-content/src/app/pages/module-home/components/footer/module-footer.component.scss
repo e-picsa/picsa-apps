@@ -3,8 +3,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  @apply h-[var(--footer-height)] sm:h-[var(--footer-height-sm)] md:h-[var(--footer-height-md)];
-  @apply min-h-[var(--footer-height)] sm:min-h-[var(--footer-height-sm)] md:min-h-[var(--footer-height-md)];
+  height: var(--footer-height); // inherited from parent
   overflow: hidden;
   display: flex;
   align-items: center;

@@ -9,6 +9,8 @@ export interface IToolData {
   /** base url to access tool within app */
   href: string;
   tabLabel?: string;
+  /** Show default app header of tool directly uses */
+  showHeader?: boolean;
 }
 
 interface StepText {

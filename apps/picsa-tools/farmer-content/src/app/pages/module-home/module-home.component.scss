@@ -1,13 +1,14 @@
 :host {
   --footer-height: 36px;
-  --footer-height-sm: 48px;
-  --footer-height-md: 60px;
+  --tab-height: calc(100vh - var(--footer-height) - 2 * var(--page-padding)); // page-padding inherited
 
-  // Adjust farmer tabs to compensate for header,
-  // @apply sm:p-4 md:p-8;
-  --tab-height: calc(100vh - var(--footer-height));
-  --tab-height-sm: calc(100vh - var(--footer-height-sm) - 2 * theme(spacing.4));
-  --tab-height-md: calc(100vh - var(--footer-height-md) - 2 * theme(spacing.8));
+  // Adjust farmer tabs to compensate for header and increased footer size
+  @screen sm {
+    --footer-height: 48px;
+  }
+  @screen md {
+    --footer-height: 60px;
+  }
 }
 .content-container {
   flex: 1;
@@ -43,8 +44,12 @@
   // background: yellow;
   display: flex;
   flex-direction: column;
-  @apply max-w-screen-md m-auto;
-  @apply p-0 sm:p-4 md:p-8;
-  @apply max-h-[var(--tab-height)] sm:max-h-[var(--tab-height-sm)] md:max-h-[var(--tab-height-md)];
+  @apply md:max-w-screen-md m-auto;
+  padding: var(--page-padding);
+  max-height: var(--tab-height);
   overflow: auto;
+}
+// HACK - reduce page size when using header
+.page[data-has-header='true'] {
+  max-height: calc(var(--tab-height) - 3.5rem);
 }

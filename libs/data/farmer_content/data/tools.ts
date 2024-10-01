@@ -9,8 +9,8 @@ import { IToolData } from '../types';
 
 // TODO - consider including svgIcons and using for extension tool also (refactor to folder and icon pack)
 const TOOLS_BASE = {
-  budget: { label: translateMarker('Budget'), href: 'budget', title: translateMarker('Tool') },
-  climate: { label: translateMarker('Climate'), href: 'climate', title: translateMarker('Tool') },
+  budget: { label: translateMarker('Budget'), href: 'budget', title: translateMarker('Tool'), showHeader: true },
+  climate: { label: translateMarker('Climate'), href: 'climate', title: translateMarker('Tool'), showHeader: true },
   options: { label: translateMarker('Options'), href: 'option', title: translateMarker('Tool') },
   probability_and_risk: {
     label: translateMarker('Probability and Risk'),

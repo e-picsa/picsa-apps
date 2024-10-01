@@ -3,6 +3,16 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
+
+  // Add page padding for different breakpoints
+  // Store as variable so can also used to calculate positioning on nested elements
+  --page-padding: 0px;
+  @screen sm {
+    --page-padding: theme(spacing.4);
+  }
+  @screen md {
+    --page-padding: theme(spacing.4);
+  }
 }
 
 .page {
@@ -23,9 +33,8 @@ body {
   position: relative;
   z-index: 1;
   overflow: auto;
-  // NOTE - avoid changing as values impact sticky header/footer elements
-  // Can find elements by searching for same text as below
-  @apply sm:p-4 md:p-8;
+
+  padding: var(--page-padding);
 }
 // remove padding when displaying within farmer-content
 farmer-content-module-home > .page-content {
