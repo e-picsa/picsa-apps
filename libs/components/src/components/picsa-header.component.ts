@@ -14,14 +14,14 @@ import { IHeaderOptions, PicsaCommonComponentsService } from '../services/compon
 @Component({
   selector: 'picsa-header',
   template: `
-    <header [attr.data-style]="style" [style.display]="hideHeader() ? 'none' : 'block'">
+    <header [attr.data-style]="style" [style.display]="hideHeader() ? 'none' : 'flex'">
       <div class="start-content">
-        <!-- HACK - menu button passed as content but back-button hardcoded -->
-        <ng-content></ng-content>
+        <!-- HACK - menu button passed as portal but back-button hardcoded -->
         <back-button
           [style.display]="hideBackButton() ? 'none' : 'block'"
           [variant]="style === 'primary' ? 'white' : 'primary'"
         ></back-button>
+        <ng-template [cdkPortalOutlet]="cdkPortalStart" #portalOutlet></ng-template>
       </div>
       <h1 class="central-content">
         <ng-template [cdkPortalOutlet]="cdkPortalCenter" #portalOutlet></ng-template>
@@ -45,6 +45,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
 
   private destroyed$ = new Subject<boolean>();
   /** Inject dynamic content into header slots using angular cdk portal */
+  public cdkPortalStart: IHeaderOptions['cdkPortalStart'];
   public cdkPortalCenter: IHeaderOptions['cdkPortalCenter'];
   public cdkPortalEnd: IHeaderOptions['cdkPortalEnd'];
 
@@ -126,7 +127,14 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   }
 
   private setPortalContent(options: IHeaderOptions) {
-    const { cdkPortalCenter, cdkPortalEnd } = options;
+    const { cdkPortalStart, cdkPortalCenter, cdkPortalEnd } = options;
+    // Center Portal
+    if (!cdkPortalStart) {
+      this.cdkPortalStart = undefined;
+    }
+    if (!cdkPortalStart?.isAttached) {
+      this.cdkPortalStart = cdkPortalStart;
+    }
     // Center Portal
     if (!cdkPortalCenter) {
       this.cdkPortalCenter = undefined;

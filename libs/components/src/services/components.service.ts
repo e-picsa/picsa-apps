@@ -5,7 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 export interface IHeaderOptions {
   title?: string;
   style?: 'inverted' | 'primary';
-  /** Angular portal cdk to inject component into header central slot */
+  /** Angular portal cdk to inject component into header slots */
+  cdkPortalStart?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
   cdkPortalEnd?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
   cdkPortalCenter?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
 

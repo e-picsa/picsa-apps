@@ -34,8 +34,8 @@
 
           <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
           @case ('tool') {
-          <div class="page" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
-            <router-outlet #toolRouter class="tool-router"></router-outlet>
+          <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
+            <router-outlet #toolRouter></router-outlet>
           </div>
           } } }
           <!-- show title on first tab -->

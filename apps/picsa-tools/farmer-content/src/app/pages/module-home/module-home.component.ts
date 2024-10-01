@@ -90,10 +90,10 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.componentService.patchHeader({ hideHeader: true, hideBackButton: true });
+    this.componentService.patchHeader({ hideHeader: true, hideBackButton: true, style: 'inverted' });
   }
   ngOnDestroy() {
-    this.componentService.patchHeader({ hideHeader: false, hideBackButton: false });
+    this.componentService.patchHeader({ hideHeader: false, hideBackButton: false, style: 'primary' });
   }
 
   /** Handle tool routing and header changes when stepper content changed */

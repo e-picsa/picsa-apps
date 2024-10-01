@@ -1,7 +1,5 @@
 :host {
   --footer-height: 36px;
-  --tab-height: calc(100vh - var(--footer-height) - 2 * var(--page-padding)); // page-padding inherited
-
   // Adjust farmer tabs to compensate for header and increased footer size
   @screen sm {
     --footer-height: 48px;
@@ -39,6 +37,8 @@
 }
 
 .tab-content {
+  --tab-height: calc(100vh - var(--footer-height) - 2 * var(--page-padding)); // page-padding inherited
+
   padding: 0;
   height: 100%;
   // background: yellow;
@@ -52,4 +52,8 @@
 // HACK - reduce page size when using header
 .page[data-has-header='true'] {
   max-height: calc(var(--tab-height) - 3.5rem);
+}
+// HACK - remove page padding from nested tool routes
+.tool-route {
+  --page-padding: 0px;
 }
