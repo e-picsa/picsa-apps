@@ -67,11 +67,7 @@ export class BudgetEditorComponent implements OnDestroy {
     this.periodType$.next(type);
 
     this.dialog.open(this.cardsListDialog, {
-      width: '90vw',
-      height: '90vh',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      panelClass: 'no-padding',
+      panelClass: 'budget-dialog',
     });
     // scroll existing dialog to top if exists as dialog opens
     setTimeout(() => {

@@ -48,9 +48,19 @@ mat-dialog-container.mat-mdc-dialog-container {
     padding: 0;
   }
 }
+
 // Increase dialog overlay width on small devices (600px)
 .cdk-overlay-pane.mat-mdc-dialog-panel {
   --mat-dialog-container-small-max-width: calc(100vw - theme(spacing.4));
+  // Budget tool picker full screen
+  &.budget-dialog {
+    --mat-dialog-container-small-max-width: 100vw;
+    width: 100vw;
+    @apply max-w-screen-md;
+    .mat-mdc-dialog-surface {
+      padding: 0;
+    }
+  }
 }
 
 // Remove padding from dialog action buttons
