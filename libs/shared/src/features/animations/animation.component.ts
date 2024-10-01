@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, input, OnInit, TemplateRef, viewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';
 import { AnimationOptions, BMCompleteLoopEvent } from 'ngx-lottie';
 
@@ -7,51 +8,48 @@ import type { IAvailableAnimations } from './models';
 @Component({
   selector: 'picsa-animation',
   styleUrls: ['./animation.component.scss'],
-  template: ` <div class="animation-background" [style.display]="options ? 'block' : 'none'">
-    <ng-container *ngIf="options">
-      <ng-lottie id="animation-container" [options]="options" (loopComplete)="loopComplete($event)"></ng-lottie>
-    </ng-container>
-  </div>`,
+  templateUrl: 'animation.component.html',
 })
 export class PicsaAnimationComponent implements OnInit {
   /** Name of animation file to display */
-  @Input() name: IAvailableAnimations;
-  /** Duration in ms to show animation for */
-  @Input() duration?: number;
+  name = input.required<IAvailableAnimations>();
   /** Number of loops to show animation for */
-  @Input() loops?: number;
-  /** Apply absolute positioning to float in center (default inline) */
-  @Input() position?: 'inline' | 'float' = 'inline';
+  loops = input.required<number>();
   /** Delay display of animation by set number of ms */
-  @Input() delay?: number;
+  delay = input<number>();
+
+  private dialogTemplate = viewChild.required<TemplateRef<HTMLElement>>('dialogTemplate');
 
   public options: AnimationOptions;
 
-  constructor(private host: ElementRef<HTMLElement>) {}
+  constructor(private host: ElementRef<HTMLElement>, private dialog: MatDialog) {}
 
-  private selfDestruct() {
+  private async selfDestruct() {
+    this.dialog.closeAll();
+    await _wait(300);
     this.host.nativeElement.remove();
   }
 
   async ngOnInit() {
-    if (this.delay) {
-      await _wait(this.delay);
+    if (this.delay()) {
+      await _wait(this.delay());
     }
-    this.loadAnimation(this.name);
+    this.loadAnimation(this.name());
   }
 
   /** Track number of times animation has looped, destroy if loops limit provided */
   loopComplete(e: BMCompleteLoopEvent) {
-    if (this.loops && (e.currentLoop as number) >= this.loops) {
+    if ((e.currentLoop as number) >= this.loops()) {
       this.selfDestruct();
     }
   }
 
   private loadAnimation(name: string) {
-    requestAnimationFrame(() => {
+    requestAnimationFrame(async () => {
       this.options = {
         path: `assets/animations/${name}.json`,
       };
+      this.dialog.open(this.dialogTemplate(), { disableClose: true, panelClass: 'no-padding' });
     });
   }
 }

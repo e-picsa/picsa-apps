@@ -9,7 +9,7 @@
     </button>
     <!-- Use a hidden select that opens from button (instead of using full select form component) -->
     <mat-select
-      style="width: 250px; position: absolute; right: 0; visibility: hidden"
+      style="width: 200px; position: absolute; right: 0; top: 18px; visibility: hidden"
       #select
       (selectionChange)="handleStationSelect(select.value)"
       [value]="chartService.station?.id"
@@ -40,5 +40,5 @@
 </div>
 
 @if(showRotateAnimation()){
-<picsa-animation name="rotate-phone" [loops]="2" position="float" [delay]="2000"></picsa-animation>
+<picsa-animation name="rotate-phone" [loops]="2" [delay]="2000"></picsa-animation>
 }
