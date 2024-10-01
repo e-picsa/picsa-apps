@@ -23,6 +23,7 @@ node_modules
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/tailwind.json
 
 # misc
 /.sass-cache
@@ -58,6 +59,7 @@ libs/**/*.ngsummary.json
 libs/environments/environment.prod.ts
 libs/environments/firebase/config.prod.ts
 
+!libs/theme/src/tailwind.config.js
 !libs/webcomponents/**
 
 # map tiles   

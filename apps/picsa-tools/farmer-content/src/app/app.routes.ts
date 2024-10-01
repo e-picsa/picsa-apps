@@ -2,11 +2,6 @@ import { Route } from '@angular/router';
 
 import { FarmerToolPlaceholderComponent } from './pages/tool/farmer-tool.component';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-// import { APP_TOOL_ROUTES } from '../../../../picsa-apps/extension-app/src/app/app-routing.module';
-
-// console.log({ APP_TOOL_ROUTES });
-
 export const appRoutes: Route[] = [
   {
     path: '',

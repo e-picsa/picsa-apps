@@ -9,10 +9,11 @@ import { arrayToHashmap } from '@picsa/utils';
 export type ICountryCode = Database['public']['Enums']['country_code'];
 
 const COUNTRIES_BASE: { [key in ICountryCode]: { label: string } } = {
-  global: { label: 'Global' },
   mw: { label: 'Malawi' },
   zm: { label: 'Zambia' },
   tj: { label: 'Tajikistan' },
+  // order entry will also be used for language select screen, so keep global at bottom
+  global: { label: 'Global' },
 };
 
 export const COUNTRIES_DATA = Object.entries(COUNTRIES_BASE)

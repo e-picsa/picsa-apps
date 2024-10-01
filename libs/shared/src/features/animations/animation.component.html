@@ -1,0 +1,7 @@
+<!-- TODO - consider support for inline animation again in the future if required -->
+
+<ng-template #dialogTemplate>
+  <div class="animation-background">
+    <ng-lottie id="animation-container" [options]="options" (loopComplete)="loopComplete($event)"></ng-lottie>
+  </div>
+</ng-template>

@@ -5,6 +5,7 @@ const config: CapacitorConfig = {
   appName: 'PICSA Extension',
   webDir: '../../../dist/apps/picsa-apps/extension-app',
   bundledWebRuntime: false,
+  zoomEnabled:true,
   // manually include plugins here as top-level package.json not checked correctly
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [

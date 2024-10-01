@@ -1,7 +1,14 @@
+:host {
+  --footer-height: 36px;
+  // Adjust farmer tabs to compensate for header and increased footer size
+  @screen sm {
+    --footer-height: 48px;
+  }
+  @screen md {
+    --footer-height: 60px;
+  }
+}
 .content-container {
-  width: 100%;
-  max-width: 800px;
-  margin: auto;
   flex: 1;
 }
 .top-banner {
@@ -30,30 +37,22 @@
 }
 
 .tab-content {
-  padding: 16px;
-}
-.tab-content.router-tab {
+  --tab-height: calc(100vh - var(--footer-height) - 2 * var(--page-padding)); // page-padding inherited
+
   padding: 0;
   height: 100%;
   // background: yellow;
   display: flex;
   flex-direction: column;
-  // Some styles also inherited from main .page
-  .page {
-    overflow: auto;
-    max-height: calc(100vh - 136px);
-  }
+  @apply md:max-w-screen-md m-auto;
+  padding: var(--page-padding);
+  max-height: var(--tab-height);
+  overflow: auto;
 }
-// Force child-router tab to fill screen and provide page region
-// .tab-content.router-tab {
-//   padding: 0;
-//   height: calc(100% - 32px);
-//   // background: yellow;
-//   display: flex;
-//   flex-direction: column;
-//   // Some styles also inherited from main .page
-//   .page {
-//     overflow: auto;
-//     max-height: calc(100vh - 104px);
-//   }
-// }
+.tab-content[data-tool-content='true'] {
+  --page-padding: 0px;
+}
+// HACK - reduce page size when using header
+.page[data-has-header='true'] {
+  max-height: calc(var(--tab-height) - 3.5rem);
+}
