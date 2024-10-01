@@ -11,7 +11,7 @@
       <!-- content -->
       @for(step of content.steps; track $index){
       <mat-tab>
-        <div class="tab-content">
+        <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
           @for(block of step; track $index){ @switch (block.type) {
 
           <!-- Text -->
@@ -38,8 +38,6 @@
             <router-outlet #toolRouter></router-outlet>
           </div>
           } } }
-          <!-- show title on first tab -->
-          @if($first){ }
         </div>
       </mat-tab>
       }

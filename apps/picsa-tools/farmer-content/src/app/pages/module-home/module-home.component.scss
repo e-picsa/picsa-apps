@@ -49,11 +49,10 @@
   max-height: var(--tab-height);
   overflow: auto;
 }
+.tab-content[data-tool-content='true'] {
+  --page-padding: 0px;
+}
 // HACK - reduce page size when using header
 .page[data-has-header='true'] {
   max-height: calc(var(--tab-height) - 3.5rem);
-}
-// HACK - remove page padding from nested tool routes
-.tool-route {
-  --page-padding: 0px;
 }

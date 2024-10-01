@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -49,6 +49,9 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
 
   /** Selected tab index. Used to programatically change tabs from custom footer */
   public selectedIndex = model(0);
+
+  /** Track whether tool is active in mat-stepper  */
+  public toolTabIndex = signal(-1);
 
   /** Store any user-generated photos within a folder named after module */
   public photoAlbum = computed(() => {
@@ -100,6 +103,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   private handleContentChangeEffects(stepContent: IFarmerContentStep[]) {
     const toolBlock = stepContent.find((b) => b.type === 'tool') as StepTool | undefined;
     if (toolBlock) {
+      this.toolTabIndex.set(this.selectedIndex());
       this.setToolUrl(toolBlock.tool);
     }
     // toogle app header if required by tool
