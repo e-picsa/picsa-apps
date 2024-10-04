@@ -42,6 +42,7 @@ export class PicsaDatabaseSyncService {
     this.db = db;
     const { sync_delete } = await this.db.addCollections({ sync_delete: SYNC_DELETE_COLLECTION });
     this.syncDeleteCollection = sync_delete;
+    // once db is registered subscribe to network changes to manage syncing
     this.subscribeToNetworkChanges();
   }
 
