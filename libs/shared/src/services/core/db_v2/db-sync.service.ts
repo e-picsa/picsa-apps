@@ -32,9 +32,7 @@ export class PicsaDatabaseSyncService {
   /** Track local document deletions in separate collection to sync to server */
   private syncDeleteCollection: RxCollection<ISyncDeleteEntry>;
 
-  constructor(private supabaseService: SupabaseService) {
-    this.subscribeToNetworkChanges();
-  }
+  constructor(private supabaseService: SupabaseService) {}
 
   /**
    * Register database for sync service to interact with
@@ -44,6 +42,7 @@ export class PicsaDatabaseSyncService {
     this.db = db;
     const { sync_delete } = await this.db.addCollections({ sync_delete: SYNC_DELETE_COLLECTION });
     this.syncDeleteCollection = sync_delete;
+    this.subscribeToNetworkChanges();
   }
 
   /** Register a given collection to have records pushed to supabase db */
