@@ -1,11 +1,8 @@
 :host {
-  --footer-height: 36px;
+  --footer-height: 48px;
   // Adjust farmer tabs to compensate for header and increased footer size
   @screen sm {
-    --footer-height: 48px;
-  }
-  @screen md {
-    --footer-height: 60px;
+    --footer-height: 64px;
   }
 }
 .content-container {

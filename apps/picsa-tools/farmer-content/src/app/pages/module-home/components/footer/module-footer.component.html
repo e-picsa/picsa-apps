@@ -3,14 +3,26 @@
   {{ 'Home' | translate }}
 </button>
 <div class="footer-nav-buttons">
-  <button mat-button color="white" (click)="previous()" [disabled]="selectedIndex() === 0">
-    {{ 'Previous' | translate }}
+  <button
+    mat-icon-button
+    color="white"
+    [attr.aria-labe]="'previous' | translate"
+    (click)="previous()"
+    [disabled]="selectedIndex() === 0"
+  >
+    <mat-icon>arrow_back</mat-icon>
   </button>
   <!-- Tab counter - could consider labels/icons although not as much space on mobile -->
   <span class="footer-tab-counter">{{ selectedIndex() + 1 }} / {{ totalSections() }}</span>
 
-  <button mat-button color="white" (click)="next()" [disabled]="selectedIndex() === totalSections() - 1">
-    {{ 'Next' | translate }}
+  <button
+    mat-icon-button
+    color="white"
+    [attr.aria-label]="'next' | translate"
+    (click)="next()"
+    [disabled]="selectedIndex() === totalSections() - 1"
+  >
+    <mat-icon>arrow_forward</mat-icon>
   </button>
 </div>
 
