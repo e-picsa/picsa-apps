@@ -1,35 +1,18 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
-    <h2 style="flex: 1">Climate Data</h2>
+    <h2 style="flex: 1; text-align: center">Station Data</h2>
     <dashboard-climate-api-status clientId="station" [options]="apiStatusOptions"></dashboard-climate-api-status>
   </div>
-  <h3>Stations ({{ service.apiCountryCode }})</h3>
-  <div style="display: flex; gap: 1rem">
-    <div style="flex: 1">
-      <table mat-table class="stations-table" [dataSource]="service.stations()" style="width: 200px">
-        <!-- index -->
-        <ng-container matColumnDef="station_id">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let station; let i = index">{{ i + 1 }}</td>
-        </ng-container>
-        <!-- station name -->
-        <ng-container matColumnDef="station_name">
-          <th mat-header-cell *matHeaderCellDef>station_name</th>
-          <td mat-cell *matCellDef="let station">{{ station.station_name }}</td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          class="station-row"
-          [routerLink]="row.station_id"
-          *matRowDef="let row; columns: displayedColumns"
-        ></tr>
-      </table>
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+    <div style="flex: 1; min-width: 500px; overflow: auto">
+      <picsa-data-table [options]="tableOptions" [data]="tableData()"> </picsa-data-table>
     </div>
-    <picsa-map
-      style="height: 500px; width: 500px"
-      [markers]="mapMarkers()"
-      (onMarkerClick)="handleMarkerClick($event)"
-    ></picsa-map>
+    <div style="flex: 1; min-width: 500px; height: calc(100vh - 70px); position: sticky; top: 0; right: 0">
+      <picsa-map
+        style="width: 100%; height: 100%"
+        [markers]="mapMarkers()"
+        (onMarkerClick)="handleMarkerClick($event)"
+      ></picsa-map>
+    </div>
   </div>
 </div>

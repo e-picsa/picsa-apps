@@ -3,11 +3,14 @@ import { Component, computed, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
 
 import { ClimateService } from '../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
 import { IStationRow } from '../../types';
+
+const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
 
 @Component({
   selector: 'dashboard-climate-station-page',
@@ -17,6 +20,7 @@ import { IStationRow } from '../../types';
     DashboardClimateApiStatusComponent,
     MatTableModule,
     RouterModule,
+    PicsaDataTableComponent,
     PicsaMapComponent,
     MatProgressSpinnerModule,
   ],
@@ -24,7 +28,16 @@ import { IStationRow } from '../../types';
   styleUrls: ['./station.component.scss'],
 })
 export class ClimateStationPageComponent implements OnInit {
-  public displayedColumns: (keyof IStationRow)[] = ['station_id', 'station_name'];
+  public tableOptions: IDataTableOptions = {
+    displayColumns: ['map', ...displayColumns],
+    sort: { id: 'district', start: 'desc' },
+  };
+  public tableData = computed(() => {
+    const stations = this.service.stations();
+    return stations.map((station, index) => {
+      return { ...station, map: index + 1 };
+    });
+  });
 
   public mapMarkers = computed<IMapMarker[]>(() => {
     const stations = this.service.stations();
