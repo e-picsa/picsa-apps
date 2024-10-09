@@ -50,7 +50,11 @@ export const ApiMapping = (
           },
         });
       if (error) throw error;
-      console.log('summary data', data);
+      // HACK - API issue returning huge data for some stations
+      if (data.data.length > 1000) {
+        console.error({ country_code, station_id, station_name, total_rows: data.data.length });
+        throw new Error(`[rainfallSummary] Too many rows | ${station_name} ${data.data.length}`);
+      }
       // TODO - gen types and handle mapping
       const entry: IClimateProductInsert = {
         data: data as any,
