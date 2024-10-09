@@ -165,10 +165,11 @@ export class PicsaDataTableComponent implements OnChanges {
       this.dataSource.paginator = this.paginator;
     }
     // sort will be disabled in html template if not included
-    if (this.tableOptions.sort && typeof this.tableOptions.sort === 'object') {
-      this.sort.sort(this.tableOptions.sort as MatSortable);
-    }
     this.dataSource.sort = this.sort;
+    // update default sort settings if included
+    if (this.tableOptions.sort && typeof this.tableOptions.sort === 'object') {
+      this.dataSource.sort.sort(this.tableOptions.sort as MatSortable);
+    }
     this.cdr.markForCheck();
   }
 }

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { IMapMarker, PicsaMapComponent } from '@picsa/shared/features/map/map';
@@ -18,7 +17,6 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
   imports: [
     CommonModule,
     DashboardClimateApiStatusComponent,
-    MatTableModule,
     RouterModule,
     PicsaDataTableComponent,
     PicsaMapComponent,
@@ -27,10 +25,11 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.scss'],
 })
-export class ClimateStationPageComponent implements OnInit {
+export class ClimateStationPageComponent {
   public tableOptions: IDataTableOptions = {
     displayColumns: ['map', ...displayColumns],
     sort: { id: 'district', start: 'desc' },
+    handleRowClick: (station: IStationRow) => this.goToStation(station),
   };
   public tableData = computed(() => {
     const stations = this.service.stations();
@@ -51,13 +50,13 @@ export class ClimateStationPageComponent implements OnInit {
 
   constructor(public service: ClimateService, private router: Router, private route: ActivatedRoute) {}
 
-  async ngOnInit() {
-    await this.service.ready();
-  }
-
   public handleMarkerClick(marker: IMapMarker) {
     const { _index } = marker;
     const station = this.service.stations()[_index];
+    this.goToStation(station);
+  }
+
+  private goToStation(station: IStationRow) {
     this.router.navigate(['./', station.station_id], { relativeTo: this.route });
   }
 
