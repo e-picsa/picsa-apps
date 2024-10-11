@@ -44,19 +44,9 @@ export interface paths {
     /** Read Stations */
     get: operations["read_stations_v1_station__country___station_id__get"];
   };
-  "/v1/forecasts/{country_code}": {
-    /**
-     * List Forecasts
-     * @description Get latest forecasts for country
-     */
-    get: operations["list_forecasts_v1_forecasts__country_code__get"];
-  };
-  "/v1/forecasts/{file_name}": {
-    /**
-     * Get Forecast
-     * @description Get forecast file
-     */
-    get: operations["get_forecast_v1_forecasts__file_name__get"];
+  "/v1/documents/{country}": {
+    /** Get Documents */
+    get: operations["get_documents_v1_documents__country__get"];
   };
 }
 
@@ -98,13 +88,13 @@ export interface components {
     AnnualRainfallSummariesParameters: {
       /**
        * Country
-       * @default zm_workshops
+       * @default mw_test
        * @enum {string}
        */
       country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /**
        * Station Id
-       * @default zambia_eastern
+       * @default Kasungu
        */
       station_id?: string;
       /**
@@ -143,20 +133,28 @@ export interface components {
       n_rain?: number;
       /** Start Rains Doy */
       start_rains_doy?: number;
-      /** End Season Doy */
-      end_season_doy?: number;
-      /** Season Length */
-      season_length?: number;
       /** Start Rains Date */
       start_rains_date?: unknown;
+      /** Start Rains Status */
+      start_rains_status?: boolean;
       /** End Rains Doy */
       end_rains_doy?: number;
       /** End Rains Date */
       end_rains_date?: unknown;
-      /** End Season Date */
-      end_season_date?: unknown;
+      /** End Rains Status */
+      end_rains_status?: boolean;
+      /** Seasonal Rain */
+      seasonal_rain?: number;
       /** N Seasonal Rain */
       n_seasonal_rain?: number;
+      /** Season Length */
+      season_length?: number;
+      /** End Season Doy */
+      end_season_doy?: number;
+      /** End Season Date */
+      end_season_date?: unknown;
+      /** End Season Status */
+      end_season_status?: boolean;
     };
     /** AnnualTempartureSummariesdata */
     AnnualTempartureSummariesdata: {
@@ -181,13 +179,13 @@ export interface components {
     AnnualTemperatureSummariesParameters: {
       /**
        * Country
-       * @default zm_workshops
+       * @default mw_test
        * @enum {string}
        */
       country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /**
        * Station Id
-       * @default zambia_eastern
+       * @default Kasungu
        */
       station_id?: string;
       /**
@@ -214,17 +212,23 @@ export interface components {
       /** Data */
       data: components["schemas"]["AnnualTempartureSummariesdata"][];
     };
+    /** CropSuccessProbabilitiesMetadata */
+    CropSuccessProbabilitiesMetadata: {
+      start_rains?: components["schemas"]["StartRains"];
+      end_rains?: components["schemas"]["EndRains"];
+      crops_success?: components["schemas"]["CropsSuccess"];
+    };
     /** CropSuccessProbabilitiesParameters */
     CropSuccessProbabilitiesParameters: {
       /**
        * Country
-       * @default zm_workshops
+       * @default mw_test
        * @enum {string}
        */
       country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /**
        * Station Id
-       * @default zambia_eastern
+       * @default Kasungu
        */
       station_id?: string;
       /** Water Requirements */
@@ -240,6 +244,25 @@ export interface components {
        * @default false
        */
       override?: boolean;
+    };
+    /** CropSuccessProbabilitiesResponce */
+    CropSuccessProbabilitiesResponce: {
+      metadata: components["schemas"]["CropSuccessProbabilitiesMetadata"];
+      /** Data */
+      data: components["schemas"]["CropSuccessProbabilitiesdata"][];
+    };
+    /** CropSuccessProbabilitiesdata */
+    CropSuccessProbabilitiesdata: {
+      /** Station */
+      station: string;
+      /** Rain Total */
+      rain_total: number;
+      /** Plant Day */
+      plant_day: number;
+      /** Plant Length */
+      plant_length: number;
+      /** Prop Success */
+      prop_success: number;
     };
     /** CropsSuccess */
     CropsSuccess: {
@@ -294,13 +317,13 @@ export interface components {
     ExtremesSummariesParameters: {
       /**
        * Country
-       * @default zm
+       * @default mw_test
        * @enum {string}
        */
       country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /**
        * Station Id
-       * @default test_1
+       * @default Kasungu
        */
       station_id?: string;
       /**
@@ -317,23 +340,6 @@ export interface components {
        * @default false
        */
       override?: boolean;
-    };
-    /** Forecast */
-    Forecast: {
-      /**
-       * Date
-       * Format: date-time
-       */
-      date: string;
-      /** Filename */
-      filename: string;
-      /** Type */
-      type: string;
-      /**
-       * Format
-       * @enum {string}
-       */
-      format: "html" | "pdf";
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -365,13 +371,13 @@ export interface components {
     MonthlyTemperatureSummariesParameters: {
       /**
        * Country
-       * @default zm_workshops
+       * @default mw_test
        * @enum {string}
        */
       country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /**
        * Station Id
-       * @default zambia_eastern
+       * @default Kasungu
        */
       station_id?: string;
       /**
@@ -414,13 +420,13 @@ export interface components {
     SeasonStartProbabilitiesParameters: {
       /**
        * Country
-       * @default zm_workshops
+       * @default mw_test
        * @enum {string}
        */
       country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /**
        * Station Id
-       * @default zambia_eastern
+       * @default Kasungu
        */
       station_id?: string;
       /**
@@ -546,7 +552,7 @@ export interface components {
        */
       country_code: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       /** Definitions Id */
-      definitions_id: string[];
+      definitions_id: unknown[];
       /** Climsoft List */
       climsoft_list?: string[];
       data: components["schemas"]["StationDefinitionDataResponce"];
@@ -712,7 +718,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": Record<string, never>;
+          "application/json": components["schemas"]["CropSuccessProbabilitiesResponce"];
         };
       };
       /** @description Validation Error */
@@ -834,39 +840,17 @@ export interface operations {
       };
     };
   };
-  /**
-   * List Forecasts
-   * @description Get latest forecasts for country
-   */
-  list_forecasts_v1_forecasts__country_code__get: {
+  /** Get Documents */
+  get_documents_v1_documents__country__get: {
     parameters: {
+      query?: {
+        prefix?: unknown;
+        delimiter?: string;
+        max_results?: number;
+        match_glob?: string;
+      };
       path: {
-        country_code: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Forecast"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Get Forecast
-   * @description Get forecast file
-   */
-  get_forecast_v1_forecasts__file_name__get: {
-    parameters: {
-      path: {
-        file_name: string;
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
       };
     };
     responses: {

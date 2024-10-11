@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -13,7 +13,7 @@ import { ChartConfiguration } from 'c3';
 
 import { ClimateService } from '../../../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import { APITypes, IClimateProductRow } from '../../../../types';
+import { APITypes, IClimateProductRow, IStationRow } from '../../../../types';
 
 type AnnualRainfallSummariesdata = APITypes.components['schemas']['AnnualRainfallSummariesdata'];
 
@@ -39,13 +39,20 @@ interface IRainfallSummary {
   styleUrl: './rainfall-summary.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RainfallSummaryComponent implements AfterViewInit {
+export class RainfallSummaryComponent {
   public summaryMetadata: IRainfallSummary['metadata'] = {};
   public summaryData: IRainfallSummary['data'] = [];
   public apiClientId: string;
   public chartDefintions: IChartMeta[] = [];
   public activeChartConfig: Partial<ChartConfiguration>;
-  constructor(private service: ClimateService, private cdr: ChangeDetectorRef, private supabase: SupabaseService) {}
+  constructor(private service: ClimateService, private cdr: ChangeDetectorRef, private supabase: SupabaseService) {
+    effect(() => {
+      const activeStation = this.service.activeStation();
+      if (activeStation) {
+        this.loadActiveStation(activeStation);
+      }
+    });
+  }
 
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],
@@ -56,17 +63,20 @@ export class RainfallSummaryComponent implements AfterViewInit {
     showStatusCode: true,
   };
 
+  private get activeStation() {
+    return this.service.activeStation();
+  }
+
   private get db() {
     return this.supabase.db.table('climate_products');
   }
 
-  async ngAfterViewInit() {
-    const { activeStation } = this.service;
+  private async loadActiveStation(station: IStationRow) {
     // Load data stored in supabase db if available. Otherwise load from api
     // TODO - nicer if could include db lookups as part of mapping doc
     const { data, error } = await this.db
       .select<'*', IClimateProductRow>('*')
-      .eq('station_id', activeStation().id)
+      .eq('station_id', station.id)
       .eq('type', 'rainfallSummary')
       .single();
     if (data) {
@@ -79,9 +89,9 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   public async refreshData() {
-    if (this.service.activeStation) {
-      this.apiClientId = `rainfallSummary_${this.service.activeStation().id}`;
-      const data = await this.service.loadFromAPI.rainfallSummaries(this.service.activeStation());
+    if (this.activeStation) {
+      this.apiClientId = `rainfallSummary_${this.activeStation.id}`;
+      const data = await this.service.loadFromAPI.rainfallSummaries(this.activeStation);
       const summary = data?.[0];
       if (summary) {
         this.loadData(summary.data as any);
@@ -98,11 +108,12 @@ export class RainfallSummaryComponent implements AfterViewInit {
 
   private loadData(summary: IRainfallSummary) {
     console.log('load data', summary);
-    this.tableOptions.exportFilename = `${this.service.activeStation().station_name}_rainfallSummary.csv`;
+    this.tableOptions.exportFilename = `${this.activeStation.id}.csv`;
     const { data, metadata } = summary;
     this.summaryData = this.convertAPIDataToLegacyFormat(data);
+    // this.summaryData = data;
     this.summaryMetadata = metadata;
-    const { country_code } = this.service.activeStation();
+    const { country_code } = this.activeStation;
     const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
     this.chartDefintions = Object.values(definitions);
   }
@@ -114,10 +125,12 @@ export class RainfallSummaryComponent implements AfterViewInit {
       // HACK - use either end_rains or end_season depending on which has data populated
       // TODO - push for single value to be populated at api level
       End: el.end_rains_doy || el.end_season_doy,
-      Extreme_events: null as any,
+      // HACK - extreme events not currently supported
+      // Extreme_events: null as any,
       Length: el.season_length,
       // HACK - replace 0mm with null value
-      Rainfall: el.annual_rain || undefined,
+      // HACK - newer api returning seasonal_rain instead of annual_rain
+      Rainfall: el.seasonal_rain || undefined,
       Start: el.start_rains_doy,
     }));
     return data;
