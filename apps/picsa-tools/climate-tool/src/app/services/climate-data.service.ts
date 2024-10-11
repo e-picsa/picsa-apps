@@ -63,7 +63,8 @@ export class ClimateDataService {
   }
 
   private async loadStationSummaries(stationID: string) {
-    return loadCSV<IStationData>(`assets/summaries/${stationID}.csv`, {
+    const { country_code } = this.configurationService.deploymentSettings();
+    return loadCSV<IStationData>(`assets/summaries/${country_code}/${stationID}.csv`, {
       download: true,
       dynamicTyping: true,
       header: true,
