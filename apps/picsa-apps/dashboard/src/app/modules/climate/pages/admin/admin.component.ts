@@ -102,7 +102,6 @@ export class ClimateAdminPageComponent {
           return { station_id };
         }
       });
-      console.log(summary);
       return summary;
     }
     return [];
