@@ -108,9 +108,10 @@ export class RainfallSummaryComponent {
 
   private loadData(summary: IRainfallSummary) {
     console.log('load data', summary);
-    this.tableOptions.exportFilename = `${this.activeStation.station_name}_rainfallSummary.csv`;
+    this.tableOptions.exportFilename = `${this.activeStation.id}.csv`;
     const { data, metadata } = summary;
     this.summaryData = this.convertAPIDataToLegacyFormat(data);
+    // this.summaryData = data;
     this.summaryMetadata = metadata;
     const { country_code } = this.activeStation;
     const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
@@ -124,10 +125,12 @@ export class RainfallSummaryComponent {
       // HACK - use either end_rains or end_season depending on which has data populated
       // TODO - push for single value to be populated at api level
       End: el.end_rains_doy || el.end_season_doy,
-      Extreme_events: null as any,
+      // HACK - extreme events not currently supported
+      // Extreme_events: null as any,
       Length: el.season_length,
       // HACK - replace 0mm with null value
-      Rainfall: el.annual_rain || undefined,
+      // HACK - newer api returning seasonal_rain instead of annual_rain
+      Rainfall: el.seasonal_rain || undefined,
       Start: el.start_rains_doy,
     }));
     return data;

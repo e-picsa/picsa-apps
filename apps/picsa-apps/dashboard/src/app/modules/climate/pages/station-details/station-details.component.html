@@ -1,8 +1,7 @@
 <div class="page-content">
   @if(station(); as station){
   <h2>{{ station.station_name }}</h2>
-  <!-- <picsa-data-table [options]="tableOptions" [data]="stationSummaries()"></picsa-data-table> -->
-  <table>
+  <table style="max-width: 600px">
     <tr>
       @for(key of stationSummary().keys; track $index){
       <th>{{ key }}</th>

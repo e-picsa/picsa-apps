@@ -94,48 +94,49 @@ export const ApiMapping = (
     },
     //
     forecasts: async (country_code: IAPICountryCode) => {
-      const { data, error } = await api
-        .getObservableClient(`forecasts/${country_code}`)
-        .GET(`/v1/forecasts/{country_code}`, { params: { path: { country_code } } });
-      if (error) throw error;
-      const forecasts = data.map((d): IForecastInsert => {
-        const { date, filename, format, type } = d;
-        // TODO - handle format
-        return { date_modified: date, filename, country_code, type, id: filename.split('/').pop() as string };
-      });
-      const { error: dbError, data: dbData } = await db
-        .table('climate_forecasts')
-        .upsert<IForecastInsert>(forecasts)
-        .select<'*', IForecastRow>('*');
-      if (dbError) throw dbError;
-      return dbData || [];
+      // const { data, error } = await api
+      //   .getObservableClient(`forecasts/${country_code}`)
+      //   .GET(`/v1/forecasts/{country_code}`, { params: { path: { country_code } } });
+      // if (error) throw error;
+      // const forecasts = data.map((d): IForecastInsert => {
+      //   const { date, filename, format, type } = d;
+      //   // TODO - handle format
+      //   return { date_modified: date, filename, country_code, type, id: filename.split('/').pop() as string };
+      // });
+      // const { error: dbError, data: dbData } = await db
+      //   .table('climate_forecasts')
+      //   .upsert<IForecastInsert>(forecasts)
+      //   .select<'*', IForecastRow>('*');
+      // if (dbError) throw dbError;
+      // return dbData || [];
+      return [];
     },
     forecast_file: async (row: IForecastRow) => {
-      const { country_code, filename } = row;
-      const { data, error } = await api.getObservableClient(`forecasts/${filename}`).GET(`/v1/forecasts/{file_name}`, {
-        params: { path: { file_name: filename } },
-        parseAs: 'blob',
-      });
-      if (error) throw error;
-      // setup metadata
-      const fileBlob = data as Blob;
-      const bucketId = country_code as string;
-      const folderPath = 'climate/forecasts';
-      // upload to storage
-      await storage.putFile({ bucketId, fileBlob, filename, folderPath });
-      // TODO - handle error if filename already exists
-      const storageEntry = await storage.getFileAlt({ bucketId, filename, folderPath });
-      if (storageEntry) {
-        const { error: dbError } = await db
-          .table('climate_forecasts')
-          .upsert<IForecastInsert>({ ...row, storage_file: storageEntry.id })
-          .select('*');
-        if (dbError) {
-          throw dbError;
-        }
-        return;
-      }
-      throw new Error('Storage file not found');
+      // const { country_code, filename } = row;
+      // const { data, error } = await api.getObservableClient(`forecasts/${filename}`).GET(`/v1/forecasts/{file_name}`, {
+      //   params: { path: { file_name: filename } },
+      //   parseAs: 'blob',
+      // });
+      // if (error) throw error;
+      // // setup metadata
+      // const fileBlob = data as Blob;
+      // const bucketId = country_code as string;
+      // const folderPath = 'climate/forecasts';
+      // // upload to storage
+      // await storage.putFile({ bucketId, fileBlob, filename, folderPath });
+      // // TODO - handle error if filename already exists
+      // const storageEntry = await storage.getFileAlt({ bucketId, filename, folderPath });
+      // if (storageEntry) {
+      //   const { error: dbError } = await db
+      //     .table('climate_forecasts')
+      //     .upsert<IForecastInsert>({ ...row, storage_file: storageEntry.id })
+      //     .select('*');
+      //   if (dbError) {
+      //     throw dbError;
+      //   }
+      //   return;
+      // }
+      // throw new Error('Storage file not found');
     },
   };
 };
