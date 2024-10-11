@@ -15,14 +15,7 @@ import type { IAnnualRainfallSummariesData, IClimateProductRow, IStationRow } fr
 import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/rainfall-summary/rainfall-summary.utils';
 
 /**
- * TODOs
- * - [ ] Improve types throughout
- * - [ ] Add auth and navlink route guards
- * - [ ] Add button to force api fetch
- * - [ ] Update table to include country_code for filtered query
- * - [ ] Update table to include updated_at
- * - [ ] Consider rename climate_products table to just be climate_rainfall_summary (separate data/metadata cols)
- * - [ ] Improve data conversion so raw data can be displayed in dashboard (and climate products use)
+ * TODOs - See #333
  */
 
 @Component({
