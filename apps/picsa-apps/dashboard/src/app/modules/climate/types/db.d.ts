@@ -1,6 +1,9 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 
+import * as APITypes from './api';
+
+// DB types
 export type IClimateProductRow = Database['public']['Tables']['climate_products']['Row'];
 export type IClimateProductInsert = Database['public']['Tables']['climate_products']['Insert'];
 
@@ -9,3 +12,6 @@ export type IForecastInsert = Database['public']['Tables']['climate_forecasts'][
 
 export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
 export type IStationInsert = Database['public']['Tables']['climate_stations']['Insert'];
+
+// API Types
+export type IAnnualRainfallSummariesData = APITypes.components['schemas']['AnnualRainfallSummariesdata'];

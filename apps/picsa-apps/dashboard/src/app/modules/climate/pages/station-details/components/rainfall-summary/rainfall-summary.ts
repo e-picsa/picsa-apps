@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
-import { IChartMeta, IStationData } from '@picsa/models/src';
+import { IChartMeta } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -13,9 +13,8 @@ import { ChartConfiguration } from 'c3';
 
 import { ClimateService } from '../../../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import { APITypes, IClimateProductRow, IStationRow } from '../../../../types';
-
-type AnnualRainfallSummariesdata = APITypes.components['schemas']['AnnualRainfallSummariesdata'];
+import { IClimateProductRow, IStationRow } from '../../../../types';
+import { hackConvertAPIDataToLegacyFormat } from './rainfall-summary.utils';
 
 interface IRainfallSummary {
   // TODO - improve typings
@@ -110,29 +109,11 @@ export class RainfallSummaryComponent {
     console.log('load data', summary);
     this.tableOptions.exportFilename = `${this.activeStation.id}.csv`;
     const { data, metadata } = summary;
-    this.summaryData = this.convertAPIDataToLegacyFormat(data);
+    this.summaryData = hackConvertAPIDataToLegacyFormat(data);
     // this.summaryData = data;
     this.summaryMetadata = metadata;
     const { country_code } = this.activeStation;
     const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
     this.chartDefintions = Object.values(definitions);
-  }
-
-  // TODO - refactor components to use modern format
-  private convertAPIDataToLegacyFormat(apiData: AnnualRainfallSummariesdata[] = []) {
-    const data: Partial<IStationData>[] = apiData.map((el) => ({
-      Year: el.year,
-      // HACK - use either end_rains or end_season depending on which has data populated
-      // TODO - push for single value to be populated at api level
-      End: el.end_rains_doy || el.end_season_doy,
-      // HACK - extreme events not currently supported
-      // Extreme_events: null as any,
-      Length: el.season_length,
-      // HACK - replace 0mm with null value
-      // HACK - newer api returning seasonal_rain instead of annual_rain
-      Rainfall: el.seasonal_rain || undefined,
-      Start: el.start_rains_doy,
-    }));
-    return data;
   }
 }

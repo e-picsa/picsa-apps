@@ -17,6 +17,11 @@ import { StationDetailsPageComponent } from './pages/station-details/station-det
         pathMatch: 'full',
       },
       {
+        path: 'admin',
+        loadComponent: () => import('./pages/admin/admin.component').then((m) => m.ClimateAdminPageComponent),
+        // TODO - add auth route guards
+      },
+      {
         path: 'station',
         component: ClimateStationPageComponent,
       },

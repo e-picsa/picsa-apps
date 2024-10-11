@@ -46,6 +46,12 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
         label: 'Forecasts',
         href: '/forecast',
       },
+      {
+        label: 'Admin',
+        href: '/admin',
+        // TODO - auth role
+        // TODO - import from module?
+      },
     ],
   },
   {
