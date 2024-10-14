@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { arrayToHashmapArray } from '@picsa/utils';
+import { _wait, arrayToHashmapArray } from '@picsa/utils';
 import download from 'downloadjs';
 import JSZip from 'jszip';
 import { unparse } from 'papaparse';
@@ -13,6 +13,17 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 import { ClimateService } from '../../climate.service';
 import type { IAnnualRainfallSummariesData, IClimateProductRow, IStationRow } from '../../types';
 import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/rainfall-summary/rainfall-summary.utils';
+
+interface IStationAdminSummary {
+  station_id: string;
+  row: IStationRow;
+  updated_at: string;
+  rainfall_summary?: IClimateProductRow;
+  start_year?: number;
+  end_year?: number;
+}
+
+const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['station_id', 'updated_at', 'start_year', 'end_year'];
 
 /**
  * TODOs - See #333
@@ -32,8 +43,9 @@ export class ClimateAdminPageComponent {
     return this.generateTableSummaryData(stations, products);
   });
   public tableOptions: IDataTableOptions = {
-    displayColumns: ['station_id', 'type', 'updated_at', 'start_year', 'end_year', 'csv'],
+    displayColumns: DISPLAY_COLUMNS,
   };
+  public refreshCount = signal(-1);
 
   private climateProducts = signal<IClimateProductRow[]>([]);
 
@@ -61,7 +73,7 @@ export class ClimateAdminPageComponent {
     for (const summary of this.tableData()) {
       const csvData = this.generateStationCSVDownload(summary);
       if (csvData) {
-        zip.file(`${summary.station_id}.csv`, csvData);
+        zip.file(`${summary.row.station_id}.csv`, csvData);
       }
     }
     const blob = await zip.generateAsync({ type: 'blob' });
@@ -69,15 +81,30 @@ export class ClimateAdminPageComponent {
     download(blob, `${country_code}_rainfall_summaries.zip`);
   }
 
-  public downloadStationCSV(summary) {
-    const csv = this.generateStationCSVDownload(summary);
+  public downloadStationCSV(station: IStationAdminSummary) {
+    const csv = this.generateStationCSVDownload(station);
     if (csv) {
-      download(csv, summary.station_id, 'text/csv');
+      download(csv, station.row.station_id, 'text/csv');
     }
   }
-  private generateStationCSVDownload(summary) {
-    if (summary.data && summary.data.length > 0) {
-      const csvData = hackConvertAPIDataToLegacyFormat(summary.data);
+
+  public async refreshAllStations() {
+    this.refreshCount.set(0);
+    const promises = this.tableData().map(async (station, i) => {
+      // hack - instead of queueing apply small offset between requests to reduce blocking
+      await _wait(200 * i);
+      await this.service.loadFromAPI.rainfallSummaries(station.row);
+      this.refreshCount.update((v) => v + 1);
+    });
+    await Promise.all(promises);
+    await this.loadRainfallSummaries(this.deploymentService.activeDeployment()?.country_code as string);
+  }
+
+  private generateStationCSVDownload(summary: IStationAdminSummary) {
+    const { rainfall_summary } = summary;
+    if (rainfall_summary && rainfall_summary.data) {
+      const data = rainfall_summary.data['data'] as any[];
+      const csvData = hackConvertAPIDataToLegacyFormat(data);
       const columns = Object.keys(csvData[0]);
       const csv = unparse(csvData, { columns });
       return csv;
@@ -86,25 +113,21 @@ export class ClimateAdminPageComponent {
   }
 
   private generateTableSummaryData(stations: IStationRow[], products: IClimateProductRow[]) {
-    if (stations.length > 0 && products.length > 0) {
-      // NOTE - only single entry for rainfallSummary (not hashmapArray)
-      const productsHashmap = arrayToHashmapArray(products, 'station_id');
-      const summary = stations.map((station) => {
-        const { station_id } = station;
-        const rainfallSummary = productsHashmap[station_id]?.find((p) => p.type === 'rainfallSummary');
-        if (rainfallSummary) {
-          const { data, station_id, type } = rainfallSummary;
-          const entries: IAnnualRainfallSummariesData[] = data?.['data'] || [];
-          const start_year = entries[0]?.year;
-          const end_year = entries[entries.length - 1]?.year;
-          return { station_id, type, updated_at: '', start_year, end_year, csv: '', data: data?.['data'] };
-        } else {
-          return { station_id };
-        }
-      });
+    // NOTE - only single entry for rainfallSummary (not hashmapArray)
+    const productsHashmap = arrayToHashmapArray(products, 'station_id');
+    return stations.map((row) => {
+      const { station_id } = row;
+      const summary: IStationAdminSummary = { station_id, row, updated_at: '' };
+      const rainfallSummary = productsHashmap[station_id]?.find((p) => p.type === 'rainfallSummary');
+      if (rainfallSummary) {
+        summary.rainfall_summary = rainfallSummary;
+        const { data } = rainfallSummary;
+        const entries: IAnnualRainfallSummariesData[] = data?.['data'] || [];
+        summary.start_year = entries[0]?.year;
+        summary.end_year = entries[entries.length - 1]?.year;
+      }
       return summary;
-    }
-    return [];
+    });
   }
 
   private async loadRainfallSummaries(country_code: string) {

@@ -2,7 +2,18 @@
   <h2>Admin</h2>
   <div style="display: flex; align-items: center; gap: 2em">
     <p style="flex: 1">(WiP) dashboard to allow quick download of Rainfall Summaries to include in the app</p>
-    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">Download All</button>
+    <!-- Data Refresh -->
+    <button mat-stroked-button color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
+      <mat-icon>refresh</mat-icon>
+      <span>
+        @if(refreshCount() > -1){
+        {{ refreshCount() }} / {{ tableData().length }} } @else { Refresh All}
+      </span>
+    </button>
+    <!-- Data Download -->
+    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
+      <mat-icon>download</mat-icon>Download All
+    </button>
   </div>
   <picsa-data-table
     style="margin-top: 1em"
@@ -10,8 +21,8 @@
     [options]="tableOptions"
     [valueTemplates]="{ csv: csvTemplate }"
   >
-    <ng-template #csvTemplate let-row="row">
-      <button mat-button (click)="downloadStationCSV(row)"><mat-icon>download</mat-icon></button>
+    <ng-template #csvTemplate let-row="row" let-value="value">
+      <button mat-button (click)="downloadStationCSV(row)" [disabled]="!value"><mat-icon>download</mat-icon></button>
     </ng-template>
   </picsa-data-table>
 </div>
