@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
-import { IChartMeta } from '@picsa/models/src';
+import { IChartMeta, IStationData } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -13,13 +13,17 @@ import { ChartConfiguration } from 'c3';
 
 import { ClimateService } from '../../../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import { IClimateSummaryRainfallRow, IStationRow } from '../../../../types';
+import {
+  IAnnualRainfallSummariesData,
+  IAnnualRainfallSummariesMetadata,
+  IClimateSummaryRainfallRow,
+  IStationRow,
+} from '../../../../types';
 import { hackConvertAPIDataToLegacyFormat } from './rainfall-summary.utils';
 
 interface IRainfallSummary {
-  // TODO - improve typings
-  data: any[];
-  metadata: any;
+  data: IAnnualRainfallSummariesData[];
+  metadata: IAnnualRainfallSummariesMetadata;
 }
 
 @Component({
@@ -40,7 +44,7 @@ interface IRainfallSummary {
 })
 export class RainfallSummaryComponent {
   public summaryMetadata: IRainfallSummary['metadata'] = {};
-  public summaryData: IRainfallSummary['data'] = [];
+  public summaryData: IStationData[] = [];
   public apiClientId: string;
   public chartDefintions: IChartMeta[] = [];
   public activeChartConfig: Partial<ChartConfiguration>;
@@ -104,7 +108,7 @@ export class RainfallSummaryComponent {
     }
   }
 
-  private loadData(summary: IRainfallSummary) {
+  private loadData(summary: IClimateSummaryRainfallRow) {
     console.log('load data', summary);
     this.tableOptions.exportFilename = `${this.activeStation.id}.csv`;
     const { data, metadata } = summary;

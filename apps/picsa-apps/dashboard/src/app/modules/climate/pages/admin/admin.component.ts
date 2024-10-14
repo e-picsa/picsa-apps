@@ -2,6 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, effect, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { _wait, arrayToHashmap } from '@picsa/utils';
@@ -44,6 +45,8 @@ export class ClimateAdminPageComponent {
   });
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
+    handleRowClick: ({ station_id }: IStationAdminSummary) =>
+      this.router.navigate(['../', 'station', station_id], { relativeTo: this.route }),
   };
   public refreshCount = signal(-1);
 
@@ -52,7 +55,9 @@ export class ClimateAdminPageComponent {
   constructor(
     private service: ClimateService,
     private deploymentService: DeploymentDashboardService,
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     effect(
       () => {

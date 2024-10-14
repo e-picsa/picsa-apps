@@ -4,18 +4,29 @@ import { IAnnualRainfallSummariesData } from '../../../../types';
 
 // TODO - refactor components to use modern format
 export function hackConvertAPIDataToLegacyFormat(apiData: IAnnualRainfallSummariesData[] = []) {
-  const data: Partial<IStationData>[] = apiData.map((el) => ({
-    Year: el.year,
+  const data: IStationData[] = apiData.map((el) => {
+    const entry: IStationData = {
+      End: undefined as any,
+      Extreme_events: undefined as any,
+      Length: undefined as any,
+      Rainfall: undefined as any,
+      Start: undefined as any,
+      Year: undefined as any,
+    };
+    const { year, end_rains_doy, end_season_doy, season_length, seasonal_rain, annual_rain } = el;
+    if (typeof year === 'number') entry.Year = year;
     // HACK - use either end_rains or end_season depending on which has data populated
     // TODO - push for single value to be populated at api level
-    End: el.end_rains_doy || el.end_season_doy,
-    // HACK - extreme events not currently supported
-    // Extreme_events: null as any,
-    Length: el.season_length,
+
+    if (typeof end_rains_doy === 'number') entry.End = end_rains_doy;
+    if (typeof end_season_doy === 'number') entry.End = end_season_doy;
+    if (typeof season_length === 'number') entry.Length = season_length;
     // HACK - replace 0mm with null value
+    if (seasonal_rain) entry.Rainfall = seasonal_rain;
     // HACK - mw uses seasonal_rain but zm uses annual_rainfall - API should return consistent
-    Rainfall: el.seasonal_rain || el.annual_rain || undefined,
-    Start: el.start_rains_doy,
-  }));
+    if (annual_rain) entry.Rainfall = annual_rain;
+
+    return entry;
+  });
   return data;
 }
