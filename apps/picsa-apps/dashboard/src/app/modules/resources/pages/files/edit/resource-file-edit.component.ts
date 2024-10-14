@@ -84,6 +84,7 @@ export class ResourceFileEditComponent implements OnInit {
       modified_at: '',
       sort_order: 1,
       ...formValues,
+      country_code: formValues.country_code as any,
     };
     return value;
   }

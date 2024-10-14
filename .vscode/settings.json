@@ -1,7 +1,6 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "cSpell.enabled": false,
-  "eslint.runtime": "node",
   // Deno configuration for supabase functions
   // NOTE - could be refactored to separate code-workspace
   // https://supabase.com/docs/guides/functions/local-development#setting-up-your-environment
