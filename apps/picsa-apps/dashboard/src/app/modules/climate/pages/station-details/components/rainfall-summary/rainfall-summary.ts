@@ -13,7 +13,7 @@ import { ChartConfiguration } from 'c3';
 
 import { ClimateService } from '../../../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import { IClimateProductRow, IStationRow } from '../../../../types';
+import { IClimateSummaryRainfallRow, IStationRow } from '../../../../types';
 import { hackConvertAPIDataToLegacyFormat } from './rainfall-summary.utils';
 
 interface IRainfallSummary {
@@ -67,19 +67,18 @@ export class RainfallSummaryComponent {
   }
 
   private get db() {
-    return this.supabase.db.table('climate_products');
+    return this.supabase.db.table('climate_summary_rainfall');
   }
 
   private async loadActiveStation(station: IStationRow) {
     // Load data stored in supabase db if available. Otherwise load from api
     // TODO - nicer if could include db lookups as part of mapping doc
     const { data, error } = await this.db
-      .select<'*', IClimateProductRow>('*')
+      .select<'*', IClimateSummaryRainfallRow>('*')
       .eq('station_id', station.id)
-      .eq('type', 'rainfallSummary')
       .single();
     if (data) {
-      this.loadData((data.data as any) || { data: [], metadata: {} });
+      this.loadData(data);
       this.cdr.markForCheck();
     } else {
       await this.refreshData();
@@ -93,7 +92,7 @@ export class RainfallSummaryComponent {
       const data = await this.service.loadFromAPI.rainfallSummaries(this.activeStation);
       const summary = data?.[0];
       if (summary) {
-        this.loadData(summary.data as any);
+        this.loadData(summary);
       }
     }
   }

@@ -1,4 +1,8 @@
 import * as APITypes from './api';
 export * from './db';
 
-export { APITypes };
+// Re-export specific API Types
+type schemas = APITypes.components['schemas'];
+export type IAnnualRainfallSummariesData = schemas['AnnualRainfallSummariesdata'];
+
+export type IAPICountryCode = schemas['StationDataResponce']['country_code'];

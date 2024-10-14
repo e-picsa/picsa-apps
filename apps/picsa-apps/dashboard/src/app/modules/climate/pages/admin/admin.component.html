@@ -19,10 +19,13 @@
     style="margin-top: 1em"
     [data]="tableData()"
     [options]="tableOptions"
-    [valueTemplates]="{ csv: csvTemplate }"
+    [valueTemplates]="{ csv: csvTemplate, updated_at: updatedAtTemplate }"
   >
     <ng-template #csvTemplate let-row="row" let-value="value">
       <button mat-button (click)="downloadStationCSV(row)" [disabled]="!value"><mat-icon>download</mat-icon></button>
+    </ng-template>
+    <ng-template #updatedAtTemplate let-value>
+      {{ value | date: 'mediumDate' }}
     </ng-template>
   </picsa-data-table>
 </div>

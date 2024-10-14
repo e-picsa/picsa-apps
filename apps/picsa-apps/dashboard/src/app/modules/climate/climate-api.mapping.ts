@@ -5,19 +5,17 @@ import { IDeploymentRow } from '../deployment/types';
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
 import {
-  IClimateProductInsert,
-  IClimateProductRow,
+  IAPICountryCode,
+  IClimateSummaryRainfallInsert,
+  IClimateSummaryRainfallRow,
   IForecastInsert,
   IForecastRow,
   IStationInsert,
   IStationRow,
 } from './types';
-import type { components as ApiComponents } from './types/api';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
 export type IApiMappingName = keyof IApiMapping;
-
-export type IAPICountryCode = ApiComponents['schemas']['StationAndDefintionResponce']['country_code'];
 
 // TODO - certain amount of boilerplate could be reduced
 // TODO - depends on climate api updates
@@ -38,7 +36,7 @@ export const ApiMapping = (
     rainfallSummaries: async (station: IStationRow) => {
       const { country_code, station_id, station_name, id } = station;
       // TODO - add model type definitions for server rainfall summary response body
-      const { data, error } = await api
+      const { data: apiData, error } = await api
         .getObservableClient(`rainfallSummary_${id}`)
         .POST('/v1/annual_rainfall_summaries/', {
           body: {
@@ -51,20 +49,22 @@ export const ApiMapping = (
         });
       if (error) throw error;
       // HACK - API issue returning huge data for some stations
-      if (data.data.length > 1000) {
-        console.error({ country_code, station_id, station_name, total_rows: data.data.length });
-        throw new Error(`[rainfallSummary] Too many rows | ${station_name} ${data.data.length}`);
+      const { data, metadata } = apiData;
+      if (data.length > 1000) {
+        console.error({ country_code, station_id, station_name, total_rows: data.length });
+        throw new Error(`[rainfallSummary] Too many rows | ${station_name} ${data.length}`);
       }
       // TODO - gen types and handle mapping
-      const entry: IClimateProductInsert = {
-        data: data as any,
+      const entry: IClimateSummaryRainfallInsert = {
+        data: data as any[],
+        metadata,
         station_id: id as string,
-        type: 'rainfallSummary',
+        country_code: country_code as any,
       };
       const { data: dbData, error: dbError } = await db
-        .table('climate_products')
-        .upsert<IClimateProductInsert>(entry)
-        .select<'*', IClimateProductRow>('*');
+        .table('climate_summary_rainfall')
+        .upsert<IClimateSummaryRainfallInsert>(entry)
+        .select<'*', IClimateSummaryRainfallRow>('*');
       if (dbError) throw dbError;
       return dbData || [];
     },

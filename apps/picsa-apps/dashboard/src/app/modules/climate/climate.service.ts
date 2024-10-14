@@ -9,9 +9,9 @@ import { map } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
-import { ApiMapping, IAPICountryCode } from './climate-api.mapping';
+import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
-import { IStationRow } from './types';
+import { IAPICountryCode, IStationRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {

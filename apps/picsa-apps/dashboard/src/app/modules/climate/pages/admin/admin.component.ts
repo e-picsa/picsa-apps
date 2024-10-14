@@ -1,24 +1,24 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, effect, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { _wait, arrayToHashmapArray } from '@picsa/utils';
+import { _wait, arrayToHashmap } from '@picsa/utils';
 import download from 'downloadjs';
 import JSZip from 'jszip';
 import { unparse } from 'papaparse';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
-import type { IAnnualRainfallSummariesData, IClimateProductRow, IStationRow } from '../../types';
+import type { IAnnualRainfallSummariesData, IClimateSummaryRainfallRow, IStationRow } from '../../types';
 import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/rainfall-summary/rainfall-summary.utils';
 
 interface IStationAdminSummary {
   station_id: string;
   row: IStationRow;
-  updated_at: string;
-  rainfall_summary?: IClimateProductRow;
+  updated_at?: string;
+  rainfall_summary?: IClimateSummaryRainfallRow;
   start_year?: number;
   end_year?: number;
 }
@@ -32,22 +32,22 @@ const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['station_id', 'updated_
 @Component({
   selector: 'dashboard-climate-admin-page',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, PicsaDataTableComponent],
+  imports: [CommonModule, DatePipe, MatButtonModule, MatIconModule, PicsaDataTableComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
 })
 export class ClimateAdminPageComponent {
   public tableData = computed(() => {
     const stations = this.service.stations();
-    const products = this.climateProducts();
-    return this.generateTableSummaryData(stations, products);
+    const rainfallSummaries = this.rainfallSummaries();
+    return this.generateTableSummaryData(stations, rainfallSummaries);
   });
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
   };
   public refreshCount = signal(-1);
 
-  private climateProducts = signal<IClimateProductRow[]>([]);
+  private rainfallSummaries = signal<IClimateSummaryRainfallRow[]>([]);
 
   constructor(
     private service: ClimateService,
@@ -65,7 +65,7 @@ export class ClimateAdminPageComponent {
     );
   }
   private get db() {
-    return this.supabase.db.table('climate_products');
+    return this.supabase.db.table('climate_summary_rainfall');
   }
 
   public async downloadAllStationsCSV() {
@@ -103,7 +103,7 @@ export class ClimateAdminPageComponent {
   private generateStationCSVDownload(summary: IStationAdminSummary) {
     const { rainfall_summary } = summary;
     if (rainfall_summary && rainfall_summary.data) {
-      const data = rainfall_summary.data['data'] as any[];
+      const data = rainfall_summary.data as any[];
       const csvData = hackConvertAPIDataToLegacyFormat(data);
       const columns = Object.keys(csvData[0]);
       const csv = unparse(csvData, { columns });
@@ -112,17 +112,18 @@ export class ClimateAdminPageComponent {
     return undefined;
   }
 
-  private generateTableSummaryData(stations: IStationRow[], products: IClimateProductRow[]) {
+  private generateTableSummaryData(stations: IStationRow[], rainfallSummaries: IClimateSummaryRainfallRow[]) {
     // NOTE - only single entry for rainfallSummary (not hashmapArray)
-    const productsHashmap = arrayToHashmapArray(products, 'station_id');
+    const rainfallSummariesHashmap = arrayToHashmap(rainfallSummaries, 'station_id');
     return stations.map((row) => {
-      const { station_id } = row;
-      const summary: IStationAdminSummary = { station_id, row, updated_at: '' };
-      const rainfallSummary = productsHashmap[station_id]?.find((p) => p.type === 'rainfallSummary');
+      const { station_id, id } = row;
+      const summary: IStationAdminSummary = { station_id, row };
+      const rainfallSummary = rainfallSummariesHashmap[station_id];
       if (rainfallSummary) {
+        const { data, updated_at } = rainfallSummary;
+        summary.updated_at = updated_at;
         summary.rainfall_summary = rainfallSummary;
-        const { data } = rainfallSummary;
-        const entries: IAnnualRainfallSummariesData[] = data?.['data'] || [];
+        const entries = data as IAnnualRainfallSummariesData[];
         summary.start_year = entries[0]?.year;
         summary.end_year = entries[entries.length - 1]?.year;
       }
@@ -131,17 +132,16 @@ export class ClimateAdminPageComponent {
   }
 
   private async loadRainfallSummaries(country_code: string) {
-    const { data, error } = await this.db.select<'*', IClimateProductRow>('*');
-
+    const { data, error } = await this.db.select<'*', IClimateSummaryRainfallRow>('*').eq('country_code', country_code);
     if (error) {
       throw error;
     }
-    const filtered = data
-      .filter((el) => el.type === 'rainfallSummary' && el.station_id.startsWith(`${country_code}/`))
-      .map((station) => {
-        station.station_id = station.station_id.replace(`${country_code}/`, '');
-        return station;
-      });
-    this.climateProducts.set(filtered);
+    this.rainfallSummaries.set(
+      data.map((el) => {
+        // HACK - to keep parent ref id includes full country prefix, remove for lookup
+        el.station_id = el.station_id.replace(`${country_code}/`, '');
+        return el;
+      })
+    );
   }
 }
