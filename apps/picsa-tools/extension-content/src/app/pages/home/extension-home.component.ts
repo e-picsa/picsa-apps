@@ -32,24 +32,7 @@ const PAGE_LINKS: IPageLink[] = [
     url: '/manual',
     tourId: 'manual',
   },
-  {
-    name: translateMarker('Farmer Activities'),
-    svgIcon: 'extension_app:farmer_activity',
-    url: '/farmer',
-    tourId: 'farmer',
-  },
-  {
-    name: translateMarker('Resources'),
-    svgIcon: 'extension_app:resources_tool',
-    url: '/resources',
-    tourId: 'resources',
-  },
-  {
-    name: translateMarker('Monitoring'),
-    svgIcon: 'extension_app:data_collection',
-    url: '/monitoring',
-    tourId: 'monitoring',
-  },
+
   {
     name: translateMarker('Climate'),
     svgIcon: 'extension_app:climate_tool',
@@ -94,6 +77,45 @@ const PAGE_LINKS: IPageLink[] = [
   // }
 ];
 
+const ADDITIONAL_LINKS: IPageLink[] = [
+  {
+    name: translateMarker('Resources'),
+    svgIcon: 'extension_app:resources_tool',
+    url: '/resources',
+    tourId: 'resources',
+  },
+  {
+    name: translateMarker('Forecasts'),
+    svgIcon: 'extension_app:forecasts_tool',
+    url: '/forecasts',
+    tourId: 'forecasts',
+  },
+  {
+    name: translateMarker('Farmer Activities'),
+    svgIcon: 'extension_app:farmer_activity',
+    url: '/farmer',
+    tourId: 'farmer',
+  },
+  {
+    name: translateMarker('Monitoring'),
+    svgIcon: 'extension_app:data_collection',
+    url: '/monitoring',
+    tourId: 'monitoring',
+  },
+
+  // {
+  //   name: translateMarker('Discussions'),
+  //   svgIcon: 'picsa_discussions',
+  //   url: '/discussions',
+  // },
+
+  // {
+  //   name: 'Settings',
+  //   svgIcon: 'picsa_settings',
+  //   url: '/settings'
+  // }
+];
+
 /** Additional links only available when running in non-production */
 const DEV_PAGE_LINKS: IPageLink[] = [];
 if (!ENVIRONMENT.production) {
@@ -119,7 +141,8 @@ if (!ENVIRONMENT.production) {
 })
 export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   /** List of home page display links, filtered when running in production */
-  public links = PAGE_LINKS;
+  public picsaLinks = PAGE_LINKS;
+  public additionalLinks = ADDITIONAL_LINKS;
   public version = APP_VERSION;
 
   @ViewChild('headerContent')
