@@ -1,26 +1,30 @@
-const seasonal = {
-  id: 'b79ff462-eb50-49bf-89d2-d7e87717af7e',
-  bucket_id: 'mw',
-  name: 'forecasts/2024-2025_Seasonal_Rainfall_Forecast_Malawi_11_Sep_2024_Final.pdf',
-  owner: '',
-  created_at: '2024-10-14 18:12:08.013546+00',
-  updated_at: '2024-10-14 18:12:08.013546+00',
-  last_accessed_at: '2024-10-14 18:12:08.013546+00',
-  metadata: {
-    eTag: '0d83e8fa5956c75dbd7bd40d8d4811de-1',
-    size: 275194,
-    mimetype: 'application/pdf',
-    cacheControl: 'max-age=3600',
-    lastModified: '2024-10-14T18:12:08.000Z',
-    contentLength: 275194,
-    httpStatusCode: 200,
-  },
-  path_tokens: ['forecasts', '2024-2025_Seasonal_Rainfall_Forecast_Malawi_11_Sep_2024_Final.pdf'],
-  version: 'fd5bed25-06af-46a3-a727-5fd81ac81eb2',
-  owner_id: '',
-};
+import { IForecastStorageEntry } from './types';
 
-const downscaled = [
+const seasonal: IForecastStorageEntry[] = [
+  {
+    id: 'b79ff462-eb50-49bf-89d2-d7e87717af7e',
+    bucket_id: 'mw',
+    name: 'forecasts/2024-2025_Seasonal_Rainfall_Forecast_Malawi_11_Sep_2024_Final.pdf',
+    owner: '',
+    created_at: '2024-10-14 18:12:08.013546+00',
+    updated_at: '2024-10-14 18:12:08.013546+00',
+    last_accessed_at: '2024-10-14 18:12:08.013546+00',
+    metadata: {
+      eTag: '0d83e8fa5956c75dbd7bd40d8d4811de-1',
+      size: 275194,
+      mimetype: 'application/pdf',
+      cacheControl: 'max-age=3600',
+      lastModified: '2024-10-14T18:12:08.000Z',
+      contentLength: 275194,
+      httpStatusCode: 200,
+    },
+    path_tokens: ['forecasts', '2024-2025_Seasonal_Rainfall_Forecast_Malawi_11_Sep_2024_Final.pdf'],
+    version: 'fd5bed25-06af-46a3-a727-5fd81ac81eb2',
+    owner_id: '',
+  },
+];
+
+const downscaled: IForecastStorageEntry[] = [
   {
     id: 'a4ac39ea-f469-419d-8bd5-99e080e00bcb',
     bucket_id: 'mw',

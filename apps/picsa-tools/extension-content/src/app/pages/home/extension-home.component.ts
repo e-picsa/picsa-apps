@@ -87,7 +87,9 @@ const ADDITIONAL_LINKS: IPageLink[] = [
   {
     name: translateMarker('Forecasts'),
     svgIcon: 'extension_app:forecasts_tool',
-    url: '/forecasts',
+    // HACK - forecasts currently child resource collection
+    // TODO - move to standalone tool
+    url: '/resources/collection/weatherResources',
     tourId: 'forecasts',
   },
   {
