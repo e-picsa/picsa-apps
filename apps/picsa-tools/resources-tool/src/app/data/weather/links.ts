@@ -21,6 +21,17 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     cover: { image: 'assets/resources/covers/facebook.svg' },
     filter: { countries: ['zm'] },
   },
+  dccms_whatsapp: {
+    id: 'dccms_whatsapp',
+    title: 'DCCMS Whatsapp',
+    description: 'Stay updated on #Malawi weather, climate, alerts and news.',
+    type: 'link',
+    subtype: 'whatsapp',
+    cover: { image: 'assets/resources/covers/whatsapp.svg' },
+    url: 'https://www.whatsapp.com/channel/0029VaT21WW8PgsBmJWWGc1A',
+    priority: 9,
+    filter: { countries: ['mw'] },
+  },
   dccms_daily_forecast: {
     id: 'dccms_daily_forecast',
     title: 'DCCMS Daily Forecast',
@@ -32,17 +43,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     priority: 10,
     filter: { countries: ['mw'] },
   },
-  dccms_facebook: {
-    id: 'dccms_facebook',
-    title: 'DCCMS Malawi',
-    description: 'Facebook Group',
-    type: 'link',
-    subtype: 'facebook',
-    cover: { image: 'assets/resources/covers/facebook.svg' },
-    url: 'https://www.facebook.com/MALAWIWEATHERUPDATE',
-    priority: 9,
-    filter: { countries: ['mw'] },
-  },
+
   dccms_twitter: {
     id: 'dccms_twitter',
     title: 'DCCMS Twitter',
