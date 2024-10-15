@@ -1,31 +1,65 @@
 <div #headerContent style="margin-right: 8px; display: flex; justify-content: flex-end">
-  <picsa-profile-select></picsa-profile-select>
+  <!-- TODO - decide if still useful to have multiple profiles now direct-to-farmer exists -->
+  <!-- <picsa-profile-select></picsa-profile-select> -->
 </div>
 
 <div class="page-content background-image">
-  <div class="link-grid">
-    @for (link of links; track $index) {
-    <div
-      [attr.data-tour-id]="link.tourId"
-      [attr.data-dev-only]="link.devOnly"
-      data-cy="link"
-      class="grid-tile"
-      (click)="linkClicked(link)"
-    >
-      <div style="text-align: center">
-        <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
-        <div class="nav-text">{{ link.name | translate }}</div>
+  <div class="link-container">
+    <h2 class="section-header">
+      <div class="max-w-screen-lg m-auto">{{ 'Training' | translate }}</div>
+    </h2>
+    <div class="link-grid">
+      <!-- PICSA Links -->
+      @for (link of picsaLinks; track $index) {
+      <div
+        [attr.data-tour-id]="link.tourId"
+        [attr.data-dev-only]="link.devOnly"
+        data-cy="link"
+        class="grid-tile"
+        (click)="linkClicked(link)"
+      >
+        <div style="text-align: center">
+          <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ link.name | translate }}</div>
+        </div>
+        @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
+        <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
+        }
       </div>
-      @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
-      <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
       }
     </div>
-    }
-    <div class="grid-tile" (click)="startTour()" style="position: relative">
-      <div style="text-align: center">
-        <mat-icon svgIcon="extension_app:tutorial" class="nav-icon"></mat-icon>
-        <div class="nav-text">{{ 'Take App Tour' | translate }}</div>
+    <!-- Additional Links -->
+    <h2 class="section-header">
+      <div class="max-w-screen-lg m-auto">{{ 'Additional' | translate }}</div>
+    </h2>
+    <div class="link-grid">
+      @for (link of additionalLinks; track $index) {
+      <div
+        [attr.data-tour-id]="link.tourId"
+        [attr.data-dev-only]="link.devOnly"
+        data-cy="link"
+        class="grid-tile"
+        (click)="linkClicked(link)"
+      >
+        <div style="text-align: center">
+          <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ link.name | translate }}</div>
+        </div>
+        @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
+        <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
+        }
       </div>
+      }
+      <!-- Dev Links -->
+
+      <!-- Tour -->
+
+      <!-- <div class="grid-tile" (click)="startTour()" style="position: relative">
+        <div style="text-align: center">
+          <mat-icon svgIcon="extension_app:tutorial" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ 'Take App Tour' | translate }}</div>
+        </div>
+      </div> -->
     </div>
   </div>
 
