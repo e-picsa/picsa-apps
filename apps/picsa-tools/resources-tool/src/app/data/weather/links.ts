@@ -28,7 +28,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     type: 'link',
     subtype: 'website',
     cover: { image: 'assets/resources/covers/dccms.jpg' },
-    url: 'https://www.metmalawi.gov.mw/dccms_weather.php',
+    url: 'https://www.metmalawi.gov.mw/products/daily-forecast#results',
     priority: 10,
     filter: { countries: ['mw'] },
   },
