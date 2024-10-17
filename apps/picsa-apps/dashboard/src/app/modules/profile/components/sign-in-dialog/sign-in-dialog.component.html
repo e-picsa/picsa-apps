@@ -3,31 +3,21 @@
   <form [formGroup]="form">
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input
-        type="email"
-        matInput
-        formControlName="email"
-        autocomplete="picsa-email"
-        [errorStateMatcher]="errorMatcher"
-      />
+      <input type="email" matInput formControlName="email" autocomplete="picsa-email"
+        [errorStateMatcher]="errorMatcher" />
       @if (form.controls.email.errors) {
       <mat-error>Please enter a valid email address</mat-error>
       }
     </mat-form-field>
-    <mat-form-field>
+    @if (template !== 'reset') {<mat-form-field>
       <mat-label>Password</mat-label>
       <input type="password" matInput autocomplete="picsa-password" formControlName="password" />
-    </mat-form-field>
+    </mat-form-field>}
     @if(template==='register'){
     <mat-form-field>
       <mat-label>Repeat Password</mat-label>
-      <input
-        type="password"
-        matInput
-        autocomplete="off"
-        formControlName="passwordConfirm"
-        [errorStateMatcher]="errorMatcher"
-      />
+      <input type="password" matInput autocomplete="off" formControlName="passwordConfirm"
+        [errorStateMatcher]="errorMatcher" />
       @if (form.controls.passwordConfirm?.errors) {
       <mat-error>Password must match</mat-error>
       }
@@ -35,28 +25,32 @@
     }
   </form>
 </mat-dialog-content>
-<mat-dialog-actions align="start">
+<mat-dialog-actions style="display: flex; flex-direction: column;" align="start">
   @if(template==='signIn'){
-  <button mat-button (click)="enableRegisterMode()">Create new account</button>
-  <button
-    mat-button
-    cdkFocusInitial
-    (click)="handleSignIn()"
-    style="margin-left: auto"
-    [disabled]="!form.valid || form.disabled"
-  >
-    Sign In
-  </button>
+  <div class="action-buttons-container">
+    <button mat-button (click)="enableRegisterMode()">Create new account</button>
+    <button mat-button cdkFocusInitial (click)="handleSignIn()" style="margin-left: auto"
+      [disabled]="!form.valid || form.disabled">
+      Sign In
+    </button>
+  </div>
+  <button mat-button (click)="enableResetMode()">Reset Password</button>
   } @if(template==='register'){
-  <button
-    mat-button
-    cdkFocusInitial
-    (click)="handleRegister()"
-    style="margin-left: auto"
-    [disabled]="!form.valid || form.disabled"
-  >
-    Register
-  </button>
-
+  <div class="action-buttons-container">
+    <button mat-button (click)="enableSignInMode()">Sign in</button>
+    <button mat-button cdkFocusInitial (click)="handleRegister()" style="margin-left: auto"
+      [disabled]="!form.valid || form.disabled">
+      Register
+    </button>
+  </div>
+  }
+  @if(template==='reset'){
+  <div class="action-buttons-container">
+    <button mat-button (click)="enableSignInMode()">Sign in</button>
+    <button mat-button (click)="handleReset()" style="margin-left: auto"
+      [disabled]="!form.controls.email.valid || form.disabled">
+      Send Reset Email
+    </button>
+  </div>
   }
 </mat-dialog-actions>
