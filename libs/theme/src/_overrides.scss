@@ -132,6 +132,12 @@ mat-stepper.slim-headers {
     height: 48px;
   }
 }
+mat-stepper.responsive-content-padding {
+  .mat-horizontal-content-container {
+    // keep enough padding to see shadow
+    @apply p-2 sm:px-6 sm:pb-6;
+  }
+}
 
 // Allow use of primary color with selected value by custom `value-primary` class
 mat-select.value-primary {
