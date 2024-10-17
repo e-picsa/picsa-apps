@@ -109,7 +109,12 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     // toogle app header if required by tool
     const hideHeader = toolBlock?.tool?.showHeader ? false : true;
     if (this.componentService.headerOptions().hideHeader !== hideHeader) {
-      this.componentService.patchHeader({ hideHeader });
+      this.componentService.patchHeader({ hideHeader, hideBackButton: hideHeader ? true : false });
+    }
+    // show back button in tools that have nested route
+    const hideBackButton = this.shouldHideBackButton(toolBlock?.tool);
+    if (this.componentService.headerOptions().hideBackButton !== hideBackButton) {
+      this.componentService.patchHeader({ hideBackButton });
     }
   }
 
@@ -130,5 +135,16 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     if (!location.pathname.includes(`/${tool.href}`)) {
       this.router.navigate([tool.href], { relativeTo: this.route, replaceUrl: true });
     }
+  }
+
+  private shouldHideBackButton(tool?: IToolData) {
+    if (tool) {
+      // HACK - budget tool doesn't show back to site select as can be done from dropdownj
+      if (location.pathname.includes(`/climate`)) return true;
+      // default hide back button on tool home page, e.g. `/farmer/module/budget`
+      // but include on nested pages, e.g. `/farmer/module/budget`
+      return location.pathname.endsWith(`/${tool.href}`);
+    }
+    return true;
   }
 }

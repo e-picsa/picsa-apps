@@ -18,6 +18,11 @@ button.mat-mdc-button > .mat-icon {
   min-width: 24px; // climate share icon not showing without
   height: 24px;
 }
+// Don't allow button labels to extend beyond their container
+.mdc-button__label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 
 mat-card.link {
   cursor: pointer;
