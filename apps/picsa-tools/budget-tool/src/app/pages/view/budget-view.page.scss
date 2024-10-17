@@ -1,0 +1,23 @@
+// HACK - copied from options tool, should generalise
+.editor-popup {
+  position: fixed;
+  z-index: 2;
+
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+
+  // Include margin for top/bottom banners (inherit from farmer content
+  margin-top: 56px;
+  margin-bottom: var(--footer-height);
+  height: calc(100% - 56px - var(--footer-height));
+}
+
+.slide-in {
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100vh);
+}
+.slide-in.active {
+  transform: translateY(0);
+}
