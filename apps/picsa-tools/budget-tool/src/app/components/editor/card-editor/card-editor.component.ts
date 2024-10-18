@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+import { IBudgetPeriodType } from '../../../models/budget-tool.models';
 import { IBudgetCardWithValues } from '../../../schema';
 import { BudgetStore } from '../../../store/budget.store';
 
@@ -11,6 +12,7 @@ import { BudgetStore } from '../../../store/budget.store';
 export class BudgetCardEditorComponent {
   currency: string;
   @Input() card: IBudgetCardWithValues;
+  @Input() type: IBudgetPeriodType;
   @Output() deleteClicked = new EventEmitter<IBudgetCardWithValues>();
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues>();
 
