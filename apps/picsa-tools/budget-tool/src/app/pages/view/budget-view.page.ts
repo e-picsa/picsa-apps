@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { ANIMATION_DEFAULTS_Y, FadeInOut, FlyInOut, OpenClosed } from '@picsa/shared/animations';
+import { FadeInOut, OpenClosed } from '@picsa/shared/animations';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -13,7 +13,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-view',
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
-  animations: [FadeInOut({ inDelay: 200 }), OpenClosed, FlyInOut(ANIMATION_DEFAULTS_Y)],
+  animations: [FadeInOut({ inDelay: 200 }), OpenClosed],
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetViewPage implements OnInit, OnDestroy {
