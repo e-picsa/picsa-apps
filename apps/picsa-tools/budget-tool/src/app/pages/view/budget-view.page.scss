@@ -8,10 +8,11 @@
   left: 0;
   display: flex;
 
-  // Include margin for top/bottom banners (inherit from farmer content
+  // Include margin for top/bottom banners
+  // Inherit footer-height from farmer content or use fallback value if not defined
   margin-top: 56px;
-  margin-bottom: var(--footer-height);
-  height: calc(100% - 56px - var(--footer-height));
+  margin-bottom: var(--footer-height, 0px);
+  height: calc(100% - 56px - var(--footer-height, 0px));
 }
 
 .slide-in {
