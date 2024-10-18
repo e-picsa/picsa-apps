@@ -24,4 +24,9 @@
   } @else {
   <picsa-loading style="margin: auto"></picsa-loading>
   }
+
+  <!-- JSON Export -->
+  <button style="margin-top: 2rem; max-width: 200px" mat-button (click)="service.exportJson(tableData(),locale())">
+    Export JSON
+  </button>
 </div>
