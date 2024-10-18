@@ -8,7 +8,7 @@
   </div>
 
   <!-- Inputs/Outputs Editor -->
-  <div class="input-values" *ngIf="card.type === 'inputs' || card.type === 'outputs'">
+  <div class="input-values" *ngIf="type === 'inputs' || type === 'outputs'">
     <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
       <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
@@ -31,7 +31,7 @@
   </div>
 
   <!-- Family Labor Editor -->
-  <div class="input-values" *ngIf="card.type === 'familyLabour'">
+  <div class="input-values" *ngIf="type === 'familyLabour'">
     <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
       <mat-label>{{ 'Days' | translate }}</mat-label>
       <input
@@ -44,7 +44,7 @@
   </div>
 
   <!-- Produce Consumed Editor -->
-  <div class="input-values" *ngIf="card.type === 'produceConsumed'">
+  <div class="input-values" *ngIf="type === 'produceConsumed'">
     <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
       <input
