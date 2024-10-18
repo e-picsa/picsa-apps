@@ -88,4 +88,20 @@ export class TranslationDashboardService extends PicsaAsyncService {
     const { tool, context, text } = row;
     return [tool, context, text].map((t) => t?.toLowerCase().replace(/[^a-z0-9]/g, '')).join('-');
   }
+
+  /** WiP - method to export translations json used in app */
+  public exportJson(data: ITranslationRow[], locale: string) {
+    const json: Record<string, string> = {};
+    for (const { text, ...columns } of data) {
+      if (locale in columns) {
+        const translatedText = columns[locale] || '';
+        if (json[text] && json[text] !== translatedText) {
+          console.warn('Duplicate translation skipped', text, translatedText, json[translatedText]);
+        } else {
+          json[text] = translatedText;
+        }
+      }
+    }
+    console.log(locale, json);
+  }
 }
