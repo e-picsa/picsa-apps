@@ -7,7 +7,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     title: 'Weather Services ZM',
     type: 'link',
     subtype: 'whatsapp',
-    url: 'https://chat.whatsapp.com/KSRlJie2m3aKTz6urP8KuT',
+    url: 'https://chat.whatsapp.com/ElFe8iaYazGAO05Jrsdpc2',
     cover: { image: 'assets/resources/covers/whatsapp.svg' },
     filter: { countries: ['zm'] },
   },
