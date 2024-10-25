@@ -21,8 +21,9 @@ const stations: IStationMeta[] = [
   {
     id: 'chipepo_met',
     name: 'CHIPEPO MET',
-    latitude: -17.33,
-    longitude: 28.38,
+    // NOTE - Manually overridden, should keep override until climsoft corrected
+    latitude: -15.79,
+    longitude: 28.14,
     district: 'GWEMBE',
   },
   {
