@@ -2,7 +2,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 
 import { IFarmerContent } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
-import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
+import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_OPERATIONAL_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
 const title = translateMarker('What is happening to the climate in your area?');
 
@@ -16,6 +16,10 @@ const steps: IFarmerContent['steps'] = [
       type: 'video',
       video: PICSA_FARMER_VIDEOS_HASHMAP.historic_climate,
     },
+  ],
+  [
+    { type: 'text', title: translateMarker('Tool') },
+    { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.historic_climate },
   ],
   [
     {

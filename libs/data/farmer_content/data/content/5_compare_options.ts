@@ -2,7 +2,7 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 
 import { IFarmerContent } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
-import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
+import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_OPERATIONAL_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
 const title = translateMarker('Are the changes a good idea?');
 
@@ -13,6 +13,10 @@ const steps: IFarmerContent['steps'] = [
       type: 'video',
       video: PICSA_FARMER_VIDEOS_HASHMAP.participatory_budget,
     },
+  ],
+  [
+    { type: 'text', title: translateMarker('Tool') },
+    { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.participatory_budget },
   ],
   [
     {

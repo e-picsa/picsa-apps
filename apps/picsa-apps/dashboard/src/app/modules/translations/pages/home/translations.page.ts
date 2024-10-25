@@ -47,9 +47,12 @@ export class TranslationsPageComponent {
   /** ID of currently selected locale */
   public locale = signal(LOCALES_DATA_HASHMAP.global_en.id);
 
+  /** Use subset of service translations to include non-archived */
+  private translations = computed(() => this.service.translations().filter((entry) => !entry.archived));
+
   /** Generated list of table entries */
   public tableData = computed(() => {
-    const translations = this.service.translations();
+    const translations = this.translations();
     const locale = this.locale();
     const data = this.generateTableData(locale, translations, this.includeTranslated());
     return data;
@@ -58,13 +61,13 @@ export class TranslationsPageComponent {
   /** List of entries pending translation */
   public pendingEntries = computed(() => {
     const locale = this.locale();
-    return this.service.translations().filter((entry) => !entry[locale]);
+    return this.translations().filter((entry) => !entry[locale]);
   });
 
   public translationProgress = computed(() => (100 * this.countTranslated) / this.countTotal);
 
   public get countTotal() {
-    return this.service.translations().length;
+    return this.translations().length;
   }
   public get countPending() {
     return this.pendingEntries().length;
