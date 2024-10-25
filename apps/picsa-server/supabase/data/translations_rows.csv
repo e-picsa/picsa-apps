@@ -1,6 +1,5 @@
 id,created_at,tool,context,text,mw_ny,ke_sw,tj_tg,zm_ny,archived
 budget-activities-applyfertiliser,2024-05-22 15:40:22.95126+00,budget,activities,apply fertiliser,kuthira feteleza,,Ба кор нуриҳо муроҷиат кунед,thirani fatatleza,
-common--whatishappeningtotheclimateinyourarea,2024-07-22 00:49:14.474008+00,common,,What is happening to the climate in your area?,,,,Kodi chikuchitika ni chiyani ku nyengo m�dera lanu?,
 budget-activities-buildhousing,2024-05-22 15:40:23.231016+00,budget,activities,build housing,kumanga makola,,сохтани манзил,kumanga nyumba,
 budget-activities-dipping,2024-05-22 15:40:23.350954+00,budget,activities,dipping,kupanga dipi ziweto,,ғӯтонда,kupaka,
 budget-activities-feedinglivestock,2024-05-22 15:40:23.410889+00,budget,activities,feeding livestock,kudyetsa ziweto,,таъом додани чорводорӣ,kudyetsa ziweto,
@@ -41,7 +40,6 @@ budget-inputs-feed,2024-05-22 15:40:26.261152+00,budget,inputs,feed,zakudza za z
 budget-inputs-fertiliser,2024-05-22 15:40:26.32112+00,budget,inputs,fertiliser,feteleza,,нуриҳо,fataleza,
 budget-inputs-housing,2024-05-22 15:40:26.380876+00,budget,inputs,housing,khola,,манзил,mosungila,
 climate--sharechart,2024-05-22 15:40:32.170817+00,climate,,Share Chart,tumizani galafu,,,gawani chithunzi,
-budget-activities-harvesting,2024-05-22 15:40:23.460969+00,budget,activities,harvesting,kukolola,,гирдоварӣ,kukolola,true
 budget-activities-landclearing,2024-05-22 15:40:23.520994+00,budget,activities,land clearing,kusosa,,тозакунии замин,kukonza malo,true
 budget-activities-marketingandselling,2024-05-22 15:40:23.58089+00,budget,activities,marketing and selling,kutsatsa ndi kugulitsa,,Маркетинг ва фурӯш,kutsatsa ndi kugulitsa,true
 budget-activities-mulching,2024-05-22 15:40:23.640841+00,budget,activities,mulching,kuphimbila,,пешкаш,mochi,true
@@ -52,6 +50,8 @@ budget-activities-threshing,2024-05-22 15:40:24.271009+00,budget,activities,thre
 budget-activities-transport,2024-05-22 15:40:24.33087+00,budget,activities,transport,transipoti,,наклиёт,mayendedwe,true
 budget-activities-valueaddition,2024-05-22 15:40:24.511097+00,budget,activities,value addition,kuwonjezera phindu,,Илова,kuwonjezera phindu,true
 budget-activities-bagging,2024-05-22 15:40:23.071025+00,budget,activities,bagging,kupakila mmatumba,,халта,kuika m'mathumba,true
+common--whatishappeningtotheclimateinyourarea,2024-07-22 00:49:14.474008+00,common,,What is happening to the climate in your area?,Kodi nchiyani chikuchitika ku nyengo ya mdera lanu,,,Kodi chikuchitika ni chiyani ku nyengo m�dera lanu?,
+budget-activities-harvesting,2024-05-22 15:40:23.460969+00,budget,activities,harvesting,kukolola,,гирдоварӣ,kukolola,true
 budget-inputs-labourpaid,2024-05-22 15:40:26.430943+00,budget,inputs,labour - paid,"ganyu ",,Меҳнати - пардохтшаванда,ntchito - yolipidwa,
 budget-inputs-manuresacks,2024-05-22 15:40:26.480972+00,budget,inputs,manure sacks,matumba a manyowa,,халта,masaka ya manyowa,
 budget-inputs-manurewheelbarrows,2024-05-22 15:40:26.540901+00,budget,inputs,manure wheelbarrows,wilibala ya manyowa,,поруи аробача,wilibala ya manyowa,
@@ -102,10 +102,10 @@ budget--savedbudgets,2024-05-22 15:40:29.291031+00,budget,,Saved Budgets,bajeti 
 budget--select,2024-05-22 15:40:29.350824+00,budget,,Select,sankhani,,Интихоб кардан,sankhani,
 budget--shareapplink,2024-05-22 15:40:29.410928+00,budget,,Share App Link,Tumizani progalamu,,,Gawani ulalo wa app,
 budget--forsale,2024-05-22 15:40:28.441053+00,budget,,For Sale,,,,Zogullitsidwa,
-budget--newbudget,2024-05-22 15:40:28.910776+00,budget,,New Budget,,,,Bajeti Yatsopano,
-budget--purchased,2024-05-22 15:40:29.140998+00,budget,,Purchased,,,,Zogulidwa,
 budget--sharebudget,2024-05-22 15:40:29.460957+00,budget,,Share Budget,tumizani bajeti kwa ena,,,gawani bajeti,
 budget--shareaspicture,2024-05-22 15:40:29.521004+00,budget,,Share as Picture,tumizani ngati chithunzi,,,gawani monga chithunzi,
+budget--newbudget,2024-05-22 15:40:28.910776+00,budget,,New Budget,Bajeti yatsopano,,,Bajeti Yatsopano,
+budget--purchased,2024-05-22 15:40:29.140998+00,budget,,Purchased,Zogulidwa,,,Zogulidwa,
 budget--showmore,2024-05-22 15:40:29.58098+00,budget,,Show More,onetsani zambiri,,Намоиши бештар,onetsani zambiri,
 budget--total,2024-05-22 15:40:29.640821+00,budget,,Total,zonse pamodzi,,,zonse,
 budget--whatisyourtypeofenterprise,2024-05-22 15:40:29.820851+00,budget,,What is your type of enterprise?,kodi mtundu wanu wabizinesi ndi uti?,,Навъи корхонаи шумо чист?,kodi mtundu wanu wabizinesi ndi uti?,
@@ -129,17 +129,17 @@ climate-chart-startofseasonisdefinedasthefirstoccasionfrom1stoctoberwithmorethan
 climate--analyse,2024-05-22 15:40:31.481184+00,climate,,Analyse,Kuzukuta,,,Fufuza,
 climate--chart,2024-05-22 15:40:31.770812+00,climate,,Chart,Galafu,,,Zithunzi zazochita,
 manual--stepe,2024-05-22 15:40:44.019864+00,manual,,Step E,Gawo E,,,Gawo E,
-budget--hours,2024-05-22 15:40:30.000873+00,budget,,hours,,,,Maola,
-climate-chart-extreme,2024-05-22 15:40:30.410866+00,climate,chart,Extreme,,,,Kupitilira Muyeso,
-climate-chart-extremerainfall,2024-05-22 15:40:30.471006+00,climate,chart,Extreme Rainfall,,,,Kugwa kwa Mvula kopitilira muyeso,
 climate-chart-frequencyofextreme,2024-05-22 15:40:30.621055+00,climate,chart,Frequency of Extreme,Kachulukidwe ka kupyola muyeso,,,Kuchuluka kopitilira muyeso,
-common--whatdoyoucurrentlydo,2024-05-22 15:40:34.260875+00,common,,What do you currently do?,,,,Mukuchita chiyani palipano?,
 climate--line,2024-05-22 15:40:31.890774+00,climate,,Line,Mzere,,,Mzere,
 climate--printversion,2024-05-22 15:40:31.96082+00,climate,,Print Version,zoti zikhoza kusindikizidwa,,,zolembedwa papepala,
 climate--selectasite,2024-05-22 15:40:32.06086+00,climate,,Select a site,sankhani malo,Chagua tovuti,Интихоб кунед сайт,sankhani malo,
 climate--share,2024-05-22 15:40:32.110788+00,climate,,Share,tumizani,,,gawani,
-budget--totalproduced,2024-05-22 15:40:29.760843+00,budget,,Total Produced,Zokolola zonse,,,Zonse Zokololedwa,true
 climate--below,2024-05-22 15:40:31.541047+00,climate,,Below,,,,,true
+climate-chart-extremerainfall,2024-05-22 15:40:30.471006+00,climate,chart,Extreme Rainfall,Mvula yopyola muyeso,,,Kugwa kwa Mvula kopitilira muyeso,
+common--whatdoyoucurrentlydo,2024-05-22 15:40:34.260875+00,common,,What do you currently do?,Kodi pakadali pano mumatani?,,,Mukuchita chiyani palipano?,
+budget--hours,2024-05-22 15:40:30.000873+00,budget,,hours,Maola,,,Maola,
+climate-chart-extreme,2024-05-22 15:40:30.410866+00,climate,chart,Extreme,Kupyola Muyeso,,,Kupitilira Muyeso,
+budget--totalproduced,2024-05-22 15:40:29.760843+00,budget,,Total Produced,Zokolola zonse,,,Zonse Zokololedwa,true
 climate--terciles,2024-05-22 15:40:32.220854+00,climate,,Terciles,Magawo a zotsatira za kafukufuku,,,Misampha,
 climate--tools,2024-05-22 15:40:32.280966+00,climate,,Tools,zida,,Воситаҳо,zida,
 climate--outof,2024-05-22 15:40:32.340923+00,climate,,out of,kuchokera pa,,,kuchokera,
@@ -160,7 +160,6 @@ common--name,2024-05-22 15:40:33.680931+00,common,,Name,Dzina,,,Dzina,
 common--newprofile,2024-05-22 15:40:33.695763+00,common,,New Profile,Mbiri yatsopano,,,Profaelo yatsopano,
 common--options,2024-05-22 15:40:33.760974+00,common,,Options,Zisankho,,,Zosankha,
 common--probabilityandrisk,2024-05-22 15:40:33.820895+00,common,,Probability and Risk,Kuthekera and Ziopsezo,,,Mpata komanso ziophyezo,
-common--resourceallocationmap,2024-05-22 15:40:33.88077+00,common,,Resource Allocation Map,,,,,
 common--seasonalcalendar,2024-05-22 15:40:33.94075+00,common,,Seasonal Calendar,Kalendala ya nyengo,,,Kalenda ya Nyengo,
 common--whoisusing,2024-05-22 15:40:34.37114+00,common,,Who is using?,Akugwiritsa ntchito ndi ndani?,,,Ndani akusewenzetsa,
 commoncropactivity--applyfertiliser,2024-05-22 15:40:34.430935+00,common_crop_activity,,Apply Fertiliser,kuthira feteleza,,Ба кор нуриҳо муроҷиат кунед,thirani fatatleza,
@@ -188,9 +187,6 @@ common--imafarmer,2024-05-22 15:40:33.470981+00,common,,I'm a farmer,Ndine Mlimi
 common--tutorials,2024-05-22 15:40:34.04084+00,common,,Tutorials,Zitsanzo,,,Maphunziro,
 common--whatbestdescribesyou,2024-05-22 15:40:34.150893+00,common,,What best describes you?,Kodi chimakufotokozani bwino nchiyani?,,,Kodi nizinthu zotani zomwe zimasulira inu bwino?,
 common--whatispicsa,2024-05-22 15:40:34.310788+00,common,,What is PICSA?,Kodi PICSA ndi chiyani?,,,Kodi PICSA ndi chiyani?,
-commoncrops--avocado,2024-05-22 15:40:34.791195+00,common_crops,,Avocado,,,,Kotapela,
-commoncrops--cotton,2024-05-22 15:40:34.970855+00,common_crops,,Cotton,,,,Thonje,
-commoncrops--mangoes,2024-05-22 15:40:35.200887+00,common_crops,,Mangoes,,,,Mango,
 commoncrops--sweetpotatoes,2024-05-22 15:40:35.721021+00,common_crops,,Sweet Potatoes,mbatata ya kholowa,,картошка ширин,kandolo/kachamba,
 commoncrops--tomatoes,2024-05-22 15:40:35.860846+00,common_crops,,Tomatoes,tomato,,помидор,chimate,
 commondays-day1-monday,2024-05-22 15:40:35.910893+00,common_days,day_1,Monday,Lolemba,,,Pa lolemba,
@@ -199,8 +195,12 @@ commondays-day3-wednesday,2024-05-22 15:40:36.021058+00,common_days,day_3,Wednes
 commondays-day4-thursday,2024-05-22 15:40:36.111059+00,common_days,day_4,Thursday,lachinayi,,,Pa chinai,
 commondays-day5-friday,2024-05-22 15:40:36.221194+00,common_days,day_5,Friday,Lachisanu,,,Pa chisanu,
 commondays-day6-saturday,2024-05-22 15:40:36.321212+00,common_days,day_6,Saturday,Loweruka,,,Pa chiweru,
-common--isyourclimatechanging,2024-05-22 15:40:33.621465+00,common,,Is your climate changing?,,,,,true
 common--showoptions,2024-05-22 15:40:33.990834+00,common,,Show Options,onetsani zipangizo,,,Wonetsani zosankha,true
+common--isyourclimatechanging,2024-05-22 15:40:33.621465+00,common,,Is your climate changing?,,,,,true
+commoncrops--avocado,2024-05-22 15:40:34.791195+00,common_crops,,Avocado,Mapeyala,,,Kotapela,
+commoncrops--cotton,2024-05-22 15:40:34.970855+00,common_crops,,Cotton,Thonje,,,Thonje,
+commoncrops--mangoes,2024-05-22 15:40:35.200887+00,common_crops,,Mangoes,Mango,,,Mango,
+common--resourceallocationmap,2024-05-22 15:40:33.88077+00,common,,Resource Allocation Map,Mapu oonetsa zinthu zomwe mlimi alinazo,,,Chithunzi cha Kugawidwa kwa Zinthu,
 commondays-day7-sunday,2024-05-22 15:40:36.390983+00,common_days,day_7,Sunday,Lamulungu,,,Pa sondo,
 commonweather--rain,2024-05-22 15:40:39.899811+00,common_weather,,Rain,Mvula,,,Mvula,
 cropprobability--chanceofreceivingthewaterrequirementinthedaystomaturityforthiscropvariety,2024-05-22 15:40:40.019776+00,crop-probability,,Chance of receiving the water requirement in the days to maturity for this crop variety,Mwayi olandira madzi amene mbewu imafunikira mu masiku amene mbewu imatenga kuti ikhwime  pa mbewu zosiyanasiyana,,,Mpata wolandila madzi oyenera kuti mtundu wa mbeu iyi iche.,
@@ -234,9 +234,6 @@ commonmonths-monthshort10-oct,2024-05-22 15:40:39.429962+00,common_months,month_
 commonmonths-monthshort11-nov,2024-05-22 15:40:39.49995+00,common_months,month_short_11,Nov,Nov,,Ноябр,Nov,
 commonmonths-monthshort12-dec,2024-05-22 15:40:39.590059+00,common_months,month_short_12,Dec,Dec,,Кек,Dec,
 commonweather--clear,2024-05-22 15:40:39.649954+00,common_weather,,Clear,Kopanda mitambo,,,Chotsani,
-commoncrops--tobacco,2024-05-22 15:40:35.800823+00,common_crops,,Tobacco,,,,Fodya,
-commondays-dayshort1-mon,2024-05-22 15:40:36.471188+00,common_days,day_short_1,Mon,,,,Lolemba,
-commondays-dayshort2-tue,2024-05-22 15:40:36.530847+00,common_days,day_short_2,Tue,,,,Lachiwiri,
 commondays-dayshort3-wed,2024-05-22 15:40:36.591334+00,common_days,day_short_3,Wed,Wed,,,Lachitatu,
 commonweather--cloudy,2024-05-22 15:40:39.710232+00,common_weather,,Cloudy,Kwamitambo,,,M'dima,
 commonweather--heavyrain,2024-05-22 15:40:39.779808+00,common_weather,,Heavy Rain,Mvula ya mphanvu,,,Mvula Yamphamvu,
@@ -255,6 +252,7 @@ extension--reload,2024-05-22 15:40:41.439799+00,extension,,Reload,bwezeraninso,P
 extension--somethingwentwrong,2024-05-22 15:40:41.540019+00,extension,,Something went wrong...,chinachake chinalakwika ...,Kitu kilichokosa ...,Чизе хато кард ...,chinachake chinalakwika ...,
 manual--aftertheseason,2024-05-22 15:40:42.160022+00,manual,,After the season,Pakutha pa nyengo,,,Pambuyo pakutha kwa Nyengo,
 manual--comparedifferentoptionsandplans,2024-05-22 15:40:42.30986+00,manual,,Compare different options and plans,Siyanitsani zisankho ndi ma pulani osiyanasiyana,,,Linganizani Zosankha,
+commondays-dayshort2-tue,2024-05-22 15:40:36.530847+00,common_days,day_short_2,Tue,Tue,,,Lachiwiri,
 manual--cropinfo,2024-05-22 15:40:42.459905+00,manual,,Crop Info,Zokhudza mbeu,,,Zambiri za Mbeu,
 manual--duringtheseason,2024-05-22 15:40:42.579996+00,manual,,During the season,Mkatikati mwa sizoni/nyengo,,,Mkati mwa Nyengo,
 manual--farmerschoose,2024-05-22 15:40:42.639984+00,manual,,Farmers choose,Alimi amasankha,,,Alimi asankha,
@@ -305,20 +303,18 @@ option--money,2024-05-22 15:40:46.93977+00,option,,Money,ndalama,,пул,ndalama
 option--selectenterprise,2024-05-22 15:40:47.519899+00,option,,Select Enterprise,sankhani mtundu wa bizinezi,Chagua Enterprise,Корхона интихоб кунед,sankhani makampani,
 resources--collectionnotfound,2024-05-22 15:40:48.039724+00,resources,,Collection not found,Kutolera sizikupezeka,,,Zokonzedwa bwino sizikupezeka,
 resources--title,2024-05-22 15:40:48.699996+00,resources,,Title,mutu,,Ном,mutu,
-monitoring--allsubmitted,2024-05-22 15:40:44.749954+00,monitoring,,All Submitted,,,,Zonse Zaperekedwa,
-farmeractivity--inthisvideoyouwilllearnaboutthepicsastep,2024-05-22 15:40:41.820078+00,farmer-activity,,In this video you will learn about the PICSA step:,,,,,true
 farmeractivity--intro,2024-05-22 15:40:41.87999+00,farmer-activity,,Intro,,,,,true
 farmeractivity--tool,2024-05-22 15:40:42.009976+00,farmer-activity,,Tool,,,,,true
 manual--budget,2024-05-22 15:40:42.24984+00,manual,,Budget,Bajeti,,,Bajeti,true
 farmeractivity--activity,2024-05-22 15:40:41.610112+00,farmer-activity,,Activity,,,,,true
 extensioncontent--takeapptour,2024-05-22 15:40:41.289816+00,extension-content,,Take App Tour,,,,Yendani Patsamba La App,true
+monitoring--allsubmitted,2024-05-22 15:40:44.749954+00,monitoring,,All Submitted,Zonse Zotumizidwa,,,Zonse Zaperekedwa,
 monitoring--createnew,2024-05-22 15:40:44.819898+00,monitoring,,Create New,Pangani yatsopano,,,Pangani Chatsopano,
 monitoring--records,2024-05-22 15:40:44.939774+00,monitoring,,Records,Ma record,,,Zolemba,
 monitoring--submit,2024-05-22 15:40:45.059864+00,monitoring,,Submit,Tumizani,,,Perekani,
 option--add,2024-05-22 15:40:45.179924+00,option,,Add,Onjezerani,,,Onjezani,
 option--and,2024-05-22 15:40:47.919827+00,option,,and,ndi,,,ndipo,
 option--bad,2024-05-22 15:40:45.349809+00,option,,Bad,kusachita bwino,,,Zoipa,
-option--benefit,2024-05-22 15:40:47.969716+00,option,,benefit,,,,Phindu,
 option--benefits,2024-05-22 15:40:45.409857+00,option,,Benefits,Phindu,,,Mapindu,
 option--both,2024-05-22 15:40:45.599862+00,option,,Both,Zonse ziwiri,,,Zonsezi,
 option--cropoptions,2024-05-22 15:40:45.719832+00,option,,Crop Options,Zisankho zokhudza Mbewu,,,Zosankha za Mbeu,
@@ -354,10 +350,6 @@ resources--searchresources,2024-05-22 15:40:48.5799+00,resources,,Search Resourc
 resources--size,2024-05-22 15:40:48.639868+00,resources,,Size,Makulidwe,,,Kukula,
 resources--type,2024-05-22 15:40:48.749782+00,resources,,Type,Mtundu,,,Mtundu,
 seasonalcalendar--copy,2024-05-22 15:40:48.92988+00,seasonal-calendar,,Copy,Kopelani,,,Koperani,
-common--youdecideandmakeaplan,2024-07-22 00:49:14.670789+00,common,,You decide and make a plan,,,,Mumasankha ndikupanga dongosolo,
-common--addphoto,2024-08-18 23:17:29.4077+00,common,,Add Photo,,,,,
-common--nophotosadded,2024-08-18 23:17:29.947626+00,common,,No photos added,,,,,
-common--testimonials,2024-08-18 23:17:30.147664+00,common,,Testimonials,,,,,
 commoncropactivity--applypesticide,2024-08-18 23:17:30.457744+00,common_crop_activity,,apply pesticide,kopopela mankhwala a tizilombo,,пестисидҳоро татбиқ кунед,thirani mankhwala,
 commoncropactivity--bagging,2024-08-18 23:17:30.507717+00,common_crop_activity,,bagging,kupakila mmatumba,,халта,kuika m'mathumba,
 commoncropactivity--banding,2024-08-18 23:17:30.557583+00,common_crop_activity,,banding,kubandila,,банд,kumangilira,
@@ -369,13 +361,15 @@ commoncropactivity--mulching,2024-08-18 23:17:30.817586+00,common_crop_activity,
 commoncropactivity--ploughing,2024-08-18 23:17:30.867573+00,common_crop_activity,,ploughing,kugalauza,,шудгор кардан,kugaula,
 commoncropactivity--postharvesthandling,2024-08-18 23:17:30.91769+00,common_crop_activity,,post-harvest handling,kusamala zokolora,,Мавридҳои ҳосили пас аз,kagwiridwe pambuyo po kolola,
 commoncropactivity--shelling,2024-08-18 23:17:30.967582+00,common_crop_activity,,shelling,kutonola/kusola,,релинг,kutongola,
-common--whatchangescanyoumake,2024-05-22 15:40:34.201028+00,common,,What changes can you make?,,,,Kodi mungasinthe chiyani?,
-common--intro,2024-08-18 23:17:29.897668+00,common,,Intro,,,,,true
 climate--above,2024-05-22 15:40:31.420967+00,climate,,Above,,,,,true
 climate--calculatedwiththedaterangeofstartofrainsandendoftherains,2024-05-22 15:40:31.653304+00,climate,,Calculated with the date range of Start of rains and End of the rains,,,,,true
-climate--first3daysreceivingrainfallamountof20mmandnotfollowedby9daydryspellforthenext21days,2024-05-22 15:40:31.831041+00,climate,,First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days,,,,,true
+common--nophotosadded,2024-08-18 23:17:29.947626+00,common,,No photos added,Palibe chithunzi chaikidwa,,,Palibe zithunzi zoyikidwa,
+common--testimonials,2024-08-18 23:17:30.147664+00,common,,Testimonials,Kuperekera Umboni,,,Umboni,
+common--intro,2024-08-18 23:17:29.897668+00,common,,Intro,,,,,true
+common--whatchangescanyoumake,2024-05-22 15:40:34.201028+00,common,,What changes can you make?,Kodi mukhoza kupanga kusintha kwanji?,,,Kodi mungasinthe chiyani?,
+option--benefit,2024-05-22 15:40:47.969716+00,option,,benefit,Phindu/Ubwino,,,Phindu,
+common--addphoto,2024-08-18 23:17:29.4077+00,common,,Add Photo,Tengani chithunzi,,,Ikani Chithunzi,
 budget--cardlabel,2024-07-22 00:49:10.723004+00,budget,,Card Label,Dzina la choonjezeredwa,,,Chizindikiro cha Khadi,
-climate--forecast,2024-07-22 00:49:11.301227+00,climate,,Forecast,,,,Chisonyezo cha nyengo,
 common--above,2024-07-22 00:49:11.48823+00,common,,Above,Pamwamba,,,Pamwamba,
 common--below,2024-07-22 00:49:11.683625+00,common,,Below,Pamunsi,,,Pansi,
 common--budget,2024-07-22 00:49:11.875845+00,common,,Budget,Bajeti,,,Bajeti,
@@ -385,7 +379,6 @@ common--drawhere,2024-07-22 00:49:12.896617+00,common,,Draw Here,Jambulani apa,,
 common--redo,2024-07-22 00:49:13.479066+00,common,,Redo,Panganinso,,,Kubwelezanso,
 common--tool,2024-07-22 00:49:13.85765+00,common,,Tool,Zipangizo,,,Chida,
 common--undo,2024-07-22 00:49:14.084736+00,common,,Undo,Kuchotsa zomwe mudapanga,,,Kubwezeretsa,
-common--usetheforecaststoupdateandadaptyourplans,2024-07-22 00:49:14.278545+00,common,,Use the forecasts to update and adapt your plans,,,,Gwiritsani nchito chisonyezo cha mvula kuti musinthe ndikukonzekera,
 seasonalcalendar--examplecalendar,2024-05-22 15:40:49.039686+00,seasonal-calendar,,Example Calendar,Chitsanzo cha kalendala,,,Chitsanzo cha Kalendala,
 seasonalcalendar--nosavedcalendars,2024-05-22 15:40:49.089842+00,seasonal-calendar,,No saved calendars,Palibe kalendala zosungidwa,,,Palibe makalendala osungidwa,
 seasonalcalendar--numberofmonths,2024-05-22 15:40:49.149699+00,seasonal-calendar,,Number of Months,Kuchuluka kwa Miyezi,,,Chiwerengero cha Miyesedwa (miyezi),
@@ -400,25 +393,27 @@ commoncropactivity--storage,2024-08-18 23:17:31.017739+00,common_crop_activity,,
 commoncropactivity--threshing,2024-08-18 23:17:31.067693+00,common_crop_activity,,threshing,kupuntha,,пешбинӣ,kupuntha,
 commoncropactivity--transport,2024-08-18 23:17:31.117669+00,common_crop_activity,,transport,transipoti,,наклиёт,mayendedwe,
 commoncropactivity--valueaddition,2024-08-18 23:17:31.17761+00,common_crop_activity,,value addition,kuwonjezera phindu,,Илова,kuwonjezera phindu,
-commoncrops--paprika,2024-08-18 23:17:31.227707+00,common_crops,,Paprika,,,,,
-commoncrops--pearlmillet,2024-08-18 23:17:31.277695+00,common_crops,,Pearl Millet,,,,,
-commoncrops--potatoes,2024-08-18 23:17:31.327759+00,common_crops,,Potatoes,,,,,
-commoncrops--sesame,2024-08-18 23:17:31.3777+00,common_crops,,Sesame,,,,,
-cropprobability--district,2024-08-18 23:17:31.427717+00,crop-probability,,District,,,,,
 budget--addcard,2024-05-22 15:40:27.690824+00,budget,,Add Card,Onjezerani china,,,Onjezani Khadi,
-budget--budgettool,2024-05-22 15:40:27.930812+00,budget,,Budget Tool,,Chombo cha Bajeti,Воситаи буҷет,Chida Cha Bajeti,
 climate-chart-extremerainfallaredayswherethetotalamountofrainexceedsthe95thpercentile,2024-05-22 15:40:30.551146+00,climate,chart,Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile,Mvula yopyola muyeso ndi masiku amene mlingo wa mvula yapitilira gawo la 95 percent,,,Kugwa kwamphamvu kwa mvula ndi masiku omwe mvula yonse yopitirira 95th Percentile,
 common--seasonaltotalrainfallcalculatedbetweenthedefinedstartanddefinedendoftheseason,2024-07-22 00:49:13.659536+00,common,,Seasonal total rainfall calculated between the defined start and defined end of the season,Mvula yonse yogwa pachaka yomwe yawerengetseredwa pakati pa kuyamba ndi kutha kwa nyengo ya mvula,,,Mvula yonse ya nyengo yowerengeka pakati pa kuyamba koyambika ndi kutha koyambika kwa nyengo,
 common--whataretheopportunitiesandrisk,2024-05-22 15:40:34.090903+00,common,,What are the opportunities and risk?,Kodi pali mwayi ndi ziopsezo zotani?,,,Kodi mwayi ndi zoopsa ndi chiyani?,
 commoncropactivity--landpreparation,2024-05-22 15:40:34.490914+00,common_crop_activity,,Land Preparation,Kukonza nthaka,,,Kusosa /kukonzekera Malo,
-budget-activities-banding,2024-05-22 15:40:23.151009+00,budget,activities,banding,kubandila,,банд,kumangilira,true
-budget-activities-compostmanuremaking,2024-05-22 15:40:23.291147+00,budget,activities,compost manure making,kupanga manyowa,,компост компост,kupanga manyowa kuzinyalala,true
-climate--annualforecast,2024-07-22 00:49:10.908935+00,climate,,Annual Forecast,,,,Chisonyezo cha nyengo chaka chonse,true
 common--calendar,2024-07-22 00:49:12.297453+00,common,,Calendar,Kalendala,,,Kalendala,true
 seasonalcalendar--createcalendar,2024-05-22 15:40:48.989732+00,seasonal-calendar,,Create Calendar,Pangani Kalendala,,,Pangani Kalendala,true
 budget-activities-applypesticide,2024-05-22 15:40:23.010916+00,budget,activities,apply pesticide,kopopela mankhwala a tizilombo,,пестисидҳоро татбиқ кунед,thirani mankhwala,true
 option--addbenefit,2024-08-19 00:26:13.613304+00,option,,add benefit,Onjezerani zomwe mungapindule,,,,true
 climate--downscaledforecast,2024-07-22 00:49:11.100386+00,climate,,Downscaled Forecast,Ulosi wa dela laling'ono,,,Chisonyezo cha nyengo chochepa,true
+budget--budgettool,2024-05-22 15:40:27.930812+00,budget,,Budget Tool,Chida cha Bajeti,Chombo cha Bajeti,Воситаи буҷет,Chida Cha Bajeti,
+climate--forecast,2024-07-22 00:49:11.301227+00,climate,,Forecast,Ulosi,,,Chisonyezo cha nyengo,
+common--usetheforecaststoupdateandadaptyourplans,2024-07-22 00:49:14.278545+00,common,,Use the forecasts to update and adapt your plans,"Konzaninso ma Plan anu pogwiritsa ntchito Ulosi ",,,Gwiritsani nchito chisonyezo cha mvula kuti musinthe ndikukonzekera,
+commoncrops--pearlmillet,2024-08-18 23:17:31.277695+00,common_crops,,Pearl Millet,Mapila,,,Mawele,
+commoncrops--potatoes,2024-08-18 23:17:31.327759+00,common_crops,,Potatoes,Mbatata,,,Mbatatisi,
+commoncrops--sesame,2024-08-18 23:17:31.3777+00,common_crops,,Sesame,Chitowe,,,Mtedza wa Sesiamu,
+cropprobability--district,2024-08-18 23:17:31.427717+00,crop-probability,,District,Boma,,,Boma,
+budget-activities-banding,2024-05-22 15:40:23.151009+00,budget,activities,banding,kubandila,,банд,kumangilira,true
+commoncrops--paprika,2024-08-18 23:17:31.227707+00,common_crops,,Paprika,Paprika,,,Paprika,
+budget-activities-compostmanuremaking,2024-05-22 15:40:23.291147+00,budget,activities,compost manure making,kupanga manyowa,,компост компост,kupanga manyowa kuzinyalala,true
+climate--annualforecast,2024-07-22 00:49:10.908935+00,climate,,Annual Forecast,,,,Chisonyezo cha nyengo chaka chonse,true
 cropprobability--eachrowcontainsinformationaboutcropvarietydaystomaturityandwaterrequirementprobabilitiesofreceivingrequirementsareshownfordifferentplantingdates,2024-05-22 15:40:40.315649+00,crop-probability,,"Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates","Mzele uliwonse opita kumanja uli ndi uthenga okhudza mbewu, mtundu wa mbewuyo, masiku omwe imatenga kuti ikhwime komanso madzi omwe imafuna. Kuthekera kokwaniritsa zofunikirazi kukuonetsedwa pa masiku obzalira osiyanasiyana",,,"Mzere uliwonse uli ndi zambiri zokhudza mbeu, mtundu, masiku okula ndi zofunikira za madzi. Mwayi wokwaniritsa zofunikirazo ukuwonetsedwa kwa masiku osiyanasiyana okololako.",
 cropprobability--probabilityofseasonstartonorbeforedate,2024-05-22 15:40:40.599723+00,crop-probability,,Probability of season start on or before date,Kuthekera kwakuti nyengo ya mvula iyamba pa tsiku linalake kapena tiskuli lisanakwane,,,Mwayi wa kuyamba kwa nyengo pa tsiku linalake kapena musanatike.,
 cropprobability--thematurityandwaterrequirementscanbeusedtocalculatethechanceofsatisfyingtheseconditionsforaspecificplantingdate,2024-05-22 15:40:40.719859+00,crop-probability,,The maturity and water requirements can be used to calculate the chance of satisfying these conditions for a specific planting date,Kakhwimidwe komanso madzi amene amafunikira pa mbewu zikhoza kugwiritsidwa ntchito kuwerengetsera mwayi umene ulipo kukwaniritsa izi pa date linalake,,,Masiku okhwima ndi zofunikira za madzi zitha kugwiritsidwa ntchito kuwerengera mwayi wokwaniritsa izi pa tsiku losankhira kulima.,
@@ -451,21 +446,27 @@ option--risksordisadvantages,2024-05-22 15:40:47.459758+00,option,,Risks or disa
 option--whomakesdecisions,2024-05-22 15:40:47.869711+00,option,,Who makes decisions,Amapanga ziganizo ndindani?,,,Amayendetsa Zosankha Ndani,
 seasonalcalendar--calendarname,2024-05-22 15:40:48.869711+00,seasonal-calendar,,Calendar name,"Dzina la  kalendala                                                                                   ",,,Dzina la Kalendala,
 seasonalcalendar--calendartime,2024-05-22 15:40:48.819831+00,seasonal-calendar,,Calendar Time,Nthawi ya pa kalendala,,,Nthawi ya Kalendala,
-budget--nooutputsproduceforconsumption,2024-05-22 15:40:28.961294+00,budget,,No outputs produce for consumption,Palibe zokolora zomwe zagwiritsidwa (zadyedwa) ntchito pakhomo,,,Palibe zokolola zakudya pakhomo,true
-budget--totalconsumed,2024-05-22 15:40:29.700822+00,budget,,Total Consumed,Zonse zomwe zagwiritsidwa  ntchito (zadyedwa),,,Zonse Zosewenzetsadwa,true
-climate--capacityof100mmon1stmarchreduces05withevaporationrateof5mmperday,2024-05-22 15:40:31.711226+00,climate,,Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day,,,,,true
+common--seasonalforecast,2024-10-18 11:20:49.650967+00,common,,Seasonal Forecast,ulosi wa nyengo,,,Uthenga wa zanyengo,
+farmercontent--next,2024-10-18 11:20:49.889066+00,farmer-content,,next,pitani tsamba lina,,Баъдӣ,ina,
 common--hideoptions,2024-05-22 15:40:33.401136+00,common,,Hide Options,Bisani Zipangizo,,,Bimphani zosankha,true
 climate--seasonaltotalrainfallcalculatedbetweenthedefinedstartanddefinedendoftheseason,2024-05-22 15:40:32.011223+00,climate,,Seasonal total rainfall calculated between the defined start and defined end of the season,,,,,true
 farmeractivity--afterwatchingcontinuetotheactivity,2024-05-22 15:40:41.740145+00,farmer-activity,,After watching continue to the activity,,,,,true
+common--youdecideandmakeaplan,2024-07-22 00:49:14.670789+00,common,,You decide and make a plan,Mumapanga chiganizo ndikupanga plan,,,Mumasankha ndikupanga dongosolo,
+commoncrops--tobacco,2024-05-22 15:40:35.800823+00,common_crops,,Tobacco,Fodya,,,Fodya,
+commondays-dayshort1-mon,2024-05-22 15:40:36.471188+00,common_days,day_short_1,Mon,Mon,,,Lolemba,
 common--ram,2024-07-22 00:49:13.29149+00,common,,Ram,,,,Ram,true
 budget-activities-postharvesthandling,2024-05-22 15:40:23.770952+00,budget,activities,post-harvest handling,kusamala zokolora,,Мавридҳои ҳосили пас аз,kagwiridwe pambuyo po kolola,true
 cropprobability--longitude3426latitude1291altitude500,2024-05-22 15:40:40.48975+00,crop-probability,,"Longitude:34.26, Latitude: -12.91 Altitude: 500.","Longitude:34.26, Latitude: -12.91 Altitude: 500.",,,"Kutalika :34.26, Kutambasuka:12.91, Mtunda wa M'mwamba : 500",true
 cropprobability--calculatedbyusingfaoclimwat20forcropwatandcropwat80andclimatedatafornkhotakotametstation,2024-05-22 15:40:39.959902+00,crop-probability,,Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.,Kuwerengeredwa pogwiritsa ntchito FAO CLIMWAT 2.0 ya Cropwat ndi Cropwat 8.0 ndi uthenga wa  zanyengo ya Nkhotakota Met Station.,,,Kuwerengela kusewenzetsa FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.,true
-common--downscaledforecasts,2024-10-18 11:20:49.523327+00,common,,Downscaled Forecasts,,,,,
-common--forecasts,2024-10-18 11:20:49.589356+00,common,,Forecasts,,,,,
-common--seasonalforecast,2024-10-18 11:20:49.650967+00,common,,Seasonal Forecast,ulosi wa nyengo,,,Uthenga wa zanyengo,
-extensioncontent--additional,2024-10-18 11:20:49.727604+00,extension-content,,Additional,,,,,
-extensioncontent--training,2024-10-18 11:20:49.777289+00,extension-content,,Training,,,,,
-farmercontent--home,2024-10-18 11:20:49.827764+00,farmer-content,,Home,,,,,
-farmercontent--next,2024-10-18 11:20:49.889066+00,farmer-content,,next,pitani tsamba lina,,Баъдӣ,ina,
-farmercontent--previous,2024-10-18 11:20:49.94754+00,farmer-content,,previous,,,,,
+common--downscaledforecasts,2024-10-18 11:20:49.523327+00,common,,Downscaled Forecasts,Ulosi wa dera laling'ono,,,Zolosera/zanyengo Zochepetsedwa,
+common--forecasts,2024-10-18 11:20:49.589356+00,common,,Forecasts,Maulosi,,,Zolosera/zanyengo,
+extensioncontent--additional,2024-10-18 11:20:49.727604+00,extension-content,,Additional,Zipangizo zoonjezera,,,Zowonjezera,
+extensioncontent--training,2024-10-18 11:20:49.777289+00,extension-content,,Training,Maphunziro a PICSA,,,Maphunziro,
+farmercontent--home,2024-10-18 11:20:49.827764+00,farmer-content,,Home,Pachiyambi,,,Poyamba,
+farmercontent--previous,2024-10-18 11:20:49.94754+00,farmer-content,,previous,M'mbuyo,,,Zambuyo,
+farmeractivity--inthisvideoyouwilllearnaboutthepicsastep,2024-05-22 15:40:41.820078+00,farmer-activity,,In this video you will learn about the PICSA step:,,,,,true
+climate--first3daysreceivingrainfallamountof20mmandnotfollowedby9daydryspellforthenext21days,2024-05-22 15:40:31.831041+00,climate,,First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days,,,,,true
+budget--nooutputsproduceforconsumption,2024-05-22 15:40:28.961294+00,budget,,No outputs produce for consumption,Palibe zokolora zomwe zagwiritsidwa (zadyedwa) ntchito pakhomo,,,Palibe zokolola zakudya pakhomo,true
+budget--totalconsumed,2024-05-22 15:40:29.700822+00,budget,,Total Consumed,Zonse zomwe zagwiritsidwa  ntchito (zadyedwa),,,Zonse Zosewenzetsadwa,true
+climate--capacityof100mmon1stmarchreduces05withevaporationrateof5mmperday,2024-05-22 15:40:31.711226+00,climate,,Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day,,,,,true
+budget--outputsforsale,2024-05-22 15:40:28.441053+00,budget,,(Outputs )For Sale,(Zokolora)Zogulitsa,,,(Zokolora) Zogulitsa,true

@@ -17,7 +17,7 @@
   </div>
 
   <!-- Table -->
-  @if(tableOptions() && countTotal >0){
+  @if(tableOptions() && countTotal>0){
   <picsa-data-table [data]="tableData()" [options]="tableOptions()" [valueTemplates]="{created_at}">
     <ng-template #created_at let-value> {{value | date: 'mediumDate' }} </ng-template>
   </picsa-data-table>
