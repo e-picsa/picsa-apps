@@ -58,7 +58,7 @@ export class TranslationsPageComponent {
   /** List of entries pending translation */
   public pendingEntries = computed(() => {
     const locale = this.locale();
-    return this.service.translations().filter((entry) => !entry[locale]);
+    return this.service.translations().filter((entry) => !entry[locale] && !entry.archived);
   });
 
   public translationProgress = computed(() => (100 * this.countTranslated) / this.countTotal);
