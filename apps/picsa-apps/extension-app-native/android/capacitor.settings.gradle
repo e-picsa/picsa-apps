@@ -26,11 +26,17 @@ project(':capacitor-video-player').projectDir = new File('../../../../node_modul
 include ':capacitor-community-firebase-analytics'
 project(':capacitor-community-firebase-analytics').projectDir = new File('../../../../node_modules/@capacitor-community/firebase-analytics/android')
 
-include ':capacitor-community-firebase-crashlytics'
-project(':capacitor-community-firebase-crashlytics').projectDir = new File('../../../../node_modules/@capacitor-community/firebase-crashlytics/android')
+include ':capacitor-firebase-crashlytics'
+project(':capacitor-firebase-crashlytics').projectDir = new File('../../../../node_modules/@capacitor-firebase/crashlytics/android')
 
 include ':capacitor-firebase-performance'
 project(':capacitor-firebase-performance').projectDir = new File('../../../../node_modules/@capacitor-firebase/performance/android')
 
 include ':capacitor-screen-orientation'
 project(':capacitor-screen-orientation').projectDir = new File('../../../../node_modules/@capacitor/screen-orientation/android')
+
+include ':capacitor-camera'
+project(':capacitor-camera').projectDir = new File('../../../../node_modules/@capacitor/camera/android')
+
+include ':capacitor-share'
+project(':capacitor-share').projectDir = new File('../../../../node_modules/@capacitor/share/android')

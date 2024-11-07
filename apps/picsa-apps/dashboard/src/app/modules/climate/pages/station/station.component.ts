@@ -39,7 +39,7 @@ export class ClimateStationPageComponent implements OnInit {
     await this.service.ready();
     this.mapMarkers = this.service.stations.map((m) => ({
       latlng: [m.latitude as number, m.longitude as number],
-      number: m.station_id,
+      number: parseInt(m.station_id),
     }));
   }
 }

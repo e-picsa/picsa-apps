@@ -27,9 +27,11 @@ const config: CapacitorConfig = {
     'capacitor-blob-writer',
     'capacitor-video-player',
     '@capacitor-community/firebase-analytics',
-    '@capacitor-community/firebase-crashlytics',
+    '@capacitor-firebase/crashlytics',
     '@capacitor-firebase/performance',
     '@capacitor/screen-orientation',
+    '@capacitor/camera',
+    "@capacitor/share",
   ],
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http
