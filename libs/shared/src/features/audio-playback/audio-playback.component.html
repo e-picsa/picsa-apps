@@ -1,8 +1,7 @@
-<button (click)="togglePlayback()" class="audio-button">
-  <div *ngIf="isAudioPlaying; else playIcon">
-    <mat-icon>play_circle_outline</mat-icon>
-  </div>
-  <ng-template #playIcon>
-    <mat-icon>headset</mat-icon>
-  </ng-template>
-</button>
+<div (click)="togglePlayback()" class="audio-button">
+  @if (isAudioPlaying) {
+  <button mat-flat-button><mat-icon>play_circle_outline</mat-icon></button>
+  } @else{
+  <button mat-flat-button><mat-icon>headset</mat-icon></button>
+  }
+</div>
