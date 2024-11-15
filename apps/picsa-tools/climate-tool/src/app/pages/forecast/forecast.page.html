@@ -7,22 +7,13 @@
     }
   </div>
 
-  <div class="card-container">
-    <mat-card class="mat-card" (click)="openAnnualForeCast()">
-      <mat-card-header>
-        <div>{{'Annual Forecast' | translate}}</div>
-      </mat-card-header>
-      <mat-card-content class="card-content">
-        <mat-icon>assessment</mat-icon>
-      </mat-card-content>
-    </mat-card>
-    <mat-card class="mat-card" (click)="openAnnualForeCast()">
-      <mat-card-header>
-        <div>{{'Downscaled Forecast' | translate}}</div>
-      </mat-card-header>
-      <mat-card-content class="card-content">
-        <mat-icon>map</mat-icon>
-      </mat-card-content>
-    </mat-card>
-  </div>
+  <h2>{{'Seasonal Forecast' | translate}}</h2>
+  @for(forecast of seasonalForecasts(); track forecast.id){
+  <resource-item-file [resource]="forecast"></resource-item-file>
+  }
+
+  <h2>{{'Downscaled Forecasts' | translate}}</h2>
+  @for(forecast of downscaledForecasts(); track forecast.id){
+  <mat-card>{{forecast.title}}</mat-card>
+  }
 </div>
