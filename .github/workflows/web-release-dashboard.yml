@@ -32,35 +32,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: dashboard
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           lfs: true
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-      #############################################################################
-      #         Node Modules
-      # Manually restore any previous cache to speed install
-      # As immutable install will not change cache only save new cache if not hit
-      # Uses fine-grained methods from https://github.com/actions/cache
-      #############################################################################
-      - uses: actions/cache/restore@v3
-        id: cache
-        with:
-          path: ./.yarn/cache
-          key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-yarn-v1-
+          node-version: 22.x
+          cache: 'yarn'
 
       - name: Install node modules
         run: yarn install --immutable && npm i -g vercel
-
-      - uses: actions/cache/save@v3
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          path: ./.yarn/cache
-          key: ${{ runner.os }}-node-modules-yarn-v1-${{ hashFiles('yarn.lock') }}
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
