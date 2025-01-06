@@ -125,7 +125,7 @@
     "@angular-eslint/eslint-plugin": "19.0.2",
     "@angular-eslint/eslint-plugin-template": "19.0.2",
     "@angular-eslint/template-parser": "19.0.2",
-    "@angular/cli": "~18.2.0",
+    "@angular/cli": "~19.0.0",
     "@angular/compiler-cli": "19.0.5",
     "@angular/language-service": "19.0.5",
     "@biesbjerg/ngx-translate-extract-marker": "^1.0.0",
