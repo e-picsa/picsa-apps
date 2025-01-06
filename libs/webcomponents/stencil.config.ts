@@ -34,7 +34,6 @@ export const config: Config = {
       componentCorePackage: '@picsa/webcomponents',
       directivesProxyFile: 'libs/webcomponents-ngx/src/lib/generated/components.ts',
       directivesArrayFile: 'libs/webcomponents-ngx/src/lib/generated/index.ts',
-      includeImportCustomElements: false,
     }),
     {
       type: 'dist',
