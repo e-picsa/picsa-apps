@@ -27,6 +27,7 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
   selector: 'picsa-video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
+  standalone: false,
 })
 export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */

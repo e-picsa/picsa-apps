@@ -7,7 +7,6 @@ import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall
 
 @Component({
   selector: 'dashboard-station-details',
-  standalone: true,
   imports: [CommonModule, MatProgressBarModule, RainfallSummaryComponent],
   templateUrl: './station-details.component.html',
   styleUrls: ['./station-details.component.scss'],

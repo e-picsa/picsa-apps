@@ -8,7 +8,6 @@ import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, PicsaConfigurationSelectComponent],
 })
 export class HomePageComponent {

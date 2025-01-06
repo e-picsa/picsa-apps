@@ -12,7 +12,6 @@ const DISPLAYED_COLUMNS: (keyof IDeploymentRow)[] = ['country_code', 'label', 'p
 
 @Component({
   selector: 'dashboard-deployment-list',
-  standalone: true,
   imports: [CommonModule, MatIconModule, MatTabsModule, PicsaDataTableComponent, StoragePathPipe],
   templateUrl: './deployment-list.component.html',
   styleUrls: ['./deployment-list.component.scss'],

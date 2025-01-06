@@ -14,7 +14,6 @@ export type IMonitoringSubmissionsRow = Database['public']['Tables']['monitoring
 
 @Component({
   selector: 'dashboard-form-submissions',
-  standalone: true,
   imports: [
     CommonModule,
     DashboardMaterialModule,

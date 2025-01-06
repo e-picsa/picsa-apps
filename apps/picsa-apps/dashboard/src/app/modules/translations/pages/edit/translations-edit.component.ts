@@ -10,7 +10,6 @@ import { ITranslationRow, TranslationDashboardService } from '../../translations
 
 @Component({
   selector: 'dashboard-translations-edit',
-  standalone: true,
   imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './translations-edit.component.html',
   styleUrls: ['./translations-edit.component.scss'],

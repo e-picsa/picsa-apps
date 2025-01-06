@@ -25,6 +25,7 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
       }
     `,
   ],
+  standalone: false,
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   public breadcrumbs: { label: string; path: string }[] = [];

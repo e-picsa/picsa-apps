@@ -20,7 +20,6 @@ const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
 
 @Component({
   selector: 'dashboard-resource-links',
-  standalone: true,
   imports: [
     CommonModule,
     CommonModule,

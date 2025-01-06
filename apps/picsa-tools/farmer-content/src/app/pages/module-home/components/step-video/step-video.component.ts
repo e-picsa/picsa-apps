@@ -15,7 +15,6 @@ import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/c
  */
 @Component({
   selector: 'farmer-step-video',
-  standalone: true,
   imports: [CommonModule, ResourcesComponentsModule],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',

@@ -27,7 +27,6 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 
 @Component({
   selector: 'dashboard-monitoring-update',
-  standalone: true,
   imports: [
     CommonModule,
     DashboardMaterialModule,

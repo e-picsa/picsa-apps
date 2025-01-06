@@ -32,7 +32,6 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
  */
 @Component({
   selector: 'dashboard-climate-api-status',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './api-status.html',
   styleUrls: ['./api-status.scss'],

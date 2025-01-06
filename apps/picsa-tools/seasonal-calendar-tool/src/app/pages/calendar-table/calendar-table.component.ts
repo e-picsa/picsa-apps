@@ -15,6 +15,7 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   templateUrl: './calendar-table.component.html',
   styleUrls: ['./calendar-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CalendarTableComponent implements OnInit, OnDestroy {
   /** Table column labels (e.g. names of months) */

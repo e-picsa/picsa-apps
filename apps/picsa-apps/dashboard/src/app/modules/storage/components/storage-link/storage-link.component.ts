@@ -21,7 +21,6 @@ const filetypeIconMapping = {
 
 @Component({
   selector: 'dashboard-storage-link',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './storage-link.component.html',
   styleUrls: ['./storage-link.component.scss'],

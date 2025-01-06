@@ -9,7 +9,6 @@ import { TranslationsJSONImportComponent } from './components/json-import/json-i
 
 @Component({
   selector: 'dashboard-translations-import',
-  standalone: true,
   imports: [CommonModule, TranslationsCSVImportComponent, TranslationsJSONImportComponent],
   templateUrl: './translations-import.component.html',
   styleUrl: './translations-import.component.scss',

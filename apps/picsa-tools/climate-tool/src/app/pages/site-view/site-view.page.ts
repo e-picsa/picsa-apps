@@ -37,6 +37,7 @@ interface ISiteViewParams {
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   public showRotateAnimation = signal(false);

@@ -18,6 +18,7 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
       useClass: LineDatePickerSelectionStrategy,
     },
   ],
+  standalone: false,
 })
 export class LineToolComponent implements OnInit, OnDestroy {
   public value?: number;

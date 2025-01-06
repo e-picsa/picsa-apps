@@ -13,7 +13,6 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
 
 @Component({
   selector: 'dashboard-climate-station-page',
-  standalone: true,
   imports: [
     CommonModule,
     DashboardClimateApiStatusComponent,

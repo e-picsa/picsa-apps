@@ -10,6 +10,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-list-item',
   templateUrl: './budget-list-item.html',
   styleUrls: ['./budget-list-item.scss'],
+  standalone: false,
 })
 export class BudgetListItemComponent {
   @Input() budget: IBudget;
@@ -74,6 +75,7 @@ export class BudgetListItemComponent {
       <button mat-button [mat-dialog-close]="editableBudget">Save</button>
     </div>
   `,
+  standalone: false,
 })
 export class BudgetListItemRenameDialog {
   constructor(

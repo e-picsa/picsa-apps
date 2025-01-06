@@ -26,7 +26,6 @@ import { ConfigurationService, IUserSettings } from '../../provider';
 
 @Component({
   selector: 'picsa-configuration-select',
-  standalone: true,
   imports: [
     CommonModule,
     PicsaTranslateModule,

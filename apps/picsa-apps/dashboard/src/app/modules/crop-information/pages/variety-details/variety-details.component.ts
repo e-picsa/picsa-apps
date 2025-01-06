@@ -12,7 +12,6 @@ import { CropInformationService, ICropInformationInsert, ICropInformationRow } f
 
 @Component({
   selector: 'dashboard-crop-variety-details',
-  standalone: true,
   imports: [CommonModule, DashboardMaterialModule, RouterModule, FormsModule, PicsaFormsModule, ReactiveFormsModule],
   templateUrl: './variety-details.component.html',
   styleUrl: './variety-details.component.scss',

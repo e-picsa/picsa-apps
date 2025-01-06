@@ -8,7 +8,6 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 
 @Component({
   selector: 'dashboard-user-profile',
-  standalone: true,
   imports: [CommonModule, DeploymentItemComponent, MatCheckboxModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',

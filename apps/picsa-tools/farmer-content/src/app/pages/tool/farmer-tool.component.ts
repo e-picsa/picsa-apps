@@ -22,8 +22,7 @@ import { filter, map } from 'rxjs';
       <router-outlet></router-outlet>
     </div>
   `,
-  // standalone: true,
-  // imports: [RouterOutlet, RouterModule],
+  standalone: false,
 })
 export class FarmerToolPlaceholderComponent {
   public tools = TOOLS_DATA;

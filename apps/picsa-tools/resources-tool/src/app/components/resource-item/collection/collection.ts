@@ -6,6 +6,7 @@ import { IResourceCollection, IResourceLink } from '../../../schemas';
   selector: 'resource-item-collection',
   templateUrl: 'collection.html',
   styleUrls: ['collection.scss'],
+  standalone: false,
 })
 export class ResourceItemCollectionComponent implements OnInit {
   // Collections are simply rendered as a link to the collection

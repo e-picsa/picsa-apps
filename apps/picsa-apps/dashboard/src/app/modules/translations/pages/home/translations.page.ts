@@ -18,7 +18,6 @@ import { TranslationsEditComponent } from '../edit/translations-edit.component';
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
   selector: 'dashboard-translations-page',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

@@ -36,6 +36,7 @@ import { IHeaderOptions, PicsaCommonComponentsService } from '../services/compon
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
+  standalone: false,
 })
 export class PicsaHeaderComponent implements OnInit, OnDestroy {
   public title = '';

@@ -4,7 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IPicsaDialogData, IPicsaDialogSelectOption } from '../dialog.models';
 
 // Dialog base
-@Component({ template: '' })
+@Component({
+  template: '',
+  standalone: false,
+})
 export class PicsaDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IPicsaDialogData = {},
@@ -17,6 +20,7 @@ export class PicsaDialogComponent {
   selector: 'picsa-action-dialog',
   templateUrl: './action-dialog.html',
   styleUrls: ['./dialog.scss'],
+  standalone: false,
 })
 export class PicsaActionDialog extends PicsaDialogComponent {}
 
@@ -25,6 +29,7 @@ export class PicsaActionDialog extends PicsaDialogComponent {}
   selector: 'picsa-image-select-dialog',
   templateUrl: './image-select.html',
   styleUrls: ['./dialog.scss'],
+  standalone: false,
 })
 export class PicsaSelectDialog extends PicsaDialogComponent {
   select(option: IPicsaDialogSelectOption) {

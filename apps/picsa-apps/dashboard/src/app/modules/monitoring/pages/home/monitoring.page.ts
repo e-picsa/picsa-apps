@@ -12,7 +12,6 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 
 @Component({
   selector: 'dashboard-monitoring-page',
-  standalone: true,
   imports: [CommonModule, DashboardMaterialModule, RouterModule, PicsaDataTableComponent],
   templateUrl: './monitoring.page.html',
   styleUrls: ['./monitoring.page.scss'],

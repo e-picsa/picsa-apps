@@ -40,7 +40,6 @@ export class SupabaseStoragePickerDirective {
 
 @Component({
   selector: 'picsa-supabase-storage-file-picker',
-  standalone: true,
   imports: [CommonModule, FormsModule, MatButtonModule, MatListModule, MatTabsModule],
   templateUrl: './storage-file-picker.component.html',
   styleUrls: ['./storage-file-picker.component.scss'],

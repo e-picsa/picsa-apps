@@ -7,6 +7,7 @@ import { BudgetStore, IBudgetCounterSVGIcons } from '../../../store/budget.store
   selector: 'budget-balance-dot-value',
   templateUrl: './dot-value.html',
   styleUrls: ['./dot-value.scss'],
+  standalone: false,
 })
 export class BudgetBalanceDotValueComponent {
   public svgIcons: IBudgetCounterSVGIcons;
