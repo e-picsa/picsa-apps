@@ -32,7 +32,6 @@ type ImportActionSummary = { [key in ImportActions]: ITranslationImportEntry[] }
  */
 @Component({
   selector: 'dashboard-translation-json-import',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatTabsModule, PicsaDataTableComponent],
   templateUrl: './json-import.component.html',
   styleUrl: './json-import.component.scss',

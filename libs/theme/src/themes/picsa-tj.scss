@@ -69,14 +69,14 @@ $accent: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$palette-primary: mat.define-palette($primary);
-$palette-accent: mat.define-palette($accent, A200, A100, A400);
+$palette-primary: mat.m2-define-palette($primary);
+$palette-accent: mat.m2-define-palette($accent, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$palette-warn: mat.define-palette(mat.$red-palette);
+$palette-warn: mat.m2-define-palette(mat.$m2-red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$theme-tj: mat.define-light-theme(
+$theme-tj: mat.m2-define-light-theme(
   (
     color: (
       primary: $palette-primary,

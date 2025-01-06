@@ -6,7 +6,6 @@ import { PhotoViewComponent } from '../photo-view/photo-view.component';
 
 @Component({
   selector: 'picsa-photo-debug',
-  standalone: true,
   imports: [PhotoInputComponent, PhotoListComponent, PhotoViewComponent],
   templateUrl: './photo-debug.component.html',
   styleUrl: './photo-debug.component.scss',

@@ -32,7 +32,6 @@ const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['station_id', 'updated_
 
 @Component({
   selector: 'dashboard-climate-admin-page',
-  standalone: true,
   imports: [CommonModule, DatePipe, MatButtonModule, MatIconModule, PicsaDataTableComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',

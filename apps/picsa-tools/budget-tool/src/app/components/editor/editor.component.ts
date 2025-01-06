@@ -15,6 +15,7 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
   animations: [FadeInOut({})],
+  standalone: false,
 })
 export class BudgetEditorComponent implements OnDestroy {
   /** View reference to ng-template content shown in dialog */

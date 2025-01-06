@@ -8,6 +8,7 @@ import { IBudgetCard } from '../../../schema';
   selector: 'budget-card-new-dialog',
   templateUrl: './card-new-dialog.html',
   styleUrls: ['./card-new-dialog.scss'],
+  standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetCardNewDialog {

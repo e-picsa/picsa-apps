@@ -33,7 +33,6 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
 
 @Component({
   selector: 'dashboard-resource-files',
-  standalone: true,
   imports: [
     CommonModule,
     DashboardMaterialModule,

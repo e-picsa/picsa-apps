@@ -21,11 +21,11 @@ import { Subject } from 'rxjs';
   // NOTE - will only work if child component includes focusable element
   // This can be any input element, or div with tabindex=0 applied
   // https://web.dev/articles/control-focus-with-tabindex
-
   host: {
     '(focusin)': 'onFocusIn($event)',
     '(focusout)': 'onFocusOut($event)',
   },
+  standalone: false,
 })
 export abstract class PicsaFormBaseSelectComponent<T extends { id: string }>
   implements ControlValueAccessor, MatFormFieldControl<string>, OnDestroy

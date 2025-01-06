@@ -20,7 +20,6 @@ import { IResourceFileRow } from '../../../types';
 
 @Component({
   selector: 'dashboard-resource-file-edit',
-  standalone: true,
   imports: [
     CommonModule,
     DashboardMaterialModule,

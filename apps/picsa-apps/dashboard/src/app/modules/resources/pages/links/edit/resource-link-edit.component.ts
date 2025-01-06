@@ -11,7 +11,6 @@ import { IResourceLinkRow } from '../../../types';
 
 @Component({
   selector: 'dashboard-resource-link-edit',
-  standalone: true,
   imports: [CommonModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
   templateUrl: './resource-link-edit.component.html',
   styleUrl: './resource-link-edit.component.scss',

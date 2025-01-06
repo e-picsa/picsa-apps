@@ -10,6 +10,7 @@ import { IStationRouteQueryParams } from '../../models';
   selector: 'crop-probability-station-select',
   templateUrl: './station-select.component.html',
   styleUrls: ['./station-select.component.scss'],
+  standalone: false,
 })
 export class CropProbabilityStationSelectComponent {
   @Input() selectedStationId?: string;

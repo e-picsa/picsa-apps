@@ -21,7 +21,6 @@ type ActionSummary = { [key in Action]: ITranslationRow[] };
 
 @Component({
   selector: 'dashboard-translation-csv-import',
-  standalone: true,
   imports: [CommonModule, MatButtonModule],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.scss',

@@ -1,12 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
 import { ClimateChartService } from '../../services/climate-chart.service';
 
 @Component({
   selector: 'climate-print-layout',
   templateUrl: './print-layout.component.html',
   styleUrls: ['./print-layout.component.scss'],
+  standalone: false,
 })
-export class ClimatePrintLayoutComponent {
+export class ClimatePrintLayoutComponent implements OnInit {
   public stationName: string;
   public chartName: string;
   public chartDefinition: string;

@@ -9,6 +9,7 @@ import { ClimateDataService } from '../../services/climate-data.service';
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
+  standalone: false,
 })
 export class SiteSelectPage implements OnInit {
   activeStation: any;

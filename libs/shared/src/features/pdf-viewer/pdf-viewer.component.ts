@@ -9,7 +9,6 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
   templateUrl: './pdf-viewer.component.html',
   styleUrls: ['./pdf-viewer.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [NgxExtendedPdfViewerModule, CommonModule],
 })
 export class PdfViewerComponent {

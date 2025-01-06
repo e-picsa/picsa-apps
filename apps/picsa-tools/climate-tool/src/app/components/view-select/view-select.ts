@@ -1,15 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IsActiveMatchOptions } from '@angular/router';
-
-import { ClimateChartService } from '../../services/climate-chart.service';
 import { IChartMeta } from '@picsa/models/src';
-import { IReportMeta } from '../../models';
 import { Subject, takeUntil } from 'rxjs';
+
+import { IReportMeta } from '../../models';
+import { ClimateChartService } from '../../services/climate-chart.service';
 
 @Component({
   selector: 'climate-view-select',
   templateUrl: './view-select.html',
   styleUrls: ['./view-select.scss'],
+  standalone: false,
 })
 export class ViewSelectComponent implements OnInit, OnDestroy {
   /** List of charts available for display */

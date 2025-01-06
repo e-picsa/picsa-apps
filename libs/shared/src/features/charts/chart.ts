@@ -8,7 +8,6 @@ import * as c3 from 'c3';
   styleUrls: ['./chart.scss'],
   // remove shadow-dom encapsulation so c3.css styles can be passed down
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [],
 })
 /*  angular wrapper for c3.js lib

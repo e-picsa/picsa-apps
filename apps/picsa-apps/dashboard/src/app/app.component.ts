@@ -12,7 +12,6 @@ import { DeploymentDashboardService } from './modules/deployment/deployment.serv
 import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
 
 @Component({
-  standalone: true,
   imports: [
     RouterModule,
     DashboardMaterialModule,

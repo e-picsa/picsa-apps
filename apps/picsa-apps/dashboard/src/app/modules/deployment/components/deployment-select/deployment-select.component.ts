@@ -13,7 +13,6 @@ import { DeploymentItemComponent } from '../deployment-item/deployment-item.comp
 
 @Component({
   selector: 'dashboard-deployment-select',
-  standalone: true,
   imports: [CommonModule, DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule, StoragePathPipe],
   templateUrl: './deployment-select.component.html',
   styleUrls: ['./deployment-select.component.scss'],

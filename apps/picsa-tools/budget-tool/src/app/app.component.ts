@@ -8,6 +8,7 @@ import { BudgetStore } from './store/budget.store';
   selector: 'picsa-budget-tool',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent {
   title = 'picsa-budget-tool';
@@ -20,5 +21,6 @@ export class AppComponent {
   // tslint:disable component-selector
   selector: 'picsa-budget-tool',
   template: '',
+  standalone: false,
 })
 export class AppComponentEmbedded extends AppComponent {}

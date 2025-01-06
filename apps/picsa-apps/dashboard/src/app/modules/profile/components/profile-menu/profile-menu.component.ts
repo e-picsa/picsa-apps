@@ -12,7 +12,6 @@ import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.
 
 @Component({
   selector: 'dashboard-profile-menu',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.scss'],

@@ -84,7 +84,6 @@ export class FormatValuePipe implements PipeTransform {
  */
 @Component({
   selector: 'picsa-data-table',
-  standalone: true,
   imports: [
     CommonModule,
     FormatValuePipe,

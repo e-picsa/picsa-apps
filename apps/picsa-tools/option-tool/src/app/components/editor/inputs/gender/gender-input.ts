@@ -39,6 +39,7 @@ export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   styleUrls: ['./gender-input.scss'],
   providers: [GENDER_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<typeof SELECT_OPTIONS[0]> {
   // public override selectOptions = SELECT_OPTIONS;

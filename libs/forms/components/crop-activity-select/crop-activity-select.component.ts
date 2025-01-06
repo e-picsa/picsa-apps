@@ -22,6 +22,7 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   styleUrls: ['./crop-activity-select.component.scss'],
   providers: [CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FormCropActivitySelectComponent extends PicsaFormBaseSelectComponent<ICropActivityDataEntry> {
   constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {

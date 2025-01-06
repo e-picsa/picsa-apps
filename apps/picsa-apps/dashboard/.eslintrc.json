@@ -23,7 +23,8 @@
             "prefix": "dashboard",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@angular-eslint/prefer-standalone": "off"
       }
     },
     {

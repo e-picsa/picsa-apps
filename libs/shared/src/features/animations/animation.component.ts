@@ -9,6 +9,7 @@ import type { IAvailableAnimations } from './models';
   selector: 'picsa-animation',
   styleUrls: ['./animation.component.scss'],
   templateUrl: 'animation.component.html',
+  standalone: false,
 })
 export class PicsaAnimationComponent implements OnInit {
   /** Name of animation file to display */

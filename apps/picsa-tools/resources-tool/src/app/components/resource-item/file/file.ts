@@ -9,6 +9,7 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
   selector: 'resource-item-file',
   templateUrl: 'file.html',
   styleUrls: ['file.scss'],
+  standalone: false,
 })
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;

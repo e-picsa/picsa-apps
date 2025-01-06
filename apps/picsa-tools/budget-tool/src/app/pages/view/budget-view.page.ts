@@ -14,6 +14,7 @@ import { BudgetStore } from '../../store/budget.store';
   templateUrl: './budget-view.page.html',
   styleUrls: ['./budget-view.page.scss'],
   animations: [FadeInOut({ inDelay: 200 }), OpenClosed],
+  standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetViewPage implements OnInit, OnDestroy {

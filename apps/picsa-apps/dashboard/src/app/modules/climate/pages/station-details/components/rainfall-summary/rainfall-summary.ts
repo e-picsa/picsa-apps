@@ -29,7 +29,6 @@ interface IRainfallSummary {
 @Component({
   selector: 'dashboard-climate-rainfall-summary',
   templateUrl: './rainfall-summary.html',
-  standalone: true,
   imports: [
     DashboardClimateApiStatusComponent,
     MatButtonModule,

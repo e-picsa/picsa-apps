@@ -12,6 +12,7 @@ import { IResourceFile } from '../../schemas';
     </picsa-video-player>
     <p *ngIf="resource.description">{{ resource.description | translate }}</p>
   `,
+  standalone: false,
 })
 export class ResourceItemVideoComponent {
   public videoSource: string;

@@ -10,6 +10,7 @@ import { IStationCropData, IStationCropDataItem, IStationCropInformation } from 
   selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
+  standalone: false,
 })
 export class CropProbabilityTableComponent {
   public displayedColumns: string[] = [];

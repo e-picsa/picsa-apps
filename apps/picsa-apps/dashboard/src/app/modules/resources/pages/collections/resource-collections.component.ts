@@ -26,7 +26,6 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
 
 @Component({
   selector: 'dashboard-resource-collections',
-  standalone: true,
   imports: [
     CommonModule,
     CommonModule,

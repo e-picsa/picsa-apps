@@ -9,6 +9,7 @@ import { BUDGET_PERIOD_ROWS, IBudgetPeriodRow } from '../../store/templates';
   selector: 'budget-table',
   templateUrl: 'budget-table.html',
   styleUrls: ['./budget-table.scss'],
+  standalone: false,
 })
 export class BudgetTableComponent {
   @Input() budget: IBudget;

@@ -13,6 +13,7 @@ import { BudgetCardNewDialog } from './card-new-dialog';
   selector: 'budget-card-new',
   templateUrl: './card-new.html',
   styleUrls: ['./card-new.scss', '../budget-card.scss'],
+  standalone: false,
 })
 export class BudgetCardNew {
   @Input() type: IBudgetCardType;

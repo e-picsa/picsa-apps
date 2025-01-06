@@ -10,7 +10,6 @@ import { AuthRoleRequiredDirective } from '../auth';
   selector: 'dashboard-home',
   templateUrl: 'home.component.html',
   styleUrl: 'home.component.scss',
-  standalone: true,
   imports: [MatCardModule, MatIconModule, RouterModule, AuthRoleRequiredDirective],
 })
 export class DashboardHomeComponent {

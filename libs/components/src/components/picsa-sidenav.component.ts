@@ -119,6 +119,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class PicsaSidenavComponent implements OnInit, AfterViewInit {
   private _mobileQueryListener: () => void;

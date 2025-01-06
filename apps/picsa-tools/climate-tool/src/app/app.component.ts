@@ -5,6 +5,7 @@ import { PicsaTranslateService } from '@picsa/shared/modules/translate';
   selector: 'climate-tool',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent {
   title = 'climate-tool';
@@ -16,5 +17,6 @@ export class AppComponent {
   // use empty template as router outlet not required
   template: '',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponentEmbedded extends AppComponent {}

@@ -9,7 +9,6 @@ import { CropInformationService, ICropInformationRow } from '../../services';
 
 @Component({
   selector: 'dashboard-crop-variety',
-  standalone: true,
   imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
   templateUrl: './variety.component.html',
   styleUrl: './variety.component.scss',

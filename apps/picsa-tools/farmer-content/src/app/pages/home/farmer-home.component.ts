@@ -11,7 +11,6 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 @Component({
   selector: 'farmer-home',
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,

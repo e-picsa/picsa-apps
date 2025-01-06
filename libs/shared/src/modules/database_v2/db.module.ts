@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
+import { inject, ModuleWithProviders, NgModule, provideAppInitializer } from '@angular/core';
 
 import { PicsaDatabase_V2_Service } from '../../services/core/db_v2/db.service';
 
@@ -32,12 +32,10 @@ export class PicsaDb_V2_Module {
     return {
       ngModule: PicsaDb_V2_Module,
       providers: [
-        {
-          provide: APP_INITIALIZER,
-          useFactory: dbInitFactory,
-          multi: true,
-          deps: [PicsaDatabase_V2_Service],
-        },
+        provideAppInitializer(() => {
+          const initializerFn = dbInitFactory(inject(PicsaDatabase_V2_Service));
+          return initializerFn();
+        }),
       ],
     };
   }

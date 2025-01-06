@@ -22,7 +22,6 @@ import * as GEOJSON from './geoJson';
   templateUrl: './map.html',
   styleUrls: ['./map.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaMapComponent implements OnInit {
