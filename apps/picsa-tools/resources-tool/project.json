@@ -22,14 +22,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": [
-          "lottie-web/build/player/lottie_light",
-          "downloadjs",
-          "html2canvas",
-          "save-svg-as-png",
-          "fast-xml-parser",
-          "leaflet"
-        ],
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/resources-tool",
         "index": "apps/picsa-tools/resources-tool/src/index.html",
         "main": "apps/picsa-tools/resources-tool/src/main.ts",

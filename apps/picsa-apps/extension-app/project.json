@@ -7,18 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "allowedCommonJsDependencies": [
-        "c3",
-        "deepmerge",
-        "downloadjs",
-        "fast-xml-parser",
-        "html2canvas",
-        "leaflet",
-        "node-forge",
-        "papaparse",
-        "save-svg-as-png",
-        "stacktrace-js"
-      ],
+      "allowedCommonJsDependencies": ["*"],
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -116,9 +105,9 @@
             "output": "assets"
           },
           {
-            "glob": "{*.min.js,op-chaining-support.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
+            "glob": "{*.min.mjs,op-chaining-support.js,images/*,locale/en-GB/*,locale/locale.json,standard_fonts/**}",
             "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-            "ignore": ["**/*-es5.min.js"],
+            "ignore": ["**/*-es5.min.mjs"],
             "output": "/assets/pdf-viewer"
           }
         ],
@@ -139,7 +128,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "4mb"
+              "maximumError": "5mb"
             },
             {
               "type": "anyComponentStyle",

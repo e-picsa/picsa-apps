@@ -5,7 +5,6 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 // Local components
 import { PdfViewerComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 import { ManualToolMaterialModule } from './material.module';
 import { stepsContainerComponent } from './stepsContainer/stepsContainer.component';
@@ -16,7 +15,6 @@ const Components = [stepsContainerComponent];
   imports: [
     CommonModule,
     ManualToolMaterialModule,
-    NgxExtendedPdfViewerModule,
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
     PdfViewerComponent,

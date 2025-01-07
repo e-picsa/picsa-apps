@@ -101,7 +101,7 @@
     "lottie-web": "^5.12.2",
     "mobx": "^6.13.5",
     "mobx-angular": "^4.8.0",
-    "ngx-extended-pdf-viewer": "^18.1.15",
+    "ngx-extended-pdf-viewer": "^22.2.0-alpha.6",
     "ngx-json-viewer": "^3.2.1",
     "ngx-lottie": "^13.0.0",
     "openapi-fetch": "^0.8.2",

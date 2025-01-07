@@ -16776,13 +16776,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.deburr@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "lodash.deburr@npm:4.1.0"
-  checksum: 10c0/30c068e9c3b21d65d260887a8849fa7b94692f868adcc4527136c296b4e71ced7149f58e0f37154d3c56d7950cc605ad3e10b2ee0baedf5638af0befc5013ebc
-  languageName: node
-  linkType: hard
-
 "lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
@@ -17844,16 +17837,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-extended-pdf-viewer@npm:^18.1.15":
-  version: 18.1.15
-  resolution: "ngx-extended-pdf-viewer@npm:18.1.15"
+"ngx-extended-pdf-viewer@npm:^22.2.0-alpha.6":
+  version: 22.2.0-alpha.6
+  resolution: "ngx-extended-pdf-viewer@npm:22.2.0-alpha.6"
   dependencies:
-    lodash.deburr: "npm:^4.1.0"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">=12.0.0 <18.0.0"
-    "@angular/core": ">=12.0.0 <18.0.0"
-  checksum: 10c0/72d13c911dfd6383a04cf7cc28eb9e02c4b7b4bcaa9627f2d4fc719219c1c36c7d4547ae7d13a842ffdbfc46ddc9e15583f01269bf167d9790893284b6ecab76
+    "@angular/common": ">=17.0.0 <20.0.0"
+    "@angular/core": ">=17.0.0 <20.0.0"
+  checksum: 10c0/193bf886f7c90f8abefbef25ea6abd1a29321b30aa1bcc3737e9d4b6cbf453e11f16e1eab70d97aa2b0d819dc1582492e7913b0181fc81d33e673a93776624a4
   languageName: node
   linkType: hard
 
@@ -19115,7 +19107,7 @@ __metadata:
     mobx: "npm:^6.13.5"
     mobx-angular: "npm:^4.8.0"
     ng-packagr: "npm:19.0.1"
-    ngx-extended-pdf-viewer: "npm:^18.1.15"
+    ngx-extended-pdf-viewer: "npm:^22.2.0-alpha.6"
     ngx-json-viewer: "npm:^3.2.1"
     ngx-lottie: "npm:^13.0.0"
     nx: "npm:20.3.0"
