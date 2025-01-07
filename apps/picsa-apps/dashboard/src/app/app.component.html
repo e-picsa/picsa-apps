@@ -10,8 +10,8 @@
   </mat-toolbar>
 
   <mat-sidenav-container style="flex: 1">
-    <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64">
-      <mat-nav-list>
+    <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true" fixedTopGap="64" >
+      <mat-nav-list style="width:256px">
         @for (link of navLinks; track link.href) { @if(link.children){
         <!-- Nested nav items -->
         <mat-expansion-panel class="mat-elevation-z0" [expanded]="rla.isActive" *roleRequired="link.roleRequired">
