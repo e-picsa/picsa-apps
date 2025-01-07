@@ -3,7 +3,6 @@ import { Component, computed, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 import { IAuthUser } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
 import { DashboardAuthService } from '../../../auth/services/auth.service';
@@ -13,7 +12,7 @@ import { DeploymentItemComponent } from '../deployment-item/deployment-item.comp
 
 @Component({
   selector: 'dashboard-deployment-select',
-  imports: [CommonModule, DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule, StoragePathPipe],
+  imports: [CommonModule, DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './deployment-select.component.html',
   styleUrls: ['./deployment-select.component.scss'],
 })
