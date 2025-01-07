@@ -17,8 +17,6 @@ import { DashboardErrorHandler } from './modules/error-handler';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
-    // TODO - when stable remove zone.js polyfill
-    // TODO - force all components to use onPush
     // provideExperimentalCheckNoChangesForDebug({
     //   interval: 1000, // run change detection every second
     //   useNgZoneOnStable: true, // run it when the NgZone is stable as well
