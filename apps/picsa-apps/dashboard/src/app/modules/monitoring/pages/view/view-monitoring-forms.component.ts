@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -17,7 +16,6 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 @Component({
   selector: 'dashboard-monitoring-view',
   imports: [
-    CommonModule,
     DashboardMaterialModule,
     FormsModule,
     ReactiveFormsModule,

@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ILocaleCode, LOCALES_DATA_HASHMAP } from '@picsa/data';
@@ -21,7 +21,7 @@ type ActionSummary = { [key in Action]: ITranslationRow[] };
 
 @Component({
   selector: 'dashboard-translation-csv-import',
-  imports: [CommonModule, MatButtonModule],
+  imports: [MatButtonModule],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.scss',
 })

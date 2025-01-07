@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,7 +10,7 @@ import { IResourceLinkRow } from '../../../types';
 
 @Component({
   selector: 'dashboard-resource-link-edit',
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
   templateUrl: './resource-link-edit.component.html',
   styleUrl: './resource-link-edit.component.scss',
 })

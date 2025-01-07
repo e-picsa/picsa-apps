@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaDataTableComponent } from '@picsa/shared/features';
@@ -9,7 +8,7 @@ import { CropInformationService, ICropInformationRow } from '../../services';
 
 @Component({
   selector: 'dashboard-crop-variety',
-  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
+  imports: [DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
   templateUrl: './variety.component.html',
   styleUrl: './variety.component.scss',
 })

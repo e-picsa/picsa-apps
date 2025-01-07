@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +11,7 @@ import { DeploymentItemComponent } from '../deployment-item/deployment-item.comp
 
 @Component({
   selector: 'dashboard-deployment-select',
-  imports: [CommonModule, DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './deployment-select.component.html',
   styleUrls: ['./deployment-select.component.scss'],
 })

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +11,7 @@ import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.
 
 @Component({
   selector: 'dashboard-profile-menu',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.scss'],
 })

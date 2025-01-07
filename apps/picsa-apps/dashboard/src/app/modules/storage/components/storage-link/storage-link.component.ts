@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, Input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +20,7 @@ const filetypeIconMapping = {
 
 @Component({
   selector: 'dashboard-storage-link',
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './storage-link.component.html',
   styleUrls: ['./storage-link.component.scss'],
 })

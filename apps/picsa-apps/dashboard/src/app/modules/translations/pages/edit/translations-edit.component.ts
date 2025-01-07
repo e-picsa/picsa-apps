@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -10,7 +9,7 @@ import { ITranslationRow, TranslationDashboardService } from '../../translations
 
 @Component({
   selector: 'dashboard-translations-edit',
-  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './translations-edit.component.html',
   styleUrls: ['./translations-edit.component.scss'],
 })

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -28,7 +27,6 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 @Component({
   selector: 'dashboard-monitoring-update',
   imports: [
-    CommonModule,
     DashboardMaterialModule,
     FormsModule,
     ReactiveFormsModule,

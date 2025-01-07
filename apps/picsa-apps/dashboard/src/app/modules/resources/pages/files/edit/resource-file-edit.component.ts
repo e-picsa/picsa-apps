@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,7 +20,6 @@ import { IResourceFileRow } from '../../../types';
 @Component({
   selector: 'dashboard-resource-file-edit',
   imports: [
-    CommonModule,
     DashboardMaterialModule,
     DashboardStorageLinkComponent,
     FormsModule,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
@@ -12,7 +11,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 
 @Component({
   selector: 'dashboard-monitoring-page',
-  imports: [CommonModule, DashboardMaterialModule, RouterModule, PicsaDataTableComponent],
+  imports: [DashboardMaterialModule, RouterModule, PicsaDataTableComponent],
   templateUrl: './monitoring.page.html',
   styleUrls: ['./monitoring.page.scss'],
 })

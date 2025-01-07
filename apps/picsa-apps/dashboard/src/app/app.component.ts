@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -16,7 +15,6 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
     RouterModule,
     DashboardMaterialModule,
     DeploymentSelectComponent,
-    CommonModule,
     ProfileMenuComponent,
     AuthRoleRequiredDirective,
   ],

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, effect } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
@@ -8,7 +7,7 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 
 @Component({
   selector: 'dashboard-user-profile',
-  imports: [CommonModule, DeploymentItemComponent, MatCheckboxModule],
+  imports: [DeploymentItemComponent, MatCheckboxModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
 })

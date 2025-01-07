@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,14 +17,7 @@ import { TranslationsEditComponent } from '../edit/translations-edit.component';
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
   selector: 'dashboard-translations-page',
-  imports: [
-    CommonModule,
-    FormsModule,
-    DashboardMaterialModule,
-    PicsaDataTableComponent,
-    PicsaLoadingComponent,
-    RouterModule,
-  ],
+  imports: [FormsModule, DashboardMaterialModule, PicsaDataTableComponent, PicsaLoadingComponent, RouterModule],
   templateUrl: './translations.page.html',
   styleUrls: ['./translations.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

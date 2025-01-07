@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -14,7 +13,6 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
 @Component({
   selector: 'dashboard-climate-station-page',
   imports: [
-    CommonModule,
     DashboardClimateApiStatusComponent,
     RouterModule,
     PicsaDataTableComponent,

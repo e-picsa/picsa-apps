@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,7 +31,7 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
  */
 @Component({
   selector: 'dashboard-climate-api-status',
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './api-status.html',
   styleUrls: ['./api-status.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,14 +13,7 @@ export type IMonitoringSubmissionsRow = Database['public']['Tables']['monitoring
 
 @Component({
   selector: 'dashboard-form-submissions',
-  imports: [
-    CommonModule,
-    DashboardMaterialModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxJsonViewerModule,
-    PicsaDataTableComponent,
-  ],
+  imports: [DashboardMaterialModule, FormsModule, ReactiveFormsModule, NgxJsonViewerModule, PicsaDataTableComponent],
   templateUrl: './form-submissions.component.html',
   styleUrls: ['./form-submissions.component.scss'],
 })

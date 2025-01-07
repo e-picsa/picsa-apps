@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -32,7 +32,7 @@ type ImportActionSummary = { [key in ImportActions]: ITranslationImportEntry[] }
  */
 @Component({
   selector: 'dashboard-translation-json-import',
-  imports: [CommonModule, MatButtonModule, MatTabsModule, PicsaDataTableComponent],
+  imports: [MatButtonModule, MatTabsModule, PicsaDataTableComponent],
   templateUrl: './json-import.component.html',
   styleUrl: './json-import.component.scss',
 })
