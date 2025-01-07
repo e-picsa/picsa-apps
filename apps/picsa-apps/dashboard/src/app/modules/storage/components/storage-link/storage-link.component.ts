@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, computed, Input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -37,7 +37,11 @@ export class DashboardStorageLinkComponent implements OnInit {
 
   constructor(private service: DashboardStorageService) {}
 
-  public entry?: IDashboardStorageEntry;
+  public entry = signal<IDashboardStorageEntry | undefined>(undefined);
+
+  public entryName = computed(() => {
+    return this.entry()?.name?.split('/')?.pop() || '';
+  });
 
   public notFound = false;
 
@@ -45,7 +49,7 @@ export class DashboardStorageLinkComponent implements OnInit {
 
   async ngOnInit() {
     const entry = await this.service.getStorageFileByPath(this.id);
-    this.entry = entry;
+    this.entry.set(entry);
     if (entry) {
       this.fileTypeIcon = this.getFileTypeIcon(entry);
     } else {
