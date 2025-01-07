@@ -6826,16 +6826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stencil/core@npm:3.2.2":
-  version: 3.2.2
-  resolution: "@stencil/core@npm:3.2.2"
-  bin:
-    stencil: bin/stencil
-  checksum: 10c0/5c676d87ef91585f25298bbf7489422948b73b96e274fab0270d4a015452afc0b3c38440ab099c6a34faa579c20ee3095e63f613fd3ad087f0293b63b4af8abf
-  languageName: node
-  linkType: hard
-
-"@stencil/core@npm:^4.12.6":
+"@stencil/core@npm:4.23.1, @stencil/core@npm:^4.12.6":
   version: 4.23.1
   resolution: "@stencil/core@npm:4.23.1"
   bin:
@@ -6844,7 +6835,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stencil/sass@npm:^3.0.2":
+"@stencil/sass@npm:^3.0.12":
   version: 3.0.12
   resolution: "@stencil/sass@npm:3.0.12"
   peerDependencies:
@@ -19046,8 +19037,8 @@ __metadata:
     "@nxext/stencil": "npm:^20.0.6"
     "@schematics/angular": "npm:19.0.6"
     "@stencil/angular-output-target": "npm:^0.10.2"
-    "@stencil/core": "npm:3.2.2"
-    "@stencil/sass": "npm:^3.0.2"
+    "@stencil/core": "npm:4.23.1"
+    "@stencil/sass": "npm:^3.0.12"
     "@supabase/supabase-js": "npm:^2.39.0"
     "@swc-node/register": "npm:1.9.2"
     "@swc/core": "npm:1.5.7"
