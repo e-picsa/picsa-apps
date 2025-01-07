@@ -3,7 +3,7 @@
 Files in this folder can be hardcoded into every build. If updating should populate via
 
 ```sh
-yarn ts-node tools/workflows/populateResourceContents.ts --skip-nx-cache
+yarn tx tools/workflows/populateResourceContents.ts
 ```
 
 ## Previewing Changes

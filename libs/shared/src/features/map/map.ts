@@ -120,7 +120,6 @@ export class PicsaMapComponent implements OnInit {
   // when the map is ready it emits event with map, and also binds map to
   // public api to be accessed by other services
   _onMapReady(map: L.Map) {
-    console.log('setting map', map);
     this.map.set(map);
     this.onMapReady.emit(map);
   }
