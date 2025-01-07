@@ -14,14 +14,14 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 export class PdfViewerComponent {
   legacyBrowser = true;
   sidebarOpen = false;
+  // additional locales are currently excluded from main build
+  locale = 'en-GB';
   public isNative = Capacitor.isNativePlatform();
   @Input() page?: number;
   @Input() src: string;
   constructor() {
     // name of folder pdf viewer assets copied to as declared in `angular.json`
     pdfDefaultOptions.assetsFolder = 'assets/pdf-viewer';
-    // additional locales are currently excluded from main build
-    pdfDefaultOptions.locale = 'en-GB';
     this.legacyBrowser = isLegacyBrowser();
   }
 }

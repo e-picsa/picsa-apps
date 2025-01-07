@@ -10,6 +10,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/option-tool",
         "index": "apps/picsa-tools/option-tool/src/index.html",
         "main": "apps/picsa-tools/option-tool/src/main.ts",

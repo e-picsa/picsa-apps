@@ -16,8 +16,6 @@ const config: CapacitorConfig = {
     'cordova-plugin-file',
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
-    // cordova standalone
-    'cordova-plugin-codeplay-share-own-apk',
     // capacitor
     '@capacitor/app',
     '@capacitor/browser',

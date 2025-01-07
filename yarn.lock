@@ -593,16 +593,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@asymmetrik/ngx-leaflet@npm:^17.0.0":
-  version: 17.0.0
-  resolution: "@asymmetrik/ngx-leaflet@npm:17.0.0"
+"@asymmetrik/ngx-leaflet@npm:^18.0.1":
+  version: 18.0.1
+  resolution: "@asymmetrik/ngx-leaflet@npm:18.0.1"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": 17
-    "@angular/core": 17
+    "@angular/common": 18
+    "@angular/core": 18
     leaflet: 1
-  checksum: 10c0/cc244cd307ec2d262fb731cebdad07a2dcc2d5398772b125203014e14741bf6a40525fbc3322011597bbee022700cadf9fb3a8a3dff7203e59e5b47e4eeaf0c7
+  checksum: 10c0/79efdab969c88d20b9774602345f5dd0804f27f77197d7ee45d2cefb492f91589c012d4f9ed0e2a2b559f0ec621c879658501f5a56cda71dca689fb8ae1e67b8
   languageName: node
   linkType: hard
 
@@ -5419,26 +5419,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngx-translate/core@npm:~15.0.0":
-  version: 15.0.0
-  resolution: "@ngx-translate/core@npm:15.0.0"
+"@ngx-translate/core@npm:~16.0.4":
+  version: 16.0.4
+  resolution: "@ngx-translate/core@npm:16.0.4"
+  dependencies:
+    tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">=16.0.0"
-    "@angular/core": ">=16.0.0"
-    rxjs: ^6.5.5 || ^7.4.0
-  checksum: 10c0/a79c80f1ed9dc36285fb7cef82957089d7f7682a0cc6f97bb6682a8587beaebc5daddb3f44408a09f58991a7a68abb6a05d252a2f0e4d091366bc059cad7edfa
+    "@angular/common": ">=16"
+    "@angular/core": ">=16"
+  checksum: 10c0/b84839745d04f9f8a0964cc1eeadb54ff77508675dd1e42f2b9b6dd6ccca91177c7905ac2909de90807cd3883ae1967c293b3313592cb76ba566a6c233313e3b
   languageName: node
   linkType: hard
 
-"@ngx-translate/http-loader@npm:~8.0.0":
-  version: 8.0.0
-  resolution: "@ngx-translate/http-loader@npm:8.0.0"
+"@ngx-translate/http-loader@npm:~16.0.1":
+  version: 16.0.1
+  resolution: "@ngx-translate/http-loader@npm:16.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">=16.0.0"
-    "@angular/core": ">=16.0.0"
-    "@ngx-translate/core": ">=15.0.0"
-    rxjs: ^6.5.5 || ^7.4.0
-  checksum: 10c0/200ad76239a51dec431c12d8e87160281c156252f1bae164fbee2d66ee0d34a4e2eb5102dd3cb040f743a4d7221e486fe33186e8955064e5afcfb6a546e45f56
+    "@angular/common": ">=16"
+    "@angular/core": ">=16"
+  checksum: 10c0/8d0543310d24f62efcca73a00de5568e2b48ba405b1536ca74906887c4cce3e4749c1f0793a2ae5655443880af4550f39b008349dd63a184919d0ea8c6d970c1
   languageName: node
   linkType: hard
 
@@ -6825,16 +6826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stencil/core@npm:3.2.2":
-  version: 3.2.2
-  resolution: "@stencil/core@npm:3.2.2"
-  bin:
-    stencil: bin/stencil
-  checksum: 10c0/5c676d87ef91585f25298bbf7489422948b73b96e274fab0270d4a015452afc0b3c38440ab099c6a34faa579c20ee3095e63f613fd3ad087f0293b63b4af8abf
-  languageName: node
-  linkType: hard
-
-"@stencil/core@npm:^4.12.6":
+"@stencil/core@npm:4.23.1, @stencil/core@npm:^4.12.6":
   version: 4.23.1
   resolution: "@stencil/core@npm:4.23.1"
   bin:
@@ -6843,7 +6835,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stencil/sass@npm:^3.0.2":
+"@stencil/sass@npm:^3.0.12":
   version: 3.0.12
   resolution: "@stencil/sass@npm:3.0.12"
   peerDependencies:
@@ -8680,7 +8672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vendure/ngx-translate-extract@npm:^9.0.3":
+"@vendure/ngx-translate-extract@npm:^9.4.0":
   version: 9.4.0
   resolution: "@vendure/ngx-translate-extract@npm:9.4.0"
   dependencies:
@@ -10672,13 +10664,6 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   checksum: 10c0/d4501aa2d813eadc906318ed301707240fc7bfeb250813e2e4d93e95bc9896822c136e49de01dfe612ea5334a1f04cb8fbed4412b91117666a92607c0deba624
-  languageName: node
-  linkType: hard
-
-"cordova-plugin-codeplay-share-own-apk@npm:0.0.7":
-  version: 0.0.7
-  resolution: "cordova-plugin-codeplay-share-own-apk@npm:0.0.7"
-  checksum: 10c0/101d1e3f73f7d36d71db18ba8cff51cb9c2204efc43bf44c4b236a446d0e8c8f19ab602eb2242bef70cc658ec06c736e74f0d35e29227fd4a0f0ceb7da148ade
   languageName: node
   linkType: hard
 
@@ -16791,13 +16776,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.deburr@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "lodash.deburr@npm:4.1.0"
-  checksum: 10c0/30c068e9c3b21d65d260887a8849fa7b94692f868adcc4527136c296b4e71ced7149f58e0f37154d3c56d7950cc605ad3e10b2ee0baedf5638af0befc5013ebc
-  languageName: node
-  linkType: hard
-
 "lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
@@ -17859,16 +17837,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-extended-pdf-viewer@npm:^18.1.15":
-  version: 18.1.15
-  resolution: "ngx-extended-pdf-viewer@npm:18.1.15"
+"ngx-extended-pdf-viewer@npm:^22.2.0-alpha.6":
+  version: 22.2.0-alpha.6
+  resolution: "ngx-extended-pdf-viewer@npm:22.2.0-alpha.6"
   dependencies:
-    lodash.deburr: "npm:^4.1.0"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">=12.0.0 <18.0.0"
-    "@angular/core": ">=12.0.0 <18.0.0"
-  checksum: 10c0/72d13c911dfd6383a04cf7cc28eb9e02c4b7b4bcaa9627f2d4fc719219c1c36c7d4547ae7d13a842ffdbfc46ddc9e15583f01269bf167d9790893284b6ecab76
+    "@angular/common": ">=17.0.0 <20.0.0"
+    "@angular/core": ">=17.0.0 <20.0.0"
+  checksum: 10c0/193bf886f7c90f8abefbef25ea6abd1a29321b30aa1bcc3737e9d4b6cbf453e11f16e1eab70d97aa2b0d819dc1582492e7913b0181fc81d33e673a93776624a4
   languageName: node
   linkType: hard
 
@@ -17881,16 +17858,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-lottie@npm:^11.0.0":
-  version: 11.0.2
-  resolution: "ngx-lottie@npm:11.0.2"
+"ngx-lottie@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "ngx-lottie@npm:13.0.0"
   dependencies:
     "@scarf/scarf": "npm:^1.1.1"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": ">=17"
+    "@angular/core": ">=19"
     lottie-web: ">=5.9.2"
-  checksum: 10c0/89a48b4171644e5675149733dc381fd32a9d321fd1ed36afe6420fa7f99152e136a36228d1692e80f3edf086b4bdc19d60b6a88c9544a6cc980465c1da76f885
+  checksum: 10c0/0319993205fe71c841e7980d0b7fb86574089b0f23ccd8472c96cda85ab9f20a3920b092664221ce3cd69718aa3073f8b46e648ac0d0292e7ec6e770888320f2
   languageName: node
   linkType: hard
 
@@ -19016,7 +18993,7 @@ __metadata:
     "@angular/platform-browser-dynamic": "npm:19.0.5"
     "@angular/router": "npm:19.0.5"
     "@angular/service-worker": "npm:19.0.5"
-    "@asymmetrik/ngx-leaflet": "npm:^17.0.0"
+    "@asymmetrik/ngx-leaflet": "npm:^18.0.1"
     "@awesome-cordova-plugins/core": "npm:^6.14.0"
     "@awesome-cordova-plugins/file": "npm:^6.14.0"
     "@awesome-cordova-plugins/file-opener": "npm:^6.14.0"
@@ -19038,8 +19015,8 @@ __metadata:
     "@capacitor/network": "npm:^6.0.3"
     "@capacitor/screen-orientation": "npm:^6.0.3"
     "@capacitor/share": "npm:^6.0.3"
-    "@ngx-translate/core": "npm:~15.0.0"
-    "@ngx-translate/http-loader": "npm:~8.0.0"
+    "@ngx-translate/core": "npm:~16.0.4"
+    "@ngx-translate/http-loader": "npm:~16.0.1"
     "@nx/angular": "npm:20.3.0"
     "@nx/cypress": "npm:20.3.0"
     "@nx/eslint": "npm:20.3.0"
@@ -19052,8 +19029,8 @@ __metadata:
     "@nxext/stencil": "npm:^20.0.6"
     "@schematics/angular": "npm:19.0.6"
     "@stencil/angular-output-target": "npm:^0.10.2"
-    "@stencil/core": "npm:3.2.2"
-    "@stencil/sass": "npm:^3.0.2"
+    "@stencil/core": "npm:4.23.1"
+    "@stencil/sass": "npm:^3.0.12"
     "@supabase/supabase-js": "npm:^2.39.0"
     "@swc-node/register": "npm:1.9.2"
     "@swc/core": "npm:1.5.7"
@@ -19081,12 +19058,11 @@ __metadata:
     "@uppy/progress-bar": "npm:^3.0.4"
     "@uppy/status-bar": "npm:^3.2.5"
     "@uppy/tus": "npm:^3.4.0"
-    "@vendure/ngx-translate-extract": "npm:^9.0.3"
+    "@vendure/ngx-translate-extract": "npm:^9.4.0"
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
     capacitor-video-player: "npm:^6.0.2"
-    cordova-plugin-codeplay-share-own-apk: "npm:0.0.7"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
@@ -19131,9 +19107,9 @@ __metadata:
     mobx: "npm:^6.13.5"
     mobx-angular: "npm:^4.8.0"
     ng-packagr: "npm:19.0.1"
-    ngx-extended-pdf-viewer: "npm:^18.1.15"
+    ngx-extended-pdf-viewer: "npm:^22.2.0-alpha.6"
     ngx-json-viewer: "npm:^3.2.1"
-    ngx-lottie: "npm:^11.0.0"
+    ngx-lottie: "npm:^13.0.0"
     nx: "npm:20.3.0"
     openapi-fetch: "npm:^0.8.2"
     openapi-typescript: "npm:^6.7.3"
