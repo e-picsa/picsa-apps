@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import { readFileSync, readJSONSync, writeFileSync, writeJSONSync } from 'fs-extra';
 import prompts from 'prompts';
 import { resolve } from 'path';
 import { PATHS } from './paths';
@@ -14,7 +14,7 @@ const APP_BUILD_GRADLE_PATH = resolve(PATHS.extensionAppNative, 'android/app/bui
  * package.json version and also assigning to android version codes
  */
 async function version() {
-  const oldVersion = fs.readJSONSync(MAIN_PACKAGE_PATH).version;
+  const oldVersion = readJSONSync(MAIN_PACKAGE_PATH).version;
   const newVersion = await promptNewVersion(oldVersion);
   updatePackageJson(newVersion);
   updateGradleBuild(newVersion);
@@ -22,21 +22,21 @@ async function version() {
 }
 
 function updateGradleBuild(newVersionName: string) {
-  let gradleBuildFile = fs.readFileSync(APP_BUILD_GRADLE_PATH, {
+  let gradleBuildFile = readFileSync(APP_BUILD_GRADLE_PATH, {
     encoding: 'utf-8',
   });
   const newVersionCode = _generateVersionCode(newVersionName);
   gradleBuildFile = gradleBuildFile.replace(/versionCode [0-9]+/g, `versionCode ${newVersionCode}`);
   gradleBuildFile = gradleBuildFile.replace(/versionName "[0-9]+\.[0-9]+\.[0-9]+"/g, `versionName "${newVersionName}"`);
-  fs.writeFileSync(APP_BUILD_GRADLE_PATH, gradleBuildFile, {
+  writeFileSync(APP_BUILD_GRADLE_PATH, gradleBuildFile, {
     encoding: 'utf-8',
   });
 }
 
 async function updatePackageJson(newVersion: string) {
-  const packageJson = fs.readJSONSync(MAIN_PACKAGE_PATH);
+  const packageJson = readJSONSync(MAIN_PACKAGE_PATH);
   packageJson.version = newVersion;
-  fs.writeJSONSync(MAIN_PACKAGE_PATH, packageJson, { spaces: 2 });
+  writeJSONSync(MAIN_PACKAGE_PATH, packageJson, { spaces: 2 });
 }
 
 /**
@@ -45,13 +45,13 @@ async function updatePackageJson(newVersion: string) {
  */
 async function updateLibEnvVersion() {
   const versionFilePath = resolve(PATHS.rootDir, 'libs/environments/src/version.ts');
-  const versionFileTxt = fs.readFileSync(versionFilePath, {
+  const versionFileTxt = readFileSync(versionFilePath, {
     encoding: 'utf-8',
   });
   const regex = /date: '([0-9-]+)'/;
   const versionDate = new Date().toISOString().substring(0, 10);
   const update = versionFileTxt.replace(regex, `date: '${versionDate}'`);
-  fs.writeFileSync(versionFilePath, update, { encoding: 'utf-8' });
+  writeFileSync(versionFilePath, update, { encoding: 'utf-8' });
 }
 
 async function promptNewVersion(currentVersion: string) {
