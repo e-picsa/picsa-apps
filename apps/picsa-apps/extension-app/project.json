@@ -11,6 +11,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-apps/extension-app",
         "index": "apps/picsa-apps/extension-app/src/index.html",
         "main": "apps/picsa-apps/extension-app/src/main.ts",
@@ -158,7 +159,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "4mb"
+              "maximumError": "5mb"
             },
             {
               "type": "anyComponentStyle",

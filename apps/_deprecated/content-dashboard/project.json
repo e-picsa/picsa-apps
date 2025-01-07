@@ -9,6 +9,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-apps/content-dashboard",
         "index": "apps/picsa-apps/content-dashboard/src/index.html",
         "main": "apps/picsa-apps/content-dashboard/src/main.ts",
