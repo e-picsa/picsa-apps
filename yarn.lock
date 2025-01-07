@@ -5419,26 +5419,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngx-translate/core@npm:~15.0.0":
-  version: 15.0.0
-  resolution: "@ngx-translate/core@npm:15.0.0"
+"@ngx-translate/core@npm:~16.0.4":
+  version: 16.0.4
+  resolution: "@ngx-translate/core@npm:16.0.4"
+  dependencies:
+    tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">=16.0.0"
-    "@angular/core": ">=16.0.0"
-    rxjs: ^6.5.5 || ^7.4.0
-  checksum: 10c0/a79c80f1ed9dc36285fb7cef82957089d7f7682a0cc6f97bb6682a8587beaebc5daddb3f44408a09f58991a7a68abb6a05d252a2f0e4d091366bc059cad7edfa
+    "@angular/common": ">=16"
+    "@angular/core": ">=16"
+  checksum: 10c0/b84839745d04f9f8a0964cc1eeadb54ff77508675dd1e42f2b9b6dd6ccca91177c7905ac2909de90807cd3883ae1967c293b3313592cb76ba566a6c233313e3b
   languageName: node
   linkType: hard
 
-"@ngx-translate/http-loader@npm:~8.0.0":
-  version: 8.0.0
-  resolution: "@ngx-translate/http-loader@npm:8.0.0"
+"@ngx-translate/http-loader@npm:~16.0.1":
+  version: 16.0.1
+  resolution: "@ngx-translate/http-loader@npm:16.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": ">=16.0.0"
-    "@angular/core": ">=16.0.0"
-    "@ngx-translate/core": ">=15.0.0"
-    rxjs: ^6.5.5 || ^7.4.0
-  checksum: 10c0/200ad76239a51dec431c12d8e87160281c156252f1bae164fbee2d66ee0d34a4e2eb5102dd3cb040f743a4d7221e486fe33186e8955064e5afcfb6a546e45f56
+    "@angular/common": ">=16"
+    "@angular/core": ">=16"
+  checksum: 10c0/8d0543310d24f62efcca73a00de5568e2b48ba405b1536ca74906887c4cce3e4749c1f0793a2ae5655443880af4550f39b008349dd63a184919d0ea8c6d970c1
   languageName: node
   linkType: hard
 
@@ -8680,7 +8681,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vendure/ngx-translate-extract@npm:^9.0.3":
+"@vendure/ngx-translate-extract@npm:^9.4.0":
   version: 9.4.0
   resolution: "@vendure/ngx-translate-extract@npm:9.4.0"
   dependencies:
@@ -10672,13 +10673,6 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   checksum: 10c0/d4501aa2d813eadc906318ed301707240fc7bfeb250813e2e4d93e95bc9896822c136e49de01dfe612ea5334a1f04cb8fbed4412b91117666a92607c0deba624
-  languageName: node
-  linkType: hard
-
-"cordova-plugin-codeplay-share-own-apk@npm:0.0.7":
-  version: 0.0.7
-  resolution: "cordova-plugin-codeplay-share-own-apk@npm:0.0.7"
-  checksum: 10c0/101d1e3f73f7d36d71db18ba8cff51cb9c2204efc43bf44c4b236a446d0e8c8f19ab602eb2242bef70cc658ec06c736e74f0d35e29227fd4a0f0ceb7da148ade
   languageName: node
   linkType: hard
 
@@ -19038,8 +19032,8 @@ __metadata:
     "@capacitor/network": "npm:^6.0.3"
     "@capacitor/screen-orientation": "npm:^6.0.3"
     "@capacitor/share": "npm:^6.0.3"
-    "@ngx-translate/core": "npm:~15.0.0"
-    "@ngx-translate/http-loader": "npm:~8.0.0"
+    "@ngx-translate/core": "npm:~16.0.4"
+    "@ngx-translate/http-loader": "npm:~16.0.1"
     "@nx/angular": "npm:20.3.0"
     "@nx/cypress": "npm:20.3.0"
     "@nx/eslint": "npm:20.3.0"
@@ -19081,12 +19075,11 @@ __metadata:
     "@uppy/progress-bar": "npm:^3.0.4"
     "@uppy/status-bar": "npm:^3.2.5"
     "@uppy/tus": "npm:^3.4.0"
-    "@vendure/ngx-translate-extract": "npm:^9.0.3"
+    "@vendure/ngx-translate-extract": "npm:^9.4.0"
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
     capacitor-video-player: "npm:^6.0.2"
-    cordova-plugin-codeplay-share-own-apk: "npm:0.0.7"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
