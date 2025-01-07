@@ -1,5 +1,5 @@
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -15,6 +15,7 @@ const DISPLAYED_COLUMNS: (keyof IDeploymentRow)[] = ['country_code', 'label', 'p
   imports: [CommonModule, MatIconModule, MatTabsModule, NgTemplateOutlet, PicsaDataTableComponent, StoragePathPipe],
   templateUrl: './deployment-list.component.html',
   styleUrls: ['./deployment-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeploymentListComponent implements OnInit {
   public farmer: IDeploymentRow[] = [];

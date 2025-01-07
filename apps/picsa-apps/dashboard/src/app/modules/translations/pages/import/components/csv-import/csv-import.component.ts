@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 
-import { Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ILocaleCode, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
@@ -24,6 +24,7 @@ type ActionSummary = { [key in Action]: ITranslationRow[] };
   imports: [MatButtonModule],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsCSVImportComponent {
   public importSummary = signal<ActionSummary>(this.prepareActions([], []));

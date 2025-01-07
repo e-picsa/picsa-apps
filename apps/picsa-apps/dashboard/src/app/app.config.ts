@@ -1,5 +1,10 @@
 import { provideHttpClient } from '@angular/common/http';
-import { ApplicationConfig, ErrorHandler, importProvidersFrom } from '@angular/core';
+import {
+  ApplicationConfig,
+  ErrorHandler,
+  importProvidersFrom,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { PicsaFormsModule } from '@picsa/forms';
@@ -11,6 +16,14 @@ import { DashboardErrorHandler } from './modules/error-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideExperimentalZonelessChangeDetection(),
+    // TODO - when stable remove zone.js polyfill
+    // TODO - force all components to use onPush
+    // provideExperimentalCheckNoChangesForDebug({
+    //   interval: 1000, // run change detection every second
+    //   useNgZoneOnStable: true, // run it when the NgZone is stable as well
+    //   exhaustive: true,
+    // }),
     provideRouter(appRoutes),
     provideAnimations(),
     provideHttpClient(),

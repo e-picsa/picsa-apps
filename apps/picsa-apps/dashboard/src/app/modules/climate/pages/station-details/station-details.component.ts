@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ClimateService } from '../../climate.service';
@@ -9,6 +9,7 @@ import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall
   imports: [MatProgressBarModule, RainfallSummaryComponent],
   templateUrl: './station-details.component.html',
   styleUrls: ['./station-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StationDetailsPageComponent {
   public station = this.service.activeStation;

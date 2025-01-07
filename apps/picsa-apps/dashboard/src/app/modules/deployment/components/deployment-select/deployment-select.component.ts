@@ -1,4 +1,4 @@
-import { Component, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -14,6 +14,7 @@ import { DeploymentItemComponent } from '../deployment-item/deployment-item.comp
   imports: [DeploymentItemComponent, MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './deployment-select.component.html',
   styleUrls: ['./deployment-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeploymentSelectComponent implements OnInit {
   /** Computed list of deployments where user has auth roles */

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -11,6 +11,7 @@ import { CropInformationService, ICropInformationRow } from '../../services';
   imports: [DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
   templateUrl: './variety.component.html',
   styleUrl: './variety.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyComponent implements OnInit {
   constructor(

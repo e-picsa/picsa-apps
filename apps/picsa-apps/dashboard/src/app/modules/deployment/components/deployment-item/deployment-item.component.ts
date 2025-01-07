@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
 import { IDeploymentRow } from '../../types';
@@ -9,6 +9,7 @@ import { IDeploymentRow } from '../../types';
   imports: [StoragePathPipe],
   templateUrl: './deployment-item.component.html',
   styleUrl: './deployment-item.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeploymentItemComponent {
   @Input() deployment: IDeploymentRow;

@@ -1,4 +1,4 @@
-import { Component, computed, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -23,6 +23,7 @@ const filetypeIconMapping = {
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './storage-link.component.html',
   styleUrls: ['./storage-link.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 /**
  * Minimal component that takes a storage file id input and returns a link

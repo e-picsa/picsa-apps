@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { ILocaleCode } from '@picsa/data';
@@ -12,6 +12,7 @@ import { ITranslationRow, TranslationDashboardService } from '../../translations
   imports: [DashboardMaterialModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './translations-edit.component.html',
   styleUrls: ['./translations-edit.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsEditComponent {
   public text: string;

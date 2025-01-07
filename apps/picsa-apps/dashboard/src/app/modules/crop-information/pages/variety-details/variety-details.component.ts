@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -14,6 +14,7 @@ import { CropInformationService, ICropInformationInsert, ICropInformationRow } f
   imports: [DashboardMaterialModule, RouterModule, FormsModule, PicsaFormsModule, ReactiveFormsModule],
   templateUrl: './variety-details.component.html',
   styleUrl: './variety-details.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
   entryForm = this.formBuilder.nonNullable.group({

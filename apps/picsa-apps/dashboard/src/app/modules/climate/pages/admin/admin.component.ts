@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,6 +35,7 @@ const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['station_id', 'updated_
   imports: [CommonModule, DatePipe, MatButtonModule, MatIconModule, PicsaDataTableComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateAdminPageComponent {
   public tableData = computed(() => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +13,7 @@ import { IResourceLinkRow } from '../../../types';
   imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
   templateUrl: './resource-link-edit.component.html',
   styleUrl: './resource-link-edit.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinkEditComponent implements OnInit {
   constructor(

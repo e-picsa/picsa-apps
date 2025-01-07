@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -16,6 +16,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   imports: [DashboardMaterialModule, DatePipe, RouterModule, PicsaDataTableComponent],
   templateUrl: './monitoring.page.html',
   styleUrls: ['./monitoring.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MonitoringPageComponent implements OnInit {
   displayedColumns: (keyof IMonitoringFormsRow)[] = [

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -16,6 +16,7 @@ export type IMonitoringSubmissionsRow = Database['public']['Tables']['monitoring
   imports: [DashboardMaterialModule, FormsModule, ReactiveFormsModule, NgxJsonViewerModule, PicsaDataTableComponent],
   templateUrl: './form-submissions.component.html',
   styleUrls: ['./form-submissions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormSubmissionsComponent {
   public form: IMonitoringFormsRow | null = null;

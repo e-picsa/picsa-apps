@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -35,6 +35,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule, StoragePathPipe, SizeMBPipe],
   templateUrl: './resource-files.component.html',
   styleUrl: './resource-files.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFilesComponent implements OnInit {
   public resources: IMergedResources[] = [];
