@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -17,6 +18,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   selector: 'dashboard-monitoring-view',
   imports: [
     DashboardMaterialModule,
+    DatePipe,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
