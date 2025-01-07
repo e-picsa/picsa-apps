@@ -1,11 +1,9 @@
 import { Route } from '@angular/router';
 
-import { DashboardHomeComponent } from './modules/home/home.component';
-
 export const appRoutes: Route[] = [
   {
     path: 'home',
-    component: DashboardHomeComponent,
+    loadComponent: () => import('./modules/home/home.component').then((m) => m.DashboardHomeComponent),
   },
   {
     path: 'resources',
