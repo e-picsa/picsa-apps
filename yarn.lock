@@ -17866,16 +17866,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-lottie@npm:^11.0.0":
-  version: 11.0.2
-  resolution: "ngx-lottie@npm:11.0.2"
+"ngx-lottie@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "ngx-lottie@npm:13.0.0"
   dependencies:
     "@scarf/scarf": "npm:^1.1.1"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": ">=17"
+    "@angular/core": ">=19"
     lottie-web: ">=5.9.2"
-  checksum: 10c0/89a48b4171644e5675149733dc381fd32a9d321fd1ed36afe6420fa7f99152e136a36228d1692e80f3edf086b4bdc19d60b6a88c9544a6cc980465c1da76f885
+  checksum: 10c0/0319993205fe71c841e7980d0b7fb86574089b0f23ccd8472c96cda85ab9f20a3920b092664221ce3cd69718aa3073f8b46e648ac0d0292e7ec6e770888320f2
   languageName: node
   linkType: hard
 
@@ -19117,7 +19117,7 @@ __metadata:
     ng-packagr: "npm:19.0.1"
     ngx-extended-pdf-viewer: "npm:^18.1.15"
     ngx-json-viewer: "npm:^3.2.1"
-    ngx-lottie: "npm:^11.0.0"
+    ngx-lottie: "npm:^13.0.0"
     nx: "npm:20.3.0"
     openapi-fetch: "npm:^0.8.2"
     openapi-typescript: "npm:^6.7.3"

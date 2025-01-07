@@ -59,6 +59,7 @@ export class PicsaMapComponent implements OnInit {
     // Observe layout size changes, use map invalidate method on change
     // to ensure map correctly setup. E.g. when switching tabs in farmer version
     effect((cleanup) => {
+      if (!this.map()) return;
       const container = this.map().getContainer();
       const observer = new ResizeObserver(() => {
         this.map().invalidateSize();
@@ -119,6 +120,7 @@ export class PicsaMapComponent implements OnInit {
   // when the map is ready it emits event with map, and also binds map to
   // public api to be accessed by other services
   _onMapReady(map: L.Map) {
+    console.log('setting map', map);
     this.map.set(map);
     this.onMapReady.emit(map);
   }
