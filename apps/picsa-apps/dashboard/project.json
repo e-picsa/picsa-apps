@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/picsa-apps/dashboard",
         "index": "apps/picsa-apps/dashboard/src/index.html",
         "browser": "apps/picsa-apps/dashboard/src/main.ts",
-        "polyfills": [],
         "tsConfig": "apps/picsa-apps/dashboard/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [

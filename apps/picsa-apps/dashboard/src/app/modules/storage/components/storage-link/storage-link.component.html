@@ -1,4 +1,4 @@
-@if(entry(); as e){ @switch (displayStyle) {
+@if(entry(); as e){ @switch (displayStyle()) {
 <!-- chip style -->
 @case ('button') {
 <button
@@ -25,5 +25,5 @@
   <div class="filename" style="margin-left: 8px">{{ entryName() }}</div>
 </div>
 } } } @if(notFound) {
-<p class="error-message">Not Found<br />{{ id }}</p>
+<p class="error-message">Not Found<br />{{ id() }}</p>
 }

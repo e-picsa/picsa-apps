@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -31,9 +31,9 @@ const filetypeIconMapping = {
  */
 export class DashboardStorageLinkComponent implements OnInit {
   /** Resource storage id */
-  @Input() id: string;
+  id = input.required<string>();
 
-  @Input() displayStyle: 'button' | 'link' | 'default' = 'default';
+  displayStyle = input<'button' | 'link' | 'default'>('default');
 
   constructor(private service: DashboardStorageService) {}
 
@@ -48,7 +48,7 @@ export class DashboardStorageLinkComponent implements OnInit {
   public fileTypeIcon = 'description';
 
   async ngOnInit() {
-    const entry = await this.service.getStorageFileByPath(this.id);
+    const entry = await this.service.getStorageFileByPath(this.id());
     this.entry.set(entry);
     if (entry) {
       this.fileTypeIcon = this.getFileTypeIcon(entry);

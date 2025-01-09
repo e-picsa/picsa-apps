@@ -16,12 +16,11 @@ import { DashboardErrorHandler } from './modules/error-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Opt out of zone-js to fix issue supabase auth incompatibility (zoneJS polyfill of Navigator api)
+    // https://github.com/supabase/supabase-js/issues/936
     provideExperimentalZonelessChangeDetection(),
-    // provideExperimentalCheckNoChangesForDebug({
-    //   interval: 1000, // run change detection every second
-    //   useNgZoneOnStable: true, // run it when the NgZone is stable as well
-    //   exhaustive: true,
-    // }),
+    // NOTE - provideExperimentalCheckNoChangesForDebug not good for debug here due to way
+    // routerActive used to toggle nav sections (infinite loops triggered)
     provideRouter(appRoutes),
     provideAnimations(),
     provideHttpClient(),
