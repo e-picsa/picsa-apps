@@ -161,10 +161,10 @@ class SupabaseSeed {
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
       const parsedRows = parseCSVRows(csvRows);
-      const { error, data } = await this.client.from(tableName).upsert(parsedRows).select('*');
+      const { error, data, status, statusText } = await this.client.from(tableName).upsert(parsedRows).select('*');
       if (error) {
         console.error(`[${tableName}] import failed`, csvRows);
-        console.error(error);
+        console.error({ status, statusText, error });
         process.exit(1);
       }
       results.push({ table: tableName, rows: data.length });

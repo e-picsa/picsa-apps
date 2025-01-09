@@ -65,7 +65,7 @@
           <button mat-icon-button class="file-remove" (click)="handleStorageFileSelected(undefined, 'cover_image')">
             <mat-icon>close</mat-icon>
           </button>
-          <img class="cover-preview" [src]="storageLink.entry?.publicUrl" style="margin-top: 8px" />
+          <img class="cover-preview" [src]="storageLink.entry()?.publicUrl" style="margin-top: 8px" />
 
           } @else {
           <picsa-supabase-upload

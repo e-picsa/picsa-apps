@@ -6871,12 +6871,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/postgrest-js@npm:1.17.7":
-  version: 1.17.7
-  resolution: "@supabase/postgrest-js@npm:1.17.7"
+"@supabase/postgrest-js@npm:1.17.9":
+  version: 1.17.9
+  resolution: "@supabase/postgrest-js@npm:1.17.9"
   dependencies:
     "@supabase/node-fetch": "npm:^2.6.14"
-  checksum: 10c0/021e569e0c3cc53b631a233ec85dae4379d0e24bcbf246c20488e80219887fc4fbbfc6cd97d4dded65e7e9fd80b921ba141fa6279c57b14af8ee97cd84b604ee
+  checksum: 10c0/0cc2d79115cba76fbfd34e90e80302aaee93cc125f54b2886228c59b5bfac1cd0b6ac4b6ebdd41899c828fee8d725b85592ed371a4ff598488fb35d45c86b38c
   languageName: node
   linkType: hard
 
@@ -6901,17 +6901,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.39.0":
-  version: 2.47.10
-  resolution: "@supabase/supabase-js@npm:2.47.10"
+"@supabase/supabase-js@npm:^2.47.10":
+  version: 2.47.11
+  resolution: "@supabase/supabase-js@npm:2.47.11"
   dependencies:
     "@supabase/auth-js": "npm:2.67.3"
     "@supabase/functions-js": "npm:2.4.4"
     "@supabase/node-fetch": "npm:2.6.15"
-    "@supabase/postgrest-js": "npm:1.17.7"
+    "@supabase/postgrest-js": "npm:1.17.9"
     "@supabase/realtime-js": "npm:2.11.2"
     "@supabase/storage-js": "npm:2.7.1"
-  checksum: 10c0/5dd840018370fd98850b2fd6ec6d2efe80a48e40818c3937b6f4ea561ef892b76160ae8600e059a10df1b873fdf87b6ce3c95fa9da91a6ed7575f2ec37dbd994
+  checksum: 10c0/00a3358b3fb4a74b8a10d5c01daae75ab548e087584061bd568830ac480907be9b96b21ac7bf345fa957383debd4f762db67a1b0d34e4ac67f5836d8600713f3
   languageName: node
   linkType: hard
 
@@ -19031,7 +19031,7 @@ __metadata:
     "@stencil/angular-output-target": "npm:^0.10.2"
     "@stencil/core": "npm:4.23.1"
     "@stencil/sass": "npm:^3.0.12"
-    "@supabase/supabase-js": "npm:^2.39.0"
+    "@supabase/supabase-js": "npm:^2.47.10"
     "@swc-node/register": "npm:1.9.2"
     "@swc/core": "npm:1.5.7"
     "@swc/helpers": "npm:0.5.15"
@@ -19129,10 +19129,9 @@ __metadata:
     save-svg-as-png: "npm:^1.4.17"
     sharp: "npm:^0.31.3"
     stacktrace-js: "npm:^2.0.2"
-    supabase: "npm:^1.148.6"
+    supabase: "npm:^2.2.1"
     tailwindcss: "npm:^3.4.13"
     ts-jest: "npm:29.1.1"
-    ts-node: "npm:10.9.2"
     tslib: "npm:^2.5.0"
     tsx: "npm:^4.19.2"
     typescript: "npm:5.6.3"
@@ -21932,9 +21931,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supabase@npm:^1.148.6":
-  version: 1.226.4
-  resolution: "supabase@npm:1.226.4"
+"supabase@npm:^2.2.1":
+  version: 2.3.0
+  resolution: "supabase@npm:2.3.0"
   dependencies:
     bin-links: "npm:^5.0.0"
     https-proxy-agent: "npm:^7.0.2"
@@ -21942,7 +21941,7 @@ __metadata:
     tar: "npm:7.4.3"
   bin:
     supabase: bin/supabase
-  checksum: 10c0/a5f36e0c8cd19a86ea56997240fb3738b84b24ba1afd5f1870fff0650d88f3614234821afd99ae6e1d33d8eca2254fc1d0b75b40f75b220237177dc3269b772e
+  checksum: 10c0/1c5261b48bf91538c492e3f98850b6fb2c81c143bf6362f013907b8e7b2f833d043e8c78b5ffbacf7dac8c2764b84d6501955e074003db085a63056bf8ad8269
   languageName: node
   linkType: hard
 
@@ -22511,44 +22510,6 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 10c0/95187932fb83f3901e22546bd2feeac7d2feb4f412f42ac3a595f049a23e8dcf70516dffb51866391228ea2dbcfaea039e250fb2bb334d48a86ab2b6aea0ae2d
-  languageName: node
-  linkType: hard
-
-"ts-node@npm:10.9.2":
-  version: 10.9.2
-  resolution: "ts-node@npm:10.9.2"
-  dependencies:
-    "@cspotcode/source-map-support": "npm:^0.8.0"
-    "@tsconfig/node10": "npm:^1.0.7"
-    "@tsconfig/node12": "npm:^1.0.7"
-    "@tsconfig/node14": "npm:^1.0.0"
-    "@tsconfig/node16": "npm:^1.0.2"
-    acorn: "npm:^8.4.1"
-    acorn-walk: "npm:^8.1.1"
-    arg: "npm:^4.1.0"
-    create-require: "npm:^1.1.0"
-    diff: "npm:^4.0.1"
-    make-error: "npm:^1.1.1"
-    v8-compile-cache-lib: "npm:^3.0.1"
-    yn: "npm:3.1.1"
-  peerDependencies:
-    "@swc/core": ">=1.2.50"
-    "@swc/wasm": ">=1.2.50"
-    "@types/node": "*"
-    typescript: ">=2.7"
-  peerDependenciesMeta:
-    "@swc/core":
-      optional: true
-    "@swc/wasm":
-      optional: true
-  bin:
-    ts-node: dist/bin.js
-    ts-node-cwd: dist/bin-cwd.js
-    ts-node-esm: dist/bin-esm.js
-    ts-node-script: dist/bin-script.js
-    ts-node-transpile-only: dist/bin-transpile.js
-    ts-script: dist/bin-script-deprecated.js
-  checksum: 10c0/5f29938489f96982a25ba650b64218e83a3357d76f7bede80195c65ab44ad279c8357264639b7abdd5d7e75fc269a83daa0e9c62fd8637a3def67254ecc9ddc2
   languageName: node
   linkType: hard
 

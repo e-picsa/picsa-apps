@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,9 +11,10 @@ import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.
 
 @Component({
   selector: 'dashboard-profile-menu',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, RouterModule],
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileMenuComponent implements AfterViewInit {
   constructor(public supabaseAuthService: SupabaseAuthService, private dialog: MatDialog) {}

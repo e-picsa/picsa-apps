@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -37,6 +37,7 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
   imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
   templateUrl: 'sign-in-dialog.component.html',
   styleUrl: 'sign-in-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupabaseSignInDialogComponent {
   public title = 'Sign In';

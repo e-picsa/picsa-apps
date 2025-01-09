@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'dashboard-crop-probability',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './probability.component.html',
   styleUrl: './probability.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityComponent {}

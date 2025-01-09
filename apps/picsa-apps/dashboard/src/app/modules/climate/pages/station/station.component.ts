@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -14,7 +13,6 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
 @Component({
   selector: 'dashboard-climate-station-page',
   imports: [
-    CommonModule,
     DashboardClimateApiStatusComponent,
     RouterModule,
     PicsaDataTableComponent,
@@ -23,6 +21,7 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
   ],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateStationPageComponent {
   public tableOptions: IDataTableOptions = {
