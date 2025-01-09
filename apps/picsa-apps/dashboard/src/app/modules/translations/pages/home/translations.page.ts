@@ -99,18 +99,15 @@ export class TranslationsPageComponent {
     public dialog: MatDialog,
     deploymentService: DeploymentDashboardService
   ) {
-    effect(
-      async () => {
-        const deployment = deploymentService.activeDeployment();
-        if (deployment) {
-          const { country_code } = deployment;
-          this.activeCountryCode = country_code;
-          await this.loadTranslationMeta(country_code);
-          await this.refreshTranslations();
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(async () => {
+      const deployment = deploymentService.activeDeployment();
+      if (deployment) {
+        const { country_code } = deployment;
+        this.activeCountryCode = country_code;
+        await this.loadTranslationMeta(country_code);
+        await this.refreshTranslations();
+      }
+    });
   }
 
   public showEditDialog(row: ITranslationRow) {

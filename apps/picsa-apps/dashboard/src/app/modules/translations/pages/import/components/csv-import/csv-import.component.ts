@@ -39,17 +39,14 @@ export class TranslationsCSVImportComponent {
   private dropEl = viewChild('dragDrop', { read: ElementRef });
 
   constructor(private service: TranslationDashboardService) {
-    effect(
-      () => {
-        const el = this.dropEl();
-        if (el) {
-          this.setupDropZone(el.nativeElement);
-          // eagerly initialise service in case not previously (ensured during process)
-          this.service.ready();
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      const el = this.dropEl();
+      if (el) {
+        this.setupDropZone(el.nativeElement);
+        // eagerly initialise service in case not previously (ensured during process)
+        this.service.ready();
+      }
+    });
   }
 
   public async processImport() {

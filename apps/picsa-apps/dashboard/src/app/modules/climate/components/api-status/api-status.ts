@@ -36,7 +36,7 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardClimateApiStatusComponent implements OnDestroy {
-  public status: IStatus = 'pending';
+  public status = signal<IStatus>('pending');
   public code = signal<number>(0);
 
   private componentDestroyed$ = new Subject();
@@ -44,23 +44,23 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
 
   constructor(public api: ClimateApiService, public service: ClimateService) {
     effect(() => {
-      // TODO - convert to computed and toSignal
       const id = this.clientId();
       // clear any previous subscription
       if (this.subscription) this.subscription.unsubscribe();
       // subscribe to any requests sent via client and update UI accordingly
       const client = this.api.getObservableClient(id);
       this.subscription = client.$.pipe(takeUntil(this.componentDestroyed$)).subscribe(async (response) => {
-        this.status = this.getCallbackStatus(response?.status);
+        const status = this.getCallbackStatus(response?.status);
+        this.status.set(status);
         // only assign success and error codes
-        if (this.status === 'error' || this.status === 'success') {
+        if (status === 'error' || status === 'success') {
           this.code.set(response?.status || 0);
         }
-        if (response && this.status === 'error') {
+        if (response && status === 'error') {
           this.showCustomFetchErrorMessage(id, response);
         }
         // console log response body (debug purposes)
-        if (response && this.status === 'success') {
+        if (response && status === 'success') {
           const body = await this.parseResponseBody(response);
           console.log(`[API] ${id}`, body);
         }

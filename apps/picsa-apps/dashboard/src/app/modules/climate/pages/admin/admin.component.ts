@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { _wait, arrayToHashmap } from '@picsa/utils';
 import download from 'downloadjs';
@@ -57,17 +58,15 @@ export class ClimateAdminPageComponent {
     private deploymentService: DeploymentDashboardService,
     private supabase: SupabaseService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: PicsaNotificationService
   ) {
-    effect(
-      () => {
-        const country_code = this.deploymentService.activeDeployment()?.country_code;
-        if (country_code) {
-          this.loadRainfallSummaries(country_code);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      const country_code = this.deploymentService.activeDeployment()?.country_code;
+      if (country_code) {
+        this.loadRainfallSummaries(country_code);
+      }
+    });
   }
   private get db() {
     return this.supabase.db.table('climate_summary_rainfall');
@@ -98,10 +97,16 @@ export class ClimateAdminPageComponent {
     const promises = this.tableData().map(async (station, i) => {
       // hack - instead of queueing apply small offset between requests to reduce blocking
       await _wait(200 * i);
-      await this.service.loadFromAPI.rainfallSummaries(station.row);
-      this.refreshCount.update((v) => v + 1);
+      try {
+        await this.service.loadFromAPI.rainfallSummaries(station.row);
+      } catch (error) {
+        this.notificationService.showErrorNotification(`Could not update station: ${station.station_id}`);
+        console.error(error);
+      } finally {
+        this.refreshCount.update((v) => v + 1);
+      }
     });
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
     await this.loadRainfallSummaries(this.deploymentService.activeDeployment()?.country_code as string);
   }
 
