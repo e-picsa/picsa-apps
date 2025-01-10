@@ -281,6 +281,19 @@ export interface components {
       /** Start Check */
       start_check?: boolean;
     };
+    /** DocumentMetadata */
+    DocumentMetadata: {
+      /** Name */
+      name: string;
+      /** Contenttype */
+      contentType: string;
+      /** Size */
+      size: number;
+      /** Timecreated */
+      timeCreated: string;
+      /** Updated */
+      updated: string;
+    };
     /** EndRains */
     EndRains: {
       /** Start Day */
@@ -843,21 +856,21 @@ export interface operations {
   /** Get Documents */
   get_documents_v1_documents__country__get: {
     parameters: {
-      query?: {
-        prefix?: unknown;
-        delimiter?: string;
-        max_results?: number;
-        match_glob?: string;
-      };
-      path: {
+      query: {
         country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+        /** @description Specify folder path prefixes. Can be used to filter folders timestamped YYYYMMDD, E.g. "202405" */
+        prefix?: string;
+        /** @description Max 1000 */
+        max_results?: number;
+        /** @description Use expression for advanced pattern matching. Specify "[^/]" to omit folders */
+        match_glob?: string;
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["DocumentMetadata"][];
         };
       };
       /** @description Validation Error */

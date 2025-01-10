@@ -70,13 +70,6 @@ export type Database = {
             foreignKeyName: "climate_forecasts_storage_file_fkey"
             columns: ["storage_file"]
             isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "climate_forecasts_storage_file_fkey"
-            columns: ["storage_file"]
-            isOneToOne: false
             referencedRelation: "storage_objects"
             referencedColumns: ["id"]
           },
@@ -253,15 +246,7 @@ export type Database = {
           public?: boolean
           variant?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "deployments_icon_path_fkey"
-            columns: ["icon_path"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-        ]
+        Relationships: []
       }
       kobo_sync: {
         Row: {
@@ -339,22 +324,7 @@ export type Database = {
           summary_fields?: Json[] | null
           title?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "monitoring_forms_cover_image_fkey"
-            columns: ["cover_image"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-          {
-            foreignKeyName: "monitoring_forms_form_xlsx_fkey"
-            columns: ["form_xlsx"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-        ]
+        Relationships: []
       }
       monitoring_tool_submissions: {
         Row: {
@@ -432,15 +402,7 @@ export type Database = {
           sort_order?: number
           title?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "public_resource_collection_cover_image_fkey"
-            columns: ["cover_image"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-        ]
+        Relationships: []
       }
       resource_files: {
         Row: {
@@ -494,22 +456,7 @@ export type Database = {
           storage_file?: string | null
           title?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "resource_files_cover_image_fkey"
-            columns: ["cover_image"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-          {
-            foreignKeyName: "resource_files_storage_file_fkey"
-            columns: ["storage_file"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-        ]
+        Relationships: []
       }
       resource_files_child: {
         Row: {
@@ -574,20 +521,6 @@ export type Database = {
             referencedRelation: "resource_files"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "resource_files_child_cover_image_fkey"
-            columns: ["cover_image"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-          {
-            foreignKeyName: "resource_files_child_storage_file_fkey"
-            columns: ["storage_file"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
         ]
       }
       resource_links: {
@@ -624,15 +557,7 @@ export type Database = {
           type?: Database["public"]["Enums"]["resource_link_type"]
           url?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "resource_links_cover_image_fkey"
-            columns: ["cover_image"]
-            isOneToOne: false
-            referencedRelation: "objects"
-            referencedColumns: ["path"]
-          },
-        ]
+        Relationships: []
       }
       translations: {
         Row: {
@@ -703,13 +628,6 @@ export type Database = {
             referencedRelation: "deployments"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "public_user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
     }
@@ -754,15 +672,7 @@ export type Database = {
           updated_at?: string | null
           version?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "objects_bucketId_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
@@ -903,101 +813,6 @@ export type Database = {
           },
         ]
       }
-      s3_multipart_uploads: {
-        Row: {
-          bucket_id: string
-          created_at: string
-          id: string
-          in_progress_size: number
-          key: string
-          owner_id: string | null
-          upload_signature: string
-          version: string
-        }
-        Insert: {
-          bucket_id: string
-          created_at?: string
-          id: string
-          in_progress_size?: number
-          key: string
-          owner_id?: string | null
-          upload_signature: string
-          version: string
-        }
-        Update: {
-          bucket_id?: string
-          created_at?: string
-          id?: string
-          in_progress_size?: number
-          key?: string
-          owner_id?: string | null
-          upload_signature?: string
-          version?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      s3_multipart_uploads_parts: {
-        Row: {
-          bucket_id: string
-          created_at: string
-          etag: string
-          id: string
-          key: string
-          owner_id: string | null
-          part_number: number
-          size: number
-          upload_id: string
-          version: string
-        }
-        Insert: {
-          bucket_id: string
-          created_at?: string
-          etag: string
-          id?: string
-          key: string
-          owner_id?: string | null
-          part_number: number
-          size?: number
-          upload_id: string
-          version: string
-        }
-        Update: {
-          bucket_id?: string
-          created_at?: string
-          etag?: string
-          id?: string
-          key?: string
-          owner_id?: string | null
-          part_number?: number
-          size?: number
-          upload_id?: string
-          version?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey"
-            columns: ["upload_id"]
-            isOneToOne: false
-            referencedRelation: "s3_multipart_uploads"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
@@ -1028,7 +843,7 @@ export type Database = {
         Args: {
           name: string
         }
-        Returns: unknown
+        Returns: string[]
       }
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>
@@ -1036,41 +851,6 @@ export type Database = {
           size: number
           bucket_id: string
         }[]
-      }
-      list_multipart_uploads_with_delimiter: {
-        Args: {
-          bucket_id: string
-          prefix_param: string
-          delimiter_param: string
-          max_keys?: number
-          next_key_token?: string
-          next_upload_token?: string
-        }
-        Returns: {
-          key: string
-          id: string
-          created_at: string
-        }[]
-      }
-      list_objects_with_delimiter: {
-        Args: {
-          bucket_id: string
-          prefix_param: string
-          delimiter_param: string
-          max_keys?: number
-          start_after?: string
-          next_token?: string
-        }
-        Returns: {
-          name: string
-          id: string
-          metadata: Json
-          updated_at: string
-        }[]
-      }
-      operation: {
-        Args: Record<PropertyKey, never>
-        Returns: string
       }
       search: {
         Args: {
@@ -1182,5 +962,20 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
