@@ -48,6 +48,13 @@ export interface paths {
     /** Get Documents */
     get: operations["get_documents_v1_documents__country__get"];
   };
+  "/v1/documents/{country}/{filepath}": {
+    /**
+     * Download Document
+     * @description Download a specific document
+     */
+    get: operations["download_document_v1_documents__country___filepath__get"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -856,14 +863,42 @@ export interface operations {
   /** Get Documents */
   get_documents_v1_documents__country__get: {
     parameters: {
-      query: {
-        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      query?: {
         /** @description Specify folder path prefixes. Can be used to filter folders timestamped YYYYMMDD, E.g. "202405" */
         prefix?: string;
-        /** @description Max 1000 */
+        /** @description Maximum number of results to return. If more than 1000 results required use multiple queries */
         max_results?: number;
-        /** @description Use expression for advanced pattern matching. Specify "[^/]" to omit folders */
+        /** @description Use expression for advanced pattern matching. To return only files and not folders end with "[^/]" */
         match_glob?: string;
+      };
+      path: {
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["DocumentMetadata"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Download Document
+   * @description Download a specific document
+   */
+  download_document_v1_documents__country___filepath__get: {
+    parameters: {
+      path: {
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+        filepath: string;
       };
     };
     responses: {

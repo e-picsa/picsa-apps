@@ -36,44 +36,39 @@ export type Database = {
     Tables: {
       climate_forecasts: {
         Row: {
-          country_code: string | null
-          date_modified: string
-          district: string | null
-          filename: string
+          country_code: string
+          created_at: string
+          forecast_type: Database["public"]["Enums"]["forecast_type"] | null
           id: string
           language_code: string | null
+          location: string[] | null
+          mimetype: string | null
           storage_file: string | null
-          type: string | null
+          updated_at: string
         }
         Insert: {
-          country_code?: string | null
-          date_modified: string
-          district?: string | null
-          filename: string
+          country_code: string
+          created_at?: string
+          forecast_type?: Database["public"]["Enums"]["forecast_type"] | null
           id: string
           language_code?: string | null
+          location?: string[] | null
+          mimetype?: string | null
           storage_file?: string | null
-          type?: string | null
+          updated_at?: string
         }
         Update: {
-          country_code?: string | null
-          date_modified?: string
-          district?: string | null
-          filename?: string
+          country_code?: string
+          created_at?: string
+          forecast_type?: Database["public"]["Enums"]["forecast_type"] | null
           id?: string
           language_code?: string | null
+          location?: string[] | null
+          mimetype?: string | null
           storage_file?: string | null
-          type?: string | null
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "climate_forecasts_storage_file_fkey"
-            columns: ["storage_file"]
-            isOneToOne: false
-            referencedRelation: "storage_objects"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       climate_stations: {
         Row: {
@@ -691,6 +686,7 @@ export type Database = {
         | "deployments.admin"
         | "translations.viewer"
       country_code: "global" | "mw" | "zm" | "tj"
+      forecast_type: "daily" | "annual"
       locale_code: "global_en" | "mw_ny" | "mw_tum" | "zm_ny" | "tj_tg"
       resource_link_type: "app" | "social" | "web"
     }

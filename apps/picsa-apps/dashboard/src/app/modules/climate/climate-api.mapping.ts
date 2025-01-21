@@ -10,6 +10,7 @@ import {
   IClimateSummaryRainfallRow,
   IForecastInsert,
   IForecastRow,
+  IForecastUpdate,
   IStationInsert,
   IStationRow,
 } from './types';
@@ -93,50 +94,63 @@ export const ApiMapping = (
       }
     },
     //
-    forecasts: async (country_code: IAPICountryCode) => {
-      // const { data, error } = await api
-      //   .getObservableClient(`forecasts/${country_code}`)
-      //   .GET(`/v1/forecasts/{country_code}`, { params: { path: { country_code } } });
-      // if (error) throw error;
-      // const forecasts = data.map((d): IForecastInsert => {
-      //   const { date, filename, format, type } = d;
-      //   // TODO - handle format
-      //   return { date_modified: date, filename, country_code, type, id: filename.split('/').pop() as string };
-      // });
-      // const { error: dbError, data: dbData } = await db
-      //   .table('climate_forecasts')
-      //   .upsert<IForecastInsert>(forecasts)
-      //   .select<'*', IForecastRow>('*');
-      // if (dbError) throw dbError;
-      // return dbData || [];
+    forecasts: async (country_code: IAPICountryCode, queryPrefix: string) => {
+      // HACK - assume want most recent only (would need better pagination methods for all)
+      const { data, error } = await api
+        .getObservableClient(`forecasts/${country_code}`)
+        .GET(`/v1/documents/{country}`, {
+          params: { path: { country: country_code }, query: { prefix: queryPrefix, max_results: 1000 } },
+        });
+      if (error) throw error;
+      const forecasts = data.map((d): IForecastInsert => {
+        const { contentType, name } = d;
+        return { country_code, mimetype: contentType, id: name, forecast_type: 'daily' };
+      });
+      console.log('forecasts', forecasts);
+      // TODO - avoid overwrite unchanged
+      const { error: dbError, data: dbData } = await db
+        .table('climate_forecasts')
+        .upsert<IForecastInsert>(forecasts)
+        .select<'*', IForecastRow>('*');
+      if (dbError) throw dbError;
+      return dbData || [];
       return [];
     },
+    /**
+     *
+     * @param row
+     * @returns
+     */
     forecast_file: async (row: IForecastRow) => {
-      // const { country_code, filename } = row;
-      // const { data, error } = await api.getObservableClient(`forecasts/${filename}`).GET(`/v1/forecasts/{file_name}`, {
-      //   params: { path: { file_name: filename } },
-      //   parseAs: 'blob',
-      // });
-      // if (error) throw error;
-      // // setup metadata
-      // const fileBlob = data as Blob;
-      // const bucketId = country_code as string;
-      // const folderPath = 'climate/forecasts';
-      // // upload to storage
-      // await storage.putFile({ bucketId, fileBlob, filename, folderPath });
-      // // TODO - handle error if filename already exists
-      // const storageEntry = await storage.getFileAlt({ bucketId, filename, folderPath });
-      // if (storageEntry) {
-      //   const { error: dbError } = await db
-      //     .table('climate_forecasts')
-      //     .upsert<IForecastInsert>({ ...row, storage_file: storageEntry.id })
-      //     .select('*');
-      //   if (dbError) {
-      //     throw dbError;
-      //   }
-      //   return;
-      // }
-      // throw new Error('Storage file not found');
+      console.log('load forecast file', row);
+      const { country_code, id } = row;
+      // api does not use per-country buckets, so recreate folder structure from id
+      const filepath = id.replace(`${country_code}/`, '');
+      const { data, error } = await api
+        .getObservableClient(`forecasts/${id}`)
+        .GET(`/v1/documents/{country}/{filepath}`, {
+          params: { path: { country: country_code as any, filepath } },
+          parseAs: 'blob',
+        });
+
+      console.log({ data, error });
+      if (error) throw error;
+      // setup metadata
+      const fileBlob = data as any as Blob;
+      const bucketId = country_code as string;
+      const folderPath = 'climate/forecasts';
+      // upload to storage
+      const { fullPath } = await storage.putFile({ bucketId, fileBlob, filename: filepath, folderPath });
+
+      // TODO - handle error if filename already exists
+      const { error: dbError } = await db
+        .table('climate_forecasts')
+        .update<IForecastUpdate>({ storage_file: fullPath })
+        .eq('id', row.id);
+      if (dbError) {
+        throw dbError;
+      }
+      return fullPath;
     },
   };
 };
