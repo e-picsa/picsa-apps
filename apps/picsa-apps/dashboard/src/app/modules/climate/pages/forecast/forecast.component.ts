@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -8,7 +8,7 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
-import { IForecastRow } from '../../types';
+import { IAPICountryCode, IForecastRow } from '../../types';
 import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
 
 interface IForecastTableRow extends IForecastRow {
@@ -49,9 +49,11 @@ export class ClimateForecastPageComponent {
     showStatusCode: false,
   };
 
-  public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
+  public apiStartDate = signal(new Date());
+  /** When querying data use name prefixes to limit search results, e.g. 202406* pattern match */
+  private apiQueryPrefix = computed(() => this.apiStartDate().toISOString().replace(/-/g, '').substring(0, 6));
 
-  public yearSelectOptions = [2024, 2025];
+  public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
 
   private get db() {
     return this.supabase.db.table('climate_forecasts');
@@ -63,10 +65,13 @@ export class ClimateForecastPageComponent {
     private deploymentService: DeploymentDashboardService
   ) {
     effect(async () => {
+      // whenever deployment or start date set load db data and refresh from api
       const deployment = this.deploymentService.activeDeployment();
-      if (deployment) {
+      const startDate = this.apiStartDate();
+      if (deployment && startDate) {
         await this.service.ready();
         await this.loadDBData();
+        await this.refreshAPIData();
       }
     });
   }
@@ -87,20 +92,20 @@ export class ClimateForecastPageComponent {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { country_code } = this.deploymentService.activeDeployment()!;
     // Load data stored in supabase db if available. Otherwise load from api
-    const { data, error } = await this.db.select<'*', IForecastRow>('*').eq('country_code', country_code);
+    const { data, error } = await this.db
+      .select<'*', IForecastRow>('*')
+      .eq('country_code', country_code)
+      .like('id', `${this.apiQueryPrefix()}%`);
     if (error) throw error;
     if (data?.length > 0) {
       this.forecastData.set(this.toTableData(data));
-    } else {
-      this.refreshAPIData();
     }
+    return data;
   }
-  public async refreshAPIData(startDate = new Date()) {
+  private async refreshAPIData() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { country_code } = this.deploymentService.activeDeployment()!;
-    // HACK - as query has max results limits assume just forecasts from current month prefix fine, e.g 202501
-    const prefix = startDate.toISOString().replace(/-/g, '').substring(0, 6);
-    const apiData = await this.service.loadFromAPI.forecasts(country_code as any, prefix);
+    const apiData = await this.service.loadFromAPI.forecasts(country_code as IAPICountryCode, this.apiQueryPrefix());
     this.forecastData.set(this.toTableData(apiData));
   }
 

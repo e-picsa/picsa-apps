@@ -1,9 +1,9 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
-    <h2 style="flex: 1">Forecasts</h2>
-    <dashboard-climate-api-status [options]="apiStatusOptions" clientId="forecasts"></dashboard-climate-api-status>
+    <h2 class="mr-2">Forecasts</h2>
+    <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
+    <dashboard-climate-api-status [options]="apiStatusOptions" clientId="forecasts" class="ml-auto"></dashboard-climate-api-status>
   </div>
-  <dashboard-climate-forecast-month-select (dateChanged)="refreshAPIData($event)" />
   <picsa-data-table [data]="forecastData()" [options]="tableOptions" [valueTemplates]="{ updated_at,storage_file }">
     <ng-template #updated_at let-value> {{ value | date }} </ng-template>
     <ng-template #storage_file let-value let-row="row">
