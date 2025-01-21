@@ -1,21 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
 import { IForecastRow } from '../../types';
+import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
 
-const DISPLAY_COLUMNS: (keyof IForecastRow)[] = [
+interface IForecastTableRow extends IForecastRow {
+  file_name: string;
+}
+
+const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
   'country_code',
-  'district',
-  'type',
-  'language_code',
-  'filename',
-  'date_modified',
+  'forecast_type',
+  'location',
+  'file_name',
   'storage_file',
 ];
 
@@ -24,6 +28,7 @@ const DISPLAY_COLUMNS: (keyof IForecastRow)[] = [
   imports: [
     CommonModule,
     DashboardClimateApiStatusComponent,
+    DashboardClimateMonthSelectComponent,
     RouterModule,
     PicsaDataTableComponent,
     DashboardMaterialModule,
@@ -32,66 +37,87 @@ const DISPLAY_COLUMNS: (keyof IForecastRow)[] = [
   styleUrls: ['./forecast.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClimateForecastPageComponent implements OnInit {
-  public forecastData: IForecastRow[] = [];
+export class ClimateForecastPageComponent {
+  public forecastData = signal<IForecastTableRow[]>([]);
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
+    handleRowClick: (row: IForecastTableRow) => this.handleStorageClick(row),
   };
   public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.refreshData() },
+    events: { refresh: () => this.refreshAPIData() },
     showStatusCode: false,
   };
 
-  public activeDownloads: Record<string, 'pending' | 'complete'> = {};
+  public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
 
-  constructor(private service: ClimateService, private supabase: SupabaseService, private cdr: ChangeDetectorRef) {}
+  public yearSelectOptions = [2024, 2025];
 
   private get db() {
     return this.supabase.db.table('climate_forecasts');
   }
 
-  async ngOnInit() {
-    await this.service.ready();
-    // TODO - read from deployment
-    const country_code = 'mw';
+  constructor(
+    private service: ClimateService,
+    private supabase: SupabaseService,
+    private deploymentService: DeploymentDashboardService
+  ) {
+    effect(async () => {
+      const deployment = this.deploymentService.activeDeployment();
+      if (deployment) {
+        await this.service.ready();
+        await this.loadDBData();
+      }
+    });
+  }
+
+  public async handleStorageClick(row: IForecastTableRow) {
+    let { storage_file } = row;
+    // handle download if storage file doesn't exist or hasn't been downloaded
+    if (!storage_file && this.activeDownloads[row.id] !== 'complete') {
+      storage_file = await this.downloadStorageFile(row);
+    }
+    // handle open
+    const [bucket, ...path] = (storage_file as string).split('/');
+    const publicLink = this.supabase.storage.getPublicLink(bucket, path.join('/'));
+    open(publicLink, '_blank');
+  }
+
+  private async loadDBData() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const { country_code } = this.deploymentService.activeDeployment()!;
     // Load data stored in supabase db if available. Otherwise load from api
     const { data, error } = await this.db.select<'*', IForecastRow>('*').eq('country_code', country_code);
     if (error) throw error;
     if (data?.length > 0) {
-      this.loadForecastData(data);
+      this.forecastData.set(this.toTableData(data));
     } else {
-      await this.refreshData();
+      this.refreshAPIData();
     }
   }
+  public async refreshAPIData(startDate = new Date()) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const { country_code } = this.deploymentService.activeDeployment()!;
+    // HACK - as query has max results limits assume just forecasts from current month prefix fine, e.g 202501
+    const prefix = startDate.toISOString().replace(/-/g, '').substring(0, 6);
+    const apiData = await this.service.loadFromAPI.forecasts(country_code as any, prefix);
+    this.forecastData.set(this.toTableData(apiData));
+  }
 
-  public async handleStorageClick(row: IForecastRow) {
-    // handle download if storage file doesn't exist or hasn't been downloaded
-    if (!row.storage_file && this.activeDownloads[row.filename] !== 'complete') {
-      await this.downloadStorageFile(row);
-    }
-    // handle open
-    const storagePath = `climate/forecasts/${row.filename}`;
-    const publicLink = this.supabase.storage.getPublicLink('mw', storagePath);
-    open(publicLink, '_blank');
+  private toTableData(data: IForecastRow[]): IForecastTableRow[] {
+    return data
+      .map((el) => {
+        // compute file_name column from storage file path
+        const file_name = el.id.split('/').pop() || '';
+        return { ...el, file_name };
+      })
+      .sort((a, b) => (b.id > a.id ? 1 : -1));
   }
 
   private async downloadStorageFile(row: IForecastRow) {
-    this.activeDownloads[row.filename] = 'pending';
-    this.cdr.markForCheck();
-    await this.service.loadFromAPI.forecast_file(row);
-    this.activeDownloads[row.filename] = 'complete';
-    this.cdr.markForCheck();
-  }
-
-  private loadForecastData(data: any[] = []) {
-    this.forecastData = data;
-    this.cdr.detectChanges();
-  }
-
-  public async refreshData() {
-    const data = await this.service.loadFromAPI.forecasts('mw');
-    this.loadForecastData(data);
+    this.activeDownloads.update((v) => ({ ...v, [row.id]: 'pending' }));
+    const storagePath = await this.service.loadFromAPI.forecast_file(row);
+    this.activeDownloads.update((v) => ({ ...v, [row.id]: 'complete' }));
+    return storagePath;
   }
 }
