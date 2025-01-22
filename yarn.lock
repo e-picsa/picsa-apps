@@ -2317,6 +2317,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capawesome/capacitor-app-update@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@capawesome/capacitor-app-update@npm:6.1.0"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+  checksum: 10c0/409f258d0fca4920cdb2ba6cb954fd36304f66eaf5c0afa3bc13115c1cec65c616e65ac332847fa5a9a23051f8bacd1343dac4c8bc24a256e2b7fce2fd63b95a
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -4333,6 +4342,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ionic/angular@npm:^8.4.1":
+  version: 8.4.1
+  resolution: "@ionic/angular@npm:8.4.1"
+  dependencies:
+    "@ionic/core": "npm:8.4.1"
+    ionicons: "npm:^7.0.0"
+    jsonc-parser: "npm:^3.0.0"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/core": ">=16.0.0"
+    "@angular/forms": ">=16.0.0"
+    "@angular/router": ">=16.0.0"
+    rxjs: ">=7.5.0"
+    zone.js: ">=0.13.0"
+  checksum: 10c0/08da210a608977d8b732584890a76560124f8a545eb57b4510888edc427f3e874ed3d0bfce273a31967faba2d96213a116dc7f334e09516f720be633053f6d12
+  languageName: node
+  linkType: hard
+
 "@ionic/cli-framework-output@npm:^2.2.5":
   version: 2.2.8
   resolution: "@ionic/cli-framework-output@npm:2.2.8"
@@ -4341,6 +4368,17 @@ __metadata:
     debug: "npm:^4.0.0"
     tslib: "npm:^2.0.1"
   checksum: 10c0/a7bf9379201225f20dc3fe1ff93d8b811ef6f9437762785ca80d0c26bcb5aa6fe1661e9d8e1a41d6b193036d7c09a97215d6ec36f4692fa6ea860c1aebd5a97f
+  languageName: node
+  linkType: hard
+
+"@ionic/core@npm:8.4.1":
+  version: 8.4.1
+  resolution: "@ionic/core@npm:8.4.1"
+  dependencies:
+    "@stencil/core": "npm:4.20.0"
+    ionicons: "npm:^7.2.2"
+    tslib: "npm:^2.1.0"
+  checksum: 10c0/993dede92827565f77743316cb25cfb733f43147bf8e6ecd8e6a8f8edde7a3af802c06d6ea6ad36104ad4ca214947c06e36013132442a0e0c9c69f3bafe8c366
   languageName: node
   linkType: hard
 
@@ -6826,12 +6864,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stencil/core@npm:4.20.0":
+  version: 4.20.0
+  resolution: "@stencil/core@npm:4.20.0"
+  bin:
+    stencil: bin/stencil
+  checksum: 10c0/5757cf6f2cf7028b335e52ff6f1eb4c75920d8e07a7dccc74c57d27ed2bf1a0ba77af832a7d4fc86cfc75bda42f4090c875535a83b743f6c2fb781efa3bac2ea
+  languageName: node
+  linkType: hard
+
 "@stencil/core@npm:4.23.1, @stencil/core@npm:^4.12.6":
   version: 4.23.1
   resolution: "@stencil/core@npm:4.23.1"
   bin:
     stencil: bin/stencil
   checksum: 10c0/74d0a52086d137c8e881681150e5cb05dcb6a9bf2c8367c3325e2624682b480e9b1d2a01fcca19550f738203dbde1402acf0e31e122f1724d5dc8ee5bb314a2c
+  languageName: node
+  linkType: hard
+
+"@stencil/core@npm:^4.0.3":
+  version: 4.24.0
+  resolution: "@stencil/core@npm:4.24.0"
+  bin:
+    stencil: bin/stencil
+  checksum: 10c0/8fbe0a44b1b3c606eb4c937de2e0f3251a1ff2ef499a093b2591a3dfae85e76dff1bcb5336df56b2ce43991cde5af969282d3206f3fd09f2a3b7e8d1bd56c921
   languageName: node
   linkType: hard
 
@@ -14842,6 +14898,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ionicons@npm:^7.0.0, ionicons@npm:^7.2.2":
+  version: 7.4.0
+  resolution: "ionicons@npm:7.4.0"
+  dependencies:
+    "@stencil/core": "npm:^4.0.3"
+  checksum: 10c0/0f0e9b5a390514e864f098fbc6b69823fa2cde1758d0e43ca6a9a3b19d3a15b595c913e5a4445945bbbf779454c710fd101edb00f5f1a658dafd9073cc10b0b6
+  languageName: node
+  linkType: hard
+
 "ip-address@npm:^9.0.5":
   version: 9.0.5
   resolution: "ip-address@npm:9.0.5"
@@ -16119,7 +16184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:3.3.1, jsonc-parser@npm:^3.3.1":
+"jsonc-parser@npm:3.3.1, jsonc-parser@npm:^3.0.0, jsonc-parser@npm:^3.3.1":
   version: 3.3.1
   resolution: "jsonc-parser@npm:3.3.1"
   checksum: 10c0/269c3ae0a0e4f907a914bf334306c384aabb9929bd8c99f909275ebd5c2d3bc70b9bcd119ad794f339dec9f24b6a4ee9cd5a8ab2e6435e730ad4075388fc2ab6
@@ -16326,7 +16391,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
+  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
   languageName: node
   linkType: hard
 
@@ -19015,6 +19080,8 @@ __metadata:
     "@capacitor/network": "npm:^6.0.3"
     "@capacitor/screen-orientation": "npm:^6.0.3"
     "@capacitor/share": "npm:^6.0.3"
+    "@capawesome/capacitor-app-update": "npm:^6.1.0"
+    "@ionic/angular": "npm:^8.4.1"
     "@ngx-translate/core": "npm:~16.0.4"
     "@ngx-translate/http-loader": "npm:~16.0.1"
     "@nx/angular": "npm:20.3.0"

@@ -35,7 +35,6 @@
     "leaflet-draw": "github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617"
   },
   "overrides": {
-    "__note_1__": "See https://github.com/supabase/supabase-js/issues/936",
     "@supabase/supabase-js": {
       "@supabase/auth-js": "2.61.0"
     }
@@ -71,6 +70,8 @@
     "@capacitor/network": "^6.0.3",
     "@capacitor/screen-orientation": "^6.0.3",
     "@capacitor/share": "^6.0.3",
+    "@capawesome/capacitor-app-update": "^6.1.0",
+    "@ionic/angular": "^8.4.1",
     "@ngx-translate/core": "~16.0.4",
     "@ngx-translate/http-loader": "~16.0.1",
     "@nx/angular": "20.3.0",

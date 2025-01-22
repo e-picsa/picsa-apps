@@ -5,6 +5,8 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@ang
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { AppUpdate, AppUpdateAvailability, AppUpdateInfo } from '@capawesome/capacitor-app-update';
+import { IonicModule } from '@ionic/angular';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
@@ -129,6 +131,7 @@ if (!ENVIRONMENT.production) {
 
 @Component({
   selector: 'extension-home',
+  standalone: true,
   imports: [
     CommonModule,
     ExtensionToolkitMaterialModule,
@@ -136,6 +139,7 @@ if (!ENVIRONMENT.production) {
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
     RouterModule,
+    IonicModule,
   ],
   templateUrl: './extension-home.component.html',
   styleUrl: './extension-home.component.scss',
@@ -145,6 +149,8 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   public picsaLinks = PAGE_LINKS;
   public additionalLinks = ADDITIONAL_LINKS;
   public version = APP_VERSION;
+
+  public appUpdateInfo: AppUpdateInfo | undefined;
 
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
@@ -173,6 +179,29 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
     this.componentsService.patchHeader({
       cdkPortalEnd: new DomPortal(this.headerContent),
     });
+
+    // Check for updates using Google Play API
+    AppUpdate.getAppUpdateInfo().then((appUpdateInfo: AppUpdateInfo) => {
+      if (
+        appUpdateInfo.updateAvailability === AppUpdateAvailability.UPDATE_AVAILABLE &&
+        appUpdateInfo.flexibleUpdateAllowed
+      ) {
+        this.startFlexibleUpdate();
+      }
+    });
+  }
+
+  private async startFlexibleUpdate() {
+    try {
+      await AppUpdate.startFlexibleUpdate();
+      console.log('Flexible update started');
+
+      // Complete the update once it's downloaded
+      await AppUpdate.completeFlexibleUpdate();
+      console.log('Flexible update completed successfully');
+    } catch (error) {
+      console.error('Error during flexible update:', error);
+    }
   }
 
   public startTour() {
