@@ -8,6 +8,7 @@ import { ResourcesToolService } from '@picsa/resources/src/app/services/resource
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
+import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
 
 @Component({
   selector: 'picsa-root',
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit {
     private resourcesService: ResourcesToolService,
     private monitoringService: MonitoringToolService,
     private migrationService: PicsaMigrationService,
+    private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector
   ) {}
 
@@ -36,6 +38,7 @@ export class AppComponent implements OnInit {
     this.crashlyticsService.ready().then(() => null);
     // eagerly enable analytics collection
     this.analyticsService.init(this.router);
+    await this.pushNotificationService.initializePushNotifications();
     // wait for migrations to run
     await this.runMigrations();
     // eagerly load resources service to populate hardcoded resources

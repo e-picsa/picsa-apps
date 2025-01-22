@@ -31,6 +31,7 @@ const config: CapacitorConfig = {
     '@capacitor/screen-orientation',
     '@capacitor/camera',
     "@capacitor/share",
+    '@capacitor/push-notifications',
   ],
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http
