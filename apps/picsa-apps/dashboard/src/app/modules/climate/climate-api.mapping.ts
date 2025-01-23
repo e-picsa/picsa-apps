@@ -1,14 +1,12 @@
 import type { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
-import { IDeploymentRow } from '../deployment/types';
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
 import {
   IAPICountryCode,
   IClimateSummaryRainfallInsert,
   IClimateSummaryRainfallRow,
-  IForecastInsert,
   IForecastRow,
   IForecastUpdate,
   IStationInsert,
@@ -29,9 +27,8 @@ export type IApiMappingName = keyof IApiMapping;
 export const ApiMapping = (
   api: ClimateApiService,
   service: ClimateService,
-  db: SupabaseService['db'],
-  storage: SupabaseStorageService,
-  deployment: IDeploymentRow
+  supabaseService: SupabaseService,
+  storage: SupabaseStorageService
 ) => {
   return {
     rainfallSummaries: async (station: IStationRow) => {
@@ -62,7 +59,7 @@ export const ApiMapping = (
         station_id: id as string,
         country_code: country_code as any,
       };
-      const { data: dbData, error: dbError } = await db
+      const { data: dbData, error: dbError } = await supabaseService.db
         .table('climate_summary_rainfall')
         .upsert<IClimateSummaryRainfallInsert>(entry)
         .select<'*', IClimateSummaryRainfallRow>('*');
@@ -84,7 +81,7 @@ export const ApiMapping = (
           station_id: `${d.station_id.toLowerCase().replace(/[^a-z]/gi, '_')}`,
         })
       );
-      const { error: dbError, data: dbData } = await db
+      const { error: dbError, data: dbData } = await supabaseService.db
         .table('climate_stations')
         .upsert<IStationInsert>(update)
         .select();
@@ -93,36 +90,12 @@ export const ApiMapping = (
         service.stations.set(dbData);
       }
     },
-    //
-    forecasts: async (country_code: IAPICountryCode, queryPrefix: string) => {
-      // HACK - assume want most recent only (would need better pagination methods for all)
-      const { data, error } = await api
-        .getObservableClient(`forecasts/${country_code}`)
-        .GET(`/v1/documents/{country}`, {
-          params: { path: { country: country_code }, query: { prefix: queryPrefix, max_results: 1000 } },
-        });
-      if (error) throw error;
-      const forecasts = data.map((d): IForecastInsert => {
-        const { contentType, name } = d;
-        return { country_code, mimetype: contentType, id: name, forecast_type: 'daily' };
-      });
-      console.log('forecasts', forecasts);
-      // TODO - avoid overwrite unchanged
-      const { error: dbError, data: dbData } = await db
-        .table('climate_forecasts')
-        .upsert<IForecastInsert>(forecasts)
-        .select<'*', IForecastRow>('*');
-      if (dbError) throw dbError;
-      return dbData || [];
-      return [];
-    },
     /**
      *
      * @param row
      * @returns
      */
     forecast_file: async (row: IForecastRow) => {
-      console.log('load forecast file', row);
       const { country_code, id } = row;
       // api does not use per-country buckets, so recreate folder structure from id
       const filepath = id.replace(`${country_code}/`, '');
@@ -133,7 +106,6 @@ export const ApiMapping = (
           parseAs: 'blob',
         });
 
-      console.log({ data, error });
       if (error) throw error;
       // setup metadata
       const fileBlob = data as any as Blob;
@@ -143,7 +115,7 @@ export const ApiMapping = (
       const { fullPath } = await storage.putFile({ bucketId, fileBlob, filename: filepath, folderPath });
 
       // TODO - handle error if filename already exists
-      const { error: dbError } = await db
+      const { error: dbError } = await supabaseService.db
         .table('climate_forecasts')
         .update<IForecastUpdate>({ storage_file: fullPath })
         .eq('id', row.id);

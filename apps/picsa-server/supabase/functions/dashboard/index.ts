@@ -4,8 +4,13 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { climateForecastUpdate } from './climate-forecast-update.ts';
+import { corsHeaders } from '../_shared/cors.ts';
 
 serve((req) => {
+  // handle cors pre-flight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
   if (req.method !== 'POST') {
     return new Response('Try sending a POST request instead', { status: 400 });
   }

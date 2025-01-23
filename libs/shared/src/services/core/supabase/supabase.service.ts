@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments/src';
+import type { FunctionsClient } from '@supabase/functions-js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 import { PicsaAsyncService } from '../../asyncService.service';
@@ -14,6 +15,8 @@ import { SupabaseStorageService } from './services/supabase-storage.service';
 export class SupabaseService extends PicsaAsyncService {
   /** Access to postgres db as a shortcut to table from method */
   public db: { table: SupabaseClient['from'] };
+
+  public functions: FunctionsClient;
 
   private supabase: SupabaseClient;
 
@@ -34,5 +37,7 @@ export class SupabaseService extends PicsaAsyncService {
     // trigger child service initialisers optimistically
     this.auth.ready();
     this.storage.ready();
+
+    this.functions = this.supabase.functions;
   }
 }

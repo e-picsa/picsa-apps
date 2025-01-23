@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { RefreshSpinnerComponent } from '@picsa/components';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
-import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../components/api-status/api-status';
-import { IAPICountryCode, IForecastRow } from '../../types';
+import { IForecastRow } from '../../types';
 import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
 
 interface IForecastTableRow extends IForecastRow {
@@ -27,11 +28,11 @@ const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
   selector: 'dashboard-climate-forecast',
   imports: [
     CommonModule,
-    DashboardClimateApiStatusComponent,
     DashboardClimateMonthSelectComponent,
     RouterModule,
     PicsaDataTableComponent,
     DashboardMaterialModule,
+    RefreshSpinnerComponent,
   ],
   templateUrl: './forecast.component.html',
   styleUrls: ['./forecast.component.scss'],
@@ -44,14 +45,18 @@ export class ClimateForecastPageComponent {
     displayColumns: DISPLAY_COLUMNS,
     handleRowClick: (row: IForecastTableRow) => this.handleStorageClick(row),
   };
-  public apiStatusOptions: IApiStatusOptions = {
-    events: { refresh: () => this.refreshAPIData() },
-    showStatusCode: false,
-  };
+
+  public refreshPending = signal(false);
 
   public apiStartDate = signal(new Date());
+
   /** When querying data use name prefixes to limit search results, e.g. 202406* pattern match */
   private apiQueryPrefix = computed(() => this.apiStartDate().toISOString().replace(/-/g, '').substring(0, 6));
+
+  private countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code);
+
+  /** Use combination of apiQuery and countryCode to avoid repeated data refresh on load */
+  private apiQueryMemo = computed(() => this.countryCode() && `${this.countryCode()}/${this.apiQueryPrefix()}`);
 
   public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
 
@@ -62,18 +67,23 @@ export class ClimateForecastPageComponent {
   constructor(
     private service: ClimateService,
     private supabase: SupabaseService,
-    private deploymentService: DeploymentDashboardService
+    private deploymentService: DeploymentDashboardService,
+    private notificationService: PicsaNotificationService
   ) {
     effect(async () => {
-      // whenever deployment or start date set load db data and refresh from api
-      const deployment = this.deploymentService.activeDeployment();
-      const startDate = this.apiStartDate();
-      if (deployment && startDate) {
-        await this.service.ready();
-        await this.loadDBData();
-        await this.refreshAPIData();
-      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const memo = this.apiQueryMemo();
+      this.forecastData.set([]);
+      await this.service.ready();
+      await this.loadDBData();
+      await this.handleRefreshClick();
     });
+  }
+
+  public async handleRefreshClick() {
+    this.refreshPending.set(true);
+    await this.refreshAPIData();
+    this.refreshPending.set(false);
   }
 
   public async handleStorageClick(row: IForecastTableRow) {
@@ -102,11 +112,30 @@ export class ClimateForecastPageComponent {
     }
     return data;
   }
+
+  /** Invoke backend function that fetches forecasts from climate api and updates db */
   private async refreshAPIData() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const { country_code } = this.deploymentService.activeDeployment()!;
-    const apiData = await this.service.loadFromAPI.forecasts(country_code as IAPICountryCode, this.apiQueryPrefix());
-    this.forecastData.set(this.toTableData(apiData));
+    const formData = new FormData();
+    formData.append('country_code', country_code);
+    formData.append('query_prefix', this.apiQueryPrefix());
+    const { data, error } = await this.supabase.functions
+      .invoke('dashboard/climate-forecast-update', {
+        method: 'POST',
+        body: formData,
+      })
+      .catch((error) => ({ data: [], error }));
+    if (error) {
+      console.error(error);
+      this.notificationService.showErrorNotification('Forecast Update Failed. See console logs for details');
+      return [];
+    }
+    if (data.length > 0) {
+      this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(v, this.toTableData(data)));
+    }
+    console.log('[Api Data Updated]', data);
+    return data;
   }
 
   private toTableData(data: IForecastRow[]): IForecastTableRow[] {

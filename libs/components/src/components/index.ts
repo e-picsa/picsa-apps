@@ -5,3 +5,4 @@ export * from './picsa-breadcrumbs.component';
 export * from './picsa-header.component';
 export * from './picsa-sidenav.component';
 export * from './profile-select/profile-select.component';
+export * from './refresh-spinner/refresh-spinner.component';
