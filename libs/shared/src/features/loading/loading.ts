@@ -9,7 +9,6 @@ import SVGS from './svgs';
   selector: 'picsa-loading',
   templateUrl: './loading.html',
   styleUrls: ['./loading.scss'],
-  standalone: true,
 })
 export class PicsaLoadingComponent {
   @Input() name: IPicsaLoaders;

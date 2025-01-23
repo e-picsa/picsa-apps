@@ -24,6 +24,8 @@ export class ClimateDataService {
     }
   });
 
+  private stationHashmap = computed(() => arrayToHashmap(this.stations(), 'id'));
+
   constructor(private configurationService: ConfigurationService) {
     this.stationDataCache = arrayToHashmap(DATA.HARDCODED_STATIONS, 'id');
   }
@@ -63,7 +65,12 @@ export class ClimateDataService {
   }
 
   private async loadStationSummaries(stationID: string) {
-    return loadCSV<IStationData>(`assets/summaries/${stationID}.csv`, {
+    const station = this.stationHashmap()[stationID];
+    if (!station) {
+      return [];
+    }
+    const { countryCode, id } = station;
+    return loadCSV<IStationData>(`assets/summaries/${countryCode}/${id}.csv`, {
       download: true,
       dynamicTyping: true,
       header: true,

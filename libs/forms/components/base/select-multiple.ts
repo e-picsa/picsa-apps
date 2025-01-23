@@ -4,6 +4,7 @@ import { arrayToHashmap } from '@picsa/utils';
 /** For more information about this base component see local @see./README.md */
 @Component({
   template: '',
+  standalone: false,
 })
 export abstract class PicsaFormBaseSelectMultipleComponent<T extends { id: string }> {
   private _selected: string[] = []; // this is the updated value that the class accesses

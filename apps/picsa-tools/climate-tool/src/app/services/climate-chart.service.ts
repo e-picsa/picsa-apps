@@ -85,9 +85,6 @@ export class ClimateChartService {
     if (definition) {
       // apply translations
       definition.name = await this.translateService.translateText(definition.name);
-      if (this.station) {
-        definition.name = this.station.name;
-      }
       definition.yLabel = await this.translateService.translateText(definition.yLabel);
       definition.xLabel = await this.translateService.translateText(definition.xLabel);
       // generate config and apply custom onrendered callback

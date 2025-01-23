@@ -13,7 +13,6 @@ import { ENTRY_TEMPLATE } from '../../schema';
   selector: 'picsa-photo-input',
   templateUrl: './photo-input.component.html',
   styleUrls: ['./photo-input.component.scss'],
-  standalone: true,
   imports: [PicsaTranslateModule, MatButtonModule, MatIconModule],
 })
 export class PhotoInputComponent {

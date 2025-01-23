@@ -14,7 +14,6 @@ import { PicsaConfigurationSelectComponent } from '../configuration-select/confi
   styleUrl: './configuration-summary.scss',
   imports: [CommonModule, MatButtonModule, MatDialogModule, PicsaConfigurationSelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class PicsaConfigurationSummaryComponent {
   public label = '';

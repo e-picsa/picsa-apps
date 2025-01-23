@@ -5,6 +5,7 @@ const config: CapacitorConfig = {
   appName: 'PICSA Extension',
   webDir: '../../../dist/apps/picsa-apps/extension-app',
   bundledWebRuntime: false,
+  zoomEnabled:true,
   // manually include plugins here as top-level package.json not checked correctly
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [
@@ -15,8 +16,6 @@ const config: CapacitorConfig = {
     'cordova-plugin-file',
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
-    // cordova standalone
-    'cordova-plugin-codeplay-share-own-apk',
     // capacitor
     '@capacitor/app',
     '@capacitor/browser',

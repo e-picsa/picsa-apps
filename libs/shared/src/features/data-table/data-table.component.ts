@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortable, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { capitalise } from '@picsa/utils';
 import download from 'downloadjs';
@@ -30,8 +30,8 @@ export interface IDataTableOptions {
   paginatorSizes?: number[];
   /** Specify whether to enable search input box and table filtering (will include all data during filter) */
   search?: boolean;
-  /** Specify whether to include column sort headers (default true) */
-  sort?: boolean;
+  /** Sort settings. Set `false` to disable, or `{ id: 'some_col', start: 'asc' }` to change default sort */
+  sort?: boolean | Omit<MatSortable, 'disableClear'>;
   /** Apply custom formatter to header values. Default replaces underscore with space and capitalises each word */
   formatHeader?: (value: string) => string;
   /** Bind to row click events */
@@ -84,7 +84,6 @@ export class FormatValuePipe implements PipeTransform {
  */
 @Component({
   selector: 'picsa-data-table',
-  standalone: true,
   imports: [
     CommonModule,
     FormatValuePipe,
@@ -166,6 +165,10 @@ export class PicsaDataTableComponent implements OnChanges {
     }
     // sort will be disabled in html template if not included
     this.dataSource.sort = this.sort;
+    // update default sort settings if included
+    if (this.tableOptions.sort && typeof this.tableOptions.sort === 'object') {
+      this.dataSource.sort.sort(this.tableOptions.sort as MatSortable);
+    }
     this.cdr.markForCheck();
   }
 }

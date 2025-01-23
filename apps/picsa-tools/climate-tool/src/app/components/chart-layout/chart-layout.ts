@@ -14,6 +14,7 @@ import { ClimateToolService } from '../../services/climate-tool.service';
   selector: 'climate-chart-layout',
   templateUrl: 'chart-layout.html',
   styleUrls: ['chart-layout.scss'],
+  standalone: false,
 })
 export class ClimateChartLayoutComponent implements AfterViewInit {
   @Input() definition: IChartMeta;

@@ -18,6 +18,7 @@ import { IDownloadStatus, ResourcesToolService } from '../../services/resources-
   templateUrl: './resource-download.component.html',
   styleUrls: ['./resource-download.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceDownloadComponent implements OnDestroy {
   public downloadStatus: IDownloadStatus;

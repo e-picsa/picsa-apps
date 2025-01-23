@@ -10,6 +10,7 @@
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/extension-content",
         "index": "apps/picsa-tools/extension-content/src/index.html",
         "browser": "apps/picsa-tools/extension-content/src/main.ts",

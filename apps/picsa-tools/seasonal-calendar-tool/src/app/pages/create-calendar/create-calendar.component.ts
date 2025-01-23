@@ -9,6 +9,7 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   selector: 'seasonal-calendar-create',
   templateUrl: './create-calendar.component.html',
   styleUrls: ['./create-calendar.component.scss'],
+  standalone: false,
 })
 export class CreateCalendarComponent implements OnInit {
   constructor(

@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,10 +10,10 @@ import { IResourceLinkRow } from '../../../types';
 
 @Component({
   selector: 'dashboard-resource-link-edit',
-  standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
   templateUrl: './resource-link-edit.component.html',
   styleUrl: './resource-link-edit.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinkEditComponent implements OnInit {
   constructor(

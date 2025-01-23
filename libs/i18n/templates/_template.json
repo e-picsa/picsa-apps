@@ -339,10 +339,6 @@
     "tool": "budget"
   },
   {
-    "text": "Consumed",
-    "tool": "budget"
-  },
-  {
     "text": "Cost",
     "tool": "budget"
   },
@@ -411,10 +407,6 @@
     "tool": "budget"
   },
   {
-    "text": "No outputs produce for consumption",
-    "tool": "budget"
-  },
-  {
     "text": "Outputs",
     "tool": "budget"
   },
@@ -460,14 +452,6 @@
   },
   {
     "text": "Total",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Consumed",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Produced",
     "tool": "budget"
   },
   {
@@ -686,6 +670,10 @@
     "tool": "common"
   },
   {
+    "text": "App",
+    "tool": "common"
+  },
+  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
@@ -703,10 +691,6 @@
   },
   {
     "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "common"
-  },
-  {
-    "text": "Calendar",
     "tool": "common"
   },
   {
@@ -734,6 +718,10 @@
     "tool": "common"
   },
   {
+    "text": "Downscaled Forecasts",
+    "tool": "common"
+  },
+  {
     "text": "Draw Here",
     "tool": "common"
   },
@@ -754,15 +742,15 @@
     "tool": "common"
   },
   {
+    "text": "Forecasts",
+    "tool": "common"
+  },
+  {
     "text": "I'm a farmer",
     "tool": "common"
   },
   {
     "text": "I'm an extension worker",
-    "tool": "common"
-  },
-  {
-    "text": "Intro",
     "tool": "common"
   },
   {
@@ -786,10 +774,6 @@
     "tool": "common"
   },
   {
-    "text": "Ram",
-    "tool": "common"
-  },
-  {
     "text": "Redo",
     "tool": "common"
   },
@@ -799,6 +783,10 @@
   },
   {
     "text": "Seasonal Calendar",
+    "tool": "common"
+  },
+  {
+    "text": "Seasonal Forecast",
     "tool": "common"
   },
   {
@@ -1303,6 +1291,10 @@
     "tool": "crop-probability"
   },
   {
+    "text": "Additional",
+    "tool": "extension-content"
+  },
+  {
     "text": "Farmer Activities",
     "tool": "extension-content"
   },
@@ -1323,7 +1315,7 @@
     "tool": "extension-content"
   },
   {
-    "text": "Take App Tour",
+    "text": "Training",
     "tool": "extension-content"
   },
   {
@@ -1349,6 +1341,18 @@
   {
     "text": "Switch to Farmer",
     "tool": "extension"
+  },
+  {
+    "text": "Home",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "next",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "previous",
+    "tool": "farmer-content"
   },
   {
     "text": "Activity Flow Chart",
@@ -1796,10 +1800,6 @@
   },
   {
     "text": "Create",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Create Calendar",
     "tool": "seasonal-calendar"
   },
   {

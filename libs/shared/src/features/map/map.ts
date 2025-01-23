@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  EventEmitter,
+  input,
+  OnInit,
+  Output,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import type { Feature, GeoJsonObject, Geometry } from 'geojson';
 import * as L from 'leaflet';
@@ -12,40 +22,54 @@ import * as GEOJSON from './geoJson';
   templateUrl: './map.html',
   styleUrls: ['./map.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PicsaMapComponent {
+export class PicsaMapComponent implements OnInit {
   @Output() onMapReady = new EventEmitter<L.Map>();
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
 
-  @Input() mapOptions: L.MapOptions = {};
-  @Input() basemapOptions: Partial<IBasemapOptions> = {};
-
-  /** Stored list of input marker data */
-  private _markers: IMapMarker[];
-  /** Handle adding map markers on input change */
-  @Input() set markers(markers: IMapMarker[]) {
-    if (markers) {
-      this._markers = markers;
-      // add markers if map already initialised, otherwise will be added onMapReady
-      if (this.map) {
-        this.addMarkers(markers);
-      }
-    }
-  }
+  mapOptions = input<L.MapOptions>({});
+  basemapOptions = input<Partial<IBasemapOptions>>({});
+  markers = input<IMapMarker[]>([]);
 
   /** List of rendered markers with map data */
   private renderedMarkers: L.Marker[] = [];
 
-  // make native map element available directly
-  public map: L.Map;
+  // make native map element available directly as signal
+  public map = signal<L.Map>(null as any);
+
   // expose full leaflet functionality for use within parent components
   public L = L;
   // active marker used to toggle style classes
   private _activeMarker: L.Marker;
-  // default options are overwritten via input setter
-  _mapOptions: L.MapOptions = MAP_DEFAULTS;
+
+  /** Full set of map options merged from input options and default */
+  public _mapOptions = signal<L.MapOptions>(null as any);
+
+  constructor() {
+    // Load any input markers whenever both markers and map exist
+    effect(() => {
+      const inputMarkers = this.markers();
+      const map = this.map();
+      if (map && inputMarkers?.length > 0) {
+        this.addMarkers(inputMarkers);
+      }
+    });
+    // Observe layout size changes, use map invalidate method on change
+    // to ensure map correctly setup. E.g. when switching tabs in farmer version
+    effect((cleanup) => {
+      if (!this.map()) return;
+      const container = this.map().getContainer();
+      const observer = new ResizeObserver(() => {
+        this.map().invalidateSize();
+      });
+      observer.observe(container);
+      cleanup(() => {
+        observer.disconnect();
+      });
+    });
+  }
 
   ngOnInit() {
     // the user provides basemap options separate to general map options, so combine here
@@ -53,14 +77,13 @@ export class PicsaMapComponent {
     const basemapOptions = { ...BASEMAP_DEFAULTS, ...this.basemapOptions };
     const basemap = L.tileLayer(basemapOptions.src, basemapOptions);
     const mapOptions = { ...MAP_DEFAULTS, ...this.mapOptions };
-    this._mapOptions = { ...mapOptions, layers: [basemap] };
-    // this.markOffClosestStation()
+    this._mapOptions.set({ ...mapOptions, layers: [basemap] });
   }
 
   /** Programatically set the active map marker and trigger click callback */
   public setActiveMarker(marker: IMapMarker) {
     const { _index } = marker;
-    this._onMarkerClick(this._markers[_index], this.renderedMarkers[_index]);
+    this._onMarkerClick(this.markers()[_index], this.renderedMarkers[_index]);
   }
 
   /** Render a marker for current user location */
@@ -71,7 +94,7 @@ export class PicsaMapComponent {
       html: L.Util.template(LOCATION_ICON_BLACK, 'color:white'),
     });
     const userMarker = L.marker([lat, lng], { icon });
-    userMarker.addTo(this.map);
+    userMarker.addTo(this.map());
   }
 
   private addMarkers(mapMarkers: IMapMarker[], fitMap = true) {
@@ -86,7 +109,7 @@ export class PicsaMapComponent {
       marker.on({
         click: () => this._onMarkerClick(m, marker),
       });
-      marker.addTo(this.map);
+      marker.addTo(this.map());
       this.renderedMarkers.push(marker);
     });
     if (fitMap && mapMarkers.length > 0) {
@@ -97,10 +120,7 @@ export class PicsaMapComponent {
   // when the map is ready it emits event with map, and also binds map to
   // public api to be accessed by other services
   _onMapReady(map: L.Map) {
-    this.map = map;
-    if (this._markers) {
-      this.addMarkers(this._markers);
-    }
+    this.map.set(map);
     this.onMapReady.emit(map);
   }
 
@@ -108,7 +128,7 @@ export class PicsaMapComponent {
   private fitMapToMarkers(markers: IMapMarker[]) {
     const latLngs = markers.map((m) => m.latlng);
     const bounds = new L.LatLngBounds(latLngs as any);
-    this.map.fitBounds(bounds, { maxZoom: 8, padding: [10, 10] });
+    this.map().fitBounds(bounds, { maxZoom: 8, padding: [10, 10] });
   }
 
   /** Generate default (inactive) and active icons for a marker */
@@ -128,7 +148,7 @@ export class PicsaMapComponent {
   // NOTE L.Layer doesn't recognize _bounds prop so just pass as any
   protected _onLayerClick(layer: any) {
     const bounds = layer._bounds as L.LatLngBounds;
-    this.map.fitBounds(bounds);
+    this.map().fitBounds(bounds);
     this.onLayerClick.emit(layer);
   }
 
@@ -139,7 +159,7 @@ export class PicsaMapComponent {
       this._activeMarker.setIcon(icon);
     }
     const [lat, lng] = m.latlng;
-    this.map.flyTo([lat, lng], 10);
+    this.map().flyTo([lat, lng], 10);
     marker.setIcon(activeIcon);
     this._activeMarker = marker;
     this.onMarkerClick.emit(m);
@@ -154,7 +174,7 @@ export class PicsaMapComponent {
       onEachFeature: (feature, layer) => this.setFeature(feature, layer),
       style: GEOJSON_STYLE,
     });
-    geojsonLayer.addTo(this.map);
+    geojsonLayer.addTo(this.map());
     // *** TODO - ADD METHOD TO CALCULATE AND AUTO FIT BOUNDS DEPENDENT ON USER
   }
 

@@ -21,6 +21,7 @@ const PROFILE_FORM_BASE: { [key in keyof IPicsaUser]: FormControl } = {
   templateUrl: './profile-select.component.html',
   styleUrls: ['./profile-select.component.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
+  standalone: false,
 })
 export class ProfileSelectComponent implements OnInit, OnDestroy {
   public activeProfile: IPicsaUser;

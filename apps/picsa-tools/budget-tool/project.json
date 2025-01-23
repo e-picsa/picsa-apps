@@ -10,13 +10,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": [
-          "c3",
-          "deepmerge",
-          "fast-xml-parser",
-          "leaflet",
-          "lottie-web/build/player/lottie_light"
-        ],
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/budget-tool",
         "index": "apps/picsa-tools/budget-tool/src/index.html",
         "main": "apps/picsa-tools/budget-tool/src/main.ts",
@@ -41,7 +35,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "4mb"
+              "maximumError": "5mb"
             },
             {
               "type": "anyComponentStyle",

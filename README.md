@@ -7,7 +7,7 @@
 1. Download and install [Git](https://git-scm.com/downloads)  
    This will be used to download the repository
 
-2. Download and install [Node](https://nodejs.org/en/download/) version 18+
+2. Download and install [Node](https://nodejs.org/en/download/) version 20+
    This is the programming lanugage required to run the project
 
 3. Download and Install [Yarn](https://yarnpkg.com/getting-started/install)  

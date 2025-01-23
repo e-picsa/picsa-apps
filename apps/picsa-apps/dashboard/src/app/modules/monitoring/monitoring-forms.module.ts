@@ -2,11 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { FormSubmissionsComponent } from './pages/form-submissions/form-submissions.component';
-import { MonitoringPageComponent } from './pages/home/monitoring.page';
-import { UpdateMonitoringFormsComponent } from './pages/update/update-monitoring-forms.component';
-import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms.component';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -14,23 +9,27 @@ import { ViewMonitoringFormsComponent } from './pages/view/view-monitoring-forms
     RouterModule.forChild([
       {
         path: '',
-        component: MonitoringPageComponent,
+        loadComponent: () => import('./pages/home/monitoring.page').then((m) => m.MonitoringPageComponent),
       },
       {
         path: 'create',
-        component: UpdateMonitoringFormsComponent,
+        loadComponent: () =>
+          import('./pages/update/update-monitoring-forms.component').then((m) => m.UpdateMonitoringFormsComponent),
       },
       {
         path: ':id',
-        component: ViewMonitoringFormsComponent,
+        loadComponent: () =>
+          import('./pages/view/view-monitoring-forms.component').then((m) => m.ViewMonitoringFormsComponent),
       },
       {
         path: ':id/submissions',
-        component: FormSubmissionsComponent,
+        loadComponent: () =>
+          import('./pages/form-submissions/form-submissions.component').then((m) => m.FormSubmissionsComponent),
       },
       {
         path: ':id/edit',
-        component: UpdateMonitoringFormsComponent,
+        loadComponent: () =>
+          import('./pages/update/update-monitoring-forms.component').then((m) => m.UpdateMonitoringFormsComponent),
       },
     ]),
   ],

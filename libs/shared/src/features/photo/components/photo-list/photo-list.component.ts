@@ -6,7 +6,6 @@ import { PhotoViewComponent } from '../photo-view/photo-view.component';
 
 @Component({
   selector: 'picsa-photo-list',
-  standalone: true,
   imports: [PhotoViewComponent, PicsaTranslateModule],
   templateUrl: './photo-list.component.html',
   styleUrl: './photo-list.component.scss',

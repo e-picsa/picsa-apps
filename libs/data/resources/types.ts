@@ -8,7 +8,8 @@ export interface IPicsaVideo {
    */
   locale_codes: ILocaleCode[];
   size_kb: number;
-  resolution: '360p';
+  /** Generally 360p preferred but 480p used for operational videos */
+  resolution: '360p' | '480p';
   supabase_url: string;
 }
 

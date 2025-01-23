@@ -2,97 +2,48 @@
   @if(content(); as content){
   <div @fadeInOut class="content-container">
     <mat-tab-group
-      (selectedTabChange)="handleTabChange($event)"
-      class="height-fill sticky-header-bottom"
+      [selectedIndex]="selectedIndex()"
+      class="height-fill no-header"
       style="height: 100%; width: 100%; flex: 1"
       headerPosition="below"
       preserveContent
     >
-      <!-- intro -->
-      <!-- <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">home</mat-icon>
-          {{ 'Intro' | translate }}
-        </ng-template>
-        <div class="tab-content">
-          <div class="top-banner">
-            <img class="content-icon" [src]="content.icon_path" />
-            <h2 class="title">{{ content.title | translate }}</h2>
-          </div>
-        </div>
-      </mat-tab> -->
       <!-- content -->
-      @for(step of steps(); track $index){
+      @for(step of content.steps; track $index){
       <mat-tab>
-        @switch (step.type){
-        <!-- video -->
-        @case ("video") {
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">{{ step.tabMatIcon || 'slideshow' }}</mat-icon>
-          {{ step.tabLabel || 'video' | translate }}
-        </ng-template>
-        <div class="tab-content">
-          @if(step.video){
-          <farmer-step-video [videoData]="step.video"></farmer-step-video>
+        <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
+          @for(block of step; track $index){ @switch (block.type) {
+
+          <!-- Text -->
+          @case ('text') { @if(block.title){
+          <h2 class="px-4">{{ block.title | translate }}</h2>
+          } @if(block.text) {
+          <p class="px-4">{{ block.text | translate }}</p>
+          } }
+          <!-- Video -->
+          @case('video'){
+          <farmer-step-video [videoData]="block.video"></farmer-step-video>
           }
-        </div>
-        }
-        <!-- video playlist -->
-        @case ("video_playlist") {
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">{{ step.tabMatIcon || 'slideshow' }}</mat-icon>
-          {{ step.tabLabel || 'video' | translate }}
-        </ng-template>
-        <div class="tab-content">
-          @for(video of step.videos; track video.id){
-          <farmer-step-video [videoData]="video"></farmer-step-video>
-          }
-        </div>
-        } }
-      </mat-tab>
-      }
-      <!-- tools HACK - use hardcoded placeholders as cannot create loop of named router outlets -->
-      @if(tools()[0]; as tool_0){
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">smartphone</mat-icon>
-          {{ tool_0.tabLabel || 'Tool' | translate }}
-        </ng-template>
-        <div class="tab-content router-tab">
-          <div class="page">
-            <router-outlet #toolRouter class="tool-router"></router-outlet>
-          </div>
-        </div>
-      </mat-tab>
-      }
-      <!-- User photos -->
-      @if(content.showReviewSection){ @if(photoAlbum(); as album){
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">perm_media</mat-icon>
-          {{ 'Review' | translate }}
-        </ng-template>
-        <div class="tab-content router-tab">
+
+          <!-- Review tab -->
+          @case ('review') { @if(photoAlbum(); as album){
+          <h2>{{ 'Review' | translate }}</h2>
           <picsa-photo-list [album]="album"></picsa-photo-list>
           <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-        </div>
-      </mat-tab>
+          } }
 
-      } }
-      <!-- @if(tools()[1]; as tool_1){
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon class="tab-icon">smartphone</mat-icon>
-          {{ tool_1.tabLabel || 'Tool' | translate }}
-        </ng-template>
-        <div class="tab-content router-tab">
-          <div class="page">
-            <router-outlet #toolRouter1 class="tool-router"></router-outlet>
+          <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
+          @case ('tool') {
+          <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
+            <router-outlet #toolRouter></router-outlet>
           </div>
+          } } }
         </div>
       </mat-tab>
-      } -->
+      }
     </mat-tab-group>
   </div>
+  <farmer-module-footer [totalSections]="tabs().length" [(selectedIndex)]="selectedIndex"></farmer-module-footer>
+
   }
 </div>

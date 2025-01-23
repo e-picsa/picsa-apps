@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
-import { Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ENVIRONMENT } from '@picsa/environments/src';
@@ -32,10 +32,10 @@ type ImportActionSummary = { [key in ImportActions]: ITranslationImportEntry[] }
  */
 @Component({
   selector: 'dashboard-translation-json-import',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatTabsModule, PicsaDataTableComponent],
+  imports: [MatButtonModule, MatTabsModule, PicsaDataTableComponent],
   templateUrl: './json-import.component.html',
   styleUrl: './json-import.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsJSONImportComponent {
   public importSummary = signal<ImportActionSummary>(this.generateSourceSummary({}, {}));

@@ -1,8 +1,10 @@
+import { FORECAST_COLLECTIONS, FORECAST_FILES } from '@picsa/data/resources/forecasts';
+
 import { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { filterHashmap } from '../../utils/data.utils';
 import weatherFiles from './files';
 import { WEATHER_LINKS } from './links';
-import { IWeatherLocation, WEATHER_LOCATIONS } from './locations';
+import { IWeatherLocation } from './locations';
 import { MeteoBlueGenerator } from './meteoBlue';
 import { WMOGenerator } from './wmo';
 
@@ -10,13 +12,17 @@ import { WMOGenerator } from './wmo';
  * Weather resources are generated dynamically to assign location-specific
  * values to links
  */
-const localisedResources = WEATHER_LOCATIONS.reduce(
-  (resources, location) => ({
-    ...resources,
-    ...generateLocationResources(location),
-  }),
-  {}
-);
+
+// HACK - no longer provide localised resources
+// TODO - review best way to manage moving forwards
+
+// const localisedResources = WEATHER_LOCATIONS.reduce(
+//   (resources, location) => ({
+//     ...resources,
+//     ...generateLocationResources(location),
+//   }),
+//   {}
+// );
 
 /** Main collection that hosts child resources */
 const weatherResources: IResourceCollection = {
@@ -27,8 +33,9 @@ const weatherResources: IResourceCollection = {
   cover: { image: 'assets/resources/covers/weather.svg' },
   priority: 6,
   childResources: {
-    collections: WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
-    files: [],
+    // collections: WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
+    collections: [FORECAST_COLLECTIONS.forecasts_downscaled.id],
+    files: FORECAST_COLLECTIONS.forecasts.childResources.files,
     links: Object.keys(WEATHER_LINKS),
   },
 };
@@ -61,15 +68,18 @@ function generateLocationResources(location: IWeatherLocation) {
     [collection.id]: collection,
     ...links,
     ...files,
-    ...weatherFiles.downscaledForecasts,
-    ...weatherFiles.otherForecasts,
   };
 }
+
+// HACK - only included downscaled collection (files from main collection included in web)
+const { forecasts_downscaled } = FORECAST_COLLECTIONS;
 
 export default {
   weatherResources,
   ...WEATHER_LINKS,
-  ...localisedResources,
+  // ...localisedResources,
   ...weatherFiles.downscaledForecasts,
   ...weatherFiles.otherForecasts,
+  forecasts_downscaled,
+  ...FORECAST_FILES,
 };

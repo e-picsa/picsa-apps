@@ -6,6 +6,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-editor-sidebar',
   templateUrl: './editor-sidebar.component.html',
   styleUrls: ['./editor-sidebar.component.scss'],
+  standalone: false,
 })
 export class BudgetEditorSidebarComponent {
   constructor(public store: BudgetStore) {}

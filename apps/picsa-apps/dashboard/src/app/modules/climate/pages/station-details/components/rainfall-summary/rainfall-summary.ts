@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -13,20 +13,22 @@ import { ChartConfiguration } from 'c3';
 
 import { ClimateService } from '../../../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import { APITypes, IClimateProductRow } from '../../../../types';
-
-type AnnualRainfallSummariesdata = APITypes.components['schemas']['AnnualRainfallSummariesdata'];
+import {
+  IAnnualRainfallSummariesData,
+  IAnnualRainfallSummariesMetadata,
+  IClimateSummaryRainfallRow,
+  IStationRow,
+} from '../../../../types';
+import { hackConvertAPIDataToLegacyFormat } from './rainfall-summary.utils';
 
 interface IRainfallSummary {
-  // TODO - improve typings
-  data: any[];
-  metadata: any;
+  data: IAnnualRainfallSummariesData[];
+  metadata: IAnnualRainfallSummariesMetadata;
 }
 
 @Component({
   selector: 'dashboard-climate-rainfall-summary',
   templateUrl: './rainfall-summary.html',
-  standalone: true,
   imports: [
     DashboardClimateApiStatusComponent,
     MatButtonModule,
@@ -39,13 +41,20 @@ interface IRainfallSummary {
   styleUrl: './rainfall-summary.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RainfallSummaryComponent implements AfterViewInit {
+export class RainfallSummaryComponent {
   public summaryMetadata: IRainfallSummary['metadata'] = {};
-  public summaryData: IRainfallSummary['data'] = [];
+  public summaryData: IStationData[] = [];
   public apiClientId: string;
   public chartDefintions: IChartMeta[] = [];
   public activeChartConfig: Partial<ChartConfiguration>;
-  constructor(private service: ClimateService, private cdr: ChangeDetectorRef, private supabase: SupabaseService) {}
+  constructor(private service: ClimateService, private cdr: ChangeDetectorRef, private supabase: SupabaseService) {
+    effect(() => {
+      const activeStation = this.service.activeStation();
+      if (activeStation) {
+        this.loadActiveStation(activeStation);
+      }
+    });
+  }
 
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],
@@ -56,21 +65,23 @@ export class RainfallSummaryComponent implements AfterViewInit {
     showStatusCode: true,
   };
 
-  private get db() {
-    return this.supabase.db.table('climate_products');
+  private get activeStation() {
+    return this.service.activeStation();
   }
 
-  async ngAfterViewInit() {
-    const { activeStation } = this.service;
+  private get db() {
+    return this.supabase.db.table('climate_summary_rainfall');
+  }
+
+  private async loadActiveStation(station: IStationRow) {
     // Load data stored in supabase db if available. Otherwise load from api
     // TODO - nicer if could include db lookups as part of mapping doc
     const { data, error } = await this.db
-      .select<'*', IClimateProductRow>('*')
-      .eq('station_id', activeStation().id)
-      .eq('type', 'rainfallSummary')
+      .select<'*', IClimateSummaryRainfallRow>('*')
+      .eq('station_id', station.id)
       .single();
     if (data) {
-      this.loadData((data.data as any) || { data: [], metadata: {} });
+      this.loadData(data);
       this.cdr.markForCheck();
     } else {
       await this.refreshData();
@@ -79,12 +90,12 @@ export class RainfallSummaryComponent implements AfterViewInit {
   }
 
   public async refreshData() {
-    if (this.service.activeStation) {
-      this.apiClientId = `rainfallSummary_${this.service.activeStation().id}`;
-      const data = await this.service.loadFromAPI.rainfallSummaries(this.service.activeStation());
+    if (this.activeStation) {
+      this.apiClientId = `rainfallSummary_${this.activeStation.id}`;
+      const data = await this.service.loadFromAPI.rainfallSummaries(this.activeStation);
       const summary = data?.[0];
       if (summary) {
-        this.loadData(summary.data as any);
+        this.loadData(summary);
       }
     }
   }
@@ -96,30 +107,15 @@ export class RainfallSummaryComponent implements AfterViewInit {
     }
   }
 
-  private loadData(summary: IRainfallSummary) {
+  private loadData(summary: IClimateSummaryRainfallRow) {
     console.log('load data', summary);
-    this.tableOptions.exportFilename = `${this.service.activeStation().station_name}_rainfallSummary.csv`;
+    this.tableOptions.exportFilename = `${this.activeStation.id}.csv`;
     const { data, metadata } = summary;
-    this.summaryData = this.convertAPIDataToLegacyFormat(data);
+    this.summaryData = hackConvertAPIDataToLegacyFormat(data);
+    // this.summaryData = data;
     this.summaryMetadata = metadata;
-    const { country_code } = this.service.activeStation();
+    const { country_code } = this.activeStation;
     const definitions = CLIMATE_CHART_DEFINTIONS[country_code] || CLIMATE_CHART_DEFINTIONS.default;
     this.chartDefintions = Object.values(definitions);
-  }
-
-  // TODO - refactor components to use modern format
-  private convertAPIDataToLegacyFormat(apiData: AnnualRainfallSummariesdata[] = []) {
-    const data: Partial<IStationData>[] = apiData.map((el) => ({
-      Year: el.year,
-      // HACK - use either end_rains or end_season depending on which has data populated
-      // TODO - push for single value to be populated at api level
-      End: el.end_rains_doy || el.end_season_doy,
-      Extreme_events: null as any,
-      Length: el.season_length,
-      // HACK - replace 0mm with null value
-      Rainfall: el.annual_rain || undefined,
-      Start: el.start_rains_doy,
-    }));
-    return data;
   }
 }

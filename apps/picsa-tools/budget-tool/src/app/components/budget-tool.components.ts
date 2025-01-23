@@ -24,7 +24,6 @@ import { BudgetCellComponent } from './cell/cell';
 import { BudgetCardEditorComponent } from './editor/card-editor/card-editor.component';
 import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-select';
 import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
-import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
 import { BudgetEditorComponent } from './editor/editor.component';
 import { BudgetEditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
@@ -43,7 +42,6 @@ const components = [
   BudgetCellComponent,
   BudgetCellEditorCardSelectComponent,
   BudgetCellEditorFamilyLabourComponent,
-  BudgetCellEditorProduceConsumedComponent,
   BudgetEditorComponent,
   BudgetEditorSidebarComponent,
   BudgetCardNew,

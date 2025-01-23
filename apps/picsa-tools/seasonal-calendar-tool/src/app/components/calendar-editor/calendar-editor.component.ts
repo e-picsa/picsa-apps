@@ -11,6 +11,7 @@ type IMonthForm = ReturnType<CalendarEditorComponent['createMonthForm']>;
   selector: 'seasonal-calendar-editor',
   templateUrl: './calendar-editor.component.html',
   styleUrls: ['./calendar-editor.component.scss'],
+  standalone: false,
 })
 export class CalendarEditorComponent implements OnInit, OnDestroy {
   /** List of month data to use in select component */

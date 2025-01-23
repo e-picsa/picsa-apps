@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -16,10 +16,9 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
 
 @Component({
   selector: 'dashboard-monitoring-view',
-  standalone: true,
   imports: [
-    CommonModule,
     DashboardMaterialModule,
+    DatePipe,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
@@ -28,6 +27,7 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   ],
   templateUrl: './view-monitoring-forms.component.html',
   styleUrls: ['./view-monitoring-forms.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewMonitoringFormsComponent implements OnInit {
   public form: IMonitoringFormsRow;

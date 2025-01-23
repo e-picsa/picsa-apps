@@ -9,6 +9,7 @@ import { ClimateDataService } from '../../services/climate-data.service';
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
+  standalone: false,
 })
 export class SiteSelectPage implements OnInit {
   activeStation: any;
@@ -52,7 +53,7 @@ export class SiteSelectPage implements OnInit {
 
   goToSite(site: IStationMeta) {
     // record current map bound positions for returning back
-    const mapBounds = this.picsaMap.map.getBounds();
+    const mapBounds = this.picsaMap.map().getBounds();
     localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));
     // navigate
     this.router.navigate(['./', 'site', site.id], {

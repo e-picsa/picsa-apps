@@ -10,6 +10,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/monitoring-tool",
         "index": "apps/picsa-tools/monitoring-tool/src/index.html",
         "main": "apps/picsa-tools/monitoring-tool/src/main.ts",

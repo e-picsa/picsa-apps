@@ -1,12 +1,13 @@
+import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { Component, computed, Input, viewChild } from '@angular/core';
+import { Component, computed, effect, Input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListItem, MatNavList } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
-import { PicsaCommonComponentsModule } from '@picsa/components';
+import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION } from '@picsa/environments';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
@@ -17,7 +18,6 @@ import { filter, map } from 'rxjs';
   selector: 'picsa-app-layout',
   templateUrl: 'layout.html',
   styleUrl: 'layout.scss',
-  standalone: true,
   imports: [
     CommonModule,
     MatSidenavModule,
@@ -35,6 +35,7 @@ import { filter, map } from 'rxjs';
 export class AppLayoutComponent {
   @Input() showLoader: boolean;
   @Input() ready: boolean;
+  menuButtonTemplate = viewChild.required<TemplateRef<HTMLElement>>('menuButtonTemplate');
   public drawer = viewChild.required(MatDrawer);
   public showMenuButton = toSignal(
     this.router.events.pipe(
@@ -46,7 +47,31 @@ export class AppLayoutComponent {
   public userType = computed(() => this.configurationService.userSettings().user_type);
   public version = APP_VERSION;
 
-  constructor(private router: Router, private configurationService: ConfigurationService) {}
+  constructor(
+    private router: Router,
+    private configurationService: ConfigurationService,
+    componentService: PicsaCommonComponentsService,
+    viewContainer: ViewContainerRef
+  ) {
+    effect(
+      () => {
+        // Inject menu button into global header when on farmer or extension home
+        const { cdkPortalStart } = componentService.headerOptions();
+        if (this.showMenuButton()) {
+          if (!cdkPortalStart) {
+            componentService.patchHeader({
+              cdkPortalStart: new TemplatePortal(this.menuButtonTemplate(), viewContainer),
+            });
+          }
+        } else {
+          if (cdkPortalStart) {
+            componentService.patchHeader({ cdkPortalStart: undefined });
+          }
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   public toggleUserType() {
     const targetType = this.userType() === 'extension' ? 'farmer' : 'extension';

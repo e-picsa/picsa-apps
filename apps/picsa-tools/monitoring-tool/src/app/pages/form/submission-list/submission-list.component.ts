@@ -14,6 +14,7 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   templateUrl: './submission-list.component.html',
   styleUrls: ['./submission-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SubmissionListComponent implements OnInit, OnDestroy {
   public submissionData = new MatTableDataSource<IFormSubmission>([]);

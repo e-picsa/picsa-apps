@@ -13,6 +13,7 @@ import { BudgetCardNewDialog } from './card-new-dialog';
   selector: 'budget-card-new',
   templateUrl: './card-new.html',
   styleUrls: ['./card-new.scss', '../budget-card.scss'],
+  standalone: false,
 })
 export class BudgetCardNew {
   @Input() type: IBudgetCardType;
@@ -25,10 +26,15 @@ export class BudgetCardNew {
   showCardDialog() {
     // groupings should match the current enterprise unless otherwise specified
     const groupings = this.groupings ? this.groupings : toJS(this.store.activeBudget.meta.enterprise.groupings);
+    // HACK - when generating produce consumed cards create as an output card type
+    let type = this.type;
+    if (type === 'produceConsumed') {
+      type = 'outputs';
+    }
     const card: IBudgetCard = {
       id: generateID(),
       label: '',
-      type: this.type,
+      type,
       groupings: groupings as IBudgetCardGrouping[],
       imgType: 'svg',
     };

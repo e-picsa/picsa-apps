@@ -21,7 +21,6 @@ const DISPLAY_COLUMNS: (keyof IForecastRow)[] = [
 
 @Component({
   selector: 'dashboard-climate-forecast',
-  standalone: true,
   imports: [
     CommonModule,
     DashboardClimateApiStatusComponent,

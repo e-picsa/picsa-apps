@@ -27,6 +27,7 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
   selector: 'picsa-video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
+  standalone: false,
 })
 export class VideoPlayerComponent implements OnDestroy {
   /** Optional override of player options */
@@ -195,6 +196,8 @@ export class VideoPlayerComponent implements OnDestroy {
       width: clientWidth,
       height: Math.round((clientWidth * 9) / 16),
       displayMode: 'landscape',
+      bkmodeEnabled: false,
+      pipEnabled: false,
     };
     if (Capacitor.isNativePlatform()) {
       defaultOptions.mode = 'fullscreen';

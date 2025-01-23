@@ -2,13 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { ResourceCollectionEditComponent } from './pages/collections/edit/resource-collection-edit.component';
-import { ResourceCollectionsComponent } from './pages/collections/resource-collections.component';
-import { ResourceFileEditComponent } from './pages/files/edit/resource-file-edit.component';
-import { ResourceFilesComponent } from './pages/files/resource-files.component';
-import { ResourceLinkEditComponent } from './pages/links/edit/resource-link-edit.component';
-import { ResourceLinksComponent } from './pages/links/resource-links.component';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -21,39 +14,50 @@ import { ResourceLinksComponent } from './pages/links/resource-links.component';
       },
       {
         path: 'files',
-        component: ResourceFilesComponent,
+        loadComponent: () => import('./pages/files/resource-files.component').then((m) => m.ResourceFilesComponent),
       },
       {
         path: 'files/create',
-        component: ResourceFileEditComponent,
+        loadComponent: () =>
+          import('./pages/files/edit/resource-file-edit.component').then((m) => m.ResourceFileEditComponent),
       },
       {
         path: 'files/:id',
-        component: ResourceFileEditComponent,
+        loadComponent: () =>
+          import('./pages/files/edit/resource-file-edit.component').then((m) => m.ResourceFileEditComponent),
       },
       {
         path: 'links',
-        component: ResourceLinksComponent,
+        loadComponent: () => import('./pages/links/resource-links.component').then((m) => m.ResourceLinksComponent),
       },
       {
         path: 'links/create',
-        component: ResourceLinkEditComponent,
+        loadComponent: () =>
+          import('./pages/links/edit/resource-link-edit.component').then((m) => m.ResourceLinkEditComponent),
       },
       {
         path: 'links/:id',
-        component: ResourceLinkEditComponent,
+        loadComponent: () =>
+          import('./pages/links/edit/resource-link-edit.component').then((m) => m.ResourceLinkEditComponent),
       },
       {
         path: 'collections',
-        component: ResourceCollectionsComponent,
+        loadComponent: () =>
+          import('./pages/collections/resource-collections.component').then((m) => m.ResourceCollectionsComponent),
       },
       {
         path: 'collections/create',
-        component: ResourceCollectionEditComponent,
+        loadComponent: () =>
+          import('./pages/collections/edit/resource-collection-edit.component').then(
+            (m) => m.ResourceCollectionEditComponent
+          ),
       },
       {
         path: 'collections/:id',
-        component: ResourceCollectionEditComponent,
+        loadComponent: () =>
+          import('./pages/collections/edit/resource-collection-edit.component').then(
+            (m) => m.ResourceCollectionEditComponent
+          ),
       },
     ]),
   ],

@@ -18,6 +18,11 @@ button.mat-mdc-button > .mat-icon {
   min-width: 24px; // climate share icon not showing without
   height: 24px;
 }
+// Don't allow button labels to extend beyond their container
+.mdc-button__label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 
 mat-card.link {
   cursor: pointer;
@@ -46,6 +51,20 @@ mat-dialog-container.mat-mdc-dialog-container {
 .cdk-overlay-pane.no-padding {
   .mat-mdc-dialog-surface {
     padding: 0;
+  }
+}
+
+// Increase dialog overlay width on small devices (600px)
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  --mat-dialog-container-small-max-width: calc(100vw - theme(spacing.4));
+  // Budget tool picker full screen
+  &.budget-dialog {
+    --mat-dialog-container-small-max-width: 100vw;
+    width: 100vw;
+    @apply max-w-screen-md;
+    .mat-mdc-dialog-surface {
+      padding: 0;
+    }
   }
 }
 
@@ -118,6 +137,12 @@ mat-stepper.slim-headers {
     height: 48px;
   }
 }
+mat-stepper.responsive-content-padding {
+  .mat-horizontal-content-container {
+    // keep enough padding to see shadow
+    @apply p-2 sm:px-6 sm:pb-6;
+  }
+}
 
 // Allow use of primary color with selected value by custom `value-primary` class
 mat-select.value-primary {
@@ -133,22 +158,10 @@ mat-tab-group.height-fill {
     flex: 1;
   }
 }
-// Allow tabs which have bottom header absolute positioned
-mat-tab-group.sticky-header-bottom {
-  position: relative;
+
+mat-tab-group.no-header {
   & > mat-tab-header {
-    background: green;
-    position: fixed;
-    bottom: 0;
-    // HACK - ensure farmer content aligns on larger screen sizes
-    width: calc(100% - 32px);
-    background: white;
-    z-index: 2;
-    // HACK - use with farmer content that has max width (hard to inherit)
-    max-width: 800px;
-  }
-  & > .mat-mdc-tab-body-wrapper {
-    margin-bottom: 32px;
+    display: none;
   }
 }
 

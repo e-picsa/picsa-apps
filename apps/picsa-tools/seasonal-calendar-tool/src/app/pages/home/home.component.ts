@@ -13,6 +13,7 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   selector: 'seasonal-calendar-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  standalone: false,
 })
 export class HomeComponent implements OnDestroy {
   /** Track current calendar selected from editing from menu popup */
