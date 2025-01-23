@@ -6,3 +6,7 @@ export function ErrorResponse(msg: string, status = 400) {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
+
+export function JSONResponse(data: any) {
+  return new Response(JSON.stringify(data), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+}
