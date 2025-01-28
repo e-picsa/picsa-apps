@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../../types/index.ts';
+import type { Database } from '../../types/index.ts';
 
 export { SupabaseClient };
 
