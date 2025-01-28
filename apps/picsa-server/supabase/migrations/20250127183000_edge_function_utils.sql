@@ -1,3 +1,6 @@
+-- enable the "pg_net" extension.
+create extension if not exists pg_net;
+
 
 -- https://github.com/orgs/supabase/discussions/12813
 

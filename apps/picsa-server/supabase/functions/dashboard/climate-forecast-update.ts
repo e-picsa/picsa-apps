@@ -15,10 +15,10 @@ import { JSONResponse } from '../_shared/response.ts';
  * https://github.com/orgs/supabase/discussions/9837
  */
 const CLIMATE_API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
+const COUNTRY_CODES = ['mw', 'zm'];
 
 // Create typed fetch client from open-api definition exported by climate api
 import createClient from 'openapi-fetch';
-import { ErrorResponse } from '../_shared/response.ts';
 const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_ENDPOINT, mode: 'cors' });
 
 type IDBClimateForecast = Database['public']['Tables']['climate_forecasts']['Insert'];
@@ -30,14 +30,27 @@ type IApiClimateForecast = climateApiComponents['schemas']['DocumentMetadata'];
 export const climateForecastUpdate = async (req: Request) => {
   // Validate body formData
   // TODO - Improve validators and feedback
-  let { country_code, query_prefix } = await getJsonData(req);
-  if (!country_code) {
-    return ErrorResponse('country_code required', 400);
-  }
+  let { country_codes = COUNTRY_CODES, query_prefix } = await getJsonData(req);
+
   // Default query for documents stored in the current month,
   if (!query_prefix) {
     query_prefix = new Date().toISOString().replace(/-/, '').substring(0, 6);
   }
+
+  const responses = [];
+
+  for (const country_code of country_codes) {
+    try {
+      const data = await getCountryUpdates(country_code, query_prefix);
+      responses.push({ country_code, data });
+    } catch (error) {
+      responses.push({ country_code, error });
+    }
+  }
+  return JSONResponse(responses);
+};
+
+async function getCountryUpdates(country_code: string, query_prefix: string) {
   // retrieve latest api forecast for query and existing db forecasts for query
   // filter results to only include api forecasts not present on db
   const apiForecasts = await getApiForecasts({ country_code, query_prefix });
@@ -46,7 +59,7 @@ export const climateForecastUpdate = async (req: Request) => {
   const dbForecastIds = dbForecasts.map((v) => v.id);
   const newForecasts = apiForecasts.filter((v) => !dbForecastIds.includes(v.name));
   if (newForecasts.length === 0) {
-    return JSONResponse([], 200);
+    return [];
   }
 
   // map api forecasts to db format and update db
@@ -54,11 +67,10 @@ export const climateForecastUpdate = async (req: Request) => {
   const supabaseClient = getClient();
   const { error } = await supabaseClient.from('climate_forecasts').insert(updates);
   if (error) {
-    console.error(error);
-    return JSONResponse(error, 400);
+    throw error;
   }
-  return JSONResponse(updates, 201);
-};
+  return updates;
+}
 
 async function getApiForecasts(query: { country_code: string; query_prefix?: string }) {
   const { country_code, query_prefix } = query;
