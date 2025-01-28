@@ -17,21 +17,22 @@ declare
     -- url:='https://project-ref.supabase.co/functions/v1/function-name'
     url text ='http://host.docker.internal:54321/functions/v1/dashboard/climate-forecast-update';
     headers jsonb ='{"Content-Type": "application/json"}'::jsonb;
-    body jsonb ='{"country_code": "mw"}'::jsonb;
+    body jsonb;
 
     request_id BIGINT;
     -- TODO - lookup from db
-    country_codes = ["mw","zm"]::text[]
+    country_codes text[] = array['mw','zm'];
+    country_code text;
 
 begin 
-    
-
-    select (net.http_post(url:=url,headers:=headers,body:=body)) 
-    into request_id;
-    return request_id;
-
+ foreach country_code in array country_codes loop
+    body = format('{"country_code": "%s"}',country_code)::jsonb;
+    perform (net.http_post(url:=url,headers:=headers,body:=body));
+  end loop;
+  return 0;
 end $$; 
 
+select public.climate_forecast_update();
 
 -- Trigger to run every hour at the 30 minute mark
 select cron.schedule('climate_forecasts_update', '30 * * * *', 'CALL climate_forecast_update()');
