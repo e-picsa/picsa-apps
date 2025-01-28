@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
 import { MatButton } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
@@ -29,34 +29,3 @@ export class DashboardClimateMonthSelectComponent {
     this.dateChanged.emit(date);
   }
 }
-
-/**
-   public yearOptions = signal(this.calcYearOptions());
-
-  public yearSelected = signal(new Date().getFullYear());
-
-  public monthOptions = computed(() => this.calcMonthOptions(this.yearSelected()));
-
-  // Use linked signal so that when year is changed default value is set (but user can override)
-  public monthSelected = linkedSignal(() => {
-    const options = this.monthOptions();
-    return options[options.length - 1];
-  });
-
-  private calcYearOptions() {
-    const currentYear = new Date().getFullYear();
-    const startYear = 2024;
-    return [...Array(currentYear - startYear + 1).keys()].map((v) => v + startYear);
-  }
-
-  private calcMonthOptions(yearSelected: number) {
-    const monthNumbers = [...Array(12).keys()];
-    const currentYear = new Date().getFullYear();
-    console.log({ monthNumbers, yearSelected });
-    if (yearSelected === currentYear) {
-      const currentMonth = new Date().getMonth();
-      return monthNumbers.filter((v) => v <= currentMonth);
-    }
-    return monthNumbers;
-  }
- */
