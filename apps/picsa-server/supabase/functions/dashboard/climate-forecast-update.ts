@@ -4,7 +4,7 @@ import type {
   components as climateApiComponents,
 } from '../../../../picsa-apps/dashboard/src/app/modules/climate/types/api.d.ts';
 import { getClient } from '../_shared/client.ts';
-import { getFormData } from '../_shared/request.ts';
+import { getJsonData } from '../_shared/request.ts';
 import { JSONResponse } from '../_shared/response.ts';
 
 /**
@@ -30,8 +30,7 @@ type IApiClimateForecast = climateApiComponents['schemas']['DocumentMetadata'];
 export const climateForecastUpdate = async (req: Request) => {
   // Validate body formData
   // TODO - Improve validators and feedback
-  const { fields } = await getFormData(req);
-  let { country_code, query_prefix } = fields;
+  let { country_code, query_prefix } = await getJsonData(req);
   if (!country_code) {
     return ErrorResponse('country_code required', 400);
   }
