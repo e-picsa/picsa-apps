@@ -132,7 +132,7 @@ export class ClimateForecastPageComponent {
       return [];
     }
     if (data.length > 0) {
-      this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(v, this.toTableData(data)));
+      this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(data), v));
     }
     console.log('[Api Data Updated]', data);
     return data;
