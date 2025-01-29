@@ -7,6 +7,7 @@
     "postinstall": "node ./decorate-angular-cli.js && jetifier && husky install",
     "start": "yarn build:webcomponents && nx serve",
     "start:server": "nx run picsa-server:supabase start",
+    "start:server:functions": "nx run picsa-server:supabase functions serve",
     "start:budget": "nx run picsa-tools-budget-tool:serve",
     "start:climate": "nx run picsa-tools-climate-tool:serve",
     "start:crop-probability": "nx run picsa-tools-crop-probability-tool:serve",

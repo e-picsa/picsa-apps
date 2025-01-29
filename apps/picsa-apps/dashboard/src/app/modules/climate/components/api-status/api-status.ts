@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { RefreshSpinnerComponent } from '@picsa/components';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { ClimateService } from '../../climate.service';
@@ -30,7 +31,7 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
  */
 @Component({
   selector: 'dashboard-climate-api-status',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, RefreshSpinnerComponent],
   templateUrl: './api-status.html',
   styleUrls: ['./api-status.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

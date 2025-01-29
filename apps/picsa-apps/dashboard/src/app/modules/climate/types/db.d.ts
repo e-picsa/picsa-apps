@@ -12,6 +12,7 @@ export type IClimateSummaryRainfallInsert = Database['public']['Tables']['climat
 
 export type IForecastRow = Database['public']['Tables']['climate_forecasts']['Row'];
 export type IForecastInsert = Database['public']['Tables']['climate_forecasts']['Insert'];
+export type IForecastUpdate = Database['public']['Tables']['climate_forecasts']['Update'];
 
 export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
 export type IStationInsert = Database['public']['Tables']['climate_stations']['Insert'];
