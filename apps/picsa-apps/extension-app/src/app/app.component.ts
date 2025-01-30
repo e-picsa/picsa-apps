@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, Injector, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ENVIRONMENT } from '@picsa/environments';
 import { PicsaMigrationService } from '@picsa/migrations';
@@ -9,6 +9,7 @@ import { AnalyticsService } from '@picsa/shared/services/core/analytics.service'
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
+import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
 
 @Component({
   selector: 'picsa-root',
@@ -16,7 +17,7 @@ import { AppUpdateService } from '@picsa/shared/services/native/app-update';
   styleUrls: ['./app.component.scss'],
   standalone: false,
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'extension-toolkit';
   public ready = signal(false);
   public showLoader = signal(false);
@@ -29,17 +30,22 @@ export class AppComponent implements OnInit {
     private resourcesService: ResourcesToolService,
     private monitoringService: MonitoringToolService,
     private migrationService: PicsaMigrationService,
-    private injector: Injector,
-    private appUpdateService: AppUpdateService
+    private appUpdateService: AppUpdateService,
+    private pushNotificationService: PicsaPushNotificationService,
+    private injector: Injector
   ) {}
 
   async ngOnInit() {
-    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
-    this.crashlyticsService.ready().then(() => null);
-    // eagerly enable analytics collection
-    this.analyticsService.init(this.router);
     // wait for migrations to run
     await this.runMigrations();
+
+    this.ready.set(true);
+  }
+  async ngAfterViewInit() {
+    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
+    this.crashlyticsService.ready();
+    // eagerly enable analytics collection
+    this.analyticsService.init(this.router);
     // eagerly load resources service to populate hardcoded resources
     this.resourcesService.ready();
     // eagerly load monitoring service to sync form data
@@ -47,6 +53,10 @@ export class AppComponent implements OnInit {
     this.ready.set(true);
     // check for available updates
     await this.appUpdateService.checkForUpdates();
+    // delay push notification as will prompt for permissions
+    setTimeout(() => {
+      this.pushNotificationService.initializePushNotifications();
+    }, 1000);
   }
 
   private async runMigrations() {

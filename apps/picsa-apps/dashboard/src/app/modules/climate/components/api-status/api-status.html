@@ -5,8 +5,6 @@
   } @if(options().labels?.ready; as readyLabel){
   <div class="status-label">{{readyLabel}}</div>
   } @if(options().events?.refresh; as refreshEvent){
-  <button class="status-refresh-button" mat-icon-button [disabled]="status() === 'pending'" (click)="refreshEvent()">
-    <mat-icon iconPositionEnd [class.spin]="status() === 'pending'">autorenew</mat-icon>
-  </button>
+  <picsa-refresh-spinner [spin]="status() === 'pending'" [disabled]="status()==='pending'" (click)="refreshEvent()" />
   }
 </div>

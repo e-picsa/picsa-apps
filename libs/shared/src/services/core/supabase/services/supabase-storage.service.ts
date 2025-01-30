@@ -136,7 +136,7 @@ export class SupabaseStorageService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    return data?.[0] || null;
+    return data;
   }
 
   public async deleteFile(bucketId: string, filePath: string) {

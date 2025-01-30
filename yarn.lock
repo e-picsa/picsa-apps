@@ -2299,6 +2299,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/push-notifications@npm:^6.0.4":
+  version: 6.0.4
+  resolution: "@capacitor/push-notifications@npm:6.0.4"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+  checksum: 10c0/c16315ebebfc0ec15f171f0330aeced3b851761f96522fefaca79c16b260ab9606198e021a3370b419308307efedec522af3dc5be4bfeec34d103836e79086b9
+  languageName: node
+  linkType: hard
+
 "@capacitor/screen-orientation@npm:^6.0.3":
   version: 6.0.3
   resolution: "@capacitor/screen-orientation@npm:6.0.3"
@@ -19078,6 +19087,7 @@ __metadata:
     "@capacitor/filesystem": "npm:^6.0.2"
     "@capacitor/geolocation": "npm:^6.1.0"
     "@capacitor/network": "npm:^6.0.3"
+    "@capacitor/push-notifications": "npm:^6.0.4"
     "@capacitor/screen-orientation": "npm:^6.0.3"
     "@capacitor/share": "npm:^6.0.3"
     "@capawesome/capacitor-app-update": "npm:^6.1.0"

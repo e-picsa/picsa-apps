@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PicsaDataTableComponent } from '@picsa/shared/features';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -23,7 +23,7 @@ export class CropVarietyComponent implements OnInit {
 
   displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'label'];
 
-  tableOptions = {
+  tableOptions: IDataTableOptions = {
     displayColumns: this.displayedColumns,
     handleRowClick: (row: ICropInformationRow) => {
       this.router.navigate(['./', row.id], { relativeTo: this.route });
