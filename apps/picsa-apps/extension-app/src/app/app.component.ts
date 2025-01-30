@@ -8,6 +8,7 @@ import { ResourcesToolService } from '@picsa/resources/src/app/services/resource
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
+import { AppUpdateService } from '@picsa/shared/services/native/app-update';
 
 @Component({
   selector: 'picsa-root',
@@ -28,7 +29,8 @@ export class AppComponent implements OnInit {
     private resourcesService: ResourcesToolService,
     private monitoringService: MonitoringToolService,
     private migrationService: PicsaMigrationService,
-    private injector: Injector
+    private injector: Injector,
+    private appUpdateService: AppUpdateService
   ) {}
 
   async ngOnInit() {
@@ -43,6 +45,8 @@ export class AppComponent implements OnInit {
     // eagerly load monitoring service to sync form data
     this.monitoringService.ready();
     this.ready.set(true);
+    // check for available updates
+    await this.appUpdateService.checkForUpdates();
   }
 
   private async runMigrations() {
