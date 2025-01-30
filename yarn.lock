@@ -2299,12 +2299,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@capacitor/push-notifications@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@capacitor/push-notifications@npm:7.0.0"
+"@capacitor/push-notifications@npm:^6.0.4":
+  version: 6.0.4
+  resolution: "@capacitor/push-notifications@npm:6.0.4"
   peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10c0/2d24454f709c8a68650c57e6ad17f18fbee7f5038c6600032e27560e8913d7be022e3c0f8ac23b409d5c92ce55f828df5b466ce13b221caa7589be7da0131679
+    "@capacitor/core": ^6.0.0
+  checksum: 10c0/c16315ebebfc0ec15f171f0330aeced3b851761f96522fefaca79c16b260ab9606198e021a3370b419308307efedec522af3dc5be4bfeec34d103836e79086b9
   languageName: node
   linkType: hard
 
@@ -16335,7 +16335,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
+  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
   languageName: node
   linkType: hard
 
@@ -19022,7 +19022,7 @@ __metadata:
     "@capacitor/filesystem": "npm:^6.0.2"
     "@capacitor/geolocation": "npm:^6.1.0"
     "@capacitor/network": "npm:^6.0.3"
-    "@capacitor/push-notifications": "npm:^7.0.0"
+    "@capacitor/push-notifications": "npm:^6.0.4"
     "@capacitor/screen-orientation": "npm:^6.0.3"
     "@capacitor/share": "npm:^6.0.3"
     "@ngx-translate/core": "npm:~16.0.4"
