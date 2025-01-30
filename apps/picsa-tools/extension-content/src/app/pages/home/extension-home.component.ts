@@ -5,7 +5,6 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@ang
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { IonicModule } from '@ionic/angular';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
@@ -138,7 +137,6 @@ if (!ENVIRONMENT.production) {
     PicsaCommonComponentsModule,
     PicsaTranslateModule,
     RouterModule,
-    IonicModule,
   ],
   templateUrl: './extension-home.component.html',
   styleUrl: './extension-home.component.scss',
