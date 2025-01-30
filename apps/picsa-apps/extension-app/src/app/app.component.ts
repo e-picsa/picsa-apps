@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, Injector, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ENVIRONMENT } from '@picsa/environments';
 import { PicsaMigrationService } from '@picsa/migrations';
@@ -16,7 +16,7 @@ import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-n
   styleUrls: ['./app.component.scss'],
   standalone: false,
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'extension-toolkit';
   public ready = signal(false);
   public showLoader = signal(false);
@@ -34,18 +34,24 @@ export class AppComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
-    this.crashlyticsService.ready().then(() => null);
-    // eagerly enable analytics collection
-    this.analyticsService.init(this.router);
-    await this.pushNotificationService.initializePushNotifications();
     // wait for migrations to run
     await this.runMigrations();
+
+    this.ready.set(true);
+  }
+  async ngAfterViewInit() {
+    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
+    this.crashlyticsService.ready();
+    // eagerly enable analytics collection
+    this.analyticsService.init(this.router);
     // eagerly load resources service to populate hardcoded resources
     this.resourcesService.ready();
     // eagerly load monitoring service to sync form data
     this.monitoringService.ready();
-    this.ready.set(true);
+    // delay push notification as will prompt for permissions
+    setTimeout(() => {
+      this.pushNotificationService.initializePushNotifications();
+    }, 1000);
   }
 
   private async runMigrations() {
