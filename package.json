@@ -70,6 +70,7 @@
     "@capacitor/filesystem": "^6.0.2",
     "@capacitor/geolocation": "^6.1.0",
     "@capacitor/network": "^6.0.3",
+    "@capacitor/push-notifications": "^6.0.4",
     "@capacitor/screen-orientation": "^6.0.3",
     "@capacitor/share": "^6.0.3",
     "@ngx-translate/core": "~16.0.4",
