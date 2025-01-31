@@ -8,8 +8,8 @@ import { ResourcesToolService } from '@picsa/resources/src/app/services/resource
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
-import { AppUpdateService } from '@picsa/shared/services/native/app-update';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
+import { AppUpdateService } from '@picsa/shared/services/native/app-update';
 
 @Component({
   selector: 'picsa-root',
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.monitoringService.ready();
     this.ready.set(true);
     // check for available updates
-    await this.appUpdateService.checkForUpdates();
+    this.appUpdateService.checkForUpdates();
     // delay push notification as will prompt for permissions
     setTimeout(() => {
       this.pushNotificationService.initializePushNotifications();

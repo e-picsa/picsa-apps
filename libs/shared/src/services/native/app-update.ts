@@ -27,11 +27,8 @@ export class AppUpdateService {
   private async startFlexibleUpdate() {
     try {
       await AppUpdate.startFlexibleUpdate();
-      console.log('Flexible update started');
-
       // Complete the update once it's downloaded
       await AppUpdate.completeFlexibleUpdate();
-      console.log('Flexible update completed successfully');
     } catch (error) {
       console.error('Error during flexible update:', error);
     }
