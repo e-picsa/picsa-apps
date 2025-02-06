@@ -38,6 +38,7 @@ import { Subject, takeUntil } from 'rxjs';
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LineDatePickerHeaderComponent<D> implements OnDestroy {
   private _destroyed = new Subject<void>();

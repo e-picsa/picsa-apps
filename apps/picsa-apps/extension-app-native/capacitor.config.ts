@@ -1,3 +1,4 @@
+/// <reference types="@capacitor/push-notifications" />
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
@@ -16,8 +17,6 @@ const config: CapacitorConfig = {
     'cordova-plugin-file',
     '@awesome-cordova-plugins/social-sharing',
     'cordova-plugin-x-socialsharing',
-    // cordova standalone
-    'cordova-plugin-codeplay-share-own-apk',
     // capacitor
     '@capacitor/app',
     '@capacitor/browser',
@@ -33,7 +32,13 @@ const config: CapacitorConfig = {
     '@capacitor/screen-orientation',
     '@capacitor/camera',
     "@capacitor/share",
+    '@capacitor/push-notifications',
   ],
+  plugins:{
+    PushNotifications: {
+      presentationOptions: ["alert"],
+    },
+  },
   // Enable app to use native http for requests (bypass cors)
   // https://capacitorjs.com/docs/apis/http
   // TODO - check if resources still work as intended once enabled
@@ -51,6 +56,7 @@ const config: CapacitorConfig = {
      */
     cleartext: true,
   },
+  
 };
 
 /**

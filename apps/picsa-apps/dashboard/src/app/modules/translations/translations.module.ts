@@ -2,9 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { TranslationsEditComponent } from './pages/edit/translations-edit.component';
-import { TranslationsPageComponent } from './pages/home/translations.page';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -12,7 +9,7 @@ import { TranslationsPageComponent } from './pages/home/translations.page';
     RouterModule.forChild([
       {
         path: 'list',
-        component: TranslationsPageComponent,
+        loadComponent: () => import('./pages/home/translations.page').then((m) => m.TranslationsPageComponent),
       },
       {
         path: 'import',
@@ -21,7 +18,8 @@ import { TranslationsPageComponent } from './pages/home/translations.page';
       },
       {
         path: 'edit/:id',
-        component: TranslationsEditComponent,
+        loadComponent: () =>
+          import('./pages/edit/translations-edit.component').then((m) => m.TranslationsEditComponent),
       },
       {
         path: '',

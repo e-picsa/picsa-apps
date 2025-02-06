@@ -575,7 +575,15 @@
     "tool": "climate"
   },
   {
+    "text": "Annual Forecast",
+    "tool": "climate"
+  },
+  {
     "text": "Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Downscaled Forecast",
     "tool": "climate"
   },
   {
@@ -659,6 +667,10 @@
   },
   {
     "text": "Add Photo",
+    "tool": "common"
+  },
+  {
+    "text": "App",
     "tool": "common"
   },
   {

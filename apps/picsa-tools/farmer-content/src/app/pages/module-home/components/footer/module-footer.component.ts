@@ -7,7 +7,6 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 @Component({
   selector: 'farmer-module-footer',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, PicsaTranslateModule],
   templateUrl: './module-footer.component.html',
   styleUrl: './module-footer.component.scss',

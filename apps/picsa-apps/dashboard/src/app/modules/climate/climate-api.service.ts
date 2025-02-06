@@ -5,6 +5,7 @@ import {  BehaviorSubject, Subject } from 'rxjs';
 import { paths } from './types/api';
 
 const API_ENDPOINT = 'https://api.epicsa.idems.international';
+// const API_ENDPOINT = 'http://localhost:8000';
 
 /** Type-safe http client with added support for callbacks */
 export type IApiClient = ReturnType<typeof createClient<paths>> & { $:Subject<Response | undefined>}

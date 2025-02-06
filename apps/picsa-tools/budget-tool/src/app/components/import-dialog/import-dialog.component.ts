@@ -8,6 +8,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-import-dialog',
   templateUrl: './import-dialog.component.html',
   styleUrls: ['./import-dialog.component.scss'],
+  standalone: false,
 })
 export class BudgetImportDialogComponent {
   public status = '';

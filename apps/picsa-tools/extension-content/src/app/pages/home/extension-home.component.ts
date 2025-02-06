@@ -129,7 +129,6 @@ if (!ENVIRONMENT.production) {
 
 @Component({
   selector: 'extension-home',
-  standalone: true,
   imports: [
     CommonModule,
     ExtensionToolkitMaterialModule,

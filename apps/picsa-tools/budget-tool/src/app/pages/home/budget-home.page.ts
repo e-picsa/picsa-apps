@@ -10,6 +10,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-home',
   templateUrl: './budget-home.page.html',
   styleUrls: ['./budget-home.page.scss'],
+  standalone: false,
 })
 export class BudgetHomePage {
   sharedDisabled: boolean;

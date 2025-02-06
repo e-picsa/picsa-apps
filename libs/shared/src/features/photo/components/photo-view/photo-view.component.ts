@@ -11,7 +11,6 @@ import { IPhotoEntry } from '../../schema';
 
 @Component({
   selector: 'picsa-photo-view',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, MatDialogModule, PicsaTranslateModule],
   templateUrl: './photo-view.component.html',
   styleUrl: './photo-view.component.scss',

@@ -24,6 +24,7 @@ const SELECT_OPTIONS = WEATHER_DATA.filter((w) => w.label !== '');
   styleUrls: ['./weather-select.component.scss'],
   providers: [CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FormWeatherSelectComponent extends PicsaFormBaseSelectComponent<IWeatherDataEntry> {
   constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {

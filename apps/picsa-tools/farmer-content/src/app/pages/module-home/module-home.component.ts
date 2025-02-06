@@ -15,7 +15,6 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
 
 @Component({
   selector: 'farmer-content-module-home',
-  standalone: true,
   imports: [
     CommonModule,
     FarmerModuleFooterComponent,

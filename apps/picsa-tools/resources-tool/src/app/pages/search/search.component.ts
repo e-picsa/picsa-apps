@@ -18,7 +18,6 @@ interface ISearchResultsByType {
 
 @Component({
   selector: 'resource-search-component',
-  standalone: true,
   imports: [CommonModule, FormsModule, ResourcesComponentsModule, PicsaTranslateModule],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],

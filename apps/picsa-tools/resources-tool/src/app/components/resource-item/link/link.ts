@@ -8,6 +8,7 @@ import { IResourceLink } from '../../../schemas';
   selector: 'resource-item-link',
   templateUrl: 'link.html',
   styleUrls: ['link.scss'],
+  standalone: false,
 })
 export class ResourceItemLinkComponent {
   resource = input.required<IResourceLink>();

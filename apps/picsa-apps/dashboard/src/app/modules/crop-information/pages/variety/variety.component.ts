@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PicsaDataTableComponent } from '@picsa/shared/features';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
@@ -9,10 +8,10 @@ import { CropInformationService, ICropInformationRow } from '../../services';
 
 @Component({
   selector: 'dashboard-crop-variety',
-  standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
+  imports: [DashboardMaterialModule, PicsaDataTableComponent, RouterModule],
   templateUrl: './variety.component.html',
   styleUrl: './variety.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyComponent implements OnInit {
   constructor(
@@ -24,7 +23,7 @@ export class CropVarietyComponent implements OnInit {
 
   displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'label'];
 
-  tableOptions = {
+  tableOptions: IDataTableOptions = {
     displayColumns: this.displayedColumns,
     handleRowClick: (row: ICropInformationRow) => {
       this.router.navigate(['./', row.id], { relativeTo: this.route });

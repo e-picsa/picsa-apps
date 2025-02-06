@@ -1,19 +1,17 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
-    <h2 style="flex: 1">Forecasts</h2>
-    <dashboard-climate-api-status [options]="apiStatusOptions" clientId="forecasts/mw"></dashboard-climate-api-status>
+    <h2 class="mr-2">Forecasts</h2>
+    <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
+    <picsa-refresh-spinner [spin]="refreshPending()" [disabled]="refreshPending()" (click)="handleRefreshClick()" class="ml-auto"></picsa-refresh-spinner>
   </div>
-  <picsa-data-table [data]="forecastData" [options]="tableOptions" [valueTemplates]="{ date_modified,storage_file }">
-    <ng-template #date_modified let-value> {{ value | date }} </ng-template>
+  <picsa-data-table [data]="forecastData()" [options]="tableOptions" [valueTemplates]="{ updated_at,storage_file }">
+    <ng-template #updated_at let-value> {{ value | date }} </ng-template>
     <ng-template #storage_file let-value let-row="row">
-      <button
-        mat-icon-button
-        (click)="handleStorageClick(row)"
-        [disabled]="activeDownloads[row.filename] === 'pending'"
-      >
-        @if(value || activeDownloads[row.filename]==='complete'){
+      @let status = activeDownloads()[row.id];
+      <button mat-icon-button [disabled]="status === 'pending'">
+        @if(value || status==='complete'){
         <mat-icon>open_in_new</mat-icon>
-        } @else if(activeDownloads[row.filename]==='pending'){
+        } @else if(status==='pending'){
         <mat-icon class="spin">autorenew</mat-icon>
         } @else {
         <mat-icon>download</mat-icon>

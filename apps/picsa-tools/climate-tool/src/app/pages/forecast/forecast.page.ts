@@ -14,7 +14,6 @@ import { ClimateToolComponentsModule } from '../../components/climate-tool-compo
   selector: 'climate-forecast',
   templateUrl: './forecast.page.html',
   styleUrls: ['./forecast.page.scss'],
-  standalone: true,
   imports: [
     CommonModule,
     ClimateToolComponentsModule,

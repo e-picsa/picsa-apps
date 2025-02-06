@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -8,14 +8,15 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { MonitoringFormsDashboardService } from '../../monitoring.service';
+
 export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
 
 @Component({
   selector: 'dashboard-monitoring-page',
-  standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, RouterModule, PicsaDataTableComponent],
+  imports: [DashboardMaterialModule, DatePipe, RouterModule, PicsaDataTableComponent],
   templateUrl: './monitoring.page.html',
   styleUrls: ['./monitoring.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MonitoringPageComponent implements OnInit {
   displayedColumns: (keyof IMonitoringFormsRow)[] = [

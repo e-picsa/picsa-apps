@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
@@ -20,9 +19,7 @@ import { IResourceFileRow } from '../../../types';
 
 @Component({
   selector: 'dashboard-resource-file-edit',
-  standalone: true,
   imports: [
-    CommonModule,
     DashboardMaterialModule,
     DashboardStorageLinkComponent,
     FormsModule,
@@ -32,6 +29,7 @@ import { IResourceFileRow } from '../../../types';
   ],
   templateUrl: './resource-file-edit.component.html',
   styleUrl: './resource-file-edit.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFileEditComponent implements OnInit {
   constructor(

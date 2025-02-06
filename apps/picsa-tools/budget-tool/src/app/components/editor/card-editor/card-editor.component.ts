@@ -8,6 +8,7 @@ import { BudgetStore } from '../../../store/budget.store';
   selector: 'budget-card-editor',
   templateUrl: './card-editor.component.html',
   styleUrls: ['./card-editor.component.scss'],
+  standalone: false,
 })
 export class BudgetCardEditorComponent {
   currency: string;

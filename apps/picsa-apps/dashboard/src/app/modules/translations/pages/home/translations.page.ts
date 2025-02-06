@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,9 +18,8 @@ import { TranslationsEditComponent } from '../edit/translations-edit.component';
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
   selector: 'dashboard-translations-page',
-  standalone: true,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     DashboardMaterialModule,
     PicsaDataTableComponent,
@@ -100,18 +99,15 @@ export class TranslationsPageComponent {
     public dialog: MatDialog,
     deploymentService: DeploymentDashboardService
   ) {
-    effect(
-      async () => {
-        const deployment = deploymentService.activeDeployment();
-        if (deployment) {
-          const { country_code } = deployment;
-          this.activeCountryCode = country_code;
-          await this.loadTranslationMeta(country_code);
-          await this.refreshTranslations();
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(async () => {
+      const deployment = deploymentService.activeDeployment();
+      if (deployment) {
+        const { country_code } = deployment;
+        this.activeCountryCode = country_code;
+        await this.loadTranslationMeta(country_code);
+        await this.refreshTranslations();
+      }
+    });
   }
 
   public showEditDialog(row: ITranslationRow) {

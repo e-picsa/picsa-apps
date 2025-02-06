@@ -1,4 +1,3 @@
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,7 +19,6 @@ export const APP_COMMON_IMPORTS = [
   MobxAngularModule,
   PicsaDbModule.forRoot(),
   PicsaNativeModule.forRoot(),
-  HttpClientModule,
   PicsaTranslateModule.forRoot(),
   PicsaCommonComponentsModule,
 ];

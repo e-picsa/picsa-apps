@@ -18,7 +18,6 @@ import { filter, map } from 'rxjs';
   selector: 'picsa-app-layout',
   templateUrl: 'layout.html',
   styleUrl: 'layout.scss',
-  standalone: true,
   imports: [
     CommonModule,
     MatSidenavModule,

@@ -2,10 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { ClimateForecastPageComponent } from './pages/forecast/forecast.component';
-import { ClimateStationPageComponent } from './pages/station/station.component';
-import { StationDetailsPageComponent } from './pages/station-details/station-details.component';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -23,15 +19,16 @@ import { StationDetailsPageComponent } from './pages/station-details/station-det
       },
       {
         path: 'station',
-        component: ClimateStationPageComponent,
+        loadComponent: () => import('./pages/station/station.component').then((m) => m.ClimateStationPageComponent),
       },
       {
         path: 'forecast',
-        component: ClimateForecastPageComponent,
+        loadComponent: () => import('./pages/forecast/forecast.component').then((m) => m.ClimateForecastPageComponent),
       },
       {
         path: 'station/:stationId',
-        component: StationDetailsPageComponent,
+        loadComponent: () =>
+          import('./pages/station-details/station-details.component').then((m) => m.StationDetailsPageComponent),
       },
     ]),
   ],

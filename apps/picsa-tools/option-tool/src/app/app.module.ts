@@ -1,4 +1,3 @@
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,7 +20,6 @@ const StandaloneImports = [
 
 /** Common imports used in both standalone and embedded formats */
 export const APP_COMMON_IMPORTS = [
-  HttpClientModule,
   OptionMaterialModule,
   PicsaTranslateModule,
   PicsaDb_V2_Module,

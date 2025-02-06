@@ -14,6 +14,7 @@ interface ISummaryEntry {
   selector: 'budget-summary',
   templateUrl: './budget-summary.component.html',
   styleUrls: ['./budget-summary.component.scss'],
+  standalone: false,
 })
 export class BudgetSummaryComponent implements OnInit {
   @Input() budgetData: IBudget['data'];

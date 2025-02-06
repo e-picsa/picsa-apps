@@ -12,6 +12,7 @@ interface ITercile {
   selector: 'climate-terciles-tool',
   templateUrl: './terciles-tool.component.html',
   styleUrls: ['./terciles-tool.component.scss'],
+  standalone: false,
 })
 export class TercilesToolComponent implements OnDestroy {
   /** Value of current series data displayed */

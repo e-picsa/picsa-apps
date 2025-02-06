@@ -6,7 +6,6 @@ import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 
 @Component({
   selector: 'picsa-info-tooltip',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './info-tooltip.component.html',
   styleUrl: './info-tooltip.component.scss',

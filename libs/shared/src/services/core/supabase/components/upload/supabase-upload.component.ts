@@ -44,7 +44,6 @@ export interface IUploadResult {
  */
 @Component({
   selector: 'picsa-supabase-upload',
-  standalone: true,
   imports: [
     CommonModule,
     UppyAngularDashboardModule,

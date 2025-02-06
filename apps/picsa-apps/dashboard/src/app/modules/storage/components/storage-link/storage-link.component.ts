@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -21,10 +20,10 @@ const filetypeIconMapping = {
 
 @Component({
   selector: 'dashboard-storage-link',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './storage-link.component.html',
   styleUrls: ['./storage-link.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 /**
  * Minimal component that takes a storage file id input and returns a link
@@ -32,21 +31,25 @@ const filetypeIconMapping = {
  */
 export class DashboardStorageLinkComponent implements OnInit {
   /** Resource storage id */
-  @Input() id: string;
+  id = input.required<string>();
 
-  @Input() displayStyle: 'button' | 'link' | 'default' = 'default';
+  displayStyle = input<'button' | 'link' | 'default'>('default');
 
   constructor(private service: DashboardStorageService) {}
 
-  public entry?: IDashboardStorageEntry;
+  public entry = signal<IDashboardStorageEntry | undefined>(undefined);
+
+  public entryName = computed(() => {
+    return this.entry()?.name?.split('/')?.pop() || '';
+  });
 
   public notFound = false;
 
   public fileTypeIcon = 'description';
 
   async ngOnInit() {
-    const entry = await this.service.getStorageFileByPath(this.id);
-    this.entry = entry;
+    const entry = await this.service.getStorageFileByPath(this.id());
+    this.entry.set(entry);
     if (entry) {
       this.fileTypeIcon = this.getFileTypeIcon(entry);
     } else {

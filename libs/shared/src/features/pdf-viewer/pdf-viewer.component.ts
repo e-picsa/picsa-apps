@@ -9,20 +9,19 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
   templateUrl: './pdf-viewer.component.html',
   styleUrls: ['./pdf-viewer.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [NgxExtendedPdfViewerModule, CommonModule],
 })
 export class PdfViewerComponent {
   legacyBrowser = true;
   sidebarOpen = false;
+  // additional locales are currently excluded from main build
+  locale = 'en-GB';
   public isNative = Capacitor.isNativePlatform();
   @Input() page?: number;
   @Input() src: string;
   constructor() {
     // name of folder pdf viewer assets copied to as declared in `angular.json`
     pdfDefaultOptions.assetsFolder = 'assets/pdf-viewer';
-    // additional locales are currently excluded from main build
-    pdfDefaultOptions.locale = 'en-GB';
     this.legacyBrowser = isLegacyBrowser();
   }
 }

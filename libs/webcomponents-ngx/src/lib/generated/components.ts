@@ -14,6 +14,7 @@ import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
   template: '<ng-content></ng-content>',
   // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
   inputs: ['form', 'model', 'showButtons'],
+  standalone: false,
 })
 export class EnketoWebform {
   protected el: HTMLElement;

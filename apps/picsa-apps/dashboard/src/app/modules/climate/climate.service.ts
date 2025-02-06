@@ -37,13 +37,7 @@ export class ClimateService extends PicsaAsyncService {
   public apiCountryCode: IAPICountryCode;
 
   /** Trigger API request that includes mapping response to local database */
-  public loadFromAPI = ApiMapping(
-    this.api,
-    this,
-    this.supabaseService.db,
-    this.supabaseService.storage,
-    this.deploymentSevice.activeDeployment() as IDeploymentRow
-  );
+  public loadFromAPI = ApiMapping(this.api, this, this.supabaseService, this.supabaseService.storage);
 
   // Create a signal to represent current stationId as defined by route params
   private activeStationId = toSignal(

@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -12,18 +12,18 @@ import { DeploymentDashboardService } from './modules/deployment/deployment.serv
 import { ProfileMenuComponent } from './modules/profile/components/profile-menu/profile-menu.component';
 
 @Component({
-  standalone: true,
   imports: [
+    NgTemplateOutlet,
     RouterModule,
     DashboardMaterialModule,
     DeploymentSelectComponent,
-    CommonModule,
     ProfileMenuComponent,
     AuthRoleRequiredDirective,
   ],
   selector: 'dashboard-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';

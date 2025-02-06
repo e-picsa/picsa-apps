@@ -1,4 +1,5 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+/* eslint-disable @nx/enforce-module-boundaries */
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,11 +23,10 @@ import { AppLayoutComponent } from './components/layout';
 
 @NgModule({
   declarations: [AppComponent],
-  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     MobxAngularModule,
     PicsaDbModule.forRoot(),
     PicsaDb_V2_Module.forRoot(),
@@ -40,11 +40,10 @@ import { AppLayoutComponent } from './components/layout';
     PicsaTranslateModule,
     PicsaAnimationsModule.forRoot(),
     PicsaCommonComponentsModule,
-    HttpClientModule,
     AppLayoutComponent,
     AppRoutingModule,
   ],
-  bootstrap: [AppComponent],
+  providers: [{ provide: ErrorHandler, useClass: ErrorHandlerService }, provideHttpClient(withInterceptorsFromDi())],
 })
 export class AppModule {}
 

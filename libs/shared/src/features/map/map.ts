@@ -22,7 +22,6 @@ import * as GEOJSON from './geoJson';
   templateUrl: './map.html',
   styleUrls: ['./map.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaMapComponent implements OnInit {
@@ -60,6 +59,7 @@ export class PicsaMapComponent implements OnInit {
     // Observe layout size changes, use map invalidate method on change
     // to ensure map correctly setup. E.g. when switching tabs in farmer version
     effect((cleanup) => {
+      if (!this.map()) return;
       const container = this.map().getContainer();
       const observer = new ResizeObserver(() => {
         this.map().invalidateSize();
