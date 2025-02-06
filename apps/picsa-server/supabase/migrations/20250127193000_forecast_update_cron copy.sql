@@ -7,7 +7,9 @@ grant all privileges on all tables in schema cron to postgres;
 -- Trigger backend edge function every 30 minutes
 -- Adapted from https://supabase.com/docs/guides/functions/schedule-functions
 
-select cron.schedule('climate_forecasts_update', '30 * * * *', $$ select public.call_edge_function('dashboard/climate-forecast-update','{}'::jsonb); $$);
+select cron.schedule('climate_forecasts_db', '30 * * * *', $$ select public.call_edge_function('dashboard/climate-forecast-db','{}'::jsonb); $$);
+
+select cron.schedule('climate_forecasts_storage', '35 * * * *', $$ select public.call_edge_function('dashboard/climate-forecast-storage','{}'::jsonb); $$);
 
 
 -- Alt implementation (intermediate function created to structure more complex requests, kept for future reference)

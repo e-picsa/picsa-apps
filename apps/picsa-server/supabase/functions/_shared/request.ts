@@ -9,11 +9,11 @@ export const getFormData = async (req: Request): Promise<Form> => {
   return { fields: {}, files: {} };
 };
 
-export const getJsonData = async (req: Request): Promise<Record<string, any>> => {
+export const getJsonData = async <T = Record<string, any>>(req: Request): Promise<T> => {
   if (req.headers.has('content-type') && req.headers.get('content-type')?.startsWith('application/json')) {
     const json = await req.json();
-    return json;
+    return json as T;
   }
   console.error('Request does not contain json body');
-  return {};
+  return {} as T;
 };
