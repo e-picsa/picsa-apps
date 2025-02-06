@@ -8,3 +8,12 @@ export const getFormData = async (req: Request): Promise<Form> => {
   console.error('Request does not contain form-data', req.body);
   return { fields: {}, files: {} };
 };
+
+export const getJsonData = async (req: Request): Promise<Record<string, any>> => {
+  if (req.headers.has('content-type') && req.headers.get('content-type')?.startsWith('application/json')) {
+    const json = await req.json();
+    return json;
+  }
+  console.error('Request does not contain json body');
+  return {};
+};
