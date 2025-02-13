@@ -1,9 +1,30 @@
 <div class="page-content">
   <div class="pdf-container slide-in" [class.active]="pdfSrc ? true : false">
     @if(pdfSrc){
-    <picsa-pdf-viewer [page]="page" [src]="pdfSrc">
-      <button style="margin-right: 8px" mat-button color="primary" (click)="clearPdf()">{{'Close' | translate}}</button>
+    <picsa-pdf-viewer [src]="pdfSrc">
+      <button style="margin-right: 8px" mat-button color="primary" (click)="closeForecast()">
+        {{'Close' | translate}}
+      </button>
     </picsa-pdf-viewer>
+    }
+  </div>
+
+  <h2>{{'Daily Forecast' | translate}}</h2>
+  <div class="flex gap-4 overflow-x-auto sm:flex-wrap">
+    @for(forecast of dailyForecasts(); track forecast.id){
+    <div
+      #container
+      class="max-h-32 min-w-32 w-32 border-solid capitalize p-2 overflow-auto"
+      (click)="handleForecastClick(forecast)"
+    >
+      @if(!forecast.downloaded && forecast.storage_file){
+      <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
+        <div>progress: {{downloader.progress()}}</div>
+      </picsa-supabase-storage-download>
+      }
+
+      <div>{{forecast.label}}</div>
+    </div>
     }
   </div>
 
