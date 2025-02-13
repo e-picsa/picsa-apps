@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { FirebasePerformance } from '@capacitor-firebase/performance';
 import { FirebasePerformance as IFirebasePerformance, getPerformance } from '@firebase/performance';
+import { ENVIRONMENT } from '@picsa/environments/src';
 
 import { PicsaFirebaseService } from './firebase.service';
 
@@ -13,8 +15,12 @@ import { PicsaFirebaseService } from './firebase.service';
 export class PerformanceService {
   private performance: IFirebasePerformance;
 
-  constructor(firebaseService: PicsaFirebaseService) {
-    this.performance = getPerformance(firebaseService.app);
+  constructor(private firebaseService: PicsaFirebaseService) {}
+
+  public init() {
+    if (Capacitor.isNativePlatform() && ENVIRONMENT.production) {
+      this.performance = getPerformance(this.firebaseService.app);
+    }
   }
   public startTrace = FirebasePerformance.startTrace;
 
