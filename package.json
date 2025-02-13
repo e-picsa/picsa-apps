@@ -87,7 +87,7 @@
     "@uppy/tus": "^3.4.0",
     "c3": "^0.7.20",
     "capacitor-blob-writer": "^1.1.16",
-    "capacitor-video-player": "^6.0.2",
+    "capacitor-video-player": "6.0.0",
     "cordova-plugin-file": "^8.1.3",
     "cordova-plugin-file-opener2": "^4.0.0",
     "cordova-plugin-x-socialsharing": "^6.0.4",
