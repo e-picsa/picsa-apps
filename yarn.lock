@@ -16315,6 +16315,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ky@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "ky@npm:1.7.4"
+  checksum: 10c0/8b28b85cbee6d3e073ff796b92661f4bf155ec9b9a131411de1c34fb2f89f8507e67ff3df369e3c6d18714134774e8735e88cba72b19d005a09112b800d14474
+  languageName: node
+  linkType: hard
+
 "launch-editor@npm:^2.6.1":
   version: 2.9.1
   resolution: "launch-editor@npm:2.9.1"
@@ -19110,6 +19117,7 @@ __metadata:
     jsonc-eslint-parser: "npm:^2.4.0"
     jszip: "npm:^3.10.1"
     jwt-decode: "npm:^4.0.0"
+    ky: "npm:^1.7.4"
     leaflet: "npm:^1.9.4"
     lint-staged: "npm:^13.2.1"
     lottie-web: "npm:^5.12.2"
