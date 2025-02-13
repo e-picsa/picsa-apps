@@ -40,8 +40,8 @@ export class ClimateForecastService {
       // load new forecasts from the server
       const serverForecasts = await this.loadServerForecasts(country_code, cachedForecasts[0]);
       if (serverForecasts.length > 0) {
-        const saved = await this.saveForecasts(serverForecasts);
-        this.dailyForecastDocs.update((v) => [...saved, ...v]);
+        const { success, error } = await this.saveForecasts(serverForecasts);
+        this.dailyForecastDocs.update((v) => [...success, ...v]);
       }
     }
   }
