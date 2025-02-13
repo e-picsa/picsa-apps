@@ -23,11 +23,14 @@ export const SCHEMA_V0: RxJsonSchema<IClimateForecastRow> = {
   },
   required: ['id'],
   primaryKey: 'id',
+  attachments: {
+    encrypted: false,
+    compression: undefined,
+  },
 };
 
 export const COLLECTION_V0: IPicsaCollectionCreator<IClimateForecastRow> = {
   schema: SCHEMA_V0,
   isUserCollection: false,
   migrationStrategies: {},
-  attachments: {},
 };

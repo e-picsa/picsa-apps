@@ -9,6 +9,13 @@ import { PicsaDatabase_V2_Service } from './db.service';
 import { ATTACHMENTS_COLLECTION, IAttachment } from './schemas/attachments';
 
 /*********************************************************************************************
+ * @deprecated v3.50.0
+ * The attachment system was creating primarily to store single resource file attachments
+ * in a separate collection due to limitations in rxdb/dexie attachment handling.
+ *
+ * Recent upgrades handle better so reccomend using doc `putAttachment` method directly
+ * on source documents
+ *
  * DB Attachments
  * Ordinarily RXDB handles attachments within the storage provider, however dexie is not
  * currently supported. So manual workaround to persist attachment files to separate collection
@@ -74,6 +81,7 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     }
     return null;
   }
+
   /**
    * Release a file attachment URI when no longer required
    * @param attachmentNames specific resource attachmentNames to revoke
