@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
+import { addRxPlugin, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
-import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
+import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
 import { PicsaDatabaseSyncService } from './db-sync.service';
+import { createDB } from './migrations';
 import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
-addRxPlugin(RxDBMigrationPlugin);
+addRxPlugin(RxDBMigrationSchemaPlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
 
 interface IUserCollectionData {
@@ -41,13 +41,13 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * not be manually triggered
    */
   public override async init() {
-    this.db = await createRxDatabase({
-      name: `picsa_app`,
-      storage: getRxStorageDexie({ autoOpen: true }),
-      // hashFunction: (s) => md5hash(s).toString(),
-      // TODO - want to use md5 hashfunction but would need to migrate all collections
-      // import md5hash from 'crypto-js/md5';
-    });
+    // NOTE - do not use dev-mode. It blocks usage of fields starting with `_`, which is still permissable in production
+
+    // if (isDevMode()) {
+    //   await import('rxdb/plugins/dev-mode').then((module) => addRxPlugin(module.RxDBDevModePlugin));
+    // }
+    this.db = await createDB();
+
     await this.syncService.registerDB(this.db);
   }
 
