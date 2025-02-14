@@ -6,6 +6,7 @@ import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
 import { createDB } from './migrations';
 import { IPicsaCollectionCreator } from './models';
@@ -13,10 +14,6 @@ import { IPicsaCollectionCreator } from './models';
 addRxPlugin(RxDBAttachmentsPlugin);
 addRxPlugin(RxDBMigrationSchemaPlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
-
-interface IUserCollectionData {
-  _app_user_id?: string;
-}
 
 /**
  * DB service that utilises RXDB to provide live-query collections
@@ -58,7 +55,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         console.warn('Duplicate collection skipped:', name);
       } else {
         // apply custom collection modifiers
-        const { collection, hookFactories } = this.handleCollectionModifiers(picsaCollection);
+        const { collection, hookFactories } = handleCollectionModifiers(picsaCollection);
 
         // register colleciton
         await this.db.addCollections({ [name]: collection });
@@ -92,28 +89,5 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     } else {
       return collection.find({ selector: query });
     }
-  }
-
-  /**
-   * Handle custom PICSA DB modifiers
-   */
-  private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
-    const { isUserCollection, syncPush, ...collection } = picsaCollection;
-    const hookFactories: ((c: RxCollection) => void)[] = [];
-    // store app user ids in any collections marked with `isUserCollection`
-    // user information is stored in localStorage instead of db to avoid circular dependency issues
-    if (isUserCollection) {
-      collection.schema.properties['_app_user_id'] = { type: 'string' };
-      hookFactories.push((c) => {
-        const fn = (data: IUserCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
-        c.addHook('pre', 'save', fn);
-        c.addHook('pre', 'insert', fn);
-      });
-    }
-    // If collection pushed to server db store _sync_push_status
-    if (syncPush) {
-      collection.schema.properties['_sync_push_status'] = { type: 'string' };
-    }
-    return { collection, hookFactories };
   }
 }
