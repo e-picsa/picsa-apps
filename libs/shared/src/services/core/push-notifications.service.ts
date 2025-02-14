@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
 
 @Injectable({
@@ -8,6 +9,9 @@ export class PicsaPushNotificationService {
   //constructor() {}
 
   public async initializePushNotifications() {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
     try {
       // Check if permission is already granted
       const permResult = await PushNotifications.checkPermissions();

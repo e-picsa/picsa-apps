@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
+import { addRxPlugin, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
-import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
+import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
+import { createDB } from './migrations';
 import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
-addRxPlugin(RxDBMigrationPlugin);
+addRxPlugin(RxDBMigrationSchemaPlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
-
-interface IUserCollectionData {
-  _app_user_id?: string;
-}
 
 /**
  * DB service that utilises RXDB to provide live-query collections
@@ -41,13 +38,13 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * not be manually triggered
    */
   public override async init() {
-    this.db = await createRxDatabase({
-      name: `picsa_app`,
-      storage: getRxStorageDexie({ autoOpen: true }),
-      // hashFunction: (s) => md5hash(s).toString(),
-      // TODO - want to use md5 hashfunction but would need to migrate all collections
-      // import md5hash from 'crypto-js/md5';
-    });
+    // NOTE - do not use dev-mode. It blocks usage of fields starting with `_`, which is still permissable in production
+
+    // if (isDevMode()) {
+    //   await import('rxdb/plugins/dev-mode').then((module) => addRxPlugin(module.RxDBDevModePlugin));
+    // }
+    this.db = await createDB();
+
     await this.syncService.registerDB(this.db);
   }
 
@@ -58,7 +55,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
         console.warn('Duplicate collection skipped:', name);
       } else {
         // apply custom collection modifiers
-        const { collection, hookFactories } = this.handleCollectionModifiers(picsaCollection);
+        const { collection, hookFactories } = handleCollectionModifiers(picsaCollection);
 
         // register colleciton
         await this.db.addCollections({ [name]: collection });
@@ -92,28 +89,5 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     } else {
       return collection.find({ selector: query });
     }
-  }
-
-  /**
-   * Handle custom PICSA DB modifiers
-   */
-  private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
-    const { isUserCollection, syncPush, ...collection } = picsaCollection;
-    const hookFactories: ((c: RxCollection) => void)[] = [];
-    // store app user ids in any collections marked with `isUserCollection`
-    // user information is stored in localStorage instead of db to avoid circular dependency issues
-    if (isUserCollection) {
-      collection.schema.properties['_app_user_id'] = { type: 'string' };
-      hookFactories.push((c) => {
-        const fn = (data: IUserCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
-        c.addHook('pre', 'save', fn);
-        c.addHook('pre', 'insert', fn);
-      });
-    }
-    // If collection pushed to server db store _sync_push_status
-    if (syncPush) {
-      collection.schema.properties['_sync_push_status'] = { type: 'string' };
-    }
-    return { collection, hookFactories };
   }
 }

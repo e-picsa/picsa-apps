@@ -16,7 +16,7 @@ export interface IResourceCollection_v0 extends IResourceBase_v0 {
 }
 
 export const SCHEMA_V0: RxJsonSchema<IResourceCollection_v0> = {
-  title: 'resource_file',
+  title: 'resource_collection',
   version: 0,
   keyCompression: false,
   type: 'object',

@@ -4,6 +4,7 @@ import { _wait } from '@picsa/utils';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
 
 import { SupabaseService } from '../supabase';
+import { handleCollectionModifiers } from './db.utils';
 import { ISyncDeleteEntry, SYNC_DELETE_COLLECTION } from './schemas/sync_delete';
 
 export interface ISyncPushEntry {
@@ -40,7 +41,8 @@ export class PicsaDatabaseSyncService {
    */
   public async registerDB(db: RxDatabase<{ [key: string]: RxCollection }>) {
     this.db = db;
-    const { sync_delete } = await this.db.addCollections({ sync_delete: SYNC_DELETE_COLLECTION });
+    const { collection } = handleCollectionModifiers(SYNC_DELETE_COLLECTION);
+    const { sync_delete } = await this.db.addCollections({ sync_delete: collection });
     this.syncDeleteCollection = sync_delete;
     // once db is registered subscribe to network changes to manage syncing
     this.subscribeToNetworkChanges();
