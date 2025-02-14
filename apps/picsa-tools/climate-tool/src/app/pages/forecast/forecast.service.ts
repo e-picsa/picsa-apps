@@ -41,6 +41,10 @@ export class ClimateForecastService {
       const serverForecasts = await this.loadServerForecasts(country_code, cachedForecasts[0]);
       if (serverForecasts.length > 0) {
         const { success, error } = await this.saveForecasts(serverForecasts);
+        if (error.length > 0) {
+          console.error(error);
+          throw new Error(`[Forecast] failed to load daily forecasts`);
+        }
         this.dailyForecastDocs.update((v) => [...success, ...v]);
       }
     }
@@ -49,7 +53,7 @@ export class ClimateForecastService {
   public async downloadForecastFile(
     doc: RxDocument<IClimateForecastRow>,
     downloaderUI: SupabaseStorageDownloadComponent
-  ) {
+  ): Promise<RxDocument<IClimateForecastRow>> {
     await downloaderUI.start();
     const { error, data } = await downloaderUI.completed();
     if (error) {
@@ -59,7 +63,8 @@ export class ClimateForecastService {
     }
     if (data && data instanceof Blob) {
       const attachmentId = downloaderUI.storage_path();
-      doc.putAttachment({ id: attachmentId, data, type: data.type });
+      const { doc: updatedDoc } = await doc.putAttachment({ id: attachmentId, data, type: data.type });
+      return updatedDoc;
     }
     return doc;
   }

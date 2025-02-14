@@ -16,7 +16,7 @@ export const SCHEMA_V0: RxJsonSchema<IClimateForecastRow> = {
     forecast_type: { type: 'string' },
     id: { type: 'string' },
     language_code: { type: 'string' },
-    location: { type: 'string' },
+    location: { type: 'array' },
     mimetype: { type: 'string' },
     storage_file: { type: 'string' },
     updated_at: { type: 'string' },

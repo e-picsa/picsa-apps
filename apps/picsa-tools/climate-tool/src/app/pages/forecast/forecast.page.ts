@@ -69,13 +69,20 @@ export class ClimateForecastComponent implements OnDestroy {
   }
 
   public async handleForecastClick(forecast: IForecastSummary) {
+    // open downloaded forecast
     if (forecast.downloaded) {
       this.openForecast(forecast);
-    } else {
+    }
+    // download and open new forecast
+    else {
       const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
       if (downloader) {
-        forecast._doc = await this.service.downloadForecastFile(forecast._doc, downloader);
-        await this.openForecast(forecast);
+        await this.service.downloadForecastFile(forecast._doc, downloader);
+        await this.refreshForecastData();
+        const updated = this.dailyForecasts().find(({ id }) => id === forecast.id);
+        if (updated?.downloaded) {
+          this.openForecast(updated);
+        }
       }
     }
   }
@@ -85,6 +92,11 @@ export class ClimateForecastComponent implements OnDestroy {
       URL.revokeObjectURL(this.pdfSrc);
     }
     this.pdfSrc = undefined;
+  }
+
+  private refreshForecastData() {
+    const { country_code } = this.configurationService.deploymentSettings();
+    return this.service.loadDailyForecasts(country_code);
   }
 
   private async openForecast(forecast: IForecastSummary) {
