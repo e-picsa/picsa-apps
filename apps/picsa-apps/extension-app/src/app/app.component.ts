@@ -1,7 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { AfterViewInit, Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ENVIRONMENT } from '@picsa/environments';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
@@ -40,7 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.ready.set(true);
   }
   async ngAfterViewInit() {
-    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
+    this.performanceService.init();
     this.crashlyticsService.ready();
     // eagerly enable analytics collection
     this.analyticsService.init(this.router);
