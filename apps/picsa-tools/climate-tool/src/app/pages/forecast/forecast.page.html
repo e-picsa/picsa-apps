@@ -9,32 +9,63 @@
     }
   </div>
 
-  <h2>{{'Daily Forecast' | translate}}</h2>
-  <div class="flex gap-4 overflow-x-auto sm:flex-wrap">
-    @for(forecast of dailyForecasts(); track forecast.id){
-    <div
-      #container
-      class="max-h-32 min-w-32 w-32 border-solid capitalize p-2 overflow-auto"
-      (click)="handleForecastClick(forecast)"
-    >
-      @if(!forecast.downloaded && forecast.storage_file){
-      <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
-        <div>progress: {{downloader.progress()}}</div>
-      </picsa-supabase-storage-download>
+  <!-- Daily -->
+  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4">
+    <h2 class="forecast-heading">{{'Daily' | translate}}</h2>
+    <div class="forecast-content">
+      @if(dailyForecasts().length===0){
+      <div class="mx-auto w-24 mt-4">
+        <mat-progress-bar mode="query"></mat-progress-bar>
+      </div>
       }
-
-      <div>{{forecast.label}}</div>
+      <div class="flex gap-4 justify-center w-fit">
+        @for(forecast of dailyForecasts(); track forecast.id){
+        <div
+          class="min-w-40 w-40 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
+          (click)="handleForecastClick(forecast)"
+        >
+          <div class="flex-1 overflow-auto capitalize p-2">{{forecast.label}}</div>
+          <div class="pt-1 text-center" style="background: var(--color-secondary-50)">
+            @if(!forecast.downloaded){
+            <picsa-supabase-storage-download
+              [storage_path]="forecast.storage_file"
+              #downloader
+              (click)="downloader.stop()"
+            >
+              @if(downloader.progress()===undefined){
+              <mat-icon>download</mat-icon>
+              } @else{
+              <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
+              }
+            </picsa-supabase-storage-download>
+            } @else{
+            <mat-icon>task_alt</mat-icon>
+            }
+          </div>
+        </div>
+        }
+      </div>
     </div>
-    }
   </div>
 
-  <h2>{{'Seasonal Forecast' | translate}}</h2>
-  @for(forecast of seasonalForecasts(); track forecast.id){
-  <resource-item-file [resource]="forecast"></resource-item-file>
-  }
+  <!-- Seasonal -->
+  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
+    <h2 class="forecast-heading">{{'Seasonal' | translate}}</h2>
+    <div class="flex-1 overflow-x-auto">
+      <div class="flex gap-4 justify-center w-fit items-center">...</div>
+    </div>
+  </div>
 
-  <h2>{{'Downscaled Forecasts' | translate}}</h2>
-  @for(forecast of downscaledForecasts(); track forecast.id){
-  <mat-card>{{forecast.title}}</mat-card>
-  }
+  <!-- Downscaled -->
+  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
+    <h2 class="forecast-heading">{{'Downscaled' | translate}}</h2>
+    <div class="flex-1 overflow-x-auto">
+      <div class="flex gap-4 justify-center w-fit items-center">
+        @if(downscaledForecasts(); as collection){
+        <resource-item-collection [collection]="collection"></resource-item-collection>
+        }
+        <!--  -->
+      </div>
+    </div>
+  </div>
 </div>

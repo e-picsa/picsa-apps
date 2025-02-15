@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, OnDestroy, signal, viewChildren } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ConfigurationService } from '@picsa/configuration';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
-import { IResourceFile } from '@picsa/resources/src/app/schemas';
 import { PdfViewerComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
@@ -10,14 +11,14 @@ import { RxDocument } from 'rxdb';
 
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
 import { ClimateForecastService } from './forecast.service';
-import { IClimateForecastRow } from './forecast.types';
+import { IClimateForecast } from './schemas';
 
 interface IForecastSummary {
-  _doc: RxDocument<IClimateForecastRow>;
+  _doc: RxDocument<IClimateForecast>;
   id: string;
   label: string;
+  storage_file: string;
   downloaded: boolean;
-  storage_file: string | null;
 }
 
 @Component({
@@ -27,6 +28,8 @@ interface IForecastSummary {
   imports: [
     CommonModule,
     ClimateToolComponentsModule,
+    MatIcon,
+    MatProgressBarModule,
     PicsaTranslateModule,
     PdfViewerComponent,
     ResourcesComponentsModule,
@@ -34,7 +37,6 @@ interface IForecastSummary {
   ],
 })
 export class ClimateForecastComponent implements OnDestroy {
-  forecastTypes = ['Annual', 'Downscaled'];
   public pdfSrc?: string;
 
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
@@ -43,7 +45,13 @@ export class ClimateForecastComponent implements OnDestroy {
     this.service.dailyForecastDocs().map((doc): IForecastSummary => {
       const { id, storage_file } = doc;
       const label = this.generateForecastLabel(id);
-      const summary: IForecastSummary = { _doc: doc, id, label, storage_file, downloaded: false };
+      const summary: IForecastSummary = {
+        _doc: doc,
+        id,
+        label,
+        storage_file: storage_file as string,
+        downloaded: false,
+      };
       if (storage_file) {
         summary.downloaded = doc.getAttachment(storage_file) ? true : false;
       }
@@ -51,15 +59,22 @@ export class ClimateForecastComponent implements OnDestroy {
     })
   );
 
-  public seasonalForecasts = signal<IResourceFile[]>([]);
+  public downscaledForecasts = computed(() => {
+    const collection = this.service.downscaledForecastsCollection();
+    if (collection) {
+      return collection._data;
+    }
+    return undefined;
+  });
 
-  public downscaledForecasts = signal<IResourceFile[]>([]);
+  // HACK - use resources collection for downscaled forecasts
+  public downscaledForecastsCollection = {};
 
   constructor(private service: ClimateForecastService, private configurationService: ConfigurationService) {
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();
       if (country_code) {
-        this.service.loadDailyForecasts(country_code);
+        this.service.loadForecasts(country_code);
       }
     });
   }
@@ -78,6 +93,7 @@ export class ClimateForecastComponent implements OnDestroy {
       const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
       if (downloader) {
         await this.service.downloadForecastFile(forecast._doc, downloader);
+        // refresh data to populated downloads
         await this.refreshForecastData();
         const updated = this.dailyForecasts().find(({ id }) => id === forecast.id);
         if (updated?.downloaded) {
@@ -96,7 +112,7 @@ export class ClimateForecastComponent implements OnDestroy {
 
   private refreshForecastData() {
     const { country_code } = this.configurationService.deploymentSettings();
-    return this.service.loadDailyForecasts(country_code);
+    return this.service.loadForecasts(country_code);
   }
 
   private async openForecast(forecast: IForecastSummary) {

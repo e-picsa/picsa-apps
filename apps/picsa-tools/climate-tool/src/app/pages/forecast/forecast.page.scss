@@ -1,3 +1,7 @@
+.forecast-container {
+  @apply border-solid capitalize p-2;
+}
+
 .pdf-container {
   position: fixed;
   z-index: 2;
@@ -13,4 +17,11 @@
 
 .slide-in.active {
   transform: translateY(0);
+}
+
+h2.forecast-heading {
+  @apply w-full sm:mb-8 sm:w-32 sm:text-left overflow-hidden text-ellipsis;
+}
+div.forecast-content {
+  @apply flex-1 overflow-x-auto mx-4 sm:mx-0;
 }

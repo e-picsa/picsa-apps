@@ -28,7 +28,7 @@ export class SupabaseStorageDownloadComponent {
   /** Storage file path */
   storage_path = input.required<string>();
 
-  /** Signal of download progress */
+  /** Signal of download progress, integer value from 0 to 100 */
   public progress = signal<number | undefined>(undefined);
 
   /** Promise that resolves when download is complete */
@@ -59,7 +59,7 @@ export class SupabaseStorageDownloadComponent {
     return ky(url, {
       signal: controller.signal,
       onDownloadProgress: (progress) => {
-        this.progress.set(progress.percent);
+        this.progress.set(Math.round(progress.percent * 100));
       },
     }).then(
       async (res) => {
