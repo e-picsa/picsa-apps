@@ -1,16 +1,27 @@
+import type { Config } from 'jest';
+
 /* eslint-disable */
-export default {
+const config: Config = {
   displayName: 'shared',
   preset: '../../jest.preset.js',
-  globals: {},
+  setupFiles: ['fake-indexeddb/auto'],
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  coverageDirectory: '../../../coverage/apps/picsa-tools/seasonal-calendar-tool',
   transform: {
-    '^.+\\.[tj]sx?$': [
-      'ts-jest',
+    '^.+\\.(ts|mjs|js|html)$': [
+      'jest-preset-angular',
       {
         tsconfig: '<rootDir>/tsconfig.spec.json',
+        stringifyContentPathRegex: '\\.(html|svg)$',
       },
     ],
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/shared',
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  snapshotSerializers: [
+    'jest-preset-angular/build/serializers/no-ng-attributes',
+    'jest-preset-angular/build/serializers/ng-snapshot',
+    'jest-preset-angular/build/serializers/html-comment',
+  ],
 };
+
+export default config;
