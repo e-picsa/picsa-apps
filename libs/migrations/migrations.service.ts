@@ -1,13 +1,19 @@
 import { Injectable, Injector } from '@angular/core';
 import { MIGRATIONS } from './migrations';
+import { IMigrationStatus } from './migrations/types';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaMigrationService {
-  private migrationHistory: Record<string, { timestamp: string; result?: any; error?: string }> = {};
+  private migrationHistory: Record<string, IMigrationStatus> = {};
 
   public async runMigrations(injector: Injector): Promise<void> {
     this.migrationHistory = this.loadMigrationHistory();
-    const pending = MIGRATIONS.filter(({ id }) => !Object.prototype.hasOwnProperty.call(this.migrationHistory, id));
+    const pending = MIGRATIONS.filter(({ id, retryOnFail }) => {
+      const history = this.migrationHistory[id];
+      if (!history) return true;
+      if (history.error) return retryOnFail ? true : false;
+      return false;
+    });
     const timestamp = new Date().toLocaleString();
     if (pending.length > 0) {
       console.group('[Migrations]');
@@ -17,6 +23,7 @@ export class PicsaMigrationService {
           const result = await up(injector);
           this.migrationHistory[id] = { timestamp, result };
         } catch (error) {
+          console.error('migration failed', id, error);
           this.migrationHistory[id] = { timestamp, error: (error as any)?.message };
         }
       }
