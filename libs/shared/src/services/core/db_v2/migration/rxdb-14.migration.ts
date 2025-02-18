@@ -5,6 +5,7 @@ import { COLLECTION as OPTION_TOOL_COLLECTION } from '@picsa/option/src/app/sche
 import { COLLECTION as SEASONAL_CALENDAR_COLLECTION } from '@picsa/seasonal-calendar/src/app/schema';
 import { COLLECTION as PHOTO_COLLECTION } from '@picsa/shared/features/photo/schema';
 import { COLLECTION as VIDEO_COLLECTION } from 'libs/shared/src/features/video-player/schema';
+import { RxDatabase } from 'rxdb';
 import { addRxPlugin, createRxDatabase, RxDocument } from 'rxdb-14';
 import { RxDBAttachmentsPlugin } from 'rxdb-14/plugins/attachments';
 import { RxDBMigrationPlugin } from 'rxdb-14/plugins/migration';
@@ -24,6 +25,7 @@ const legacyCollections: Record<string, IPicsaCollectionCreator<any>> = {
   // (not migrating resources_tool_files)
   monitoring_tool_submissions: MONITORING_SUBMISSIONS_SCHEMA,
   options_tool: OPTION_TOOL_COLLECTION,
+  // TODO - include resource_files if wanting them to download
   seasonal_calendar_tool: SEASONAL_CALENDAR_COLLECTION,
   video_player: VIDEO_COLLECTION,
 };
@@ -74,13 +76,12 @@ class Rxdb14Migrator {
 
     await this.dbService.ready();
 
-    const legacyAttachments = legacyDB.collections.attachments;
-
     await this.dbService.ensureCollections(legacyCollections as any);
 
     for (const collectionName of Object.keys(legacyCollections)) {
       console.log('[Migrate]', collectionName);
-      const legacyDocs: RxDocument<any>[] = await legacyDB.collections[collectionName].find().exec();
+      const legacyCollection = legacyDB.collections[collectionName];
+      const legacyDocs: RxDocument[] = await legacyCollection.find().exec();
       const collection = this.dbService.db.collections[collectionName];
       for (const legacyDoc of legacyDocs) {
         const { _attachments, _meta, _rev, _deleted, ...data } = legacyDoc._data;
@@ -88,30 +89,16 @@ class Rxdb14Migrator {
           try {
             const upsertDoc: RxDocument = await collection.upsert(data);
             for (const [attachmentName, attachmentMeta] of Object.entries(_attachments)) {
-              console.log('migrate attachment', attachmentName, attachmentMeta, _attachments);
-              const legacyAttachment = await legacyAttachments.findOne(`${collectionName}||${attachmentName}`).exec();
-              if (legacyAttachment) {
-                const { id, length, type, digest } = legacyAttachment._data as IAttachment_V0;
-
-                // native doc only keeps reference to attachment which is stored in attachments DB (not collection attachment objectstore)
-                const blob = new Blob([JSON.stringify({ digest, length, type })]);
-                await upsertDoc.putAttachment({ id, type, data: blob });
-
-                // TODO - native should have uri
-                //   TODO - is it better to write to disk or idb blob
-                // TODO - update db-attachment service to also handle
-                // TODO - maybe migrate db attachment service first and call
-                //   TODO - consider which attachments to store as docs and which as URIs on disk
+              const attachmentEntry = new Blob([JSON.stringify(attachmentMeta)], { type: 'application/json' });
+              try {
+                await upsertDoc.putAttachment({ id: attachmentName, data: attachmentEntry, type: attachmentMeta.type });
+              } catch (error) {
+                console.error('Attachment put failed', attachmentName, attachmentMeta);
+                console.error(error);
               }
-              console.log('legacyAttachment', legacyAttachment);
-              //   const attachment = legacyDoc.getAttachment(attachmentName);
-              //   if (attachment) {
-              //     const { id, type } = attachment;
-              //     const data = await attachment.getData();
-              //     console.log('put attachment', { id, type, data });
-              //     // TODO - migrate all legacy attachments
-              //     // await upsertDoc.putAttachment({ data, id, type });
-              //   }
+            }
+            if (upsertDoc) {
+              await legacyDoc.remove();
             }
             // TODO - handle attachments
           } catch (error) {
@@ -120,11 +107,12 @@ class Rxdb14Migrator {
           }
         }
       }
-      const attachments: RxDocument[] = await this.dbService.db.collections.attachments.find().exec();
-      console.log(
-        'attachments',
-        attachments.map((doc) => doc._data)
-      );
+      const nonMigratedDocs = await legacyCollection.find().exec();
+      if (nonMigratedDocs.length === 0) {
+        console.log('removing legacy collection', legacyCollection.name);
+        await legacyCollection.remove();
+      }
+      // TODO - housekeeping plugin??
     }
 
     // TODO - consider whether migrating attachments worth it (likely slow)

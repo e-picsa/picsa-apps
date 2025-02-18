@@ -12,10 +12,6 @@ import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
 import { IPicsaCollectionCreator } from './models';
 
-addRxPlugin(RxDBAttachmentsPlugin);
-addRxPlugin(RxDBMigrationSchemaPlugin);
-addRxPlugin(RxDBQueryBuilderPlugin);
-
 /**
  * DB service that utilises RXDB to provide live-query collections
  * and persisted data to indexeddb (via dexie)
@@ -39,6 +35,10 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * not be manually triggered
    */
   public override async init() {
+    // TODO - should create custom attachments plugin that handles native/opfs file storage
+    addRxPlugin(RxDBAttachmentsPlugin);
+    addRxPlugin(RxDBMigrationSchemaPlugin);
+    addRxPlugin(RxDBQueryBuilderPlugin);
     // NOTE - do not use dev-mode. It blocks usage of fields starting with `_`, which is still permissable in production
 
     // if (isDevMode()) {
