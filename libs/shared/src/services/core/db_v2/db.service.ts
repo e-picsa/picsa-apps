@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
+import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
 import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
-import { createDB } from './migrations';
 import { IPicsaCollectionCreator } from './models';
 
 addRxPlugin(RxDBAttachmentsPlugin);
@@ -43,7 +44,13 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     // if (isDevMode()) {
     //   await import('rxdb/plugins/dev-mode').then((module) => addRxPlugin(module.RxDBDevModePlugin));
     // }
-    this.db = await createDB();
+    this.db = await createRxDatabase({
+      name: `picsa_app_16`,
+      storage: wrappedValidateAjvStorage({ storage: getRxStorageDexie({ autoOpen: true }) }),
+      // hashFunction: (s) => md5hash(s).toString(),
+      // TODO - want to use md5 hashfunction but would need to migrate all collections
+      // import md5hash from 'crypto-js/md5';
+    });
 
     await this.syncService.registerDB(this.db);
   }

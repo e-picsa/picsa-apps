@@ -3,7 +3,7 @@ import { RxJsonSchema } from 'rxdb';
 import type { IPicsaCollectionCreator } from '../../models';
 
 /** Populated properties following RXDB putAttachment method */
-export interface IAttachment_v0 {
+export interface IAttachment_V0 {
   id: string;
   /** web - base64 encoded string data stored in document */
   data?: string;
@@ -15,7 +15,7 @@ export interface IAttachment_v0 {
   digest?: string;
 }
 
-export const SCHEMA_V0: RxJsonSchema<IAttachment_v0> = {
+export const SCHEMA_V0: RxJsonSchema<IAttachment_V0> = {
   title: 'attachments',
   version: 0,
   keyCompression: false,
@@ -31,7 +31,7 @@ export const SCHEMA_V0: RxJsonSchema<IAttachment_v0> = {
   primaryKey: 'id',
 };
 
-export const COLLECTION_V0: IPicsaCollectionCreator<IAttachment_v0> = {
+export const COLLECTION_V0: IPicsaCollectionCreator<IAttachment_V0> = {
   schema: SCHEMA_V0,
   isUserCollection: false,
 };

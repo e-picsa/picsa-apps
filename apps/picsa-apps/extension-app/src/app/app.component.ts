@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { AfterViewInit, Component, Injector, OnInit, signal } from '@angular/core';
+import { Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
@@ -8,6 +8,7 @@ import { AnalyticsService } from '@picsa/shared/services/core/analytics.service'
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
+import { _wait } from '@picsa/utils';
 
 @Component({
   selector: 'picsa-root',
@@ -15,7 +16,7 @@ import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-n
   styleUrls: ['./app.component.scss'],
   standalone: false,
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit {
   title = 'extension-toolkit';
   public ready = signal(false);
   public showLoader = signal(false);
@@ -37,8 +38,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     await this.runMigrations();
 
     this.ready.set(true);
-  }
-  async ngAfterViewInit() {
+
+    // ensure service initialisation only occurs after migrations complete
+    // and UI has chance to update
+    await _wait(50);
     this.performanceService.init();
     this.crashlyticsService.ready();
     // eagerly enable analytics collection

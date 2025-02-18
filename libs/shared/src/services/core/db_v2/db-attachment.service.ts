@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { base64ToBlob } from '@picsa/utils';
-import { blobToBase64String, RxCollection, RxDocument } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { NativeStorageService } from '../../native';
@@ -113,9 +113,9 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     }
     // Web
     else {
-      // RXDB converts blobs to string, which has more support on safari/ios
+      // TODO - may need to consider converting to string if storing on IOS
       // https://web.dev/indexeddb-best-practices/#not-everything-can-be-stored-in-indexeddb-on-all-platforms
-      entry.data = await blobToBase64String(data);
+      entry.data = data;
     }
     // Combined
     const attachmentDoc = await this.collection.upsert(entry);

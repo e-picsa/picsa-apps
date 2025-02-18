@@ -20,6 +20,9 @@ export function handleCollectionModifiers(picsaCollection: IPicsaCollectionCreat
     collection.schema.properties[primaryKey as string].maxLength = 1024;
   }
 
+  // add support for attachments by default
+  collection.attachments ??= {};
+
   // remove `null` values to pass schema check on non-required fields
   hookFactories.push((c) => {
     c.addHook('pre', 'insert', (data: Record<string, any>) => {
