@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { MIGRATIONS } from './migrations';
 import { IMigrationStatus } from './types';
-import { APP_VERSION } from '@picsa/environments/src';
+import { APP_VERSION, ENVIRONMENT } from '@picsa/environments/src';
 
 interface IMigrationMeta {
   first_install_version: number;
@@ -15,16 +15,16 @@ export class PicsaMigrationService {
   public async runMigrations(injector: Injector): Promise<void> {
     console.group('[Migrations]');
     const { first_install_version } = this.meta;
-    const pending = MIGRATIONS.filter(({ id, retryOnFail, app_version }) => {
+    const pending = MIGRATIONS.filter(({ id, app_version }) => {
       if (first_install_version >= parseSemverVersion(app_version)) {
         return false;
       }
       const history = this.meta.history[id];
-      if (history && history.result) {
-        return false;
-      }
-      if (history && history.error && !retryOnFail) {
-        return false;
+      if (history) {
+        // re-run migrations with errors when developing locally
+        if (history.error) {
+          return ENVIRONMENT.production ? false : true;
+        }
       }
       return true;
     });
@@ -55,13 +55,18 @@ export class PicsaMigrationService {
   }
 
   private loadMigrationMeta() {
-    const migrationsEntry = localStorage.getItem('picsa_migration_meta') || '{}';
     const meta: IMigrationMeta = {
       first_install_version: parseSemverVersion(APP_VERSION.number),
       history: {},
-      ...JSON.parse(migrationsEntry),
     };
-    return meta;
+    // HACK - legacy users did not track first_install but may be available from resources storage
+    const legacy_version = localStorage.getItem(`picsa-resources-tool||assets-cache-version`);
+    if (legacy_version) {
+      meta.first_install_version = parseSemverVersion(legacy_version);
+    }
+    // override with previously saved meta
+    const migrationsEntry = localStorage.getItem('picsa_migration_meta') || '{}';
+    return { ...meta, ...JSON.parse(migrationsEntry) };
   }
 }
 function parseSemverVersion(v: string) {

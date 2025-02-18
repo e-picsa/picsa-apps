@@ -12,8 +12,6 @@ export interface IMigration {
   app_version: string;
   /** Migration logic. Included injector to access additional services */
   up: (injector: Injector) => Promise<any>;
-  /** Re-attempt migration on next load if error encountered */
-  retryOnFail?: boolean;
 }
 export interface IMigrationStatus {
   timestamp: string;

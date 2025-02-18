@@ -66,6 +66,11 @@ class Rxdb14Migrator {
   private errors: any[] = [];
 
   public async migrate() {
+    const isRequired = await this.checkMigrationRequired();
+    if (!isRequired) {
+      return 'Not required, no rxdb14 instance';
+    }
+
     // setup legacy db
 
     addRxPlugin(RxDBAttachmentsPlugin);
@@ -75,6 +80,13 @@ class Rxdb14Migrator {
     // load all pre-existing tables
 
     await this.handleDBMigration();
+    return 'Migration completed';
+  }
+
+  private async checkMigrationRequired() {
+    const idbs = await indexedDB.databases();
+    const rxdb14Internal = idbs.find((idb) => idb.name === 'rxdb-dexie-picsa_app--0--_rxdb_internal');
+    return rxdb14Internal ? true : false;
   }
 
   private async handleDBMigration() {
@@ -82,9 +94,13 @@ class Rxdb14Migrator {
     await this.dbService.ready();
     for (const [collectionName, { creator }] of Object.entries(rxdb14CollectionMeta)) {
       const legacyCollection = legacyDB.collections[collectionName];
-      await this.dbService.ensureCollections({ [collectionName]: creator });
-      const collection = this.dbService.db.collections[collectionName];
-      await this.migrateDBDocs(legacyCollection, collection);
+      try {
+        await this.dbService.ensureCollections({ [collectionName]: creator });
+        const collection = this.dbService.db.collections[collectionName];
+        await this.migrateDBDocs(legacyCollection, collection);
+      } catch (error) {
+        // schema validation failed
+      }
     }
     // create a db backup to preserve the state of any documents that have not been exported
     // this is done after migration as on web some attachments may be very large (base64 data)
@@ -143,6 +159,8 @@ class Rxdb14Migrator {
         // NOTE - docs that fail to migrate will be dropped from db moving forwards
         // These are likely legacy and created at a time when schema validation was not well enforced
         // They could be recovered in the future from the dbBackup created
+
+        // TODO - some validation more strict for null types
         console.error('docs upsert failed', data);
         console.error(error);
         this.errors.push({ msg: 'doc upsert fail', data, error });
@@ -165,6 +183,5 @@ class Rxdb14Migrator {
   }
 }
 
-const migrate = (injector: Injector) => new Rxdb14Migrator(injector.get(PicsaDatabase_V2_Service)).migrate();
-
-export default migrate;
+export const RXDB_14_Migrate = (injector: Injector) =>
+  new Rxdb14Migrator(injector.get(PicsaDatabase_V2_Service)).migrate();
