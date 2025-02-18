@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
 import { DB_MIGRATIONS } from '@picsa/shared/services/core/db_v2/migration';
-import { IMigration } from './types';
+import { IMigration } from '../types';
 
 const migration: IMigration = {
   id: 20250217,
@@ -12,7 +12,7 @@ const migration: IMigration = {
   },
   // only run if first install <= 3.52
   // TODO - update after testing
-  first_install_skip: '3.53.0',
+  app_version: '3.52.0',
   retryOnFail: true,
 };
 export default migration;

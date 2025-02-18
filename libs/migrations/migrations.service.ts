@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { MIGRATIONS } from './migrations';
-import { IMigrationStatus } from './migrations/types';
+import { IMigrationStatus } from './types';
 import { APP_VERSION } from '@picsa/environments/src';
 
 interface IMigrationMeta {
@@ -15,8 +15,8 @@ export class PicsaMigrationService {
   public async runMigrations(injector: Injector): Promise<void> {
     console.group('[Migrations]');
     const { first_install_version } = this.meta;
-    const pending = MIGRATIONS.filter(({ id, retryOnFail, first_install_skip }) => {
-      if (first_install_skip && first_install_version >= parseSemverVersion(first_install_skip)) {
+    const pending = MIGRATIONS.filter(({ id, retryOnFail, app_version }) => {
+      if (first_install_version >= parseSemverVersion(app_version)) {
         return false;
       }
       const history = this.meta.history[id];

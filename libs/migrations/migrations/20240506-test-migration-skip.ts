@@ -1,5 +1,5 @@
 import { Injector } from '@angular/core';
-import { IMigration } from './types';
+import { IMigration } from '../types';
 
 const migration: IMigration = {
   id: 20240506,
@@ -7,7 +7,7 @@ const migration: IMigration = {
   up: async (injector: Injector) => {
     throw new Error('This migration should have skiped');
   },
-  first_install_skip: '999.999.999',
+  app_version: '999.999.999',
 };
 
 export default migration;
