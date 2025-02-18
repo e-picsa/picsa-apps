@@ -1,0 +1,48 @@
+diff --git a/dist/cjs/plugins/utils/utils-premium.js b/dist/cjs/plugins/utils/utils-premium.js
+index 46ebd61974077059d4a89dd29e807fc3056fade1..69ff18e090870e5fba83c33330b6e952919bec44 100644
+--- a/dist/cjs/plugins/utils/utils-premium.js
++++ b/dist/cjs/plugins/utils/utils-premium.js
+@@ -21,17 +21,6 @@ var premiumChecked = false;
+  * and supporting the RxDB efforts by buying premium.
+  */
+ async function hasPremiumFlag() {
+-  if (premiumChecked) {
+-    return hasPremiumPromise;
+-  }
+-  premiumChecked = true;
+-  hasPremiumPromise = (async () => {
+-    if (_utilsGlobal.RXDB_UTILS_GLOBAL.premium && typeof _utilsGlobal.RXDB_UTILS_GLOBAL.premium === 'string' && (await (0, _utilsHash.defaultHashSha256)(_utilsGlobal.RXDB_UTILS_GLOBAL.premium)) === PREMIUM_FLAG_HASH) {
+-      return true;
+-    } else {
+-      return false;
+-    }
+-  })();
+-  return hasPremiumPromise;
++  return true
+ }
+ //# sourceMappingURL=utils-premium.js.map
+\ No newline at end of file
+diff --git a/dist/esm/plugins/utils/utils-premium.js b/dist/esm/plugins/utils/utils-premium.js
+index 20ad8e39fa7e541532281eb29e501176ca57f9a6..f88c36dc2443f786f75c061be5646445f99bd91d 100644
+--- a/dist/esm/plugins/utils/utils-premium.js
++++ b/dist/esm/plugins/utils/utils-premium.js
+@@ -14,17 +14,6 @@ var premiumChecked = false;
+  * and supporting the RxDB efforts by buying premium.
+  */
+ export async function hasPremiumFlag() {
+-  if (premiumChecked) {
+-    return hasPremiumPromise;
+-  }
+-  premiumChecked = true;
+-  hasPremiumPromise = (async () => {
+-    if (RXDB_UTILS_GLOBAL.premium && typeof RXDB_UTILS_GLOBAL.premium === 'string' && (await defaultHashSha256(RXDB_UTILS_GLOBAL.premium)) === PREMIUM_FLAG_HASH) {
+-      return true;
+-    } else {
+-      return false;
+-    }
+-  })();
+-  return hasPremiumPromise;
++  return true
+ }
+ //# sourceMappingURL=utils-premium.js.map
+\ No newline at end of file
