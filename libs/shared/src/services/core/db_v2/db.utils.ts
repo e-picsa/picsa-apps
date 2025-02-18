@@ -15,10 +15,24 @@ export function handleCollectionModifiers(picsaCollection: IPicsaCollectionCreat
   const hookFactories: ((c: RxCollection) => void)[] = [];
 
   // ensure all collections include maxLength with primary key (rxdb 16 requirement)
-  const { primaryKey, properties } = collection.schema;
+  const { primaryKey, properties, required = [] } = collection.schema;
   if (!properties[primaryKey as string].maxLength) {
     collection.schema.properties[primaryKey as string].maxLength = 1024;
   }
+
+  // add support for attachments by default
+  collection.attachments ??= {};
+
+  // remove `null` values to pass schema check on non-required fields
+  hookFactories.push((c) => {
+    c.addHook('pre', 'insert', (data: Record<string, any>) => {
+      for (const [key, value] of Object.entries(data)) {
+        if (value === null && !required[key]) {
+          delete data[key];
+        }
+      }
+    });
+  });
 
   // store app user ids in any collections marked with `isUserCollection`
   // user information is stored in localStorage instead of db to avoid circular dependency issues
