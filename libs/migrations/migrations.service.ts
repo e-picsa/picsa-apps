@@ -1,35 +1,48 @@
 import { Injectable, Injector } from '@angular/core';
 import { MIGRATIONS } from './migrations';
 import { IMigrationStatus } from './migrations/types';
+import { APP_VERSION } from '@picsa/environments/src';
+
+interface IMigrationMeta {
+  first_install_version: number;
+  history: Record<string, IMigrationStatus>;
+}
 
 @Injectable({ providedIn: 'root' })
 export class PicsaMigrationService {
-  private migrationHistory: Record<string, IMigrationStatus> = {};
+  private meta = this.loadMigrationMeta();
 
   public async runMigrations(injector: Injector): Promise<void> {
-    this.migrationHistory = this.loadMigrationHistory();
-    const pending = MIGRATIONS.filter(({ id, retryOnFail }) => {
-      const history = this.migrationHistory[id];
-      if (!history) return true;
-      if (history.error) return retryOnFail ? true : false;
-      return false;
+    console.group('[Migrations]');
+    const { first_install_version } = this.meta;
+    const pending = MIGRATIONS.filter(({ id, retryOnFail, first_install_skip }) => {
+      if (first_install_skip && first_install_version >= parseSemverVersion(first_install_skip)) {
+        return false;
+      }
+      const history = this.meta.history[id];
+      if (history && history.result) {
+        return false;
+      }
+      if (history && history.error && !retryOnFail) {
+        return false;
+      }
+      return true;
     });
     const timestamp = new Date().toLocaleString();
     if (pending.length > 0) {
-      console.group('[Migrations]');
       for (const { id, label, up } of pending) {
         console.log(`Exec ${id} - ${label}`);
         try {
           const result = await up(injector);
-          this.migrationHistory[id] = { timestamp, result };
+          this.meta.history[id] = { timestamp, result };
         } catch (error) {
-          console.error('migration failed', id, error);
-          this.migrationHistory[id] = { timestamp, error: (error as any)?.message };
+          console.error('Failed', id, error);
+          this.meta.history[id] = { timestamp, error: (error as any)?.message };
         }
       }
-      console.log('Results', this.migrationHistory);
-      console.groupEnd();
     }
+    console.log('Complete', this.meta.history);
+    console.groupEnd();
 
     this.saveMigrationHistory();
   }
@@ -37,12 +50,21 @@ export class PicsaMigrationService {
   private saveMigrationHistory() {
     // Use timeout to avoid blocking other init operations
     setTimeout(() => {
-      localStorage.setItem('picsa_migrations', JSON.stringify(this.migrationHistory));
+      localStorage.setItem('picsa_migration_meta', JSON.stringify(this.meta));
     }, 2000);
   }
 
-  private loadMigrationHistory() {
-    const migrationsEntry = localStorage.getItem('picsa_migrations') || '{}';
-    return JSON.parse(migrationsEntry);
+  private loadMigrationMeta() {
+    const migrationsEntry = localStorage.getItem('picsa_migration_meta') || '{}';
+    const meta: IMigrationMeta = {
+      first_install_version: parseSemverVersion(APP_VERSION.number),
+      history: {},
+      ...JSON.parse(migrationsEntry),
+    };
+    return meta;
   }
+}
+function parseSemverVersion(v: string) {
+  const [major, minor, patch] = v.split('.').map((n) => parseInt(n));
+  return major * 1000000 + minor * 1000 + patch;
 }

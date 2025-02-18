@@ -5,6 +5,8 @@ export interface IMigration {
   id: number;
   /** Label used for logging purposes */
   label: string;
+  /** Skip migration for any devices whose first_install version is greater than or equal to value */
+  first_install_skip?: string;
   /** Migration logic. Included injector to access additional services */
   up: (injector: Injector) => Promise<any>;
   /** Re-attempt migration on next load if error encountered */

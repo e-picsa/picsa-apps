@@ -10,6 +10,8 @@ const migration: IMigration = {
     console.log('migration res', res);
     throw new Error('rxdb 14 fail');
   },
+  // only run if first install <= 3.52
+  min_first_install: '3.51.0',
   retryOnFail: true,
 };
 export default migration;
