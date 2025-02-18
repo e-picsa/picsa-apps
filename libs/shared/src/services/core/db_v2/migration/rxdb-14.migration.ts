@@ -14,7 +14,7 @@ import { getRxStorageDexie } from 'rxdb-14/plugins/storage-dexie';
 import { PicsaDatabase_V2_Service } from '../db.service';
 import { IPicsaCollectionCreator } from '../models';
 import { ATTACHMENTS_COLLECTION } from '../schemas/attachments';
-import { IAttachment_V0 } from '../schemas/attachments/schema_V0';
+import { IAttachment_V0 } from '../schemas/attachments/schema_v0';
 
 const legacyCollections: Record<string, IPicsaCollectionCreator<any>> = {
   attachments: ATTACHMENTS_COLLECTION,
