@@ -8,6 +8,7 @@ import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { IDBCollectionName } from './db.types';
 import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
 import { IPicsaCollectionCreator } from './models';
@@ -56,7 +57,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
   }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
-  public async ensureCollections(collections: { [name: string]: IPicsaCollectionCreator<any> }) {
+  public async ensureCollections(collections: { [name in IDBCollectionName]?: IPicsaCollectionCreator<any> }) {
     for (const [name, picsaCollection] of Object.entries(collections)) {
       if (name in this.db.collections) {
         console.warn('Duplicate collection skipped:', name);
