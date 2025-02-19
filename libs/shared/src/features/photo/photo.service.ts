@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, signal } from '@angular/core';
+import { isEqual } from '@picsa/utils/object.utils';
 import { RxCollection } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
@@ -13,7 +14,7 @@ export class PhotoService extends PicsaAsyncService {
   public collection: RxCollection<Schema.IPhotoEntry>;
 
   /** List of all stored photos, exposed as signal */
-  public photos = signal<Schema.IPhotoEntry[]>([]);
+  public photos = signal<Schema.IPhotoEntry[]>([], { equal: isEqual });
 
   constructor(private dbService: PicsaDatabase_V2_Service, private attachmentService: PicsaDatabaseAttachmentService) {
     super();
@@ -32,7 +33,7 @@ export class PhotoService extends PicsaAsyncService {
   public async getPhotoAttachment(id: string) {
     const doc = await this.collection.findOne(id).exec();
     if (doc) {
-      return this.attachmentService.getFileAttachmentURI(doc, true);
+      return this.attachmentService.getFileAttachmentURI(doc, id, true);
     }
     return undefined;
   }
@@ -43,31 +44,33 @@ export class PhotoService extends PicsaAsyncService {
   /** Subscribe to all photos and store list within angular signal */
   private subscribeToPhotos() {
     this.collection.find().$.subscribe((docs) => {
-      this.photos.set(docs.map((d) => d._data));
+      const photos = docs.map((d) => d._data);
+      // as photo docs are updated before attachment stored filter to only include those that have
+      // had attachment added
+      const photosWithAttachments = photos.filter((p) => (p._attachments[p.id] ? true : false));
+      this.photos.set(photosWithAttachments);
     });
   }
 
   // this method will save the photo to the database.
   async savePhoto(entry: Schema.IPhotoEntry, data: Blob) {
     try {
-      const doc = await this.collection.insert(entry);
-      await this.attachmentService.putAttachment(doc, entry.id, data);
+      // create new doc in photos
+      const photoDoc = await this.collection.insert(entry);
+      // update the doc with reference to stored attachment
+      const updatedDoc = await this.attachmentService.putAttachment(photoDoc, entry.id, data);
+      return updatedDoc;
     } catch (error) {
       console.error('Failed to save photo:', error);
+      return;
     }
   }
 
   // this method will delete a photo from the database.
   async deletePhoto(id: string) {
-    let doc = await this.collection.findOne(id).exec();
-    if (doc) {
-      await this.attachmentService.removeAttachment(doc, id);
-      // HACK - fetch the doc again as revision will have changed following
-      // attachment removal
-      doc = await this.collection.findOne(id).exec();
-      if (doc) {
-        await doc.remove();
-      }
-    }
+    const photoDoc = await this.collection.findOne(id).exec();
+    if (!photoDoc) return;
+    const updatedDoc = await this.attachmentService.removeAttachment(photoDoc, id);
+    return updatedDoc;
   }
 }
