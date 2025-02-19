@@ -56,10 +56,10 @@ const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], IMigrateM
   seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION, strategy: 'migrate' },
   video_player: { creator: VIDEO_COLLECTION, strategy: 'migrate' },
   // skip
-  monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION, strategy: 'skip' },
-  resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION, strategy: 'skip' },
-  resources_tool_links: { creator: LINKS_COLLECTION, strategy: 'skip' },
-  sync_delete: { creator: SYNC_DELETE_COLLECTION, strategy: 'skip' },
+  monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION, strategy: 'skip' }, // recreated by service
+  resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION, strategy: 'skip' }, // recreated by service
+  resources_tool_links: { creator: LINKS_COLLECTION, strategy: 'skip' }, // recreated by service
+  sync_delete: { creator: SYNC_DELETE_COLLECTION, strategy: 'skip' }, // migration errors, fine to drop
 };
 
 /**
@@ -82,7 +82,7 @@ class Rxdb14Migrator {
 
   public async migrate() {
     // check if required
-    this.legacyDBNames = await this.listRXDBLegacyIDBs();
+    await this.listRXDBLegacyIDBs();
     if (this.legacyDBNames.length === 0) {
       return 'Not required, no rxdb14 instance';
     }
@@ -102,7 +102,8 @@ class Rxdb14Migrator {
 
   private async listRXDBLegacyIDBs() {
     const idbs = await indexedDB.databases();
-    return idbs.map((idb) => idb.name || '').filter((name) => name.startsWith('rxdb-dexie-picsa_app--'));
+    const legacyNames = idbs.map((idb) => idb.name || '').filter((name) => name.startsWith('rxdb-dexie-picsa_app--'));
+    this.legacyDBNames = legacyNames;
   }
 
   private async handleDBMigration() {
@@ -176,9 +177,11 @@ class Rxdb14Migrator {
   }
 
   private async removeLegacyIndexedDBs(collectionName: string) {
+    // update list of legacyDBIDs in case migration created new schema versions
+    await this.listRXDBLegacyIDBs();
+    // remove all legacyDBs that match collection (could be multiple due to schema versioning)
     for (const dbName of this.legacyDBNames) {
       if (dbName.endsWith(`--${collectionName}`)) {
-        console.log('removing db', dbName);
         await removeIndexedDB(dbName as string);
       }
     }
@@ -216,13 +219,13 @@ class Rxdb14Migrator {
   }
 
   private async handleCleanup() {
-    const remainingIDBNames = await this.listRXDBLegacyIDBs();
+    await this.listRXDBLegacyIDBs();
     const metadataDBName = `rxdb-dexie-picsa_app--0--_rxdb_internal`;
-    if (remainingIDBNames.length === 1 && remainingIDBNames[0] === metadataDBName) {
+    if (this.legacyDBNames.length === 1 && this.legacyDBNames[0] === metadataDBName) {
       await removeIndexedDB(`metadataDBName`);
       console.log('all legacy indexeddbs removed');
     } else {
-      this.errors.push(`Failed to remove all legacy DBs: ${remainingIDBNames.join(', ')}`);
+      this.errors.push(`Failed to remove all legacy DBs: ${this.legacyDBNames.join(', ')}`);
     }
   }
 }
