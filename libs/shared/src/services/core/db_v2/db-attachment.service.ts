@@ -9,19 +9,17 @@ import { PicsaDatabase_V2_Service } from './db.service';
 import { ATTACHMENTS_COLLECTION, IAttachment } from './schemas/attachments';
 
 /*********************************************************************************************
- * @deprecated v3.50.0
- * The attachment system was creating primarily to store single resource file attachments
- * in a separate collection due to limitations in rxdb/dexie attachment handling.
+ * If storing attachments using regular `putAttachment` method all attachment data is converted
+ * to base64 string and stored directly within an `attachments` objectStore on the collection
+ * indexeddb. This results in very large indexeddbs which may be slow to use and difficult to migrate
  *
- * Recent upgrades handle better so reccomend using doc `putAttachment` method directly
- * on source documents
+ * The PicsaDatabaseAttachmentService instead uses local file storage on native devices, providing
+ * URIs to files on disk instead of raw data. It includes methods to convert these URIs to
+ * other data types as required
  *
- * DB Attachments
- * Ordinarily RXDB handles attachments within the storage provider, however dexie is not
- * currently supported. So manual workaround to persist attachment files to separate collection
- * instead and retrieve on demand.
- * Additionally writes to disk on native
+ * On web the service still uses indexeddb
  *
+ * TODO - add support for opfs storage on web
  * TODO - may want hooks system to ensure attachments removed on doc delete
  * TODO - change all md5checksum for sha256
  * TODO - add db service hooks to also remove files on doc remove
@@ -55,28 +53,25 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
-   * @param convertNativeSrc - Convert to src usable within web content (e.g as image or pdf src)
    **/
-  public async getFileAttachmentURI(doc: RxDocument<any>, convertNativeSrc = false) {
-    const attachmentName = doc.filename || doc.id;
-    if (!attachmentName) {
+  public async getFileAttachmentURI(doc: RxDocument<any>, filename: string) {
+    if (!filename) {
       console.error(doc);
       throw new Error(`No attachment name provided`);
     }
-    const attachment = await this.getAttachment(doc, attachmentName);
+    const attachment = await this.getAttachment(doc, filename);
     if (!attachment) return null;
     if (attachment) {
       if (Capacitor.isNativePlatform()) {
         const { uri } = attachment;
-        return convertNativeSrc ? Capacitor.convertFileSrc(uri as string) : uri;
-      }
-      // On native URI already stored as path to file stored locally
-      if (attachment.uri) return attachment.uri;
-      // On web data stored as base64 string, convert to blob and generate object url
-      if (attachment.data) {
-        const blob = await base64ToBlob(attachment.data, attachment.type);
-        this.objectURLs[attachmentName] = URL.createObjectURL(blob);
-        return this.objectURLs[attachmentName];
+        return Capacitor.convertFileSrc(uri as string);
+      } else {
+        // On web data stored as base64 string, convert to blob and generate object url
+        if (attachment.data) {
+          const blob = await base64ToBlob(attachment.data, attachment.type);
+          this.objectURLs[filename] = URL.createObjectURL(blob);
+          return this.objectURLs[filename];
+        }
       }
     }
     return null;
@@ -106,8 +101,10 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
    * @param prefix additional prefix to provide to filename to ensure globally unique
    * @param index doc file entry number in case of multiple files
    */
-  public async putAttachment(doc: RxDocument<any>, filename: string, data: Blob) {
-    if (!data) return;
+  public async putAttachment<T>(doc: RxDocument<T>, filename: string, data: Blob) {
+    if (!data) {
+      throw new Error('Cannot put attachment, no data: ' + filename);
+    }
     // prefer to use downloaded blob data directly instead of doc expected
     const { type, size } = data;
     const id = this.generateAttachmentID(doc, filename);
@@ -136,11 +133,12 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
       type,
       data: new Blob([JSON.stringify(attachmentDoc._data)], { type: 'application/json' }),
     });
-    // await attachmentDoc.patch({ digest });
+    // refresh doc and return
+    return doc.getLatest();
   }
 
   /** Remove attachments populated to a specific collection doc */
-  public async removeAttachment(doc: RxDocument<any>, filename: string) {
+  public async removeAttachment<T>(doc: RxDocument<T>, filename: string) {
     const id = this.generateAttachmentID(doc, filename);
     const ref = await this.collection.findOne(id).exec();
     if (ref) {
@@ -157,6 +155,7 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     if (docRef) {
       await docRef.remove();
     }
+    return doc.getLatest();
   }
 
   /**

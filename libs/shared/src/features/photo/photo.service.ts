@@ -33,7 +33,7 @@ export class PhotoService extends PicsaAsyncService {
   public async getPhotoAttachment(id: string) {
     const doc = await this.collection.findOne(id).exec();
     if (doc) {
-      return this.attachmentService.getFileAttachmentURI(doc, id, true);
+      return this.attachmentService.getFileAttachmentURI(doc, id);
     }
     return undefined;
   }
