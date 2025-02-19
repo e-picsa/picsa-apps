@@ -49,7 +49,6 @@ const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], IMigrateM
   // migrate
   attachments: { creator: ATTACHMENTS_COLLECTION, strategy: 'migrate' },
   budget_cards: { creator: BUDGET_CARDS_COLLECTION, strategy: 'migrate' },
-  monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION, strategy: 'migrate' },
   monitoring_tool_submissions: { creator: MONITORING_SUBMISSIONS_COLLECTION, strategy: 'migrate' },
   options_tool: { creator: OPTION_TOOL_COLLECTION, strategy: 'migrate' },
   photos: { creator: PHOTO_COLLECTION, strategy: 'migrate' },
@@ -57,6 +56,7 @@ const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], IMigrateM
   seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION, strategy: 'migrate' },
   video_player: { creator: VIDEO_COLLECTION, strategy: 'migrate' },
   // skip
+  monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION, strategy: 'skip' },
   resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION, strategy: 'skip' },
   resources_tool_links: { creator: LINKS_COLLECTION, strategy: 'skip' },
   sync_delete: { creator: SYNC_DELETE_COLLECTION, strategy: 'skip' },
