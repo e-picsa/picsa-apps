@@ -10,7 +10,7 @@ export interface IResourceLink extends IResourceBase_v0 {
 }
 
 export const SCHEMA_V0: RxJsonSchema<IResourceLink> = {
-  title: 'resource_link',
+  title: 'resource_file',
   version: 0,
   keyCompression: false,
   type: 'object',

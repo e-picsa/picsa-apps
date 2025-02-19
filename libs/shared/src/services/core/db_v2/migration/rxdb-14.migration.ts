@@ -3,12 +3,14 @@ import { COLLECTION as BUDGET_CARDS_COLLECTION } from '@picsa/budget/src/app/sch
 import { COLLECTION as MONITORING_FORMS_COLLECTION } from '@picsa/monitoring/src/app/schema/forms';
 import { COLLECTION as MONITORING_SUBMISSIONS_COLLECTION } from '@picsa/monitoring/src/app/schema/submissions';
 import { COLLECTION as OPTION_TOOL_COLLECTION } from '@picsa/option/src/app/schemas';
-import { COLLECTION_COLLECTION, FILES_COLLECTION, LINKS_COLLECTION } from '@picsa/resources/src/app/schemas';
+import { COLLECTION_COLLECTION as RESOURCES_COLLECTION_COLLECTION } from '@picsa/resources/src/app/schemas/collection';
+import { FILES_COLLECTION } from '@picsa/resources/src/app/schemas/file';
+import { LINKS_COLLECTION } from '@picsa/resources/src/app/schemas/link';
 import { COLLECTION as SEASONAL_CALENDAR_COLLECTION } from '@picsa/seasonal-calendar/src/app/schema';
 import { COLLECTION as PHOTO_COLLECTION } from '@picsa/shared/features/photo/schema';
 import { COLLECTION as VIDEO_COLLECTION } from 'libs/shared/src/features/video-player/schema';
 import type { RxCollection as Rx16Collection } from 'rxdb';
-import { addRxPlugin, createRxDatabase, RxCollection, RxDatabase, RxDocument } from 'rxdb-14';
+import { addRxPlugin, createRxDatabase, RxCollection, RxDocument } from 'rxdb-14';
 import { RxDBAttachmentsPlugin } from 'rxdb-14/plugins/attachments';
 import { RxDBJsonDumpPlugin } from 'rxdb-14/plugins/json-dump';
 import { RxDBMigrationPlugin } from 'rxdb-14/plugins/migration';
@@ -45,9 +47,11 @@ const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], { creator
   seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION },
   video_player: { creator: VIDEO_COLLECTION },
   monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION },
-  resources_tool_collections: { creator: COLLECTION_COLLECTION },
+  resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION },
   resources_tool_files: { creator: FILES_COLLECTION },
   resources_tool_links: { creator: LINKS_COLLECTION },
+  // TODO - legacy resources_tool_links and collections schema mismatch - needs migration (eurghhh)
+  // maybe just skip
 };
 
 /**
@@ -65,14 +69,16 @@ class Rxdb14Migrator {
 
   private errors: any[] = [];
 
+  private legacyDBNames: string[] = [];
+
   public async migrate() {
-    const isRequired = await this.checkMigrationRequired();
-    if (!isRequired) {
+    // check if required
+    this.legacyDBNames = await this.listRXDBLegacyIDBs();
+    if (this.legacyDBNames.length === 0) {
       return 'Not required, no rxdb14 instance';
     }
 
     // setup legacy db
-
     addRxPlugin(RxDBAttachmentsPlugin);
     addRxPlugin(RxDBMigrationPlugin);
     addRxPlugin(RxDBQueryBuilderPlugin);
@@ -80,34 +86,53 @@ class Rxdb14Migrator {
     // load all pre-existing tables
 
     await this.handleDBMigration();
-    return 'Migration completed';
-  }
+    const nonMigrated = await this.listRXDBLegacyIDBs();
 
-  private async checkMigrationRequired() {
-    const idbs = await indexedDB.databases();
-    const rxdb14Internal = idbs.find((idb) => idb.name === 'rxdb-dexie-picsa_app--0--_rxdb_internal');
-    return rxdb14Internal ? true : false;
+    return { errors: this.errors };
   }
 
   private async handleDBMigration() {
+    // TODO - consider loading one-by-one
+    // TODO - consider checking which legacy dbs exist in indexddb names first
     const legacyDB = await this.loadLegacyDB();
     await this.dbService.ready();
     for (const [collectionName, { creator }] of Object.entries(rxdb14CollectionMeta)) {
       const legacyCollection = legacyDB.collections[collectionName];
-      try {
-        await this.dbService.ensureCollections({ [collectionName]: creator });
-        const collection = this.dbService.db.collections[collectionName];
+      await this.dbService.ensureCollections({ [collectionName]: creator });
+      const collection = this.dbService.db.collections[collectionName];
+      if (collection && legacyCollection) {
         await this.migrateDBDocs(legacyCollection, collection);
-      } catch (error) {
-        // schema validation failed
+        await this.removeLegacyCollection(legacyCollection);
+      } else {
+        this.errors.push(`Failed to migrate: ${collectionName}`);
       }
+      // there may be schema validation errors, however as long as collection exists should still be
+      // fine to proceed with migration and removal
     }
     // create a db backup to preserve the state of any documents that have not been exported
     // this is done after migration as on web some attachments may be very large (base64 data)
     // and could cause issue if replicating
-    await this.createDBBackup(legacyDB);
+  }
+  private async removeLegacyCollection(legacyCollection: RxCollection) {
+    // take a backup if there are still any docs that have not been migrated
+    const backup = await legacyCollection.exportJSON();
+    if (backup.docs.length > 0) {
+      console.warn(`${legacyCollection.name} failed to backup docs`, backup.docs);
+      localStorage.setItem(`picsa_migration_rxdb_14_backup_${legacyCollection.name}`, JSON.stringify(backup));
+    }
+    await legacyCollection.remove();
+    await legacyCollection.destroy();
+    for (const dbName of this.legacyDBNames) {
+      if (dbName.endsWith(`--${legacyCollection.name}`)) {
+        console.log('removing db', dbName);
+        await removeIndexedDB(dbName as string);
+      }
+    }
+  }
 
-    await this.removeLegacyIndexedDBs();
+  private async listRXDBLegacyIDBs() {
+    const idbs = await indexedDB.databases();
+    return idbs.map((idb) => idb.name || '').filter((name) => name.startsWith('rxdb-dexie-picsa_app--'));
   }
 
   /** Load rxdb 14 DB (prefixed `picsa_app` ), and all collections marked for migration **/
@@ -165,20 +190,6 @@ class Rxdb14Migrator {
         console.error(error);
         this.errors.push({ msg: 'doc upsert fail', data, error });
       }
-    }
-  }
-
-  private async createDBBackup(legacyDB: RxDatabase) {
-    const dbExport = await legacyDB.exportJSON();
-    localStorage.setItem('picsa_migration_rxdb_14_backup', JSON.stringify(dbExport));
-  }
-
-  /** Remove all indexeddb instances representing rxdb 14 collections */
-  private async removeLegacyIndexedDBs() {
-    const allIDBs = await indexedDB.databases();
-    const rxdb14DBNames = allIDBs.map((idb) => idb.name).filter((name) => name?.startsWith('rxdb-dexie-picsa_app--'));
-    for (const dbName of rxdb14DBNames) {
-      await removeIndexedDB(dbName as string);
     }
   }
 }
