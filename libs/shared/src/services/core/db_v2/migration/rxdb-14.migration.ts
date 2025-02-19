@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Injector } from '@angular/core';
 import { COLLECTION as BUDGET_CARDS_COLLECTION } from '@picsa/budget/src/app/schema/cards';
 import { COLLECTION as MONITORING_FORMS_COLLECTION } from '@picsa/monitoring/src/app/schema/forms';
@@ -7,8 +8,6 @@ import { COLLECTION_COLLECTION as RESOURCES_COLLECTION_COLLECTION } from '@picsa
 import { FILES_COLLECTION } from '@picsa/resources/src/app/schemas/file';
 import { LINKS_COLLECTION } from '@picsa/resources/src/app/schemas/link';
 import { COLLECTION as SEASONAL_CALENDAR_COLLECTION } from '@picsa/seasonal-calendar/src/app/schema';
-import { COLLECTION as PHOTO_COLLECTION } from '@picsa/shared/features/photo/schema';
-import { COLLECTION as VIDEO_COLLECTION } from 'libs/shared/src/features/video-player/schema';
 import type { RxCollection as Rx16Collection } from 'rxdb';
 import { addRxPlugin, createRxDatabase, RxCollection, RxDocument } from 'rxdb-14';
 import { RxDBAttachmentsPlugin } from 'rxdb-14/plugins/attachments';
@@ -17,6 +16,8 @@ import { RxDBMigrationPlugin } from 'rxdb-14/plugins/migration';
 import { RxDBQueryBuilderPlugin } from 'rxdb-14/plugins/query-builder';
 import { getRxStorageDexie } from 'rxdb-14/plugins/storage-dexie';
 
+import { COLLECTION as PHOTO_COLLECTION } from '../../../../features/photo/schema';
+import { COLLECTION as VIDEO_COLLECTION } from '../../../../features/video-player/schema';
 import { PicsaDatabase_V2_Service } from '../db.service';
 import { IPicsaCollectionCreator } from '../models';
 import { ATTACHMENTS_COLLECTION } from '../schemas/attachments';
