@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ENVIRONMENT } from '@picsa/environments/src';
 import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
@@ -8,6 +9,7 @@ import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { IDBCollectionName } from './db.types';
 import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
 import { IPicsaCollectionCreator } from './models';
@@ -44,9 +46,11 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     // if (isDevMode()) {
     //   await import('rxdb/plugins/dev-mode').then((module) => addRxPlugin(module.RxDBDevModePlugin));
     // }
+    const dexieStorage = getRxStorageDexie({ autoOpen: true });
     this.db = await createRxDatabase({
       name: `picsa_app_16`,
-      storage: wrappedValidateAjvStorage({ storage: getRxStorageDexie({ autoOpen: true }) }),
+      // when running in production do not validate data (expense op and could lead to accidental data loss)
+      storage: ENVIRONMENT.production ? dexieStorage : wrappedValidateAjvStorage({ storage: dexieStorage }),
       // hashFunction: (s) => md5hash(s).toString(),
       // TODO - want to use md5 hashfunction but would need to migrate all collections
       // import md5hash from 'crypto-js/md5';
@@ -56,7 +60,7 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
   }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
-  public async ensureCollections(collections: { [name: string]: IPicsaCollectionCreator<any> }) {
+  public async ensureCollections(collections: { [name in IDBCollectionName]?: IPicsaCollectionCreator<any> }) {
     for (const [name, picsaCollection] of Object.entries(collections)) {
       if (name in this.db.collections) {
         console.warn('Duplicate collection skipped:', name);

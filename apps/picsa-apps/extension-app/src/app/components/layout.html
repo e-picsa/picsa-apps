@@ -37,12 +37,12 @@
   <mat-drawer-content>
     <div class="page">
       <picsa-header> </picsa-header>
-      @if(ready){
+      @if(ready()){
       <router-outlet></router-outlet>
       }
     </div>
     <!-- Loading spinner -->
-    @if(showLoader) {
+    @if(showLoader()) {
     <div class="loading-container">
       <picsa-loading></picsa-loading>
     </div>

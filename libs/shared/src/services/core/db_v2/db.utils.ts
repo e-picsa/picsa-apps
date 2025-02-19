@@ -25,13 +25,7 @@ export function handleCollectionModifiers(picsaCollection: IPicsaCollectionCreat
 
   // remove `null` values to pass schema check on non-required fields
   hookFactories.push((c) => {
-    c.addHook('pre', 'insert', (data: Record<string, any>) => {
-      for (const [key, value] of Object.entries(data)) {
-        if (value === null && !required[key]) {
-          delete data[key];
-        }
-      }
-    });
+    c.addHook('pre', 'insert', (data: Record<string, any>) => removeNullValues(data));
   });
 
   // store app user ids in any collections marked with `isUserCollection`
@@ -51,4 +45,22 @@ export function handleCollectionModifiers(picsaCollection: IPicsaCollectionCreat
     collection.schema.properties['_sync_push_status'] = { type: 'string' };
   }
   return { collection, hookFactories };
+}
+
+function removeNullValues(data: Record<string, any>) {
+  if (isObjectLiteral(data)) {
+    for (const [key, value] of Object.entries(data)) {
+      if (value === null) {
+        delete data[key];
+      }
+      if (isObjectLiteral(value)) {
+        data[key] = removeNullValues(value);
+      }
+    }
+  }
+  return data;
+}
+
+function isObjectLiteral(v: any) {
+  return v ? v.constructor === {}.constructor : false;
 }

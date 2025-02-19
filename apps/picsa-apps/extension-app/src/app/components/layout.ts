@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, Input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
+import { Component, computed, effect, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -33,8 +33,8 @@ import { filter, map } from 'rxjs';
   ],
 })
 export class AppLayoutComponent {
-  @Input() showLoader: boolean;
-  @Input() ready: boolean;
+  showLoader = input<boolean>();
+  ready = input<boolean>();
   menuButtonTemplate = viewChild.required<TemplateRef<HTMLElement>>('menuButtonTemplate');
   public drawer = viewChild.required(MatDrawer);
   public showMenuButton = toSignal(

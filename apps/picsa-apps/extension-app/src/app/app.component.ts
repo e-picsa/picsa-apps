@@ -37,7 +37,6 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     // wait for migrations to run
     await this.runMigrations();
-
     this.ready.set(true);
 
     // ensure service initialisation only occurs after migrations complete

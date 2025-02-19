@@ -37,3 +37,11 @@ export async function getIndexedDBData(indexedDBName: string, objectStoreName = 
     };
   });
 }
+
+export async function removeIndexedDB(dbName: string) {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.deleteDatabase(dbName);
+    req.onsuccess = () => resolve(true);
+    req.onerror = (err) => reject(err);
+  });
+}
