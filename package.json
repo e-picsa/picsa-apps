@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.50.0",
+  "version": "3.52.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -116,7 +116,8 @@
     "papaparse": "^5.3.2",
     "parse": "3.4.2",
     "perfect-freehand": "^1.2.2",
-    "rxdb": "^14.11.1",
+    "rxdb": "patch:rxdb@npm%3A16.6.1#~/.yarn/patches/rxdb-npm-16.6.1-c881d164ee.patch",
+    "rxdb-14": "npm:rxdb@^14.17.1",
     "rxjs": "~7.8.1",
     "save-svg-as-png": "^1.4.17",
     "sharp": "^0.31.3",
@@ -180,6 +181,7 @@
     "eslint-plugin-cypress": "2.13.4",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "execa": "^5.1.1",
+    "fake-indexeddb": "^6.0.0",
     "fs-extra": "^11.2.0",
     "husky": "^9.1.6",
     "jest": "29.7.0",

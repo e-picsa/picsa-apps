@@ -21,8 +21,8 @@ export class PhotoService extends PicsaAsyncService {
 
   override async init() {
     try {
-      await this.dbService.ensureCollections({ [Schema.COLLECTION_NAME]: Schema.COLLECTION });
-      this.collection = this.dbService.db.collections[Schema.COLLECTION_NAME] as RxCollection<Schema.IPhotoEntry>;
+      await this.dbService.ensureCollections({ photos: Schema.COLLECTION });
+      this.collection = this.dbService.db.collections.photos as RxCollection<Schema.IPhotoEntry>;
       this.subscribeToPhotos();
     } catch (error) {
       console.error('Failed to initialize database:', error);

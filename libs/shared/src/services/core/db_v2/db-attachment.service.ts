@@ -113,7 +113,8 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     }
     // Web
     else {
-      // RXDB converts blobs to string, which has more support on safari/ios
+      // TODO - consider using opfs instead
+      // https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system
       // https://web.dev/indexeddb-best-practices/#not-everything-can-be-stored-in-indexeddb-on-all-platforms
       entry.data = await blobToBase64String(data);
     }
