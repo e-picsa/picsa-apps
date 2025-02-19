@@ -25,6 +25,9 @@ export class PicsaMigrationService {
         if (history.error) {
           return ENVIRONMENT.production ? false : true;
         }
+        if (history.result) {
+          return false;
+        }
       }
       return true;
     });

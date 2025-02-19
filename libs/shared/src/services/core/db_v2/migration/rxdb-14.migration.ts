@@ -50,8 +50,6 @@ const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], { creator
   resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION },
   resources_tool_files: { creator: FILES_COLLECTION },
   resources_tool_links: { creator: LINKS_COLLECTION },
-  // TODO - legacy resources_tool_links and collections schema mismatch - needs migration (eurghhh)
-  // maybe just skip
 };
 
 /**
@@ -61,8 +59,7 @@ const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], { creator
  * Breaking Changes
  * - User profile tables no longer used
  * - Downloaded resources not migrated (but may persist in legacy)
- *
- * TODO - attempt using idb directly and not relying on rx14 and 16 creators
+
  */
 class Rxdb14Migrator {
   constructor(private dbService: PicsaDatabase_V2_Service) {}
@@ -86,14 +83,14 @@ class Rxdb14Migrator {
     // load all pre-existing tables
 
     await this.handleDBMigration();
-    const nonMigrated = await this.listRXDBLegacyIDBs();
+
+    // TODO - manage internal schema and sync_delete (ignore for now)
 
     return { errors: this.errors };
   }
 
   private async handleDBMigration() {
-    // TODO - consider loading one-by-one
-    // TODO - consider checking which legacy dbs exist in indexddb names first
+    // TODO - checking which legacy dbs exist in indexddb names first and load one-by-one
     const legacyDB = await this.loadLegacyDB();
     await this.dbService.ready();
     for (const [collectionName, { creator }] of Object.entries(rxdb14CollectionMeta)) {
@@ -106,15 +103,12 @@ class Rxdb14Migrator {
       } else {
         this.errors.push(`Failed to migrate: ${collectionName}`);
       }
-      // there may be schema validation errors, however as long as collection exists should still be
-      // fine to proceed with migration and removal
     }
-    // create a db backup to preserve the state of any documents that have not been exported
-    // this is done after migration as on web some attachments may be very large (base64 data)
-    // and could cause issue if replicating
   }
+
   private async removeLegacyCollection(legacyCollection: RxCollection) {
-    // take a backup if there are still any docs that have not been migrated
+    // Take a backup if there are still any docs that have not been migrated
+    // Do this after doc migration as some docs with base64 data could be very large to store
     const backup = await legacyCollection.exportJSON();
     if (backup.docs.length > 0) {
       console.warn(`${legacyCollection.name} failed to backup docs`, backup.docs);
