@@ -24,6 +24,11 @@ import { ATTACHMENTS_COLLECTION } from '../schemas/attachments';
 import { SYNC_DELETE_COLLECTION } from '../schemas/sync_delete';
 import { removeIndexedDB } from './common';
 
+interface IMigrateMeta {
+  creator: IPicsaCollectionCreator<any>;
+  strategy: 'migrate' | 'skip';
+}
+
 // snapshot taken from db-types
 const DB_COLLECTION_NAMES = [
   'attachments',
@@ -40,20 +45,21 @@ const DB_COLLECTION_NAMES = [
   'video_player',
 ] as const;
 
-const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], { creator: IPicsaCollectionCreator<any> }> = {
+const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], IMigrateMeta> = {
   // migrate
-  attachments: { creator: ATTACHMENTS_COLLECTION },
-  budget_cards: { creator: BUDGET_CARDS_COLLECTION },
-  monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION },
-  monitoring_tool_submissions: { creator: MONITORING_SUBMISSIONS_COLLECTION },
-  options_tool: { creator: OPTION_TOOL_COLLECTION },
-  photos: { creator: PHOTO_COLLECTION },
-  resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION },
-  resources_tool_files: { creator: FILES_COLLECTION },
-  resources_tool_links: { creator: LINKS_COLLECTION },
-  seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION },
-  sync_delete: { creator: SYNC_DELETE_COLLECTION },
-  video_player: { creator: VIDEO_COLLECTION },
+  attachments: { creator: ATTACHMENTS_COLLECTION, strategy: 'migrate' },
+  budget_cards: { creator: BUDGET_CARDS_COLLECTION, strategy: 'migrate' },
+  monitoring_tool_forms: { creator: MONITORING_FORMS_COLLECTION, strategy: 'migrate' },
+  monitoring_tool_submissions: { creator: MONITORING_SUBMISSIONS_COLLECTION, strategy: 'migrate' },
+  options_tool: { creator: OPTION_TOOL_COLLECTION, strategy: 'migrate' },
+  photos: { creator: PHOTO_COLLECTION, strategy: 'migrate' },
+  resources_tool_files: { creator: FILES_COLLECTION, strategy: 'migrate' },
+  seasonal_calendar_tool: { creator: SEASONAL_CALENDAR_COLLECTION, strategy: 'migrate' },
+  video_player: { creator: VIDEO_COLLECTION, strategy: 'migrate' },
+  // skip
+  resources_tool_collections: { creator: RESOURCES_COLLECTION_COLLECTION, strategy: 'skip' },
+  resources_tool_links: { creator: LINKS_COLLECTION, strategy: 'skip' },
+  sync_delete: { creator: SYNC_DELETE_COLLECTION, strategy: 'skip' },
 };
 
 /**
@@ -106,10 +112,15 @@ class Rxdb14Migrator {
       storage: getRxStorageDexie({ autoOpen: true }),
     });
     await this.dbService.ready();
-    for (const [collectionName, { creator }] of Object.entries(rxdb14CollectionMeta)) {
+    for (const [collectionName, { creator, strategy }] of Object.entries(rxdb14CollectionMeta)) {
       // check if any legacy db exists, formatted like `rxdb-dexie-picsa_app--[schema_version]--[name]`
       if (this.legacyDBNames.find((name) => name.endsWith(`--${collectionName}`))) {
-        await this.migrateLegacyCollection(collectionName, creator);
+        if (strategy === 'migrate') {
+          await this.migrateLegacyCollection(collectionName, creator);
+        } else {
+          // if a collection is not migrated simply remove any indexeddb refs
+          await this.removeLegacyIndexedDBs(collectionName);
+        }
       }
     }
   }
@@ -161,8 +172,12 @@ class Rxdb14Migrator {
     }
     await legacyCollection.remove();
     await legacyCollection.destroy();
+    await this.removeLegacyIndexedDBs(legacyCollection.name);
+  }
+
+  private async removeLegacyIndexedDBs(collectionName: string) {
     for (const dbName of this.legacyDBNames) {
-      if (dbName.endsWith(`--${legacyCollection.name}`)) {
+      if (dbName.endsWith(`--${collectionName}`)) {
         console.log('removing db', dbName);
         await removeIndexedDB(dbName as string);
       }
