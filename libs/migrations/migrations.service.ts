@@ -53,23 +53,32 @@ export class PicsaMigrationService {
   private saveMigrationHistory() {
     // Use timeout to avoid blocking other init operations
     setTimeout(() => {
-      localStorage.setItem('picsa_migration_meta', JSON.stringify(this.meta));
+      localStorage.setItem('picsa_app_migration_history', JSON.stringify(this.meta.history));
     }, 2000);
   }
 
-  private loadMigrationMeta() {
-    const meta: IMigrationMeta = {
-      first_install_version: parseSemverVersion(APP_VERSION.number),
-      history: {},
+  private loadMigrationMeta(): IMigrationMeta {
+    const firstInstallString = this.getFirstInstallVersion();
+    const historyString = localStorage.getItem('picsa_app_migration_history');
+    return {
+      first_install_version: parseSemverVersion(firstInstallString),
+      history: historyString ? JSON.parse(historyString) : {},
     };
-    // HACK - legacy users did not track first_install but may be available from resources storage
-    const legacy_version = localStorage.getItem(`picsa-resources-tool||assets-cache-version`);
-    if (legacy_version) {
-      meta.first_install_version = parseSemverVersion(legacy_version);
+  }
+
+  /** Return the version of the app that the user first installed to */
+  private getFirstInstallVersion() {
+    let firstInstallVersion = localStorage.getItem('picsa_app_first_install_version');
+    if (firstInstallVersion) {
+      return firstInstallVersion;
+    } else {
+      // HACK - As first install only tracked from v3.52, fallback to v3.0.0 if the user is not
+      // a first-time user but does not have accurate first install version
+      const previousUser = localStorage.getItem('picsa_user_settings');
+      firstInstallVersion = previousUser ? '3.0.0' : APP_VERSION.number;
+      localStorage.setItem('picsa_app_first_install_version', firstInstallVersion);
+      return firstInstallVersion;
     }
-    // override with previously saved meta
-    const migrationsEntry = localStorage.getItem('picsa_migration_meta') || '{}';
-    return { ...meta, ...JSON.parse(migrationsEntry) };
   }
 }
 function parseSemverVersion(v: string) {
