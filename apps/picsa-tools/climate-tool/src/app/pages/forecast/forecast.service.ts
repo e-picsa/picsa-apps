@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { ICountryCode } from '@picsa/data';
 import { IResourceCollection } from '@picsa/resources/src/app/schemas';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
-import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
+import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
 import { RxCollection, RxDocument } from 'rxdb';
@@ -34,7 +34,8 @@ export class ClimateForecastService {
   constructor(
     private supabaseService: SupabaseService,
     private dbService: PicsaDatabase_V2_Service,
-    private resourcesService: ResourcesToolService
+    private resourcesService: ResourcesToolService,
+    private dbAttachmentService: PicsaDatabaseAttachmentService
   ) {}
 
   public async loadForecasts(country_code: ICountryCode) {
@@ -71,10 +72,7 @@ export class ClimateForecastService {
     this.downscaledForecastsCollection.set(downscaled);
   }
 
-  public async downloadForecastFile(
-    doc: RxDocument<IClimateForecast>,
-    downloaderUI: SupabaseStorageDownloadComponent
-  ): Promise<RxDocument<IClimateForecast>> {
+  public async downloadForecastFile(doc: RxDocument<IClimateForecast>, downloaderUI: SupabaseStorageDownloadComponent) {
     await downloaderUI.start();
     const { error, data } = await downloaderUI.completed();
     if (error) {
@@ -84,7 +82,8 @@ export class ClimateForecastService {
     }
     if (data && data instanceof Blob) {
       const attachmentId = downloaderUI.storage_path();
-      const { doc: updatedDoc } = await doc.putAttachment({ id: attachmentId, data, type: data.type });
+      await this.dbAttachmentService.ready();
+      const updatedDoc = await this.dbAttachmentService.putAttachment(doc, attachmentId, data);
       return updatedDoc;
     }
     return doc;

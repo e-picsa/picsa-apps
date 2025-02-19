@@ -6,6 +6,7 @@ import { ConfigurationService } from '@picsa/configuration';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { PdfViewerComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { RxDocument } from 'rxdb';
 
@@ -70,7 +71,11 @@ export class ClimateForecastComponent implements OnDestroy {
   // HACK - use resources collection for downscaled forecasts
   public downscaledForecastsCollection = {};
 
-  constructor(private service: ClimateForecastService, private configurationService: ConfigurationService) {
+  constructor(
+    private service: ClimateForecastService,
+    private configurationService: ConfigurationService,
+    private dbAttachmentService: PicsaDatabaseAttachmentService
+  ) {
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();
       if (country_code) {
@@ -93,11 +98,11 @@ export class ClimateForecastComponent implements OnDestroy {
       const downloader = this.downloaders().find((d) => d.storage_path() === forecast.storage_file);
       if (downloader) {
         await this.service.downloadForecastFile(forecast._doc, downloader);
-        // refresh data to populated downloads
-        await this.refreshForecastData();
-        const updated = this.dailyForecasts().find(({ id }) => id === forecast.id);
-        if (updated?.downloaded) {
-          this.openForecast(updated);
+        forecast._doc = forecast._doc.getLatest();
+        if (forecast._doc.getAttachment(forecast.storage_file)) {
+          this.openForecast(forecast);
+          // refresh data to populated downloads
+          this.refreshForecastData();
         }
       }
     }
@@ -116,14 +121,8 @@ export class ClimateForecastComponent implements OnDestroy {
   }
 
   private async openForecast(forecast: IForecastSummary) {
-    const attachment = forecast._doc.getAttachment(forecast.storage_file as string);
-    if (!attachment) {
-      throw new Error('Forecast file not found');
-    }
-    const blob = await attachment.getData();
-    // TODO - handle html (maybe general file-viewer component)
-    const uri = URL.createObjectURL(blob);
-    this.pdfSrc = uri;
+    const uri = await this.dbAttachmentService.getFileAttachmentURI(forecast._doc, forecast.storage_file as string);
+    this.pdfSrc = uri || undefined;
   }
 
   private generateForecastLabel(id: string) {
