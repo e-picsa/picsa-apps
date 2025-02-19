@@ -1,3 +1,11 @@
+/**
+ *
+ * TODO
+ * These specs have become outdated, however still contain some useful snippets
+ * for testing in general. They could be adapted in the future when new migrations added
+ *
+ */
+
 import migrate from './rxdb-14.migration';
 
 // HACK
