@@ -1,5 +1,8 @@
 export interface IGelocationData {
-  /** Osm admin_4 typically represents district/province level data */
+  /**
+   * Osm admin_4 typically represents district/province level data
+   * https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative
+   **/
   admin_4: {
     label: string;
     data: () => Promise<ITopoJson>;

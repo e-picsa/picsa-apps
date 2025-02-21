@@ -2,17 +2,12 @@
 
 ## TODO
 
-- [ ] Decide whether to use natural earth or OSM
-      OSM better on map overlay but not as good at low precision
-      PROBABLY OSM -> TOPOJSON
-
 - [ ] Scripts to convert geojson to topojson (removing metadata and features not required, reducing accuracy)
 - [ ] Re-export geojson to try get admin centre labels (zm did but manually deleted, mw doesn't...?)
 - [ ] Cache geojson conversions
 - [ ] Export all data from OSM instead of natural earth
 - [ ] Setup admin levels to match OSM
-- [ ] Remove map marker clustering until zoomed in (or add cluster setting)
-- [ ]
+- [ ] Remove map marker until zoomed in (or add cluster setting)
 - [ ] Migrate optimisation scripts
 - [ ] Migrate legacy data
 - [ ] Add custom select
@@ -25,7 +20,10 @@ https://overpass-turbo.eu/index.html
 Example data exploration
 https://www.openstreetmap.org/relation/195290
 
-**Country Boundaries**
+For details about administratrivte levels
+https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative
+
+**Admin_2 - Country Boundaries**
 
 ```
 [out:json][timeout:25];
@@ -37,7 +35,7 @@ out geom;
 
 https://overpass-turbo.eu/s/1Z8i
 
-**District/Province Boundaries**
+**Admin_4 - District/Province Boundaries**
 
 ```
 [out:json][timeout:25];
@@ -51,10 +49,14 @@ https://overpass-turbo.eu/s/1Z83
 
 ### Export as GeoJSON
 
+Use the export feature in overpass-turbo to export as GeoJson
+
 ### Convert to TopoJson
 
-(TODO - convert to TopoJson)
-Recommended for district/province but possibly not for country (???)
+Files up to 10MB can be converted online using:
+https://mygeodata.cloud/converter/geojson-to-topojson
+
+Larger files may first need to be optimised locally first (e.g. removing metadata fields), or converted via local scripts
 
 ## Generating Boundary Data (QGIS)
 
