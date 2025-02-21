@@ -19952,6 +19952,7 @@ __metadata:
     stacktrace-js: "npm:^2.0.2"
     supabase: "npm:^2.2.1"
     tailwindcss: "npm:^3.4.13"
+    topojson-client: "npm:^3.1.0"
     ts-jest: "npm:29.1.1"
     tslib: "npm:^2.5.0"
     tsx: "npm:^4.19.2"
@@ -23209,6 +23210,19 @@ __metadata:
   version: 1.0.1
   resolution: "toidentifier@npm:1.0.1"
   checksum: 10c0/93937279934bd66cc3270016dd8d0afec14fb7c94a05c72dc57321f8bd1fa97e5bea6d1f7c89e728d077ca31ea125b78320a616a6c6cd0e6b9cb94cb864381c1
+  languageName: node
+  linkType: hard
+
+"topojson-client@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "topojson-client@npm:3.1.0"
+  dependencies:
+    commander: "npm:2"
+  bin:
+    topo2geo: bin/topo2geo
+    topomerge: bin/topomerge
+    topoquantize: bin/topoquantize
+  checksum: 10c0/da2acba268cbf4d002483d5d81452e0d797b2fff6041fafb1d420e58973fa780a6f42041ce4c2677376ab977e5e1732b89c42a2db3c334a34f6c47f4d94b3eaa
   languageName: node
   linkType: hard
 
