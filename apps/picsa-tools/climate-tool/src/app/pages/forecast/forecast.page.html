@@ -52,6 +52,15 @@
   <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
     <h2 class="forecast-heading">{{'Downscaled' | translate}}</h2>
     <div class="flex-1 overflow-x-auto">
+      <mat-form-field>
+        <!-- TODO - get admin level label (e.g. location/district/province) -->
+        <mat-label>{{'Location' | translate}}</mat-label>
+        <!-- <mat-select>
+          @for (district of districts; track district) {
+          <mat-option [value]="food.value">{{food.viewValue}}</mat-option>
+          }
+        </mat-select> -->
+      </mat-form-field>
       <div class="flex gap-4 justify-center w-fit items-center">
         @if(downscaledForecasts(); as collection){
         <resource-item-collection [collection]="collection"></resource-item-collection>
