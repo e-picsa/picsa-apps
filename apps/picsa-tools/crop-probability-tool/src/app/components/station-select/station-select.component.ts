@@ -57,8 +57,7 @@ export class CropProbabilityStationSelectComponent {
         if (stationOptions.length > 0) {
           this.handleStationChange(stationOptions[0].id);
         }
-      },
-      { allowSignalWrites: true }
+      }
     );
   }
 

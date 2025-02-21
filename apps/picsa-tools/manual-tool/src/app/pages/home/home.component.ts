@@ -106,7 +106,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     const manualDoc = await this.resourcesService.dbFiles.findOne(manualResource.id).exec();
     if (manualDoc) {
       this.resourceDocs[version] = manualDoc;
-      const uri = await this.resourcesService.getFileAttachmentURI(manualDoc, true);
+      const uri = await this.resourcesService.getFileAttachmentURI(manualDoc);
       if (uri) {
         this.downloadPrompt.show = false;
         this.pdfSrc = uri;

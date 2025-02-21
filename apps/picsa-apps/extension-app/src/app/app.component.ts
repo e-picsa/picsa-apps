@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
@@ -51,7 +52,9 @@ export class AppComponent implements OnInit {
     this.monitoringService.ready();
     // delay push notification as will prompt for permissions
     setTimeout(() => {
-      this.pushNotificationService.initializePushNotifications();
+      if (Capacitor.isNativePlatform()) {
+        this.pushNotificationService.initializePushNotifications();
+      }
     }, 1000);
   }
 

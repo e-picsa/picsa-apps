@@ -121,7 +121,7 @@ export class ClimateForecastPageComponent {
     formData.append('country_code', country_code);
     formData.append('query_prefix', this.apiQueryPrefix());
     const { data, error } = await this.supabase.functions
-      .invoke('dashboard/climate-forecast-update', {
+      .invoke('dashboard/climate-forecast-db', {
         method: 'POST',
         body: formData,
       })

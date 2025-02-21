@@ -13,5 +13,6 @@
   "deno.unstable": true,
   "deno.config": "apps/picsa-server/supabase/functions/deno.jsonc",
   "angular.enable-strict-mode-prompt": false,
-  "css.customData": [".vscode/tailwind.json"]
+  "css.customData": [".vscode/tailwind.json"],
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

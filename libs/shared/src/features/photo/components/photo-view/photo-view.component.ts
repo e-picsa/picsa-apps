@@ -26,22 +26,19 @@ export class PhotoViewComponent {
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
   constructor(private service: PhotoService, private dialog: PicsaDialogService, public photoDialog: MatDialog) {
-    effect(
-      async (onCleanup) => {
-        const photo = this.photo;
-        const uri = await this.service.getPhotoAttachment(photo().id);
-        if (uri) {
-          this.uri.set(uri);
-        } else {
-          console.error('[Photo] not found', this.photo);
-          this.errorMsg.set(`Photo not found`);
-        }
-        onCleanup(() => {
-          this.service.revokePhotoAttachment(photo().id);
-        });
-      },
-      { allowSignalWrites: true }
-    );
+    effect(async (onCleanup) => {
+      const photo = this.photo;
+      const uri = await this.service.getPhotoAttachment(photo().id);
+      if (uri) {
+        this.uri.set(uri);
+      } else {
+        console.error('[Photo] not found', this.photo);
+        this.errorMsg.set(`Photo not found`);
+      }
+      onCleanup(() => {
+        this.service.revokePhotoAttachment(photo().id);
+      });
+    });
   }
 
   openPhotoDialog() {

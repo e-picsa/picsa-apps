@@ -5,6 +5,7 @@
 const DB_COLLECTION_NAMES = [
   'attachments',
   'budget_cards',
+  'climate_forecasts',
   'monitoring_tool_forms',
   'monitoring_tool_submissions',
   'options_tool',

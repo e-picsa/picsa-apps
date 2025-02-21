@@ -1,28 +1,80 @@
 <div class="page-content">
   <div class="pdf-container slide-in" [class.active]="pdfSrc ? true : false">
     @if(pdfSrc){
-    <picsa-pdf-viewer [page]="page" [src]="pdfSrc">
-      <button style="margin-right: 8px" mat-button color="primary" (click)="clearPdf()">{{'Close' | translate}}</button>
+    <picsa-pdf-viewer [src]="pdfSrc">
+      <button style="margin-right: 8px" mat-button color="primary" (click)="closeForecast()">
+        {{'Close' | translate}}
+      </button>
     </picsa-pdf-viewer>
     }
   </div>
 
-  <div class="card-container">
-    <mat-card class="mat-card" (click)="openAnnualForeCast()">
-      <mat-card-header>
-        <div>{{'Annual Forecast' | translate}}</div>
-      </mat-card-header>
-      <mat-card-content class="card-content">
-        <mat-icon>assessment</mat-icon>
-      </mat-card-content>
-    </mat-card>
-    <mat-card class="mat-card" (click)="openAnnualForeCast()">
-      <mat-card-header>
-        <div>{{'Downscaled Forecast' | translate}}</div>
-      </mat-card-header>
-      <mat-card-content class="card-content">
-        <mat-icon>map</mat-icon>
-      </mat-card-content>
-    </mat-card>
+  <!-- Daily -->
+  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4">
+    <h2 class="forecast-heading">{{'Daily' | translate}}</h2>
+    <div class="forecast-content">
+      @if(dailyForecasts().length===0){
+      <div class="mx-auto w-24 mt-4">
+        <mat-progress-bar mode="query"></mat-progress-bar>
+      </div>
+      }
+      <div class="flex gap-4 justify-center w-fit">
+        @for(forecast of dailyForecasts(); track forecast.id){
+        <div
+          class="min-w-40 w-40 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
+          (click)="handleForecastClick(forecast)"
+        >
+          <div class="flex-1 overflow-auto capitalize p-2">{{forecast.label}}</div>
+          <div class="pt-1 text-center" style="background: var(--color-secondary-50)">
+            @if(!forecast.downloaded){
+            <picsa-supabase-storage-download
+              [storage_path]="forecast.storage_file"
+              #downloader
+              (click)="downloader.stop()"
+            >
+              @if(downloader.progress()===undefined){
+              <mat-icon>download</mat-icon>
+              } @else{
+              <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
+              }
+            </picsa-supabase-storage-download>
+            } @else{
+            <mat-icon>task_alt</mat-icon>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Downscaled -->
+  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
+    <h2 class="forecast-heading">{{'Downscaled' | translate}}</h2>
+    <div class="flex-1 overflow-x-auto">
+      <mat-form-field>
+        <!-- TODO - get admin level label (e.g. location/district/province) -->
+        <mat-label>{{'Location' | translate}}</mat-label>
+        <!-- <mat-select>
+          @for (district of districts; track district) {
+          <mat-option [value]="food.value">{{food.viewValue}}</mat-option>
+          }
+        </mat-select> -->
+      </mat-form-field>
+      <div class="flex gap-4 justify-center w-fit items-center">
+        @if(downscaledForecasts(); as collection){
+        <resource-item-collection [collection]="collection"></resource-item-collection>
+        }
+        <!--  -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Seasonal -->
+  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
+    <h2 class="forecast-heading">{{'Seasonal' | translate}}</h2>
+    <div class="flex-1 overflow-x-auto">
+      <div class="flex gap-4 justify-center w-fit items-center">...</div>
+    </div>
   </div>
 </div>

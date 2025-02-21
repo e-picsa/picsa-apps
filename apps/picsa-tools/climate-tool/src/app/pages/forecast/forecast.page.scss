@@ -1,25 +1,7 @@
-.card-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 48px;
-  flex-wrap: wrap;
+.forecast-container {
+  @apply border-solid capitalize p-2;
 }
 
-.mat-card {
-  min-width: 200px;
-  display: flex;
-  cursor: pointer;
-  justify-content: center;
-  align-items: center;
-}
-.card-content {
-  display: flex;
-  padding: 1rem;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-}
 .pdf-container {
   position: fixed;
   z-index: 2;
@@ -35,4 +17,11 @@
 
 .slide-in.active {
   transform: translateY(0);
+}
+
+h2.forecast-heading {
+  @apply w-full sm:mb-8 sm:w-40 sm:text-left overflow-hidden text-ellipsis;
+}
+div.forecast-content {
+  @apply flex-1 overflow-x-auto mx-4 sm:mx-0;
 }
