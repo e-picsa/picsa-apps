@@ -1,4 +1,12 @@
-import { IBoundaryData, IGeoJsonData } from './types';
+import { IBoundaryData, IGeoJsonData, ITopoJson } from './types';
+
+import * as topojson from 'topojson-client';
+
+export function topoJsonToGeoJson(t: ITopoJson) {
+  // convert the first named object in the topology
+  const [objectName] = Object.keys(t.objects);
+  return topojson.feature(t, t.objects[objectName]);
+}
 
 /**
  * Take input geoJson feature collection data and extract coordinates into a a more simple
@@ -6,8 +14,8 @@ import { IBoundaryData, IGeoJsonData } from './types';
  * @param propertyKeyField name of field within feature properties to use to index output
  * @param precision number or decimal places used to round coordinate values and omit duplicates
  *
- * NOTE - this is not a fully reversible process. Additional metadata fields CRS and geometry
- * types are dropped in the process and should be repopulated from hardcoded data
+ * NOTE - For more complex geometries it is likely better to use TopoJson instead, particularly
+ * in cases such as shared borders
  **/
 export function geoJsonToBoundaries<T>(data: IGeoJsonData<T>, propertyKeyField: keyof T, precision = 2) {
   const boundaries: IBoundaryData = {};
@@ -42,7 +50,32 @@ export function geoJsonToBoundaries<T>(data: IGeoJsonData<T>, propertyKeyField: 
 
     boundaries[key as any] = coordinates;
   }
-  return boundaries;
+  return sortObjectByKey(boundaries);
+}
+
+/** Take summary boundary data and convert back to GeoJson */
+export function boundariesToGeoJson(data: IBoundaryData, propertyKeyField: string) {
+  const geoJson: IGeoJsonData = {
+    type: 'FeatureCollection',
+    crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } },
+    features: [],
+  };
+  for (const [key, coordinates] of Object.entries(data)) {
+    geoJson.features.push({
+      type: 'Feature',
+      properties: { [propertyKeyField]: key },
+      geometry: { type: 'MultiPolygon', coordinates: [[coordinates as any]] },
+    });
+  }
+  return geoJson;
+}
+
+function sortObjectByKey(object: Record<string, any>) {
+  const sorted: Record<string, any> = {};
+  for (const key of Object.keys(object).sort()) {
+    sorted[key] = object[key];
+  }
+  return sorted;
 }
 
 /**
@@ -62,21 +95,4 @@ function flattenCoordinates(data: any[] = []): number[][] {
     }
   }
   return data;
-}
-
-/** Take summary boundary data and convert back to GeoJson */
-export function boundariesToGeoJson(data: IBoundaryData, propertyKeyField: string) {
-  const geoJson: IGeoJsonData = {
-    type: 'FeatureCollection',
-    crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } },
-    features: [],
-  };
-  for (const [key, coordinates] of Object.entries(data)) {
-    geoJson.features.push({
-      type: 'Feature',
-      properties: { [propertyKeyField]: key },
-      geometry: { type: 'MultiPolygon', coordinates: [[coordinates as any]] },
-    });
-  }
-  return geoJson;
 }

@@ -718,6 +718,10 @@
     "tool": "common"
   },
   {
+    "text": "District",
+    "tool": "common"
+  },
+  {
     "text": "Downscaled Forecasts",
     "tool": "common"
   },
@@ -771,6 +775,10 @@
   },
   {
     "text": "Probability and Risk",
+    "tool": "common"
+  },
+  {
+    "text": "Province",
     "tool": "common"
   },
   {
@@ -1240,10 +1248,6 @@
   },
   {
     "text": "Days to maturity",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "District",
     "tool": "crop-probability"
   },
   {

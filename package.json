@@ -123,6 +123,7 @@
     "save-svg-as-png": "^1.4.17",
     "sharp": "^0.31.3",
     "stacktrace-js": "^2.0.2",
+    "topojson-client": "^3.1.0",
     "tslib": "^2.5.0",
     "uuid": "^9.0.1",
     "zone.js": "0.15.0"
