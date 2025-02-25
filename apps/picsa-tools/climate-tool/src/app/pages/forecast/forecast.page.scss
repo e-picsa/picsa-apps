@@ -21,3 +21,12 @@
 .forecast-heading {
   @apply border-solid border-0 border-b border-[var(--color-light)]  text-center p-2 m-0 capitalize;
 }
+.download-container {
+  @apply pt-1 text-center bg-[var(--color-secondary-50)];
+}
+.download-container[data-forecast-type='downscaled'] {
+  filter: hue-rotate(120deg);
+}
+.download-container[data-forecast-type='seasonal'] {
+  filter: hue-rotate(240deg);
+}

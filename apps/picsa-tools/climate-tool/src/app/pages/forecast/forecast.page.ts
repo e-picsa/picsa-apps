@@ -50,32 +50,11 @@ export class ClimateForecastComponent implements OnDestroy {
   public locationSelectLabel = signal('');
 
   /** Location selected as stored to user profile (admin_4 district/province level) */
-  public locationSelected = computed(
-    () => this.configurationService.userSettings().location[4] || this.locationSelectOptions()[0]?.id
-  );
+  public locationSelected = computed(() => this.configurationService.userSettings().location[4]);
 
-  public dailyForecasts = computed(() =>
-    this.service.dailyForecastDocs().map((doc): IForecastSummary => {
-      const { id, storage_file, forecast_type } = doc;
-      const label = this.generateForecastLabel(id);
-      const summary: IForecastSummary = {
-        _doc: doc,
-        id,
-        label,
-        storage_file: storage_file as string,
-        downloaded: false,
-        type: forecast_type || '',
-      };
-      if (storage_file) {
-        summary.downloaded = doc.getAttachment(storage_file) ? true : false;
-      }
-      return summary;
-    })
-  );
-
-  public downscaledForecast = signal<IForecastSummary | undefined>(undefined);
-
-  public seasonalForecast = signal<IForecastSummary | undefined>(undefined);
+  public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
+  public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
+  public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
   // Utility to add type-safety to implicit ng-template data
   public toForecastType = (data: any) => data as IForecastSummary;
@@ -90,21 +69,24 @@ export class ClimateForecastComponent implements OnDestroy {
   ) {
     effect(() => {
       const { location } = this.configurationService.userSettings();
-      console.log('load location data', location);
       if (location) {
         const country_code = location[2] as ICountryCode;
-        this.service.loadForecasts(country_code);
+        const sublocation = location[4];
         const geoLocationData = GEO_LOCATION_DATA[country_code];
-        this.locationSelectOptions.set(geoLocationData?.admin_4.locations || []);
-        this.locationSelectLabel.set(geoLocationData?.admin_4.label || '');
-      }
-    });
+        const locationOptions = geoLocationData?.admin_4.locations || [];
 
-    effect(() => {
-      const location = this.locationSelected();
-      if (location) {
-        console.log('loading downscaled forecast', location);
-        // TODO - load downscaled forecast for location
+        // HACK - update user profile to select first location if not specified
+        if (!sublocation && locationOptions.length > 0) {
+          const updatedLocation = [...location];
+          updatedLocation[4] = locationOptions[0].id;
+          return this.configurationService.updateUserSettings({ location: updatedLocation });
+        }
+        // Load forecasts and configure UI
+        else {
+          this.locationSelectOptions.set(locationOptions);
+          this.locationSelectLabel.set(geoLocationData?.admin_4.label || '');
+          this.service.loadForecasts(location);
+        }
       }
     });
   }
@@ -147,9 +129,29 @@ export class ClimateForecastComponent implements OnDestroy {
     this.pdfSrc = undefined;
   }
 
+  private generateForecastSummary(docs: RxDocument<IClimateForecast>[]): IForecastSummary[] {
+    const summaries = docs.map((doc) => {
+      const { id, storage_file, forecast_type } = doc;
+      const label = this.generateForecastLabel(storage_file);
+      const summary: IForecastSummary = {
+        _doc: doc,
+        id,
+        label,
+        storage_file: storage_file as string,
+        downloaded: false,
+        type: forecast_type || '',
+      };
+      if (storage_file) {
+        summary.downloaded = doc.getAttachment(storage_file) ? true : false;
+      }
+      return summary;
+    });
+    return summaries;
+  }
+
   private refreshForecastData() {
-    const { country_code } = this.configurationService.deploymentSettings();
-    return this.service.loadForecasts(country_code);
+    const { location } = this.configurationService.userSettings();
+    return this.service.loadForecasts(location);
   }
 
   private async openForecast(forecast: IForecastSummary) {
@@ -157,12 +159,12 @@ export class ClimateForecastComponent implements OnDestroy {
     this.pdfSrc = uri || undefined;
   }
 
-  private generateForecastLabel(id: string) {
-    const [timestamp, filename] = id.split('/');
+  private generateForecastLabel(storage_file: string) {
+    const filename = storage_file.split('/').pop();
     if (filename) {
       const [basename, extension] = filename.split('.');
-      return basename.replace(/-/g, ' ');
+      return basename.replace(/[-_]/g, ' ');
     }
-    return id;
+    return storage_file;
   }
 }

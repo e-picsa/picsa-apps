@@ -35,16 +35,14 @@
     }
     <div class="h-0 w-full"></div>
     <!-- Downscaled -->
-    @if(downscaledForecast(); as downscaledForecast){
-    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: downscaledForecast }"></ng-container>
+    @for(forecast of downscaledForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
     <!-- Seasonal -->
-    @if(seasonalForecast(); as seasonalForecast){
-    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: seasonalForecast }"></ng-container>
+    @for(forecast of seasonalForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
   </div>
-
-  <!-- Additional Links -->
 </div>
 
 <!-- Forecast item tempalte -->
@@ -57,7 +55,7 @@
   >
     <h3 class="forecast-heading">{{forecast.type | translate}}</h3>
     <div class="flex-1 overflow-auto capitalize p-2">{{forecast.label}}</div>
-    <div class="pt-1 text-center" style="background: var(--color-secondary-50)">
+    <div class="download-container" [attr.data-forecast-type]="forecast.type">
       @if(!forecast.downloaded){
       <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
         @if(downloader.progress()===undefined){

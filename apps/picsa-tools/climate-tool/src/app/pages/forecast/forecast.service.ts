@@ -1,28 +1,25 @@
 import { Injectable, signal } from '@angular/core';
+import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { IResourceCollection } from '@picsa/resources/src/app/schemas';
-import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
+import { CLIMATE_FORECASTS_DB } from '@picsa/data/climate/forecasts';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
-import { RxCollection, RxDocument } from 'rxdb';
+import { MangoQuerySelector, RxCollection, RxDocument, RxQuery } from 'rxdb';
 
 import { IClimateForecastRow } from './forecast.types';
 import { CLIMATE_FORECAST_COLLECTION, IClimateForecast, SERVER_DB_MAPPING } from './schemas';
 
 /**
  * TODOs
- * - include forecast_type in all requests and make generic for daily, seasonal and downscaled
- * - storage file download/open (convert to resource)
- * - UI improvements (re-use existing collection?)
- * - Improved downscaled forecast filters
+ * - HTML Open
  */
 
 @Injectable({ providedIn: 'root' })
 export class ClimateForecastService {
   public dailyForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
-
-  public downscaledForecastsCollection = signal<RxDocument<IResourceCollection> | null>(null);
+  public seasonalForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
+  public downscaledForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
 
   private get table() {
     return this.supabaseService.db.table('climate_forecasts');
@@ -34,21 +31,34 @@ export class ClimateForecastService {
   constructor(
     private supabaseService: SupabaseService,
     private dbService: PicsaDatabase_V2_Service,
-    private resourcesService: ResourcesToolService,
     private dbAttachmentService: PicsaDatabaseAttachmentService
   ) {}
 
-  public async loadForecasts(country_code: ICountryCode) {
-    if (country_code) {
-      this.loadDailyForecasts(country_code);
-      this.loadDownscaledForecasts();
-    }
-  }
-
-  private async loadDailyForecasts(country_code: ICountryCode) {
+  public async loadForecasts(location: IUserSettings['location'] = []) {
     await this.dbService.ensureCollections({
       climate_forecasts: CLIMATE_FORECAST_COLLECTION,
     });
+    const country_code = location[2] as ICountryCode;
+    const subLocationCode = location[4];
+    if (country_code) {
+      this.loadDailyForecasts(country_code);
+      this.loadSeasonalForecasts(country_code);
+      this.loadDownscaledForecasts(country_code, subLocationCode);
+    }
+  }
+
+  private async hackStoreHardcodedData(forecasts: IClimateForecastRow[] = []) {
+    const { error, success } = await this.dbCollection.bulkUpsert(
+      forecasts.map((forecast) => SERVER_DB_MAPPING(forecast))
+    );
+    if (error.length > 0) {
+      console.error('forecast store error', error);
+      return [];
+    }
+    return success;
+  }
+
+  private async loadDailyForecasts(country_code: ICountryCode) {
     // populate any forecasts that are in the cache
     const cachedForecasts = await this.loadCachedForecasts(country_code);
     this.dailyForecastDocs.set(cachedForecasts);
@@ -60,16 +70,28 @@ export class ClimateForecastService {
         console.error(error);
         throw new Error(`[Forecast] failed to load daily forecasts`);
       }
-      this.dailyForecastDocs.update((v) => [...success, ...v].slice(0, 5));
+      this.dailyForecastDocs.update((v) => [...success, ...v].slice(0, 3));
     }
   }
+  private async loadSeasonalForecasts(country_code: ICountryCode) {
+    const seaonalForecasts = CLIMATE_FORECASTS_DB.filter(
+      (v) => v.country_code === country_code && v.forecast_type === 'seasonal'
+    );
+    const dbDocs = await this.hackStoreHardcodedData(seaonalForecasts);
+    this.seasonalForecastDocs.set(dbDocs);
+  }
 
-  private async loadDownscaledForecasts() {
-    // TODO - load hardcoded into service schema instead of resources (?)
-    // TODO - or integrate into DB (might be better)
-    await this.resourcesService.ready();
-    const downscaled = await this.resourcesService.dbCollections.findOne('forecasts_downscaled').exec();
-    this.downscaledForecastsCollection.set(downscaled);
+  private async loadDownscaledForecasts(country_code: ICountryCode, subLocationCode: string | null) {
+    if (!subLocationCode) {
+      this.downscaledForecastDocs.set([]);
+      return;
+    }
+    const downscaledForecasts = CLIMATE_FORECASTS_DB.filter(
+      (v) =>
+        v.country_code === country_code && v.forecast_type === 'downscaled' && v.location?.includes(subLocationCode)
+    );
+    const dbDocs = await this.hackStoreHardcodedData(downscaledForecasts);
+    this.downscaledForecastDocs.set(dbDocs);
   }
 
   public async downloadForecastFile(doc: RxDocument<IClimateForecast>, downloaderUI: SupabaseStorageDownloadComponent) {
@@ -91,8 +113,11 @@ export class ClimateForecastService {
 
   private async loadCachedForecasts(country_code: string) {
     // only filter if non-global country used
-    const selector = country_code === 'global' ? {} : { country_code };
-    const cached = await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit: 5 }).exec();
+    const selector: MangoQuerySelector<IClimateForecast> = { forecast_type: 'daily' };
+    if (country_code !== 'global') {
+      selector.country_code = country_code;
+    }
+    const cached = await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit: 3 }).exec();
     return cached;
   }
 
@@ -112,8 +137,7 @@ export class ClimateForecastService {
     if (latest) {
       query.gt('id', latest.id);
     }
-    const { data = [], error } = await query.order('id', { ascending: false }).limit(5);
-    console.log('server latest', latest?.id, data);
+    const { data = [], error } = await query.order('id', { ascending: false }).limit(3);
     if (error) {
       console.error(error);
       // TODO - handle error
