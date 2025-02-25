@@ -1,6 +1,8 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import MW_DISTRICTS from './mw/districts';
 import { ICountryCode } from '../deployments';
 import { IGelocationData } from './types';
+import ZM_PROVINCES from './zm/provinces';
 
 export * from './utils';
 export * from './types';
@@ -9,19 +11,21 @@ export const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGelocationDa
   mw: {
     admin_4: {
       label: translateMarker('District'),
-      data: async () => {
+      topoJson: async () => {
         const res = await import('./mw/admin-4.osm.topo.json');
         return res.default;
       },
+      locations: MW_DISTRICTS,
     },
   },
   zm: {
     admin_4: {
       label: translateMarker('Province'),
-      data: async () => {
+      topoJson: async () => {
         const res = await import('./zm/admin-4.osm.topo.json');
         return res.default;
       },
+      locations: ZM_PROVINCES,
     },
   },
 };
