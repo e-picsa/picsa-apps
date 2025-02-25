@@ -9,72 +9,67 @@
     }
   </div>
 
-  <!-- Daily -->
-  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4">
-    <h2 class="forecast-heading">{{'Daily' | translate}}</h2>
-    <div class="forecast-content">
-      @if(dailyForecasts().length===0){
-      <div class="mx-auto w-24 mt-4">
-        <mat-progress-bar mode="query"></mat-progress-bar>
-      </div>
+  <!-- Location Select (Admin 4 - district/province) -->
+  <mat-form-field class="mt-4 mx-4 sm:mx-0">
+    <mat-label>{{locationSelectLabel() | translate}}</mat-label>
+    <mat-select
+      #locationSelect
+      (selectionChange)="handleUserLocationSelect(locationSelect.value)"
+      [value]="locationSelected()"
+    >
+      @for (option of locationSelectOptions(); track option.id) {
+      <mat-option [value]="option.id">{{option.label}}</mat-option>
       }
-      <div class="flex gap-4 justify-center w-fit">
-        @for(forecast of dailyForecasts(); track forecast.id){
-        <div
-          class="min-w-40 w-40 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
-          (click)="handleForecastClick(forecast)"
-        >
-          <div class="flex-1 overflow-auto capitalize p-2">{{forecast.label}}</div>
-          <div class="pt-1 text-center" style="background: var(--color-secondary-50)">
-            @if(!forecast.downloaded){
-            <picsa-supabase-storage-download
-              [storage_path]="forecast.storage_file"
-              #downloader
-              (click)="downloader.stop()"
-            >
-              @if(downloader.progress()===undefined){
-              <mat-icon>download</mat-icon>
-              } @else{
-              <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
-              }
-            </picsa-supabase-storage-download>
-            } @else{
-            <mat-icon>task_alt</mat-icon>
-            }
-          </div>
-        </div>
-        }
-      </div>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Forecasts -->
+  <div class="flex flex-wrap items-center gap-4">
+    <!-- Daily -->
+    @if(dailyForecasts().length===0){
+    <div class="mx-auto w-24 mt-4">
+      <mat-progress-bar mode="query"></mat-progress-bar>
     </div>
+    } @for(forecast of dailyForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+    }
+    <div class="h-0 w-full"></div>
+    <!-- Downscaled -->
+    @if(downscaledForecast(); as downscaledForecast){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: downscaledForecast }"></ng-container>
+    }
+    <!-- Seasonal -->
+    @if(seasonalForecast(); as seasonalForecast){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: seasonalForecast }"></ng-container>
+    }
   </div>
 
-  <!-- Downscaled -->
-  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
-    <h2 class="forecast-heading">{{'Downscaled' | translate}}</h2>
-    <div class="flex-1 overflow-x-auto">
-      <mat-form-field>
-        <!-- TODO - get admin level label (e.g. location/district/province) -->
-        <mat-label>{{'Location' | translate}}</mat-label>
-        <!-- <mat-select>
-          @for (district of districts; track district) {
-          <mat-option [value]="food.value">{{food.viewValue}}</mat-option>
-          }
-        </mat-select> -->
-      </mat-form-field>
-      <div class="flex gap-4 justify-center w-fit items-center">
-        @if(downscaledForecasts(); as collection){
-        <resource-item-collection [collection]="collection"></resource-item-collection>
-        }
-        <!--  -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Seasonal -->
-  <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 mt-8">
-    <h2 class="forecast-heading">{{'Seasonal' | translate}}</h2>
-    <div class="flex-1 overflow-x-auto">
-      <div class="flex gap-4 justify-center w-fit items-center">...</div>
-    </div>
-  </div>
+  <!-- Additional Links -->
 </div>
+
+<!-- Forecast item tempalte -->
+<ng-template #forecastItem let-value>
+  <!-- use function to make template type-safe -->
+  @if(toForecastType(value); as forecast){
+  <div
+    class="min-w-40 w-40 h-44 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
+    (click)="handleForecastClick(forecast)"
+  >
+    <h3 class="forecast-heading">{{forecast.type | translate}}</h3>
+    <div class="flex-1 overflow-auto capitalize p-2">{{forecast.label}}</div>
+    <div class="pt-1 text-center" style="background: var(--color-secondary-50)">
+      @if(!forecast.downloaded){
+      <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
+        @if(downloader.progress()===undefined){
+        <mat-icon>download</mat-icon>
+        } @else{
+        <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
+        }
+      </picsa-supabase-storage-download>
+      } @else{
+      <mat-icon>task_alt</mat-icon>
+      }
+    </div>
+  </div>
+  }
+</ng-template>

@@ -686,7 +686,7 @@ export type Database = {
         | "deployments.admin"
         | "translations.viewer"
       country_code: "global" | "mw" | "zm" | "tj"
-      forecast_type: "daily" | "annual"
+      forecast_type: "daily" | "annual" | 'seasonal'| 'downscaled'
       locale_code: "global_en" | "mw_ny" | "mw_tum" | "zm_ny" | "tj_tg"
       resource_link_type: "app" | "social" | "web"
     }

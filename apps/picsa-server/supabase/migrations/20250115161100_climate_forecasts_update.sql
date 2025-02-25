@@ -2,7 +2,7 @@
 drop table if exists public.climate_forecasts;
 
 -- -- Custom types
-create type public.forecast_type as enum ('daily','annual');
+create type public.forecast_type as enum ('daily','seasonal','downscaled');
 
 create table
   public.climate_forecasts (
