@@ -1,8 +1,14 @@
 import { getClient } from '../_shared/client.ts';
 import { getJsonData } from '../_shared/request.ts';
+import { ErrorResponse } from '../_shared/response.ts';
 import { JSONResponse } from '../_shared/response.ts';
 
-import type { climateApiPaths, IApiClimateForecast, IDBClimateForecastInsert } from './types.ts';
+import type {
+  climateApiPaths,
+  IApiClimateForecast,
+  IDBClimateForecastInsert,
+  IForecastDBAPIResponse,
+} from './types.ts';
 
 /**
  * Read the endpoint from env. Note, if running climate api in local docker container update `.env` to:
@@ -12,7 +18,7 @@ import type { climateApiPaths, IApiClimateForecast, IDBClimateForecastInsert } f
  * https://github.com/orgs/supabase/discussions/9837
  */
 export const CLIMATE_API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
-export const COUNTRY_CODES = ['mw', 'zm'];
+export const ALL_COUNTRY_CODES = ['mw', 'zm'];
 
 // Create typed fetch client from open-api definition exported by climate api
 import createClient from 'openapi-fetch';
@@ -22,26 +28,32 @@ export const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_EN
  * Update cliamte forecast db rows
  */
 export const forecastDB = async (req: Request) => {
-  // Validate body formData
   // TODO - Improve validators and feedback
-  let { country_codes = COUNTRY_CODES, query_prefix } = await getJsonData(req);
+  let { country_code, query_prefix } = await getJsonData(req);
+
+  // Retrieve single country if specified, default all
+  const country_codes = country_code ? [country_code] : ALL_COUNTRY_CODES;
 
   // Default query for documents stored in the current month,
   if (!query_prefix) {
     query_prefix = new Date().toISOString().replace(/-/, '').substring(0, 6);
   }
 
-  const responses = [];
+  const response: IForecastDBAPIResponse = {};
+  const errors = [];
 
   for (const country_code of country_codes) {
     try {
       const data = await getCountryUpdates(country_code, query_prefix);
-      responses.push({ country_code, data });
+      response[country_code] = data;
     } catch (error) {
-      responses.push({ country_code, error });
+      errors.push(error);
     }
   }
-  return JSONResponse(responses);
+  if (errors.length > 0) {
+    return ErrorResponse(errors);
+  }
+  return JSONResponse(response);
 };
 
 async function getCountryUpdates(country_code: string, query_prefix: string) {
