@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, OnDestroy, signal, viewChildren } from '@angular/core';
+import { Component, computed, OnDestroy, viewChildren } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { ConfigurationService } from '@picsa/configuration';
-import { ICountryCode } from '@picsa/data';
-import { GEO_LOCATION_DATA } from '@picsa/data/geoLocation';
 import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
 import { PdfViewerComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -13,6 +10,7 @@ import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/su
 import { RxDocument } from 'rxdb';
 
 import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
+import { ClimateLocationSelectComponent } from '../../components/location-select/location-select.component';
 import { ClimateForecastService } from './forecast.service';
 import { IClimateForecast } from './schemas';
 
@@ -32,6 +30,7 @@ interface IForecastSummary {
   imports: [
     CommonModule,
     ClimateToolComponentsModule,
+    ClimateLocationSelectComponent,
     MatIcon,
     MatProgressBarModule,
     PicsaTranslateModule,
@@ -43,15 +42,6 @@ interface IForecastSummary {
 export class ClimateForecastComponent implements OnDestroy {
   public pdfSrc?: string;
 
-  /** Options provided to location select (admin_4 district/province level) */
-  public locationSelectOptions = signal<{ id: string; label: string }[]>([]);
-
-  /** Label used for location select (admin_4 district/province level) */
-  public locationSelectLabel = signal('');
-
-  /** Location selected as stored to user profile (admin_4 district/province level) */
-  public locationSelected = computed(() => this.configurationService.userSettings().location[4]);
-
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
@@ -62,34 +52,7 @@ export class ClimateForecastComponent implements OnDestroy {
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
-  constructor(
-    private service: ClimateForecastService,
-    private configurationService: ConfigurationService,
-    private dbAttachmentService: PicsaDatabaseAttachmentService
-  ) {
-    effect(() => {
-      const { location } = this.configurationService.userSettings();
-      if (location) {
-        const country_code = location[2] as ICountryCode;
-        const sublocation = location[4];
-        const geoLocationData = GEO_LOCATION_DATA[country_code];
-        const locationOptions = geoLocationData?.admin_4.locations || [];
-
-        // HACK - update user profile to select first location if not specified
-        if (!sublocation && locationOptions.length > 0) {
-          const updatedLocation = [...location];
-          updatedLocation[4] = locationOptions[0].id;
-          return this.configurationService.updateUserSettings({ location: updatedLocation });
-        }
-        // Load forecasts and configure UI
-        else {
-          this.locationSelectOptions.set(locationOptions);
-          this.locationSelectLabel.set(geoLocationData?.admin_4.label || '');
-          this.service.loadForecasts(location);
-        }
-      }
-    });
-  }
+  constructor(private service: ClimateForecastService, private dbAttachmentService: PicsaDatabaseAttachmentService) {}
 
   ngOnDestroy() {
     this.closeForecast();
@@ -108,18 +71,9 @@ export class ClimateForecastComponent implements OnDestroy {
         forecast._doc = forecast._doc.getLatest();
         if (forecast._doc.getAttachment(forecast.storage_file)) {
           this.openForecast(forecast);
-          // refresh data to populated downloads
-          this.refreshForecastData();
         }
       }
     }
-  }
-
-  /** When user district/province selected store to user profile location data */
-  public handleUserLocationSelect(admin_4_location: string) {
-    const update = [...this.configurationService.userSettings().location];
-    update[4] = admin_4_location;
-    this.configurationService.updateUserSettings({ location: update });
   }
 
   public closeForecast() {
@@ -147,11 +101,6 @@ export class ClimateForecastComponent implements OnDestroy {
       return summary;
     });
     return summaries;
-  }
-
-  private refreshForecastData() {
-    const { location } = this.configurationService.userSettings();
-    return this.service.loadForecasts(location);
   }
 
   private async openForecast(forecast: IForecastSummary) {
