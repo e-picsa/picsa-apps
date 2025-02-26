@@ -8,14 +8,14 @@ import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared
 import { isEqual } from '@picsa/utils/object.utils';
 import { MangoQuerySelector, RxCollection, RxDocument } from 'rxdb';
 
-import { IClimateForecastRow } from './forecast.types';
-import { CLIMATE_FORECAST_COLLECTION, IClimateForecast, SERVER_DB_MAPPING } from './schemas';
+import { IForecastRow } from './forecast.types';
+import { FORECAST_COLLECTION, IForecast, SERVER_DB_MAPPING } from './schemas';
 
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
-  public dailyForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
-  public seasonalForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
-  public downscaledForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
+  public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
+  public seasonalForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
+  public downscaledForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
 
   private downscaledLocation = computed(
     () => {
@@ -29,7 +29,7 @@ export class ForecastService extends PicsaAsyncService {
     return this.supabaseService.db.table('climate_forecasts');
   }
   private get dbCollection() {
-    return this.dbService.db.collections['climate_forecasts'] as RxCollection<IClimateForecast>;
+    return this.dbService.db.collections['climate_forecasts'] as RxCollection<IForecast>;
   }
 
   constructor(
@@ -60,12 +60,12 @@ export class ForecastService extends PicsaAsyncService {
   }
   public override async init(...args: any): Promise<void> {
     await this.dbService.ensureCollections({
-      climate_forecasts: CLIMATE_FORECAST_COLLECTION,
+      climate_forecasts: FORECAST_COLLECTION,
     });
   }
 
   private async loadDownscaledForecasts(country_code: string, admin_4: string, admin_5?: string) {
-    const filters: ((v: IClimateForecastRow) => boolean)[] = [
+    const filters: ((v: IForecastRow) => boolean)[] = [
       (v) => v.forecast_type === 'downscaled',
       (v) => v.country_code === country_code,
       (v) => v.location?.[0] === admin_4,
@@ -79,7 +79,7 @@ export class ForecastService extends PicsaAsyncService {
     this.downscaledForecastDocs.set(dbDocs);
   }
 
-  private async hackStoreHardcodedData(forecasts: IClimateForecastRow[] = []) {
+  private async hackStoreHardcodedData(forecasts: IForecastRow[] = []) {
     const { error, success } = await this.dbCollection.bulkUpsert(
       forecasts.map((forecast) => SERVER_DB_MAPPING(forecast))
     );
@@ -113,7 +113,7 @@ export class ForecastService extends PicsaAsyncService {
     this.seasonalForecastDocs.set(dbDocs);
   }
 
-  public async downloadForecastFile(doc: RxDocument<IClimateForecast>, downloaderUI: SupabaseStorageDownloadComponent) {
+  public async downloadForecastFile(doc: RxDocument<IForecast>, downloaderUI: SupabaseStorageDownloadComponent) {
     await downloaderUI.start();
     const { error, data } = await downloaderUI.completed();
     if (error) {
@@ -132,7 +132,7 @@ export class ForecastService extends PicsaAsyncService {
 
   private async loadCachedForecasts(country_code: string) {
     // only filter if non-global country used
-    const selector: MangoQuerySelector<IClimateForecast> = { forecast_type: 'daily' };
+    const selector: MangoQuerySelector<IForecast> = { forecast_type: 'daily' };
     if (country_code !== 'global') {
       selector.country_code = country_code;
     }
@@ -140,16 +140,16 @@ export class ForecastService extends PicsaAsyncService {
     return cached;
   }
 
-  private async saveForecasts(forecasts: IClimateForecast[]) {
+  private async saveForecasts(forecasts: IForecast[]) {
     const saved = await this.dbCollection.bulkUpsert(forecasts);
     return saved;
   }
 
-  private async loadServerForecasts(country_code: string, latest?: IClimateForecast): Promise<IClimateForecast[]> {
+  private async loadServerForecasts(country_code: string, latest?: IForecast): Promise<IForecast[]> {
     await this.supabaseService.ready();
     // only retrieve forecasts that have storage files stored
     // NOTE - these are populated on a separate cron schedule to forecast db entries
-    const query = this.table.select<'*', IClimateForecastRow>('*').neq('storage_file', null);
+    const query = this.table.select<'*', IForecastRow>('*').neq('storage_file', null);
     if (country_code !== 'global') {
       query.eq('country_code', country_code);
     }

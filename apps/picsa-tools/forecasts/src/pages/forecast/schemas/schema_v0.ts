@@ -2,12 +2,12 @@ import type { Database } from '@picsa/server-types';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
-import { IClimateForecastRow } from '../forecast.types';
+import { IForecastRow } from '../forecast.types';
 
 const SCHEMA_VERSION = 0;
 
 // interface adapted from server types
-export interface IClimateForecast_V0 {
+export interface IForecast_V0 {
   country_code: string;
   forecast_type: Database['public']['Enums']['forecast_type'] | null;
   id: string;
@@ -17,8 +17,8 @@ export interface IClimateForecast_V0 {
   storage_file: string;
 }
 
-export const SCHEMA_V0: RxJsonSchema<IClimateForecast_V0> = {
-  title: 'climate_forecasts',
+export const SCHEMA_V0: RxJsonSchema<IForecast_V0> = {
+  title: 'forecasts',
   version: SCHEMA_VERSION,
   keyCompression: false,
   type: 'object',
@@ -39,13 +39,13 @@ export const SCHEMA_V0: RxJsonSchema<IClimateForecast_V0> = {
   },
 };
 
-export const COLLECTION_V0: IPicsaCollectionCreator<IClimateForecast_V0> = {
+export const COLLECTION_V0: IPicsaCollectionCreator<IForecast_V0> = {
   schema: SCHEMA_V0,
   isUserCollection: false,
   migrationStrategies: {},
 };
 
-export const SERVER_DB_MAPPING_V0 = (row: IClimateForecastRow): IClimateForecast_V0 => {
+export const SERVER_DB_MAPPING_V0 = (row: IForecastRow): IForecast_V0 => {
   const { country_code, forecast_type, id, language_code, location, mimetype, storage_file } = row;
   return {
     country_code,

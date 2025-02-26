@@ -11,10 +11,10 @@ import { RxDocument } from 'rxdb';
 
 import { ForecastLocationSelectComponent } from '../../components/location-select/location-select.component';
 import { ForecastService } from './forecast.service';
-import { IClimateForecast } from './schemas';
+import { IForecast } from './schemas';
 
 interface IForecastSummary {
-  _doc: RxDocument<IClimateForecast>;
+  _doc: RxDocument<IForecast>;
   id: string;
   label: string;
   storage_file: string;
@@ -80,7 +80,7 @@ export class ForecastComponent implements OnDestroy {
     this.pdfSrc = undefined;
   }
 
-  private generateForecastSummary(docs: RxDocument<IClimateForecast>[]): IForecastSummary[] {
+  private generateForecastSummary(docs: RxDocument<IForecast>[]): IForecastSummary[] {
     const summaries = docs.map((doc) => {
       const { id, storage_file, forecast_type } = doc;
       const label = this.generateForecastLabel(storage_file);
