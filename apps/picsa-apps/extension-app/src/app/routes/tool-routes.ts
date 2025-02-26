@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Routes } from '@angular/router';
 
 export const TOOL_ROUTES: Routes = [
