@@ -1,7 +1,7 @@
 import { getClient } from '../_shared/client.ts';
 import { getJsonData } from '../_shared/request.ts';
 import { JSONResponse } from '../_shared/response.ts';
-import { apiClient } from './climate-forecast-db.ts';
+import { apiClient } from './forecast-db.ts';
 import { IDBClimateForecastRow } from './types.ts';
 
 interface IReqParams {

@@ -17,7 +17,7 @@ export const TOOL_ROUTES: Routes = [
       import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
   },
   {
-    path: 'forecast',
+    path: 'forecasts',
     loadComponent: () => import('@picsa/forecasts/pages/forecast/forecast.page').then((mod) => mod.ForecastComponent),
   },
   {

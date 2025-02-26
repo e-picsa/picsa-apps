@@ -3,8 +3,8 @@
 // This enables autocomplete, go to definition, etc.
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { forecastStorage } from './climate-forecast-storage.ts';
-import { forecastDB } from './climate-forecast-db.ts';
+import { forecastStorage } from './forecast-storage.ts';
+import { forecastDB } from './forecast-db.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 
 serve((req) => {
@@ -19,9 +19,9 @@ serve((req) => {
   const endpoint = req.url.split('/').pop();
 
   switch (endpoint) {
-    case 'climate-forecast-db':
+    case 'forecast-db':
       return forecastDB(req);
-    case 'climate-forecast-storage':
+    case 'forecast-storage':
       return forecastStorage(req);
 
     default:
