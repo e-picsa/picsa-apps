@@ -3,6 +3,7 @@ import MW_DISTRICTS from './mw/districts';
 import { ICountryCode } from '../deployments';
 import { IGelocationData } from './types';
 import ZM_PROVINCES from './zm/provinces';
+import ZM_DISTRICTS from './zm/districts';
 
 export * from './utils';
 export * from './types';
@@ -26,6 +27,10 @@ export const GEO_LOCATION_DATA: { [country_code in ICountryCode]?: IGelocationDa
         return res.default;
       },
       locations: ZM_PROVINCES,
+    },
+    admin_5: {
+      label: translateMarker('District'),
+      locations: ZM_DISTRICTS,
     },
   },
 };

@@ -8,6 +8,10 @@ export interface IGelocationData {
     topoJson: () => Promise<ITopoJson>;
     locations: { id: string; label: string }[];
   };
+  admin_5?: {
+    label: string;
+    locations: { id: string; label: string; admin_4: string }[];
+  };
 }
 
 export interface IGeoJsonData<T = Record<string, string>> {
