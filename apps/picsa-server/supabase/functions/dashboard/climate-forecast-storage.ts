@@ -16,19 +16,19 @@ interface IReqParams {
  * Handle downloading forecast files from api and populating to supabase storage entry
  * Checks DB for any entries without storage files and attempts to update
  */
-export const climateForecastStorage = async (req: Request) => {
+export const forecastStorage = async (req: Request) => {
   // ensure api up and running before sending batched requests
   await apiClient.GET('/v1/status/');
   const params = await getJsonData<IReqParams>(req);
-  const res = await new ClimateForecastStorageUpdate().populateStorageFiles(params);
+  const res = await new ForecastStorageUpdate().populateStorageFiles(params);
   return JSONResponse(res);
 };
 
-class ClimateForecastStorageUpdate {
+class ForecastStorageUpdate {
   supabaseClient = getClient();
 
   private get table() {
-    return this.supabaseClient.from('climate_forecasts');
+    return this.supabaseClient.from('forecasts');
   }
 
   async populateStorageFiles(params: IReqParams) {

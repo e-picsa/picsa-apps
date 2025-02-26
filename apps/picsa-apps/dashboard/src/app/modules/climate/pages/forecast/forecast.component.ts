@@ -61,7 +61,7 @@ export class ClimateForecastPageComponent {
   public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
 
   private get db() {
-    return this.supabase.db.table('climate_forecasts');
+    return this.supabase.db.table('forecasts');
   }
 
   constructor(

@@ -21,7 +21,7 @@ export const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_EN
 /**
  * Update cliamte forecast db rows
  */
-export const climateForecastDB = async (req: Request) => {
+export const forecastDB = async (req: Request) => {
   // Validate body formData
   // TODO - Improve validators and feedback
   let { country_codes = COUNTRY_CODES, query_prefix } = await getJsonData(req);
@@ -59,7 +59,7 @@ async function getCountryUpdates(country_code: string, query_prefix: string) {
   // map api forecasts to db format and update db
   const updates = mapApiForecastToDb(newForecasts, country_code);
   const supabaseClient = getClient();
-  const { error } = await supabaseClient.from('climate_forecasts').insert(updates);
+  const { error } = await supabaseClient.from('forecasts').insert(updates);
   if (error) {
     throw error;
   }
@@ -82,7 +82,7 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
   const { country_code, query_prefix } = query;
   console.log('db query', query_prefix, country_code);
   const { data, error } = await supabaseClient
-    .from('climate_forecasts')
+    .from('forecasts')
     .select('*')
     .like('id', `${query_prefix}%`)
     .eq('country_code', country_code)

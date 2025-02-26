@@ -4,7 +4,7 @@ import type { paths, components } from '../../../../picsa-apps/dashboard/src/app
 export type climateApiPaths = paths;
 export type climateApiComponents = components;
 
-export type IDBClimateForecastRow = Database['public']['Tables']['climate_forecasts']['Row'];
-export type IDBClimateForecastInsert = Database['public']['Tables']['climate_forecasts']['Insert'];
+export type IDBClimateForecastRow = Database['public']['Tables']['forecasts']['Row'];
+export type IDBClimateForecastInsert = Database['public']['Tables']['forecasts']['Insert'];
 
 export type IApiClimateForecast = climateApiComponents['schemas']['DocumentMetadata'];

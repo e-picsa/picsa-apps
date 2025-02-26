@@ -1,6 +1,6 @@
-import { IClimateForecastRow } from './types';
+import { IForecastRow } from './types';
 
-const seasonal: IClimateForecastRow[] = [
+const seasonal: IForecastRow[] = [
   {
     id: 'b79ff462-eb50-49bf-89d2-d7e87717af7e',
     country_code: 'mw',
@@ -14,7 +14,7 @@ const seasonal: IClimateForecastRow[] = [
   },
 ];
 
-const downscaled: IClimateForecastRow[] = [
+const downscaled: IForecastRow[] = [
   {
     id: 'a4ac39ea-f469-419d-8bd5-99e080e00bcb',
     country_code: 'mw',

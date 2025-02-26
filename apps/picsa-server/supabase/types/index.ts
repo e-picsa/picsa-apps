@@ -34,7 +34,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      climate_forecasts: {
+      forecasts: {
         Row: {
           country_code: string
           created_at: string

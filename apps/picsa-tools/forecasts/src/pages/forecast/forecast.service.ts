@@ -1,7 +1,7 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
-import { CLIMATE_FORECASTS_DB } from '@picsa/data/climate/forecasts';
+import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
@@ -26,10 +26,10 @@ export class ForecastService extends PicsaAsyncService {
   );
 
   private get table() {
-    return this.supabaseService.db.table('climate_forecasts');
+    return this.supabaseService.db.table('forecasts');
   }
   private get dbCollection() {
-    return this.dbService.db.collections['climate_forecasts'] as RxCollection<IForecast>;
+    return this.dbService.db.collections['forecasts'] as RxCollection<IForecast>;
   }
 
   constructor(
@@ -60,7 +60,7 @@ export class ForecastService extends PicsaAsyncService {
   }
   public override async init(...args: any): Promise<void> {
     await this.dbService.ensureCollections({
-      climate_forecasts: FORECAST_COLLECTION,
+      forecasts: FORECAST_COLLECTION,
     });
   }
 
@@ -74,7 +74,7 @@ export class ForecastService extends PicsaAsyncService {
     if (admin_5) {
       filters.push((v) => v.location?.[1] === admin_5);
     }
-    const forecasts = CLIMATE_FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
+    const forecasts = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
     const dbDocs = await this.hackStoreHardcodedData(forecasts);
     this.downscaledForecastDocs.set(dbDocs);
   }
@@ -106,7 +106,7 @@ export class ForecastService extends PicsaAsyncService {
     }
   }
   private async loadSeasonalForecasts(country_code: ICountryCode) {
-    const seaonalForecasts = CLIMATE_FORECASTS_DB.filter(
+    const seaonalForecasts = FORECASTS_DB.filter(
       (v) => v.country_code === country_code && v.forecast_type === 'seasonal'
     );
     const dbDocs = await this.hackStoreHardcodedData(seaonalForecasts);

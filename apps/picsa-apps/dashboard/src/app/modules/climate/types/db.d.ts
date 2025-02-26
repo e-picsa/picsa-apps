@@ -10,9 +10,9 @@ export type IClimateSummaryRainfallRow = Database['public']['Tables']['climate_s
 };
 export type IClimateSummaryRainfallInsert = Database['public']['Tables']['climate_summary_rainfall']['Insert'];
 
-export type IForecastRow = Database['public']['Tables']['climate_forecasts']['Row'];
-export type IForecastInsert = Database['public']['Tables']['climate_forecasts']['Insert'];
-export type IForecastUpdate = Database['public']['Tables']['climate_forecasts']['Update'];
+export type IForecastRow = Database['public']['Tables']['forecasts']['Row'];
+export type IForecastInsert = Database['public']['Tables']['forecasts']['Insert'];
+export type IForecastUpdate = Database['public']['Tables']['forecasts']['Update'];
 
 export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
 export type IStationInsert = Database['public']['Tables']['climate_stations']['Insert'];
