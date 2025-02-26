@@ -9,9 +9,8 @@ import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { RxDocument } from 'rxdb';
 
-import { ClimateToolComponentsModule } from '../../components/climate-tool-components.module';
-import { ClimateLocationSelectComponent } from '../../components/location-select/location-select.component';
-import { ClimateForecastService } from './forecast.service';
+import { ForecastLocationSelectComponent } from '../../components/location-select/location-select.component';
+import { ForecastService } from './forecast.service';
 import { IClimateForecast } from './schemas';
 
 interface IForecastSummary {
@@ -24,13 +23,11 @@ interface IForecastSummary {
 }
 
 @Component({
-  selector: 'climate-forecast',
   templateUrl: './forecast.page.html',
   styleUrls: ['./forecast.page.scss'],
   imports: [
     CommonModule,
-    ClimateToolComponentsModule,
-    ClimateLocationSelectComponent,
+    ForecastLocationSelectComponent,
     MatIcon,
     MatProgressBarModule,
     PicsaTranslateModule,
@@ -39,7 +36,7 @@ interface IForecastSummary {
     SupabaseStorageDownloadComponent,
   ],
 })
-export class ClimateForecastComponent implements OnDestroy {
+export class ForecastComponent implements OnDestroy {
   public pdfSrc?: string;
 
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
@@ -52,7 +49,7 @@ export class ClimateForecastComponent implements OnDestroy {
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
-  constructor(private service: ClimateForecastService, private dbAttachmentService: PicsaDatabaseAttachmentService) {}
+  constructor(private service: ForecastService, private dbAttachmentService: PicsaDatabaseAttachmentService) {}
 
   ngOnDestroy() {
     this.closeForecast();

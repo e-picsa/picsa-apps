@@ -12,7 +12,7 @@ import { IClimateForecastRow } from './forecast.types';
 import { CLIMATE_FORECAST_COLLECTION, IClimateForecast, SERVER_DB_MAPPING } from './schemas';
 
 @Injectable({ providedIn: 'root' })
-export class ClimateForecastService extends PicsaAsyncService {
+export class ForecastService extends PicsaAsyncService {
   public dailyForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
   public seasonalForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
   public downscaledForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });

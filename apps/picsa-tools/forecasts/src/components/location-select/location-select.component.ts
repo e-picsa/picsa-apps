@@ -8,7 +8,7 @@ import { GEO_LOCATION_DATA } from '@picsa/data/geoLocation';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 /**
- * Climate location select displays dropdown selection boxes for administrative level 4 and 5
+ * Forecast location select displays dropdown selection boxes for administrative level 4 and 5
  * locations within the current user selected country.
  *
  * This is slightly complicated as different countries use different terminology to describe
@@ -18,13 +18,13 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
  * E.g. In Zambia is shows dropdowns [4|Province] [5|District]
  */
 @Component({
-  selector: 'climate-location-select',
+  selector: 'forecast-location-select',
   imports: [CommonModule, MatFormFieldModule, MatSelectModule, PicsaTranslateModule],
   templateUrl: './location-select.component.html',
   styleUrl: './location-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClimateLocationSelectComponent {
+export class ForecastLocationSelectComponent {
   /** Options provided to location select (admin_4 district/province level) */
   public admin4Options = signal<{ id: string; label: string }[]>([]);
   public admin5Options = signal<{ id: string; label: string }[]>([]);

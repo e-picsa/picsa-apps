@@ -87,7 +87,7 @@ const ADDITIONAL_LINKS: IPageLink[] = [
   {
     name: translateMarker('Forecasts'),
     svgIcon: 'extension_app:forecasts_tool',
-    url: '/climate/forecast',
+    url: '/forecasts',
     tourId: 'forecasts',
   },
   {
