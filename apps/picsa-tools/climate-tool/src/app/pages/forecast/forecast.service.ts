@@ -1,25 +1,29 @@
-import { Injectable, signal } from '@angular/core';
-import { IUserSettings } from '@picsa/configuration/src';
+import { computed, effect, Injectable, signal } from '@angular/core';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { CLIMATE_FORECASTS_DB } from '@picsa/data/climate/forecasts';
+import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
-import { MangoQuerySelector, RxCollection, RxDocument, RxQuery } from 'rxdb';
+import { MangoQuerySelector, RxCollection, RxDocument } from 'rxdb';
 
 import { IClimateForecastRow } from './forecast.types';
 import { CLIMATE_FORECAST_COLLECTION, IClimateForecast, SERVER_DB_MAPPING } from './schemas';
 
-/**
- * TODOs
- * - HTML Open
- */
-
 @Injectable({ providedIn: 'root' })
-export class ClimateForecastService {
+export class ClimateForecastService extends PicsaAsyncService {
   public dailyForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
   public seasonalForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
   public downscaledForecastDocs = signal<RxDocument<IClimateForecast>[]>([], { equal: isEqual });
+
+  private downscaledLocation = computed(
+    () => {
+      const { location } = this.configurationService.userSettings();
+      return { country_code: location[2], admin_4: location[4], admin_5: location[5] };
+    },
+    { equal: isEqual }
+  );
 
   private get table() {
     return this.supabaseService.db.table('climate_forecasts');
@@ -31,20 +35,48 @@ export class ClimateForecastService {
   constructor(
     private supabaseService: SupabaseService,
     private dbService: PicsaDatabase_V2_Service,
-    private dbAttachmentService: PicsaDatabaseAttachmentService
-  ) {}
+    private dbAttachmentService: PicsaDatabaseAttachmentService,
+    private configurationService: ConfigurationService
+  ) {
+    super();
+    effect(async () => {
+      const { country_code } = this.configurationService.userSettings();
+      if (country_code) {
+        await this.ready();
+        this.loadDailyForecasts(country_code);
+        this.loadSeasonalForecasts(country_code);
+      }
+    });
 
-  public async loadForecasts(location: IUserSettings['location'] = []) {
+    effect(async () => {
+      const { country_code, admin_4, admin_5 } = this.downscaledLocation();
+      if (country_code && admin_4) {
+        await this.ready();
+        this.loadDownscaledForecasts(country_code, admin_4, admin_5);
+      } else {
+        this.downscaledForecastDocs.set([]);
+      }
+    });
+  }
+  public override async init(...args: any): Promise<void> {
     await this.dbService.ensureCollections({
       climate_forecasts: CLIMATE_FORECAST_COLLECTION,
     });
-    const country_code = location[2] as ICountryCode;
-    const subLocationCode = location[4];
-    if (country_code) {
-      this.loadDailyForecasts(country_code);
-      this.loadSeasonalForecasts(country_code);
-      this.loadDownscaledForecasts(country_code, subLocationCode);
+  }
+
+  private async loadDownscaledForecasts(country_code: string, admin_4: string, admin_5?: string) {
+    const filters: ((v: IClimateForecastRow) => boolean)[] = [
+      (v) => v.forecast_type === 'downscaled',
+      (v) => v.country_code === country_code,
+      (v) => v.location?.[0] === admin_4,
+    ];
+    // optional filter if admin_5 in specifed
+    if (admin_5) {
+      filters.push((v) => v.location?.[1] === admin_5);
     }
+    const forecasts = CLIMATE_FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
+    const dbDocs = await this.hackStoreHardcodedData(forecasts);
+    this.downscaledForecastDocs.set(dbDocs);
   }
 
   private async hackStoreHardcodedData(forecasts: IClimateForecastRow[] = []) {
@@ -79,19 +111,6 @@ export class ClimateForecastService {
     );
     const dbDocs = await this.hackStoreHardcodedData(seaonalForecasts);
     this.seasonalForecastDocs.set(dbDocs);
-  }
-
-  private async loadDownscaledForecasts(country_code: ICountryCode, subLocationCode: string | null) {
-    if (!subLocationCode) {
-      this.downscaledForecastDocs.set([]);
-      return;
-    }
-    const downscaledForecasts = CLIMATE_FORECASTS_DB.filter(
-      (v) =>
-        v.country_code === country_code && v.forecast_type === 'downscaled' && v.location?.includes(subLocationCode)
-    );
-    const dbDocs = await this.hackStoreHardcodedData(downscaledForecasts);
-    this.downscaledForecastDocs.set(dbDocs);
   }
 
   public async downloadForecastFile(doc: RxDocument<IClimateForecast>, downloaderUI: SupabaseStorageDownloadComponent) {

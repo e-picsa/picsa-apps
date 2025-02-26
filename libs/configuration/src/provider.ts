@@ -17,7 +17,7 @@ export interface IUserSettings {
    * https://wiki.openstreetmap.org/wiki/Key:admin_level
    * @example [null,null,'malawi','northern','karonga']
    */
-  location: (string | null)[];
+  location: (string | undefined)[];
 }
 
 const USER_CONFIGURATION_DEFAULT: IUserSettings = {
@@ -59,7 +59,7 @@ export class ConfigurationService {
       // ensure sublocation kept in sync with country selected
       const { country_code, location } = this.userSettings();
       if (location[2] === country_code) return;
-      this.userSettings.update((v) => ({ ...v, location: [null, null, country_code] }));
+      this.userSettings.update((v) => ({ ...v, location: [undefined, undefined, country_code] }));
     });
   }
 

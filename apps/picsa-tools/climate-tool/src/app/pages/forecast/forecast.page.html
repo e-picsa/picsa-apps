@@ -10,18 +10,7 @@
   </div>
 
   <!-- Location Select (Admin 4 - district/province) -->
-  <mat-form-field class="mt-4 mx-4 sm:mx-0">
-    <mat-label>{{locationSelectLabel() | translate}}</mat-label>
-    <mat-select
-      #locationSelect
-      (selectionChange)="handleUserLocationSelect(locationSelect.value)"
-      [value]="locationSelected()"
-    >
-      @for (option of locationSelectOptions(); track option.id) {
-      <mat-option [value]="option.id">{{option.label}}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <climate-location-select></climate-location-select>
 
   <!-- Forecasts -->
   <div class="flex flex-wrap items-center gap-4">
