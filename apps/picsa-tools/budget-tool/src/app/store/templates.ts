@@ -21,7 +21,7 @@ export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
 // don't assert type so missing _key field picked up in create new budget from store
 export const NEW_BUDGET_TEMPLATE: IBudget = {
   apiVersion: BUDGET_API_VERSION,
-  _appVersion: APP_VERSION.number,
+  _appVersion: APP_VERSION.semver,
   data: [],
   meta: {
     title: '',

@@ -45,7 +45,7 @@ export class AppLayoutComponent {
     )
   );
   public userType = computed(() => this.configurationService.userSettings().user_type);
-  public version = APP_VERSION;
+  public version = APP_VERSION.semver;
 
   constructor(
     private router: Router,
