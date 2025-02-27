@@ -79,7 +79,6 @@ export class ForecastLocationSelectComponent {
     if (admin_level === 4) {
       update[5] = undefined;
     }
-    console.log('update location', update);
     this.configurationService.updateUserSettings({ location: update });
   }
 
