@@ -82,7 +82,7 @@ export class SiteSelectPage {
   private async loadCountryAdminBoundaries(map: Map, country_code: string) {
     const metadata: IGelocationData = GEO_LOCATION_DATA[country_code];
     if (!metadata) return;
-    const topojson = await metadata.admin_4.data();
+    const topojson = await metadata.admin_4.topoJson();
     const feature = topoJsonToGeoJson(topojson);
     geoJSON(feature as any)
       .setStyle({ fill: false, color: 'brown', opacity: 0.5 })
