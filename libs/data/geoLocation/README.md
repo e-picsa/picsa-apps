@@ -47,6 +47,47 @@ out geom;
 
 https://overpass-turbo.eu/s/1Z83
 
+**Admin_5 - District/Province Boundaries**
+OSM does not keep relations between admin_4 and admin_5, so it is not possible to retrieve all admin_5
+boundaries with a single query.
+
+Instead wiki entries must be used to manually extract one at a time
+
+In some cases original sources for boundaries are provided, however these have likely undergone several revisions since
+first population, and so are unlikely to be representative of current map as viewed in OSM
+
+It may be possible to try and use common tags found across multiple boundaries, e.g.
+
+```
+[out:json][timeout:25];
+// gather results
+nwr["admin_level"="5"]["boundary"="administrative"]["source"="https://github.com/lightonphiri/data-zambia-shapefiles"];
+
+// print results
+out geom;
+```
+
+Otherwise will likely need to create a search limited to country bounding box and filter out results that are not part of country
+Use web viewport bounding box via {{bbox}} query, or specify coordinates for custom bounding box
+
+```
+[out:json][timeout:25];
+// gather results
+nwr["admin_level"="5"]["boundary"="administrative"]["type"="boundary"]({{bbox}});
+
+// print results
+out geom;
+```
+
+http://bboxfinder.com/#-18.271086,21.379395,-7.863382,34.453125
+21.379395, -18.271086, 34.453125, -7.863382
+West South East North
+
+Convert WSEN -> SWNE coordinates
+
+-18.271086, 21.379395, -7.863382, 34.453125
+South West North East
+
 ### Export as GeoJSON
 
 Use the export feature in overpass-turbo to export as GeoJson
