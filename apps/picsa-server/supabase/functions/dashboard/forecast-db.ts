@@ -1,11 +1,14 @@
-import type { Database } from '../../types/index.ts';
-import type {
-  paths as climateApiPaths,
-  components as climateApiComponents,
-} from '../../../../picsa-apps/dashboard/src/app/modules/climate/types/api.d.ts';
 import { getClient } from '../_shared/client.ts';
 import { getJsonData } from '../_shared/request.ts';
+import { ErrorResponse } from '../_shared/response.ts';
 import { JSONResponse } from '../_shared/response.ts';
+
+import type {
+  climateApiPaths,
+  IApiClimateForecast,
+  IDBClimateForecastInsert,
+  IForecastDBAPIResponse,
+} from './types.ts';
 
 /**
  * Read the endpoint from env. Note, if running climate api in local docker container update `.env` to:
@@ -14,40 +17,43 @@ import { JSONResponse } from '../_shared/response.ts';
  * ```
  * https://github.com/orgs/supabase/discussions/9837
  */
-const CLIMATE_API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
-const COUNTRY_CODES = ['mw', 'zm'];
+export const CLIMATE_API_ENDPOINT = Deno.env.get('CLIMATE_API_ENDPOINT') || 'https://api.epicsa.idems.international';
+export const ALL_COUNTRY_CODES = ['mw', 'zm'];
 
 // Create typed fetch client from open-api definition exported by climate api
 import createClient from 'openapi-fetch';
-const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_ENDPOINT, mode: 'cors' });
-
-type IDBClimateForecast = Database['public']['Tables']['climate_forecasts']['Insert'];
-type IApiClimateForecast = climateApiComponents['schemas']['DocumentMetadata'];
+export const apiClient = createClient<climateApiPaths>({ baseUrl: CLIMATE_API_ENDPOINT, mode: 'cors' });
 
 /**
- * Update
+ * Update cliamte forecast db rows
  */
-export const climateForecastUpdate = async (req: Request) => {
-  // Validate body formData
+export const forecastDB = async (req: Request) => {
   // TODO - Improve validators and feedback
-  let { country_codes = COUNTRY_CODES, query_prefix } = await getJsonData(req);
+  let { country_code, query_prefix } = await getJsonData(req);
+
+  // Retrieve single country if specified, default all
+  const country_codes = country_code ? [country_code] : ALL_COUNTRY_CODES;
 
   // Default query for documents stored in the current month,
   if (!query_prefix) {
     query_prefix = new Date().toISOString().replace(/-/, '').substring(0, 6);
   }
 
-  const responses = [];
+  const response: IForecastDBAPIResponse = {};
+  const errors = [];
 
   for (const country_code of country_codes) {
     try {
       const data = await getCountryUpdates(country_code, query_prefix);
-      responses.push({ country_code, data });
+      response[country_code] = data;
     } catch (error) {
-      responses.push({ country_code, error });
+      errors.push(error);
     }
   }
-  return JSONResponse(responses);
+  if (errors.length > 0) {
+    return ErrorResponse(errors);
+  }
+  return JSONResponse(response);
 };
 
 async function getCountryUpdates(country_code: string, query_prefix: string) {
@@ -65,7 +71,7 @@ async function getCountryUpdates(country_code: string, query_prefix: string) {
   // map api forecasts to db format and update db
   const updates = mapApiForecastToDb(newForecasts, country_code);
   const supabaseClient = getClient();
-  const { error } = await supabaseClient.from('climate_forecasts').insert(updates);
+  const { error } = await supabaseClient.from('forecasts').insert(updates);
   if (error) {
     throw error;
   }
@@ -88,7 +94,7 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
   const { country_code, query_prefix } = query;
   console.log('db query', query_prefix, country_code);
   const { data, error } = await supabaseClient
-    .from('climate_forecasts')
+    .from('forecasts')
     .select('*')
     .like('id', `${query_prefix}%`)
     .eq('country_code', country_code)
@@ -100,7 +106,7 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
   return data;
 }
 
-function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: string): IDBClimateForecast[] {
+function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: string): IDBClimateForecastInsert[] {
   return apiForecasts.map((v) => ({
     country_code,
     id: v.name,

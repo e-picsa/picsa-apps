@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { RefreshSpinnerComponent } from '@picsa/components';
+import { FunctionResponses } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
@@ -15,6 +17,8 @@ import { DashboardClimateMonthSelectComponent } from './month-select/month-selec
 interface IForecastTableRow extends IForecastRow {
   file_name: string;
 }
+
+type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
 
 const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
   'country_code',
@@ -61,7 +65,7 @@ export class ClimateForecastPageComponent {
   public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
 
   private get db() {
-    return this.supabase.db.table('climate_forecasts');
+    return this.supabase.db.table('forecasts');
   }
 
   constructor(
@@ -116,29 +120,31 @@ export class ClimateForecastPageComponent {
   /** Invoke backend function that fetches forecasts from climate api and updates db */
   private async refreshAPIData() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { country_code } = this.deploymentService.activeDeployment()!;
-    const formData = new FormData();
-    formData.append('country_code', country_code);
-    formData.append('query_prefix', this.apiQueryPrefix());
-    const { data, error } = await this.supabase.functions
-      .invoke('dashboard/climate-forecast-update', {
-        method: 'POST',
-        body: formData,
-      })
-      .catch((error) => ({ data: [], error }));
-    if (error) {
-      console.error(error);
+    const country_code = this.countryCode() as string;
+    const query_prefix = this.apiQueryPrefix();
+
+    const { data, error } = await this.supabase.functions.invoke<IForecastDBAPIResponse>('dashboard/forecast-db', {
+      method: 'POST',
+      body: { country_code, query_prefix },
+    });
+
+    // Errors thrown from functions in JS client need to wait for message
+    // https://github.com/supabase/functions-js/issues/45
+    if (error && error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      console.error('refreshAPIData', JSON.parse(errorMessage));
       this.notificationService.showErrorNotification('Forecast Update Failed. See console logs for details');
       return [];
     }
-    if (data.length > 0) {
-      this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(data), v));
-    }
-    console.log('[Api Data Updated]', data);
-    return data;
+    const forecasts = data?.[country_code] || [];
+
+    this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(forecasts), v));
+    console.log('[Api Data Updated]', { country_code, data, forecasts });
+
+    return forecasts;
   }
 
-  private toTableData(data: IForecastRow[]): IForecastTableRow[] {
+  private toTableData(data: IForecastRow[] = []): IForecastTableRow[] {
     return data
       .map((el) => {
         // compute file_name column from storage file path
