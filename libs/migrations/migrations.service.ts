@@ -75,7 +75,7 @@ export class PicsaMigrationService {
       // HACK - As first install only tracked from v3.52, fallback to v3.0.0 if the user is not
       // a first-time user but does not have accurate first install version
       const previousUser = localStorage.getItem('picsa_user_settings');
-      firstInstallVersion = previousUser ? '3.0.0' : APP_VERSION.number;
+      firstInstallVersion = previousUser ? '3.0.0' : APP_VERSION.semver;
       localStorage.setItem('picsa_app_first_install_version', firstInstallVersion);
       return firstInstallVersion;
     }
