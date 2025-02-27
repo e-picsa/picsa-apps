@@ -1,0 +1,30 @@
+<!-- Location Select (Admin 4 - district/province) -->
+<div class="flex gap-4 my-4">
+  <mat-form-field>
+    <mat-label>{{ admin4Label() | translate }}</mat-label>
+    <mat-select
+      #locationSelect
+      (selectionChange)="handleUserLocationSelect(locationSelect.value, 4)"
+      [value]="admin4Selected()"
+    >
+      @for (option of admin4Options(); track option.id) {
+      <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  @if(admin5Options().length>0){
+  <!-- Location Select (Admin 5) -->
+  <mat-form-field>
+    <mat-label>{{ admin5Label() | translate }}</mat-label>
+    <mat-select
+      #locationSelect
+      (selectionChange)="handleUserLocationSelect(locationSelect.value, 5)"
+      [value]="admin5Selected()"
+    >
+      @for (option of admin5Options(); track option.id) {
+      <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  }
+</div>
