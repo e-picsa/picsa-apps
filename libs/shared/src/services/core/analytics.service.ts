@@ -32,7 +32,7 @@ export class AnalyticsService {
         this.firebaseAnalytics.setScreenName({ screenName: location.pathname });
         this.firebaseAnalytics.logEvent({
           name: 'picsa_screen_view',
-          params: { screen_name: location.pathname, app_version: APP_VERSION },
+          params: { screen_name: location.pathname, app_version: APP_VERSION.semver },
         });
       }
     });

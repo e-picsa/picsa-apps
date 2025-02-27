@@ -142,7 +142,7 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   /** List of home page display links, filtered when running in production */
   public picsaLinks = PAGE_LINKS;
   public additionalLinks = ADDITIONAL_LINKS;
-  public version = APP_VERSION;
+  public version = APP_VERSION.semver;
 
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;

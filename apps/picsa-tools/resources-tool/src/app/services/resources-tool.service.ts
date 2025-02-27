@@ -165,7 +165,7 @@ export class ResourcesToolService extends PicsaAsyncService {
 
     // Use caching system to only populate once per app version launch in production
     const assetsCacheVersion = this.getAssetResourcesVersion();
-    if (ENVIRONMENT.production && assetsCacheVersion === APP_VERSION.number) {
+    if (ENVIRONMENT.production && assetsCacheVersion === APP_VERSION.semver) {
       return;
     }
     // Update DB with hardcoded entries
@@ -236,7 +236,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   private setAssetResourcesVersion() {
-    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
+    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.semver);
   }
 
   public async shareLink(url: string) {
