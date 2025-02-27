@@ -53,24 +53,21 @@ export class AppLayoutComponent {
     componentService: PicsaCommonComponentsService,
     viewContainer: ViewContainerRef
   ) {
-    effect(
-      () => {
-        // Inject menu button into global header when on farmer or extension home
-        const { cdkPortalStart } = componentService.headerOptions();
-        if (this.showMenuButton()) {
-          if (!cdkPortalStart) {
-            componentService.patchHeader({
-              cdkPortalStart: new TemplatePortal(this.menuButtonTemplate(), viewContainer),
-            });
-          }
-        } else {
-          if (cdkPortalStart) {
-            componentService.patchHeader({ cdkPortalStart: undefined });
-          }
+    effect(() => {
+      // Inject menu button into global header when on farmer or extension home
+      const { cdkPortalStart } = componentService.headerOptions();
+      if (this.showMenuButton()) {
+        if (!cdkPortalStart) {
+          componentService.patchHeader({
+            cdkPortalStart: new TemplatePortal(this.menuButtonTemplate(), viewContainer),
+          });
         }
-      },
-      { allowSignalWrites: true }
-    );
+      } else {
+        if (cdkPortalStart) {
+          componentService.patchHeader({ cdkPortalStart: undefined });
+        }
+      }
+    });
   }
 
   public toggleUserType() {
