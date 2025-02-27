@@ -116,7 +116,7 @@ export const ApiMapping = (
 
       // TODO - handle error if filename already exists
       const { error: dbError } = await supabaseService.db
-        .table('climate_forecasts')
+        .table('forecasts')
         .update<IForecastUpdate>({ storage_file: fullPath })
         .eq('id', row.id);
       if (dbError) {

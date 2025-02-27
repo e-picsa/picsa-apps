@@ -2,10 +2,10 @@
 drop table if exists public.climate_forecasts;
 
 -- -- Custom types
-create type public.forecast_type as enum ('daily','annual');
+create type public.forecast_type as enum ('daily','seasonal','downscaled');
 
 create table
-  public.climate_forecasts (
+  public.forecasts (
     id character varying not null,
     created_at timestamp with time zone DEFAULT "now"() NOT NULL,
     updated_at timestamp with time zone DEFAULT "now"() NOT NULL,
@@ -17,8 +17,8 @@ create table
     language_code text null,
     storage_file text null,
     mimetype text null,
-    constraint climate_forecasts_pkey primary key (id),
-    constraint climate_forecasts_storage_file_fkey foreign key (storage_file) references storage.objects (path) on delete cascade
+    constraint forecasts_pkey primary key (id),
+    constraint forecasts_storage_file_fkey foreign key (storage_file) references storage.objects (path) on delete cascade
   ) tablespace pg_default;
 
 
@@ -27,5 +27,5 @@ create table
 CREATE EXTENSION IF NOT EXISTS "moddatetime" SCHEMA extensions;
 
 --  NOTE - required extensions - allow moddatetime
-create trigger handle_updated_at before update on public.climate_forecasts
+create trigger handle_updated_at before update on public.forecasts
   for each row execute procedure moddatetime (updated_at);
