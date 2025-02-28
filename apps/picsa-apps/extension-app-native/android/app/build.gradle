@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "io.picsa.extension"
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "io.picsa.extension"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -40,7 +40,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
-
+    
     // Required for capacitor-video-player
     implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
 
@@ -48,7 +48,6 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
-
 
 try {
     def servicesJSON = file('google-services.json')
