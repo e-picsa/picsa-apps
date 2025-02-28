@@ -53,8 +53,10 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
+   * @param convertFileSrc - Convert into usable src for rendering in webview. Typically required for files
+   * rendered in webview (images, pdf), but not for files passed to native handlers (video, native file open)
    **/
-  public async getFileAttachmentURI(doc: RxDocument<any>, filename: string) {
+  public async getFileAttachmentURI(doc: RxDocument<any>, filename: string, convertFileSrc = true) {
     if (!filename) {
       console.error(doc);
       throw new Error(`No attachment name provided`);
@@ -64,7 +66,7 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
     if (attachment) {
       if (Capacitor.isNativePlatform()) {
         const { uri } = attachment;
-        return Capacitor.convertFileSrc(uri as string);
+        return convertFileSrc ? Capacitor.convertFileSrc(uri as string) : (uri as string);
       } else {
         // On web data stored as base64 string, convert to blob and generate object url
         if (attachment.data) {
