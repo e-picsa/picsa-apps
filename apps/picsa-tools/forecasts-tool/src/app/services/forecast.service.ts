@@ -50,7 +50,6 @@ export class ForecastService extends PicsaAsyncService {
 
     effect(async () => {
       const { country_code, admin_4, admin_5 } = this.downscaledLocation();
-      console.log('load downscaled forecasts', country_code, admin_4, admin_5);
       if (country_code && admin_4) {
         await this.ready();
         this.loadDownscaledForecasts(country_code, admin_4, admin_5);
@@ -70,11 +69,9 @@ export class ForecastService extends PicsaAsyncService {
       (v) => v.forecast_type === 'downscaled',
       (v) => v.country_code === country_code,
       (v) => v.location?.[0] === admin_4,
+      // if admin_5 not used will be undefined in both comparisons
+      (v) => v.location?.[1] === admin_5,
     ];
-    // optional filter if admin_5 in specifed
-    if (admin_5) {
-      filters.push((v) => v.location?.[1] === admin_5);
-    }
     const forecasts = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));
     const dbDocs = await this.hackStoreHardcodedData(forecasts);
     this.downscaledForecastDocs.set(dbDocs);
