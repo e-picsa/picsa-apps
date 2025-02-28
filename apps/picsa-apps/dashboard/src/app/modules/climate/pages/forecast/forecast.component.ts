@@ -155,6 +155,7 @@ export class ClimateForecastPageComponent {
   }
 
   private async downloadStorageFile(row: IForecastRow) {
+    // TODO - invoke cloud function instead of direct
     this.activeDownloads.update((v) => ({ ...v, [row.id]: 'pending' }));
     const storagePath = await this.service.loadFromAPI.forecast_file(row);
     this.activeDownloads.update((v) => ({ ...v, [row.id]: 'complete' }));
