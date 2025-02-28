@@ -3,11 +3,12 @@ import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, output, s
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { IForecast } from '@picsa/forecasts/schemas';
 import { PdfViewerComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { RxDocument } from 'rxdb';
+
+import { IForecast } from '../../schemas';
 
 interface IViewerForecast {
   _doc: RxDocument<IForecast>;

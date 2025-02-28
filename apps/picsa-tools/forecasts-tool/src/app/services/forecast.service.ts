@@ -1,5 +1,5 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
-import { ConfigurationService } from '@picsa/configuration/src';
+import { effect, Injectable, signal } from '@angular/core';
+import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -11,19 +11,25 @@ import { MangoQuerySelector, RxCollection, RxDocument } from 'rxdb';
 import { FORECAST_COLLECTION, IForecast, SERVER_DB_MAPPING } from '../schemas';
 import { IForecastRow } from '../types/forecast.types';
 
+interface IDownscaledLocation {
+  country_code?: ICountryCode;
+  admin_4?: string;
+  admin_5?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
+  /** Toggle service effects on/off when pages are in view */
+  public enabled = signal(false);
+
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public seasonalForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public downscaledForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
 
-  private downscaledLocation = computed(
-    () => {
-      const { location } = this.configurationService.userSettings();
-      return { country_code: location[2], admin_4: location[4], admin_5: location[5] };
-    },
-    { equal: isEqual }
-  );
+  /** Track downscaled location for use in effects */
+  private downscaledLocation = signal<IDownscaledLocation>({}, { equal: isEqual });
+  /** Track country location for use in effects */
+  private countryLocation = signal<ICountryCode | undefined>(undefined);
 
   private get table() {
     return this.supabaseService.db.table('forecasts');
@@ -35,12 +41,11 @@ export class ForecastService extends PicsaAsyncService {
   constructor(
     private supabaseService: SupabaseService,
     private dbService: PicsaDatabase_V2_Service,
-    private dbAttachmentService: PicsaDatabaseAttachmentService,
-    private configurationService: ConfigurationService
+    private dbAttachmentService: PicsaDatabaseAttachmentService
   ) {
     super();
     effect(async () => {
-      const { country_code } = this.configurationService.userSettings();
+      const country_code = this.countryLocation();
       if (country_code) {
         await this.ready();
         this.loadDailyForecasts(country_code);
@@ -62,6 +67,17 @@ export class ForecastService extends PicsaAsyncService {
     await this.dbService.ensureCollections({
       forecasts: FORECAST_COLLECTION,
     });
+  }
+
+  public setForecastLocation(location?: IUserSettings['location']) {
+    if (location) {
+      const country_code = location[2] as ICountryCode;
+      this.countryLocation.set(country_code);
+      this.downscaledLocation.set({ country_code, admin_4: location[4], admin_5: location[5] });
+    } else {
+      this.countryLocation.set(undefined);
+      this.downscaledLocation.set({});
+    }
   }
 
   private async loadDownscaledForecasts(country_code: string, admin_4: string, admin_5?: string) {

@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal, viewChildren } from '@angular/core';
+import { Component, computed, effect, OnDestroy, signal, viewChildren } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { ForecastViewerComponent } from '@picsa/forecasts/components/forecast-viewer/forecast-viewer.component';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
-import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { RxDocument } from 'rxdb';
 
+import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
 import { ForecastLocationSelectComponent } from '../../components/location-select/location-select.component';
 import { IForecast } from '../../schemas';
 import { ForecastService } from '../../services/forecast.service';
@@ -34,7 +34,7 @@ interface IForecastSummary {
     SupabaseStorageDownloadComponent,
   ],
 })
-export class ForecastComponent {
+export class ForecastComponent implements OnDestroy {
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
   public viewerOpen = signal(false);
@@ -49,7 +49,16 @@ export class ForecastComponent {
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
-  constructor(private service: ForecastService, private dbAttachmentService: PicsaDatabaseAttachmentService) {}
+  constructor(private service: ForecastService, configurationService: ConfigurationService) {
+    effect(() => {
+      const { location } = configurationService.userSettings();
+      service.setForecastLocation(location);
+    });
+  }
+
+  ngOnDestroy() {
+    this.service.setForecastLocation(undefined);
+  }
 
   public async handleForecastClick(forecast: IForecastSummary) {
     // open downloaded forecast
