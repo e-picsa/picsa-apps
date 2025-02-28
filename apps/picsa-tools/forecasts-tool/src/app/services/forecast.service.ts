@@ -8,8 +8,8 @@ import { SupabaseService, SupabaseStorageDownloadComponent } from '@picsa/shared
 import { isEqual } from '@picsa/utils/object.utils';
 import { MangoQuerySelector, RxCollection, RxDocument } from 'rxdb';
 
-import { IForecastRow } from './forecast.types';
-import { FORECAST_COLLECTION, IForecast, SERVER_DB_MAPPING } from './schemas';
+import { FORECAST_COLLECTION, IForecast, SERVER_DB_MAPPING } from '../schemas';
+import { IForecastRow } from '../types/forecast.types';
 
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
@@ -50,6 +50,7 @@ export class ForecastService extends PicsaAsyncService {
 
     effect(async () => {
       const { country_code, admin_4, admin_5 } = this.downscaledLocation();
+      console.log('load downscaled forecasts', country_code, admin_4, admin_5);
       if (country_code && admin_4) {
         await this.ready();
         this.loadDownscaledForecasts(country_code, admin_4, admin_5);

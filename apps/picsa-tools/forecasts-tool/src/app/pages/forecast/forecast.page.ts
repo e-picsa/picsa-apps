@@ -9,8 +9,8 @@ import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/su
 import { RxDocument } from 'rxdb';
 
 import { ForecastLocationSelectComponent } from '../../components/location-select/location-select.component';
-import { ForecastService } from './forecast.service';
-import { IForecast } from './schemas';
+import { IForecast } from '../../schemas';
+import { ForecastService } from '../../services/forecast.service';
 
 interface IForecastSummary {
   _doc: RxDocument<IForecast>;

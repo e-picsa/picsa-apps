@@ -2,7 +2,7 @@ import type { Database } from '@picsa/server-types';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
-import { IForecastRow } from '../forecast.types';
+import { IForecastRow } from '../types/forecast.types';
 
 const SCHEMA_VERSION = 0;
 
