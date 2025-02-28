@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Routes } from '@angular/router';
 
 export const TOOL_ROUTES: Routes = [
@@ -15,6 +16,10 @@ export const TOOL_ROUTES: Routes = [
     path: 'crop-probability',
     loadChildren: () =>
       import('@picsa/crop-probability/src/app/app.module-embedded').then((mod) => mod.CropProbabilityToolModule),
+  },
+  {
+    path: 'forecasts',
+    loadComponent: () => import('@picsa/forecasts/pages/forecast/forecast.page').then((mod) => mod.ForecastComponent),
   },
   {
     path: 'monitoring',

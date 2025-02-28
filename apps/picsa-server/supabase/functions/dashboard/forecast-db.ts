@@ -61,9 +61,9 @@ async function getCountryUpdates(country_code: string, query_prefix: string) {
   // filter results to only include api forecasts not present on db
   const apiForecasts = await getApiForecasts({ country_code, query_prefix });
   const dbForecasts = await getDBForecasts({ country_code, query_prefix });
-
   const dbForecastIds = dbForecasts.map((v) => v.id);
   const newForecasts = apiForecasts.filter((v) => !dbForecastIds.includes(v.name));
+  console.log(`${country_code}: ${newForecasts.length} New Forecasts`);
   if (newForecasts.length === 0) {
     return [];
   }
@@ -92,12 +92,12 @@ async function getApiForecasts(query: { country_code: string; query_prefix?: str
 async function getDBForecasts(query: { country_code: string; query_prefix: string }) {
   const supabaseClient = getClient();
   const { country_code, query_prefix } = query;
-  console.log('db query', query_prefix, country_code);
   const { data, error } = await supabaseClient
     .from('forecasts')
     .select('*')
     .like('id', `${query_prefix}%`)
     .eq('country_code', country_code)
+    .eq('forecast_type', 'daily')
     .order('id', { ascending: false });
 
   if (error) {

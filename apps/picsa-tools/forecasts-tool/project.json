@@ -1,0 +1,90 @@
+{
+  "name": "forecasts-tool",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/picsa-tools/forecasts-tool/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/picsa-tools/forecasts-tool",
+        "index": "apps/picsa-tools/forecasts-tool/src/index.html",
+        "browser": "apps/picsa-tools/forecasts-tool/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/picsa-tools/forecasts-tool/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/picsa-tools/forecasts-tool/public"
+          }
+        ],
+        "styles": ["apps/picsa-tools/forecasts-tool/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "4mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "forecasts-tool:build:production"
+        },
+        "development": {
+          "buildTarget": "forecasts-tool:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "forecasts-tool:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/picsa-tools/forecasts-tool/jest.config.ts"
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "forecasts-tool:build",
+        "port": 4200,
+        "staticFilePath": "dist/apps/picsa-tools/forecasts-tool/browser",
+        "spa": true
+      }
+    }
+  }
+}

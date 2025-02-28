@@ -3,12 +3,10 @@ import { IResourceBase } from '../schemas/base';
 import CROPS from './crops';
 import { GENDER_RESOURCES } from './gender';
 import PICSA_RESOURCES from './picsa';
-import WEATHER from './weather';
 
 const byId: Record<string, IResourceBase> = {
   ...CROPS,
   ...GENDER_RESOURCES,
-  ...WEATHER,
   ...PICSA_RESOURCES,
 };
 

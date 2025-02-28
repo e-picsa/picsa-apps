@@ -110,7 +110,7 @@ export const ApiMapping = (
       // setup metadata
       const fileBlob = data as any as Blob;
       const bucketId = country_code as string;
-      const folderPath = 'climate/forecasts';
+      const folderPath = 'forecasts/daily';
       // upload to storage
       const { fullPath } = await storage.putFile({ bucketId, fileBlob, filename: filepath, folderPath });
 

@@ -32,13 +32,12 @@ class ForecastStorageUpdate {
   }
 
   async populateStorageFiles(params: IReqParams) {
-    const { limit = 5 } = params;
+    const { limit = 20 } = params;
     const pending = await this.listPendingFiles(limit);
 
     const updates: IDBClimateForecastRow[] = [];
     const errors: any[] = [];
-    // TODO - make parallel and allow failure
-    for (const { country_code, id } of pending) {
+    const promises = pending.map(async ({ country_code, id }) => {
       const { data, error } = await this.storeForecast(country_code, id);
       if (error) {
         errors.push(error);
@@ -46,12 +45,17 @@ class ForecastStorageUpdate {
       if (data) {
         updates.push(data);
       }
+    });
+    await Promise.allSettled(promises);
+    for (const error of errors) {
+      console.error(error);
     }
+    console.log(`[${updates.length}] storage files populates\n[${errors.length}] errors recorded`);
     return { data: updates, error: errors };
   }
 
   /** Check all climate forecast db entries for any that are missing corresponding storage files */
-  private async listPendingFiles(limit = 5) {
+  private async listPendingFiles(limit: number) {
     const query = this.table.select('*').is('storage_file', null).order('id', { ascending: false }).limit(limit);
     const { data, error } = await query;
     if (error) {
@@ -78,9 +82,13 @@ class ForecastStorageUpdate {
     if (fileData) {
       // upload to supabase storage
       const contentType = apiResponse.headers.get('content-type') as string;
+      const year = id.substring(0, 4);
+      const month = id.substring(4, 6);
+      const day = id.substring(6, 8);
+      const filename = id.substring(9);
       const { data: uploadData, error: uploadError } = await supabaseClient.storage
         .from(country_code)
-        .upload(`climate/forecasts/${id}`, fileData, { contentType, upsert: true });
+        .upload(`forecasts/daily/${year}/${month}/${day}/${filename}`, fileData, { contentType, upsert: true });
       if (uploadError) {
         return { error: uploadError };
       }

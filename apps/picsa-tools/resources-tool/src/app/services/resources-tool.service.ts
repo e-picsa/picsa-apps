@@ -109,8 +109,9 @@ export class ResourcesToolService extends PicsaAsyncService {
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
    * @param convertNativeSrc - Convert to src usable within web content (e.g as image or pdf src)
    **/
-  public async getFileAttachmentURI(doc: RxDocument<schemas.IResourceFile>, convertNativeSrc = false) {
-    return this.dbAttachmentService.getFileAttachmentURI(doc, convertNativeSrc);
+  public async getFileAttachmentURI(doc: RxDocument<schemas.IResourceFile>) {
+    const filename = doc.filename || doc.id;
+    return this.dbAttachmentService.getFileAttachmentURI(doc, filename);
   }
   /**
    * Release a file attachment URI when no longer required
