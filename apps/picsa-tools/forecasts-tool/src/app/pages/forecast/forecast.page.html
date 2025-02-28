@@ -1,12 +1,6 @@
 <div class="page-content">
-  <div class="pdf-container slide-in" [class.active]="pdfSrc ? true : false">
-    @if(pdfSrc){
-    <picsa-pdf-viewer [src]="pdfSrc">
-      <button style="margin-right: 8px" mat-button color="primary" (click)="closeForecast()">
-        {{'Close' | translate}}
-      </button>
-    </picsa-pdf-viewer>
-    }
+  <div class="viewer-container slide-in" [class.active]="viewerOpen() ? true : false">
+    <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
 
   <!-- Location Select (Admin 4 - district/province) -->

@@ -2,22 +2,6 @@
   @apply border-solid capitalize p-2;
 }
 
-.pdf-container {
-  position: fixed;
-  z-index: 2;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-}
-.slide-in {
-  transition: transform 0.3s ease-in-out;
-  transform: translateY(100vh);
-}
-
-.slide-in.active {
-  transform: translateY(0);
-}
 .forecast-heading {
   @apply border-solid border-0 border-b border-[var(--color-light)]  text-center p-2 m-0 capitalize;
 }
@@ -29,4 +13,22 @@
 }
 .download-container[data-forecast-type='seasonal'] {
   filter: hue-rotate(240deg);
+}
+
+.viewer-container {
+  position: fixed;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+.viewer-container.slide-in {
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100vh);
+}
+
+.viewer-container.slide-in.active {
+  transform: translateY(0);
 }

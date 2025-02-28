@@ -1,0 +1,18 @@
+<div class="text-right">
+  <button mat-button color="primary" class="ml-auto" (click)="closeClicked.emit()">
+    {{ 'Close' | translate }}
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+@if(errorMessage(); as errorMessage){
+<div>{{ errorMessage | translate }}</div>
+}
+<!-- PDF -->
+@if(pdfForecastData(); as pdfForecastData){
+<picsa-pdf-viewer [src]="pdfForecastData"> </picsa-pdf-viewer>
+}
+
+<!-- HTML -->
+@if(htmlForecastData(); as htmlForecastData){
+<div class="p-4 overflow-auto" [innerHTML]="htmlForecastData"></div>
+}

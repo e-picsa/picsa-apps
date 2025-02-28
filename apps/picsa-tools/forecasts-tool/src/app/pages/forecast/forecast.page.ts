@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnDestroy, viewChildren } from '@angular/core';
+import { Component, computed, signal, viewChildren } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
-import { PdfViewerComponent } from '@picsa/shared/features';
+import { ForecastViewerComponent } from '@picsa/forecasts/components/forecast-viewer/forecast-viewer.component';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
@@ -28,16 +27,17 @@ interface IForecastSummary {
   imports: [
     CommonModule,
     ForecastLocationSelectComponent,
+    ForecastViewerComponent,
     MatIcon,
     MatProgressBarModule,
     PicsaTranslateModule,
-    PdfViewerComponent,
-    ResourcesComponentsModule,
     SupabaseStorageDownloadComponent,
   ],
 })
-export class ForecastComponent implements OnDestroy {
-  public pdfSrc?: string;
+export class ForecastComponent {
+  /** Forecast summary for display in forecast-viewer component */
+  public viewerForecast = signal<IForecastSummary | undefined>(undefined);
+  public viewerOpen = signal(false);
 
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
@@ -50,10 +50,6 @@ export class ForecastComponent implements OnDestroy {
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
   constructor(private service: ForecastService, private dbAttachmentService: PicsaDatabaseAttachmentService) {}
-
-  ngOnDestroy() {
-    this.closeForecast();
-  }
 
   public async handleForecastClick(forecast: IForecastSummary) {
     // open downloaded forecast
@@ -73,11 +69,9 @@ export class ForecastComponent implements OnDestroy {
     }
   }
 
-  public closeForecast() {
-    if (this.pdfSrc) {
-      URL.revokeObjectURL(this.pdfSrc);
-    }
-    this.pdfSrc = undefined;
+  private openForecast(forecast: IForecastSummary) {
+    this.viewerForecast.set(forecast);
+    this.viewerOpen.set(true);
   }
 
   private generateForecastSummary(docs: RxDocument<IForecast>[]): IForecastSummary[] {
@@ -98,11 +92,6 @@ export class ForecastComponent implements OnDestroy {
       return summary;
     });
     return summaries;
-  }
-
-  private async openForecast(forecast: IForecastSummary) {
-    const uri = await this.dbAttachmentService.getFileAttachmentURI(forecast._doc, forecast.storage_file as string);
-    this.pdfSrc = uri || undefined;
   }
 
   private generateForecastLabel(storage_file: string) {
