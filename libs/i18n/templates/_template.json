@@ -575,19 +575,7 @@
     "tool": "climate"
   },
   {
-    "text": "Annual Forecast",
-    "tool": "climate"
-  },
-  {
     "text": "Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Downscaled Forecast",
-    "tool": "climate"
-  },
-  {
-    "text": "Forecast",
     "tool": "climate"
   },
   {
@@ -722,10 +710,6 @@
     "tool": "common"
   },
   {
-    "text": "Downscaled Forecasts",
-    "tool": "common"
-  },
-  {
     "text": "Draw Here",
     "tool": "common"
   },
@@ -743,10 +727,6 @@
   },
   {
     "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
-    "tool": "common"
-  },
-  {
-    "text": "Forecasts",
     "tool": "common"
   },
   {
@@ -791,10 +771,6 @@
   },
   {
     "text": "Seasonal Calendar",
-    "tool": "common"
-  },
-  {
-    "text": "Seasonal Forecast",
     "tool": "common"
   },
   {
@@ -1324,6 +1300,10 @@
   },
   {
     "text": "Click on the button below to retry",
+    "tool": "extension"
+  },
+  {
+    "text": "Forecasts",
     "tool": "extension"
   },
   {
