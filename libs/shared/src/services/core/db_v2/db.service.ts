@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments/src';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
+import md5 from 'crypto-js/md5';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, nativeSha256, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
 import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
@@ -47,13 +48,19 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     //   await import('rxdb/plugins/dev-mode').then((module) => addRxPlugin(module.RxDBDevModePlugin));
     // }
     const dexieStorage = getRxStorageDexie({ autoOpen: true });
+
+    // HACK - if running locally but via ip 192.168.xx or 127.0.0.1 (e.g. native serve), then browser will not
+    // be able to access native crypto for hash. Use fallback
+    // https://github.com/pubkey/rxdb/issues/6765
+    const md5HashFunction = async (s: string) => md5(s).toString();
+
     this.db = await createRxDatabase({
       name: `picsa_app_16`,
       // when running in production do not validate data (expense op and could lead to accidental data loss)
       storage: ENVIRONMENT.production ? dexieStorage : wrappedValidateAjvStorage({ storage: dexieStorage }),
-      // hashFunction: (s) => md5hash(s).toString(),
-      // TODO - want to use md5 hashfunction but would need to migrate all collections
-      // import md5hash from 'crypto-js/md5';
+      hashFunction: location.host.startsWith('192') ? md5HashFunction : nativeSha256,
+      // TODO - want to use md5 hashfunction for all but would require migrate all collections
+      // (would also need to compare performance when hashing large video files)
     });
 
     await this.syncService.registerDB(this.db);

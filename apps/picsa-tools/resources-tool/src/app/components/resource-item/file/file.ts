@@ -44,7 +44,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
       // use neglible timeout due to avoid afterViewCheck change detection
       await _wait(0);
       this.attachment = attachment;
-      const uri = await this.service.getFileAttachmentURI(this.dbDoc);
+      const uri = await this.service.getFileAttachmentURI(this.dbDoc, false);
       if (uri) {
         this.fileURI = uri;
       }
