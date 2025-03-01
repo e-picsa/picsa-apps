@@ -1,15 +1,14 @@
+<!-- Top close button -->
+@if(!pdfForecastData()){
 <div class="text-right">
-  <!-- Top close button -->
-  @if(!pdfForecastData()){
   <ng-container *ngTemplateOutlet="closeButton"></ng-container>
-  }
 </div>
-@if(errorMessage(); as errorMessage){
+} @if(errorMessage(); as errorMessage){
 <div>{{ errorMessage | translate }}</div>
 }
 <!-- PDF -->
 @if(pdfForecastData(); as pdfForecastData){
-<picsa-pdf-viewer [src]="pdfForecastData">
+<picsa-pdf-viewer [src]="pdfForecastData" class="flex-1">
   <ng-container *ngTemplateOutlet="closeButton"></ng-container>
 </picsa-pdf-viewer>
 }

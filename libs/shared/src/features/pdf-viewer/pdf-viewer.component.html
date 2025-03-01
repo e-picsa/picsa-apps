@@ -1,20 +1,50 @@
-<ngx-extended-pdf-viewer
-  *ngIf="!legacyBrowser"
-  [src]="src"
-  [page]="page ? page : 1"
-  [height]="'100%'"
-  [activeSidebarView]="2"
-  [textLayer]="false"
-  [showHandToolButton]="true"
-  [(sidebarVisible)]="sidebarOpen"
-  [customToolbar]="customToolbar"
-  [showBorders]="false"
-  [mobileFriendlyZoom]="'1.3'"
-  [textLayer]="false"
-  [language]="locale"
->
-</ngx-extended-pdf-viewer>
-<div class="error-message" *ngIf="legacyBrowser">PDF Viewer not supported on this device</div>
+<div class="h-full bg-[white]">
+  @if(serviceReady()){ @if(isCompatible()){
+  <!-- PDF Viewer -->
+  <ngx-extended-pdf-viewer
+    [src]="src"
+    [page]="page ? page : 1"
+    [height]="'100%'"
+    [activeSidebarView]="2"
+    [textLayer]="false"
+    [showHandToolButton]="true"
+    [(sidebarVisible)]="sidebarOpen"
+    [customToolbar]="customToolbar"
+    [showBorders]="false"
+    [mobileFriendlyZoom]="'1.3'"
+    [textLayer]="false"
+    [language]="locale"
+  >
+  </ngx-extended-pdf-viewer>
+  } @else {
+  <!-- Compatibility Warning -->
+  <ng-container *ngTemplateOutlet="customToolbar"></ng-container>
+  <div class="bg-[white] mt-4 p-8 text-center">
+    <div class="error-message">{{ 'PDF Viewer not supported on this device' | translate }}</div>
+    <div class="mb-4">{{ 'Please install the latest version of Google Chrome and restart' | translate }}</div>
+    <a mat-raised-button target="_blank" href="https://play.google.com/store/apps/details?id=com.android.chrome">
+      {{ 'Update' | translate }}
+    </a>
+    <button mat-raised-button class="ml-4" mat-button (click)="restartApp()">
+      {{ 'Restart App' | translate }}
+    </button>
+  </div>
+
+  } }
+  <!-- Loading -->
+  @else {
+  <ng-container *ngTemplateOutlet="customToolbar"></ng-container>
+  <div class="text-center mt-4">{{ 'Loading' | translate }}...</div>
+  }
+</div>
+
+<!-- Custom Sidebar -->
+<!-- <ng-template #customSidebar>
+      <div id="sidebarContainer" style="top: 8px">
+        <pdf-sidebar-content></pdf-sidebar-content>
+        <div id="sidebarResizer" class="hidden"></div>
+      </div>
+    </ng-template> -->
 
 <!-- Custom toolbar examples here: https://pdfviewer.net/extended-pdf-viewer/custom-toolbar -->
 <ng-template #customToolbar>
@@ -37,11 +67,3 @@
     </div>
   </div>
 </ng-template>
-
-<!-- Custom Sidebar -->
-<!-- <ng-template #customSidebar>
-  <div id="sidebarContainer" style="top: 8px">
-    <pdf-sidebar-content></pdf-sidebar-content>
-    <div id="sidebarResizer" class="hidden"></div>
-  </div>
-</ng-template> -->

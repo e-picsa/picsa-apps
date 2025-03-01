@@ -18647,14 +18647,14 @@ __metadata:
   linkType: hard
 
 "ngx-extended-pdf-viewer@npm:^22.2.0-alpha.6":
-  version: 22.2.0-alpha.6
-  resolution: "ngx-extended-pdf-viewer@npm:22.2.0-alpha.6"
+  version: 22.3.9
+  resolution: "ngx-extended-pdf-viewer@npm:22.3.9"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     "@angular/common": ">=17.0.0 <20.0.0"
     "@angular/core": ">=17.0.0 <20.0.0"
-  checksum: 10c0/193bf886f7c90f8abefbef25ea6abd1a29321b30aa1bcc3737e9d4b6cbf453e11f16e1eab70d97aa2b0d819dc1582492e7913b0181fc81d33e673a93776624a4
+  checksum: 10c0/f5db745abf50df5744c1bdc9199050b1b7c6a1bee961f11950f5fbd73ec9e02c19505b6d342731510f2cadc4503aace88100b2ca7618ec8f2f05cfd20beaa17b
   languageName: node
   linkType: hard
 

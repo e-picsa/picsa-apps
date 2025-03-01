@@ -738,6 +738,10 @@
     "tool": "common"
   },
   {
+    "text": "Loading",
+    "tool": "common"
+  },
+  {
     "text": "Name",
     "tool": "common"
   },
@@ -754,6 +758,14 @@
     "tool": "common"
   },
   {
+    "text": "PDF Viewer not supported on this device",
+    "tool": "common"
+  },
+  {
+    "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
     "text": "Probability and Risk",
     "tool": "common"
   },
@@ -767,6 +779,10 @@
   },
   {
     "text": "Resource Allocation Map",
+    "tool": "common"
+  },
+  {
+    "text": "Restart App",
     "tool": "common"
   },
   {
@@ -791,6 +807,10 @@
   },
   {
     "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Update",
     "tool": "common"
   },
   {
