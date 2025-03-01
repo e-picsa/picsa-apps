@@ -33,9 +33,10 @@ export class PicsaPDFViewerService extends PicsaAsyncService {
     const useInlineScripts = true;
     try {
       // As ngx-extended viewer uses effect signal for it's own service use injection context to ensure availability
-      runInInjectionContext(this.injector, async () => {
+      await runInInjectionContext(this.injector, async () => {
         const needsES5 = await new PDFScriptLoaderService(null as any, null as any)['needsES5'](useInlineScripts);
         this.isCompatible = !needsES5;
+        console.log(`[PDF Viewer] Compatible: ${this.isCompatible}`);
       });
     } catch (error) {
       this.isCompatible = false;
