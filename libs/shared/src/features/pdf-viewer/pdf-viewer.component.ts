@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { pdfDefaultOptions, PDFScriptLoaderService } from 'ngx-extended-pdf-viewer';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -26,6 +27,10 @@ export class PdfViewerComponent {
     // force viewer to not use es5 fallback (not included in build)
     // use comparable check below to share message if not available for legacy browser
     this.runCompatibilityCheck();
+  }
+
+  public restartApp() {
+    App.exitApp();
   }
 
   private async runCompatibilityCheck() {

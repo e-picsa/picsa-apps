@@ -2,11 +2,17 @@
 <div class="h-full bg-[white]">
   <ng-container *ngTemplateOutlet="customToolbar"></ng-container>
   <div class="bg-[white] mt-4 p-8 text-center">
-    <div class="error-message">PDF Viewer not supported on this device</div>
-    <div>Please update to the latest version of chrome to enable</div>
-    <a mat-raised-button target="_blank" href="https://play.google.com/store/apps/details?id=com.android.chrome">
-      Update
+    <div class="error-message">{{ 'PDF Viewer not supported on this device' | translate }}</div>
+    <div>{{ 'Please install the latest version of Google Chrome and restart' | translate }}</div>
+    <a
+      class="mt-2"
+      mat-raised-button
+      target="_blank"
+      href="https://play.google.com/store/apps/details?id=com.android.chrome"
+    >
+      {{ 'Update' | translate }}
     </a>
+    <button mat-raised-button (click)="restartApp()">{{ 'Restart App' | translate }}</button>
   </div>
 </div>
 
