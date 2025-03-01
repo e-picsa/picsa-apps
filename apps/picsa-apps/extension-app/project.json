@@ -106,7 +106,7 @@
             "output": "assets"
           },
           {
-            "glob": "{*.min.mjs,op-chaining-support.js,images/*,locale/en-GB/*,locale/locale.json,standard_fonts/**}",
+            "glob": "{*.min.mjs,images/*,locale/en-GB/*,locale/locale.json,standard_fonts/**}",
             "input": "node_modules/ngx-extended-pdf-viewer/assets/",
             "ignore": ["**/*-es5.min.mjs"],
             "output": "/assets/pdf-viewer"

@@ -1,5 +1,17 @@
+@if(legacyBrowser){
+<div class="h-full bg-[white]">
+  <ng-container *ngTemplateOutlet="customToolbar"></ng-container>
+  <div class="bg-[white] mt-4 p-8 text-center">
+    <div class="error-message">PDF Viewer not supported on this device</div>
+    <div>Please update to the latest version of chrome to enable</div>
+    <a mat-raised-button target="_blank" href="https://play.google.com/store/apps/details?id=com.android.chrome">
+      Update
+    </a>
+  </div>
+</div>
+
+} @else {
 <ngx-extended-pdf-viewer
-  *ngIf="!legacyBrowser"
   [src]="src"
   [page]="page ? page : 1"
   [height]="'100%'"
@@ -14,7 +26,7 @@
   [language]="locale"
 >
 </ngx-extended-pdf-viewer>
-<div class="error-message" *ngIf="legacyBrowser">PDF Viewer not supported on this device</div>
+}
 
 <!-- Custom toolbar examples here: https://pdfviewer.net/extended-pdf-viewer/custom-toolbar -->
 <ng-template #customToolbar>
