@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -50,8 +50,9 @@ export class SupabaseSignInDialogComponent {
     password: new FormControl('', Validators.required),
   });
 
+  private readonly dialogRef = inject(MatDialogRef<SupabaseSignInDialogComponent>);
+
   constructor(
-    private dialogRef: MatDialogRef<SupabaseSignInDialogComponent>,
     private notificationService: PicsaNotificationService,
     private supabaseAuthService: SupabaseAuthService
   ) {}
@@ -83,8 +84,8 @@ export class SupabaseSignInDialogComponent {
     const { data, error } = await this.supabaseAuthService.signInUser(email, password);
     console.log({ data, error });
     if (error) {
-      throw new Error(error.message);
       this.form.enable();
+      throw new Error(error.message);
     } else {
       this.dialogRef.close();
     }
@@ -94,20 +95,21 @@ export class SupabaseSignInDialogComponent {
     const { email, password } = this.form.value;
     const { error } = await this.supabaseAuthService.signUpUser(email, password);
     if (error) {
-      throw new Error(error.message);
       this.form.enable();
+      throw new Error(error.message);
     } else {
       this.dialogRef.close();
     }
   }
   public async handleReset() {
-     this.form.disable();
+    this.form.disable();
     const { email } = this.form.value;
     const { error } = await this.supabaseAuthService.resetEmailPassword(email);
     if (error) {
-      throw new Error(error.message);
       this.form.enable();
+      throw new Error(error.message);
     } else {
+      this.notificationService.showSuccessNotification(`Reset email sent, please check your inbox`,{duration:5000});
       this.dialogRef.close();
     }
   }
