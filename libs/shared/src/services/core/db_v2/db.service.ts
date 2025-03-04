@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, MangoQuerySelector, RxCollection, RxDatabase } from 'rxdb';
+import { ENVIRONMENT } from '@picsa/environments/src';
+import md5 from 'crypto-js/md5';
+import { addRxPlugin, createRxDatabase, MangoQuerySelector, nativeSha256, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
-import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
+import { RxDBMigrationSchemaPlugin } from 'rxdb/plugins/migration-schema';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { wrappedValidateAjvStorage } from 'rxdb/plugins/validate-ajv';
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { PicsaUserService } from '../user.service';
+import { IDBCollectionName } from './db.types';
+import { handleCollectionModifiers } from './db.utils';
 import { PicsaDatabaseSyncService } from './db-sync.service';
 import { IPicsaCollectionCreator } from './models';
-
-addRxPlugin(RxDBAttachmentsPlugin);
-addRxPlugin(RxDBMigrationPlugin);
-addRxPlugin(RxDBQueryBuilderPlugin);
-
-interface IUserCollectionData {
-  _app_user_id?: string;
-}
 
 /**
  * DB service that utilises RXDB to provide live-query collections
@@ -41,24 +38,42 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
    * not be manually triggered
    */
   public override async init() {
+    // TODO - should create custom attachments plugin that handles native/opfs file storage
+    addRxPlugin(RxDBAttachmentsPlugin);
+    addRxPlugin(RxDBMigrationSchemaPlugin);
+    addRxPlugin(RxDBQueryBuilderPlugin);
+    // NOTE - do not use dev-mode. It blocks usage of fields starting with `_`, which is still permissable in production
+
+    // if (isDevMode()) {
+    //   await import('rxdb/plugins/dev-mode').then((module) => addRxPlugin(module.RxDBDevModePlugin));
+    // }
+    const dexieStorage = getRxStorageDexie({ autoOpen: true });
+
+    // HACK - if running locally but via ip 192.168.xx or 127.0.0.1 (e.g. native serve), then browser will not
+    // be able to access native crypto for hash. Use fallback
+    // https://github.com/pubkey/rxdb/issues/6765
+    const md5HashFunction = async (s: string) => md5(s).toString();
+
     this.db = await createRxDatabase({
-      name: `picsa_app`,
-      storage: getRxStorageDexie({ autoOpen: true }),
-      // hashFunction: (s) => md5hash(s).toString(),
-      // TODO - want to use md5 hashfunction but would need to migrate all collections
-      // import md5hash from 'crypto-js/md5';
+      name: `picsa_app_16`,
+      // when running in production do not validate data (expense op and could lead to accidental data loss)
+      storage: ENVIRONMENT.production ? dexieStorage : wrappedValidateAjvStorage({ storage: dexieStorage }),
+      hashFunction: location.host.startsWith('192') ? md5HashFunction : nativeSha256,
+      // TODO - want to use md5 hashfunction for all but would require migrate all collections
+      // (would also need to compare performance when hashing large video files)
     });
+
     await this.syncService.registerDB(this.db);
   }
 
   /** Call method to register db collection, avoiding re-register duplicate collection */
-  public async ensureCollections(collections: { [name: string]: IPicsaCollectionCreator<any> }) {
+  public async ensureCollections(collections: { [name in IDBCollectionName]?: IPicsaCollectionCreator<any> }) {
     for (const [name, picsaCollection] of Object.entries(collections)) {
       if (name in this.db.collections) {
         console.warn('Duplicate collection skipped:', name);
       } else {
         // apply custom collection modifiers
-        const { collection, hookFactories } = this.handleCollectionModifiers(picsaCollection);
+        const { collection, hookFactories } = handleCollectionModifiers(picsaCollection);
 
         // register colleciton
         await this.db.addCollections({ [name]: collection });
@@ -92,28 +107,5 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     } else {
       return collection.find({ selector: query });
     }
-  }
-
-  /**
-   * Handle custom PICSA DB modifiers
-   */
-  private handleCollectionModifiers(picsaCollection: IPicsaCollectionCreator<any>) {
-    const { isUserCollection, syncPush, ...collection } = picsaCollection;
-    const hookFactories: ((c: RxCollection) => void)[] = [];
-    // store app user ids in any collections marked with `isUserCollection`
-    // user information is stored in localStorage instead of db to avoid circular dependency issues
-    if (isUserCollection) {
-      collection.schema.properties['_app_user_id'] = { type: 'string' };
-      hookFactories.push((c) => {
-        const fn = (data: IUserCollectionData) => (data._app_user_id = this.userService.activeUser$.value._id);
-        c.addHook('pre', 'save', fn);
-        c.addHook('pre', 'insert', fn);
-      });
-    }
-    // If collection pushed to server db store _sync_push_status
-    if (syncPush) {
-      collection.schema.properties['_sync_push_status'] = { type: 'string' };
-    }
-    return { collection, hookFactories };
   }
 }

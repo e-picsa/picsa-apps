@@ -11,10 +11,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import type { Feature, GeoJsonObject, Geometry } from 'geojson';
 import * as L from 'leaflet';
-
-import * as GEOJSON from './geoJson';
 
 @Component({
   imports: [CommonModule, LeafletModule],
@@ -163,33 +160,6 @@ export class PicsaMapComponent implements OnInit {
     marker.setIcon(activeIcon);
     this._activeMarker = marker;
     this.onMarkerClick.emit(m);
-  }
-
-  /***********************************************************************
-   *  Country features geojson
-   ***********************************************************************/
-  private addCountryFeatures(country: IFeaturedCountry) {
-    const geoJSON = this._getCountryGeoJson(country);
-    const geojsonLayer = L.geoJSON(geoJSON, {
-      onEachFeature: (feature, layer) => this.setFeature(feature, layer),
-      style: GEOJSON_STYLE,
-    });
-    geojsonLayer.addTo(this.map());
-    // *** TODO - ADD METHOD TO CALCULATE AND AUTO FIT BOUNDS DEPENDENT ON USER
-  }
-
-  private setFeature(feature: Feature<Geometry, any>, layer: L.Layer) {
-    layer.on({
-      click: () => this._onLayerClick(layer),
-    });
-  }
-
-  private _getCountryGeoJson(country: IFeaturedCountry) {
-    const mapping: { [country in IFeaturedCountry]: GeoJsonObject } = {
-      kenya: null as any,
-      malawi: GEOJSON.PicsaDefault as GeoJsonObject,
-    };
-    return mapping[country];
   }
 }
 /***********************************************************************

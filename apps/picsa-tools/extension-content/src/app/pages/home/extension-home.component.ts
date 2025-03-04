@@ -87,9 +87,7 @@ const ADDITIONAL_LINKS: IPageLink[] = [
   {
     name: translateMarker('Forecasts'),
     svgIcon: 'extension_app:forecasts_tool',
-    // HACK - forecasts currently child resource collection
-    // TODO - move to standalone tool
-    url: '/resources/collection/weatherResources',
+    url: '/forecasts',
     tourId: 'forecasts',
   },
   {
@@ -144,7 +142,7 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   /** List of home page display links, filtered when running in production */
   public picsaLinks = PAGE_LINKS;
   public additionalLinks = ADDITIONAL_LINKS;
-  public version = APP_VERSION;
+  public version = APP_VERSION.semver;
 
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;

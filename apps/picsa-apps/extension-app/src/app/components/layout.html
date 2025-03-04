@@ -20,7 +20,7 @@
           </div>
         </a>
         }
-        <a mat-list-item routerLink="/resources/collection/weatherResources" (click)="drawer.close()">
+        <a mat-list-item routerLink="/forecasts" (click)="drawer.close()">
           <div style="display: flex; align-items: center">
             <mat-icon style="margin-right: 8px">cloud</mat-icon>
             <span>{{ 'Forecasts' | translate}}</span>
@@ -30,19 +30,19 @@
       <picsa-configuration-summary style="margin-top: auto; padding: 4px" (click)="drawer.close()" />
       <footer>
         <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
-        <div>v{{ version.number }}</div>
+        <div>v{{ version }}</div>
       </footer>
     </div>
   </mat-drawer>
   <mat-drawer-content>
     <div class="page">
       <picsa-header> </picsa-header>
-      @if(ready){
+      @if(ready()){
       <router-outlet></router-outlet>
       }
     </div>
     <!-- Loading spinner -->
-    @if(showLoader) {
+    @if(showLoader()) {
     <div class="loading-container">
       <picsa-loading></picsa-loading>
     </div>

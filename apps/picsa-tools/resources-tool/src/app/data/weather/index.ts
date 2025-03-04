@@ -1,8 +1,4 @@
-import { FORECAST_COLLECTIONS, FORECAST_FILES } from '@picsa/data/resources/forecasts';
-
-import { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
-import { filterHashmap } from '../../utils/data.utils';
-import weatherFiles from './files';
+import { IResourceCollection, IResourceLink } from '../../schemas';
 import { WEATHER_LINKS } from './links';
 import { IWeatherLocation } from './locations';
 import { MeteoBlueGenerator } from './meteoBlue';
@@ -29,25 +25,17 @@ const weatherResources: IResourceCollection = {
   id: 'weatherResources',
   type: 'collection',
   title: 'Weather Resources',
+  // TODO - add support for including direct link to app page instead of collection
   description: 'Local forecasts and meterological services',
   cover: { image: 'assets/resources/covers/weather.svg' },
   priority: 6,
-  childResources: {
-    // collections: WEATHER_LOCATIONS.map((location) => `weatherResources_${location.id}`),
-    collections: [FORECAST_COLLECTIONS.forecasts_downscaled.id],
-    files: FORECAST_COLLECTIONS.forecasts.childResources.files,
-    links: Object.keys(WEATHER_LINKS),
-  },
+  childResources: { collections: [], files: [], links: [] },
 };
 
 function generateLocationResources(location: IWeatherLocation) {
   const links: Record<string, IResourceLink> = {
     ...new WMOGenerator(location).links,
     ...new MeteoBlueGenerator(location).links,
-  };
-  const forecasts = { ...weatherFiles.downscaledForecasts, ...weatherFiles.otherForecasts };
-  const files: Record<string, IResourceFile> = {
-    ...filterHashmap(forecasts, (r) => r.meta.locationIds.includes(location.id)),
   };
 
   const collection: IResourceCollection = {
@@ -59,7 +47,7 @@ function generateLocationResources(location: IWeatherLocation) {
     parentCollection: 'weatherResources',
     childResources: {
       collections: [],
-      files: Object.keys(files),
+      files: [],
       links: Object.keys(links),
     },
     filter: { countries: [location.countryCode] },
@@ -67,19 +55,13 @@ function generateLocationResources(location: IWeatherLocation) {
   return {
     [collection.id]: collection,
     ...links,
-    ...files,
   };
 }
 
 // HACK - only included downscaled collection (files from main collection included in web)
-const { forecasts_downscaled } = FORECAST_COLLECTIONS;
+// const { forecasts_downscaled } = FORECAST_COLLECTIONS;
 
 export default {
   weatherResources,
   ...WEATHER_LINKS,
-  // ...localisedResources,
-  ...weatherFiles.downscaledForecasts,
-  ...weatherFiles.otherForecasts,
-  forecasts_downscaled,
-  ...FORECAST_FILES,
 };

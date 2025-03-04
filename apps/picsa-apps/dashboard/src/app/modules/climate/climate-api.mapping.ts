@@ -110,13 +110,13 @@ export const ApiMapping = (
       // setup metadata
       const fileBlob = data as any as Blob;
       const bucketId = country_code as string;
-      const folderPath = 'climate/forecasts';
+      const folderPath = 'forecasts/daily';
       // upload to storage
       const { fullPath } = await storage.putFile({ bucketId, fileBlob, filename: filepath, folderPath });
 
       // TODO - handle error if filename already exists
       const { error: dbError } = await supabaseService.db
-        .table('climate_forecasts')
+        .table('forecasts')
         .update<IForecastUpdate>({ storage_file: fullPath })
         .eq('id', row.id);
       if (dbError) {
