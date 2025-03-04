@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.52.1",
+  "version": "3.53.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -79,6 +79,7 @@
     "@capacitor/push-notifications": "^6.0.4",
     "@capacitor/screen-orientation": "^6.0.3",
     "@capacitor/share": "^6.0.3",
+    "@capawesome/capacitor-app-update": "^6.1.0",
     "@ngx-translate/core": "~16.0.4",
     "@ngx-translate/http-loader": "~16.0.1",
     "@nx/angular": "20.3.0",

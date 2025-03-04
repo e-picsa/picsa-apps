@@ -2344,6 +2344,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capawesome/capacitor-app-update@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@capawesome/capacitor-app-update@npm:6.1.0"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+  checksum: 10c0/409f258d0fca4920cdb2ba6cb954fd36304f66eaf5c0afa3bc13115c1cec65c616e65ac332847fa5a9a23051f8bacd1343dac4c8bc24a256e2b7fce2fd63b95a
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -19841,6 +19850,7 @@ __metadata:
     "@capacitor/push-notifications": "npm:^6.0.4"
     "@capacitor/screen-orientation": "npm:^6.0.3"
     "@capacitor/share": "npm:^6.0.3"
+    "@capawesome/capacitor-app-update": "npm:^6.1.0"
     "@ngx-translate/core": "npm:~16.0.4"
     "@ngx-translate/http-loader": "npm:~16.0.1"
     "@nx/angular": "npm:20.3.0"
