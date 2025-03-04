@@ -44,5 +44,6 @@ $icon-size: 48px;
 .mat-icon {
   height: $icon-size;
   width: $icon-size;
-  font-size: $icon-size;
+  // HACK - ensure image doesn't get cut off
+  font-size: calc($icon-size - 4px);
 }

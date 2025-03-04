@@ -1,16 +1,14 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IFarmerContent, IFarmerContentStep } from '../../types';
-import { TOOLS_DATA_HASHMAP } from '../tools';
+import { IFarmerContent } from '../../types';
 
-const {} = TOOLS_DATA_HASHMAP;
+const title = translateMarker('Use the forecasts to update and adapt your plans');
 
-const steps: IFarmerContentStep[] = [];
+const steps: IFarmerContent['steps'] = [];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'use-forecasts',
-  title: translateMarker('Use the forecasts to update and adapt your plans'),
-  tools: [],
+  title,
   tags: [],
   steps,
   disabled: true,

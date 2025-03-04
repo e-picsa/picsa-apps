@@ -10,6 +10,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   templateUrl: './resource-share.component.html',
   styleUrls: ['./resource-share.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceShareComponent {
   public attachment?: RxAttachment<IResourceFile>;

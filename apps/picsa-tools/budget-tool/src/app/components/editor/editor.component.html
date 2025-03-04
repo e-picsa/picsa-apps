@@ -10,6 +10,7 @@
         <budget-card-editor
           *ngFor="let card of selectedCards; index as i; trackBy: trackByFn"
           [card]="card"
+          [type]="editorStep.type"
           (deleteClicked)="removeSelectedCard(editorStep.type, i)"
           (valueChanged)="updateCardValue(editorStep.type, i, $event)"
           @fadeInOut
@@ -36,12 +37,6 @@
         [values]="data.familyLabour"
         (valueChanged)="onEditorChange($event, 'familyLabour')"
       ></budget-cell-editor-family-labour>
-      <!-- Produce Consumed -->
-      <budget-cell-editor-produce-consumed
-        *ngSwitchCase="'produceConsumed'"
-        @fadeInOut
-        (valueChanged)="onEditorChange($event, 'produceConsumed')"
-      ></budget-cell-editor-produce-consumed>
       <!-- Default Editor -->
       <budget-cell-editor-card-select
         *ngSwitchDefault

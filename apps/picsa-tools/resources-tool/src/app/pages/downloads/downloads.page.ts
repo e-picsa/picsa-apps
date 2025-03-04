@@ -13,6 +13,7 @@ const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'
   selector: 'resource-downloads',
   templateUrl: './downloads.page.html',
   styleUrls: ['./downloads.page.scss'],
+  standalone: false,
 })
 export class DownloadsPageComponent implements OnInit, OnDestroy {
   private componentDestroyed$ = new Subject();

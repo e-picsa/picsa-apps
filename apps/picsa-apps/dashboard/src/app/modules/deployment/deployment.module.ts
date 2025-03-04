@@ -2,8 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { DeploymentListComponent } from './pages/list/deployment-list.component';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -11,7 +9,7 @@ import { DeploymentListComponent } from './pages/list/deployment-list.component'
     RouterModule.forChild([
       {
         path: '',
-        component: DeploymentListComponent,
+        loadComponent: () => import('./pages/list/deployment-list.component').then((m) => m.DeploymentListComponent),
       },
     ]),
   ],

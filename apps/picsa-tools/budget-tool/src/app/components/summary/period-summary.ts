@@ -8,6 +8,7 @@ import { BUDGET_PERIOD_ROWS, IBudgetPeriodRow } from '../../store/templates';
   selector: 'budget-period-summary',
   templateUrl: './period-summary.html',
   styleUrls: ['./period-summary.scss'],
+  standalone: false,
 })
 export class BudgetPeriodSummaryComponent {
   @Input() periodIndex: number;

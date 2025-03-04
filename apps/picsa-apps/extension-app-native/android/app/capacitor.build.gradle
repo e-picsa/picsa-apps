@@ -22,6 +22,7 @@ dependencies {
     implementation project(':capacitor-screen-orientation')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-share')
+    implementation project(':capacitor-push-notifications')
     implementation "androidx.webkit:webkit:1.4.0"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 }

@@ -18,6 +18,7 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   styleUrls: ['./budget-create.page.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class BudgetCreatePage implements OnInit, OnDestroy {
   budgetMetaForm: FormGroup;

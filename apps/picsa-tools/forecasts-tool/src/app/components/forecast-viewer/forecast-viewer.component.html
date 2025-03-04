@@ -1,0 +1,27 @@
+<!-- Top close button -->
+@if(!pdfForecastData()){
+<div class="text-right">
+  <ng-container *ngTemplateOutlet="closeButton"></ng-container>
+</div>
+} @if(errorMessage(); as errorMessage){
+<div>{{ errorMessage | translate }}</div>
+}
+<!-- PDF -->
+@if(pdfForecastData(); as pdfForecastData){
+<picsa-pdf-viewer [src]="pdfForecastData" class="flex-1">
+  <ng-container *ngTemplateOutlet="closeButton"></ng-container>
+</picsa-pdf-viewer>
+}
+
+<!-- HTML -->
+@if(htmlForecastData(); as htmlForecastData){
+<div class="p-4 overflow-auto" [innerHTML]="htmlForecastData"></div>
+}
+
+<!-- Reusable close button - displayed in pdf viewer or at top of page-->
+<ng-template #closeButton>
+  <button mat-button color="primary" class="ml-auto" (click)="closeClicked.emit()">
+    {{ 'Close' | translate }}
+    <mat-icon>close</mat-icon>
+  </button>
+</ng-template>

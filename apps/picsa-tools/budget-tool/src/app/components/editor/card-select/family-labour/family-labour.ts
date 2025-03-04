@@ -17,6 +17,7 @@ const MEMBERS = Object.entries(LABELS).map(([id, label]) => ({
   selector: 'budget-cell-editor-family-labour',
   templateUrl: './family-labour.html',
   styleUrls: ['./family-labour.scss'],
+  standalone: false,
 })
 export class BudgetCellEditorFamilyLabourComponent {
   @Input() values: IBudgetCardWithValues[];

@@ -9,24 +9,41 @@ export interface IToolData {
   /** base url to access tool within app */
   href: string;
   tabLabel?: string;
+  /** Show default app header of tool directly uses */
+  showHeader?: boolean;
 }
 
-interface IFarmerContentStepVideo {
+interface StepText {
+  type: 'text';
+  text?: string;
+  title?: string;
+}
+
+export interface StepTool {
+  type: 'tool';
+  tool: IToolData;
+}
+interface StepVideo {
   type: 'video';
   video: IPicsaVideoData;
-  /** Label to show when selecting content from tab */
-  tabLabel?: string;
 }
 
-export type IFarmerContentStep = IFarmerContentStepVideo;
+interface StepReview {
+  type: 'review';
+}
+
+export type IFarmerContentStep = StepReview | StepVideo | StepText | StepTool;
 
 export interface IFarmerContent {
   id: IFarmerContentId;
   slug: string;
   icon_path: string;
   title: string;
-  tools: IToolData[];
-  tags: { label: string }[];
-  steps: IFarmerContentStep[];
+
+  /** Steps contain dynamic content blocks, grouped within a mat-stepper **/
+  steps: IFarmerContentStep[][];
+
+  tags: { label: string; color?: 'primary' | 'secondary' }[];
+
   disabled?: boolean;
 }

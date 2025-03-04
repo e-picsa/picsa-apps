@@ -1,4 +1,4 @@
-import { effect, Injectable, signal } from '@angular/core';
+import { computed, effect, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -9,44 +9,55 @@ import { map } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
-import { ApiMapping, IAPICountryCode } from './climate-api.mapping';
+import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
-import { IStationRow } from './types';
+import { IAPICountryCode, IStationRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {
   public apiStatus: number;
   public stations = signal<IStationRow[]>([]);
-  public activeStation: IStationRow;
+
+  /** Lookup active station from stationId param and db stations list*/
+  public activeStation = computed<IStationRow>(() => {
+    const stations = this.stations();
+    const activeStationId = this.activeStationId();
+    if (stations.length > 0) {
+      const station = stations.find((station) => station.station_id === activeStationId);
+      if (station) return station;
+      else {
+        this.router.navigate(['climate', 'station']);
+        this.notificationService.showErrorNotification(`[Climate Station] data not found: ${activeStationId}`);
+      }
+    }
+    // UI components aren't rendered unless station defined so can safely ignore this return type
+    return null as any;
+  });
   /** Country code used for api requests */
   public apiCountryCode: IAPICountryCode;
 
   /** Trigger API request that includes mapping response to local database */
-  public loadFromAPI = ApiMapping(
-    this.api,
-    this.supabaseService.db,
-    this.supabaseService.storage,
-    this.deploymentSevice.activeDeployment() as IDeploymentRow
-  );
+  public loadFromAPI = ApiMapping(this.api, this, this.supabaseService, this.supabaseService.storage);
 
   // Create a signal to represent current stationId as defined by route params
-  private activeStationId = toSignal(ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => params.stationId)));
+  private activeStationId = toSignal(
+    ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => decodeURIComponent(params.stationId)))
+  );
 
   constructor(
     private supabaseService: SupabaseService,
     private api: ClimateApiService,
-    private notificationService: PicsaNotificationService,
     private router: Router,
-    private deploymentSevice: DeploymentDashboardService
+    private deploymentSevice: DeploymentDashboardService,
+    private notificationService: PicsaNotificationService
   ) {
     super();
     this.ready();
     // Update list of available stations for deployment country code and station id on change
     effect(async () => {
       const deployment = this.deploymentSevice.activeDeployment();
-      const activeStationId = this.activeStationId();
       if (deployment) {
-        await this.loadData(deployment, activeStationId);
+        await this.loadData(deployment);
       }
     });
   }
@@ -55,41 +66,19 @@ export class ClimateService extends PicsaAsyncService {
     await this.supabaseService.ready();
   }
 
-  public async refreshData() {
-    const deployment = this.deploymentSevice.activeDeployment();
-    if (deployment) {
-      const { country_code } = deployment;
-      await this.listStations(country_code);
-    }
-  }
-
-  private async loadData(deployment: IDeploymentRow, stationId?: string) {
+  private async loadData(deployment: IDeploymentRow) {
     // allow configuration override for country_code
     const configuration = deployment.configuration as any;
     const targetCode = configuration.climate_country_code || deployment.country_code;
-    // refresh list of stations on deployment country code change
+    // refresh list of stations on deployment country code change (or if forced update)
     if (targetCode !== this.apiCountryCode) {
       this.apiCountryCode = targetCode;
       await this.ready();
       await this.listStations(targetCode);
     }
-    // set active station if deployment and active station id selected
-    if (stationId) {
-      this.setActiveStation(stationId);
-    }
   }
 
-  private setActiveStation(id: string) {
-    const station = this.stations().find((station) => station.station_id === id);
-    if (station) {
-      this.activeStation = station;
-    } else {
-      this.activeStation = undefined as any;
-      throw new Error(`[Climate Station] data not found: ${id}`);
-    }
-  }
-
-  private async listStations(country_code: string, allowRefresh = true) {
+  private async listStations(country_code: string) {
     // TODO - when running should refresh from server as cron task
     const { data, error } = await this.supabaseService.db
       .table('climate_stations')
@@ -98,10 +87,11 @@ export class ClimateService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    if (data.length === 0 && allowRefresh) {
+    if (data?.length > 0) {
+      this.stations.set(data);
+    } else {
+      // NOTE - api will also update station signal
       await this.loadFromAPI.station(country_code);
-      return this.listStations(country_code, false);
     }
-    this.stations.set(data || []);
   }
 }

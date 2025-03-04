@@ -7,6 +7,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   selector: 'resource-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  standalone: false,
 })
 export class HomeComponent implements OnInit {
   public collections: IResourceCollection[];

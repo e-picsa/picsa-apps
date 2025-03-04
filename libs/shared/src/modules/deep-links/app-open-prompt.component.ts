@@ -68,6 +68,7 @@ import { DeepLinksService } from './deep-links.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class AppOpenPromptComponent {
   appDynamicLink: string;

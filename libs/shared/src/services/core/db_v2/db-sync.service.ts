@@ -4,6 +4,7 @@ import { _wait } from '@picsa/utils';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
 
 import { SupabaseService } from '../supabase';
+import { handleCollectionModifiers } from './db.utils';
 import { ISyncDeleteEntry, SYNC_DELETE_COLLECTION } from './schemas/sync_delete';
 
 export interface ISyncPushEntry {
@@ -32,9 +33,7 @@ export class PicsaDatabaseSyncService {
   /** Track local document deletions in separate collection to sync to server */
   private syncDeleteCollection: RxCollection<ISyncDeleteEntry>;
 
-  constructor(private supabaseService: SupabaseService) {
-    this.subscribeToNetworkChanges();
-  }
+  constructor(private supabaseService: SupabaseService) {}
 
   /**
    * Register database for sync service to interact with
@@ -42,8 +41,11 @@ export class PicsaDatabaseSyncService {
    */
   public async registerDB(db: RxDatabase<{ [key: string]: RxCollection }>) {
     this.db = db;
-    const { sync_delete } = await this.db.addCollections({ sync_delete: SYNC_DELETE_COLLECTION });
+    const { collection } = handleCollectionModifiers(SYNC_DELETE_COLLECTION);
+    const { sync_delete } = await this.db.addCollections({ sync_delete: collection });
     this.syncDeleteCollection = sync_delete;
+    // once db is registered subscribe to network changes to manage syncing
+    this.subscribeToNetworkChanges();
   }
 
   /** Register a given collection to have records pushed to supabase db */
@@ -55,7 +57,6 @@ export class PicsaDatabaseSyncService {
       console.warn('[Sync Service] Collection already registered: ' + collection.name);
       return;
     }
-    await this.supabaseService.ready();
     this.subscribeToCollectionChanges(collection);
     this.registeredCollections[collection.name] = collection;
     await this.syncPendingDocs(collection);
@@ -67,7 +68,6 @@ export class PicsaDatabaseSyncService {
    * and when network presence detected as online
    * */
   public async syncPendingDocs(collection: RxCollection) {
-    await this.supabaseService.ready();
     const docs: RxDocument<ISyncPushEntry>[] = await collection
       .find({ selector: { _sync_push_status: 'ready' } })
       .exec();
@@ -123,6 +123,7 @@ export class PicsaDatabaseSyncService {
   }
 
   private async pushDeletionsToSupabase() {
+    await this.supabaseService.ready();
     const pendingDeleteDocs = await this.syncDeleteCollection.find().exec();
     const ops = pendingDeleteDocs.map(async (doc) => {
       const { collectionName, documentId } = doc._data;
@@ -139,6 +140,7 @@ export class PicsaDatabaseSyncService {
   }
 
   private async pushDocsToSupabase(docs: RxDocument<ISyncPushEntry>[], collection: RxCollection) {
+    await this.supabaseService.ready();
     const records = docs.map((d) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { _meta, _rev, _sync_push_status, _sync_push_timestamp, ...keptFields } = d._data as ISyncPushEntry;

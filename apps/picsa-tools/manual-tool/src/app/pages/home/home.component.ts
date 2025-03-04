@@ -35,6 +35,7 @@ const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IReso
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [FlyInOut({ axis: 'Y' }), FadeInOut({ inDelay: 200, inSpeed: 300 })],
+  standalone: false,
 })
 export class HomeComponent implements OnDestroy, AfterViewInit {
   // TODO - ideally all variables should be tracked by version (use additional component)

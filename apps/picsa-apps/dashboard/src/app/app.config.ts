@@ -1,5 +1,10 @@
 import { provideHttpClient } from '@angular/common/http';
-import { ApplicationConfig, ErrorHandler, importProvidersFrom } from '@angular/core';
+import {
+  ApplicationConfig,
+  ErrorHandler,
+  importProvidersFrom,
+  provideExperimentalZonelessChangeDetection,
+} from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { PicsaFormsModule } from '@picsa/forms';
@@ -11,6 +16,11 @@ import { DashboardErrorHandler } from './modules/error-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Opt out of zone-js to fix issue supabase auth incompatibility (zoneJS polyfill of Navigator api)
+    // https://github.com/supabase/supabase-js/issues/936
+    provideExperimentalZonelessChangeDetection(),
+    // NOTE - provideExperimentalCheckNoChangesForDebug not good for debug here due to way
+    // routerActive used to toggle nav sections (infinite loops triggered)
     provideRouter(appRoutes),
     provideAnimations(),
     provideHttpClient(),

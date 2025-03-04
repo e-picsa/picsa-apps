@@ -6,8 +6,6 @@ import { RxCollection } from 'rxdb';
 import { BUDGET_CARDS } from '../data';
 import * as CardSchema from '../schema/cards';
 
-const COLLECTION_NAME = 'budget_cards';
-
 @Injectable({ providedIn: 'root' })
 export class BudgetCardService extends PicsaAsyncService {
   constructor(private dbService: PicsaDatabase_V2_Service) {
@@ -19,13 +17,13 @@ export class BudgetCardService extends PicsaAsyncService {
   public override async init() {
     await this.dbService.ready();
     await this.dbService.ensureCollections({
-      [COLLECTION_NAME]: CardSchema.COLLECTION,
+      budget_cards: CardSchema.COLLECTION,
     });
     await this.loadHardcodedData();
   }
 
   public get dbCollection() {
-    return this.dbService.db.collections[COLLECTION_NAME] as RxCollection<CardSchema.IBudgetCard>;
+    return this.dbService.db.collections.budget_cards as RxCollection<CardSchema.IBudgetCard>;
   }
 
   public async getEnterpriseGroupCards() {

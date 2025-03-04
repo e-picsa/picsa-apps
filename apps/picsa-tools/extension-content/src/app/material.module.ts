@@ -25,6 +25,8 @@ export class ExtensionToolkitMaterialModule {
       'climate_tool',
       'data_collection',
       'discussions',
+      'farmer_activity',
+      'forecasts_tool',
       'manual_tool',
       'option_tool',
       'play_store',
@@ -33,7 +35,6 @@ export class ExtensionToolkitMaterialModule {
       'seasonal_calendar_tool',
       'tutorial',
       'whatsapp',
-      'farmer_activity',
     ];
 
     for (const icon of icons) {

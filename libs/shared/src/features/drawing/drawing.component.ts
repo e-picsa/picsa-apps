@@ -29,7 +29,6 @@ type Segment = {
 
 @Component({
   selector: 'picsa-custom-drawing',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
   templateUrl: './drawing.component.html',
   styleUrls: ['./drawing.component.scss'],

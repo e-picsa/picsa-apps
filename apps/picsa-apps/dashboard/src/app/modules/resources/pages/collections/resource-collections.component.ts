@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -26,7 +26,6 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
 
 @Component({
   selector: 'dashboard-resource-collections',
-  standalone: true,
   imports: [
     CommonModule,
     CommonModule,
@@ -37,6 +36,7 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
   ],
   templateUrl: './resource-collections.component.html',
   styleUrl: './resource-collections.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionsComponent implements OnInit {
   public collections: IMergedCollection[] = [];

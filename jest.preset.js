@@ -12,4 +12,11 @@ module.exports = {
    * More info: https://jestjs.io/docs/upgrading-to-jest29#snapshot-format
    */
   snapshotFormat: { escapeString: true, printBasicPrototype: true },
+  testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
+  transform: {
+    '^.+\\.(ts|js|html)$': 'ts-jest',
+  },
+  resolver: '@nx/jest/plugins/resolver',
+  moduleFileExtensions: ['ts', 'js', 'html'],
+  coverageReporters: ['html'],
 };

@@ -3,7 +3,7 @@
     <mat-icon>close</mat-icon>
   </button>
 
-  <mat-stepper [linear]="false" #stepper class="slim-headers">
+  <mat-stepper [linear]="false" #stepper class="slim-headers responsive-content-padding">
     <!-- Step header (common) -->
     <mat-step matStepContent *ngFor="let step of stepperSteps; index as stepIndex">
       <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
@@ -67,12 +67,14 @@
     <ng-template #benefitsInput>
       <div class="entry-rows">
         <div class="entry-row-item" *ngFor="let benefit of values.benefits; index as i">
-          <div style="display: flex; flex-direction: row; gap: 3px; padding-bottom: 3px">
-            <input [(ngModel)]="benefit.benefit" class="form-control" />
-            <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
-            <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
-              <mat-icon>close</mat-icon>
-            </button>
+          <div class="benefit-container">
+            <input [(ngModel)]="benefit.benefit" class="form-control" style="flex: 1" />
+            <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
+              <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
+              <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
         <!-- Only enable adding more benefits when previous are validated

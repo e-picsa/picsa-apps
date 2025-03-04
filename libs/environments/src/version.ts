@@ -1,8 +1,8 @@
 // tslint:disable no-var-requires
 import packageJson from '../../../package.json';
-// e.g. 1.0.1 - even though called a number is stored as a string
 
 export const APP_VERSION = {
-  number: packageJson.version,
-  date: '2024-08-05',
+  /** Semver code for current app version, e.g. 3.26.0  */
+  semver: packageJson.version,
+  date: '2025-03-04',
 };

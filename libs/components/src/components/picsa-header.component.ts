@@ -1,5 +1,4 @@
-import { CdkPortalOutlet, Portal, PortalOutlet } from '@angular/cdk/portal';
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -10,54 +9,61 @@ import {
 } from '@angular/router';
 import { filter, map, Subject, takeUntil } from 'rxjs';
 
-import { PicsaCommonComponentsService } from '../services/components.service';
+import { IHeaderOptions, PicsaCommonComponentsService } from '../services/components.service';
 
 @Component({
   selector: 'picsa-header',
   template: `
-    <header [attr.data-style]="style">
+    <header [attr.data-style]="style" [style.display]="hideHeader() ? 'none' : 'flex'">
       <div class="start-content">
-        <!-- HACK - menu button passed as content but back-button hardcoded -->
-        <ng-content></ng-content>
+        <!-- HACK - menu button passed as portal but back-button hardcoded -->
         <back-button
-          [style.display]="hideBackButton ? 'none' : 'block'"
+          [style.display]="hideBackButton() ? 'none' : 'block'"
           [variant]="style === 'primary' ? 'white' : 'primary'"
         ></back-button>
+        <ng-template [cdkPortalOutlet]="cdkPortalStart" #portalOutlet></ng-template>
       </div>
       <h1 class="central-content">
+        <ng-template [cdkPortalOutlet]="cdkPortalCenter" #portalOutlet></ng-template>
+        @if(!cdkPortalCenter){
         <span class="title">{{ title | translate }}</span>
+        }
       </h1>
       <div class="end-content">
-        <ng-template [cdkPortalOutlet]="endPortal" #portalOutlet></ng-template>
+        <ng-template [cdkPortalOutlet]="cdkPortalEnd" #portalOutlet></ng-template>
       </div>
     </header>
     <picsa-breadcrumbs> </picsa-breadcrumbs>
   `,
   styleUrls: ['./picsa-header.component.scss'],
+  standalone: false,
 })
-export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
+export class PicsaHeaderComponent implements OnInit, OnDestroy {
   public title = '';
   public style: 'primary' | 'inverted' = 'primary';
-  public hideBackButton? = false;
+  public hideBackButton = signal(false);
+  public hideHeader = signal(false);
 
   private destroyed$ = new Subject<boolean>();
-  /** Inject dynamic content into end slot of header using angular cdk portal */
-  public endPortal?: Portal<any>;
-  public endPortalReady = false;
+  /** Inject dynamic content into header slots using angular cdk portal */
+  public cdkPortalStart: IHeaderOptions['cdkPortalStart'];
+  public cdkPortalCenter: IHeaderOptions['cdkPortalCenter'];
+  public cdkPortalEnd: IHeaderOptions['cdkPortalEnd'];
 
-  @ViewChild(CdkPortalOutlet) portalOutlet: PortalOutlet;
   constructor(
     private componentsService: PicsaCommonComponentsService,
     private router: Router,
     private titleStrategy: DefaultTitleStrategy,
     private titleService: Title
-  ) {}
+  ) {
+    effect(() => {
+      const headerOptions = this.componentsService.headerOptions();
+      this.handleHeaderOptionsChange(headerOptions);
+    });
+  }
 
   ngOnInit() {
     this.listenToRouteChanges();
-  }
-  ngAfterViewInit(): void {
-    this.listenToServiceTitleChanges();
   }
 
   ngOnDestroy() {
@@ -103,32 +109,46 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  /** Listen to changes to title triggered directly service */
-  private listenToServiceTitleChanges() {
-    this.componentsService.headerOptions$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ title, style, endContent, hideBackButton }) => {
-        requestAnimationFrame(() => {
-          if (title) {
-            this.title = title;
-            this.titleService.setTitle(title);
-          }
-          if (style) {
-            this.style = style;
-          }
-          this.setEndPortal(endContent);
-          // hide back button when set or if on farmer or extension homepages
-          this.hideBackButton = hideBackButton || ['/', '/farmer', '/extension'].includes(location.pathname);
-        });
-      });
+  private handleHeaderOptionsChange(options: IHeaderOptions) {
+    const { title, style, hideBackButton, hideHeader } = options;
+    requestAnimationFrame(() => {
+      if (title) {
+        this.title = title;
+        this.titleService.setTitle(title);
+      }
+      if (style) {
+        this.style = style;
+      }
+      this.setPortalContent(options);
+      // hide back button when set or if on farmer or extension homepages
+      const shouldHideBackButton = hideBackButton || ['/', '/farmer', '/extension'].includes(location.pathname);
+      this.hideBackButton.set(shouldHideBackButton);
+      this.hideHeader.set(hideHeader ? true : false);
+    });
   }
-  private setEndPortal(endContent?: Portal<any>) {
-    if (!endContent) {
-      this.endPortal = undefined;
-      return;
+
+  private setPortalContent(options: IHeaderOptions) {
+    const { cdkPortalStart, cdkPortalCenter, cdkPortalEnd } = options;
+    // Center Portal
+    if (!cdkPortalStart) {
+      this.cdkPortalStart = undefined;
     }
-    if (!endContent.isAttached) {
-      this.endPortal = endContent;
+    if (!cdkPortalStart?.isAttached) {
+      this.cdkPortalStart = cdkPortalStart;
+    }
+    // Center Portal
+    if (!cdkPortalCenter) {
+      this.cdkPortalCenter = undefined;
+    }
+    if (!cdkPortalCenter?.isAttached) {
+      this.cdkPortalCenter = cdkPortalCenter;
+    }
+    // End Portal
+    if (!cdkPortalEnd) {
+      this.cdkPortalEnd = undefined;
+    }
+    if (!cdkPortalEnd?.isAttached) {
+      this.cdkPortalEnd = cdkPortalEnd;
     }
   }
 }

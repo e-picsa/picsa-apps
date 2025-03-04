@@ -4,8 +4,8 @@
   </button>
 </div>
 <div class="page-content" [class.HideOverflow]="matStepperOpen">
-  <div style="overflow: auto; flex: 1" id="options">
-    <table mat-table [dataSource]="dbDataDocs" class="mat-elevation-z8">
+  <div class="table-container mat-elevation-z8" id="options">
+    <table mat-table [dataSource]="dbDataDocs">
       <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
@@ -142,7 +142,7 @@
   </div>
   <div class="editor-popup slide-in" [class.active]="matStepperOpen">
     <div class="blurBackground"></div>
-    <div class="editor-container">
+    <div class="editor-content">
       <option-editor (dataTransfer)="onDataTransfer($event)" style="width: 100%"></option-editor>
     </div>
   </div>

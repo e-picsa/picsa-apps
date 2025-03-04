@@ -1,4 +1,4 @@
-import { effect, Injectable, OnDestroy } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ConfigurationService } from '@picsa/configuration';
 import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
@@ -305,10 +305,10 @@ export class BudgetStore {
   // attempt to reload any hardcoded data present in the app
   private async checkForUpdates() {
     const version = await this.db.getDoc<IAppMeta>('_appMeta', 'VERSION');
-    const updateRequired = !version || version.value !== APP_VERSION.number;
+    const updateRequired = !version || version.value !== APP_VERSION.semver;
     if (updateRequired) {
       await this.setHardcodedData();
-      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.number };
+      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.semver };
       this.db.setDoc('_appMeta', update);
     }
   }

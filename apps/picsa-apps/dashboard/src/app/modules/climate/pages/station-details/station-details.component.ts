@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ClimateService } from '../../climate.service';
@@ -7,27 +6,22 @@ import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall
 
 @Component({
   selector: 'dashboard-station-details',
-  standalone: true,
-  imports: [CommonModule, MatProgressBarModule, RainfallSummaryComponent],
+  imports: [MatProgressBarModule, RainfallSummaryComponent],
   templateUrl: './station-details.component.html',
   styleUrls: ['./station-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StationDetailsPageComponent implements OnInit {
-  public get station() {
-    return this.service.activeStation;
-  }
+export class StationDetailsPageComponent {
+  public station = this.service.activeStation;
 
-  public get stationSummary() {
-    const entries = Object.entries(this.station || {}).filter(([key]) => !['id', 'country_code'].includes(key));
+  stationSummary = computed(() => {
+    const station = this.service.activeStation();
+    const entries = Object.entries(station || {}).filter(([key]) => !['id', 'country_code'].includes(key));
     return {
       keys: entries.map(([key]) => key),
       values: entries.map(([, value]) => value),
     };
-  }
+  });
 
   constructor(private service: ClimateService) {}
-
-  async ngOnInit() {
-    await this.service.ready();
-  }
 }

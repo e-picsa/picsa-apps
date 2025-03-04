@@ -31,6 +31,8 @@ export class PicsaAsyncService {
       this.callInitFunction();
     }
   }
+  /** Observable for service ready state */
+  public ready$ = this.initialised$.pipe(filter((v) => v === true));
 
   private callInitFunction(...args: any) {
     this.initCalled = true;
@@ -45,7 +47,7 @@ export class PicsaAsyncService {
     if (!this.initCalled) {
       this.callInitFunction(args);
     }
-    return firstValueFrom(this.initialised$.pipe(filter((v) => v === true)));
+    return firstValueFrom(this.ready$);
   };
 
   /** Specify any async initialisation logic in method */

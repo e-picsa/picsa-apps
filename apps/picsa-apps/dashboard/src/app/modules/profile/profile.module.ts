@@ -2,9 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { PasswordResetComponent } from './pages/password-reset/password-reset.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -12,12 +9,13 @@ import { UserProfileComponent } from './pages/user-profile/user-profile.componen
     RouterModule.forChild([
       {
         path: '',
-        component: UserProfileComponent,
+        loadComponent: () => import('./pages/user-profile/user-profile.component').then((m) => m.UserProfileComponent),
       },
       {
         path: 'password-reset',
-        component: PasswordResetComponent,
-      }
+        loadComponent: () =>
+          import('./pages/password-reset/password-reset.component').then((m) => m.PasswordResetComponent),
+      },
     ]),
   ],
 })

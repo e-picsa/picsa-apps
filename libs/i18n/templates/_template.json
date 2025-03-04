@@ -5,27 +5,7 @@
     "context": "activities"
   },
   {
-    "text": "apply pesticide",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "bagging",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "banding",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
     "text": "build housing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "compost manure making",
     "tool": "budget",
     "context": "activities"
   },
@@ -36,36 +16,6 @@
   },
   {
     "text": "feeding livestock",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "harvesting",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "land clearing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "marketing and selling",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "mulching",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "ploughing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "post-harvest handling",
     "tool": "budget",
     "context": "activities"
   },
@@ -90,27 +40,7 @@
     "context": "activities"
   },
   {
-    "text": "shelling",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
     "text": "sowing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "storage",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "threshing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "transport",
     "tool": "budget",
     "context": "activities"
   },
@@ -121,11 +51,6 @@
   },
   {
     "text": "vaccinate",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "value addition",
     "tool": "budget",
     "context": "activities"
   },
@@ -414,10 +339,6 @@
     "tool": "budget"
   },
   {
-    "text": "Consumed",
-    "tool": "budget"
-  },
-  {
     "text": "Cost",
     "tool": "budget"
   },
@@ -486,10 +407,6 @@
     "tool": "budget"
   },
   {
-    "text": "No outputs produce for consumption",
-    "tool": "budget"
-  },
-  {
     "text": "Outputs",
     "tool": "budget"
   },
@@ -535,14 +452,6 @@
   },
   {
     "text": "Total",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Consumed",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Produced",
     "tool": "budget"
   },
   {
@@ -666,19 +575,7 @@
     "tool": "climate"
   },
   {
-    "text": "Annual Forecast",
-    "tool": "climate"
-  },
-  {
     "text": "Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Downscaled Forecast",
-    "tool": "climate"
-  },
-  {
-    "text": "Forecast",
     "tool": "climate"
   },
   {
@@ -761,6 +658,10 @@
     "tool": "common"
   },
   {
+    "text": "App",
+    "tool": "common"
+  },
+  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
@@ -778,10 +679,6 @@
   },
   {
     "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "common"
-  },
-  {
-    "text": "Calendar",
     "tool": "common"
   },
   {
@@ -809,6 +706,10 @@
     "tool": "common"
   },
   {
+    "text": "District",
+    "tool": "common"
+  },
+  {
     "text": "Draw Here",
     "tool": "common"
   },
@@ -829,15 +730,15 @@
     "tool": "common"
   },
   {
-    "text": "Hide Options",
-    "tool": "common"
-  },
-  {
     "text": "I'm a farmer",
     "tool": "common"
   },
   {
     "text": "I'm an extension worker",
+    "tool": "common"
+  },
+  {
+    "text": "Loading",
     "tool": "common"
   },
   {
@@ -857,15 +758,31 @@
     "tool": "common"
   },
   {
+    "text": "PDF Viewer not supported on this device",
+    "tool": "common"
+  },
+  {
+    "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
     "text": "Probability and Risk",
     "tool": "common"
   },
   {
-    "text": "Ram",
+    "text": "Province",
     "tool": "common"
   },
   {
     "text": "Redo",
+    "tool": "common"
+  },
+  {
+    "text": "Resource Allocation Map",
+    "tool": "common"
+  },
+  {
+    "text": "Restart App",
     "tool": "common"
   },
   {
@@ -877,7 +794,7 @@
     "tool": "common"
   },
   {
-    "text": "Show Options",
+    "text": "Testimonials",
     "tool": "common"
   },
   {
@@ -890,6 +807,10 @@
   },
   {
     "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Update",
     "tool": "common"
   },
   {
@@ -949,6 +870,66 @@
     "tool": "common_crop_activity"
   },
   {
+    "text": "apply pesticide",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "bagging",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "banding",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "compost manure making",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "harvesting",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "land clearing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "marketing and selling",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "mulching",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "ploughing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "post-harvest handling",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "shelling",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "storage",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "threshing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "transport",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "value addition",
+    "tool": "common_crop_activity"
+  },
+  {
     "text": "Avocado",
     "tool": "common_crops"
   },
@@ -985,11 +966,23 @@
     "tool": "common_crops"
   },
   {
+    "text": "Paprika",
+    "tool": "common_crops"
+  },
+  {
     "text": "Paw-paw",
     "tool": "common_crops"
   },
   {
+    "text": "Pearl Millet",
+    "tool": "common_crops"
+  },
+  {
     "text": "Pigeon Peas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Potatoes",
     "tool": "common_crops"
   },
   {
@@ -998,6 +991,10 @@
   },
   {
     "text": "Rice",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Sesame",
     "tool": "common_crops"
   },
   {
@@ -1230,10 +1227,6 @@
     "tool": "common_weather"
   },
   {
-    "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
     "tool": "crop-probability"
   },
@@ -1263,10 +1256,6 @@
   },
   {
     "text": "In the crop information table, you will be able to see the probabilities for different crops through the different seasons.",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Longitude:34.26, Latitude: -12.91 Altitude: 500.",
     "tool": "crop-probability"
   },
   {
@@ -1302,6 +1291,10 @@
     "tool": "crop-probability"
   },
   {
+    "text": "Additional",
+    "tool": "extension-content"
+  },
+  {
     "text": "Farmer Activities",
     "tool": "extension-content"
   },
@@ -1322,11 +1315,15 @@
     "tool": "extension-content"
   },
   {
-    "text": "Take App Tour",
+    "text": "Training",
     "tool": "extension-content"
   },
   {
     "text": "Click on the button below to retry",
+    "tool": "extension"
+  },
+  {
+    "text": "Forecasts",
     "tool": "extension"
   },
   {
@@ -1348,6 +1345,18 @@
   {
     "text": "Switch to Farmer",
     "tool": "extension"
+  },
+  {
+    "text": "Home",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "next",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "previous",
+    "tool": "farmer-content"
   },
   {
     "text": "Activity Flow Chart",
@@ -1795,10 +1804,6 @@
   },
   {
     "text": "Create",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Create Calendar",
     "tool": "seasonal-calendar"
   },
   {

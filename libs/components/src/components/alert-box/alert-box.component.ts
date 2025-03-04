@@ -15,6 +15,7 @@ const COLOR_MAPPING: { [type in IAlertType]: number[] } = {
   selector: 'picsa-alert-box',
   templateUrl: './alert-box.component.html',
   styleUrls: ['./alert-box.component.scss'],
+  standalone: false,
 })
 /**
  * Visual text box, inspired by

@@ -2,9 +2,14 @@ import { ILocaleCode } from '../deployments';
 
 export interface IPicsaVideo {
   id: string;
-  locale_code: ILocaleCode;
+  /**
+   * Country and Language codes supported by video.
+   * The audio locale should be listed first and subtitle second if different
+   */
+  locale_codes: ILocaleCode[];
   size_kb: number;
-  resolution: '360p';
+  /** Generally 360p preferred but 480p used for operational videos */
+  resolution: '360p' | '480p';
   supabase_url: string;
 }
 

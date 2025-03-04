@@ -6,6 +6,7 @@ import { ICropRequirement } from '@picsa/models';
   selector: 'climate-crop-analysis',
   templateUrl: './crop-analysis.html',
   styleUrls: ['./crop-analysis.scss'],
+  standalone: false,
 })
 export class CropAnalysisComponent implements OnInit {
   selectedCrops: { [variety: string]: ICropRequirement } = {};
