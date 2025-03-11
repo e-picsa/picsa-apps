@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -16,6 +16,8 @@ export class CropInformationService extends PicsaAsyncService {
     return this.supabaseService.db.table('crop_data');
   }
 
+  public cropData = signal<ICropInformationRow[]>([]);
+
   constructor(private supabaseService: SupabaseService) {
     super();
   }
@@ -26,11 +28,13 @@ export class CropInformationService extends PicsaAsyncService {
   }
 
   public async list() {
+    // TODO - filter for country code, maybe create as resource...
     const { data, error } = await this.table.select<'*', ICropInformationRow>('*');
     if (error) {
       throw error;
     }
     this.cropProbabilities = data || [];
+    this.cropData.set(data);
   }
 
   public async insert(cropInfo: ICropInformationInsert) {
