@@ -3,12 +3,13 @@ import { Component, computed, effect, OnDestroy, signal, viewChildren } from '@a
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
+import { isEqual } from '@picsa/utils/object.utils';
 import { RxDocument } from 'rxdb';
 
 import { ForecastViewerComponent } from '../../components/forecast-viewer/forecast-viewer.component';
-import { ForecastLocationSelectComponent } from '../../components/location-select/location-select.component';
 import { IForecast } from '../../schemas';
 import { ForecastService } from '../../services/forecast.service';
 
@@ -26,10 +27,10 @@ interface IForecastSummary {
   styleUrls: ['./forecast.page.scss'],
   imports: [
     CommonModule,
-    ForecastLocationSelectComponent,
     ForecastViewerComponent,
     MatIcon,
     MatProgressBarModule,
+    PicsaFormsModule,
     PicsaTranslateModule,
     SupabaseStorageDownloadComponent,
   ],
@@ -38,6 +39,9 @@ export class ForecastComponent implements OnDestroy {
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
   public viewerOpen = signal(false);
+
+  public countryCode = computed(() => this.configurationService.userSettings().country_code);
+  public locationSelected = computed(() => this.configurationService.userSettings().location, { equal: isEqual });
 
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
@@ -49,7 +53,7 @@ export class ForecastComponent implements OnDestroy {
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
-  constructor(private service: ForecastService, configurationService: ConfigurationService) {
+  constructor(private service: ForecastService, private configurationService: ConfigurationService) {
     effect(() => {
       const { location } = configurationService.userSettings();
       service.setForecastLocation(location);
@@ -58,6 +62,10 @@ export class ForecastComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.service.setForecastLocation(undefined);
+  }
+
+  public handleLocationUpdate(location: (string | undefined)[]) {
+    this.configurationService.updateUserSettings({ location });
   }
 
   public async handleForecastClick(forecast: IForecastSummary) {

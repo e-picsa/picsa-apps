@@ -3,8 +3,12 @@
     <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
   </div>
 
-  <!-- Location Select (Admin 4 - district/province) -->
-  <forecast-location-select></forecast-location-select>
+  <!-- Location Select  -->
+  <picsa-form-location-select
+    [countryCode]="countryCode()"
+    [value]="locationSelected()"
+    (valueChanged)="handleLocationUpdate($event)"
+  ></picsa-form-location-select>
 
   <!-- Forecasts -->
   <div class="flex flex-wrap items-center gap-4">
