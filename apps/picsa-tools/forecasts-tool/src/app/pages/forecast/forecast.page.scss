@@ -5,14 +5,20 @@
 .forecast-heading {
   @apply border-solid border-0 border-b border-[var(--color-light)]  text-center p-2 m-0 capitalize;
 }
-.download-container {
-  @apply pt-1 text-center bg-[var(--color-secondary-50)];
+.forecast-bottom-bar {
+  @apply flex items-center bg-[var(--color-secondary-50)] h-8 px-2 relative;
 }
-.download-container[data-forecast-type='downscaled'] {
+.forecast-bottom-bar > picsa-supabase-storage-download {
+  @apply absolute bottom-0 left-0;
+}
+.forecast-bottom-bar[data-forecast-type='downscaled'] {
   filter: hue-rotate(120deg);
 }
-.download-container[data-forecast-type='seasonal'] {
+.forecast-bottom-bar[data-forecast-type='seasonal'] {
   filter: hue-rotate(240deg);
+}
+.forecast-bottom-bar > mat-progress-bar {
+  @apply absolute bottom-0 left-0 w-full;
 }
 
 .viewer-container {
@@ -31,4 +37,14 @@
 
 .viewer-container.slide-in.active {
   transform: translateY(0);
+}
+
+.language-label {
+  @apply text-sm flex-1 text-left;
+}
+.image-container {
+  @apply flex-1 p-2;
+}
+.forecast-image {
+  @apply h-full w-full object-contain;
 }

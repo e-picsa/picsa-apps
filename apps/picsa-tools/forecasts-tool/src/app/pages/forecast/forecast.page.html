@@ -10,9 +10,9 @@
     (valueChanged)="handleLocationUpdate($event)"
   ></picsa-form-location-select>
 
-  <!-- Forecasts -->
+  <!-- Daily Forecasts -->
+  <h2>{{'Daily' | translate}}</h2>
   <div class="flex flex-wrap items-center gap-4">
-    <!-- Daily -->
     @if(dailyForecasts().length===0){
     <div class="mx-auto w-24 mt-4">
       <mat-progress-bar mode="query"></mat-progress-bar>
@@ -20,12 +20,17 @@
     } @for(forecast of dailyForecasts(); track forecast.id){
     <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
-    <div class="h-0 w-full"></div>
+  </div>
+  <!-- <div class="h-0 w-full"></div> -->
+
+  <!-- Seasonal Forecasts -->
+  <h2>{{'Seasonal' | translate}}</h2>
+  <div class="mt-2 flex flex-wrap items-center gap-4">
     <!-- Downscaled -->
     @for(forecast of downscaledForecasts(); track forecast.id){
     <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
-    <!-- Seasonal -->
+    <!-- National -->
     @for(forecast of seasonalForecasts(); track forecast.id){
     <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
@@ -40,19 +45,26 @@
     class="min-w-40 w-40 h-44 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
     (click)="handleForecastClick(forecast)"
   >
-    <h3 class="forecast-heading">{{forecast.type | translate}}</h3>
-    <div class="flex-1 overflow-auto capitalize p-2">{{forecast.label}}</div>
-    <div class="download-container" [attr.data-forecast-type]="forecast.type">
-      @if(!forecast.downloaded){
+    <h3 class="forecast-heading">{{forecast.title | translate}}</h3>
+    <!-- image content -->
+    @if(forecast.image){
+    <div class="flex-1 p-2 overflow-hidden">
+      <img class="forecast-image" [src]="forecast.image" />
+    </div>
+    }
+    <!-- label content -->
+    @else {
+    <div class="flex-1 p-2 overflow-auto capitalize">{{forecast.label}}</div>
+    }
+    <div class="forecast-bottom-bar" [attr.data-forecast-type]="forecast.type">
+      <div class="language-label">{{forecast.languageLabel}}</div>
       <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
-        @if(downloader.progress()===undefined){
-        <mat-icon>download</mat-icon>
-        } @else{
-        <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
-        }
       </picsa-supabase-storage-download>
-      } @else{
-      <mat-icon>task_alt</mat-icon>
+
+      <mat-icon>{{forecast.downloaded || downloader.progress()===100 ? 'task_alt' : 'download'}}</mat-icon>
+
+      @if(downloader.progress()){
+      <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
       }
     </div>
   </div>
