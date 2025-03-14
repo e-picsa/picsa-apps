@@ -30,6 +30,7 @@ export class FormLocationSelectComponent {
 
   /** Location selected as stored to user profile (admin_4 district/province level) */
   public admin4Selected = signal<string | undefined>(undefined);
+  public admin5Options = signal<{ id: string; label: string }[]>([]);
   public admin5Selected = signal<string | undefined>(undefined);
 
   private computedValue = computed<(string | undefined)[]>(
@@ -56,12 +57,10 @@ export class FormLocationSelectComponent {
       this.admin4Selected.set(inputValue[4]);
       this.admin5Selected.set(inputValue[5]);
     });
-    // Clear admin_5 when admin_4 changed
+
     effect(() => {
       const admin4Selected = this.admin4Selected();
-      if (admin4Selected) {
-        this.admin5Selected.set(undefined);
-      }
+      this.handleAdmin4Selected(admin4Selected);
     });
     // Emit value changes when valid
     effect(() => {
@@ -91,10 +90,17 @@ export class FormLocationSelectComponent {
     }
   }
 
-  public filterOptions(options: { id: string; label: string; admin_4: string }[], admin4Selected?: string) {
-    if (!admin4Selected) {
-      return [];
+  /** Update admin 5 options/selected when admin 4 changes */
+  private handleAdmin4Selected(admin4Selected: string | undefined) {
+    if (!admin4Selected) return;
+    const admin5Locations = this.locationData().admin_5?.locations;
+    if (admin5Locations) {
+      const filteredLocations = admin5Locations.filter((o) => o.admin_4 === admin4Selected);
+      this.admin5Options.set(filteredLocations);
+      const admin5Selected = this.admin5Selected();
+      if (admin5Selected && !filteredLocations.find((v) => v.id === admin5Selected)) {
+        this.admin5Selected.set(undefined);
+      }
     }
-    return options.filter((o) => o.admin_4 === admin4Selected);
   }
 }

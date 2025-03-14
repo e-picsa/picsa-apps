@@ -21,7 +21,7 @@
       (selectionChange)="admin5Selected.set(admin5.value)"
       [value]="admin5Selected()"
     >
-      @for (option of filterOptions(data.locations,admin4Selected()); track option.id) {
+      @for (option of admin5Options(); track option.id) {
       <mat-option [value]="option.id">{{ option.label }}</mat-option>
       }
     </mat-select>
