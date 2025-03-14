@@ -65,7 +65,6 @@ export class ForecastComponent implements OnDestroy {
   constructor(private service: ForecastService, private configurationService: ConfigurationService) {
     effect(() => {
       const { location } = configurationService.userSettings();
-      console.log('set forecast location', location);
       service.setForecastLocation(location);
     });
   }
@@ -75,7 +74,6 @@ export class ForecastComponent implements OnDestroy {
   }
 
   public handleLocationUpdate(location: (string | undefined)[]) {
-    console.log('location', location);
     this.configurationService.updateUserSettings({ location });
   }
 
