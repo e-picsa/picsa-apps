@@ -16,6 +16,9 @@ import {
 } from './resource-item';
 import { ResourceShareComponent } from './resource-share/resource-share.component';
 
+// NOTE - standalone components not included in module to allow standalone to
+// import non-standalone. In future all should be moved to standalone
+
 const components = [
   ResourceDownloadComponent,
   ResourceShareComponent,
