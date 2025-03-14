@@ -15,7 +15,7 @@ import { ForecastViewerComponent } from '../../components/forecast-viewer/foreca
 import { IForecast } from '../../schemas';
 import { ForecastService } from '../../services/forecast.service';
 
-const STRINGS = { national: translateMarker('national') };
+const STRINGS = { National: translateMarker('National') };
 
 interface IForecastSummary {
   _doc: RxDocument<IForecast>;
@@ -104,7 +104,7 @@ export class ForecastComponent implements OnDestroy {
     const summaries = docs.map((doc) => {
       const { id, storage_file, forecast_type, language_code } = doc;
       // rename seasonal forecast title to say 'national' instead
-      const title = forecast_type === 'seasonal' ? STRINGS.national : (forecast_type as string);
+      const title = forecast_type === 'seasonal' ? STRINGS.National : (forecast_type as string);
       const languageLabel = LOCALES_DATA_HASHMAP[language_code || '']?.language_label;
       // only include filename label for daily forecast, use image for seasonal and downscaled
       const label = forecast_type === 'daily' ? this.generateForecastLabel(storage_file) : '';
