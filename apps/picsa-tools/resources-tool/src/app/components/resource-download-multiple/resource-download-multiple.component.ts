@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, signal } from '@angular/core';
 import { RxDocument } from 'rxdb';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 
@@ -15,7 +15,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
   private _resources: IResourceFile[];
   private pendingDocs: RxDocument<IResourceFile>[] = [];
 
-  downloadStatus: IDownloadStatus;
+  downloadStatus = signal<IDownloadStatus>('pending');
   downloadProgress = 0;
   downloadCount = 0;
   totalSize = 0;
@@ -66,8 +66,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
     this.totalSize = totalSize;
     this.downloadCount = downloadCount;
     this.pendingDocs = pendingDocs;
-    this.downloadStatus = totalSize > 0 ? 'ready' : 'complete';
-    console.log('pending', { totalCount, totalSize, downloadCount, pendingDocs });
+    this.downloadStatus.set(totalSize > 0 ? 'ready' : 'complete');
   }
 
   public async downloadAllResources() {
@@ -75,14 +74,14 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
     await this.getPendingDownloads();
 
     // handle all downloads
-    this.downloadStatus = 'pending';
+    this.downloadStatus.set('pending');
 
     for (const doc of this.pendingDocs) {
       await this.downloadNextResource(doc);
     }
     // refresh UI
     await this.getPendingDownloads();
-    this.downloadStatus = 'complete';
+    this.downloadStatus.set('complete');
     return;
   }
 
@@ -92,7 +91,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
    */
   private async downloadNextResource(doc: RxDocument<IResourceFile>) {
     // Only download if pending status given (will be set to 'ready' if cancelled)
-    if (this.downloadStatus === 'pending') {
+    if (this.downloadStatus() === 'pending') {
       const { download$, progress$, status$ } = this.service.triggerResourceDownload(doc);
       this.downloadSubscription = download$;
       progress$.subscribe((progress) => (this.downloadProgress = progress));
@@ -109,7 +108,7 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
       this.downloadSubscription = undefined;
     }
     // change the download status which will prevent nextResourceDownload trigger
-    this.downloadStatus = 'ready';
+    this.downloadStatus.set('ready');
     this.downloadProgress = 0;
     await this.getPendingDownloads();
   }

@@ -3,7 +3,8 @@ import { Component, computed, input } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
-import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ResourcesComponentsModule } from '@picsa/resources/components/components.module';
 
 /**
  * Temporary component to help migrate between legacy flat resource format

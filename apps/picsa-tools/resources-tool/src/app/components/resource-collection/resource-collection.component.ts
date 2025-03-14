@@ -58,6 +58,7 @@ export class ResourceCollectionComponent {
     this.collections.set(this.processDocs(collectionDocs));
     const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
     this.files.set(this.processDocs(fileDocs));
+    console.log('files', this.files());
   }
   private processDocs(docs: Map<string, RxDocument<any>>) {
     const entries = [...docs.values()];
