@@ -11,6 +11,7 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
   selector: 'option-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
+  standalone: false,
 })
 export class EditorComponent implements OnInit {
   public values = ENTRY_TEMPLATE();

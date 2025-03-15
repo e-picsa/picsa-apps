@@ -18,6 +18,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
     </button>
   `,
+  standalone: false,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BackButton implements OnDestroy {

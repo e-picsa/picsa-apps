@@ -7,6 +7,7 @@ import {
   computed,
   effect,
   OnDestroy,
+  signal,
   TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -36,9 +37,10 @@ interface ISiteViewParams {
   templateUrl: './site-view.page.html',
   styleUrls: ['./site-view.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
-  public showRotateAnimation = false;
+  public showRotateAnimation = signal(false);
 
   public stationSelectOptions = computed(() => {
     const stations = this.dataService.stations();
@@ -76,6 +78,8 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
           this._siteId = siteId;
           await this.chartService.setStation(siteId);
           await this.loadView(viewId);
+          await _wait(50);
+          this.checkOrientation();
         }
       }
 
@@ -83,12 +87,10 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  async ngAfterViewInit() {
+  ngAfterViewInit() {
     this.componentsService.patchHeader({
       cdkPortalCenter: new TemplatePortal(this.headerPortal, this.viewContainer),
     });
-    this.promptScreenRotate();
-    this.cdr.markForCheck();
   }
 
   ngOnDestroy() {
@@ -116,9 +118,8 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     await this.chartService.setChart(viewId);
   }
 
-  private promptScreenRotate() {
-    if (window.innerHeight > window.innerWidth) {
-      this.showRotateAnimation = true;
-    }
+  private checkOrientation() {
+    const shouldRotate = window.innerHeight > window.innerWidth;
+    this.showRotateAnimation.set(shouldRotate);
   }
 }

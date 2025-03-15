@@ -7,6 +7,7 @@ import { BudgetStore } from '../../store/budget.store';
   selector: 'budget-share-dialog',
   templateUrl: './share-dialog.component.html',
   styleUrls: ['./share-dialog.component.scss'],
+  standalone: false,
 })
 export class BudgetShareDialogComponent {
   public status = '';

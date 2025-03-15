@@ -1,6 +1,10 @@
 // import "./node_modules/leaflet/dist/leaflet.css" to add leaflet styles
 // this has to be done in angular.json
 
+.map-container {
+  height: 100%;
+}
+
 .countryLabel {
   fill: transparent;
   background: rgba(255, 255, 255, 0);

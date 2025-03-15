@@ -7,6 +7,7 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   selector: 'climate-share-dialog',
   templateUrl: './share-dialog.component.html',
   styleUrls: ['./share-dialog.component.scss'],
+  standalone: false,
 })
 /**
  *

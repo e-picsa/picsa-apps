@@ -19,8 +19,8 @@ export class VideoPlayerService extends PicsaAsyncService {
 
   override async init() {
     try {
-      await this.dbService.ensureCollections({ [Schema.COLLECTION_NAME]: Schema.COLLECTION });
-      this.collection = this.dbService.db.collections[Schema.COLLECTION_NAME] as RxCollection<Schema.IVideoPlayerEntry>;
+      await this.dbService.ensureCollections({ video_player: Schema.COLLECTION });
+      this.collection = this.dbService.db.collections.video_player as RxCollection<Schema.IVideoPlayerEntry>;
     } catch (error) {
       console.error('Failed to initialize database:', error);
     }

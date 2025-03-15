@@ -1,24 +1,39 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IFarmerContent, IFarmerContentStep } from '../../types';
+import { IFarmerContent } from '../../types';
 import { TOOLS_DATA_HASHMAP } from '../tools';
-import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
+import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_OPERATIONAL_VIDEOS_HASHMAP } from '@picsa/data/resources';
 
-const { climate } = TOOLS_DATA_HASHMAP;
+const title = translateMarker('What is happening to the climate in your area?');
 
-const steps: IFarmerContentStep[] = [
-  {
-    type: 'video',
-    video: PICSA_FARMER_VIDEOS_HASHMAP.historic_climate,
-  },
+const steps: IFarmerContent['steps'] = [
+  [
+    {
+      type: 'text',
+      title,
+    },
+    {
+      type: 'video',
+      video: PICSA_FARMER_VIDEOS_HASHMAP.historic_climate,
+    },
+  ],
+  [
+    { type: 'text', title: translateMarker('Tool') },
+    { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.historic_climate },
+  ],
+  [
+    {
+      type: 'tool',
+      tool: TOOLS_DATA_HASHMAP.climate,
+    },
+  ],
+  [{ type: 'review' }],
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'is-the-climate-changing',
-  title: translateMarker('What is happening to the climate in your area?'),
-  tools: [climate],
-  tags: [],
+  title,
+  tags: [{ label: TOOLS_DATA_HASHMAP.climate.label }],
   steps,
-  showReviewSection: true,
 };
 export default content;

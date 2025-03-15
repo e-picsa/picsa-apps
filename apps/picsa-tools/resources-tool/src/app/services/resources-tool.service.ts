@@ -107,10 +107,14 @@ export class ResourcesToolService extends PicsaAsyncService {
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
-   * @param convertNativeSrc - Convert to src usable within web content (e.g as image or pdf src)
+   * @param convertFileSrc - Convert into usable src for rendering in webview. Typically required for files
+   * rendered in webview (images, pdf), but not for files passed to native handlers (video, native file open)
    **/
-  public async getFileAttachmentURI(doc: RxDocument<schemas.IResourceFile>, convertNativeSrc = false) {
-    return this.dbAttachmentService.getFileAttachmentURI(doc, convertNativeSrc);
+  public async getFileAttachmentURI(doc: RxDocument<schemas.IResourceFile>, convertFileSrc: boolean) {
+    const filename = doc.filename || doc.id;
+    // when retrieving videos get result as a file:/// url, instead of http:// local url
+
+    return this.dbAttachmentService.getFileAttachmentURI(doc, filename, convertFileSrc);
   }
   /**
    * Release a file attachment URI when no longer required
@@ -164,7 +168,7 @@ export class ResourcesToolService extends PicsaAsyncService {
 
     // Use caching system to only populate once per app version launch in production
     const assetsCacheVersion = this.getAssetResourcesVersion();
-    if (ENVIRONMENT.production && assetsCacheVersion === APP_VERSION.number) {
+    if (ENVIRONMENT.production && assetsCacheVersion === APP_VERSION.semver) {
       return;
     }
     // Update DB with hardcoded entries
@@ -235,7 +239,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   private setAssetResourcesVersion() {
-    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.number);
+    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.semver);
   }
 
   public async shareLink(url: string) {

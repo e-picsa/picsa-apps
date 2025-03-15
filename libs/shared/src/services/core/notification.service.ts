@@ -46,7 +46,6 @@ export class PicsaNotificationService {
       }
     `,
   ],
-  standalone: true,
   imports: [MatIconModule, MatButtonModule],
 })
 export class SnackBarWithIconComponent {

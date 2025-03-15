@@ -11,6 +11,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   selector: 'resource-collection',
   templateUrl: './collection.component.html',
   styleUrls: ['./collection.component.scss'],
+  standalone: false,
 })
 export class CollectionComponent implements OnInit, OnDestroy {
   public collection: IResourceCollection | undefined;

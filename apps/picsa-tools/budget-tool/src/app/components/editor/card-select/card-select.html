@@ -8,13 +8,13 @@
 <div @fadeInOut *ngIf="!showAllCards">
   <button mat-button (click)="showAllCards = true">{{ 'Show More' | translate }}</button>
 </div>
-<div *ngIf="showAllCards">
-  <budget-card
-    *ngFor="let card of otherCards"
-    [card]="card"
-    (click)="onCardClicked(card)"
-    [selected]="selected[card.id]"
-    @fadeInOut
-  ></budget-card>
-  <budget-card-new (cardSaved)="onCardCreated($event)" [type]="type" @fadeInOut></budget-card-new>
-</div>
+@if(showAllCards){
+<budget-card
+  *ngFor="let card of otherCards"
+  [card]="card"
+  (click)="onCardClicked(card)"
+  [selected]="selected[card.id]"
+  @fadeInOut
+></budget-card>
+<budget-card-new (cardSaved)="onCardCreated($event)" [type]="type" @fadeInOut></budget-card-new>
+}

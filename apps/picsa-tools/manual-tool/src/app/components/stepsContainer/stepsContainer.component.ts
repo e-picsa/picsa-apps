@@ -7,6 +7,7 @@ import { IManualPeriodEntry, IManualStep } from '../../data';
   selector: 'picsa-manual-steps-container',
   templateUrl: './stepsContainer.component.html',
   styleUrls: ['./stepsContainer.component.scss'],
+  standalone: false,
 })
 export class stepsContainerComponent {
   @Input() stepData: IManualPeriodEntry[];

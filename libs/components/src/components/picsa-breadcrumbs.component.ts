@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { debounce, filter, interval, Subject, takeUntil } from 'rxjs';
 
@@ -25,6 +25,7 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
       }
     `,
   ],
+  standalone: false,
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   public breadcrumbs: { label: string; path: string }[] = [];
@@ -32,7 +33,18 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   public options: IBreadcrumbOptions = { hideOnPaths: {}, enabled: false };
   private destroyed$ = new Subject<boolean>();
   private rebuild$ = new Subject<boolean>();
-  constructor(private componentsService: PicsaCommonComponentsService, private router: Router) {}
+  constructor(private componentsService: PicsaCommonComponentsService, private router: Router) {
+    effect(() => {
+      const headerOptions = this.componentsService.headerOptions();
+      const title = headerOptions.title;
+      if (title) {
+        if (this.getAlias(location.pathname) !== title) {
+          this.setAlias(location.pathname, title);
+          this.rebuild$.next(true);
+        }
+      }
+    });
+  }
 
   ngOnInit() {
     this.constructBreadcrumbAliases();
@@ -75,14 +87,6 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   }
   /** Listen to changes to title triggered directly service */
   private listenToServiceChanges() {
-    this.componentsService.headerOptions$.pipe(takeUntil(this.destroyed$)).subscribe(({ title }) => {
-      if (title) {
-        if (this.getAlias(location.pathname) !== title) {
-          this.setAlias(location.pathname, title);
-          this.rebuild$.next(true);
-        }
-      }
-    });
     this.componentsService.breadcrumbOptions$.pipe(takeUntil(this.destroyed$)).subscribe((options) => {
       this.options = options;
       //

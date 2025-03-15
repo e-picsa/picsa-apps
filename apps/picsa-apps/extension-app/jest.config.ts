@@ -1,8 +1,11 @@
+import type { Config } from 'jest';
+
 /* eslint-disable */
-export default {
+const config: Config = {
   displayName: 'picsa-apps-extension-app',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+
   globals: {},
   coverageDirectory: '../../../coverage/apps/picsa-apps/extension-app',
   transform: {
@@ -21,3 +24,5 @@ export default {
     'jest-preset-angular/build/serializers/html-comment',
   ],
 };
+
+export default config;

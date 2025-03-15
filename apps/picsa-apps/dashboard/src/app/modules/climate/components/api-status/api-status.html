@@ -1,12 +1,10 @@
 <!-- ready status template -->
-<div class="status-container" [attr.data-status]="status">
-  @if(options.showStatusCode){
-  <span class="status-code" [attr.data-status]="status">{{code}}</span>
-  } @if(options.labels?.ready; as readyLabel){
+<div class="status-container" [attr.data-status]="status()">
+  @if(options().showStatusCode){
+  <span class="status-code" [attr.data-status]="status()">{{code() || ''}}</span>
+  } @if(options().labels?.ready; as readyLabel){
   <div class="status-label">{{readyLabel}}</div>
-  } @if(options.events?.refresh; as refreshEvent){
-  <button class="status-refresh-button" mat-icon-button [disabled]="status === 'pending'" (click)="refreshEvent()">
-    <mat-icon iconPositionEnd [class.spin]="status === 'pending'">autorenew</mat-icon>
-  </button>
+  } @if(options().events?.refresh; as refreshEvent){
+  <picsa-refresh-spinner [spin]="status() === 'pending'" [disabled]="status()==='pending'" (click)="refreshEvent()" />
   }
 </div>

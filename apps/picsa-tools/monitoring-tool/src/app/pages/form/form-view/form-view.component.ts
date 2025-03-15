@@ -14,6 +14,7 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   selector: 'monitoring-form-view',
   templateUrl: './form-view.component.html',
   styleUrls: ['./form-view.component.scss'],
+  standalone: false,
 })
 export class FormViewComponent implements OnInit, OnDestroy {
   public formInitial: {

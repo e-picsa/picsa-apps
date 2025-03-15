@@ -17,6 +17,7 @@ export interface IStationMeta {
   latitude: number;
   longitude: number;
   countryCode: string;
+  district?: string;
   /** Data summaries for charts */
   data?: IStationData[];
   /** Definitions for charts */

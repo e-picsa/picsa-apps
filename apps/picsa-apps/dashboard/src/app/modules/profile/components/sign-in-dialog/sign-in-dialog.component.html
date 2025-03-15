@@ -14,11 +14,10 @@
       <mat-error>Please enter a valid email address</mat-error>
       }
     </mat-form-field>
-    <mat-form-field>
+    @if (template !== 'reset') {<mat-form-field>
       <mat-label>Password</mat-label>
-      <input type="password" matInput autocomplete="picsa-password" formControlName="password" />
-    </mat-form-field>
-    @if(template==='register'){
+      <input type="password" matInput autocomplete="picsa-password" formControlName="password" /> </mat-form-field
+    >} @if(template==='register'){
     <mat-form-field>
       <mat-label>Repeat Password</mat-label>
       <input
@@ -35,28 +34,38 @@
     }
   </form>
 </mat-dialog-content>
-<mat-dialog-actions align="start">
+<mat-dialog-actions class="flex flex-col">
   @if(template==='signIn'){
-  <button mat-button (click)="enableRegisterMode()">Create new account</button>
-  <button
-    mat-button
-    cdkFocusInitial
-    (click)="handleSignIn()"
-    style="margin-left: auto"
-    [disabled]="!form.valid || form.disabled"
-  >
-    Sign In
-  </button>
+  <div class="action-buttons-container">
+    <button mat-button (click)="enableRegisterMode()" class="flex-1">Create Account</button>
+    <button
+      mat-button
+      cdkFocusInitial
+      (click)="handleSignIn()"
+      class="flex-1"
+      [disabled]="!form.valid || form.disabled"
+    >
+      Sign In
+    </button>
+  </div>
+  <button class="mt-2" mat-button (click)="enableResetMode()">Forgot Password</button>
   } @if(template==='register'){
-  <button
-    mat-button
-    cdkFocusInitial
-    (click)="handleRegister()"
-    style="margin-left: auto"
-    [disabled]="!form.valid || form.disabled"
-  >
-    Register
-  </button>
-
+  <div class="action-buttons-container">
+    <button
+      mat-button
+      cdkFocusInitial
+      (click)="handleRegister()"
+      class="ml-auto"
+      [disabled]="!form.valid || form.disabled"
+    >
+      Register
+    </button>
+  </div>
+  } @if(template==='reset'){
+  <div class="action-buttons-container">
+    <button mat-button (click)="handleReset()" class="ml-auto" [disabled]="!form.controls.email.valid || form.disabled">
+      Reset
+    </button>
+  </div>
   }
 </mat-dialog-actions>

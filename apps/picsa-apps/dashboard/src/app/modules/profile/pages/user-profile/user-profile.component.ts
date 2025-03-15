@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { DashboardAuthService } from '../../../auth/services/auth.service';
@@ -8,10 +7,10 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 
 @Component({
   selector: 'dashboard-user-profile',
-  standalone: true,
-  imports: [CommonModule, DeploymentItemComponent, MatCheckboxModule],
+  imports: [DeploymentItemComponent, MatCheckboxModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserProfileComponent {
   public authRoleLevels = ['viewer', 'author', 'admin'];

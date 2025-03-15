@@ -9,6 +9,7 @@ import { IDownloadStatus, ResourcesToolService } from '../../services/resources-
   selector: 'resource-download-multiple',
   templateUrl: './resource-download-multiple.component.html',
   styleUrl: './resource-download-multiple.component.scss',
+  standalone: false,
 })
 export class ResourceDownloadMultipleComponent implements OnDestroy {
   private _resources: IResourceFile[];

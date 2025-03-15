@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
-import { Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ILocaleCode, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
@@ -21,10 +21,10 @@ type ActionSummary = { [key in Action]: ITranslationRow[] };
 
 @Component({
   selector: 'dashboard-translation-csv-import',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [MatButtonModule],
   templateUrl: './csv-import.component.html',
   styleUrl: './csv-import.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsCSVImportComponent {
   public importSummary = signal<ActionSummary>(this.prepareActions([], []));
@@ -39,17 +39,14 @@ export class TranslationsCSVImportComponent {
   private dropEl = viewChild('dragDrop', { read: ElementRef });
 
   constructor(private service: TranslationDashboardService) {
-    effect(
-      () => {
-        const el = this.dropEl();
-        if (el) {
-          this.setupDropZone(el.nativeElement);
-          // eagerly initialise service in case not previously (ensured during process)
-          this.service.ready();
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      const el = this.dropEl();
+      if (el) {
+        this.setupDropZone(el.nativeElement);
+        // eagerly initialise service in case not previously (ensured during process)
+        this.service.ready();
+      }
+    });
   }
 
   public async processImport() {

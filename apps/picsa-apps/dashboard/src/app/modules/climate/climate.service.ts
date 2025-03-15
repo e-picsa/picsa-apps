@@ -9,9 +9,9 @@ import { map } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
-import { ApiMapping, IAPICountryCode } from './climate-api.mapping';
+import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
-import { IStationRow } from './types';
+import { IAPICountryCode, IStationRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {
@@ -37,13 +37,7 @@ export class ClimateService extends PicsaAsyncService {
   public apiCountryCode: IAPICountryCode;
 
   /** Trigger API request that includes mapping response to local database */
-  public loadFromAPI = ApiMapping(
-    this.api,
-    this,
-    this.supabaseService.db,
-    this.supabaseService.storage,
-    this.deploymentSevice.activeDeployment() as IDeploymentRow
-  );
+  public loadFromAPI = ApiMapping(this.api, this, this.supabaseService, this.supabaseService.storage);
 
   // Create a signal to represent current stationId as defined by route params
   private activeStationId = toSignal(

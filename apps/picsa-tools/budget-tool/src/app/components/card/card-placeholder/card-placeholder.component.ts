@@ -4,5 +4,6 @@ import { Component } from '@angular/core';
   selector: 'budget-card-placeholder',
   templateUrl: './card-placeholder.component.html',
   styleUrls: ['./card-placeholder.component.scss', '../budget-card.scss'],
+  standalone: false,
 })
 export class BudgetCardPlaceholderComponent {}

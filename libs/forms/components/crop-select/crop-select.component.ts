@@ -34,6 +34,7 @@ import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<ICropData> {
   protected isMultiple = false;
@@ -75,6 +76,7 @@ export class FormCropSelectSingleComponent extends PicsaFormBaseSelectComponent<
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FormCropSelectMultipleComponent extends PicsaFormBaseSelectMultipleComponent<ICropData> {
   protected isMultiple = true;

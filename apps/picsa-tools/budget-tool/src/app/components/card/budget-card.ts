@@ -10,6 +10,7 @@ import { BudgetCardService } from '../../store/budget-card.service';
   templateUrl: 'budget-card.html',
   styleUrls: ['budget-card.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 
 // implement CVA so can be used in form and template bindings to pass back value

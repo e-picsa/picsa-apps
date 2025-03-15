@@ -5,21 +5,22 @@ Shared styles
 
 These are imported from libs\theme\src\_index.scss
 
-Made available from project.json 
+Made available from project.json
 ```
 "stylePreprocessorOptions": {
-          "includePaths": ["libs/theme/src"]
-        },
+"includePaths": ["libs/theme/src"]
+},
 ```
 */
-@import 'animations';
-@import 'fonts';
-@import 'layout';
-@import 'misc';
-@import 'overrides';
-@import 'themes';
-@import 'typography';
-@import 'variables';
+@use 'animations';
+@use 'fonts';
+@use 'layout';
+@use 'misc';
+@use 'overrides';
+@use 'themes';
+@use 'typography';
+@use 'variables';
+@use 'tailwind';
 
 mat-sidenav-content > * {
   display: contents;

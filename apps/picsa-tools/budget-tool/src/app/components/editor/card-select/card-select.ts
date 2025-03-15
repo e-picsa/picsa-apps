@@ -9,6 +9,7 @@ import { BudgetStore } from '../../../store/budget.store';
   templateUrl: './card-select.html',
   styleUrls: ['./card-select.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
+  standalone: false,
 })
 export class BudgetCellEditorCardSelectComponent {
   @Input() set values(values: IBudgetCardWithValues[]) {

@@ -1,12 +1,20 @@
 :host {
   display: contents;
 }
+.table-container {
+  overflow: auto;
+  flex: 1;
+  @apply max-w-screen-lg;
+  // allow space for table box shadow
+  @apply sm:w-[calc(100%-16px)] sm:mx-auto sm:my-4;
+}
 // ************************************************************
 //  Table - General
 // ************************************************************
 
 table {
   border-collapse: collapse;
+  height: 100%;
 }
 
 th {
@@ -14,6 +22,7 @@ th {
   border-left: 1px solid var(--color-light);
   border-bottom: none;
   padding: 8px;
+  text-align: center;
 }
 th.subheader {
   border-bottom: 2px solid var(--color-primary);
@@ -43,23 +52,23 @@ td.mdc-data-table__cell {
   position: fixed;
   z-index: 2;
   height: 100%;
+  width: 100%;
   top: 0;
   left: 0;
+  display: flex;
 }
-.editor-container {
-  height: 100%;
-  max-height: 750px;
-  background-color: white;
+.editor-content {
+  background: white;
+  position: relative;
   overflow: auto;
-  border-radius: 20px;
   justify-content: center;
   display: flex;
-  margin: 1rem;
+  height: 100%;
+  overflow: auto;
+  margin: auto;
+  @apply max-w-screen-md;
+  @apply sm:my-4 sm:p-2;
   z-index: 2;
-  position: absolute;
-  top: 2.5rem;
-  left: 1rem;
-  width: calc(100vw - 4rem);
 }
 .slide-in {
   transition: transform 0.3s ease-in-out;

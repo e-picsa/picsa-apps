@@ -7,6 +7,7 @@ import { BudgetStore } from '../../../store/budget.store';
   selector: 'budget-balance-legend',
   templateUrl: './balance-legend.html',
   styleUrls: ['./balance-legend.scss'],
+  standalone: false,
 })
 export class BudgetBalanceLegendComponent {
   labels: string[] = [];

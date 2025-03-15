@@ -16,7 +16,6 @@ import { TourService } from './tour.service';
     <mat-icon class="tour-icon mat-elevation-z4">question_mark</mat-icon>
     <span>{{ 'Demo' | translate }}</span>
   </button>`,
-  standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule, PicsaTranslateModule],
   styles: [
     `

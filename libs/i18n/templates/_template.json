@@ -339,10 +339,6 @@
     "tool": "budget"
   },
   {
-    "text": "Consumed",
-    "tool": "budget"
-  },
-  {
     "text": "Cost",
     "tool": "budget"
   },
@@ -411,10 +407,6 @@
     "tool": "budget"
   },
   {
-    "text": "No outputs produce for consumption",
-    "tool": "budget"
-  },
-  {
     "text": "Outputs",
     "tool": "budget"
   },
@@ -460,14 +452,6 @@
   },
   {
     "text": "Total",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Consumed",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Produced",
     "tool": "budget"
   },
   {
@@ -591,19 +575,7 @@
     "tool": "climate"
   },
   {
-    "text": "Annual Forecast",
-    "tool": "climate"
-  },
-  {
     "text": "Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Downscaled Forecast",
-    "tool": "climate"
-  },
-  {
-    "text": "Forecast",
     "tool": "climate"
   },
   {
@@ -686,6 +658,10 @@
     "tool": "common"
   },
   {
+    "text": "App",
+    "tool": "common"
+  },
+  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
@@ -703,10 +679,6 @@
   },
   {
     "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "common"
-  },
-  {
-    "text": "Calendar",
     "tool": "common"
   },
   {
@@ -731,6 +703,10 @@
   },
   {
     "text": "Demo",
+    "tool": "common"
+  },
+  {
+    "text": "District",
     "tool": "common"
   },
   {
@@ -762,7 +738,7 @@
     "tool": "common"
   },
   {
-    "text": "Intro",
+    "text": "Loading",
     "tool": "common"
   },
   {
@@ -782,11 +758,19 @@
     "tool": "common"
   },
   {
+    "text": "PDF Viewer not supported on this device",
+    "tool": "common"
+  },
+  {
+    "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
     "text": "Probability and Risk",
     "tool": "common"
   },
   {
-    "text": "Ram",
+    "text": "Province",
     "tool": "common"
   },
   {
@@ -795,6 +779,10 @@
   },
   {
     "text": "Resource Allocation Map",
+    "tool": "common"
+  },
+  {
+    "text": "Restart App",
     "tool": "common"
   },
   {
@@ -819,6 +807,10 @@
   },
   {
     "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Update",
     "tool": "common"
   },
   {
@@ -1255,10 +1247,6 @@
     "tool": "crop-probability"
   },
   {
-    "text": "District",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates",
     "tool": "crop-probability"
   },
@@ -1303,6 +1291,10 @@
     "tool": "crop-probability"
   },
   {
+    "text": "Additional",
+    "tool": "extension-content"
+  },
+  {
     "text": "Farmer Activities",
     "tool": "extension-content"
   },
@@ -1323,11 +1315,15 @@
     "tool": "extension-content"
   },
   {
-    "text": "Take App Tour",
+    "text": "Training",
     "tool": "extension-content"
   },
   {
     "text": "Click on the button below to retry",
+    "tool": "extension"
+  },
+  {
+    "text": "Forecasts",
     "tool": "extension"
   },
   {
@@ -1349,6 +1345,18 @@
   {
     "text": "Switch to Farmer",
     "tool": "extension"
+  },
+  {
+    "text": "Home",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "next",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "previous",
+    "tool": "farmer-content"
   },
   {
     "text": "Activity Flow Chart",
@@ -1796,10 +1804,6 @@
   },
   {
     "text": "Create",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Create Calendar",
     "tool": "seasonal-calendar"
   },
   {

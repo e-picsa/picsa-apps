@@ -1,0 +1,30 @@
+<button mat-button color="white" style="margin-right: auto" (click)="goHome()">
+  <mat-icon>home</mat-icon>
+  {{ 'Home' | translate }}
+</button>
+<div class="footer-nav-buttons">
+  <button
+    mat-icon-button
+    color="white"
+    [attr.aria-labe]="'previous' | translate"
+    (click)="previous()"
+    [disabled]="selectedIndex() === 0"
+  >
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <!-- Tab counter - could consider labels/icons although not as much space on mobile -->
+  <span class="footer-tab-counter">{{ selectedIndex() + 1 }} / {{ totalSections() }}</span>
+
+  <button
+    mat-icon-button
+    color="white"
+    [attr.aria-label]="'next' | translate"
+    (click)="next()"
+    [disabled]="selectedIndex() === totalSections() - 1"
+  >
+    <mat-icon>arrow_forward</mat-icon>
+  </button>
+</div>
+
+<!-- TODO - could consider adding back icons depending on section, E.g. -->
+<!-- <mat-icon class="tab-icon">smartphone</mat-icon>{{ tool_1.tabLabel || 'Tool' | translate }}} -->

@@ -9,6 +9,7 @@ import { ResourcesToolService } from '../../../services/resources-tool.service';
   selector: 'resource-item-file',
   templateUrl: 'file.html',
   styleUrls: ['file.scss'],
+  standalone: false,
 })
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;
@@ -43,7 +44,9 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
       // use neglible timeout due to avoid afterViewCheck change detection
       await _wait(0);
       this.attachment = attachment;
-      const uri = await this.service.getFileAttachmentURI(this.dbDoc);
+      // avoiding converting to web url as will usually be opened natively (e.g. external open, native video)
+      const convertNativeSrc = false;
+      const uri = await this.service.getFileAttachmentURI(this.dbDoc, convertNativeSrc);
       if (uri) {
         this.fileURI = uri;
       }

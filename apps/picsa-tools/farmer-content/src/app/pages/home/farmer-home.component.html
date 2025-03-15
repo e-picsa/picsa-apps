@@ -15,8 +15,6 @@
         <div class="tags-container">
           @for(tag of step.tags; track tag){
           <span class="tag" [attr.data-color]="tag.color">{{ tag.label | translate }}</span>
-          } @for(tool of step.tools; track tool){
-          <span class="tag">{{ tool.label | translate }}</span>
           }
         </div>
       </div>

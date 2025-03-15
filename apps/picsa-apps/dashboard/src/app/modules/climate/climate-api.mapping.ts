@@ -1,23 +1,20 @@
 import type { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
-import { IDeploymentRow } from '../deployment/types';
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
 import {
-  IClimateProductInsert,
-  IClimateProductRow,
-  IForecastInsert,
+  IAPICountryCode,
+  IClimateSummaryRainfallInsert,
+  IClimateSummaryRainfallRow,
   IForecastRow,
+  IForecastUpdate,
   IStationInsert,
   IStationRow,
 } from './types';
-import type { components as ApiComponents } from './types/api';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
 export type IApiMappingName = keyof IApiMapping;
-
-export type IAPICountryCode = ApiComponents['schemas']['StationAndDefintionResponce']['country_code'];
 
 // TODO - certain amount of boilerplate could be reduced
 // TODO - depends on climate api updates
@@ -30,15 +27,14 @@ export type IAPICountryCode = ApiComponents['schemas']['StationAndDefintionRespo
 export const ApiMapping = (
   api: ClimateApiService,
   service: ClimateService,
-  db: SupabaseService['db'],
-  storage: SupabaseStorageService,
-  deployment: IDeploymentRow
+  supabaseService: SupabaseService,
+  storage: SupabaseStorageService
 ) => {
   return {
     rainfallSummaries: async (station: IStationRow) => {
       const { country_code, station_id, station_name, id } = station;
       // TODO - add model type definitions for server rainfall summary response body
-      const { data, error } = await api
+      const { data: apiData, error } = await api
         .getObservableClient(`rainfallSummary_${id}`)
         .POST('/v1/annual_rainfall_summaries/', {
           body: {
@@ -50,17 +46,23 @@ export const ApiMapping = (
           },
         });
       if (error) throw error;
-      console.log('summary data', data);
+      // HACK - API issue returning huge data for some stations
+      const { data, metadata } = apiData;
+      if (data.length > 1000) {
+        console.error({ country_code, station_id, station_name, total_rows: data.length });
+        throw new Error(`[rainfallSummary] Too many rows | ${station_name} ${data.length}`);
+      }
       // TODO - gen types and handle mapping
-      const entry: IClimateProductInsert = {
-        data: data as any,
+      const entry: IClimateSummaryRainfallInsert = {
+        data: data as any[],
+        metadata,
         station_id: id as string,
-        type: 'rainfallSummary',
+        country_code: country_code as any,
       };
-      const { data: dbData, error: dbError } = await db
-        .table('climate_products')
-        .upsert<IClimateProductInsert>(entry)
-        .select<'*', IClimateProductRow>('*');
+      const { data: dbData, error: dbError } = await supabaseService.db
+        .table('climate_summary_rainfall')
+        .upsert<IClimateSummaryRainfallInsert>(entry)
+        .select<'*', IClimateSummaryRainfallRow>('*');
       if (dbError) throw dbError;
       return dbData || [];
     },
@@ -79,7 +81,7 @@ export const ApiMapping = (
           station_id: `${d.station_id.toLowerCase().replace(/[^a-z]/gi, '_')}`,
         })
       );
-      const { error: dbError, data: dbData } = await db
+      const { error: dbError, data: dbData } = await supabaseService.db
         .table('climate_stations')
         .upsert<IStationInsert>(update)
         .select();
@@ -88,50 +90,39 @@ export const ApiMapping = (
         service.stations.set(dbData);
       }
     },
-    //
-    forecasts: async (country_code: IAPICountryCode) => {
-      const { data, error } = await api
-        .getObservableClient(`forecasts/${country_code}`)
-        .GET(`/v1/forecasts/{country_code}`, { params: { path: { country_code } } });
-      if (error) throw error;
-      const forecasts = data.map((d): IForecastInsert => {
-        const { date, filename, format, type } = d;
-        // TODO - handle format
-        return { date_modified: date, filename, country_code, type, id: filename.split('/').pop() as string };
-      });
-      const { error: dbError, data: dbData } = await db
-        .table('climate_forecasts')
-        .upsert<IForecastInsert>(forecasts)
-        .select<'*', IForecastRow>('*');
-      if (dbError) throw dbError;
-      return dbData || [];
-    },
+    /**
+     *
+     * @param row
+     * @returns
+     */
     forecast_file: async (row: IForecastRow) => {
-      const { country_code, filename } = row;
-      const { data, error } = await api.getObservableClient(`forecasts/${filename}`).GET(`/v1/forecasts/{file_name}`, {
-        params: { path: { file_name: filename } },
-        parseAs: 'blob',
-      });
+      const { country_code, id } = row;
+      // api does not use per-country buckets, so recreate folder structure from id
+      const filepath = id.replace(`${country_code}/`, '');
+      const { data, error } = await api
+        .getObservableClient(`forecasts/${id}`)
+        .GET(`/v1/documents/{country}/{filepath}`, {
+          params: { path: { country: country_code as any, filepath } },
+          parseAs: 'blob',
+        });
+
       if (error) throw error;
       // setup metadata
-      const fileBlob = data as Blob;
+      const fileBlob = data as any as Blob;
       const bucketId = country_code as string;
-      const folderPath = 'climate/forecasts';
+      const folderPath = 'forecasts/daily';
       // upload to storage
-      await storage.putFile({ bucketId, fileBlob, filename, folderPath });
+      const { fullPath } = await storage.putFile({ bucketId, fileBlob, filename: filepath, folderPath });
+
       // TODO - handle error if filename already exists
-      const storageEntry = await storage.getFileAlt({ bucketId, filename, folderPath });
-      if (storageEntry) {
-        const { error: dbError } = await db
-          .table('climate_forecasts')
-          .upsert<IForecastInsert>({ ...row, storage_file: storageEntry.id })
-          .select('*');
-        if (dbError) {
-          throw dbError;
-        }
-        return;
+      const { error: dbError } = await supabaseService.db
+        .table('forecasts')
+        .update<IForecastUpdate>({ storage_file: fullPath })
+        .eq('id', row.id);
+      if (dbError) {
+        throw dbError;
       }
-      throw new Error('Storage file not found');
+      return fullPath;
     },
   };
 };
