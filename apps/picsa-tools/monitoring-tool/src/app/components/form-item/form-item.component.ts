@@ -72,13 +72,14 @@ export class FormItemComponent implements OnInit, OnDestroy {
       const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
         width: '350px',
         data: { formTitle: this.form.title },
+        disableClose: false,
       });
 
       dialogRef.afterClosed().subscribe(async (code) => {
         if (code && code === this.form.access_code) {
           // Update the form to be unlocked
           await this.service.unlockForm(this.form._id);
-          // Navigate to the form
+          // Navigate to the form's submission list
           this.router.navigate(['view', this.form._id]);
         }
       });

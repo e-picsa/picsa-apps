@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -53,9 +53,27 @@ export class FormViewComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
   ) {}
 
+  // Track user activity to reset inactivity timer
+  @HostListener('document:mousemove')
+  @HostListener('document:keypress')
+  @HostListener('document:click')
+  @HostListener('document:touchstart')
+  onUserActivity() {
+    if (this.formId && this.currentForm?.access_code) {
+      this.monitoringService.resetAutoLockTimer(this.formId);
+    }
+  }
+
   async ngOnDestroy() {
     await this.handleViewDestroy();
+
+    // Clear any active lock timers when component is destroyed
+    if (this.formId) {
+      this.monitoringService.clearAutoLockTimer(this.formId);
+    }
+
     this.componentDestroyed$.next(true);
+    this.componentDestroyed$.complete();
   }
 
   async ngOnInit() {
@@ -85,6 +103,11 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.formInteracted = true;
     const entry = (e as any).detail as IEnketoFormEntry;
     this.formEntry = entry;
+
+    // Reset inactivity timer on autosave (counts as user activity)
+    if (this.formId && this.currentForm?.access_code) {
+      this.monitoringService.resetAutoLockTimer(this.formId);
+    }
   }
 
   public async promptDelete() {
@@ -127,10 +150,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     return 'UPDATE';
   }
 
-  /**
-   *
-   * TODO - add tests
-   */
   private async finaliseForm(action: 'UPDATE' | 'DELETE' | 'IGNORE') {
     const afterJson = this.getFormEntryJson(this.formEntry?.xml);
 
@@ -149,9 +168,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     return;
   }
 
-  /**
-   *
-   */
   private getFormEntryJson(formXml = '') {
     if (formXml) {
       // json nested by entry id, e.g. {abcde: {name:'Joe'}}
@@ -181,6 +197,11 @@ export class FormViewComponent implements OnInit, OnDestroy {
       }
       this.formEntry = submission.enketoEntry;
       this.formInitial = { form, model, submission };
+
+      // Start inactivity timer if the form has an access code
+      if (formMeta.access_code) {
+        this.monitoringService.resetAutoLockTimer(id);
+      }
     }
   }
 
@@ -195,6 +216,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
       width: '350px',
       data: { formTitle: form.title },
+      disableClose: false,
     });
 
     dialogRef.afterClosed().subscribe(async (code) => {
