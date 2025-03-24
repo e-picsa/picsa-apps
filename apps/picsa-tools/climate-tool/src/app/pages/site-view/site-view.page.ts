@@ -122,4 +122,15 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     const shouldRotate = window.innerHeight > window.innerWidth;
     this.showRotateAnimation.set(shouldRotate);
   }
+
+  goToSiteSelect() {
+    // Clear the preferred station to prevent automatic redirect
+    this.dataService.setPreferredStation('');
+    setTimeout(async () => {
+      await this.router.navigate(['/climate'], {
+        queryParams: { forceSelect: true },
+        replaceUrl: true,
+      });
+    }, 50);
+  }
 }

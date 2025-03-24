@@ -18,6 +18,9 @@
       <mat-option [value]="option.value" [attr.data-draft]="option.draft">{{option.label}}</mat-option>
       }
     </mat-select>
+    <button desktopHeader mat-button color="primary" (click)="goToSiteSelect()" style="font-size: 25px;" matTooltip="Select from map">
+      <mat-icon>place</mat-icon>{{ 'Map' | translate }}
+    </button>
   </div>
 </ng-template>
 
