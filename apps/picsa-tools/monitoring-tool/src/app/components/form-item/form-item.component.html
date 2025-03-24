@@ -1,9 +1,17 @@
-<mat-card appearance="raised" class="link" [routerLink]="['view', form._id]">
+<mat-card
+  appearance="raised"
+  class="link"
+  [routerLink]="isLocked ? null : ['view', form._id]"
+  (click)="handleFormClick($event)"
+>
   <!-- Header -->
   <mat-card-header>
     <mat-card-title-group>
       <img mat-card-sm-image [src]="form.cover.icon" />
-      <mat-card-title>{{ form.title | translate }}</mat-card-title>
+      <mat-card-title>
+        {{ form.title | translate }}
+        <mat-icon *ngIf="isLocked" class="lock-icon">lock</mat-icon>
+      </mat-card-title>
       <mat-card-subtitle> {{ form.description | translate }}</mat-card-subtitle>
     </mat-card-title-group>
   </mat-card-header>

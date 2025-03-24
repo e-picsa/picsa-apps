@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
@@ -7,6 +8,8 @@ import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/compon
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { AccessCodeDialogComponent } from '../../../components/access-code-dialog/access-code-dialog.component';
+import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 
@@ -29,6 +32,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
   /** Form entry data from enketo form */
   public formEntry?: IEnketoFormEntry;
   private formId: string;
+  private currentForm: IMonitoringForm;
+  private isLoadingForm = false;
+
   /** Track if form has already had finalisation action (e.g. update/delete) */
   private formFinalised = false;
 
@@ -40,9 +46,11 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private monitoringService: MonitoringToolService,
     private componentService: PicsaCommonComponentsService,
-    private dialogService: PicsaDialogService
+    private dialogService: PicsaDialogService,
+    private dialog: MatDialog
   ) {}
 
   async ngOnDestroy() {
@@ -87,8 +95,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
         this.componentService.back();
       }
     });
-
-    // TODO - Delete from server (?)
   }
 
   private async handleViewDestroy() {
@@ -159,6 +165,14 @@ export class FormViewComponent implements OnInit, OnDestroy {
   private async loadFormSubmission(id: string, submission: IFormSubmission) {
     const formMeta = await this.monitoringService.getForm(id);
     if (formMeta) {
+      this.currentForm = formMeta;
+
+      // Check if form is locked and redirect if necessary
+      if (this.isFormLocked(formMeta)) {
+        this.promptForAccessCode(formMeta);
+        return;
+      }
+
       let { model } = formMeta.enketoDefinition;
       const { form } = formMeta.enketoDefinition;
       // replace the xml <instance>...</instance> content with the submission xml to load values
@@ -168,6 +182,33 @@ export class FormViewComponent implements OnInit, OnDestroy {
       this.formEntry = submission.enketoEntry;
       this.formInitial = { form, model, submission };
     }
+  }
+
+  private isFormLocked(form: IMonitoringForm): boolean {
+    return !!form.access_code && !form.access_unlocked;
+  }
+
+  private promptForAccessCode(form: IMonitoringForm) {
+    if (this.isLoadingForm) return;
+    this.isLoadingForm = true;
+
+    const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
+      width: '350px',
+      data: { formTitle: form.title },
+    });
+
+    dialogRef.afterClosed().subscribe(async (code) => {
+      this.isLoadingForm = false;
+      if (code && code === form.access_code) {
+        // Update the form to be unlocked
+        await this.monitoringService.unlockForm(form._id);
+        // Reload the page to load the form
+        window.location.reload();
+      } else {
+        // Navigate back to home if canceled or wrong code
+        this.router.navigate(['/']);
+      }
+    });
   }
 
   private subscribeToRouteChanges() {
@@ -184,24 +225,5 @@ export class FormViewComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
-
-  /**
-   * Use native http client on android device to avoid cors issues
-   * NOTE - fails to send form body as per
-   * https://github.com/ionic-team/capacitor/pull/6206
-   * Potential workaround (below) or will require API
-   * https://github.com/silkimen/cordova-plugin-advanced-http#uploadfile
-   */
-  private wipTestKoboEndpoint() {
-    // const koboService = new KoboService({ authToken: environment.koboAuthToken });
-    // if (Capacitor.isNativePlatform()) {
-    //   koboService.httpHandlers.req = (endpoint, options) => {
-    //     return CapacitorHttp.request({ url: endpoint, ...(options as any) }).then(async (res) => ({
-    //       status: res.status,
-    //       text: res.data,
-    //     }));
-    //   };
-    // }
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { PicsaDatabaseSyncService } from '@picsa/shared/services/core/db_v2/db-sync.service';
-import { RxCollection } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
 import * as FormSchema from '../schema/forms';
@@ -63,8 +63,28 @@ export class MonitoringToolService extends PicsaAsyncService {
 
     return doc._data;
   }
+
   public getFormSubmissionsQuery(formId: string) {
     return this.dbService.activeUserQuery(this.dbSubmissionsCollection, { formId });
+  }
+
+  /**
+   * Unlock a form by setting access_unlocked to true
+   */
+  public async unlockForm(formId: string): Promise<boolean> {
+    try {
+      const formDoc = await this.dbFormCollection.findOne(formId).exec();
+      if (!formDoc) {
+        console.error('could not find form with id', formId);
+        return false;
+      }
+
+      await formDoc.incrementalPatch({ access_unlocked: true });
+      return true;
+    } catch (error) {
+      console.error('Error unlocking form:', error);
+      return false;
+    }
   }
 
   /**

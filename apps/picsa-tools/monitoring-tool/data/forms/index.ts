@@ -68,7 +68,7 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
     cover: {
       icon: 'assets/svgs/monitoring-forms/ew-monitoring.svg',
     },
-    access_code: 'testMe',
+    access_code: 'picsa',
     access_unlocked: false,
   },
 ];
