@@ -3,6 +3,7 @@
   class="link"
   [routerLink]="isLocked ? null : ['view', form._id]"
   (click)="handleFormClick($event)"
+  [class.processing]="isProcessing()"
 >
   <!-- Header -->
   <mat-card-header>
@@ -11,6 +12,8 @@
       <mat-card-title>
         {{ form.title | translate }}
         <mat-icon *ngIf="isLocked" class="lock-icon">lock</mat-icon>
+        <mat-progress-spinner *ngIf="isProcessing()" diameter="20" mode="indeterminate" class="spinner">
+        </mat-progress-spinner>
       </mat-card-title>
       <mat-card-subtitle> {{ form.description | translate }}</mat-card-subtitle>
     </mat-card-title-group>

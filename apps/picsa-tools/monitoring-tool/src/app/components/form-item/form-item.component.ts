@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ISyncPushEntry } from '@picsa/shared/services/core/db_v2/db-sync.service';
 import { arrayToHashmapArray, hashmapToArray } from '@picsa/utils';
@@ -9,7 +10,7 @@ import { STATUS_ICONS } from '../../models';
 import { IMonitoringForm } from '../../schema/forms';
 import { IFormSubmission } from '../../schema/submissions';
 import { MonitoringToolService } from '../../services/monitoring-tool.service';
-import { AccessCodeDialogComponent } from '../access-code-dialog/access-code-dialog.component';
+import { AccessCodeDialogComponent, AccessCodeDialogResult } from '../access-code-dialog/access-code-dialog.component';
 
 type ISyncStatus = {
   [status in ISyncPushEntry['_sync_push_status']]: {
@@ -27,7 +28,7 @@ type ISyncStatus = {
   standalone: false,
 })
 export class FormItemComponent implements OnInit, OnDestroy {
-  @Input() form: IMonitoringForm;
+  @Input() form!: IMonitoringForm;
 
   public syncStatusMap: ISyncStatus = {
     complete: { ...STATUS_ICONS.complete, value: 0 },
@@ -36,13 +37,16 @@ export class FormItemComponent implements OnInit, OnDestroy {
     failed: { ...STATUS_ICONS.failed, value: 0 },
   };
 
-  private componentDestroyed$ = new Subject();
+  public isProcessing = signal(false);
+
+  private componentDestroyed$ = new Subject<void>();
 
   constructor(
     private service: MonitoringToolService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   public get syncStatus() {
@@ -54,40 +58,59 @@ export class FormItemComponent implements OnInit, OnDestroy {
     return !!this.form.access_code && !this.form.access_unlocked;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.subscribeToSubmissionSummary();
   }
 
-  ngOnDestroy() {
-    this.componentDestroyed$.next(true);
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next();
     this.componentDestroyed$.complete();
   }
 
   // Handle form click when locked
-  public async handleFormClick(event: Event) {
+  public async handleFormClick(event: Event): Promise<void> {
     if (this.isLocked) {
       event.preventDefault();
       event.stopPropagation();
 
+      this.isProcessing.set(true);
+
       const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
         width: '350px',
-        data: { formTitle: this.form.title },
+        data: {
+          formTitle: this.form.title,
+          accessCode: this.form.access_code,
+        },
         disableClose: false,
       });
 
-      dialogRef.afterClosed().subscribe(async (code) => {
-        if (code && code === this.form.access_code) {
-          // Update the form to be unlocked
-          await this.service.unlockForm(this.form._id);
-          // Navigate to the form's submission list
-          this.router.navigate(['view', this.form._id]);
+      dialogRef.afterClosed().subscribe(async (result: AccessCodeDialogResult) => {
+        if (result?.success) {
+          try {
+            // Update the form to be unlocked
+            await this.service.unlockForm(this.form._id);
+
+            // Show success message
+            this.snackBar.open('Form unlocked successfully', 'Close', {
+              duration: 3000,
+            });
+
+            // Navigate to the form's submission list immediately
+            this.router.navigate(['view', this.form._id]);
+          } catch (error) {
+            console.error('Error unlocking form:', error);
+            this.snackBar.open('Error unlocking form', 'Close', {
+              duration: 3000,
+            });
+          }
         }
+        this.isProcessing.set(false);
       });
     }
   }
 
   /** Subscribe to form submissions and summarise by status */
-  private subscribeToSubmissionSummary() {
+  private subscribeToSubmissionSummary(): void {
     const submissionsQuery = this.service.getFormSubmissionsQuery(this.form._id);
     submissionsQuery.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
       const submissions = docs.map((d) => d.toMutableJSON());

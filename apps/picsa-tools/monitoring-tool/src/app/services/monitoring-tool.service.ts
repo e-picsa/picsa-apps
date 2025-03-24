@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { PicsaDatabaseSyncService } from '@picsa/shared/services/core/db_v2/db-sync.service';
@@ -12,6 +12,9 @@ import * as SubmissionSchema from '../schema/submissions';
 export class MonitoringToolService extends PicsaAsyncService {
   /** Track number of items pending push to server db (0 value implies fully synced) */
   public pendingSyncCount = -1;
+
+  /** Signal to track which forms are currently being unlocked */
+  public unlockingForms = signal<string[]>([]);
 
   // Map to track form auto-lock timers
   private formLockTimers: Map<string, any> = new Map();
@@ -27,7 +30,7 @@ export class MonitoringToolService extends PicsaAsyncService {
    * Initialisation method automatically called on instantiation
    * Await completed state via the service `ready()` property
    */
-  public override async init() {
+  public override async init(): Promise<void> {
     await this.dbService.ensureCollections({
       monitoring_tool_forms: FormSchema.COLLECTION,
       monitoring_tool_submissions: SubmissionSchema.COLLECTION,
@@ -37,12 +40,12 @@ export class MonitoringToolService extends PicsaAsyncService {
   }
 
   /** Provide database options tool collection (with typings) */
-  public get dbFormCollection() {
+  public get dbFormCollection(): RxCollection<FormSchema.IMonitoringForm> {
     return this.dbService.db.collections['monitoring_tool_forms'] as RxCollection<FormSchema.IMonitoringForm>;
   }
 
   /** Provide database options tool collection (with typings) */
-  public get dbSubmissionsCollection() {
+  public get dbSubmissionsCollection(): RxCollection<SubmissionSchema.IFormSubmission> {
     return this.dbService.db.collections[
       'monitoring_tool_submissions'
     ] as RxCollection<SubmissionSchema.IFormSubmission>;
@@ -52,15 +55,13 @@ export class MonitoringToolService extends PicsaAsyncService {
     return this.dbSubmissionsCollection.find({ selector: { formId } });
   }
 
-  public async createNewSubmission(formId: string) {
+  public async createNewSubmission(formId: string): Promise<SubmissionSchema.IFormSubmission> {
     const template = SubmissionSchema.ENTRY_TEMPLATE(formId);
-    console.log({ formId, template });
-    // template.formId = formId;
     await this.dbSubmissionsCollection.insert(template);
     return template;
   }
 
-  public async getForm(formId: string, entry?: string) {
+  public async getForm(formId: string, entry?: string): Promise<FormSchema.IMonitoringForm | undefined> {
     const doc = await this.dbFormCollection.findOne(formId).exec();
     if (!doc) {
       console.error('could not find form with id', formId);
@@ -79,6 +80,9 @@ export class MonitoringToolService extends PicsaAsyncService {
    */
   public async unlockForm(formId: string): Promise<boolean> {
     try {
+      // Add form to unlocking list
+      this.unlockingForms.update((forms) => [...forms, formId]);
+
       const formDoc = await this.dbFormCollection.findOne(formId).exec();
       if (!formDoc) {
         console.error('could not find form with id', formId);
@@ -87,12 +91,16 @@ export class MonitoringToolService extends PicsaAsyncService {
 
       await formDoc.incrementalPatch({ access_unlocked: true });
 
+      // Set up auto-lock timer
       this.setupAutoLockTimer(formId);
 
       return true;
     } catch (error) {
       console.error('Error unlocking form:', error);
       return false;
+    } finally {
+      // Remove form from unlocking list
+      this.unlockingForms.update((forms) => forms.filter((id) => id !== formId));
     }
   }
 
@@ -100,7 +108,10 @@ export class MonitoringToolService extends PicsaAsyncService {
    * Reset the auto-lock timer for a form when there is activity
    */
   public resetAutoLockTimer(formId: string): void {
+    // Clear existing timer
     this.clearAutoLockTimer(formId);
+
+    // Set up a new timer
     this.setupAutoLockTimer(formId);
   }
 
@@ -152,7 +163,7 @@ export class MonitoringToolService extends PicsaAsyncService {
     return this.syncService.syncPendingDocs(this.dbSubmissionsCollection);
   }
 
-  private listPendingSync() {
+  private listPendingSync(): void {
     const selector = { _sync_push_status: 'ready' };
     this.dbSubmissionsCollection.find({ selector }).$.subscribe((res) => {
       this.pendingSyncCount = res.length;
