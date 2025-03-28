@@ -4,9 +4,9 @@ import { COLLECTION as BUDGET_CARDS_COLLECTION } from '@picsa/budget/src/app/sch
 import { COLLECTION as MONITORING_FORMS_COLLECTION } from '@picsa/monitoring/src/app/schema/forms';
 import { COLLECTION as MONITORING_SUBMISSIONS_COLLECTION } from '@picsa/monitoring/src/app/schema/submissions';
 import { COLLECTION as OPTION_TOOL_COLLECTION } from '@picsa/option/src/app/schemas';
-import { COLLECTION_COLLECTION as RESOURCES_COLLECTION_COLLECTION } from '@picsa/resources/src/app/schemas/collection';
-import { FILES_COLLECTION } from '@picsa/resources/src/app/schemas/file';
-import { LINKS_COLLECTION } from '@picsa/resources/src/app/schemas/link';
+import { COLLECTION_COLLECTION as RESOURCES_COLLECTION_COLLECTION } from '@picsa/resources/schemas/collection';
+import { FILES_COLLECTION } from '@picsa/resources/schemas/file';
+import { LINKS_COLLECTION } from '@picsa/resources/schemas/link';
 import { COLLECTION as SEASONAL_CALENDAR_COLLECTION } from '@picsa/seasonal-calendar/src/app/schema';
 import type { RxCollection as Rx16Collection } from 'rxdb';
 import { addRxPlugin, createRxDatabase, RxCollection, RxDatabase, RxDocument } from 'rxdb-14';

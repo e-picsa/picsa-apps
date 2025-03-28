@@ -8,6 +8,8 @@ import { DataIconRegistry, ICON_PACK_DATA, IconPackName } from '@picsa/data/icon
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { PICSA_FORM_COMPONENTS } from './components';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Injectable({
   providedIn: 'root',
@@ -24,11 +26,13 @@ export class PicsaFormsModuleConfig {
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
+    MatFormFieldModule,
+    MatSelectModule,
     MatDialogModule,
     PicsaTranslateModule,
   ],
-  exports: PICSA_FORM_COMPONENTS,
-  declarations: PICSA_FORM_COMPONENTS,
+  exports: [...PICSA_FORM_COMPONENTS],
+  declarations: [...PICSA_FORM_COMPONENTS],
 })
 export class PicsaFormsModule {
   constructor(

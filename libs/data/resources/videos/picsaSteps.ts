@@ -17,16 +17,17 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         id: '',
         locale_codes: ['mw_ny', 'global_en'],
         resolution: '360p',
-        size_kb: 12900,
-        supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Intro.mp4',
+        size_kb: 15790,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Malawi%20Intro%202025.mp4',
       },
       {
         id: '',
         locale_codes: ['zm_ny', 'global_en'],
         resolution: '360p',
-        size_kb: 12170,
+        size_kb: 15960,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Intro%202024-08.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Zambia%20Intro%202025.mp4',
       },
     ],
   },

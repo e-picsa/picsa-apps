@@ -8,24 +8,24 @@ const title = 'Collection';
 const routes: Routes = [
   {
     path: '',
-    component: CollectionComponent,
+    loadComponent: () => CollectionComponent,
     title,
   },
   // allow deeply nested collections
   { path: ':collectionId', component: CollectionComponent, title },
   {
     path: ':collectionId/:collectionId',
-    component: CollectionComponent,
+    loadComponent: () => CollectionComponent,
     title,
   },
   {
     path: ':collectionId/:collectionId/:collectionId',
-    component: CollectionComponent,
+    loadComponent: () => CollectionComponent,
     title,
   },
   {
     path: ':collectionId/:collectionId/:collectionId/:collectionId',
-    component: CollectionComponent,
+    loadComponent: () => CollectionComponent,
     title,
   },
 ];

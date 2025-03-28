@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { ResourcesComponentsModule } from '@picsa/resources/src/app/components/components.module';
+import { ResourcesComponentsModule } from '@picsa/resources/components/components.module';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ManualToolComponentsModule } from '../../components/components.module';

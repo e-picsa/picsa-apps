@@ -24,7 +24,6 @@ import { ProfileSelectComponent } from './components/profile-select/profile-sele
 
 // import {} from './warning.component';
 const components = [
-  AlertBoxComponent,
   BackButton,
   PicsaBreadcrumbsComponent,
   PicsaHeaderComponent,
@@ -32,7 +31,7 @@ const components = [
   ProfileSelectComponent,
 ];
 
-const standalone = [PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent];
+const standalone = [AlertBoxComponent, PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent];
 
 @NgModule({
   declarations: components,

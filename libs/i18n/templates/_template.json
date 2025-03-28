@@ -1359,6 +1359,18 @@
     "tool": "farmer-content"
   },
   {
+    "text": "Daily",
+    "tool": "forecasts"
+  },
+  {
+    "text": "National",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Seasonal",
+    "tool": "forecasts"
+  },
+  {
     "text": "Activity Flow Chart",
     "tool": "manual"
   },

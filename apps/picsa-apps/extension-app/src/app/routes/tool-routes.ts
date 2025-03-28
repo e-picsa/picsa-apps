@@ -35,7 +35,7 @@ export const TOOL_ROUTES: Routes = [
   },
   {
     path: 'resources',
-    loadChildren: () => import('@picsa/resources/src/app/app.module-embedded').then((mod) => mod.ResourcesToolModule),
+    loadChildren: () => import('@picsa/resources/app.module-embedded').then((mod) => mod.ResourcesToolModule),
   },
   {
     path: 'seasonal-calendar',

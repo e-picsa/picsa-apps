@@ -1,4 +1,4 @@
-import type { IResourceFile } from '@picsa/resources/src/app/schemas';
+import type { IResourceFile } from '@picsa/resources/schemas';
 import { IPicsaVideoData } from '../types';
 
 /**
