@@ -30,6 +30,23 @@ export class ClimateDataService {
     this.stationDataCache = arrayToHashmap(DATA.HARDCODED_STATIONS, 'id');
   }
 
+  /** Retrieve the preferred station ID from user settings */
+  public getPreferredStation(): string | undefined {
+    const userSettings = this.configurationService.userSettings();
+    return userSettings.climate_tool?.station_id;
+  }
+
+  /** Allow user to set preferred station */
+  public setPreferredStation(stationID: string) {
+    const currentSettings = this.configurationService.userSettings();
+    this.configurationService.updateUserSettings({
+      climate_tool: {
+        ...currentSettings.climate_tool,
+        station_id: stationID,
+      },
+    });
+  }
+
   public async getStationMeta(stationID: string): Promise<IStationMeta> {
     const station = this.stationDataCache[stationID];
     if (!station) {
