@@ -6,6 +6,8 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { ConfigurationService } from '@picsa/configuration/src';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
 import { PicsaFormsModule } from '@picsa/forms';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ResourceCollectionComponent } from '@picsa/resources/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
@@ -39,6 +41,7 @@ interface IForecastSummary {
     MatProgressBarModule,
     PicsaFormsModule,
     PicsaTranslateModule,
+    ResourceCollectionComponent,
     SupabaseStorageDownloadComponent,
   ],
 })

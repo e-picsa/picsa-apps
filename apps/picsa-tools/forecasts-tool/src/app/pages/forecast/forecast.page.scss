@@ -1,3 +1,8 @@
+.page-content {
+  max-width: 1280px;
+  margin: auto;
+  width: 100%;
+}
 .forecast-container {
   @apply border-solid capitalize p-2;
 }
@@ -19,6 +24,10 @@
 }
 .forecast-bottom-bar > mat-progress-bar {
   @apply absolute bottom-0 left-0 w-full;
+}
+
+h2 {
+  @apply md:text-left;
 }
 
 .viewer-container {

@@ -35,6 +35,10 @@
     <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
   </div>
+
+  <!-- Resources -->
+  <h2>{{'Resources' | translate}}</h2>
+  <resource-collection id="forecast_resources"></resource-collection>
 </div>
 
 <!-- Forecast item tempalte -->
