@@ -14,7 +14,7 @@ import { ClimateDataService } from '../../services/climate-data.service';
   styleUrls: ['./site-select.page.scss'],
   standalone: false,
 })
-export class SiteSelectPage implements OnInit {
+export class SiteSelectPage {
   activeStation: any;
   // avoid static: true for map as created dynamic
   picsaMap = viewChild<PicsaMapComponent>('picsaMap');
@@ -57,31 +57,6 @@ export class SiteSelectPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      if (!params['forceSelect']) {
-        this.checkForSavedStation();
-      }
-    });
-  }
-
-  private async checkForSavedStation() {
-    const queryParams = this.route.snapshot.queryParams;
-    if (queryParams['forceSelect']) return;
-
-    const userSettings = this.configurationService.userSettings();
-    const stations = this.dataService.stations();
-    const savedStationID = userSettings?.climate_tool?.station_id;
-
-    if (savedStationID && stations.some((station) => station.id === savedStationID)) {
-      this.router.navigate(['./', 'site', savedStationID], {
-        relativeTo: this.route,
-        queryParams: { view: 'rainfall' },
-        replaceUrl: true,
-      });
-    }
-  }
-
   onMarkerClick(marker: IMapMarker) {
     // linking to callback forces angular outside of usual cdr strategy/zone
     // so have to manually call ngZone.run to detect changes
@@ -91,15 +66,12 @@ export class SiteSelectPage implements OnInit {
   }
 
   goToSite(site: IStationMeta) {
-    this.configurationService.updateUserSettings({
-      climate_tool: { station_id: site.id },
-    });
-    // record current map bound positions for returning back
-    const mapBounds = this.picsaMap()!.map().getBounds();
-    localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));
+    this.dataService.setPreferredStation(site.id);
+
     // navigate
-    this.router.navigate(['./', 'site', site.id], {
+    this.router.navigate(['./', site.id], {
       relativeTo: this.route,
+      replaceUrl: true,
       queryParams: {
         view: 'rainfall',
       },
