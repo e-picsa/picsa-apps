@@ -1,0 +1,30 @@
+<div class="flex gap-4 my-4">
+  <!-- Location Select (Admin 4 - district/province) -->
+  @if(locationData().admin_4; as data){
+  <mat-form-field>
+    <mat-label>{{ data.label }}</mat-label>
+    <mat-select #admin4 (selectionChange)="admin4Selected.set(admin4.value)" [value]="admin4Selected()">
+      @for (option of data.locations; track option.id) {
+      <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  }
+
+  <!-- Location Select (Admin 5) -->
+  @if(locationData().admin_5; as data){
+  <mat-form-field>
+    <mat-label>{{ data.label }}</mat-label>
+    <mat-select
+      [disabled]="!admin4Selected()"
+      #admin5
+      (selectionChange)="admin5Selected.set(admin5.value)"
+      [value]="admin5Selected()"
+    >
+      @for (option of filterOptions(data.locations,admin4Selected()); track option.id) {
+      <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  }
+</div>
