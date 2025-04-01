@@ -1,27 +1,7 @@
-import { IResourceLink } from '../../schemas';
+import type { IResourceLink } from '@picsa/resources/schemas';
 
-export const WEATHER_LINKS: Record<string, IResourceLink> = {
-  zmdWhatsapp: {
-    id: 'zmdWhatsapp',
-    description: 'WhatsApp Group',
-    title: 'Weather Services ZM',
-    type: 'link',
-    subtype: 'whatsapp',
-    url: 'https://chat.whatsapp.com/ElFe8iaYazGAO05Jrsdpc2',
-    cover: { image: 'assets/resources/covers/whatsapp.svg' },
-    filter: { countries: ['zm'] },
-  },
-  zmdFacebook: {
-    id: 'zmdFacebook',
-    description: 'Facebook Group',
-    title: 'Zambia Meteorological Department',
-    type: 'link',
-    subtype: 'whatsapp',
-    url: 'https://facebook.com/zambiameteorologicaldepartment/',
-    cover: { image: 'assets/resources/covers/facebook.svg' },
-    filter: { countries: ['zm'] },
-  },
-  dccms_whatsapp: {
+const links: IResourceLink[] = [
+  {
     id: 'dccms_whatsapp',
     title: 'DCCMS Whatsapp',
     description: 'Stay updated on #Malawi weather, climate, alerts and news.',
@@ -32,7 +12,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     priority: 9,
     filter: { countries: ['mw'] },
   },
-  dccms_daily_forecast: {
+  {
     id: 'dccms_daily_forecast',
     title: 'DCCMS Daily Forecast',
     description: '',
@@ -44,7 +24,7 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     filter: { countries: ['mw'] },
   },
 
-  dccms_twitter: {
+  {
     id: 'dccms_twitter',
     title: 'DCCMS Twitter',
     description: 'Weather and Climate Updates, Alerts, Warnings and related News',
@@ -54,4 +34,6 @@ export const WEATHER_LINKS: Record<string, IResourceLink> = {
     url: 'https://twitter.com/DccmsM',
     filter: { countries: ['mw'] },
   },
-};
+];
+
+export default links;
