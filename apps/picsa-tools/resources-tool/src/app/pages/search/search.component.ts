@@ -3,15 +3,15 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import {
-  ResourceItemCollectionComponent,
-  ResourceItemFileComponent,
-  ResourceItemLinkComponent,
-} from '@picsa/resources/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import Fuse, { FuseResult, IFuseOptions } from 'fuse.js';
 import { Subject, takeUntil } from 'rxjs';
 
+import {
+  ResourceItemCollectionComponent,
+  ResourceItemFileComponent,
+  ResourceItemLinkComponent,
+} from '../../components';
 import { IResourceBase, IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 

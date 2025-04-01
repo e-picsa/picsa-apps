@@ -1,12 +1,13 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AlertBoxComponent } from '@picsa/components';
-import { IResourceCollection, IResourceFile, IResourceLink } from '@picsa/resources/schemas';
-import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { RxDocument } from 'rxdb';
 
+import type { IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
+import { ResourcesToolService } from '../../services/resources-tool.service';
 import { ResourceDownloadMultipleComponent } from '../resource-download-multiple/resource-download-multiple.component';
 import {
   ResourceItemCollectionComponent,

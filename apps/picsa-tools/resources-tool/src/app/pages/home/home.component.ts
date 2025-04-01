@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ResourceItemCollectionComponent } from '@picsa/resources/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { ResourceItemCollectionComponent } from '../../components';
 import { IResourceCollection } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 

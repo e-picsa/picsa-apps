@@ -4,12 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '@picsa/resources/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { RxDocument } from 'rxdb';
 import { Subject } from 'rxjs';
 
+import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '../../components';
 import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 

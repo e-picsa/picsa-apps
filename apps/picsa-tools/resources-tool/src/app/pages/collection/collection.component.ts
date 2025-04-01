@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { ResourceCollectionComponent } from '@picsa/resources/components';
-import { IResourceCollection } from '@picsa/resources/schemas';
 import { map } from 'rxjs';
+
+import { ResourceCollectionComponent } from '../../components';
+import type { IResourceCollection } from '../../schemas';
 
 interface ICollectionPageRouteParams {
   collectionId: string;
