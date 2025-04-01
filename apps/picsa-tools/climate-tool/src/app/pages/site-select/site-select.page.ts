@@ -1,4 +1,4 @@
-import { Component, computed, effect, NgZone, viewChild } from '@angular/core';
+import { Component, computed, effect, NgZone, OnInit, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IStationMeta } from '@picsa/models';
@@ -66,12 +66,12 @@ export class SiteSelectPage {
   }
 
   goToSite(site: IStationMeta) {
-    // record current map bound positions for returning back
-    const mapBounds = this.picsaMap()!.map().getBounds();
-    localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));
+    this.dataService.setPreferredStation(site.id);
+
     // navigate
-    this.router.navigate(['./', 'site', site.id], {
+    this.router.navigate(['./', site.id], {
       relativeTo: this.route,
+      replaceUrl: true,
       queryParams: {
         view: 'rainfall',
       },

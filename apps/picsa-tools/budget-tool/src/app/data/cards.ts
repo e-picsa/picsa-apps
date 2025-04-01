@@ -479,12 +479,14 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     groupings: ['crop'],
     imgType: 'png',
   },
+  // HACK - duplicate input/output wood
   {
     type: 'inputs',
     label: 'wood',
-    id: 'wood',
+    id: 'wood_input',
     groupings: ['crop'],
     imgType: 'svg',
+    imgId: 'wood',
   },
   {
     type: 'outputs',
@@ -507,12 +509,14 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     groupings: ['crop', 'livestock'],
     imgType: 'svg',
   },
+  // HACK - duplicate input/output wood
   {
     type: 'inputs',
     label: 'money',
-    id: 'money',
+    id: 'money_input',
     groupings: ['*'],
     imgType: 'svg',
+    imgId: 'money',
   },
   {
     type: 'activities',

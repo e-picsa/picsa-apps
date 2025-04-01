@@ -8,7 +8,7 @@ import { FarmerContentModule } from '@picsa/farmer-content/src/app/app.module-em
 import { ManualToolModule } from '@picsa/manual/src/app/app.module-embedded';
 import { MonitoringToolModule } from '@picsa/monitoring/src/app/app.module-embedded';
 import { OptionsToolModule } from '@picsa/option/src/app/app.module-embedded';
-import { ResourcesToolModule } from '@picsa/resources/src/app/app.module-embedded';
+import { ResourcesToolModule } from '@picsa/resources/app.module-embedded';
 import { SeasonalCalendarToolModule } from '@picsa/seasonal-calendar/src/app/app.module-embedded';
 
 import { TOOL_ROUTES } from './routes';

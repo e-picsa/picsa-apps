@@ -66,7 +66,7 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     private cdr: ChangeDetectorRef
   ) {
     effect(async () => {
-      const viewId = this.viewId();
+      const viewId = this.viewId() || 'rainfall';
       const siteId = this.siteId();
       if (siteId && viewId) {
         // same site, just view changed
@@ -121,5 +121,14 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private checkOrientation() {
     const shouldRotate = window.innerHeight > window.innerWidth;
     this.showRotateAnimation.set(shouldRotate);
+  }
+
+  goToSiteSelect() {
+    // Clear the preferred station to prevent automatic redirect
+    this.dataService.setPreferredStation('');
+    this.router.navigate(['../'], {
+      replaceUrl: true,
+      relativeTo: this.route,
+    });
   }
 }

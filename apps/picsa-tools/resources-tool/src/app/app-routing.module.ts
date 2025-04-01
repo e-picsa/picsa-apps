@@ -1,25 +1,27 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-import { ResourceSearchComponent } from './pages/search/search.component';
-
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
     title: 'Resources',
   },
   {
     path: 'collection',
-    loadChildren: () => import('./pages/collection/collection.module').then((m) => m.CollectionModule),
+    loadChildren: () => import('./pages/collection/collection-routing.module').then((m) => m.CollectionRoutingModule),
+    title: 'Collection',
   },
+
   {
     path: 'downloads',
-    loadChildren: () => import('./pages/downloads/downloads.module').then((m) => m.DownloadsModule),
+    loadComponent: () => import('./pages/downloads/downloads.page').then((m) => m.DownloadsPageComponent),
+    title: 'Downloads',
   },
   {
     path: 'search',
-    component: ResourceSearchComponent,
+    loadComponent: () => import('./pages/search/search.component').then((m) => m.ResourceSearchComponent),
+    title: 'Search',
   },
 ];
 /** Routes only registered in standalone mode */

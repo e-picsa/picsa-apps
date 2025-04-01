@@ -7,6 +7,10 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { RxAttachment, RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -18,7 +22,7 @@ import { IDownloadStatus, ResourcesToolService } from '../../services/resources-
   templateUrl: './resource-download.component.html',
   styleUrls: ['./resource-download.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, SizeMBPipe],
 })
 export class ResourceDownloadComponent implements OnDestroy {
   public downloadStatus: IDownloadStatus;

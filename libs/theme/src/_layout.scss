@@ -16,6 +16,7 @@ body {
 }
 
 .page {
+  background-color: white;
   height: 100vh;
   width: 100%;
   position: absolute;
@@ -27,13 +28,11 @@ body {
 
 .page-content {
   flex: 1;
-  background-color: white;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1;
   overflow: auto;
-
   padding: var(--page-padding);
 }
 // remove padding when displaying within farmer-content
