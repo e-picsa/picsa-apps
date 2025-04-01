@@ -19,6 +19,14 @@
             ]
           }
         ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "name": "@ngx-translate/core",
+            "importNames": ["TranslateModule"],
+            "message": "Please use PicsaTranslateModule instead"
+          }
+        ],
         "@angular-eslint/component-selector": ["warn"],
         "@angular-eslint/component-class-suffix": ["warn"],
         "@typescript-eslint/no-explicit-any": ["warn"],
