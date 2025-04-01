@@ -1,5 +1,4 @@
 import { IResourceCollection, IResourceLink } from '../../schemas';
-import { WEATHER_LINKS } from './links';
 import { IWeatherLocation } from './locations';
 import { MeteoBlueGenerator } from './meteoBlue';
 import { WMOGenerator } from './wmo';
@@ -7,6 +6,8 @@ import { WMOGenerator } from './wmo';
 /**
  * Weather resources are generated dynamically to assign location-specific
  * values to links
+ *
+ * NOTE - not currently in use
  */
 
 // HACK - no longer provide localised resources
@@ -63,5 +64,4 @@ function generateLocationResources(location: IWeatherLocation) {
 
 export default {
   weatherResources,
-  ...WEATHER_LINKS,
 };
