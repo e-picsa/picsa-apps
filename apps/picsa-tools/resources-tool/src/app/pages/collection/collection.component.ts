@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { map } from 'rxjs';
 
@@ -14,8 +14,7 @@ interface ICollectionPageRouteParams {
 @Component({
   templateUrl: './collection.component.html',
   styleUrls: ['./collection.component.scss'],
-  standalone: true,
-  imports: [ResourceCollectionComponent],
+  imports: [ResourceCollectionComponent, RouterModule],
 })
 export class CollectionComponent implements OnInit, OnDestroy {
   public collectionId = toSignal(this.route.params.pipe(map((v) => (v as ICollectionPageRouteParams).collectionId)));

@@ -9,9 +9,10 @@ export const ROUTES_COMMON: Routes = [
   },
   {
     path: 'collection',
-    loadComponent: () => import('./pages/collection/collection.component').then((m) => m.CollectionComponent),
+    loadChildren: () => import('./pages/collection/collection-routing.module').then((m) => m.CollectionRoutingModule),
     title: 'Collection',
   },
+
   {
     path: 'downloads',
     loadComponent: () => import('./pages/downloads/downloads.page').then((m) => m.DownloadsPageComponent),

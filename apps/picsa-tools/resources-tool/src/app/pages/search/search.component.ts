@@ -1,8 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { AutofocusDirective } from '@picsa/shared/directives';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import Fuse, { FuseResult, IFuseOptions } from 'fuse.js';
 import { Subject, takeUntil } from 'rxjs';
@@ -24,9 +25,10 @@ interface ISearchResultsByType {
 @Component({
   selector: 'resource-search-component',
   imports: [
-    CommonModule,
+    AutofocusDirective,
     FormsModule,
     MatFormFieldModule,
+    MatInputModule,
     ResourceItemFileComponent,
     ResourceItemCollectionComponent,
     ResourceItemLinkComponent,
@@ -89,25 +91,18 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
 
   private subscribeToQueryParams() {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe((params: Params) => {
-      if (params.searchText) {
-        this.query = params.searchText;
-        this.onSearchInputChange();
-      }
+      this.query = params.searchText || '';
+      this.onSearchInputChange();
     });
   }
 
-  onSearchInputChange() {
-    // Only display search results if user has typed more than 2 characters
-    if (this.query.length > 2) {
-      const searchResults = this.fuse.search(this.query);
-      this.setSearchResultsByType(searchResults);
-      this.totalResults = searchResults.length;
-      this.setRouteSearchParam(this.query);
-    } else {
-      this.searchResults = { collection: [], file: [], link: [] };
-      this.totalResults = undefined;
-      this.setRouteSearchParam(undefined);
-    }
+  public onSearchInputChange() {
+    // Display filtered results when more than 2 characters specified, default to all docs
+    const searchResults =
+      this.query.length > 2 ? this.fuse.search(this.query) : this.fuse['_docs'].map((item) => ({ item }));
+    this.setSearchResultsByType(searchResults);
+    this.totalResults = searchResults.length;
+    this.setRouteSearchParam(this.query || undefined);
     this.cdr.markForCheck();
   }
 

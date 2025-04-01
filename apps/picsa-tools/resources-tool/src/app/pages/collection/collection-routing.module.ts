@@ -12,20 +12,20 @@ const routes: Routes = [
     title,
   },
   // allow deeply nested collections
-  { path: ':collectionId', component: CollectionComponent, title },
+  { path: ':collectionId', loadComponent: () => import('./collection.component').then((m) => m.CollectionComponent) },
   {
     path: ':collectionId/:collectionId',
-    loadComponent: () => CollectionComponent,
+    loadComponent: () => import('./collection.component').then((m) => m.CollectionComponent),
     title,
   },
   {
     path: ':collectionId/:collectionId/:collectionId',
-    loadComponent: () => CollectionComponent,
+    loadComponent: () => import('./collection.component').then((m) => m.CollectionComponent),
     title,
   },
   {
     path: ':collectionId/:collectionId/:collectionId/:collectionId',
-    loadComponent: () => CollectionComponent,
+    loadComponent: () => import('./collection.component').then((m) => m.CollectionComponent),
     title,
   },
 ];
