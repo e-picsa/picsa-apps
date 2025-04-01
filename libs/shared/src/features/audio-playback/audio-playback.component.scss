@@ -1,0 +1,15 @@
+.audio-button{
+    outline: none;
+    background-color: none;
+    border: none;
+    padding: 5px;
+    &:hover{
+        background-color: none;
+    }
+    .mat-icon{
+        color: var(--color-secondary);
+        font-size: 28px;
+        height: 32px;
+        width: 32px;
+    }
+}
