@@ -21,7 +21,7 @@ export class CropVarietyComponent implements OnInit {
     private router: Router
   ) {}
 
-  displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'label'];
+  displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'maturity_period', 'days_lower', 'days_upper'];
 
   tableOptions: IDataTableOptions = {
     displayColumns: this.displayedColumns,

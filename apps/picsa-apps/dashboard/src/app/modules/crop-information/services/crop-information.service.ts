@@ -29,7 +29,7 @@ export class CropInformationService extends PicsaAsyncService {
 
   public async list() {
     // TODO - filter for country code, maybe create as resource...
-    const { data, error } = await this.table.select<'*', ICropInformationRow>('*');
+    const { data, error } = await this.table.select<'*', ICropInformationRow>('*').order('id');
     if (error) {
       throw error;
     }

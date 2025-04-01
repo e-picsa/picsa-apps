@@ -1,9 +1,24 @@
-ALTER TABLE crop_data DROP COLUMN label;
+DROP TABLE IF EXISTS public.crop_data cascade;
 
-ALTER TABLE crop_data ADD maturity_days_lower integer;
-ALTER TABLE crop_data ADD maturity_days_upper integer;
-ALTER TABLE crop_data ADD maturity_category text;
-ALTER TABLE crop_data ADD seed_company text;
+CREATE TABLE public.crop_data(
+  id text GENERATED ALWAYS AS (crop || '/' || variety) STORED,
+
+  crop text not null,
+  variety text not null,
+  maturity_period text not null,
+  
+  days_lower integer not null,
+  days_upper integer not null,
+
+  metadata jsonb NOT NULL default '{}'::jsonb,
+  
+  
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+
+  constraint crop_data_id_key primary key (id);
+)tablespace pg_default;
+
 
 DROP TABLE if exists public.crop_station_data cascade;
 
@@ -22,7 +37,7 @@ create table
 
 -- TODO - specific override columns to replace global data (columns as required)
 
-    metadata jsonb NOT NULL default '{}'::jsonb,
+    override_data jsonb NOT NULL default '{}'::jsonb,
     
     constraint crop_data_downscaled_pkey primary key (id),
     constraint public_crop_data_downscaled_crop_id_fkey foreign key (crop_id) references crop_data (id)
