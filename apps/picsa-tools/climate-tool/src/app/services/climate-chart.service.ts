@@ -58,7 +58,9 @@ export class ClimateChartService {
   ) {}
 
   public async clearChartData() {
-    this.setChart(undefined);
+    this.chartDefinition$.next(undefined);
+    this.chartConfig$.next(undefined);
+    this.chartSeriesData$.next([]);
     this.setStation(undefined);
     this.getPointColour = () => undefined;
   }
@@ -78,8 +80,8 @@ export class ClimateChartService {
     return this.station;
   }
 
-  public async setChart(id?: IChartId) {
-    const definition = id ? this.station?.definitions[id] : undefined;
+  public async setChart(id: IChartId) {
+    const definition = this.station?.definitions[id];
     this.chartDefinition = definition;
     this.chartDefinition$.next(this.chartDefinition);
     if (definition) {

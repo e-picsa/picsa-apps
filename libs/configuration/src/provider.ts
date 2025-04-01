@@ -18,6 +18,10 @@ export interface IUserSettings {
    * @example [null,null,'malawi','northern','karonga']
    */
   location: (string | undefined)[];
+  /** Selected station for the climate tool */
+  climate_tool?: {
+    station_id: string;
+  };
 }
 
 const USER_CONFIGURATION_DEFAULT: IUserSettings = {
@@ -26,6 +30,7 @@ const USER_CONFIGURATION_DEFAULT: IUserSettings = {
   language_code: null as any,
   user_type: null as any,
   location: [],
+  climate_tool: { station_id: '' },
 };
 
 @Injectable({ providedIn: 'root' })
