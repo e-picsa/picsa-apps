@@ -10,7 +10,12 @@ import { IResourceFile } from '../../schemas';
     @if(resource.title){
     <h2>{{ resource.title | translate }}</h2>
     }
-    <picsa-video-player [source]="fileURI" #videoPlayer [thumbnail]="resource.cover?.image" [id]="resource.id">
+    <picsa-video-player
+      [source]="fileURI"
+      #videoPlayer
+      [thumbnail]="resource.cover?.image || generatedThumbnail"
+      [id]="resource.id"
+    >
     </picsa-video-player>
     @if(resource.description){
     <p>{{ resource.description | translate }}</p>
@@ -24,4 +29,6 @@ export class ResourceItemVideoComponent {
   @Input() fileURI: string;
 
   @Input() resource: IResourceFile;
+
+  @Input() generatedThumbnail: string;
 }
