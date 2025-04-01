@@ -1,5 +1,11 @@
 <div class="page-content">
-  <ng-container *ngIf="formInitial">
+  <div *ngIf="isLoading() || isAuthenticating()" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p *ngIf="isLoading()">{{ 'Loading form...' | translate }}</p>
+    <p *ngIf="isAuthenticating()">{{ 'Authenticating...' | translate }}</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading() && !isAuthenticating() && formInitial">
     <enketo-webform
       [form]="formInitial.form"
       [model]="formInitial.model"
@@ -7,11 +13,17 @@
       (formSaved)="handleSave($event)"
       [showButtons]="false"
     ></enketo-webform>
-    <div style="display: flex">
-      <button mat-button style="margin-right: 1rem" (click)="promptDelete()">
+    <div class="form-actions">
+      <button mat-button class="delete-button" (click)="promptDelete()">
         <mat-icon>delete</mat-icon>{{ 'Delete' | translate }}
       </button>
-      <button mat-raised-button color="primary" style="flex: 1" [disabled]="!formEntry" (click)="handleCustomSave()">
+      <button
+        mat-raised-button
+        color="primary"
+        class="submit-button"
+        [disabled]="!formEntry"
+        (click)="handleCustomSave()"
+      >
         {{ 'Submit' | translate }}
       </button>
     </div>
