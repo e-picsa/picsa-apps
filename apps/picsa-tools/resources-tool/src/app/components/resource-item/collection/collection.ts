@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { IResourceCollection, IResourceLink } from '../../../schemas';
+import { ResourceItemLinkComponent } from '../link/link';
 
 @Component({
   selector: 'resource-item-collection',
   templateUrl: 'collection.html',
   styleUrls: ['collection.scss'],
-  standalone: false,
+  imports: [ResourceItemLinkComponent],
 })
 export class ResourceItemCollectionComponent implements OnInit {
   // Collections are simply rendered as a link to the collection

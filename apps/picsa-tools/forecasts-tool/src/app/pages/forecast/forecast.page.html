@@ -38,7 +38,9 @@
 
   <!-- Resources -->
   <h2>{{'Resources' | translate}}</h2>
-  <resource-collection id="forecast_resources"></resource-collection>
+  @for(resource of resourceLinks(); track resource.id){
+  <resource-item-link [resource]="resource" style="margin-bottom: 8px"> </resource-item-link>
+  }
 </div>
 
 <!-- Forecast item tempalte -->

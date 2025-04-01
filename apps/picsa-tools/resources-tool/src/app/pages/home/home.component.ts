@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { ResourceItemCollectionComponent } from '@picsa/resources/components';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { IResourceCollection } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
@@ -7,7 +10,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   selector: 'resource-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: false,
+  imports: [PicsaTranslateModule, MatIconModule, ResourceItemCollectionComponent],
 })
 export class HomeComponent implements OnInit {
   public collections: IResourceCollection[];

@@ -43,11 +43,12 @@
     style="margin-top: 2rem; display: flex; width: 100%"
   >
     <div style="max-width: 300px; margin: auto">
+      @if(resourceDocs[version]){
       <resource-item-file
-        *ngIf="resourceDocs[version]"
         [resource]="resourceDocs[version]._data"
         (attachmentChange)="handleResourceAttachmentChange($event.attachment)"
       ></resource-item-file>
+      }
     </div>
   </picsa-alert-box>
 </ng-template>

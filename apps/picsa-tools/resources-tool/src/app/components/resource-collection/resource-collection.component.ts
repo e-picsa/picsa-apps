@@ -7,11 +7,25 @@ import { ResourcesToolService } from '@picsa/resources/services/resources-tool.s
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { RxDocument } from 'rxdb';
 
-import { ResourcesComponentsModule } from '../components.module';
+import { ResourceDownloadMultipleComponent } from '../resource-download-multiple/resource-download-multiple.component';
+import {
+  ResourceItemCollectionComponent,
+  ResourceItemFileComponent,
+  ResourceItemLinkComponent,
+} from '../resource-item';
 
 @Component({
   selector: 'resource-collection',
-  imports: [AlertBoxComponent, CommonModule, MatCardModule, PicsaTranslateModule, ResourcesComponentsModule],
+  imports: [
+    AlertBoxComponent,
+    CommonModule,
+    MatCardModule,
+    PicsaTranslateModule,
+    ResourceDownloadMultipleComponent,
+    ResourceItemCollectionComponent,
+    ResourceItemLinkComponent,
+    ResourceItemFileComponent,
+  ],
   templateUrl: './resource-collection.component.html',
   styleUrl: './resource-collection.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,11 +56,19 @@ export class ResourceCollectionComponent {
   private async loadCollection(id: string) {
     await this.service.ready();
     const foundCollection = await this.service.dbCollections.findOne(id).exec();
+
     this.showcollectionNotFound.set(foundCollection ? false : true);
     if (foundCollection) {
       this.collection.set(foundCollection._data);
       this.collectionLoaded.emit(foundCollection._data);
       await this.loadCollectionResources(foundCollection._data);
+    } else {
+      console.warn('Collection not found', id);
+      const allCollections = await this.service.dbCollections.find().exec();
+      console.log(
+        'Collections',
+        allCollections.map((d) => d._data)
+      );
     }
   }
 

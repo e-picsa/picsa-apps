@@ -4,7 +4,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResourcesComponentsModule } from '@picsa/resources/components/components.module';
+import { ResourceItemFileComponent } from '@picsa/resources/components';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -16,7 +16,7 @@ import { ResourcesComponentsModule } from '@picsa/resources/components/component
  */
 @Component({
   selector: 'farmer-step-video',
-  imports: [CommonModule, ResourcesComponentsModule],
+  imports: [CommonModule, ResourceItemFileComponent],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })

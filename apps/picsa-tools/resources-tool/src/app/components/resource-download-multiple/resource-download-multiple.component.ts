@@ -1,4 +1,9 @@
 import { Component, Input, OnDestroy, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { RxDocument } from 'rxdb';
 import { lastValueFrom, Subject, Subscription } from 'rxjs';
 
@@ -9,7 +14,14 @@ import { IDownloadStatus, ResourcesToolService } from '../../services/resources-
   selector: 'resource-download-multiple',
   templateUrl: './resource-download-multiple.component.html',
   styleUrl: './resource-download-multiple.component.scss',
-  standalone: false,
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    SizeMBPipe,
+    PicsaTranslateModule,
+    PicsaTranslateModule,
+  ],
 })
 export class ResourceDownloadMultipleComponent implements OnDestroy {
   private _resources: IResourceFile[];

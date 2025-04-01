@@ -13,12 +13,9 @@
         </button>
       </div>
       <div class="list-container">
-        <resource-item-collection
-          *ngFor="let collection of collections"
-          trackBy:collectionLink.id
-          [collection]="collection"
-        >
-        </resource-item-collection>
+        @for(collection of collections; track collection.id){
+        <resource-item-collection [collection]="collection"> </resource-item-collection>
+        }
       </div>
     </div>
   </div>

@@ -1,12 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import {
+  ResourceItemCollectionComponent,
+  ResourceItemFileComponent,
+  ResourceItemLinkComponent,
+} from '@picsa/resources/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import Fuse, { FuseResult, IFuseOptions } from 'fuse.js';
 import { Subject, takeUntil } from 'rxjs';
 
-import { ResourcesComponentsModule } from '../../components/components.module';
 import { IResourceBase, IResourceCollection, IResourceFile, IResourceLink } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
@@ -18,7 +23,15 @@ interface ISearchResultsByType {
 
 @Component({
   selector: 'resource-search-component',
-  imports: [CommonModule, FormsModule, ResourcesComponentsModule, PicsaTranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    ResourceItemFileComponent,
+    ResourceItemCollectionComponent,
+    ResourceItemLinkComponent,
+    PicsaTranslateModule,
+  ],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

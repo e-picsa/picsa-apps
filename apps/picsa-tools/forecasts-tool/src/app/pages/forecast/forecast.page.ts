@@ -4,10 +4,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { CLIMATE_RESOURCES } from '@picsa/data/climate/resources';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
 import { PicsaFormsModule } from '@picsa/forms';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResourceCollectionComponent } from '@picsa/resources/components';
+import { ResourceItemLinkComponent } from '@picsa/resources/components/resource-item';
+import type { IResourceLink } from '@picsa/resources/schemas';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';
 import { isEqual } from '@picsa/utils/object.utils';
@@ -41,7 +43,7 @@ interface IForecastSummary {
     MatProgressBarModule,
     PicsaFormsModule,
     PicsaTranslateModule,
-    ResourceCollectionComponent,
+    ResourceItemLinkComponent,
     SupabaseStorageDownloadComponent,
   ],
 })
@@ -56,6 +58,11 @@ export class ForecastComponent implements OnDestroy {
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
+
+  public resourceLinks = computed<IResourceLink[]>(() => {
+    const { country_code } = this.configurationService.userSettings();
+    return CLIMATE_RESOURCES[country_code] || [];
+  });
 
   // Utility to add type-safety to implicit ng-template data
   public toForecastType = (data: any) => data as IForecastSummary;
