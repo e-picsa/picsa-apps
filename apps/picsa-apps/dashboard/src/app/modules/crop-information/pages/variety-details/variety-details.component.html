@@ -4,7 +4,11 @@
     <div class="flex justify-evenly">
       <mat-form-field appearance="outline" floatLabel="always">
         <mat-label>Crop</mat-label>
-        <input matInput formControlName="crop" />
+        <mat-select matInput formControlName="crop">
+          @for(option of cropOptions; track option.id){
+          <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Variety</mat-label>

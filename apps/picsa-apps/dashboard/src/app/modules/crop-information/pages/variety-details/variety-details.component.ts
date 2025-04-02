@@ -3,7 +3,8 @@ import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators 
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PicsaFormsModule } from '@picsa/forms';
+import { CROPS_DATA } from '@picsa/data';
+import { PicsaFormsModule, PICSAFormValidators } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -30,10 +31,12 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
     crop: ['', Validators.required],
     variety: ['', Validators.required],
     maturity_period: ['', Validators.required],
-    days_lower: [0, Validators.required],
-    days_upper: [0, Validators.required],
+    days_lower: [0, PICSAFormValidators.minMax(1, 1000)],
+    days_upper: [0, PICSAFormValidators.minMax(1, 1000)],
     additional_info: new FormControl<string | null>(null),
   });
+
+  public cropOptions = CROPS_DATA.map(({ id, label }) => ({ id, label }));
 
   /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
   private get formValue() {
