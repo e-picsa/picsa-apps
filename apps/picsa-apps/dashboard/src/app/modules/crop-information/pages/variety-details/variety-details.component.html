@@ -1,36 +1,48 @@
 <div class="page-content">
-  <h2>Edit Details</h2>
+  <h2>Crop Details</h2>
   <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
-    <mat-form-field appearance="outline" floatLabel="always">
-      <mat-label>Crop</mat-label>
-      <picsa-form-crop-select formControlName="crop"></picsa-form-crop-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Variety</mat-label>
-      <input matInput formControlName="variety" />
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Label</mat-label>
-      <input matInput placeholder="E.g. local name" formControlName="label" />
-    </mat-form-field>
+    <div class="flex justify-evenly">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Crop</mat-label>
+        <input matInput formControlName="crop" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Variety</mat-label>
+        <input matInput formControlName="variety" />
+      </mat-form-field>
+    </div>
+    <div class="flex justify-evenly">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label for="days_lower">Maturity Period</mat-label>
+        <mat-select formControlName="maturity_period">
+          <mat-option value="early">Early</mat-option>
+          <mat-option value="medium">Medium</mat-option>
+          <mat-option value="late">Late</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label for="days_lower">Days Lower</mat-label>
+        <input matInput id="days_lower" type="number" formControlName="days_lower" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label for="days_upper">Days Upper</mat-label>
+        <input matInput id="days_upper" type="number" formControlName="days_upper" />
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label for="days_upper">Additional Information</mat-label>
+        <textarea matInput id="days_upper" type="number" formControlName="additional_info"></textarea>
+      </mat-form-field>
+    </div>
 
-    <!-- <div class="form-data">
-      <label for="water_upper">Water Upper:</label>
-      <input id="water_upper" type="number" formControlName="water_upper" />
-    </div>
-    <div class="form-data">
-      <label for="water_lower">Water Lower:</label>
-      <input id="water_lower" type="number" formControlName="water_lower" />
-    </div>
-    <div class="form-data">
-      <label for="length_upper">Length Upper:</label>
-      <input id="length_upper" type="number" formControlName="length_upper" />
-    </div>
-    <div class="form-data">
-      <label for="length_lower">Length Lower:</label>
-      <input id="lenght_lower" type="number" formControlName="length_lower" />
-    </div> -->
-    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">
+    <button
+      mat-raised-button
+      color="primary"
+      class="submitButton"
+      type="submit"
+      [disabled]="!entryForm.valid || entryForm.pristine"
+    >
       Submit
     </button>
   </form>

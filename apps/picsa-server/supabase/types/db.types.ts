@@ -36,6 +36,7 @@ export type Database = {
           id: string | null;
           latitude: number | null;
           longitude: number | null;
+          override_data: Json;
           station_id: string;
           station_name: string | null;
         };
@@ -46,6 +47,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          override_data?: Json;
           station_id: string;
           station_name?: string | null;
         };
@@ -56,6 +58,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          override_data?: Json;
           station_id?: string;
           station_name?: string | null;
         };
@@ -63,6 +66,7 @@ export type Database = {
       };
       climate_summary_rainfall: {
         Row: {
+          comments: Json[];
           country_code: Database['public']['Enums']['country_code'];
           created_at: string;
           data: Json[];
@@ -71,6 +75,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          comments?: Json[];
           country_code: Database['public']['Enums']['country_code'];
           created_at?: string;
           data: Json[];
@@ -79,6 +84,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          comments?: Json[];
           country_code?: Database['public']['Enums']['country_code'];
           created_at?: string;
           data?: Json[];
@@ -98,35 +104,38 @@ export type Database = {
       };
       crop_data: {
         Row: {
+          additional_data: Json;
+          additional_info: string | null;
           created_at: string;
           crop: string;
           days_lower: number;
           days_upper: number;
           id: string;
           maturity_period: string;
-          metadata: Json;
           updated_at: string;
           variety: string;
         };
         Insert: {
+          additional_data?: Json;
+          additional_info?: string | null;
           created_at?: string;
           crop: string;
           days_lower: number;
           days_upper: number;
           id?: string;
           maturity_period: string;
-          metadata?: Json;
           updated_at?: string;
           variety: string;
         };
         Update: {
+          additional_data?: Json;
+          additional_info?: string | null;
           created_at?: string;
           crop?: string;
           days_lower?: number;
           days_upper?: number;
           id?: string;
           maturity_period?: string;
-          metadata?: Json;
           updated_at?: string;
           variety?: string;
         };

@@ -3,16 +3,20 @@ DROP TABLE IF EXISTS public.crop_data cascade;
 CREATE TABLE public.crop_data(
   id text GENERATED ALWAYS AS (crop || '/' || variety) STORED,
 
+  -- core data 
   crop text not null,
   variety text not null,
   maturity_period text not null,
-  
   days_lower integer not null,
   days_upper integer not null,
 
-  metadata jsonb NOT NULL default '{}'::jsonb,
+  -- custom information text
+  additional_info text,
+
+  -- structured additional (e.g. production year, seed supplier)
+  additional_data jsonb NOT NULL default '{}'::jsonb,
   
-  
+  -- timestamp data
   created_at timestamp with time zone not null default now(),
   updated_at timestamp with time zone not null default now(),
 

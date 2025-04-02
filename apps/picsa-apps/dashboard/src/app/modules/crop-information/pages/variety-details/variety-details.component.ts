@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -11,7 +12,14 @@ import { CropInformationService, ICropInformationInsert, ICropInformationRow } f
 
 @Component({
   selector: 'dashboard-crop-variety-details',
-  imports: [DashboardMaterialModule, RouterModule, FormsModule, PicsaFormsModule, ReactiveFormsModule],
+  imports: [
+    DashboardMaterialModule,
+    MatFormFieldModule,
+    RouterModule,
+    FormsModule,
+    PicsaFormsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './variety-details.component.html',
   styleUrl: './variety-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,12 +29,10 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
     id: new FormControl(), // populated by server or on edit
     crop: ['', Validators.required],
     variety: ['', Validators.required],
-    label: new FormControl<string>(''),
-
-    // water_lower: [0],
-    // water_upper: [0],
-    // length_lower: [0],
-    // length_upper: [0],
+    maturity_period: ['', Validators.required],
+    days_lower: [0, Validators.required],
+    days_upper: [0, Validators.required],
+    additional_info: new FormControl<string | null>(null),
   });
 
   /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
@@ -101,6 +107,7 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
   private async loadEditableEntry(id: string) {
     const { data, error } = await this.service.table.select<'*', ICropInformationRow>('*').eq('id', id).single();
     if (data) {
+      console.log('data', data);
       this.entryForm.patchValue(data);
     }
     if (error) {
