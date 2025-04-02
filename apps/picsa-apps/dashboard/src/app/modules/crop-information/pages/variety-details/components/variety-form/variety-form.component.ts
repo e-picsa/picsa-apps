@@ -9,13 +9,13 @@ import { DashboardMaterialModule } from '../../../../../../material.module';
 import { ICropInformationInsert } from '../../../../services';
 
 @Component({
-  selector: 'dashboard-climate-variety-form',
+  selector: 'dashboard-crop-variety-form',
   imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule],
   templateUrl: './variety-form.component.html',
   styleUrl: './variety-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardClimateVarietyFormComponent {
+export class DashboardCropVarietyFormComponent {
   public initialValue = input<ICropInformationInsert | undefined>(undefined);
 
   public form = this.formBuilder.nonNullable.group({

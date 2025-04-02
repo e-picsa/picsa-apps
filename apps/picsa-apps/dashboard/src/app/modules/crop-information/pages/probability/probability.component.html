@@ -2,12 +2,13 @@
   <h2>Crop Probabilities</h2>
   <picsa-form-location-select
     [countryCode]="countryCode()"
-    (valueChanged)="locationSelected.set($event)"
+    [value]="locationSelected()"
+    (valueChanged)="handleLocationUpdate($event)"
   ></picsa-form-location-select>
   <div class="flex gap-4">
     <mat-form-field>
       <mat-label>Crop</mat-label>
-      <mat-select (selectionChange)="cropTypeSelected.set($event.value)">
+      <mat-select (selectionChange)="cropTypeSelected.set($event.value)" [value]="cropTypeSelected()">
         @for(cropType of allCropTypes; track cropType.id){
         <mat-option [value]="cropType.id">{{ cropType.label }}</mat-option>
         }
@@ -21,10 +22,10 @@
     {{ editingMode() ? 'Save Changes' : 'Edit' }}
   </button>
 
-  @if(editingMode()){
+  <!-- @if(editingMode()){ -->
   <div class="mt-4">
     <picsa-data-table [data]="editableData()"></picsa-data-table>
     <button mat-button routerLink="/crop/variety/add"><mat-icon>add</mat-icon>New Variety</button>
   </div>
-  }
+  <!-- } -->
 </div>

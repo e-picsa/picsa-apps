@@ -1,15 +1,10 @@
 <div class="page-content">
   <!-- Crop Details -->
   <h2>Crop Details</h2>
-  <dashboard-climate-variety-form [initialValue]="varietyFormValue()" #variety> </dashboard-climate-variety-form>
-
+  <dashboard-crop-variety-form [initialValue]="varietyFormValue()" #variety /> 
+  @let formDisabled = variety.form.valid || variety.form.pristine;
   <div class="flex">
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="submitForm(variety.value)"
-      [disabled]="!variety.form.valid || variety.form.pristine"
-    >
+    <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
       Submit
     </button>
     @if(variety.value.id){
@@ -22,8 +17,10 @@
 
   <!-- Water Requirements -->
   <h2 class="mt-3">Water Requirements</h2>
+  <dashboard-crop-water-requirements />
 </div>
 
+<!-- Delete dialog -->
 <ng-template #deleteDialog>
   <h2 mat-dialog-title style="margin-bottom: 2rem; font-size: 1.5rem">Delete Entry</h2>
   <mat-dialog-content>

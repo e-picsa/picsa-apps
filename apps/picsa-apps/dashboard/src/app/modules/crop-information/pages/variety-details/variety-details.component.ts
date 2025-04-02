@@ -5,11 +5,17 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { CropInformationService, ICropInformationInsert, ICropInformationRow } from '../../services';
-import { DashboardClimateVarietyFormComponent } from './components/variety-form/variety-form.component';
+import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
+import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
 
 @Component({
   selector: 'dashboard-crop-variety-details',
-  imports: [DashboardClimateVarietyFormComponent, DashboardMaterialModule, RouterModule],
+  imports: [
+    DashboardCropVarietyFormComponent,
+    DashboardCropWaterRequirementsComponent,
+    DashboardMaterialModule,
+    RouterModule,
+  ],
   templateUrl: './variety-details.component.html',
   styleUrl: './variety-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
