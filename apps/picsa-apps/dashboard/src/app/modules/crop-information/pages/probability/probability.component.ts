@@ -5,8 +5,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { CROPS_DATA } from '@picsa/data';
 import { PicsaFormsModule } from '@picsa/forms';
+import { PicsaDataTableComponent } from '@picsa/shared/features/data-table/data-table.component';
 
-import { PicsaDataTableComponent } from '../../../../../../../../../libs/shared/src/features/data-table/data-table.component';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { CropInformationService, ICropInformationRow } from '../../services';
 
@@ -52,7 +52,7 @@ export class CropProbabilityComponent {
     effect(() => {
       const location = this.locationSelected();
       const countryCode = location[2];
-      const downscaledCode = location.pop();
+      const downscaledCode = location[4];
       if (countryCode && downscaledCode) {
         this.loadLocationCropData(countryCode, downscaledCode);
       }
@@ -60,6 +60,17 @@ export class CropProbabilityComponent {
     effect(() => {
       console.log('editable data', this.editableData());
     });
+    effect(() => {
+      // set default crop type selected
+      const selected = this.cropTypeSelected();
+      if (!selected) {
+        this.cropTypeSelected.set('maize');
+      }
+    });
+  }
+
+  public handleLocationUpdate(location: (string | undefined)[]) {
+    this.locationSelected.set(location);
   }
 
   private async loadLocationCropData(countryCode: string, downscaledCode: string) {
@@ -70,11 +81,8 @@ export class CropProbabilityComponent {
     if (cropTypeSelected) {
       cropVarietyData = cropVarietyData.filter((v) => v.crop === cropTypeSelected);
     }
-    return cropVarietyData.map(({ crop, variety, label }) => ({
-      crop,
-      variety,
-      label,
-      water_requirement: 0,
+    return cropVarietyData.map((data) => ({
+      ...data,
       included: false,
     }));
   }
