@@ -93,6 +93,8 @@ export class CropVarietyDetailsComponent implements OnInit {
     }
   }
 
+  // TODO - merge downscaled data totals to display a `water_requirement_entries` or similar counter
+
   private async loadDownscaledData(crop_id: string) {
     const country_code = this.deploymentService.activeDeployment()?.country_code;
     if (!country_code) return;

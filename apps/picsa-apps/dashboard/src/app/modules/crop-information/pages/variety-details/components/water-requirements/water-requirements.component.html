@@ -1,1 +1,19 @@
-<p>water-requirements works!</p>
+<picsa-data-table [data]="tableData()" [options]="tableOptions"></picsa-data-table>
+
+<button mat-stroked-button (click)="dialog.open(inputDialog)" class="block mt-4 w-full">
+  <mat-icon>add</mat-icon>New Entry
+</button>
+
+<ng-template #inputDialog>
+  <h2 mat-dialog-title style="margin-bottom: 2rem; font-size: 1.5rem">Water Requirements</h2>
+  <mat-dialog-content>
+    <mat-form-field>
+      <!-- TODO - include location select -->
+      <mat-label></mat-label>
+      <input matInput />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+  </mat-dialog-actions>
+</ng-template>

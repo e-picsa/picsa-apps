@@ -1,25 +1,30 @@
 <div class="page-content">
-  <!-- Crop Details -->
-  <h2>Crop Details</h2>
-  <dashboard-crop-variety-form [initialValue]="varietyFormValue()" #variety /> 
-  @let formDisabled = variety.form.valid || variety.form.pristine;
-  <div class="flex mb-8">
-    <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
-      Submit
-    </button>
-    @if(variety.value.id){
-    <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
-      <mat-icon>delete</mat-icon>
-      Delete
-    </button>
-    }
-  </div>
-
-  <mat-divider ></mat-divider>
-
-  <!-- Water Requirements -->
-  <h2 class="mt-3">Water Requirements</h2>
-  <dashboard-crop-water-requirements [data]="downscaledData()" />
+  <mat-tab-group>
+    <!-- Crop Details Requirements -->
+    <mat-tab label="Crop Details">
+      <dashboard-crop-variety-form
+        class="mt-4"
+        [initialValue]="varietyFormValue()"
+        #variety
+      ></dashboard-crop-variety-form>
+      @let formDisabled = variety.form.valid || variety.form.pristine;
+      <div class="flex mb-8">
+        <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
+          Submit
+        </button>
+        @if(variety.value.id){
+        <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+        }
+      </div>
+    </mat-tab>
+    <!-- Water Requirements -->
+    <mat-tab label="Water Requirements">
+      <dashboard-crop-water-requirements class="mt-2" [data]="downscaledData()"></dashboard-crop-water-requirements>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 
 <!-- Delete dialog -->
