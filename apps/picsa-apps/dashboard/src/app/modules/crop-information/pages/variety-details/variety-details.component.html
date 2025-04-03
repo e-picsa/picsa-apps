@@ -3,7 +3,7 @@
   <h2>Crop Details</h2>
   <dashboard-crop-variety-form [initialValue]="varietyFormValue()" #variety /> 
   @let formDisabled = variety.form.valid || variety.form.pristine;
-  <div class="flex">
+  <div class="flex mb-8">
     <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
       Submit
     </button>
@@ -15,9 +15,11 @@
     }
   </div>
 
+  <mat-divider ></mat-divider>
+
   <!-- Water Requirements -->
   <h2 class="mt-3">Water Requirements</h2>
-  <dashboard-crop-water-requirements />
+  <dashboard-crop-water-requirements [data]="downscaledData()" />
 </div>
 
 <!-- Delete dialog -->

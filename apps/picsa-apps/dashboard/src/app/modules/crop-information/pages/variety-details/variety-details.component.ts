@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { CropInformationService, ICropInformationInsert, ICropInformationRow } from '../../services';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import {
+  CropInformationService,
+  ICropDataDownscaled,
+  ICropInformationInsert,
+  ICropInformationRow,
+} from '../../services';
 import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
 import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
 
@@ -23,13 +29,23 @@ import { DashboardCropWaterRequirementsComponent } from './components/water-requ
 export class CropVarietyDetailsComponent implements OnInit {
   public varietyFormValue = signal<ICropInformationInsert | undefined>(undefined);
 
+  public downscaledData = signal<ICropDataDownscaled['Row'][]>([]);
+
   constructor(
     private service: CropInformationService,
     private router: Router,
     private route: ActivatedRoute,
     private notificationService: PicsaNotificationService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private deploymentService: DeploymentDashboardService
+  ) {
+    effect(() => {
+      const id = this.varietyFormValue()?.id;
+      if (id) {
+        this.loadDownscaledData(id);
+      }
+    });
+  }
 
   async ngOnInit() {
     await this.service.ready();
@@ -54,7 +70,7 @@ export class CropVarietyDetailsComponent implements OnInit {
   }
 
   public async handleDelete(id: string) {
-    await this.service.table.delete().eq('id', id);
+    await this.service.cropDataTable.delete().eq('id', id);
     return this.goToVarietyListPage();
   }
 
@@ -64,13 +80,30 @@ export class CropVarietyDetailsComponent implements OnInit {
 
   /** Load an existing db record for editing */
   private async loadEditableEntry(id: string) {
-    const { data, error } = await this.service.table.select<'*', ICropInformationRow>('*').eq('id', id).single();
+    const { data, error } = await this.service.cropDataTable
+      .select<'*', ICropInformationRow>('*')
+      .eq('id', id)
+      .single();
     if (data) {
       this.varietyFormValue.set(data);
     }
     if (error) {
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
       throw new Error(error.message);
+    }
+  }
+
+  private async loadDownscaledData(crop_id: string) {
+    const country_code = this.deploymentService.activeDeployment()?.country_code;
+    if (!country_code) return;
+    const { data, error } = await this.service.cropDataDownscaledTable
+      .select<'*', ICropDataDownscaled['Row']>('*')
+      .eq('crop_id', crop_id)
+      .eq('country_code', country_code);
+    this.downscaledData.set(data || []);
+    if (error) {
+      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+      throw error;
     }
   }
 }
