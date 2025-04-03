@@ -8,12 +8,17 @@ export type ICropInformationRow = Database['public']['Tables']['crop_data']['Row
 export type ICropInformationInsert = Database['public']['Tables']['crop_data']['Insert'];
 export type ICropInformationUpdate = Database['public']['Tables']['crop_data']['Update'];
 
+export type ICropDataDownscaled = Database['public']['Tables']['crop_data_downscaled'];
+
 @Injectable({ providedIn: 'root' })
 export class CropInformationService extends PicsaAsyncService {
   public cropProbabilities: ICropInformationRow[] = [];
 
-  public get table() {
+  public get cropDataTable() {
     return this.supabaseService.db.table('crop_data');
+  }
+  public get cropDataDownscaledTable() {
+    return this.supabaseService.db.table('crop_data_downscaled');
   }
 
   public cropData = signal<ICropInformationRow[]>([]);
@@ -29,7 +34,7 @@ export class CropInformationService extends PicsaAsyncService {
 
   public async list() {
     // TODO - filter for country code, maybe create as resource...
-    const { data, error } = await this.table.select<'*', ICropInformationRow>('*').order('id');
+    const { data, error } = await this.cropDataTable.select<'*', ICropInformationRow>('*').order('id');
     if (error) {
       throw error;
     }
@@ -38,7 +43,7 @@ export class CropInformationService extends PicsaAsyncService {
   }
 
   public async insert(cropInfo: ICropInformationInsert) {
-    const { data, error } = await this.table.insert(cropInfo);
+    const { data, error } = await this.cropDataTable.insert(cropInfo);
     if (error) {
       throw error;
     }
@@ -46,7 +51,7 @@ export class CropInformationService extends PicsaAsyncService {
   }
   public async update(cropInfo: ICropInformationUpdate) {
     const { id, ...update } = cropInfo;
-    const { data, error } = await this.supabaseService.db.table('crop_data').update(update).eq('id', id);
+    const { data, error } = await this.cropDataTable.update(update).eq('id', id);
     if (error) {
       throw error;
     }

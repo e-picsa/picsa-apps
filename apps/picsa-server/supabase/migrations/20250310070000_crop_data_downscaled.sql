@@ -24,23 +24,23 @@ CREATE TABLE public.crop_data(
 )tablespace pg_default;
 
 
-DROP TABLE if exists public.crop_station_data cascade;
+DROP TABLE if exists public.crop_data_downscaled cascade;
 
 create table
   public.crop_data_downscaled (
-    id text not null default gen_random_uuid (),
+    id text GENERATED ALWAYS AS (country_code || '/' || location_id || '/' || crop_id) STORED,
     created_at timestamp with time zone DEFAULT "now"() NOT NULL,
     updated_at timestamp with time zone DEFAULT "now"() NOT NULL,
-    -- location admin boundaries, including multiple levels where required
-    -- https://wiki.openstreetmap.org/w/index.php
+    
+    -- location data
     country_code text NOT NULL,
-    location_code text NOT NULL,
+    location_id text NOT NULL,
     crop_id text NOT NULL,
 
+    -- crop downscaled data
     water_requirement integer,
 
--- TODO - specific override columns to replace global data (columns as required)
-
+    -- specific override columns to replace global data (columns as required)
     override_data jsonb NOT NULL default '{}'::jsonb,
     
     constraint crop_data_downscaled_pkey primary key (id),

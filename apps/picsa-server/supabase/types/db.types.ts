@@ -147,8 +147,8 @@ export type Database = {
           created_at: string;
           crop_id: string;
           id: string;
-          location_code: string;
-          metadata: Json;
+          location_id: string;
+          override_data: Json;
           updated_at: string;
           water_requirement: number | null;
         };
@@ -157,8 +157,8 @@ export type Database = {
           created_at?: string;
           crop_id: string;
           id?: string;
-          location_code: string;
-          metadata?: Json;
+          location_id: string;
+          override_data?: Json;
           updated_at?: string;
           water_requirement?: number | null;
         };
@@ -167,12 +167,20 @@ export type Database = {
           created_at?: string;
           crop_id?: string;
           id?: string;
-          location_code?: string;
-          metadata?: Json;
+          location_id?: string;
+          override_data?: Json;
           updated_at?: string;
           water_requirement?: number | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'public_crop_data_downscaled_crop_id_fkey';
+            columns: ['crop_id'];
+            isOneToOne: false;
+            referencedRelation: 'crop_data';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       deployments: {
         Row: {
