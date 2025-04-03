@@ -1,1 +1,1 @@
-export * from './uppy-file-drop/uppy-file-drop.component';
+export * from './data-import/data-import.component';

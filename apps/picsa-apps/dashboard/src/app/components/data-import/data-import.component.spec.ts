@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UppyFileDropComponent } from './uppy-file-drop.component';
+import { DataImportComponent } from './data-import.component';
 
-describe('UppyDropzoneComponent', () => {
-  let component: UppyFileDropComponent;
-  let fixture: ComponentFixture<UppyFileDropComponent>;
+describe('DataImportComponent', () => {
+  let component: DataImportComponent;
+  let fixture: ComponentFixture<DataImportComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UppyFileDropComponent],
+      imports: [DataImportComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UppyFileDropComponent);
+    fixture = TestBed.createComponent(DataImportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

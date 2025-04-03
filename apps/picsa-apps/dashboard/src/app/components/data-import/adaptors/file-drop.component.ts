@@ -1,5 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 // Ensure Uppy styles imported
 import '@uppy/core/dist/style.min.css';
 import '@uppy/drag-drop/dist/style.min.css';
@@ -15,13 +13,19 @@ import DragDrop from '@uppy/drag-drop';
  */
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'uppy-file-drop',
+  selector: 'data-import-file-drop',
   imports: [],
-  templateUrl: './uppy-file-drop.component.html',
-  styleUrls: ['./uppy-file-drop.component.scss'],
+  template: `<div class="h-48" #dragDrop></div>`,
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UppyFileDropComponent {
+export class DataImportFileDropComponent {
   private uppy: Uppy;
   private dropEl = viewChild('dragDrop', { read: ElementRef });
 
@@ -47,6 +51,7 @@ export class UppyFileDropComponent {
       id: 'file',
       allowMultipleFiles: false,
       note,
+      height: 48 * 4,
     });
     this.uppy.on('file-added', async ({ data, type }) => {
       this.uppy.setOptions({
