@@ -10,7 +10,7 @@ import download from 'downloadjs';
 import { DataImportComponent } from '../../../../components/data-import/data-import.component';
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { CropInformationService, ICropDataDownscaled } from '../../services';
+import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
 
 interface ICropDataImport {
   location_id: string;
@@ -26,7 +26,6 @@ interface ICropDataImport {
   /** Use location/crop/variety combined key to track unique hash */
   _hash?: string;
 }
-type ILocationWaterRequirements = { [crop: string]: { [variety: string]: number } };
 
 /**
  * Crop Information management page
@@ -150,7 +149,7 @@ export class DashboardCropAdminComponent {
 
   /** Convert flat import data type to nested db entries */
   private importToEntry(data: ICropDataImport[], country_code: string) {
-    const merged: Record<string, ILocationWaterRequirements> = {};
+    const merged: Record<string, ICropDataDownscaledWaterRequirements> = {};
     for (const entry of data) {
       const { crop, location_id, variety, water_requirement } = entry;
       merged[location_id] ??= {};
@@ -169,7 +168,7 @@ export class DashboardCropAdminComponent {
   private entryToImport(data: ICropDataDownscaled['Row'][] = []) {
     const importRows: ICropDataImport[] = [];
     for (const { location_id, water_requirements } of data) {
-      for (const [crop, varietyData] of Object.entries(water_requirements as ILocationWaterRequirements)) {
+      for (const [crop, varietyData] of Object.entries(water_requirements as ICropDataDownscaledWaterRequirements)) {
         for (const [variety, water_requirement] of Object.entries(varietyData)) {
           const importRow: ICropDataImport = { crop, location_id, variety, water_requirement };
           importRow._hash = this.getEntryHash(importRow);

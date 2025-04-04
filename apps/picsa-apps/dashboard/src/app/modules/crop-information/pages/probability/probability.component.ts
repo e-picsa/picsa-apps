@@ -8,7 +8,7 @@ import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaDataTableComponent } from '@picsa/shared/features/data-table/data-table.component';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { CropInformationService, ICropInformationRow } from '../../services';
+import { CropInformationService, ICropData } from '../../services';
 
 /**
  * TODO
@@ -77,7 +77,7 @@ export class CropProbabilityComponent {
     console.log('loading location crop data', { countryCode, downscaledCode });
   }
 
-  private generateEditableData(cropVarietyData: ICropInformationRow[], downscaledData, cropTypeSelected?: string) {
+  private generateEditableData(cropVarietyData: ICropData['Row'][], downscaledData, cropTypeSelected?: string) {
     if (cropTypeSelected) {
       cropVarietyData = cropVarietyData.filter((v) => v.crop === cropTypeSelected);
     }
