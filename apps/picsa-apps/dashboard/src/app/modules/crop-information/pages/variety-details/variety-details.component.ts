@@ -1,49 +1,46 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, effect, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { Subject, takeUntil } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { CropInformationService, ICropInformationInsert, ICropInformationRow } from '../../services';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import { CropInformationService, ICropData, ICropDataDownscaled } from '../../services';
+import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
+import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
 
 @Component({
   selector: 'dashboard-crop-variety-details',
-  imports: [DashboardMaterialModule, RouterModule, FormsModule, PicsaFormsModule, ReactiveFormsModule],
+  imports: [
+    DashboardCropVarietyFormComponent,
+    DashboardCropWaterRequirementsComponent,
+    DashboardMaterialModule,
+    RouterModule,
+  ],
   templateUrl: './variety-details.component.html',
   styleUrl: './variety-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
-  entryForm = this.formBuilder.nonNullable.group({
-    id: new FormControl(), // populated by server or on edit
-    crop: ['', Validators.required],
-    variety: ['', Validators.required],
-    label: new FormControl<string>(''),
+export class CropVarietyDetailsComponent implements OnInit {
+  public varietyFormValue = signal<ICropData['Insert'] | undefined>(undefined);
 
-    // water_lower: [0],
-    // water_upper: [0],
-    // length_lower: [0],
-    // length_upper: [0],
-  });
-
-  /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
-  private get formValue() {
-    const entry: ICropInformationInsert = this.entryForm.getRawValue();
-    return entry;
-  }
-  private componentDestroyed$ = new Subject<boolean>();
+  public downscaledData = signal<ICropDataDownscaled['Row'][]>([]);
 
   constructor(
     private service: CropInformationService,
-    private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private notificationService: PicsaNotificationService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private deploymentService: DeploymentDashboardService
+  ) {
+    effect(() => {
+      const id = this.varietyFormValue()?.id;
+      if (id) {
+        this.loadDownscaledData(id);
+      }
+    });
+  }
 
   async ngOnInit() {
     await this.service.ready();
@@ -52,60 +49,55 @@ export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
     // load editable entry from route param unless on /new route
     if (id && id !== 'add') {
       await this.loadEditableEntry(id);
-      // avoid crop type or variety change after entry created as wil change id
-      this.entryForm.controls.crop.disable();
-      this.entryForm.controls.variety.disable();
     }
-    this.addFormValueModifiers();
   }
 
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next(true);
-    this.componentDestroyed$.complete();
-  }
-
-  async submitForm() {
-    if (this.formValue.id) {
-      await this.service.update(this.formValue);
+  public async submitForm(value: ICropData['Insert']) {
+    if (value.id) {
+      await this.service.update(value);
     } else {
       // remove null id when adding crop probability
-      const { id, ...data } = this.formValue;
+      const { id, ...data } = value;
       await this.service.insert(data);
     }
     // navigate back after successful addition
     return this.goToVarietyListPage();
   }
 
-  public async handleDelete() {
-    await this.service.table.delete().eq('id', this.formValue.id);
+  public async handleDelete(id: string) {
+    await this.service.cropDataTable.delete().eq('id', id);
     return this.goToVarietyListPage();
   }
+
   private goToVarietyListPage() {
     this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
   }
 
-  /**
-   * Automatically alter inputs to clean and sanitize data
-   * Enforces variety names to be upper case with only alphanumeric and dash allowed
-   */
-  private addFormValueModifiers() {
-    this.entryForm.controls.variety.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe((variety) => {
-      const cleanedValue = variety.toUpperCase().replace(/[^0-9a-z-]/gi, '-');
-      if (variety !== cleanedValue) {
-        this.entryForm.patchValue({ variety: cleanedValue }, { emitEvent: true });
-      }
-    });
-  }
-
   /** Load an existing db record for editing */
   private async loadEditableEntry(id: string) {
-    const { data, error } = await this.service.table.select<'*', ICropInformationRow>('*').eq('id', id).single();
+    const { data, error } = await this.service.cropDataTable.select<'*', ICropData['Row']>('*').eq('id', id).single();
     if (data) {
-      this.entryForm.patchValue(data);
+      this.varietyFormValue.set(data);
     }
     if (error) {
-      throw new Error('error');
       this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+      throw new Error(error.message);
+    }
+  }
+
+  // TODO - merge downscaled data totals to display a `water_requirement_entries` or similar counter
+
+  private async loadDownscaledData(crop_id: string) {
+    const country_code = this.deploymentService.activeDeployment()?.country_code;
+    if (!country_code) return;
+    const { data, error } = await this.service.cropDataDownscaledTable
+      .select<'*', ICropDataDownscaled['Row']>('*')
+      .eq('crop_id', crop_id)
+      .eq('country_code', country_code);
+    this.downscaledData.set(data || []);
+    if (error) {
+      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+      throw error;
     }
   }
 }

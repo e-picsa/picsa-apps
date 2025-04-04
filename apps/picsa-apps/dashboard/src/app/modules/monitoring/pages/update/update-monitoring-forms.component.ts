@@ -44,7 +44,7 @@ export class UpdateMonitoringFormsComponent implements OnInit {
   public convertXlsxFeedbackMessage = '';
   public allowedFileTypes = ['xlsx', 'xls'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
-  public storageBucketName = computed(() => this.deploymentService.activeDeployment()!.country_code);
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
   public storageFolderPath = 'monitoring/forms';
   public coverImageStorageFolder = 'monitoring/cover_images';
   public formID: string | null = null;

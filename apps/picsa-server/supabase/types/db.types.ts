@@ -28,47 +28,6 @@ export type Database = {
   };
   public: {
     Tables: {
-      climate_forecasts: {
-        Row: {
-          country_code: string | null;
-          date_modified: string;
-          district: string | null;
-          filename: string;
-          id: string;
-          language_code: string | null;
-          storage_file: string | null;
-          type: string | null;
-        };
-        Insert: {
-          country_code?: string | null;
-          date_modified: string;
-          district?: string | null;
-          filename: string;
-          id: string;
-          language_code?: string | null;
-          storage_file?: string | null;
-          type?: string | null;
-        };
-        Update: {
-          country_code?: string | null;
-          date_modified?: string;
-          district?: string | null;
-          filename?: string;
-          id?: string;
-          language_code?: string | null;
-          storage_file?: string | null;
-          type?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'climate_forecasts_storage_file_fkey';
-            columns: ['storage_file'];
-            isOneToOne: false;
-            referencedRelation: 'storage_objects';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
       climate_stations: {
         Row: {
           country_code: string;
@@ -77,6 +36,7 @@ export type Database = {
           id: string | null;
           latitude: number | null;
           longitude: number | null;
+          override_data: Json;
           station_id: string;
           station_name: string | null;
         };
@@ -87,6 +47,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          override_data?: Json;
           station_id: string;
           station_name?: string | null;
         };
@@ -97,6 +58,7 @@ export type Database = {
           id?: string | null;
           latitude?: number | null;
           longitude?: number | null;
+          override_data?: Json;
           station_id?: string;
           station_name?: string | null;
         };
@@ -104,6 +66,7 @@ export type Database = {
       };
       climate_summary_rainfall: {
         Row: {
+          comments: Json[];
           country_code: Database['public']['Enums']['country_code'];
           created_at: string;
           data: Json[];
@@ -112,6 +75,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          comments?: Json[];
           country_code: Database['public']['Enums']['country_code'];
           created_at?: string;
           data: Json[];
@@ -120,6 +84,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          comments?: Json[];
           country_code?: Database['public']['Enums']['country_code'];
           created_at?: string;
           data?: Json[];
@@ -139,75 +104,72 @@ export type Database = {
       };
       crop_data: {
         Row: {
+          additional_data: Json;
+          additional_info: string | null;
           created_at: string;
           crop: string;
-          id: string | null;
-          label: string | null;
+          days_lower: number;
+          days_upper: number;
+          id: string;
+          maturity_period: string;
+          updated_at: string;
           variety: string;
         };
         Insert: {
+          additional_data?: Json;
+          additional_info?: string | null;
           created_at?: string;
           crop: string;
-          id?: string | null;
-          label?: string | null;
+          days_lower: number;
+          days_upper: number;
+          id?: string;
+          maturity_period: string;
+          updated_at?: string;
           variety: string;
         };
         Update: {
+          additional_data?: Json;
+          additional_info?: string | null;
           created_at?: string;
           crop?: string;
-          id?: string | null;
-          label?: string | null;
+          days_lower?: number;
+          days_upper?: number;
+          id?: string;
+          maturity_period?: string;
+          updated_at?: string;
           variety?: string;
         };
         Relationships: [];
       };
-      crop_station_data: {
+      crop_data_downscaled: {
         Row: {
+          country_code: string;
           created_at: string;
-          crop_id: string;
-          days_lower: number;
-          days_upper: number;
-          probabilities: number[] | null;
-          station_id: string;
-          water_lower: number;
-          water_upper: number;
+          id: string;
+          location_id: string;
+          override_data: Json;
+          updated_at: string;
+          water_requirements: Json;
         };
         Insert: {
+          country_code: string;
           created_at?: string;
-          crop_id: string;
-          days_lower: number;
-          days_upper: number;
-          probabilities?: number[] | null;
-          station_id: string;
-          water_lower: number;
-          water_upper: number;
+          id?: string;
+          location_id: string;
+          override_data?: Json;
+          updated_at?: string;
+          water_requirements?: Json;
         };
         Update: {
+          country_code?: string;
           created_at?: string;
-          crop_id?: string;
-          days_lower?: number;
-          days_upper?: number;
-          probabilities?: number[] | null;
-          station_id?: string;
-          water_lower?: number;
-          water_upper?: number;
+          id?: string;
+          location_id?: string;
+          override_data?: Json;
+          updated_at?: string;
+          water_requirements?: Json;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'public_crop_station_data_crop_id_fkey';
-            columns: ['crop_id'];
-            isOneToOne: false;
-            referencedRelation: 'crop_data';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'public_crop_station_data_station_id_fkey';
-            columns: ['station_id'];
-            isOneToOne: false;
-            referencedRelation: 'climate_stations';
-            referencedColumns: ['id'];
-          }
-        ];
+        Relationships: [];
       };
       deployments: {
         Row: {

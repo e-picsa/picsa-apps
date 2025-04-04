@@ -1,9 +1,11 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2 style="flex: 1">Crop Variety</h2>
-    <button mat-stroked-button color="primary" routerLink="add"><mat-icon>add</mat-icon>Add New Entry</button>
+    <button mat-stroked-button color="primary" routerLink="add"><mat-icon>add</mat-icon>Add Variety</button>
   </div>
-  @if(service.cropProbabilities){
-  <picsa-data-table [data]="service.cropProbabilities" [options]="tableOptions"></picsa-data-table>
-  }
+  <p>
+    See below a list of all known crop varieties.<br />
+    Downscaled locations track the number of location-specific crop water requirements.
+  </p>
+  <picsa-data-table [data]="tableData()" [options]="tableOptions"> </picsa-data-table>
 </div>
