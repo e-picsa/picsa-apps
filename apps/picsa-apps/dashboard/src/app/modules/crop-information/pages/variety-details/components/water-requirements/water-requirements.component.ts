@@ -11,7 +11,7 @@ import { ICropDataDownscaled } from '../../../../services';
 
 interface IWaterRequirementTableData {
   location_id: string;
-  water_requirement: number | null;
+  water_requirements: any;
 }
 
 @Component({
@@ -28,6 +28,7 @@ export class DashboardCropWaterRequirementsComponent {
 
   tableOptions: IDataTableOptions = {
     hideColumns: ['location_id'],
+    // TODO - display nested water requirements by crop
   };
 
   constructor(public dialog: MatDialog, private deploymentService: DeploymentDashboardService) {}
@@ -51,22 +52,22 @@ export class DashboardCropWaterRequirementsComponent {
       // re-populate admin 4 and 5 labels from location id
       const admin5Hashmap = arrayToHashmap(admin_5.locations, 'id');
       const { label: admin_5_label } = admin_5;
-      return data.map(({ location_id, water_requirement }) => {
+      return data.map(({ location_id, water_requirements }) => {
         const admin_4_value = admin5Hashmap[location_id].admin_4;
         return {
           [admin_4_label]: admin4Hashmap[admin_4_value]?.label,
           [admin_5_label]: admin5Hashmap[location_id]?.label,
           location_id,
-          water_requirement,
+          water_requirements,
         };
       });
     } else {
       // Otherwise just include admin_4 label column
-      return data.map(({ location_id: admin_4_value, water_requirement }) => {
+      return data.map(({ location_id: admin_4_value, water_requirements }) => {
         return {
           [admin_4_label]: admin_4_value,
           location_id: admin_4_value,
-          water_requirement,
+          water_requirements,
         };
       });
     }

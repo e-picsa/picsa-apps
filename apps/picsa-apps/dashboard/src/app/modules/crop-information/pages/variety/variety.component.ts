@@ -4,7 +4,7 @@ import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/featur
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { CropInformationService, ICropInformationRow } from '../../services';
+import { CropInformationService, ICropData } from '../../services';
 
 @Component({
   selector: 'dashboard-crop-variety',
@@ -21,11 +21,11 @@ export class CropVarietyComponent implements OnInit {
     private router: Router
   ) {}
 
-  displayedColumns: (keyof ICropInformationRow)[] = ['crop', 'variety', 'maturity_period', 'days_lower', 'days_upper'];
+  displayedColumns: (keyof ICropData['Row'])[] = ['crop', 'variety', 'maturity_period', 'days_lower', 'days_upper'];
 
   tableOptions: IDataTableOptions = {
     displayColumns: this.displayedColumns,
-    handleRowClick: (row: ICropInformationRow) => {
+    handleRowClick: (row: ICropData['Row']) => {
       this.router.navigate(['./', row.id], { relativeTo: this.route });
     },
   };

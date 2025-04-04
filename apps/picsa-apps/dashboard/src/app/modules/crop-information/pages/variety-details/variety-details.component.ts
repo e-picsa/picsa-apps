@@ -5,12 +5,7 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import {
-  CropInformationService,
-  ICropDataDownscaled,
-  ICropInformationInsert,
-  ICropInformationRow,
-} from '../../services';
+import { CropInformationService, ICropData, ICropDataDownscaled } from '../../services';
 import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
 import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
 
@@ -27,7 +22,7 @@ import { DashboardCropWaterRequirementsComponent } from './components/water-requ
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyDetailsComponent implements OnInit {
-  public varietyFormValue = signal<ICropInformationInsert | undefined>(undefined);
+  public varietyFormValue = signal<ICropData['Insert'] | undefined>(undefined);
 
   public downscaledData = signal<ICropDataDownscaled['Row'][]>([]);
 
@@ -57,7 +52,7 @@ export class CropVarietyDetailsComponent implements OnInit {
     }
   }
 
-  public async submitForm(value: ICropInformationInsert) {
+  public async submitForm(value: ICropData['Insert']) {
     if (value.id) {
       await this.service.update(value);
     } else {
@@ -80,10 +75,7 @@ export class CropVarietyDetailsComponent implements OnInit {
 
   /** Load an existing db record for editing */
   private async loadEditableEntry(id: string) {
-    const { data, error } = await this.service.cropDataTable
-      .select<'*', ICropInformationRow>('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await this.service.cropDataTable.select<'*', ICropData['Row']>('*').eq('id', id).single();
     if (data) {
       this.varietyFormValue.set(data);
     }

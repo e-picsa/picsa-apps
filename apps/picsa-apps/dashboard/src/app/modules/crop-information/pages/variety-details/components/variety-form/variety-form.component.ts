@@ -6,7 +6,7 @@ import { CROPS_DATA } from '@picsa/data';
 import { PICSAFormValidators } from '@picsa/forms';
 
 import { DashboardMaterialModule } from '../../../../../../material.module';
-import { ICropInformationInsert } from '../../../../services';
+import { ICropData } from '../../../../services';
 
 @Component({
   selector: 'dashboard-crop-variety-form',
@@ -16,7 +16,7 @@ import { ICropInformationInsert } from '../../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardCropVarietyFormComponent {
-  public initialValue = input<ICropInformationInsert | undefined>(undefined);
+  public initialValue = input<ICropData['Insert'] | undefined>(undefined);
 
   public form = this.formBuilder.nonNullable.group({
     id: new FormControl(), // populated by server or on edit
@@ -55,7 +55,7 @@ export class DashboardCropVarietyFormComponent {
 
   /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
   public get value() {
-    const entry: ICropInformationInsert = this.form.getRawValue();
+    const entry: ICropData['Insert'] = this.form.getRawValue();
     return entry;
   }
 }
