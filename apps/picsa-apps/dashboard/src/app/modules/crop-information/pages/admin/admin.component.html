@@ -5,22 +5,27 @@
     <button class="ml-2" mat-stroked-button (click)="downloadTemplate()"><mat-icon>download</mat-icon>Template</button>
   </div>
 
-  <!-- TODO - include template to download -->
-
   <dashboard-data-import (dataLoaded)="handleDataLoad($event)"></dashboard-data-import>
 
   <mat-accordion class="mt-4" multi>
     <!-- Processed -->
-    @if(rows().length>0){
-    <mat-expansion-panel>
+    @if(parsedRows().length>0){
+    <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon class="mr-2">check_circle</mat-icon>
-          Rows ({{ rows().length }})</mat-panel-title
+          Rows ({{ parsedRows().length }})</mat-panel-title
         >
       </mat-expansion-panel-header>
+      @if(insertRows().length>0){
+      <picsa-data-table [data]="updates()" [options]="updateTableOptions"></picsa-data-table>
+      <button mat-raised-button (click)="processImport(insertRows())" color="primary">Import</button>
+      } @else{
+      <p>All data already exists</p>
+      }
     </mat-expansion-panel>
     }
+
     <!-- Duplicates -->
     @if(duplicates().length>0){
     <mat-expansion-panel disabled>

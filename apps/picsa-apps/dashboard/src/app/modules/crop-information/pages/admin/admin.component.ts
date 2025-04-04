@@ -1,0 +1,276 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import { arrayToHashmap, arrayToHashmapArray, jsonToCSV } from '@picsa/utils';
+import { isObjectLiteral } from '@picsa/utils/object.utils';
+import download from 'downloadjs';
+
+import { DataImportComponent } from '../../../../components/data-import/data-import.component';
+import { DashboardMaterialModule } from '../../../../material.module';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
+import { CropInformationService, ICropDataDownscaled } from '../../services';
+
+interface ICropDataImport {
+  location_id: string;
+  crop: string;
+  variety: string;
+  water_requirement: number;
+  /** Value of water requirement currently on server for comparison */
+  _water_requirement_server?: number;
+  /** Track input csv row numbers */
+  _row_number?: number;
+  /** Track errors */
+  _error?: string;
+  /** Use location/crop/variety combined key to track unique hash */
+  _hash?: string;
+}
+type ILocationWaterRequirements = { [crop: string]: { [variety: string]: number } };
+
+/**
+ * Crop Information management page
+ * Enables import and quality-check of crop water requirements
+ *
+ * Water requirements are imported as individual rows, cleaned and merged by location.
+ * Merged requirements are compared against server ahead of import, and then updated
+ *
+ * TODO
+ * - Consider warning check if crop id not in main DB
+ */
+@Component({
+  selector: 'dashboard-crop-admin',
+  imports: [CommonModule, DataImportComponent, PicsaDataTableComponent, DashboardMaterialModule],
+  templateUrl: './admin.component.html',
+  styleUrl: './admin.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DashboardCropAdminComponent {
+  public errors = signal<ICropDataImport[]>([]);
+  public errorTableOptions: IDataTableOptions = {
+    displayColumns: ['_row_number', 'location_id', 'crop', 'variety', 'water_requirement', '_error'],
+    paginatorSizes: [5, 20, 50],
+    search: false,
+    formatHeader: (v) => {
+      if (v === '_row_number') return '#';
+      return formatHeaderDefault(v);
+    },
+  };
+  public duplicates = signal<ICropDataImport[]>([]);
+  public parsedRows = signal<ICropDataImport[]>([]);
+
+  public updates = signal<ICropDataImport[]>([]);
+  public updateTableOptions: IDataTableOptions = {
+    displayColumns: ['location_id', 'crop', 'variety', '_water_requirement_server', 'water_requirement'],
+    paginatorSizes: [5, 20, 50],
+    search: false,
+    formatHeader: (v) => {
+      if (v === '_water_requirement_server') return 'Water Requirement (before)';
+      if (v === 'water_requirement') return 'Water Requirement (after)';
+      return formatHeaderDefault(v);
+    },
+  };
+
+  public insertRows = signal<ICropDataDownscaled['Insert'][]>([]);
+
+  constructor(
+    private service: CropInformationService,
+    private deploymentService: DeploymentDashboardService,
+    private notificationService: PicsaNotificationService
+  ) {
+    effect(async () => {
+      const parsedRows = this.parsedRows();
+      if (parsedRows.length > 0) {
+        await this.prepareImport(parsedRows);
+      }
+    });
+  }
+
+  public handleDataLoad(data: any) {
+    const { rows, errors, duplicates } = this.qualityControlData(data);
+    this.errors.set(errors);
+    this.duplicates.set(duplicates);
+    this.parsedRows.set(rows);
+  }
+
+  public downloadTemplate() {
+    const dummyLocation = this.getLocationList()[0].id;
+    const dummyRow: ICropDataImport = {
+      location_id: dummyLocation,
+      crop: 'maize',
+      variety: 'PAN-53',
+      water_requirement: 420,
+    };
+    const csv = jsonToCSV([dummyRow]);
+    download(csv, `crop-water-requirements-template.csv`);
+  }
+
+  public async processImport(rows: ICropDataDownscaled['Insert'][]) {
+    console.log('importing rows', rows);
+    const { error } = await this.service.cropDataDownscaledTable.upsert(rows);
+    if (error) {
+      this.notificationService.showErrorNotification(`${error.message}`);
+      return;
+    }
+    this.notificationService.showSuccessNotification(`Import successful`);
+  }
+
+  private async prepareImport(rows: ICropDataImport[]) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const { country_code } = this.deploymentService.activeDeployment()!;
+
+    const { data, error } = await this.service.cropDataDownscaledTable
+      .select<'*', ICropDataDownscaled['Row']>('*')
+      .eq('country_code', country_code);
+
+    // server rows have a single entry per location. Inner merge to provide
+    // individual rows per crop variety (same as import rows)
+    const serverRows = this.entryToImport(data || []);
+    const serverHashmap = arrayToHashmap(serverRows, '_hash');
+
+    // merge server water requirement and filter out unchanged duplicates
+    const filtered = rows
+      .map((row) => {
+        row._water_requirement_server = serverHashmap[row._hash as string]?.water_requirement;
+        return row;
+      })
+      .filter((v) => v.water_requirement !== v._water_requirement_server);
+
+    this.updates.set(filtered);
+
+    // convert to merged rows for insert
+    const insertRows = this.importToEntry(filtered, country_code);
+    this.insertRows.set(insertRows);
+  }
+
+  private getLocationList() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const { country_code } = this.deploymentService.activeDeployment()!;
+    const { admin_4, admin_5 } = GEO_LOCATION_DATA[country_code] as IGelocationData;
+    return admin_5 ? admin_5.locations : admin_4.locations;
+  }
+
+  /** Convert flat import data type to nested db entries */
+  private importToEntry(data: ICropDataImport[], country_code: string) {
+    const merged: Record<string, ILocationWaterRequirements> = {};
+    for (const entry of data) {
+      const { crop, location_id, variety, water_requirement } = entry;
+      merged[location_id] ??= {};
+      merged[location_id][crop] ??= {};
+      merged[location_id][crop][variety] = water_requirement;
+    }
+    const entryRows: ICropDataDownscaled['Insert'][] = Object.entries(merged).map(
+      ([location_id, water_requirements]) => {
+        const entry: ICropDataDownscaled['Insert'] = { country_code, location_id, water_requirements };
+        return entry;
+      }
+    );
+    return entryRows;
+  }
+  /** Convert nested db entries to flat import data type */
+  private entryToImport(data: ICropDataDownscaled['Row'][] = []) {
+    const importRows: ICropDataImport[] = [];
+    for (const { location_id, water_requirements } of data) {
+      for (const [crop, varietyData] of Object.entries(water_requirements as ILocationWaterRequirements)) {
+        for (const [variety, water_requirement] of Object.entries(varietyData)) {
+          const importRow: ICropDataImport = { crop, location_id, variety, water_requirement };
+          importRow._hash = this.getEntryHash(importRow);
+          importRows.push(importRow);
+        }
+      }
+    }
+    return importRows;
+  }
+
+  private qualityControlData(data: ICropDataImport[] = []) {
+    const rows: ICropDataImport[] = [];
+    const errors: ICropDataImport[] = [];
+    const duplicates: ICropDataImport[] = [];
+
+    if (!Array.isArray(data)) {
+      errors.push({ _error: 'Data Invalid' } as any);
+      return { rows, duplicates, errors };
+    }
+
+    const locations = this.getLocationList();
+    const locationHashmap = arrayToHashmap(locations, 'id');
+
+    // add row numbers
+    const withRowNumbers = data.map((v, i) => {
+      v._row_number = i + 1;
+      return v;
+    });
+
+    // remove empty rows or malformed entires
+    const cleaned = withRowNumbers.filter((v) => isObjectLiteral(v));
+
+    // remove individual entries failing QC checks
+    const errorChecked = cleaned.filter((v) => {
+      const { _error } = this.checkForErrors(v, locationHashmap);
+      if (_error) {
+        errors.push(v);
+      }
+      return true;
+    });
+
+    // create hashed entries to detect and remove duplicates
+    const hashed = errorChecked.map((v) => {
+      v._hash = this.getEntryHash(v);
+      return v;
+    });
+    const hashmapArray = arrayToHashmapArray(hashed, '_hash');
+    for (const hashedValues of Object.values(hashmapArray)) {
+      const unique = [...new Set(hashedValues.map((v) => v.water_requirement))];
+      // single unique value, or multiple identical
+      if (unique.length === 1) {
+        const [row, ...duplicateRows] = hashedValues;
+        rows.push(row);
+        duplicates.push(...duplicateRows);
+      }
+      // duplicate entries with different values
+      else {
+        for (const value of hashedValues) {
+          value._error = `Multiple Values: ${unique.join(', ')}`;
+          errors.push(value);
+        }
+      }
+    }
+
+    return { rows, errors, duplicates };
+  }
+
+  private getEntryHash(entry: ICropDataImport) {
+    const { location_id, crop, variety } = entry;
+    return `${location_id}/${crop}/${variety}`;
+  }
+
+  /**
+   * Minimal QC check that location exists in data
+   * Additional checks for crop types and varieties managed in other pages
+   */
+  private checkForErrors(el: ICropDataImport, locationHashmap: Record<string, any>) {
+    const { location_id, water_requirement } = el;
+
+    // check location exists
+    const location_id_cleaned = location_id.trim().toLowerCase().replace(' ', '');
+    if (!locationHashmap[location_id_cleaned]) {
+      el._error = `Invalid location: ${location_id}`;
+    }
+    el.location_id = location_id_cleaned;
+
+    // round water requirement to nearest 5
+    const water_requirement_parsed = Number(water_requirement);
+    if (isNaN(water_requirement_parsed)) {
+      el._error = `Invalid water requirement: ${water_requirement}`;
+    } else {
+      const water_requirement_cleaned = roundToNearest(water_requirement_parsed, 5);
+      el.water_requirement = water_requirement_cleaned;
+    }
+
+    return el;
+  }
+}
+
+function roundToNearest(value: number, n: number) {
+  return Math.round(value / n) * n;
+}
