@@ -67,6 +67,12 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
         label: 'Probability',
         href: '/probability',
       },
+      {
+        label: 'Admin',
+        href: '/admin',
+        // TODO - auth role
+        // TODO - import from module?
+      },
     ],
   },
   {

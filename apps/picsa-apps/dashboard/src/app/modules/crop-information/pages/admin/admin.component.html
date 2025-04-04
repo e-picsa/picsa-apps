@@ -1,0 +1,46 @@
+<div class="page-content">
+  <h2>Crop Admin</h2>
+  <div class="flex items-center">
+    <p class="flex-1">Upload crop water requirement definitions from CSV</p>
+    <button class="ml-2" mat-stroked-button (click)="downloadTemplate()"><mat-icon>download</mat-icon>Template</button>
+  </div>
+
+  <!-- TODO - include template to download -->
+
+  <dashboard-data-import (dataLoaded)="handleDataLoad($event)"></dashboard-data-import>
+
+  <mat-accordion class="mt-4" multi>
+    <!-- Processed -->
+    @if(rows().length>0){
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="mr-2">check_circle</mat-icon>
+          Rows ({{ rows().length }})</mat-panel-title
+        >
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+    }
+
+    <!-- Duplicates -->
+    @if(duplicates().length>0){
+    <mat-expansion-panel disabled>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Duplicates ({{ duplicates().length }})</mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+    }
+    <!-- Errors -->
+    @if(errors().length>0){
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="mr-2">warning</mat-icon>
+          Errors ({{ errors().length }})</mat-panel-title
+        >
+      </mat-expansion-panel-header>
+      <picsa-data-table [data]="errors()" [options]="errorTableOptions"></picsa-data-table>
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
+</div>

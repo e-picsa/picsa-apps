@@ -145,42 +145,31 @@ export type Database = {
         Row: {
           country_code: string;
           created_at: string;
-          crop_id: string;
           id: string;
           location_id: string;
           override_data: Json;
           updated_at: string;
-          water_requirement: number | null;
+          water_requirements: Json;
         };
         Insert: {
           country_code: string;
           created_at?: string;
-          crop_id: string;
           id?: string;
           location_id: string;
           override_data?: Json;
           updated_at?: string;
-          water_requirement?: number | null;
+          water_requirements?: Json;
         };
         Update: {
           country_code?: string;
           created_at?: string;
-          crop_id?: string;
           id?: string;
           location_id?: string;
           override_data?: Json;
           updated_at?: string;
-          water_requirement?: number | null;
+          water_requirements?: Json;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'public_crop_data_downscaled_crop_id_fkey';
-            columns: ['crop_id'];
-            isOneToOne: false;
-            referencedRelation: 'crop_data';
-            referencedColumns: ['id'];
-          }
-        ];
+        Relationships: [];
       };
       deployments: {
         Row: {
