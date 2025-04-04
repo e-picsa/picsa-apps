@@ -81,6 +81,7 @@ export class DashboardCropAdminComponent {
     effect(async () => {
       const parsedRows = this.parsedRows();
       if (parsedRows.length > 0) {
+        // TODO - consider showing processing message while waiting
         await this.prepareImport(parsedRows);
       }
     });
@@ -106,7 +107,6 @@ export class DashboardCropAdminComponent {
   }
 
   public async processImport(rows: ICropDataDownscaled['Insert'][]) {
-    console.log('importing rows', rows);
     const { error } = await this.service.cropDataDownscaledTable.upsert(rows);
     if (error) {
       this.notificationService.showErrorNotification(`${error.message}`);
@@ -116,8 +116,7 @@ export class DashboardCropAdminComponent {
   }
 
   private async prepareImport(rows: ICropDataImport[]) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { country_code } = this.deploymentService.activeDeployment()!;
+    const { country_code } = this.deploymentService.activeDeployment();
 
     const { data, error } = await this.service.cropDataDownscaledTable
       .select<'*', ICropDataDownscaled['Row']>('*')
@@ -144,8 +143,7 @@ export class DashboardCropAdminComponent {
   }
 
   private getLocationList() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { country_code } = this.deploymentService.activeDeployment()!;
+    const { country_code } = this.deploymentService.activeDeployment();
     const { admin_4, admin_5 } = GEO_LOCATION_DATA[country_code] as IGelocationData;
     return admin_5 ? admin_5.locations : admin_4.locations;
   }
