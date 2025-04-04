@@ -19,6 +19,11 @@ import { loadCSV } from '@picsa/utils';
       class="flex-1 h-48 p-1 resize-none"
       placeholder="Paste csv data..."
       (paste)="handlePaste($event)"
+      spellcheck="false"
+      autocorrect="off"
+      autocomplete="off"
+      aria-label="Paste data here"
+      title="Paste data here"
     ></textarea>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
