@@ -2,6 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
+import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
 
@@ -33,7 +34,11 @@ export class CropInformationService extends PicsaAsyncService {
     return this.mergeData(data, downscaledData);
   });
 
-  constructor(private supabaseService: SupabaseService, private dashboardService: DeploymentDashboardService) {
+  constructor(
+    private supabaseService: SupabaseService,
+    private dashboardService: DeploymentDashboardService,
+    private notificationService: PicsaNotificationService
+  ) {
     super();
   }
 
@@ -42,8 +47,64 @@ export class CropInformationService extends PicsaAsyncService {
     await this.loadCropData();
   }
 
+  /******************************************************************************************
+   * DB Methods
+   * Ensure db operations notify user feedback and refresh data
+   ****************************************************************************************/
+
+  public async delete(id: string) {
+    const { error } = await this.cropDataTable.delete().eq('id', id);
+    if (error) {
+      throw error;
+    }
+    this.notificationService.showSuccessNotification(`Delete success`);
+    this.loadCropData();
+  }
+
+  public async insert(rows: ICropData['Insert'][]) {
+    const { error } = await this.cropDataTable.insert(rows);
+    if (error) {
+      throw error;
+    }
+    this.notificationService.showSuccessNotification(`Update success`);
+    this.loadCropData();
+  }
+
+  public async upsert(rows: ICropData['Insert'][]) {
+    const { error } = await this.cropDataTable.upsert(rows);
+    if (error) {
+      throw error;
+    }
+    this.notificationService.showSuccessNotification(`Import success`);
+    this.loadCropData();
+  }
+
+  public async upsertDownscaled(rows: ICropDataDownscaled['Insert'][]) {
+    const { error } = await this.cropDataDownscaledTable.upsert(rows);
+    if (error) {
+      this.notificationService.showErrorNotification(`${error.message}`);
+      return;
+    }
+    this.loadCropData();
+    this.notificationService.showSuccessNotification(`Import successful`);
+  }
+
+  public async update(data: ICropData['Update']) {
+    const { id, ...update } = data;
+    const { error } = await this.cropDataTable.update(update).eq('id', id);
+    if (error) {
+      throw error;
+    }
+    this.notificationService.showSuccessNotification(`Update success`);
+    this.loadCropData();
+  }
+
+  /******************************************************************************************
+   * Core Methods
+   ****************************************************************************************/
+
   /** Load data from crop_data and crop_data_downscaled tables */
-  public async loadCropData() {
+  private async loadCropData() {
     const { country_code } = this.dashboardService.activeDeployment();
     const promises = [
       this.cropDataTable.select<'*', ICropData['Row']>('*').order('id'),
@@ -86,21 +147,5 @@ export class CropInformationService extends PicsaAsyncService {
       }
     }
     return Object.values(mergedData);
-  }
-
-  public async insert(cropInfo: ICropData['Insert']) {
-    const { data, error } = await this.cropDataTable.insert(cropInfo);
-    if (error) {
-      throw error;
-    }
-    return data;
-  }
-  public async update(cropInfo: ICropData['Insert']) {
-    const { id, ...update } = cropInfo;
-    const { data, error } = await this.cropDataTable.update(update).eq('id', id);
-    if (error) {
-      throw error;
-    }
-    return data;
   }
 }

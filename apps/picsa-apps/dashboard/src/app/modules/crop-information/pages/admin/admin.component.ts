@@ -106,12 +106,7 @@ export class DashboardCropAdminComponent {
   }
 
   public async processImport(rows: ICropDataDownscaled['Insert'][]) {
-    const { error } = await this.service.cropDataDownscaledTable.upsert(rows);
-    if (error) {
-      this.notificationService.showErrorNotification(`${error.message}`);
-      return;
-    }
-    this.notificationService.showSuccessNotification(`Import successful`);
+    return this.service.upsertDownscaled(rows);
   }
 
   private async prepareImport(rows: ICropDataImport[]) {
