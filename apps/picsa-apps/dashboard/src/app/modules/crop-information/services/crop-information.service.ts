@@ -15,15 +15,17 @@ export type ICropDataDownscaled = Database['public']['Tables']['crop_data_downsc
 // Specify more accurate type for downscaled water requirement (db type is just JSON)
 export type ICropDataDownscaledWaterRequirements = { [crop: string]: { [variety: string]: number } };
 
-export type ICropDataMerged = ICropData['Row'] & { downscaled: { location_id: string; water_requirement: number }[] };
+export type ICropDataMergedWaterRequirement = { location_id: string; water_requirement: number };
+
+export type ICropDataMerged = ICropData['Row'] & { downscaled: ICropDataMergedWaterRequirement[] };
 
 @Injectable({ providedIn: 'root' })
 export class CropInformationService extends PicsaAsyncService {
   public get cropDataTable() {
-    return this.supabaseService.db.table('crop_data');
+    return this.supabaseService.db.table<'crop_data', ICropData>('crop_data');
   }
   public get cropDataDownscaledTable() {
-    return this.supabaseService.db.table('crop_data_downscaled');
+    return this.supabaseService.db.table<'crop_data_downscaled', ICropDataDownscaled>('crop_data_downscaled');
   }
 
   public cropData = signal<ICropData['Row'][]>([]);
@@ -91,6 +93,8 @@ export class CropInformationService extends PicsaAsyncService {
 
   public async update(data: ICropData['Update']) {
     const { id, ...update } = data;
+    // ensure id included to avoid updating all rows
+    if (!id) return;
     const { error } = await this.cropDataTable.update(update).eq('id', id);
     if (error) {
       throw error;
