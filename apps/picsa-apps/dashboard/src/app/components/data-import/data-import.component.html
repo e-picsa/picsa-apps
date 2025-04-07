@@ -1,0 +1,8 @@
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  <mat-tab label="Upload File">
+    <data-import-file-drop (dataLoaded)="dataLoaded.emit($event)"></data-import-file-drop>
+  </mat-tab>
+  <mat-tab label="Paste Text">
+    <data-import-clipboard-paste (dataLoaded)="dataLoaded.emit($event)"></data-import-clipboard-paste>
+  </mat-tab>
+</mat-tab-group>

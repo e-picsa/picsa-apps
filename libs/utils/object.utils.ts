@@ -12,7 +12,7 @@ export function isEmptyObjectDeep(v: any) {
 }
 
 /** Minimal deep equality checker, loosely based on lodash _isEqual but for simple primitives only */
-export function isEqual(a: any, b: any) {
+export function isEqual<T extends Record<string, any>>(a = {} as T, b = {} as T) {
   // handle simple string, boolean, number, undefined, null or same object reference
   if (a === b) return true;
   // handle different object types
@@ -50,4 +50,24 @@ export const sortJsonKeys = <T extends Record<string, any>>(json: T): T => {
       obj[key] = sortJsonKeys(json[key]);
       return obj;
     }, {}) as T;
+};
+
+export const objectDiff = <T extends Record<string, any>>(before = {} as T, after = {} as T) => {
+  const diff: Record<string, { before: any; after: any }> = {};
+
+  // record diff comparing all after entries with before
+  for (const key of Object.keys(after)) {
+    if (!isEqual(before[key], after[key])) {
+      diff[key] = { before: before[key], after: after[key] };
+    }
+  }
+
+  // include case where keys removed from before
+  for (const key of Object.keys(before)) {
+    if (!(key in after)) {
+      diff[key] = { before: before[key], after: after[key] };
+    }
+  }
+
+  return diff;
 };
