@@ -42,6 +42,9 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Optional image shown as preview */
   @Input() thumbnail?: string;
 
+  /** Optional online video url - used to generate thumbnail */
+  @Input() onlineVideoUrl?: string;
+
   /** Specify whether should open overlay to play video (default inline) */
   @Input() playInModal = false;
 

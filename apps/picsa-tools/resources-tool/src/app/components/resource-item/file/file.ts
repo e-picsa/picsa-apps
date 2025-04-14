@@ -24,14 +24,17 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   public dbDoc: RxDocument<IResourceFile>;
   public attachment: RxAttachment<IResourceFile> | undefined;
   public fileURI: string;
-
+  public onlineVideoUrl: string;
   constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
 
   async ngOnInit() {
     await this.service.ready();
+
     const dbDoc = await this.service.dbFiles.findOne(this.resource.id).exec();
     if (dbDoc) {
       this.dbDoc = dbDoc;
+      //use online video thumbnail url
+      this.onlineVideoUrl = dbDoc._data.url;
     }
   }
 

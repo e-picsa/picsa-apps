@@ -1,0 +1,37 @@
+@use '@angular/material' as mat;
+
+$playerWidth: 854px;
+
+.placeholder,
+.thumbnail {
+  width: 100%;
+  max-width: $playerWidth;
+  aspect-ratio: 16/9;
+}
+.placeholder {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+.thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: saturate(0.75);
+}
+
+.thumbnail-status {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 3px;
+  z-index: 5;
+}

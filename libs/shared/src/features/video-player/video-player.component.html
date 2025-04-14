@@ -1,6 +1,12 @@
 <div class="placeholderContainer">
   <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
-    <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div>
+    <!-- call the component for thumbnails -->
+     <picsa-video-thumbnail
+      [thumbnail]="thumbnail"
+      [videoUrl]="onlineVideoUrl"
+     >
+     </picsa-video-thumbnail>
+    <!-- <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div> -->
     <button
       *ngIf="showPlayButton"
       mat-fab
