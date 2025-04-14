@@ -20,7 +20,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   public dbDoc: RxDocument<IResourceFile>;
   public attachment: RxAttachment<IResourceFile> | undefined;
   public fileURI: string;
-  public onlineThumbnailUrl: string;
+  public onlineVideoUrl: string;
   constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
 
   async ngOnInit() {
@@ -30,7 +30,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
     if (dbDoc) {
       this.dbDoc = dbDoc;
       //use online video thumbnail url
-      this.onlineThumbnailUrl = dbDoc._data.url;
+      this.onlineVideoUrl = dbDoc._data.url;
     }
   }
 
