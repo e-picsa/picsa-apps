@@ -26,13 +26,9 @@
     </div>
   </div>
 
-  <!-- Add thumbnail status text here, it is only undefined when loading, on failure it would be an empty string  -->
-  @if (thumbnail === undefined && resource.subtype === 'video' && !attachment) {
-  <div  class="thumbnail-status">loading...</div>
-  }
-
+  <!-- send online video Url -->
   @switch (resource.subtype) { @case ('video') {
-  <resource-item-video [resource]="resource" [generatedThumbnail]="thumbnail" [fileURI]="fileURI"></resource-item-video>
+  <resource-item-video [resource]="resource" [onlineVideoUrl]="onlineThumbnailUrl" [fileURI]="fileURI"></resource-item-video>
 
   } @default {
   <resource-item-link [resource]="resourceLink" (click)="handleFileLinkClick($event)" style="height: 100%">
