@@ -1,8 +1,6 @@
 DROP TABLE IF EXISTS public.crop_data cascade;
 
 CREATE TABLE public.crop_data(
-  id text GENERATED ALWAYS AS (crop || '/' || variety) STORED,
-
   -- core data 
   crop text not null,
   variety text not null,
@@ -20,8 +18,10 @@ CREATE TABLE public.crop_data(
   created_at timestamp with time zone not null default now(),
   updated_at timestamp with time zone not null default now(),
 
-  constraint crop_data_id_key primary key (id);
-)tablespace pg_default;
+  id text GENERATED ALWAYS AS (crop || '/' || variety) STORED,
+
+  constraint crop_data_id_key primary key (id)
+) tablespace pg_default;
 
 
 DROP TABLE if exists public.crop_data_downscaled cascade;
