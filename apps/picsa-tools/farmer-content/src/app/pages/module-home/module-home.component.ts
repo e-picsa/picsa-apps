@@ -87,9 +87,27 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.componentService.patchHeader({ hideHeader: true, hideBackButton: true, style: 'inverted' });
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        const tabIndex = this.findTabIndexByType(fragment);
+        if (tabIndex !== -1) {
+          this.selectedIndex.set(tabIndex);
+        }
+      }
+    });
   }
   ngOnDestroy() {
     this.componentService.patchHeader({ hideHeader: false, hideBackButton: false, style: 'primary' });
+  }
+
+  private findTabIndexByType(type: string): number {
+    const tabs = this.tabs();
+    for (let i = 0; i < tabs.length; i++) {
+      if (tabs[i].some((block) => block.type === type)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /** Handle tool routing and header changes when stepper content changed */

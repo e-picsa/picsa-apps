@@ -1,42 +1,108 @@
 .module-landing {
-  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
 
-  h1 {
-    margin-bottom: 24px;
+  .header-section {
+    margin-bottom: 40px;
+    text-align: center;
+
+    h1 {
+      margin-bottom: 16px;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #3c6296;
+    }
+
+    .description {
+      color: rgba(0, 0, 0, 0.7);
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.12);
+      margin: 0 auto;
+      width: 80%;
+    }
   }
 
-  .step-cards {
+  .section-cards {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    flex-wrap: nowrap;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
 
-    .step-card {
+    .section-card {
+      flex: 0 0 auto;
+      width: 300px;
+      background-color: white;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      display: flex;
+      align-items: center;
       cursor: pointer;
-      transition: transform 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-      &:hover {
-        transform: translateY(-2px);
-      }
-
-      .step-types {
+      .card-icon {
+        margin-right: 16px;
+        flex-shrink: 0;
         display: flex;
-        gap: 8px;
-        margin-top: 8px;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
 
-        .step-type {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 0.8rem;
-          color: rgba(0, 0, 0, 0.6);
-
-          mat-icon {
-            font-size: 1rem;
-            width: 1rem;
-            height: 1rem;
-          }
+        mat-icon {
+          font-size: 40px;
+          height: 40px;
+          width: 40px;
+          color: #3c6296;
+          display: block;
         }
       }
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        h3 {
+          font-size: 1.3rem;
+          margin-bottom: 16px;
+          color: #3c6296;
+          font-weight: 500;
+        }
+
+        p {
+          font-size: 1rem;
+          color: rgba(0, 0, 0, 0.7);
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .section-cards {
+    flex-wrap: wrap;
+
+    .section-card {
+      width: calc(50% - 12px);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .section-cards {
+    flex-direction: column;
+
+    .section-card {
+      width: 100%;
     }
   }
 }
