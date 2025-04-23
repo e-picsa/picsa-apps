@@ -16,6 +16,7 @@ import { ICropData } from '../../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardCropVarietyFormComponent {
+  public editable = input(false);
   public initialValue = input<ICropData['Insert'] | undefined>(undefined);
 
   public form = this.formBuilder.nonNullable.group({
@@ -35,10 +36,7 @@ export class DashboardCropVarietyFormComponent {
   constructor(private formBuilder: FormBuilder) {
     effect(() => {
       const value = this.initialValue();
-      // avoid crop type or variety change after entry created as wil change id
       if (value) {
-        this.form.controls.crop.disable();
-        this.form.controls.variety.disable();
         this.form.patchValue(value);
       }
     });
@@ -49,6 +47,19 @@ export class DashboardCropVarietyFormComponent {
       const cleanedValue = variety?.toUpperCase().replace(/[^0-9a-z-]/gi, '-');
       if (variety !== cleanedValue) {
         this.form.patchValue({ variety: cleanedValue }, { emitEvent: true });
+      }
+    });
+
+    effect(() => {
+      if (this.editable()) {
+        this.form.enable();
+        // avoid crop type or variety change after entry created as wil change id
+        if (this.initialValue()) {
+          this.form.controls.crop.disable();
+          this.form.controls.variety.disable();
+        }
+      } else {
+        this.form.disable();
       }
     });
   }

@@ -6,13 +6,23 @@
         <mat-icon class="mr-1">spa</mat-icon>
         Crop Details
       </ng-template>
-      <dashboard-crop-variety-form class="mt-4" [initialValue]="cropData()" #variety></dashboard-crop-variety-form>
+      <dashboard-crop-variety-form
+        class="mt-4"
+        [initialValue]="cropData()"
+        [editable]="editMode()"
+        #variety
+      ></dashboard-crop-variety-form>
       @let formDisabled = variety.form.pristine || !variety.form.valid ;
       <div class="flex mb-8">
+        @if(editMode()){ @if(!isNewEntry()){
+        <button mat-raised-button color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
+        }
         <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
           Submit
         </button>
-        @if(variety.value.id){
+        } @else {
+        <button mat-raised-button color="primary" (click)="editMode.set(true)">Edit</button>
+        } @if(variety.value.id){
         <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
           <mat-icon>delete</mat-icon>
           Delete

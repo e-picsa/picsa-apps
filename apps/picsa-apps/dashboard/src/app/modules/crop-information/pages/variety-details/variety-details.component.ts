@@ -24,6 +24,8 @@ type RouteParams = { id: string };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyDetailsComponent {
+  public isNewEntry = signal(false);
+  public editMode = signal(false);
   public cropData = signal<ICropDataMerged | undefined>(undefined);
 
   private cropId = toSignal(this.route.params.pipe(map((v) => (v as RouteParams).id)));
@@ -39,6 +41,8 @@ export class CropVarietyDetailsComponent {
       if (!service.readySignal()) return;
       const cropId = this.cropId();
       if (cropId === 'add') {
+        this.isNewEntry.set(true);
+        this.editMode.set(true);
         return;
       }
       const mergedData = this.service.cropDataMerged();
