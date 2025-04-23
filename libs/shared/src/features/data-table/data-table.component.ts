@@ -137,11 +137,14 @@ export class PicsaDataTableComponent<T = Record<string, any>> implements OnChang
 
   public dataSource: MatTableDataSource<any>;
 
+  private searchText = '';
+
   constructor(private cdr: ChangeDetectorRef) {}
 
   // Load data when inputs updated (prefer changes over input setters to avoid duplicate load)
   ngOnChanges(): void {
     this.loadData(this.data, this.options);
+    this.applyFilter(this.searchText);
   }
 
   public handleRowClick(row: T, e: Event) {
@@ -152,6 +155,7 @@ export class PicsaDataTableComponent<T = Record<string, any>> implements OnChang
   }
 
   public applyFilter(value: string) {
+    this.searchText = value;
     this.dataSource.filter = value.trim().toLowerCase();
   }
 
