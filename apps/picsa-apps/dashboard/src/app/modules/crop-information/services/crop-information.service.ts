@@ -122,7 +122,6 @@ export class CropInformationService extends PicsaAsyncService {
       if (data && downscaledData) {
         this.cropData.set(data as ICropData['Row'][]);
         this.downscaledData.set(downscaledData as ICropDataDownscaled['Row'][]);
-        console.log('crop data loaded');
         return;
       }
     }
@@ -138,6 +137,7 @@ export class CropInformationService extends PicsaAsyncService {
     const mergedHashmap = arrayToHashmap(mergedData, 'id');
 
     // Extract individual crop probabilities from downscaled data and merge into crop data
+    const missing = {};
     for (const { location_id, water_requirements } of downscaled) {
       for (const [crop, varietyData] of Object.entries(water_requirements as ICropDataDownscaledWaterRequirements)) {
         for (const [variety, water_requirement] of Object.entries(varietyData)) {
@@ -145,11 +145,17 @@ export class CropInformationService extends PicsaAsyncService {
           if (hash in mergedHashmap) {
             mergedHashmap[hash].downscaled.push({ location_id, water_requirement });
           } else {
-            console.warn(`no variety data for water requirement`, crop, variety);
+            // No variety data for water requirement
+            missing[hash] = true;
           }
         }
       }
     }
+    if (Object.keys(missing).length > 0) {
+      // Missing variety data likely due to import errors (e.g. duplicate values not reconciled)
+      // console.warn(`Variety does not exist for water requirements:`, Object.keys(missing).sort());
+    }
+
     return Object.values(mergedData);
   }
 }
