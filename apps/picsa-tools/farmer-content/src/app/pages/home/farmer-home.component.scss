@@ -1,5 +1,6 @@
 :host {
   display: contents;
+  position: relative;
 }
 .step-grid {
   @apply grid max-w-screen-lg;
@@ -86,35 +87,4 @@ button.mat-mdc-icon-button.nav-button {
 }
 .tag[data-color='secondary'] {
   --tag-background: var(--color-secondary);
-}
-
-.icon-color-toggle {
-  margin-bottom: 1rem;
-  button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-  }
-}
-
-.skin-tone-selector {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-top: 0.5rem;
-}
-
-.color-circle {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border 0.3s ease;
-}
-
-.color-circle.selected {
-  border: 2px solid #1976d2;
-  box-shadow: 0 0 4px rgba(25, 118, 210, 0.6);
 }
