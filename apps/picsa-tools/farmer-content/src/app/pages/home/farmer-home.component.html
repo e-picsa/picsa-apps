@@ -1,29 +1,13 @@
 <div class="page-content" style="padding-top: 0" scrollRestore @fadeInOut>
-  <div class="icon-color-toggle">
-    <button mat-button (click)="showSkinSelector = !showSkinSelector">
-      Icon Color
-      <mat-icon>{{ showSkinSelector ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </button>
-  
-    <div *ngIf="showSkinSelector" class="skin-tone-selector">
-      <div
-        class="color-circle"
-        *ngFor="let option of skinToneOptions"
-        [ngStyle]="{ 'background-color': option.color }"
-        [class.selected]="selectedSkinColor === option.color"
-        (click)="onSelectSkinTone(option.color)"
-        [title]="option.label"
-      ></div>
-    </div>
-  </div>
-  
+
+  <picsa-svg-colour-selector></picsa-svg-colour-selector>
   
   <div class="step-grid">
     @for(step of content; track step.id){
     <div class="step-container" matRipple [routerLink]="step.slug" [attr.data-disabled]="step.disabled">
       <div style="position: relative">
-        <div class="step-image-container" #stepImageContainer >
-          <div [id]="'icon-' + step.id" ></div>
+        <div [id]="'icon-' + step.id" class="step-image-container" >
+          <picsa-dynamic-colour-svgs [svgUrl]="step.icon_path" />
         </div>
         @if($index>0){
         <div class="step-number">{{ $index }}</div>
