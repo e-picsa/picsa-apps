@@ -11,6 +11,11 @@ import { RouterModule } from '@angular/router';
         path: '',
         loadComponent: () => import('./pages/user-profile/user-profile.component').then((m) => m.UserProfileComponent),
       },
+      {
+        path: 'password-reset',
+        loadComponent: () =>
+          import('./pages/password-reset/password-reset.component').then((m) => m.PasswordResetComponent),
+      },
     ]),
   ],
 })

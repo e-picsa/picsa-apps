@@ -1,7 +1,7 @@
 <!-- ready status template -->
-<div class="status-container" [attr.data-status]="status">
+<div class="status-container" [attr.data-status]="status()">
   @if(options().showStatusCode){
-  <span class="status-code" [attr.data-status]="status">{{code() || ''}}</span>
+  <span class="status-code" [attr.data-status]="status()">{{code() || ''}}</span>
   } @if(options().labels?.ready; as readyLabel){
   <div class="status-label">{{readyLabel}}</div>
   } @if(options().events?.refresh; as refreshEvent){

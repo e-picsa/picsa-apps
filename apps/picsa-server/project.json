@@ -46,7 +46,7 @@
       "dependsOn": [],
       "outputs": [],
       "options": {
-        "commands": ["npx supabase gen types typescript --local > supabase/types/index.ts"],
+        "commands": ["npx supabase gen types typescript --local > supabase/types/db.types.ts"],
         "cwd": "apps/picsa-server"
       }
     },

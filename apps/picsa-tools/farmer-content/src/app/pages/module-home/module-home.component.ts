@@ -68,27 +68,21 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     private tourService: TourService
   ) {
     // load content on slug change and fix tour implementation
-    effect(
-      (onCleanup) => {
-        const { slug } = this.params() || {};
-        this.loadContentBySlug(slug);
-        // update the tour service to allow triggering tour from inside mat-tab component
-        this.tourService.useInMatTab = true;
-        onCleanup(() => {
-          this.tourService.useInMatTab = false;
-        });
-      },
-      { allowSignalWrites: true }
-    );
+    effect((onCleanup) => {
+      const { slug } = this.params() || {};
+      this.loadContentBySlug(slug);
+      // update the tour service to allow triggering tour from inside mat-tab component
+      this.tourService.useInMatTab = true;
+      onCleanup(() => {
+        this.tourService.useInMatTab = false;
+      });
+    });
     // If tool tab selected handle side-effects (routing and header)
-    effect(
-      () => {
-        const selectedTabIndex = this.selectedIndex();
-        const contentBlocks = this.tabs()[selectedTabIndex];
-        this.handleContentChangeEffects(contentBlocks);
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      const selectedTabIndex = this.selectedIndex();
+      const contentBlocks = this.tabs()[selectedTabIndex];
+      this.handleContentChangeEffects(contentBlocks);
+    });
   }
 
   ngOnInit() {

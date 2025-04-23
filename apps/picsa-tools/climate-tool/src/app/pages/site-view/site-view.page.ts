@@ -65,29 +65,26 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     private viewContainer: ViewContainerRef,
     private cdr: ChangeDetectorRef
   ) {
-    effect(
-      async () => {
-        const viewId = this.viewId();
-        const siteId = this.siteId();
-        if (siteId && viewId) {
-          // same site, just view changed
-          if (siteId === this._siteId) {
-            await this.loadView(viewId);
-          }
-          // site changed
-          else {
-            this._siteId = siteId;
-            await this.chartService.setStation(siteId);
-            await this.loadView(viewId);
-            await _wait(50);
-            this.checkOrientation();
-          }
+    effect(async () => {
+      const viewId = this.viewId() || 'rainfall';
+      const siteId = this.siteId();
+      if (siteId && viewId) {
+        // same site, just view changed
+        if (siteId === this._siteId) {
+          await this.loadView(viewId);
         }
+        // site changed
+        else {
+          this._siteId = siteId;
+          await this.chartService.setStation(siteId);
+          await this.loadView(viewId);
+          await _wait(50);
+          this.checkOrientation();
+        }
+      }
 
-        this.cdr.markForCheck();
-      },
-      { allowSignalWrites: true }
-    );
+      this.cdr.markForCheck();
+    });
   }
 
   ngAfterViewInit() {
@@ -124,5 +121,14 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private checkOrientation() {
     const shouldRotate = window.innerHeight > window.innerWidth;
     this.showRotateAnimation.set(shouldRotate);
+  }
+
+  goToSiteSelect() {
+    // Clear the preferred station to prevent automatic redirect
+    this.dataService.setPreferredStation('');
+    this.router.navigate(['../'], {
+      replaceUrl: true,
+      relativeTo: this.route,
+    });
   }
 }

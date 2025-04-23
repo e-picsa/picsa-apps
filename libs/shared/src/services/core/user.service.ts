@@ -19,7 +19,8 @@ const USER_DEFAULT: IPicsaUser = {
   name: '',
 };
 
-const STORAGE_NAME = 'picsa_users';
+const ALL_USERS_STORAGE_NAME = 'picsa_users';
+export const ACTIVE_USER_STORAGE_NAME = 'picsa_active_user_id';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaUserService {
@@ -41,7 +42,7 @@ export class PicsaUserService {
     if (_id in this.allUsersHashmap) {
       delete this.allUsersHashmap[_id];
       this.saveStorageUsers();
-      this.setActiveUser('');
+      this.setActiveUser(USER_ID_DEFAULT);
     }
   }
 
@@ -57,17 +58,20 @@ export class PicsaUserService {
   }
 
   private loadStorageUsers() {
-    const storageUsers = localStorage.getItem(STORAGE_NAME);
+    const storageUsers = localStorage.getItem(ALL_USERS_STORAGE_NAME);
     if (storageUsers) {
       // TODO - ensure storage users map onto default in case of future breaking changes
       const { activeUserId, users } = JSON.parse(storageUsers);
       this.allUsersHashmap = users;
       this.setActiveUser(activeUserId);
+    } else {
+      this.setActiveUser(USER_ID_DEFAULT);
     }
   }
 
   private saveStorageUsers() {
     const activeUserId = this.activeUser$.value._id;
-    localStorage.setItem(STORAGE_NAME, JSON.stringify({ activeUserId, users: this.allUsersHashmap }));
+    localStorage.setItem(ALL_USERS_STORAGE_NAME, JSON.stringify({ activeUserId, users: this.allUsersHashmap }));
+    localStorage.setItem(ACTIVE_USER_STORAGE_NAME, activeUserId);
   }
 }

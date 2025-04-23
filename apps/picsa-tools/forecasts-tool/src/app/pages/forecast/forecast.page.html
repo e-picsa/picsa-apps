@@ -1,0 +1,80 @@
+<div class="page-content">
+  <div class="viewer-container slide-in" [class.active]="viewerOpen() ? true : false">
+    <forecast-viewer [forecast]="viewerForecast()" (closeClicked)="viewerOpen.set(false)" />
+  </div>
+
+  <!-- Location Select  -->
+  <picsa-form-location-select
+    [countryCode]="countryCode()"
+    [value]="locationSelected()"
+    (valueChanged)="handleLocationUpdate($event)"
+  ></picsa-form-location-select>
+
+  <!-- Daily Forecasts -->
+  <h2>{{'Daily' | translate}}</h2>
+  <div class="flex flex-wrap items-center gap-4">
+    @if(dailyForecasts().length===0){
+    <div class="mx-auto w-24 mt-4">
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
+    } @for(forecast of dailyForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+    }
+  </div>
+  <!-- <div class="h-0 w-full"></div> -->
+
+  <!-- Seasonal Forecasts -->
+  <h2>{{'Seasonal' | translate}}</h2>
+  <div class="mt-2 flex flex-wrap items-center gap-4">
+    <!-- Downscaled -->
+    @for(forecast of downscaledForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+    }
+    <!-- National -->
+    @for(forecast of seasonalForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+    }
+  </div>
+
+  <!-- Resources -->
+  <h2>{{'Resources' | translate}}</h2>
+  <div class="flex flex-wrap gap-4 mb-4">
+    @for(resource of resourceLinks(); track resource.id){
+    <resource-item-link [resource]="resource" class="max-w-80"> </resource-item-link>
+    }
+  </div>
+</div>
+
+<!-- Forecast item tempalte -->
+<ng-template #forecastItem let-value>
+  <!-- use function to make template type-safe -->
+  @if(toForecastType(value); as forecast){
+  <div
+    class="min-w-40 w-40 h-44 flex flex-col cursor-pointer border border-solid border-[var(--color-secondary-950)]"
+    (click)="handleForecastClick(forecast)"
+  >
+    <h3 class="forecast-heading">{{forecast.title | translate}}</h3>
+    <!-- image content -->
+    @if(forecast.image){
+    <div class="flex-1 p-2 overflow-hidden">
+      <img class="forecast-image" [src]="forecast.image" />
+    </div>
+    }
+    <!-- label content -->
+    @else {
+    <div class="flex-1 p-2 overflow-auto capitalize">{{forecast.label}}</div>
+    }
+    <div class="forecast-bottom-bar" [attr.data-forecast-type]="forecast.type">
+      <div class="language-label">{{forecast.languageLabel}}</div>
+      <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
+      </picsa-supabase-storage-download>
+
+      <mat-icon>{{forecast.downloaded || downloader.progress()===100 ? 'task_alt' : 'download'}}</mat-icon>
+
+      @if(downloader.progress()){
+      <mat-progress-bar [value]="downloader.progress()"> </mat-progress-bar>
+      }
+    </div>
+  </div>
+  }
+</ng-template>

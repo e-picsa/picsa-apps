@@ -1,7 +1,10 @@
-import { Component, computed, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, effect, NgZone, OnInit, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { IStationMeta } from '@picsa/models';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { geoJSON, Map } from 'leaflet';
+import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from 'libs/data/geoLocation';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 
@@ -11,10 +14,10 @@ import { ClimateDataService } from '../../services/climate-data.service';
   styleUrls: ['./site-select.page.scss'],
   standalone: false,
 })
-export class SiteSelectPage implements OnInit {
+export class SiteSelectPage {
   activeStation: any;
   // avoid static: true for map as created dynamic
-  @ViewChild('picsaMap') picsaMap: PicsaMapComponent;
+  picsaMap = viewChild<PicsaMapComponent>('picsaMap');
   // main options handled by featuredCountry
   mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
@@ -36,11 +39,22 @@ export class SiteSelectPage implements OnInit {
     private ngZone: NgZone,
     private router: Router,
     private route: ActivatedRoute,
-    private dataService: ClimateDataService
-  ) {}
-
-  ngOnInit() {
-    this.getUserLocationAndSelectClosestStation();
+    private dataService: ClimateDataService,
+    private configurationService: ConfigurationService
+  ) {
+    effect(async () => {
+      const map = this.picsaMap()?.map();
+      const { country_code } = this.configurationService.userSettings();
+      if (map && country_code) {
+        await this.loadCountryAdminBoundaries(map, country_code);
+      }
+    });
+    effect(() => {
+      const picsaMap = this.picsaMap();
+      if (picsaMap) {
+        this.getUserLocationAndSelectClosestStation(picsaMap);
+      }
+    });
   }
 
   onMarkerClick(marker: IMapMarker) {
@@ -52,26 +66,37 @@ export class SiteSelectPage implements OnInit {
   }
 
   goToSite(site: IStationMeta) {
-    // record current map bound positions for returning back
-    const mapBounds = this.picsaMap.map().getBounds();
-    localStorage.setItem('picsaSiteSelectBounds', JSON.stringify([mapBounds.getSouthWest(), mapBounds.getNorthEast()]));
+    this.dataService.setPreferredStation(site.id);
+
     // navigate
-    this.router.navigate(['./', 'site', site.id], {
+    this.router.navigate(['./', site.id], {
       relativeTo: this.route,
+      replaceUrl: true,
       queryParams: {
         view: 'rainfall',
       },
     });
   }
 
-  private getUserLocationAndSelectClosestStation() {
+  /** Load country boundaries from geojson */
+  private async loadCountryAdminBoundaries(map: Map, country_code: string) {
+    const metadata: IGelocationData = GEO_LOCATION_DATA[country_code];
+    if (!metadata) return;
+    const topojson = await metadata.admin_4.topoJson();
+    const feature = topoJsonToGeoJson(topojson);
+    geoJSON(feature as any)
+      .setStyle({ fill: false, color: 'brown', opacity: 0.5 })
+      .addTo(map);
+  }
+
+  private getUserLocationAndSelectClosestStation(picsaMap: PicsaMapComponent) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLat = position.coords.latitude;
           const userLng = position.coords.longitude;
-          this.selectClosestStation(userLat, userLng);
-          this.picsaMap.setLocationMarker(userLat, userLng);
+          this.selectClosestStation(picsaMap, userLat, userLng);
+          picsaMap.setLocationMarker(userLat, userLng);
         },
         (error) => {
           console.error('Error getting user location', error);
@@ -82,7 +107,7 @@ export class SiteSelectPage implements OnInit {
     }
   }
 
-  private selectClosestStation(userLat: number, userLng: number) {
+  private selectClosestStation(picsaMap: PicsaMapComponent, userLat: number, userLng: number) {
     let minDistance = Number.MAX_VALUE;
     const nearest = this.mapMarkers().reduce((previous, current) => {
       const stationLat = current.latlng[0];
@@ -98,7 +123,7 @@ export class SiteSelectPage implements OnInit {
     if (nearest) {
       this.ngZone.run(() => {
         this.activeStation = nearest.data;
-        this.picsaMap.setActiveMarker(nearest);
+        picsaMap.setActiveMarker(nearest);
       });
     }
   }

@@ -575,19 +575,7 @@
     "tool": "climate"
   },
   {
-    "text": "Annual Forecast",
-    "tool": "climate"
-  },
-  {
     "text": "Chart",
-    "tool": "climate"
-  },
-  {
-    "text": "Downscaled Forecast",
-    "tool": "climate"
-  },
-  {
-    "text": "Forecast",
     "tool": "climate"
   },
   {
@@ -718,7 +706,7 @@
     "tool": "common"
   },
   {
-    "text": "Downscaled Forecasts",
+    "text": "District",
     "tool": "common"
   },
   {
@@ -742,15 +730,15 @@
     "tool": "common"
   },
   {
-    "text": "Forecasts",
-    "tool": "common"
-  },
-  {
     "text": "I'm a farmer",
     "tool": "common"
   },
   {
     "text": "I'm an extension worker",
+    "tool": "common"
+  },
+  {
+    "text": "Loading",
     "tool": "common"
   },
   {
@@ -770,7 +758,19 @@
     "tool": "common"
   },
   {
+    "text": "PDF Viewer not supported on this device",
+    "tool": "common"
+  },
+  {
+    "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
     "text": "Probability and Risk",
+    "tool": "common"
+  },
+  {
+    "text": "Province",
     "tool": "common"
   },
   {
@@ -782,11 +782,11 @@
     "tool": "common"
   },
   {
-    "text": "Seasonal Calendar",
+    "text": "Restart App",
     "tool": "common"
   },
   {
-    "text": "Seasonal Forecast",
+    "text": "Seasonal Calendar",
     "tool": "common"
   },
   {
@@ -807,6 +807,10 @@
   },
   {
     "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Update",
     "tool": "common"
   },
   {
@@ -1243,10 +1247,6 @@
     "tool": "crop-probability"
   },
   {
-    "text": "District",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates",
     "tool": "crop-probability"
   },
@@ -1323,6 +1323,10 @@
     "tool": "extension"
   },
   {
+    "text": "Forecasts",
+    "tool": "extension"
+  },
+  {
     "text": "Privacy Policy",
     "tool": "extension"
   },
@@ -1353,6 +1357,18 @@
   {
     "text": "previous",
     "tool": "farmer-content"
+  },
+  {
+    "text": "Daily",
+    "tool": "forecasts"
+  },
+  {
+    "text": "National",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Seasonal",
+    "tool": "forecasts"
   },
   {
     "text": "Activity Flow Chart",

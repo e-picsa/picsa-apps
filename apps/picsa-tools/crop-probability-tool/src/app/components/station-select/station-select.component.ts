@@ -15,6 +15,8 @@ import { IStationRouteQueryParams } from '../../models';
 export class CropProbabilityStationSelectComponent {
   @Input() selectedStationId?: string;
 
+  // TODO - refactor to use geoLocation data (similar to forecasts page)
+  // and show fallback if no data available
   private stationsByCountry = computed(() => {
     const { country_code } = this.configurationService.userSettings();
     if (country_code) {
@@ -57,8 +59,7 @@ export class CropProbabilityStationSelectComponent {
         if (stationOptions.length > 0) {
           this.handleStationChange(stationOptions[0].id);
         }
-      },
-      { allowSignalWrites: true }
+      }
     );
   }
 

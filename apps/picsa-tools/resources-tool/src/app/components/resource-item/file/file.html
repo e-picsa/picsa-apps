@@ -13,8 +13,8 @@
     [attr.data-file-type]="dbDoc?.subtype || null"
   >
     <div class="mat-elevation-z8; border-radius: 8px;">
+      @if(dbDoc){
       <resource-download
-        *ngIf="dbDoc"
         [dbDoc]="dbDoc"
         class="download-button"
         styleVariant="white"
@@ -23,6 +23,7 @@
         [showSize]="true"
         (attachmentChange)="handleAttachmentChange($event)"
       ></resource-download>
+      }
     </div>
   </div>
 

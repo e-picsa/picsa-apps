@@ -1,14 +1,16 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { AfterViewInit, Component, Injector, OnInit, signal } from '@angular/core';
+import { Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ENVIRONMENT } from '@picsa/environments';
+import { Capacitor } from '@capacitor/core';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
-import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
+import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
+import { AppUpdateService } from '@picsa/shared/services/native/app-update';
+import { _wait } from '@picsa/utils';
 
 @Component({
   selector: 'picsa-root',
@@ -16,7 +18,7 @@ import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-n
   styleUrls: ['./app.component.scss'],
   standalone: false,
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit {
   title = 'extension-toolkit';
   public ready = signal(false);
   public showLoader = signal(false);
@@ -29,6 +31,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private resourcesService: ResourcesToolService,
     private monitoringService: MonitoringToolService,
     private migrationService: PicsaMigrationService,
+    private appUpdateService: AppUpdateService,
     private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector
   ) {}
@@ -36,22 +39,30 @@ export class AppComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     // wait for migrations to run
     await this.runMigrations();
-
     this.ready.set(true);
-  }
-  async ngAfterViewInit() {
-    this.performanceService.setEnabled({ enabled: ENVIRONMENT.production });
-    this.crashlyticsService.ready();
+
+    // ensure service initialisation only occurs after migrations complete
+    // and UI has chance to update
+    await _wait(50);
+
     // eagerly enable analytics collection
     this.analyticsService.init(this.router);
     // eagerly load resources service to populate hardcoded resources
     this.resourcesService.ready();
     // eagerly load monitoring service to sync form data
     this.monitoringService.ready();
-    // delay push notification as will prompt for permissions
-    setTimeout(() => {
-      this.pushNotificationService.initializePushNotifications();
-    }, 1000);
+    this.ready.set(true);
+
+    if (Capacitor.isNativePlatform()) {
+      this.performanceService.init();
+      this.crashlyticsService.ready();
+      // check for available updates
+      this.appUpdateService.checkForUpdates();
+      // delay push notification as will prompt for permissions
+      setTimeout(() => {
+        this.pushNotificationService.initializePushNotifications();
+      }, 1000);
+    }
   }
 
   private async runMigrations() {

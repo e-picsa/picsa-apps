@@ -15,17 +15,14 @@ export class HomePageComponent {
   showContent = signal(false);
 
   constructor(public configurationService: ConfigurationService, router: Router) {
-    effect(
-      () => {
-        // navigate to /extension or /farmer tool home if configured
-        const { deployment_id, user_type } = this.configurationService.userSettings();
-        if (deployment_id && user_type) {
-          router.navigate(['/', user_type], { replaceUrl: true });
-        } else {
-          this.showContent.set(true);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      // navigate to /extension or /farmer tool home if configured
+      const { deployment_id, user_type } = this.configurationService.userSettings();
+      if (deployment_id && user_type) {
+        router.navigate(['/', user_type], { replaceUrl: true });
+      } else {
+        this.showContent.set(true);
+      }
+    });
   }
 }

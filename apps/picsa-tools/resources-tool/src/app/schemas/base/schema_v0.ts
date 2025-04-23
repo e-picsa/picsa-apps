@@ -30,7 +30,7 @@ export interface IResourceBase_v0 {
 }
 
 export const SCHEMA_BASE_V0: RxJsonSchema<IResourceBase_v0> = {
-  title: 'resource_file',
+  title: 'resource_base',
   version: 0,
   keyCompression: false,
   type: 'object',
