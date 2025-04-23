@@ -103,8 +103,7 @@ export class ClimateForecastPageComponent {
   }
 
   private async loadDBData() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { country_code } = this.deploymentService.activeDeployment()!;
+    const { country_code } = this.deploymentService.activeDeployment();
     // Load data stored in supabase db if available. Otherwise load from api
     const { data, error } = await this.db
       .select<'*', IForecastRow>('*')

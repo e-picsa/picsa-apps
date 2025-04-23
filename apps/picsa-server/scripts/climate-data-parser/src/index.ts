@@ -1,8 +1,8 @@
 import { resolve } from 'path';
 import * as data from '../input/data.json';
 import { writeFileSync } from 'fs';
-import { jsonToCSV } from '../../utils';
 import { emptyDirSync, ensureDirSync } from 'fs-extra';
+import { jsonToCSV } from '../../../../../libs/utils';
 
 function main() {
   const stationMeta: any[] = [];
