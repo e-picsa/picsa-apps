@@ -1,0 +1,42 @@
+.module-landing {
+  padding: 16px;
+
+  h1 {
+    margin-bottom: 24px;
+  }
+
+  .step-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .step-card {
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      .step-types {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+
+        .step-type {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.8rem;
+          color: rgba(0, 0, 0, 0.6);
+
+          mat-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+    }
+  }
+}

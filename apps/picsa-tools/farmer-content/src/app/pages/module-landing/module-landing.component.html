@@ -1,0 +1,29 @@
+<div class="module-landing">
+    @if (content(); as content) {
+      <h1>{{ content.title | translate }}</h1>
+      
+      <div class="step-cards">
+        @for (group of stepGroups(); track group.index) {
+          <mat-card class="step-card" (click)="navigateToStep(group.index)">
+            <mat-card-header>
+              <mat-icon matCardAvatar>{{ group.icon }}</mat-icon>
+              <mat-card-title>{{ group.title | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (group.description) {
+                <p>{{ group.description | translate }}</p>
+              }
+              <div class="step-types">
+                @for (block of group.blocks; track $index) {
+                  <span class="step-type">
+                    <mat-icon>{{ getStepIcon(block) }}</mat-icon>
+                    <span>{{ block.type | translate }}</span>
+                  </span>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  </div>
