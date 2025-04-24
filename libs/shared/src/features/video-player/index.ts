@@ -8,9 +8,9 @@ import { VideoPlayerComponent } from './video-player.component';
 import { VideoThumbnailComponent } from './video-thumbnail/video-thumbnail.component';
 
 @NgModule({
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressBarModule],
-  exports: [VideoPlayerComponent],
-  declarations: [VideoPlayerComponent, VideoThumbnailComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressBarModule, VideoThumbnailComponent],
+  exports: [VideoPlayerComponent, VideoThumbnailComponent],
+  declarations: [VideoPlayerComponent],
   providers: [],
 })
 /**

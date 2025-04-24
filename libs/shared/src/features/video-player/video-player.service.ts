@@ -55,12 +55,16 @@ export class VideoPlayerService extends PicsaAsyncService {
 
   private thumbnailCache: Map<string, string> = new Map();
 
+  /**
+   * Load a video url and capture thumbnail from video at specific time
+   */
   public async generateVideoThumbnail(videoUrl: string, captureTime = 20): Promise<string> {
-    if (this.thumbnailCache.has(videoUrl)) {
-      return Promise.resolve(this.thumbnailCache.get(videoUrl)!);
+    const existingThumbnail = this.thumbnailCache.get(videoUrl);
+    if (existingThumbnail) {
+      return existingThumbnail;
     }
     try {
-      return await new Promise<string>((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
         const video = document.createElement('video');
         video.crossOrigin = 'anonymous';
         video.muted = true;

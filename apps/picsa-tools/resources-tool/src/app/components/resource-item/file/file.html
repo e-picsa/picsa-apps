@@ -29,7 +29,7 @@
 
   <!-- send online video Url -->
   @switch (resource.subtype) { @case ('video') {
-  <resource-item-video [resource]="resource" [onlineVideoUrl]="onlineVideoUrl" [fileURI]="fileURI"></resource-item-video>
+  <resource-item-video [resource]="resource" [fileURI]="fileURI"></resource-item-video>
 
   } @default {
   <resource-item-link [resource]="resourceLink" (click)="handleFileLinkClick($event)" style="height: 100%">

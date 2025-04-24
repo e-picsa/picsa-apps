@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, signal } from '@angular/core';
 
 import { VideoPlayerService } from '../video-player.service';
 
@@ -6,21 +6,21 @@ import { VideoPlayerService } from '../video-player.service';
   selector: 'picsa-video-thumbnail',
   templateUrl: './video-thumbnail.component.html',
   styleUrls: ['./video-thumbnail.component.scss'],
-  standalone: false,
 })
-export class VideoThumbnailComponent {
+export class VideoThumbnailComponent implements OnInit {
   @Input() videoUrl?: string;
 
   @Input() thumbnail?: string;
 
-  generatedThumbnail: string;
+  generatedThumbnail = signal<string | undefined>(undefined);
 
   constructor(private service: VideoPlayerService) {}
 
   async ngOnInit() {
     await this.service.ready();
     if (this.videoUrl && !this.thumbnail) {
-      this.generatedThumbnail = await this.service.generateVideoThumbnail(this.videoUrl);
+      const thumbnail = await this.service.generateVideoThumbnail(this.videoUrl);
+      this.generatedThumbnail.set(thumbnail);
     }
   }
 }

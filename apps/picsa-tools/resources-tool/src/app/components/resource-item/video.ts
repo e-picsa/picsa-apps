@@ -14,7 +14,7 @@ import { IResourceFile } from '../../schemas';
       [source]="fileURI"
       #videoPlayer
       [thumbnail]="resource.cover?.image"
-      [onlineVideoUrl]="onlineVideoUrl"
+      [onlineVideoUrl]="resource.url"
       [id]="resource.id"
     >
     </picsa-video-player>
@@ -30,6 +30,4 @@ export class ResourceItemVideoComponent {
   @Input() fileURI: string;
 
   @Input() resource: IResourceFile;
-
-  @Input() onlineVideoUrl: string;
 }
