@@ -8,8 +8,10 @@ import { lookup } from 'mime-types';
 import { resolve } from 'path';
 import { execSync } from 'child_process';
 
-const ROOT_DIR = resolve(__dirname, '../../../');
-const SUPABASE_DIR = resolve(__dirname, '../', 'supabase');
+import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
+
+const ROOT_DIR = resolve(__dirname, '../../../../');
+const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 const SEED_STORAGE_DIR = resolve(SUPABASE_DIR, 'data', 'storage');
 
@@ -160,7 +162,8 @@ class SupabaseSeed {
       const csvPath = resolve(SEED_DIR, csvFileName);
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
-      const parsedRows = parseCSVRows(csvRows);
+      const seedConfig = SEED_DATA_CONFIGURATION[tableName];
+      const parsedRows = parseCSVRows(csvRows, seedConfig);
       const { error, data, status, statusText } = await this.client.from(tableName).upsert(parsedRows).select('*');
       if (error) {
         console.error(`[${tableName}] import failed`, csvRows);
@@ -178,8 +181,12 @@ if (require.main === module) {
 }
 
 /** Iterate over parsed csv rows and convert parse any stringified json content */
-function parseCSVRows(rows: any[]) {
+function parseCSVRows(rows: any[], config: ISeedDataConfiguration = {}) {
+  const { omitColumns = [] } = config;
   return rows.map((row) => {
+    for (const column of omitColumns) {
+      delete row[column];
+    }
     for (const [key, value] of Object.entries<any>(row)) {
       if (typeof value === 'string' && ['{', '['].includes(value[0])) {
         row[key] = JSON.parse(value);
