@@ -1,47 +1,49 @@
 <div class="page-content">
-  <h2>Edit Details</h2>
-  <form class="form-content" [formGroup]="entryForm" (ngSubmit)="submitForm()">
-    <mat-form-field appearance="outline" floatLabel="always">
-      <mat-label>Crop</mat-label>
-      <picsa-form-crop-select formControlName="crop"></picsa-form-crop-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Variety</mat-label>
-      <input matInput formControlName="variety" />
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Label</mat-label>
-      <input matInput placeholder="E.g. local name" formControlName="label" />
-    </mat-form-field>
-
-    <!-- <div class="form-data">
-      <label for="water_upper">Water Upper:</label>
-      <input id="water_upper" type="number" formControlName="water_upper" />
-    </div>
-    <div class="form-data">
-      <label for="water_lower">Water Lower:</label>
-      <input id="water_lower" type="number" formControlName="water_lower" />
-    </div>
-    <div class="form-data">
-      <label for="length_upper">Length Upper:</label>
-      <input id="length_upper" type="number" formControlName="length_upper" />
-    </div>
-    <div class="form-data">
-      <label for="length_lower">Length Lower:</label>
-      <input id="lenght_lower" type="number" formControlName="length_lower" />
-    </div> -->
-    <button mat-raised-button color="primary" class="submitButton" type="submit" [disabled]="!entryForm.valid">
-      Submit
-    </button>
-  </form>
-  @if(entryForm.value.id){
-  <button mat-button style="margin-top: 3rem; margin-left: auto" (click)="dialog.open(deleteDialog)">
-    <mat-icon>delete</mat-icon>
-    Delete
-  </button>
-  }
+  <mat-tab-group>
+    <!-- Crop Details Requirements -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-1">spa</mat-icon>
+        Crop Details
+      </ng-template>
+      <dashboard-crop-variety-form
+        class="mt-4"
+        [initialValue]="cropData()"
+        [editable]="editMode()"
+        #variety
+      ></dashboard-crop-variety-form>
+      @let formDisabled = variety.form.pristine || !variety.form.valid ;
+      <div class="flex mb-8">
+        @if(editMode()){ @if(!isNewEntry()){
+        <button mat-raised-button color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
+        }
+        <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
+          Submit
+        </button>
+        } @else {
+        <button mat-raised-button color="primary" (click)="editMode.set(true)">Edit</button>
+        } @if(variety.value.id){
+        <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+        }
+      </div>
+    </mat-tab>
+    @if(cropData(); as cropData){
+    <!-- Water Requirements -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-1">water_drop</mat-icon>
+        Water Requirements
+      </ng-template>
+      <dashboard-crop-water-requirements class="mt-2" [data]="cropData"></dashboard-crop-water-requirements>
+    </mat-tab>
+    }
+  </mat-tab-group>
 </div>
 
+<!-- Delete dialog -->
 <ng-template #deleteDialog>
   <h2 mat-dialog-title style="margin-bottom: 2rem; font-size: 1.5rem">Delete Entry</h2>
   <mat-dialog-content>
@@ -50,6 +52,10 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button [mat-dialog-close]="true" (click)="handleDelete()" cdkFocusInitial>Delete</button>
+    @if(variety.value.id){
+    <button mat-button [mat-dialog-close]="true" (click)="handleDelete(variety.value.id)" cdkFocusInitial>
+      Delete
+    </button>
+    }
   </mat-dialog-actions>
 </ng-template>

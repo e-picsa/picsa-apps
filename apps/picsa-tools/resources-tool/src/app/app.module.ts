@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDbModule, PicsaNativeModule, PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
-import { MobxAngularModule } from 'mobx-angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -17,7 +16,6 @@ const StandaloneImports = [AppRoutingModule, BrowserModule, BrowserAnimationsMod
 export const APP_COMMON_IMPORTS = [
   FormsModule,
   PicsaTranslateModule,
-  MobxAngularModule,
   ResourcesMaterialModule,
   PicsaDbModule.forRoot(),
   PicsaNativeModule.forRoot(),

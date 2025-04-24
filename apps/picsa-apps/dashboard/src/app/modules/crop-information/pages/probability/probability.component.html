@@ -1,5 +1,31 @@
 <div class="page-content">
-  <h2>🚧 Under Construction</h2>
+  <h2>Crop Probabilities</h2>
+  <picsa-form-location-select
+    [countryCode]="countryCode()"
+    [value]="locationSelected()"
+    (valueChanged)="handleLocationUpdate($event)"
+  ></picsa-form-location-select>
+  <div class="flex gap-4">
+    <mat-form-field>
+      <mat-label>Crop</mat-label>
+      <mat-select (selectionChange)="cropTypeSelected.set($event.value)" [value]="cropTypeSelected()">
+        @for(cropType of allCropTypes; track cropType.id){
+        <mat-option [value]="cropType.id">{{ cropType.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-  <p>On this page admins will be able to interact crop probability tables for specific stations</p>
+  <!-- TODO - move to component -->
+  <button mat-button (click)="editingMode.set(!editingMode())">
+    <mat-icon>{{ editingMode() ? 'save' : 'edit' }}</mat-icon>
+    {{ editingMode() ? 'Save Changes' : 'Edit' }}
+  </button>
+
+  <!-- @if(editingMode()){ -->
+  <div class="mt-4">
+    <picsa-data-table [data]="editableData()"></picsa-data-table>
+    <button mat-button routerLink="/crop/variety/add"><mat-icon>add</mat-icon>New Variety</button>
+  </div>
+  <!-- } -->
 </div>

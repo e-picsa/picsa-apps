@@ -45,6 +45,7 @@ export class AppComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     // eagerly initialise supabase and deployment services to ensure available
+    // NOTE - do not include any services here that depend on an active deployment (could be undefined)
     await this.supabaseService.ready();
     await this.deploymentService.ready();
     this.initComplete.set(true);

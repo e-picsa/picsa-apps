@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { IResourceFile } from '../../schemas';
 
@@ -16,9 +18,11 @@ import { IResourceFile } from '../../schemas';
       [id]="resource.id"
     >
     </picsa-video-player>
-    <p *ngIf="resource.description">{{ resource.description | translate }}</p>
+    @if(resource.description){
+    <p>{{ resource.description | translate }}</p>
+    }
   `,
-  standalone: false,
+  imports: [PicsaVideoPlayerModule, PicsaTranslateModule],
 })
 export class ResourceItemVideoComponent {
   public videoSource: string;

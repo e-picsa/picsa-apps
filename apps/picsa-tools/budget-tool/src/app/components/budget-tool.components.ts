@@ -4,10 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule, PicsaDrawingComponent } from '@picsa/shared/features';
-import { PicsaDbModule } from '@picsa/shared/modules';
+import { PicsaDbModule, PicsaTranslateModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
 
 import { BudgetMaterialModule } from '../material.module';
@@ -61,7 +60,7 @@ const components = [
     CommonModule,
     FormsModule,
     BudgetMaterialModule,
-    TranslateModule.forChild(),
+    PicsaTranslateModule,
     PicsaDialogsModule,
     PicsaCommonComponentsModule,
     MobxAngularModule,
