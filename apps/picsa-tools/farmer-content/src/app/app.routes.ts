@@ -9,13 +9,21 @@ export const appRoutes: Route[] = [
     title: 'PICSA',
   },
   {
-    path: ':slug',
-    loadComponent: () =>
-      import('./pages/module-landing/module-landing.component').then((mod) => mod.FarmerModuleLandingComponent),
+    path: 'tool',
+    component: FarmerToolPlaceholderComponent,
+    loadChildren: () => {
+      return [
+        {
+          path: ':toolId',
+          component: FarmerToolPlaceholderComponent,
+        },
+      ];
+    },
     title: 'PICSA',
   },
   {
-    path: ':slug/:stepIndex',
+    path: ':slug',
+    // TODO - make non-standalone to work with tools (or get tools to work standalone)
     loadComponent: () =>
       import('./pages/module-home/module-home.component').then((mod) => mod.FarmerContentModuleHomeComponent),
     children: [
@@ -24,10 +32,6 @@ export const appRoutes: Route[] = [
         component: FarmerToolPlaceholderComponent,
       },
     ],
-  },
-  {
-    path: 'tool/:toolId',
-    component: FarmerToolPlaceholderComponent,
   },
 ];
 
