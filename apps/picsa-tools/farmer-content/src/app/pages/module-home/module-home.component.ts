@@ -89,7 +89,6 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
             icon = 'summarize';
             break;
           case 'text': {
-            // For text blocks, use the title if available
             const textBlock: any = primaryBlock;
             title = textBlock?.title || 'Information';
             icon = 'description';

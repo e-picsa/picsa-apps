@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input, model, Output } from '@angular/core';
+import { Component, EventEmitter, inject,input, model, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -23,8 +23,9 @@ export class FarmerModuleFooterComponent {
   public totalSections = input.required<number>();
   public selectedIndex = model.required<number>();
   @Output() selectedIndexChange = new EventEmitter<number>();
-  public sections = input<SectionData[]>([]); // Input for the sections data
-  router: any;
+  public sections = input<SectionData[]>([]);
+
+  private router = inject(Router);
 
   public goHome() {
     this.router.navigate(['/', 'farmer'], { replaceUrl: true });
