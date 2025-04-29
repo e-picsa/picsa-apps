@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -16,12 +19,14 @@ import { ResourceItemFileComponent } from '@picsa/resources/components';
  */
 @Component({
   selector: 'farmer-step-video',
-  imports: [CommonModule, ResourceItemFileComponent],
+  imports: [CommonModule, ResourceItemFileComponent, MatOptionModule, MatSelectModule],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
   videoData = input.required<IPicsaVideoData>();
+  videoLanguageOptions: string[];
+  defaultLanguage: string;
 
   videoResource = computed(() => {
     // HACK - when identifying video to show user cannot rely solely on language_code as
@@ -32,15 +37,28 @@ export class FarmerStepVideoComponent {
     const availableVideos = this.videoData().children;
     // HACK - select best video recommendation. TODO - show toggle options in future
     const [video] = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
+
     if (video) {
       // HACK - lookup resource entry which should be given by same id
       const resource = RESOURCE_VIDEO_HASHMAP[video.id];
+      this.videoLanguageOptions = this.listAvailableLanguageOptions(video);
+      this.defaultLanguage = LOCALES_DATA_HASHMAP[language_code].language_label;
       return resource;
     }
     return undefined;
   });
 
   constructor(private configurationService: ConfigurationService) {}
+
+  private listAvailableLanguageOptions(video: IPicsaVideo) {
+    const languages = video.locale_codes.map((l) => {
+      return LOCALES_DATA_HASHMAP[l];
+    });
+    const languageLabels = languages.map((l) => {
+      return l.language_label;
+    });
+    return languageLabels;
+  }
 
   private filterAvailableVideos(userCountry: string, userLanguage: string, videos: IPicsaVideo[] = []) {
     const rankedVideos = videos

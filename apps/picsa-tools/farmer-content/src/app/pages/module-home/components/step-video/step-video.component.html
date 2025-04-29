@@ -1,8 +1,18 @@
 @if(videoData()){
 <!-- Ignore case where video entry exists but ranking empty (e.g. playlist with multi-country videos)  -->
-@if(videoResource(); as resource){
-<resource-item-file [resource]="resource"></resource-item-file>
-
-} } @else {
+<div style="display: flex; width: 100%; align-items: center; justify-content: center;">
+  <div style="display: flex; flex-direction: column; width: 90%; align-self: center">
+    @if(videoResource(); as resource){
+    <resource-item-file [resource]="resource"></resource-item-file>
+    <mat-form-field style="width: 60%; margin: 5px 0px 10px 0px;" class="no-hint" data-tour-id="resource-item-video">
+      <mat-label>{{ 'Language' }}</mat-label>
+      <mat-select [(value)]="defaultLanguage">
+        <mat-option *ngFor="let option of videoLanguageOptions" [value]="option">{{ option }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    }
+  </div>
+</div>
+} @else {
 <p>Video not found</p>
 }
