@@ -25,8 +25,8 @@ import { ResourceItemFileComponent } from '@picsa/resources/components';
 })
 export class FarmerStepVideoComponent {
   videoData = input.required<IPicsaVideoData>();
-  videoLanguageOptions: string[];
-  defaultLanguage: string;
+  videoLanguageOption: string;
+  videoLanguageCodes: string[];
 
   videoResource = computed(() => {
     // HACK - when identifying video to show user cannot rely solely on language_code as
@@ -41,24 +41,14 @@ export class FarmerStepVideoComponent {
     if (video) {
       // HACK - lookup resource entry which should be given by same id
       const resource = RESOURCE_VIDEO_HASHMAP[video.id];
-      this.videoLanguageOptions = this.listAvailableLanguageOptions(video);
-      this.defaultLanguage = LOCALES_DATA_HASHMAP[language_code].language_label;
+      this.videoLanguageCodes = video.locale_codes;
+      this.videoLanguageOption = LOCALES_DATA_HASHMAP[this.videoLanguageCodes[0]].language_label;
       return resource;
     }
     return undefined;
   });
 
   constructor(private configurationService: ConfigurationService) {}
-
-  private listAvailableLanguageOptions(video: IPicsaVideo) {
-    const languages = video.locale_codes.map((l) => {
-      return LOCALES_DATA_HASHMAP[l];
-    });
-    const languageLabels = languages.map((l) => {
-      return l.language_label;
-    });
-    return languageLabels;
-  }
 
   private filterAvailableVideos(userCountry: string, userLanguage: string, videos: IPicsaVideo[] = []) {
     const rankedVideos = videos
