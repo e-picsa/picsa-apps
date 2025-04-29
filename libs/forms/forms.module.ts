@@ -3,13 +3,13 @@ import { Inject, Injectable, ModuleWithProviders, NgModule } from '@angular/core
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { DataIconRegistry, ICON_PACK_DATA, IconPackName } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { PICSA_FORM_COMPONENTS } from './components';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 
 @Injectable({
   providedIn: 'root',

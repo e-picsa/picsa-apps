@@ -78,14 +78,20 @@ div.mdc-dialog__actions {
   display: flex;
   flex-direction: column;
 }
-// Increase size and set primary colour for text inputs, remove inset
+// Increase size and set primary colour for text inputs
 input.mat-mdc-input-element.mdc-text-field__input {
   font-size: 30px;
   width: 100%;
   color: var(--color-primary) !important;
   text-align: center;
-  // margin-left: -4px;
 }
+//  Increase size and set primary colour for select
+mat-select.mat-mdc-select {
+  --mat-select-trigger-text-size: 30px;
+  --mat-select-enabled-trigger-text-color: var(--color-primary);
+  --mat-select-trigger-text-line-height: 38px;
+}
+
 // Reduce padding and remove inset from fields with custom .input-field or .no-padding class
 mat-form-field.input-field,
 mat-form-field.no-padding {

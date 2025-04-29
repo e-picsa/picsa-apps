@@ -1,4 +1,4 @@
-import { arrayToHashmap } from '@picsa/utils/data';
+import { arrayToHashmap, jsonToCSV } from '@picsa/utils/data';
 import { spawnSync } from 'child_process';
 import {
   emptyDirSync,
@@ -73,33 +73,6 @@ function generateTranslationTemplates() {
 
   console.log('Templates generated', GENERATED_TEMPLATES_DIR);
   console.log('Assets generated', GENERATED_ASSETS_DIR);
-}
-
-/** Convert json to csv  (adapted from https://stackoverflow.com/a/31536517) */
-function jsonToCSV(data: any[], headers?: string[]) {
-  if (data.length === 0) return '';
-  // generate headers from first row of data if not provided
-  if (!headers) {
-    headers = Object.keys(data[0]);
-  }
-  const csv = [
-    headers.join(','), // header row first
-    ...data.map((row) => headers.map((fieldName) => valueCSV(row[fieldName])).join(',')),
-  ].join('\r\n');
-  return csv;
-}
-
-/** Convert value for csv output. Stringifies json, converts array to string with custom escape */
-function valueCSV(v: any) {
-  if (typeof v === 'string') {
-    v = v.replace(/"/g, '');
-  }
-  if (Array.isArray(v)) {
-    if (v.length === 0) return null;
-    // HACK - use double quotes to un-escape csv
-    return `"[${v.map((el) => `""${el}""`).join(',')}]"`;
-  }
-  return JSON.stringify(v);
 }
 
 /**
