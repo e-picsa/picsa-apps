@@ -1,17 +1,36 @@
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
-import { CROPS_DATA } from '@picsa/data';
+import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaDataTableComponent } from '@picsa/shared/features/data-table/data-table.component';
+import { PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { geoJSON } from 'leaflet';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { CropInformationService, ICropData } from '../../services';
+import {
+  CropInformationService,
+  ICropData,
+  ICropDataDownscaled,
+  ICropDataDownscaledWaterRequirements,
+} from '../../services';
+
+interface ICropDataDownscaledTableData {
+  location: string;
+  total_crops: number;
+  total_varieties: number;
+}
 
 /**
  * TODO
+ * - Child page to manage for specific location
+ *
+ * - Get map of stations with available probability data. Select
+ * - Generate table of all crops
+ *
+ * (old)
  * - add table to store downscaled data (water requirements, local name, included in table)
  * - retrieve downscaled data and populate crop probability table
  * - add editing view to toggle more crops to include in downscaled
@@ -25,48 +44,88 @@ import { CropInformationService, ICropData } from '../../services';
 
 @Component({
   selector: 'dashboard-crop-probability',
-  imports: [MatButtonModule, MatIconModule, MatSelectModule, PicsaFormsModule, PicsaDataTableComponent, RouterLink],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    PicsaFormsModule,
+    PicsaMapComponent,
+    PicsaDataTableComponent,
+    RouterLink,
+  ],
   templateUrl: './probability.component.html',
   styleUrl: './probability.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityComponent {
-  public editingMode = signal(false);
-  public countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code || '');
+  private picsaMapComponent = viewChild.required(PicsaMapComponent);
 
-  public allCropTypes = CROPS_DATA;
+  // public editingMode = signal(false);
+  // public countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code || '');
 
-  public cropTypeSelected = signal<string>('');
+  // public allCropTypes = CROPS_DATA;
+
+  // public cropTypeSelected = signal<string>('');
 
   public locationSelected = signal<(string | undefined)[]>([]);
 
-  public cropDownscaledData = signal([]);
+  // public cropDownscaledData = signal([]);
 
-  public editableData = computed(() =>
-    this.generateEditableData(this.service.cropData(), this.cropDownscaledData(), this.cropTypeSelected())
-  );
+  // public editableData = computed(() =>
+  //   this.generateEditableData(this.service.cropData(), this.cropDownscaledData(), this.cropTypeSelected())
+  // );
+
+  public downscaledTableData = signal<ICropDataDownscaledTableData[]>([]);
 
   constructor(private service: CropInformationService, private deploymentService: DeploymentDashboardService) {
     this.service.ready();
 
-    effect(() => {
+    effect(async () => {
       const location = this.locationSelected();
       const countryCode = location[2];
       const downscaledCode = location[4];
       if (countryCode && downscaledCode) {
-        this.loadLocationCropData(countryCode, downscaledCode);
+        this.setMapBounds(countryCode, downscaledCode);
+        await this.loadLocationCropData(countryCode, downscaledCode);
       }
     });
-    effect(() => {
-      console.log('editable data', this.editableData());
-    });
-    effect(() => {
-      // set default crop type selected
-      const selected = this.cropTypeSelected();
-      if (!selected) {
-        this.cropTypeSelected.set('maize');
+
+    effect(async () => {
+      const { country_code } = this.deploymentService.activeDeployment();
+      if (country_code) {
+        const { data, error } = await this.service.cropDataDownscaledTable
+          .select<'*', ICropDataDownscaled['Row']>('*')
+          .eq('country_code', country_code);
+        if (data) {
+          const tableData = data.map(({ location_id, water_requirements }) => {
+            const waterRequirements = water_requirements as ICropDataDownscaledWaterRequirements;
+            let total_crops = 0;
+            let total_varieties = 0;
+            for (const cropData of Object.values(waterRequirements)) {
+              total_crops++;
+              total_varieties = total_varieties + Object.keys(cropData).length;
+            }
+            const entry: ICropDataDownscaledTableData = { location: location_id, total_crops, total_varieties };
+            return entry;
+          });
+          this.downscaledTableData.set(tableData);
+        }
       }
     });
+  }
+
+  // TODO - map no longer used?
+  private async setMapBounds(countryCode: string, downscaledCode: string) {
+    // Load admin 4 boundaries and put on map
+    const geoData = GEO_LOCATION_DATA[countryCode] as IGelocationData;
+    const topoJson = await geoData.admin_4.topoJson();
+    const feature = topoJsonToGeoJson(topoJson);
+
+    feature.features = feature.features.filter((v) => v.properties.name === downscaledCode);
+    const map = this.picsaMapComponent().map();
+    const geoFeature = geoJSON(feature as any);
+    geoFeature.setStyle({ fill: false, color: 'brown', opacity: 0.5 }).addTo(map);
+    map.fitBounds(geoFeature.getBounds());
   }
 
   public handleLocationUpdate(location: (string | undefined)[]) {
