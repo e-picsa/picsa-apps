@@ -27,8 +27,9 @@
     "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
     "cache:clear": "nx reset && yarn build --skip-nx-cache",
-    "version": "tsx --tsconfig tools/tsconfig.tools.json ./tools/workflows/version.ts",
-    "i18n": "nx run i18n:build && nx run i18n:spellcheck"
+    "i18n": "nx run i18n:build && nx run i18n:spellcheck",
+    "scripts": "nx run picsa-scripts:exec --scriptName",
+    "version": "tsx --tsconfig tools/tsconfig.tools.json ./tools/workflows/version.ts"
   },
   "private": true,
   "notes": {

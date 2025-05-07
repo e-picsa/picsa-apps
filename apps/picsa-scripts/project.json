@@ -1,0 +1,16 @@
+{
+  "name": "picsa-scripts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/picsa-scripts/src",
+  "projectType": "application",
+  "targets": {
+    "exec": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx apps/picsa-scripts/src/{args.scriptName}",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  },
+  "tags": []
+}
