@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -13,6 +14,13 @@ import { TourService } from '@picsa/shared/services/core/tour';
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
 
+interface SectionData {
+  title: string;
+  icon: string;
+  type: string;
+  index: number; // To navigate to the correct tab
+}
+
 @Component({
   selector: 'farmer-content-module-home',
   imports: [
@@ -21,6 +29,7 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
     FarmerStepVideoComponent,
     PicsaTranslateModule,
     MatTabsModule,
+    MatIconModule,
     PhotoInputComponent,
     PhotoViewComponent,
     RouterOutlet,
@@ -45,6 +54,67 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     const content = this.content();
     return content?.steps || [];
   });
+
+  /** Sections for the new layout */
+  public sections = computed<SectionData[]>(() => {
+    const content = this.content();
+    if (!content?.steps) return [];
+
+    return content.steps
+      .map((stepGroup, index) => {
+        // Find the primary content type in this step group
+        // First, look for non-text blocks as they're usually more important
+        const primaryBlock =
+          stepGroup.find((block) => block.type === 'video' || block.type === 'tool' || block.type === 'review') ||
+          stepGroup[0];
+
+        if (!primaryBlock) return null;
+
+        let title: string;
+        let icon: string;
+        const type = primaryBlock.type;
+
+        // Set appropriate title and icon based on content type
+        switch (type) {
+          case 'video':
+            title = index === 0 ? 'Intro Video' : 'Video';
+            icon = 'play_circle';
+            break;
+          case 'tool':
+            title = 'Interactive Tool';
+            icon = 'build';
+            break;
+          case 'review':
+            title = 'Review & Summary';
+            icon = 'summarize';
+            break;
+          case 'text': {
+            const textBlock: any = primaryBlock;
+            title = textBlock?.title || 'Information';
+            icon = 'description';
+            break;
+          }
+          default:
+            title = 'Section';
+            icon = 'article';
+            break;
+        }
+
+        return { title, icon, type, index };
+      })
+      .filter(Boolean) as SectionData[];
+  });
+
+  public updateSelectedIndex(index: number) {
+    this.selectedIndex.set(index);
+  }
+
+  public stepIcons = {
+    video: 'play_circle',
+    tool: 'build',
+    review: 'summarize',
+    text: 'description',
+  };
 
   /** Selected tab index. Used to programatically change tabs from custom footer */
   public selectedIndex = model(0);
@@ -87,9 +157,28 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.componentService.patchHeader({ hideHeader: true, hideBackButton: true, style: 'inverted' });
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        const tabIndex = this.findTabIndexByType(fragment);
+        if (tabIndex !== -1) {
+          this.selectedIndex.set(tabIndex);
+        }
+      }
+    });
   }
+
   ngOnDestroy() {
     this.componentService.patchHeader({ hideHeader: false, hideBackButton: false, style: 'primary' });
+  }
+
+  private findTabIndexByType(type: string): number {
+    const tabs = this.tabs();
+    for (let i = 0; i < tabs.length; i++) {
+      if (tabs[i].some((block) => block.type === type)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /** Handle tool routing and header changes when stepper content changed */
@@ -99,7 +188,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
       this.toolTabIndex.set(this.selectedIndex());
       this.setToolUrl(toolBlock.tool);
     }
-    // toogle app header if required by tool
+    // toggle app header if required by tool
     const hideHeader = toolBlock?.tool?.showHeader ? false : true;
     if (this.componentService.headerOptions().hideHeader !== hideHeader) {
       this.componentService.patchHeader({ hideHeader, hideBackButton: hideHeader ? true : false });
@@ -132,12 +221,20 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
 
   private shouldHideBackButton(tool?: IToolData) {
     if (tool) {
-      // HACK - budget tool doesn't show back to site select as can be done from dropdownj
+      // HACK - budget tool doesn't show back to site select as can be done from dropdown
       if (location.pathname.includes(`/climate`)) return true;
       // default hide back button on tool home page, e.g. `/farmer/module/budget`
       // but include on nested pages, e.g. `/farmer/module/budget`
       return location.pathname.endsWith(`/${tool.href}`);
     }
     return true;
+  }
+
+  public navigateToSection(index: number) {
+    this.selectedIndex.set(index);
+  }
+
+  public getSectionIcon(type: string): string {
+    return this.stepIcons[type as keyof typeof this.stepIcons] || 'article';
   }
 }

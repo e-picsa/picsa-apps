@@ -1,49 +1,44 @@
 <div class="page-content">
   @if(content(); as content){
   <div @fadeInOut class="content-container">
-    <mat-tab-group
-      [selectedIndex]="selectedIndex()"
-      class="height-fill no-header"
-      style="height: 100%; width: 100%; flex: 1"
-      headerPosition="below"
-      preserveContent
-    >
-      <!-- content -->
+    <div class="module-content">
       @for(step of content.steps; track $index){
-      <mat-tab>
-        <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
-          @for(block of step; track $index){ @switch (block.type) {
+      @if (selectedIndex() === $index) {
+      <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
+        @for(block of step; track $index){ @switch (block.type) {
 
-          <!-- Text -->
-          @case ('text') { @if(block.title){
-          <h2 class="px-4">{{ block.title | translate }}</h2>
-          } @if(block.text) {
-          <p class="px-4">{{ block.text | translate }}</p>
-          } }
-          <!-- Video -->
-          @case('video'){
-          <farmer-step-video [videoData]="block.video"></farmer-step-video>
-          }
+        @case ('text') { @if(block.title){
+        <h2 class="px-4">{{ block.title | translate }}</h2>
+        } @if(block.text) {
+        <p class="px-4">{{ block.text | translate }}</p>
+        } }
+        @case('video'){
+        <farmer-step-video [videoData]="block.video"></farmer-step-video>
+        }
 
-          <!-- Review tab -->
-          @case ('review') { @if(photoAlbum(); as album){
-          <h2>{{ 'Review' | translate }}</h2>
-          <picsa-photo-list [album]="album"></picsa-photo-list>
-          <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-          } }
+        @case ('review') { @if(photoAlbum(); as album){
+        <h2>{{ 'Review' | translate }}</h2>
+        <picsa-photo-list [album]="album"></picsa-photo-list>
+        <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
+        } }
 
-          <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
-          @case ('tool') {
-          <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
-            <router-outlet #toolRouter></router-outlet>
-          </div>
-          } } }
+        @case ('tool') {
+        <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
+          <router-outlet #toolRouter></router-outlet>
         </div>
-      </mat-tab>
+        } } }
+      </div>
       }
-    </mat-tab-group>
+      }
+    </div>
   </div>
-  <farmer-module-footer [totalSections]="tabs().length" [(selectedIndex)]="selectedIndex"></farmer-module-footer>
+
+  <farmer-module-footer
+    [totalSections]="tabs().length"
+    [selectedIndex]="selectedIndex()"
+    (selectedIndexChange)="updateSelectedIndex($event)"
+    [sections]="sections()"
+  ></farmer-module-footer>
 
   }
 </div>

@@ -4,25 +4,91 @@
   left: 0;
   width: 100%;
   height: var(--footer-height); // inherited from parent
-  overflow: hidden;
   display: flex;
   align-items: center;
   --mdc-text-button-label-text-color: white;
   color: white;
   background: var(--color-secondary);
   z-index: 10;
+  padding: 0 8px;
+  justify-content: space-between;
 }
 
-.footer-nav-buttons {
-  flex: 1;
+.section-navigation {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  & > button {
-    flex: 1;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 16px; /* Increased gap for horizontal layout */
+  max-width: 75%; /* Slightly increased to accommodate horizontal layout */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  margin: 0 auto;
+  padding: 0 8px;
+}
+
+.section-button {
+  display: flex;
+  flex-direction: row; /* Changed from column to row */
+  align-items: center; /* Center items vertically */
+  justify-content: flex-start; /* Align items to start */
+  min-width: auto; /* Allow natural width */
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: white;
+  border-radius: 6px;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px; /* Add margin to the right instead of bottom */
+    margin-bottom: 0; /* Remove bottom margin */
+    color: white;
+  }
+
+  .section-title {
+    font-size: 14px; /* Increased to 14px as requested */
+    font-family: 'Noto Sans', sans-serif; /* Set font to Noto Sans */
+    text-align: left; /* Align text to left */
+    white-space: nowrap; /* Keep text on one line */
+    font-weight: 400; /* Normal weight */
+    color: white;
+  }
+
+  &.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 500; /* Make active text slightly bolder */
   }
 }
-.footer-tab-counter {
-  flex: 1;
-  text-align: center;
+
+/* Style for home button */
+button[mat-button] {
+  padding: 0 12px;
+  min-width: auto;
+  white-space: nowrap;
+  color: white;
+  margin-right: 8px;
+  font-family: 'Noto Sans', sans-serif; /* Match font */
+
+  mat-icon {
+    color: white;
+    margin-right: 4px;
+  }
+}
+
+/* Style for page number */
+.page-number {
+  font-size: 14px; /* Match section title size */
+  white-space: nowrap;
+  margin-left: 8px;
+  flex-shrink: 0;
+  color: white;
+  padding: 0 4px;
+  font-family: 'Noto Sans', sans-serif; /* Match font */
 }

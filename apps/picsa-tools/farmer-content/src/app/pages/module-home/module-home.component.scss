@@ -53,3 +53,96 @@
 .page[data-has-header='true'] {
   max-height: calc(var(--tab-height) - 3.5rem);
 }
+
+.page-content {
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .module-overview {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      overflow-x: auto; /* Allow horizontal scrolling if many sections */
+      border-bottom: 1px solid var(--border-color);
+
+      .section-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        min-width: 100px;
+        text-align: center;
+
+        &:hover {
+          background-color: var(--secondary-background);
+        }
+
+        .card-icon {
+          margin-bottom: 4px;
+          mat-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+            color: var(--primary-color);
+          }
+        }
+
+        .card-content {
+          h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary-text);
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+
+    .mat-tab-group {
+      flex-grow: 1;
+      // ... other styles for mat-tab-group ...
+    }
+  }
+
+  // ... other styles ...
+}
+
+/* Add these styles to center the section buttons and ensure they're visible */
+.section-navigation {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0 8px;
+}
+
+.section-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  padding: 8px 4px;
+}
+
+.section-title {
+  font-size: 12px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  margin-top: 4px;
+}
+
+/* Style for active section */
+.section-button.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
