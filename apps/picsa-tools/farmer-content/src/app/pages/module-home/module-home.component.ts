@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -25,6 +27,8 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
     PhotoViewComponent,
     RouterOutlet,
     PhotoListComponent,
+    MatOptionModule,
+    MatSelectModule,
   ],
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
