@@ -27,8 +27,10 @@
     "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
     "cache:clear": "nx reset && yarn build --skip-nx-cache",
-    "version": "tsx --tsconfig tools/tsconfig.tools.json ./tools/workflows/version.ts",
-    "i18n": "nx run i18n:build && nx run i18n:spellcheck"
+    "i18n": "nx run i18n:build && nx run i18n:spellcheck",
+    "scripts": "nx run picsa-scripts:exec --scriptName",
+    "scripts:version": "nx run picsa-scripts:exec --scriptName version",
+    "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup"
   },
   "private": true,
   "notes": {
@@ -183,8 +185,6 @@
     "autoprefixer": "^10.4.20",
     "cspell": "^6.31.1",
     "cypress": "13.13.0",
-    "dotenv": "^16.0.1",
-    "dotenv-expand": "^8.0.3",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-cypress": "2.13.4",
