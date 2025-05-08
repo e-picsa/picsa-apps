@@ -1,7 +1,7 @@
-import { syncStorage } from './backup-storage';
+import { backupStorage } from './backup-storage';
 
 async function backup() {
-  await syncStorage();
+  await backupStorage();
 }
 
 backup();

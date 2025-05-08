@@ -3,8 +3,10 @@ import type { FileObject } from '@supabase/storage-js';
 import fs from 'fs';
 import path, { resolve } from 'path';
 import crypto from 'crypto';
+import { zipFolderContents } from '../utils/file.utils';
 
-const localDir = path.resolve(__dirname, './output');
+const localDir = path.resolve(__dirname, './cache');
+const backupDir = path.resolve(__dirname, './backups');
 
 const omitDirs = ['forecasts'];
 const omitBuckets = [];
@@ -23,7 +25,7 @@ interface IFileMeta extends FileObject {
  * - optimise server file path stat (return md5 in list)
  * - copy generated to backup named backup folder and zip via archiver/jszip
  */
-export async function syncStorage() {
+export async function backupStorage() {
   console.log('Starting sync process...');
 
   // Create local directory if it doesn't exist
@@ -44,6 +46,9 @@ export async function syncStorage() {
     console.log(`Files: ${bucketFiles.length}`);
     await syncFiles(bucketFiles);
   }
+  const outputName = new Date().toISOString().substring(0, 10);
+  const outputPath = resolve(backupDir, `${outputName}.tar`);
+  await zipFolderContents(localDir, outputPath);
 }
 
 async function syncFiles(remoteFiles: IFileMeta[]) {
@@ -105,6 +110,7 @@ async function syncFile(remoteFile: IFileMeta) {
 
   // Save the file
   fs.writeFileSync(localFilePath, Buffer.from(await data.arrayBuffer()));
+  fs.utimesSync(localFilePath, new Date(created_at), new Date(updated_at));
 
   status.downloaded = true;
   return status;
