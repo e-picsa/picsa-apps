@@ -7,7 +7,7 @@
     "exec": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx apps/picsa-scripts/src/{args.scriptName}",
+        "command": "tsx apps/picsa-scripts/src/{args.scriptName} --env-file=apps/picsa-scripts/.env",
         "cwd": "{workspaceRoot}"
       }
     }
