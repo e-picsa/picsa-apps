@@ -1,17 +1,9 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { FileObject } from '@supabase/storage-js';
 import fs from 'fs';
-import path, { resolve } from 'path';
+import path, { relative, resolve } from 'path';
 import crypto from 'crypto';
 import { zipFolderContents } from '../utils/file.utils';
-
-const localDir = path.resolve(__dirname, './cache');
-const backupDir = path.resolve(__dirname, './backups');
-
-const omitDirs = ['forecasts'];
-const omitBuckets = [];
-
-let supabase: SupabaseClient;
 
 interface IFileMeta extends FileObject {
   bucketName: string;
@@ -19,12 +11,18 @@ interface IFileMeta extends FileObject {
   filePath: string;
 }
 
-/**
- *
- * TODO
- * - optimise server file path stat (return md5 in list)
- * - copy generated to backup named backup folder and zip via archiver/jszip
- */
+const localDir = path.resolve(__dirname, './cache');
+const backupDir = path.resolve(__dirname, './backups');
+
+/** List of folders to exclude from local backup */
+const omitDirs = ['forecasts'];
+
+/** List of buckets to exclude from local backup */
+const omitBuckets = [];
+
+let supabase: SupabaseClient;
+
+/** Export all supabase storage files to local cache and store as timestamped archive */
 export async function backupStorage() {
   console.log('Starting sync process...');
 
@@ -45,10 +43,13 @@ export async function backupStorage() {
     console.log(`[ ${bucketName} ]\n`);
     console.log(`Files: ${bucketFiles.length}`);
     await syncFiles(bucketFiles);
+    removeOrphaned(bucketName, bucketFiles);
   }
+
   const outputName = new Date().toISOString().substring(0, 10);
   const outputPath = resolve(backupDir, `${outputName}.tar`);
   await zipFolderContents(localDir, outputPath);
+  console.log(`Backup complete`, outputPath);
 }
 
 async function syncFiles(remoteFiles: IFileMeta[]) {
@@ -114,44 +115,41 @@ async function syncFile(remoteFile: IFileMeta) {
 
   status.downloaded = true;
   return status;
-
-  // console.log(`Sync complete! Downloaded ${downloadCount} files, skipped ${skipCount} files.`);
-
-  // await removeOrphaned(bucketName, remoteFiles);
 }
 
-async function removeOrphaned(bucketName: string, remoteFiles: string[]) {
+function removeOrphaned(bucketName: string, remoteFiles: IFileMeta[]) {
   let removedCount = 0;
+
   const baseDir = resolve(localDir, bucketName);
 
+  const remoteHashmap = remoteFiles.reduce((map, f) => {
+    map.set(f.filePath, f);
+    return map;
+  }, new Map<string, IFileMeta>());
+
   function walkDir(dir: string) {
-    const files = fs.readdirSync(dir);
-
+    const files = fs.readdirSync(dir, { withFileTypes: true });
+    // Remove empty directories
+    if (files.length === 0) {
+      fs.rmdirSync(dir);
+    }
     for (const file of files) {
-      const fullPath = path.join(dir, file);
-      const stat = fs.statSync(fullPath);
-
-      if (stat.isDirectory()) {
-        walkDir(fullPath);
-
-        // Remove empty directories
-        if (fs.readdirSync(fullPath).length === 0) {
-          fs.rmdirSync(fullPath);
-        }
+      const childPath = resolve(file.parentPath, file.name);
+      if (file.isDirectory()) {
+        walkDir(childPath);
       } else {
-        const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
-
-        if (!remoteFiles.includes(relativePath)) {
-          fs.unlinkSync(fullPath);
-          console.log(`Removed orphaned file: ${relativePath}`);
+        const relativePath = relative(baseDir, childPath).replace(/\\/g, '/');
+        if (!remoteHashmap.has(relativePath)) {
+          console.log(`[-] ${relativePath}`);
+          fs.unlinkSync(childPath);
           removedCount++;
         }
       }
     }
   }
 
-  walkDir(localDir);
-  console.log(`Removed ${removedCount} orphaned files`);
+  walkDir(baseDir);
+  console.log(`Removed: ${removedCount}`);
 }
 
 async function getSupabaseClient() {
