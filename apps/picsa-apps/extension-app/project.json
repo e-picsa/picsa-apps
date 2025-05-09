@@ -208,6 +208,9 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "proxyConfig": "{workspaceRoot}/proxy.conf.js"
+      },
       "configurations": {
         "production": {
           "buildTarget": "picsa-apps-extension-app:build:production"

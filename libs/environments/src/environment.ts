@@ -27,7 +27,9 @@ async function loadSupabaseDevEnvironment(): Promise<{ anonKey: string; apiUrl: 
   const defaultConfig = {
     anonKey:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
-    apiUrl: 'http://localhost:54321',
+    // Assumes proxy configured as per `{workspaceRoot}/proxy.conf.js`
+    apiUrl: 'http://localhost:4200/api',
+    // apiUrl: 'http://localhost:54321',
   };
   return new Promise((resolve) => {
     // Use a variable filename so that compiler bundles all files in folder

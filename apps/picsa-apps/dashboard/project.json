@@ -96,7 +96,10 @@
           "buildTarget": "picsa-apps-dashboard:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "{workspaceRoot}/proxy.conf.js"
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
