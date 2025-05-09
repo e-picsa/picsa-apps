@@ -36,18 +36,10 @@
   "notes": {
     "resolutions": {
       "leaflet-draw": "required by enketo-core, short hash not matched from repo package.json"
-    },
-    "overrides": {
-      "@supabase/auth-js": "See https://github.com/supabase/supabase-js/issues/936"
     }
   },
   "resolutions": {
     "leaflet-draw": "github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  },
-  "overrides": {
-    "@supabase/supabase-js": {
-      "@supabase/auth-js": "2.61.0"
-    }
   },
   "dependencies": {
     "@angular/animations": "19.0.5",
