@@ -16,12 +16,12 @@
  * ```
  */
 exports.default = {
-  '/api': {
-    target: 'http://localhost:54321',
-    secure: false,
-    changeOrigin: true,
-    pathRewrite: {
-      '^/api': '',
-    },
-  },
+  // '/api': {
+  //   target: 'http://localhost:54321',
+  //   changeOrigin: true,
+  //   rewrite: (path) => {
+  //     console.log('rewrite path', path, path.replace(/^\/api/, ''));
+  //     return path.replace(/^\/api/, '');
+  //   },
+  // },
 };

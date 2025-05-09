@@ -22,7 +22,7 @@ INSERT INTO
   )
 VALUES
   (
-    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000000',
     'authenticated',
     'authenticated',
