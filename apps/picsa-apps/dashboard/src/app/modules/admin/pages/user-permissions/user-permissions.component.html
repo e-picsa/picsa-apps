@@ -1,3 +1,17 @@
 <div class="page-content">
-  <h2>User Permissions</h2>
+  <h2>Members</h2>
+  <picsa-data-table [data]="deploymentUsers()" [options]="authUserTableOptions"></picsa-data-table>
+
+  <button mat-stroked-button class="mt-3" (click)="dialog.open(addUserDialog)">
+    Add User
+    <mat-icon>person_add</mat-icon>
+  </button>
 </div>
+
+<ng-template #addUserDialog>
+  <h2 mat-dialog-title class="mb-2">Add User</h2>
+  <mat-dialog-content>
+    <picsa-data-table [data]="authUsers()" [options]="authUserTableOptions"></picsa-data-table>
+  </mat-dialog-content>
+  <button mat-stroked-button mat-dialog-close>Cancel</button>
+</ng-template>

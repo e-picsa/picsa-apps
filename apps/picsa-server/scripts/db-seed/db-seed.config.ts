@@ -13,6 +13,9 @@ export interface ISeedDataConfiguration {
 type IDBTableName = keyof Database['public']['Tables'];
 
 export const SEED_DATA_CONFIGURATION: Partial<Record<IDBTableName, ISeedDataConfiguration>> = {
+  deployments: {
+    priority: 1,
+  },
   climate_stations: {
     omitColumns: ['id'],
   },
