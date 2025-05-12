@@ -97,7 +97,7 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
   },
 ];
 
-export const GLOBAL_NAV_LINKS: INavLink[] = [
+export const ADMIN_NAV_LINKS: INavLink[] = [
   {
     label: 'Deployments',
     href: '/deployment',

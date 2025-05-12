@@ -44,9 +44,9 @@
         </a>
         } }
         <mat-divider style="margin-top: auto"></mat-divider>
-        <div mat-subheader>Global Admin</div>
+        <div mat-subheader>Admin</div>
         <mat-divider></mat-divider>
-        @for (link of globalLinks; track link.href) {
+        @for (link of adminLinks; track link.href) {
         <a mat-list-item [routerLink]="link.href" routerLinkActive="mdc-list-item--activated active-link" *roleRequired="link.roleRequired">
           <ng-container *ngTemplateOutlet="linkTemplate; context: { $implicit: link }"></ng-container>
         </a>
