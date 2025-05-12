@@ -104,4 +104,10 @@ export const GLOBAL_NAV_LINKS: INavLink[] = [
     matIcon: 'apps',
     roleRequired: 'deployments.admin',
   },
+  {
+    label: 'User Permissions',
+    href: '/admin/user-permissions',
+    matIcon: 'manage_accounts',
+    // roleRequired: 'deployments.admin',
+  },
 ];
