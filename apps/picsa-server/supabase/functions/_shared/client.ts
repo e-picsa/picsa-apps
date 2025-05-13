@@ -42,5 +42,10 @@ export const getClient = (req?: Request) => {
 export const getServiceRoleClient = () => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
   const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  return createClient<Database>(supabaseUrl, supabaseKey);
+  return createClient<Database>(supabaseUrl, supabaseKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
 };

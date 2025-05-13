@@ -1,6 +1,7 @@
 <div class="page-content">
+  <!-- Members List -->
   <h2>Members</h2>
-  <picsa-data-table [data]="deploymentUsers()" [options]="authUserTableOptions"></picsa-data-table>
+  <picsa-data-table [data]="deploymentUsers()" [options]="deploymentUserTableOptions"></picsa-data-table>
 
   <button mat-stroked-button class="mt-3" (click)="dialog.open(addUserDialog)">
     Add User
@@ -8,10 +9,22 @@
   </button>
 </div>
 
+<!-- Add User Dialog -->
 <ng-template #addUserDialog>
   <h2 mat-dialog-title class="mb-2">Add User</h2>
   <mat-dialog-content>
-    <picsa-data-table [data]="authUsers()" [options]="authUserTableOptions"></picsa-data-table>
+    <picsa-data-table
+      [data]="allUsers()"
+      [options]="allUserTableOptions"
+      [valueTemplates]="{ isMember: memberTemplate }"
+    >
+      <ng-template #memberTemplate let-isMember let-row="row">
+        <button mat-button [disabled]="isMember" (click)="addUser(row)">
+          Add
+          <mat-icon>person_add</mat-icon>
+        </button>
+      </ng-template>
+    </picsa-data-table>
   </mat-dialog-content>
   <button mat-stroked-button mat-dialog-close>Cancel</button>
 </ng-template>

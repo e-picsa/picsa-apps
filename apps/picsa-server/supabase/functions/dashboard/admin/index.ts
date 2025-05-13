@@ -1,8 +1,9 @@
 import { ErrorResponse } from '../../_shared/response.ts';
-import { getAuthRoles } from '../../_shared/auth.ts';
+import { hasAuthRole } from '../../_shared/auth.ts';
 import { listUsers } from './list-users.ts';
 import { listUserRoles } from './list-user-roles.ts';
 import type { Database } from '../../../types/db.types.ts';
+import { addUser } from './add-user.ts';
 
 type IAppRole = Database['public']['Enums']['app_role'];
 /**
@@ -13,21 +14,25 @@ export const admin = async (req: Request) => {
   const { pathname } = new URL(req.url);
   const [deploymentId, adminEndpoint] = pathname.replace('/dashboard/admin/', '').split('/');
 
-  const roles = await getAuthRoles(req);
-  const deploymentRoles = roles[deploymentId];
-
-  console.log('User Roles: ', deploymentId, deploymentRoles);
-
-  console.log('process admin request', deploymentId, adminEndpoint);
-
   switch (adminEndpoint) {
     case 'list-users': {
       const roleRequired: IAppRole = 'deployments.admin';
-      if (!deploymentRoles.includes(roleRequired)) {
+      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      if (!hasPermission) {
         return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
       }
       return listUsers();
     }
+    case 'add-user': {
+      const roleRequired: IAppRole = 'deployments.admin';
+      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      if (!hasPermission) {
+        return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
+      }
+      const payload = await req.json();
+      return addUser(payload);
+    }
+
     case 'list-user-roles': {
       return listUserRoles(deploymentId);
     }
