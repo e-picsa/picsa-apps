@@ -54,10 +54,6 @@ export class SupabaseService extends PicsaAsyncService {
       const errorMessage = await error.context.json();
       throw new Error(errorMessage);
     }
-    if (!data) {
-      console.error({ data, error });
-      throw new Error(`[${endpoint}] request returned no data`);
-    }
 
     return data as ResponseType;
   }

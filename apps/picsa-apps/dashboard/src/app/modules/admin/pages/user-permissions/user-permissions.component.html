@@ -1,13 +1,38 @@
 <div class="page-content">
   <!-- Members List -->
   <h2>Members</h2>
-  <picsa-data-table [data]="deploymentUsers()" [options]="deploymentUserTableOptions"></picsa-data-table>
+  <picsa-data-table
+    [data]="deploymentUsers()"
+    [options]="deploymentUserTableOptions"
+    (rowClick)="showUserEditDialog($event)"
+  ></picsa-data-table>
 
   <button mat-stroked-button class="mt-3" (click)="dialog.open(addUserDialog)">
     Add User
     <mat-icon>person_add</mat-icon>
   </button>
 </div>
+
+<!-- Edit User Dialog -->
+<ng-template #userPermissionsDialog>
+  <h2 mat-dialog-title class="mb-2">User Permissions</h2>
+  <mat-dialog-content>
+    @if(editableUser(); as user){
+    <button
+      mat-button
+      mat-dialog-close
+      (click)="removeUser(user.id)"
+      [disabled]="user.roles.includes('admin') || user.roles.includes('deployments.admin')"
+    >
+      <mat-icon>person_remove</mat-icon>
+      Remove User
+    </button>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-stroked-button mat-dialog-close class="mt-2">Cancel</button>
+  </mat-dialog-actions>
+</ng-template>
 
 <!-- Add User Dialog -->
 <ng-template #addUserDialog>
@@ -19,12 +44,14 @@
       [valueTemplates]="{ isMember: memberTemplate }"
     >
       <ng-template #memberTemplate let-isMember let-row="row">
-        <button mat-button [disabled]="isMember" (click)="addUser(row)">
+        <button mat-button [disabled]="isMember" mat-dialog-close (click)="addUser(row)">
           Add
           <mat-icon>person_add</mat-icon>
         </button>
       </ng-template>
     </picsa-data-table>
   </mat-dialog-content>
-  <button mat-stroked-button mat-dialog-close>Cancel</button>
+  <mat-dialog-actions>
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+  </mat-dialog-actions>
 </ng-template>

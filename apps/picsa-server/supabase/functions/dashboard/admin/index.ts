@@ -4,6 +4,7 @@ import { listUsers } from './list-users.ts';
 import { listUserRoles } from './list-user-roles.ts';
 import type { Database } from '../../../types/db.types.ts';
 import { addUser } from './add-user.ts';
+import { removeUser } from './remove-user.ts';
 
 type IAppRole = Database['public']['Enums']['app_role'];
 /**
@@ -30,7 +31,18 @@ export const admin = async (req: Request) => {
         return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
       }
       const payload = await req.json();
+      payload.deployment_id = deploymentId;
       return addUser(payload);
+    }
+    case 'remove-user': {
+      const roleRequired: IAppRole = 'deployments.admin';
+      const hasPermission = await hasAuthRole(req, deploymentId, roleRequired);
+      if (!hasPermission) {
+        return ErrorResponse(`[${roleRequired}] permission required to list users`, 401);
+      }
+      const payload = await req.json();
+      payload.deployment_id = deploymentId;
+      return removeUser(payload);
     }
 
     case 'list-user-roles': {

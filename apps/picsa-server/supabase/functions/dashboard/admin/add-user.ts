@@ -13,5 +13,5 @@ export const addUser = async (params: { user_id: string; deployment_id: string }
   if (error) {
     return ErrorResponse(error);
   }
-  return JSONResponse<any>(data);
+  return JSONResponse<any>({ data });
 };
