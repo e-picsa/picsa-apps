@@ -1,6 +1,8 @@
 import { decode } from 'djwt';
 import { getServiceRoleClient } from './client.ts';
-import type { IAppRole } from '../dashboard/types.ts';
+import type { Database } from '../../types/db.types.ts';
+
+type IAppRole = Database['public']['Enums']['app_role'];
 
 const mockAuthPayload = {
   aal: 'aal1',
@@ -22,7 +24,8 @@ const mockAuthPayload = {
 
 type SupabaseAuthJWT = typeof mockAuthPayload;
 
-export async function getAuthRoles(req: Request) {
+/** Return all auth roles stored for the current user making request */
+async function getAuthRoles(req: Request) {
   const authHeader = req.headers.get('Authorization')!;
   const token = authHeader.replace('Bearer ', '');
 
@@ -30,6 +33,16 @@ export async function getAuthRoles(req: Request) {
   // NOTE - no need to verify jwt as already handled by supabase
   const { picsa_roles } = payload as SupabaseAuthJWT;
   return picsa_roles as { [deployment_id: string]: IAppRole[] };
+}
+
+/** Check whether the request user has specific user role on deployment */
+export async function hasAuthRole(req: Request, deployment_id: string, role: IAppRole) {
+  const userRoles = await getAuthRoles(req);
+  const deploymentRoles = userRoles[deployment_id];
+  const [featureName, featureRole] = role.split('.');
+  // allow global role
+  if (deploymentRoles.includes(featureRole as IAppRole)) return true;
+  return deploymentRoles.includes(role);
 }
 
 /**

@@ -6,6 +6,7 @@
 - [x] Dashboard pages to view current user role
 - [x] Deployment default role settings
 
+- [x] Add support for general `viewer`, `author`, and `admin` role across all features
 - [ ] Update all existing UI to restrict features as required
 - [ ] Update seed scripts to include means to assign roles to demo users
 - [ ] Subscribe to user_role updates (for logged in user) and refresh token on change
