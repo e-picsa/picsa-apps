@@ -7,8 +7,15 @@
     "exec": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx apps/picsa-scripts/src/{args.scriptName} --env-file=apps/picsa-scripts/.env",
-        "cwd": "{workspaceRoot}"
+        "command": "tsx src/{args.scriptName} --env-file=.env",
+        "cwd": "apps/picsa-scripts"
+      }
+    },
+    "watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx watch src/{args.scriptName} --env-file=.env",
+        "cwd": "apps/picsa-scripts"
       }
     }
   },
