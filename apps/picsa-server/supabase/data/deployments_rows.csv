@@ -1,10 +1,4 @@
 id,country_code,label,configuration,variant,access_key_md5,public,icon_path
-demo_dev,demo,Extension,{},extension,,false,global/images/tutorial.svg
-global_extension,global,Extension,{},extension,,false,global/images/flags/global.svg
-global_farmer,global,Farmer,{},farmer,,false,global/images/flags/global.svg
-mw_farmer,mw,Farmer,{},farmer,,false,global/images/flags/mw.svg
-zm_farmer,zm,Farmer,{},farmer,,false,global/images/flags/zm.svg
-mw_extension,mw,Malawi,{},extension,,true,global/images/flags/mw.svg
-mw_workshop,mw,Malawi Workshop,"{""climate_country_code"":""mw_workshops""}",extension,,false,global/images/flags/mw.svg
-zm_extension,zm,Zambia,{},extension,,true,global/images/flags/zm.svg
-zm_workshop,zm,Zambia Workshop,"{""climate_country_code"":""zm_workshops""}",extension,,false,global/images/flags/zm.svg
+mw,mw,Malawi,{},,,true,global/images/flags/mw.svg
+test_private,mw,Test Private,"{""climate_country_code"": ""mw_workshops""}",extension,,false,global/images/flags/global.svg
+zm,zm,Zambia,{},,,true,global/images/flags/zm.svg
