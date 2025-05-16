@@ -7,27 +7,22 @@ import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_OPERATIONAL_VIDEOS_HASHMAP } from '@
 const title = translateMarker('What is happening to the climate in your area?');
 
 const steps: IFarmerContent['steps'] = [
-  [
-    {
-      type: 'text',
-      title,
-    },
-    {
-      type: 'video',
-      video: PICSA_FARMER_VIDEOS_HASHMAP.historic_climate,
-    },
-  ],
-  [
-    { type: 'text', title: translateMarker('Tool') },
-    { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.historic_climate },
-  ],
-  [
-    {
-      type: 'tool',
-      tool: TOOLS_DATA_HASHMAP.climate,
-    },
-  ],
-  [{ type: 'review' }],
+  {
+    type: 'video',
+    video: PICSA_FARMER_VIDEOS_HASHMAP.historic_climate,
+    title: translateMarker('Historic Climate'),
+  },
+  {
+    type: 'video',
+    video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.historic_climate,
+    title: translateMarker('Using The Tool'),
+  },
+  {
+    type: 'tool',
+    tool: TOOLS_DATA_HASHMAP.climate,
+    title: translateMarker('Interactive Tool'),
+  },
+  { type: 'review', title: translateMarker('Review') },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {

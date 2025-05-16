@@ -21,6 +21,7 @@ const configBase = {
       primary: 'var(--color-primary)',
       secondary: 'var(--color-primary)',
       black: 'var(--color-black)',
+      white: 'var(--color-white)',
     },
   },
   plugins: [],

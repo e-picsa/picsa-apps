@@ -7,15 +7,13 @@ import { PICSA_FARMER_VIDEOS_HASHMAP } from '@picsa/data/resources';
 const title = translateMarker('What are the opportunities and risk?');
 
 const steps: IFarmerContent['steps'] = [
-  [
-    { type: 'text', title },
-    {
-      type: 'video',
-      video: PICSA_FARMER_VIDEOS_HASHMAP.probability_risk,
-    },
-  ],
-  [{ type: 'tool', tool: TOOLS_DATA_HASHMAP.probability_and_risk }],
-  [{ type: 'review' }],
+  {
+    type: 'video',
+    video: PICSA_FARMER_VIDEOS_HASHMAP.probability_risk,
+    title: translateMarker('Probability and Risk'),
+  },
+  { type: 'tool', tool: TOOLS_DATA_HASHMAP.probability_and_risk, title: translateMarker('Interactive Tool') },
+  { type: 'review', title: translateMarker('Review') },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {

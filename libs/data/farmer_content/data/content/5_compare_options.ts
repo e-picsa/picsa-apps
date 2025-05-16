@@ -7,28 +7,26 @@ import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_OPERATIONAL_VIDEOS_HASHMAP } from '@
 const title = translateMarker('Are the changes a good idea?');
 
 const steps: IFarmerContent['steps'] = [
-  [
-    { type: 'text', title },
-    {
-      type: 'video',
-      video: PICSA_FARMER_VIDEOS_HASHMAP.participatory_budget,
-    },
-  ],
-  [
-    { type: 'text', title: translateMarker('Tool') },
-    { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.participatory_budget },
-  ],
-  [
-    {
-      type: 'tool',
-      tool: TOOLS_DATA_HASHMAP.budget,
-    },
-  ],
-  [
-    {
-      type: 'review',
-    },
-  ],
+  {
+    type: 'video',
+    video: PICSA_FARMER_VIDEOS_HASHMAP.participatory_budget,
+    title: translateMarker('Participatory Budgets'),
+  },
+  {
+    type: 'video',
+    video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.participatory_budget,
+    title: translateMarker('Using The Tool'),
+  },
+
+  {
+    type: 'tool',
+    tool: TOOLS_DATA_HASHMAP.budget,
+    title: translateMarker('Interactive Tool'),
+  },
+  {
+    type: 'review',
+    title: translateMarker('Review'),
+  },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {

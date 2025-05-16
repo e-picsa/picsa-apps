@@ -13,26 +13,28 @@ export interface IToolData {
   showHeader?: boolean;
 }
 
-interface StepText {
-  type: 'text';
-  text?: string;
-  title?: string;
-}
-
 export interface StepTool {
   type: 'tool';
   tool: IToolData;
+  title: string;
 }
 interface StepVideo {
   type: 'video';
   video: IPicsaVideoData;
+  title: string;
+}
+interface StepVideoPlaylist {
+  type: 'videoPlaylist';
+  videos: IPicsaVideoData[];
+  title: string;
 }
 
 interface StepReview {
   type: 'review';
+  title: string;
 }
 
-export type IFarmerContentStep = StepReview | StepVideo | StepText | StepTool;
+export type IFarmerContentStep = StepReview | StepVideo | StepVideoPlaylist | StepTool;
 
 export interface IFarmerContent {
   id: IFarmerContentId;
@@ -41,7 +43,7 @@ export interface IFarmerContent {
   title: string;
 
   /** Steps contain dynamic content blocks, grouped within a mat-stepper **/
-  steps: IFarmerContentStep[][];
+  steps: IFarmerContentStep[];
 
   tags: { label: string; color?: 'primary' | 'secondary' }[];
 

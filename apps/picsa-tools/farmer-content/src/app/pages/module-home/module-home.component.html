@@ -1,49 +1,73 @@
 <div class="page-content">
-  @if(content(); as content){
-  <div @fadeInOut class="content-container">
-    <mat-tab-group
-      [selectedIndex]="selectedIndex()"
-      class="height-fill no-header"
-      style="height: 100%; width: 100%; flex: 1"
-      headerPosition="below"
-      preserveContent
-    >
-      <!-- content -->
-      @for(step of content.steps; track $index){
-      <mat-tab>
-        <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
-          @for(block of step; track $index){ @switch (block.type) {
+  <!-- Main Content -->
 
-          <!-- Text -->
-          @case ('text') { @if(block.title){
-          <h2 class="px-4">{{ block.title | translate }}</h2>
-          } @if(block.text) {
-          <p class="px-4">{{ block.text | translate }}</p>
-          } }
+  @if(content(); as content){
+  <div @fadeInOut>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      @for(step of content.steps; track $index){
+      <mat-card class="flex flex-col">
+        <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
+        <div class="flex-1">
+          @switch (step.type) {
           <!-- Video -->
           @case('video'){
-          <farmer-step-video [videoData]="block.video"></farmer-step-video>
+          <farmer-step-video [videoData]="step.video"></farmer-step-video>
           }
+          <!-- Video Playlist-->
+          @case('videoPlaylist'){
 
-          <!-- Review tab -->
+          <mat-list>
+            @for(video of step.videos; track video.id){
+            <mat-list-item>
+              <img matListItemAvatar />
+              <h3 matListItemTitle>{{ video.title }}</h3>
+              @if($last){
+              <mat-divider></mat-divider>
+              }
+            </mat-list-item>
+            <!-- TODO - playback button -->
+            <!-- <farmer-step-video [videoData]="video"></farmer-step-video> -->
+
+            }
+          </mat-list>
+          }
+          <!-- Review -->
           @case ('review') { @if(photoAlbum(); as album){
-          <h2>{{ 'Review' | translate }}</h2>
-          <picsa-photo-list [album]="album"></picsa-photo-list>
-          <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-          } }
-
-          <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
-          @case ('tool') {
-          <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
-            <router-outlet #toolRouter></router-outlet>
+          <div class="p-2">
+            <p>{{ 'If you recorded anything on paper you can capture photos and save' | translate }}</p>
+            <picsa-photo-list [album]="album"></picsa-photo-list>
+            <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
           </div>
-          } } }
+
+          } } @case ('tool') {
+          <!-- TODO - tool -->
+          } }
         </div>
-      </mat-tab>
+      </mat-card>
+
       }
-    </mat-tab-group>
+    </div>
   </div>
-  <farmer-module-footer [totalSections]="tabs().length" [(selectedIndex)]="selectedIndex"></farmer-module-footer>
 
   }
 </div>
+<!-- Footer -->
+<farmer-module-footer [totalSections]="1" [selectedIndex]="1"></farmer-module-footer>
+
+<!-- TODO - footer navigation between units -->
+
+<!-- TODO - track video viewed state from step videos (e.g. checkmark) -->
+
+<!-- <div>{{ step | json }}</div> -->
+<!-- @if (selectedIndex() === $index) {
+      <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
+        @for(block of step; track $index){ @switch (block.type) {
+
+        @case ('text') { @if(block.title){
+        <h2 class="px-4">{{ block.title | translate }}</h2>
+        } @if(block.text) {
+        <p class="px-4">{{ block.text | translate }}</p>
+        } }
+         } }
+      </div>
+      } -->
