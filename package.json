@@ -27,25 +27,20 @@
     "lint": "nx run-many --target=lint",
     "graph": "yarn nx graph",
     "cache:clear": "nx reset && yarn build --skip-nx-cache",
-    "version": "tsx --tsconfig tools/tsconfig.tools.json ./tools/workflows/version.ts",
-    "i18n": "nx run i18n:build && nx run i18n:spellcheck"
+    "i18n": "nx run i18n:build && nx run i18n:spellcheck",
+    "scripts": "nx run picsa-scripts:exec --scriptName",
+    "scripts:watch": "nx run picsa-scripts:watch --scriptName",
+    "scripts:version": "nx run picsa-scripts:exec --scriptName version",
+    "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup"
   },
   "private": true,
   "notes": {
     "resolutions": {
       "leaflet-draw": "required by enketo-core, short hash not matched from repo package.json"
-    },
-    "overrides": {
-      "@supabase/auth-js": "See https://github.com/supabase/supabase-js/issues/936"
     }
   },
   "resolutions": {
     "leaflet-draw": "github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  },
-  "overrides": {
-    "@supabase/supabase-js": {
-      "@supabase/auth-js": "2.61.0"
-    }
   },
   "dependencies": {
     "@angular/animations": "19.0.5",
@@ -84,7 +79,7 @@
     "@ngx-translate/http-loader": "~16.0.1",
     "@nx/angular": "20.3.0",
     "@stencil/angular-output-target": "^0.10.2",
-    "@supabase/supabase-js": "^2.47.10",
+    "@supabase/supabase-js": "^2.49.4",
     "@uppy/angular": "^0.6.1",
     "@uppy/core": "^3.7.1",
     "@uppy/dashboard": "^3.7.1",
@@ -183,8 +178,6 @@
     "autoprefixer": "^10.4.20",
     "cspell": "^6.31.1",
     "cypress": "13.13.0",
-    "dotenv": "^16.0.1",
-    "dotenv-expand": "^8.0.3",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-cypress": "2.13.4",
@@ -215,7 +208,7 @@
     "puppeteer": "^15.5.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-visualizer": "^5.8.3",
-    "supabase": "^2.2.1",
+    "supabase": "^2.22.12",
     "tailwindcss": "^3.4.13",
     "ts-jest": "29.1.1",
     "tsx": "^4.19.2",

@@ -8,8 +8,10 @@ import { lookup } from 'mime-types';
 import { resolve } from 'path';
 import { execSync } from 'child_process';
 
-const ROOT_DIR = resolve(__dirname, '../../../');
-const SUPABASE_DIR = resolve(__dirname, '../', 'supabase');
+import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
+
+const ROOT_DIR = resolve(__dirname, '../../../../');
+const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 const SEED_STORAGE_DIR = resolve(SUPABASE_DIR, 'data', 'storage');
 
@@ -142,25 +144,27 @@ class SupabaseSeed {
     console.log('\n', '\n', 'DB');
     // specify tables that should be loaded with priority
     // e.g. ensure populated if linked table seed data references
-    const priority = { climate_stations_rows: 1, resource_files_rows: 1 };
-    const csvFileNames = readdirSync(SEED_DIR, { withFileTypes: true })
+    const tableNames = readdirSync(SEED_DIR, { withFileTypes: true })
       .filter((f) => f.isFile() && f.name.endsWith('_rows.csv'))
-      .map((f) => f.name)
+      .map((f) => f.name.replace(`_rows.csv`, ''))
       // ensure child rows processed after parent
       .sort((a, b) => {
         // ensure tables with priority are processed before those without
-        const aPriority = priority[a] || 0;
-        const bPriority = priority[b] || 0;
-        return aPriority > bPriority ? 1 : -1;
+        const aPriority = SEED_DATA_CONFIGURATION[a]?.priority || 0;
+        const bPriority = SEED_DATA_CONFIGURATION[b]?.priority || 0;
+        // default sort by table name length to ensure child tables after parent
+        if (aPriority === bPriority) return a.length > b.length ? 1 : -1;
+        return aPriority < bPriority ? 1 : -1;
       });
     const results: any[] = [];
-    console.log(csvFileNames);
-    for (const csvFileName of csvFileNames) {
-      const tableName = csvFileName.replace('_rows.csv', '');
+    console.log('Import Order: ', tableNames);
+    for (const tableName of tableNames) {
+      const csvFileName = `${tableName}_rows.csv`;
       const csvPath = resolve(SEED_DIR, csvFileName);
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });
-      const parsedRows = parseCSVRows(csvRows);
+      const seedConfig = SEED_DATA_CONFIGURATION[tableName];
+      const parsedRows = parseCSVRows(csvRows, seedConfig);
       const { error, data, status, statusText } = await this.client.from(tableName).upsert(parsedRows).select('*');
       if (error) {
         console.error(`[${tableName}] import failed`, csvRows);
@@ -178,8 +182,12 @@ if (require.main === module) {
 }
 
 /** Iterate over parsed csv rows and convert parse any stringified json content */
-function parseCSVRows(rows: any[]) {
+function parseCSVRows(rows: any[], config: ISeedDataConfiguration = {}) {
+  const { omitColumns = [] } = config;
   return rows.map((row) => {
+    for (const column of omitColumns) {
+      delete row[column];
+    }
     for (const [key, value] of Object.entries<any>(row)) {
       if (typeof value === 'string' && ['{', '['].includes(value[0])) {
         row[key] = JSON.parse(value);

@@ -2,6 +2,7 @@
   "imports": {
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.47.10",
     "xml": "https://deno.land/x/xml@2.1.1/mod.ts",
-    "openapi-fetch": "npm:openapi-fetch"
+    "openapi-fetch": "npm:openapi-fetch",
+    "djwt": "https://deno.land/x/djwt@v2.8/mod.ts"
   }
 }

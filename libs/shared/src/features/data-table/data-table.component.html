@@ -37,11 +37,7 @@
   }
 
   <tr mat-header-row *matHeaderRowDef="tableOptions.displayColumns"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: tableOptions.displayColumns"
-    (click)="tableOptions.handleRowClick(row, $event)"
-  ></tr>
+  <tr mat-row *matRowDef="let row; columns: tableOptions.displayColumns" (click)="handleRowClick(row, $event)"></tr>
 </table>
 
 <!-- Paginator -->

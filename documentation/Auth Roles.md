@@ -6,6 +6,7 @@
 - [x] Dashboard pages to view current user role
 - [x] Deployment default role settings
 
+- [x] Add support for general `viewer`, `author`, and `admin` role across all features
 - [ ] Update all existing UI to restrict features as required
 - [ ] Update seed scripts to include means to assign roles to demo users
 - [ ] Subscribe to user_role updates (for logged in user) and refresh token on change
@@ -71,11 +72,11 @@ More fine-grained controls are also available at feature level if required
 
 ## Auth Integration
 
-The `user_roles` table is integrated into the existing auth system by providing a JWT token custom `picsa_roles` claim populated when a user logs in. This can be read by either frontend or backend to see what
+The `user_roles` table is integrated into the existing auth system by providing a JWT token custom `picsa_roles` claim populated when a user logs in. This can be read by either frontend or backend to see what roles a user has
 
 ```json
 {
-  "email": "anonymous_user@picsa.app",
+  "email": "admin@picsa.app",
   "picsa_roles": {
     "mw_extension": {
       "resources": "admin"

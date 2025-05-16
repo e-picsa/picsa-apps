@@ -10,7 +10,13 @@ import { IResourceFile } from '../../schemas';
     @if(resource.title){
     <h2>{{ resource.title | translate }}</h2>
     }
-    <picsa-video-player [source]="fileURI" #videoPlayer [thumbnail]="resource.cover?.image" [id]="resource.id">
+    <picsa-video-player
+      [source]="fileURI"
+      #videoPlayer
+      [thumbnail]="resource.cover?.image"
+      [onlineVideoUrl]="resource.url"
+      [id]="resource.id"
+    >
     </picsa-video-player>
     @if(resource.description){
     <p>{{ resource.description | translate }}</p>

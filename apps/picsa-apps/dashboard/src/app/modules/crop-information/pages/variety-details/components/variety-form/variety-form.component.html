@@ -1,0 +1,40 @@
+<form class="form-content" [formGroup]="form">
+  <div class="flex justify-evenly">
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Crop</mat-label>
+      <mat-select matInput formControlName="crop">
+        @for(option of cropOptions; track option.id){
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Variety</mat-label>
+      <input matInput formControlName="variety" />
+    </mat-form-field>
+  </div>
+  <div class="flex justify-evenly">
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label for="days_lower">Maturity Period</mat-label>
+      <mat-select formControlName="maturity_period">
+        <mat-option value="early">Early</mat-option>
+        <mat-option value="medium">Medium</mat-option>
+        <mat-option value="late">Late</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label for="days_lower">Days Lower</mat-label>
+      <input matInput id="days_lower" type="number" formControlName="days_lower" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label for="days_upper">Days Upper</mat-label>
+      <input matInput id="days_upper" type="number" formControlName="days_upper" />
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label for="days_upper">Additional Information</mat-label>
+      <textarea matInput id="days_upper" type="number" formControlName="additional_info"></textarea>
+    </mat-form-field>
+  </div>
+</form>

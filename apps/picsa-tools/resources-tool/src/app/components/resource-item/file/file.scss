@@ -36,3 +36,14 @@
   right: -6px;
   z-index: 2;
 }
+
+.thumbnail-status {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 3px;
+  z-index: 5;
+}

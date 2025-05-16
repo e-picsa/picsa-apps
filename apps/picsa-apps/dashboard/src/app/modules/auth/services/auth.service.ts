@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { computed, Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import {
@@ -37,7 +38,10 @@ export class DashboardAuthService extends PicsaAsyncService {
     if (!user) return [];
     const authRoles = user.picsa_roles[deployment.id] || [];
     // assign default roles to all deployments
-    const defaultRoles: IAuthRole[] = ['resources.viewer', 'translations.viewer'];
+    let globalRole: IAuthRole = 'viewer';
+    if (authRoles.includes('author')) globalRole = 'author';
+    if (authRoles.includes('admin')) globalRole = 'admin';
+
     const implicitRoles: IAuthRole[] = [];
     for (const role of authRoles) {
       const [feature, level] = role.split('.');
@@ -49,7 +53,7 @@ export class DashboardAuthService extends PicsaAsyncService {
         implicitRoles.push(`${feature}.viewer` as IAuthRole);
       }
     }
-    const uniqueRoles = new Set([...defaultRoles, ...authRoles, ...implicitRoles]);
-    return [...uniqueRoles];
+    const uniqueRoles = new Set([...globalRole, ...authRoles, ...implicitRoles]);
+    return [...uniqueRoles] as IAuthRole[];
   }
 }

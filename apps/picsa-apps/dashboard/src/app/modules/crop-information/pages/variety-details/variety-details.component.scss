@@ -1,4 +1,4 @@
-.form-content {
-  display: flex;
-  flex-direction: column;
+.mat-mdc-tab-body-content {
+  @apply pt-2;
+  margin-top: 2rem;
 }

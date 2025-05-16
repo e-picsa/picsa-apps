@@ -61,7 +61,7 @@
       "executor": "nx:run-commands",
       "inputs": ["{projectRoot}/supabase/data"],
       "options": {
-        "command": "yarn tsx scripts/seed.ts",
+        "command": "yarn tsx scripts/db-seed/db-seed.ts",
         "cwd": "apps/picsa-server"
       }
     },

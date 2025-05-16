@@ -13,6 +13,10 @@ import { RouterModule } from '@angular/router';
         pathMatch: 'full',
       },
       {
+        path: 'admin',
+        loadComponent: () => import('./pages/admin/admin.component').then((m) => m.DashboardCropAdminComponent),
+      },
+      {
         path: 'variety',
         loadComponent: () => import('./pages/variety/variety.component').then((m) => m.CropVarietyComponent),
       },
