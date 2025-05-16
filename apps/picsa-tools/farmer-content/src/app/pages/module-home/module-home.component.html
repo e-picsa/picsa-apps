@@ -1,9 +1,65 @@
 <div class="page-content">
+  <!-- Main Content -->
+
   @if(content(); as content){
-  <div @fadeInOut class="content-container">
-    <div class="module-content">
+  <div @fadeInOut>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       @for(step of content.steps; track $index){
-      @if (selectedIndex() === $index) {
+      <mat-card class="flex flex-col">
+        <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
+        <div class="flex-1">
+          @switch (step.type) {
+          <!-- Video -->
+          @case('video'){
+          <farmer-step-video [videoData]="step.video"></farmer-step-video>
+          }
+          <!-- Video Playlist-->
+          @case('videoPlaylist'){
+
+          <mat-list>
+            @for(video of step.videos; track video.id){
+            <mat-list-item>
+              <img matListItemAvatar />
+              <h3 matListItemTitle>{{ video.title }}</h3>
+              @if($last){
+              <mat-divider></mat-divider>
+              }
+            </mat-list-item>
+            <!-- TODO - playback button -->
+            <!-- <farmer-step-video [videoData]="video"></farmer-step-video> -->
+
+            }
+          </mat-list>
+          }
+          <!-- Review -->
+          @case ('review') { @if(photoAlbum(); as album){
+          <div class="p-2">
+            <p>{{ 'If you recorded anything on paper you can capture photos and save' | translate }}</p>
+            <picsa-photo-list [album]="album"></picsa-photo-list>
+            <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
+          </div>
+
+          } } @case ('tool') {
+          <!-- TODO - tool -->
+          } }
+        </div>
+      </mat-card>
+
+      }
+    </div>
+  </div>
+
+  }
+</div>
+<!-- Footer -->
+<farmer-module-footer [totalSections]="1" [selectedIndex]="1"></farmer-module-footer>
+
+<!-- TODO - footer navigation between units -->
+
+<!-- TODO - track video viewed state from step videos (e.g. checkmark) -->
+
+<!-- <div>{{ step | json }}</div> -->
+<!-- @if (selectedIndex() === $index) {
       <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
         @for(block of step; track $index){ @switch (block.type) {
 
@@ -12,33 +68,6 @@
         } @if(block.text) {
         <p class="px-4">{{ block.text | translate }}</p>
         } }
-        @case('video'){
-        <farmer-step-video [videoData]="block.video"></farmer-step-video>
-        }
-
-        @case ('review') { @if(photoAlbum(); as album){
-        <h2>{{ 'Review' | translate }}</h2>
-        <picsa-photo-list [album]="album"></picsa-photo-list>
-        <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-        } }
-
-        @case ('tool') {
-        <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
-          <router-outlet #toolRouter></router-outlet>
-        </div>
-        } } }
+         } }
       </div>
-      }
-      }
-    </div>
-  </div>
-
-  <farmer-module-footer
-    [totalSections]="tabs().length"
-    [selectedIndex]="selectedIndex()"
-    (selectedIndexChange)="updateSelectedIndex($event)"
-    [sections]="sections()"
-  ></farmer-module-footer>
-
-  }
-</div>
+      } -->

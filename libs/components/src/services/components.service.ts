@@ -1,5 +1,6 @@
 import { DomPortal, TemplatePortal } from '@angular/cdk/portal';
 import { Injectable, signal } from '@angular/core';
+import { isEqual } from '@picsa/utils/object.utils';
 import { BehaviorSubject } from 'rxjs';
 
 export interface IHeaderOptions {
@@ -20,7 +21,7 @@ export interface IBreadcrumbOptions {
 
 @Injectable({ providedIn: 'root' })
 export class PicsaCommonComponentsService {
-  headerOptions = signal<IHeaderOptions>({});
+  headerOptions = signal<IHeaderOptions>({}, { equal: isEqual });
   breadcrumbOptions$ = new BehaviorSubject<IBreadcrumbOptions>({});
 
   /** Track navigation history - used by back-button components (multi-instance) */

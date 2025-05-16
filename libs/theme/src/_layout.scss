@@ -35,10 +35,7 @@ body {
   overflow: auto;
   padding: var(--page-padding);
 }
-// remove padding when displaying within farmer-content
-farmer-content-module-home > .page-content {
-  padding: 0;
-}
+
 .no-padding {
   padding: 0 !important;
 }

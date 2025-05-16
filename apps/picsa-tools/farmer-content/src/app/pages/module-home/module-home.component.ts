@@ -1,25 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { MatListModule } from '@angular/material/list';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
-import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IFarmerContentStep, IToolData, StepTool } from '@picsa/data';
+import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IToolData } from '@picsa/data';
 import { FadeInOut } from '@picsa/shared/animations';
-import { PhotoInputComponent, PhotoListComponent, PhotoViewComponent } from '@picsa/shared/features';
+import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
+import { map } from 'rxjs';
 
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
-
-interface SectionData {
-  title: string;
-  icon: string;
-  type: string;
-  index: number; // To navigate to the correct tab
-}
 
 @Component({
   selector: 'farmer-content-module-home',
@@ -28,11 +24,11 @@ interface SectionData {
     FarmerModuleFooterComponent,
     FarmerStepVideoComponent,
     PicsaTranslateModule,
-    MatTabsModule,
+    MatCardModule,
+    MatDividerModule,
+    MatListModule,
     MatIconModule,
     PhotoInputComponent,
-    PhotoViewComponent,
-    RouterOutlet,
     PhotoListComponent,
   ],
   templateUrl: './module-home.component.html',
@@ -42,79 +38,23 @@ interface SectionData {
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
-  private params = toSignal(this.route.params);
+  private slug = toSignal(this.route.params.pipe(map((v) => v.slug)));
 
-  public content = computed<IFarmerContent | undefined>(() => {
-    const { slug } = this.params() || {};
-    return this.loadContentBySlug(slug);
-  });
+  public content = computed<IFarmerContent | undefined>(
+    () => {
+      const slug = this.slug();
+      if (slug) {
+        return FARMER_CONTENT_DATA_BY_SLUG[slug];
+      }
+    },
+    { equal: (a, b) => a?.id === b?.id }
+  );
 
   /** Content to display within mat-tabs */
   public tabs = computed(() => {
     const content = this.content();
     return content?.steps || [];
   });
-
-  /** Sections for the new layout */
-  public sections = computed<SectionData[]>(() => {
-    const content = this.content();
-    if (!content?.steps) return [];
-
-    return content.steps
-      .map((stepGroup, index) => {
-        // Find the primary content type in this step group
-        // First, look for non-text blocks as they're usually more important
-        const primaryBlock =
-          stepGroup.find((block) => block.type === 'video' || block.type === 'tool' || block.type === 'review') ||
-          stepGroup[0];
-
-        if (!primaryBlock) return null;
-
-        let title: string;
-        let icon: string;
-        const type = primaryBlock.type;
-
-        // Set appropriate title and icon based on content type
-        switch (type) {
-          case 'video':
-            title = index === 0 ? 'Intro Video' : 'Video';
-            icon = 'play_circle';
-            break;
-          case 'tool':
-            title = 'Interactive Tool';
-            icon = 'build';
-            break;
-          case 'review':
-            title = 'Review & Summary';
-            icon = 'summarize';
-            break;
-          case 'text': {
-            const textBlock: any = primaryBlock;
-            title = textBlock?.title || 'Information';
-            icon = 'description';
-            break;
-          }
-          default:
-            title = 'Section';
-            icon = 'article';
-            break;
-        }
-
-        return { title, icon, type, index };
-      })
-      .filter(Boolean) as SectionData[];
-  });
-
-  public updateSelectedIndex(index: number) {
-    this.selectedIndex.set(index);
-  }
-
-  public stepIcons = {
-    video: 'play_circle',
-    tool: 'build',
-    review: 'summarize',
-    text: 'description',
-  };
 
   /** Selected tab index. Used to programatically change tabs from custom footer */
   public selectedIndex = model(0);
@@ -137,79 +77,39 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     private componentService: PicsaCommonComponentsService,
     private tourService: TourService
   ) {
-    // load content on slug change and fix tour implementation
-    effect((onCleanup) => {
-      const { slug } = this.params() || {};
-      this.loadContentBySlug(slug);
-      // update the tour service to allow triggering tour from inside mat-tab component
-      this.tourService.useInMatTab = true;
-      onCleanup(() => {
-        this.tourService.useInMatTab = false;
-      });
-    });
-    // If tool tab selected handle side-effects (routing and header)
     effect(() => {
-      const selectedTabIndex = this.selectedIndex();
-      const contentBlocks = this.tabs()[selectedTabIndex];
-      this.handleContentChangeEffects(contentBlocks);
+      const content = this.content();
+      if (content) {
+        this.componentService.patchHeader({ title: content.title });
+      } else {
+        // If content not loaded simply navigate back to parent.
+        this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+      }
     });
+    // load content on slug change and fix tour implementation
+    // effect((onCleanup) => {
+    //   // update the tour service to allow triggering tour from inside mat-tab component
+    //   this.tourService.useInMatTab = true;
+    //   onCleanup(() => {
+    //     console.log('cleanup');
+    //     this.tourService.useInMatTab = false;
+    //   });
+    // });
+    // effect(() => {
+    //   const content = this.content();
+    //   if (content) {
+    //     console.log('content', content);
+    //     // this.componentService.patchHeader({ title: content.title });
+    //   }
+    // });
   }
 
   ngOnInit() {
-    this.componentService.patchHeader({ hideHeader: true, hideBackButton: true, style: 'inverted' });
-    this.route.fragment.subscribe((fragment) => {
-      if (fragment) {
-        const tabIndex = this.findTabIndexByType(fragment);
-        if (tabIndex !== -1) {
-          this.selectedIndex.set(tabIndex);
-        }
-      }
-    });
+    this.componentService.patchHeader({ style: 'inverted' });
   }
 
   ngOnDestroy() {
-    this.componentService.patchHeader({ hideHeader: false, hideBackButton: false, style: 'primary' });
-  }
-
-  private findTabIndexByType(type: string): number {
-    const tabs = this.tabs();
-    for (let i = 0; i < tabs.length; i++) {
-      if (tabs[i].some((block) => block.type === type)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  /** Handle tool routing and header changes when stepper content changed */
-  private handleContentChangeEffects(stepContent: IFarmerContentStep[]) {
-    const toolBlock = stepContent.find((b) => b.type === 'tool') as StepTool | undefined;
-    if (toolBlock) {
-      this.toolTabIndex.set(this.selectedIndex());
-      this.setToolUrl(toolBlock.tool);
-    }
-    // toggle app header if required by tool
-    const hideHeader = toolBlock?.tool?.showHeader ? false : true;
-    if (this.componentService.headerOptions().hideHeader !== hideHeader) {
-      this.componentService.patchHeader({ hideHeader, hideBackButton: hideHeader ? true : false });
-    }
-    // show back button in tools that have nested route
-    const hideBackButton = this.shouldHideBackButton(toolBlock?.tool);
-    if (this.componentService.headerOptions().hideBackButton !== hideBackButton) {
-      this.componentService.patchHeader({ hideBackButton });
-    }
-  }
-
-  private loadContentBySlug(slug: string | undefined) {
-    if (slug) {
-      const content: IFarmerContent = FARMER_CONTENT_DATA_BY_SLUG[slug];
-      if (content) {
-        return content;
-      }
-    }
-    // If content not loaded simply navigate back to parent.
-    this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
-    return undefined;
+    this.componentService.patchHeader({ style: 'primary' });
   }
 
   /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
@@ -228,13 +128,5 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
       return location.pathname.endsWith(`/${tool.href}`);
     }
     return true;
-  }
-
-  public navigateToSection(index: number) {
-    this.selectedIndex.set(index);
-  }
-
-  public getSectionIcon(type: string): string {
-    return this.stepIcons[type as keyof typeof this.stepIcons] || 'article';
   }
 }

@@ -2,7 +2,8 @@
   position: sticky;
   bottom: 0;
   left: 0;
-  width: 100%;
+  padding: 0 8px;
+  width: calc(100% - 16px);
   height: var(--footer-height); // inherited from parent
   display: flex;
   align-items: center;
@@ -10,7 +11,7 @@
   color: white;
   background: var(--color-secondary);
   z-index: 10;
-  padding: 0 8px;
+
   justify-content: space-between;
 }
 
