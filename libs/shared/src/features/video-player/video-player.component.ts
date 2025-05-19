@@ -1,9 +1,10 @@
-import { Component, ElementRef, HostBinding, Input, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostBinding, Input, input, OnDestroy, signal, viewChild } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 import { AnalyticsService } from '../../services/core/analytics.service';
+import { IVideoPlayerWebPlaybackTimeEvent, VideoPlayerWebComponent } from './player/video-player.web';
 import { VideoPlayerService } from './video-player.service';
 
 // Fix listeners missing from type
@@ -30,6 +31,10 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
   standalone: false,
 })
 export class VideoPlayerComponent implements OnDestroy {
+  public isNative = Capacitor.isNativePlatform();
+
+  public startTime: number;
+
   /** Optional override of player options */
   @Input() options: Partial<capVideoPlayerOptions> = {};
 
@@ -37,16 +42,13 @@ export class VideoPlayerComponent implements OnDestroy {
   @Input() id: string;
 
   /** Video source - can be string url or data blob */
-  @Input() source?: string;
+  source = input<string | undefined>();
 
   /** Optional image shown as preview */
   @Input() thumbnail?: string;
 
   /** Optional online video url - used to generate thumbnail */
   @Input() onlineVideoUrl?: string;
-
-  /** Specify whether should open overlay to play video (default inline) */
-  @Input() playInModal = false;
 
   // Bind player id to host element to support element query when initialising player
   @HostBinding('attr.data-player-id') get playerId() {
@@ -57,7 +59,11 @@ export class VideoPlayerComponent implements OnDestroy {
     return this.id;
   }
 
+  private webPlayer = viewChild<VideoPlayerWebComponent>('webPlayer');
+
   protected showPlayButton = true;
+
+  protected showThumbnail = signal(true);
 
   public videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
 
@@ -69,17 +75,21 @@ export class VideoPlayerComponent implements OnDestroy {
   /** Track any created object urls to dispose on destroy */
   private objectUrl: string;
 
-  private pauseTime = 0;
-
   totalTime: number;
 
-  playbackPercentage: number;
+  playbackPercentage = signal<number>(0);
 
   constructor(
-    private elementRef: ElementRef<HTMLDivElement>,
     private analyticsService: AnalyticsService,
-    private playerService: VideoPlayerService
+    private playerService: VideoPlayerService,
+    private elementRef: ElementRef
   ) {}
+
+  public async handlePlaybackProgressChanged(e: IVideoPlayerWebPlaybackTimeEvent) {
+    const { currentTime, percentage: playbackPercentage, totalTime } = e;
+    this.playbackPercentage.set(playbackPercentage);
+    await this.playerService.updateVideoState({ videoId: this.playerId, currentTime, playbackPercentage, totalTime });
+  }
 
   async ngOnInit() {
     await this.playerService.ready();
@@ -88,10 +98,8 @@ export class VideoPlayerComponent implements OnDestroy {
 
   private async loadVideoState() {
     const videoState = await this.playerService.getVideoState(this.playerId);
-    if (videoState) {
-      this.pauseTime = videoState.currentTime;
-      this.playbackPercentage = videoState.playbackPercentage;
-    }
+    this.startTime = videoState?.currentTime || 0;
+    this.playbackPercentage.set(videoState?.playbackPercentage || 0);
   }
 
   async ngOnDestroy() {
@@ -103,44 +111,44 @@ export class VideoPlayerComponent implements OnDestroy {
   }
 
   private async saveVideoState() {
-    // Getting the total time of the video
-    const currenttime = await this.videoPlayer.getCurrentTime({ playerId: this.playerId });
-    const totalTimeResult = await this.videoPlayer.getDuration({ playerId: this.playerId });
-    this.pauseTime = currenttime.value || this.pauseTime;
-    this.totalTime = totalTimeResult.value || this.totalTime || 1;
-
-    // Calculating the playback percentage
-    this.playbackPercentage = (this.pauseTime / this.totalTime) * 100;
-
-    // Saving the video state
-    const videoState = {
-      videoId: this.playerId,
-      currentTime: this.pauseTime,
-      totalTime: this.totalTime,
-      playbackPercentage: this.playbackPercentage,
-    };
-    await this.playerService.updateVideoState(videoState);
-  }
-
-  public async pauseVideo() {
-    return this.videoPlayer.pause({ playerId: this.playerId });
+    // // Getting the total time of the video
+    // const currenttime = await this.videoPlayer.getCurrentTime({ playerId: this.playerId });
+    // const totalTimeResult = await this.videoPlayer.getDuration({ playerId: this.playerId });
+    // this.totalTime = totalTimeResult.value || this.totalTime || 1;
+    // // Calculating the playback percentage
+    // this.playbackPercentage = (currenttime.value / this.totalTime) * 100;
+    // // Saving the video state
+    // const videoState = {
+    //   videoId: this.playerId,
+    //   currentTime: this.pauseTime,
+    //   totalTime: this.totalTime,
+    //   playbackPercentage: this.playbackPercentage,
+    // };
+    // await this.playerService.updateVideoState(videoState);
   }
 
   public async playVideo() {
     // Remove thumbnail from future playback
-    this.thumbnail = undefined;
+    this.showThumbnail.set(false);
+
+    if (this.isNative) {
+      //
+    } else {
+      console.log('webPlayer', this.webPlayer());
+      this.webPlayer()?.play();
+    }
+
+    return;
+
     // Stop playback from any other players
     await this.videoPlayer.stopAllPlayers();
     // Track video play event
     this.analyticsService.trackVideoPlay(this.playerId);
 
-    if (!this.initialised) {
-      await this.initPlayer();
-    }
+    // if (!this.initialised) {
+    await this.initPlayer();
+    // }
 
-    if (this.pauseTime) {
-      await this.setPlayerInitialTime(this.pauseTime);
-    }
     await this.videoPlayer.play({ playerId: this.playerId });
   }
 
@@ -160,12 +168,7 @@ export class VideoPlayerComponent implements OnDestroy {
     }
   }
   private getWebVideoEl() {
-    const containerEl = document.querySelector(`#vc_${this.id}`);
-    if (containerEl) {
-      const videoEl = containerEl.querySelector('video');
-      return videoEl;
-    }
-    return null;
+    return this.elementRef.nativeElement.querySelector('video') as HTMLVideoElement;
   }
 
   /**
@@ -185,27 +188,27 @@ export class VideoPlayerComponent implements OnDestroy {
   }
 
   private async initPlayer() {
-    if (!this.source) return;
-    const url = this.convertSourceToUrl(this.source);
-    const { clientWidth } = this.elementRef.nativeElement;
+    const source = this.source();
+    if (!source) return;
+    const url = this.convertSourceToUrl(source);
+
     // load player
     const defaultOptions: capVideoPlayerOptions = {
-      mode: 'embedded',
+      mode: 'fullscreen',
+      exitOnEnd: true,
       url,
       playerId: this.playerId,
       componentTag: `picsa-video-player[data-player-id="${this.playerId}"]`,
-      exitOnEnd: false,
-      // Use host element to calculate default player size
-      width: clientWidth,
-      height: Math.round((clientWidth * 9) / 16),
       displayMode: 'landscape',
       bkmodeEnabled: false,
       pipEnabled: false,
     };
-    if (Capacitor.isNativePlatform()) {
-      defaultOptions.mode = 'fullscreen';
-      defaultOptions.exitOnEnd = true;
-    }
+
+    // // Embedded player options - Use host element to calculate default player size
+    // const { clientWidth } = this.elementRef.nativeElement;
+    // defaultOptions.width = clientWidth;
+    // defaultOptions.height = Math.round((clientWidth * 9) / 16);
+
     // Merge default options with user override
     this.playerOptions = { ...defaultOptions, ...this.options };
     const res = await this.videoPlayer.initPlayer(this.playerOptions);
@@ -247,21 +250,20 @@ export class VideoPlayerComponent implements OnDestroy {
   }
 
   private async handlePlayerPause(currentTime: number) {
-    // console.log('[Video Player] pause', currentTime);
-
-    this.pauseTime = currentTime;
+    console.log('[Video Player] pause', currentTime);
     this.showPlayButton = true;
     await this.saveVideoState();
   }
 
   private async handlePlayerEnded(currentTime: number) {
-    // console.log('[Video Player] ended', currentTime);
+    console.log('[Video Player] ended', currentTime);
     this.showPlayButton = true;
+
     await this.saveVideoState();
   }
 
   private async handlePlayerExit() {
-    // console.log('[Video Player] exit');
+    console.log('[Video Player] exit');
     // HACK - player exit event not bound to specific player instance so do not update video state
     // this means that progress state cannot be saved if user exits video without first pausing
     // (this only applies to fullscreen videos played on native devices)
