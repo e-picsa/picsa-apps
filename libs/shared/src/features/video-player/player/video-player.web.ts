@@ -1,13 +1,9 @@
-import { Component, computed, effect, ElementRef, input, OnInit, output, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, OnInit, signal, viewChild } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { firstValueFrom, map } from 'rxjs';
 
-export interface IVideoPlayerWebPlaybackTimeEvent {
-  currentTime: number;
-  totalTime: number;
-  percentage: number;
-}
+import { VideoPlayerBaseComponent } from './video-player.base';
 
 @Component({
   selector: 'picsa-video-player-web',
@@ -20,23 +16,12 @@ export interface IVideoPlayerWebPlaybackTimeEvent {
     `,
   ],
 })
-export class VideoPlayerWebComponent implements OnInit {
-  /** Video source (data object url) */
-  public source = input.required<string>();
-  /** Timestamp to start playback from */
-  public startTime = input<number>();
-  /** Timestamp to set placeholder thumbnail to */
-  public placeholderTime = input<number>();
-
-  // Outputs
-  public playbackProgress = output<IVideoPlayerWebPlaybackTimeEvent>();
-
+export class VideoPlayerWebComponent extends VideoPlayerBaseComponent implements OnInit {
   public videoUrl = computed(() => {
     const source = this.source();
     return this.sanitizer.bypassSecurityTrustUrl(source);
   });
 
-  public playerLoaded = signal(false);
   private playerLoaded$ = toObservable(this.playerLoaded);
 
   private isFullScreen = signal(false);
@@ -47,7 +32,10 @@ export class VideoPlayerWebComponent implements OnInit {
 
   private videoElRef = viewChild.required<ElementRef<HTMLVideoElement>>('videoEl');
 
+  private registeredListeners: Partial<Record<keyof HTMLVideoElementEventMap, () => void>> = {};
+
   constructor(private sanitizer: DomSanitizer) {
+    super();
     // Add/Remove event listeners on creation
     effect((onCleanup) => {
       if (this.videoElRef().nativeElement) {
@@ -88,7 +76,7 @@ export class VideoPlayerWebComponent implements OnInit {
 
   private emitPlaybackTime(currentTime: number) {
     const totalTime = this.videoEl.duration;
-    this.playbackProgress.emit({ currentTime, totalTime, percentage: (currentTime / totalTime) * 100 });
+    this.playbackProgress.emit({ currentTime, totalTime });
   }
 
   /***********************************************************************************************
@@ -97,7 +85,6 @@ export class VideoPlayerWebComponent implements OnInit {
 
   private videoElEventMap: Partial<Record<keyof HTMLVideoElementEventMap, (e: Event) => void>> = {
     loadedmetadata: () => this.playerLoaded.set(true),
-
     pause: () =>
       // wait before exiting in case using seek bar
       // TODO - add better trackign of mousedown/touch to check if seeking...
@@ -107,14 +94,11 @@ export class VideoPlayerWebComponent implements OnInit {
           document.exitFullscreen();
         }
       }, 500),
-
     ended: () => {
       this.emitPlaybackTime(this.videoEl.duration);
       document.exitFullscreen();
     },
   };
-
-  private registeredListeners: Partial<Record<keyof HTMLVideoElementEventMap, () => void>> = {};
 
   private addListeners() {
     // register video event listeners

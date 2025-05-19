@@ -1,14 +1,20 @@
 <div class="placeholderContainer">
   <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
-    <!-- Native -->
-    @if(isNative){
+    <!-- Play Button -->
     <button mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!source">
       <mat-icon>play_arrow</mat-icon>
     </button>
-    <!-- <picsa-video-player-native [source]="source" #nativePlayer></picsa-video-player-native> -->
+    @if(source(); as source){
+    <!-- Native -->
+    @if(isNative){
+    <picsa-video-player-native
+      [source]="source"
+      [playerId]="playerId"
+      #nativePlayer
+      (playbackProgress)="handlePlaybackProgressChanged($event)"
+    ></picsa-video-player-native>
     } @else {
     <!-- Web -->
-    @if(source(); as source){
     <picsa-video-player-web
       [source]="source"
       [placeholderTime]="20"
@@ -16,13 +22,11 @@
       #webPlayer
       (playbackProgress)="handlePlaybackProgressChanged($event)"
     ></picsa-video-player-web>
-    } @else {
-    <picsa-video-thumbnail [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl"> </picsa-video-thumbnail>
     } }
-
-    <button mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!source">
-      <mat-icon>play_arrow</mat-icon>
-    </button>
+    <!-- Thumbnail -->
+    @else {
+    <picsa-video-thumbnail [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl"> </picsa-video-thumbnail>
+    }
   </div>
   <!-- Playback Progress -->
   <div class="progress-bar">
