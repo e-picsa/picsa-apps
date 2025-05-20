@@ -1,5 +1,4 @@
 import { Component, effect, input } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
@@ -30,12 +29,13 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
 export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   public playerId = input.required<string>();
 
+  /** Override default player options */
+  public playerOptions = input<capVideoPlayerOptions>();
+
   private videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
 
-  private playerOptions: capVideoPlayerOptions;
-
-  /** Track if player has been initialised */
-  private initialised = false;
+  private currentTime: number;
+  private totalTime: number;
 
   constructor() {
     super();
@@ -51,18 +51,30 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // Stop playback from any other players
     await this.videoPlayer.stopAllPlayers();
 
-    // if (!this.initialised) {
+    // play needs to initialise every time on native
     await this.initPlayer();
-    // }
+    // register listeners each play (unregisters on exit)
+    this.addListeners();
+    await this.setPlayerInitialTime(this.currentTime || this.startTime() || 0);
 
     await this.videoPlayer.play({ playerId: this.playerId() });
   }
 
-  private async updatePlaybackProgress() {
-    const { value: currentTime } = await this.videoPlayer.getCurrentTime({ playerId: this.playerId() });
-    const { value: totalTime } = await this.videoPlayer.getDuration({ playerId: this.playerId() });
-
-    this.playbackProgress.emit({ currentTime, totalTime });
+  private async updatePlaybackProgress(currentTime: number | string) {
+    // Some events like pause can emit string so ensure parsed as integer
+    if (typeof currentTime === 'string') {
+      currentTime = parseInt(currentTime);
+    }
+    this.currentTime = currentTime;
+    // Initial playback can trigger pause event before total time has been calculated
+    // so only emit after total time checked
+    if (!this.totalTime) {
+      const durationRes = await this.videoPlayer.getDuration({ playerId: this.playerId() });
+      this.totalTime = durationRes.value;
+    }
+    if (this.totalTime) {
+      this.playbackProgress.emit({ currentTime: this.currentTime, totalTime: this.totalTime });
+    }
   }
 
   /** Set the initial time for video player feedback */
@@ -111,13 +123,9 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // defaultOptions.height = Math.round((clientWidth * 9) / 16);
 
     // Merge default options with user override
-    this.playerOptions = { ...defaultOptions, ...options };
-    const res = await this.videoPlayer.initPlayer(this.playerOptions);
-    this.addListeners();
-    // HACK - on web play only needs to initialise once but on Android needs to init every playback
-    if (!Capacitor.isNativePlatform()) {
-      this.initialised = true;
-    }
+    const mergedPlayerOptions = { ...defaultOptions, ...options };
+    const res = await this.videoPlayer.initPlayer(mergedPlayerOptions);
+
     return res;
   }
 
@@ -147,25 +155,30 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // console.log('[Video Player] play');
   }
 
-  private async handlePlayerPause(currentTime: number) {
-    console.log('[Video Player] pause', currentTime);
-    await this.updatePlaybackProgress();
+  private async handlePlayerPause(currentTime: number, playerId: string) {
+    // console.log('[Video Player] pause', currentTime);
+    if (playerId === this.playerId()) {
+      this.updatePlaybackProgress(currentTime);
+    }
   }
 
-  private async handlePlayerEnded(currentTime: number) {
-    console.log('[Video Player] ended', currentTime);
-
-    await this.updatePlaybackProgress();
+  private async handlePlayerEnded(currentTime: number, playerId: string) {
+    // console.log('[Video Player] ended', currentTime);
+    if (playerId === this.playerId()) {
+      this.updatePlaybackProgress(currentTime);
+      this.removeListeners();
+    }
   }
 
-  private async handlePlayerExit() {
-    console.log('[Video Player] exit');
-    // HACK - player exit event not bound to specific player instance so do not update video state
-    // this means that progress state cannot be saved if user exits video without first pausing
-    // (this only applies to fullscreen videos played on native devices)
-
-    // Ensure player does not stay stuck in landscape mode
-
+  private async handlePlayerExit(currentTime: number, playerId: string) {
+    // console.log('[Video Player] exit', currentTime, playerId);
+    // HACK - player exit can get caught by multiple players (listeners do not seem to unregister correctly)
+    // so include playerId
+    if (playerId === this.playerId()) {
+      this.updatePlaybackProgress(currentTime);
+      this.removeListeners();
+    }
+    // Ensure don't get stuck in landscape
     await ScreenOrientation.unlock();
   }
 
@@ -202,25 +215,22 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
     // Pause
     const jeepCapVideoPlayerPause = (e: capVideoListener) => {
-      if (e.fromPlayerId === this.playerId()) {
-        this.handlePlayerPause(e.currentTime);
-      }
+      this.handlePlayerPause(e.currentTime, e.fromPlayerId);
     };
     this.videoPlayer.addListener('jeepCapVideoPlayerPause', jeepCapVideoPlayerPause);
     this.listeners.push({ event: 'jeepCapVideoPlayerPause', callback: jeepCapVideoPlayerPause });
 
     // Ended
     const jeepCapVideoPlayerEnded = (e: capVideoListener) => {
-      if (e.fromPlayerId === this.playerId()) {
-        this.handlePlayerEnded(e.currentTime);
-      }
+      this.handlePlayerEnded(e.currentTime, e.fromPlayerId);
     };
     this.videoPlayer.addListener('jeepCapVideoPlayerEnded', jeepCapVideoPlayerEnded);
     this.listeners.push({ event: 'jeepCapVideoPlayerEnded', callback: jeepCapVideoPlayerEnded });
 
     // Exit - NOTE - different callback
+    const playerId = this.playerId();
     const jeepCapVideoPlayerExit = (e: { dismiss?: boolean; currentTime: number }) => {
-      this.handlePlayerExit();
+      this.handlePlayerExit(e.currentTime, playerId);
     };
     this.videoPlayer.addListener('jeepCapVideoPlayerExit', jeepCapVideoPlayerExit);
     this.listeners.push({ event: 'jeepCapVideoPlayerExit', callback: jeepCapVideoPlayerExit });

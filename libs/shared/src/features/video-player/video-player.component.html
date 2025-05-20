@@ -8,23 +8,24 @@
     <!-- Native -->
     @if(isNative){
     <picsa-video-player-native
+      #nativePlayer
       [source]="source"
       [playerId]="playerId"
-      #nativePlayer
+      [startTime]="startTime"
       (playbackProgress)="handlePlaybackProgressChanged($event)"
     ></picsa-video-player-native>
     } @else {
     <!-- Web -->
     <picsa-video-player-web
+      #webPlayer
       [source]="source"
       [placeholderTime]="20"
       [startTime]="startTime"
-      #webPlayer
       (playbackProgress)="handlePlaybackProgressChanged($event)"
     ></picsa-video-player-web>
     } }
     <!-- Thumbnail -->
-    @else {
+    @if(isNative || !source()) {
     <picsa-video-thumbnail [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl"> </picsa-video-thumbnail>
     }
   </div>
