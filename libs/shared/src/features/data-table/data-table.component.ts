@@ -76,12 +76,15 @@ export class FormatValuePipe implements PipeTransform {
  * <picsa-data-table [data]="myData" [options]="{search:false}"></picsa-data-table>
  * ```
  * The table will display all cell values directly, without any additional formatting
- * If needing to render values within a custom template this can be done via `valueTemplates`
+ * If needing to render values within a custom template this can be done via `valueTemplates`.
+ * Value templates can access the value through any default named variable `let-{varName}`
+ * The full row can also be accessed through `let-row`
  * @example
  * ```
  * <picsa-data-table [data]="myData" [valueTemplates]={col1:col1Template}>
- *  <ng-template #col1Template let-value>
+ *  <ng-template #col1Template let-value let-row>
  *    <span class='some-custom-class'>{{value | modifierPipe}}</span>
+ *    <span>{{row.anotherField}}</span>
  *  </ng-template>
  * </picsa-data-table>
  * ```

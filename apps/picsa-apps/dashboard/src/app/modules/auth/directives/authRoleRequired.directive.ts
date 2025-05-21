@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
@@ -37,6 +38,10 @@ export class AuthRoleRequiredDirective {
   private doesUserHaveRole(requiredRole?: IAuthRole, deploymentRoles?: IAuthRole[]) {
     if (!requiredRole) return true;
     if (!deploymentRoles) return false;
+    const [feature, role] = requiredRole.split('.');
+    // if has global permission return true
+    if (deploymentRoles[role]) return true;
+    // otherwise check specific feature permisison
     return deploymentRoles.includes(requiredRole);
   }
 

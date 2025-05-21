@@ -1,7 +1,7 @@
 import { readFileSync, readJSONSync, writeFileSync, writeJSONSync } from 'fs-extra';
 import prompts from 'prompts';
 import { resolve } from 'path';
-import { PATHS } from './paths';
+import { PATHS } from '../../../tools/workflows/paths';
 const MAIN_PACKAGE_PATH = resolve(PATHS.rootDir, 'package.json');
 const APP_BUILD_GRADLE_PATH = resolve(PATHS.extensionAppNative, 'android/app/build.gradle');
 
