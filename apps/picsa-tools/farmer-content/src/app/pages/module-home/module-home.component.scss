@@ -9,3 +9,24 @@
 .step-title {
   @apply m-0 p-2 text-white bg-[var(--color-secondary)];
 }
+
+.tool-step-container {
+  @apply flex-1 flex justify-center items-center cursor-pointer;
+
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+.tool-container {
+  @apply fixed left-0 w-screen h-screen z-10;
+  &[data-has-header] {
+    // fixed header height 3.5rem
+    max-height: calc(100hv - 3.5rem);
+    top: 3.5rem;
+  }
+}
+.tool-header {
+  @apply flex items-center;
+}

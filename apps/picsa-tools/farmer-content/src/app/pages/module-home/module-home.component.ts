@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { BackButton, PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IToolData } from '@picsa/data';
-import { FadeInOut } from '@picsa/shared/animations';
+import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
-import { map } from 'rxjs';
+import { isEqual } from '@picsa/utils/object.utils';
+import { filter, map, tap } from 'rxjs';
 
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
@@ -19,23 +22,25 @@ import { FarmerStepVideoPlaylistComponent } from './components/step-video-playli
   selector: 'farmer-content-module-home',
   imports: [
     CommonModule,
+    BackButton,
     FarmerModuleFooterComponent,
     FarmerStepVideoComponent,
     FarmerStepVideoPlaylistComponent,
     PicsaTranslateModule,
+    MatButtonModule,
     MatCardModule,
+    MatIconModule,
     PhotoInputComponent,
     PhotoListComponent,
+    RouterModule,
   ],
   templateUrl: './module-home.component.html',
   styleUrl: './module-home.component.scss',
-  animations: [FadeInOut({ inSpeed: 200, inDelay: 100 })],
+  animations: [FadeInOut({ inSpeed: 200, inDelay: 100 }), FlyInOut({ axis: 'Y' })],
   // Ensure url changes update in nested tools by using default change detection
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
-  private slug = toSignal(this.route.params.pipe(map((v) => v.slug)));
-
   public content = computed<IFarmerContent | undefined>(
     () => {
       const slug = this.slug();
@@ -46,17 +51,15 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     { equal: (a, b) => a?.id === b?.id }
   );
 
-  /** Content to display within mat-tabs */
-  public tabs = computed(() => {
-    const content = this.content();
-    return content?.steps || [];
+  public toolStep = computed(() => this.content()?.steps.find((v) => v.type === 'tool'));
+
+  /** Route segments of nested tool router */
+  public toolRouteSegments = computed(() => this.calcToolRouteSegments(this.url(), this.toolStep()?.tool.href), {
+    equal: isEqual,
   });
 
-  /** Selected tab index. Used to programatically change tabs from custom footer */
-  public selectedIndex = model(0);
-
-  /** Track whether tool is active in mat-stepper  */
-  public toolTabIndex = signal(-1);
+  /** Manually show/hide tool */
+  public toolHidden = signal(false);
 
   /** Store any user-generated photos within a folder named after module */
   public photoAlbum = computed(() => {
@@ -66,6 +69,20 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     }
     return undefined;
   });
+
+  private slug = toSignal(
+    this.route.params.pipe(
+      tap((v) => console.log('params', v)),
+      map((params) => params.slug)
+    )
+  );
+
+  private url = toSignal(
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map((e) => e.url)
+    )
+  );
 
   constructor(
     private route: ActivatedRoute,
@@ -82,22 +99,22 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
         this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
       }
     });
-    // load content on slug change and fix tour implementation
-    // effect((onCleanup) => {
-    //   // update the tour service to allow triggering tour from inside mat-tab component
-    //   this.tourService.useInMatTab = true;
-    //   onCleanup(() => {
-    //     console.log('cleanup');
-    //     this.tourService.useInMatTab = false;
-    //   });
-    // });
-    // effect(() => {
-    //   const content = this.content();
-    //   if (content) {
-    //     console.log('content', content);
-    //     // this.componentService.patchHeader({ title: content.title });
-    //   }
-    // });
+
+    // load content on slug change
+    effect(() => {
+      const content = this.content();
+      if (content) {
+        this.componentService.patchHeader({ title: content.title });
+      }
+    });
+
+    // update the tour service to allow triggering tour from inside mat-tab component
+    effect((onCleanup) => {
+      this.tourService.useInMatTab = true;
+      onCleanup(() => {
+        this.tourService.useInMatTab = false;
+      });
+    });
   }
 
   ngOnInit() {
@@ -108,13 +125,39 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     this.componentService.patchHeader({ style: 'primary' });
   }
 
-  /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
-  private setToolUrl(tool: IToolData) {
-    if (!location.pathname.includes(`/${tool.href}`)) {
-      this.router.navigate([tool.href], { relativeTo: this.route, replaceUrl: true });
+  public showTool() {
+    const toolStep = this.toolStep();
+    if (toolStep) {
+      this.setToolUrl(toolStep.tool);
+      this.toolHidden.set(false);
     }
   }
 
+  /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
+  private setToolUrl(tool: IToolData) {
+    if (!location.pathname.includes(`/${tool.href}`)) {
+      this.router.navigate([tool.href], { relativeTo: this.route });
+    }
+  }
+
+  /**
+   * Take a url like `/farmer/what-do-you-currently-do/seasonal-calendar/CFAi6NIjHzKNyBonyfha`
+   * and calculate nested path segments of tool, e.g. ["","CFAi6NIjHzKNyBonyfha"]
+   * Returns `[]` if no segments,  [""] on home
+   * */
+  private calcToolRouteSegments(url?: string, toolHref?: string) {
+    if (url && toolHref) {
+      const index: number = url.indexOf(toolHref);
+      const toolPath = index !== -1 ? url.substring(index + toolHref.length) : undefined;
+      console.log({ url, toolHref, toolPath }, toolPath?.split('/'));
+      if (toolPath !== undefined) {
+        return toolPath.split('/');
+      }
+    }
+    return [];
+  }
+
+  // TODO - review if needed
   private shouldHideBackButton(tool?: IToolData) {
     if (tool) {
       // HACK - budget tool doesn't show back to site select as can be done from dropdown

@@ -7,7 +7,7 @@
       @for(step of content.steps; track $index){
       <mat-card class="flex flex-col">
         <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
-        <div class="flex-1">
+        <div class="flex-1 flex flex-col">
           @switch (step.type) {
           <!-- Video -->
           @case('video'){
@@ -27,7 +27,10 @@
           </div>
 
           } } @case ('tool') {
-          <!-- TODO - tool -->
+          <div class="tool-step-container" (click)="showTool()">
+            <h3>{{ 'Use The Tool' | translate }}</h3>
+          </div>
+
           } }
         </div>
       </mat-card>
@@ -40,21 +43,34 @@
 </div>
 <!-- Footer -->
 <farmer-module-footer [totalSections]="1" [selectedIndex]="1"></farmer-module-footer>
-
 <!-- TODO - footer navigation between units -->
 
+@if(toolStep(); as toolStep){
+<div
+  id="toolStep"
+  class="page tool-container"
+  [attr.data-has-header]="toolStep.tool.showHeader ? true : undefined"
+  [@flyInOut]="toolRouteSegments().length > 0 && !toolHidden() ? 'in' : 'out'"
+>
+  @if(toolStep.tool.showHeader){
+  <!-- TODO - handle offset -->
+  } @else {
+  <!-- Custom tool header -->
+  <div class="tool-header">
+    @if(toolRouteSegments().length > 0){
+    <back-button variant="primary"></back-button>
+    }
+
+    <button mat-button (click)="toolHidden.set(true)" class="p-4 m-2 ml-auto">
+      {{ 'Close' | translate }}
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  }
+
+  <router-outlet #toolRouter></router-outlet>
+</div>
+}
+
 <!-- TODO - track video viewed state from step videos (e.g. checkmark) -->
-
-<!-- <div>{{ step | json }}</div> -->
-<!-- @if (selectedIndex() === $index) {
-      <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
-        @for(block of step; track $index){ @switch (block.type) {
-
-        @case ('text') { @if(block.title){
-        <h2 class="px-4">{{ block.title | translate }}</h2>
-        } @if(block.text) {
-        <p class="px-4">{{ block.text | translate }}</p>
-        } }
-         } }
-      </div>
-      } -->
