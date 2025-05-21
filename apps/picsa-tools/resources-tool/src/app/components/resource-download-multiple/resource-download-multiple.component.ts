@@ -36,8 +36,6 @@ export class ResourceDownloadMultipleComponent implements OnDestroy {
   private componentDestroyed$ = new Subject();
   private downloadSubscription?: Subscription;
 
-  @Input() hideOnComplete = false;
-
   @Input() set resources(resources: IResourceFile[]) {
     this._resources = resources;
     this.totalCount = resources.length;

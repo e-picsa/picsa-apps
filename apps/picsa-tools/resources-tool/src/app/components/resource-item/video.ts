@@ -27,7 +27,7 @@ import { IResourceFile } from '../../schemas';
 export class ResourceItemVideoComponent {
   public videoSource: string;
 
-  @Input() fileURI: string;
+  @Input() fileURI: string | null;
 
   @Input() resource: IResourceFile;
 }

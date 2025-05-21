@@ -112,7 +112,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private handleHeaderOptionsChange(options: IHeaderOptions) {
     const { title, style, hideBackButton, hideHeader } = options;
     requestAnimationFrame(() => {
-      if (title) {
+      if (title && this.title !== title) {
         this.title = title;
         this.titleService.setTitle(title);
       }

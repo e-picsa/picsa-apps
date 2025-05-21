@@ -1,49 +1,77 @@
 <div class="page-content">
-  @if(content(); as content){
-  <div @fadeInOut class="content-container">
-    <mat-tab-group
-      [selectedIndex]="selectedIndex()"
-      class="height-fill no-header"
-      style="height: 100%; width: 100%; flex: 1"
-      headerPosition="below"
-      preserveContent
-    >
-      <!-- content -->
-      @for(step of content.steps; track $index){
-      <mat-tab>
-        <div class="tab-content" [attr.data-tool-content]="toolTabIndex() === $index">
-          @for(block of step; track $index){ @switch (block.type) {
+  <!-- Main Content -->
 
-          <!-- Text -->
-          @case ('text') { @if(block.title){
-          <h2 class="px-4">{{ block.title | translate }}</h2>
-          } @if(block.text) {
-          <p class="px-4">{{ block.text | translate }}</p>
-          } }
+  @if(content(); as content){
+  <div @fadeInOut>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      @for(step of content.steps; track $index){
+      <mat-card class="flex flex-col">
+        <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
+        <div class="flex-1 flex flex-col">
+          @switch (step.type) {
           <!-- Video -->
           @case('video'){
-          <farmer-step-video [videoData]="block.video"></farmer-step-video>
+          <farmer-step-video [videoData]="step.video"></farmer-step-video>
           }
+          <!-- Video Playlist-->
+          @case('videoPlaylist'){
+          <farmer-step-video-playlist [videos]="step.videos"></farmer-step-video-playlist>
 
-          <!-- Review tab -->
+          }
+          <!-- Review -->
           @case ('review') { @if(photoAlbum(); as album){
-          <h2>{{ 'Review' | translate }}</h2>
-          <picsa-photo-list [album]="album"></picsa-photo-list>
-          <picsa-photo-input [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-          } }
-
-          <!-- Tool Tab - NOTE only 1 tab will be supported due to router outlet naming-->
-          @case ('tool') {
-          <div class="page tool-route" [attr.data-has-header]="block.tool.showHeader ? true : undefined">
-            <router-outlet #toolRouter></router-outlet>
+          <div class="p-2">
+            <p>{{ 'If you recorded anything on paper you can capture photos and save' | translate }}</p>
+            <picsa-photo-list [album]="album"></picsa-photo-list>
+            <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
           </div>
-          } } }
+
+          } } @case ('tool') {
+          <div class="tool-step-container" (click)="showTool()">
+            <h3>{{ 'Use The Tool' | translate }}</h3>
+          </div>
+
+          } }
         </div>
-      </mat-tab>
+      </mat-card>
+
       }
-    </mat-tab-group>
+    </div>
   </div>
-  <farmer-module-footer [totalSections]="tabs().length" [(selectedIndex)]="selectedIndex"></farmer-module-footer>
 
   }
 </div>
+<!-- Footer -->
+<farmer-module-footer [totalSections]="1" [selectedIndex]="1"></farmer-module-footer>
+<!-- TODO - footer navigation between units -->
+
+<!-- TODO - refactor to component (?) -->
+@if(toolStep(); as toolStep){
+<div
+  id="toolStep"
+  class="page tool-container"
+  [attr.data-has-header]="toolStep.tool.showHeader ? true : undefined"
+  [@flyInOut]="toolRouteSegments().length > 0 && !toolHidden() ? 'in' : 'out'"
+>
+  @if(toolStep.tool.showHeader){
+  <!-- TODO - handle offset -->
+  } @else {
+  <!-- Custom tool header -->
+  <div class="tool-header">
+    @if(toolRouteSegments().length > 1){
+    <back-button variant="primary"></back-button>
+    }
+
+    <button mat-button color="primary" class="p-4 m-2 ml-auto" (click)="toolHidden.set(true)">
+      {{ 'Close' | translate }}
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  }
+
+  <router-outlet #toolRouter></router-outlet>
+</div>
+}
+
+<!-- TODO - track video viewed state from step videos (e.g. checkmark) -->

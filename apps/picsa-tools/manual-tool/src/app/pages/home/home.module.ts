@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { ResourceItemFileComponent } from '@picsa/resources/components';
+import { ResourceDownloadComponent } from '@picsa/resources/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ManualToolComponentsModule } from '../../components/components.module';
@@ -21,7 +21,7 @@ const routes: Route[] = [
     ManualToolComponentsModule,
     RouterModule.forChild(routes),
     PicsaTranslateModule,
-    ResourceItemFileComponent,
+    ResourceDownloadComponent,
   ],
   exports: [],
   declarations: [HomeComponent],
