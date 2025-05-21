@@ -2,34 +2,32 @@
 
 <!-- TODO - should be able to refactor video item to be included here -->
 <div style="position: relative; max-width: 854px; margin: auto; width: 100%">
-  @if(fileURI){
+  @if(dl.fileURI(); as fileURI){
   <resource-share class="share-link" [link]="dbDoc.url" [uri]="fileURI"></resource-share>
   }
 
   <!-- Download overlay -->
   <div
     class="download-overlay"
-    [style.visibility]="attachment ? 'hidden' : 'visible'"
+    [style.visibility]="dl.fileURI() ? 'hidden' : 'visible'"
     [attr.data-file-type]="dbDoc?.subtype || null"
   >
     <div class="mat-elevation-z8; border-radius: 8px;">
-      @if(dbDoc){
       <resource-download
-        [dbDoc]="dbDoc"
+        #dl
+        [resource]="resource"
         class="download-button"
         styleVariant="white"
         [size]="36"
-        [hideOnComplete]="true"
         [showSize]="true"
-        (attachmentChange)="handleAttachmentChange($event)"
+        [style.visibility]="dl.downloadStatus()==='complete'?'hidden':'visible'"
       ></resource-download>
-      }
     </div>
   </div>
 
   <!-- send online video Url -->
   @switch (resource.subtype) { @case ('video') {
-  <resource-item-video [resource]="resource" [fileURI]="fileURI"></resource-item-video>
+  <resource-item-video [resource]="resource" [fileURI]="dl.fileURI()"></resource-item-video>
 
   } @default {
   <resource-item-link [resource]="resourceLink" (click)="handleFileLinkClick($event)" style="height: 100%">

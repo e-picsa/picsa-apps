@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
-import { ConfigurationService } from '@picsa/configuration/src';
+import { ConfigurationService, IUserSettings } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -24,14 +24,8 @@ export class FarmerStepVideoComponent {
   videoData = input.required<IPicsaVideoData>();
 
   videoResource = computed(() => {
-    // HACK - when identifying video to show user cannot rely solely on language_code as
-    // that populates 'global_en' when different country used (should be zm_en)
-    // So instead use country_code specified and language part of localeCode
-    const { country_code: userCountry, language_code } = this.configurationService.userSettings();
-    const [_, userLanguage] = language_code.split('_');
-    const availableVideos = this.videoData().children;
     // HACK - select best video recommendation. TODO - show toggle options in future
-    const [video] = this.filterAvailableVideos(userCountry, userLanguage, availableVideos);
+    const [video] = getRankedChildVideos(this.videoData(), this.configurationService.userSettings());
     if (video) {
       // HACK - lookup resource entry which should be given by same id
       const resource = RESOURCE_VIDEO_HASHMAP[video.id];
@@ -41,16 +35,23 @@ export class FarmerStepVideoComponent {
   });
 
   constructor(private configurationService: ConfigurationService) {}
+}
 
-  private filterAvailableVideos(userCountry: string, userLanguage: string, videos: IPicsaVideo[] = []) {
-    const rankedVideos = videos
-      .map((v) => ({ ...v, _rank: getVideoRank(userCountry, userLanguage, v) }))
-      .filter(({ _rank }) => _rank > 0)
-      .sort((a, b) => a._rank - b._rank);
+/**
+ * Rank available child video formats in order by user language settings
+ * Returns undefined if no child video formats found that match either country or global language settings
+ */
+export function getRankedChildVideos(video: IPicsaVideoData, userSettings: IUserSettings) {
+  // HACK - when identifying video to show user cannot rely solely on language_code as
+  // that populates 'global_en' when different country used (should be zm_en)
+  // So instead use country_code specified and language part of localeCode
+  const { country_code: userCountry, language_code } = userSettings;
+  const [_, userLanguage] = language_code.split('_');
 
-    // default fallback to first video entry
-    return rankedVideos;
-  }
+  return video.children
+    .map((v) => ({ ...v, _rank: getVideoRank(userCountry, userLanguage, v) }))
+    .filter(({ _rank }) => _rank > 0)
+    .sort((a, b) => a._rank - b._rank);
 }
 
 function getVideoRank(userCountry: string, userLanguage: string, video: IPicsaVideo) {

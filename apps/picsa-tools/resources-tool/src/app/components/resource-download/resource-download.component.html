@@ -1,21 +1,21 @@
 <!-- Ready -->
-@if(downloadStatus==='ready' || downloadStatus==='error'){
+@if(downloadStatus()==='ready' || downloadStatus()==='error'){
 <button mat-icon-button (click)="downloadResource()" [attr.data-style-variant]="styleVariant">
   <div class="download-button-inner">
-    <mat-icon style="font-size: 30px">download</mat-icon>
+    <mat-icon style="font-size: 30px; width: 30px">download</mat-icon>
     @if(showSize){
-    <span class="resource-size"> {{ resource.size_kb | sizeMB }} MB </span>
+    <span class="resource-size"> {{ resource().size_kb | sizeMB }} MB </span>
     }
   </div>
 </button>
 }
 <!-- Pending -->
-@if(downloadStatus==='pending'){
+@if(downloadStatus()==='pending'){
 <div class="download-progress">
   <mat-progress-spinner
     [class]="'spinner' + styleVariant"
     color="primary"
-    [mode]="downloadProgress > 0 ? 'determinate' : 'indeterminate'"
+    [mode]="downloadProgress() > 0 ? 'determinate' : 'indeterminate'"
     [value]="downloadProgress"
     [diameter]="size"
     [style.width]="sizePx"
@@ -26,7 +26,7 @@
     mat-button
     class="download-cancel"
     (click)="cancelDownload()"
-    [disabled]="downloadProgress === 100"
+    [disabled]="downloadProgress() === 100"
     [style.width]="sizePx"
     [style.min-width]="sizePx"
     [style.height]="sizePx"
@@ -37,19 +37,15 @@
 </div>
 }
 <!-- Finalizing (write to disk) -->
-@if(downloadStatus==='finalizing'){
+@if(downloadStatus()==='finalizing'){
 <button mat-icon-button [attr.data-style-variant]="styleVariant">
   <mat-icon>pending</mat-icon>
 </button>
 }
 
 <!-- Complete -->
-@if(downloadStatus==='complete'){
-<button
-  mat-icon-button
-  [attr.data-style-variant]="styleVariant"
-  [style.visibility]="hideOnComplete ? 'hidden' : 'visible'"
->
+@if(downloadStatus()==='complete'){
+<button mat-icon-button [attr.data-style-variant]="styleVariant">
   <mat-icon>download_done</mat-icon>
 </button>
 }

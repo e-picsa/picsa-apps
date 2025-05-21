@@ -7,27 +7,21 @@ import { PICSA_FARMER_VIDEOS_HASHMAP, PICSA_OPERATIONAL_VIDEOS_HASHMAP } from '@
 const title = translateMarker('What changes can you make?');
 
 const steps: IFarmerContent['steps'] = [
-  [
-    {
-      type: 'text',
-      title,
-    },
-    {
-      type: 'video',
-      video: PICSA_FARMER_VIDEOS_HASHMAP.options,
-    },
-  ],
-  [
-    { type: 'text', title: translateMarker('Tool') },
-    { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.options },
-  ],
-  [
-    {
-      type: 'tool',
-      tool: TOOLS_DATA_HASHMAP.options,
-    },
-  ],
-  [{ type: 'review' }],
+  {
+    type: 'video',
+    video: PICSA_FARMER_VIDEOS_HASHMAP.options,
+    title: translateMarker('Options'),
+  },
+
+  { type: 'video', video: PICSA_OPERATIONAL_VIDEOS_HASHMAP.options, title: translateMarker('Using The tool') },
+
+  {
+    type: 'tool',
+    tool: TOOLS_DATA_HASHMAP.options,
+    title: translateMarker('Interactive Tool'),
+  },
+
+  { type: 'review', title: translateMarker('Review') },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
