@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  effect,
   EventEmitter,
   Input,
+  input,
   OnDestroy,
   Output,
+  signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,11 +27,11 @@ import { IDownloadStatus, ResourcesToolService } from '../../services/resources-
   imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, SizeMBPipe],
 })
 export class ResourceDownloadComponent implements OnDestroy {
-  public downloadStatus: IDownloadStatus;
-  public downloadProgress = 0;
+  public downloadStatus = signal<IDownloadStatus>('loading');
+  public downloadProgress = signal(0);
+
   public attachment?: RxAttachment<IResourceFile>;
 
-  private _dbDoc: RxDocument<IResourceFile>;
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
 
@@ -40,34 +42,39 @@ export class ResourceDownloadComponent implements OnDestroy {
 
   @Input() size = 48;
 
-  @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
-    this._dbDoc = dbDoc;
-    if (dbDoc) {
-      this.subscribeToAttachmentChanges(dbDoc);
-    }
-  }
+  private dbDoc = signal<RxDocument<IResourceFile> | undefined>(undefined);
 
-  @Input() hideOnComplete = false;
+  public resource = input.required<IResourceFile>();
 
   /** Emit downloaded file updates */
   @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
 
-  constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
+  constructor(private service: ResourcesToolService) {
+    effect(async () => {
+      const resource = this.resource();
+      this.loadDBDoc(resource);
+    });
+  }
+
+  private async loadDBDoc(resource: IResourceFile) {
+    await this.service.ready();
+    const dbDoc = await this.service.dbFiles.findOne(resource.id).exec();
+    if (dbDoc) {
+      this.dbDoc.set(dbDoc);
+      this.subscribeToAttachmentChanges(dbDoc);
+    }
+  }
 
   public get sizePx() {
     return `${this.size}px`;
   }
 
-  public get resource() {
-    return this._dbDoc._data;
-  }
-
   private subscribeToAttachmentChanges(dbDoc: RxDocument<IResourceFile>) {
     // subscribe to doc attachment changes to confirm whether downloaded
     dbDoc.allAttachments$.pipe(takeUntil(this.componentDestroyed$)).subscribe((attachments) => {
-      const attachment = attachments.find((a) => a.id === this.resource.filename);
+      const attachment = attachments.find((a) => a.id === this.resource().filename);
       // TODO - check if update available
-      this.downloadStatus = attachment ? 'complete' : 'ready';
+      this.downloadStatus.set(attachment ? 'complete' : 'ready');
       this.attachment = attachment;
       this.attachmentChange.next(attachment);
     });
@@ -79,25 +86,26 @@ export class ResourceDownloadComponent implements OnDestroy {
   }
 
   public downloadResource() {
-    const { download$, progress$, status$ } = this.service.triggerResourceDownload(this._dbDoc);
-    progress$.subscribe((progress) => {
-      this.downloadProgress = progress;
-      this.cdr.markForCheck();
-    });
-    status$.subscribe((status) => {
-      this.downloadStatus = status;
-      this.cdr.markForCheck();
-    });
-    this.download$ = download$;
+    const doc = this.dbDoc();
+    if (doc) {
+      const { download$, progress$, status$ } = this.service.triggerResourceDownload(doc);
+      progress$.subscribe((progress) => {
+        this.downloadProgress.set(progress);
+      });
+      status$.subscribe((status) => {
+        this.downloadStatus.set(status);
+      });
+      this.download$ = download$;
+    }
   }
 
   /** Cancel ongoing download */
   public cancelDownload() {
-    this.downloadStatus = 'ready';
+    this.downloadStatus.set('ready');
     if (this.download$) {
       this.download$.unsubscribe();
       this.download$ = undefined;
-      this.downloadProgress = 0;
+      this.downloadProgress.set(0);
     }
   }
 }

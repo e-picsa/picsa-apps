@@ -13,17 +13,16 @@
     [attr.data-file-type]="dbDoc?.subtype || null"
   >
     <div class="mat-elevation-z8; border-radius: 8px;">
-      @if(dbDoc){
       <resource-download
-        [dbDoc]="dbDoc"
+        #dl
+        [resource]="resource"
         class="download-button"
         styleVariant="white"
         [size]="36"
-        [hideOnComplete]="true"
         [showSize]="true"
         (attachmentChange)="handleAttachmentChange($event)"
+        [style.visibility]="dl.downloadStatus()==='complete'?'hidden':'visible'"
       ></resource-download>
-      }
     </div>
   </div>
 
