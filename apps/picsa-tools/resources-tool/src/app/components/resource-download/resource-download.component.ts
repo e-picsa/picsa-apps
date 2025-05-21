@@ -30,6 +30,9 @@ export class ResourceDownloadComponent implements OnDestroy {
   public downloadStatus = signal<IDownloadStatus>('loading');
   public downloadProgress = signal(0);
 
+  /** Generated fileURI of downloaded file */
+  public fileURI = signal<string | null>(null);
+
   public attachment?: RxAttachment<IResourceFile>;
 
   private download$?: Subscription;
@@ -44,7 +47,7 @@ export class ResourceDownloadComponent implements OnDestroy {
 
   private dbDoc = signal<RxDocument<IResourceFile> | undefined>(undefined);
 
-  public resource = input.required<IResourceFile>();
+  resource = input.required<IResourceFile>();
 
   /** Emit downloaded file updates */
   @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
@@ -77,7 +80,14 @@ export class ResourceDownloadComponent implements OnDestroy {
       this.downloadStatus.set(attachment ? 'complete' : 'ready');
       this.attachment = attachment;
       this.attachmentChange.next(attachment);
+      this.generateFileURI(dbDoc);
     });
+  }
+  private async generateFileURI(dbDoc: RxDocument<IResourceFile>) {
+    // avoiding converting to web url as will usually be opened natively (e.g. external open, native video)
+    const convertNativeSrc = false;
+    const uri = await this.service.getFileAttachmentURI(dbDoc, convertNativeSrc);
+    this.fileURI.set(uri);
   }
 
   ngOnDestroy() {
