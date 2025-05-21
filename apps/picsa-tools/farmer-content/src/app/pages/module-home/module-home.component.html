@@ -3,7 +3,7 @@
 
   @if(content(); as content){
   <div @fadeInOut>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-screen-lg m-auto">
       @for(step of content.steps; track $index){
       <mat-card class="flex flex-col">
         <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
