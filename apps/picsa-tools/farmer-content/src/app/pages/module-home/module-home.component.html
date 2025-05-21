@@ -15,21 +15,8 @@
           }
           <!-- Video Playlist-->
           @case('videoPlaylist'){
+          <farmer-step-video-playlist [videos]="step.videos"></farmer-step-video-playlist>
 
-          <mat-list>
-            @for(video of step.videos; track video.id){
-            <mat-list-item>
-              <img matListItemAvatar />
-              <h3 matListItemTitle>{{ video.title }}</h3>
-              @if($last){
-              <mat-divider></mat-divider>
-              }
-            </mat-list-item>
-            <!-- TODO - playback button -->
-            <!-- <farmer-step-video [videoData]="video"></farmer-step-video> -->
-
-            }
-          </mat-list>
           }
           <!-- Review -->
           @case ('review') { @if(photoAlbum(); as album){

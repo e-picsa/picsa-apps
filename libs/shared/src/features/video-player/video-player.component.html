@@ -1,10 +1,11 @@
-<div class="placeholderContainer">
+<div class="placeholderContainer" [attr.data-downloaded]="source() ? true : undefined">
   <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
     <!-- Play Button -->
-    <button mat-fab color="primary" class="play-button" (click)="playVideo()" [disabled]="!source">
+    @if(source()){
+    <button mat-fab color="primary" class="play-button" (click)="playVideo()">
       <mat-icon>play_arrow</mat-icon>
     </button>
-    @if(source(); as source){
+    } @if(source(); as source){
     <!-- Native -->
     @if(isNative){
     <picsa-video-player-native

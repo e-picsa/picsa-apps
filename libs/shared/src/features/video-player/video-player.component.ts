@@ -26,7 +26,7 @@ export class VideoPlayerComponent {
   @Input() id: string;
 
   /** Video source - can be string url or data blob */
-  source = input<string | undefined>();
+  source = input<string | undefined | null>();
 
   /** Optional image shown as preview */
   @Input() thumbnail?: string;

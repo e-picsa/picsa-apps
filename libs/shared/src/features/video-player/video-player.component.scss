@@ -12,7 +12,10 @@ $playerWidth: 854px;
   position: relative;
   width: 100%;
   overflow: hidden;
-  margin-bottom: 2rem;
+  opacity: 0.75;
+  &[data-downloaded] {
+    opacity: 1;
+  }
 }
 .placeholder {
   width: 100%;

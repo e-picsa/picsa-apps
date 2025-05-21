@@ -2,9 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, model, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IToolData } from '@picsa/data';
@@ -16,6 +13,7 @@ import { map } from 'rxjs';
 
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
+import { FarmerStepVideoPlaylistComponent } from './components/step-video-playlist/step-video-playlist.component';
 
 @Component({
   selector: 'farmer-content-module-home',
@@ -23,11 +21,9 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
     CommonModule,
     FarmerModuleFooterComponent,
     FarmerStepVideoComponent,
+    FarmerStepVideoPlaylistComponent,
     PicsaTranslateModule,
     MatCardModule,
-    MatDividerModule,
-    MatListModule,
-    MatIconModule,
     PhotoInputComponent,
     PhotoListComponent,
   ],
