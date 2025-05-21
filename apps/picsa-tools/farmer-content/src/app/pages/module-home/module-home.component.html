@@ -45,6 +45,7 @@
 <farmer-module-footer [totalSections]="1" [selectedIndex]="1"></farmer-module-footer>
 <!-- TODO - footer navigation between units -->
 
+<!-- TODO - refactor to component (?) -->
 @if(toolStep(); as toolStep){
 <div
   id="toolStep"
@@ -57,11 +58,11 @@
   } @else {
   <!-- Custom tool header -->
   <div class="tool-header">
-    @if(toolRouteSegments().length > 0){
+    @if(toolRouteSegments().length > 1){
     <back-button variant="primary"></back-button>
     }
 
-    <button mat-button (click)="toolHidden.set(true)" class="p-4 m-2 ml-auto">
+    <button mat-button color="primary" class="p-4 m-2 ml-auto" (click)="toolHidden.set(true)">
       {{ 'Close' | translate }}
       <mat-icon>close</mat-icon>
     </button>

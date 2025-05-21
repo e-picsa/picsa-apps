@@ -147,9 +147,8 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
    * */
   private calcToolRouteSegments(url?: string, toolHref?: string) {
     if (url && toolHref) {
-      const index: number = url.indexOf(toolHref);
+      const index: number = url.indexOf(`/${toolHref}`);
       const toolPath = index !== -1 ? url.substring(index + toolHref.length) : undefined;
-      console.log({ url, toolHref, toolPath }, toolPath?.split('/'));
       if (toolPath !== undefined) {
         return toolPath.split('/');
       }
