@@ -12,7 +12,7 @@ import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features'
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
 import { isEqual } from '@picsa/utils/object.utils';
-import { filter, map, tap } from 'rxjs';
+import { filter, map } from 'rxjs';
 
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
@@ -70,12 +70,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
     return undefined;
   });
 
-  private slug = toSignal(
-    this.route.params.pipe(
-      tap((v) => console.log('params', v)),
-      map((params) => params.slug)
-    )
-  );
+  private slug = toSignal(this.route.params.pipe(map((params) => params.slug)));
 
   private url = toSignal(
     this.router.events.pipe(
