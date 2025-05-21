@@ -1,19 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  EventEmitter,
-  Input,
-  input,
-  OnDestroy,
-  Output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, Input, input, OnDestroy, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
-import { RxAttachment, RxDocument } from 'rxdb';
+import { RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
@@ -33,7 +23,8 @@ export class ResourceDownloadComponent implements OnDestroy {
   /** Generated fileURI of downloaded file */
   public fileURI = signal<string | null>(null);
 
-  public attachment?: RxAttachment<IResourceFile>;
+  /** File URI emitter */
+  fileDownloaded = output<string>();
 
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
@@ -49,13 +40,17 @@ export class ResourceDownloadComponent implements OnDestroy {
 
   resource = input.required<IResourceFile>();
 
-  /** Emit downloaded file updates */
-  @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
-
   constructor(private service: ResourcesToolService) {
     effect(async () => {
       const resource = this.resource();
       this.loadDBDoc(resource);
+    });
+    // Emit whenever file download complete/retrieved and URI available for use
+    effect(() => {
+      const fileURI = this.fileURI();
+      if (fileURI) {
+        this.fileDownloaded.emit(fileURI);
+      }
     });
   }
 
@@ -78,8 +73,6 @@ export class ResourceDownloadComponent implements OnDestroy {
       const attachment = attachments.find((a) => a.id === this.resource().filename);
       // TODO - check if update available
       this.downloadStatus.set(attachment ? 'complete' : 'ready');
-      this.attachment = attachment;
-      this.attachmentChange.next(attachment);
       this.generateFileURI(dbDoc);
     });
   }
