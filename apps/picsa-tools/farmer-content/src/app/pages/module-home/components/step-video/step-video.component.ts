@@ -25,7 +25,8 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
-  multiple = input(false);
+  /** */
+  viewMode = input<'single' | 'playlist'>('single');
 
   videos = input.required<IPicsaVideoData[]>();
 

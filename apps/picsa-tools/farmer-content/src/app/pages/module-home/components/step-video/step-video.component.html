@@ -1,5 +1,5 @@
-<!-- Multiple View  -->
-@if(multiple()){
+<!-- Playlist View  -->
+@if(viewMode()==='playlist'){
 <mat-list class="playlist-container">
   @for(video of videoResources(); track video.id){
 
