@@ -1,8 +1,61 @@
-@if(videoData()){
-<!-- Ignore case where video entry exists but ranking empty (e.g. playlist with multi-country videos)  -->
-@if(videoResource(); as resource){
-<resource-item-file [resource]="resource"></resource-item-file>
+<!-- Multiple View  -->
+@if(multiple()){
+<mat-list class="playlist-container">
+  @for(video of videoResources(); track video.id){
 
-} } @else {
-<p>Video not found</p>
+  <div class="playlist-item" (click)="handleItemClick(dl, videoPlayer)">
+    <div class="relative">
+      <div class="w-48">
+        <picsa-video-player
+          #videoPlayer
+          [source]="dl.fileURI()"
+          [thumbnail]="video.cover?.image"
+          [onlineVideoUrl]="video.url"
+          [id]="video.id"
+        >
+        </picsa-video-player>
+      </div>
+
+      <resource-download
+        #dl
+        [resource]="video"
+        [showSize]="true"
+        [size]="48"
+        styleVariant="white"
+        class="video-downloader"
+        [attr.data-status]="dl.downloadStatus()"
+      ></resource-download>
+    </div>
+
+    <h3 class="flex-1 ml-4">{{ video.title }}</h3>
+  </div>
+
+  @if(!$last){
+  <mat-divider></mat-divider>
+  } }
+</mat-list>
 }
+<!-- Single View  -->
+@else { @if(videoResources()[0]; as video){
+<div class="relative">
+  <picsa-video-player
+    #videoPlayer
+    [source]="dl.fileURI()"
+    [thumbnail]="video.cover?.image"
+    [onlineVideoUrl]="video.url"
+    [id]="video.id"
+  >
+  </picsa-video-player>
+
+  <resource-download
+    #dl
+    [resource]="video"
+    [showSize]="true"
+    [size]="48"
+    styleVariant="white"
+    class="video-downloader"
+    [attr.data-status]="dl.downloadStatus()"
+  ></resource-download>
+</div>
+
+} }

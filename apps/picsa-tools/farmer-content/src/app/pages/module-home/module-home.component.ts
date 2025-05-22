@@ -16,7 +16,6 @@ import { filter, map } from 'rxjs';
 
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
-import { FarmerStepVideoPlaylistComponent } from './components/step-video-playlist/step-video-playlist.component';
 
 @Component({
   selector: 'farmer-content-module-home',
@@ -25,7 +24,6 @@ import { FarmerStepVideoPlaylistComponent } from './components/step-video-playli
     BackButton,
     FarmerModuleFooterComponent,
     FarmerStepVideoComponent,
-    FarmerStepVideoPlaylistComponent,
     PicsaTranslateModule,
     MatButtonModule,
     MatCardModule,

@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { MatDivider } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { ConfigurationService, IUserSettings } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResourceItemFileComponent } from '@picsa/resources/components';
+import { ResourceDownloadComponent } from '@picsa/resources/components';
+import { PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -16,32 +20,42 @@ import { ResourceItemFileComponent } from '@picsa/resources/components';
  */
 @Component({
   selector: 'farmer-step-video',
-  imports: [CommonModule, ResourceItemFileComponent],
+  imports: [CommonModule, MatListModule, MatDivider, ResourceDownloadComponent, PicsaVideoPlayerModule],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
-  videoData = input.required<IPicsaVideoData>();
+  multiple = input(false);
 
-  videoResource = computed(() => {
-    // HACK - select best video recommendation. TODO - show toggle options in future
-    const [video] = getRankedChildVideos(this.videoData(), this.configurationService.userSettings());
-    if (video) {
-      // HACK - lookup resource entry which should be given by same id
-      const resource = RESOURCE_VIDEO_HASHMAP[video.id];
-      return resource;
-    }
-    return undefined;
-  });
+  videos = input.required<IPicsaVideoData[]>();
+
+  public videoResources = computed(() => this.toVideoResources(this.videos()));
 
   constructor(private configurationService: ConfigurationService) {}
+
+  public handleItemClick(dlComponent: ResourceDownloadComponent, videoPlayer: VideoPlayerComponent) {
+    if (dlComponent.downloadStatus() === 'ready') {
+      return dlComponent.downloadResource();
+    }
+    if (videoPlayer.source()) {
+      videoPlayer.playVideo();
+    }
+  }
+
+  private toVideoResources(videos: IPicsaVideoData[]) {
+    const userSettings = this.configurationService.userSettings();
+    return videos
+      .map((video) => getRankedChildVideos(video, userSettings))
+      .map(([topRanked]) => RESOURCE_VIDEO_HASHMAP[topRanked?.id])
+      .filter((resource) => resource !== undefined);
+  }
 }
 
 /**
  * Rank available child video formats in order by user language settings
  * Returns undefined if no child video formats found that match either country or global language settings
  */
-export function getRankedChildVideos(video: IPicsaVideoData, userSettings: IUserSettings) {
+function getRankedChildVideos(video: IPicsaVideoData, userSettings: IUserSettings) {
   // HACK - when identifying video to show user cannot rely solely on language_code as
   // that populates 'global_en' when different country used (should be zm_en)
   // So instead use country_code specified and language part of localeCode

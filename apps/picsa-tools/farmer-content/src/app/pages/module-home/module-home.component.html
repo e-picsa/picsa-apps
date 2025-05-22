@@ -11,11 +11,11 @@
           @switch (step.type) {
           <!-- Video -->
           @case('video'){
-          <farmer-step-video [videoData]="step.video"></farmer-step-video>
+          <farmer-step-video [videos]="[step.video]"></farmer-step-video>
           }
           <!-- Video Playlist-->
           @case('videoPlaylist'){
-          <farmer-step-video-playlist [videos]="step.videos"></farmer-step-video-playlist>
+          <farmer-step-video [videos]="step.videos" [multiple]="true"></farmer-step-video>
 
           }
           <!-- Review -->
