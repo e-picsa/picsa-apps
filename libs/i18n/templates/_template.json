@@ -583,6 +583,10 @@
     "tool": "climate"
   },
   {
+    "text": "Map",
+    "tool": "climate"
+  },
+  {
     "text": "Print Version",
     "tool": "climate"
   },
@@ -658,10 +662,6 @@
     "tool": "common"
   },
   {
-    "text": "App",
-    "tool": "common"
-  },
-  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
@@ -671,6 +671,10 @@
   },
   {
     "text": "Below",
+    "tool": "common"
+  },
+  {
+    "text": "Beyond PICSA",
     "tool": "common"
   },
   {
@@ -706,6 +710,10 @@
     "tool": "common"
   },
   {
+    "text": "Digital Skills Introduction",
+    "tool": "common"
+  },
+  {
     "text": "District",
     "tool": "common"
   },
@@ -730,11 +738,43 @@
     "tool": "common"
   },
   {
+    "text": "Historic Climate",
+    "tool": "common"
+  },
+  {
+    "text": "How to Create Your Own Content",
+    "tool": "common"
+  },
+  {
+    "text": "How to Download and Install Apps",
+    "tool": "common"
+  },
+  {
+    "text": "How to Keep Your Device Operational",
+    "tool": "common"
+  },
+  {
+    "text": "How to Search for and Evaluate Digital Information",
+    "tool": "common"
+  },
+  {
+    "text": "How to share content with others",
+    "tool": "common"
+  },
+  {
     "text": "I'm a farmer",
     "tool": "common"
   },
   {
     "text": "I'm an extension worker",
+    "tool": "common"
+  },
+  {
+    "text": "Interactive Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Introduction",
     "tool": "common"
   },
   {
@@ -762,6 +802,10 @@
     "tool": "common"
   },
   {
+    "text": "Participatory Budgets",
+    "tool": "common"
+  },
+  {
     "text": "Please install the latest version of Google Chrome and restart",
     "tool": "common"
   },
@@ -783,6 +827,10 @@
   },
   {
     "text": "Restart App",
+    "tool": "common"
+  },
+  {
+    "text": "Review",
     "tool": "common"
   },
   {
@@ -815,6 +863,18 @@
   },
   {
     "text": "Use the forecasts to update and adapt your plans",
+    "tool": "common"
+  },
+  {
+    "text": "Using The Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Using The tool",
+    "tool": "common"
+  },
+  {
+    "text": "Using the App",
     "tool": "common"
   },
   {
@@ -1311,10 +1371,6 @@
     "tool": "extension-content"
   },
   {
-    "text": "Resources",
-    "tool": "extension-content"
-  },
-  {
     "text": "Training",
     "tool": "extension-content"
   },
@@ -1351,11 +1407,11 @@
     "tool": "farmer-content"
   },
   {
-    "text": "next",
+    "text": "If you recorded anything on paper you can capture photos and save",
     "tool": "farmer-content"
   },
   {
-    "text": "previous",
+    "text": "Use The Tool",
     "tool": "farmer-content"
   },
   {
@@ -1364,6 +1420,10 @@
   },
   {
     "text": "National",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Resources",
     "tool": "forecasts"
   },
   {
@@ -1407,10 +1467,6 @@
     "tool": "manual"
   },
   {
-    "text": "Introduction",
-    "tool": "manual"
-  },
-  {
     "text": "Is the climate changing?",
     "tool": "manual"
   },
@@ -1448,10 +1504,6 @@
   },
   {
     "text": "Response to forecast",
-    "tool": "manual"
-  },
-  {
-    "text": "Review",
     "tool": "manual"
   },
   {
