@@ -1,10 +1,10 @@
 import type { IFarmerContentId } from './data/content';
 
-import type { IToolId } from './data/tools';
+import type { IFarmerToolId } from './data/tools';
 import { IPicsaVideoData } from '../resources';
 
 export interface IToolData {
-  id: IToolId;
+  id: IFarmerToolId;
   label: string;
   /** base url to access tool within app */
   href: string;

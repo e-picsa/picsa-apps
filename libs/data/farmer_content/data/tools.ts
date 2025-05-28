@@ -1,4 +1,5 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { TOOLS_DATA_HASHMAP } from '../../tools';
 
 /*******************************************************************
  * Farmer Tools
@@ -7,27 +8,20 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { arrayToHashmap } from '@picsa/utils';
 import { IToolData } from '../types';
 
-// TODO - consider including svgIcons and using for extension tool also (refactor to folder and icon pack)
-const TOOLS_BASE = {
-  budget: { label: translateMarker('Budget'), href: 'budget', title: translateMarker('Tool'), showHeader: true },
-  climate: { label: translateMarker('Climate'), href: 'climate', title: translateMarker('Tool'), showHeader: true },
-  options: { label: translateMarker('Options'), href: 'option', title: translateMarker('Tool') },
-  probability_and_risk: {
-    label: translateMarker('Probability and Risk'),
-    href: 'crop-probability',
-    title: translateMarker('Tool'),
-  },
-  seasonal_calendar: {
-    label: translateMarker('Seasonal Calendar'),
-    href: 'seasonal-calendar',
-    title: translateMarker('Tool'),
-  },
+const FARMER_TOOLS_BASE = {
+  budget: { ...TOOLS_DATA_HASHMAP.budget, showHeader: true },
+  climate: { ...TOOLS_DATA_HASHMAP.climate, showHeader: true },
+  options: { ...TOOLS_DATA_HASHMAP.option },
+  probability_and_risk: { ...TOOLS_DATA_HASHMAP.crop_probability, label: translateMarker('Probability and Risk') },
+  seasonal_calendar: { ...TOOLS_DATA_HASHMAP.seasonal_calendar },
 };
 
-export type IToolId = keyof typeof TOOLS_BASE;
+export type IFarmerToolId = keyof typeof FARMER_TOOLS_BASE;
 
-export const FARMER_TOOLS_DATA: IToolData[] = Object.entries(TOOLS_BASE).map(([id, data]) => ({
+export const FARMER_TOOLS_DATA: IToolData[] = Object.entries(FARMER_TOOLS_BASE).map(([id, data]) => ({
   ...data,
-  id: id as IToolId,
+  href: data.url.replace('/', ''),
+  id: id as IFarmerToolId,
+  title: translateMarker('Tool'),
 }));
-export const FARMER_TOOLS_DATA_HASHMAP: Record<IToolId, IToolData> = arrayToHashmap(FARMER_TOOLS_DATA, 'id');
+export const FARMER_TOOLS_DATA_HASHMAP: Record<IFarmerToolId, IToolData> = arrayToHashmap(FARMER_TOOLS_DATA, 'id');
