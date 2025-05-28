@@ -12,7 +12,7 @@ import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features'
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { TourService } from '@picsa/shared/services/core/tour';
 import { isEqual } from '@picsa/utils/object.utils';
-import { filter, map } from 'rxjs';
+import { filter, map, Subscription } from 'rxjs';
 
 import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
@@ -38,7 +38,7 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   // Ensure url changes update in nested tools by using default change detection
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
+export class FarmerContentModuleHomeComponent implements OnDestroy {
   public content = computed<IFarmerContent | undefined>(
     () => {
       const slug = this.slug();
@@ -46,7 +46,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
         return FARMER_CONTENT_DATA_BY_SLUG[slug];
       }
     },
-    { equal: (a, b) => a?.id === b?.id }
+    { equal: (a, b) => a?.id === b?.id },
   );
 
   public toolStep = computed(() => this.content()?.steps.find((v) => v.type === 'tool'));
@@ -73,15 +73,18 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   private url = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      map((e) => e.url)
-    )
+      map((e) => e.url),
+    ),
   );
+
+  /** Utility used to intercept nav back events when tool hidden but in routable state */
+  private backEventInterceptor: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private componentService: PicsaCommonComponentsService,
-    private tourService: TourService
+    private tourService: TourService,
   ) {
     effect(() => {
       const content = this.content();
@@ -108,28 +111,58 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
         this.tourService.useInMatTab = false;
       });
     });
-  }
-
-  ngOnInit() {
-    this.componentService.patchHeader({ style: 'inverted' });
+    // HACK - revert any changes to header style that tool might impose
+    effect(() => {
+      const segments = this.toolRouteSegments();
+      if (segments.length === 0) {
+        this.componentService.patchHeader({ style: 'inverted' });
+      }
+    });
   }
 
   ngOnDestroy() {
     this.componentService.patchHeader({ style: 'primary' });
+    if (this.backEventInterceptor) {
+      this.backEventInterceptor.unsubscribe();
+    }
   }
 
   public showTool() {
     const toolStep = this.toolStep();
     if (toolStep) {
-      this.setToolUrl(toolStep.tool);
+      const { tool } = toolStep;
+      // When navigating to the tool tab update the url to allow the correct tool to load within a child route
+      if (!location.pathname.includes(`/${tool.url}`)) {
+        this.router.navigate([tool.url], { relativeTo: this.route, replaceUrl: true });
+      }
       this.toolHidden.set(false);
     }
   }
 
-  /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
-  private setToolUrl(tool: IFarmerToolData) {
-    if (!location.pathname.includes(`/${tool.url}`)) {
-      this.router.navigate([tool.url], { relativeTo: this.route });
+  /** Hide the currently open tool but keep its active routing state so that it can be shown again */
+  public hideTool() {
+    const toolStep = this.toolStep();
+    if (toolStep) {
+      this.toolHidden.set(true);
+      this.setupBackNavigationInterceptor();
+    }
+  }
+
+  /**
+   * HACK - when tool closed it retains route, so if containing nested routes main page back button will handle back
+   * nav within the tool (not seen by user). As a workaround trigger additional `back` button press if required
+   */
+  private setupBackNavigationInterceptor() {
+    if (this.toolRouteSegments().length > 1) {
+      if (this.backEventInterceptor) {
+        this.backEventInterceptor.unsubscribe();
+      }
+      const navEndEvents = this.router.events.pipe(filter((e) => e instanceof NavigationEnd));
+      this.backEventInterceptor = navEndEvents.subscribe(() => {
+        if (this.toolRouteSegments().length > 0) {
+          this.componentService.back();
+        }
+      });
     }
   }
 
@@ -140,10 +173,10 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
    * */
   private calcToolRouteSegments(url?: string, toolUrl?: string) {
     if (url && toolUrl) {
-      const index: number = url.indexOf(`/${toolUrl}`);
-      const toolPath = index !== -1 ? url.substring(index + toolUrl.length) : undefined;
-      if (toolPath !== undefined) {
-        return toolPath.split('/');
+      if (url.includes(`/${toolUrl}`)) {
+        const [before, after] = url.split(`/${toolUrl}`);
+        const segments = after.split('/');
+        return segments;
       }
     }
     return [];
