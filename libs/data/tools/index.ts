@@ -16,7 +16,7 @@ const TOOLS_DATA_BASE = {
 } as const;
 
 // Extract list of available tools names
-type IToolsID = keyof typeof TOOLS_DATA_BASE;
+export type IToolsID = keyof typeof TOOLS_DATA_BASE;
 
 export const TOOLS_DATA = Object.entries(TOOLS_DATA_BASE).map(([id, { label, url }]) => {
   const iconData: IPicsaDataWithIcons = {

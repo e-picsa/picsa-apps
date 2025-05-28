@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FARMER_TOOLS_DATA } from '@picsa/data';
 
-const TOOL_PREFIXES = FARMER_TOOLS_DATA.map((t) => t.href);
+const TOOL_PREFIXES = FARMER_TOOLS_DATA.map((t) => t.url);
 
 @Injectable({ providedIn: 'root' })
 export class FarmerContentService {
@@ -14,7 +14,7 @@ export class FarmerContentService {
   public createNestedToolRoutes(router: Router) {
     const embeddedRoutes = router.config.filter((route) => {
       const prefix = route.path?.split('/')[0] as string;
-      return TOOL_PREFIXES.includes(prefix);
+      return TOOL_PREFIXES.includes(prefix as any);
     });
     router.resetConfig([
       ...router.config.map((route) => {

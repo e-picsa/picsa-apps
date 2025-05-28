@@ -1,27 +1,39 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { TOOLS_DATA_HASHMAP } from '../../tools';
+import { IToolsDataEntry, IToolsID, TOOLS_DATA_HASHMAP } from '../../tools';
 
 /*******************************************************************
  * Farmer Tools
  ********************************************************************/
 
 import { arrayToHashmap } from '@picsa/utils';
-import { IToolData } from '../types';
 
-const FARMER_TOOLS_BASE = {
-  budget: { ...TOOLS_DATA_HASHMAP.budget, showHeader: true },
-  climate: { ...TOOLS_DATA_HASHMAP.climate, showHeader: true },
-  options: { ...TOOLS_DATA_HASHMAP.option },
-  probability_and_risk: { ...TOOLS_DATA_HASHMAP.crop_probability, label: translateMarker('Probability and Risk') },
-  seasonal_calendar: { ...TOOLS_DATA_HASHMAP.seasonal_calendar },
+interface IFarmerToolDataBase extends Partial<IToolsDataEntry> {
+  /** Show default app header of tool directly uses */
+  showHeader?: boolean;
+}
+
+/** Specific overrides for tool data when displayed in farmer app */
+const FARMER_TOOLS_BASE: Partial<Record<IToolsID, IFarmerToolDataBase>> = {
+  budget: { showHeader: true },
+  climate: { showHeader: true },
+  crop_probability: { label: translateMarker('Probability and Risk') },
+  option: {},
+  seasonal_calendar: {},
 };
 
-export type IFarmerToolId = keyof typeof FARMER_TOOLS_BASE;
+export interface IFarmerToolData extends IToolsDataEntry {
+  /** Show default app header of tool directly uses */
+  showHeader?: boolean;
+}
 
-export const FARMER_TOOLS_DATA: IToolData[] = Object.entries(FARMER_TOOLS_BASE).map(([id, data]) => ({
-  ...data,
-  href: data.url.replace('/', ''),
-  id: id as IFarmerToolId,
-  title: translateMarker('Tool'),
-}));
-export const FARMER_TOOLS_DATA_HASHMAP: Record<IFarmerToolId, IToolData> = arrayToHashmap(FARMER_TOOLS_DATA, 'id');
+export const FARMER_TOOLS_DATA = Object.entries(FARMER_TOOLS_BASE).map(([id, overrides]) => {
+  const data = TOOLS_DATA_HASHMAP[id] as IToolsDataEntry;
+  const toolData: IFarmerToolData = {
+    ...data,
+    ...overrides,
+    // HACK - replace leading '/' for easier use in modules
+    url: data.url.replace('/', '') as any,
+  };
+  return toolData;
+});
+export const FARMER_TOOLS_DATA_HASHMAP: Record<IToolsID, IFarmerToolData> = arrayToHashmap(FARMER_TOOLS_DATA, 'id');

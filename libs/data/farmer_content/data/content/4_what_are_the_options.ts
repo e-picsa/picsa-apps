@@ -17,7 +17,7 @@ const steps: IFarmerContent['steps'] = [
 
   {
     type: 'tool',
-    tool: FARMER_TOOLS_DATA_HASHMAP.options,
+    tool: FARMER_TOOLS_DATA_HASHMAP.option,
     title: translateMarker('Interactive Tool'),
   },
 

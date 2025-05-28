@@ -1,21 +1,11 @@
 import type { IFarmerContentId } from './data/content';
 
-import type { IFarmerToolId } from './data/tools';
+import type { IFarmerToolData } from './data/tools';
 import { IPicsaVideoData } from '../resources';
-
-export interface IToolData {
-  id: IFarmerToolId;
-  label: string;
-  /** base url to access tool within app */
-  href: string;
-  tabLabel?: string;
-  /** Show default app header of tool directly uses */
-  showHeader?: boolean;
-}
 
 export interface StepTool {
   type: 'tool';
-  tool: IToolData;
+  tool: IFarmerToolData;
   title: string;
 }
 interface StepVideo {

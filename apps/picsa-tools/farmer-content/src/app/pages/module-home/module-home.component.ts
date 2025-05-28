@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { BackButton, PicsaCommonComponentsService } from '@picsa/components/src';
-import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IToolData } from '@picsa/data';
+import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent, IFarmerToolData } from '@picsa/data';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -52,7 +52,7 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   public toolStep = computed(() => this.content()?.steps.find((v) => v.type === 'tool'));
 
   /** Route segments of nested tool router */
-  public toolRouteSegments = computed(() => this.calcToolRouteSegments(this.url(), this.toolStep()?.tool.href), {
+  public toolRouteSegments = computed(() => this.calcToolRouteSegments(this.url(), this.toolStep()?.tool.url), {
     equal: isEqual,
   });
 
@@ -127,9 +127,9 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   }
 
   /** When navigating to the tool tab update the url to allow the correct tool to load within a child route */
-  private setToolUrl(tool: IToolData) {
-    if (!location.pathname.includes(`/${tool.href}`)) {
-      this.router.navigate([tool.href], { relativeTo: this.route });
+  private setToolUrl(tool: IFarmerToolData) {
+    if (!location.pathname.includes(`/${tool.url}`)) {
+      this.router.navigate([tool.url], { relativeTo: this.route });
     }
   }
 
@@ -138,10 +138,10 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
    * and calculate nested path segments of tool, e.g. ["","CFAi6NIjHzKNyBonyfha"]
    * Returns `[]` if no segments,  [""] on home
    * */
-  private calcToolRouteSegments(url?: string, toolHref?: string) {
-    if (url && toolHref) {
-      const index: number = url.indexOf(`/${toolHref}`);
-      const toolPath = index !== -1 ? url.substring(index + toolHref.length) : undefined;
+  private calcToolRouteSegments(url?: string, toolUrl?: string) {
+    if (url && toolUrl) {
+      const index: number = url.indexOf(`/${toolUrl}`);
+      const toolPath = index !== -1 ? url.substring(index + toolUrl.length) : undefined;
       if (toolPath !== undefined) {
         return toolPath.split('/');
       }
@@ -150,13 +150,13 @@ export class FarmerContentModuleHomeComponent implements OnInit, OnDestroy {
   }
 
   // TODO - review if needed
-  private shouldHideBackButton(tool?: IToolData) {
+  private shouldHideBackButton(tool?: IFarmerToolData) {
     if (tool) {
       // HACK - budget tool doesn't show back to site select as can be done from dropdown
       if (location.pathname.includes(`/climate`)) return true;
       // default hide back button on tool home page, e.g. `/farmer/module/budget`
       // but include on nested pages, e.g. `/farmer/module/budget`
-      return location.pathname.endsWith(`/${tool.href}`);
+      return location.pathname.endsWith(`/${tool.url}`);
     }
     return true;
   }

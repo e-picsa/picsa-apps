@@ -12,14 +12,14 @@ const steps: IFarmerContent['steps'] = [
     video: PICSA_FARMER_VIDEOS_HASHMAP.probability_risk,
     title: translateMarker('Probability and Risk'),
   },
-  { type: 'tool', tool: FARMER_TOOLS_DATA_HASHMAP.probability_and_risk, title: translateMarker('Interactive Tool') },
+  { type: 'tool', tool: FARMER_TOOLS_DATA_HASHMAP.crop_probability, title: translateMarker('Interactive Tool') },
   { type: 'review', title: translateMarker('Review') },
 ];
 
 const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   slug: 'opportunities-and-risk',
   title,
-  tags: [{ label: FARMER_TOOLS_DATA_HASHMAP.probability_and_risk.label }],
+  tags: [{ label: FARMER_TOOLS_DATA_HASHMAP.crop_probability.label }],
   steps,
 };
 export default content;

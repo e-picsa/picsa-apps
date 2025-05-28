@@ -46,7 +46,7 @@ export class PicsaFormsModule {
 
   /** Use forRoot so that constructor function will be called once when module registered */
   static forRoot(
-    config: PicsaFormsModuleConfig = { iconPacks: ['crop', 'crop_activity', 'weather'] }
+    config: PicsaFormsModuleConfig = { iconPacks: ['crops', 'crop_activity', 'weather'] }
   ): ModuleWithProviders<PicsaFormsModule> {
     return {
       ngModule: PicsaFormsModule,

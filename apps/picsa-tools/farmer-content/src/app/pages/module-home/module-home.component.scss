@@ -11,7 +11,7 @@
 }
 
 .tool-step-container {
-  @apply flex-1 flex justify-center items-center cursor-pointer;
+  @apply flex-1 flex flex-col justify-center items-center cursor-pointer;
 
   transition: background-color 0.2s ease-in-out;
 
@@ -29,4 +29,7 @@
 }
 .tool-header {
   @apply flex items-center;
+}
+mat-icon.tool-icon {
+  @apply h-16 w-16;
 }

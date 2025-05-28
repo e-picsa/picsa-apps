@@ -13,7 +13,7 @@ import { filter, map } from 'rxjs';
       <div class="page-content">
         @for(tool of tools; track tool.id){
         <div>
-          <a [routerLink]="tool.href">{{ tool.label }}</a>
+          <a [routerLink]="tool.url">{{ tool.label }}</a>
         </div>
         }
       </div>

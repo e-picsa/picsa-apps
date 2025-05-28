@@ -26,12 +26,12 @@
             <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
           </div>
 
-          } } @case ('tool') {
+          } } @case ('tool') { @if(toolStep()?.tool; as tool){
           <div class="tool-step-container" (click)="showTool()">
-            <h3>{{ 'Use The Tool' | translate }}</h3>
+            <h3 class="mt-0">{{ tool.label | translate }}</h3>
+            <mat-icon class="tool-icon" [svgIcon]="'picsa_tools:' + tool.svgIcon"></mat-icon>
           </div>
-
-          } }
+          } } }
         </div>
       </mat-card>
 

@@ -5,16 +5,15 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { CROP_ACTIVITY_DATA } from './crop_activity';
 import { WEATHER_DATA } from './weather';
 import { CROPS_DATA } from './crops';
-import { IPicsaDataWithIcons } from './models';
 import { TOOLS_DATA } from './tools';
 
 /** List of datasets that include icons for registration */
-export const ICON_PACK_DATA: Record<string, IPicsaDataWithIcons[]> = {
+export const ICON_PACK_DATA = {
   crop_activity: CROP_ACTIVITY_DATA,
   crops: CROPS_DATA,
   tools: TOOLS_DATA,
   weather: WEATHER_DATA,
-};
+} as const;
 export type IconPackName = keyof typeof ICON_PACK_DATA;
 
 @Injectable({ providedIn: 'root' })
