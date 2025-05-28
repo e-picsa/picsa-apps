@@ -6,11 +6,13 @@ import { CROP_ACTIVITY_DATA } from './crop_activity';
 import { WEATHER_DATA } from './weather';
 import { CROPS_DATA } from './crops';
 import { IPicsaDataWithIcons } from './models';
+import { TOOLS_DATA } from './tools';
 
 /** List of datasets that include icons for registration */
 export const ICON_PACK_DATA: Record<string, IPicsaDataWithIcons[]> = {
   crop_activity: CROP_ACTIVITY_DATA,
   crops: CROPS_DATA,
+  tools: TOOLS_DATA,
   weather: WEATHER_DATA,
 };
 export type IconPackName = keyof typeof ICON_PACK_DATA;
