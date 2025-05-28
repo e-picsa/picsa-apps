@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { BackButton, PicsaCommonComponentsService } from '@picsa/components/src';
-import { FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
+import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { _wait } from '@picsa/utils';
 import { isEqual } from '@picsa/utils/object.utils';
-import { filter, map, Subscription } from 'rxjs';
+import { filter, map } from 'rxjs';
 
-import { FarmerModuleFooterComponent } from './components/footer/module-footer.component';
 import { FarmerStepVideoComponent } from './components/step-video/step-video.component';
 
 @Component({
@@ -21,7 +21,6 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   imports: [
     CommonModule,
     BackButton,
-    FarmerModuleFooterComponent,
     FarmerStepVideoComponent,
     PicsaTranslateModule,
     MatButtonModule,
@@ -37,7 +36,7 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   // Ensure url changes update in nested tools by using default change detection
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class FarmerContentModuleHomeComponent implements OnDestroy {
+export class FarmerContentModuleHomeComponent {
   public content = computed<IFarmerContent | undefined>(
     () => {
       const slug = this.slug();
@@ -67,6 +66,21 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     return undefined;
   });
 
+  public nextModule = computed(() => {
+    const content = this.content();
+    if (content) {
+      const { id } = content;
+      const currentIndex = FARMER_CONTENT_DATA.findIndex((v) => v.id === id);
+      return FARMER_CONTENT_DATA[currentIndex + 1];
+    }
+    return undefined;
+  });
+
+  /** Manually trigger content fade by setting signal (used when changing modules dynamically) */
+  public fadeInContent = signal(true);
+
+  private contentEl = viewChild.required<ElementRef<HTMLDivElement>>('contentEl');
+
   private slug = toSignal(this.route.params.pipe(map((params) => params.slug)));
 
   private url = toSignal(
@@ -75,9 +89,6 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
       map((e) => e.url),
     ),
   );
-
-  /** Utility used to intercept nav back events when tool hidden but in routable state */
-  private backEventInterceptor: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -94,15 +105,9 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
 
     // Hide regular header when tool not in view (avoid conflicting local and tool headers)
     effect(() => {
-      const toolHidden = this.toolHidden();
-      this.componentService.patchHeader({ hideHeader: toolHidden ? true : false, style: 'inverted', title: 'test' });
+      const hideHeader = this.toolHidden() || this.toolRouteSegments().length === 0;
+      this.componentService.patchHeader({ hideHeader });
     });
-  }
-
-  ngOnDestroy() {
-    if (this.backEventInterceptor) {
-      this.backEventInterceptor.unsubscribe();
-    }
   }
 
   public showTool() {
@@ -122,26 +127,17 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     const toolStep = this.toolStep();
     if (toolStep) {
       this.toolHidden.set(true);
-      this.setupBackNavigationInterceptor();
     }
   }
 
-  /**
-   * HACK - when tool closed it retains route, so if containing nested routes main page back button will handle back
-   * nav within the tool (not seen by user). As a workaround trigger additional `back` button press if required
-   */
-  private setupBackNavigationInterceptor() {
-    if (this.toolRouteSegments().length > 1) {
-      if (this.backEventInterceptor) {
-        this.backEventInterceptor.unsubscribe();
-      }
-      const navEndEvents = this.router.events.pipe(filter((e) => e instanceof NavigationEnd));
-      this.backEventInterceptor = navEndEvents.subscribe(() => {
-        if (this.toolRouteSegments().length > 0) {
-          this.componentService.back();
-        }
-      });
-    }
+  public async goToModule(module: IFarmerContent) {
+    // fade out previous content before loading next module and fading back in
+    this.fadeInContent.set(false);
+    await _wait(100);
+    this.router.navigate(['farmer', module.slug], { replaceUrl: true });
+    this.contentEl().nativeElement.scrollTo({ top: 0, behavior: 'instant' });
+    await _wait(100);
+    this.fadeInContent.set(true);
   }
 
   /**

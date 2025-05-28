@@ -1,16 +1,16 @@
-<div class="page-content">
-  <!-- Main Content -->
-
-  @if(content(); as content){
+<div class="page-content" #contentEl>
   <!-- Custom Header -->
   <div class="flex items-center">
     <button color="primary" mat-icon-button routerLink="/farmer">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="header-title">{{ content.title | translate }}</h2>
+    <h2 class="header-title">{{ content()?.title || '' | translate }}</h2>
   </div>
 
-  <div @fadeInOut>
+  @if(content(); as content){
+
+  <!-- Main Content -->
+  <div [@fadeInOut]="fadeInContent() ? 'in' : 'out'">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-screen-lg m-auto">
       @for(step of content.steps; track $index){
       <mat-card class="flex flex-col">
@@ -50,11 +50,22 @@
   </div>
 
   }
+
+  <!-- Custom Footer -->
+  <div class="mt-6 text-secondary flex items-center">
+    <button mat-icon-button style="color: black" routerLink="/farmer"><mat-icon>home</mat-icon></button>
+    @if(nextModule(); as nextModule){
+    <button mat-button class="flex-1" (click)="goToModule(nextModule)">
+      <span>{{ nextModule.title | translate }}</span>
+      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+    </button>
+    }
+  </div>
 </div>
-<!-- Footer -->
-<farmer-module-footer [totalSections]="1" [selectedIndex]="1"></farmer-module-footer>
+
 <!-- TODO - footer navigation between units -->
 
+<!-- Tool Popup -->
 <!-- TODO - refactor to component (?) -->
 @if(toolStep(); as toolStep){
 <div
