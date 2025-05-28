@@ -26,5 +26,8 @@ const TOOLS_BASE = {
 
 export type IToolId = keyof typeof TOOLS_BASE;
 
-export const TOOLS_DATA: IToolData[] = Object.entries(TOOLS_BASE).map(([id, data]) => ({ ...data, id: id as IToolId }));
-export const TOOLS_DATA_HASHMAP: Record<IToolId, IToolData> = arrayToHashmap(TOOLS_DATA, 'id');
+export const FARMER_TOOLS_DATA: IToolData[] = Object.entries(TOOLS_BASE).map(([id, data]) => ({
+  ...data,
+  id: id as IToolId,
+}));
+export const FARMER_TOOLS_DATA_HASHMAP: Record<IToolId, IToolData> = arrayToHashmap(FARMER_TOOLS_DATA, 'id');

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { TOOLS_DATA } from '@picsa/data';
+import { FARMER_TOOLS_DATA } from '@picsa/data';
 
-const TOOL_PREFIXES = TOOLS_DATA.map((t) => t.href);
+const TOOL_PREFIXES = FARMER_TOOLS_DATA.map((t) => t.href);
 
 @Injectable({ providedIn: 'root' })
 export class FarmerContentService {
