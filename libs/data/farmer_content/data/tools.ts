@@ -12,14 +12,19 @@ interface IFarmerToolDataBase extends Partial<IToolsDataEntry> {
   showHeader?: boolean;
 }
 
+// Utility type to use with const for derived keys and defined value types
+type DataMapWithValues = Partial<Record<IToolsID, IFarmerToolDataBase>>;
+
 /** Specific overrides for tool data when displayed in farmer app */
-const FARMER_TOOLS_BASE: Partial<Record<IToolsID, IFarmerToolDataBase>> = {
+const FARMER_TOOLS_BASE = {
   budget: { showHeader: true },
   climate: { showHeader: true },
   crop_probability: { label: translateMarker('Probability and Risk') },
   option: {},
   seasonal_calendar: {},
-};
+} as const satisfies DataMapWithValues;
+
+type IFarmerToolId = keyof typeof FARMER_TOOLS_BASE;
 
 export interface IFarmerToolData extends IToolsDataEntry {
   /** Show default app header of tool directly uses */
@@ -36,4 +41,7 @@ export const FARMER_TOOLS_DATA = Object.entries(FARMER_TOOLS_BASE).map(([id, ove
   };
   return toolData;
 });
-export const FARMER_TOOLS_DATA_HASHMAP: Record<IToolsID, IFarmerToolData> = arrayToHashmap(FARMER_TOOLS_DATA, 'id');
+export const FARMER_TOOLS_DATA_HASHMAP: Record<IFarmerToolId, IFarmerToolData> = arrayToHashmap(
+  FARMER_TOOLS_DATA,
+  'id',
+);
