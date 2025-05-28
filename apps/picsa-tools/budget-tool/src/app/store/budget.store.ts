@@ -1,5 +1,6 @@
 import { effect, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { ConfigurationService } from '@picsa/configuration';
 import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
 import { APP_VERSION } from '@picsa/environments';
@@ -86,7 +87,8 @@ export class BudgetStore {
     private configurationService: ConfigurationService,
     private printPrvdr: PrintProvider,
     private sanitizer: DomSanitizer,
-    private dialogService: PicsaDialogService
+    private dialogService: PicsaDialogService,
+    private componentService: PicsaCommonComponentsService,
   ) {
     this.counterSVGIcons = this.createBudgetCounterSVGs();
     effect(() => {
@@ -235,6 +237,8 @@ export class BudgetStore {
     budget = checkForBudgetUpgrades(budget);
     this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
+    console.log('patching header', budget.meta.title);
+    this.componentService.patchHeader({ title: budget.meta.title });
   }
 
   private async loadSavedBudgets(): Promise<void> {

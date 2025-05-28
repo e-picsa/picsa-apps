@@ -2,6 +2,14 @@
   <!-- Main Content -->
 
   @if(content(); as content){
+  <!-- Custom Header -->
+  <div class="flex items-center">
+    <button color="primary" mat-icon-button routerLink="/farmer">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="header-title">{{ content.title | translate }}</h2>
+  </div>
+
   <div @fadeInOut>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-screen-lg m-auto">
       @for(step of content.steps; track $index){
@@ -21,7 +29,7 @@
           <!-- Review -->
           @case ('review') { @if(photoAlbum(); as album){
           <div class="p-2">
-            <p>{{ 'If you recorded anything on paper you can capture photos and save' | translate }}</p>
+            <p>{{ 'If you recorded anything on paper you can capture photos here' | translate }}</p>
             <picsa-photo-list [album]="album"></picsa-photo-list>
             <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
           </div>
