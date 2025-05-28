@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.53.0",
+  "version": "3.54.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -30,7 +30,7 @@
     "i18n": "nx run i18n:build && nx run i18n:spellcheck",
     "scripts": "nx run picsa-scripts:exec --scriptName",
     "scripts:watch": "nx run picsa-scripts:watch --scriptName",
-    "scripts:version": "nx run picsa-scripts:exec --scriptName version",
+    "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
     "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup"
   },
   "private": true,
