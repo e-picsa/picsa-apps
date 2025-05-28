@@ -5,13 +5,16 @@
     --footer-height: 64px;
   }
 }
+.header-title {
+  @apply text-[var(--color-primary)]  text-2xl text-center mr-2 -ml-2;
+}
 
 .step-title {
   @apply m-0 p-2 text-white bg-[var(--color-secondary)];
 }
 
 .tool-step-container {
-  @apply flex-1 flex justify-center items-center cursor-pointer;
+  @apply flex-1 flex flex-col justify-center items-center cursor-pointer;
 
   transition: background-color 0.2s ease-in-out;
 
@@ -23,10 +26,13 @@
   @apply fixed left-0 w-screen h-screen z-10;
   &[data-has-header] {
     // fixed header height 3.5rem
-    max-height: calc(100hv - 3.5rem);
+    max-height: calc(100vh - 3.5rem);
     top: 3.5rem;
   }
 }
 .tool-header {
   @apply flex items-center;
+}
+mat-icon.tool-icon {
+  @apply h-16 w-16;
 }
