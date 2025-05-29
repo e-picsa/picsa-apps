@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 // import { RouterOutlet } from '@angular/router';
-import { DataIconRegistry } from '@picsa/data/iconRegistry';
 
 @Component({
   // TODO - see if possible to use standalone with tool routing
@@ -15,7 +14,4 @@ import { DataIconRegistry } from '@picsa/data/iconRegistry';
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class PicsaFarmerContent {
   title = 'farmer-content';
-  constructor(dataIconRegistry: DataIconRegistry) {
-    dataIconRegistry.registerMatIcons('tools');
-  }
 }

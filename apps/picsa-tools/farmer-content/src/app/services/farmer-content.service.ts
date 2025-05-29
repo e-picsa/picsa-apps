@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FARMER_TOOLS_DATA } from '@picsa/data';
+import { DataIconRegistry } from '@picsa/data/iconRegistry';
 
 const TOOL_PREFIXES = FARMER_TOOLS_DATA.map((t) => t.url);
 
 @Injectable({ providedIn: 'root' })
 export class FarmerContentService {
+  constructor(dataIconRegistry: DataIconRegistry) {
+    dataIconRegistry.registerMatIcons('tools');
+  }
   /**
    * Add support for rendering any existing page of the app within a child route.
    * This is used to show tools such as the budget tool (/budget) within a tabbed child route (/farmer/budget/budget)

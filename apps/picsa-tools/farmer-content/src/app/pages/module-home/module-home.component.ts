@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  OnDestroy,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -36,7 +45,7 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   // Ensure url changes update in nested tools by using default change detection
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class FarmerContentModuleHomeComponent {
+export class FarmerContentModuleHomeComponent implements OnDestroy {
   public content = computed<IFarmerContent | undefined>(
     () => {
       const slug = this.slug();
@@ -108,6 +117,10 @@ export class FarmerContentModuleHomeComponent {
       const hideHeader = this.toolHidden() || this.toolRouteSegments().length === 0;
       this.componentService.patchHeader({ hideHeader });
     });
+  }
+
+  ngOnDestroy() {
+    this.componentService.patchHeader({ hideHeader: false });
   }
 
   public showTool() {
