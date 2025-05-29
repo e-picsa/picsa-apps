@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { DataIconRegistry, ICON_PACK_DATA, IconPackName } from '@picsa/data/iconRegistry';
+import { DataIconRegistry, IconPackName } from '@picsa/data/iconRegistry';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { PICSA_FORM_COMPONENTS } from './components';
@@ -15,7 +15,7 @@ import { PICSA_FORM_COMPONENTS } from './components';
   providedIn: 'root',
 })
 export class PicsaFormsModuleConfig {
-  public iconPacks: IconPackName[] = Object.keys(ICON_PACK_DATA) as IconPackName[];
+  public iconPacks: IconPackName[] = ['crop_activity', 'crops', 'weather'];
 }
 
 /** Input components for use within forms */
@@ -37,7 +37,7 @@ export class PicsaFormsModuleConfig {
 export class PicsaFormsModule {
   constructor(
     dataIconRegistry: DataIconRegistry,
-    @Inject(PicsaFormsModuleConfig) private config: PicsaFormsModuleConfig
+    @Inject(PicsaFormsModuleConfig) private config: PicsaFormsModuleConfig,
   ) {
     for (const iconPack of config.iconPacks) {
       dataIconRegistry.registerMatIcons(iconPack);
@@ -46,7 +46,7 @@ export class PicsaFormsModule {
 
   /** Use forRoot so that constructor function will be called once when module registered */
   static forRoot(
-    config: PicsaFormsModuleConfig = { iconPacks: ['crops', 'crop_activity', 'weather'] }
+    config: PicsaFormsModuleConfig = { iconPacks: ['crops', 'crop_activity', 'weather'] },
   ): ModuleWithProviders<PicsaFormsModule> {
     return {
       ngModule: PicsaFormsModule,
