@@ -38,4 +38,6 @@ export interface IFarmerContent {
   tags: { label: string; color?: 'primary' | 'secondary' }[];
 
   disabled?: boolean;
+
+  stepNumber?: number;
 }

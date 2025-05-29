@@ -18,5 +18,6 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   title,
   tags: [{ label: 'Digital Skills', color: 'secondary' }],
   steps,
+  stepNumber: -1,
 };
 export default content;
