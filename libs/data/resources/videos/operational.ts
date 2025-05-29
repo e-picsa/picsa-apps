@@ -8,7 +8,14 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
     children: [
       {
         id: '',
-        // HACK - zm_ny shown for all while waiting on other videos
+        locale_codes: ['global_en', 'global_en'],
+        resolution: '360p',
+        size_kb: 7860,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/operational/Intro%20Video%20English.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_ny', 'global_en'],
         resolution: '480p',
         size_kb: 22300,
@@ -22,7 +29,14 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
     children: [
       {
         id: '',
-        // HACK - zm_ny shown for all while waiting on other videos
+        locale_codes: ['global_en', 'global_en'],
+        resolution: '360p',
+        size_kb: 3990,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/operational/HCI%20English.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_ny', 'global_en'],
         size_kb: 15730,
         resolution: '480p',
@@ -36,7 +50,14 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
     children: [
       {
         id: '',
-        // HACK - zm_ny shown for all while waiting on other videos
+        locale_codes: ['global_en', 'global_en'],
+        resolution: '360p',
+        size_kb: 15190,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/operational/Options%20English.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_ny', 'global_en'],
         size_kb: 43900,
         resolution: '480p',
@@ -49,7 +70,14 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
     children: [
       {
         id: '',
-        // HACK - zm_ny shown for all while waiting on other videos
+        locale_codes: ['global_en', 'global_en'],
+        resolution: '360p',
+        size_kb: 12590,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/operational/PB%20Operational%20Video.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_ny', 'global_en'],
         size_kb: 43410,
         resolution: '480p',
@@ -69,10 +97,10 @@ export const PICSA_OPERATIONAL_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(P
       child.id = `operational_${id}_${locale_code}_${resolution}`;
       return child;
     }),
-  })
+  }),
 );
 
 export const PICSA_OPERATIONAL_VIDEOS_HASHMAP: Record<IPicsaOperationalVideoID, IPicsaVideoData> = arrayToHashmap(
   PICSA_OPERATIONAL_VIDEOS_DATA,
-  'id'
+  'id',
 );
