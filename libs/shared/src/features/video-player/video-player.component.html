@@ -1,33 +1,34 @@
 <div class="placeholderContainer" [attr.data-downloaded]="source() ? true : undefined">
   <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
     <!-- Play Button -->
-    @if(source()){
-    <button mat-fab color="primary" class="play-button" (click)="playVideo()">
-      <mat-icon>play_arrow</mat-icon>
-    </button>
-    } @if(source(); as source){
-    <!-- Native -->
-    @if(isNative){
-    <picsa-video-player-native
-      #nativePlayer
-      [source]="source"
-      [playerId]="playerId"
-      [startTime]="startTime"
-      (playbackProgress)="handlePlaybackProgressChanged($event)"
-    ></picsa-video-player-native>
-    } @else {
-    <!-- Web -->
-    <picsa-video-player-web
-      #webPlayer
-      [source]="source"
-      [placeholderTime]="20"
-      [startTime]="startTime"
-      (playbackProgress)="handlePlaybackProgressChanged($event)"
-    ></picsa-video-player-web>
-    } }
+    @if (source()) {
+      <button mat-fab color="primary" class="play-button" (click)="playVideo()">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
+    }
+    @if (source(); as source) {
+      <!-- Native -->
+      @if (isNative) {
+        <picsa-video-player-native
+          #nativePlayer
+          [source]="source"
+          [startTime]="startTime"
+          (playbackProgress)="handlePlaybackProgressChanged($event)"
+        ></picsa-video-player-native>
+      } @else {
+        <!-- Web -->
+        <picsa-video-player-web
+          #webPlayer
+          [source]="source"
+          [placeholderTime]="20"
+          [startTime]="startTime"
+          (playbackProgress)="handlePlaybackProgressChanged($event)"
+        ></picsa-video-player-web>
+      }
+    }
     <!-- Thumbnail -->
-    @if(isNative || !source()) {
-    <picsa-video-thumbnail [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl" class="z-0"> </picsa-video-thumbnail>
+    @if (isNative || !source()) {
+      <picsa-video-thumbnail [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl" class="z-0"> </picsa-video-thumbnail>
     }
   </div>
   <!-- Playback Progress -->

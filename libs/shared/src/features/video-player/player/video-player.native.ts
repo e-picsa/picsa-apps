@@ -1,5 +1,6 @@
 import { Component, effect, input } from '@angular/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { _wait } from '@picsa/utils';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
 import { VideoPlayerBaseComponent } from './video-player.base';
@@ -27,10 +28,10 @@ interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
   template: ``,
 })
 export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
-  public playerId = input.required<string>();
-
   /** Override default player options */
   public playerOptions = input<capVideoPlayerOptions>();
+
+  private playerId: string;
 
   private videoPlayer = CapacitorVideoPlayer as IVideoPlayer;
 
@@ -48,8 +49,15 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   }
 
   public async play() {
+    this.playerId = `video-${Date.now()}`;
     // Stop playback from any other players
-    await this.videoPlayer.stopAllPlayers();
+    try {
+      // Ensure any previously playing videos have a chance to stop
+      await this.videoPlayer.stopAllPlayers();
+      await _wait(200);
+    } catch (error) {
+      // Silent fail - player might already be destroyed
+    }
 
     // play needs to initialise every time on native
     await this.initPlayer();
@@ -57,7 +65,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     this.addListeners();
     await this.setPlayerInitialTime(this.currentTime || this.startTime() || 0);
 
-    await this.videoPlayer.play({ playerId: this.playerId() });
+    await this.videoPlayer.play({ playerId: this.playerId });
   }
 
   private async updatePlaybackProgress(currentTime: number | string) {
@@ -69,7 +77,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // Initial playback can trigger pause event before total time has been calculated
     // so only emit after total time checked
     if (!this.totalTime) {
-      const durationRes = await this.videoPlayer.getDuration({ playerId: this.playerId() });
+      const durationRes = await this.videoPlayer.getDuration({ playerId: this.playerId });
       this.totalTime = durationRes.value;
     }
     if (this.totalTime) {
@@ -81,7 +89,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   private async setPlayerInitialTime(seektime = 0) {
     // Hack - on android the seek time can only be set after confirmation the player is ready
     await this.waitForPlayerReady();
-    await this.videoPlayer.setCurrentTime({ playerId: this.playerId(), seektime });
+    await this.videoPlayer.setCurrentTime({ playerId: this.playerId, seektime });
   }
 
   /**
@@ -91,7 +99,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   private async waitForPlayerReady() {
     return new Promise((resolve) => {
       const playerReadyCalback = (e: capVideoListener) => {
-        if (e.fromPlayerId === this.playerId()) {
+        if (e.fromPlayerId === this.playerId) {
           this.videoPlayer.removeListener('jeepCapVideoPlayerReady', playerReadyCalback);
           resolve(true);
         }
@@ -110,12 +118,16 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
       mode: 'fullscreen',
       exitOnEnd: true,
       url,
-      playerId: this.playerId(),
-      componentTag: `picsa-video-player[data-player-id="${this.playerId()}"]`,
+      playerId: this.playerId,
+      componentTag: `picsa-video-player[data-player-id="${this.playerId}"]`,
       // Do not enforce specific portrait or landscape orientation as video content mixed
       displayMode: 'all',
       bkmodeEnabled: false,
       pipEnabled: false,
+      // Disable chromecast to prevent issue. Proper workaround could involve better video lifecycle management or patching package (see claude 4 tips)
+      // Fatal Exception: java.lang.NullPointerException: Attempt to invoke virtual method 'void com.google.android.exoplayer2.ext.cast.CastPlayer.release()' on a null object reference
+      // at com.jeep.plugin.capacitor.capacitorvideoplayer.FullscreenExoPlayerFragment.releasePlayer(FullscreenExoPlayerFragment.java:730)
+      chromecast: false,
     };
 
     // // Embedded player options - Use host element to calculate default player size
@@ -158,14 +170,14 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
   private async handlePlayerPause(currentTime: number, playerId: string) {
     // console.log('[Video Player] pause', currentTime);
-    if (playerId === this.playerId()) {
+    if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
     }
   }
 
   private async handlePlayerEnded(currentTime: number, playerId: string) {
     // console.log('[Video Player] ended', currentTime);
-    if (playerId === this.playerId()) {
+    if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
       this.removeListeners();
     }
@@ -175,7 +187,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     // console.log('[Video Player] exit', currentTime, playerId);
     // HACK - player exit can get caught by multiple players (listeners do not seem to unregister correctly)
     // so include playerId
-    if (playerId === this.playerId()) {
+    if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
       this.removeListeners();
     }
@@ -198,7 +210,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
     // Ready
     const jeepCapVideoPlayerReady = (e: capVideoListener) => {
-      if (e.fromPlayerId === this.playerId()) {
+      if (e.fromPlayerId === this.playerId) {
         this.handlePlayerReady();
       }
     };
@@ -207,7 +219,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
     // Play
     const jeepCapVideoPlayerPlay = (e: capVideoListener) => {
-      if (e.fromPlayerId === this.playerId()) {
+      if (e.fromPlayerId === this.playerId) {
         this.handlePlayerPlay();
       }
     };
@@ -229,7 +241,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     this.listeners.push({ event: 'jeepCapVideoPlayerEnded', callback: jeepCapVideoPlayerEnded });
 
     // Exit - NOTE - different callback
-    const playerId = this.playerId();
+    const playerId = this.playerId;
     const jeepCapVideoPlayerExit = (e: { dismiss?: boolean; currentTime: number }) => {
       this.handlePlayerExit(e.currentTime, playerId);
     };

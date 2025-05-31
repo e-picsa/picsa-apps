@@ -1,0 +1,116 @@
+diff --git a/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java b/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
+index 108b80258f67cc289263b5850dd3dc9785866230..10345d2486784074dd4d190fe06ac4c08c699d2a 100644
+--- a/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
++++ b/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
+@@ -560,13 +560,13 @@ public class FullscreenExoPlayerFragment extends Fragment {
+   }
+ 
+   public void playerExit() {
+-    Map<String, Object> info = new HashMap<String, Object>() {
++    if (player != null) {
++      Map<String, Object> info = new HashMap<String, Object>() {
+       {
+         put("dismiss", "1");
+         put("currentTime", getCurrentTime());
+       }
+     };
+-    if (player != null) {
+       player.seekTo(0);
+       player.setVolume(curVolume);
+     }
+@@ -710,28 +710,46 @@ public class FullscreenExoPlayerFragment extends Fragment {
+     }
+   }
+ 
+-  /**
+-   * Release the player
+-   */
+   public void releasePlayer() {
+     if (player != null) {
+-      playWhenReady = player.getPlayWhenReady();
+-      playbackPosition = player.getCurrentPosition();
+-      currentWindow = player.getCurrentWindowIndex();
+-      mediaSessionConnector.setPlayer(null);
+-      mediaSession.setActive(false);
+-      player.setRepeatMode(player.REPEAT_MODE_OFF);
+-      player.removeListener(listener);
+-      player.release();
+-      player = null;
+-      showSystemUI();
+-      resetVariables();
+-      if (chromecast) {
+-        castPlayer.release();
+-        castPlayer = null;
+-      }
++        try {
++            playWhenReady = player.getPlayWhenReady();
++            playbackPosition = player.getCurrentPosition();
++            currentWindow = player.getCurrentWindowIndex();
++            
++            if (mediaSessionConnector != null) {
++                mediaSessionConnector.setPlayer(null);
++            }
++            
++            if (mediaSession != null) {
++                mediaSession.setActive(false);
++            }
++            
++            player.setRepeatMode(Player.REPEAT_MODE_OFF);
++            player.removeListener(listener);
++            player.release();
++        } catch (Exception e) {
++            Log.e("VideoPlayer", "Error releasing player", e);
++        } finally {
++            player = null;
++        }
++        
++        showSystemUI();
++        resetVariables();
+     }
+-  }
++    
++    // Move chromecast handling outside the player null check
++    // and add null check for castPlayer
++    if (chromecast && castPlayer != null) {
++        try {
++            castPlayer.release();
++        } catch (Exception e) {
++            Log.e("VideoPlayer", "Error releasing cast player", e);
++        } finally {
++            castPlayer = null;
++        }
++    }
++}
+ 
+   /**
+    * Perform onResume Action
+@@ -1063,13 +1081,25 @@ public class FullscreenExoPlayerFragment extends Fragment {
+    * Start the player
+    */
+   public void play() {
+-    PlaybackParameters param = new PlaybackParameters(videoRate);
+-    player.setPlaybackParameters(param);
++    // Add null check for player
++    if (player == null) {
++        Log.w("VideoPlayer", "Player is null, cannot play");
++        return;
++    }
++    
++    try {
++        PlaybackParameters param = new PlaybackParameters(videoRate);
++        player.setPlaybackParameters(param);
+ 
+         /* If the user start the cast before the player is ready and playing, then the video will start
+           in the device and chromecast at the same time. This is to avoid that behaviour.*/
+-    if (!isCastSession) player.setPlayWhenReady(true);
+-  }
++        if (!isCastSession) {
++            player.setPlayWhenReady(true);
++        }
++    } catch (Exception e) {
++        Log.e("VideoPlayer", "Error during play operation", e);
++    }
++}
+ 
+   /**
+    * Pause the player
