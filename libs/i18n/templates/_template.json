@@ -734,7 +734,15 @@
     "tool": "common"
   },
   {
+    "text": "Farmer Activities",
+    "tool": "common"
+  },
+  {
     "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "tool": "common"
+  },
+  {
+    "text": "Forecasts",
     "tool": "common"
   },
   {
@@ -782,6 +790,14 @@
     "tool": "common"
   },
   {
+    "text": "Manual",
+    "tool": "common"
+  },
+  {
+    "text": "Monitoring",
+    "tool": "common"
+  },
+  {
     "text": "Name",
     "tool": "common"
   },
@@ -810,6 +826,10 @@
     "tool": "common"
   },
   {
+    "text": "Probability",
+    "tool": "common"
+  },
+  {
     "text": "Probability and Risk",
     "tool": "common"
   },
@@ -823,6 +843,10 @@
   },
   {
     "text": "Resource Allocation Map",
+    "tool": "common"
+  },
+  {
+    "text": "Resources",
     "tool": "common"
   },
   {
@@ -843,10 +867,6 @@
   },
   {
     "text": "Testimonials",
-    "tool": "common"
-  },
-  {
-    "text": "Tool",
     "tool": "common"
   },
   {
@@ -1355,31 +1375,11 @@
     "tool": "extension-content"
   },
   {
-    "text": "Farmer Activities",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Manual",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Monitoring",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Probability",
-    "tool": "extension-content"
-  },
-  {
     "text": "Training",
     "tool": "extension-content"
   },
   {
     "text": "Click on the button below to retry",
-    "tool": "extension"
-  },
-  {
-    "text": "Forecasts",
     "tool": "extension"
   },
   {
@@ -1403,15 +1403,7 @@
     "tool": "extension"
   },
   {
-    "text": "Home",
-    "tool": "farmer-content"
-  },
-  {
-    "text": "If you recorded anything on paper you can capture photos and save",
-    "tool": "farmer-content"
-  },
-  {
-    "text": "Use The Tool",
+    "text": "If you recorded anything on paper you can capture photos here",
     "tool": "farmer-content"
   },
   {
@@ -1420,10 +1412,6 @@
   },
   {
     "text": "National",
-    "tool": "forecasts"
-  },
-  {
-    "text": "Resources",
     "tool": "forecasts"
   },
   {
