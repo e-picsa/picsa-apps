@@ -1,8 +1,8 @@
 diff --git a/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java b/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
-index 108b80258f67cc289263b5850dd3dc9785866230..c1676fa33043e0c953d2115e6084de3cfcca2533 100644
+index 108b80258f67cc289263b5850dd3dc9785866230..7df3abb5bf9f0d213fa4cf8607a861820e4d59cb 100644
 --- a/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
 +++ b/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
-@@ -560,13 +560,13 @@ public class FullscreenExoPlayerFragment extends Fragment {
+@@ -560,29 +560,30 @@ public class FullscreenExoPlayerFragment extends Fragment {
    }
  
    public void playerExit() {
@@ -17,8 +17,39 @@ index 108b80258f67cc289263b5850dd3dc9785866230..c1676fa33043e0c953d2115e6084de3c
 -    if (player != null) {
        player.seekTo(0);
        player.setVolume(curVolume);
+-    }
+-    releasePlayer();
+-/* 
+-    Activity mAct = getActivity();
+-    int mOrient = mAct.getRequestedOrientation();
+-    if (mOrient == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+-      mAct.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+-    }
+-*/
+-    // We control if the user lock the screen when the player is in pip mode
+-    try {
+-      NotificationCenter.defaultCenter().postNotification("playerFullscreenDismiss", info);
+-    } catch (Exception e) {
+-      Log.e(TAG, "Error in posting notification");
++   
++      releasePlayer();
++  /* 
++      Activity mAct = getActivity();
++      int mOrient = mAct.getRequestedOrientation();
++      if (mOrient == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
++        mAct.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
++      }
++  */
++      // We control if the user lock the screen when the player is in pip mode
++      try {
++        NotificationCenter.defaultCenter().postNotification("playerFullscreenDismiss", info);
++      } catch (Exception e) {
++        Log.e(TAG, "Error in posting notification");
++      }
      }
-@@ -710,28 +710,46 @@ public class FullscreenExoPlayerFragment extends Fragment {
+   }
+ 
+@@ -710,28 +711,46 @@ public class FullscreenExoPlayerFragment extends Fragment {
      }
    }
  
@@ -84,7 +115,7 @@ index 108b80258f67cc289263b5850dd3dc9785866230..c1676fa33043e0c953d2115e6084de3c
  
    /**
     * Perform onResume Action
-@@ -1063,13 +1081,25 @@ public class FullscreenExoPlayerFragment extends Fragment {
+@@ -1063,13 +1082,25 @@ public class FullscreenExoPlayerFragment extends Fragment {
     * Start the player
     */
    public void play() {
@@ -114,7 +145,7 @@ index 108b80258f67cc289263b5850dd3dc9785866230..c1676fa33043e0c953d2115e6084de3c
  
    /**
     * Pause the player
-@@ -1091,6 +1121,9 @@ public class FullscreenExoPlayerFragment extends Fragment {
+@@ -1091,6 +1122,9 @@ public class FullscreenExoPlayerFragment extends Fragment {
     * @return int in seconds
     */
    public int getCurrentTime() {
@@ -124,3 +155,15 @@ index 108b80258f67cc289263b5850dd3dc9785866230..c1676fa33043e0c953d2115e6084de3c
      return player.getCurrentPosition() == UNKNOWN_TIME ? 0 : (int) (player.getCurrentPosition() / 1000);
    }
  
+diff --git a/package.json b/package.json
+index ed15a76966c4485e37f3ac4d94708135a307080a..627f2cfab33ea6e095386b73f7b2d6529b70745b 100644
+--- a/package.json
++++ b/package.json
+@@ -82,5 +82,6 @@
+     "android": {
+       "src": "android"
+     }
+-  }
++  },
++  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+ }
