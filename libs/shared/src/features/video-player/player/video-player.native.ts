@@ -1,9 +1,9 @@
 import { Component, effect, input } from '@angular/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
-import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { _wait } from '@picsa/utils';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
+import { generateID } from '../../../services/core/db/db.service';
 import { VideoPlayerBaseComponent } from './video-player.base';
 
 // Fix listeners missing from type
