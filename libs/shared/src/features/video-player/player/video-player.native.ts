@@ -3,6 +3,7 @@ import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { _wait } from '@picsa/utils';
 import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
 
+import { generateID } from '../../../services/core/db/db.service';
 import { VideoPlayerBaseComponent } from './video-player.base';
 
 // Fix listeners missing from type
@@ -49,15 +50,17 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   }
 
   public async play() {
-    this.playerId = `video-${Date.now()}`;
     // Stop playback from any other players
     try {
       // Ensure any previously playing videos have a chance to stop
       await this.videoPlayer.stopAllPlayers();
+      this.removeListeners();
       await _wait(200);
     } catch (error) {
       // Silent fail - player might already be destroyed
     }
+    // Create a new player id to fix issue where pausing, exiting, and playing same file breaks player
+    this.playerId = `videoPlayer_${generateID(5)}`;
 
     // play needs to initialise every time on native
     await this.initPlayer();
@@ -169,14 +172,14 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   }
 
   private async handlePlayerPause(currentTime: number, playerId: string) {
-    // console.log('[Video Player] pause', currentTime);
+    console.log('[Video Player] pause', currentTime);
     if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
     }
   }
 
   private async handlePlayerEnded(currentTime: number, playerId: string) {
-    // console.log('[Video Player] ended', currentTime);
+    console.log('[Video Player] ended', currentTime);
     if (playerId === this.playerId) {
       this.updatePlaybackProgress(currentTime);
       this.removeListeners();
@@ -184,7 +187,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
   }
 
   private async handlePlayerExit(currentTime: number, playerId: string) {
-    // console.log('[Video Player] exit', currentTime, playerId);
+    console.log('[Video Player] exit', currentTime, playerId);
     // HACK - player exit can get caught by multiple players (listeners do not seem to unregister correctly)
     // so include playerId
     if (playerId === this.playerId) {
