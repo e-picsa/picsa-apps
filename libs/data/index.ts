@@ -5,6 +5,7 @@ export * from './days';
 export * from './deployments';
 export * from './farmer_content';
 export * from './months';
+export * from './tools';
 export * from './weather';
 
 // NOTE - do not include top-level export as angular esm modules

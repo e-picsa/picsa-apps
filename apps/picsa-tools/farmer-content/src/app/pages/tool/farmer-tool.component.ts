@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { TOOLS_DATA } from '@picsa/data';
+import { FARMER_TOOLS_DATA } from '@picsa/data';
 import { filter, map } from 'rxjs';
 
 @Component({
@@ -13,7 +13,7 @@ import { filter, map } from 'rxjs';
       <div class="page-content">
         @for(tool of tools; track tool.id){
         <div>
-          <a [routerLink]="tool.href">{{ tool.label }}</a>
+          <a [routerLink]="tool.url">{{ tool.label }}</a>
         </div>
         }
       </div>
@@ -25,7 +25,7 @@ import { filter, map } from 'rxjs';
   standalone: false,
 })
 export class FarmerToolPlaceholderComponent {
-  public tools = TOOLS_DATA;
+  public tools = FARMER_TOOLS_DATA;
 
   public toolId = toSignal(
     this.router.events.pipe(

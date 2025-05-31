@@ -2,11 +2,10 @@
   display: contents;
 }
 .step-grid {
+  @apply grid max-w-screen-lg;
   flex: 1;
-  max-width: 1280px;
   width: 100%;
   margin: auto;
-  display: grid;
   gap: 0 128px;
   grid-auto-rows: max-content;
   grid-template-columns: 1fr;

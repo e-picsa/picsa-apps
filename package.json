@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.53.0",
+  "version": "3.54.2",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -30,7 +30,7 @@
     "i18n": "nx run i18n:build && nx run i18n:spellcheck",
     "scripts": "nx run picsa-scripts:exec --scriptName",
     "scripts:watch": "nx run picsa-scripts:watch --scriptName",
-    "scripts:version": "nx run picsa-scripts:exec --scriptName version",
+    "scripts:version": "tsx apps/picsa-scripts/src/version.ts",
     "scripts:supabase:backup": "nx run picsa-scripts:exec --scriptName supabase/backup"
   },
   "private": true,
@@ -203,7 +203,7 @@
     "postcss": "^8.4.47",
     "postcss-import": "~14.1.0",
     "postcss-url": "~10.1.3",
-    "prettier": "2.6.2",
+    "prettier": "3.5.3",
     "prompts": "^2.4.2",
     "puppeteer": "^15.5.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
