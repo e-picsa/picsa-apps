@@ -10692,11 +10692,11 @@ __metadata:
 
 "capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch":
   version: 6.0.0
-  resolution: "capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch::version=6.0.0&hash=10b9d1"
+  resolution: "capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch::version=6.0.0&hash=228ec1"
   peerDependencies:
     "@capacitor/core": ^6.0.0
     hls.js: ^1.4.0
-  checksum: 10c0/1e8171ba97e005500b91105e5bb0dd1487d0504bfc504bb1a03747cdd6a00c3a10f7aa87ca63f1178efea136ad64efee2bbdbe73b4e1b8a6e5ab0e231f1688f3
+  checksum: 10c0/472d63defab8451d59eee82dd267b20a3a9b0ad76f31b5c23c8b2cfed1797ebf25bf050893d258c150271da1a7e81b94292d49189e69af15b2da26d7200aba20
   languageName: node
   linkType: hard
 

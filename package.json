@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "3.54.3",
+  "version": "3.54.4",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -35,9 +35,8 @@
   },
   "private": true,
   "notes": {
-    "resolutions": {
-      "leaflet-draw": "required by enketo-core, short hash not matched from repo package.json"
-    }
+    "leaflet-draw": "resolution required by enketo-core, short hash not matched from repo package.json",
+    "capacitor-video-player": "see notes from PR 398 before upgrading"
   },
   "resolutions": {
     "leaflet-draw": "github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617"
