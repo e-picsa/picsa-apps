@@ -112,7 +112,8 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
       url,
       playerId: this.playerId(),
       componentTag: `picsa-video-player[data-player-id="${this.playerId()}"]`,
-      displayMode: 'landscape',
+      // Do not enforce specific portrait or landscape orientation as video content mixed
+      displayMode: 'all',
       bkmodeEnabled: false,
       pipEnabled: false,
     };

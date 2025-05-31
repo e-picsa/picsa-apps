@@ -22,5 +22,6 @@ const content: Omit<IFarmerContent, 'id' | 'icon_path'> = {
   title: translateMarker('What is PICSA?'),
   steps,
   tags: [{ label: translateMarker('Tutorials'), color: 'secondary' }],
+  stepNumber: -1,
 };
 export default content;
