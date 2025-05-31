@@ -1,5 +1,5 @@
 diff --git a/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java b/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
-index 108b80258f67cc289263b5850dd3dc9785866230..a2128ad0d9222c9341441602a34edd61b5b99a8e 100644
+index 108b80258f67cc289263b5850dd3dc9785866230..c1676fa33043e0c953d2115e6084de3cfcca2533 100644
 --- a/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
 +++ b/android/src/main/java/com/jeep/plugin/capacitor/capacitorvideoplayer/FullscreenExoPlayerFragment.java
 @@ -560,13 +560,13 @@ public class FullscreenExoPlayerFragment extends Fragment {
@@ -119,7 +119,7 @@ index 108b80258f67cc289263b5850dd3dc9785866230..a2128ad0d9222c9341441602a34edd61
     */
    public int getCurrentTime() {
 +    if (player == null) {
-+      return 0
++      return 0;
 +    }
      return player.getCurrentPosition() == UNKNOWN_TIME ? 0 : (int) (player.getCurrentPosition() / 1000);
    }
