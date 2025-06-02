@@ -13,6 +13,8 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
 
   @Input() thumbnail?: string;
 
+  @Input() videoId: string;
+
   generatedThumbnail = signal<string | undefined>(undefined);
 
   /** Thumbnail generation video element */
@@ -23,8 +25,11 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
   // Load existing thumbnail (if exists), or create videoEl to generate thumbnail
   async ngOnInit() {
     await this.service.ready();
+
     if (this.videoUrl && !this.thumbnail) {
-      const existingThumbnail = this.service.thumbnailCache.get(this.videoUrl);
+      const doc = await this.service.getVideoState(this.videoId);
+      const existingThumbnail = doc?.thumbnail;
+
       if (existingThumbnail) {
         this.generatedThumbnail.set(existingThumbnail);
       } else {
@@ -44,8 +49,8 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
   private generateThumbnail(videoEl: HTMLVideoElement, retryCount = 0) {
     const image = this.getCurrentVideoFrameImage(videoEl);
     if (image) {
-      this.service.thumbnailCache.set(this.videoUrl as string, image);
       this.generatedThumbnail.set(image);
+      this.service.saveThumbnail(this.videoId, image);
     } else {
       // Attempt to regenerate at later timestamp in case current time
       // either failed to render or fails validation (blank screen)
