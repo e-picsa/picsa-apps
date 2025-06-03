@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Database, FunctionResponses } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { isEqual } from '@picsa/utils/object.utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
@@ -52,9 +53,9 @@ export class AdminUserPermissionsComponent implements OnInit {
 
   private userPermissionsDialog = viewChild.required('userPermissionsDialog', { read: TemplateRef });
 
-  private authUsers = signal<IAuthUser[]>([]);
+  private authUsers = signal<IAuthUser[]>([], { equal: isEqual });
 
-  private userRolesHashmap = signal<Map<string, IUserRoles>>(new Map());
+  private userRolesHashmap = signal<Map<string, IUserRoles>>(new Map(), { equal: isEqual });
 
   private get deploymentId() {
     return this.deploymentService.activeDeployment().id;
@@ -63,7 +64,7 @@ export class AdminUserPermissionsComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private supabase: SupabaseService,
-    private deploymentService: DeploymentDashboardService
+    private deploymentService: DeploymentDashboardService,
   ) {}
 
   async ngOnInit() {
@@ -104,17 +105,17 @@ export class AdminUserPermissionsComponent implements OnInit {
 
   private async listAuthUsers() {
     const users = await this.supabase.invokeFunction<FunctionResponses['Dashboard']['admin']['list-users']>(
-      `dashboard/admin/${this.deploymentId}/list-users`
+      `dashboard/admin/${this.deploymentId}/list-users`,
     );
-    this.authUsers.set(users);
+    this.authUsers.set(users || []);
   }
 
   private async listUserRoles() {
     const userRoles = await this.supabase.invokeFunction<FunctionResponses['Dashboard']['admin']['list-user-roles']>(
-      `dashboard/admin/${this.deploymentId}/list-user-roles`
+      `dashboard/admin/${this.deploymentId}/list-user-roles`,
     );
     const map = new Map<string, IUserRoles>();
-    for (const entry of userRoles) {
+    for (const entry of userRoles || []) {
       map.set(entry.user_id, entry.roles);
     }
     this.userRolesHashmap.set(map);

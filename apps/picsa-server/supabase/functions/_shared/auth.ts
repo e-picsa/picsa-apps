@@ -38,7 +38,7 @@ async function getAuthRoles(req: Request) {
 /** Check whether the request user has specific user role on deployment */
 export async function hasAuthRole(req: Request, deployment_id: string, role: IAppRole) {
   const userRoles = await getAuthRoles(req);
-  const deploymentRoles = userRoles[deployment_id];
+  const deploymentRoles = userRoles[deployment_id] || [];
   const [featureName, featureRole] = role.split('.');
   // allow global role
   if (deploymentRoles.includes(featureRole as IAppRole)) return true;
