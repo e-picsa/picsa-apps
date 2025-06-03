@@ -1,8 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, signal } from '@angular/core';
+import { effect, Inject, Injectable, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
+import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
@@ -29,15 +30,31 @@ interface ICustomAuthJWTPayload extends JwtPayload {
 @Injectable({ providedIn: 'root' })
 export class SupabaseAuthService extends PicsaAsyncService {
   /** Authenticated user */
-  public authUser = signal<IAuthUser | undefined>(undefined);
+  public authUser = signal<IAuthUser | undefined>(undefined, {
+    equal: (a, b) => {
+      // ignore changes to `updated_at` field, but diff any other changes
+      const diff = objectDiff(a, b);
+      return diff.updated_at && Object.keys(diff).length === 1;
+    },
+  });
 
   /** Track parent supabase client registration */
   private register$ = new Subject<SupabaseClient>();
 
   private auth: SupabaseAuthClient;
 
-  constructor(@Inject(DOCUMENT) private document: Document, private notificationService: PicsaNotificationService) {
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    private notificationService: PicsaNotificationService,
+  ) {
     super();
+    effect(() => {
+      const user = this.authUser();
+      // Log user for prod debugging
+      if (user) {
+        console.log(`[AUTH USER]`, user);
+      }
+    });
   }
 
   public override async init(): Promise<void> {
