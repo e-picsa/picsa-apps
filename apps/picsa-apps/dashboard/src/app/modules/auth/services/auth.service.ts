@@ -24,7 +24,10 @@ export class DashboardAuthService extends PicsaAsyncService {
     return this.getAuthRoles(deployment, user);
   });
 
-  constructor(private deploymentService: DeploymentDashboardService, private supabaseAuthService: SupabaseAuthService) {
+  constructor(
+    private deploymentService: DeploymentDashboardService,
+    private supabaseAuthService: SupabaseAuthService,
+  ) {
     super();
   }
 
@@ -53,7 +56,7 @@ export class DashboardAuthService extends PicsaAsyncService {
         implicitRoles.push(`${feature}.viewer` as IAuthRole);
       }
     }
-    const uniqueRoles = new Set([...globalRole, ...authRoles, ...implicitRoles]);
+    const uniqueRoles = new Set([globalRole, ...authRoles, ...implicitRoles]);
     return [...uniqueRoles] as IAuthRole[];
   }
 }
