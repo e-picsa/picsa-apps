@@ -19,7 +19,7 @@ env:
 on:
   workflow_dispatch:
     inputs:
-      branches:
+      branch:
         description: Branch to deploy dashboard from
         default: main
         required: true
