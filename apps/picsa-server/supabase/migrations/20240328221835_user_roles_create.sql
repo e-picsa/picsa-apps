@@ -41,6 +41,9 @@ using (true);
 ------------------------------------------------------------------------------------ 
 -- Auth Hook - Assign user deployment roles to jwt token when user signs in 
 -- https://supabase.com/docs/guides/auth/custom-claims-and-role-based-access-control-rbac?language=plpgsql
+
+-- This hook can be configured to run locally from `config.toml` or on production
+-- from the `auth/hooks` dashboard page
 ------------------------------------------------------------------------------------ 
 
 create or replace function public.custom_access_token_hook(event jsonb)
