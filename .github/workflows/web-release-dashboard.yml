@@ -21,8 +21,6 @@ on:
     inputs:
       branch:
         description: Branch to deploy dashboard from
-        default: main
-        required: true
         type: string
 
   # (avoid automated push as will often need manual migration apply)
