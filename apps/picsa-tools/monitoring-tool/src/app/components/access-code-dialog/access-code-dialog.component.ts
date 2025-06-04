@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, signal } from '@angular/core';
+import { Component, Inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -34,24 +34,15 @@ export interface AccessCodeDialogResult {
     PicsaTranslateModule,
   ],
 })
-export class AccessCodeDialogComponent implements OnDestroy {
+export class AccessCodeDialogComponent {
   accessCode = signal('');
   hidePassword = signal(true);
   showError = signal(false);
-
-  private errorTimer: ReturnType<typeof setTimeout> | null = null;
-
-  // Configurable properties
-  private errorDuration = 3000; // this is 3 seconds
 
   constructor(
     public dialogRef: MatDialogRef<AccessCodeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AccessCodeDialogData,
   ) {}
-
-  ngOnDestroy(): void {
-    this.clearErrorTimer();
-  }
   togglePasswordVisibility(): void {
     this.hidePassword.update((value) => !value);
   }
@@ -59,28 +50,23 @@ export class AccessCodeDialogComponent implements OnDestroy {
   onAccessCodeInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.accessCode.set(target.value);
+
+    // Clear error when user starts typing
+    if (this.showError()) {
+      this.showError.set(false);
+    }
   }
   validateAndSubmit(): void {
     if (this.accessCode() === this.data.accessCode) {
       // Success - return success result with the code
-      this.clearErrorTimer();
       this.dialogRef.close({ success: true, code: this.accessCode() });
     } else {
       this.showError.set(true);
-
-      this.clearErrorTimer();
-
-      // Set timer to hide error message after 3 seconds
-      this.errorTimer = setTimeout(() => {
-        this.showError.set(false);
-      }, this.errorDuration);
-
       this.focusInput();
     }
   }
 
   cancel(): void {
-    this.clearErrorTimer();
     this.dialogRef.close({ success: false });
   }
 
@@ -92,12 +78,5 @@ export class AccessCodeDialogComponent implements OnDestroy {
         inputElement.select();
       }
     }, 100);
-  }
-
-  private clearErrorTimer(): void {
-    if (this.errorTimer) {
-      clearTimeout(this.errorTimer);
-      this.errorTimer = null;
-    }
   }
 }

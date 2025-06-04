@@ -24,9 +24,11 @@
       <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
   </mat-form-field>
-  <div *ngIf="showError()" class="error-message">
-    {{ 'Incorrect access code. Please try again.' | translate }}
-  </div>
+  @if (showError()) {
+    <div class="error-message">
+      {{ 'Incorrect access code. Please try again.' | translate }}
+    </div>
+  }
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
