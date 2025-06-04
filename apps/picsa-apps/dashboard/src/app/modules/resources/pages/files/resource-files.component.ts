@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -21,6 +21,7 @@ type IMergedResources = IResourceFileRow & {
 };
 const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   'mimetype',
+  'cover_image',
   'title',
   'size_kb',
   'languages',
@@ -38,7 +39,7 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFilesComponent implements OnInit {
-  public resources: IMergedResources[] = [];
+  public resources = signal<IMergedResources[]>([]);
 
   public readonly tableOptions: IDataTableOptions = {
     displayColumns: TABLE_COLUMNS,
@@ -57,7 +58,7 @@ export class ResourceFilesComponent implements OnInit {
     private service: ResourcesDashboardService,
     private router: Router,
     private route: ActivatedRoute,
-    deploymentService: DeploymentDashboardService
+    deploymentService: DeploymentDashboardService,
   ) {
     effect(() => {
       const resources = service.files();
@@ -67,7 +68,7 @@ export class ResourceFilesComponent implements OnInit {
         const deploymentResources = resources.filter((r) => this.filterDeploymentResource(r, deployment));
         const merged = this.getMergedResources(deploymentResources, deployment);
         const sorted = merged.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
-        this.resources = sorted;
+        this.resources.set(sorted);
       }
     });
   }

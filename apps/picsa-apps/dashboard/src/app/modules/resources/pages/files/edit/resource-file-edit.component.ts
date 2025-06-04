@@ -39,7 +39,7 @@ export class ResourceFileEditComponent implements OnInit {
     private router: Router,
     private deploymentService: DeploymentDashboardService,
     private notificationService: PicsaNotificationService,
-    private dialog: PicsaDialogService
+    private dialog: PicsaDialogService,
   ) {}
 
   public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
@@ -49,7 +49,7 @@ export class ResourceFileEditComponent implements OnInit {
     const deployment = this.deploymentService.activeDeployment();
     if (deployment) {
       const languages = LOCALES_DATA.filter(
-        (l) => l.country_code === deployment.country_code || l.country_code === 'global'
+        (l) => l.country_code === deployment.country_code || l.country_code === 'global',
       );
       return languages;
     }
@@ -70,7 +70,7 @@ export class ResourceFileEditComponent implements OnInit {
     mimetype: [''],
     size_kb: [0],
     id: new FormControl(),
-    country_code: [this.deploymentService.activeDeployment()?.country_code as string, Validators.required],
+    country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
 
   // HACK - temporary lookup to compare form values with db entry

@@ -1,4 +1,4 @@
-<p>Import a <code>template.json</code> file to add new strings for translation</p>
+<p>App Developers: Upload the code <code>template.json</code> file to import text for translation</p>
 <div style="display: flex; align-items: center">
   <button
     mat-raised-button
@@ -8,20 +8,20 @@
     (click)="processImport()"
   >
     <span>Import</span>
-    @if(importTotal()>0){
-    <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
+    @if (importTotal() > 0) {
+      <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
     }
   </button>
 </div>
 
-@if (importTotal()===-1) {
-<div #dragDrop></div>
+@if (importTotal() === -1) {
+  <div #dragDrop></div>
 } @else {
-<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-  @for(table of summaryTables(); track table.key){
-  <mat-tab [label]="table.label">
-    <picsa-data-table [options]="tableOptions" [data]="table.data"></picsa-data-table>
-  </mat-tab>
-  }
-</mat-tab-group>
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    @for (table of summaryTables(); track table.key) {
+      <mat-tab [label]="table.label">
+        <picsa-data-table [options]="tableOptions" [data]="table.data"></picsa-data-table>
+      </mat-tab>
+    }
+  </mat-tab-group>
 }

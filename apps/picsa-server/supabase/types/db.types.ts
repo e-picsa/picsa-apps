@@ -93,7 +93,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'climate_stations';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
       crop_data: {
@@ -203,7 +203,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'climate_stations';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
       deployments: {
@@ -392,6 +392,7 @@ export type Database = {
       resource_collections: {
         Row: {
           collection_parent: string | null;
+          country_code: Database['public']['Enums']['country_code'] | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -405,6 +406,7 @@ export type Database = {
         };
         Insert: {
           collection_parent?: string | null;
+          country_code?: Database['public']['Enums']['country_code'] | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -418,6 +420,7 @@ export type Database = {
         };
         Update: {
           collection_parent?: string | null;
+          country_code?: Database['public']['Enums']['country_code'] | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -547,11 +550,12 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'resource_files';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
       resource_links: {
         Row: {
+          country_code: Database['public']['Enums']['country_code'] | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -563,6 +567,7 @@ export type Database = {
           url: string;
         };
         Insert: {
+          country_code?: Database['public']['Enums']['country_code'] | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -574,6 +579,7 @@ export type Database = {
           url: string;
         };
         Update: {
+          country_code?: Database['public']['Enums']['country_code'] | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -597,7 +603,13 @@ export type Database = {
           text: string;
           tj_tg: string | null;
           tool: string;
+          zm_bem: string | null;
+          zm_kqn: string | null;
+          zm_loz: string | null;
+          zm_lue: string | null;
+          zm_lun: string | null;
           zm_ny: string | null;
+          zm_toi: string | null;
         };
         Insert: {
           archived?: boolean | null;
@@ -609,7 +621,13 @@ export type Database = {
           text: string;
           tj_tg?: string | null;
           tool: string;
+          zm_bem?: string | null;
+          zm_kqn?: string | null;
+          zm_loz?: string | null;
+          zm_lue?: string | null;
+          zm_lun?: string | null;
           zm_ny?: string | null;
+          zm_toi?: string | null;
         };
         Update: {
           archived?: boolean | null;
@@ -621,7 +639,13 @@ export type Database = {
           text?: string;
           tj_tg?: string | null;
           tool?: string;
+          zm_bem?: string | null;
+          zm_kqn?: string | null;
+          zm_loz?: string | null;
+          zm_lue?: string | null;
+          zm_lun?: string | null;
           zm_ny?: string | null;
+          zm_toi?: string | null;
         };
         Relationships: [];
       };
@@ -651,7 +675,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'deployments';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
     };
@@ -731,7 +755,18 @@ export type Database = {
         | 'translations.admin';
       country_code: 'global' | 'mw' | 'zm' | 'tj';
       forecast_type: 'daily' | 'seasonal' | 'downscaled';
-      locale_code: 'global_en' | 'mw_ny' | 'mw_tum' | 'zm_ny' | 'tj_tg';
+      locale_code:
+        | 'global_en'
+        | 'mw_ny'
+        | 'mw_tum'
+        | 'zm_ny'
+        | 'tj_tg'
+        | 'zm_bem'
+        | 'zm_toi'
+        | 'zm_loz'
+        | 'zm_lun'
+        | 'zm_kqn'
+        | 'zm_lue';
       resource_link_type: 'app' | 'social' | 'web';
     };
     CompositeTypes: {
@@ -856,7 +891,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'buckets';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
       prefixes: {
@@ -888,7 +923,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'buckets';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
       s3_multipart_uploads: {
@@ -932,7 +967,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'buckets';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
       s3_multipart_uploads_parts: {
@@ -986,7 +1021,7 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 's3_multipart_uploads';
             referencedColumns: ['id'];
-          }
+          },
         ];
       };
     };
@@ -1170,7 +1205,7 @@ export type Tables<
   }
     ? keyof (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
         Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
   ? (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
       Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
@@ -1179,12 +1214,12 @@ export type Tables<
     ? R
     : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-  ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R;
-    }
-    ? R
-    : never
-  : never;
+    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof Database },
@@ -1192,7 +1227,7 @@ export type TablesInsert<
     schema: keyof Database;
   }
     ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
   ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I;
@@ -1200,12 +1235,12 @@ export type TablesInsert<
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
-      Insert: infer I;
-    }
-    ? I
-    : never
-  : never;
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof Database },
@@ -1213,7 +1248,7 @@ export type TablesUpdate<
     schema: keyof Database;
   }
     ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
   ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U;
@@ -1221,12 +1256,12 @@ export type TablesUpdate<
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
-      Update: infer U;
-    }
-    ? U
-    : never
-  : never;
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof Database },
@@ -1234,12 +1269,12 @@ export type Enums<
     schema: keyof Database;
   }
     ? keyof Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
-    : never = never
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
   ? Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-  ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
-  : never;
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+    : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes'] | { schema: keyof Database },
@@ -1247,12 +1282,12 @@ export type CompositeTypes<
     schema: keyof Database;
   }
     ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
-    : never = never
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-  ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
-  : never;
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+    : never;
 
 export const Constants = {
   graphql_public: {
@@ -1276,7 +1311,19 @@ export const Constants = {
       ],
       country_code: ['global', 'mw', 'zm', 'tj'],
       forecast_type: ['daily', 'seasonal', 'downscaled'],
-      locale_code: ['global_en', 'mw_ny', 'mw_tum', 'zm_ny', 'tj_tg'],
+      locale_code: [
+        'global_en',
+        'mw_ny',
+        'mw_tum',
+        'zm_ny',
+        'tj_tg',
+        'zm_bem',
+        'zm_toi',
+        'zm_loz',
+        'zm_lun',
+        'zm_kqn',
+        'zm_lue',
+      ],
       resource_link_type: ['app', 'social', 'web'],
     },
   },
