@@ -48,10 +48,10 @@ function setupFolders() {
 function generateTranslationTemplates() {
   const entries: ITranslationEntry[] = [];
   // Process ngx-translate extraction
-  for (const { name, path } of EXTRACTED_PROJECTS) {
+  for (const { path, tool, context } of EXTRACTED_PROJECTS) {
     const extracted = generateNGXTranslateStrings(resolve(PROJECT_ROOT, path));
     for (const key of Object.keys(extracted)) {
-      entries.push(stringToTranslationEntry(key, name));
+      entries.push(stringToTranslationEntry(key, tool, context));
     }
   }
   // Process hardcoded entries (will take priority over generated)
