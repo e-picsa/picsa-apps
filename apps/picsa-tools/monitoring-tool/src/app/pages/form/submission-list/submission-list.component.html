@@ -1,31 +1,55 @@
 <div class="page-content">
-  <div class="header-container">
-    <h2 style="flex: 1">{{ 'Submissions' | translate }}</h2>
-    <button class="create-button" mat-stroked-button color="primary" (click)="createNewSubmission()">
-      <mat-icon>add</mat-icon>
-      <span>{{ 'Create New' | translate }}</span>
-    </button>
-  </div>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>{{ 'Loading submissions...' | translate }}</p>
+    </div>
+  }
 
-  <table mat-table [dataSource]="submissionData" class="mat-elevation-z8">
-    <!-- Summary Columns -->
-    <ng-container *ngFor="let column of displayedColumns; index as i" [matColumnDef]="column">
-      <th mat-header-cell *matHeaderCellDef>{{ displayedColumnsMeta[i].label | translate }}</th>
-      <td mat-cell *matCellDef="let element">
-        <ng-template [ngIf]="element.json[column]" let-value>
-          {{ value }}
-        </ng-template>
-      </td>
-    </ng-container>
-    <!-- Sync status column -->
-    <ng-container matColumnDef="_sync_push_status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let element">
-        <mat-icon>{{ statusIcons[element._sync_push_status]?.matIcon }}</mat-icon>
-      </td>
-    </ng-container>
+  @if (!isLoading()) {
+    <div class="header-container">
+      <h2>{{ 'Submissions' | translate }}</h2>
+      <button class="create-button" mat-stroked-button color="primary" (click)="createNewSubmission()">
+        <mat-icon>add</mat-icon>
+        <span>{{ 'Create New' | translate }}</span>
+      </button>
+    </div>
 
-    <tr mat-header-row *matHeaderRowDef="dataSourceColumns"></tr>
-    <tr mat-row *matRowDef="let row; index as i; columns: dataSourceColumns" [routerLink]="row._id"></tr>
-  </table>
+    @if (isEmpty()) {
+      <div class="empty-state">
+        <mat-icon>assignment</mat-icon>
+        <p>{{ 'No submissions found' | translate }}</p>
+        <span>{{ 'Click the Create New button to add a submission' | translate }}</span>
+      </div>
+    }
+
+    @if (!isEmpty()) {
+      <table mat-table [dataSource]="submissionData" class="mat-elevation-z8">
+        <!-- Summary Columns -->
+        @for (column of displayedColumns; track column; let i = $index) {
+          <ng-container [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef>{{ displayedColumnsMeta[i].label | translate }}</th>
+            <td mat-cell *matCellDef="let element">
+              @if (element.json[column]) {
+                {{ element.json[column] }}
+              }
+            </td>
+          </ng-container>
+        }
+
+        <!-- Sync status column -->
+        <ng-container matColumnDef="_sync_push_status">
+          <th mat-header-cell *matHeaderCellDef>{{ 'Status' | translate }}</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-icon class="status-icon" [title]="element._sync_push_status | titlecase">
+              {{ statusIcons[element._sync_push_status]?.matIcon }}
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="dataSourceColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: dataSourceColumns" [routerLink]="row._id" class="clickable-row"></tr>
+      </table>
+    }
+  }
 </div>
