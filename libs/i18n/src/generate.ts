@@ -59,15 +59,29 @@ function generateTranslationTemplates() {
     entries.push(entry);
   }
   // sort and remove duplicates
-  const unique = Object.values(arrayToHashmap(entries, 'text')).filter(({ text }) => text !== '');
-  const sorted = unique.sort((a, b) => {
-    const comparator = `${a.tool}-${a.context}-${a.text}` > `${b.tool}-${b.context}-${b.text}`;
-    return comparator ? 1 : -1;
-  });
-  writeOutputJson(sorted);
+  const ordered = entries
+    .filter(({ text }) => text !== '')
+    .sort((a, b) => {
+      // context priority
+      let aScore = 0;
+      let bScore = 0;
+      if (a.context) aScore += 100;
+      if (b.context) bScore += 100;
+      if (a.tool !== 'common') aScore += 10;
+      if (b.tool !== 'common') bScore += 10;
+      return aScore > bScore ? 1 : -1;
+    });
+  const unique: Record<string, ITranslationEntry> = {};
+  // as entries will be sorted by lowest to highest score simply
+  // allow higher score to override lower and form unique list
+  for (const el of ordered) {
+    unique[el.text] = el;
+  }
+  const output = Object.values(unique);
+  writeOutputJson(output);
   // write output csv
   const headers: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
-  const csv = jsonToCSV(sorted, headers);
+  const csv = jsonToCSV(output, headers);
   const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
   writeFileSync(target, csv);
 

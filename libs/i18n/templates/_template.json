@@ -1,485 +1,1360 @@
 [
   {
-    "text": "apply fertiliser",
+    "text": "value addition",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "build housing",
+    "text": "transport",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "dipping",
+    "text": "threshing",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "feeding livestock",
+    "text": "storage",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "provide supplements",
+    "text": "shelling",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "provide water",
+    "text": "post-harvest handling",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "purchase",
+    "text": "ploughing",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "relocation",
+    "text": "mulching",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "sowing",
+    "text": "marketing and selling",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "transport livestock",
+    "text": "land clearing",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "vaccinate",
+    "text": "harvesting",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "watering",
+    "text": "compost manure making",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "weeding",
+    "text": "banding",
     "tool": "budget",
     "context": "activities"
   },
   {
-    "text": "afforestation",
+    "text": "bagging",
     "tool": "budget",
-    "context": "enterprise"
+    "context": "activities"
   },
   {
-    "text": "cattle",
+    "text": "apply pesticide",
     "tool": "budget",
-    "context": "enterprise"
+    "context": "activities"
   },
   {
-    "text": "chicken",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "You decide and make a plan",
+    "tool": "farmer_content"
   },
   {
-    "text": "cowpeas",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Who is using?",
+    "tool": "common"
   },
   {
-    "text": "ducks",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "What is happening to the climate in your area?",
+    "tool": "farmer_content"
   },
   {
-    "text": "fish",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "What is PICSA?",
+    "tool": "farmer_content"
   },
   {
-    "text": "goats",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "What do you currently do?",
+    "tool": "farmer_content"
   },
   {
-    "text": "groundnuts",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "What changes can you make?",
+    "tool": "farmer_content"
   },
   {
-    "text": "guinea fowl",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "What best describes you?",
+    "tool": "common"
   },
   {
-    "text": "maize",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "What are the opportunities and risk?",
+    "tool": "farmer_content"
   },
   {
-    "text": "mixed",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Weeding",
+    "tool": "common_crop_activity"
   },
   {
-    "text": "onions",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Wednesday",
+    "tool": "common_days",
+    "context": "day_3"
   },
   {
-    "text": "paw-paw",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Wed",
+    "tool": "common_days",
+    "context": "day_short_3"
   },
   {
-    "text": "pigeon peas",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Watering",
+    "tool": "common_crop_activity"
   },
   {
-    "text": "pigs",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Using the App",
+    "tool": "farmer_content"
   },
   {
-    "text": "rice",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Using The tool",
+    "tool": "farmer_content"
   },
   {
-    "text": "sheep",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Using The Tool",
+    "tool": "farmer_content"
   },
   {
-    "text": "sorghum",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Use the forecasts to update and adapt your plans",
+    "tool": "farmer_content"
   },
   {
-    "text": "soya beans",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Update",
+    "tool": "common"
   },
   {
-    "text": "sweet potatoes",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Undo",
+    "tool": "common"
   },
   {
-    "text": "tomatoes",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Tutorials",
+    "tool": "farmer_content"
   },
   {
-    "text": "watermelon",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "Tuesday",
+    "tool": "common_days",
+    "context": "day_2"
   },
   {
-    "text": "bags",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Tue",
+    "tool": "common_days",
+    "context": "day_short_2"
   },
   {
-    "text": "chemicals",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Tomatoes",
+    "tool": "common_crops"
   },
   {
-    "text": "feed",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Tobacco",
+    "tool": "common_crops"
   },
   {
-    "text": "fertiliser",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Thursday",
+    "tool": "common_days",
+    "context": "day_4"
   },
   {
-    "text": "housing",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Thu",
+    "tool": "common_days",
+    "context": "day_short_4"
   },
   {
-    "text": "labour - paid",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Testimonials",
+    "tool": "farmer_content"
   },
   {
-    "text": "manure sacks",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sweet Potatoes",
+    "tool": "common_crops"
   },
   {
-    "text": "manure wheelbarrows",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sunflower",
+    "tool": "common_crops"
   },
   {
-    "text": "ox cart",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sunday",
+    "tool": "common_days",
+    "context": "day_7"
   },
   {
-    "text": "pot for storage",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sun",
+    "tool": "common_days",
+    "context": "day_short_7"
   },
   {
-    "text": "protective equipment",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Soya Beans",
+    "tool": "common_crops"
   },
   {
-    "text": "seeds",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sowing",
+    "tool": "common_crop_activity"
   },
   {
-    "text": "sheller hire",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sorghum",
+    "tool": "common_crops"
   },
   {
-    "text": "supplements",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sesame",
+    "tool": "common_crops"
   },
   {
-    "text": "tools",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "September",
+    "tool": "common_months",
+    "context": "month_09"
   },
   {
-    "text": "tractor hire",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Sep",
+    "tool": "common_months",
+    "context": "month_short_09"
   },
   {
-    "text": "transportation hire",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
+    "tool": "common"
   },
   {
-    "text": "vaccine",
-    "tool": "budget",
-    "context": "inputs"
+    "text": "Seasonal Calendar",
+    "tool": "manual"
   },
   {
-    "text": "add custom",
-    "tool": "budget",
-    "context": "other"
+    "text": "Save",
+    "tool": "common",
+    "context": "buttons"
   },
   {
-    "text": "family labour",
-    "tool": "budget",
-    "context": "other"
+    "text": "Saturday",
+    "tool": "common_days",
+    "context": "day_6"
   },
   {
-    "text": "crop",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Sat",
+    "tool": "common_days",
+    "context": "day_short_6"
   },
   {
-    "text": "eggs",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Rice",
+    "tool": "common_crops"
   },
   {
-    "text": "fodder for livestock",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Review",
+    "tool": "manual"
   },
   {
-    "text": "manure for compost",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Restart App",
+    "tool": "common"
   },
   {
-    "text": "meat",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Resources",
+    "tool": "forecasts"
   },
   {
-    "text": "milk",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Resource Allocation Map",
+    "tool": "farmer_content"
   },
   {
-    "text": "money",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Redo",
+    "tool": "common"
   },
   {
-    "text": "wood",
-    "tool": "budget",
-    "context": "outputs"
+    "text": "Rain",
+    "tool": "climate",
+    "context": "chart"
   },
   {
-    "text": "Add Card",
+    "text": "Pumpkins",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Province",
+    "tool": "common"
+  },
+  {
+    "text": "Probability and Risk",
+    "tool": "manual"
+  },
+  {
+    "text": "Probability",
+    "tool": "common"
+  },
+  {
+    "text": "Potatoes",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
+    "text": "Pigeon Peas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Pearl Millet",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Paw-paw",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Participatory Budgets",
+    "tool": "farmer_content"
+  },
+  {
+    "text": "Paprika",
+    "tool": "common_crops"
+  },
+  {
+    "text": "PDF Viewer not supported on this device",
+    "tool": "common"
+  },
+  {
+    "text": "Options",
+    "tool": "farmer_content"
+  },
+  {
+    "text": "Onions",
+    "tool": "common_crops"
+  },
+  {
+    "text": "October",
+    "tool": "common_months",
+    "context": "month_10"
+  },
+  {
+    "text": "Oct",
+    "tool": "common_months",
+    "context": "month_short_10"
+  },
+  {
+    "text": "November",
+    "tool": "common_months",
+    "context": "month_11"
+  },
+  {
+    "text": "Nov",
+    "tool": "common_months",
+    "context": "month_short_11"
+  },
+  {
+    "text": "No photos added",
+    "tool": "common"
+  },
+  {
+    "text": "New Profile",
+    "tool": "common"
+  },
+  {
+    "text": "Name",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Monitoring",
+    "tool": "common"
+  },
+  {
+    "text": "Monday",
+    "tool": "common_days",
+    "context": "day_1"
+  },
+  {
+    "text": "Mon",
+    "tool": "common_days",
+    "context": "day_short_1"
+  },
+  {
+    "text": "May",
+    "tool": "common_months",
+    "context": "month_05"
+  },
+  {
+    "text": "March",
+    "tool": "common_months",
+    "context": "month_03"
+  },
+  {
+    "text": "Mar",
+    "tool": "common_months",
+    "context": "month_short_03"
+  },
+  {
+    "text": "Manual",
+    "tool": "common"
+  },
+  {
+    "text": "Mangoes",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Maize",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Loading",
+    "tool": "common"
+  },
+  {
+    "text": "Light Rain",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Land Preparation",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "June",
+    "tool": "common_months",
+    "context": "month_06"
+  },
+  {
+    "text": "Jun",
+    "tool": "common_months",
+    "context": "month_short_06"
+  },
+  {
+    "text": "July",
+    "tool": "common_months",
+    "context": "month_07"
+  },
+  {
+    "text": "Jul",
+    "tool": "common_months",
+    "context": "month_short_07"
+  },
+  {
+    "text": "January",
+    "tool": "common_months",
+    "context": "month_01"
+  },
+  {
+    "text": "Jan",
+    "tool": "common_months",
+    "context": "month_short_01"
+  },
+  {
+    "text": "Introduction",
+    "tool": "manual"
+  },
+  {
+    "text": "Interactive Tool",
+    "tool": "farmer_content"
+  },
+  {
+    "text": "I'm an extension worker",
+    "tool": "common"
+  },
+  {
+    "text": "I'm a farmer",
+    "tool": "common"
+  },
+  {
+    "text": "How to share content with others",
+    "tool": "resources",
+    "context": "videos"
+  },
+  {
+    "text": "How to Search for and Evaluate Digital Information",
+    "tool": "resources",
+    "context": "videos"
+  },
+  {
+    "text": "How to Keep Your Device Operational",
+    "tool": "resources",
+    "context": "videos"
+  },
+  {
+    "text": "How to Download and Install Apps",
+    "tool": "resources",
+    "context": "videos"
+  },
+  {
+    "text": "How to Create Your Own Content",
+    "tool": "resources",
+    "context": "videos"
+  },
+  {
+    "text": "Historic Climate",
+    "tool": "farmer_content"
+  },
+  {
+    "text": "Heavy Rain",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Groundnuts",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Friday",
+    "tool": "common_days",
+    "context": "day_5"
+  },
+  {
+    "text": "Fri",
+    "tool": "common_days",
+    "context": "day_short_5"
+  },
+  {
+    "text": "Forecasts",
+    "tool": "extension"
+  },
+  {
+    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "tool": "common"
+  },
+  {
+    "text": "February",
+    "tool": "common_months",
+    "context": "month_02"
+  },
+  {
+    "text": "Feb",
+    "tool": "common_months",
+    "context": "month_short_02"
+  },
+  {
+    "text": "Farmer Activities",
+    "tool": "common"
+  },
+  {
+    "text": "Farmer",
+    "tool": "manual"
+  },
+  {
+    "text": "Extension",
+    "tool": "manual"
+  },
+  {
+    "text": "Edit Profiles",
+    "tool": "common"
+  },
+  {
+    "text": "Draw Here",
+    "tool": "common"
+  },
+  {
+    "text": "District",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Digital Skills Introduction",
+    "tool": "resources",
+    "context": "videos"
+  },
+  {
+    "text": "Demo",
+    "tool": "common"
+  },
+  {
+    "text": "Delete",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "December",
+    "tool": "common_months",
+    "context": "month_12"
+  },
+  {
+    "text": "Dec",
+    "tool": "common_months",
+    "context": "month_short_12"
+  },
+  {
+    "text": "Cowpeas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cotton",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Cloudy",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Climate",
+    "tool": "common"
+  },
+  {
+    "text": "Clear All",
+    "tool": "common"
+  },
+  {
+    "text": "Clear",
+    "tool": "common_weather"
+  },
+  {
+    "text": "Choose language",
+    "tool": "common"
+  },
+  {
+    "text": "Choose country",
+    "tool": "common"
+  },
+  {
+    "text": "Cassava",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
+    "tool": "common"
+  },
+  {
+    "text": "Cancel",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Calculated with the date range of Start of rains and End of the rains",
+    "tool": "common"
+  },
+  {
+    "text": "Budget",
+    "tool": "manual"
+  },
+  {
+    "text": "Beyond PICSA",
+    "tool": "farmer_content"
+  },
+  {
+    "text": "Below",
+    "tool": "common"
+  },
+  {
+    "text": "Beans",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Back",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Avocado",
+    "tool": "common_crops"
+  },
+  {
+    "text": "August",
+    "tool": "common_months",
+    "context": "month_08"
+  },
+  {
+    "text": "Aug",
+    "tool": "common_months",
+    "context": "month_short_08"
+  },
+  {
+    "text": "Are you sure you want to delete?",
+    "tool": "common"
+  },
+  {
+    "text": "Are the changes a good idea?",
+    "tool": "farmer_content"
+  },
+  {
+    "text": "April",
+    "tool": "common_months",
+    "context": "month_04"
+  },
+  {
+    "text": "Apr",
+    "tool": "common_months",
+    "context": "month_short_04"
+  },
+  {
+    "text": "Apply Fertiliser",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "Add Photo",
+    "tool": "common"
+  },
+  {
+    "text": "Above",
+    "tool": "common"
+  },
+  {
+    "text": "Switch to Farmer",
+    "tool": "extension"
+  },
+  {
+    "text": "Switch to Extension",
+    "tool": "extension"
+  },
+  {
+    "text": "Something went wrong...",
+    "tool": "extension"
+  },
+  {
+    "text": "Reload",
+    "tool": "extension"
+  },
+  {
+    "text": "Privacy Policy",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Click on the button below to retry",
+    "tool": "extension"
+  },
+  {
+    "text": "Start Month ",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Season Crops",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Saved Calendars",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Save Copy",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please select at least 1 crop",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please enter total months",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please enter start month",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Please add title",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Number of Months",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "No saved calendars",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Example Calendar",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Edit",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Create",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Copy",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Calendar name",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Calendar Time",
+    "tool": "seasonal-calendar"
+  },
+  {
+    "text": "Type",
+    "tool": "resources"
+  },
+  {
+    "text": "Title",
     "tool": "budget"
   },
   {
-    "text": "Add Female Member",
+    "text": "Size",
+    "tool": "resources"
+  },
+  {
+    "text": "Search Resources",
+    "tool": "resources"
+  },
+  {
+    "text": "Search",
+    "tool": "resources"
+  },
+  {
+    "text": "No results found",
+    "tool": "resources"
+  },
+  {
+    "text": "Manage Downloads",
+    "tool": "resources"
+  },
+  {
+    "text": "Links",
+    "tool": "resources"
+  },
+  {
+    "text": "Input at least 3 letters to search",
+    "tool": "resources"
+  },
+  {
+    "text": "Files",
+    "tool": "resources"
+  },
+  {
+    "text": "Downloaded",
+    "tool": "resources"
+  },
+  {
+    "text": "Download All",
+    "tool": "resources"
+  },
+  {
+    "text": "Collections",
+    "tool": "resources"
+  },
+  {
+    "text": "Collection not found",
+    "tool": "resources"
+  },
+  {
+    "text": "risk",
+    "tool": "option"
+  },
+  {
+    "text": "benefit",
+    "tool": "option"
+  },
+  {
+    "text": "and",
+    "tool": "option"
+  },
+  {
+    "text": "Who makes decisions",
+    "tool": "option"
+  },
+  {
+    "text": "Who does the activity",
+    "tool": "option"
+  },
+  {
+    "text": "Who does activity",
+    "tool": "option"
+  },
+  {
+    "text": "Weeks",
+    "tool": "option"
+  },
+  {
+    "text": "Time to start benefiting",
+    "tool": "option"
+  },
+  {
+    "text": "Time",
+    "tool": "option"
+  },
+  {
+    "text": "Select Enterprise",
     "tool": "budget"
   },
   {
-    "text": "Add Male Member",
+    "text": "Risks or disadvantages",
+    "tool": "option"
+  },
+  {
+    "text": "Risks",
+    "tool": "option"
+  },
+  {
+    "text": "Risk",
+    "tool": "option"
+  },
+  {
+    "text": "Practice",
+    "tool": "option"
+  },
+  {
+    "text": "Performance in high, mid and low rainfall",
+    "tool": "option"
+  },
+  {
+    "text": "Performance",
+    "tool": "option"
+  },
+  {
+    "text": "Only",
+    "tool": "option"
+  },
+  {
+    "text": "Next",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Neutral",
+    "tool": "option"
+  },
+  {
+    "text": "Name of practice",
+    "tool": "option"
+  },
+  {
+    "text": "Months",
+    "tool": "option"
+  },
+  {
+    "text": "Money",
+    "tool": "option"
+  },
+  {
+    "text": "Mid",
+    "tool": "option"
+  },
+  {
+    "text": "Medium",
+    "tool": "option"
+  },
+  {
+    "text": "Male",
+    "tool": "option"
+  },
+  {
+    "text": "Low",
+    "tool": "option"
+  },
+  {
+    "text": "Livestock Options",
+    "tool": "option"
+  },
+  {
+    "text": "Livestock",
+    "tool": "option"
+  },
+  {
+    "text": "Livelihood Options",
+    "tool": "option"
+  },
+  {
+    "text": "Livelihood",
+    "tool": "option"
+  },
+  {
+    "text": "Investment in terms of money and time",
+    "tool": "option"
+  },
+  {
+    "text": "Investment",
+    "tool": "option"
+  },
+  {
+    "text": "High",
+    "tool": "option"
+  },
+  {
+    "text": "Good",
+    "tool": "option"
+  },
+  {
+    "text": "Finish",
+    "tool": "option"
+  },
+  {
+    "text": "Female",
+    "tool": "option"
+  },
+  {
+    "text": "Decisions",
+    "tool": "option"
+  },
+  {
+    "text": "Days",
     "tool": "budget"
   },
   {
-    "text": "Balance",
+    "text": "Crop Options",
+    "tool": "option"
+  },
+  {
+    "text": "Crop",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Both",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits and who",
+    "tool": "option"
+  },
+  {
+    "text": "Benefits",
+    "tool": "option"
+  },
+  {
+    "text": "Bad",
+    "tool": "option"
+  },
+  {
+    "text": "Add Option",
+    "tool": "option"
+  },
+  {
+    "text": "Add",
+    "tool": "option"
+  },
+  {
+    "text": "Activities",
     "tool": "budget"
   },
   {
-    "text": "Budget Tool",
+    "text": "Submit",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Submissions",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Records",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Forms",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Create New",
+    "tool": "monitoring"
+  },
+  {
+    "text": "All Submitted",
+    "tool": "monitoring"
+  },
+  {
+    "text": "What does the farmer currently do?",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the probabilities and risks?",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the options for the farmer?",
+    "tool": "manual"
+  },
+  {
+    "text": "What are the opportunities and risks?",
+    "tool": "manual"
+  },
+  {
+    "text": "The farmer decides",
+    "tool": "manual"
+  },
+  {
+    "text": "Step L",
+    "tool": "manual"
+  },
+  {
+    "text": "Step K",
+    "tool": "manual"
+  },
+  {
+    "text": "Step J",
+    "tool": "manual"
+  },
+  {
+    "text": "Step I",
+    "tool": "manual"
+  },
+  {
+    "text": "Step H",
+    "tool": "manual"
+  },
+  {
+    "text": "Step G",
+    "tool": "manual"
+  },
+  {
+    "text": "Step F",
+    "tool": "manual"
+  },
+  {
+    "text": "Step E",
+    "tool": "manual"
+  },
+  {
+    "text": "Step D",
+    "tool": "manual"
+  },
+  {
+    "text": "Step C",
+    "tool": "manual"
+  },
+  {
+    "text": "Step B",
+    "tool": "manual"
+  },
+  {
+    "text": "Step A",
+    "tool": "manual"
+  },
+  {
+    "text": "Short-term forecasts and warnings",
+    "tool": "manual"
+  },
+  {
+    "text": "Select and amend",
+    "tool": "manual"
+  },
+  {
+    "text": "Seasonal forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Revisit",
+    "tool": "manual"
+  },
+  {
+    "text": "Response to forecast",
+    "tool": "manual"
+  },
+  {
+    "text": "Resource Allocation Map (RAM)",
+    "tool": "manual"
+  },
+  {
+    "text": "PICSA",
+    "tool": "manual"
+  },
+  {
+    "text": "Options by context",
+    "tool": "manual"
+  },
+  {
+    "text": "Long before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Livestock Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Livelihood Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Learn and improve",
+    "tool": "manual"
+  },
+  {
+    "text": "Just before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Is the climate changing?",
+    "tool": "manual"
+  },
+  {
+    "text": "Historic climate",
+    "tool": "manual"
+  },
+  {
+    "text": "Farmers choose",
+    "tool": "manual"
+  },
+  {
+    "text": "During the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Download the PICSA Manual",
+    "tool": "manual"
+  },
+  {
+    "text": "Crop Info",
+    "tool": "manual"
+  },
+  {
+    "text": "Comparing different options and planning using Participatory Budgets",
+    "tool": "manual"
+  },
+  {
+    "text": "Compare different options and plans",
+    "tool": "manual"
+  },
+  {
+    "text": "After the season",
+    "tool": "manual"
+  },
+  {
+    "text": "Activity Flow Chart",
+    "tool": "manual"
+  },
+  {
+    "text": "Seasonal",
+    "tool": "forecasts"
+  },
+  {
+    "text": "National",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Daily",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "If you recorded anything on paper you can capture photos here",
+    "tool": "farmer-content"
+  },
+  {
+    "text": "Training",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Additional",
+    "tool": "extension-content"
+  },
+  {
+    "text": "Variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "This is water requirement for the variety",
     "tool": "budget"
   },
   {
-    "text": "Card Label",
+    "text": "This is the number of days to maturity for the variety",
     "tool": "budget"
   },
   {
-    "text": "Cost",
+    "text": "The maturity and water requirements can be used to calculate the chance of satisfying these conditions for a specific planting date",
     "tool": "budget"
   },
   {
-    "text": "Create New Budget",
+    "text": "The crop filter shows more information for specific crops",
     "tool": "budget"
   },
   {
-    "text": "Decrease Scale",
+    "text": "Station",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Probability of season start on or before date",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Now you are ready to explore the crop information tool",
     "tool": "budget"
   },
   {
-    "text": "Description (optional)",
+    "text": "In the crop information table, you will be able to see the probabilities for different crops through the different seasons.",
     "tool": "budget"
   },
   {
-    "text": "Edit Budget",
+    "text": "Here we can see information for a specific crop variety",
     "tool": "budget"
   },
   {
-    "text": "Enterprise",
+    "text": "Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates",
     "tool": "budget"
   },
   {
-    "text": "Family Labour",
+    "text": "Days to maturity",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop water requirement (mm)",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Crop probabilities depend on when the season starts.\nHere you can see the probabilities of the season starting at different dates",
     "tool": "budget"
   },
   {
-    "text": "Female Member",
+    "text": "Crop Information",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "years out of every 10",
+    "tool": "climate"
+  },
+  {
+    "text": "out of",
+    "tool": "climate"
+  },
+  {
+    "text": "Tools",
     "tool": "budget"
   },
   {
-    "text": "For Sale",
+    "text": "Terciles",
+    "tool": "climate"
+  },
+  {
+    "text": "Share Chart",
+    "tool": "climate"
+  },
+  {
+    "text": "Share",
     "tool": "budget"
   },
   {
-    "text": "How long is your budget for?",
-    "tool": "budget"
+    "text": "Select a site",
+    "tool": "climate"
   },
   {
-    "text": "Import",
-    "tool": "budget"
+    "text": "Print Version",
+    "tool": "climate"
   },
   {
-    "text": "Import Budget Code",
-    "tool": "budget"
+    "text": "Map",
+    "tool": "climate"
   },
   {
-    "text": "Increase Scale",
-    "tool": "budget"
+    "text": "Line",
+    "tool": "climate"
   },
   {
-    "text": "Inputs",
-    "tool": "budget"
+    "text": "Chart",
+    "tool": "climate"
   },
   {
-    "text": "Legend",
-    "tool": "budget"
+    "text": "Analyse",
+    "tool": "climate"
   },
   {
-    "text": "Male Member",
-    "tool": "budget"
-  },
-  {
-    "text": "New Budget",
-    "tool": "budget"
-  },
-  {
-    "text": "Outputs",
-    "tool": "budget"
-  },
-  {
-    "text": "Produce Consumed",
-    "tool": "budget"
-  },
-  {
-    "text": "Purchased",
-    "tool": "budget"
-  },
-  {
-    "text": "Quantity",
-    "tool": "budget"
-  },
-  {
-    "text": "Save your budget",
-    "tool": "budget"
-  },
-  {
-    "text": "Saved Budgets",
-    "tool": "budget"
-  },
-  {
-    "text": "Select",
-    "tool": "budget"
-  },
-  {
-    "text": "Share App Link",
-    "tool": "budget"
-  },
-  {
-    "text": "Share Budget",
-    "tool": "budget"
-  },
-  {
-    "text": "Share as Picture",
-    "tool": "budget"
-  },
-  {
-    "text": "Show More",
-    "tool": "budget"
-  },
-  {
-    "text": "Total",
-    "tool": "budget"
-  },
-  {
-    "text": "What is your type of enterprise?",
-    "tool": "budget"
-  },
-  {
-    "text": "balance",
-    "tool": "budget"
-  },
-  {
-    "text": "consumed",
-    "tool": "budget"
-  },
-  {
-    "text": "description",
-    "tool": "budget"
-  },
-  {
-    "text": "fruits",
-    "tool": "budget"
-  },
-  {
-    "text": "hours",
-    "tool": "budget"
-  },
-  {
-    "text": "livestock",
+    "text": "title",
     "tool": "budget"
   },
   {
@@ -487,21 +1362,200 @@
     "tool": "budget"
   },
   {
-    "text": "title",
+    "text": "livestock",
     "tool": "budget"
   },
   {
-    "text": "End",
+    "text": "hours",
+    "tool": "budget"
+  },
+  {
+    "text": "fruits",
+    "tool": "budget"
+  },
+  {
+    "text": "fish",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "description",
+    "tool": "budget"
+  },
+  {
+    "text": "crop",
+    "tool": "budget",
+    "context": "outputs"
+  },
+  {
+    "text": "consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "balance",
+    "tool": "budget"
+  },
+  {
+    "text": "afforestation",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "What is your type of enterprise?",
+    "tool": "budget"
+  },
+  {
+    "text": "Total",
+    "tool": "budget"
+  },
+  {
+    "text": "Show More",
+    "tool": "budget"
+  },
+  {
+    "text": "Share as Picture",
+    "tool": "budget"
+  },
+  {
+    "text": "Share Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Share App Link",
+    "tool": "budget"
+  },
+  {
+    "text": "Select",
+    "tool": "budget"
+  },
+  {
+    "text": "Saved Budgets",
+    "tool": "budget"
+  },
+  {
+    "text": "Save your budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Quantity",
+    "tool": "budget"
+  },
+  {
+    "text": "Purchased",
+    "tool": "budget"
+  },
+  {
+    "text": "Produce Consumed",
+    "tool": "budget"
+  },
+  {
+    "text": "Outputs",
+    "tool": "budget"
+  },
+  {
+    "text": "New Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Male Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Length",
     "tool": "climate",
     "context": "chart"
   },
   {
-    "text": "End of Season",
+    "text": "Legend",
+    "tool": "budget"
+  },
+  {
+    "text": "Inputs",
+    "tool": "budget"
+  },
+  {
+    "text": "Increase Scale",
+    "tool": "budget"
+  },
+  {
+    "text": "Import Budget Code",
+    "tool": "budget"
+  },
+  {
+    "text": "Import",
+    "tool": "budget"
+  },
+  {
+    "text": "How long is your budget for?",
+    "tool": "budget"
+  },
+  {
+    "text": "For Sale",
+    "tool": "budget"
+  },
+  {
+    "text": "Female Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Family Labour",
+    "tool": "budget"
+  },
+  {
+    "text": "Enterprise",
+    "tool": "budget"
+  },
+  {
+    "text": "Edit Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Description (optional)",
+    "tool": "budget"
+  },
+  {
+    "text": "Decrease Scale",
+    "tool": "budget"
+  },
+  {
+    "text": "Create New Budget",
+    "tool": "budget"
+  },
+  {
+    "text": "Cost",
+    "tool": "budget"
+  },
+  {
+    "text": "Card Label",
+    "tool": "budget"
+  },
+  {
+    "text": "Budget Tool",
+    "tool": "budget"
+  },
+  {
+    "text": "Balance",
+    "tool": "budget"
+  },
+  {
+    "text": "Add Male Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Add Female Member",
+    "tool": "budget"
+  },
+  {
+    "text": "Add Card",
+    "tool": "budget"
+  },
+  {
+    "text": "Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile",
     "tool": "climate",
     "context": "chart"
   },
   {
-    "text": "End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.",
+    "text": "Frequency of Extreme",
     "tool": "climate",
     "context": "chart"
   },
@@ -516,17 +1570,7 @@
     "context": "chart"
   },
   {
-    "text": "Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Frequency of Extreme",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Length",
+    "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
     "tool": "climate",
     "context": "chart"
   },
@@ -536,32 +1580,17 @@
     "context": "chart"
   },
   {
-    "text": "Length of season is defined as the total days from the start of the season until the end of the season as defined",
+    "text": "End of season is defined as the last day in the season (1st October - 30th April) with more than 10mm of rainfall.",
     "tool": "climate",
     "context": "chart"
   },
   {
-    "text": "Seasonal Rainfall",
+    "text": "End of Season",
     "tool": "climate",
     "context": "chart"
   },
   {
-    "text": "Seasonal Total Rainfall (mm)",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Start",
-    "tool": "climate",
-    "context": "chart"
-  },
-  {
-    "text": "Start of Season",
+    "text": "End",
     "tool": "climate",
     "context": "chart"
   },
@@ -571,1335 +1600,328 @@
     "context": "chart"
   },
   {
-    "text": "Analyse",
-    "tool": "climate"
+    "text": "Start of Season",
+    "tool": "climate",
+    "context": "chart"
   },
   {
-    "text": "Chart",
-    "tool": "climate"
+    "text": "Start",
+    "tool": "climate",
+    "context": "chart"
   },
   {
-    "text": "Line",
-    "tool": "climate"
+    "text": "Seasonal rainfall is defined as the total rain recorded from the start of the season until the end of the season",
+    "tool": "climate",
+    "context": "chart"
   },
   {
-    "text": "Map",
-    "tool": "climate"
+    "text": "Seasonal Total Rainfall (mm)",
+    "tool": "climate",
+    "context": "chart"
   },
   {
-    "text": "Print Version",
-    "tool": "climate"
+    "text": "Seasonal Rainfall",
+    "tool": "climate",
+    "context": "chart"
   },
   {
-    "text": "Select a site",
-    "tool": "climate"
+    "text": "purchase",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Share",
-    "tool": "climate"
+    "text": "money",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Share Chart",
-    "tool": "climate"
+    "text": "family labour",
+    "tool": "budget",
+    "context": "other"
   },
   {
-    "text": "Terciles",
-    "tool": "climate"
+    "text": "add custom",
+    "tool": "budget",
+    "context": "other"
   },
   {
-    "text": "Tools",
-    "tool": "climate"
+    "text": "labour - paid",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "out of",
-    "tool": "climate"
+    "text": "transportation hire",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "years out of every 10",
-    "tool": "climate"
+    "text": "wood",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Back",
-    "tool": "common",
-    "context": "buttons"
+    "text": "weeding",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Cancel",
-    "tool": "common",
-    "context": "buttons"
+    "text": "watering",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Close",
-    "tool": "common",
-    "context": "buttons"
+    "text": "tractor hire",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Delete",
-    "tool": "common",
-    "context": "buttons"
+    "text": "tools",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Edit",
-    "tool": "common",
-    "context": "buttons"
+    "text": "tomatoes",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Next",
-    "tool": "common",
-    "context": "buttons"
+    "text": "sweet potatoes",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Save",
-    "tool": "common",
-    "context": "buttons"
+    "text": "soya beans",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Above",
-    "tool": "common"
+    "text": "sowing",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Add Photo",
-    "tool": "common"
+    "text": "sorghum",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Are you sure you want to delete?",
-    "tool": "common"
+    "text": "sheller hire",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Below",
-    "tool": "common"
+    "text": "seeds",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Budget",
-    "tool": "common"
+    "text": "rice",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "common"
+    "text": "protective equipment",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
-    "tool": "common"
+    "text": "pot for storage",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Choose country",
-    "tool": "common"
+    "text": "pigeon peas",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Choose language",
-    "tool": "common"
+    "text": "ox cart",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Clear All",
-    "tool": "common"
+    "text": "onions",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Climate",
-    "tool": "common"
+    "text": "manure wheelbarrows",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Demo",
-    "tool": "common"
+    "text": "manure sacks",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Digital Skills Introduction",
-    "tool": "common"
+    "text": "maize",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "District",
-    "tool": "common"
+    "text": "groundnuts",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Draw Here",
-    "tool": "common"
+    "text": "fertiliser",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Edit Profiles",
-    "tool": "common"
+    "text": "cowpeas",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Extension",
-    "tool": "common"
+    "text": "chemicals",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Farmer",
-    "tool": "common"
+    "text": "apply fertiliser",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Farmer Activities",
-    "tool": "common"
+    "text": "watermelon",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
-    "tool": "common"
+    "text": "paw-paw",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Forecasts",
-    "tool": "common"
+    "text": "mixed",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "How to Create Your Own Content",
-    "tool": "common"
+    "text": "bags",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "How to Download and Install Apps",
-    "tool": "common"
+    "text": "vaccine",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "How to Keep Your Device Operational",
-    "tool": "common"
+    "text": "vaccinate",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "How to Search for and Evaluate Digital Information",
-    "tool": "common"
+    "text": "transport livestock",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "How to share content with others",
-    "tool": "common"
+    "text": "supplements",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "I'm a farmer",
-    "tool": "common"
+    "text": "sheep",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "I'm an extension worker",
-    "tool": "common"
+    "text": "relocation",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Loading",
-    "tool": "common"
+    "text": "provide water",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Manual",
-    "tool": "common"
+    "text": "provide supplements",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Monitoring",
-    "tool": "common"
+    "text": "pigs",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Name",
-    "tool": "common"
+    "text": "milk",
+    "tool": "budget",
+    "context": "outputs"
   },
   {
-    "text": "New Profile",
-    "tool": "common"
+    "text": "meat",
+    "tool": "budget",
+    "context": "outputs"
   },
   {
-    "text": "No photos added",
-    "tool": "common"
+    "text": "manure for compost",
+    "tool": "budget",
+    "context": "outputs"
   },
   {
-    "text": "PDF Viewer not supported on this device",
-    "tool": "common"
+    "text": "housing",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Please install the latest version of Google Chrome and restart",
-    "tool": "common"
+    "text": "guinea fowl",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Probability",
-    "tool": "common"
+    "text": "goats",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Province",
-    "tool": "common"
+    "text": "fodder for livestock",
+    "tool": "budget",
+    "context": "outputs"
   },
   {
-    "text": "Redo",
-    "tool": "common"
+    "text": "feeding livestock",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Resources",
-    "tool": "common"
+    "text": "feed",
+    "tool": "budget",
+    "context": "inputs"
   },
   {
-    "text": "Restart App",
-    "tool": "common"
+    "text": "eggs",
+    "tool": "budget",
+    "context": "outputs"
   },
   {
-    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
-    "tool": "common"
+    "text": "ducks",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Undo",
-    "tool": "common"
+    "text": "dipping",
+    "tool": "budget",
+    "context": "activities"
   },
   {
-    "text": "Update",
-    "tool": "common"
+    "text": "chicken",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "What best describes you?",
-    "tool": "common"
+    "text": "cattle",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
-    "text": "Who is using?",
-    "tool": "common"
-  },
-  {
-    "text": "Apply Fertiliser",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "Land Preparation",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "Sowing",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "Watering",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "Weeding",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "apply pesticide",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "bagging",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "banding",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "compost manure making",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "harvesting",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "land clearing",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "marketing and selling",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "mulching",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "ploughing",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "post-harvest handling",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "shelling",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "storage",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "threshing",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "transport",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "value addition",
-    "tool": "common_crop_activity"
-  },
-  {
-    "text": "Avocado",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Beans",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Cassava",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Cotton",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Cowpeas",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Groundnuts",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Maize",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Mangoes",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Onions",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Paprika",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Paw-paw",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Pearl Millet",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Pigeon Peas",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Potatoes",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Pumpkins",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Rice",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Sesame",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Sorghum",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Soya Beans",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Sunflower",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Sweet Potatoes",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Tobacco",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Tomatoes",
-    "tool": "common_crops"
-  },
-  {
-    "text": "Monday",
-    "tool": "common_days",
-    "context": "day_1"
-  },
-  {
-    "text": "Tuesday",
-    "tool": "common_days",
-    "context": "day_2"
-  },
-  {
-    "text": "Wednesday",
-    "tool": "common_days",
-    "context": "day_3"
-  },
-  {
-    "text": "Thursday",
-    "tool": "common_days",
-    "context": "day_4"
-  },
-  {
-    "text": "Friday",
-    "tool": "common_days",
-    "context": "day_5"
-  },
-  {
-    "text": "Saturday",
-    "tool": "common_days",
-    "context": "day_6"
-  },
-  {
-    "text": "Sunday",
-    "tool": "common_days",
-    "context": "day_7"
-  },
-  {
-    "text": "Mon",
-    "tool": "common_days",
-    "context": "day_short_1"
-  },
-  {
-    "text": "Tue",
-    "tool": "common_days",
-    "context": "day_short_2"
-  },
-  {
-    "text": "Wed",
-    "tool": "common_days",
-    "context": "day_short_3"
-  },
-  {
-    "text": "Thu",
-    "tool": "common_days",
-    "context": "day_short_4"
-  },
-  {
-    "text": "Fri",
-    "tool": "common_days",
-    "context": "day_short_5"
-  },
-  {
-    "text": "Sat",
-    "tool": "common_days",
-    "context": "day_short_6"
-  },
-  {
-    "text": "Sun",
-    "tool": "common_days",
-    "context": "day_short_7"
-  },
-  {
-    "text": "January",
-    "tool": "common_months",
-    "context": "month_01"
-  },
-  {
-    "text": "February",
-    "tool": "common_months",
-    "context": "month_02"
-  },
-  {
-    "text": "March",
-    "tool": "common_months",
-    "context": "month_03"
-  },
-  {
-    "text": "April",
-    "tool": "common_months",
-    "context": "month_04"
-  },
-  {
-    "text": "June",
-    "tool": "common_months",
-    "context": "month_06"
-  },
-  {
-    "text": "July",
-    "tool": "common_months",
-    "context": "month_07"
-  },
-  {
-    "text": "August",
-    "tool": "common_months",
-    "context": "month_08"
-  },
-  {
-    "text": "September",
-    "tool": "common_months",
-    "context": "month_09"
-  },
-  {
-    "text": "October",
-    "tool": "common_months",
-    "context": "month_10"
-  },
-  {
-    "text": "November",
-    "tool": "common_months",
-    "context": "month_11"
-  },
-  {
-    "text": "December",
-    "tool": "common_months",
-    "context": "month_12"
-  },
-  {
-    "text": "Jan",
-    "tool": "common_months",
-    "context": "month_short_01"
-  },
-  {
-    "text": "Feb",
-    "tool": "common_months",
-    "context": "month_short_02"
-  },
-  {
-    "text": "Mar",
-    "tool": "common_months",
-    "context": "month_short_03"
-  },
-  {
-    "text": "Apr",
-    "tool": "common_months",
-    "context": "month_short_04"
-  },
-  {
-    "text": "May",
-    "tool": "common_months",
-    "context": "month_short_05"
-  },
-  {
-    "text": "Jun",
-    "tool": "common_months",
-    "context": "month_short_06"
-  },
-  {
-    "text": "Jul",
-    "tool": "common_months",
-    "context": "month_short_07"
-  },
-  {
-    "text": "Aug",
-    "tool": "common_months",
-    "context": "month_short_08"
-  },
-  {
-    "text": "Sep",
-    "tool": "common_months",
-    "context": "month_short_09"
-  },
-  {
-    "text": "Oct",
-    "tool": "common_months",
-    "context": "month_short_10"
-  },
-  {
-    "text": "Nov",
-    "tool": "common_months",
-    "context": "month_short_11"
-  },
-  {
-    "text": "Dec",
-    "tool": "common_months",
-    "context": "month_short_12"
-  },
-  {
-    "text": "Clear",
-    "tool": "common_weather"
-  },
-  {
-    "text": "Cloudy",
-    "tool": "common_weather"
-  },
-  {
-    "text": "Heavy Rain",
-    "tool": "common_weather"
-  },
-  {
-    "text": "Light Rain",
-    "tool": "common_weather"
-  },
-  {
-    "text": "Rain",
-    "tool": "common_weather"
-  },
-  {
-    "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Crop Information",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Crop probabilities depend on when the season starts.\nHere you can see the probabilities of the season starting at different dates",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Crop water requirement (mm)",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Days to maturity",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Here we can see information for a specific crop variety",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "In the crop information table, you will be able to see the probabilities for different crops through the different seasons.",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Now you are ready to explore the crop information tool",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Probability of season start on or before date",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Station",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "The crop filter shows more information for specific crops",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "The maturity and water requirements can be used to calculate the chance of satisfying these conditions for a specific planting date",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "This is the number of days to maturity for the variety",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "This is water requirement for the variety",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Variety",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Additional",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Training",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Click on the button below to retry",
-    "tool": "extension"
-  },
-  {
-    "text": "Privacy Policy",
-    "tool": "extension"
-  },
-  {
-    "text": "Reload",
-    "tool": "extension"
-  },
-  {
-    "text": "Something went wrong...",
-    "tool": "extension"
-  },
-  {
-    "text": "Switch to Extension",
-    "tool": "extension"
-  },
-  {
-    "text": "Switch to Farmer",
-    "tool": "extension"
-  },
-  {
-    "text": "If you recorded anything on paper you can capture photos here",
-    "tool": "farmer-content"
-  },
-  {
-    "text": "Are the changes a good idea?",
-    "tool": "farmer"
-  },
-  {
-    "text": "Beyond PICSA",
-    "tool": "farmer"
-  },
-  {
-    "text": "Historic Climate",
-    "tool": "farmer"
-  },
-  {
-    "text": "Interactive Tool",
-    "tool": "farmer"
-  },
-  {
-    "text": "Introduction",
-    "tool": "farmer"
-  },
-  {
-    "text": "Options",
-    "tool": "farmer"
-  },
-  {
-    "text": "Participatory Budgets",
-    "tool": "farmer"
-  },
-  {
-    "text": "Probability and Risk",
-    "tool": "farmer"
-  },
-  {
-    "text": "Resource Allocation Map",
-    "tool": "farmer"
-  },
-  {
-    "text": "Review",
-    "tool": "farmer"
-  },
-  {
-    "text": "Seasonal Calendar",
-    "tool": "farmer"
-  },
-  {
-    "text": "Testimonials",
-    "tool": "farmer"
-  },
-  {
-    "text": "Tutorials",
-    "tool": "farmer"
-  },
-  {
-    "text": "Use the forecasts to update and adapt your plans",
-    "tool": "farmer"
-  },
-  {
-    "text": "Using The Tool",
-    "tool": "farmer"
-  },
-  {
-    "text": "Using The tool",
-    "tool": "farmer"
-  },
-  {
-    "text": "Using the App",
-    "tool": "farmer"
-  },
-  {
-    "text": "What are the opportunities and risk?",
-    "tool": "farmer"
-  },
-  {
-    "text": "What changes can you make?",
-    "tool": "farmer"
-  },
-  {
-    "text": "What do you currently do?",
-    "tool": "farmer"
-  },
-  {
-    "text": "What is PICSA?",
-    "tool": "farmer"
-  },
-  {
-    "text": "What is happening to the climate in your area?",
-    "tool": "farmer"
-  },
-  {
-    "text": "You decide and make a plan",
-    "tool": "farmer"
-  },
-  {
-    "text": "Daily",
-    "tool": "forecasts"
-  },
-  {
-    "text": "National",
-    "tool": "forecasts"
-  },
-  {
-    "text": "Seasonal",
-    "tool": "forecasts"
-  },
-  {
-    "text": "Activity Flow Chart",
-    "tool": "manual"
-  },
-  {
-    "text": "After the season",
-    "tool": "manual"
-  },
-  {
-    "text": "Compare different options and plans",
-    "tool": "manual"
-  },
-  {
-    "text": "Comparing different options and planning using Participatory Budgets",
-    "tool": "manual"
-  },
-  {
-    "text": "Crop Info",
-    "tool": "manual"
-  },
-  {
-    "text": "Download the PICSA Manual",
-    "tool": "manual"
-  },
-  {
-    "text": "During the season",
-    "tool": "manual"
-  },
-  {
-    "text": "Farmers choose",
-    "tool": "manual"
-  },
-  {
-    "text": "Historic climate",
-    "tool": "manual"
-  },
-  {
-    "text": "Is the climate changing?",
-    "tool": "manual"
-  },
-  {
-    "text": "Just before the season",
-    "tool": "manual"
-  },
-  {
-    "text": "Learn and improve",
-    "tool": "manual"
-  },
-  {
-    "text": "Livelihood Info",
-    "tool": "manual"
-  },
-  {
-    "text": "Livestock Info",
-    "tool": "manual"
-  },
-  {
-    "text": "Long before the season",
-    "tool": "manual"
-  },
-  {
-    "text": "Options by context",
-    "tool": "manual"
-  },
-  {
-    "text": "PICSA",
-    "tool": "manual"
-  },
-  {
-    "text": "Resource Allocation Map (RAM)",
-    "tool": "manual"
-  },
-  {
-    "text": "Response to forecast",
-    "tool": "manual"
-  },
-  {
-    "text": "Revisit",
-    "tool": "manual"
-  },
-  {
-    "text": "Seasonal forecast",
-    "tool": "manual"
-  },
-  {
-    "text": "Select and amend",
-    "tool": "manual"
-  },
-  {
-    "text": "Short-term forecasts and warnings",
-    "tool": "manual"
-  },
-  {
-    "text": "Step A",
-    "tool": "manual"
-  },
-  {
-    "text": "Step B",
-    "tool": "manual"
-  },
-  {
-    "text": "Step C",
-    "tool": "manual"
-  },
-  {
-    "text": "Step D",
-    "tool": "manual"
-  },
-  {
-    "text": "Step E",
-    "tool": "manual"
-  },
-  {
-    "text": "Step F",
-    "tool": "manual"
-  },
-  {
-    "text": "Step G",
-    "tool": "manual"
-  },
-  {
-    "text": "Step H",
-    "tool": "manual"
-  },
-  {
-    "text": "Step I",
-    "tool": "manual"
-  },
-  {
-    "text": "Step J",
-    "tool": "manual"
-  },
-  {
-    "text": "Step K",
-    "tool": "manual"
-  },
-  {
-    "text": "Step L",
-    "tool": "manual"
-  },
-  {
-    "text": "The farmer decides",
-    "tool": "manual"
-  },
-  {
-    "text": "What are the opportunities and risks?",
-    "tool": "manual"
-  },
-  {
-    "text": "What are the options for the farmer?",
-    "tool": "manual"
-  },
-  {
-    "text": "What are the probabilities and risks?",
-    "tool": "manual"
-  },
-  {
-    "text": "What does the farmer currently do?",
-    "tool": "manual"
-  },
-  {
-    "text": "All Submitted",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Create New",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Forms",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Records",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Submissions",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Submit",
-    "tool": "monitoring"
-  },
-  {
-    "text": "Activities",
-    "tool": "option"
-  },
-  {
-    "text": "Add",
-    "tool": "option"
-  },
-  {
-    "text": "Add Option",
-    "tool": "option"
-  },
-  {
-    "text": "Bad",
-    "tool": "option"
-  },
-  {
-    "text": "Benefits",
-    "tool": "option"
-  },
-  {
-    "text": "Benefits and who",
-    "tool": "option"
-  },
-  {
-    "text": "Both",
-    "tool": "option"
-  },
-  {
-    "text": "Crop",
-    "tool": "option"
-  },
-  {
-    "text": "Crop Options",
-    "tool": "option"
-  },
-  {
-    "text": "Days",
-    "tool": "option"
-  },
-  {
-    "text": "Decisions",
-    "tool": "option"
-  },
-  {
-    "text": "Female",
-    "tool": "option"
-  },
-  {
-    "text": "Finish",
-    "tool": "option"
-  },
-  {
-    "text": "Good",
-    "tool": "option"
-  },
-  {
-    "text": "High",
-    "tool": "option"
-  },
-  {
-    "text": "Investment",
-    "tool": "option"
-  },
-  {
-    "text": "Investment in terms of money and time",
-    "tool": "option"
-  },
-  {
-    "text": "Livelihood",
-    "tool": "option"
-  },
-  {
-    "text": "Livelihood Options",
-    "tool": "option"
-  },
-  {
-    "text": "Livestock",
-    "tool": "option"
-  },
-  {
-    "text": "Livestock Options",
-    "tool": "option"
-  },
-  {
-    "text": "Low",
-    "tool": "option"
-  },
-  {
-    "text": "Male",
-    "tool": "option"
-  },
-  {
-    "text": "Medium",
-    "tool": "option"
-  },
-  {
-    "text": "Mid",
-    "tool": "option"
-  },
-  {
-    "text": "Money",
-    "tool": "option"
-  },
-  {
-    "text": "Months",
-    "tool": "option"
-  },
-  {
-    "text": "Name of practice",
-    "tool": "option"
-  },
-  {
-    "text": "Neutral",
-    "tool": "option"
-  },
-  {
-    "text": "Only",
-    "tool": "option"
-  },
-  {
-    "text": "Performance",
-    "tool": "option"
-  },
-  {
-    "text": "Performance in high, mid and low rainfall",
-    "tool": "option"
-  },
-  {
-    "text": "Practice",
-    "tool": "option"
-  },
-  {
-    "text": "Risk",
-    "tool": "option"
-  },
-  {
-    "text": "Risks",
-    "tool": "option"
-  },
-  {
-    "text": "Risks or disadvantages",
-    "tool": "option"
-  },
-  {
-    "text": "Select Enterprise",
-    "tool": "option"
-  },
-  {
-    "text": "Time",
-    "tool": "option"
-  },
-  {
-    "text": "Time to start benefiting",
-    "tool": "option"
-  },
-  {
-    "text": "Weeks",
-    "tool": "option"
-  },
-  {
-    "text": "Who does activity",
-    "tool": "option"
-  },
-  {
-    "text": "Who does the activity",
-    "tool": "option"
-  },
-  {
-    "text": "Who makes decisions",
-    "tool": "option"
-  },
-  {
-    "text": "and",
-    "tool": "option"
-  },
-  {
-    "text": "benefit",
-    "tool": "option"
-  },
-  {
-    "text": "risk",
-    "tool": "option"
-  },
-  {
-    "text": "Collection not found",
-    "tool": "resources"
-  },
-  {
-    "text": "Collections",
-    "tool": "resources"
-  },
-  {
-    "text": "Download All",
-    "tool": "resources"
-  },
-  {
-    "text": "Downloaded",
-    "tool": "resources"
-  },
-  {
-    "text": "Files",
-    "tool": "resources"
-  },
-  {
-    "text": "Input at least 3 letters to search",
-    "tool": "resources"
-  },
-  {
-    "text": "Links",
-    "tool": "resources"
-  },
-  {
-    "text": "Manage Downloads",
-    "tool": "resources"
-  },
-  {
-    "text": "No results found",
-    "tool": "resources"
-  },
-  {
-    "text": "Search",
-    "tool": "resources"
-  },
-  {
-    "text": "Search Resources",
-    "tool": "resources"
-  },
-  {
-    "text": "Size",
-    "tool": "resources"
-  },
-  {
-    "text": "Title",
-    "tool": "resources"
-  },
-  {
-    "text": "Type",
-    "tool": "resources"
-  },
-  {
-    "text": "Calendar Time",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Calendar name",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Copy",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Create",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Example Calendar",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "No saved calendars",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Number of Months",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please add title",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please enter start month",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please enter total months",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Please select at least 1 crop",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Save Copy",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Saved Calendars",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Season Crops",
-    "tool": "seasonal-calendar"
-  },
-  {
-    "text": "Start Month ",
-    "tool": "seasonal-calendar"
+    "text": "build housing",
+    "tool": "budget",
+    "context": "activities"
   }
 ]
