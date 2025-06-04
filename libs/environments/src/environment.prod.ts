@@ -10,7 +10,7 @@ const productionEnvironment: IEnvironment = {
   production: true,
   // TODO - load from CI
   supabase: {
-    appUser: { email: 'anonymous_user@picsa.app' },
+    appUser: { email: 'admin@picsa.app' },
     load: async () => {
       return {
         anonKey:

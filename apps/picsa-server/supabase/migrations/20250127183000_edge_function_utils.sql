@@ -24,6 +24,7 @@ $$ language plpgsql;
 -- utility to call a named supabase edge function (post request with body)
 CREATE OR REPLACE FUNCTION public.call_edge_function(name text, body jsonb)
  RETURNS BIGINT
+ SECURITY DEFINER  -- This makes the function run with the privileges of the function owner
  LANGUAGE plpgsql
 AS $function$
 DECLARE

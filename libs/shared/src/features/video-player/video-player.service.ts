@@ -12,6 +12,9 @@ export class VideoPlayerService extends PicsaAsyncService {
   private dbService: PicsaDatabase_V2_Service;
   private collection: RxCollection<Schema.IVideoPlayerEntry>;
 
+  /** Keep cache of generated thumbnails */
+  public thumbnailCache = new Map<string, string>();
+
   constructor(dbService: PicsaDatabase_V2_Service) {
     super();
     this.dbService = dbService;

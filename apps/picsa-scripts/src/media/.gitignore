@@ -1,0 +1,6 @@
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
+thumbnails/*
+!thumbnails/.gitkeep

@@ -175,7 +175,7 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }>
     return false;
   }
   controlType = 'picsa-select';
-  @Input('aria-describedby') userAriaDescribedBy: string;
+  @Input() ariaDescribedBy: string;
   setDescribedByIds(ids: string[]) {
     // const controlElement = this._elementRef.nativeElement.querySelector('.picsa-select-input-container')!;
     // controlElement.setAttribute('aria-describedby', ids.join(' '));

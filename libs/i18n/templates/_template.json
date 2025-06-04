@@ -583,6 +583,10 @@
     "tool": "climate"
   },
   {
+    "text": "Map",
+    "tool": "climate"
+  },
+  {
     "text": "Print Version",
     "tool": "climate"
   },
@@ -658,10 +662,6 @@
     "tool": "common"
   },
   {
-    "text": "App",
-    "tool": "common"
-  },
-  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
@@ -671,6 +671,10 @@
   },
   {
     "text": "Below",
+    "tool": "common"
+  },
+  {
+    "text": "Beyond PICSA",
     "tool": "common"
   },
   {
@@ -706,6 +710,10 @@
     "tool": "common"
   },
   {
+    "text": "Digital Skills Introduction",
+    "tool": "common"
+  },
+  {
     "text": "District",
     "tool": "common"
   },
@@ -726,7 +734,39 @@
     "tool": "common"
   },
   {
+    "text": "Farmer Activities",
+    "tool": "common"
+  },
+  {
     "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "tool": "common"
+  },
+  {
+    "text": "Forecasts",
+    "tool": "common"
+  },
+  {
+    "text": "Historic Climate",
+    "tool": "common"
+  },
+  {
+    "text": "How to Create Your Own Content",
+    "tool": "common"
+  },
+  {
+    "text": "How to Download and Install Apps",
+    "tool": "common"
+  },
+  {
+    "text": "How to Keep Your Device Operational",
+    "tool": "common"
+  },
+  {
+    "text": "How to Search for and Evaluate Digital Information",
+    "tool": "common"
+  },
+  {
+    "text": "How to share content with others",
     "tool": "common"
   },
   {
@@ -738,7 +778,23 @@
     "tool": "common"
   },
   {
+    "text": "Interactive Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Introduction",
+    "tool": "common"
+  },
+  {
     "text": "Loading",
+    "tool": "common"
+  },
+  {
+    "text": "Manual",
+    "tool": "common"
+  },
+  {
+    "text": "Monitoring",
     "tool": "common"
   },
   {
@@ -762,7 +818,15 @@
     "tool": "common"
   },
   {
+    "text": "Participatory Budgets",
+    "tool": "common"
+  },
+  {
     "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
+    "text": "Probability",
     "tool": "common"
   },
   {
@@ -782,7 +846,15 @@
     "tool": "common"
   },
   {
+    "text": "Resources",
+    "tool": "common"
+  },
+  {
     "text": "Restart App",
+    "tool": "common"
+  },
+  {
+    "text": "Review",
     "tool": "common"
   },
   {
@@ -795,10 +867,6 @@
   },
   {
     "text": "Testimonials",
-    "tool": "common"
-  },
-  {
-    "text": "Tool",
     "tool": "common"
   },
   {
@@ -815,6 +883,18 @@
   },
   {
     "text": "Use the forecasts to update and adapt your plans",
+    "tool": "common"
+  },
+  {
+    "text": "Using The Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Using The tool",
+    "tool": "common"
+  },
+  {
+    "text": "Using the App",
     "tool": "common"
   },
   {
@@ -1295,35 +1375,11 @@
     "tool": "extension-content"
   },
   {
-    "text": "Farmer Activities",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Manual",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Monitoring",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Probability",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Resources",
-    "tool": "extension-content"
-  },
-  {
     "text": "Training",
     "tool": "extension-content"
   },
   {
     "text": "Click on the button below to retry",
-    "tool": "extension"
-  },
-  {
-    "text": "Forecasts",
     "tool": "extension"
   },
   {
@@ -1347,16 +1403,20 @@
     "tool": "extension"
   },
   {
-    "text": "Home",
+    "text": "If you recorded anything on paper you can capture photos here",
     "tool": "farmer-content"
   },
   {
-    "text": "next",
-    "tool": "farmer-content"
+    "text": "Daily",
+    "tool": "forecasts"
   },
   {
-    "text": "previous",
-    "tool": "farmer-content"
+    "text": "National",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Seasonal",
+    "tool": "forecasts"
   },
   {
     "text": "Activity Flow Chart",
@@ -1392,10 +1452,6 @@
   },
   {
     "text": "Historic climate",
-    "tool": "manual"
-  },
-  {
-    "text": "Introduction",
     "tool": "manual"
   },
   {
@@ -1436,10 +1492,6 @@
   },
   {
     "text": "Response to forecast",
-    "tool": "manual"
-  },
-  {
-    "text": "Review",
     "tool": "manual"
   },
   {

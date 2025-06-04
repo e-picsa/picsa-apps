@@ -1,38 +1,30 @@
 import type { IFarmerContentId } from './data/content';
 
-import type { IToolId } from './data/tools';
+import type { IFarmerToolData } from './data/tools';
 import { IPicsaVideoData } from '../resources';
-
-export interface IToolData {
-  id: IToolId;
-  label: string;
-  /** base url to access tool within app */
-  href: string;
-  tabLabel?: string;
-  /** Show default app header of tool directly uses */
-  showHeader?: boolean;
-}
-
-interface StepText {
-  type: 'text';
-  text?: string;
-  title?: string;
-}
 
 export interface StepTool {
   type: 'tool';
-  tool: IToolData;
+  tool: IFarmerToolData;
+  title: string;
 }
 interface StepVideo {
   type: 'video';
   video: IPicsaVideoData;
+  title: string;
+}
+interface StepVideoPlaylist {
+  type: 'videoPlaylist';
+  videos: IPicsaVideoData[];
+  title: string;
 }
 
 interface StepReview {
   type: 'review';
+  title: string;
 }
 
-export type IFarmerContentStep = StepReview | StepVideo | StepText | StepTool;
+export type IFarmerContentStep = StepReview | StepVideo | StepVideoPlaylist | StepTool;
 
 export interface IFarmerContent {
   id: IFarmerContentId;
@@ -41,9 +33,11 @@ export interface IFarmerContent {
   title: string;
 
   /** Steps contain dynamic content blocks, grouped within a mat-stepper **/
-  steps: IFarmerContentStep[][];
+  steps: IFarmerContentStep[];
 
   tags: { label: string; color?: 'primary' | 'secondary' }[];
 
   disabled?: boolean;
+
+  stepNumber?: number;
 }

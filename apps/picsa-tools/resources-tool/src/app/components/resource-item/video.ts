@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { PicsaVideoPlayerModule } from '@picsa/shared/features';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { IResourceFile } from '../../schemas';
 
@@ -8,16 +10,24 @@ import { IResourceFile } from '../../schemas';
     @if(resource.title){
     <h2>{{ resource.title | translate }}</h2>
     }
-    <picsa-video-player [source]="fileURI" #videoPlayer [thumbnail]="resource.cover?.image" [id]="resource.id">
+    <picsa-video-player
+      [source]="fileURI"
+      #videoPlayer
+      [thumbnail]="resource.cover?.image"
+      [onlineVideoUrl]="resource.url"
+      [id]="resource.id"
+    >
     </picsa-video-player>
-    <p *ngIf="resource.description">{{ resource.description | translate }}</p>
+    @if(resource.description){
+    <p>{{ resource.description | translate }}</p>
+    }
   `,
-  standalone: false,
+  imports: [PicsaVideoPlayerModule, PicsaTranslateModule],
 })
 export class ResourceItemVideoComponent {
   public videoSource: string;
 
-  @Input() fileURI: string;
+  @Input() fileURI: string | null;
 
   @Input() resource: IResourceFile;
 }

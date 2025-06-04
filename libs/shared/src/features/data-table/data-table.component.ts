@@ -5,6 +5,7 @@ import {
   Component,
   Input,
   OnChanges,
+  output,
   Pipe,
   PipeTransform,
   TemplateRef,
@@ -24,6 +25,8 @@ import { unparse } from 'papaparse';
 export interface IDataTableOptions {
   /** Optional list of columns to display (default selects first keys from first data entry) */
   displayColumns?: string[];
+  /** Alternate list of columns to hide if not specifying displayColumns */
+  hideColumns?: string[];
   /** Provide filename to export data as csv. If omitted export option will not be presented */
   exportFilename?: string;
   /** Specify size options to show in page paginator, e.g. [5,10,25] or just [25] (no paginator if left blank) */
@@ -34,7 +37,10 @@ export interface IDataTableOptions {
   sort?: boolean | Omit<MatSortable, 'disableClear'>;
   /** Apply custom formatter to header values. Default replaces underscore with space and capitalises each word */
   formatHeader?: (value: string) => string;
-  /** Bind to row click events */
+  /**
+   * @deprecated - prefer `<picsa-data-table (rowClick)="someCallback" />` binding instead
+   * Bind to row click events
+   * */
   handleRowClick?: (row: any, event: Event) => void;
 }
 
@@ -70,12 +76,15 @@ export class FormatValuePipe implements PipeTransform {
  * <picsa-data-table [data]="myData" [options]="{search:false}"></picsa-data-table>
  * ```
  * The table will display all cell values directly, without any additional formatting
- * If needing to render values within a custom template this can be done via `valueTemplates`
+ * If needing to render values within a custom template this can be done via `valueTemplates`.
+ * Value templates can access the value through any default named variable `let-{varName}`
+ * The full row can also be accessed through `let-row`
  * @example
  * ```
  * <picsa-data-table [data]="myData" [valueTemplates]={col1:col1Template}>
- *  <ng-template #col1Template let-value>
+ *  <ng-template #col1Template let-value let-row>
  *    <span class='some-custom-class'>{{value | modifierPipe}}</span>
+ *    <span>{{row.anotherField}}</span>
  *  </ng-template>
  * </picsa-data-table>
  * ```
@@ -99,8 +108,8 @@ export class FormatValuePipe implements PipeTransform {
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PicsaDataTableComponent implements OnChanges {
-  @Input() data: Record<string, any>[] = [];
+export class PicsaDataTableComponent<T = Record<string, any>> implements OnChanges {
+  @Input() data: T[] = [];
 
   /** User option overrides */
   @Input() options: IDataTableOptions = {};
@@ -112,11 +121,15 @@ export class PicsaDataTableComponent implements OnChanges {
    */
   @Input() valueTemplates: Record<string, TemplateRef<{ $implicit: any }>> = {};
 
+  /** Event output emitted on table row click */
+  rowClick = output<T>();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   public tableOptions: Required<IDataTableOptions> = {
     displayColumns: [],
+    hideColumns: [],
     exportFilename: '',
     paginatorSizes: [],
     search: true,
@@ -127,14 +140,25 @@ export class PicsaDataTableComponent implements OnChanges {
 
   public dataSource: MatTableDataSource<any>;
 
+  private searchText = '';
+
   constructor(private cdr: ChangeDetectorRef) {}
 
   // Load data when inputs updated (prefer changes over input setters to avoid duplicate load)
   ngOnChanges(): void {
     this.loadData(this.data, this.options);
+    this.applyFilter(this.searchText);
+  }
+
+  public handleRowClick(row: T, e: Event) {
+    // call passed click option
+    this.tableOptions.handleRowClick(row, e);
+    // call passed function
+    this.rowClick.emit(row);
   }
 
   public applyFilter(value: string) {
+    this.searchText = value;
     this.dataSource.filter = value.trim().toLowerCase();
   }
 
@@ -146,7 +170,8 @@ export class PicsaDataTableComponent implements OnChanges {
 
   private loadData<T>(data: T[] = [], overrides: IDataTableOptions = {}) {
     // Assign default columns from first data entry if not specified
-    const displayColumns = overrides.displayColumns || Object.keys(data[0] || {});
+    const defaultColumns = overrides.displayColumns || Object.keys(data[0] || {});
+    const displayColumns = defaultColumns.filter((v) => !overrides.hideColumns?.includes(v));
 
     // Merge default options with generated and user overrides
     const mergedOptions = { ...this.tableOptions, displayColumns, ...overrides };

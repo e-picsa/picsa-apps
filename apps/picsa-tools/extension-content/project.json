@@ -19,7 +19,8 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/picsa-tools/extension-content/src/favicon.ico",
-          "apps/picsa-tools/extension-content/src/assets"
+          "apps/picsa-tools/extension-content/src/assets",
+          { "glob": "*.svg", "input": "libs/data/tools/svgs", "output": "assets/svgs/tools" }
         ],
         "styles": ["apps/picsa-tools/extension-content/src/styles.scss"],
         "scripts": []

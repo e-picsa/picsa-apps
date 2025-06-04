@@ -7429,12 +7429,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/auth-js@npm:2.67.3":
-  version: 2.67.3
-  resolution: "@supabase/auth-js@npm:2.67.3"
+"@supabase/auth-js@npm:2.69.1":
+  version: 2.69.1
+  resolution: "@supabase/auth-js@npm:2.69.1"
   dependencies:
     "@supabase/node-fetch": "npm:^2.6.14"
-  checksum: 10c0/59b29ba51e4c9e9d61b60db98005cec2007077e09489dbc82073919f8dd86364e0577c27e79993af528f9a077e564e2da222f4f22af71b1d1688d130098cb3e0
+  checksum: 10c0/efc08fc6be48769efc84105617f2cb681791641ba86480d29a316ae83beac8cf4f747bf00b4947c32992f9b7b0b40e3c2bf74013f01e070c38558169ab68b6f1
   languageName: node
   linkType: hard
 
@@ -7456,12 +7456,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/postgrest-js@npm:1.17.9":
-  version: 1.17.9
-  resolution: "@supabase/postgrest-js@npm:1.17.9"
+"@supabase/postgrest-js@npm:1.19.4":
+  version: 1.19.4
+  resolution: "@supabase/postgrest-js@npm:1.19.4"
   dependencies:
     "@supabase/node-fetch": "npm:^2.6.14"
-  checksum: 10c0/0cc2d79115cba76fbfd34e90e80302aaee93cc125f54b2886228c59b5bfac1cd0b6ac4b6ebdd41899c828fee8d725b85592ed371a4ff598488fb35d45c86b38c
+  checksum: 10c0/1d14adc841f720e0035045f8b06cf2cb9f3b0a83ac903e268d5afb80b64d240ae64cb24372e0e9c857420b07010bfdb9a806f024fe60ac13468fd791ada2eb7f
   languageName: node
   linkType: hard
 
@@ -7486,17 +7486,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.47.10":
-  version: 2.47.11
-  resolution: "@supabase/supabase-js@npm:2.47.11"
+"@supabase/supabase-js@npm:^2.49.4":
+  version: 2.49.4
+  resolution: "@supabase/supabase-js@npm:2.49.4"
   dependencies:
-    "@supabase/auth-js": "npm:2.67.3"
+    "@supabase/auth-js": "npm:2.69.1"
     "@supabase/functions-js": "npm:2.4.4"
     "@supabase/node-fetch": "npm:2.6.15"
-    "@supabase/postgrest-js": "npm:1.17.9"
+    "@supabase/postgrest-js": "npm:1.19.4"
     "@supabase/realtime-js": "npm:2.11.2"
     "@supabase/storage-js": "npm:2.7.1"
-  checksum: 10c0/00a3358b3fb4a74b8a10d5c01daae75ab548e087584061bd568830ac480907be9b96b21ac7bf345fa957383debd4f762db67a1b0d34e4ac67f5836d8600713f3
+  checksum: 10c0/43f5500b4cee89fa975ef13036846e6406d7719c79e1c9563b9e6a54529aa7b8d17e86bd0cd2cd2394ce6894e85628f43a29809572a438d2fc493175bb25ac25
   languageName: node
   linkType: hard
 
@@ -10690,6 +10690,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch":
+  version: 6.0.0
+  resolution: "capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch::version=6.0.0&hash=228ec1"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+    hls.js: ^1.4.0
+  checksum: 10c0/472d63defab8451d59eee82dd267b20a3a9b0ad76f31b5c23c8b2cfed1797ebf25bf050893d258c150271da1a7e81b94292d49189e69af15b2da26d7200aba20
+  languageName: node
+  linkType: hard
+
 "caseless@npm:~0.12.0":
   version: 0.12.0
   resolution: "caseless@npm:0.12.0"
@@ -12777,13 +12787,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv-expand@npm:^8.0.3":
-  version: 8.0.3
-  resolution: "dotenv-expand@npm:8.0.3"
-  checksum: 10c0/bf928bdd75ec632918e41fc5822d507dcf4081ae1d07b47aaee086141f6bbdc202add9f214b4064e118db1ca343b59f3924b0721327954a7af46897069271672
-  languageName: node
-  linkType: hard
-
 "dotenv-expand@npm:~11.0.6":
   version: 11.0.7
   resolution: "dotenv-expand@npm:11.0.7"
@@ -12793,7 +12796,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.1, dotenv@npm:^16.4.5, dotenv@npm:~16.4.5":
+"dotenv@npm:^16.4.5, dotenv@npm:~16.4.5":
   version: 16.4.7
   resolution: "dotenv@npm:16.4.7"
   checksum: 10c0/be9f597e36a8daf834452daa1f4cc30e5375a5968f98f46d89b16b983c567398a330580c88395069a77473943c06b877d1ca25b4afafcdd6d4adb549e8293462
@@ -19867,7 +19870,7 @@ __metadata:
     "@stencil/angular-output-target": "npm:^0.10.2"
     "@stencil/core": "npm:4.23.1"
     "@stencil/sass": "npm:^3.0.12"
-    "@supabase/supabase-js": "npm:^2.47.10"
+    "@supabase/supabase-js": "npm:^2.49.4"
     "@swc-node/register": "npm:1.9.2"
     "@swc/core": "npm:1.5.7"
     "@swc/helpers": "npm:0.5.15"
@@ -19898,7 +19901,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
-    capacitor-video-player: "npm:6.0.0"
+    capacitor-video-player: "patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
@@ -19907,8 +19910,6 @@ __metadata:
     date-fns: "npm:^2.29.3"
     deepmerge: "npm:^4.3.0"
     dexie: "npm:^3.2.3"
-    dotenv: "npm:^16.0.1"
-    dotenv-expand: "npm:^8.0.3"
     downloadjs: "npm:^1.4.7"
     enketo-core: "npm:^6.1.3"
     eslint: "npm:8.57.0"
@@ -19957,7 +19958,7 @@ __metadata:
     postcss: "npm:^8.4.47"
     postcss-import: "npm:~14.1.0"
     postcss-url: "npm:~10.1.3"
-    prettier: "npm:2.6.2"
+    prettier: "npm:3.5.3"
     prompts: "npm:^2.4.2"
     puppeteer: "npm:^15.5.0"
     rollup-plugin-node-polyfills: "npm:^0.2.1"
@@ -19968,7 +19969,7 @@ __metadata:
     save-svg-as-png: "npm:^1.4.17"
     sharp: "npm:^0.31.3"
     stacktrace-js: "npm:^2.0.2"
-    supabase: "npm:^2.2.1"
+    supabase: "npm:^2.22.12"
     tailwindcss: "npm:^3.4.13"
     topojson-client: "npm:^3.1.0"
     ts-jest: "npm:29.1.1"
@@ -20631,12 +20632,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.6.2":
-  version: 2.6.2
-  resolution: "prettier@npm:2.6.2"
+"prettier@npm:3.5.3":
+  version: 3.5.3
+  resolution: "prettier@npm:3.5.3"
   bin:
-    prettier: bin-prettier.js
-  checksum: 10c0/4a2717d0aca6b5b5c24570854fdf119c4184ff7422a1aa283364bdfe5394ecff4f6ac375663840dc2680ea09b1d5370329b83ac06579588db6f8bc71620e1267
+    prettier: bin/prettier.cjs
+  checksum: 10c0/3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
   languageName: node
   linkType: hard
 
@@ -22853,9 +22854,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supabase@npm:^2.2.1":
-  version: 2.3.0
-  resolution: "supabase@npm:2.3.0"
+"supabase@npm:^2.22.12":
+  version: 2.22.13
+  resolution: "supabase@npm:2.22.13"
   dependencies:
     bin-links: "npm:^5.0.0"
     https-proxy-agent: "npm:^7.0.2"
@@ -22863,7 +22864,7 @@ __metadata:
     tar: "npm:7.4.3"
   bin:
     supabase: bin/supabase
-  checksum: 10c0/1c5261b48bf91538c492e3f98850b6fb2c81c143bf6362f013907b8e7b2f833d043e8c78b5ffbacf7dac8c2764b84d6501955e074003db085a63056bf8ad8269
+  checksum: 10c0/5babd0b860ceb931af68bad7ad65b147db15df95be2daf29e4abca9a2a5aa361b460a0484c7b71aeaef3abf75de99b75b4e132666248122faf8f1f944ac71289
   languageName: node
   linkType: hard
 

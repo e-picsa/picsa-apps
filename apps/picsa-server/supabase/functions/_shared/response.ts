@@ -23,7 +23,7 @@ export function ErrorResponse(msg: any, status = 400) {
   });
 }
 
-export function JSONResponse(data: Record<string, any>, status = 200) {
+export function JSONResponse<T>(data: T, status = 200) {
   return new Response(JSON.stringify(data), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     status,

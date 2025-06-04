@@ -23,16 +23,14 @@ import { PicsaSidenavComponent } from './components/picsa-sidenav.component';
 import { ProfileSelectComponent } from './components/profile-select/profile-select.component';
 
 // import {} from './warning.component';
-const components = [
+const components = [PicsaBreadcrumbsComponent, PicsaHeaderComponent, PicsaSidenavComponent, ProfileSelectComponent];
+
+const standalone = [
   AlertBoxComponent,
   BackButton,
-  PicsaBreadcrumbsComponent,
-  PicsaHeaderComponent,
-  PicsaSidenavComponent,
-  ProfileSelectComponent,
+  PicsaConfigurationSelectComponent,
+  PicsaConfigurationSummaryComponent,
 ];
-
-const standalone = [PicsaConfigurationSelectComponent, PicsaConfigurationSummaryComponent];
 
 @NgModule({
   declarations: components,

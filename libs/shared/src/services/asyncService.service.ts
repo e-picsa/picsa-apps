@@ -1,3 +1,4 @@
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, filter, firstValueFrom } from 'rxjs';
 
 /**
@@ -33,6 +34,8 @@ export class PicsaAsyncService {
   }
   /** Observable for service ready state */
   public ready$ = this.initialised$.pipe(filter((v) => v === true));
+
+  public readySignal = toSignal(this.ready$);
 
   private callInitFunction(...args: any) {
     this.initCalled = true;

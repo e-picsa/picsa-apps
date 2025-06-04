@@ -42,7 +42,7 @@ export class ResourceFileEditComponent implements OnInit {
     private dialog: PicsaDialogService
   ) {}
 
-  public storageBucketName = computed(() => this.deploymentService.activeDeployment()!.country_code);
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
 
   /** List of languages used in deployment available for resources */
   public languagesAvailable = computed(() => {

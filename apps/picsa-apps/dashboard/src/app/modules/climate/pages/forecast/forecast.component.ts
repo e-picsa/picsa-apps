@@ -103,8 +103,7 @@ export class ClimateForecastPageComponent {
   }
 
   private async loadDBData() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const { country_code } = this.deploymentService.activeDeployment()!;
+    const { country_code } = this.deploymentService.activeDeployment();
     // Load data stored in supabase db if available. Otherwise load from api
     const { data, error } = await this.db
       .select<'*', IForecastRow>('*')
@@ -123,19 +122,17 @@ export class ClimateForecastPageComponent {
     const country_code = this.countryCode() as string;
     const query_prefix = this.apiQueryPrefix();
 
-    const { data, error } = await this.supabase.functions.invoke<IForecastDBAPIResponse>('dashboard/forecast-db', {
-      method: 'POST',
-      body: { country_code, query_prefix },
-    });
+    const data = await this.supabase
+      .invokeFunction<IForecastDBAPIResponse>('dashboard/forecast-db', {
+        method: 'POST',
+        body: { country_code, query_prefix },
+      })
+      .catch((err) => {
+        console.error(err);
+        this.notificationService.showErrorNotification('Forecast Update Failed. See console logs for details');
+        return [];
+      });
 
-    // Errors thrown from functions in JS client need to wait for message
-    // https://github.com/supabase/functions-js/issues/45
-    if (error && error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json();
-      console.error('refreshAPIData', JSON.parse(errorMessage));
-      this.notificationService.showErrorNotification('Forecast Update Failed. See console logs for details');
-      return [];
-    }
     const forecasts = data?.[country_code] || [];
 
     this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(forecasts), v));

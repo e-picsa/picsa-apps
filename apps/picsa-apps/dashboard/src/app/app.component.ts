@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
-import { DASHBOARD_NAV_LINKS, GLOBAL_NAV_LINKS } from './data';
+import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { AuthRoleRequiredDirective } from './modules/auth';
 import { DeploymentSelectComponent } from './modules/deployment/components';
@@ -28,7 +28,7 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
 export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
-  globalLinks = GLOBAL_NAV_LINKS;
+  adminLinks = ADMIN_NAV_LINKS;
 
   public deployment = this.deploymentService.activeDeployment;
 
@@ -45,6 +45,7 @@ export class AppComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     // eagerly initialise supabase and deployment services to ensure available
+    // NOTE - do not include any services here that depend on an active deployment (could be undefined)
     await this.supabaseService.ready();
     await this.deploymentService.ready();
     this.initComplete.set(true);

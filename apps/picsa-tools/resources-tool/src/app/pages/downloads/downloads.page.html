@@ -6,11 +6,13 @@
     <ng-container matColumnDef="mimetype">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Type' | translate }}</th>
       <td mat-cell *matCellDef="let doc">
-        <ng-container [ngSwitch]="doc._data.subtype">
-          <mat-icon *ngSwitchCase="'pdf'" svgIcon="resources_tool:filetype_pdf"></mat-icon>
-          <mat-icon *ngSwitchCase="'video'" svgIcon="resources_tool:filetype_video"></mat-icon>
-          <mat-icon *ngSwitchDefault svgIcon="resources_tool:filetype_document"></mat-icon>
-        </ng-container>
+        @switch (doc._data.subtype) { @case ('pdf') {
+        <mat-icon svgIcon="resources_tool:filetype_pdf"></mat-icon>
+        } @case ('video') {
+        <mat-icon svgIcon="resources_tool:filetype_video"></mat-icon>
+        } @default {
+        <mat-icon svgIcon="resources_tool:filetype_document"></mat-icon>
+        } }
       </td>
     </ng-container>
 
@@ -27,7 +29,7 @@
     <ng-container matColumnDef="download_button">
       <th mat-header-cell *matHeaderCellDef class="icon-column"></th>
       <td mat-cell *matCellDef="let doc" class="icon-column">
-        <resource-download [dbDoc]="doc"></resource-download>
+        <resource-download [resource]="doc._data"></resource-download>
       </td>
     </ng-container>
 

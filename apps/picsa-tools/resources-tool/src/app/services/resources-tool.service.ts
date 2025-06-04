@@ -18,7 +18,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
 
-export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
+export type IDownloadStatus = 'loading' | 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {

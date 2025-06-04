@@ -19,8 +19,8 @@
         (click)="linkClicked(link)"
       >
         <div style="text-align: center">
-          <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
-          <div class="nav-text">{{ link.name | translate }}</div>
+          <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ link.label | translate }}</div>
         </div>
         @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
         <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
@@ -42,8 +42,8 @@
         (click)="linkClicked(link)"
       >
         <div style="text-align: center">
-          <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
-          <div class="nav-text">{{ link.name | translate }}</div>
+          <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ link.label | translate }}</div>
         </div>
         @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
         <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
@@ -53,6 +53,7 @@
       <!-- Dev Links -->
 
       <!-- Tour -->
+      <!-- TODO - if uncommenting will need to refactor to use svg asset from local svgs folder -->
 
       <!-- <div class="grid-tile" (click)="startTour()" style="position: relative">
         <div style="text-align: center">
