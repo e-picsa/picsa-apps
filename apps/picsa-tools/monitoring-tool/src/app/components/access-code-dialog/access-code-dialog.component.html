@@ -8,7 +8,8 @@
     <mat-label>{{ 'Access Code' | translate }}</mat-label>
     <input
       matInput
-      [(ngModel)]="accessCode"
+      [value]="accessCode()"
+      (input)="onAccessCodeInput($event)"
       [type]="hidePassword() ? 'password' : 'text'"
       placeholder="{{ 'Enter access code' | translate }}"
       (keyup.enter)="validateAndSubmit()"
@@ -29,7 +30,7 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
-  <button mat-raised-button color="primary" (click)="validateAndSubmit()" [disabled]="!accessCode.trim()">
+  <button mat-raised-button color="primary" (click)="validateAndSubmit()" [disabled]="!accessCode().trim()">
     {{ 'Unlock' | translate }}
   </button>
 </div>

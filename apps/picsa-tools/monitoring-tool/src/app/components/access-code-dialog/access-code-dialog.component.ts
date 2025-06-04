@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnDestroy, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 export interface AccessCodeDialogData {
   formTitle: string;
@@ -26,7 +25,6 @@ export interface AccessCodeDialogResult {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -37,33 +35,36 @@ export interface AccessCodeDialogResult {
   ],
 })
 export class AccessCodeDialogComponent implements OnDestroy {
-  accessCode = '';
+  accessCode = signal('');
   hidePassword = signal(true);
   showError = signal(false);
 
-  private errorTimer: any;
+  private errorTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Configurable properties
   private errorDuration = 3000; // this is 3 seconds
 
   constructor(
     public dialogRef: MatDialogRef<AccessCodeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AccessCodeDialogData
+    @Inject(MAT_DIALOG_DATA) public data: AccessCodeDialogData,
   ) {}
 
   ngOnDestroy(): void {
     this.clearErrorTimer();
   }
-
   togglePasswordVisibility(): void {
     this.hidePassword.update((value) => !value);
   }
 
+  onAccessCodeInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.accessCode.set(target.value);
+  }
   validateAndSubmit(): void {
-    if (this.accessCode === this.data.accessCode) {
+    if (this.accessCode() === this.data.accessCode) {
       // Success - return success result with the code
       this.clearErrorTimer();
-      this.dialogRef.close({ success: true, code: this.accessCode });
+      this.dialogRef.close({ success: true, code: this.accessCode() });
     } else {
       this.showError.set(true);
 
