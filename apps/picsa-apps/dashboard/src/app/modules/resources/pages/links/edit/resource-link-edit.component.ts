@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { PICSAFormValidators } from '@picsa/forms';
 
+import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
 import { ResourcesDashboardService } from '../../../resources.service';
 import { IResourceLinkRow } from '../../../types';
 
@@ -19,13 +20,15 @@ export class ResourceLinkEditComponent implements OnInit {
   constructor(
     private service: ResourcesDashboardService,
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private deploymentService: DeploymentDashboardService,
   ) {}
 
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),
     type: ['link'],
     url: ['', PICSAFormValidators.isUrl],
+    country_code: [this.deploymentService.activeDeploymentCountry() as string, Validators.required],
   });
   async ngOnInit() {
     await this.service.ready();

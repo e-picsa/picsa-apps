@@ -13,32 +13,43 @@
   </p>
 
   <picsa-data-table
-    [data]="resources"
+    [data]="resources()"
     [options]="tableOptions"
     [valueTemplates]="{
+      cover_image: coverImageTemplate,
       size_kb: sizeKbTemplate,
       mimetype: mimetypeTemplate,
       languages: languagesTemplate,
       modified_at: modifiedAtTemplate,
       collections: collectionsTemplate,
-      external_url: externalUrlTemplate
+      external_url: externalUrlTemplate,
     }"
   >
+    <!-- cover image -->
+    <ng-template #coverImageTemplate let-cover_image>
+      <img class="collection-cover" [src]="cover_image | storagePath" />
+    </ng-template>
+
     <!-- size in MB -->
     <ng-template #sizeKbTemplate let-sizeKb> {{ sizeKb | sizeMB }}MB </ng-template>
     <!-- mimetype icons -->
     <ng-template #mimetypeTemplate let-mimetype>
-      @switch (mimetype) { @case (('application/pdf')) {
-      <mat-icon svgIcon="dashboard:filetype_pdf" [matTooltip]="mimetype"></mat-icon>
-      } @case ('video/mp4') {
-      <mat-icon svgIcon="dashboard:filetype_video" [matTooltip]="mimetype"></mat-icon>
-      } @default {
-      <mat-icon svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>} }
+      @switch (mimetype) {
+        @case ('application/pdf') {
+          <mat-icon svgIcon="dashboard:filetype_pdf" [matTooltip]="mimetype"></mat-icon>
+        }
+        @case ('video/mp4') {
+          <mat-icon svgIcon="dashboard:filetype_video" [matTooltip]="mimetype"></mat-icon>
+        }
+        @default {
+          <mat-icon svgIcon="dashboard:filetype_document" [matTooltip]="mimetype"></mat-icon>
+        }
+      }
     </ng-template>
     <!-- language codes -->
     <ng-template #languagesTemplate let-languages>
-      @for(language of languages; track language.id){
-      <div>{{ language.language_label }}</div>
+      @for (language of languages; track language.id) {
+        <div>{{ language.language_label }}</div>
       }
     </ng-template>
     <!-- modified date -->
@@ -48,25 +59,25 @@
     <!-- collections -->
     <ng-template #collectionsTemplate let-collections>
       <div style="display: flex; gap: 4px">
-        @for(collection of collections; track collection.id;){
-        <div
-          class="collection-cover-container"
-          [matTooltip]="collection.title"
-          (click)="handleCollectionClick($event, collection)"
-        >
-          <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
-        </div>
+        @for (collection of collections; track collection.id) {
+          <div
+            class="collection-cover-container"
+            [matTooltip]="collection.title"
+            (click)="handleCollectionClick($event, collection)"
+          >
+            <img class="collection-cover color-on-hover" [src]="collection.cover_image | storagePath" />
+          </div>
         }
       </div>
     </ng-template>
     <!-- externalUrl -->
     <ng-template #externalUrlTemplate let-url>
-      @if(url){
-      <a [href]="url" target="_blank" rel="noopener noreferrer nofollow" (click)="$event.stopImmediatePropagation()">
-        <button mat-icon-button style="color: black; margin: auto; display: block">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-      </a>
+      @if (url) {
+        <a [href]="url" target="_blank" rel="noopener noreferrer nofollow" (click)="$event.stopImmediatePropagation()">
+          <button mat-icon-button style="color: black; margin: auto; display: block">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </a>
       }
     </ng-template>
   </picsa-data-table>
