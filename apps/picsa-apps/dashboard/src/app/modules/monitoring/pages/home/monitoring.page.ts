@@ -28,7 +28,11 @@ export class MonitoringPageComponent implements OnInit {
     'created_at',
   ];
 
-  constructor(public service: MonitoringFormsDashboardService, private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    public service: MonitoringFormsDashboardService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],

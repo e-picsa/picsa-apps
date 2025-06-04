@@ -662,19 +662,11 @@
     "tool": "common"
   },
   {
-    "text": "Are the changes a good idea?",
-    "tool": "common"
-  },
-  {
     "text": "Are you sure you want to delete?",
     "tool": "common"
   },
   {
     "text": "Below",
-    "tool": "common"
-  },
-  {
-    "text": "Beyond PICSA",
     "tool": "common"
   },
   {
@@ -746,10 +738,6 @@
     "tool": "common"
   },
   {
-    "text": "Historic Climate",
-    "tool": "common"
-  },
-  {
     "text": "How to Create Your Own Content",
     "tool": "common"
   },
@@ -778,14 +766,6 @@
     "tool": "common"
   },
   {
-    "text": "Interactive Tool",
-    "tool": "common"
-  },
-  {
-    "text": "Introduction",
-    "tool": "common"
-  },
-  {
     "text": "Loading",
     "tool": "common"
   },
@@ -810,15 +790,7 @@
     "tool": "common"
   },
   {
-    "text": "Options",
-    "tool": "common"
-  },
-  {
     "text": "PDF Viewer not supported on this device",
-    "tool": "common"
-  },
-  {
-    "text": "Participatory Budgets",
     "tool": "common"
   },
   {
@@ -830,19 +802,11 @@
     "tool": "common"
   },
   {
-    "text": "Probability and Risk",
-    "tool": "common"
-  },
-  {
     "text": "Province",
     "tool": "common"
   },
   {
     "text": "Redo",
-    "tool": "common"
-  },
-  {
-    "text": "Resource Allocation Map",
     "tool": "common"
   },
   {
@@ -854,23 +818,7 @@
     "tool": "common"
   },
   {
-    "text": "Review",
-    "tool": "common"
-  },
-  {
-    "text": "Seasonal Calendar",
-    "tool": "common"
-  },
-  {
     "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
-    "tool": "common"
-  },
-  {
-    "text": "Testimonials",
-    "tool": "common"
-  },
-  {
-    "text": "Tutorials",
     "tool": "common"
   },
   {
@@ -882,51 +830,11 @@
     "tool": "common"
   },
   {
-    "text": "Use the forecasts to update and adapt your plans",
-    "tool": "common"
-  },
-  {
-    "text": "Using The Tool",
-    "tool": "common"
-  },
-  {
-    "text": "Using The tool",
-    "tool": "common"
-  },
-  {
-    "text": "Using the App",
-    "tool": "common"
-  },
-  {
-    "text": "What are the opportunities and risk?",
-    "tool": "common"
-  },
-  {
     "text": "What best describes you?",
     "tool": "common"
   },
   {
-    "text": "What changes can you make?",
-    "tool": "common"
-  },
-  {
-    "text": "What do you currently do?",
-    "tool": "common"
-  },
-  {
-    "text": "What is PICSA?",
-    "tool": "common"
-  },
-  {
-    "text": "What is happening to the climate in your area?",
-    "tool": "common"
-  },
-  {
     "text": "Who is using?",
-    "tool": "common"
-  },
-  {
-    "text": "You decide and make a plan",
     "tool": "common"
   },
   {
@@ -1369,6 +1277,98 @@
   {
     "text": "Variety",
     "tool": "crop-probability"
+  },
+  {
+    "text": "Are the changes a good idea?",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Beyond PICSA",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Historic Climate",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Interactive Tool",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Introduction",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Options",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Participatory Budgets",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Probability and Risk",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Resource Allocation Map",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Review",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Seasonal Calendar",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Testimonials",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Tutorials",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Use the forecasts to update and adapt your plans",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Using The Tool",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Using The tool",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "Using the App",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "What are the opportunities and risk?",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "What changes can you make?",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "What do you currently do?",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "What is PICSA?",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "What is happening to the climate in your area?",
+    "tool": "direct-to-farmer"
+  },
+  {
+    "text": "You decide and make a plan",
+    "tool": "direct-to-farmer"
   },
   {
     "text": "Additional",
