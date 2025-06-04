@@ -11,25 +11,27 @@
       <img mat-card-sm-image [src]="form.cover.icon" />
       <mat-card-title>
         {{ form.title | translate }}
-        <mat-icon *ngIf="isLocked" class="lock-icon">lock</mat-icon>
-        <mat-progress-spinner *ngIf="isProcessing()" diameter="20" mode="indeterminate" class="spinner">
-        </mat-progress-spinner>
+        @if (isLocked) {
+          <mat-icon class="lock-icon">lock</mat-icon>
+        }
+        @if (isProcessing()) {
+          <mat-progress-spinner diameter="20" mode="indeterminate" class="spinner"> </mat-progress-spinner>
+        }
       </mat-card-title>
       <mat-card-subtitle> {{ form.description | translate }}</mat-card-subtitle>
     </mat-card-title-group>
   </mat-card-header>
   <!-- Contents -->
   <mat-card-content class="sync-status-container">
-    <div
-      *ngFor="let status of syncStatus"
-      class="sync-status-item"
-      [style.display]="status.value > 0 ? 'block' : 'none'"
-      [attr.data-status]="status.id"
-    >
-      <div style="display: flex; align-items: center">
-        <mat-icon>{{ status.matIcon }}</mat-icon>
-        <span class="sync-status-value">{{ status.value }}</span>
-      </div>
-    </div>
+    @for (status of syncStatus; track status.id) {
+      @if (status.value > 0) {
+        <div class="sync-status-item" [attr.data-status]="status.id">
+          <div style="display: flex; align-items: center">
+            <mat-icon>{{ status.matIcon }}</mat-icon>
+            <span class="sync-status-value">{{ status.value }}</span>
+          </div>
+        </div>
+      }
+    }
   </mat-card-content>
 </mat-card>

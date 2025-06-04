@@ -1,9 +1,11 @@
-import { Component, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
 import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 import { RxDocument } from 'rxdb';
@@ -16,6 +18,17 @@ import {
 import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
+
+// Translation markers for text extraction
+const FORM_SAVE_SUCCESS_MESSAGE = translateMarker('Form saved successfully');
+const FORM_SUBMIT_SUCCESS_MESSAGE = translateMarker('Form submitted successfully');
+const FORM_DELETE_SUCCESS_MESSAGE = translateMarker('Form deleted');
+const FORM_UNLOCK_SUCCESS_MESSAGE = translateMarker('Form unlocked successfully');
+const FORM_LOAD_ERROR_MESSAGE = translateMarker('Error loading form');
+const FORM_NOT_FOUND_MESSAGE = translateMarker('Form not found');
+const FORM_UNLOCK_ERROR_MESSAGE = translateMarker('Error unlocking form');
+const SUBMISSION_NOT_FOUND_MESSAGE = translateMarker('Submission not found');
+const CLOSE_BUTTON_TEXT = translateMarker('Close');
 
 @Component({
   selector: 'monitoring-form-view',
@@ -50,7 +63,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
   /** DB doc linked to current submission entry */
   private submissionDoc?: RxDocument<IFormSubmission>;
   private componentDestroyed$ = new Subject<void>();
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -58,19 +70,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
     private componentService: PicsaCommonComponentsService,
     private dialogService: PicsaDialogService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translateService: PicsaTranslateService,
   ) {}
-
-  // Track user activity to reset inactivity timer
-  @HostListener('document:mousemove')
-  @HostListener('document:keypress')
-  @HostListener('document:click')
-  @HostListener('document:touchstart')
-  onUserActivity(): void {
-    if (this.formId && this.currentForm?.access_code) {
-      this.monitoringService.resetAutoLockTimer(this.formId);
-    }
-  }
 
   async ngOnDestroy(): Promise<void> {
     await this.handleViewDestroy();
@@ -83,7 +85,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.componentDestroyed$.next();
     this.componentDestroyed$.complete();
   }
-
   async ngOnInit(): Promise<void> {
     await this.monitoringService.ready();
     this.subscribeToRouteChanges();
@@ -91,10 +92,12 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
   /** Handle save event triggered from enketo form */
   public async handleSave(e: Event): Promise<void> {
-    const entry: IEnketoFormEntry = (e as any).detail.entry;
+    const entry: IEnketoFormEntry = (e as CustomEvent).detail.entry;
     this.formEntry = entry;
     await this.finaliseForm('UPDATE');
-    this.snackBar.open('Form saved successfully', 'Close', {
+    const message = await this.translateService.translateText(FORM_SAVE_SUCCESS_MESSAGE);
+    const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+    this.snackBar.open(message, closeText, {
       duration: 3000,
     });
     this.componentService.back();
@@ -105,7 +108,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
     if (this.formEntry) {
       this.formEntry.draft = false;
       await this.finaliseForm('UPDATE');
-      this.snackBar.open('Form submitted successfully', 'Close', {
+      const message = await this.translateService.translateText(FORM_SUBMIT_SUCCESS_MESSAGE);
+      const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+      this.snackBar.open(message, closeText, {
         duration: 3000,
       });
       this.componentService.back();
@@ -115,7 +120,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
   /** When autosave triggered store value in memory (write on destroy) */
   public async handleAutosave(e: Event): Promise<void> {
     this.formInteracted = true;
-    const entry = (e as any).detail as IEnketoFormEntry;
+    const entry = (e as CustomEvent).detail as IEnketoFormEntry;
     this.formEntry = entry;
 
     // Reset inactivity timer on autosave (counts as user activity)
@@ -123,13 +128,14 @@ export class FormViewComponent implements OnInit, OnDestroy {
       this.monitoringService.resetAutoLockTimer(this.formId);
     }
   }
-
   public async promptDelete(): Promise<void> {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
         await this.finaliseForm('DELETE');
-        this.snackBar.open('Form deleted', 'Close', {
+        const message = await this.translateService.translateText(FORM_DELETE_SUCCESS_MESSAGE);
+        const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+        this.snackBar.open(message, closeText, {
           duration: 3000,
         });
         this.componentService.back();
@@ -190,8 +196,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
       await this.submissionDoc.incrementalPatch(patch);
     }
   }
-
-  private getFormEntryJson(formXml = ''): Record<string, any> {
+  private getFormEntryJson(formXml = ''): Record<string, unknown> {
     if (formXml) {
       // json nested by entry id, e.g. {abcde: {name:'Joe'}}
       const entryJson = xmlToJson(formXml);
@@ -232,7 +237,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
         }
       } catch (error) {
         console.error('Error loading form submission:', error);
-        this.snackBar.open('Error loading form', 'Close', {
+        const message = await this.translateService.translateText(FORM_LOAD_ERROR_MESSAGE);
+        const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+        this.snackBar.open(message, closeText, {
           duration: 3000,
         });
         return;
@@ -241,7 +248,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
       }
     } else {
       this.isLoading.set(false);
-      this.snackBar.open('Form not found', 'Close', {
+      const message = await this.translateService.translateText(FORM_NOT_FOUND_MESSAGE);
+      const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+      this.snackBar.open(message, closeText, {
         duration: 3000,
       });
       return;
@@ -273,7 +282,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
           await this.monitoringService.unlockForm(form._id);
 
           // Show success message
-          this.snackBar.open('Form unlocked successfully', 'Close', {
+          const message = await this.translateService.translateText(FORM_UNLOCK_SUCCESS_MESSAGE);
+          const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+          this.snackBar.open(message, closeText, {
             duration: 3000,
           });
 
@@ -286,7 +297,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
           }
         } catch (error) {
           console.error('Error unlocking form:', error);
-          this.snackBar.open('Error unlocking form', 'Close', {
+          const message = await this.translateService.translateText(FORM_UNLOCK_ERROR_MESSAGE);
+          const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+          this.snackBar.open(message, closeText, {
             duration: 3000,
           });
           return;
@@ -313,7 +326,9 @@ export class FormViewComponent implements OnInit, OnDestroy {
             }
           } catch (error) {
             console.error('Error loading submission:', error);
-            this.snackBar.open('Submission not found', 'Close', {
+            const message = await this.translateService.translateText(SUBMISSION_NOT_FOUND_MESSAGE);
+            const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
+            this.snackBar.open(message, closeText, {
               duration: 3000,
             });
             this.router.navigate(['view', formId]);

@@ -1,11 +1,17 @@
 <div class="page-content">
-  <div *ngIf="isLoading() || isAuthenticating()" class="loading-container">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p *ngIf="isLoading()">{{ 'Loading form...' | translate }}</p>
-    <p *ngIf="isAuthenticating()">{{ 'Authenticating...' | translate }}</p>
-  </div>
+  @if (isLoading() || isAuthenticating()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      @if (isLoading()) {
+        <p>{{ 'Loading form...' | translate }}</p>
+      }
+      @if (isAuthenticating()) {
+        <p>{{ 'Authenticating...' | translate }}</p>
+      }
+    </div>
+  }
 
-  <ng-container *ngIf="!isLoading() && !isAuthenticating() && formInitial">
+  @if (!isLoading() && !isAuthenticating() && formInitial) {
     <enketo-webform
       [form]="formInitial.form"
       [model]="formInitial.model"
@@ -27,5 +33,5 @@
         {{ 'Submit' | translate }}
       </button>
     </div>
-  </ng-container>
+  }
 </div>
