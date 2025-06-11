@@ -1,4 +1,4 @@
-<p>Import a <code>[language_code].csv</code> file to add translated strings</p>
+<p>Upload a <code class="mx-1">translations.csv</code> file to import translations</p>
 <div style="display: flex; align-items: center">
   <button
     mat-raised-button
@@ -8,12 +8,12 @@
     (click)="processImport()"
   >
     <span>Import</span>
-    @if(importTotal()>0){
-    <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
+    @if (importTotal() > 0) {
+      <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
     }
   </button>
 </div>
 
-@if (importTotal()===0) {
-<div #dragDrop></div>
-} @else { }
+@if (importTotal() === 0) {
+  <div #dragDrop></div>
+} @else {}

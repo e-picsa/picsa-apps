@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -11,6 +11,8 @@ export class DeploymentDashboardService extends PicsaAsyncService {
   public readonly deployments = signal<IDeploymentRow[]>([]);
   // all routing is blocked unless deployment set, so consumers can safely assume will be defined
   public readonly activeDeployment = signal<IDeploymentRow>(null as any);
+
+  public activeDeploymentCountry = computed(() => this.activeDeployment().country_code);
 
   /** Observable activeDeployment used to monitor changes (ensure deployment selected) */
   private activeDeployment$ = toObservable(this.activeDeployment);
@@ -55,8 +57,8 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     return firstValueFrom(
       this.activeDeployment$.pipe(
         filter((d) => d !== null),
-        map((d) => d as IDeploymentRow)
-      )
+        map((d) => d as IDeploymentRow),
+      ),
     );
   }
 
