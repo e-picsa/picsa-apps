@@ -12268,7 +12268,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318852",
-            "name": "Western Province"
+            "name": "western"
           },
           "id": "relation/318852"
         },
@@ -12277,7 +12277,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318859",
-            "name": "North-Western Province"
+            "name": "north_western"
           },
           "id": "relation/318859"
         },
@@ -12286,7 +12286,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318860",
-            "name": "Copperbelt Province"
+            "name": "copperbelt"
           },
           "id": "relation/318860"
         },
@@ -12295,7 +12295,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318861",
-            "name": "Central Province"
+            "name": "central"
           },
           "id": "relation/318861"
         },
@@ -12304,7 +12304,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318862",
-            "name": "Northern Province"
+            "name": "northern"
           },
           "id": "relation/318862"
         },
@@ -12313,7 +12313,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318863",
-            "name": "Southern Province"
+            "name": "southern"
           },
           "id": "relation/318863"
         },
@@ -12322,7 +12322,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318864",
-            "name": "Lusaka Province"
+            "name": "lusaka"
           },
           "id": "relation/318864"
         },
@@ -12331,7 +12331,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318865",
-            "name": "Eastern Province",
+            "name": "eastern",
             "source": "maplibrary.org"
           },
           "id": "relation/318865"
@@ -12341,7 +12341,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/318866",
-            "name": "Luapula Province"
+            "name": "luapula"
           },
           "id": "relation/318866"
         },
@@ -12350,7 +12350,7 @@
           "type": "Polygon",
           "properties": {
             "@id": "relation/3668334",
-            "name": "Muchinga Province"
+            "name": "muchinga"
           },
           "id": "relation/3668334"
         }
