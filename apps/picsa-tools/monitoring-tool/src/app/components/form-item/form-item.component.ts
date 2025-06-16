@@ -104,6 +104,7 @@ export class FormItemComponent implements OnInit {
           await this.service.unlockForm(this.form()._id);
           this.goToForm(this.form()._id);
         } catch (error) {
+          await this.service.showMessage('FORM_UNLOCK_ERROR');
           console.error('Error unlocking form:', error);
         }
       }

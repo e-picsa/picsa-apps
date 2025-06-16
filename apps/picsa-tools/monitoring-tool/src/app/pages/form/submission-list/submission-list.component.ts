@@ -103,6 +103,7 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
         throw new Error('Form ID not available');
       }
       const submission = await this.service.createNewSubmission(this.form._id);
+      this.isLoading.set(false);
       // Navigate to the new submission
       this.router.navigate([submission._id], { relativeTo: this.route });
     } catch (error) {

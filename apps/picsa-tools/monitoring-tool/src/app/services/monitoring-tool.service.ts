@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { PicsaDatabaseSyncService } from '@picsa/shared/services/core/db_v2/db-sync.service';
 import { RxCollection } from 'rxdb';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
+import { MONITITORING_STRINGS } from '../models';
 import * as FormSchema from '../schema/forms';
 import * as SubmissionSchema from '../schema/submissions';
 
@@ -16,6 +19,8 @@ export class MonitoringToolService extends PicsaAsyncService {
   constructor(
     private dbService: PicsaDatabase_V2_Service,
     private syncService: PicsaDatabaseSyncService,
+    private translateService: PicsaTranslateService,
+    private snackBar: MatSnackBar,
   ) {
     super();
   }
@@ -69,9 +74,6 @@ export class MonitoringToolService extends PicsaAsyncService {
     return this.dbService.activeUserQuery(this.dbSubmissionsCollection, { formId });
   }
 
-  /**
-   * Unlock a form by setting access_unlocked to true and start auto-lock timer
-   */
   public async unlockForm(id: string): Promise<boolean> {
     try {
       const formDoc = await this.dbFormCollection.findOne(id).exec();
@@ -95,6 +97,14 @@ export class MonitoringToolService extends PicsaAsyncService {
    */
   public syncPending() {
     return this.syncService.syncPendingDocs(this.dbSubmissionsCollection);
+  }
+
+  public async showMessage(string: keyof typeof MONITITORING_STRINGS) {
+    const msg = await this.translateService.translateText(MONITITORING_STRINGS[string]);
+    const closeText = await this.translateService.translateText(MONITITORING_STRINGS.CLOSE_BUTTON_TEXT);
+    this.snackBar.open(msg, closeText, {
+      duration: 3000,
+    });
   }
 
   private listPendingSync(): void {

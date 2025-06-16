@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
-import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
 import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 import { RxDocument } from 'rxdb';
@@ -13,15 +11,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
-
-// Translation markers for text extraction
-const FORM_SAVE_SUCCESS_MESSAGE = translateMarker('Form saved successfully');
-const FORM_SUBMIT_SUCCESS_MESSAGE = translateMarker('Form submitted successfully');
-const FORM_DELETE_SUCCESS_MESSAGE = translateMarker('Form deleted');
-const FORM_LOAD_ERROR_MESSAGE = translateMarker('Error loading form');
-const FORM_NOT_FOUND_MESSAGE = translateMarker('Form not found');
-const SUBMISSION_NOT_FOUND_MESSAGE = translateMarker('Submission not found');
-const CLOSE_BUTTON_TEXT = translateMarker('Close');
 
 @Component({
   selector: 'monitoring-form-view',
@@ -63,7 +52,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     private componentService: PicsaCommonComponentsService,
     private dialogService: PicsaDialogService,
     private snackBar: MatSnackBar,
-    private translateService: PicsaTranslateService,
   ) {}
 
   async ngOnDestroy(): Promise<void> {
@@ -82,11 +70,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
     const entry: IEnketoFormEntry = (e as CustomEvent).detail.entry;
     this.formEntry = entry;
     await this.finaliseForm('UPDATE');
-    const message = await this.translateService.translateText(FORM_SAVE_SUCCESS_MESSAGE);
-    const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-    this.snackBar.open(message, closeText, {
-      duration: 3000,
-    });
+    await this.monitoringService.showMessage('FORM_SAVE_SUCCESS');
     this.componentService.back();
   }
 
@@ -95,11 +79,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
     if (this.formEntry) {
       this.formEntry.draft = false;
       await this.finaliseForm('UPDATE');
-      const message = await this.translateService.translateText(FORM_SUBMIT_SUCCESS_MESSAGE);
-      const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-      this.snackBar.open(message, closeText, {
-        duration: 3000,
-      });
+      await this.monitoringService.showMessage('FORM_SUBMIT_SUCCESS');
       this.componentService.back();
     }
   }
@@ -115,11 +95,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
         await this.finaliseForm('DELETE');
-        const message = await this.translateService.translateText(FORM_DELETE_SUCCESS_MESSAGE);
-        const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-        this.snackBar.open(message, closeText, {
-          duration: 3000,
-        });
+        await this.monitoringService.showMessage('FORM_DELETE_SUCCESS');
         this.componentService.back();
       }
     });
@@ -213,22 +189,14 @@ export class FormViewComponent implements OnInit, OnDestroy {
         this.formInitial = { form, model, submission };
       } catch (error) {
         console.error('Error loading form submission:', error);
-        const message = await this.translateService.translateText(FORM_LOAD_ERROR_MESSAGE);
-        const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-        this.snackBar.open(message, closeText, {
-          duration: 3000,
-        });
+        await this.monitoringService.showMessage('FORM_LOAD_ERROR');
         return;
       } finally {
         this.isLoading.set(false);
       }
     } else {
       this.isLoading.set(false);
-      const message = await this.translateService.translateText(FORM_NOT_FOUND_MESSAGE);
-      const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-      this.snackBar.open(message, closeText, {
-        duration: 3000,
-      });
+      await this.monitoringService.showMessage('FORM_NOT_FOUND');
       return;
     }
   }
@@ -253,11 +221,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
             }
           } catch (error) {
             console.error('Error loading submission:', error);
-            const message = await this.translateService.translateText(SUBMISSION_NOT_FOUND_MESSAGE);
-            const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-            this.snackBar.open(message, closeText, {
-              duration: 3000,
-            });
+            await this.monitoringService.showMessage('SUBMISSION_NOT_FOUND');
             this.router.navigate(['view', formId]);
           }
         } else {
