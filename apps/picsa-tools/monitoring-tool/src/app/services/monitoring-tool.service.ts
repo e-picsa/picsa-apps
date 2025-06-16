@@ -29,9 +29,8 @@ export class MonitoringToolService extends PicsaAsyncService {
       monitoring_tool_forms: FormSchema.COLLECTION,
       monitoring_tool_submissions: SubmissionSchema.COLLECTION,
     });
+    await this.loadHardcodedForms();
     this.listPendingSync();
-    // TODO - avoid resetting unlocked status
-    await this.dbFormCollection.bulkUpsert(HARDCODED_FORMS);
   }
 
   /** Provide database options tool collection (with typings) */
@@ -103,5 +102,18 @@ export class MonitoringToolService extends PicsaAsyncService {
     this.dbSubmissionsCollection.find({ selector }).$.subscribe((res) => {
       this.pendingSyncCount = res.length;
     });
+  }
+
+  /** Load forms from hardcoded data, preserving unlock status */
+  private async loadHardcodedForms() {
+    const allForms = await this.dbFormCollection.find().exec();
+    // TODO - avoid resetting unlocked status
+    const unlockedForms = allForms.filter((f) => f.access_unlocked).map((f) => f._id);
+    const hardcodedWithUnlockStatus = HARDCODED_FORMS.map((f) => {
+      f.access_unlocked = unlockedForms.includes(f._id);
+      return f;
+    });
+
+    await this.dbFormCollection.bulkUpsert(hardcodedWithUnlockStatus);
   }
 }
