@@ -1,12 +1,13 @@
 <h2 mat-dialog-title>{{ 'Restricted Form' | translate }}</h2>
 <div mat-dialog-content>
   <p>
-    {{ 'This form requires an access code to unlock' | translate }}: <strong>{{ data.formTitle }}</strong>
+    {{ 'This form requires an access code to unlock' | translate }}: <strong>{{ form.title }}</strong>
   </p>
 
   <mat-form-field style="width: 100%" [class.error]="showError()">
     <mat-label>{{ 'Access Code' | translate }}</mat-label>
     <input
+      CdkFocusInitial
       matInput
       [value]="accessCode()"
       (input)="onAccessCodeInput($event)"

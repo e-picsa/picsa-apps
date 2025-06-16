@@ -18,7 +18,7 @@
       </div>
 
       <div class="list-container">
-        @for (form of forms; track form._id) {
+        @for (form of forms(); track form._id) {
           <monitoring-form-item [form]="form"></monitoring-form-item>
         }
       </div>

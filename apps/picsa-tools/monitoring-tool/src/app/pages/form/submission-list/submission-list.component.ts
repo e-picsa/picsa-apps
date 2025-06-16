@@ -51,7 +51,7 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
     private componentService: PicsaCommonComponentsService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   // Track user activity to reset inactivity timer

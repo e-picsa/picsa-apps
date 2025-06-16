@@ -1,34 +1,26 @@
-<mat-card
-  appearance="raised"
-  class="link"
-  [routerLink]="isLocked ? null : ['view', form._id]"
-  (click)="handleFormClick($event)"
-  [class.processing]="isProcessing()"
->
+<mat-card appearance="raised" class="link" (click)="handleFormClick()">
   <!-- Header -->
   <mat-card-header>
     <mat-card-title-group>
-      <img mat-card-sm-image [src]="form.cover.icon" />
+      <img mat-card-sm-image [src]="form().cover.icon" />
       <mat-card-title>
-        {{ form.title | translate }}
-        @if (isLocked) {
+        {{ form().title | translate }}
+        @if (!isUnlocked()) {
           <mat-icon class="lock-icon">lock</mat-icon>
         }
-        @if (isProcessing()) {
-          <mat-progress-spinner diameter="20" mode="indeterminate" class="spinner"> </mat-progress-spinner>
-        }
       </mat-card-title>
-      <mat-card-subtitle> {{ form.description | translate }}</mat-card-subtitle>
+      <mat-card-subtitle> {{ form().description | translate }}</mat-card-subtitle>
     </mat-card-title-group>
   </mat-card-header>
   <!-- Contents -->
   <mat-card-content class="sync-status-container">
-    @for (status of syncStatus; track status.id) {
-      @if (status.value > 0) {
-        <div class="sync-status-item" [attr.data-status]="status.id">
+    @for (status of syncStatusList; track status) {
+      @let count = syncCounters[status];
+      @if (count() > 0) {
+        <div class="sync-status-item" [attr.data-status]="status">
           <div style="display: flex; align-items: center">
-            <mat-icon>{{ status.matIcon }}</mat-icon>
-            <span class="sync-status-value">{{ status.value }}</span>
+            <mat-icon>{{ statusIcons[status] }}</mat-icon>
+            <span class="sync-status-value">{{ count() }}</span>
           </div>
         </div>
       }
