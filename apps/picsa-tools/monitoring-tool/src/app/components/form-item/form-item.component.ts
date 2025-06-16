@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { arrayToHashmapArray } from '@picsa/utils';
 import { map } from 'rxjs';
@@ -52,6 +52,7 @@ export class FormItemComponent implements OnInit {
     private dialog: MatDialog,
     private router: Router,
     private injector: Injector,
+    private route: ActivatedRoute,
   ) {
     effect(() => {
       this.updateSyncCounters(this.submissions());
@@ -75,7 +76,7 @@ export class FormItemComponent implements OnInit {
   // Handle form click when locked
   public async handleFormClick() {
     if (this.isUnlocked()) {
-      this.router.navigate(['view', this.form()._id]);
+      this.goToForm(this.form()._id);
     } else {
       return this.promptFormUnlock();
     }
@@ -101,14 +102,16 @@ export class FormItemComponent implements OnInit {
         try {
           // Update the form to be unlocked
           await this.service.unlockForm(this.form()._id);
-
-          // Navigate to the form's submission list immediately
-          this.router.navigate(['view', this.form()._id]);
+          this.goToForm(this.form()._id);
         } catch (error) {
           console.error('Error unlocking form:', error);
         }
       }
     });
+  }
+
+  private goToForm(id: string) {
+    this.router.navigate(['view', id], { relativeTo: this.route });
   }
 
   /** Subscribe to form submissions and summarise by status */

@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -11,10 +10,6 @@ import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/compon
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
-import {
-  AccessCodeDialogComponent,
-  AccessCodeDialogResult,
-} from '../../../components/access-code-dialog/access-code-dialog.component';
 import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
@@ -23,10 +18,8 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
 const FORM_SAVE_SUCCESS_MESSAGE = translateMarker('Form saved successfully');
 const FORM_SUBMIT_SUCCESS_MESSAGE = translateMarker('Form submitted successfully');
 const FORM_DELETE_SUCCESS_MESSAGE = translateMarker('Form deleted');
-const FORM_UNLOCK_SUCCESS_MESSAGE = translateMarker('Form unlocked successfully');
 const FORM_LOAD_ERROR_MESSAGE = translateMarker('Error loading form');
 const FORM_NOT_FOUND_MESSAGE = translateMarker('Form not found');
-const FORM_UNLOCK_ERROR_MESSAGE = translateMarker('Error unlocking form');
 const SUBMISSION_NOT_FOUND_MESSAGE = translateMarker('Submission not found');
 const CLOSE_BUTTON_TEXT = translateMarker('Close');
 
@@ -69,7 +62,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     private monitoringService: MonitoringToolService,
     private componentService: PicsaCommonComponentsService,
     private dialogService: PicsaDialogService,
-    private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private translateService: PicsaTranslateService,
   ) {}
@@ -205,8 +197,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
       // Check if form is locked and redirect if necessary
       if (this.isFormLocked(formMeta)) {
-        this.promptForAccessCode(formMeta);
-        return;
+        this.router.navigate(['../../../'], { relativeTo: this.route });
       }
 
       try {
@@ -244,55 +235,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
   private isFormLocked(form: IMonitoringForm): boolean {
     return !!form.access_code && !form.access_unlocked;
-  }
-
-  private promptForAccessCode(form: IMonitoringForm): void {
-    this.isAuthenticating.set(true);
-
-    const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
-      width: '350px',
-      data: {
-        formTitle: form.title,
-        accessCode: form.access_code || '',
-      },
-      disableClose: false,
-    });
-
-    dialogRef.afterClosed().subscribe(async (result: AccessCodeDialogResult) => {
-      this.isAuthenticating.set(false);
-
-      if (result?.success) {
-        try {
-          // Update the form to be unlocked
-          await this.monitoringService.unlockForm(form._id);
-
-          // Show success message
-          const message = await this.translateService.translateText(FORM_UNLOCK_SUCCESS_MESSAGE);
-          const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-          this.snackBar.open(message, closeText, {
-            duration: 3000,
-          });
-
-          // Try loading the submission again now that the form is unlocked
-          if (this.submissionDoc) {
-            await this.loadFormSubmission(form._id, this.submissionDoc._data);
-          } else {
-            // Navigate back to the form list
-            this.router.navigate(['view', form._id]);
-          }
-        } catch (error) {
-          console.error('Error unlocking form:', error);
-          const message = await this.translateService.translateText(FORM_UNLOCK_ERROR_MESSAGE);
-          const closeText = await this.translateService.translateText(CLOSE_BUTTON_TEXT);
-          this.snackBar.open(message, closeText, {
-            duration: 3000,
-          });
-          return;
-        }
-      } else {
-        return;
-      }
-    });
   }
 
   private subscribeToRouteChanges(): void {

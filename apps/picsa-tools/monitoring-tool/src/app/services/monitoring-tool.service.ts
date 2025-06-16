@@ -30,6 +30,7 @@ export class MonitoringToolService extends PicsaAsyncService {
       monitoring_tool_submissions: SubmissionSchema.COLLECTION,
     });
     this.listPendingSync();
+    // TODO - avoid resetting unlocked status
     await this.dbFormCollection.bulkUpsert(HARDCODED_FORMS);
   }
 
@@ -72,15 +73,15 @@ export class MonitoringToolService extends PicsaAsyncService {
   /**
    * Unlock a form by setting access_unlocked to true and start auto-lock timer
    */
-  public async unlockForm(formId: string): Promise<boolean> {
+  public async unlockForm(id: string): Promise<boolean> {
     try {
-      const formDoc = await this.dbFormCollection.findOne(formId).exec();
+      const formDoc = await this.dbFormCollection.findOne(id).exec();
       if (!formDoc) {
-        console.error('could not find form with id', formId);
+        console.error('could not find form with id', id);
         return false;
       }
 
-      await formDoc.incrementalPatch({ access_unlocked: true });
+      await formDoc.patch({ access_unlocked: true });
 
       return true;
     } catch (error) {

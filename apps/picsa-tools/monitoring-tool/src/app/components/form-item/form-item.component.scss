@@ -6,7 +6,10 @@
   font-size: 18px;
   vertical-align: middle;
   margin-left: 8px;
-  color: #f44336;
+  color: red;
+  &.open {
+    color: green;
+  }
 }
 
 .spinner {

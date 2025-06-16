@@ -1,23 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  signal,
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components';
 import { Subject, takeUntil } from 'rxjs';
 
-import {
-  AccessCodeDialogComponent,
-  AccessCodeDialogResult,
-} from '../../../components/access-code-dialog/access-code-dialog.component';
 import { STATUS_ICONS } from '../../../models';
 import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
@@ -50,14 +37,9 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
     private router: Router,
     private componentService: PicsaCommonComponentsService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {}
 
-  // Track user activity to reset inactivity timer
-  @HostListener('document:mousemove')
-  @HostListener('document:keypress')
-  @HostListener('document:click')
   async ngOnInit(): Promise<void> {
     await this.service.ready();
     const { formId } = this.route.snapshot.params;
@@ -67,10 +49,9 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
 
       await this.loadForm(formId);
       if (this.form) {
-        // Check if form is locked
+        // Check if form is locked - navigate back to home if locked
         if (this.isFormLocked(this.form)) {
-          this.promptForAccessCode(this.form);
-          return;
+          this.router.navigate(['../../'], { relativeTo: this.route });
         }
 
         await this.loadSubmissions(formId);
@@ -135,41 +116,5 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
 
   private isFormLocked(form: IMonitoringForm): boolean {
     return !!form.access_code && !form.access_unlocked;
-  }
-
-  private promptForAccessCode(form: IMonitoringForm): void {
-    const dialogRef = this.dialog.open(AccessCodeDialogComponent, {
-      width: '350px',
-      data: {
-        formTitle: form.title,
-        accessCode: form.access_code || '',
-      },
-      disableClose: false,
-    });
-
-    dialogRef.afterClosed().subscribe(async (result: AccessCodeDialogResult) => {
-      if (result?.success) {
-        try {
-          // Update the form to be unlocked
-          await this.service.unlockForm(form._id);
-
-          // Show success message
-          this.snackBar.open('Form unlocked successfully', 'Close', {
-            duration: 3000,
-          });
-
-          await this.loadSubmissions(form._id);
-          this.isLoading.set(false);
-        } catch (error) {
-          console.error('Error unlocking form:', error);
-          this.snackBar.open('Error unlocking form', 'Close', {
-            duration: 3000,
-          });
-          return;
-        }
-      } else {
-        return;
-      }
-    });
   }
 }

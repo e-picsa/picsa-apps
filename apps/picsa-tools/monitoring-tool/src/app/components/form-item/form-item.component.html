@@ -5,8 +5,12 @@
       <img mat-card-sm-image [src]="form().cover.icon" />
       <mat-card-title>
         {{ form().title | translate }}
-        @if (!isUnlocked()) {
-          <mat-icon class="lock-icon">lock</mat-icon>
+        @if (form().access_code) {
+          @if (isUnlocked()) {
+            <mat-icon class="lock-icon open">lock_open</mat-icon>
+          } @else {
+            <mat-icon class="lock-icon">lock</mat-icon>
+          }
         }
       </mat-card-title>
       <mat-card-subtitle> {{ form().description | translate }}</mat-card-subtitle>

@@ -4,16 +4,6 @@
 
 .mat-form-field {
   margin-top: 10px;
-
-  &.error {
-    ::ng-deep .mat-form-field-outline {
-      color: #f44336;
-    }
-
-    ::ng-deep .mat-form-field-ripple {
-      background-color: #f44336;
-    }
-  }
 }
 
 h2 {
@@ -25,24 +15,4 @@ h2 {
   font-size: 12px;
   margin-top: 4px;
   padding-left: 4px;
-  animation: fadeInOut 3s;
-}
-
-mat-icon {
-  cursor: pointer;
-}
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
 }
