@@ -1,24 +1,33 @@
-<mat-card appearance="raised" class="link" [routerLink]="['view', form._id]">
+<mat-card appearance="raised" class="link" (click)="handleFormClick()">
   <!-- Header -->
   <mat-card-header>
     <mat-card-title-group>
-      <img mat-card-sm-image [src]="form.cover.icon" />
-      <mat-card-title>{{ form.title | translate }}</mat-card-title>
-      <mat-card-subtitle> {{ form.description | translate }}</mat-card-subtitle>
+      <img mat-card-sm-image [src]="form().cover.icon" />
+      <mat-card-title>
+        {{ form().title | translate }}
+        @if (form().access_code) {
+          @if (isUnlocked()) {
+            <mat-icon class="lock-icon open">lock_open</mat-icon>
+          } @else {
+            <mat-icon class="lock-icon">lock</mat-icon>
+          }
+        }
+      </mat-card-title>
+      <mat-card-subtitle> {{ form().description | translate }}</mat-card-subtitle>
     </mat-card-title-group>
   </mat-card-header>
   <!-- Contents -->
   <mat-card-content class="sync-status-container">
-    <div
-      *ngFor="let status of syncStatus"
-      class="sync-status-item"
-      [style.display]="status.value > 0 ? 'block' : 'none'"
-      [attr.data-status]="status.id"
-    >
-      <div style="display: flex; align-items: center">
-        <mat-icon>{{ status.matIcon }}</mat-icon>
-        <span class="sync-status-value">{{ status.value }}</span>
-      </div>
-    </div>
+    @for (status of syncStatusList; track status) {
+      @let count = syncCounters[status];
+      @if (count() > 0) {
+        <div class="sync-status-item" [attr.data-status]="status">
+          <div style="display: flex; align-items: center">
+            <mat-icon>{{ statusIcons[status] }}</mat-icon>
+            <span class="sync-status-value">{{ count() }}</span>
+          </div>
+        </div>
+      }
+    }
   </mat-card-content>
 </mat-card>
