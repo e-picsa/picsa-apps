@@ -1,43 +1,28 @@
-<div class="page-content" *mobxAutorun>
-  <picsa-sidenav-layout [opened]="false" #picsaSidenav>
-    <!-- Header -->
-    <button
-      desktopHeader
-      mat-button
-      color="primary"
-      *ngIf="!isEditorOpen"
-      aria-label="Share"
-      (click)="showShareDialog()"
-    >
-      <mat-icon>share</mat-icon>{{'Share' | translate }}
-    </button>
-    <button
-      mobileHeader
-      mat-button
-      color="primary"
-      *ngIf="!isEditorOpen"
-      aria-label="Share"
-      (click)="showShareDialog()"
-    >
-      <mat-icon>share</mat-icon>{{'Share' | translate }}
-    </button>
+<picsa-sidenav-layout #picsaSidenav *mobxAutorun>
+  <!-- Header -->
+  <button desktopHeader mat-button color="primary" *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
+    <mat-icon>share</mat-icon>{{'Share' | translate }}
+  </button>
+  <button mobileHeader mat-button color="primary" *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
+    <mat-icon>share</mat-icon>{{'Share' | translate }}
+  </button>
 
-    <!-- Sidenav -->
-    <budget-editor-sidebar sidenav (emitClose)="picsaSidenav.close()"></budget-editor-sidebar>
+  <!-- Sidenav -->
+  <budget-editor-sidebar sidenav (emitClose)="picsaSidenav.close()"></budget-editor-sidebar>
 
-    <!-- Main content -->
-    <div content class="page-content" style="overflow-y: hidden; overflow-x: auto; padding: 0">
-      <!-- hide overflow so that editor can be stored outside bottom of page -->
-      <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
+  <!-- Main content -->
+  <ng-container content>
+    <!-- hide overflow so that editor can be stored outside bottom of page -->
+    <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
 
-      <!-- Updated Editor -->
+    <!-- Updated Editor -->
+    <div class="editor-popup slide-in" [class.active]="isEditorOpen">
       <budget-editor
         *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
         [activePeriod]="store.activePeriod"
         [activeType]="store.activeType"
-        [@flyInOut]="isEditorOpen ? 'in' : 'out'"
         (handleNextClick)="handleEditorNext()"
       ></budget-editor>
     </div>
-  </picsa-sidenav-layout>
-</div>
+  </ng-container>
+</picsa-sidenav-layout>

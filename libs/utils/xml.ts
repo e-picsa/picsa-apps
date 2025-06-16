@@ -5,14 +5,14 @@
 
 // NOTE - previously used https://www.npmjs.com/package/xml-js
 // however requires node polyfills and output formatting not ideal
-import { X2jOptionsOptional, XMLBuilder, XMLParser } from 'fast-xml-parser';
+import { X2jOptions, XMLBuilder, XMLParser } from 'fast-xml-parser';
 
 /**
  * Convert xml to json
  * @param xml
  * @returns
  */
-export function xmlToJson<T = Record<string, any>>(xmlString: string, options: X2jOptionsOptional = {}) {
+export function xmlToJson<T = Record<string, any>>(xmlString: string, options: X2jOptions = {}) {
   // parser configured to convert string/bool/number by default
   // https://naturalintelligence.github.io/fast-xml-parser/
   const parser = new XMLParser(options);

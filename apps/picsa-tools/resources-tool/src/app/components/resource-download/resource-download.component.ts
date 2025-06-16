@@ -1,13 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-} from '@angular/core';
-import { RxAttachment, RxDocument } from 'rxdb';
+import { ChangeDetectionStrategy, Component, effect, Input, input, OnDestroy, output, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
+import { RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { IResourceFile } from '../../schemas';
@@ -18,13 +14,18 @@ import { IDownloadStatus, ResourcesToolService } from '../../services/resources-
   templateUrl: './resource-download.component.html',
   styleUrls: ['./resource-download.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, SizeMBPipe],
 })
 export class ResourceDownloadComponent implements OnDestroy {
-  public downloadStatus: IDownloadStatus;
-  public downloadProgress = 0;
-  public attachment?: RxAttachment<IResourceFile>;
+  public downloadStatus = signal<IDownloadStatus>('loading');
+  public downloadProgress = signal(0);
 
-  private _dbDoc: RxDocument<IResourceFile>;
+  /** Generated fileURI of downloaded file */
+  public fileURI = signal<string | null>(null);
+
+  /** File URI emitter */
+  fileDownloaded = output<string>();
+
   private download$?: Subscription;
   private componentDestroyed$ = new Subject();
 
@@ -35,37 +36,51 @@ export class ResourceDownloadComponent implements OnDestroy {
 
   @Input() size = 48;
 
-  @Input() set dbDoc(dbDoc: RxDocument<IResourceFile>) {
-    this._dbDoc = dbDoc;
+  private dbDoc = signal<RxDocument<IResourceFile> | undefined>(undefined);
+
+  resource = input.required<IResourceFile>();
+
+  constructor(private service: ResourcesToolService) {
+    effect(async () => {
+      const resource = this.resource();
+      this.loadDBDoc(resource);
+    });
+    // Emit whenever file download complete/retrieved and URI available for use
+    effect(() => {
+      const fileURI = this.fileURI();
+      if (fileURI) {
+        this.fileDownloaded.emit(fileURI);
+      }
+    });
+  }
+
+  private async loadDBDoc(resource: IResourceFile) {
+    await this.service.ready();
+    const dbDoc = await this.service.dbFiles.findOne(resource.id).exec();
     if (dbDoc) {
+      this.dbDoc.set(dbDoc);
       this.subscribeToAttachmentChanges(dbDoc);
     }
   }
-
-  @Input() hideOnComplete = false;
-
-  /** Emit downloaded file updates */
-  @Output() attachmentChange = new EventEmitter<RxAttachment<IResourceFile> | undefined>();
-
-  constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
 
   public get sizePx() {
     return `${this.size}px`;
   }
 
-  public get resource() {
-    return this._dbDoc._data;
-  }
-
   private subscribeToAttachmentChanges(dbDoc: RxDocument<IResourceFile>) {
     // subscribe to doc attachment changes to confirm whether downloaded
     dbDoc.allAttachments$.pipe(takeUntil(this.componentDestroyed$)).subscribe((attachments) => {
-      const attachment = attachments.find((a) => a.id === this.resource.filename);
+      const attachment = attachments.find((a) => a.id === this.resource().filename);
       // TODO - check if update available
-      this.downloadStatus = attachment ? 'complete' : 'ready';
-      this.attachment = attachment;
-      this.attachmentChange.next(attachment);
+      this.downloadStatus.set(attachment ? 'complete' : 'ready');
+      this.generateFileURI(dbDoc);
     });
+  }
+  private async generateFileURI(dbDoc: RxDocument<IResourceFile>) {
+    // avoiding converting to web url as will usually be opened natively (e.g. external open, native video)
+    const convertNativeSrc = false;
+    const uri = await this.service.getFileAttachmentURI(dbDoc, convertNativeSrc);
+    this.fileURI.set(uri);
   }
 
   ngOnDestroy() {
@@ -74,25 +89,26 @@ export class ResourceDownloadComponent implements OnDestroy {
   }
 
   public downloadResource() {
-    const { download$, progress$, status$ } = this.service.triggerResourceDownload(this._dbDoc);
-    progress$.subscribe((progress) => {
-      this.downloadProgress = progress;
-      this.cdr.markForCheck();
-    });
-    status$.subscribe((status) => {
-      this.downloadStatus = status;
-      this.cdr.markForCheck();
-    });
-    this.download$ = download$;
+    const doc = this.dbDoc();
+    if (doc) {
+      const { download$, progress$, status$ } = this.service.triggerResourceDownload(doc);
+      progress$.subscribe((progress) => {
+        this.downloadProgress.set(progress);
+      });
+      status$.subscribe((status) => {
+        this.downloadStatus.set(status);
+      });
+      this.download$ = download$;
+    }
   }
 
   /** Cancel ongoing download */
   public cancelDownload() {
-    this.downloadStatus = 'ready';
+    this.downloadStatus.set('ready');
     if (this.download$) {
       this.download$.unsubscribe();
       this.download$ = undefined;
-      this.downloadProgress = 0;
+      this.downloadProgress.set(0);
     }
   }
 }

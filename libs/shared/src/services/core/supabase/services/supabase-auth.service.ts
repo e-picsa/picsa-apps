@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable, signal } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
@@ -35,7 +36,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   private auth: SupabaseAuthClient;
 
-  constructor(private notificationService: PicsaNotificationService) {
+  constructor(@Inject(DOCUMENT) private document: Document, private notificationService: PicsaNotificationService) {
     super();
   }
 
@@ -60,6 +61,19 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   public async signUpUser(email: string, password: string) {
     return this.auth.signUp({ email, password });
+  }
+
+  public async resetEmailPassword(email: string) {
+    const baseUrl = this.document.location.origin;
+    const redirectToUrl = `${baseUrl}/profile/password-reset`;
+    return this.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectToUrl,
+    });
+  }
+
+  // this works automatically since the access token is saved in cookies (really cool)
+  public async resetResetUserPassword(newPassword: string) {
+    return this.auth.updateUser({ password: newPassword });
   }
 
   public async signOut() {
@@ -124,16 +138,22 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   private subscribeToAuthChanges() {
     // Subscribe to authenticated user changes
-    this.auth.onAuthStateChange(async (_event, session) => {
+    this.auth.onAuthStateChange((_event, session) => {
+      console.log(`[AUTH] ${_event}`);
       const user = session?.user as IAuthUser;
       if (session) {
         // ignore INITIAL_SESSION as also 'SIGNED_IN' event will be triggered
         if (_event === 'INITIAL_SESSION') return;
         const { picsa_roles } = jwtDecode(session.access_token) as ICustomAuthJWTPayload;
         user.picsa_roles = picsa_roles || {};
+
+        // If user auth cames are updated it will trigger a signed_in action (same as initial)
+        // Refresh session to ensure any updated user roles are included
+        if (_event === 'SIGNED_IN') {
+          this.auth.refreshSession();
+        }
       }
       this.authUser.set(user);
     });
-    // TODO - trigger auth token refresh on permissions change
   }
 }

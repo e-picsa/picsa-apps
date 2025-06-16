@@ -20,6 +20,7 @@ import { BudgetStore } from '../../store/budget.store';
   // cells have parent content changing frequently so run manual change detection
   // for better performance
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class BudgetCellComponent implements OnInit, OnDestroy, OnChanges {
   @Input() type: string;

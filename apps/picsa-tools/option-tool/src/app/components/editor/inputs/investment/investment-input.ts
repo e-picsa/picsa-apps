@@ -46,6 +46,7 @@ export const INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   styleUrls: ['./investment-input.scss'],
   providers: [INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class InvestmentInputComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]> {
   /** Configurable display options (none currently used) */

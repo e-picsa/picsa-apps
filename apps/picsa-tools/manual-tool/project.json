@@ -10,6 +10,7 @@
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/manual-tool",
         "index": "apps/picsa-tools/manual-tool/src/index.html",
         "main": "apps/picsa-tools/manual-tool/src/main.ts",
@@ -30,7 +31,7 @@
             "output": "/assets/resources"
           },
           {
-            "glob": "{*.min.js,op-chaining-support.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
+            "glob": "{*.min.js,cmaps/*,images/*,locale/en-GB/*,locale/locale.properties,standard_fonts/**}",
             "input": "node_modules/ngx-extended-pdf-viewer/assets/",
             "ignore": ["**/*-es5.min.js"],
             "output": "/assets/pdf-viewer"

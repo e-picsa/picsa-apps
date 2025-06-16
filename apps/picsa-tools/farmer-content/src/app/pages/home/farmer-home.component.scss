@@ -2,11 +2,10 @@
   display: contents;
 }
 .step-grid {
+  @apply grid max-w-screen-lg;
   flex: 1;
-  max-width: 1280px;
   width: 100%;
   margin: auto;
-  display: grid;
   gap: 0 128px;
   grid-auto-rows: max-content;
   grid-template-columns: 1fr;
@@ -20,11 +19,16 @@
   padding: 1.25em 0;
   align-items: center;
   cursor: pointer;
+  &[data-disabled='true'] {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(1);
+  }
 }
 .step-image-container {
-  width: 96px;
-  height: 96px;
-  padding: 16px;
+  width: 128px;
+  height: 128px;
+  padding: 8px;
   background: var(--color-primary-50);
   border-radius: 8px;
 }
@@ -47,13 +51,15 @@ img.step-image {
   border-radius: 50%;
 }
 .step-content {
-  margin: 0 24px;
+  margin: 0;
+  @apply ml-6 sm:ml-12 sm:mr-12;
   flex: 1;
 }
 .step-title {
   text-transform: capitalize;
   font-weight: bold;
   color: var(--color-secondary);
+  text-align: left;
 }
 button.mat-mdc-icon-button.nav-button {
   height: 60px;
@@ -74,12 +80,10 @@ button.mat-mdc-icon-button.nav-button {
   background: var(--tag-background, black);
   padding: 8px;
   color: white;
-  .step-tag {
-  }
 }
-.tag.tool-tag {
+.tag {
   --tag-background: var(--color-primary);
 }
-.tag.step-tag {
+.tag[data-color='secondary'] {
   --tag-background: var(--color-secondary);
 }

@@ -1,0 +1,12 @@
+<div class="page-content">
+  <h2>Edit Resource</h2>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-label>URL</mat-label>
+      <input matInput type="text" formControlName="url" placeholder="https://..." />
+    </mat-form-field>
+    @if (form.controls.url.errors) {
+    <mat-error>Please enter a valid url</mat-error>
+    }
+  </form>
+</div>

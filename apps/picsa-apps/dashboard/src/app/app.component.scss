@@ -1,6 +1,8 @@
-mat-sidenav {
-  width: 256px;
+:host {
+  // force page padding which normally only applies to tailwind breakpoints
+  --page-padding: 16px;
 }
+
 mat-nav-list {
   --mdc-list-list-item-one-line-container-height: 48px;
   height: calc(100% - 16px);

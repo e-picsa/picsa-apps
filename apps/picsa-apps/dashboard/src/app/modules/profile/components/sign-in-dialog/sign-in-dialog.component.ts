@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -34,14 +34,14 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 
 @Component({
   selector: 'dashboard-sign-in-dialog',
-  standalone: true,
   imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
   templateUrl: 'sign-in-dialog.component.html',
   styleUrl: 'sign-in-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupabaseSignInDialogComponent {
   public title = 'Sign In';
-  public template: 'signIn' | 'register' = 'signIn';
+  public template: 'signIn' | 'register' | 'reset' = 'signIn';
 
   errorMatcher = new showErrorAfterInteraction();
 
@@ -50,11 +50,24 @@ export class SupabaseSignInDialogComponent {
     password: new FormControl('', Validators.required),
   });
 
+  private readonly dialogRef = inject(MatDialogRef<SupabaseSignInDialogComponent>);
+
   constructor(
-    private dialogRef: MatDialogRef<SupabaseSignInDialogComponent>,
     private notificationService: PicsaNotificationService,
     private supabaseAuthService: SupabaseAuthService
   ) {}
+
+  public enableResetMode() {
+    this.template = 'reset';
+    this.title = 'Reset Password';
+    this.form.removeControl('passwordConfirm');
+  }
+
+  public enableSignInMode() {
+    this.template = 'signIn';
+    this.title = 'Sign In';
+    this.form.removeControl('passwordConfirm');
+  }
 
   public enableRegisterMode() {
     this.template = 'register';
@@ -71,9 +84,8 @@ export class SupabaseSignInDialogComponent {
     const { data, error } = await this.supabaseAuthService.signInUser(email, password);
     console.log({ data, error });
     if (error) {
-      console.error(error);
-      this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });
       this.form.enable();
+      throw new Error(error.message);
     } else {
       this.dialogRef.close();
     }
@@ -83,10 +95,21 @@ export class SupabaseSignInDialogComponent {
     const { email, password } = this.form.value;
     const { error } = await this.supabaseAuthService.signUpUser(email, password);
     if (error) {
-      console.error(error);
-      this.notificationService.showUserNotification({ message: error.message, matIcon: 'error' });
       this.form.enable();
+      throw new Error(error.message);
     } else {
+      this.dialogRef.close();
+    }
+  }
+  public async handleReset() {
+    this.form.disable();
+    const { email } = this.form.value;
+    const { error } = await this.supabaseAuthService.resetEmailPassword(email);
+    if (error) {
+      this.form.enable();
+      throw new Error(error.message);
+    } else {
+      this.notificationService.showSuccessNotification(`Reset email sent, please check your inbox`,{duration:5000});
       this.dialogRef.close();
     }
   }

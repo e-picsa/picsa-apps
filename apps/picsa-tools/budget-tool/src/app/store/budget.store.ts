@@ -1,5 +1,6 @@
-import { effect, Injectable, OnDestroy } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { ConfigurationService } from '@picsa/configuration';
 import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
 import { APP_VERSION } from '@picsa/environments';
@@ -86,7 +87,8 @@ export class BudgetStore {
     private configurationService: ConfigurationService,
     private printPrvdr: PrintProvider,
     private sanitizer: DomSanitizer,
-    private dialogService: PicsaDialogService
+    private dialogService: PicsaDialogService,
+    private componentService: PicsaCommonComponentsService,
   ) {
     this.counterSVGIcons = this.createBudgetCounterSVGs();
     effect(() => {
@@ -235,6 +237,8 @@ export class BudgetStore {
     budget = checkForBudgetUpgrades(budget);
     this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
+    console.log('patching header', budget.meta.title);
+    this.componentService.patchHeader({ title: budget.meta.title });
   }
 
   private async loadSavedBudgets(): Promise<void> {
@@ -305,10 +309,10 @@ export class BudgetStore {
   // attempt to reload any hardcoded data present in the app
   private async checkForUpdates() {
     const version = await this.db.getDoc<IAppMeta>('_appMeta', 'VERSION');
-    const updateRequired = !version || version.value !== APP_VERSION.number;
+    const updateRequired = !version || version.value !== APP_VERSION.semver;
     if (updateRequired) {
       await this.setHardcodedData();
-      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.number };
+      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.semver };
       this.db.setDoc('_appMeta', update);
     }
   }

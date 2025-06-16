@@ -1,7 +1,7 @@
 <div style="display: flex; align-items: center">
   <!-- Data Search -->
   @if(tableOptions.search){
-  <mat-form-field class="search-field" style="flex: 1; margin-right: 2rem">
+  <mat-form-field class="search-field" style="flex: 1">
     <mat-label>Search Data</mat-label>
     <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
     <mat-icon matPrefix>search</mat-icon>
@@ -37,11 +37,7 @@
   }
 
   <tr mat-header-row *matHeaderRowDef="tableOptions.displayColumns"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: tableOptions.displayColumns"
-    (click)="tableOptions.handleRowClick(row)"
-  ></tr>
+  <tr mat-row *matRowDef="let row; columns: tableOptions.displayColumns" (click)="handleRowClick(row, $event)"></tr>
 </table>
 
 <!-- Paginator -->

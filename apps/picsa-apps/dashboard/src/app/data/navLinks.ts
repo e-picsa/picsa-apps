@@ -20,16 +20,16 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     matIcon: 'library_books',
     children: [
       {
-        label: 'Collections',
-        href: '/collections',
-      },
-      {
         label: 'Files',
         href: '/files',
       },
       {
         label: 'Links',
         href: '/links',
+      },
+      {
+        label: 'Collections',
+        href: '/collections',
       },
     ],
   },
@@ -46,6 +46,12 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
         label: 'Forecasts',
         href: '/forecast',
       },
+      {
+        label: 'Admin',
+        href: '/admin',
+        // TODO - auth role
+        // TODO - import from module?
+      },
     ],
   },
   {
@@ -60,6 +66,12 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
       {
         label: 'Probability',
         href: '/probability',
+      },
+      {
+        label: 'Admin',
+        href: '/admin',
+        // TODO - auth role
+        // TODO - import from module?
       },
     ],
   },
@@ -85,11 +97,17 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
   },
 ];
 
-export const GLOBAL_NAV_LINKS: INavLink[] = [
+export const ADMIN_NAV_LINKS: INavLink[] = [
   {
     label: 'Deployments',
     href: '/deployment',
     matIcon: 'apps',
+    roleRequired: 'deployments.admin',
+  },
+  {
+    label: 'User Permissions',
+    href: '/admin/user-permissions',
+    matIcon: 'manage_accounts',
     roleRequired: 'deployments.admin',
   },
 ];

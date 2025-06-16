@@ -10,3 +10,5 @@ Files from this theme should be imported into required project using
 
 It is not currently possible to import individual files, such as `@use "@picsa/theme/src/variables"`
 https://github.com/nrwl/nx/issues/3203
+
+picsa palette generated at http://mcg.mbitson.com

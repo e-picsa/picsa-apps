@@ -1,8 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
-import { ILanguageDataEntry, LANGUAGES_DATA, LANGUAGES_DATA_HASHMAP } from '@picsa/data';
+import { COUNTRIES_DATA_HASHMAP, ILocaleDataEntry, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -11,95 +12,143 @@ import { capitalise } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { IDeploymentRow } from '../../../deployment/types';
 import { TranslationDashboardService } from '../../translations.service';
+import { TranslationsEditComponent } from '../edit/translations-edit.component';
 
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 @Component({
   selector: 'dashboard-translations-page',
-  standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, PicsaLoadingComponent, RouterModule],
+  imports: [
+    DatePipe,
+    FormsModule,
+    DashboardMaterialModule,
+    PicsaDataTableComponent,
+    PicsaLoadingComponent,
+    RouterModule,
+  ],
   templateUrl: './translations.page.html',
   styleUrls: ['./translations.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsPageComponent {
   /** Table options specific to active deployment (display columns vary depending on country) */
-  public tableOptions: IDataTableOptions;
-
-  public languageHashmap = LANGUAGES_DATA_HASHMAP;
-
-  public tableData = computed(() => {
-    return this.service.translations.filter((entry) => !entry.archived);
+  public tableOptions = computed<IDataTableOptions>(() => {
+    const locale = this.locale();
+    return this.generateTableOptions(locale);
   });
 
-  /** Common table options used independent of deployment selected */
-  private tableOptionsBase: IDataTableOptions = {
-    displayColumns: [],
-    exportFilename: 'translations',
-    formatHeader: (v) => {
-      const languageData: ILanguageDataEntry = LANGUAGES_DATA_HASHMAP[v];
-      if (languageData) {
-        const { country_label, language_label, country_code } = languageData;
-        if (country_code === 'global') return capitalise(language_label);
-        return capitalise(country_label) + ' - ' + capitalise(language_label);
-      }
-      return formatHeaderDefault(v);
-    },
-    paginatorSizes: [50, 100, 250],
-    handleRowClick: (row) => this.goToRecord(row),
-  };
+  /** Specify whether to show all translations or just missing */
+  public includeTranslated = signal(false);
+
+  /** List of available locales for deployment country */
+  public localeOptions = signal<ILocaleDataEntry[]>([]);
+
+  /** ID of currently selected locale */
+  public locale = signal(LOCALES_DATA_HASHMAP.global_en.id);
+
+  /** Use subset of service translations to include non-archived */
+  private translations = computed(() => this.service.translations().filter((entry) => !entry.archived));
+
+  /** Generated list of table entries */
+  public tableData = computed(() => {
+    const translations = this.translations();
+    const locale = this.locale();
+    const data = this.generateTableData(locale, translations, this.includeTranslated());
+    return data;
+  });
+
+  /** List of entries pending translation */
+  public pendingEntries = computed(() => {
+    const locale = this.locale();
+    return this.translations().filter((entry) => !entry[locale]);
+  });
+
+  public translationProgress = computed(() => (100 * this.countTranslated) / this.countTotal);
+
+  public get countTotal() {
+    return this.translations().length;
+  }
+  public get countPending() {
+    return this.pendingEntries().length;
+  }
+  public get countTranslated() {
+    return this.countTotal - this.countPending;
+  }
+
+  /** */
+  private generateTableData(localeId: string, entries: ITranslationRow[], includeTranslated = false) {
+    // HACK - ignore list when default translations set
+    if (localeId === LOCALES_DATA_HASHMAP.global_en.id) return [];
+    // Filter entries to only include those not already translated or archived
+    return entries
+      .filter((entry) => {
+        if (entry.archived) return false;
+        if (!includeTranslated) {
+          return entry[localeId] ? false : true;
+        }
+        return true;
+      })
+      .sort((a, b) => (a.id > b.id ? 1 : -1));
+  }
 
   /** Track active country code to avoid refreshing list when toggling between different country versions */
   private activeCountryCode: string;
 
   constructor(
     public service: TranslationDashboardService,
-    private router: Router,
-    cdr: ChangeDetectorRef,
+    public dialog: MatDialog,
     deploymentService: DeploymentDashboardService
   ) {
     effect(async () => {
       const deployment = deploymentService.activeDeployment();
       if (deployment) {
-        await this.loadTranslations(deployment);
-        cdr.markForCheck();
+        const { country_code } = deployment;
+        this.activeCountryCode = country_code;
+        await this.loadTranslationMeta(country_code);
+        await this.refreshTranslations();
       }
     });
   }
 
-  private async loadTranslations(deployment: IDeploymentRow) {
-    const { country_code } = deployment;
-    if (country_code && country_code !== this.activeCountryCode) {
-      this.activeCountryCode = country_code;
-      const languages = this.getTargetTranslationLanguages(country_code);
-      this.tableOptions = this.generateTableOptions(languages.map((l) => l.id));
-      await this.refreshTranslations();
-    }
+  public showEditDialog(row: ITranslationRow) {
+    this.dialog.open(TranslationsEditComponent, { data: { row, locale: this.locale() } });
+  }
+
+  private async loadTranslationMeta(country_code: string) {
+    // List all locales available for current language
+    const locales = this.getTargetTranslationLanguages(country_code);
+    this.localeOptions.set(locales);
+    this.locale.set(locales[0].id);
   }
 
   private getTargetTranslationLanguages(country_code: string) {
     if (country_code === 'global') {
-      return LANGUAGES_DATA;
+      return LOCALES_DATA;
     }
-    return LANGUAGES_DATA.filter((o) => o.country_code === country_code);
+    return LOCALES_DATA.filter((o) => o.country_code === country_code);
   }
 
-  private generateTableOptions(languageCodes: string[]): IDataTableOptions {
+  private generateTableOptions(locale: string): IDataTableOptions {
     return {
-      ...this.tableOptionsBase,
-      displayColumns: ['tool', 'context', 'text', ...languageCodes, 'created_at'],
+      exportFilename: 'translations',
+      formatHeader: (v) => {
+        const languageData: ILocaleDataEntry = LOCALES_DATA_HASHMAP[v];
+        if (languageData) {
+          const { language_label, country_code } = languageData;
+          const { label: country_label } = COUNTRIES_DATA_HASHMAP[country_code];
+          if (country_code === 'global') return capitalise(language_label);
+          return capitalise(country_label) + ' - ' + capitalise(language_label);
+        }
+        return formatHeaderDefault(v);
+      },
+      paginatorSizes: [10, 50, 100],
+      handleRowClick: (row) => this.showEditDialog(row),
+      displayColumns: ['tool', 'context', 'text', locale, 'created_at'],
     };
   }
 
-  goToRecord(row: ITranslationRow) {
-    this.router.navigate([`/translations`, row.id]);
-  }
-
-  async refreshTranslations() {
+  private async refreshTranslations() {
     await this.service.ready();
-    this.service.listTranslations().catch((error) => {
-      console.error('Error fetching translations:', error);
-    });
+    this.service.listTranslations();
   }
 }

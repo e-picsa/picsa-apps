@@ -1,6 +1,7 @@
 :host {
   display: block;
 }
+
 .editor-container {
   position: relative;
   padding-bottom: 2rem;
@@ -35,37 +36,45 @@ $container-border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: fit-content;
+  width: 100%;
+  max-width: 500px;
   position: relative;
   border-radius: $container-border-radius;
   min-width: 18rem;
   min-height: 18rem;
   margin-top: 1rem;
   box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.25);
+  @apply mx-auto;
   // Desktop layout - container moves along with stepper
-  @media only screen and (min-width: 768px) {
+  @screen md {
+    @apply mx-0;
     &[data-step='2'] {
-      left: 12%;
+      left: 110px;
     }
     &[data-step='3'] {
-      left: 24%;
+      left: 220px;
     }
     &[data-step='4'] {
-      left: 36%;
+      left: 330px;
     }
+    // Linear increment stops as getting to end of 500px width
     &[data-step='5'] {
-      left: calc(min(100vw - 4rem - 36rem, 48%)); // apply min sizing to prevent overflow off screen
+      left: 355px;
     }
     &[data-step='6'] {
-      left: calc(min(100vw - 4rem - 26rem, 60%));
+      left: 380px;
     }
     &[data-step='7'] {
-      left: calc(min(100vw - 4rem - 26rem, 72%));
+      left: 405px;
     }
     &[data-step='8'] {
-      left: calc(min(100vw - 4rem - 26rem, 84%));
+      left: 430px;
     }
   }
+}
+// mat-container
+.mat-horizontal-content-container {
+  @apply p-0 sm:py-6;
 }
 
 h3.StepTitle {
@@ -162,6 +171,16 @@ $entry-icon-size: 64px;
     max-width: $entry-icon-size;
   }
   border: 1px solid var(--color-primary);
+}
+
+.benefit-container {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  padding-bottom: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 // ***************************************************************************************

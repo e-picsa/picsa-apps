@@ -1,20 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 // import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import { arrayToHashmap } from '@picsa/utils';
 
 export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 
-export interface IResourceStorageEntry extends IStorageEntry {
-  /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
-  publicUrl: string;
-}
 @Injectable({ providedIn: 'root' })
 export class TranslationDashboardService extends PicsaAsyncService {
-  public translations: ITranslationRow[] = [];
+  public translations = signal<ITranslationRow[]>([]);
+
+  /** Track a list of translations by id for lookup and local update */
+  private translationsHashmap: Record<string, ITranslationRow> = {};
 
   public get table() {
     return this.supabaseService.db.table('translations');
@@ -34,15 +33,23 @@ export class TranslationDashboardService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    this.translations = data || [];
+    this.translations.set(data || []);
+    this.translationsHashmap = arrayToHashmap(data, 'id');
   }
   // update a translation record by ID
-  public async updateTranslationById(id: string, updatedData: Partial<ITranslationRow>): Promise<string> {
-    const { data, error } = await this.supabaseService.db.table('translations').update(updatedData).eq('id', id);
-    if (error) {
-      throw error;
-    }
-    return 'Updated successfully';
+  public async updateTranslationById(id: string, updatedData: Partial<ITranslationRow>) {
+    // Save to DB
+    const { error, data } = await this.supabaseService.db
+      .table('translations')
+      .update(updatedData)
+      .eq('id', id)
+      .select<'*', ITranslationRow>('*')
+      .single();
+    if (error) throw new Error(error.message);
+    // Update current list
+    this.translationsHashmap[id] = data;
+    this.translations.set(Object.values(this.translationsHashmap));
+    return data;
   }
 
   // Fetch a translation record by ID
@@ -80,5 +87,21 @@ export class TranslationDashboardService extends PicsaAsyncService {
     // Convert to lower case and remove non-alphanumeric characters so that minor text differences ignored
     const { tool, context, text } = row;
     return [tool, context, text].map((t) => t?.toLowerCase().replace(/[^a-z0-9]/g, '')).join('-');
+  }
+
+  /** WiP - method to export translations json used in app */
+  public exportJson(data: ITranslationRow[], locale: string) {
+    const json: Record<string, string> = {};
+    for (const { text, ...columns } of data) {
+      if (locale in columns) {
+        const translatedText = columns[locale] || '';
+        if (json[text] && json[text] !== translatedText) {
+          console.warn('Duplicate translation skipped', text, translatedText, json[translatedText]);
+        } else {
+          json[text] = translatedText;
+        }
+      }
+    }
+    console.log(locale, json);
   }
 }

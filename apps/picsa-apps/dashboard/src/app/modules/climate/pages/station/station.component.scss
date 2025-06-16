@@ -12,3 +12,12 @@ tr.station-row {
 th {
   font-weight: bold;
 }
+
+dashboard-climate-api-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid black;
+  z-index: 2;
+}

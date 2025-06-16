@@ -1,6 +1,15 @@
 import { MediaMatcher } from '@angular/cdk/layout';
 import { DomPortal } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  input,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
@@ -31,8 +40,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       <!-- default buttons -->
       <button mat-button color="primary" #optionsToggleButton (click)="snav.toggle()">
         <span style="margin-right: 8px">
-          <span *ngIf="snav.opened">{{ 'Hide Options' | translate }}</span>
-          <span *ngIf="!snav.opened">{{ 'Show Options' | translate }}</span>
+          <span>{{ 'Options' | translate }}</span>
         </span>
         <mat-icon iconPositionEnd>menu</mat-icon>
       </button>
@@ -45,9 +53,9 @@ import { PicsaCommonComponentsService } from '../services/components.service';
         [fixedInViewport]="mobileQuery.matches"
         position="end"
         style="width: 300px"
-        [opened]="opened"
+        [opened]="opened()"
         [fixedTopGap]="0"
-        (openedChange)="handleSidenavChange()"
+        (openedChange)="handleSidenavChange(snav.opened)"
         (swipeRight)="snav.toggle()"
       >
         <!-- Sidenav Content -->
@@ -111,6 +119,7 @@ import { PicsaCommonComponentsService } from '../services/components.service';
       }
     `,
   ],
+  standalone: false,
 })
 export class PicsaSidenavComponent implements OnInit, AfterViewInit {
   private _mobileQueryListener: () => void;
@@ -118,7 +127,10 @@ export class PicsaSidenavComponent implements OnInit, AfterViewInit {
 
   public headerAttached = false;
 
-  @Input() opened = true;
+  /** Specify whether should be initially opened */
+  initialOpen = input<boolean>();
+
+  public opened = signal(this.initialOpen() ? true : false);
 
   @ViewChild('headerContent') headerContent: ElementRef<HTMLElement>;
   @ViewChild(MatSidenav) matSidenav: MatSidenav;
@@ -134,8 +146,8 @@ export class PicsaSidenavComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     setTimeout(() => {
-      const endContent = new DomPortal(this.headerContent);
-      this.componentsService.patchHeader({ endContent });
+      const cdkPortalEnd = new DomPortal(this.headerContent);
+      this.componentsService.patchHeader({ cdkPortalEnd });
       this.headerAttached = true;
     }, 50);
   }
@@ -153,7 +165,8 @@ export class PicsaSidenavComponent implements OnInit, AfterViewInit {
   }
 
   /** when toggling sidebar also trigger resize event to ensure chart resizes */
-  public handleSidenavChange() {
+  public handleSidenavChange(opened: boolean) {
+    this.opened.set(opened);
     requestAnimationFrame(() => {
       window.dispatchEvent(new Event('resize'));
     });

@@ -2,7 +2,6 @@
   display: block;
 }
 .search-field {
-  margin-top: 2rem;
   width: 100%;
   input {
     text-align: left;
@@ -10,6 +9,7 @@
 }
 tr:hover {
   background: whitesmoke;
+  cursor: pointer;
 }
 th.mat-mdc-header-cell {
   background: var(--color-primary-50);

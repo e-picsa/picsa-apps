@@ -18,7 +18,7 @@ const minAndroidVersion = 6.0;
  * Minimum version of chrome required to run app
  * Min baseline 45 to support arrow functions: https://caniuse.com/arrow-functions
  * Capacitor requirement 60, according to: https://capacitorjs.com/docs/android
- * Codebase pdf viewer 92 (https://caniuse.com/mdn-javascript_builtins_string_at)
+ * Codebase pdf viewer 119 (but handled separately in component)
  * Legacy chrome versions available at: https://www.chromium.org/getting-involved/download-chromium/
  *
  * NOTE - whilst capacitor does have functionality to detect version and present custom error page,

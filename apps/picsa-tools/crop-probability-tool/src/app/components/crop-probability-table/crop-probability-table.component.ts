@@ -10,6 +10,7 @@ import { IStationCropData, IStationCropDataItem, IStationCropInformation } from 
   selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
+  standalone: false,
 })
 export class CropProbabilityTableComponent {
   public displayedColumns: string[] = [];
@@ -42,7 +43,7 @@ export class CropProbabilityTableComponent {
     const dataSource = new MatTableDataSource(this.tableData);
     // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
     dataSource.filterPredicate = (data, filter) => data.crop.toLowerCase() === filter;
-    this.generateCropFilters(this.station.station_data);
+    this.generateCropFilters(this.station.data);
     if (cropName) {
       dataSource.filter = cropName.toLowerCase();
     }
@@ -65,7 +66,7 @@ export class CropProbabilityTableComponent {
    * Split probabilities into individual columns
    * */
   private prepareTableRows(station: IStationCropInformation) {
-    const stationCropData = station.station_data;
+    const stationCropData = station.data;
 
     this.probabilityColumns = station.dates.map((label, index) => ({ label, name: `probability_${index}`, index }));
     const displayColumns = ['crop', 'variety', 'days', 'water', ...this.probabilityColumns.map((c) => c.name)];

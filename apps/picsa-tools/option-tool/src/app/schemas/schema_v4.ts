@@ -1,14 +1,10 @@
 import { generateID } from '@picsa/shared/services/core/db/db.service';
-import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
+import { generateTimestamp, type IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
 import { IOptionsToolEntry_v3, SCHEMA_V3 } from './schema_v3';
 
 const SCHEMA_VERSION = 4;
-
-const generateTimestamp = (): string => {
-  return new Date().toISOString();
-};
 
 /**
  * ADD 'enterprise' and '_created_at' properties

@@ -2,14 +2,15 @@ import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, map } from 'rxjs';
 
 import { IDeploymentRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class DeploymentDashboardService extends PicsaAsyncService {
   public readonly deployments = signal<IDeploymentRow[]>([]);
-  public readonly activeDeployment = signal<IDeploymentRow | null>(null);
+  // all routing is blocked unless deployment set, so consumers can safely assume will be defined
+  public readonly activeDeployment = signal<IDeploymentRow>(null as any);
 
   /** Observable activeDeployment used to monitor changes (ensure deployment selected) */
   private activeDeployment$ = toObservable(this.activeDeployment);
@@ -32,12 +33,12 @@ export class DeploymentDashboardService extends PicsaAsyncService {
     const previousId = this.activeDeployment()?.id;
     if (id === previousId) return;
     // provide optimistic update
-    this.activeDeployment.set(this.deployments().find((d) => d.id === id) || null);
+    this.activeDeployment.set(this.deployments().find((d) => d.id === id) || (null as any));
     // provide server update
     // TODO - subscribe to realtime updates
     // TODO - consider just using hardcoded deployments to prevent need for optimistic updates
     const { data } = await this.table.select<'*', IDeploymentRow>('*').eq('id', id).limit(1).single();
-    this.activeDeployment.set(data);
+    this.activeDeployment.set(data || (null as any));
     this.storeDeployment(data?.id);
     // Hack - when changing deployment from UI component force reload to ensure data updated
     if (previousId && opts.forceReload) {
@@ -46,8 +47,17 @@ export class DeploymentDashboardService extends PicsaAsyncService {
   }
 
   /** Promise that resolves only once an active deployment has been selected */
-  public async ensureActiveDeployment() {
-    return this.activeDeployment() || firstValueFrom(this.activeDeployment$);
+  public async ensureActiveDeployment(): Promise<IDeploymentRow> {
+    const deployment = this.activeDeployment();
+    if (deployment) {
+      return deployment;
+    }
+    return firstValueFrom(
+      this.activeDeployment$.pipe(
+        filter((d) => d !== null),
+        map((d) => d as IDeploymentRow)
+      )
+    );
   }
 
   private async listDeployments() {

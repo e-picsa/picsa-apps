@@ -10,6 +10,7 @@
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/farmer-content",
         "index": "apps/picsa-tools/farmer-content/src/index.html",
         "browser": "apps/picsa-tools/farmer-content/src/main.ts",
@@ -26,7 +27,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumError": "2mb"
             },
             {
               "type": "anyComponentStyle",

@@ -4,10 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PicsaDialogsModule, PicsaDrawingComponent } from '@picsa/shared/features';
-import { PicsaDbModule } from '@picsa/shared/modules';
+import { PicsaDbModule, PicsaTranslateModule } from '@picsa/shared/modules';
 import { MobxAngularModule } from 'mobx-angular';
 
 import { BudgetMaterialModule } from '../material.module';
@@ -24,7 +23,6 @@ import { BudgetCellComponent } from './cell/cell';
 import { BudgetCardEditorComponent } from './editor/card-editor/card-editor.component';
 import { BudgetCellEditorCardSelectComponent } from './editor/card-select/card-select';
 import { BudgetCellEditorFamilyLabourComponent } from './editor/card-select/family-labour/family-labour';
-import { BudgetCellEditorProduceConsumedComponent } from './editor/card-select/produce-consumed/produce-consumed';
 import { BudgetEditorComponent } from './editor/editor.component';
 import { BudgetEditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
@@ -43,7 +41,6 @@ const components = [
   BudgetCellComponent,
   BudgetCellEditorCardSelectComponent,
   BudgetCellEditorFamilyLabourComponent,
-  BudgetCellEditorProduceConsumedComponent,
   BudgetEditorComponent,
   BudgetEditorSidebarComponent,
   BudgetCardNew,
@@ -63,7 +60,7 @@ const components = [
     CommonModule,
     FormsModule,
     BudgetMaterialModule,
-    TranslateModule.forChild(),
+    PicsaTranslateModule,
     PicsaDialogsModule,
     PicsaCommonComponentsModule,
     MobxAngularModule,

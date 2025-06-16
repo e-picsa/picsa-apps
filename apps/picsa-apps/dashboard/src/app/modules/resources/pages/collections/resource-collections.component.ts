@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
@@ -26,7 +26,6 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
 
 @Component({
   selector: 'dashboard-resource-collections',
-  standalone: true,
   imports: [
     CommonModule,
     CommonModule,
@@ -37,11 +36,16 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
   ],
   templateUrl: './resource-collections.component.html',
   styleUrl: './resource-collections.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionsComponent implements OnInit {
   public collections: IMergedCollection[] = [];
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
+    handleRowClick: (collection: IMergedCollection, e) => {
+      e.stopImmediatePropagation();
+      this.router.navigate([collection.id], { relativeTo: this.route });
+    },
     formatHeader: (v) => {
       switch (v as keyof IMergedCollection) {
         case 'resource_collections':
@@ -58,7 +62,7 @@ export class ResourceCollectionsComponent implements OnInit {
     },
   };
 
-  constructor(private service: ResourcesDashboardService) {
+  constructor(private service: ResourcesDashboardService, private router: Router, private route: ActivatedRoute) {
     effect(() => {
       const collectionsHashmap = this.service.collectionsById();
       const collections = service.collections().map((c) => this.mergeCollectionData(c, collectionsHashmap));

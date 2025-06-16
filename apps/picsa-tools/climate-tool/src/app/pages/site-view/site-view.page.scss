@@ -46,3 +46,6 @@ mat-sidenav-content.page-content {
 mat-sidenav-container {
   margin-top: 0 !important;
 }
+mat-option[data-draft='true'] {
+  opacity: 0.5;
+}

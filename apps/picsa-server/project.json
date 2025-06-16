@@ -46,7 +46,7 @@
       "dependsOn": [],
       "outputs": [],
       "options": {
-        "commands": ["npx supabase gen types typescript --local > supabase/types/index.ts"],
+        "commands": ["npx supabase gen types typescript --local > supabase/types/db.types.ts"],
         "cwd": "apps/picsa-server"
       }
     },
@@ -61,7 +61,7 @@
       "executor": "nx:run-commands",
       "inputs": ["{projectRoot}/supabase/data"],
       "options": {
-        "command": "yarn ts-node -r tsconfig-paths/register scripts/seed.ts",
+        "command": "yarn tsx scripts/db-seed/db-seed.ts",
         "cwd": "apps/picsa-server"
       }
     },

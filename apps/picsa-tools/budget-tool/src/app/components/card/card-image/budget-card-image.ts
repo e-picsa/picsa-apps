@@ -10,6 +10,7 @@ import { IBudgetCard } from '../../../schema';
   templateUrl: 'budget-card-image.html',
   styleUrls: ['budget-card-image.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
   @Input() card: IBudgetCard;

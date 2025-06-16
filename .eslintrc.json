@@ -19,6 +19,14 @@
             ]
           }
         ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "name": "@ngx-translate/core",
+            "importNames": ["TranslateModule"],
+            "message": "Please use PicsaTranslateModule instead"
+          }
+        ],
         "@angular-eslint/component-selector": ["warn"],
         "@angular-eslint/component-class-suffix": ["warn"],
         "@typescript-eslint/no-explicit-any": ["warn"],
@@ -35,12 +43,18 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript", "prettier"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/no-extra-semi": "error",
+        "no-extra-semi": "off"
+      }
     },
     {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/no-extra-semi": "error",
+        "no-extra-semi": "off"
+      }
     }
   ]
 }

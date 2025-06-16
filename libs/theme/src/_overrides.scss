@@ -18,6 +18,11 @@ button.mat-mdc-button > .mat-icon {
   min-width: 24px; // climate share icon not showing without
   height: 24px;
 }
+// Don't allow button labels to extend beyond their container
+.mdc-button__label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 
 mat-card.link {
   cursor: pointer;
@@ -49,6 +54,20 @@ mat-dialog-container.mat-mdc-dialog-container {
   }
 }
 
+// Increase dialog overlay width on small devices (600px)
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  --mat-dialog-container-small-max-width: calc(100vw - theme(spacing.4));
+  // Budget tool picker full screen
+  &.budget-dialog {
+    --mat-dialog-container-small-max-width: 100vw;
+    width: 100vw;
+    @apply max-w-screen-md;
+    .mat-mdc-dialog-surface {
+      padding: 0;
+    }
+  }
+}
+
 // Remove padding from dialog action buttons
 div.mdc-dialog__actions {
   padding-left: 0;
@@ -59,14 +78,20 @@ div.mdc-dialog__actions {
   display: flex;
   flex-direction: column;
 }
-// Increase size and set primary colour for text inputs, remove inset
+// Increase size and set primary colour for text inputs
 input.mat-mdc-input-element.mdc-text-field__input {
   font-size: 30px;
   width: 100%;
   color: var(--color-primary) !important;
   text-align: center;
-  // margin-left: -4px;
 }
+//  Increase size and set primary colour for select
+mat-select.mat-mdc-select {
+  --mat-select-trigger-text-size: 30px;
+  --mat-select-enabled-trigger-text-color: var(--color-primary);
+  --mat-select-trigger-text-line-height: 38px;
+}
+
 // Reduce padding and remove inset from fields with custom .input-field or .no-padding class
 mat-form-field.input-field,
 mat-form-field.no-padding {
@@ -75,10 +100,8 @@ mat-form-field.no-padding {
   }
   .mat-mdc-form-field-infix {
     margin-left: 0;
+    padding: 0;
   }
-}
-// Reduce padding and remove inset from fields with custom .no,padding class
-mat-form-field.no-padding {
 }
 
 // Remove bottom hint placeholder (used in hints)
@@ -120,6 +143,12 @@ mat-stepper.slim-headers {
     height: 48px;
   }
 }
+mat-stepper.responsive-content-padding {
+  .mat-horizontal-content-container {
+    // keep enough padding to see shadow
+    @apply p-2 sm:px-6 sm:pb-6;
+  }
+}
 
 // Allow use of primary color with selected value by custom `value-primary` class
 mat-select.value-primary {
@@ -133,6 +162,12 @@ mat-tab-group.height-fill {
   flex: 1;
   .mat-mdc-tab-body-wrapper {
     flex: 1;
+  }
+}
+
+mat-tab-group.no-header {
+  & > mat-tab-header {
+    display: none;
   }
 }
 

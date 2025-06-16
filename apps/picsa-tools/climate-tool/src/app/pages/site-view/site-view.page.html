@@ -1,7 +1,31 @@
 <climate-print-layout *ngIf="chartService.chartPng"></climate-print-layout>
 
+<!-- Header to inject into global header component -->
+<ng-template #headerPortal>
+  <div style="position: relative; display: flex; align-items: center; width: 100%">
+    <button mat-button color="primary" (click)="select.open()" style="font-size: 32px; height: 40px">
+      @if(chartService.station){ {{chartService.station.name}} }
+      <mat-icon iconPositionEnd>expand_more</mat-icon>
+    </button>
+    <!-- Use a hidden select that opens from button (instead of using full select form component) -->
+    <mat-select
+      style="width: 200px; position: absolute; right: 0; top: 18px; visibility: hidden"
+      #select
+      (selectionChange)="handleStationSelect(select.value)"
+      [value]="chartService.station?.id"
+    >
+      @for(option of stationSelectOptions(); track option.value){
+      <mat-option [value]="option.value" [attr.data-draft]="option.draft">{{option.label}}</mat-option>
+      }
+    </mat-select>
+    <button mat-button color="primary" (click)="goToSiteSelect()" style="font-size: 24px">
+      <mat-icon>place</mat-icon>{{ 'Map' | translate }}
+    </button>
+  </div>
+</ng-template>
+
 <div class="page-content">
-  <picsa-sidenav-layout #snav>
+  <picsa-sidenav-layout #snav [initialOpen]="true">
     <button desktopHeader mat-button color="primary" (click)="showShareDialog()">
       <mat-icon>share</mat-icon>{{ 'Share' | translate }}
     </button>
@@ -16,20 +40,8 @@
       [definition]="chartService.chartDefinition"
     ></climate-chart-layout>
   </picsa-sidenav-layout>
-
-  <!-- Main content -->
-
-  <!-- reports -->
-  <!-- <div *ngIf="activeView === 'cropAnalysis'" style="flex: 1">
-        <climate-crop-analysis></climate-crop-analysis>
-      </div> -->
-  <!-- <climate-combined-probability></climate-combined-probability> -->
 </div>
 
-<picsa-animation
-  name="rotate-phone"
-  *ngIf="showRotateAnimation"
-  [loops]="2"
-  position="float"
-  [delay]="2000"
-></picsa-animation>
+<!-- @if(showRotateAnimation()){
+<picsa-animation name="rotate-phone" [loops]="2" [delay]="2000"></picsa-animation>
+} -->

@@ -15,6 +15,7 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
   animations: [FadeInOut({})],
+  standalone: false,
 })
 export class BudgetEditorComponent implements OnDestroy {
   /** View reference to ng-template content shown in dialog */
@@ -54,7 +55,15 @@ export class BudgetEditorComponent implements OnDestroy {
     // subscribe to db cards for type until next card type change
     this.periodType$
       .pipe(
-        switchMap(() => this.cardService.dbCollection.find({ selector: { type: this.periodType } }).$),
+        switchMap((type) => {
+          // HACK - load output cards when using produce consumed
+          // TODO - ideally should have own set of cards (without money) and migrate existing budgets
+          // TODO - will also have to update custom card generator
+          if (type === 'produceConsumed') {
+            type = 'outputs';
+          }
+          return this.cardService.dbCollection.find({ selector: { type } }).$;
+        }),
         takeUntil(this.componentDestroyed$)
       )
       .subscribe((docs) => {
@@ -67,11 +76,7 @@ export class BudgetEditorComponent implements OnDestroy {
     this.periodType$.next(type);
 
     this.dialog.open(this.cardsListDialog, {
-      width: '90vw',
-      height: '90vh',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      panelClass: 'no-padding',
+      panelClass: 'budget-dialog',
     });
     // scroll existing dialog to top if exists as dialog opens
     setTimeout(() => {

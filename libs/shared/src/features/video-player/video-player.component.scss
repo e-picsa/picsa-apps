@@ -7,46 +7,31 @@ $playerWidth: 854px;
   width: 100%;
   max-width: $playerWidth;
   aspect-ratio: 16/9;
-  // Assuming that video player displayed within 1rem content padding,
-  // force video to display across all space (full width)
-  @media screen and (max-width: $playerWidth) {
-    width: calc(100% + 2rem);
-    margin-left: -1rem;
-    margin-right: -1rem;
-  }
 }
 .placeholderContainer {
   position: relative;
   width: 100%;
   overflow: hidden;
-  margin-bottom: 2rem;
+  opacity: 0.75;
+  &[data-downloaded] {
+    opacity: 1;
+  }
 }
-.placeholder,
-.thumbnail {
+.placeholder {
   width: 100%;
   max-width: $playerWidth;
   aspect-ratio: 16/9;
-}
-.placeholder {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.25);
 }
-.thumbnail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  background-repeat: no-repeat;
-  background-size: cover;
-  filter: saturate(0.75);
-}
+
 $icon-size: 3rem;
 .play-button {
   position: absolute;
-  z-index: 3;
+  z-index: 1;
   height: calc($icon-size + 1rem);
   width: calc($icon-size + 1rem);
   padding: 0.5rem;

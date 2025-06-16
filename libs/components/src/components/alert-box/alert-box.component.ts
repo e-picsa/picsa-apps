@@ -1,4 +1,8 @@
 import { Component, ElementRef, Input } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 type IAlertType = 'info' | 'warning';
 
@@ -15,6 +19,7 @@ const COLOR_MAPPING: { [type in IAlertType]: number[] } = {
   selector: 'picsa-alert-box',
   templateUrl: './alert-box.component.html',
   styleUrls: ['./alert-box.component.scss'],
+  imports: [MatCardModule, MatIconModule, PicsaTranslateModule],
 })
 /**
  * Visual text box, inspired by

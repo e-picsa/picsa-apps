@@ -1,13 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ILineToolOptions, IProbabilityToolOptions } from '@picsa/models/src';
 
 import { IProbabilities } from '../../../models';
 import { ClimateChartService } from '../../../services/climate-chart.service';
-import { ILineToolOptions, IProbabilityToolOptions } from '@picsa/models/src';
 
 @Component({
   selector: 'climate-probability-tool',
   templateUrl: './probability-tool.html',
   styleUrls: ['./probability-tool.scss'],
+  standalone: false,
 })
 
 // take an array of numbers (values) and number to test (x), and display metrics

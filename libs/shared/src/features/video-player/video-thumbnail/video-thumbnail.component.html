@@ -1,0 +1,8 @@
+<div>
+  @if(thumbnail || generatedThumbnail()){
+  <div class="thumbnail" [style.background-image]="'url(' + (thumbnail || generatedThumbnail()) + ')'"></div>
+  } @else {
+  <div class="thumbnail-status">loading...</div>
+
+  }
+</div>

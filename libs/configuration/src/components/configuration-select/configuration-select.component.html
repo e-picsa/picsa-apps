@@ -24,7 +24,7 @@
         <h2>{{ 'Choose language' | translate }}</h2>
         <mat-radio-group class="options-container" [formControl]="languageForm.controls.language_code">
           @for(option of languageOptions(); track option.id){
-          <button mat-button class="options-button" (click)="setLanguage(option.id)">
+          <button mat-button class="options-button" (click)="setLanguage($any(option.id))">
             <div style="display: flex; align-items: center; gap: 8px">
               <mat-radio-button color="primary" [value]="option.id">{{ option.language_label }}</mat-radio-button>
             </div>

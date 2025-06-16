@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
+import { RefreshSpinnerComponent } from '@picsa/components';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { ClimateService } from '../../climate.service';
@@ -32,54 +31,49 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
  */
 @Component({
   selector: 'dashboard-climate-api-status',
-  standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, RefreshSpinnerComponent],
   templateUrl: './api-status.html',
   styleUrls: ['./api-status.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
-  public status: IStatus = 'pending';
-  public code?: number;
+export class DashboardClimateApiStatusComponent implements OnDestroy {
+  public status = signal<IStatus>('pending');
+  public code = signal<number>(0);
 
   private componentDestroyed$ = new Subject();
   private subscription: Subscription;
 
-  constructor(
-    public api: ClimateApiService,
-    public service: ClimateService,
-    private notificationService: PicsaNotificationService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  @Input() options: Partial<IApiStatusOptions> = {};
-
-  /** Unique id of API request to monitor for status updates */
-  @Input() set clientId(id: string) {
-    // clear any previous subscription
-    if (this.subscription) this.subscription.unsubscribe();
-    // subscribe to any requests sent via client and update UI accordingly
-    const client = this.api.getObservableClient(id);
-    this.subscription = client.$.pipe(takeUntil(this.componentDestroyed$)).subscribe(async (response) => {
-      this.status = this.getCallbackStatus(response?.status);
-      // only assign success and error codes
-      if (this.status === 'error' || this.status === 'success') {
-        this.code = response?.status;
-      }
-      this.cdr.markForCheck();
-      if (response && this.status === 'error') {
-        this.showCustomFetchErrorMessage(id, response);
-      }
-      // console log response body (debug purposes)
-      if (response && this.status === 'success') {
-        const body = await this.parseResponseBody(response);
-        console.log(`[API] ${id}`, body);
-      }
+  constructor(public api: ClimateApiService, public service: ClimateService) {
+    effect(() => {
+      const id = this.clientId();
+      // clear any previous subscription
+      if (this.subscription) this.subscription.unsubscribe();
+      // subscribe to any requests sent via client and update UI accordingly
+      const client = this.api.getObservableClient(id);
+      this.subscription = client.$.pipe(takeUntil(this.componentDestroyed$)).subscribe(async (response) => {
+        const status = this.getCallbackStatus(response?.status);
+        this.status.set(status);
+        // only assign success and error codes
+        if (status === 'error' || status === 'success') {
+          this.code.set(response?.status || 0);
+        }
+        if (response && status === 'error') {
+          this.showCustomFetchErrorMessage(id, response);
+        }
+        // console log response body (debug purposes)
+        if (response && status === 'success') {
+          const body = await this.parseResponseBody(response);
+          console.log(`[API] ${id}`, body);
+        }
+      });
     });
   }
-  ngOnInit() {
-    this.options = { ...DEFAULT_OPTIONS, ...this.options };
-  }
+
+  options = input({}, { transform: (v: Partial<IApiStatusOptions> = {}) => ({ ...DEFAULT_OPTIONS, ...v }) });
+
+  /** Unique id of API request to monitor for status updates */
+  clientId = input.required<string>();
+
   ngOnDestroy(): void {
     this.componentDestroyed$.next(true);
     this.componentDestroyed$.complete();
@@ -97,8 +91,7 @@ export class DashboardClimateApiStatusComponent implements OnInit, OnDestroy {
   private async showCustomFetchErrorMessage(id: string, response: Response) {
     const body = await this.parseResponseBody(response);
     const errorText = body.detail || 'failed, see console logs for details';
-    console.error(response);
-    this.notificationService.showUserNotification({ matIcon: 'error', message: `[${id}] ${errorText}` });
+    throw new Error(`[${id}] ${errorText}`);
   }
 
   /**

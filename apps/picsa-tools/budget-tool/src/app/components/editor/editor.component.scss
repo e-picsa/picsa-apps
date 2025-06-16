@@ -22,29 +22,29 @@
   border-bottom: 1px solid var(--color-black);
 }
 .type-label {
-  width: 100px;
+  @apply w-20 p-1 sm:w-28 sm:p-2;
   border-right: 1px solid var(--color-black);
-  padding: 8px;
 }
 
 #cardsList {
-  height: calc(100% - 16px);
-  width: calc(100% - 16px);
+  height: 100%;
   background: white;
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  @apply sm:p-4;
 }
 
 .selected-summary {
   flex: 1;
   min-height: 140px;
+  // HACK - assign width to prevent expanding over title column
+  min-width: 0px;
 }
 .selected-cards-container {
   display: grid;
-  padding: 10px;
+  padding: 8px;
   gap: 8px;
-  grid-template-columns: repeat(auto-fit, 128px);
+  grid-template-columns: repeat(auto-fit, 120px);
   // arrange input and output into larger grid for values editor
   &[data-type='inputs'],
   &[data-type='outputs'] {

@@ -14,7 +14,6 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 // import TestAudio from '@picsa/farmer-content/src/assets/'
 @Component({
   selector: 'farmer-home',
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,

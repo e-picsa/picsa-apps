@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { Database } from '@picsa/server-types';
+import type { Database } from '@picsa/server-types';
 import { FileObject, FileOptions } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { firstValueFrom, Subject } from 'rxjs';
@@ -25,7 +25,7 @@ export interface IStorageEntry extends IStorageDB {
 }
 
 /** Data populated when storage object retrieved via SDK (as opposed to storage table direct) */
-export type IStorageEntrySDK = FileObject;
+type IStorageEntrySDK = FileObject;
 
 /**
  * Utility class for interacting with supabase storage client
@@ -61,24 +61,57 @@ export class SupabaseStorageService extends PicsaAsyncService {
    * Uses custom table view as by default js sdk appears to only return top-level files/folders
    * and not recursive children
    * Requires custom view created (see example resources migration)
+   * @param subFolder - list all files within nested folder structure
    * */
-  public async list(bucketId: string, folderPath?: string) {
+  public async list(bucketId?: string, subfolder?: string) {
     // NOTE - access via storage table instead of storage api as does not support recursive list
-    let query = this.client.from(`storage_objects`).select<'*', IStorageEntry>('*').eq('bucket_id', bucketId);
+    let query = this.client.from(`storage_objects`).select<'*', IStorageEntry>('*');
+    if (bucketId) {
+      query = query.eq('bucket_id', bucketId);
+    }
 
-    if (folderPath) {
-      query = query.like('name', `${folderPath}/%`);
+    if (subfolder) {
+      query = query.like('name', `${subfolder}/%`);
     }
     const { data, error } = await query;
-
+    console.log('storage list', { bucketId, subfolder });
     if (error) {
       console.error(error);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+      throw new Error(error.message);
     }
     return data || [];
   }
 
-  public async getFile(options: {
+  /**
+   * List a single file using the data stored within the custom storage_objects database
+   * @param storagePath - Fully qualified path to file, including bucket prefix
+   */
+  public async getFile(storagePath: string): Promise<IStorageEntry | null> {
+    const [bucket_id, ...path_tokens] = storagePath.split('/');
+    const { data, error } = await this.client
+      .from(`storage_objects`)
+      .select<'*', IStorageEntry>('*')
+      .eq('bucket_id', bucket_id)
+      .eq('name', path_tokens.join('/'))
+      .limit(1);
+    console.log('get file', { bucket_id, path_tokens, data, error });
+
+    if (error) {
+      throw error;
+    }
+    if (data && data.length > 0) {
+      return data[0];
+    }
+    return null;
+  }
+
+  /**
+   * Alt implementation to retrieve file meta using storage sdk
+   * Previously required when using storage objects ids (not returned),
+   * however now storage pathnames used instead so can likely deprecate/remove
+   * https://github.com/orgs/supabase/discussions/4303
+   **/
+  public async getFileAlt(options: {
     bucketId: string;
     filename: string;
     folderPath?: string;
@@ -103,7 +136,7 @@ export class SupabaseStorageService extends PicsaAsyncService {
     if (error) {
       throw error;
     }
-    return data?.[0] || null;
+    return data;
   }
 
   public async deleteFile(bucketId: string, filePath: string) {

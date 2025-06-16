@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+/* eslint-disable @nx/enforce-module-boundaries */
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,7 +20,6 @@ const StandaloneImports = [
 
 /** Common imports used in both standalone and embedded formats */
 export const APP_COMMON_IMPORTS = [
-  HttpClientModule,
   CropProbabilityMaterialModule,
   PicsaTranslateModule,
   PicsaDbModule.forRoot(),

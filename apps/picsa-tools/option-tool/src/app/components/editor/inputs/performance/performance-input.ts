@@ -50,6 +50,7 @@ export const PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   styleUrls: ['./performance-input.scss'],
   providers: [PERFORMANCE_INPUT_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]> {
   /** Configurable display options (none currently used) */

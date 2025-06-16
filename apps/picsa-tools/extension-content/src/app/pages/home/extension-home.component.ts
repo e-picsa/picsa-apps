@@ -4,8 +4,9 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
+import { ConfigurationService } from '@picsa/configuration/src';
+import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
@@ -14,10 +15,7 @@ import { TourService } from '@picsa/shared/services/core/tour';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
 import { HOME_TOUR } from './extension-home.tour';
 
-interface IPageLink {
-  name: string;
-  svgIcon: string;
-  url: string;
+interface IPageLink extends IToolsDataEntry {
   /** Element ID used in tours */
   tourId: string;
   /** Specify if only shown in dev mode */
@@ -26,58 +24,60 @@ interface IPageLink {
 
 const PAGE_LINKS: IPageLink[] = [
   {
-    name: translateMarker('Manual'),
-    svgIcon: 'extension_app:manual_tool',
-    url: '/manual',
+    ...TOOLS_DATA_HASHMAP.manual,
     tourId: 'manual',
   },
+
   {
-    name: translateMarker('Farmer Activities'),
-    svgIcon: 'extension_app:farmer_activity',
-    url: '/farmer-activity',
-    tourId: 'farmer',
-  },
-  {
-    name: translateMarker('Resources'),
-    svgIcon: 'extension_app:resources_tool',
-    url: '/resources',
-    tourId: 'resources',
-  },
-  {
-    name: translateMarker('Monitoring'),
-    svgIcon: 'extension_app:data_collection',
-    url: '/monitoring',
-    tourId: 'monitoring',
-  },
-  {
-    name: translateMarker('Climate'),
-    svgIcon: 'extension_app:climate_tool',
-    url: '/climate',
+    ...TOOLS_DATA_HASHMAP.climate,
     tourId: 'climate',
   },
   {
-    name: translateMarker('Budget'),
-    svgIcon: 'extension_app:budget_tool',
-    url: '/budget',
+    ...TOOLS_DATA_HASHMAP.budget,
     tourId: 'budget',
   },
   {
-    name: translateMarker('Probability'),
-    svgIcon: 'extension_app:probability_tool',
-    url: '/crop-probability',
+    ...TOOLS_DATA_HASHMAP.crop_probability,
     tourId: 'crop-probability',
   },
   {
-    name: translateMarker('Options'),
-    svgIcon: 'extension_app:option_tool',
-    url: '/option',
+    ...TOOLS_DATA_HASHMAP.option,
     tourId: 'option',
   },
   {
-    name: translateMarker('Seasonal Calendar'),
-    svgIcon: 'extension_app:seasonal_calendar_tool',
-    url: '/seasonal-calendar',
+    ...TOOLS_DATA_HASHMAP.seasonal_calendar,
     tourId: 'seasonal-calendar',
+  },
+
+  // {
+  //   name: translateMarker('Discussions'),
+  //   svgIcon: 'picsa_discussions',
+  //   url: '/discussions',
+  // },
+
+  // {
+  //   name: 'Settings',
+  //   svgIcon: 'picsa_settings',
+  //   url: '/settings'
+  // }
+];
+
+const ADDITIONAL_LINKS: IPageLink[] = [
+  {
+    ...TOOLS_DATA_HASHMAP.resources,
+    tourId: 'resources',
+  },
+  {
+    ...TOOLS_DATA_HASHMAP.forecasts,
+    tourId: 'forecasts',
+  },
+  {
+    ...TOOLS_DATA_HASHMAP.farmer,
+    tourId: 'farmer',
+  },
+  {
+    ...TOOLS_DATA_HASHMAP.monitoring,
+    tourId: 'monitoring',
   },
 
   // {
@@ -104,7 +104,6 @@ if (!ENVIRONMENT.production) {
 
 @Component({
   selector: 'extension-home',
-  standalone: true,
   imports: [
     CommonModule,
     ExtensionToolkitMaterialModule,
@@ -118,8 +117,9 @@ if (!ENVIRONMENT.production) {
 })
 export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
   /** List of home page display links, filtered when running in production */
-  public links = PAGE_LINKS;
-  public version = APP_VERSION;
+  public picsaLinks = PAGE_LINKS;
+  public additionalLinks = ADDITIONAL_LINKS;
+  public version = APP_VERSION.semver;
 
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
@@ -128,20 +128,25 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
     public monitoringService: MonitoringToolService,
     private router: Router,
     private componentsService: PicsaCommonComponentsService,
-    private tourService: TourService
+    private tourService: TourService,
+    private configurationService: ConfigurationService
   ) {}
 
   linkClicked(link: IPageLink) {
     this.router.navigate([link.url]);
+    // hack - ensure farmer version enabled if navigating to it
+    if (link.url === '/farmer') {
+      this.configurationService.updateUserSettings({ user_type: 'farmer' });
+    }
   }
 
   ngOnDestroy(): void {
-    this.componentsService.patchHeader({ endContent: undefined });
+    this.componentsService.patchHeader({ cdkPortalEnd: undefined });
   }
 
   ngAfterViewInit() {
     this.componentsService.patchHeader({
-      endContent: new DomPortal(this.headerContent),
+      cdkPortalEnd: new DomPortal(this.headerContent),
     });
   }
 

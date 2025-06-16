@@ -5,27 +5,7 @@
     "context": "activities"
   },
   {
-    "text": "apply pesticide",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "bagging",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "banding",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
     "text": "build housing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "compost manure making",
     "tool": "budget",
     "context": "activities"
   },
@@ -36,36 +16,6 @@
   },
   {
     "text": "feeding livestock",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "harvesting",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "land clearing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "marketing and selling",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "mulching",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "ploughing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "post-harvest handling",
     "tool": "budget",
     "context": "activities"
   },
@@ -90,27 +40,7 @@
     "context": "activities"
   },
   {
-    "text": "shelling",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
     "text": "sowing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "storage",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "threshing",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "transport",
     "tool": "budget",
     "context": "activities"
   },
@@ -121,11 +51,6 @@
   },
   {
     "text": "vaccinate",
-    "tool": "budget",
-    "context": "activities"
-  },
-  {
-    "text": "value addition",
     "tool": "budget",
     "context": "activities"
   },
@@ -410,7 +335,7 @@
     "tool": "budget"
   },
   {
-    "text": "Consumed",
+    "text": "Card Label",
     "tool": "budget"
   },
   {
@@ -482,10 +407,6 @@
     "tool": "budget"
   },
   {
-    "text": "No outputs produce for consumption",
-    "tool": "budget"
-  },
-  {
     "text": "Outputs",
     "tool": "budget"
   },
@@ -531,14 +452,6 @@
   },
   {
     "text": "Total",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Consumed",
-    "tool": "budget"
-  },
-  {
-    "text": "Total Produced",
     "tool": "budget"
   },
   {
@@ -658,23 +571,7 @@
     "context": "chart"
   },
   {
-    "text": "Above",
-    "tool": "climate"
-  },
-  {
     "text": "Analyse",
-    "tool": "climate"
-  },
-  {
-    "text": "Below",
-    "tool": "climate"
-  },
-  {
-    "text": "Calculated with the date range of Start of rains and End of the rains",
-    "tool": "climate"
-  },
-  {
-    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
     "tool": "climate"
   },
   {
@@ -682,19 +579,15 @@
     "tool": "climate"
   },
   {
-    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
-    "tool": "climate"
-  },
-  {
     "text": "Line",
     "tool": "climate"
   },
   {
-    "text": "Print Version",
+    "text": "Map",
     "tool": "climate"
   },
   {
-    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
+    "text": "Print Version",
     "tool": "climate"
   },
   {
@@ -761,11 +654,39 @@
     "context": "buttons"
   },
   {
+    "text": "Above",
+    "tool": "common"
+  },
+  {
+    "text": "Add Photo",
+    "tool": "common"
+  },
+  {
     "text": "Are the changes a good idea?",
     "tool": "common"
   },
   {
     "text": "Are you sure you want to delete?",
+    "tool": "common"
+  },
+  {
+    "text": "Below",
+    "tool": "common"
+  },
+  {
+    "text": "Beyond PICSA",
+    "tool": "common"
+  },
+  {
+    "text": "Budget",
+    "tool": "common"
+  },
+  {
+    "text": "Calculated with the date range of Start of rains and End of the rains",
+    "tool": "common"
+  },
+  {
+    "text": "Capacity of 100mm on 1st March reduces 0.5 with evaporation rate of 5mm per day",
     "tool": "common"
   },
   {
@@ -777,11 +698,27 @@
     "tool": "common"
   },
   {
+    "text": "Clear All",
+    "tool": "common"
+  },
+  {
     "text": "Climate",
     "tool": "common"
   },
   {
     "text": "Demo",
+    "tool": "common"
+  },
+  {
+    "text": "Digital Skills Introduction",
+    "tool": "common"
+  },
+  {
+    "text": "District",
+    "tool": "common"
+  },
+  {
+    "text": "Draw Here",
     "tool": "common"
   },
   {
@@ -797,7 +734,39 @@
     "tool": "common"
   },
   {
-    "text": "Hide Options",
+    "text": "Farmer Activities",
+    "tool": "common"
+  },
+  {
+    "text": "First 3 days receiving rainfall amount of 20mm and not followed by 9-day dry spell for the next 21 days",
+    "tool": "common"
+  },
+  {
+    "text": "Forecasts",
+    "tool": "common"
+  },
+  {
+    "text": "Historic Climate",
+    "tool": "common"
+  },
+  {
+    "text": "How to Create Your Own Content",
+    "tool": "common"
+  },
+  {
+    "text": "How to Download and Install Apps",
+    "tool": "common"
+  },
+  {
+    "text": "How to Keep Your Device Operational",
+    "tool": "common"
+  },
+  {
+    "text": "How to Search for and Evaluate Digital Information",
+    "tool": "common"
+  },
+  {
+    "text": "How to share content with others",
     "tool": "common"
   },
   {
@@ -809,7 +778,23 @@
     "tool": "common"
   },
   {
-    "text": "Is your climate changing?",
+    "text": "Interactive Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Introduction",
+    "tool": "common"
+  },
+  {
+    "text": "Loading",
+    "tool": "common"
+  },
+  {
+    "text": "Manual",
+    "tool": "common"
+  },
+  {
+    "text": "Monitoring",
     "tool": "common"
   },
   {
@@ -821,7 +806,27 @@
     "tool": "common"
   },
   {
+    "text": "No photos added",
+    "tool": "common"
+  },
+  {
     "text": "Options",
+    "tool": "common"
+  },
+  {
+    "text": "PDF Viewer not supported on this device",
+    "tool": "common"
+  },
+  {
+    "text": "Participatory Budgets",
+    "tool": "common"
+  },
+  {
+    "text": "Please install the latest version of Google Chrome and restart",
+    "tool": "common"
+  },
+  {
+    "text": "Probability",
     "tool": "common"
   },
   {
@@ -829,7 +834,27 @@
     "tool": "common"
   },
   {
+    "text": "Province",
+    "tool": "common"
+  },
+  {
+    "text": "Redo",
+    "tool": "common"
+  },
+  {
     "text": "Resource Allocation Map",
+    "tool": "common"
+  },
+  {
+    "text": "Resources",
+    "tool": "common"
+  },
+  {
+    "text": "Restart App",
+    "tool": "common"
+  },
+  {
+    "text": "Review",
     "tool": "common"
   },
   {
@@ -837,11 +862,39 @@
     "tool": "common"
   },
   {
-    "text": "Show Options",
+    "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
+    "tool": "common"
+  },
+  {
+    "text": "Testimonials",
     "tool": "common"
   },
   {
     "text": "Tutorials",
+    "tool": "common"
+  },
+  {
+    "text": "Undo",
+    "tool": "common"
+  },
+  {
+    "text": "Update",
+    "tool": "common"
+  },
+  {
+    "text": "Use the forecasts to update and adapt your plans",
+    "tool": "common"
+  },
+  {
+    "text": "Using The Tool",
+    "tool": "common"
+  },
+  {
+    "text": "Using The tool",
+    "tool": "common"
+  },
+  {
+    "text": "Using the App",
     "tool": "common"
   },
   {
@@ -865,7 +918,15 @@
     "tool": "common"
   },
   {
+    "text": "What is happening to the climate in your area?",
+    "tool": "common"
+  },
+  {
     "text": "Who is using?",
+    "tool": "common"
+  },
+  {
+    "text": "You decide and make a plan",
     "tool": "common"
   },
   {
@@ -886,6 +947,66 @@
   },
   {
     "text": "Weeding",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "apply pesticide",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "bagging",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "banding",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "compost manure making",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "harvesting",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "land clearing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "marketing and selling",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "mulching",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "ploughing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "post-harvest handling",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "shelling",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "storage",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "threshing",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "transport",
+    "tool": "common_crop_activity"
+  },
+  {
+    "text": "value addition",
     "tool": "common_crop_activity"
   },
   {
@@ -925,11 +1046,23 @@
     "tool": "common_crops"
   },
   {
+    "text": "Paprika",
+    "tool": "common_crops"
+  },
+  {
     "text": "Paw-paw",
     "tool": "common_crops"
   },
   {
+    "text": "Pearl Millet",
+    "tool": "common_crops"
+  },
+  {
     "text": "Pigeon Peas",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Potatoes",
     "tool": "common_crops"
   },
   {
@@ -938,6 +1071,10 @@
   },
   {
     "text": "Rice",
+    "tool": "common_crops"
+  },
+  {
+    "text": "Sesame",
     "tool": "common_crops"
   },
   {
@@ -1170,10 +1307,6 @@
     "tool": "common_weather"
   },
   {
-    "text": "Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Nkhotakota Met Station.",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
     "tool": "crop-probability"
   },
@@ -1203,10 +1336,6 @@
   },
   {
     "text": "In the crop information table, you will be able to see the probabilities for different crops through the different seasons.",
-    "tool": "crop-probability"
-  },
-  {
-    "text": "Longitude:34.26, Latitude: -12.91 Altitude: 500.",
     "tool": "crop-probability"
   },
   {
@@ -1242,27 +1371,11 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Farmer Activities",
+    "text": "Additional",
     "tool": "extension-content"
   },
   {
-    "text": "Manual",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Monitoring",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Probability",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Resources",
-    "tool": "extension-content"
-  },
-  {
-    "text": "Take App Tour",
+    "text": "Training",
     "tool": "extension-content"
   },
   {
@@ -1282,24 +1395,28 @@
     "tool": "extension"
   },
   {
-    "text": "Activity",
-    "tool": "farmer-activity"
+    "text": "Switch to Extension",
+    "tool": "extension"
   },
   {
-    "text": "After watching continue to the activity",
-    "tool": "farmer-activity"
+    "text": "Switch to Farmer",
+    "tool": "extension"
   },
   {
-    "text": "In this video you will learn about the PICSA step:",
-    "tool": "farmer-activity"
+    "text": "If you recorded anything on paper you can capture photos here",
+    "tool": "farmer-content"
   },
   {
-    "text": "Intro",
-    "tool": "farmer-activity"
+    "text": "Daily",
+    "tool": "forecasts"
   },
   {
-    "text": "Tool",
-    "tool": "farmer-activity"
+    "text": "National",
+    "tool": "forecasts"
+  },
+  {
+    "text": "Seasonal",
+    "tool": "forecasts"
   },
   {
     "text": "Activity Flow Chart",
@@ -1307,10 +1424,6 @@
   },
   {
     "text": "After the season",
-    "tool": "manual"
-  },
-  {
-    "text": "Budget",
     "tool": "manual"
   },
   {
@@ -1339,10 +1452,6 @@
   },
   {
     "text": "Historic climate",
-    "tool": "manual"
-  },
-  {
-    "text": "Introduction",
     "tool": "manual"
   },
   {
@@ -1383,10 +1492,6 @@
   },
   {
     "text": "Response to forecast",
-    "tool": "manual"
-  },
-  {
-    "text": "Review",
     "tool": "manual"
   },
   {
@@ -1750,7 +1855,7 @@
     "tool": "seasonal-calendar"
   },
   {
-    "text": "Create Calendar",
+    "text": "Create",
     "tool": "seasonal-calendar"
   },
   {

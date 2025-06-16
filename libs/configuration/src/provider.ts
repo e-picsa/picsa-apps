@@ -1,6 +1,6 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILanguageCode } from '@picsa/data/deployments';
+import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILocaleCode } from '@picsa/data/deployments';
 import { debounceTime } from 'rxjs';
 
 export interface IUserSettings {
@@ -9,9 +9,19 @@ export interface IUserSettings {
   /** Selected country */
   country_code: ICountryCode;
   /** ID of selected language */
-  language_code: ILanguageCode;
+  language_code: ILocaleCode;
   /** Specify if using farmer or extension app user_type */
   user_type: 'farmer' | 'extension';
+  /**
+   * User location, stored as an array to allow for hierarchy by osm admin level,
+   * https://wiki.openstreetmap.org/wiki/Key:admin_level
+   * @example [null,null,'malawi','northern','karonga']
+   */
+  location: (string | undefined)[];
+  /** Selected station for the climate tool */
+  climate_tool?: {
+    station_id: string;
+  };
 }
 
 const USER_CONFIGURATION_DEFAULT: IUserSettings = {
@@ -19,6 +29,8 @@ const USER_CONFIGURATION_DEFAULT: IUserSettings = {
   deployment_id: null as any,
   language_code: null as any,
   user_type: null as any,
+  location: [],
+  climate_tool: { station_id: '' },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -46,6 +58,13 @@ export class ConfigurationService {
       } else {
         document.body.dataset['theme'] = 'picsa-default';
       }
+    });
+
+    effect(() => {
+      // ensure sublocation kept in sync with country selected
+      const { country_code, location } = this.userSettings();
+      if (location[2] === country_code) return;
+      this.userSettings.update((v) => ({ ...v, location: [undefined, undefined, country_code] }));
     });
   }
 

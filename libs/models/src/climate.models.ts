@@ -1,7 +1,5 @@
 import * as c3 from 'c3';
 
-import { IDBDoc } from './db.models';
-
 export interface ICropRequirement {
   crop: string;
   variety: string;
@@ -14,16 +12,22 @@ export interface ICropRequirement {
 }
 
 export interface IStationMeta {
+  id: string;
   name: string;
   latitude: number;
   longitude: number;
   countryCode: string;
+  district?: string;
   /** Data summaries for charts */
   data?: IStationData[];
   /** Definitions for charts */
   definitions: IChartDefinitions;
+  /**
+   * Mark station in draft state (e.g. pending data approval)
+   * Draft stations appear in global deployment but not country-specific
+   **/
+  draft?: boolean;
 }
-export type IStationMetaDB = IStationMeta & IDBDoc;
 
 export interface IStationData {
   Year: number;

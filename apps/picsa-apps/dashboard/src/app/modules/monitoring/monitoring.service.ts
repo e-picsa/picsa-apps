@@ -10,6 +10,9 @@ import { firstValueFrom, Observable } from 'rxjs';
 
 export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
 
+const FORMS_TABLE = 'monitoring_forms';
+const SUBMISSIONS_TABLE = 'monitoring_tool_submissions';
+
 export interface IMonitoringStorageEntry extends IStorageEntry {
   /** Url generated when upload to public bucket (will always be populated, even if bucket not public) */
   publicUrl: string;
@@ -17,11 +20,9 @@ export interface IMonitoringStorageEntry extends IStorageEntry {
 @Injectable({ providedIn: 'root' })
 export class MonitoringFormsDashboardService extends PicsaAsyncService {
   public forms: IMonitoringFormsRow[] = [];
-  public TABLE_NAME = 'monitoring_forms';
-  public SUBMISSIONS_TABLE_NAME = 'monitoring_tool_submissions';
 
   public get table() {
-    return this.supabaseService.db.table(this.TABLE_NAME);
+    return this.supabaseService.db.table(FORMS_TABLE);
   }
 
   constructor(
@@ -37,7 +38,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
   }
 
   public async listMonitoringForms() {
-    const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).select<'*', IMonitoringFormsRow>('*');
+    const { data, error } = await this.supabaseService.db.table(FORMS_TABLE).select<'*', IMonitoringFormsRow>('*');
     if (error) {
       throw error;
     }
@@ -46,7 +47,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
 
   // Fetch a form record by ID
   public async getFormById(id: string): Promise<IMonitoringFormsRow> {
-    const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).select('*').eq('id', id).single();
+    const { data, error } = await this.supabaseService.db.table(FORMS_TABLE).select('*').eq('id', id).single();
     if (error) {
       throw error;
     }
@@ -54,10 +55,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
   }
 
   public async getSubmissions(formId: string) {
-    const { data, error } = await this.supabaseService.db
-      .table(this.SUBMISSIONS_TABLE_NAME)
-      .select('*')
-      .eq('formId', formId);
+    const { data, error } = await this.supabaseService.db.table(SUBMISSIONS_TABLE).select('*').eq('formId', formId);
     if (error) {
       throw error;
     }
@@ -66,7 +64,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
 
   public async updateFormById(id: string, updatedForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow> {
     const { data, error } = await this.supabaseService.db
-      .table(this.TABLE_NAME)
+      .table(FORMS_TABLE)
       .update(updatedForm)
       .eq('id', id)
       .select()
@@ -77,9 +75,9 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return data;
   }
   public async createForm(newForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow | null> {
-    const { data, error } = await this.supabaseService.db.table(this.TABLE_NAME).insert(newForm).single();
+    const { data, error } = await this.supabaseService.db.table(FORMS_TABLE).insert(newForm).single();
     if (error) {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
+      throw new Error(error.message);
     }
     return data;
   }
@@ -95,8 +93,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
       const { result } = await firstValueFrom(this.http.post(url, file) as Observable<XFormConvertRes>);
       return result;
     } catch (error: any) {
-      console.error(error);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error?.message || error });
+      throw new Error(error?.message || error);
       return null;
     }
   }
@@ -112,7 +109,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
       return convertedFiles[0]?.content;
     } catch (error: any) {
       console.error(error);
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error?.message || error });
+      throw new Error(error?.message || error);
       return null;
     }
   }

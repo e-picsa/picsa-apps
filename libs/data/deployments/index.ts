@@ -1,56 +1,9 @@
 import { arrayToHashmap } from '@picsa/utils/data';
-import { IStationMetaDB } from '@picsa/models/src';
+import { IStationMeta } from '@picsa/models/src';
+import { ICountryCode } from './countries';
 
-/*******************************************************************
- * Country Settings
- ********************************************************************/
-const COUNTRIES_BASE = {
-  global: { label: 'Global' },
-  mw: { label: 'Malawi' },
-  zm: { label: 'Zambia' },
-  tj: { label: 'Tajikistan' },
-} as const;
-
-export type ICountryCode = keyof typeof COUNTRIES_BASE;
-export const COUNTRIES_DATA = Object.entries(COUNTRIES_BASE).map(([id, { label }]) => ({
-  id: id as ICountryCode,
-  label: label as string,
-  flag_path: `assets/images/flags/${id}.svg`,
-}));
-export type ICountriesDataEntry = typeof COUNTRIES_DATA[0];
-export const COUNTRIES_DATA_HASHMAP = arrayToHashmap(COUNTRIES_DATA, 'id') as {
-  [code in ICountryCode]: ICountriesDataEntry;
-};
-
-/*******************************************************************
- * Language Settings
- ********************************************************************/
-interface ILanguageMeta {
-  language_code: string;
-  language_label: string;
-  country_code: ICountryCode;
-  country_label: string;
-  flag_path?: string;
-}
-const LANGUAGES_BASE = {
-  global_en: { language_code: 'en', language_label: 'English', country_code: 'global' },
-  mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw' },
-  zm_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'zm' },
-  tj_tg: { language_code: 'tg', language_label: 'Тоҷикӣ', country_code: 'tj' },
-} as const;
-
-export type ILanguageCode = keyof typeof LANGUAGES_BASE;
-export const LANGUAGES_DATA = Object.entries(LANGUAGES_BASE).map(([id, data]) => ({
-  id: id as ILanguageCode,
-  flag_path: `assets/images/flags/${data.country_code}.svg`,
-  ...(data as ILanguageMeta),
-  country_label: COUNTRIES_DATA_HASHMAP[data.country_code]?.label,
-}));
-
-export type ILanguageDataEntry = typeof LANGUAGES_DATA[0];
-export const LANGUAGES_DATA_HASHMAP = arrayToHashmap(LANGUAGES_DATA, 'id') as {
-  [code in ILanguageCode]: ILanguageDataEntry;
-};
+export * from './countries';
+export * from './locales';
 
 /*******************************************************************
  * Deployment Settings
@@ -68,7 +21,7 @@ export interface IDeploymentSettings {
   };
   climateTool: {
     /** Filter function for stations. Default filter by country_code (defined in site-select.page.ts) */
-    station_filter?: (station: IStationMetaDB) => boolean;
+    station_filter?: (station: IStationMeta) => boolean;
   };
   theme: string;
 }

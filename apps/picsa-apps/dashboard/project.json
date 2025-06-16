@@ -13,11 +13,11 @@
         "outputPath": "dist/apps/picsa-apps/dashboard",
         "index": "apps/picsa-apps/dashboard/src/index.html",
         "browser": "apps/picsa-apps/dashboard/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-apps/dashboard/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/picsa-apps/dashboard/src/favicon.ico",
+          "apps/picsa-apps/dashboard/src/favicon.svg",
           "apps/picsa-apps/dashboard/src/assets",
           {
             "glob": "*.svg",
@@ -45,7 +45,12 @@
             "output": "assets/climate-icons"
           }
         ],
-        "styles": ["apps/picsa-apps/dashboard/src/styles.scss", "node_modules/leaflet/dist/leaflet.css"],
+        "styles": [
+          "apps/picsa-apps/dashboard/src/styles.scss",
+          "node_modules/leaflet/dist/leaflet.css",
+          "@uppy/core/dist/style.min.css",
+          "@uppy/dashboard/dist/style.min.css"
+        ],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]
         },
@@ -57,7 +62,7 @@
             {
               "type": "initial",
               "maximumWarning": "500kb",
-              "maximumError": "3mb"
+              "maximumError": "5mb"
             },
             {
               "type": "anyComponentStyle",

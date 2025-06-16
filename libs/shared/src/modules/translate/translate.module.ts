@@ -1,6 +1,7 @@
 // similar code in core, however this is known working implementation
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
+// eslint-disable-next-line no-restricted-imports
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -24,7 +25,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [],
   imports: [
-    HttpClientModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -34,13 +34,12 @@ export function HttpLoaderFactory(http: HttpClient) {
       isolate: false,
     }),
   ],
-  exports: [],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class _PicsaTranslateRootModule {}
 
 @NgModule({
   imports: [
-    HttpClientModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -50,7 +49,7 @@ export class _PicsaTranslateRootModule {}
       isolate: false,
     }),
   ],
-  exports: [],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class _PicsaTranslateChildModule {}
 

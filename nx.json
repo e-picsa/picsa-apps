@@ -15,11 +15,17 @@
       "unitTestRunner": "jest"
     },
     "@nx/angular:component": {
-      "style": "scss"
+      "style": "scss",
+      "changeDetection": "OnPush"
     }
   },
   "defaultProject": "picsa-apps-extension-app",
   "targetDefaults": {
+    "serve": {
+      "options": {
+        "proxyConfig": "{workspaceRoot}/proxy.conf.js"
+      }
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],

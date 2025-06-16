@@ -1,6 +1,9 @@
 station_id,country_code,station_name,latitude,longitude,elevation,district
-1,zm_test,Chipata,-13.56,32.59,1025,Chipata
-16,zm_test,Lundazi,-12.29,33.18,1138,Lundazi
-23,zm_test,Mfuwe,-13.25,31.93,557,Mambwe
-28,zm_test,Msekera,-13.65,32.56,1011,Chipata
-33,zm_test,Petauke,-14.25,31.34,1022,Petauke
+chipata_met,zm_workshops,Chipata Met,-13.6,32.6,1025,Chipata
+lundazi_met,zm_workshops,Lundazi Met,-12.28,33.2,1143,Lundazi
+mfuwe_met,zm_workshops,Mfuwe Met,-13.26,31.93,570,Mambwe
+msekera_agromet,zm_workshops,Msekera Agromet,-13.65,32.56,1025,Chipata
+petauke_met,zm_workshops,Petauke Met,-14.25,31.28,1036,Petauke
+mansa_met,zm_workshops,MANSA MET,-11.1,28.85,1259,Mansa
+nkhotakota,mw_workshops,Nkhotakota,-12.9,34.28,500,Nhkotakota
+kasungu,mw_workshops,Kasungu,-13.02,33.47,1300,Kasungu

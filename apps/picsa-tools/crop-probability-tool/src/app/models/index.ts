@@ -2,11 +2,12 @@ import { ICropName } from '@picsa/data';
 
 export interface IStationCropInformation {
   id: string;
+  station_district_id: string;
   station_name: string;
-  station_data: IStationCropData[];
-  notes: string[];
+  data: IStationCropData[];
   dates: string[];
   season_probabilities: string[];
+  notes: string[];
 }
 
 export interface IStationCropData {

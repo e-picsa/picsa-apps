@@ -12,6 +12,9 @@ export class VideoPlayerService extends PicsaAsyncService {
   private dbService: PicsaDatabase_V2_Service;
   private collection: RxCollection<Schema.IVideoPlayerEntry>;
 
+  /** Keep cache of generated thumbnails */
+  public thumbnailCache = new Map<string, string>();
+
   constructor(dbService: PicsaDatabase_V2_Service) {
     super();
     this.dbService = dbService;
@@ -19,8 +22,8 @@ export class VideoPlayerService extends PicsaAsyncService {
 
   override async init() {
     try {
-      await this.dbService.ensureCollections({ [Schema.COLLECTION_NAME]: Schema.COLLECTION });
-      this.collection = this.dbService.db.collections[Schema.COLLECTION_NAME] as RxCollection<Schema.IVideoPlayerEntry>;
+      await this.dbService.ensureCollections({ video_player: Schema.COLLECTION });
+      this.collection = this.dbService.db.collections.video_player as RxCollection<Schema.IVideoPlayerEntry>;
     } catch (error) {
       console.error('Failed to initialize database:', error);
     }

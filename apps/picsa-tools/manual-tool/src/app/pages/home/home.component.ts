@@ -3,11 +3,11 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, O
 import { ActivatedRoute } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { ILanguageCode } from '@picsa/data/deployments';
-import { IResourceFile } from '@picsa/resources/src/app/schemas';
-import { ResourcesToolService } from '@picsa/resources/src/app/services/resources-tool.service';
+import { ILocaleCode } from '@picsa/data/deployments';
+import { IResourceFile } from '@picsa/resources/schemas';
+import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
-import { RxAttachment, RxDocument } from 'rxdb';
+import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PICSA_MANUAL_CONTENTS_EXTENSION, PICSA_MANUAL_CONTENTS_FARMER } from '../../data';
@@ -35,6 +35,7 @@ const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IReso
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [FlyInOut({ axis: 'Y' }), FadeInOut({ inDelay: 200, inSpeed: 300 })],
+  standalone: false,
 })
 export class HomeComponent implements OnDestroy, AfterViewInit {
   // TODO - ideally all variables should be tracked by version (use additional component)
@@ -43,7 +44,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     extension: null,
   };
 
-  public languageCode: ILanguageCode;
+  public languageCode: ILocaleCode;
 
   public page?: number = undefined;
   public pdfSrc?: string;
@@ -84,11 +85,9 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   }
 
   /** Prompt manual load if resource file attachment updated */
-  public async handleResourceAttachmentChange(attachment?: RxAttachment<IResourceFile>) {
-    if (attachment) {
-      await this.loadManual();
-      this.cdr.markForCheck();
-    }
+  public async handleManualDownloaded() {
+    await this.loadManual();
+    this.cdr.markForCheck();
   }
 
   /**

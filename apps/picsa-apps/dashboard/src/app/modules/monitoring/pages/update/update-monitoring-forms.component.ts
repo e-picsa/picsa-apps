@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
@@ -11,21 +10,23 @@ import {
   SupabaseStoragePickerDirective,
   SupabaseUploadComponent,
 } from '@picsa/shared/services/core/supabase';
-import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
+import {
+  IStorageEntry,
+  SupabaseStorageService,
+} from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 import { UppyFile } from '@uppy/core';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { v4 as uuidV4 } from 'uuid';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { MonitoringFormsDashboardService } from '../../monitoring.service';
 
 export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
 
 @Component({
   selector: 'dashboard-monitoring-update',
-  standalone: true,
   imports: [
-    CommonModule,
     DashboardMaterialModule,
     FormsModule,
     ReactiveFormsModule,
@@ -37,12 +38,13 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   ],
   templateUrl: './update-monitoring-forms.component.html',
   styleUrls: ['./update-monitoring-forms.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpdateMonitoringFormsComponent implements OnInit {
   public convertXlsxFeedbackMessage = '';
   public allowedFileTypes = ['xlsx', 'xls'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
-  public storageBucketName = 'global';
+  public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
   public storageFolderPath = 'monitoring/forms';
   public coverImageStorageFolder = 'monitoring/cover_images';
   public formID: string | null = null;
@@ -53,7 +55,7 @@ export class UpdateMonitoringFormsComponent implements OnInit {
   public form = this.formBuilder.group({
     title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
     description: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    cover_image: new FormControl<string>(''),
+    cover_image: new FormControl<string>(null as any),
     form_xlsx: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
     enketo_form: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
     enketo_model: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
@@ -67,7 +69,8 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     private route: ActivatedRoute,
     private storageService: SupabaseStorageService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private deploymentService: DeploymentDashboardService
   ) {}
   async ngOnInit() {
     await this.service.ready();
@@ -94,13 +97,24 @@ export class UpdateMonitoringFormsComponent implements OnInit {
       // TODO - remove uploaded file and reset form
       console.log('TODO - remove form entry', this.form.value);
       //   const storagePath = `${this.storageFolderPath}/${entry.name}`;
-      //   const { error } = await this.storageService.deleteFile(this.storageBucketName, storagePath);
+      //   const { error } = await this.storageService.deleteFile(this.storageBucketName(), storagePath);
       //   if (error) throw error;
     }
   }
 
-  public handleCoverFileSelected(e) {
-    // TODO - fix picker and bindings
+  public async handleFormFileSelected(entry?: IStorageEntry) {
+    if (entry) {
+      const url = this.storageService.getPublicLink(entry.bucket_id as string, entry.name as string);
+      // TODO - convert to file object and pass to converter
+    }
+  }
+
+  public handleCoverFileSelected(entry?: IStorageEntry) {
+    if (entry) {
+      this.form.patchValue({ cover_image: `${entry.bucket_id}/${entry.name}` });
+    } else {
+      this.form.patchValue({ cover_image: null });
+    }
   }
 
   /**
@@ -122,7 +136,6 @@ export class UpdateMonitoringFormsComponent implements OnInit {
       const formData = new FormData();
       formData.append('files', xmlFile);
       const enketoContent = await this.service.submitFormToConvertXFormToEnketo(formData);
-
       // Step 3 - upload form to supabase
       if (enketoContent) {
         this.convertXlsxFeedbackMessage = 'Uploading to storage...';
@@ -133,10 +146,10 @@ export class UpdateMonitoringFormsComponent implements OnInit {
         if (entry) {
           const { form, languageMap, model, theme } = enketoContent;
           this.form.patchValue({
-            enketo_form: form,
-            enketo_model: model,
+            enketo_form: this.encodeEnketoHTML(form),
+            enketo_model: this.encodeEnketoXML(model),
             enketo_definition: { ...languageMap, theme },
-            form_xlsx: `${this.storageBucketName}/${this.storageFolderPath}/${entry.name}`,
+            form_xlsx: `${this.storageBucketName()}/${this.storageFolderPath}/${entry.name}`,
           });
           this.convertXlsxFeedbackMessage = 'Form uploaded successfully!';
         }
@@ -151,14 +164,13 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     if (res.length === 0) {
       return;
     }
-    const [{ entry }] = res;
+    const [{ meta }] = res;
     this.form.patchValue({
-      cover_image: `${this.storageBucketName}/${this.coverImageStorageFolder}/${entry.name}`,
+      cover_image: `${meta.bucketName}/${meta.objectName}`,
     });
   }
   public async handleSubmitForm() {
     const values = this.form.getRawValue();
-    console.log('submit form', values);
     // handle update
     if (this.formID) {
       const updatedValues = Object.fromEntries(Object.entries(values).filter(([key, value]) => value !== ''));
@@ -171,5 +183,16 @@ export class UpdateMonitoringFormsComponent implements OnInit {
       await this.service.createForm({ ...values, id: this.formID });
     }
     this.router.navigate([`/monitoring/${this.formID}`]);
+  }
+
+  /** Replace html entities and encode as base64 */
+  private encodeEnketoHTML(html: string) {
+    const replaced = html.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+    return btoa(replaced);
+  }
+
+  /** Encode as base64 */
+  private encodeEnketoXML(xml: string) {
+    return btoa(xml);
   }
 }

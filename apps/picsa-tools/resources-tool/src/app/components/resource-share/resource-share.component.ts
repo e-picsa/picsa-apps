@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Capacitor } from '@capacitor/core';
 import { RxAttachment } from 'rxdb';
 
@@ -10,6 +12,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   templateUrl: './resource-share.component.html',
   styleUrls: ['./resource-share.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatButtonModule, MatIconModule],
 })
 export class ResourceShareComponent {
   public attachment?: RxAttachment<IResourceFile>;

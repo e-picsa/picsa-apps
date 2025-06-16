@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
 
@@ -20,7 +20,6 @@ const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
 
 @Component({
   selector: 'dashboard-resource-links',
-  standalone: true,
   imports: [
     CommonModule,
     CommonModule,
@@ -31,14 +30,16 @@ const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
   ],
   templateUrl: './resource-links.component.html',
   styleUrl: './resource-links.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinksComponent implements OnInit {
   public links: IResourceLinkRow[] = [];
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
+    handleRowClick: (row: IResourceLinkRow) => this.router.navigate([row.id], { relativeTo: this.route }),
   };
 
-  constructor(private service: ResourcesDashboardService) {
+  constructor(private service: ResourcesDashboardService, private router: Router, private route: ActivatedRoute) {
     effect(() => {
       const links = service.links();
       this.links = links.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));

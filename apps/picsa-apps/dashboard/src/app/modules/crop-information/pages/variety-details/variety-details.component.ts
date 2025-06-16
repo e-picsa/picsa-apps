@@ -1,116 +1,82 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PicsaFormsModule } from '@picsa/forms';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { Subject, takeUntil } from 'rxjs';
+import { map } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { CropInformationService, ICropInformationInsert, ICropInformationRow } from '../../services';
+import { CropInformationService, ICropData, ICropDataMerged } from '../../services';
+import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
+import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
+
+type RouteParams = { id: string };
 
 @Component({
   selector: 'dashboard-crop-variety-details',
-  standalone: true,
-  imports: [CommonModule, DashboardMaterialModule, RouterModule, FormsModule, PicsaFormsModule, ReactiveFormsModule],
+  imports: [
+    DashboardCropVarietyFormComponent,
+    DashboardCropWaterRequirementsComponent,
+    DashboardMaterialModule,
+    RouterModule,
+  ],
   templateUrl: './variety-details.component.html',
   styleUrl: './variety-details.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CropVarietyDetailsComponent implements OnInit, OnDestroy {
-  entryForm = this.formBuilder.nonNullable.group({
-    id: new FormControl(), // populated by server or on edit
-    crop: ['', Validators.required],
-    variety: ['', Validators.required],
-    label: new FormControl<string>(''),
+export class CropVarietyDetailsComponent {
+  public isNewEntry = signal(false);
+  public editMode = signal(false);
+  public cropData = signal<ICropDataMerged | undefined>(undefined);
 
-    // water_lower: [0],
-    // water_upper: [0],
-    // length_lower: [0],
-    // length_upper: [0],
-  });
-
-  /** Utility method, retained to ensure rawValue corresponds to expected CaledarDataEntry type */
-  private get formValue() {
-    const entry: ICropInformationInsert = this.entryForm.getRawValue();
-    return entry;
-  }
-  private componentDestroyed$ = new Subject<boolean>();
+  private cropId = toSignal(this.route.params.pipe(map((v) => (v as RouteParams).id)));
 
   constructor(
-    private service: CropInformationService,
-    private formBuilder: FormBuilder,
+    public service: CropInformationService,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: PicsaNotificationService,
     public dialog: MatDialog
-  ) {}
-
-  async ngOnInit() {
-    await this.service.ready();
-
-    const { id } = this.route.snapshot.params;
-    // load editable entry from route param unless on /new route
-    if (id && id !== 'add') {
-      await this.loadEditableEntry(id);
-      // avoid crop type or variety change after entry created as wil change id
-      this.entryForm.controls.crop.disable();
-      this.entryForm.controls.variety.disable();
-    }
-    this.addFormValueModifiers();
-  }
-
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next(true);
-    this.componentDestroyed$.complete();
-  }
-
-  async submitForm() {
-    try {
-      if (this.formValue.id) {
-        await this.service.update(this.formValue);
-      } else {
-        // remove null id when adding crop probability
-        const { id, ...data } = this.formValue;
-        await this.service.insert(data);
+  ) {
+    service.ready();
+    effect(() => {
+      if (!service.readySignal()) return;
+      const cropId = this.cropId();
+      if (cropId === 'add') {
+        this.isNewEntry.set(true);
+        this.editMode.set(true);
+        return;
       }
-      // navigate back after successful addition
-      return this.goToVarietyListPage();
-    } catch (error: any) {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
-    }
-  }
-
-  public async handleDelete() {
-    await this.service.table.delete().eq('id', this.formValue.id);
-    return this.goToVarietyListPage();
-  }
-  private goToVarietyListPage() {
-    this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
-  }
-
-  /**
-   * Automatically alter inputs to clean and sanitize data
-   * Enforces variety names to be upper case with only alphanumeric and dash allowed
-   */
-  private addFormValueModifiers() {
-    this.entryForm.controls.variety.valueChanges.pipe(takeUntil(this.componentDestroyed$)).subscribe((variety) => {
-      const cleanedValue = variety.toUpperCase().replace(/[^0-9a-z-]/gi, '-');
-      if (variety !== cleanedValue) {
-        this.entryForm.patchValue({ variety: cleanedValue }, { emitEvent: true });
+      const mergedData = this.service.cropDataMerged();
+      if (mergedData) {
+        const cropData = mergedData.find((v) => v.id === cropId);
+        if (cropData) {
+          this.cropData.set(cropData);
+          return;
+        } else {
+          this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
+          throw new Error(`No data exists for crop: ${cropId}`);
+        }
       }
     });
   }
 
-  /** Load an existing db record for editing */
-  private async loadEditableEntry(id: string) {
-    const { data, error } = await this.service.table.select<'*', ICropInformationRow>('*').eq('id', id).single();
-    if (data) {
-      this.entryForm.patchValue(data);
+  public async submitForm(value: ICropData['Insert']) {
+    if (value.id) {
+      await this.service.update(value);
+    } else {
+      // remove null id when adding crop probability
+      const { id, ...data } = value;
+      await this.service.insert([data]);
     }
-    if (error) {
-      this.notificationService.showUserNotification({ matIcon: 'error', message: error.message });
-      this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
-    }
+    // navigate back after successful addition
+    return this.goToVarietyListPage();
+  }
+
+  public async handleDelete(id: string) {
+    await this.service.delete(id);
+    return this.goToVarietyListPage();
+  }
+
+  private goToVarietyListPage() {
+    this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
   }
 }

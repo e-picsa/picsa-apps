@@ -17,31 +17,12 @@
         "commands": ["firebase deploy --only hosting:resources-tool"]
       }
     },
-    "preBuild": {
-      "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/src/assets/resources/**"],
-      "outputs": ["{projectRoot}/src/assets/resources/contents.json"],
-      "options": {
-        "command": "yarn ts-node tools/workflows/populateResourceContents.ts"
-      }
-    },
+
     "build": {
-      "dependsOn": [
-        {
-          "target": "preBuild"
-        }
-      ],
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": [
-          "lottie-web/build/player/lottie_light",
-          "downloadjs",
-          "html2canvas",
-          "save-svg-as-png",
-          "fast-xml-parser",
-          "leaflet"
-        ],
+        "allowedCommonJsDependencies": ["*"],
         "outputPath": "dist/apps/picsa-tools/resources-tool",
         "index": "apps/picsa-tools/resources-tool/src/index.html",
         "main": "apps/picsa-tools/resources-tool/src/main.ts",
@@ -95,10 +76,7 @@
           "buildTarget": "picsa-tools-resources-tool:build:development"
         }
       },
-      "defaultConfiguration": "development",
-      "options": {
-        "proxyConfig": "apps/picsa-tools/resources-tool/proxy.conf.json"
-      }
+      "defaultConfiguration": "development"
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

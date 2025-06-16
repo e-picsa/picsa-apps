@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { ResourceItemCollectionComponent } from '../../components';
 import { IResourceCollection } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
@@ -7,6 +12,7 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   selector: 'resource-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  imports: [PicsaTranslateModule, MatButtonModule, MatIconModule, ResourceItemCollectionComponent, RouterLink],
 })
 export class HomeComponent implements OnInit {
   public collections: IResourceCollection[];

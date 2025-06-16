@@ -6,6 +6,7 @@ import { ClimateDataService } from '../../../services/climate-data.service';
 @Component({
   selector: 'climate-combined-probability',
   templateUrl: 'combined-probability.html',
+  standalone: false,
 })
 export class CombinedProbabilityComponent {
   @Input() data: IStationData[];

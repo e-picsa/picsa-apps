@@ -1,9 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { RxDocument } from 'rxdb';
 import { Subject } from 'rxjs';
 
+import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '../../components';
 import { IResourceFile } from '../../schemas';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
@@ -13,6 +19,17 @@ const DISPLAY_COLUMNS: (keyof IResourceFile)[] = ['mimetype', 'title', 'size_kb'
   selector: 'resource-downloads',
   templateUrl: './downloads.page.html',
   styleUrls: ['./downloads.page.scss'],
+  imports: [
+    MatTableModule,
+    MatSortModule,
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule,
+    PicsaTranslateModule,
+    SizeMBPipe,
+    ResourceDownloadMultipleComponent,
+    ResourceDownloadComponent,
+  ],
 })
 export class DownloadsPageComponent implements OnInit, OnDestroy {
   private componentDestroyed$ = new Subject();

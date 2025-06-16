@@ -2,10 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { CropProbabilityComponent } from './pages/probability/probability.component';
-import { CropVarietyComponent } from './pages/variety/variety.component';
-import { CropVarietyDetailsComponent } from './pages/variety-details/variety-details.component';
-
 @NgModule({
   declarations: [],
   imports: [
@@ -17,16 +13,22 @@ import { CropVarietyDetailsComponent } from './pages/variety-details/variety-det
         pathMatch: 'full',
       },
       {
+        path: 'admin',
+        loadComponent: () => import('./pages/admin/admin.component').then((m) => m.DashboardCropAdminComponent),
+      },
+      {
         path: 'variety',
-        component: CropVarietyComponent,
+        loadComponent: () => import('./pages/variety/variety.component').then((m) => m.CropVarietyComponent),
       },
       {
         path: 'variety/:id',
-        component: CropVarietyDetailsComponent,
+        loadComponent: () =>
+          import('./pages/variety-details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
       },
       {
         path: 'probability',
-        component: CropProbabilityComponent,
+        loadComponent: () =>
+          import('./pages/probability/probability.component').then((m) => m.CropProbabilityComponent),
       },
     ]),
   ],
