@@ -107,7 +107,6 @@ export class MonitoringToolService extends PicsaAsyncService {
   /** Load forms from hardcoded data, preserving unlock status */
   private async loadHardcodedForms() {
     const allForms = await this.dbFormCollection.find().exec();
-    // TODO - avoid resetting unlocked status
     const unlockedForms = allForms.filter((f) => f.access_unlocked).map((f) => f._id);
     const hardcodedWithUnlockStatus = HARDCODED_FORMS.map((f) => {
       f.access_unlocked = unlockedForms.includes(f._id);
