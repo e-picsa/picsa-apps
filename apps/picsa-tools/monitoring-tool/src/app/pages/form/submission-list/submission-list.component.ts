@@ -58,13 +58,6 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
   @HostListener('document:mousemove')
   @HostListener('document:keypress')
   @HostListener('document:click')
-  @HostListener('document:touchstart')
-  onUserActivity(): void {
-    if (this.formId && this.form?.access_code) {
-      this.service.resetAutoLockTimer(this.formId);
-    }
-  }
-
   async ngOnInit(): Promise<void> {
     await this.service.ready();
     const { formId } = this.route.snapshot.params;
@@ -80,11 +73,6 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // Start inactivity timer if form has an access code
-        if (this.form.access_code) {
-          this.service.resetAutoLockTimer(formId);
-        }
-
         await this.loadSubmissions(formId);
       }
 
@@ -93,11 +81,6 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
-    // Clear any active lock timers when component is destroyed
-    if (this.formId && this.form?.access_code) {
-      this.service.clearAutoLockTimer(this.formId);
-    }
-
     this.componentDestroyed$.next();
     this.componentDestroyed$.complete();
   }

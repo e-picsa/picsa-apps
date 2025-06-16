@@ -77,11 +77,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
   async ngOnDestroy(): Promise<void> {
     await this.handleViewDestroy();
 
-    // Clear any active lock timers when component is destroyed
-    if (this.formId && this.currentForm?.access_code) {
-      this.monitoringService.clearAutoLockTimer(this.formId);
-    }
-
     this.componentDestroyed$.next();
     this.componentDestroyed$.complete();
   }
@@ -122,11 +117,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.formInteracted = true;
     const entry = (e as CustomEvent).detail as IEnketoFormEntry;
     this.formEntry = entry;
-
-    // Reset inactivity timer on autosave (counts as user activity)
-    if (this.formId && this.currentForm?.access_code) {
-      this.monitoringService.resetAutoLockTimer(this.formId);
-    }
   }
   public async promptDelete(): Promise<void> {
     const dialog = await this.dialogService.open('delete');
@@ -230,11 +220,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
 
         this.formEntry = submission.enketoEntry;
         this.formInitial = { form, model, submission };
-
-        // Start inactivity timer if the form has an access code
-        if (formMeta.access_code) {
-          this.monitoringService.resetAutoLockTimer(id);
-        }
       } catch (error) {
         console.error('Error loading form submission:', error);
         const message = await this.translateService.translateText(FORM_LOAD_ERROR_MESSAGE);
