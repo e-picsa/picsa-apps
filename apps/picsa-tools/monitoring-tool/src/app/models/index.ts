@@ -1,5 +1,3 @@
-export * from './strings';
-
 import { ISyncPushEntry } from '@picsa/shared/services/core/db_v2/db-sync.service';
 
 export type ISyncStatus = ISyncPushEntry['_sync_push_status'];

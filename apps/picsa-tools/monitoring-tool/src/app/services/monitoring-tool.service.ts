@@ -7,7 +7,7 @@ import { PicsaDatabaseSyncService } from '@picsa/shared/services/core/db_v2/db-s
 import { RxCollection } from 'rxdb';
 
 import { HARDCODED_FORMS } from '../../../data/forms';
-import { MONITITORING_STRINGS } from '../models';
+import { MONITITORING_STRINGS } from '../models/strings';
 import * as FormSchema from '../schema/forms';
 import * as SubmissionSchema from '../schema/submissions';
 
