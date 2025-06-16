@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -51,7 +50,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
     private monitoringService: MonitoringToolService,
     private componentService: PicsaCommonComponentsService,
     private dialogService: PicsaDialogService,
-    private snackBar: MatSnackBar,
   ) {}
 
   async ngOnDestroy(): Promise<void> {
