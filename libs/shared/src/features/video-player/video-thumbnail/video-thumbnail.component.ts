@@ -1,7 +1,10 @@
-import { Component, effect, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 
 import { VideoPlayerService } from '../video-player.service';
+
+const THUMBNAIL_WIDTH = 640;
+const THUMBNAIL_HEIGHT = 360;
 
 @Component({
   selector: 'picsa-video-thumbnail',
@@ -66,6 +69,8 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
 
   private createPlaceholderVideoElement(videoUrl: string) {
     const video = document.createElement('video');
+    video.width = THUMBNAIL_WIDTH;
+    video.height = THUMBNAIL_HEIGHT;
     video.crossOrigin = 'anonymous';
     video.muted = true;
     video.playsInline = true;
@@ -92,8 +97,8 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
 
   private getCurrentVideoFrameImage(video: HTMLVideoElement) {
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = THUMBNAIL_WIDTH;
+    canvas.height = THUMBNAIL_HEIGHT;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -101,7 +106,7 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
       return '';
     }
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
     const isValid = this.validateThumbnail(canvas);
     if (!isValid) {
       return undefined;
