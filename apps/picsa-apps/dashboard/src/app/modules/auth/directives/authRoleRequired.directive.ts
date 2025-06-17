@@ -40,7 +40,7 @@ export class AuthRoleRequiredDirective {
     if (!deploymentRoles) return false;
     const [feature, role] = requiredRole.split('.');
     // if has global permission return true
-    if (deploymentRoles[role]) return true;
+    if (deploymentRoles.includes(role as any)) return true;
     // otherwise check specific feature permisison
     return deploymentRoles.includes(requiredRole);
   }

@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { Subject, takeUntil } from 'rxjs';
+import { switchMap } from 'rxjs';
 
 import { IMonitoringForm } from '../../schema/forms';
 import { MonitoringToolService } from '../../services/monitoring-tool.service';
@@ -10,29 +11,30 @@ import { MonitoringToolService } from '../../services/monitoring-tool.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  forms: IMonitoringForm[] = [];
+export class HomeComponent {
+  forms = signal<IMonitoringForm[]>([]);
 
-  private componentDestroyed$ = new Subject<boolean>();
+  // wait until service ready emitted before subscribing to dbFormCollection
+  private formDocs = toSignal(this.service.ready$.pipe(switchMap(() => this.service.dbFormCollection.find().$)), {
+    initialValue: [],
+  });
 
-  constructor(public service: MonitoringToolService, private configurationService: ConfigurationService) {}
+  constructor(
+    public service: MonitoringToolService,
+    private configurationService: ConfigurationService,
+  ) {
+    service.ready();
 
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next(true);
-  }
-
-  async ngOnInit() {
-    await this.service.ready();
-    // create a live query to retrieve all docs on data change
-    // pipe subscription to complete when component destroyed (avoids memory leak)
-    const query = this.service.dbFormCollection.find();
-    query.$.pipe(takeUntil(this.componentDestroyed$)).subscribe((docs) => {
+    effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();
+      const formDocs = this.formDocs();
       // filter forms to include only active config country forms
-      this.forms = docs
+      const forms = formDocs
         .map((doc) => doc._data)
         .filter((form) => !form.appCountries || form.appCountries.includes(country_code));
+      this.forms.set(forms);
     });
   }
 

@@ -108,6 +108,6 @@ export const ADMIN_NAV_LINKS: INavLink[] = [
     label: 'User Permissions',
     href: '/admin/user-permissions',
     matIcon: 'manage_accounts',
-    // roleRequired: 'deployments.admin',
+    roleRequired: 'deployments.admin',
   },
 ];
