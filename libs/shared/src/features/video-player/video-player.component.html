@@ -28,7 +28,8 @@
     }
     <!-- Thumbnail -->
     @if (isNative || !source()) {
-      <picsa-video-thumbnail [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl" class="z-0"> </picsa-video-thumbnail>
+      <picsa-video-thumbnail [videoId]="id" [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl" class="z-0">
+      </picsa-video-thumbnail>
     }
   </div>
   <!-- Playback Progress -->
