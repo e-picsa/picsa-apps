@@ -16,28 +16,37 @@ export const HARDCODED_DATA: ITranslationEntry[] = [
 
 const PROJECT_ROOT = resolve(__dirname, '../../../../');
 
-/** List of project paths and reference names to process with ngx-extract */
-export const EXTRACTED_PROJECTS = [
+/**
+ * List of project paths and reference names to process with ngx-extract
+ * These will be ranked to give priority to those with context, then non-common, and finally process order
+ * */
+export const EXTRACTED_PROJECTS: { path: string; tool: string; context?: string }[] = [
   // tools
   ...readdirSync(resolve(PROJECT_ROOT, 'apps/picsa-tools'))
     .filter((project) => !project.endsWith('-e2e'))
     .map((project) => ({
       path: `apps/picsa-tools/${project}`,
-      name: project.replace('-tool', ''),
+      tool: project.replace('-tool', ''),
     })),
   // additional apps to include
   {
     path: 'apps/picsa-apps/extension-app',
-    name: 'extension',
+    tool: 'extension',
   },
-  // libs
+  // specific data libs
+  {
+    path: 'libs/data/farmer_content/data',
+    tool: 'farmer_content',
+  },
+  {
+    path: 'libs/data/resources/videos',
+    tool: 'resources',
+    context: 'videos',
+  },
+
+  // all other libs
   {
     path: 'libs',
-    name: 'common',
-  },
-  // libs
-  {
-    path: 'data',
-    name: 'common',
+    tool: 'common',
   },
 ];
