@@ -9614,253 +9614,169 @@
         {
           "arcs": [[[0]], [[1]]],
           "type": "MultiPolygon",
-          "properties": {
-            "@id": "relation/5621515",
-            "name": "Likoma"
-          },
+          "properties": { "@id": "relation/5621515", "name": "likoma" },
           "id": "relation/5621515"
         },
         {
           "arcs": [[2, 3, 4, 5, 6, 7]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7342877",
-            "name": "Rumphi"
-          },
+          "properties": { "@id": "relation/7342877", "name": "rumphi" },
           "id": "relation/7342877"
         },
         {
           "arcs": [[8, -3, 9]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7342878",
-            "name": "Chitipa"
-          },
+          "properties": { "@id": "relation/7342878", "name": "chitipa" },
           "id": "relation/7342878"
         },
         {
           "arcs": [[10, -4, -9]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7342879",
-            "name": "Karonga"
-          },
+          "properties": { "@id": "relation/7342879", "name": "karonga" },
           "id": "relation/7342879"
         },
         {
           "arcs": [[11, 12, -6, 13]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7343188",
-            "name": "Nkhata Bay"
-          },
+          "properties": { "@id": "relation/7343188", "name": "nkhata_bay" },
           "id": "relation/7343188"
         },
         {
           "arcs": [[-13, 14, 15, 16, -7]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7343189",
-            "name": "Mzimba"
-          },
+          "properties": { "@id": "relation/7343189", "name": "mzimba" },
           "id": "relation/7343189"
         },
         {
           "arcs": [[17, 18, -15, -12, 19, 20]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7343221",
-            "name": "Nkhotakota"
-          },
+          "properties": { "@id": "relation/7343221", "name": "nkhotakota" },
           "id": "relation/7343221"
         },
         {
           "arcs": [[21, 22, 23, 24, 25]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345522",
-            "name": "Ntcheu"
-          },
+          "properties": { "@id": "relation/7345522", "name": "ntcheu" },
           "id": "relation/7345522"
         },
         {
           "arcs": [[26, -24, 27, 28, 29, 30]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345523",
-            "name": "Dedza"
-          },
+          "properties": { "@id": "relation/7345523", "name": "dedza" },
           "id": "relation/7345523"
         },
         {
           "arcs": [[31, 32, 33, 34, 35, -29]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345524",
-            "name": "Lilongwe"
-          },
+          "properties": { "@id": "relation/7345524", "name": "lilongwe" },
           "id": "relation/7345524"
         },
         {
           "arcs": [[36, 37, -21, 38, -30, -36]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345525",
-            "name": "Salima"
-          },
+          "properties": { "@id": "relation/7345525", "name": "salima" },
           "id": "relation/7345525"
         },
         {
           "arcs": [[39, 40, -33]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345526",
-            "name": "Mchinji"
-          },
+          "properties": { "@id": "relation/7345526", "name": "mchinji" },
           "id": "relation/7345526"
         },
         {
           "arcs": [[-35, 41, 42, -37]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345527",
-            "name": "Dowa"
-          },
+          "properties": { "@id": "relation/7345527", "name": "dowa" },
           "id": "relation/7345527"
         },
         {
           "arcs": [[43, -18, -38, -43]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345528",
-            "name": "Ntchisi"
-          },
+          "properties": { "@id": "relation/7345528", "name": "ntchisi" },
           "id": "relation/7345528"
         },
         {
           "arcs": [[44, -16, -19, -44, -42, -34, -41]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345529",
-            "name": "Kasungu"
-          },
+          "properties": { "@id": "relation/7345529", "name": "kasungu" },
           "id": "relation/7345529"
         },
         {
           "arcs": [[45, 46, 47, 48, 49, 50, 51, 52]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345872",
-            "name": "Zomba"
-          },
+          "properties": { "@id": "relation/7345872", "name": "zomba" },
           "id": "relation/7345872"
         },
         {
           "arcs": [[53, 54, -48, 55, -26]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345873",
-            "name": "Balaka"
-          },
+          "properties": { "@id": "relation/7345873", "name": "balaka" },
           "id": "relation/7345873"
         },
         {
           "arcs": [[-55, 56, 57, -49]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7345874",
-            "name": "Machinga"
-          },
+          "properties": { "@id": "relation/7345874", "name": "machinga" },
           "id": "relation/7345874"
         },
         {
           "arcs": [[[58]], [[59]], [[-57, -54, -25, -27, 60]]],
           "type": "MultiPolygon",
-          "properties": {
-            "@id": "relation/7345875",
-            "name": "Mangochi"
-          },
+          "properties": { "@id": "relation/7345875", "name": "mangochi" },
           "id": "relation/7345875"
         },
         {
           "arcs": [[61, 62, -52, 63, 64]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347097",
-            "name": "Mulanje"
-          },
+          "properties": { "@id": "relation/7347097", "name": "mulanje" },
           "id": "relation/7347097"
         },
         {
           "arcs": [[65, -64, -51]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347098",
-            "name": "Phalombe"
-          },
+          "properties": { "@id": "relation/7347098", "name": "phalombe" },
           "id": "relation/7347098"
         },
         {
           "arcs": [[66, 67, -53, -63]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347099",
-            "name": "Chiradzulu"
-          },
+          "properties": { "@id": "relation/7347099", "name": "chiradzulu" },
           "id": "relation/7347099"
         },
         {
           "arcs": [[68, 69, -46, -68, 70]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347100",
-            "name": "Blantyre"
-          },
+          "properties": { "@id": "relation/7347100", "name": "blantyre" },
           "id": "relation/7347100"
         },
         {
           "arcs": [[71, 72, 73]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347101",
-            "name": "Mwanza"
-          },
+          "properties": { "@id": "relation/7347101", "name": "mwanza" },
           "id": "relation/7347101"
         },
         {
           "arcs": [[74, 75, 76]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347767",
-            "name": "Nsanje"
-          },
+          "properties": { "@id": "relation/7347767", "name": "nsanje" },
           "id": "relation/7347767"
         },
         {
           "arcs": [[77, -72, 78, -69, 79, -76]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347768",
-            "name": "Chikwawa"
-          },
+          "properties": { "@id": "relation/7347768", "name": "chikwawa" },
           "id": "relation/7347768"
         },
         {
           "arcs": [[-77, -80, -71, -67, -62, 80]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7347769",
-            "name": "Thyolo"
-          },
+          "properties": { "@id": "relation/7347769", "name": "thyolo" },
           "id": "relation/7347769"
         },
         {
           "arcs": [[81, -22, -56, -47, -70, -79, -74]],
           "type": "Polygon",
-          "properties": {
-            "@id": "relation/7800276",
-            "name": "Nneno"
-          },
+          "properties": { "@id": "relation/7800276", "name": "nneno" },
           "id": "relation/7800276"
         }
       ]
