@@ -20,8 +20,9 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: Branch to deploy dashboard from
+        description: Branch to deploy from
         type: string
+        default: main
 
   # (avoid automated push as will often need manual migration apply)
 
