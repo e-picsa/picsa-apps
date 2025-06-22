@@ -2,6 +2,22 @@
   display: contents;
 }
 
+.lock-icon {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-left: 8px;
+  color: red;
+  &.open {
+    color: green;
+  }
+}
+
+.spinner {
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 .sync-status-container {
   display: flex;
   margin-top: 1rem;

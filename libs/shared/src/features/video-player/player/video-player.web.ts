@@ -13,6 +13,13 @@ import { VideoPlayerBaseComponent } from './video-player.base';
       :host {
         display: contents;
       }
+      // Ensure full-screen video maintains aspect ration on portrait videos (digi-skills)
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background-color: black;
+      }
     `,
   ],
 })

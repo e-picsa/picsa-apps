@@ -13,7 +13,7 @@ export class VideoPlayerService extends PicsaAsyncService {
   private collection: RxCollection<Schema.IVideoPlayerEntry>;
 
   /** Keep cache of generated thumbnails */
-  public thumbnailCache = new Map<string, string>();
+  // public thumbnailCache = new Map<string, string>();
 
   constructor(dbService: PicsaDatabase_V2_Service) {
     super();
@@ -53,6 +53,27 @@ export class VideoPlayerService extends PicsaAsyncService {
     } catch (error) {
       console.error('Failed to get video state:', error);
       return null;
+    }
+  }
+
+  async saveThumbnail(videoId: string, thumbnail: string) {
+    try {
+      const videoPlayerDoc = await this.collection.findOne(videoId).exec();
+
+      if (videoPlayerDoc) {
+        await videoPlayerDoc.incrementalPatch({ thumbnail });
+      } else {
+        // If no existing document, we create one with thumbnail only
+        await this.collection.insert({
+          videoId,
+          currentTime: 0,
+          totalTime: 0,
+          playbackPercentage: 0,
+          thumbnail,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to save thumbnail:', error);
     }
   }
 }
