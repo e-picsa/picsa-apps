@@ -42,12 +42,13 @@ export const HARDCODED_FORMS: IMonitoringForm[] = [
   {
     _id: 'demo_kitchen',
     title: 'Complex Demo Form',
-    description: '',
+    description: 'Use the access code "picsa" to unlock',
     appCountries: ['global'],
     enketoDefinition: demoKitchenForm,
     summaryFields: [{ field: '_id', label: 'ID' }],
     cover: {
       icon: '',
     },
+    access_code: 'picsa',
   },
 ];

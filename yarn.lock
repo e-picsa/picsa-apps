@@ -10690,6 +10690,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch":
+  version: 6.0.0
+  resolution: "capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch::version=6.0.0&hash=228ec1"
+  peerDependencies:
+    "@capacitor/core": ^6.0.0
+    hls.js: ^1.4.0
+  checksum: 10c0/472d63defab8451d59eee82dd267b20a3a9b0ad76f31b5c23c8b2cfed1797ebf25bf050893d258c150271da1a7e81b94292d49189e69af15b2da26d7200aba20
+  languageName: node
+  linkType: hard
+
 "caseless@npm:~0.12.0":
   version: 0.12.0
   resolution: "caseless@npm:0.12.0"
@@ -19891,7 +19901,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
-    capacitor-video-player: "npm:6.0.0"
+    capacitor-video-player: "patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
