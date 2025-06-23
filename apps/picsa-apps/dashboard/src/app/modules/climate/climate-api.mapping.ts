@@ -4,7 +4,7 @@ import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/ser
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
 import {
-  IAPICountryCode,
+  IClimateSummaryProbabilities,
   IClimateSummaryRainfallInsert,
   IClimateSummaryRainfallRow,
   IForecastRow,
@@ -91,36 +91,32 @@ export const ApiMapping = (
       }
     },
     cropProbabilities: async (station: IStationRow) => {
-      const { country_code, station_id, station_name, id } = station;
+      const { country_code, station_name, id } = station;
       const { data: apiData, error } = await api
         .getObservableClient(`cropProbabilities_${id}`)
-        .POST('/v1/annual_rainfall_summaries/', {
+        .POST('/v1/crop_success_probabilities/', {
           body: {
             country: `${country_code}` as any,
             // HACK - API uses the value stored as station_name (instead of sanitized id)
             // TODO - Push for api to use safer ID values
             station_id: `${station_name}`,
-            summaries: ['annual_rain', 'start_rains', 'end_rains', 'end_season', 'seasonal_rain', 'seasonal_length'],
           },
         });
       if (error) throw error;
       // HACK - API issue returning huge data for some stations
       const { data, metadata } = apiData;
-      if (data.length > 1000) {
-        console.error({ country_code, station_id, station_name, total_rows: data.length });
-        throw new Error(`[cropProbabilities] Too many rows | ${station_name} ${data.length}`);
-      }
+      console.log('crop probabilitities', apiData);
       // TODO - gen types and handle mapping
-      const entry: IClimateSummaryRainfallInsert = {
+      const entry: IClimateSummaryProbabilities['Insert'] = {
         data: data as any[],
         metadata,
         station_id: id as string,
         country_code: country_code as any,
       };
       const { data: dbData, error: dbError } = await supabaseService.db
-        .table('climate_summary_rainfall')
-        .upsert<IClimateSummaryRainfallInsert>(entry)
-        .select<'*', IClimateSummaryRainfallRow>('*');
+        .table('climate_summary_crop_probabilities')
+        .upsert(entry)
+        .select<'*', IClimateSummaryProbabilities['Row']>('*');
       if (dbError) throw dbError;
       return dbData || [];
     },

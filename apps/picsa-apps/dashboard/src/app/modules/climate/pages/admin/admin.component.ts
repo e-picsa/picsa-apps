@@ -59,7 +59,7 @@ export class ClimateAdminPageComponent {
     private supabase: SupabaseService,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     effect(() => {
       const country_code = this.deploymentService.activeDeployment()?.country_code;
@@ -99,6 +99,8 @@ export class ClimateAdminPageComponent {
       await _wait(200 * i);
       try {
         await this.service.loadFromAPI.rainfallSummaries(station.row);
+        // TODO - find tidier way to also fetch probabilities
+        // await this.service.loadFromAPI.cropProbabilities(station.row);
       } catch (error) {
         this.notificationService.showErrorNotification(`Could not update station: ${station.station_id}`);
         console.error(error);
@@ -133,7 +135,8 @@ export class ClimateAdminPageComponent {
         const { data, updated_at } = rainfallSummary;
         summary.updated_at = updated_at;
         summary.rainfall_summary = rainfallSummary;
-        const entries = data as IAnnualRainfallSummariesData[];
+        // HACK - some data includes additional entry at end with first year (out of order)
+        const entries = (data as IAnnualRainfallSummariesData[]).sort((a, b) => a.year - b.year);
         summary.start_year = entries[0]?.year;
         summary.end_year = entries[entries.length - 1]?.year;
       }
@@ -151,7 +154,7 @@ export class ClimateAdminPageComponent {
         // HACK - to keep parent ref id includes full country prefix, remove for lookup
         el.station_id = el.station_id.replace(`${country_code}/`, '');
         return el;
-      })
+      }),
     );
   }
 }
