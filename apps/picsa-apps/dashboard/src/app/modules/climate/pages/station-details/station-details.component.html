@@ -1,31 +1,37 @@
 <div class="page-content">
   @if (service.activeStation(); as station) {
     <h2>{{ station.station_name }}</h2>
-    <table style="max-width: 600px">
-      <tr>
-        @for (key of stationSummary().keys; track $index) {
-          <th>{{ key }}</th>
-        }
-      </tr>
-      @for (value of stationSummary().values; track $index) {
-        <td>{{ value }}</td>
-      }
-    </table>
 
     <mat-tab-group preserveContent>
       <mat-tab>
         <ng-template mat-tab-label>
-          <mat-icon>view_list</mat-icon>
-          Table
+          <mat-icon>place</mat-icon>
+          Location
         </ng-template>
+        <table style="max-width: 600px" class="mt-3">
+          <tr>
+            @for (key of stationSummary().keys; track $index) {
+              <th>{{ key }}</th>
+            }
+          </tr>
+          @for (value of stationSummary().values; track $index) {
+            <td>{{ value }}</td>
+          }
+        </table>
+      </mat-tab>
 
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>view_list</mat-icon>
+          Data
+        </ng-template>
         <dashboard-climate-rainfall-summary
-          style="margin-top: 2rem"
           [station]="station"
           (rainfallSummaryLoaded)="chartSummary.summaryData.set($any($event))"
         ></dashboard-climate-rainfall-summary>
         <!-- HACK - update chart data when summary table updates -->
       </mat-tab>
+
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon>show_chart</mat-icon>
@@ -33,6 +39,7 @@
         </ng-template>
         <dashboard-climate-chart-summary #chartSummary [station]="station"></dashboard-climate-chart-summary>
       </mat-tab>
+
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon>percent</mat-icon>
@@ -40,9 +47,15 @@
         </ng-template>
         <dashboard-climate-crop-probabilities [station]="station"></dashboard-climate-crop-probabilities>
       </mat-tab>
-      <!-- Legacy - definitions display - could be loaded from rainfall summary -->
-      <!-- 
-      <mat-tab>
+    </mat-tab-group>
+  } @else {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+</div>
+
+<!-- Legacy - definitions display - could be loaded from rainfall summary -->
+<!-- 
+      <mat-tab >
         <ng-template mat-tab-label>
           <mat-icon>description</mat-icon>
           Definition
@@ -50,8 +63,3 @@
         <pre>{{summaryMetadata | json}}</pre>
       </mat-tab> 
   -->
-    </mat-tab-group>
-  } @else {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  }
-</div>

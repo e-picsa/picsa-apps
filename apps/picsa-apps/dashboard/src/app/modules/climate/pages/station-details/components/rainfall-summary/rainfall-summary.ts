@@ -65,21 +65,21 @@ export class RainfallSummaryComponent {
       .eq('station_id', station.id)
       .single();
     if (data) {
-      this.loadRainfallSummaryData(data);
+      this.processRainfallSummaryData(data);
     } else {
       await this.refreshRainfallSummaries();
     }
   }
 
-  public async refreshRainfallSummaries() {
+  private async refreshRainfallSummaries() {
     const data = await this.service.loadFromAPI.rainfallSummaries(this.station());
     const summary = data?.[0];
     if (summary) {
-      this.loadRainfallSummaryData(summary);
+      this.processRainfallSummaryData(summary);
     }
   }
 
-  private loadRainfallSummaryData(summary: IClimateSummaryRainfallRow) {
+  private processRainfallSummaryData(summary: IClimateSummaryRainfallRow) {
     console.log('load data', summary);
     this.tableOptions.exportFilename = `${this.station().id}.csv`;
     const { data, metadata } = summary;
