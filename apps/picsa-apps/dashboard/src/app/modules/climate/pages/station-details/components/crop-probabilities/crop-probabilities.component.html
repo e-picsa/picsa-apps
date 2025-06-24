@@ -3,6 +3,7 @@
   [clientId]="'cropProbabilities_' + station().id"
   [options]="probabilityReqOptions"
 />
+<!-- Planting Date -->
 <h3>Planting Date</h3>
 <div class="flex gap-4 items-center max-w-sm">
   <span>{{ plantDateRange()[0] }}</span>
@@ -19,7 +20,23 @@
   </mat-slider>
   <span>{{ plantDateRange()[1] }}</span>
 </div>
+<!-- Probabilities -->
 <h3>Crop Probabilities (no start)</h3>
-<!-- Table -->
-<picsa-data-table [data]="tableData()" [options]="tableOptions"></picsa-data-table>
-<!-- Grid -->
+<mat-tab-group preserveContent>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>view_module</mat-icon>
+      Grid
+    </ng-template>
+    <!-- Grid -->
+    <dashboard-climate-data-grid [data]="tableData" />
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>view_list</mat-icon>
+      Table
+    </ng-template>
+    <!-- Table -->
+    <picsa-data-table [data]="tableData()" [options]="tableOptions"></picsa-data-table>
+  </mat-tab>
+</mat-tab-group>

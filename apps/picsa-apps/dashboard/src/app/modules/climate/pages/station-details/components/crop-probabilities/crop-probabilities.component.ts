@@ -7,6 +7,7 @@ import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/mater
 import { ClimateService } from '../../../../climate.service';
 import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
 import { IClimateSummaryProbabilities, ICropSuccessEntry, IStationRow } from '../../../../types';
+import { DashboardClimateDataGridComponent } from './data-grid/data-grid/data-grid.component';
 
 interface IProbabilityEntry {
   plant_day: number;
@@ -17,7 +18,13 @@ interface IProbabilityEntry {
 
 @Component({
   selector: 'dashboard-climate-crop-probabilities',
-  imports: [CommonModule, DashboardClimateApiStatusComponent, DashboardMaterialModule, PicsaDataTableComponent],
+  imports: [
+    CommonModule,
+    DashboardClimateDataGridComponent,
+    DashboardClimateApiStatusComponent,
+    DashboardMaterialModule,
+    PicsaDataTableComponent,
+  ],
   templateUrl: './crop-probabilities.component.html',
   styleUrl: './crop-probabilities.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
