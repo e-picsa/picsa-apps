@@ -7,3 +7,5 @@ export type IAnnualRainfallSummariesData = schemas['AnnualRainfallSummariesdata'
 export type IAnnualRainfallSummariesMetadata = schemas['AnnualRainfallSummariesMetadata'];
 
 export type IAPICountryCode = schemas['StationDataResponce']['country_code'];
+
+export type ICropSuccessEntry = schemas['CropSuccessProbabilitiesdata'];

@@ -3,4 +3,23 @@
   [clientId]="'cropProbabilities_' + station().id"
   [options]="probabilityReqOptions"
 />
-<div>Crop Probabilities...</div>
+<h3>Planting Date</h3>
+<div class="flex gap-4 items-center max-w-sm">
+  <span>{{ plantDateRange()[0] }}</span>
+  <mat-slider
+    [discrete]="true"
+    [min]="plantDateRange()[0]"
+    [max]="plantDateRange()[1]"
+    [step]="15"
+    [showTickMarks]="true"
+    [displayWith]="formatPlantDateLabel"
+    class="flex-1"
+  >
+    <input #input matSliderThumb [value]="selectedPlantDate()" (input)="selectedPlantDate.set(input.valueAsNumber)" />
+  </mat-slider>
+  <span>{{ plantDateRange()[1] }}</span>
+</div>
+<h3>Crop Probabilities (no start)</h3>
+<!-- Table -->
+<picsa-data-table [data]="tableData()" [options]="tableOptions"></picsa-data-table>
+<!-- Grid -->

@@ -105,20 +105,21 @@ export const ApiMapping = (
       if (error) throw error;
       // HACK - API issue returning huge data for some stations
       const { data, metadata } = apiData;
-      console.log('crop probabilitities', apiData);
       // TODO - gen types and handle mapping
       const entry: IClimateSummaryProbabilities['Insert'] = {
-        data: data as any[],
+        // filter out data with 0 probability (assume using no_start)
+        data: data.filter((v) => v.prop_success_no_start > 0),
         metadata,
         station_id: id as string,
         country_code: country_code as any,
       };
-      const { data: dbData, error: dbError } = await supabaseService.db
-        .table('climate_summary_crop_probabilities')
-        .upsert(entry)
-        .select<'*', IClimateSummaryProbabilities['Row']>('*');
-      if (dbError) throw dbError;
-      return dbData || [];
+      const ref = supabaseService.db.table('climate_summary_probabilities');
+      const upsertRes = await ref.upsert(entry).select().single();
+      if (upsertRes.error) {
+        console.error('upsert error', upsertRes);
+        throw upsertRes.error;
+      }
+      return (upsertRes.data as IClimateSummaryProbabilities['Row']) || [];
     },
     /**
      *
