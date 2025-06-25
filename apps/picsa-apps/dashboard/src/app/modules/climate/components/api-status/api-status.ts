@@ -37,13 +37,17 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardClimateApiStatusComponent implements OnDestroy {
+  public label = input('');
   public status = signal<IStatus>('pending');
   public code = signal<number>(0);
 
   private componentDestroyed$ = new Subject();
   private subscription: Subscription;
 
-  constructor(public api: ClimateApiService, public service: ClimateService) {
+  constructor(
+    public api: ClimateApiService,
+    public service: ClimateService,
+  ) {
     effect(() => {
       const id = this.clientId();
       // clear any previous subscription

@@ -1,5 +1,6 @@
 <!-- ready status template -->
 <div class="status-container" [attr.data-status]="status()">
+  <span>{{label()}}</span>
   @if(options().showStatusCode){
   <span class="status-code" [attr.data-status]="status()">{{code() || ''}}</span>
   } @if(options().labels?.ready; as readyLabel){

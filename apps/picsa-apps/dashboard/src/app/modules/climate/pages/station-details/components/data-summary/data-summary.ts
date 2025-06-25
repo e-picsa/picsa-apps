@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output } from '@angular/core';
 import { IStationData } from '@picsa/models/src';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { ClimateService } from '../../../../climate.service';
@@ -11,7 +12,7 @@ import {
   IClimateSummaryRainfallRow,
   IStationRow,
 } from '../../../../types';
-import { hackConvertAPIDataToLegacyFormat } from './rainfall-summary.utils';
+import { hackConvertAPIDataToLegacyFormat } from './data-summary.utils';
 
 interface IRainfallSummary {
   data: IAnnualRainfallSummariesData[];
@@ -20,12 +21,12 @@ interface IRainfallSummary {
 
 @Component({
   selector: 'dashboard-climate-data-summary',
-  templateUrl: './rainfall-summary.html',
+  templateUrl: './data-summary.html',
   imports: [DashboardClimateApiStatusComponent, PicsaDataTableComponent],
-  styleUrl: './rainfall-summary.scss',
+  styleUrl: './data-summary.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RainfallSummaryComponent {
+export class DataSummaryComponent {
   public summaryMetadata: IRainfallSummary['metadata'] = {};
   public summaryData: IStationData[] = [];
 
