@@ -1,0 +1,12 @@
+<!-- chart -->
+<div class="chart-list">
+  @for (definition of chartDefintions(); track definition._id) {
+    <div class="chart-card" (click)="activeChartDefinition.set(definition)">
+      <img [src]="definition.image" class="chart-card-image" />
+      <div class="chart-card-label">{{ definition.name }}</div>
+    </div>
+  }
+</div>
+@if (activeChartConfig(); as chartConfig) {
+  <picsa-chart #picsaChart [config]="chartConfig" style="margin-top: 1rem; height: 500px"></picsa-chart>
+}

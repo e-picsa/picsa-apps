@@ -16,3 +16,5 @@ export type IForecastUpdate = Database['public']['Tables']['forecasts']['Update'
 
 export type IStationRow = Database['public']['Tables']['climate_stations']['Row'];
 export type IStationInsert = Database['public']['Tables']['climate_stations']['Insert'];
+
+export type IClimateSummaryProbabilities = Database['public']['Tables']['climate_summary_probabilities'];

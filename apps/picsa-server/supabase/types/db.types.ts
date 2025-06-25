@@ -61,6 +61,41 @@ export type Database = {
         };
         Relationships: [];
       };
+      climate_summary_probabilities: {
+        Row: {
+          country_code: Database['public']['Enums']['country_code'];
+          created_at: string;
+          data: Json[];
+          metadata: Json;
+          station_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          country_code: Database['public']['Enums']['country_code'];
+          created_at?: string;
+          data: Json[];
+          metadata: Json;
+          station_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          country_code?: Database['public']['Enums']['country_code'];
+          created_at?: string;
+          data?: Json[];
+          metadata?: Json;
+          station_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'climate_summary_probabilities_station_id_fkey';
+            columns: ['station_id'];
+            isOneToOne: false;
+            referencedRelation: 'climate_stations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       climate_summary_rainfall: {
         Row: {
           country_code: Database['public']['Enums']['country_code'];

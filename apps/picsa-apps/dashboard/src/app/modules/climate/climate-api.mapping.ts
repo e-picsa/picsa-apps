@@ -4,7 +4,7 @@ import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/ser
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
 import {
-  IAPICountryCode,
+  IClimateSummaryProbabilities,
   IClimateSummaryRainfallInsert,
   IClimateSummaryRainfallRow,
   IForecastRow,
@@ -28,7 +28,7 @@ export const ApiMapping = (
   api: ClimateApiService,
   service: ClimateService,
   supabaseService: SupabaseService,
-  storage: SupabaseStorageService
+  storage: SupabaseStorageService,
 ) => {
   return {
     rainfallSummaries: async (station: IStationRow) => {
@@ -79,7 +79,7 @@ export const ApiMapping = (
           // HACK - clean IDs as currently just free text input
           // TODO - Push for api to use safer ID values
           station_id: `${d.station_id.toLowerCase().replace(/[^a-z]/gi, '_')}`,
-        })
+        }),
       );
       const { error: dbError, data: dbData } = await supabaseService.db
         .table('climate_stations')
@@ -89,6 +89,37 @@ export const ApiMapping = (
       if (dbData?.length > 0) {
         service.stations.set(dbData);
       }
+    },
+    cropProbabilities: async (station: IStationRow) => {
+      const { country_code, station_name, id } = station;
+      const { data: apiData, error } = await api
+        .getObservableClient(`cropProbabilities_${id}`)
+        .POST('/v1/crop_success_probabilities/', {
+          body: {
+            country: `${country_code}` as any,
+            // HACK - API uses the value stored as station_name (instead of sanitized id)
+            // TODO - Push for api to use safer ID values
+            station_id: `${station_name}`,
+          },
+        });
+      if (error) throw error;
+      // HACK - API issue returning huge data for some stations
+      const { data, metadata } = apiData;
+      // TODO - gen types and handle mapping
+      const entry: IClimateSummaryProbabilities['Insert'] = {
+        // filter out data with 0 probability (assume using no_start)
+        data: data.filter((v) => v.prop_success_no_start > 0),
+        metadata,
+        station_id: id as string,
+        country_code: country_code as any,
+      };
+      const ref = supabaseService.db.table('climate_summary_probabilities');
+      const upsertRes = await ref.upsert(entry).select().single();
+      if (upsertRes.error) {
+        console.error('upsert error', upsertRes);
+        throw upsertRes.error;
+      }
+      return (upsertRes.data as IClimateSummaryProbabilities['Row']) || [];
     },
     /**
      *
