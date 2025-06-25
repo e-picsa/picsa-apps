@@ -60,6 +60,8 @@ const stations: IStationMeta[] = [
     latitude: -14.44,
     longitude: 28.46,
     district: 'KABWE',
+    // Prefer data from kabwe_met
+    draft: true,
   },
   {
     id: 'kafironda_agromet',
