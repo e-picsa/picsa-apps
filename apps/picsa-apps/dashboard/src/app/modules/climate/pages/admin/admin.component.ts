@@ -14,7 +14,7 @@ import { unparse } from 'papaparse';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
 import type { IAnnualRainfallSummariesData, IClimateSummaryRainfallRow, IStationRow } from '../../types';
-import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/rainfall-summary/rainfall-summary.utils';
+import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/data-summary/rainfall-summary.utils';
 
 interface IStationAdminSummary {
   station_id: string;

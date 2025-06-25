@@ -19,7 +19,7 @@ interface IRainfallSummary {
 }
 
 @Component({
-  selector: 'dashboard-climate-rainfall-summary',
+  selector: 'dashboard-climate-data-summary',
   templateUrl: './rainfall-summary.html',
   imports: [DashboardClimateApiStatusComponent, PicsaDataTableComponent],
   styleUrl: './rainfall-summary.scss',

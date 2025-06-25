@@ -4,7 +4,7 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { ClimateService } from '../../climate.service';
 import { ChartSummaryComponent } from './components/chart-summary/chart-summary.component';
 import { CropProbabilitiesComponent } from './components/crop-probabilities/crop-probabilities.component';
-import { RainfallSummaryComponent } from './components/rainfall-summary/rainfall-summary';
+import { RainfallSummaryComponent } from './components/data-summary/rainfall-summary';
 
 @Component({
   selector: 'dashboard-station-details',

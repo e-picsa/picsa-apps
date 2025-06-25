@@ -25,10 +25,10 @@
           <mat-icon>view_list</mat-icon>
           Data
         </ng-template>
-        <dashboard-climate-rainfall-summary
+        <dashboard-climate-data-summary
           [station]="station"
           (rainfallSummaryLoaded)="chartSummary.summaryData.set($any($event))"
-        ></dashboard-climate-rainfall-summary>
+        ></dashboard-climate-data-summary>
         <!-- HACK - update chart data when summary table updates -->
       </mat-tab>
 
