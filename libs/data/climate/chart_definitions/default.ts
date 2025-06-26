@@ -1,5 +1,6 @@
 import { IChartDefinitions, IChartMeta } from '@picsa/models';
 import merge from 'deepmerge';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
 
@@ -143,6 +144,28 @@ const definitions: IChartDefinitions = {
     tools,
     units: 'days',
     definition: 'Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile',
+  },
+  temperature: {
+    _id: 'temperature',
+    name: translateMarker('Temperatures'),
+    shortname: translateMarker('Temperature'),
+    image: 'assets/climate-icons/temperatures.svg',
+    keys: ['mean_tmin', 'mean_tmax'],
+    colors: ['#0091d4', '#ef1c25'],
+    yFormat: 'value',
+    yLabel: translateMarker('Temperature (°C)'),
+    xLabel: '',
+    xVar: translateMarker('Year'),
+    axes: {
+      ...AXES_DEFAULT,
+      yMin: 0,
+      yMax: 40,
+      yMinor: 1,
+      yMajor: 5,
+    },
+    tools,
+    units: '°C',
+    definition: translateMarker('Mean of monthly minimum and maximum temperatures in each year'),
   },
 };
 

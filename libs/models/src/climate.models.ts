@@ -36,11 +36,17 @@ export interface IStationData {
   Length: number;
   Rainfall: number;
   Extreme_events: number;
+  max_tmax?: number;
+  max_tmin?: number;
+  min_tmax?: number;
+  min_tmin?: number;
+  mean_tmax?: number;
+  mean_tmin?: number;
 }
 
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
-export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days';
+export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days' | 'temperature';
 export type IChartDefinitions = { [id in IChartId]: IChartMeta };
 
 export interface IChartMeta {

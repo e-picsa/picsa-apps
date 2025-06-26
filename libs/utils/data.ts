@@ -61,6 +61,29 @@ export function arrayToHashmapArray<T>(arr: T[], keyfield: keyof T) {
   return hashmap;
 }
 
+export function mergeArraysByKey<T = Record<string, any>, U = Record<string, any>>(
+  arr1: T[],
+  arr2: U[],
+  key: keyof (T & U),
+): Array<T & U> {
+  const map = new Map<any, T & U>();
+
+  for (const obj of arr1) {
+    map.set(obj[key as string], { ...obj } as any);
+  }
+
+  for (const obj of arr2) {
+    const k = obj[key as string];
+    if (map.has(k)) {
+      map.set(k, { ...map.get(k)!, ...obj });
+    } else {
+      map.set(k, { ...obj } as any);
+    }
+  }
+
+  return Array.from(map.values());
+}
+
 /**
  * Retrieve a nested property from a json object
  * using a single path string accessor

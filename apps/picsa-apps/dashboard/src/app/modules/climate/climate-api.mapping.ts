@@ -1,17 +1,10 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import type { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
-import {
-  IClimateSummaryProbabilities,
-  IClimateSummaryRainfallInsert,
-  IClimateSummaryRainfallRow,
-  IForecastRow,
-  IForecastUpdate,
-  IStationInsert,
-  IStationRow,
-} from './types';
+import { IClimateStationData, IForecastRow, IForecastUpdate, IStationInsert, IStationRow } from './types';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
 export type IApiMappingName = keyof IApiMapping;
@@ -31,6 +24,10 @@ export const ApiMapping = (
   storage: SupabaseStorageService,
 ) => {
   return {
+    /**
+     * /v1/annual_rainfall_summaries/
+     * stored to columns in `climate_station_data` table
+     */
     rainfallSummaries: async (station: IStationRow) => {
       const { country_code, station_id, station_name, id } = station;
       // TODO - add model type definitions for server rainfall summary response body
@@ -47,26 +44,153 @@ export const ApiMapping = (
         });
       if (error) throw error;
       // HACK - API issue returning huge data for some stations
-      const { data, metadata } = apiData;
-      if (data.length > 1000) {
-        console.error({ country_code, station_id, station_name, total_rows: data.length });
-        throw new Error(`[rainfallSummary] Too many rows | ${station_name} ${data.length}`);
+      if (apiData.data.length > 1000) {
+        console.error({ country_code, station_id, station_name, total_rows: apiData.data.length });
+        throw new Error(`[rainfallSummary] Too many rows | ${station_name} ${apiData.data.length}`);
       }
-      // TODO - gen types and handle mapping
-      const entry: IClimateSummaryRainfallInsert = {
-        data: data as any[],
-        metadata,
-        station_id: id as string,
-        country_code: country_code as any,
-      };
-      const { data: dbData, error: dbError } = await supabaseService.db
-        .table('climate_summary_rainfall')
-        .upsert<IClimateSummaryRainfallInsert>(entry)
-        .select<'*', IClimateSummaryRainfallRow>('*');
-      if (dbError) throw dbError;
-      return dbData || [];
+
+      const { error: upsertError } = await service.updateStationData(station, {
+        annual_rainfall_data: apiData.data as any[],
+        annual_rainfall_metadata: apiData.metadata,
+      });
+      if (upsertError) throw upsertError;
+      return apiData;
     },
-    //
+
+    /**
+     * /v1/annual_temperature_summaries/
+     * stored to columns in `climate_station_data` table
+     */
+    annualTemperature: async (station: IStationRow) => {
+      const { country_code, station_id, station_name, id } = station;
+      // TODO - add model type definitions for server rainfall summary response body
+      const { data: apiData, error } = await api
+        .getObservableClient(`annualTemperature_${id}`)
+        .POST('/v1/annual_temperature_summaries/', {
+          body: {
+            country: `${country_code}` as any,
+            station_id: `${station_name}`,
+            summaries: ['mean_tmin', 'mean_tmax', 'min_tmin', 'min_tmax', 'max_tmin', 'max_tmax'],
+          },
+        });
+      if (error) throw error;
+      // HACK - API issue returning huge data for some stations
+      const { error: upsertError } = await service.updateStationData(station, {
+        annual_temperature_data: apiData.data as any[],
+        annual_temperature_metadata: apiData.metadata,
+      });
+      if (upsertError) throw upsertError;
+      return apiData;
+    },
+
+    /**
+     * /v1/crop_success_probabilities/
+     * stored to columns in `climate_station_data` table
+     */
+    cropProbabilities: async (station: IStationRow) => {
+      const { country_code, station_name, id } = station;
+      const { data: apiData, error } = await api
+        .getObservableClient(`cropProbabilities_${id}`)
+        .POST('/v1/crop_success_probabilities/', {
+          body: {
+            country: `${country_code}` as any,
+            // HACK - API uses the value stored as station_name (instead of sanitized id)
+            // TODO - Push for api to use safer ID values
+            station_id: `${station_name}`,
+          },
+        });
+      if (error) throw error;
+
+      // TODO - filter here?
+      // data.filter((v) => v.prop_success_no_start > 0)
+
+      const { error: upsertError } = await service.updateStationData(station, {
+        crop_probability_data: apiData.data as any[],
+        crop_probability_metadata: apiData.metadata,
+      });
+      if (upsertError) throw upsertError;
+      return apiData;
+    },
+
+    /**
+     * /v1/monthly_temperature_summaries/
+     * stored to columns in `climate_station_data` table
+     */
+    monthlyTemperatures: async (station: IStationRow) => {
+      const { country_code, station_name, id } = station;
+      const { data: apiData, error } = await api
+        .getObservableClient(`monthlyTemperatures_${id}`)
+        .POST('/v1/monthly_temperature_summaries/', {
+          body: {
+            country: `${country_code}` as any,
+            // HACK - API uses the value stored as station_name (instead of sanitized id)
+            // TODO - Push for api to use safer ID values
+            station_id: `${station_name}`,
+          },
+        });
+      if (error) throw error;
+
+      const { error: upsertError } = await service.updateStationData(station, {
+        monthly_temperature_data: apiData.data as any[],
+        monthly_temperature_metadata: apiData.metadata,
+      });
+      if (upsertError) throw upsertError;
+      return apiData;
+    },
+
+    /**
+     * /v1/season_start_probabilities/
+     * stored to columns in `climate_station_data` table
+     */
+    seasonStart: async (station: IStationRow) => {
+      const { country_code, station_name, id } = station;
+      const { data: apiData, error } = await api
+        .getObservableClient(`seasonStart_${id}`)
+        .POST('/v1/season_start_probabilities/', {
+          body: {
+            country: `${country_code}` as any,
+            // HACK - API uses the value stored as station_name (instead of sanitized id)
+            // TODO - Push for api to use safer ID values
+            station_id: `${station_name}`,
+          },
+        });
+      if (error) throw error;
+
+      const { error: upsertError } = await service.updateStationData(station, {
+        season_start_data: apiData.data as any[],
+        season_start_metadata: apiData.metadata,
+      });
+      if (upsertError) throw upsertError;
+      return apiData;
+    },
+
+    /**
+     * /v1/extremes_summaries/
+     * stored to columns in `climate_station_data` table
+     */
+    extremes: async (station: IStationRow) => {
+      const { country_code, station_name, id } = station;
+      const { data: apiData, error } = await api.getObservableClient(`extremes_${id}`).POST('/v1/extremes_summaries/', {
+        body: {
+          country: `${country_code}` as any,
+          // HACK - API uses the value stored as station_name (instead of sanitized id)
+          // TODO - Push for api to use safer ID values
+          station_id: `${station_name}`,
+        },
+      });
+      if (error) throw error;
+
+      const { error: upsertError } = await service.updateStationData(station, {
+        extremes_data: apiData.data as any[],
+        extremes_metadata: apiData.metadata,
+      });
+      if (upsertError) throw upsertError;
+      return apiData;
+    },
+
+    /**
+     * /v1/station/{country}
+     */
     station: async (country_code: string) => {
       const { data, error } = await api
         .getObservableClient('station')
@@ -90,37 +214,7 @@ export const ApiMapping = (
         service.stations.set(dbData);
       }
     },
-    cropProbabilities: async (station: IStationRow) => {
-      const { country_code, station_name, id } = station;
-      const { data: apiData, error } = await api
-        .getObservableClient(`cropProbabilities_${id}`)
-        .POST('/v1/crop_success_probabilities/', {
-          body: {
-            country: `${country_code}` as any,
-            // HACK - API uses the value stored as station_name (instead of sanitized id)
-            // TODO - Push for api to use safer ID values
-            station_id: `${station_name}`,
-          },
-        });
-      if (error) throw error;
-      // HACK - API issue returning huge data for some stations
-      const { data, metadata } = apiData;
-      // TODO - gen types and handle mapping
-      const entry: IClimateSummaryProbabilities['Insert'] = {
-        // filter out data with 0 probability (assume using no_start)
-        data: data.filter((v) => v.prop_success_no_start > 0),
-        metadata,
-        station_id: id as string,
-        country_code: country_code as any,
-      };
-      const ref = supabaseService.db.table('climate_summary_probabilities');
-      const upsertRes = await ref.upsert(entry).select().single();
-      if (upsertRes.error) {
-        console.error('upsert error', upsertRes);
-        throw upsertRes.error;
-      }
-      return (upsertRes.data as IClimateSummaryProbabilities['Row']) || [];
-    },
+
     /**
      *
      * @param row

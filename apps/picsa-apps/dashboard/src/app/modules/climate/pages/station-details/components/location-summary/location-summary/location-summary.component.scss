@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+table.location-summary {
+  border-collapse: collapse;
+  width: 100%;
+
+  td,
+  th {
+    border: 1px solid #dddddd;
+    padding: 8px;
+  }
+}

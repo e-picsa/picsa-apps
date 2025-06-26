@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RefreshSpinnerComponent } from '@picsa/components';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
 import { ClimateService } from '../../climate.service';
@@ -10,10 +9,6 @@ import { ClimateApiService } from '../../climate-api.service';
 export type IStatus = 'pending' | 'success' | 'error' | 'ready';
 
 export interface IApiStatusOptions {
-  labels?: {
-    ready?: string;
-    error?: string;
-  };
   events?: {
     refresh?: () => void;
   };
@@ -31,19 +26,23 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
  */
 @Component({
   selector: 'dashboard-climate-api-status',
-  imports: [MatButtonModule, MatIconModule, RefreshSpinnerComponent],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './api-status.html',
-  styleUrls: ['./api-status.scss'],
+  styleUrl: './api-status.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardClimateApiStatusComponent implements OnDestroy {
+  public label = input('');
   public status = signal<IStatus>('pending');
   public code = signal<number>(0);
 
   private componentDestroyed$ = new Subject();
   private subscription: Subscription;
 
-  constructor(public api: ClimateApiService, public service: ClimateService) {
+  constructor(
+    public api: ClimateApiService,
+    public service: ClimateService,
+  ) {
     effect(() => {
       const id = this.clientId();
       // clear any previous subscription

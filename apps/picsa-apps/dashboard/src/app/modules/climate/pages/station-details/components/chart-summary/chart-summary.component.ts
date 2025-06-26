@@ -1,12 +1,14 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
 import { IChartMeta, IStationData } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
 import { ChartConfiguration } from 'c3';
 
-import { IStationRow } from '../../../../types';
+import { hackConvertStationDataForDisplay } from '../../../../climate.utils';
+import { IClimateStationData, IStationRow } from '../../../../types';
 
 @Component({
   selector: 'dashboard-climate-chart-summary',
@@ -23,7 +25,15 @@ export class ChartSummaryComponent {
 
   public activeChartConfig = signal<Partial<ChartConfiguration> | undefined>(undefined);
 
-  public summaryData = signal<IStationData[]>([]);
+  readonly data = input<IClimateStationData['Row'] | null>();
+
+  public chartData = computed<IStationData[]>(() => {
+    const data = this.data();
+    if (data) {
+      return hackConvertStationDataForDisplay(data);
+    }
+    return [];
+  });
 
   constructor() {
     effect(() => {
@@ -34,10 +44,10 @@ export class ChartSummaryComponent {
     });
 
     effect(async () => {
-      const summaryData = this.summaryData();
+      const chartData = this.chartData();
       const activeChartDefinition = this.activeChartDefinition();
       if (activeChartDefinition) {
-        const config = await generateChartConfig(summaryData, activeChartDefinition);
+        const config = await generateChartConfig(chartData, activeChartDefinition);
         this.activeChartConfig.set(config);
       }
     });

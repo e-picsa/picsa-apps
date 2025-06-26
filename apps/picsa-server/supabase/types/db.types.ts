@@ -28,6 +28,71 @@ export type Database = {
   };
   public: {
     Tables: {
+      climate_station_data: {
+        Row: {
+          annual_rainfall_data: Json[] | null;
+          annual_rainfall_metadata: Json | null;
+          annual_temperature_data: Json[] | null;
+          annual_temperature_metadata: Json | null;
+          country_code: Database['public']['Enums']['country_code'];
+          created_at: string;
+          crop_probability_data: Json[] | null;
+          crop_probability_metadata: Json | null;
+          extremes_data: Json[] | null;
+          extremes_metadata: Json | null;
+          monthly_temperature_data: Json[] | null;
+          monthly_temperature_metadata: Json | null;
+          season_start_data: Json[] | null;
+          season_start_metadata: Json | null;
+          station_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          annual_rainfall_data?: Json[] | null;
+          annual_rainfall_metadata?: Json | null;
+          annual_temperature_data?: Json[] | null;
+          annual_temperature_metadata?: Json | null;
+          country_code: Database['public']['Enums']['country_code'];
+          created_at?: string;
+          crop_probability_data?: Json[] | null;
+          crop_probability_metadata?: Json | null;
+          extremes_data?: Json[] | null;
+          extremes_metadata?: Json | null;
+          monthly_temperature_data?: Json[] | null;
+          monthly_temperature_metadata?: Json | null;
+          season_start_data?: Json[] | null;
+          season_start_metadata?: Json | null;
+          station_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          annual_rainfall_data?: Json[] | null;
+          annual_rainfall_metadata?: Json | null;
+          annual_temperature_data?: Json[] | null;
+          annual_temperature_metadata?: Json | null;
+          country_code?: Database['public']['Enums']['country_code'];
+          created_at?: string;
+          crop_probability_data?: Json[] | null;
+          crop_probability_metadata?: Json | null;
+          extremes_data?: Json[] | null;
+          extremes_metadata?: Json | null;
+          monthly_temperature_data?: Json[] | null;
+          monthly_temperature_metadata?: Json | null;
+          season_start_data?: Json[] | null;
+          season_start_metadata?: Json | null;
+          station_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'climate_station_data_station_id_fkey';
+            columns: ['station_id'];
+            isOneToOne: false;
+            referencedRelation: 'climate_stations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       climate_stations: {
         Row: {
           country_code: string;
@@ -60,76 +125,6 @@ export type Database = {
           station_name?: string | null;
         };
         Relationships: [];
-      };
-      climate_summary_probabilities: {
-        Row: {
-          country_code: Database['public']['Enums']['country_code'];
-          created_at: string;
-          data: Json[];
-          metadata: Json;
-          station_id: string;
-          updated_at: string;
-        };
-        Insert: {
-          country_code: Database['public']['Enums']['country_code'];
-          created_at?: string;
-          data: Json[];
-          metadata: Json;
-          station_id: string;
-          updated_at?: string;
-        };
-        Update: {
-          country_code?: Database['public']['Enums']['country_code'];
-          created_at?: string;
-          data?: Json[];
-          metadata?: Json;
-          station_id?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'climate_summary_probabilities_station_id_fkey';
-            columns: ['station_id'];
-            isOneToOne: false;
-            referencedRelation: 'climate_stations';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      climate_summary_rainfall: {
-        Row: {
-          country_code: Database['public']['Enums']['country_code'];
-          created_at: string;
-          data: Json[];
-          metadata: Json;
-          station_id: string;
-          updated_at: string;
-        };
-        Insert: {
-          country_code: Database['public']['Enums']['country_code'];
-          created_at?: string;
-          data: Json[];
-          metadata: Json;
-          station_id: string;
-          updated_at?: string;
-        };
-        Update: {
-          country_code?: Database['public']['Enums']['country_code'];
-          created_at?: string;
-          data?: Json[];
-          metadata?: Json;
-          station_id?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'climate_summary_rainfall_station_id_fkey';
-            columns: ['station_id'];
-            isOneToOne: false;
-            referencedRelation: 'climate_stations';
-            referencedColumns: ['id'];
-          },
-        ];
       };
       crop_data: {
         Row: {

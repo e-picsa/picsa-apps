@@ -1,0 +1,10 @@
+<table class="location-summary">
+  <tr>
+    @for (key of stationSummary().keys; track $index) {
+      <th>{{ key }}</th>
+    }
+  </tr>
+  @for (value of stationSummary().values; track $index) {
+    <td>{{ value }}</td>
+  }
+</table>
