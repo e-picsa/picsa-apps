@@ -35,7 +35,7 @@
         </button>
         @if (row.updateSignal().completed) {
           <button mat-icon-button (click)="showUpdateSummary(row, $event)">
-            <mat-icon>check_ciclke</mat-icon>
+            <mat-icon>check_circle</mat-icon>
           </button>
         } @else {
           <button mat-icon-button (click)="refreshStation(row, $event)" [disabled]="row.updateSignal().started">
