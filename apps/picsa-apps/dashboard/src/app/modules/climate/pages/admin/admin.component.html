@@ -2,30 +2,47 @@
   <h2>Admin</h2>
   <div style="display: flex; align-items: center; gap: 2em">
     <p style="flex: 1">See the table below for rainfall summary data for all stations</p>
+    <!-- Data Download -->
+    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
+      <mat-icon>download</mat-icon>Download All
+    </button>
     <!-- Data Refresh -->
     <button mat-stroked-button color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
       <mat-icon>refresh</mat-icon>
       <span>
-        @if(refreshCount() > -1){
-        {{ refreshCount() }} / {{ tableData().length }} } @else { Refresh All}
+        @if (refreshCount() > -1) {
+          {{ refreshCount() }} / {{ tableData().length }}
+        } @else {
+          Refresh All
+        }
       </span>
-    </button>
-    <!-- Data Download -->
-    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
-      <mat-icon>download</mat-icon>Download All
     </button>
   </div>
   <picsa-data-table
     style="margin-top: 1em"
     [data]="tableData()"
     [options]="tableOptions"
-    [valueTemplates]="{ csv: csvTemplate, updated_at: updatedAtTemplate }"
+    [valueTemplates]="{ updated_at: updatedAtTemplate, station: stationTemplate }"
   >
-    <ng-template #csvTemplate let-row="row" let-value="value">
-      <button mat-button (click)="downloadStationCSV(row)" [disabled]="!value"><mat-icon>download</mat-icon></button>
-    </ng-template>
     <ng-template #updatedAtTemplate let-value>
       {{ value | date: 'mediumDate' }}
+    </ng-template>
+    <!-- Station column includes refresh and csv download -->
+    <ng-template #stationTemplate let-station let-row="row">
+      <div class="flex gap-2 items-center">
+        <button mat-button (click)="downloadStationCSV(station)" [disabled]="!station">
+          <mat-icon>download</mat-icon>
+        </button>
+        @if (row.updateSignal().completed) {
+          <button mat-icon-button (click)="showUpdateSummary(row, $event)">
+            <mat-icon>check_ciclke</mat-icon>
+          </button>
+        } @else {
+          <button mat-icon-button (click)="refreshStation(row, $event)" [disabled]="row.updateSignal().started">
+            <mat-icon>autorenew</mat-icon>
+          </button>
+        }
+      </div>
     </ng-template>
   </picsa-data-table>
 </div>

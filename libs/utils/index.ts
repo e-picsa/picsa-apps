@@ -3,6 +3,7 @@
 
 // export * from './angular';
 
+export * from './async.utils';
 export * from './browser.utils';
 export * from './data';
 export * from './mock';

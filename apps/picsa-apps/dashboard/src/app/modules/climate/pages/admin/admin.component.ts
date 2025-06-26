@@ -1,31 +1,39 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
-import { _wait, arrayToHashmap } from '@picsa/utils';
+import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { arrayToHashmap } from '@picsa/utils';
+import { allSettledInBatches } from '@picsa/utils';
 import download from 'downloadjs';
 import JSZip from 'jszip';
 import { unparse } from 'papaparse';
+import { lastValueFrom, Subject } from 'rxjs';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
-import { ClimateService } from '../../climate.service';
+import { ClimateService, IDataRefreshStatus } from '../../climate.service';
 import type { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
 import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/data-summary/data-summary.utils';
 
+interface IStatusUpdate {
+  statuses: IDataRefreshStatus[];
+  started: boolean;
+  completed: boolean;
+}
+
 interface IStationAdminSummary {
-  station_id: string;
-  row: IStationRow;
+  name: string;
+  station: IStationRow;
   updated_at?: string;
   rainfall_data?: IAnnualRainfallSummariesData[];
   start_year?: number;
   end_year?: number;
+  updateSignal: WritableSignal<IStatusUpdate>;
 }
 
-const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['station_id', 'updated_at', 'start_year', 'end_year'];
+const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['name', 'updated_at', 'start_year', 'end_year', 'station'];
 
 /**
  * TODOs - See #333
@@ -46,19 +54,25 @@ export class ClimateAdminPageComponent {
   });
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: ({ station_id }: IStationAdminSummary) =>
-      this.router.navigate(['../', 'station', station_id], { relativeTo: this.route }),
+    handleRowClick: ({ station }: IStationAdminSummary) =>
+      this.router.navigate(['../', 'station', station.station_id], { relativeTo: this.route }),
+    formatHeader: (v) => {
+      if (v === 'station') return '';
+      return formatHeaderDefault(v);
+    },
   };
   public refreshCount = signal(-1);
 
   private allStationData = signal<IClimateStationData['Row'][]>([]);
+
+  /** Keep reference to generated row update signals to prevent recreation on data load */
+  private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
 
   constructor(
     private service: ClimateService,
     private deploymentService: DeploymentDashboardService,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: PicsaNotificationService,
   ) {
     effect(() => {
       const country_code = this.deploymentService.activeDeployment()?.country_code;
@@ -73,7 +87,7 @@ export class ClimateAdminPageComponent {
     for (const summary of this.tableData()) {
       const csvData = this.generateStationCSVDownload(summary);
       if (csvData) {
-        zip.file(`${summary.row.station_id}.csv`, csvData);
+        zip.file(`${summary.station.id}.csv`, csvData);
       }
     }
     const blob = await zip.generateAsync({ type: 'blob' });
@@ -81,33 +95,84 @@ export class ClimateAdminPageComponent {
     download(blob, `${country_code}_rainfall_summaries.zip`);
   }
 
-  public downloadStationCSV(station: IStationAdminSummary) {
-    const csv = this.generateStationCSVDownload(station);
+  public downloadStationCSV(row: IStationAdminSummary) {
+    const csv = this.generateStationCSVDownload(row);
     if (csv) {
-      download(csv, station.row.station_id, 'text/csv');
+      download(csv, row.station.id as string, 'text/csv');
     }
   }
 
-  public async refreshAllStations() {
-    // TODO - use climate service method
-    return;
-    this.refreshCount.set(0);
-    const promises = this.tableData().map(async (station, i) => {
-      // hack - instead of queueing apply small offset between requests to reduce blocking
-      await _wait(200 * i);
-      try {
-        await this.service.loadFromAPI.rainfallSummaries(station.row);
-        // TODO - find tidier way to also fetch probabilities
-        // await this.service.loadFromAPI.cropProbabilities(station.row);
-      } catch (error) {
-        this.notificationService.showErrorNotification(`Could not update station: ${station.station_id}`);
-        console.error(error);
-      } finally {
-        this.refreshCount.update((v) => v + 1);
-      }
+  /** Trigger station refresh and subscribe to changes, updating individual station signal to track in UI */
+  public refreshStation(summary: IStationAdminSummary, e?: Event) {
+    // prevent default row click
+    if (e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+    // create signal to track data changes and observer to track in refreshAll
+    const { station, updateSignal } = summary;
+    updateSignal.update((v) => ({ ...v, started: true }));
+    const sub = new Subject();
+
+    this.service.updateStationDataFromApi(station).subscribe({
+      next: (v) => {
+        updateSignal.update(({ completed, statuses, started }) => {
+          statuses[v.index] = v;
+          return { completed, started, statuses: [...statuses] };
+        });
+      },
+      error: (e) => {
+        console.error(e);
+        // sub.complete();
+      },
+      complete: async () => {
+        updateSignal.update((v) => ({
+          ...v,
+          completed: true,
+        }));
+        sub.complete();
+        // Refresh all data if triggered from single click event
+        if (e) {
+          await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
+        }
+      },
     });
-    await Promise.allSettled(promises);
+    return sub;
+  }
+
+  /** Trigger data refresh for all stations */
+  public async refreshAllStations() {
+    this.refreshCount.set(0);
+
+    const promises: (() => Promise<any>)[] = [];
+    // Create promises as executable functions as otherwise they will start to execute on creation
+    for (const summary of this.tableData()) {
+      // mark all as started even though batches
+      summary.updateSignal.update((v) => ({ ...v, started: true }));
+      // add update to queue
+      promises.push(async () => {
+        try {
+          const sub = this.refreshStation(summary);
+          await lastValueFrom(sub);
+        } catch (error) {
+          console.error(`[${summary.station.station_id}]`, (error as any).message);
+        } finally {
+          this.refreshCount.update((v) => v + 1);
+        }
+      });
+    }
+    await allSettledInBatches(promises, 3);
     await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
+    this.refreshCount.set(-1);
+  }
+
+  public showUpdateSummary(summary: IStationAdminSummary, e: Event) {
+    // prevent default row click
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    console.log('data summary', summary.updateSignal().statuses);
+    // TODO - show summary dialog (refactor to common)
+    // TODO - consider showing pending too....
   }
 
   private generateStationCSVDownload(summary: IStationAdminSummary) {
@@ -122,12 +187,14 @@ export class ClimateAdminPageComponent {
   }
 
   private generateTableSummaryData(stations: IStationRow[], allStationData: IClimateStationData['Row'][]) {
-    // NOTE - only single entry for rainfallSummary (not hashmapArray)
-    const rainfallSummariesHashmap = arrayToHashmap(allStationData, 'station_id');
-    return stations.map((row) => {
-      const { station_id, id } = row;
-      const summary: IStationAdminSummary = { station_id, row };
-      const stationData = rainfallSummariesHashmap[station_id];
+    const stationDataHashmap = arrayToHashmap(allStationData, 'station_id');
+    return stations.map((station) => {
+      const summary: IStationAdminSummary = {
+        station,
+        name: station.station_name as string,
+        updateSignal: this.getRowUpdateSignal(station),
+      };
+      const stationData = stationDataHashmap[station.id as string];
       if (stationData) {
         const { annual_rainfall_data = [], updated_at } = stationData;
         summary.updated_at = updated_at;
@@ -142,18 +209,24 @@ export class ClimateAdminPageComponent {
     });
   }
 
+  /** create or reuse signal to provide live data refresh updates */
+  private getRowUpdateSignal(station: IStationRow) {
+    const { station_id } = station;
+    const existingSignal = this.rowUpdateSignals.get(station_id);
+    if (existingSignal) return existingSignal;
+    else {
+      const createdSignal = signal({ statuses: [], started: false, completed: false });
+      this.rowUpdateSignals.set(station_id, createdSignal);
+      return createdSignal;
+    }
+  }
+
   private async loadAllStationsData(country_code: string) {
     const { data, error } = await this.service.getAllStationData(country_code);
 
     if (error) {
       throw error;
     }
-    this.allStationData.set(
-      data.map((el) => {
-        // HACK - to keep parent ref id includes full country prefix, remove for lookup
-        el.station_id = el.station_id.replace(`${country_code}/`, '');
-        return el;
-      }),
-    );
+    this.allStationData.set(data);
   }
 }
