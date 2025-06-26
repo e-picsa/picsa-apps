@@ -5,6 +5,7 @@ import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
 import { IChartMeta, IStationData } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
+import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 import { ChartConfiguration } from 'c3';
 
 import { hackConvertStationDataForDisplay } from '../../../../climate.utils';
@@ -12,7 +13,7 @@ import { IClimateStationData, IStationRow } from '../../../../types';
 
 @Component({
   selector: 'dashboard-climate-chart-summary',
-  imports: [CommonModule, PicsaChartComponent],
+  imports: [CommonModule, PicsaChartComponent, DashboardMaterialModule],
   templateUrl: './chart-summary.component.html',
   styleUrl: './chart-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,8 +48,8 @@ export class ChartSummaryComponent {
       const chartData = this.chartData();
       const activeChartDefinition = this.activeChartDefinition();
       if (activeChartDefinition) {
-        const config = await generateChartConfig(chartData, activeChartDefinition);
-        this.activeChartConfig.set(config);
+        const chartConfig = await generateChartConfig(chartData, activeChartDefinition);
+        this.activeChartConfig.set(chartConfig);
       }
     });
   }
