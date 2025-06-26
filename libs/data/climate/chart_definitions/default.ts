@@ -127,6 +127,7 @@ const definitions: IChartDefinitions = {
   },
   extreme_rainfall_days: {
     _id: 'extreme_rainfall_days',
+    disabled: true,
     name: 'Extreme Rainfall',
     shortname: 'Extreme',
     image: 'assets/climate-icons/extreme-rainfall.svg',
@@ -159,7 +160,6 @@ const definitions: IChartDefinitions = {
     axes: {
       ...AXES_DEFAULT,
       yMin: 0,
-      yMax: 40,
       yMinor: 1,
       yMajor: 5,
     },

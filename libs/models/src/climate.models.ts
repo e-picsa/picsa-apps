@@ -51,6 +51,8 @@ export type IChartDefinitions = { [id in IChartId]: IChartMeta };
 
 export interface IChartMeta {
   _id: IChartId;
+  /** Disable a chart from display */
+  disabled?: boolean;
   name: string;
   shortname: string;
   image: string;
