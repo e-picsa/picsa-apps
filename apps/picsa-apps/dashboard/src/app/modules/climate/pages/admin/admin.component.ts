@@ -14,8 +14,8 @@ import { lastValueFrom, Subject } from 'rxjs';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService, IDataRefreshStatus } from '../../climate.service';
+import { hackConvertStationDataForDisplay } from '../../climate.utils';
 import type { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
-import { hackConvertAPIDataToLegacyFormat } from '../station-details/components/data-summary/data-summary.utils';
 
 interface IStatusUpdate {
   statuses: IDataRefreshStatus[];
@@ -33,10 +33,11 @@ interface IStationAdminSummary {
   updateSignal: WritableSignal<IStatusUpdate>;
 }
 
+const REFRESH_BATCH_SIZE = 3;
 const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['name', 'updated_at', 'start_year', 'end_year', 'station'];
 
 /**
- * TODOs - See #333
+ * TODOs - See #333 (possibly outdated after #404)
  */
 
 @Component({
@@ -49,8 +50,8 @@ const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['name', 'updated_at', '
 export class ClimateAdminPageComponent {
   public tableData = computed(() => {
     const stations = this.service.stations();
-    const allStationData = this.allStationData();
-    return this.generateTableSummaryData(stations, allStationData);
+    const allStationDataHashmap = this.allStationDataHashmap();
+    return this.generateTableSummaryData(stations, allStationDataHashmap);
   });
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
@@ -64,6 +65,7 @@ export class ClimateAdminPageComponent {
   public refreshCount = signal(-1);
 
   private allStationData = signal<IClimateStationData['Row'][]>([]);
+  private allStationDataHashmap = computed(() => arrayToHashmap(this.allStationData(), 'station_id'));
 
   /** Keep reference to generated row update signals to prevent recreation on data load */
   private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
@@ -85,7 +87,8 @@ export class ClimateAdminPageComponent {
   public async downloadAllStationsCSV() {
     const zip = new JSZip();
     for (const summary of this.tableData()) {
-      const csvData = this.generateStationCSVDownload(summary);
+      const stationData = this.allStationDataHashmap[summary.station.station_id];
+      const csvData = this.generateStationCSVDownload(stationData);
       if (csvData) {
         zip.file(`${summary.station.id}.csv`, csvData);
       }
@@ -95,10 +98,11 @@ export class ClimateAdminPageComponent {
     download(blob, `${country_code}_rainfall_summaries.zip`);
   }
 
-  public downloadStationCSV(row: IStationAdminSummary) {
-    const csv = this.generateStationCSVDownload(row);
+  public downloadStationCSV(summary: IStationAdminSummary) {
+    const stationData = this.allStationDataHashmap[summary.station.station_id];
+    const csv = this.generateStationCSVDownload(stationData);
     if (csv) {
-      download(csv, row.station.id as string, 'text/csv');
+      download(csv, summary.station.station_id, 'text/csv');
     }
   }
 
@@ -161,7 +165,7 @@ export class ClimateAdminPageComponent {
         }
       });
     }
-    await allSettledInBatches(promises, 3);
+    await allSettledInBatches(promises, REFRESH_BATCH_SIZE);
     await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
     this.refreshCount.set(-1);
   }
@@ -175,10 +179,9 @@ export class ClimateAdminPageComponent {
     // TODO - consider showing pending too....
   }
 
-  private generateStationCSVDownload(summary: IStationAdminSummary) {
-    const { rainfall_data } = summary;
-    if (rainfall_data) {
-      const csvData = hackConvertAPIDataToLegacyFormat(rainfall_data);
+  private generateStationCSVDownload(row: IClimateStationData['Row']) {
+    if (row) {
+      const csvData = hackConvertStationDataForDisplay(row);
       const columns = Object.keys(csvData[0]);
       const csv = unparse(csvData, { columns });
       return csv;
@@ -186,15 +189,17 @@ export class ClimateAdminPageComponent {
     return undefined;
   }
 
-  private generateTableSummaryData(stations: IStationRow[], allStationData: IClimateStationData['Row'][]) {
-    const stationDataHashmap = arrayToHashmap(allStationData, 'station_id');
+  private generateTableSummaryData(
+    stations: IStationRow[],
+    allStationDataHashmap: Record<string, IClimateStationData['Row']>,
+  ) {
     return stations.map((station) => {
       const summary: IStationAdminSummary = {
         station,
         name: station.station_name as string,
         updateSignal: this.getRowUpdateSignal(station),
       };
-      const stationData = stationDataHashmap[station.id as string];
+      const stationData = allStationDataHashmap[station.station_id];
       if (stationData) {
         const { annual_rainfall_data, updated_at } = stationData;
         summary.updated_at = updated_at;

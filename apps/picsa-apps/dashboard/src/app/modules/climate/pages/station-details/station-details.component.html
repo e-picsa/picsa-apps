@@ -34,10 +34,7 @@
           <mat-icon>show_chart</mat-icon>
           Charts
         </ng-template>
-        <dashboard-climate-chart-summary
-          [station]="station"
-          [data]="stationData()?.annual_rainfall_data"
-        ></dashboard-climate-chart-summary>
+        <dashboard-climate-chart-summary [station]="station" [data]="stationData()"></dashboard-climate-chart-summary>
       </mat-tab>
 
       <!-- Crop Probabilities -->

@@ -7,8 +7,8 @@ import { IChartMeta, IStationData } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
 import { ChartConfiguration } from 'c3';
 
-import { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../../../types';
-import { hackConvertAPIDataToLegacyFormat } from '../data-summary/data-summary.utils';
+import { hackConvertStationDataForDisplay } from '../../../../climate.utils';
+import { IClimateStationData, IStationRow } from '../../../../types';
 
 @Component({
   selector: 'dashboard-climate-chart-summary',
@@ -25,11 +25,15 @@ export class ChartSummaryComponent {
 
   public activeChartConfig = signal<Partial<ChartConfiguration> | undefined>(undefined);
 
-  public data = input<IClimateStationData['Row']['annual_rainfall_data']>();
+  readonly data = input<IClimateStationData['Row'] | null>();
 
-  public chartData = computed<IStationData[]>(() =>
-    hackConvertAPIDataToLegacyFormat((this.data() || []) as IAnnualRainfallSummariesData[]),
-  );
+  public chartData = computed<IStationData[]>(() => {
+    const data = this.data();
+    if (data) {
+      return hackConvertStationDataForDisplay(data);
+    }
+    return [];
+  });
 
   constructor() {
     effect(() => {
