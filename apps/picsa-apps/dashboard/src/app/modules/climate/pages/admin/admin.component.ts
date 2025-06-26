@@ -123,7 +123,7 @@ export class ClimateAdminPageComponent {
       },
       error: (e) => {
         console.error(e);
-        // sub.complete();
+        sub.complete();
       },
       complete: async () => {
         updateSignal.update((v) => ({
