@@ -196,9 +196,9 @@ export class ClimateAdminPageComponent {
       };
       const stationData = stationDataHashmap[station.id as string];
       if (stationData) {
-        const { annual_rainfall_data = [], updated_at } = stationData;
+        const { annual_rainfall_data, updated_at } = stationData;
         summary.updated_at = updated_at;
-        const rainfall_data = annual_rainfall_data as IAnnualRainfallSummariesData[];
+        const rainfall_data = (annual_rainfall_data || []) as IAnnualRainfallSummariesData[];
         summary.rainfall_data = rainfall_data;
         // HACK - some data includes additional entry at end with first year (out of order)
         const entries = rainfall_data.sort((a, b) => a.year - b.year);
