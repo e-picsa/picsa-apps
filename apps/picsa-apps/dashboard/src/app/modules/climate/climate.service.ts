@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -5,13 +6,21 @@ import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
-import { map } from 'rxjs';
+import { catchError, from, map, merge, of, startWith } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
 import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
 import { IAPICountryCode, IStationRow } from './types';
+
+export interface IDataRefreshStatus {
+  status: 'fulfilled' | 'rejected' | 'pending';
+  id: string;
+  index: number;
+  value?: any;
+  reason?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {
@@ -41,7 +50,7 @@ export class ClimateService extends PicsaAsyncService {
 
   // Create a signal to represent current stationId as defined by route params
   private activeStationId = toSignal(
-    ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => decodeURIComponent(params.stationId)))
+    ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => decodeURIComponent(params.stationId))),
   );
 
   constructor(
@@ -49,7 +58,7 @@ export class ClimateService extends PicsaAsyncService {
     private api: ClimateApiService,
     private router: Router,
     private deploymentSevice: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     super();
     this.ready();
@@ -64,6 +73,32 @@ export class ClimateService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
+  }
+
+  public getMergedStationData(station) {
+    const requests = [
+      {
+        id: 'Annual Rainfall',
+        fn: this.loadFromAPI.rainfallSummaries(station),
+      },
+      {
+        id: 'Annual Temperatures',
+        fn: this.loadFromAPI.annualTemperature(station),
+      },
+      {
+        id: 'Crop Probabilities',
+        fn: this.loadFromAPI.cropProbabilities(station),
+      },
+    ];
+    const observables = requests.map(({ fn, id }, index) =>
+      from(fn).pipe(
+        map((value): IDataRefreshStatus => ({ status: 'fulfilled', id, value, index })),
+        catchError((reason) => of<IDataRefreshStatus>({ status: 'rejected', id, reason, index })),
+        startWith<IDataRefreshStatus>({ status: 'pending', id, index }),
+      ),
+    );
+    const status$ = merge(...observables);
+    return status$;
   }
 
   private async loadData(deployment: IDeploymentRow) {

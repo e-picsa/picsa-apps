@@ -1,37 +1,34 @@
 <div class="page-content">
   @if (service.activeStation(); as station) {
-    <h2>{{ station.station_name }}</h2>
+    <div class="flex items-center">
+      <h2 class="flex-1">{{ station.station_name }}</h2>
+      <button mat-stroked-button (click)="refreshData(station)">
+        Refresh Data
+        <mat-icon>autorenew</mat-icon>
+      </button>
+    </div>
 
     <mat-tab-group preserveContent>
+      <!-- Location Summary -->
       <mat-tab>
-        <ng-template mat-tab-label>
-          <mat-icon>place</mat-icon>
-          Location
-        </ng-template>
-        <table style="max-width: 600px" class="mt-3">
-          <tr>
-            @for (key of stationSummary().keys; track $index) {
-              <th>{{ key }}</th>
-            }
-          </tr>
-          @for (value of stationSummary().values; track $index) {
-            <td>{{ value }}</td>
-          }
-        </table>
+        <ng-template mat-tab-label><mat-icon>place</mat-icon>Location</ng-template>
+        <dashboard-climate-location-summary
+          [station]="station"
+          class="mt-3 max-w-lg"
+        ></dashboard-climate-location-summary>
       </mat-tab>
 
+      <!-- Data Summary -->
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon>view_list</mat-icon>
           Data
         </ng-template>
-        <dashboard-climate-data-summary
-          [station]="station"
-          (rainfallSummaryLoaded)="chartSummary.summaryData.set($any($event))"
-        ></dashboard-climate-data-summary>
+        <dashboard-climate-data-summary [data]="stationData()" [station]="station"></dashboard-climate-data-summary>
         <!-- HACK - update chart data when summary table updates -->
       </mat-tab>
 
+      <!-- Charts -->
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon>show_chart</mat-icon>
@@ -40,6 +37,7 @@
         <dashboard-climate-chart-summary #chartSummary [station]="station"></dashboard-climate-chart-summary>
       </mat-tab>
 
+      <!-- Crop Probabilities -->
       <mat-tab>
         <ng-template mat-tab-label>
           <mat-icon>percent</mat-icon>
@@ -53,13 +51,30 @@
   }
 </div>
 
-<!-- Legacy - definitions display - could be loaded from rainfall summary -->
-<!-- 
-      <mat-tab >
-        <ng-template mat-tab-label>
-          <mat-icon>description</mat-icon>
-          Definition
-        </ng-template>
-        <pre>{{summaryMetadata | json}}</pre>
-      </mat-tab> 
-  -->
+<!-- Refresh Data Dialog -->
+<ng-template #updateDialog>
+  <table class="data-updates">
+    <th></th>
+    @for (update of dataFetchUpdates(); track $index) {
+      <tr>
+        <td>
+          @switch (update.status) {
+            <!--  -->
+            @case ('pending') {
+              <mat-icon class="spin">autorenew</mat-icon>
+            }
+            <!--  -->
+            @case ('fulfilled') {
+              <mat-icon style="color: green">check_box</mat-icon>
+            }
+            <!--  -->
+            @case ('rejected') {
+              <mat-icon style="color: red">error</mat-icon>
+            }
+          }
+        </td>
+        <td>{{ update.id }}</td>
+      </tr>
+    }
+  </table>
+</ng-template>

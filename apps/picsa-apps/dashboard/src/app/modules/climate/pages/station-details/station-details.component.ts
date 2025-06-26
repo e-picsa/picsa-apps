@@ -1,27 +1,95 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ChangeDetectionStrategy, Component, effect, signal, TemplateRef, viewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { _wait } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
-import { ClimateService } from '../../climate.service';
+import { ClimateService, IDataRefreshStatus } from '../../climate.service';
+import { IClimateSummaryRainfallRow, IStationRow } from '../../types';
 import { ChartSummaryComponent } from './components/chart-summary/chart-summary.component';
 import { CropProbabilitiesComponent } from './components/crop-probabilities/crop-probabilities.component';
 import { DataSummaryComponent } from './components/data-summary/data-summary';
+import { LocationSummaryComponent } from './components/location-summary/location-summary/location-summary.component';
 
 @Component({
   selector: 'dashboard-station-details',
-  imports: [DashboardMaterialModule, DataSummaryComponent, ChartSummaryComponent, CropProbabilitiesComponent],
+  imports: [
+    DashboardMaterialModule,
+    DataSummaryComponent,
+    ChartSummaryComponent,
+    CropProbabilitiesComponent,
+    LocationSummaryComponent,
+  ],
   templateUrl: './station-details.component.html',
   styleUrls: ['./station-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StationDetailsPageComponent {
-  stationSummary = computed(() => {
-    const station = this.service.activeStation();
-    const entries = Object.entries(station || {}).filter(([key]) => !['id', 'country_code'].includes(key));
-    return {
-      keys: entries.map(([key]) => key),
-      values: entries.map(([, value]) => value),
-    };
-  });
+  public dataFetchUpdates = signal<IDataRefreshStatus[]>([]);
 
-  constructor(public service: ClimateService) {}
+  private updatesDialog = viewChild.required('updateDialog', { read: TemplateRef });
+
+  public stationData = signal<IClimateSummaryRainfallRow | null>(null);
+
+  private isFirstDataLoad = true;
+
+  constructor(
+    public service: ClimateService,
+    private dialog: MatDialog,
+    private supabase: SupabaseService,
+  ) {
+    effect(() => {
+      const station = this.service.activeStation();
+      if (station) {
+        this.loadDBData(station);
+      }
+    });
+  }
+
+  private get db() {
+    return this.supabase.db.table('climate_summary_rainfall');
+  }
+
+  private async loadDBData(station: IStationRow) {
+    const { data, error } = await this.db
+      .select<'*', IClimateSummaryRainfallRow>('*')
+      .eq('station_id', station.id)
+      .single();
+    if (data) {
+      this.stationData.set(data);
+    } else {
+      // if no data available try to load first time from api
+      if (this.isFirstDataLoad) {
+        this.isFirstDataLoad = false;
+        await this.refreshData(station);
+      }
+    }
+  }
+
+  /**
+   * Retrieve updates for all station endpoints from service
+   * Subscribe to combined updates and update summary signal on change
+   */
+  public async refreshData(station: IStationRow) {
+    const dialog = this.dialog.open(this.updatesDialog());
+    const status$ = this.service.getMergedStationData(station);
+    status$.subscribe({
+      next: (update) => {
+        this.dataFetchUpdates.update((updates) => {
+          updates[update.index] = update;
+          return [...updates];
+        });
+      },
+      error: (err) => {
+        console.error(err);
+      },
+      complete: async () => {
+        // data should now be synced to api
+        this.loadDBData(station);
+        await _wait(2000);
+        dialog.close();
+      },
+    });
+  }
 }

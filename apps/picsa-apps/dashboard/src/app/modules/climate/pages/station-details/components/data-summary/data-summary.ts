@@ -1,93 +1,27 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output } from '@angular/core';
-import { IStationData } from '@picsa/models/src';
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { SupabaseService } from '@picsa/shared/services/core/supabase';
+import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 
-import { ClimateService } from '../../../../climate.service';
-import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import {
-  IAnnualRainfallSummariesData,
-  IAnnualRainfallSummariesMetadata,
-  IClimateSummaryRainfallRow,
-  IStationRow,
-} from '../../../../types';
+import { IClimateSummaryRainfallRow, IStationRow } from '../../../../types';
 import { hackConvertAPIDataToLegacyFormat } from './data-summary.utils';
-
-interface IRainfallSummary {
-  data: IAnnualRainfallSummariesData[];
-  metadata: IAnnualRainfallSummariesMetadata;
-}
 
 @Component({
   selector: 'dashboard-climate-data-summary',
   templateUrl: './data-summary.html',
-  imports: [DashboardClimateApiStatusComponent, PicsaDataTableComponent],
+  imports: [PicsaDataTableComponent, DashboardMaterialModule],
   styleUrl: './data-summary.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataSummaryComponent {
-  public summaryMetadata: IRainfallSummary['metadata'] = {};
-  public summaryData: IStationData[] = [];
-
   public station = input.required<IStationRow>();
 
-  public rainfallSummaryLoaded = output<IStationData[]>();
+  public data = input<IClimateSummaryRainfallRow | null>();
 
-  constructor(
-    private service: ClimateService,
-    private cdr: ChangeDetectorRef,
-    private supabase: SupabaseService,
-  ) {
-    effect(() => {
-      const station = this.station();
-      this.loadRainfallSummaries(station);
-    });
-  }
+  public tableData = computed(() => hackConvertAPIDataToLegacyFormat(this.data()?.data));
 
-  public tableOptions: IDataTableOptions = {
+  public tableOptions = computed<IDataTableOptions>(() => ({
     paginatorSizes: [25, 50],
-  };
-
-  public summaryReqOptions: IApiStatusOptions = {
-    events: { refresh: () => this.refreshRainfallSummaries() },
-    showStatusCode: true,
-  };
-
-  private get db() {
-    return this.supabase.db.table('climate_summary_rainfall');
-  }
-
-  private async loadRainfallSummaries(station: IStationRow) {
-    // Load data stored in supabase db if available. Otherwise load from api
-    // TODO - nicer if could include db lookups as part of mapping doc
-    const { data, error } = await this.db
-      .select<'*', IClimateSummaryRainfallRow>('*')
-      .eq('station_id', station.id)
-      .single();
-    if (data) {
-      this.processRainfallSummaryData(data);
-    } else {
-      await this.refreshRainfallSummaries();
-    }
-  }
-
-  private async refreshRainfallSummaries() {
-    const data = await this.service.loadFromAPI.rainfallSummaries(this.station());
-    const summary = data?.[0];
-    if (summary) {
-      this.processRainfallSummaryData(summary);
-    }
-  }
-
-  private processRainfallSummaryData(summary: IClimateSummaryRainfallRow) {
-    console.log('load data', summary);
-    this.tableOptions.exportFilename = `${this.station().id}.csv`;
-    const { data, metadata } = summary;
-    const legacyData = hackConvertAPIDataToLegacyFormat(data);
-    this.summaryData = legacyData;
-    this.summaryMetadata = metadata;
-    this.rainfallSummaryLoaded.emit(legacyData);
-    this.cdr.markForCheck();
-  }
+    exportFilename: `${this.station().id}.csv`,
+  }));
 }
