@@ -1,0 +1,21 @@
+<!-- ready status template -->
+<button
+  mat-stroked-button
+  [attr.data-status]="status()"
+  [disabled]="status()==='pending'"
+  (click)="options().events?.refresh()"
+  class="refresh-button"
+>
+  <div class="flex items-center">
+    <!-- Status Code -->
+    @if(options().showStatusCode && status()!=='ready'){
+    <span class="status-code" [attr.data-status]="status()">{{code() || ''}}</span>
+    }
+    <!-- Label -->
+    @if(label()){
+    <span class="flex-1 mx-2" class="label">{{label()}}</span>
+    }
+
+    <mat-icon iconPositionEnd [class.spin]="status() === 'pending'" class="mr-1">autorenew</mat-icon>
+  </div>
+</button>
