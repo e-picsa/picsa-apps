@@ -28,7 +28,7 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
   selector: 'dashboard-climate-api-status',
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './api-status.html',
-  styleUrls: ['./api-status.scss'],
+  styleUrl: './api-status.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardClimateApiStatusComponent implements OnDestroy {

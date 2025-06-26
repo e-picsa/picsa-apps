@@ -12,7 +12,7 @@ import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
 import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
-import { IAPICountryCode, IStationRow } from './types';
+import { IAPICountryCode, IClimateStationData, IStationRow } from './types';
 
 export interface IDataRefreshStatus {
   status: 'fulfilled' | 'rejected' | 'pending';
@@ -70,12 +70,33 @@ export class ClimateService extends PicsaAsyncService {
       }
     });
   }
+  private get stationDataDB() {
+    return this.supabaseService.db.table<'climate_station_data', IClimateStationData>('climate_station_data');
+  }
 
   public override async init() {
     await this.supabaseService.ready();
   }
 
-  public getMergedStationData(station) {
+  /** Get DB station data row for a specific station id */
+  public getStationData(stationId: string) {
+    return this.stationDataDB.select<'*', IClimateStationData['Row']>('*').eq('station_id', stationId).single();
+  }
+  /** Get DB station data for all entries within a specific country */
+  public getAllStationData(countryCode: string) {
+    return this.stationDataDB.select<'*', IClimateStationData['Row']>('*').eq('country_code', countryCode as any);
+  }
+
+  /** Update DB with partial station data update */
+  public updateStationData(station: IStationRow, update: IClimateStationData['Update']) {
+    return this.stationDataDB.upsert({
+      ...update,
+      country_code: station.country_code as any,
+      station_id: station.id as string,
+    });
+  }
+
+  public updateStationDataFromApi(station: IStationRow) {
     const requests = [
       {
         id: 'Annual Rainfall',
@@ -89,6 +110,18 @@ export class ClimateService extends PicsaAsyncService {
         id: 'Crop Probabilities',
         fn: this.loadFromAPI.cropProbabilities(station),
       },
+      {
+        id: 'Monthly Temperatures',
+        fn: this.loadFromAPI.monthlyTemperatures(station),
+      },
+      {
+        id: 'Season Start',
+        fn: this.loadFromAPI.seasonStart(station),
+      },
+      {
+        id: 'Extremes',
+        fn: this.loadFromAPI.extremes(station),
+      },
     ];
     const observables = requests.map(({ fn, id }, index) =>
       from(fn).pipe(
@@ -98,6 +131,7 @@ export class ClimateService extends PicsaAsyncService {
       ),
     );
     const status$ = merge(...observables);
+
     return status$;
   }
 

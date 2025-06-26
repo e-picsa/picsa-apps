@@ -1,12 +1,10 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 
-import { ClimateService } from '../../../../climate.service';
-import { DashboardClimateApiStatusComponent, IApiStatusOptions } from '../../../../components/api-status/api-status';
-import { IClimateSummaryProbabilities, ICropSuccessEntry, IStationRow } from '../../../../types';
+import { IClimateStationData, ICropSuccessEntry } from '../../../../types';
 import { DashboardClimateDataGridComponent } from './data-grid/data-grid/data-grid.component';
 
 interface IProbabilityEntry {
@@ -18,29 +16,20 @@ interface IProbabilityEntry {
 
 @Component({
   selector: 'dashboard-climate-crop-probabilities',
-  imports: [
-    CommonModule,
-    DashboardClimateDataGridComponent,
-    DashboardClimateApiStatusComponent,
-    DashboardMaterialModule,
-    PicsaDataTableComponent,
-  ],
+  imports: [CommonModule, DashboardClimateDataGridComponent, DashboardMaterialModule, PicsaDataTableComponent],
   templateUrl: './crop-probabilities.component.html',
   styleUrl: './crop-probabilities.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilitiesComponent {
-  public station = input.required<IStationRow>();
-
-  public probabilityReqOptions: IApiStatusOptions = {
-    events: { refresh: () => this.refreshData() },
-    showStatusCode: true,
-  };
-
   public plantDateRange = computed(() => {
     const data = this.allProbabilities();
     return [data[0]?.plant_day, data[data.length - 1]?.plant_day];
   });
+
+  public data = input<IClimateStationData['Row']['crop_probability_data']>();
+
+  private allProbabilities = computed(() => this.processData((this.data() || []) as ICropSuccessEntry[]));
 
   public selectedPlantDate = signal(0);
 
@@ -54,16 +43,7 @@ export class CropProbabilitiesComponent {
     search: false,
   };
 
-  private allProbabilities = signal<IProbabilityEntry[]>([]);
-
-  constructor(
-    private service: ClimateService,
-    private supabase: SupabaseService,
-  ) {
-    effect(() => {
-      const station = this.station();
-      this.loadCropProbabilities(station);
-    });
+  constructor() {
     effect(() => {
       const data = this.allProbabilities();
       this.selectedPlantDate.set(data[0]?.plant_day);
@@ -72,31 +52,6 @@ export class CropProbabilitiesComponent {
 
   public formatPlantDateLabel(v: number) {
     return `${v}`;
-  }
-
-  private get db() {
-    return this.supabase.db.table('climate_summary_probabilities');
-  }
-
-  private async loadCropProbabilities(station: IStationRow) {
-    // Load data stored in supabase db if available. Otherwise load from api
-    // TODO - nicer if could include db lookups as part of mapping doc
-    const { data, error } = await this.db
-      .select<'*', IClimateSummaryProbabilities['Row']>('*')
-      .eq('station_id', station.id)
-      .single();
-    if (data) {
-      this.processData(data.data as ICropSuccessEntry[]);
-    } else {
-      await this.refreshData();
-    }
-  }
-
-  private async refreshData() {
-    const data = await this.service.loadFromAPI.cropProbabilities(this.station());
-    if (data) {
-      this.processData(data.data as ICropSuccessEntry[]);
-    }
   }
 
   /**
@@ -112,6 +67,6 @@ export class CropProbabilitiesComponent {
         probability: Math.round(prop_success_no_start * 100) / 100,
       }),
     );
-    this.allProbabilities.set(allProbabilities);
+    return allProbabilities;
   }
 }

@@ -43,7 +43,9 @@
           <mat-icon>percent</mat-icon>
           Crop Probabilities
         </ng-template>
-        <dashboard-climate-crop-probabilities [station]="station"></dashboard-climate-crop-probabilities>
+        <dashboard-climate-crop-probabilities
+          [data]="stationData()?.crop_probability_data"
+        ></dashboard-climate-crop-probabilities>
       </mat-tab>
     </mat-tab-group>
   } @else {

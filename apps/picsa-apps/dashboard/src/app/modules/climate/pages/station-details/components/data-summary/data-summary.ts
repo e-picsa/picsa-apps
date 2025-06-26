@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 
-import { IClimateSummaryRainfallRow, IStationRow } from '../../../../types';
+import { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../../../types';
 import { hackConvertAPIDataToLegacyFormat } from './data-summary.utils';
 
 @Component({
@@ -16,9 +16,11 @@ import { hackConvertAPIDataToLegacyFormat } from './data-summary.utils';
 export class DataSummaryComponent {
   public station = input.required<IStationRow>();
 
-  public data = input<IClimateSummaryRainfallRow | null>();
+  public data = input<IClimateStationData['Row'] | null>();
 
-  public tableData = computed(() => hackConvertAPIDataToLegacyFormat(this.data()?.data));
+  public tableData = computed(() =>
+    hackConvertAPIDataToLegacyFormat(this.data()?.annual_rainfall_data as IAnnualRainfallSummariesData[]),
+  );
 
   public tableOptions = computed<IDataTableOptions>(() => ({
     paginatorSizes: [25, 50],
