@@ -35,6 +35,7 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
   const config: IChartConfig = {
     // ensure axis labels fit
     padding: {
+      bottom: definition.legend?.show ? 10 : 0,
       right: 10,
       left: 60,
     },
@@ -106,6 +107,7 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
     },
     legend: {
       show: false,
+      ...definition.legend,
     },
     point: {
       r: (d) => 8, // NOTE - radius 3 used in print version

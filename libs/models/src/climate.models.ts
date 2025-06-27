@@ -46,7 +46,7 @@ export interface IStationData {
 
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
-export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days' | 'temperature';
+export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days' | 'temp_min' | 'temp_max';
 export type IChartDefinitions = { [id in IChartId]: IChartMeta };
 
 export interface IChartMeta {
@@ -67,6 +67,10 @@ export interface IChartMeta {
   tools: { line: ILineToolOptions; probability: IProbabilityToolOptions };
   units: string;
   definition: string;
+  legend?: {
+    /** Specify whether to show chart legend */
+    show?: boolean;
+  };
   tooltip?: {
     /** Specify whether to group data series when displaying tooltip */
     grouped?: boolean;

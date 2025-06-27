@@ -4,7 +4,6 @@ import { Capacitor } from '@capacitor/core';
 import { _wait } from '@picsa/utils';
 import download from 'downloadjs';
 import html2canvas from 'html2canvas';
-import { svgAsPngUri } from 'save-svg-as-png';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
@@ -44,30 +43,63 @@ export class PrintProvider {
     await this.shareDataImage(pngUri, title);
   }
 
-  async convertC3ChartToPNG(svgDomSelector: string) {
-    const svg = document.getElementById(svgDomSelector) as HTMLElement;
-    const options = {
-      // remove canvg as doesn't support background colours
-      // canvg: canvg,
-      scale: 2,
-      backgroundColor: 'white',
-      selectorRemap: (s: string) => s.replace(/\.c3((-)?[\w.]*)*/g, ''),
-      // modify selector-properties
-      modifyCss: (s: string, p: string) => {
-        // modifyCss is used to take stylesheet classes that apply to svgElements and make inline
-        // use remap so that .c3-axis-y-label text detects the 'text' svg element
-        // NOTE - some properties don't work quite right (override other defaults)
-        const overrides = ['.c3 svg', '.c3-grid text'];
-        if (overrides.includes(s)) {
-          return;
-        }
-        s = s.replace(/\.c3((-)?[\w.]*)*/g, '');
+  /**
+   * Generated using Claude 4
+   * Take a rendered svg element in html and convert to png. Ensure any inherited css styles
+   * are correctly inlined so that the png replicates the svg exactly
+   */
+  public async svgToPngBlob(
+    svgElement: SVGSVGElement,
+    options = { width: 900, height: 500, scale: 1, backgroundColor: 'white' },
+  ): Promise<Blob> {
+    const { width, height, scale = 1, backgroundColor = 'transparent' } = options;
 
-        return s + '{' + p + '}';
-      },
-    };
-    const pngUri: string = await svgAsPngUri(svg, options);
-    return pngUri;
+    // Get computed styles and serialize the SVG
+    const serializedSvg = serializeSvgWithStyles(svgElement);
+
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+    // Set canvas dimensions
+    const svgRect = svgElement.getBoundingClientRect();
+    canvas.width = (width || svgRect.width) * scale;
+    canvas.height = (height || svgRect.height) * scale;
+
+    // Scale context if needed
+    if (scale !== 1) {
+      ctx.scale(scale, scale);
+    }
+
+    // Set background color if specified
+    if (backgroundColor !== 'transparent') {
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
+    }
+
+    // Create image from SVG
+    const img = new Image();
+    const svgBlob = new Blob([serializedSvg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(svgBlob);
+
+    return new Promise<Blob>((resolve, reject) => {
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+
+        // Convert to PNG
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to convert canvas to blob'));
+          }
+        }, 'image/png');
+      };
+
+      img.onerror = reject;
+      img.src = url;
+    });
   }
 
   private async shareDataImage(base64Img: string, title: string) {
@@ -77,4 +109,41 @@ export class PrintProvider {
       return download(base64Img, title + '.png', 'image/png');
     }
   }
+}
+
+/** Take an svgElement and inline any inherited styles */
+function serializeSvgWithStyles(svgElement: SVGElement) {
+  // Clone the SVG to avoid modifying the original
+  const clonedSvg = svgElement.cloneNode(true) as SVGElement;
+
+  // Get all elements in the SVG
+  const allElements = [clonedSvg, ...clonedSvg.querySelectorAll('*')];
+
+  // Apply computed styles to each element
+  allElements.forEach((element, index) => {
+    const originalElement = index === 0 ? svgElement : svgElement.querySelectorAll('*')[index - 1];
+
+    if (originalElement) {
+      const computedStyle = window.getComputedStyle(originalElement);
+      const styleString = Array.from(computedStyle)
+        .filter((prop) => computedStyle.getPropertyValue(prop))
+        .map((prop) => `${prop}: ${computedStyle.getPropertyValue(prop)}`)
+        .join('; ');
+
+      if (styleString) {
+        element.setAttribute('style', styleString);
+      }
+    }
+  });
+
+  // Serialize the SVG
+  const serializer = new XMLSerializer();
+  let svgString = serializer.serializeToString(clonedSvg);
+
+  // Ensure proper SVG namespace
+  if (!svgString.includes('xmlns="http://www.w3.org/2000/svg"')) {
+    svgString = svgString.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+
+  return svgString;
 }

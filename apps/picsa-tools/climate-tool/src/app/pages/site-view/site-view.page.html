@@ -1,4 +1,6 @@
-<climate-print-layout *ngIf="chartService.chartPng"></climate-print-layout>
+@if(chartService.chartPngBlob(); as chartPngBlob){
+<climate-print-layout [chartPngBlob]="chartPngBlob"></climate-print-layout>
+}
 
 <!-- Header to inject into global header component -->
 <ng-template #headerPortal>
