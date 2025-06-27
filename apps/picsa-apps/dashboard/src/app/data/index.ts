@@ -1,5 +1,4 @@
 export * from './navLinks';
 
-// Major version should be aligned with current app major
-// Minor version used for patch updates
-export const DASHBOARD_APP_VERSION = '3.1.0';
+// Version aligned with min app compatible version
+export const DASHBOARD_APP_VERSION = '3.60.0';
