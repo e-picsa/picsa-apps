@@ -67,6 +67,10 @@ export interface IChartMeta {
   tools: { line: ILineToolOptions; probability: IProbabilityToolOptions };
   units: string;
   definition: string;
+  tooltip?: {
+    /** Specify whether to group data series when displaying tooltip */
+    grouped?: boolean;
+  };
   axes: {
     /** Min/max values (default calculate from data) */
     yMin: number;
