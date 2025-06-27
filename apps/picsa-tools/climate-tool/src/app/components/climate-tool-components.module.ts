@@ -21,10 +21,11 @@ import { ClimatePrintLayoutComponent } from './print-layout/print-layout.compone
 import { ClimateShareDialogComponent } from './share-dialog/share-dialog.component';
 import { ViewSelectComponent } from './view-select/view-select';
 
+const Standalone = [ClimatePrintLayoutComponent];
+
 const Components = [
   ClimateChartLayoutComponent,
   ClimateChartOptionsComponent,
-  ClimatePrintLayoutComponent,
   ClimateShareDialogComponent,
   CombinedProbabilityComponent,
   CropAnalysisComponent,
@@ -49,7 +50,8 @@ const Components = [
     PicsaSharedPipesModule,
     ReactiveFormsModule,
     RouterModule,
+    ...Standalone,
   ],
-  exports: [...Components, PicsaCommonComponentsModule, PicsaClimateMaterialModule],
+  exports: [...Components, ...Standalone, PicsaCommonComponentsModule, PicsaClimateMaterialModule],
 })
 export class ClimateToolComponentsModule {}

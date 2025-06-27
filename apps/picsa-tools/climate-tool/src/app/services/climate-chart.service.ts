@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
@@ -34,7 +34,7 @@ export class ClimateChartService {
   public chartConfig: IChartConfig;
 
   /** Png version of chart converted from SVG */
-  public chartPng?: string;
+  public chartPngBlob = signal<Blob | undefined>(undefined);
 
   /** Observable properties for config above */
   public chartConfig$ = new BehaviorSubject<IChartConfig | undefined>(undefined);
@@ -156,12 +156,23 @@ export class ClimateChartService {
     const filename = `${station?.name} - ${chartDefinition!.name}`;
     // TODO - translate and add language suffix
 
+    // Toggle chart settings to resize points and size for print
     await this.togglePrintVersion();
-    const png = await this.printProvider.convertC3ChartToPNG('picsa_chart_svg');
-    this.chartPng = png;
-    await _wait(200);
+
+    // Generate a png representation of currently rendered chart so that it
+    // can be embedded in custom print-layout component
+    const svgElement = document.querySelector<SVGSVGElement>('#picsa_chart_svg');
+    if (svgElement) {
+      const pngBlob = await this.printProvider.svgToPngBlob(svgElement);
+      if (pngBlob) {
+        this.chartPngBlob.set(pngBlob);
+      }
+    }
+    // wait for `print-layout` to render with generated image and export
+    await _wait(500);
     await this.printProvider.shareHtmlDom('#picsaClimatePrintLayout', filename);
-    this.chartPng = undefined;
+
+    this.chartPngBlob.set(undefined);
     await this.togglePrintVersion();
   }
 
@@ -185,7 +196,7 @@ export class ClimateChartService {
     window.dispatchEvent(new CustomEvent('picsaChartRerender'));
     // Ensure graphics updated by waiting for chart render notification and timeout
     await firstValueFrom(this.chartRendered$);
-    await _wait(200);
+    await _wait(500);
   }
 
   /**

@@ -19966,7 +19966,6 @@ __metadata:
     rxdb: "patch:rxdb@npm%3A16.6.1#~/.yarn/patches/rxdb-npm-16.6.1-c881d164ee.patch"
     rxdb-14: "npm:rxdb@^14.17.1"
     rxjs: "npm:~7.8.1"
-    save-svg-as-png: "npm:^1.4.17"
     sharp: "npm:^0.31.3"
     stacktrace-js: "npm:^2.0.2"
     supabase: "npm:^2.22.12"
@@ -21850,13 +21849,6 @@ __metadata:
   bin:
     sass: sass.js
   checksum: 10c0/9772506cd8290df7b5e800055098e91a8a65100840fd9e90c660deb74b248b3ddbbd1a274b8f7f09777d472d2c873575357bd87939a40fb5a80bdf654985486f
-  languageName: node
-  linkType: hard
-
-"save-svg-as-png@npm:^1.4.17":
-  version: 1.4.17
-  resolution: "save-svg-as-png@npm:1.4.17"
-  checksum: 10c0/4a0d8733f32d90664a484e04c346a1bad6d0d3a4a06558916ea3eadd6fc5c3b4064922474bae811ac74360aa48103c4da0ef9196df2c3ea298b7b03b1cd51cfb
   languageName: node
   linkType: hard
 

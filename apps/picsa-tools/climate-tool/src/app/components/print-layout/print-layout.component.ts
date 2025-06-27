@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnDestroy, OnInit } from '@angular/core';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
 
@@ -6,24 +7,30 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   selector: 'climate-print-layout',
   templateUrl: './print-layout.component.html',
   styleUrls: ['./print-layout.component.scss'],
-  standalone: false,
+  imports: [PicsaTranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClimatePrintLayoutComponent implements OnInit {
+export class ClimatePrintLayoutComponent implements OnInit, OnDestroy {
   public stationName: string;
   public chartName: string;
   public chartDefinition: string;
 
-  public chartPng?: string;
+  public chartPngBlob = input.required<Blob>();
+  public pngSrc: string;
 
-  constructor(private chartService: ClimateChartService) {}
+  constructor(public chartService: ClimateChartService) {}
 
   ngOnInit(): void {
-    const { chartPng, station } = this.chartService;
+    this.pngSrc = URL.createObjectURL(this.chartPngBlob());
+
+    const { station } = this.chartService;
     if (station) {
       this.stationName = station.name;
-      this.chartPng = chartPng;
       this.chartDefinition = this.chartService.chartDefinition?.definition || '';
       this.chartName = this.chartService.chartDefinition?.name || '';
     }
+  }
+  ngOnDestroy(): void {
+    URL.revokeObjectURL(this.pngSrc);
   }
 }

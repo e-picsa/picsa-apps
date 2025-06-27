@@ -121,7 +121,6 @@
     "rxdb": "patch:rxdb@npm%3A16.6.1#~/.yarn/patches/rxdb-npm-16.6.1-c881d164ee.patch",
     "rxdb-14": "npm:rxdb@^14.17.1",
     "rxjs": "~7.8.1",
-    "save-svg-as-png": "^1.4.17",
     "sharp": "^0.31.3",
     "stacktrace-js": "^2.0.2",
     "topojson-client": "^3.1.0",
