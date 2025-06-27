@@ -1,10 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { APP_VERSION } from '@picsa/environments/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
-import { ADMIN_NAV_LINKS, DASHBOARD_APP_VERSION, DASHBOARD_NAV_LINKS } from './data';
+import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
 import { DashboardMaterialModule } from './material.module';
 import { AuthRoleRequiredDirective } from './modules/auth';
 import { DeploymentSelectComponent } from './modules/deployment/components';
@@ -29,7 +30,7 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
   adminLinks = ADMIN_NAV_LINKS;
-  appVersion = DASHBOARD_APP_VERSION;
+  appVersion = APP_VERSION;
 
   public deployment = this.deploymentService.activeDeployment;
 
