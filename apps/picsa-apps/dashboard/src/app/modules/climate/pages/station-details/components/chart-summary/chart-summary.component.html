@@ -1,10 +1,17 @@
 <!-- chart -->
 <div class="chart-list">
   @for (definition of chartDefintions(); track definition._id) {
-    <div class="chart-card" (click)="activeChartDefinition.set(definition)">
-      <img [src]="definition.image" class="chart-card-image" />
-      <div class="chart-card-label">{{ definition.name }}</div>
-    </div>
+    <button
+      mat-button
+      class="chart-button"
+      (click)="activeChartDefinition.set(definition)"
+      [disabled]="definition.disabled"
+    >
+      <div class="chart-card">
+        <img [src]="definition.image" class="chart-card-image" />
+        <div class="chart-card-label">{{ definition.name }}</div>
+      </div>
+    </button>
   }
 </div>
 @if (activeChartConfig(); as chartConfig) {

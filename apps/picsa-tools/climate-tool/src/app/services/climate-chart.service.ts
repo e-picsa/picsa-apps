@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
@@ -54,7 +55,7 @@ export class ClimateChartService {
   constructor(
     private translateService: PicsaTranslateService,
     private dataService: ClimateDataService,
-    private printProvider: PrintProvider
+    private printProvider: PrintProvider,
   ) {}
 
   public async clearChartData() {
@@ -95,12 +96,12 @@ export class ClimateChartService {
       config.onrendered = () => {
         this.chartRendered$.next();
       };
-      config.data!.color = (_, d) => this.getPointColour(d as DataPoint) || definition.colors[0];
+      // override point color if function set
+      config.data!.color = (color, d) => this.getPointColour(d as DataPoint) || color;
       config.point!.r = (d) => {
         return ['LineTool', 'upperTercile', 'lowerTercile'].includes(d.id) ? 0 : this.pointRadius;
       };
       // TODO - ensure month names translated (removed from method)
-
       this.chartConfig = config;
       this.chartConfig$.next(config);
       // update data used by tools

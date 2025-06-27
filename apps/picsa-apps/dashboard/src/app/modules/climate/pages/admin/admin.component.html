@@ -30,7 +30,7 @@
     <!-- Station column includes refresh and csv download -->
     <ng-template #stationTemplate let-station let-row="row">
       <div class="flex gap-2 items-center">
-        <button mat-button (click)="downloadStationCSV(station)" [disabled]="!station">
+        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.updated_at">
           <mat-icon>download</mat-icon>
         </button>
         @if (row.updateSignal().completed) {

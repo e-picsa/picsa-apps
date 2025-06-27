@@ -51,7 +51,8 @@ export class ClimateAdminPageComponent {
   public tableData = computed(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
-    return this.generateTableSummaryData(stations, allStationDataHashmap);
+    const tableData = this.generateTableSummaryData(stations, allStationDataHashmap);
+    return tableData;
   });
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
@@ -86,11 +87,10 @@ export class ClimateAdminPageComponent {
 
   public async downloadAllStationsCSV() {
     const zip = new JSZip();
-    for (const summary of this.tableData()) {
-      const stationData = this.allStationDataHashmap[summary.station.station_id];
-      const csvData = this.generateStationCSVDownload(stationData);
+    for (const entry of this.allStationData()) {
+      const csvData = this.generateStationCSVDownload(entry);
       if (csvData) {
-        zip.file(`${summary.station.id}.csv`, csvData);
+        zip.file(`${entry.station_id}.csv`, csvData);
       }
     }
     const blob = await zip.generateAsync({ type: 'blob' });
@@ -98,8 +98,14 @@ export class ClimateAdminPageComponent {
     download(blob, `${country_code}_rainfall_summaries.zip`);
   }
 
-  public downloadStationCSV(summary: IStationAdminSummary) {
-    const stationData = this.allStationDataHashmap[summary.station.station_id];
+  public downloadStationCSV(summary: IStationAdminSummary, e: Event) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const stationData = this.allStationDataHashmap()[summary.station.id as string];
+    if (!stationData) {
+      console.error('failed to get station data', summary, this.allStationDataHashmap());
+      return;
+    }
     const csv = this.generateStationCSVDownload(stationData);
     if (csv) {
       download(csv, summary.station.station_id, 'text/csv');
@@ -174,18 +180,19 @@ export class ClimateAdminPageComponent {
     // prevent default row click
     e.preventDefault();
     e.stopImmediatePropagation();
-    console.log('data summary', summary.updateSignal().statuses);
     // TODO - show summary dialog (refactor to common)
     // TODO - consider showing pending too....
   }
 
-  private generateStationCSVDownload(row: IClimateStationData['Row']) {
-    if (row) {
-      const csvData = hackConvertStationDataForDisplay(row);
-      const columns = Object.keys(csvData[0]);
-      const csv = unparse(csvData, { columns });
-      return csv;
-    }
+  private generateStationCSVDownload(stationData: IClimateStationData['Row']) {
+    // Ignore entries where annual rainfall data not available (sometimes temp will still be)
+    if (!stationData) return;
+    if (!stationData.annual_rainfall_data) return;
+    const csvData = hackConvertStationDataForDisplay(stationData);
+    const columns = Object.keys(csvData[0]);
+    const csv = unparse(csvData, { columns });
+    return csv;
+
     return undefined;
   }
 
@@ -199,7 +206,7 @@ export class ClimateAdminPageComponent {
         name: station.station_name as string,
         updateSignal: this.getRowUpdateSignal(station),
       };
-      const stationData = allStationDataHashmap[station.station_id];
+      const stationData = allStationDataHashmap[station.id as string];
       if (stationData) {
         const { annual_rainfall_data, updated_at } = stationData;
         summary.updated_at = updated_at;

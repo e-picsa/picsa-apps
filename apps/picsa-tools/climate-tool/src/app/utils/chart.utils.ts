@@ -28,6 +28,9 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
   // configure major and minor ticks, labels and gridlines
   const gridMeta = calculateGridMeta(definition);
 
+  // combine data keys with data colors array, e.g.
+  // ['data_1','data_2'], ['red','green'] -> `{data_1: 'red', data_2: 'green'}`
+  const colors = Object.fromEntries(definition.keys.map((key, i) => [key, definition.colors[i] || 'black']));
   // configure chart
   const config: IChartConfig = {
     // ensure axis labels fit
@@ -42,7 +45,7 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
       },
       x: 'Year',
       classes: { LineTool: 'LineTool' },
-      color: (_, d) => definition.colors[0],
+      colors,
     },
     title: { text: definition.name },
     tooltip: {
@@ -135,7 +138,7 @@ function calculateDataRanges(data: IStationData[], definition: IChartMeta) {
       xMax: -Infinity,
       yMin: Infinity,
       yMax: -Infinity,
-    }
+    },
   );
 
   // overwrite data bounds with hardcoded if set
