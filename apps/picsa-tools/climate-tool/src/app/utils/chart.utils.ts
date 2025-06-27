@@ -56,6 +56,7 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
         // i marked ? as incorrect typings
         title: (x, i?) => _formatXAxis(data[i as number][definition.xVar] as any),
       },
+      ...definition.tooltip,
     },
     axis: {
       x: {

@@ -163,6 +163,9 @@ const definitions: IChartDefinitions = {
       yMinor: 1,
       yMajor: 5,
     },
+    tooltip: {
+      grouped: true,
+    },
     tools: {} as any,
     units: '°C',
     definition: translateMarker('Mean of monthly minimum and maximum temperatures in each year'),

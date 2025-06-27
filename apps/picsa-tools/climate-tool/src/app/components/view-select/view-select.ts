@@ -43,7 +43,7 @@ export class ViewSelectComponent implements OnInit, OnDestroy {
   /** Update list of available charts when station changes */
   private subscribeToStationChanges() {
     this.chartService.station$.pipe(takeUntil(this.componentDestroyed$)).subscribe((station) => {
-      this.availableCharts = station ? Object.values(station.definitions) : [];
+      this.availableCharts = station ? Object.values(station.definitions).filter((v) => !v.disabled) : [];
     });
   }
 }

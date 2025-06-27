@@ -1,7 +1,7 @@
 <div class="chart-select-container">
+  @for(chart of availableCharts; track chart._id){
   <mat-card
     appearance="outlined"
-    *ngFor="let chart of availableCharts"
     class="mat-elevation-z8 chart-card"
     [attr.data-id]="chart._id"
     [attr.data-active]=""
@@ -19,6 +19,7 @@
       <img src="{{ chart.image }}" class="chart-image" />
     </div>
   </mat-card>
+  }
 </div>
 <!-- <h2 *ngIf="availableReports.length>0">{{ 'Or a report' | translate }}</h2>
 <div style="display: flex; flex-wrap: wrap">
