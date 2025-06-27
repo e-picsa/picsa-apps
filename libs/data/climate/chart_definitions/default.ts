@@ -160,7 +160,7 @@ const definitions: IChartDefinitions = {
     axes: {
       ...AXES_DEFAULT,
       yMinor: 1,
-      yMajor: 5,
+      yMajor: 2,
     },
     tooltip: { grouped: true },
     legend: { show: true },
@@ -182,7 +182,7 @@ const definitions: IChartDefinitions = {
     axes: {
       ...AXES_DEFAULT,
       yMinor: 1,
-      yMajor: 5,
+      yMajor: 2,
     },
     tooltip: { grouped: true },
     legend: { show: true },
