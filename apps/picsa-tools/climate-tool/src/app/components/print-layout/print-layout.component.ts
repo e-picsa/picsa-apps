@@ -18,7 +18,7 @@ export class ClimatePrintLayoutComponent implements OnInit, OnDestroy {
   public chartPngBlob = input.required<Blob>();
   public pngSrc: string;
 
-  constructor(public chartService: ClimateChartService) {}
+  constructor(private chartService: ClimateChartService) {}
 
   ngOnInit(): void {
     this.pngSrc = URL.createObjectURL(this.chartPngBlob());
