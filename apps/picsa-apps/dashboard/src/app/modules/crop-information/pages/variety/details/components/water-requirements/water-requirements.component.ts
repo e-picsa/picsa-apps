@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,10 +7,10 @@ import { PicsaFormsModule } from '@picsa/forms';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap } from '@picsa/utils';
-import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 
-import { DeploymentDashboardService } from '../../../../../deployment/deployment.service';
-import { CropInformationService, ICropDataDownscaled, ICropDataMerged } from '../../../../services';
+import { DashboardMaterialModule } from '../../../../../../../material.module';
+import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
+import { CropInformationService, ICropDataDownscaled, ICropDataMerged } from '../../../../../services';
 
 interface IWaterRequirementTableData {
   location_id: string;

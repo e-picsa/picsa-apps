@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -5,8 +6,8 @@ import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators 
 import { CROPS_DATA } from '@picsa/data';
 import { PICSAFormValidators } from '@picsa/forms';
 
-import { DashboardMaterialModule } from '../../../../../../material.module';
-import { ICropData } from '../../../../services';
+import { DashboardMaterialModule } from '../../../../../../../material.module';
+import { ICropData } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-variety-form',

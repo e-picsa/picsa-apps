@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { map } from 'rxjs';
 
-import { DashboardMaterialModule } from '../../../../material.module';
-import { CropInformationService, ICropData, ICropDataMerged } from '../../services';
+import { DashboardMaterialModule } from '../../../../../material.module';
+import { CropInformationService, ICropData, ICropDataMerged } from '../../../services';
 import { DashboardCropVarietyFormComponent } from './components/variety-form/variety-form.component';
 import { DashboardCropWaterRequirementsComponent } from './components/water-requirements/water-requirements.component';
 
