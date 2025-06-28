@@ -1,12 +1,7 @@
 <div class="page-content">
-  <picsa-data-table [data]="downscaledTableData()"></picsa-data-table>
-  <!-- <p>Select station to use for crop probabilities</p>
-  <div class="w-96 h-96">
-    <picsa-map style="width: 100%; height: 100%"></picsa-map>
-  </div> -->
-  <!-- <picsa-form-location-select
-    [countryCode]="countryCode()"
-    [value]="locationSelected()"
-    (valueChanged)="handleLocationUpdate($event)"
-  ></picsa-form-location-select> -->
+  <picsa-data-table
+    [data]="downscaledTableData()"
+    [options]="downscaledTableDataOptions()"
+    (rowClick)="goToDownscaled($event)"
+  ></picsa-data-table>
 </div>
