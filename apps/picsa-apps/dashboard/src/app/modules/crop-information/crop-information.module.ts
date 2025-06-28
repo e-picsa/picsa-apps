@@ -23,7 +23,7 @@ import { RouterModule } from '@angular/router';
       {
         path: 'variety/:id',
         loadComponent: () =>
-          import('./pages/variety-details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
+          import('./pages/variety/details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
       },
       {
         path: 'probability',

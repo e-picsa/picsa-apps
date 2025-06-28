@@ -29,7 +29,7 @@ export class DashboardCropWaterRequirementsComponent {
   public data = input.required<ICropDataMerged>();
 
   public tableData = computed(() =>
-    this.generateTableData(this.data()).sort((a, b) => (a.location_hash! > b.location_hash! ? 1 : -1))
+    this.generateTableData(this.data()).sort((a, b) => (a.location_hash! > b.location_hash! ? 1 : -1)),
   );
 
   public tableOptions: IDataTableOptions = {
@@ -47,7 +47,7 @@ export class DashboardCropWaterRequirementsComponent {
     public dialog: MatDialog,
     private service: CropInformationService,
     private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {}
 
   public async save(waterRequirementInput: string) {

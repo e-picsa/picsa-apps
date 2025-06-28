@@ -34,7 +34,7 @@ export class CropVarietyDetailsComponent {
     public service: CropInformationService,
     private router: Router,
     private route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) {
     service.ready();
     effect(() => {
