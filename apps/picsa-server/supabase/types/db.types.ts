@@ -172,6 +172,7 @@ export type Database = {
           id: string;
           location_id: string;
           override_data: Json;
+          station_id: string | null;
           updated_at: string;
           water_requirements: Json;
         };
@@ -181,6 +182,7 @@ export type Database = {
           id?: string;
           location_id: string;
           override_data?: Json;
+          station_id?: string | null;
           updated_at?: string;
           water_requirements?: Json;
         };
@@ -190,45 +192,13 @@ export type Database = {
           id?: string;
           location_id?: string;
           override_data?: Json;
+          station_id?: string | null;
           updated_at?: string;
           water_requirements?: Json;
         };
-        Relationships: [];
-      };
-      crop_station_data: {
-        Row: {
-          created_at: string;
-          crop_id: string;
-          days_lower: number;
-          days_upper: number;
-          probabilities: number[] | null;
-          station_id: string;
-          water_lower: number;
-          water_upper: number;
-        };
-        Insert: {
-          created_at?: string;
-          crop_id: string;
-          days_lower: number;
-          days_upper: number;
-          probabilities?: number[] | null;
-          station_id: string;
-          water_lower: number;
-          water_upper: number;
-        };
-        Update: {
-          created_at?: string;
-          crop_id?: string;
-          days_lower?: number;
-          days_upper?: number;
-          probabilities?: number[] | null;
-          station_id?: string;
-          water_lower?: number;
-          water_upper?: number;
-        };
         Relationships: [
           {
-            foreignKeyName: 'public_crop_station_data_station_id_fkey';
+            foreignKeyName: 'crop_data_downscaled_station_id_fkey';
             columns: ['station_id'];
             isOneToOne: false;
             referencedRelation: 'climate_stations';
