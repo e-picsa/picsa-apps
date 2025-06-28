@@ -2,7 +2,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap, arrayToHashmapArray, jsonToCSV } from '@picsa/utils';
 import { isObjectLiteral } from '@picsa/utils/object.utils';
 import download from 'downloadjs';
@@ -11,6 +10,7 @@ import { DataImportComponent } from '../../../../components/data-import/data-imp
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
+import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
 
 interface ICropDataImport {
   location_id: string;
@@ -39,7 +39,13 @@ interface ICropDataImport {
  */
 @Component({
   selector: 'dashboard-crop-admin',
-  imports: [CommonModule, DataImportComponent, PicsaDataTableComponent, DashboardMaterialModule],
+  imports: [
+    CommonModule,
+    DataImportComponent,
+    PicsaDataTableComponent,
+    DashboardMaterialModule,
+    CropMissingLocationsComponent,
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,7 +81,6 @@ export class DashboardCropAdminComponent {
   constructor(
     private service: CropInformationService,
     private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService,
   ) {
     service.ready();
     effect(async () => {
