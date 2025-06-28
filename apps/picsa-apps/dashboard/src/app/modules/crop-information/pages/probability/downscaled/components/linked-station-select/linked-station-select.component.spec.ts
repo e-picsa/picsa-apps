@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LinkedStationSelectComponent } from './linked-station-select.component';
+import { CropLinkedStationSelectComponent } from './linked-station-select.component';
 
-describe('LinkedStationSelectComponent', () => {
-  let component: LinkedStationSelectComponent;
-  let fixture: ComponentFixture<LinkedStationSelectComponent>;
+describe('CropLinkedStationSelectComponent', () => {
+  let component: CropLinkedStationSelectComponent;
+  let fixture: ComponentFixture<CropLinkedStationSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LinkedStationSelectComponent],
+      imports: [CropLinkedStationSelectComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LinkedStationSelectComponent);
+    fixture = TestBed.createComponent(CropLinkedStationSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
