@@ -1,14 +1,14 @@
 const ZM_PROVINCES = [
-  { id: 'central', label: 'Central Province' },
-  { id: 'copperbelt', label: 'Copperbelt Province' },
-  { id: 'eastern', label: 'Eastern Province' },
-  { id: 'luapula', label: 'Luapula Province' },
-  { id: 'lusaka', label: 'Lusaka Province' },
-  { id: 'muchinga', label: 'Muchinga Province' },
-  { id: 'north_western', label: 'North-Western Province' },
-  { id: 'northern', label: 'Northern Province' },
-  { id: 'southern', label: 'Southern Province' },
-  { id: 'western', label: 'Western Province' },
+  { id: 'central', label: 'Central' },
+  { id: 'copperbelt', label: 'Copperbelt' },
+  { id: 'eastern', label: 'Eastern' },
+  { id: 'luapula', label: 'Luapula' },
+  { id: 'lusaka', label: 'Lusaka' },
+  { id: 'muchinga', label: 'Muchinga' },
+  { id: 'north_western', label: 'North-Western' },
+  { id: 'northern', label: 'Northern' },
+  { id: 'southern', label: 'Southern' },
+  { id: 'western', label: 'Western' },
 ];
 
 export default ZM_PROVINCES;

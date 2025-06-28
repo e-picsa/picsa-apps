@@ -40,7 +40,7 @@ export class DashboardCropWaterRequirementsComponent {
 
   public selectedEntry = signal<IWaterRequirementTableData | undefined>(undefined);
 
-  public countryCode = this.deploymentService.activeDeployment().country_code;
+  public countryCode = this.deploymentService.activeDeploymentCountry();
 
   private dialogTemplate = viewChild.required('inputDialog', { read: TemplateRef });
 
