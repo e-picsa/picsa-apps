@@ -1,12 +1,13 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Injectable, signal } from '@angular/core';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
-// import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
 
-export type ITranslationRow = Database['public']['Tables']['translations']['Row'];
+type ITranslationDB = Database['public']['Tables']['translations'];
+export type ITranslationRow = ITranslationDB['Row'];
+export type ITranslationInsert = ITranslationDB['Insert'];
 
 @Injectable({ providedIn: 'root' })
 export class TranslationDashboardService extends PicsaAsyncService {
@@ -72,7 +73,7 @@ export class TranslationDashboardService extends PicsaAsyncService {
   }
 
   // In your TranslationDashboardService
-  public async addTranslation(translation: Partial<ITranslationRow>): Promise<string> {
+  public async addTranslation(translation: ITranslationInsert): Promise<string> {
     translation.id = this.generateTranslationID(translation as ITranslationRow);
     const { data, error } = await this.supabaseService.db.table('translations').insert([translation]);
 

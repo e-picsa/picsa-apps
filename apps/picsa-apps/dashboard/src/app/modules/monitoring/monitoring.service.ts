@@ -1,6 +1,6 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -9,6 +9,7 @@ import { IStorageEntry } from '@picsa/shared/services/core/supabase/services/sup
 import { firstValueFrom, Observable } from 'rxjs';
 
 export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms']['Row'];
+type IMonitoringFormsInsert = Database['public']['Tables']['monitoring_forms']['Insert'];
 
 const FORMS_TABLE = 'monitoring_forms';
 const SUBMISSIONS_TABLE = 'monitoring_tool_submissions';
@@ -28,7 +29,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
   constructor(
     private supabaseService: SupabaseService,
     private http: HttpClient,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     super();
   }
@@ -62,7 +63,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     return { data, error };
   }
 
-  public async updateFormById(id: string, updatedForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow> {
+  public async updateFormById(id: string, updatedForm: IMonitoringFormsInsert): Promise<IMonitoringFormsRow> {
     const { data, error } = await this.supabaseService.db
       .table(FORMS_TABLE)
       .update(updatedForm)
@@ -74,7 +75,7 @@ export class MonitoringFormsDashboardService extends PicsaAsyncService {
     }
     return data;
   }
-  public async createForm(newForm: Partial<IMonitoringFormsRow>): Promise<IMonitoringFormsRow | null> {
+  public async createForm(newForm: IMonitoringFormsInsert): Promise<IMonitoringFormsRow | null> {
     const { data, error } = await this.supabaseService.db.table(FORMS_TABLE).insert(newForm).single();
     if (error) {
       throw new Error(error.message);

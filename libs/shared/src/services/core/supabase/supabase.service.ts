@@ -1,5 +1,7 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments/src';
+import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
 import { createClient, FunctionsHttpError, SupabaseClient } from '@supabase/supabase-js';
 
@@ -14,11 +16,14 @@ import { SupabaseStorageService } from './services/supabase-storage.service';
 @Injectable({ providedIn: 'root' })
 export class SupabaseService extends PicsaAsyncService {
   /** Access to postgres db as a shortcut to table from method */
-  public db: { table: SupabaseClient['from'] };
+  public db: { table: SupabaseClient<Database>['from'] };
 
   private supabase: SupabaseClient;
 
-  constructor(public storage: SupabaseStorageService, public auth: SupabaseAuthService) {
+  constructor(
+    public storage: SupabaseStorageService,
+    public auth: SupabaseAuthService,
+  ) {
     super();
   }
 

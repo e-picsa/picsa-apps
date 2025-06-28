@@ -70,7 +70,7 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     private storageService: SupabaseStorageService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private deploymentService: DeploymentDashboardService
+    private deploymentService: DeploymentDashboardService,
   ) {}
   async ngOnInit() {
     await this.service.ready();
@@ -174,7 +174,7 @@ export class UpdateMonitoringFormsComponent implements OnInit {
     // handle update
     if (this.formID) {
       const updatedValues = Object.fromEntries(Object.entries(values).filter(([key, value]) => value !== ''));
-      await this.service.updateFormById(this.monitoringRow.id, updatedValues);
+      await this.service.updateFormById(this.monitoringRow.id, updatedValues as any);
       this.router.navigate([`/monitoring/${this.monitoringRow.id}`]);
     }
     // handle create

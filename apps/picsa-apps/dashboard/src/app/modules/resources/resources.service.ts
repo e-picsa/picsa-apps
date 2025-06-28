@@ -77,7 +77,10 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       links: [] as IResourceLinkRow[],
     };
     const promises = Object.entries(this.tables).map(async ([name, table]) => {
-      const { data, error } = await table.select('*').in('country_code', [countryCode, 'global']).order('created_at');
+      const { data, error } = await table
+        .select('*')
+        .in('country_code', [countryCode as any, 'global'])
+        .order('created_at');
       if (error) {
         throw new Error(error.message);
       }
