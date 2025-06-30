@@ -152,6 +152,10 @@ const definitions: IChartDefinitions = {
     shortname: translateMarker('Min Temps'),
     image: 'assets/climate-icons/temp_min.svg',
     keys: ['min_tmin', 'mean_tmin'],
+    data_labels: {
+      min_tmin: translateMarker('Lowest minimum daily temp'),
+      mean_tmin: translateMarker('Mean minimum daily temp'),
+    },
     colors: ['#005b85', '#42c3ff'],
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
@@ -166,7 +170,7 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: translateMarker('The mean minimum and lowest minimum temperatures per year'),
+    definition: translateMarker('The mean minimum and lowest minimum daily temperatures per year'),
   },
   temp_max: {
     _id: 'temp_max',
@@ -174,6 +178,10 @@ const definitions: IChartDefinitions = {
     shortname: translateMarker('Max Temps'),
     image: 'assets/climate-icons/temp_max.svg',
     keys: ['mean_tmax', 'max_tmax'],
+    data_labels: {
+      mean_tmax: translateMarker('Mean maximum daily temp'),
+      max_tmax: translateMarker('Highest maximum daily temp'),
+    },
     colors: ['#f76e6e', '#850000'],
     yFormat: 'value',
     yLabel: translateMarker('Temperature (°C)'),
@@ -188,7 +196,7 @@ const definitions: IChartDefinitions = {
     legend: { show: true },
     tools: {} as any,
     units: '°C',
-    definition: translateMarker('The mean maximum and highest maximum temperatures per year'),
+    definition: translateMarker('The mean maximum and highest maximum daily temperatures per year'),
   },
 };
 

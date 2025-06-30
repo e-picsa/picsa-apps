@@ -30,7 +30,7 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
   adminLinks = ADMIN_NAV_LINKS;
-  appVersion = APP_VERSION;
+  appVersion = APP_VERSION.semver;
 
   public deployment = this.deploymentService.activeDeployment;
 
