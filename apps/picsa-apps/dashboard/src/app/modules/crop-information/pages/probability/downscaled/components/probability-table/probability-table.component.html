@@ -1,1 +1,28 @@
-<p>probability-table works!</p>
+@if (!hasStationCropProbabilities()) {
+  <!-- No probability data warning -->
+  <picsa-alert-box type="warning">
+    <div class="flex gap-8 items-center">
+      <div class="flex-1">
+        The selected station does not have any crop probability data
+        <br /><br />
+        Update probabilities from the climate station data page
+      </div>
+      <button mat-button [routerLink]="'/climate/station/' + station().station_id">View Station Data</button>
+    </div>
+  </picsa-alert-box>
+}
+@if (!hasDownscaledWaterRequirements()) {
+  <!-- No probability data warning -->
+  <picsa-alert-box type="warning">
+    <div class="flex gap-8 items-center">
+      <div class="flex-1">
+        The selected location does not have any downscaled crop water requirements
+        <br /><br />
+        Update requirements from the crop variety page
+      </div>
+      <button mat-button routerLink="/crop/variety/">View Water Requirements</button>
+    </div>
+  </picsa-alert-box>
+}
+
+<!-- Main Table -->

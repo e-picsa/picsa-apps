@@ -7,10 +7,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 
-import { IStationRow } from '../../../../climate/types';
+import { ICropSuccessEntry, IStationRow } from '../../../../climate/types';
 import { DeploymentDashboardService } from '../../../../deployment/deployment.service';
-import { CropInformationService, ICropDataDownscaled } from '../../../services';
+import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../../services';
 import { CropLinkedStationSelectComponent } from './components/linked-station-select/linked-station-select.component';
+import { CropProbabilityTableComponent } from './components/probability-table/probability-table.component';
 
 // Type generated when joining downscaled `station_id` with station data lookup
 type ICropDataDownscaledWithStation = ICropDataDownscaled['Row'] & {
@@ -19,7 +20,13 @@ type ICropDataDownscaledWithStation = ICropDataDownscaled['Row'] & {
 
 @Component({
   selector: 'dashboard-crop-probability-downscaled',
-  imports: [CommonModule, CropLinkedStationSelectComponent, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    CropLinkedStationSelectComponent,
+    CropProbabilityTableComponent,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: './probability-downscaled.component.html',
   styleUrl: './probability-downscaled.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,8 +36,11 @@ export class ProbabilityDownscaledComponent {
   private countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
   public downscaledData = signal<ICropDataDownscaledWithStation | undefined>(undefined);
-
   public downscaledStationId = computed(() => this.downscaledData()?.station_id);
+  public downscaledWaterRequirements = computed(
+    () => this.downscaledData()?.water_requirements as ICropDataDownscaledWaterRequirements,
+  );
+  public downscaledStationProbabilities = signal<ICropSuccessEntry[] | undefined>(undefined);
 
   public showLinkedStationSelect = signal(false);
 
@@ -50,6 +60,12 @@ export class ProbabilityDownscaledComponent {
       const country_code = this.countryCode();
       if (location_id && country_code) {
         this.loadDownscaledCropInfo({ location_id, country_code });
+      }
+    });
+    effect(() => {
+      const stationId = this.downscaledStationId();
+      if (stationId) {
+        this.loadStationCropProbabilities(stationId);
       }
     });
   }
@@ -85,6 +101,20 @@ export class ProbabilityDownscaledComponent {
       this.downscaledData.set(data);
     }
     this.dataLoading.set(false);
+  }
+
+  private async loadStationCropProbabilities(station_id: string) {
+    const { data, error } = await this.service.stationDataTable.select().eq('station_id', station_id).single();
+    // no data error will handled at end
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+    if (data && data.crop_probability_data) {
+      this.downscaledStationProbabilities.set(data.crop_probability_data as ICropSuccessEntry[]);
+      return;
+    }
+    // set empty array if no data available to still allow dummy table production
+    this.downscaledStationProbabilities.set([]);
   }
 
   /** Lookup downscaled data id and return full geolocation data */

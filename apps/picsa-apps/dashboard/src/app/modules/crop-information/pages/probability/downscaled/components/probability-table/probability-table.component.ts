@@ -1,14 +1,40 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
+import { AlertBoxComponent } from '@picsa/components/src';
+import { ICropSuccessEntry, IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
+
+import { ICropDataDownscaledWaterRequirements } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-probability-table',
-  imports: [CommonModule],
+  imports: [CommonModule, AlertBoxComponent, MatButtonModule, RouterModule],
   templateUrl: './probability-table.component.html',
   styleUrl: './probability-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CropProbabilityTableComponent {}
+export class CropProbabilityTableComponent {
+  waterRequirements = input.required<ICropDataDownscaledWaterRequirements>();
+  stationProbabilities = input.required<ICropSuccessEntry[]>();
+  station = input.required<IStationRow>();
+
+  public hasDownscaledWaterRequirements = computed(() => Object.keys(this.waterRequirements()).length > 0);
+  public hasStationCropProbabilities = computed(() => this.stationProbabilities().length > 0);
+
+  constructor() {
+    effect(() => {
+      this.generateTable(this.waterRequirements(), this.stationProbabilities());
+    });
+  }
+
+  private generateTable(
+    waterRequirements: ICropDataDownscaledWaterRequirements = {},
+    stationProbabilities: ICropSuccessEntry[] = [],
+  ) {
+    console.log('generating table', { waterRequirements, stationProbabilities });
+  }
+}
 
 /*************************************************************
  * TODO - sort legacy code

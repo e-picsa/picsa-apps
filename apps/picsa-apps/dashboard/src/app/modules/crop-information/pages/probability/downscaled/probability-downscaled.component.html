@@ -1,6 +1,6 @@
 <div class="page-content">
   @if (dataLoading()) {
-    Loading...
+    Loading crop data...
   } @else {
     @if (downscaledData(); as downscaled) {
       <div class="flex items-center gap-4">
@@ -15,7 +15,16 @@
             Change Station
           </button>
         </div>
-        <!-- Probability Table (TODO) -->
+        <!-- Probability Table -->
+        @if (downscaledStationProbabilities(); as stationProbabilities) {
+          <dashboard-crop-probability-table
+            [waterRequirements]="downscaledWaterRequirements()"
+            [stationProbabilities]="stationProbabilities"
+            [station]="downscaled.station"
+          ></dashboard-crop-probability-table>
+        } @else {
+          Loading station data...
+        }
       }
       <!-- Station Select -->
       @else {
