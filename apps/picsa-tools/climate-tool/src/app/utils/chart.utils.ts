@@ -44,6 +44,7 @@ export async function generateChartConfig(data: IStationData[], definition: ICha
       keys: {
         value: [...definition.keys, definition.xVar],
       },
+      names: definition.data_labels,
       x: 'Year',
       classes: { LineTool: 'LineTool' },
       colors,
