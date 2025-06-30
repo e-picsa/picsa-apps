@@ -58,6 +58,8 @@ export interface IChartMeta {
   image: string;
   /** Column names for data series */
   keys: (keyof IStationData)[];
+  /** Optional override of text to show legend instead of data name */
+  data_labels?: Record<string, string>;
   /** Colors for data series */
   colors: string[];
   yFormat: 'value' | 'date' | 'date-from-July';
