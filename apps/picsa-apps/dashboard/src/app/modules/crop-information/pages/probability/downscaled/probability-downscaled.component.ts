@@ -54,18 +54,20 @@ export class ProbabilityDownscaledComponent {
     });
   }
 
-  public async updateLinkedStation(station_id: string) {
-    const id = this.downscaledData()?.id as string;
-    const updateRes = await this.service.cropDataDownscaledTable.update({ station_id }).eq('id', id);
-    if (updateRes.error) {
-      console.error(updateRes.error);
-      throw updateRes.error;
+  public async updateLinkedStation(station_id?: string) {
+    if (station_id) {
+      const id = this.downscaledData()?.id as string;
+      const updateRes = await this.service.cropDataDownscaledTable.update({ station_id }).eq('id', id);
+      if (updateRes.error) {
+        console.error(updateRes.error);
+        throw updateRes.error;
+      }
+      // refresh data - do not await to allow ui to change over during reprocess
+      const location_id = this.locationId();
+      const country_code = this.countryCode();
+      this.loadDownscaledCropInfo({ location_id, country_code });
     }
-    // refresh data
-    const location_id = this.locationId();
-    const country_code = this.countryCode();
     this.showLinkedStationSelect.set(false);
-    await this.loadDownscaledCropInfo({ location_id, country_code });
   }
 
   private async loadDownscaledCropInfo(params: { country_code: string; location_id: string }) {

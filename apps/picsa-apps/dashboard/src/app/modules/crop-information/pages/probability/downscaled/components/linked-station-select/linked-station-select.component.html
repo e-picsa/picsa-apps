@@ -1,13 +1,22 @@
 <p>Specify which station to use when calculating probababilities</p>
 
-<!-- List station select -->
-<mat-form-field>
-  <mat-label>Station Select</mat-label>
-  <mat-select [value]="downscaledData().station_id" (selectionChange)="stationSelected.emit($event.value)">
-    @for (station of allStations(); track station.station_id) {
-      <mat-option [value]="station.id">{{ station.station_name }}</mat-option>
-    }
-  </mat-select>
-</mat-form-field>
+<div class="flex items-center gap-4">
+  <mat-form-field class="flex-1 max-w-sm">
+    <mat-label>Station Select</mat-label>
+    <mat-select [value]="downscaledData().station_id" #select>
+      @for (station of allStations(); track station.station_id) {
+        <mat-option [value]="station.id">{{ station.station_name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <button
+    mat-stroked-button
+    (click)="stationSelected.emit(select.value)"
+    [disabled]="downscaledData().station_id === select.value"
+  >
+    Update
+  </button>
+  <button mat-stroked-button (click)="stationSelected.emit(undefined)">Cancel</button>
+</div>
 
 <!-- TODO - map select component -->

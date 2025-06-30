@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
@@ -10,7 +11,7 @@ import { ICropDataDownscaled } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-linked-station-select',
-  imports: [CommonModule, MatSelectModule, MatFormField],
+  imports: [CommonModule, MatSelectModule, MatFormField, MatButtonModule],
   templateUrl: './linked-station-select.component.html',
   styleUrl: './linked-station-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +21,7 @@ export class CropLinkedStationSelectComponent {
   public locationId = input.required<string>();
   public downscaledData = input.required<ICropDataDownscaled['Row']>();
 
-  public stationSelected = output<string>();
+  public stationSelected = output<string | undefined>();
 
   constructor(
     private supabaseService: SupabaseService,
