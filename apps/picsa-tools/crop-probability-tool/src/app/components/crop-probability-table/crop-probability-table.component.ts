@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ICropData } from '@picsa/data';
+import { CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
 import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { arrayToHashmap } from '@picsa/utils';
@@ -30,6 +30,8 @@ export class CropProbabilityTableComponent {
   public stationMeta = input.required<IProbabilityTableStationMeta>();
 
   private tableData: ITableRow[] = [];
+
+  public cropDataHashmap = CROPS_DATA_HASHMAP;
 
   constructor() {
     effect(() => {

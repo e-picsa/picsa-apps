@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { AlertBoxComponent } from '@picsa/components/src';
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
 import type { IProbabilityTableStationMeta, IStationCropData } from '@picsa/crop-probability/src/app/models';
-import { MONTH_DATA } from '@picsa/data';
+import { ICropName, MONTH_DATA } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 import { ICropSuccessEntry, IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
 
@@ -23,6 +23,25 @@ const PLANTING_DATES = [93, 108, 123, 138, 153, 168, 183].map((value) => {
 
 const WATER_REQUIREMENT_ROUNDING = 25;
 const DAY_REQUIREMENT_ROUNDING = 15;
+
+const CROP_SORT_PRIORITY: ICropName[] = [
+  'maize',
+  'sorghum',
+  'beans',
+  'groundnuts',
+  'soya-beans',
+  'sunflower',
+  'cowpeas',
+  'cotton',
+  'tobacco',
+  'sweet-potatoes',
+];
+
+// TODO - ensure db only accepts correct format (or change legacy to match)
+const CROP_NAME_MAPPING: Record<string, ICropName> = {
+  soyabeans: 'soya-beans',
+  sweet_potatoes: 'sweet-potatoes',
+};
 
 @Component({
   selector: 'dashboard-crop-probability-table',
@@ -71,7 +90,7 @@ export class CropProbabilityTableComponent {
     const entries: IStationCropData[] = [];
     for (const [crop, requirements] of Object.entries(waterRequirements)) {
       const entry: IStationCropData = {
-        crop: crop as any,
+        crop: CROP_NAME_MAPPING[crop] || (crop as ICropName),
         data: [],
       };
       for (const [variety, waterRequirement] of Object.entries(requirements)) {
@@ -99,7 +118,14 @@ export class CropProbabilityTableComponent {
       entries.push(entry);
     }
 
-    return entries;
+    // sort by crop priority and replace crop name with label
+    return entries.sort(this.sortByPriorityCrops);
+  }
+
+  private sortByPriorityCrops(a: IStationCropData, b: IStationCropData) {
+    const aPriority = CROP_SORT_PRIORITY.includes(a.crop) ? CROP_SORT_PRIORITY.indexOf(a.crop) : 99;
+    const bPriority = CROP_SORT_PRIORITY.includes(b.crop) ? CROP_SORT_PRIORITY.indexOf(b.crop) : 99;
+    return aPriority - bPriority;
   }
 
   /** Create a hashmap or probabilities nested by water requirement and plant length */

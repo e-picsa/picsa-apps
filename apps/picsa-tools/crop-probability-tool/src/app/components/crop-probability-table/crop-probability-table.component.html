@@ -12,7 +12,7 @@
     <ng-container matColumnDef="crop" sticky>
       <th mat-header-cell *matHeaderCellDef class="crop-title">{{ 'Crop' | translate }}</th>
       <td mat-cell *matCellDef="let element" class="crop-title">
-        {{ element.crop | translate }}
+        {{ cropDataHashmap[element.crop]?.label || element.crop | translate }}
       </td>
     </ng-container>
     <ng-container matColumnDef="variety">
