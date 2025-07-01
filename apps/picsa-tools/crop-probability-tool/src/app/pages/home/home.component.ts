@@ -1,12 +1,12 @@
-import { Component, effect, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TourService } from '@picsa/shared/services/core/tour';
 import { map } from 'rxjs';
 
 import { STATION_CROP_DATA } from '../../data/mock';
 import { CROP_PROBABILITY_SELECT_TOUR, CROP_PROBABILITY_TABLE_TOUR } from '../../data/tour';
-import { IStationCropInformation, IStationRouteQueryParams } from '../../models';
+import { IProbabilityTableStationMeta, IStationCropInformation, IStationRouteQueryParams } from '../../models';
 
 @Component({
   selector: 'crop-probability-home',
@@ -15,22 +15,48 @@ import { IStationCropInformation, IStationRouteQueryParams } from '../../models'
   standalone: false,
 })
 export class HomeComponent implements OnInit {
-  public activeStation?: IStationCropInformation;
+  public stationId = toSignal(this.route.queryParams.pipe(map(({ stationId }: IStationRouteQueryParams) => stationId)));
 
-  private stationParam = toSignal(
-    this.route.queryParams.pipe(map(({ stationId }: IStationRouteQueryParams) => stationId))
-  );
+  public station = computed(() => {
+    const stationId = this.stationId();
+    return this.getStationById(stationId);
+  });
 
-  constructor(private route: ActivatedRoute, private tourService: TourService) {
-    effect(() => {
-      const station = this.stationParam();
-      this.activeStation = this.getStationById(station);
-    });
-  }
+  /** */
+  public tableStationData = computed(() => this.station()?.data || []);
+
+  /** */
+  public tableStationMeta = computed<IProbabilityTableStationMeta | undefined>(() => {
+    const station = this.station();
+    if (station) {
+      const { dates, notes, season_probabilities, station_name } = station;
+      return {
+        dateHeadings: dates,
+        label: station_name,
+        notes,
+        seasonProbabilities: season_probabilities,
+      };
+    }
+    return undefined;
+  });
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private tourService: TourService,
+  ) {}
 
   ngOnInit(): void {
     this.tourService.registerTour('cropProbabilityTable', CROP_PROBABILITY_TABLE_TOUR);
     this.tourService.registerTour('cropProbabilitySelect', CROP_PROBABILITY_SELECT_TOUR);
+  }
+
+  public handleStationChange() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { stationId: this.stationId() },
+      replaceUrl: true,
+    });
   }
 
   private getStationById(id?: string) {

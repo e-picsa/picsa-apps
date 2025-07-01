@@ -8,11 +8,19 @@ import { CropProbabilityTableComponent } from './crop-probability-table/crop-pro
 import { CropProbabilityMaterialModule } from './material.module';
 import { CropProbabilityStationSelectComponent } from './station-select/station-select.component';
 
-const components = [CropProbabilityStationSelectComponent, CropProbabilityTableComponent];
+const components = [CropProbabilityStationSelectComponent];
+const standalone = [CropProbabilityTableComponent];
 
 @NgModule({
-  imports: [CommonModule, FormsModule, CropProbabilityMaterialModule, PicsaTranslateModule, PicsaFormsModule],
-  exports: [...components, CropProbabilityMaterialModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CropProbabilityMaterialModule,
+    PicsaTranslateModule,
+    PicsaFormsModule,
+    ...standalone,
+  ],
+  exports: [...components, CropProbabilityMaterialModule, ...standalone],
   declarations: components,
   providers: [],
 })
