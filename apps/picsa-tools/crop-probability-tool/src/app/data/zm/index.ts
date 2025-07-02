@@ -2,7 +2,7 @@ import { IProbabilityTable, IStationCropData } from '../../models';
 
 const ZM_CROP_DATA: IProbabilityTable[] = [
   {
-    id: 'chipata',
+    id: 'eastern/chipata',
     label: 'Chipata',
     notes: [
       'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Chipata Met Station.',
@@ -13,7 +13,7 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     data: async () => import('./chipata.json').then((v) => v.default as IStationCropData[]),
   },
   {
-    id: 'petauke',
+    id: 'eastern/petauke',
     label: 'Petauke',
     notes: [
       'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Petauke Met Station.',

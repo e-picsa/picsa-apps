@@ -26,7 +26,8 @@ export class FormLocationSelectComponent {
 
   public value = input<(string | undefined)[]>([]);
 
-  public locationFilter = input<(data: IGelocationData, countryCode: string) => IGelocationData>((data) => data);
+  /** Optional method to apply to data before rendering locations in list */
+  public locationModifier = input<(data: IGelocationData, countryCode: string) => IGelocationData>((data) => data);
 
   public valueChanged = output<(string | undefined)[]>();
 
@@ -53,9 +54,6 @@ export class FormLocationSelectComponent {
   });
 
   constructor() {
-    effect(() => {
-      console.log('location data', this.locationData());
-    });
     // Set input values when passed
     effect(() => {
       const inputValue = this.value();
@@ -88,7 +86,7 @@ export class FormLocationSelectComponent {
   private getLocationData(country_code: string): IGelocationData {
     const locationData: IGelocationData = GEO_LOCATION_DATA[country_code];
     if (locationData) {
-      return this.locationFilter()(locationData, country_code);
+      return this.locationModifier()(locationData, country_code);
     } else {
       console.error('[Location Select] no data for country', country_code);
       return { admin_4: { label: '', locations: [], topoJson: () => null as any } };
