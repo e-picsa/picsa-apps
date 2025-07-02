@@ -136,17 +136,14 @@ export class CropProbabilityTableComponent {
 
   private generateProbabilityEntryText(probabilities: { upper: number[]; lower: number[] }) {
     return PLANTING_DATES.map((v, i) => {
-      const mean = (probabilities.lower[i] + probabilities.upper[i]) / 2;
-      return `${toProbabilityOutOfTen(mean)} / 10`;
-
-      // TODO - previous output present sorted range, e.g 0-2, but that loses clarity on which condition led to which probability
-      // would also include .5 rounding but only in some cases... overall a bit confusing
-      const upper = toProbabilityOutOfTen(probabilities.upper[i]);
-      const lower = toProbabilityOutOfTen(probabilities.lower[i]);
-      if (upper === lower) {
-        return `${upper}`;
+      const lower = probabilities.lower[i];
+      const upper = probabilities.upper[i];
+      if (typeof lower === 'number' && typeof upper === 'number') {
+        const mean = (probabilities.lower[i] + probabilities.upper[i]) / 2;
+        return `${toProbabilityOutOfTen(mean)} / 10`;
       }
-      return [lower, upper].sort().join('-');
+      // If probability NaN simply return as empty string
+      return '';
     });
   }
 
@@ -169,52 +166,3 @@ function roundToNearest(value: number, n: number) {
 function toProbabilityOutOfTen(value: number) {
   return Math.round(value * 10);
 }
-
-/*************************************************************
- * TODO - sort legacy code
- *************************************************************/
-
-// effect(async () => {
-//   const location = this.locationSelected();
-//   const countryCode = location[2];
-//   const downscaledCode = location[4];
-//   if (countryCode && downscaledCode) {
-//     this.setMapBounds(countryCode, downscaledCode);
-//     await this.loadLocationCropData(countryCode, downscaledCode);
-//   }
-// });
-
-// effect(async () => {
-//   const location = this.locationSelected();
-//   const countryCode = location[2];
-//   const downscaledCode = location[4];
-//   if (countryCode && downscaledCode) {
-//     this.setMapBounds(countryCode, downscaledCode);
-//     await this.loadLocationCropData(countryCode, downscaledCode);
-//   }
-// });
-
-// private async setMapBounds(countryCode: string, downscaledCode: string) {
-//   // Load admin 4 boundaries and put on map
-//   const geoData = GEO_LOCATION_DATA[countryCode] as IGelocationData;
-//   const topoJson = await geoData.admin_4.topoJson();
-//   const feature = topoJsonToGeoJson(topoJson);
-
-//   feature.features = feature.features.filter((v) => v.properties.name === downscaledCode);
-//   const map = this.picsaMapComponent().map();
-//   const geoFeature = geoJSON(feature as any);
-//   geoFeature.setStyle({ fill: false, color: 'brown', opacity: 0.5 }).addTo(map);
-//   map.fitBounds(geoFeature.getBounds());
-// }
-
-/**
-   <!-- <p>Select station to use for crop probabilities</p>
-  <div class="w-96 h-96">
-    <picsa-map style="width: 100%; height: 100%"></picsa-map>
-  </div> -->
-  <!-- <picsa-form-location-select
-    [countryCode]="countryCode()"
-    [value]="locationSelected()"
-    (valueChanged)="handleLocationUpdate($event)"
-  ></picsa-form-location-select> -->
- */
