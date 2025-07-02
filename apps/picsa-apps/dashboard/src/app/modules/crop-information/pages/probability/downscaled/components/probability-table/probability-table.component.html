@@ -27,3 +27,10 @@
 
 <!-- HACK - reuse frontend ui component -->
 <crop-probability-table [stationData]="tableData()" [stationMeta]="tableMeta()"></crop-probability-table>
+
+<button mat-button class="mt-4" (click)="dialog.open(exportDialog)">Export</button>
+<ng-template #exportDialog>
+  <button mat-stroked-button disabled>Export PDF (coming soon)</button>
+  <button mat-stroked-button disabled>Export Word Doc (coming soon)</button>
+  <button mat-stroked-button (click)="exportAppJson()">Export App Json</button>
+</ng-template>

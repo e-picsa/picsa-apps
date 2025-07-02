@@ -1,6 +1,12 @@
 import { ICropName } from '@picsa/data';
 
+export type IProbabilityTable = IProbabilityTableStationMeta & {
+  data: () => Promise<IStationCropData[]>;
+};
+
 export interface IProbabilityTableStationMeta {
+  /** Location id for routing */
+  id: string;
   /** Station name to display in label */
   label: string;
   /** Additional notes appended below table */
@@ -35,9 +41,4 @@ export interface IStationCropDataItem {
   days: string;
   water?: string[];
   probabilities?: string[];
-}
-
-export interface IStationRouteQueryParams {
-  /** id of active selected station */
-  stationId?: string;
 }

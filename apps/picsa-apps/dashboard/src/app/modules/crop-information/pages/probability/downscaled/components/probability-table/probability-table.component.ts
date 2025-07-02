@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { AlertBoxComponent } from '@picsa/components/src';
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
@@ -66,6 +67,7 @@ export class CropProbabilityTableComponent {
 
   public tableMeta = computed<IProbabilityTableStationMeta>(() => {
     return {
+      id: this.station().station_name as string,
       dateHeadings: PLANTING_DATES.map((v) => v.label),
       label: this.station().station_name as string,
       notes: [],
@@ -74,7 +76,16 @@ export class CropProbabilityTableComponent {
     };
   });
 
-  constructor(private service: CropInformationService) {}
+  constructor(
+    private service: CropInformationService,
+    public dialog: MatDialog,
+  ) {}
+
+  public exportAppJson() {
+    const output = { meta: this.tableMeta(), data: this.tableData() };
+    // TODO - export full app format (currently just logged)
+    console.log(output);
+  }
 
   private generateTable(params: {
     cropDataHashmap: Record<string, ICropData['Row']>;
