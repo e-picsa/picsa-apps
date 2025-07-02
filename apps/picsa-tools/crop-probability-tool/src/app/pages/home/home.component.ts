@@ -57,19 +57,17 @@ export class HomeComponent implements OnInit {
         this.tableStationData.set(data);
       }
     });
-    //  load previously selected location
-    effect(() => {
-      const locationId = this.locationId();
-      if (!locationId) {
-        const savedLocation = localStorage.getItem(STORED_LOCATION_FIELD);
-        if (savedLocation) {
-          this.handleLocationChange([savedLocation]);
-        }
-      }
-    });
   }
 
   ngOnInit(): void {
+    //  load previously selected location
+    const locationId = this.locationId();
+    if (!locationId) {
+      const savedLocation = localStorage.getItem(STORED_LOCATION_FIELD);
+      if (savedLocation) {
+        this.handleLocationChange([savedLocation]);
+      }
+    }
     this.tourService.registerTour('cropProbabilityTable', CROP_PROBABILITY_TABLE_TOUR);
     this.tourService.registerTour('cropProbabilitySelect', CROP_PROBABILITY_SELECT_TOUR);
   }
