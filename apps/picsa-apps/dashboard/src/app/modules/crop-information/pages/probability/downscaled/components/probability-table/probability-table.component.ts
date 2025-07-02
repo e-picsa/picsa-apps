@@ -37,12 +37,6 @@ const CROP_SORT_PRIORITY: ICropName[] = [
   'sweet-potatoes',
 ];
 
-// TODO - ensure db only accepts correct format (or change legacy to match)
-const CROP_NAME_MAPPING: Record<string, ICropName> = {
-  soyabeans: 'soya-beans',
-  sweet_potatoes: 'sweet-potatoes',
-};
-
 @Component({
   selector: 'dashboard-crop-probability-table',
   imports: [CommonModule, AlertBoxComponent, MatButtonModule, RouterModule, CropProbabilityTableFrontend],
@@ -90,7 +84,7 @@ export class CropProbabilityTableComponent {
     const entries: IStationCropData[] = [];
     for (const [crop, requirements] of Object.entries(waterRequirements)) {
       const entry: IStationCropData = {
-        crop: CROP_NAME_MAPPING[crop] || (crop as ICropName),
+        crop: crop as ICropName,
         data: [],
       };
       for (const [variety, waterRequirement] of Object.entries(requirements)) {
