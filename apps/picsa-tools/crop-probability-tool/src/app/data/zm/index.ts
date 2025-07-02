@@ -23,5 +23,29 @@ const ZM_CROP_DATA: IProbabilityTable[] = [
     seasonProbabilities: ['1/10', '3/10', '7/10', '9/10', '10/10'],
     data: async () => import('./petauke.json').then((v) => v.default as IStationCropData[]),
   },
+  {
+    id: 'southern/choma',
+    dateHeadings: ['1-Oct', '16-Oct', '31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
+    label: 'CHOMA MET',
+    notes: [],
+    seasonProbabilities: [],
+    data: async () => import('./choma.json').then((v) => v.default as IStationCropData[]),
+  },
+  {
+    id: 'luapula/mansa',
+    dateHeadings: ['1-Oct', '16-Oct', '31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
+    label: 'MANSA MET',
+    notes: [],
+    seasonProbabilities: [],
+    data: async () => import('./mansa.json').then((v) => v.default as IStationCropData[]),
+  },
+  {
+    id: 'central/kabwe',
+    dateHeadings: ['1-Oct', '16-Oct', '31-Oct', '15-Nov', '30-Nov', '15-Dec', '30-Dec'],
+    label: 'KABWE MET',
+    notes: [],
+    seasonProbabilities: [],
+    data: async () => import('./kabwe.json').then((v) => v.default as IStationCropData[]),
+  },
 ];
 export default ZM_CROP_DATA;
