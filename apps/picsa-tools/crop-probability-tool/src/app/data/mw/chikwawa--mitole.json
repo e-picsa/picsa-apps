@@ -39,17 +39,6 @@
       }
     ]
   },
-  // {
-  //   crop: 'sorghum\nMbatata',
-  //   data: [
-  //     {
-  //       days: '270',
-  //       variety: 'MANYOKOLA',
-  //       probabilities: ['', '', '', '', ''],
-  //       water: ['Long Duration'],
-  //     },
-  //   ],
-  // },
   {
     "crop": "cassava",
     "data": [

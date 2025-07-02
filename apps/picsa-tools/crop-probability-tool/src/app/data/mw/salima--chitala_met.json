@@ -5,182 +5,74 @@
       {
         "days": "90",
         "variety": "SC304 (Kalulu), SC 301",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "5/10",
-          "3/10",
-          "1/10",
-          ""
-        ],
-        "water": [
-          "306"
-        ]
+        "probabilities": ["1/10", "3/10", "5/10", "3/10", "1/10", ""],
+        "water": ["306"]
       },
       {
         "days": "100",
         "variety": "DK8033 or SC403, SC 419, SC 423 (Kanyani) or Pan4M-19, PAN6777",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "5/10",
-          "3/10",
-          "1/10",
-          ""
-        ],
-        "water": [
-          "340"
-        ]
+        "probabilities": ["1/10", "3/10", "5/10", "3/10", "1/10", ""],
+        "water": ["340"]
       },
       {
         "days": "115",
         "variety": "SC537 (Mbidzi), DK 8031",
-        "probabilities": [
-          "1/10",
-          "2/10",
-          "2/10",
-          "2/10",
-          "1/10",
-          ""
-        ],
-        "water": [
-          "391"
-        ]
+        "probabilities": ["1/10", "2/10", "2/10", "2/10", "1/10", ""],
+        "water": ["391"]
       },
       {
         "days": "130",
         "variety": "DK9089, MH39A, MH40A, MH42A, MH43A, SC513, DKC8033, PAN7M-89,MH 18, ZM 523",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "442"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["442"]
       },
       {
         "days": "140",
         "variety": "SC600 (Nkango)",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "476"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["476"]
       },
       {
         "days": "160",
         "variety": "SC719, 725 Njovu",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "544"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["544"]
       },
       {
         "days": "140",
         "variety": "MH 26, MH27, MH28, … , MH38, P3812W, KC9089, DK 8053, ZM 623, ZM 721, Chitedze 2QPM, DKC 8071, DKC8073, PAN4M-19, Peacock 10, CAP 9001, DK 81-81",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "476"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["476"]
       },
       {
         "days": "140",
         "variety": "PHB 30G19, PHB 30D79, PAN 67",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "476"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["476"]
       },
       {
         "days": "120",
         "variety": "ZM 309",
-        "probabilities": [
-          "1/10",
-          "2/10",
-          "2/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "408"
-        ]
+        "probabilities": ["1/10", "2/10", "2/10", "0", "0", ""],
+        "water": ["408"]
       },
       {
         "days": "130",
         "variety": "PAN57, PAN63",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "442"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["442"]
       },
       {
         "days": "130",
         "variety": "PAN4M-21",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "442"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["442"]
       },
       {
         "days": "130",
         "variety": "PAN53",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "442"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["442"]
       }
     ]
   },
@@ -190,32 +82,14 @@
       {
         "days": "90",
         "variety": "Kilombero or Faya",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "5/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "423"
-        ]
+        "probabilities": ["1/10", "3/10", "5/10", "0", "0", ""],
+        "water": ["423"]
       },
       {
         "days": "100",
         "variety": "Nerica (upland rice)",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "5/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "470"
-        ]
+        "probabilities": ["1/10", "3/10", "5/10", "0", "0", ""],
+        "water": ["470"]
       }
     ]
   },
@@ -225,17 +99,8 @@
       {
         "days": "150",
         "variety": "Kenya, Semusa, Mugamba, Zondeni, Sakananthaka, Salera, Kakoma, Nyamoyo, Sungani, Anaakwanire, Mathuthu, Chipika, Kadyaubwelere",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "540"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["540"]
       }
     ]
   },
@@ -245,17 +110,8 @@
       {
         "days": "450",
         "variety": "Manyokola, Chamandanda, Mpale, Kalawe, Sagonja, Sauti",
-        "probabilities": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
-        ],
-        "water": [
-          "0"
-        ]
+        "probabilities": ["", "", "", "", "", ""],
+        "water": ["0"]
       }
     ]
   },
@@ -265,62 +121,26 @@
       {
         "days": "90",
         "variety": "Napilira",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "5/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "306"
-        ]
+        "probabilities": ["1/10", "3/10", "5/10", "0", "0", ""],
+        "water": ["306"]
       },
       {
         "days": "72",
         "variety": "Nua Beans",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "6/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "244"
-        ]
+        "probabilities": ["1/10", "3/10", "6/10", "0", "0", ""],
+        "water": ["244"]
       },
       {
         "days": "80",
         "variety": "Kholophete",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "6/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "272"
-        ]
+        "probabilities": ["1/10", "3/10", "6/10", "0", "0", ""],
+        "water": ["272"]
       },
       {
         "days": "86",
         "variety": "Chimbamba",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "6/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "292"
-        ]
+        "probabilities": ["1/10", "3/10", "6/10", "0", "0", ""],
+        "water": ["292"]
       }
     ]
   },
@@ -330,47 +150,20 @@
       {
         "days": "110",
         "variety": "CG8, CG9, CG10, CG11, CG12",
-        "probabilities": [
-          "1/10",
-          "2/10",
-          "2/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "374"
-        ]
+        "probabilities": ["1/10", "2/10", "2/10", "0", "0", ""],
+        "water": ["374"]
       },
       {
         "days": "150",
         "variety": "Chalimbana",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "510"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["510"]
       },
       {
         "days": "120",
         "variety": "Msinjiro",
-        "probabilities": [
-          "1/10",
-          "2/10",
-          "2/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "408"
-        ]
+        "probabilities": ["1/10", "2/10", "2/10", "0", "0", ""],
+        "water": ["408"]
       }
     ]
   },
@@ -380,32 +173,14 @@
       {
         "days": "140",
         "variety": "Nasoko or Makwacha",
-        "probabilities": [
-          "0",
-          "0",
-          "0",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "338"
-        ]
+        "probabilities": ["0", "0", "0", "0", "0", ""],
+        "water": ["338"]
       },
       {
         "days": "110",
         "variety": "Tikolore",
-        "probabilities": [
-          "1/10",
-          "2/10",
-          "2/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "346"
-        ]
+        "probabilities": ["1/10", "2/10", "2/10", "0", "0", ""],
+        "water": ["346"]
       }
     ]
   },
@@ -415,17 +190,8 @@
       {
         "days": "90",
         "variety": "Sudan 1 or IT82E-16 or Nkanaufiti",
-        "probabilities": [
-          "1/10",
-          "3/10",
-          "5/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "306"
-        ]
+        "probabilities": ["1/10", "3/10", "5/10", "0", "0", ""],
+        "water": ["306"]
       }
     ]
   },
@@ -435,62 +201,26 @@
       {
         "days": "240",
         "variety": "Kachangu",
-        "probabilities": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
-        ],
-        "water": [
-          "816"
-        ]
+        "probabilities": ["", "", "", "", "", ""],
+        "water": ["816"]
       },
       {
         "days": "270",
         "variety": "Sauma",
-        "probabilities": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
-        ],
-        "water": [
-          "918"
-        ]
+        "probabilities": ["", "", "", "", "", ""],
+        "water": ["918"]
       },
       {
         "days": "127",
         "variety": "ICPL 87015 and ICPL93026",
-        "probabilities": [
-          "1/10",
-          "2/10",
-          "2/10",
-          "0",
-          "0",
-          ""
-        ],
-        "water": [
-          "432"
-        ]
+        "probabilities": ["1/10", "2/10", "2/10", "0", "0", ""],
+        "water": ["432"]
       },
       {
         "days": "180",
         "variety": "Mwaiwathu alimi (ICEAP00557)",
-        "probabilities": [
-          "",
-          "",
-          "",
-          "",
-          "",
-          ""
-        ],
-        "water": [
-          "612"
-        ]
+        "probabilities": ["", "", "", "", "", ""],
+        "water": ["612"]
       }
     ]
   }
