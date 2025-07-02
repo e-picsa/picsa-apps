@@ -18,6 +18,8 @@ interface IQueryParams {
   locationId?: string;
 }
 
+const STORED_LOCATION_FIELD = 'picsa_crop_tool_location';
+
 @Component({
   selector: 'crop-probability-home',
   templateUrl: './home.component.html',
@@ -53,6 +55,16 @@ export class HomeComponent implements OnInit {
         // load data from meta definition
         const data = await meta.data();
         this.tableStationData.set(data);
+      }
+    });
+    //  load previously selected location
+    effect(() => {
+      const locationId = this.locationId();
+      if (!locationId) {
+        const savedLocation = localStorage.getItem(STORED_LOCATION_FIELD);
+        if (savedLocation) {
+          this.handleLocationChange([savedLocation]);
+        }
       }
     });
   }
@@ -94,6 +106,7 @@ export class HomeComponent implements OnInit {
 
   public handleLocationChange(location: (string | undefined)[]) {
     const targetLocation = location.filter((v) => v !== undefined).pop();
+    localStorage.setItem(STORED_LOCATION_FIELD, targetLocation as string);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { locationId: targetLocation },
