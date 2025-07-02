@@ -13,6 +13,7 @@ beans,MBERESHI,early,80,85,,{}
 beans,MENSO-PANSAKA,early,85,90,,{}
 beans,POMBA,early,85,90,,{}
 beans,SOLWEZI,early,85,90,,{}
+beans,SUGAR-BEANS,early,85,115,,{}
 beans,WHITE-(KALUNGU),early,75,80,,{}
 cotton,CDT-II,late,140,160,,{}
 cotton,CHURAZA,medium,135,150,,{}
@@ -180,7 +181,9 @@ sunflower,CH258,early,100,120,,{}
 sunflower,MILIKA,early,100,110,,{}
 sunflower,RECORD,early,110,120,,{}
 sunflower,SAONA,early,80,120,,{}
+sweet-potatoes,BANDAWE,early,90,120,,{}
 sweet-potatoes,CHINGOVWA,early,85,120,,{}
+sweet-potatoes,CHIWOKO,early,90,120,,{}
 sweet-potatoes,GARNET,early,85,120,,{}
 sweet-potatoes,KAPIRI,early,85,120,,{}
 sweet-potatoes,KAPOKOLA,early,85,120,,{}
@@ -191,3 +194,5 @@ sweet-potatoes,MUNUNSHI,early,85,120,,{}
 sweet-potatoes,OLYMPIA,early,85,120,,{}
 sweet-potatoes,ORANGE-FLESHED,early,85,120,,{}
 sweet-potatoes,ZAMBEZI,early,85,120,,{}
+tobacco,BARLEY,medium,130,130,,{}
+tobacco,VIRGINIA,medium,130,130,,{}
