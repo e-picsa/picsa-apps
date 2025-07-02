@@ -1,0 +1,149 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "days": "160",
+        "variety": "MWAYIWATHU ALIMI, MTHAWAJUNI",
+        "probabilities": ["", "", "", "", ""],
+        "water": ["Long Duration"]
+      },
+      {
+        "days": "190",
+        "variety": "KACHANGU",
+        "probabilities": ["", "", "", "", ""],
+        "water": ["Long Duration"]
+      }
+    ]
+  },
+  {
+    "crop": "rice",
+    "data": [
+      {
+        "days": "180",
+        "variety": "ANAAKWANIRE",
+        "probabilities": ["", "", "", "", ""],
+        "water": ["Long Duration"]
+      },
+      {
+        "days": "150",
+        "variety": "NYAMOYO",
+        "probabilities": ["", "", "", "", ""],
+        "water": ["Long Duration"]
+      },
+      {
+        "days": "115",
+        "variety": "KAPHULIRA",
+        "probabilities": ["1/10", "2/10", "1/10", "1/10", "1/10"],
+        "water": ["400"]
+      }
+    ]
+  },
+  // {
+  //   crop: 'sorghum\nMbatata',
+  //   data: [
+  //     {
+  //       days: '270',
+  //       variety: 'MANYOKOLA',
+  //       probabilities: ['', '', '', '', ''],
+  //       water: ['Long Duration'],
+  //     },
+  //   ],
+  // },
+  {
+    "crop": "cassava",
+    "data": [
+      {
+        "days": "150",
+        "variety": "FAYA-14-M-49",
+        "probabilities": ["0", "0", "0", "0", "0"],
+        "water": ["660"]
+      },
+      {
+        "days": "130",
+        "variety": "MTUPATUPA",
+        "probabilities": ["0", "1/10", "0", "0", "0"],
+        "water": ["570"]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "days": "72",
+        "variety": "Nua Beans",
+        "probabilities": ["2/10", "4/10", "4/10", "6/10", "5/10"],
+        "water": ["240"]
+      },
+      {
+        "days": "86",
+        "variety": "Chimbamba",
+        "probabilities": ["1/10", "3/10", "4/10", "6/10", "5/10"],
+        "water": ["285"]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "days": "130",
+        "variety": "CG7, CHALIMBANA",
+        "probabilities": ["1/10", "1/10", "0", "0", "0"],
+        "water": ["430"]
+      },
+      {
+        "days": "100",
+        "variety": "MALIMBA",
+        "probabilities": ["2/10", "3/10", "3/10", "4/10", "2/10"],
+        "water": ["330"]
+      }
+    ]
+  },
+  {
+    "crop": "pigeon-peas",
+    "data": [
+      {
+        "days": "110",
+        "variety": "SESAME",
+        "probabilities": ["2/10", "2/10", "1/10", "1/10", "1/10"],
+        "water": ["365"]
+      }
+    ]
+  },
+  {
+    "crop": "soya-beans",
+    "data": [
+      {
+        "days": "90",
+        "variety": "Sudan 1",
+        "probabilities": ["2/10", "3/10", "3/10", "4/10", "3/10"],
+        "water": ["300"]
+      },
+      {
+        "days": "90",
+        "variety": "LOCAL V",
+        "probabilities": ["2/10", "3/10", "3/10", "4/10", "3/10"],
+        "water": ["300"]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "days": "160",
+        "variety": "MAHYCO C 577",
+        "probabilities": ["0", "0", "0", "0", "0"],
+        "water": ["510"]
+      },
+      {
+        "days": "170",
+        "variety": "MAHYCO C 569, MAHYCO570, MAHYCO 571",
+        "probabilities": ["0", "0", "0", "0", "0"],
+        "water": ["545"]
+      }
+    ]
+  }
+]

@@ -1,0 +1,340 @@
+[
+  {
+    "crop": "maize",
+    "data": [
+      {
+        "days": "80",
+        "variety": "SC304 (Kalulu)",
+        "probabilities": [
+          "2/10",
+          "4/10",
+          "5/10",
+          "6/10",
+          "5/10"
+        ],
+        "water": [
+          "304"
+        ]
+      },
+      {
+        "days": "90",
+        "variety": "DKC 8033 or SC 403, SC 423 (Kanyani), PAN 67",
+        "probabilities": [
+          "2/10",
+          "4/10",
+          "4/10",
+          "3/10",
+          "2/10"
+        ],
+        "water": [
+          "342"
+        ]
+      },
+      {
+        "days": "120",
+        "variety": "DKC 9089, DKC8033",
+        "probabilities": [
+          "2/10",
+          "2/10",
+          "2/10",
+          "1/10",
+          "0"
+        ],
+        "water": [
+          "456"
+        ]
+      },
+      {
+        "days": "158",
+        "variety": "SC719, 725 Njovu",
+        "probabilities": [
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "water": [
+          "600"
+        ]
+      },
+      {
+        "days": "140",
+        "variety": "MH 26, MH30, ZM 623, MH26, Peacock 10",
+        "probabilities": [
+          "1/10",
+          "1/10",
+          "0",
+          "0",
+          "0"
+        ],
+        "water": [
+          "532"
+        ]
+      },
+      {
+        "days": "140",
+        "variety": "PAN 67",
+        "probabilities": [
+          "1/10",
+          "1/10",
+          "0",
+          "0",
+          "0"
+        ],
+        "water": [
+          "532"
+        ]
+      },
+      {
+        "days": "115",
+        "variety": "ZM 309",
+        "probabilities": [
+          "2/10",
+          "2/10",
+          "2/10",
+          "1/10",
+          "0"
+        ],
+        "water": [
+          "437"
+        ]
+      },
+      {
+        "days": "125",
+        "variety": "ZM 523",
+        "probabilities": [
+          "1/10",
+          "1/10",
+          "0",
+          "0",
+          "0"
+        ],
+        "water": [
+          "475"
+        ]
+      },
+      {
+        "days": "144",
+        "variety": "PAN 57, PAN 63",
+        "probabilities": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "water": [
+          "547"
+        ]
+      },
+      {
+        "days": "145",
+        "variety": "PAN 53",
+        "probabilities": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "water": [
+          "551"
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "rice",
+    "data": [
+      {
+        "days": "90",
+        "variety": "Pilira 1 or Pilira 2",
+        "probabilities": [
+          "2/10",
+          "4/10",
+          "4/10",
+          "3/10",
+          "2/10"
+        ],
+        "water": [
+          "288"
+        ]
+      },
+      {
+        "days": "100",
+        "variety": "Naliyeta",
+        "probabilities": [
+          "2/10",
+          "3/10",
+          "4/10",
+          "3/10",
+          "2/10"
+        ],
+        "water": [
+          "400"
+        ]
+      },
+      {
+        "days": "105",
+        "variety": "Kaphulira",
+        "probabilities": [
+          "2/10",
+          "2/10",
+          "2/10",
+          "1/10",
+          "0"
+        ],
+        "water": [
+          "420"
+        ]
+      },
+      {
+        "days": "150",
+        "variety": "Kenya, Semusa, Mugamba, Salera, Kakoma, Nyamoyo, Anaakwanire, Mathuthu, Chipika, Kadyaubwelere, Kamchiputu",
+        "probabilities": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "water": [
+          "600"
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cassava",
+    "data": [
+      {
+        "days": "86",
+        "variety": "Chimbamba",
+        "probabilities": [
+          "2/10",
+          "3/10",
+          "5/10",
+          "5/10",
+          "5/10"
+        ],
+        "water": [
+          "327"
+        ]
+      },
+      {
+        "days": "72",
+        "variety": "Nua Beans",
+        "probabilities": [
+          "2/10",
+          "4/10",
+          "5/10",
+          "6/10",
+          "5/10"
+        ],
+        "water": [
+          "274"
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "cowpeas",
+    "data": [
+      {
+        "days": "105",
+        "variety": "CG7",
+        "probabilities": [
+          "2/10",
+          "2/10",
+          "2/10",
+          "1/10",
+          "0"
+        ],
+        "water": [
+          "399"
+        ]
+      },
+      {
+        "days": "150",
+        "variety": "Chalimbana",
+        "probabilities": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "water": [
+          "570"
+        ]
+      },
+      {
+        "days": "120",
+        "variety": "Malimba",
+        "probabilities": [
+          "1/10",
+          "2/10",
+          "2/10",
+          "1/10",
+          "0"
+        ],
+        "water": [
+          "456"
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "groundnuts",
+    "data": [
+      {
+        "days": "120",
+        "variety": "Nthawa June",
+        "probabilities": [
+          "1/10",
+          "2/10",
+          "2/10",
+          "1/10",
+          "0"
+        ],
+        "water": [
+          "456"
+        ]
+      },
+      {
+        "days": "160",
+        "variety": "Mwaiwathualimi (ICEAP00557)",
+        "probabilities": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "water": [
+          "608"
+        ]
+      }
+    ]
+  },
+  {
+    "crop": "pigeon-peas",
+    "data": [
+      {
+        "days": "90",
+        "variety": "Sudan 1",
+        "probabilities": [
+          "2/10",
+          "4/10",
+          "4/10",
+          "3/10",
+          "2/10"
+        ],
+        "water": [
+          "342"
+        ]
+      }
+    ]
+  }
+]
