@@ -7,7 +7,6 @@ import { PicsaDbModule, PicsaTranslateModule, PicsaTranslateService } from '@pic
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { CropProbabilityMaterialModule } from './components/material.module';
 
 /** Core imports only required when running standalone */
 const StandaloneImports = [
@@ -19,12 +18,7 @@ const StandaloneImports = [
 ];
 
 /** Common imports used in both standalone and embedded formats */
-export const APP_COMMON_IMPORTS = [
-  CropProbabilityMaterialModule,
-  PicsaTranslateModule,
-  PicsaDbModule.forRoot(),
-  PicsaCommonComponentsModule,
-];
+export const APP_COMMON_IMPORTS = [PicsaTranslateModule, PicsaDbModule.forRoot(), PicsaCommonComponentsModule];
 
 /*******************************************************************
  *  Standalone Version
