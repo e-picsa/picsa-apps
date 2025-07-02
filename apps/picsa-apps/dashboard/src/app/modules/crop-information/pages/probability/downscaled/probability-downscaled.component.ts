@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 
 import { ICropSuccessEntry, IStationRow } from '../../../../climate/types';
@@ -26,6 +26,7 @@ type ICropDataDownscaledWithStation = ICropDataDownscaled['Row'] & {
     CropProbabilityTableComponent,
     MatIconModule,
     MatButtonModule,
+    RouterLink,
   ],
   templateUrl: './probability-downscaled.component.html',
   styleUrl: './probability-downscaled.component.scss',

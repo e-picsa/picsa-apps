@@ -1,6 +1,8 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { PicsaFormsModule } from '@picsa/forms';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap, arrayToHashmapArray, jsonToCSV } from '@picsa/utils';
 import { isObjectLiteral } from '@picsa/utils/object.utils';
@@ -45,6 +47,7 @@ interface ICropDataImport {
     PicsaDataTableComponent,
     DashboardMaterialModule,
     CropMissingLocationsComponent,
+    PicsaFormsModule,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
@@ -78,9 +81,12 @@ export class DashboardCropAdminComponent {
 
   public insertRows = signal<ICropDataDownscaled['Insert'][]>([]);
 
+  public countryCode = computed(() => this.deploymentService.activeDeploymentCountry());
+
   constructor(
     private service: CropInformationService,
     private deploymentService: DeploymentDashboardService,
+    public dialog: MatDialog,
   ) {
     service.ready();
     effect(async () => {
@@ -99,17 +105,17 @@ export class DashboardCropAdminComponent {
     this.parsedRows.set(rows);
   }
 
-  public downloadTemplate() {
-    const locations = this.getLocationList();
-    const dummyLocation = locations[0].id;
-    const dummyRow: ICropDataImport = {
-      location_id: dummyLocation,
-      crop: 'maize',
-      variety: 'PAN-53',
-      water_requirement: 420,
-    };
-    const csv = jsonToCSV([dummyRow]);
-    download(csv, `crop-water-requirements-template.csv`);
+  public downloadTemplate(selectedLocation: (string | undefined)[]) {
+    const cropData = this.service.cropData();
+    const location_id = selectedLocation.filter((v) => v !== undefined).pop() as string;
+    const dummyRows: ICropDataImport[] = cropData.map(({ crop, variety }) => ({
+      location_id,
+      crop,
+      variety,
+      water_requirement: '' as any,
+    }));
+    const csv = jsonToCSV(dummyRows);
+    download(csv, `crop-water-requirements.${location_id}.csv`);
   }
 
   public async processImport(rows: ICropDataDownscaled['Insert'][]) {

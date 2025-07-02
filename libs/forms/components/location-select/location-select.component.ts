@@ -33,12 +33,12 @@ export class FormLocationSelectComponent {
   public admin5Options = signal<{ id: string; label: string }[]>([]);
   public admin5Selected = signal<string | undefined>(undefined);
 
-  private computedValue = computed<(string | undefined)[]>(
+  public computedValue = computed<(string | undefined)[]>(
     () => this.getComputedValue(this.admin4Selected(), this.admin5Selected()),
-    { equal: isEqual }
+    { equal: isEqual },
   );
 
-  private isValid = computed(() => {
+  public isValid = computed(() => {
     const computedValue = this.computedValue();
     const locationData = this.locationData();
     if (locationData.admin_5) return computedValue[5] ? true : false;

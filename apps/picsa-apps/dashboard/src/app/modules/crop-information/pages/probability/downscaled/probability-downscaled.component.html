@@ -10,6 +10,10 @@
       @if (downscaled.station && !showLinkedStationSelect()) {
         <div class="flex items-center gap-4">
           <p class="flex-1">Probabilities calculated from climate station [{{ downscaled.station.station_name }}]</p>
+          <button class="ml-auto" mat-button [routerLink]="['/', 'climate', 'station', downscaled.station.station_id]">
+            <mat-icon>table_rows</mat-icon>
+            Climate Data
+          </button>
           <button class="ml-auto" mat-button (click)="showLinkedStationSelect.set(true)">
             <mat-icon>edit</mat-icon>
             Change Station

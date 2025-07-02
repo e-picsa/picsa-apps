@@ -4,7 +4,9 @@
   <!-- Requirement Upload -->
   <div class="flex items-center">
     <p class="flex-1">Upload crop water requirement definitions from CSV</p>
-    <button class="ml-2" mat-stroked-button (click)="downloadTemplate()"><mat-icon>download</mat-icon>Template</button>
+    <button class="ml-2" mat-stroked-button (click)="dialog.open(templateExport)">
+      <mat-icon>download</mat-icon>Template
+    </button>
   </div>
 
   <dashboard-data-import (dataLoaded)="handleDataLoad($event)"></dashboard-data-import>
@@ -54,3 +56,23 @@
   <h2>Quality Control</h2>
   <dashboard-crop-missing-locations></dashboard-crop-missing-locations>
 </div>
+
+<!-- Template Export Location Select -->
+<ng-template #templateExport>
+  <picsa-form-location-select [countryCode]="countryCode()" #locationSelect></picsa-form-location-select>
+  <button
+    class="ml-2"
+    mat-stroked-button
+    (click)="downloadTemplate(locationSelect.computedValue())"
+    [disabled]="!locationSelect.isValid()"
+  >
+    <mat-icon>download</mat-icon>
+    <span class="capitalize">
+      @if (locationSelect.isValid()) {
+        {{ locationSelect.admin5Selected() || locationSelect.admin4Selected() }} Template
+      } @else {
+        Template
+      }
+    </span>
+  </button>
+</ng-template>
