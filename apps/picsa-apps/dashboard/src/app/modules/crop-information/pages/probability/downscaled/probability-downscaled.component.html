@@ -1,0 +1,45 @@
+<div class="page-content">
+  @if (dataLoading()) {
+    Loading crop data...
+  } @else {
+    @if (downscaledData(); as downscaled) {
+      <div class="flex items-center gap-4">
+        <h3>{{ locationMeta().label }}</h3>
+        <h2 class="flex-1">Crop Probabilities</h2>
+      </div>
+      @if (downscaled.station && !showLinkedStationSelect()) {
+        <div class="flex items-center gap-4">
+          <p class="flex-1">Probabilities calculated from climate station [{{ downscaled.station.station_name }}]</p>
+          <button class="ml-auto" mat-button [routerLink]="['/', 'climate', 'station', downscaled.station.station_id]">
+            <mat-icon>table_rows</mat-icon>
+            Climate Data
+          </button>
+          <button class="ml-auto" mat-button (click)="showLinkedStationSelect.set(true)">
+            <mat-icon>edit</mat-icon>
+            Change Station
+          </button>
+        </div>
+        <!-- Probability Table -->
+        @if (downscaledStationProbabilities(); as stationProbabilities) {
+          <dashboard-crop-probability-table
+            [waterRequirements]="downscaledWaterRequirements()"
+            [stationProbabilities]="stationProbabilities"
+            [station]="downscaled.station"
+          ></dashboard-crop-probability-table>
+        } @else {
+          Loading station data...
+        }
+      }
+      <!-- Station Select -->
+      @else {
+        <dashboard-crop-linked-station-select
+          [locationId]="locationId()"
+          [downscaledData]="downscaled"
+          (stationSelected)="updateLinkedStation($event)"
+        ></dashboard-crop-linked-station-select>
+      }
+    } @else {
+      No data available
+    }
+  }
+</div>

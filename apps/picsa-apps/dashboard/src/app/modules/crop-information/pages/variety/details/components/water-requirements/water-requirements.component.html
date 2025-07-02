@@ -41,9 +41,7 @@
         <button mat-button (click)="handleFormLocationChange([])">Cancel</button>
         <button
           mat-button
-          [disabled]="
-            !selectedEntry()?.water_requirement || waterInput.value === selectedEntry()?.water_requirement?.toString()
-          "
+          [disabled]="waterInput.value === selectedEntry()?.water_requirement?.toString()"
           mat-dialog-close
           (click)="save(waterInput.value)"
         >

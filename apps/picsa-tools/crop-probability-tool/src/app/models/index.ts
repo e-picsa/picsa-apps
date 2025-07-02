@@ -1,5 +1,20 @@
 import { ICropName } from '@picsa/data';
 
+export interface IProbabilityTableStationMeta {
+  /** Station name to display in label */
+  label: string;
+  /** Additional notes appended below table */
+  notes: string[];
+  /** Probabilities to display in header row for start of season */
+  seasonProbabilities: string[];
+  /** Text to display for heading columns */
+  dateHeadings: string[];
+}
+
+/**
+ * @deprecated
+ * Should refactor to use IProbabilityTableStationMeta
+ */
 export interface IStationCropInformation {
   id: string;
   station_district_id: string;

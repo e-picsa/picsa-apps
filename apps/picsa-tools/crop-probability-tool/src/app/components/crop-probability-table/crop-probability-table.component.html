@@ -12,7 +12,7 @@
     <ng-container matColumnDef="crop" sticky>
       <th mat-header-cell *matHeaderCellDef class="crop-title">{{ 'Crop' | translate }}</th>
       <td mat-cell *matCellDef="let element" class="crop-title">
-        {{ element.crop | translate }}
+        {{ cropDataHashmap[element.crop]?.label || element.crop | translate }}
       </td>
     </ng-container>
     <ng-container matColumnDef="variety">
@@ -47,7 +47,7 @@
     <ng-container matColumnDef="title-column">
       <th mat-header-cell *matHeaderCellDef [attr.colspan]="4">
         <h2 style="flex: 1" data-tour-id="table-title">
-          {{ 'Crop Information' | translate }} - {{ station.station_name }}
+          {{ 'Crop Information' | translate }} - {{ stationMeta().label }}
         </h2>
       </th>
     </ng-container>
@@ -72,7 +72,10 @@
 
         <table #startProbabilities style="table-layout: fixed" class="border-left">
           <tr>
-            <td *ngFor="let probability of station.season_probabilities" class="border-bottom border-top border-right">
+            <td
+              *ngFor="let probability of stationMeta().seasonProbabilities"
+              class="border-bottom border-top border-right"
+            >
               {{ probability }}
             </td>
           </tr>
@@ -80,8 +83,7 @@
         <div class="season-start-text border-left border-top" style="margin-top: 2rem; margin-left: -1px">
           {{
             'Chance of receiving the water requirement in the
-          days to maturity for this crop variety'
-              | translate
+          days to maturity for this crop variety' | translate
           }}
         </div>
       </td>
@@ -94,5 +96,5 @@
   </table>
 </section>
 <div class="disclaimer">
-  <div *ngFor="let note of station.notes">{{ note | translate }}</div>
+  <div *ngFor="let note of stationMeta().notes">{{ note | translate }}</div>
 </div>
