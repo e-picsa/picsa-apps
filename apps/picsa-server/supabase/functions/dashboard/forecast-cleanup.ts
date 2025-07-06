@@ -1,11 +1,22 @@
-import { getClient } from '../_shared/client.ts';
+import { getServiceRoleClient } from '../_shared/client.ts';
 import { JSONResponse, ErrorResponse } from '../_shared/response.ts';
+
+interface Forecast {
+  id: string;
+  country_code: string;
+  storage_file?: string | null;
+}
+
+interface CleanupError {
+  id: string;
+  error: unknown;
+}
 
 /**
  * function to delete forecasts on both DB and storage older than 1 month
  */
 export const forecastCleanup = async (_req: Request) => {
-  const supabaseClient = getClient();
+  const supabaseClient = getServiceRoleClient();
 
   // 1. Calculate the date for one month ago
   const oneMonthAgo = new Date();
@@ -25,34 +36,62 @@ export const forecastCleanup = async (_req: Request) => {
     return JSONResponse({ message: 'No old forecasts to delete.' });
   }
 
+  // Type assertion for type safety
+  const forecasts: Forecast[] = oldForecasts as Forecast[];
+
   const deletedFiles: string[] = [];
   const deletedDbEntries: string[] = [];
   const errors: CleanupError[] = [];
 
-  // 3. Delete the corresponding files from storage and db
-  for (const forecast of oldForecasts) {
-    // Delete from storage if a file exists
-    if (forecast.storage_file) {
-      const { error: storageError } = await supabaseClient.storage
-        .from(forecast.country_code)
-        .remove([forecast.storage_file]);
+  // 3. Group forecasts for batch processing
+  const forecastsWithFiles = forecasts.filter((f) => !!f.storage_file);
+  const dbIdsForDeletion: string[] = forecasts.filter((f) => !f.storage_file).map((f) => f.id);
 
-      if (storageError) {
-        errors.push({ id: forecast.id, error: storageError });
-        console.error(`Error deleting storage file for ${forecast.id}:`, storageError);
-      } else {
-        deletedFiles.push(forecast.storage_file);
+  // 4. Batch delete storage files and collect IDs of corresponding DB records for deletion
+  if (forecastsWithFiles.length > 0) {
+    const filesByCountry = forecastsWithFiles.reduce(
+      (acc: Record<string, Forecast[]>, forecast) => {
+        const country = forecast.country_code;
+        if (!acc[country]) {
+          acc[country] = [];
+        }
+        acc[country].push(forecast);
+        return acc;
+      },
+      {} as Record<string, Forecast[]>,
+    );
+
+    const storagePromises = Object.entries(filesByCountry).map(async ([countryCode, forecasts]) => {
+      const paths = forecasts.map((f) => f.storage_file!) as string[];
+      const { data, error } = await supabaseClient.storage.from(countryCode).remove(paths);
+
+      if (error) {
+        forecasts.forEach((f) => errors.push({ id: f.id, error }));
+        console.error(`Error deleting storage files for ${countryCode}:`, error);
+        return;
       }
-    }
 
-    // Delete from database
-    const { error: dbError } = await supabaseClient.from('forecasts').delete().eq('id', forecast.id);
+      const successfullyDeletedFiles = (data?.map((f: { name: string }) => f.name) ?? []) as string[];
+      deletedFiles.push(...successfullyDeletedFiles);
+
+      const idsToMarkForDeletion = forecasts
+        .filter((f) => successfullyDeletedFiles.includes(f.storage_file!))
+        .map((f) => f.id);
+
+      dbIdsForDeletion.push(...idsToMarkForDeletion);
+    });
+    await Promise.all(storagePromises);
+  }
+
+  // 5. Batch delete database entries
+  if (dbIdsForDeletion.length > 0) {
+    const { error: dbError } = await supabaseClient.from('forecasts').delete().in('id', dbIdsForDeletion);
 
     if (dbError) {
-      errors.push({ id: forecast.id, error: dbError });
-      console.error(`Error deleting database entry for ${forecast.id}:`, dbError);
+      errors.push({ id: 'db-bulk-delete-failed', error: dbError });
+      console.error('Error deleting database entries:', dbError);
     } else {
-      deletedDbEntries.push(forecast.id);
+      deletedDbEntries.push(...dbIdsForDeletion);
     }
   }
 
@@ -71,8 +110,3 @@ export const forecastCleanup = async (_req: Request) => {
     deletedDbEntries,
   });
 };
-
-interface CleanupError {
-  id: string;
-  error: unknown;
-}
