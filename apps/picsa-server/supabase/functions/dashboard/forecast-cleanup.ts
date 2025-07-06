@@ -2,7 +2,7 @@ import { getClient } from '../_shared/client.ts';
 import { JSONResponse, ErrorResponse } from '../_shared/response.ts';
 
 /**
- * function to delete forecasts on (both DB and storage) older than 1 month
+ * function to delete forecasts on both DB and storage older than 1 month
  */
 export const forecastCleanup = async (_req: Request) => {
   const supabaseClient = getClient();
