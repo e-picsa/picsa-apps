@@ -1,11 +1,6 @@
 import { getServiceRoleClient } from '../_shared/client.ts';
 import { JSONResponse, ErrorResponse } from '../_shared/response.ts';
-
-interface Forecast {
-  id: string;
-  country_code: string;
-  storage_file?: string | null;
-}
+import type { IDBClimateForecastRow } from './types.ts';
 
 interface CleanupError {
   id: string;
@@ -36,8 +31,8 @@ export const forecastCleanup = async (_req: Request) => {
     return JSONResponse({ message: 'No old forecasts to delete.' });
   }
 
-  // Type assertion for type safety
-  const forecasts: Forecast[] = oldForecasts as Forecast[];
+  // Use the imported type for type safety
+  const forecasts: IDBClimateForecastRow[] = oldForecasts as IDBClimateForecastRow[];
 
   const deletedFiles: string[] = [];
   const deletedDbEntries: string[] = [];
@@ -50,7 +45,7 @@ export const forecastCleanup = async (_req: Request) => {
   // 4. Batch delete storage files and collect IDs of corresponding DB records for deletion
   if (forecastsWithFiles.length > 0) {
     const filesByCountry = forecastsWithFiles.reduce(
-      (acc: Record<string, Forecast[]>, forecast) => {
+      (acc: Record<string, IDBClimateForecastRow[]>, forecast) => {
         const country = forecast.country_code;
         if (!acc[country]) {
           acc[country] = [];
@@ -58,7 +53,7 @@ export const forecastCleanup = async (_req: Request) => {
         acc[country].push(forecast);
         return acc;
       },
-      {} as Record<string, Forecast[]>,
+      {} as Record<string, IDBClimateForecastRow[]>,
     );
 
     const storagePromises = Object.entries(filesByCountry).map(async ([countryCode, forecasts]) => {
