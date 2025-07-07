@@ -38,7 +38,6 @@ groundnuts,MGV5,early,125,130,,{}
 groundnuts,MGV8,medium,120,130,,{}
 groundnuts,NACHIKONDO,early,90,100,,{}
 groundnuts,NATAL-COMMON,early,90,100,,{}
-groundnuts,NATAL-COMMON-,early,90,100,,{}
 groundnuts,SOLONTONI,early,90,100,,{}
 groundnuts,WAMUSANGA,early,85,90,,{}
 maize,ADV-637,medium,130,135,,{}
@@ -81,13 +80,13 @@ maize,MRI514,early,125,130,,{}
 maize,P3506W,medium,125,135,,{}
 maize,P3812W,medium,135,145,,{}
 maize,PAN-413,early,110,115,,{}
-maize,PAN-413-,early,110,115,,{}
 maize,PAN-53,early,125,130,,{}
 maize,PAN3M-05,early,95,100,,{}
 maize,PAN7M-81,medium,120,145,,{}
 maize,PAN7M-83,medium,125,135,,{}
 maize,PHB30G19,early,110,130,,{}
 maize,SC-303,early,90,100,,{}
+maize,SC304,early,60,80,Kalulu,{}
 maize,SC-403,early,115,130,,{}
 maize,SC-411,early,115,120,,{}
 maize,SC-419,early,120,130,,{}
@@ -111,6 +110,7 @@ maize,WH-504,medium,120,130,,{}
 maize,WH-507,early,120,130,,{}
 maize,WH-509,medium,120,130,,{}
 maize,WH101,early,105,120,,{}
+maize,ZARI10,early,90,95,,{}
 maize,ZM-451,early,110,120,,{}
 maize,ZM-521,early,120,130,,{}
 maize,ZM-621,medium,130,135,,{}
