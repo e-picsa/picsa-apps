@@ -1,9 +1,72 @@
 station_id,country_code,station_name,latitude,longitude,elevation,district
+bolero,mw,Bolero,-11.0167,33.7833,1100,Rumphi
+bvumbwe,mw,Bvumbwe,-15.9167,35.0667,1145,Thyolo
+chichiri,mw,Chichiri,-15.7833,35.05,1141,Blantyre
+chileka_airport,mw,Chileka Airport,-15.6667,34.9667,766,Blantyre
+chinsali_ftc,zm,CHINSALI FTC,-10.56,32.06,1404,CHINSALI
+chipata_met,zm,CHIPATA MET,-13.55,32.58,1032,CHIPATA
 chipata_met,zm_workshops,Chipata Met,-13.6,32.6,1025,Chipata
-lundazi_met,zm_workshops,Lundazi Met,-12.28,33.2,1143,Lundazi
-mfuwe_met,zm_workshops,Mfuwe Met,-13.26,31.93,570,Mambwe
-msekera_agromet,zm_workshops,Msekera Agromet,-13.65,32.56,1025,Chipata
-petauke_met,zm_workshops,Petauke Met,-14.25,31.28,1036,Petauke
-mansa_met,zm_workshops,MANSA MET,-11.1,28.85,1259,Mansa
-nkhotakota,mw_workshops,Nkhotakota,-12.9,34.28,500,Nhkotakota
+chipepo_met,zm,CHIPEPO MET,-17.33,28.38,488,GWEMBE
+chitedze,mw,Chitedze,-13.9667,33.6333,1149,Lilongwe
+chitipa,mw,Chitipa,-9.7,33.2667,1278,Chitipa
+choma_met,zm,CHOMA MET,-16.85,27.06,1267,CHOMA
+dedza,mw,Dedza,-14.3167,34.25,1630,Dedza
+isoka_met,zm,ISOKA MET,-10.16,32.63,1360,ISOKA
+kabompo_met,zm,KABOMPO MET,-13.6,24.2,1075,KABOMPO
+kabwe_agro,zm,KABWE AGRO,-14.44,28.46,1204,KABWE
+kabwe_met,zm,KABWE MET,-14.41,28.48,1165,KABWE
+kafironda_agromet,zm,KAFIRONDA AGROMET,-12.6,28.11,1243,MUFULIRA
+kafue_polder,zm,KAFUE POLDER,-15.76,27.91,987,MAZABUKA
+kalabo_met,zm,KALABO MET,-14.95,22.7,1053,KALABO
+kaoma_met,zm,KAOMA MET,-14.8,24.8,1152,KAOMA
+karonga,mw,Karonga,-9.88333,33.95,529,Karonga
+kasama_met,zm,KASAMA MET,-10.21,31.13,1384,KASAMA
+kasempa_met,zm,KASEMPA MET,-13.53,25.85,1134,KASEMPA
+kasungu,mw,Kasungu,-13.0167,33.4667,1015,Kasungu
 kasungu,mw_workshops,Kasungu,-13.02,33.47,1300,Kasungu
+kawambwa_met,zm,KAWAMBWA MET,-9.8,29.08,1324,KAWAMBWA
+kia,mw,KIA,-13.7833,33.7833,1229,Lilongwe
+livingstone_met,zm,LIVINGSTONE MET,-17.81,25.81,986,LIVINGSTONE
+lundazi_met,zm,LUNDAZI MET,-12.28,33.2,1143,LUNDAZI
+lundazi_met,zm_workshops,Lundazi Met,-12.28,33.2,1143,Lundazi
+lusaka_city_airpor,zm,LUSAKA CITY AIRPOR,-15.41,28.31,1252,LUSAKA
+lusaka_int__airpor,zm,LUSAKA INT. AIRPOR,-15.31,28.45,1154,LUSAKA
+magoye_agromet,zm,MAGOYE AGROMET,-16.13,27.63,1018,MONZE
+makoka,mw,Makoka,-15.5333,35.1833,1028,Zomba
+mangochi,mw,Mangochi,-14.4667,35.25,485,Mangochi
+mansa_agro,zm,MANSA AGRO,-11.24,28.95,1238,MANSA
+mansa_met,zm,MANSA MET,-11.1,28.85,1259,MANSA
+mansa_met,zm_workshops,MANSA MET,-11.1,28.85,1259,Mansa
+mbala_met,zm,MBALA MET,-8.85,31.33,1673,MBALA
+mfuwe_met,zm,MFUWE MET,-13.26,31.93,570,MAMBWE
+mfuwe_met,zm_workshops,Mfuwe Met,-13.26,31.93,570,Mambwe
+mimosa,mw,Mimosa,-16.1,35.6,653,Mulanje
+misamfu_agromet,zm,MISAMFU AGROMET,-10.18,31.21,1535,KASAMA
+mkushi_met,zm,MKUSHI MET,-14,30.33,1250,MKUSHI
+mongu_met,zm,MONGU MET,-15.25,23.15,1053,MONGU
+monkey_bay,mw,Monkey Bay,-14.0833,34.9167,474,Mangochi
+mpika_met,zm,MPIKA MET,-11.75,31.43,1402,MPIKA
+mpulungu_met,zm,MPULUNGU MET,-8.76,31.1,790,Mpulungu
+msekera_agromet,zm,MSEKERA AGROMET,-13.65,32.56,1025,CHIPATA
+msekera_agromet,zm_workshops,Msekera Agromet,-13.65,32.56,1025,Chipata
+mt__makulu_agrome,zm,MT. MAKULU AGROME,-15.55,28.25,1213,CHILANGA
+mumbwa_met,zm,MUMBWA MET,-14.98,27.06,1218,MUMBWA
+mwinilunga_met,zm,MWINILUNGA MET,-11.75,24.43,1363,MWINILUNGA
+mzimba,mw,Mzimba,-11.9,33.6,1349,Mzimba
+mzuzu,mw,Mzuzu,-11.4333,34.0167,1251,Mzimba
+ndola_met,zm,NDOLA MET,-13,28.65,1270,NDOLA
+ngabu,mw,Ngabu,-16.5,34.95,102,Chikwawa
+nkhata_bay,mw,Nkhata Bay,-11.6,34.3,500,Nkhata Bay
+nkhotakota,mw,Nkhotakota,-12.9167,34.2833,500,Nkhotakota
+nkhotakota,mw_workshops,Nkhotakota,-12.9,34.28,500,Nhkotakota
+ntaja,mw,Ntaja,-14.8667,35.5333,740,Mahinga
+petauke_met,zm,PETAUKE MET,-14.25,31.28,1036,PETAUKE
+petauke_met,zm_workshops,Petauke Met,-14.25,31.28,1036,Petauke
+salima,mw,Salima,-13.75,34.5833,513,Salima
+samfya_met,zm,SAMFYA MET,-11.35,29.53,1172,SAMFYA
+senanga_met,zm,SENANGA MET,-16.11,23.26,1027,SENANGA
+serenje_agro_met,zm,SERENJE AGRO MET,-13.23,30.21,1384,SERENJE
+sesheke_met,zm,SESHEKE MET,-17.46,24.3,951,SESHEKE
+simon_mwansa_kapwepwe,zm,SIMON MWANSA KAPWEPWE,-12.97,28.51,1324,Ndola
+solwezi_met,zm,SOLWEZI MET,-12.18,26.38,1333,SOLWEZI
+zambezi_met,zm,ZAMBEZI MET,-13.53,23.11,1078,ZAMBEZI
