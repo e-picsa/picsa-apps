@@ -13,11 +13,11 @@ interface CleanupError {
 export const forecastCleanup = async (_req: Request) => {
   const supabaseClient = getServiceRoleClient();
 
-  // 1. Calculate the date for one month ago
+  // calculating the date for one month ago
   const oneMonthAgo = new Date();
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-  // 2. Query the `forecasts` table for entries older than that date
+  // querying the forecasts table for entries older than that date
   const { data: oldForecasts, error: selectError } = await supabaseClient
     .from('forecasts')
     .select('id, country_code, storage_file')
@@ -31,18 +31,17 @@ export const forecastCleanup = async (_req: Request) => {
     return JSONResponse({ message: 'No old forecasts to delete.' });
   }
 
-  // Use the imported type for type safety
   const forecasts: IDBClimateForecastRow[] = oldForecasts as IDBClimateForecastRow[];
 
   const deletedFiles: string[] = [];
   const deletedDbEntries: string[] = [];
   const errors: CleanupError[] = [];
 
-  // 3. Group forecasts for batch processing
+  // group forecasts for processing
   const forecastsWithFiles = forecasts.filter((f) => !!f.storage_file);
   const dbIdsForDeletion: string[] = forecasts.filter((f) => !f.storage_file).map((f) => f.id);
 
-  // 4. Batch delete storage files and collect IDs of corresponding DB records for deletion
+  // delete storage files and collect IDs of corresponding DB records for deletion
   if (forecastsWithFiles.length > 0) {
     const filesByCountry = forecastsWithFiles.reduce(
       (acc: Record<string, IDBClimateForecastRow[]>, forecast) => {
@@ -78,7 +77,7 @@ export const forecastCleanup = async (_req: Request) => {
     await Promise.all(storagePromises);
   }
 
-  // 5. Batch delete database entries
+  // delete database entries
   if (dbIdsForDeletion.length > 0) {
     const { error: dbError } = await supabaseClient.from('forecasts').delete().in('id', dbIdsForDeletion);
 
