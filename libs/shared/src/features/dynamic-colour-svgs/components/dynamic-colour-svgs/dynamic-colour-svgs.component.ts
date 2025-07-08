@@ -19,6 +19,9 @@ export class DynamicColourSvgsComponent implements AfterViewInit, OnDestroy {
 
   private skinToneSubscription: Subscription;
 
+  // list of colours to look out for and replace in the svgs
+  defaultSVGIntrestColours = ['#6d3b0d', '#824910', '#C07363', '#a05a2c', '#845a45', '#573321', '#e8c5ba', '#eac6bb'];
+
   constructor(private skinToneService: SkinToneService) {
     this.colour = this.skinToneService.getCurrentSkinTone();
   }
@@ -51,8 +54,17 @@ export class DynamicColourSvgsComponent implements AfterViewInit, OnDestroy {
     fetch(this.svgUrl)
       .then((res) => res.text())
       .then((svgText) => {
+        // Replace colors in the SVG text directly
+        let modifiedSvgText = svgText;
+
+        this.defaultSVGIntrestColours.forEach((targetColor) => {
+          // Replace all occurrences of the target color with skin tone
+          const regex = new RegExp(targetColor, 'gi');
+          modifiedSvgText = modifiedSvgText.replace(regex, this.colour);
+        });
+
         const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+        const svgDoc = parser.parseFromString(modifiedSvgText, 'image/svg+xml');
         const svgEl = svgDoc.documentElement;
 
         const originalViewBox = svgEl.getAttribute('viewBox');
@@ -69,7 +81,6 @@ export class DynamicColourSvgsComponent implements AfterViewInit, OnDestroy {
         }
 
         svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-        svgEl.setAttribute('fill', this.colour);
 
         const brightness = this.getBrightness(this.colour);
         if (brightness > 220) {
