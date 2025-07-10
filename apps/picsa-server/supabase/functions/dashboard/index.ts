@@ -7,6 +7,7 @@ import { forecastStorage } from './forecast-storage.ts';
 import { forecastDB } from './forecast-db.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { admin } from './admin/index.ts';
+import { forecastCleanup } from './forecast-cleanup.ts';
 
 serve((req) => {
   // handle cors pre-flight
@@ -27,6 +28,8 @@ serve((req) => {
       return forecastDB(req);
     case 'forecast-storage':
       return forecastStorage(req);
+    case 'forecast-cleanup':
+      return forecastCleanup(req);
 
     default:
       return new Response(`Invalid endpoint: ${entryPoint}`, {
