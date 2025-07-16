@@ -32,9 +32,10 @@ export const forecastCleanup = async (req: Request) => {
   // fetch old forecasts with storage files
   const { data: oldForecasts, error: selectError } = await supabaseClient
     .from('forecasts')
-    .select('id, country_code, storage_file')
+    .select('id, country_code, storage_file, forecast_type')
     .not('storage_file', 'is', null)
-    .lt('id', dateIdPrefix);
+    .lt('id', dateIdPrefix)
+    .in('forecast_type', ['daily', 'weekly']);
 
   if (selectError) {
     console.error('Error querying forecasts:', selectError);
