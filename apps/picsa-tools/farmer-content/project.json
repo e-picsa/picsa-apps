@@ -17,7 +17,15 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-tools/farmer-content/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/picsa-tools/farmer-content/src/favicon.ico", "apps/picsa-tools/farmer-content/src/assets"],
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
+          ,
+          "apps/picsa-tools/farmer-content/src/assets"
+        ],
         "styles": ["apps/picsa-tools/farmer-content/src/styles.scss"],
         "scripts": []
       },

@@ -18,7 +18,11 @@
         "tsConfig": "apps/picsa-tools/extension-content/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/picsa-tools/extension-content/src/favicon.ico",
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
           "apps/picsa-tools/extension-content/src/assets",
           { "glob": "*.svg", "input": "libs/data/tools/svgs", "output": "assets/svgs/tools" }
         ],
