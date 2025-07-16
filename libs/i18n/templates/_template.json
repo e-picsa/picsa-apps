@@ -79,6 +79,10 @@
     "tool": "farmer_content"
   },
   {
+    "text": "Year",
+    "tool": "common"
+  },
+  {
     "text": "Who is using?",
     "tool": "common"
   },
@@ -181,8 +185,23 @@
     "context": "day_short_4"
   },
   {
+    "text": "The mean minimum and lowest minimum daily temperatures per year",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "The mean maximum and highest maximum daily temperatures per year",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
     "text": "Testimonials",
     "tool": "farmer_content"
+  },
+  {
+    "text": "Temperature (°C)",
+    "tool": "climate",
+    "context": "chart"
   },
   {
     "text": "Sweet Potatoes",
@@ -215,6 +234,10 @@
     "tool": "common_crops"
   },
   {
+    "text": "Short Term Forecast",
+    "tool": "farmer_content"
+  },
+  {
     "text": "Sesame",
     "tool": "common_crops"
   },
@@ -231,6 +254,10 @@
   {
     "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
     "tool": "common"
+  },
+  {
+    "text": "Seasonal Forecast",
+    "tool": "farmer_content"
   },
   {
     "text": "Seasonal Calendar",
@@ -383,9 +410,37 @@
     "context": "day_short_1"
   },
   {
+    "text": "Minimum Temperatures",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Min Temps",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Mean minimum daily temp",
+    "tool": "common"
+  },
+  {
+    "text": "Mean maximum daily temp",
+    "tool": "common"
+  },
+  {
     "text": "May",
     "tool": "common_months",
     "context": "month_05"
+  },
+  {
+    "text": "Maximum Temperatures",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Max Temps",
+    "tool": "climate",
+    "context": "chart"
   },
   {
     "text": "March",
@@ -408,6 +463,10 @@
   {
     "text": "Maize",
     "tool": "common_crops"
+  },
+  {
+    "text": "Lowest minimum daily temp",
+    "tool": "common"
   },
   {
     "text": "Loading",
@@ -497,6 +556,10 @@
     "tool": "farmer_content"
   },
   {
+    "text": "Highest maximum daily temp",
+    "tool": "common"
+  },
+  {
     "text": "Heavy Rain",
     "tool": "common_weather"
   },
@@ -554,7 +617,7 @@
   },
   {
     "text": "District",
-    "tool": "crop-probability"
+    "tool": "common"
   },
   {
     "text": "Digital Skills Introduction",
@@ -1029,6 +1092,14 @@
     "tool": "budget"
   },
   {
+    "text": "Unlock",
+    "tool": "monitoring"
+  },
+  {
+    "text": "This form requires an access code to unlock",
+    "tool": "monitoring"
+  },
+  {
     "text": "Submit",
     "tool": "monitoring"
   },
@@ -1037,7 +1108,35 @@
     "tool": "monitoring"
   },
   {
+    "text": "Submission not found",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Status",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Restricted Form",
+    "tool": "monitoring"
+  },
+  {
     "text": "Records",
+    "tool": "monitoring"
+  },
+  {
+    "text": "No submissions found",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Loading submissions...",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Loading form...",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Incorrect access code. Please try again.",
     "tool": "monitoring"
   },
   {
@@ -1045,11 +1144,56 @@
     "tool": "monitoring"
   },
   {
+    "text": "Form submitted successfully",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Form saved successfully",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Form not found",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Form deleted",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Error loading form",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Enter access code",
+    "tool": "monitoring"
+  },
+  {
     "text": "Create New",
     "tool": "monitoring"
   },
   {
+    "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Click the Create New button to add a submission",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Authenticating...",
+    "tool": "monitoring"
+  },
+  {
+    "text": "An error occured",
+    "tool": "monitoring"
+  },
+  {
     "text": "All Submitted",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Access Code",
     "tool": "monitoring"
   },
   {
@@ -1225,11 +1369,6 @@
     "tool": "forecasts"
   },
   {
-    "text": "Close",
-    "tool": "common",
-    "context": "buttons"
-  },
-  {
     "text": "If you recorded anything on paper you can capture photos here",
     "tool": "farmer-content"
   },
@@ -1260,10 +1399,6 @@
   {
     "text": "The crop filter shows more information for specific crops",
     "tool": "budget"
-  },
-  {
-    "text": "Station",
-    "tool": "crop-probability"
   },
   {
     "text": "Probability of season start on or before date",
