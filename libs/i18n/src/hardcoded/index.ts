@@ -30,7 +30,7 @@ export const EXTRACTED_PROJECTS: { path: string; tool: string; context?: string 
     })),
   // additional apps to include
   {
-    path: 'apps/picsa-apps/extension-app',
+    path: 'apps/picsa-apps/app',
     tool: 'extension',
   },
   // specific data libs

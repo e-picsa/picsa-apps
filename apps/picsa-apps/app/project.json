@@ -1,8 +1,8 @@
 {
-  "name": "picsa-apps-extension-app",
+  "name": "picsa-apps-app",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/picsa-apps/extension-app/src",
+  "sourceRoot": "apps/picsa-apps/app/src",
   "prefix": "picsa",
   "tags": [],
   "targets": {
@@ -12,17 +12,17 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "allowedCommonJsDependencies": ["*"],
-        "outputPath": "dist/apps/picsa-apps/extension-app",
-        "index": "apps/picsa-apps/extension-app/src/index.html",
-        "main": "apps/picsa-apps/extension-app/src/main.ts",
-        "polyfills": "apps/picsa-apps/extension-app/src/polyfills.ts",
-        "tsConfig": "apps/picsa-apps/extension-app/tsconfig.app.json",
+        "outputPath": "dist/apps/picsa-apps/app",
+        "index": "apps/picsa-apps/app/src/index.html",
+        "main": "apps/picsa-apps/app/src/main.ts",
+        "polyfills": "apps/picsa-apps/app/src/polyfills.ts",
+        "tsConfig": "apps/picsa-apps/app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/picsa-apps/extension-app/src/assets",
+          "apps/picsa-apps/app/src/assets",
           {
             "glob": "**/*",
-            "input": "apps/picsa-apps/extension-app/src/static",
+            "input": "apps/picsa-apps/app/src/static",
             "output": "/"
           },
           {
@@ -120,7 +120,7 @@
           "apps/picsa-tools/budget-tool/src/styles.scss",
           "apps/picsa-tools/resources-tool/src/styles.scss",
           "libs/theme/src/_index.scss",
-          "apps/picsa-apps/extension-app/src/styles.scss",
+          "apps/picsa-apps/app/src/styles.scss",
           "node_modules/intro.js/introjs.css"
         ],
         "scripts": ["node_modules/intro.js/intro.js"]
@@ -207,18 +207,18 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "picsa-apps-extension-app:build:production"
+          "buildTarget": "picsa-apps-app:build:production"
         },
         "development": {
-          "buildTarget": "picsa-apps-extension-app:build:development"
+          "buildTarget": "picsa-apps-app:build:development"
         },
         "external": {
           "host": "0.0.0.0",
-          "buildTarget": "picsa-apps-extension-app:build:development"
+          "buildTarget": "picsa-apps-app:build:development"
         },
         "external_production": {
           "host": "0.0.0.0",
-          "buildTarget": "picsa-apps-extension-app:build:production"
+          "buildTarget": "picsa-apps-app:build:production"
         }
       },
       "defaultConfiguration": "development"
@@ -226,7 +226,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "picsa-apps-extension-app:build"
+        "buildTarget": "picsa-apps-app:build"
       }
     },
     "lint": {
@@ -234,9 +234,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/extension-app"],
+      "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/app"],
       "options": {
-        "jestConfig": "apps/picsa-apps/extension-app/jest.config.ts"
+        "jestConfig": "apps/picsa-apps/app/jest.config.ts"
       }
     }
   }

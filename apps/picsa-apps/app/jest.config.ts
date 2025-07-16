@@ -2,12 +2,12 @@ import type { Config } from 'jest';
 
 /* eslint-disable */
 const config: Config = {
-  displayName: 'picsa-apps-extension-app',
+  displayName: 'picsa-apps-app',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
 
   globals: {},
-  coverageDirectory: '../../../coverage/apps/picsa-apps/extension-app',
+  coverageDirectory: '../../../coverage/apps/picsa-apps/app',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

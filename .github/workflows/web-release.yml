@@ -27,7 +27,7 @@ jobs:
       - name: Install node modules
         run: yarn install --immutable
 
-      - run: yarn nx run picsa-apps-extension-app:build
+      - run: yarn nx run picsa-apps-app:build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

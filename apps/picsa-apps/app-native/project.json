@@ -1,11 +1,11 @@
 {
-  "name": "picsa-apps-extension-app-native",
+  "name": "picsa-apps-app-native",
   "$schema": "..\\..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/picsa-apps/extension-app-native",
+  "sourceRoot": "apps/picsa-apps/app-native",
   "prefix": "picsa",
   "tags": [],
-  "implicitDependencies": ["picsa-apps-extension-app"],
+  "implicitDependencies": ["picsa-apps-app"],
   "targets": {
     "build": {
       "cache": false,
@@ -13,7 +13,7 @@
       "outputs": [],
       "options": {
         "command": "npx cap sync",
-        "cwd": "apps/picsa-apps/extension-app-native"
+        "cwd": "apps/picsa-apps/app-native"
       }
     },
     "serve": {
@@ -23,8 +23,8 @@
       "dependsOn": ["^build"],
       "inputs": ["{projectRoot}/capacitor.config.ts","{projectRoot}/.env.local"],
       "options": {
-        "commands": ["npx cap sync && nx run picsa-apps-extension-app:serve --configuration=external"],
-        "cwd": "apps/picsa-apps/extension-app-native",
+        "commands": ["npx cap sync && nx run picsa-apps-app:serve --configuration=external"],
+        "cwd": "apps/picsa-apps/app-native",
         "parallel": false
       }
     },
@@ -34,7 +34,7 @@
       "options": {
         "command": "npx cordova-res android --skip-config --copy"
       },
-      "cwd": "apps/picsa-apps/extension-app-native"
+      "cwd": "apps/picsa-apps/app-native"
     },
     "jetify": {
       "inputs": ["yarn.lock"],
@@ -50,7 +50,7 @@
       "outputs": [],
       "options": {
         "command": "npx cap open android",
-        "cwd": "apps/picsa-apps/extension-app-native"
+        "cwd": "apps/picsa-apps/app-native"
       }
     },
     "cap": {
@@ -58,7 +58,7 @@
       "outputs": [],
       "options": {
         "command": "npx cap",
-        "cwd": "apps/picsa-apps/extension-app-native"
+        "cwd": "apps/picsa-apps/app-native"
       }
     }
   }
