@@ -4,3 +4,5 @@ select cron.schedule(
   '0 0 1 * *', 
   $$ select public.call_edge_function('dashboard/forecast-cleanup','{}'::jsonb); $$
 );
+
+ALTER TYPE forecast_type ADD VALUE 'weekly';
