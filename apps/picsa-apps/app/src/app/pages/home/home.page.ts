@@ -14,7 +14,10 @@ export class HomePageComponent {
   // use a signal to only show content after potential redirects evaluated
   showContent = signal(false);
 
-  constructor(public configurationService: ConfigurationService, router: Router) {
+  constructor(
+    public configurationService: ConfigurationService,
+    router: Router,
+  ) {
     effect(() => {
       // navigate to /extension or /farmer tool home if configured
       const { deployment_id, user_type } = this.configurationService.userSettings();

@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     private migrationService: PicsaMigrationService,
     private appUpdateService: AppUpdateService,
     private pushNotificationService: PicsaPushNotificationService,
-    private injector: Injector
+    private injector: Injector,
   ) {}
 
   async ngOnInit() {

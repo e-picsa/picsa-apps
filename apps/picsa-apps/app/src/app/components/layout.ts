@@ -41,8 +41,8 @@ export class AppLayoutComponent {
     this.router.events.pipe(
       filter((e: any) => e instanceof NavigationEnd),
       // show sidebar on both farmer and extension home screens
-      map(({ url }) => ['/farmer', '/extension'].includes(url))
-    )
+      map(({ url }) => ['/farmer', '/extension'].includes(url)),
+    ),
   );
   public userType = computed(() => this.configurationService.userSettings().user_type);
   public version = APP_VERSION.semver;
@@ -51,7 +51,7 @@ export class AppLayoutComponent {
     private router: Router,
     private configurationService: ConfigurationService,
     componentService: PicsaCommonComponentsService,
-    viewContainer: ViewContainerRef
+    viewContainer: ViewContainerRef,
   ) {
     effect(() => {
       // Inject menu button into global header when on farmer or extension home
