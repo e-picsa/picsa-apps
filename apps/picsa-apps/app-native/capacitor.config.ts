@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appId: 'io.picsa.extension',
   appName: 'PICSA Extension',
   webDir: '../../../dist/apps/picsa-apps/extension-app',
-  zoomEnabled:true,
+  zoomEnabled: true,
   // manually include plugins here as top-level package.json not checked correctly
   // note - see which plugins are detected via `npx cap ls`
   includePlugins: [
@@ -30,12 +30,12 @@ const config: CapacitorConfig = {
     '@capacitor-firebase/performance',
     '@capacitor/screen-orientation',
     '@capacitor/camera',
-    "@capacitor/share",
+    '@capacitor/share',
     '@capacitor/push-notifications',
   ],
-  plugins:{
+  plugins: {
     PushNotifications: {
-      presentationOptions: ["alert"],
+      presentationOptions: ['alert'],
     },
   },
   // Enable app to use native http for requests (bypass cors)
@@ -55,7 +55,6 @@ const config: CapacitorConfig = {
      */
     cleartext: true,
   },
-  
 };
 
 /**
