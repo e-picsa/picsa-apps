@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/white_50</item>
+    <item name="windowSplashScreenAnimationDuration">1000</item>
+    <!-- NOTE - animated only available from API 31+ -->
+    <item name="windowSplashScreenAnimatedIcon">@drawable/picsa_splash_animated</item>
+  </style>
+</resources>
