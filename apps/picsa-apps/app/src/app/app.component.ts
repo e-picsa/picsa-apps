@@ -19,7 +19,7 @@ import { _wait } from '@picsa/utils';
   standalone: false,
 })
 export class AppComponent implements OnInit {
-  title = 'extension-toolkit';
+  title = 'PICSA App';
   public ready = signal(false);
   public showLoader = signal(false);
 
