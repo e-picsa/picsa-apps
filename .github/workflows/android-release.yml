@@ -35,13 +35,13 @@ jobs:
       - name: Populate google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/extension-app-native/android/app/google-services.json
-      - name: Build Extension App
-        run: yarn nx run picsa-apps-extension-app-native:build
+        run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+      - name: Build App
+        run: yarn nx run picsa-apps-app-native:build
         # Re-sync as remote cache won't populate files during nx build command
       - name: Sync Capacitor
         run: npx cap sync
-        working-directory: apps/picsa-apps/extension-app-native
+        working-directory: apps/picsa-apps/app-native
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -51,16 +51,16 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       # - name: Build Android Debug APK
-      #   working-directory: apps/picsa-apps/extension-app-native/android
+      #   working-directory: apps/picsa-apps/app-native/android
       #   run: ./gradlew :app:assembleDebug
       - name: Build Android Release Bundle
-        working-directory: apps/picsa-apps/extension-app-native/android
+        working-directory: apps/picsa-apps/app-native/android
         run: ./gradlew :app:bundleRelease
       - name: Sign Android Release
         id: sign_aab
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: apps/picsa-apps/extension-app-native/android/app/build/outputs/bundle/release
+          releaseDirectory: apps/picsa-apps/app-native/android/app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY_B64 }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}

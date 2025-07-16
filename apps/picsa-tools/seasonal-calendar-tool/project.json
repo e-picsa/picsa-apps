@@ -17,7 +17,11 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/picsa-tools/seasonal-calendar-tool/tsconfig.app.json",
         "assets": [
-          "apps/picsa-tools/seasonal-calendar-tool/src/favicon.ico",
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
           "apps/picsa-tools/seasonal-calendar-tool/src/assets",
           {
             "glob": "*.svg",
