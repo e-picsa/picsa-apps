@@ -22,7 +22,6 @@
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
-          ,
           "apps/picsa-tools/seasonal-calendar-tool/src/assets",
           {
             "glob": "*.svg",

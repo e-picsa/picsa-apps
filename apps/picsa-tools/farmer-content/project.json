@@ -23,7 +23,6 @@
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
-          ,
           "apps/picsa-tools/farmer-content/src/assets"
         ],
         "styles": ["apps/picsa-tools/farmer-content/src/styles.scss"],

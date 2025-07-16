@@ -23,7 +23,6 @@
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
-          ,
           "apps/picsa-tools/manual-tool/src/assets",
           {
             "glob": "picsa-field-manual-en.pdf",

@@ -35,7 +35,6 @@
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
-          ,
           "apps/picsa-tools/resources-tool/src/assets"
         ],
         "styles": ["apps/picsa-tools/resources-tool/src/styles.scss", "libs/theme/src/_index.scss"],

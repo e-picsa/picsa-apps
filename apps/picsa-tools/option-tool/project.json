@@ -23,7 +23,6 @@
             "input": "libs/shared-assets/favicon",
             "output": ""
           },
-          ,
           "apps/picsa-tools/option-tool/src/assets",
           {
             "glob": "*.svg",
