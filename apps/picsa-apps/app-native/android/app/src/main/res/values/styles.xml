@@ -18,7 +18,7 @@
   <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@color/white_50</item>
     <item name="windowSplashScreenAnimationDuration">1000</item>
-    <item name="windowSplashScreenAnimatedIcon">@drawable/picsa_splash_static</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/picsa_icon_foreground</item>
     <!--   Legacy static splash-->
     <!-- <item name="android:background">@drawable/splash</item> -->
   </style>

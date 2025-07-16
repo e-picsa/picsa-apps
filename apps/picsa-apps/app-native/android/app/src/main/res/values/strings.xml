@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">PICSA App for Farmers and Extension</string>
-    <string name="title_activity_main">PICSA App for Farmers and Extension</string>
+    <string name="app_name">PICSA App</string>
+    <string name="title_activity_main">PICSA App</string>
     <string name="package_name">io.picsa.extension</string>
     <string name="custom_url_scheme">io.picsa.extension</string>
 </resources>

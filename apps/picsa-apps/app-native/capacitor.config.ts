@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.picsa.extension',
-  appName: 'PICSA App for Farmers and Extension',
+  appName: 'PICSA App',
   webDir: '../../../dist/apps/picsa-apps/app',
   zoomEnabled: true,
   // manually include plugins here as top-level package.json not checked correctly

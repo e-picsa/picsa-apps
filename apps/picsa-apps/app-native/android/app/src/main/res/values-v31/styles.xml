@@ -5,6 +5,5 @@
     <item name="windowSplashScreenBackground">@color/white_50</item>
     <item name="windowSplashScreenAnimationDuration">1000</item>
     <!-- NOTE - animated only available from API 31+ -->
-    <item name="windowSplashScreenAnimatedIcon">@drawable/picsa_splash_animated</item>
   </style>
 </resources>
