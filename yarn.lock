@@ -10678,23 +10678,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"capacitor-video-player@npm:6.0.0":
-  version: 6.0.0
-  resolution: "capacitor-video-player@npm:6.0.0"
+"capacitor-video-player@github:chrismclarke/capacitor-video-player":
+  version: 7.0.0
+  resolution: "capacitor-video-player@https://github.com/chrismclarke/capacitor-video-player.git#commit=b7d1bee536f96b226eb6e821cbf5fe9440a75f87"
   peerDependencies:
-    "@capacitor/core": ^6.0.0
+    "@capacitor/core": ">=7.0.0"
     hls.js: ^1.4.0
-  checksum: 10c0/b7abc6cc5e6cdf967ae0f2754107b6d7f04b628c5ac119f9156cd26a6b60fe24eea83e98a60badd82a7b277930c5f0fdd583ad67084901a94480f468cdec57dc
-  languageName: node
-  linkType: hard
-
-"capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch":
-  version: 6.0.0
-  resolution: "capacitor-video-player@patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch::version=6.0.0&hash=228ec1"
-  peerDependencies:
-    "@capacitor/core": ^6.0.0
-    hls.js: ^1.4.0
-  checksum: 10c0/472d63defab8451d59eee82dd267b20a3a9b0ad76f31b5c23c8b2cfed1797ebf25bf050893d258c150271da1a7e81b94292d49189e69af15b2da26d7200aba20
+  checksum: 10c0/29ead3401947d4452e4e780e67cc2f420ba1597959abc2c86d4c61b55d7091b74007e99be85c4f48ba6c22588a9fa365508b223559809d0fa072e5f246854acc
   languageName: node
   linkType: hard
 
@@ -19937,7 +19927,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     c3: "npm:^0.7.20"
     capacitor-blob-writer: "npm:^1.1.16"
-    capacitor-video-player: "patch:capacitor-video-player@npm%3A6.0.0#~/.yarn/patches/capacitor-video-player-npm-6.0.0-21971dba2f.patch"
+    capacitor-video-player: "github:chrismclarke/capacitor-video-player"
     cordova-plugin-file: "npm:^8.1.3"
     cordova-plugin-file-opener2: "npm:^4.0.0"
     cordova-plugin-x-socialsharing: "npm:^6.0.4"
