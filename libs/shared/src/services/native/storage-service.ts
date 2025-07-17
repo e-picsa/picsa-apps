@@ -111,7 +111,7 @@ export class NativeStorageService extends PicsaAsyncService {
         path: this.cacheName,
       });
     } catch (error: any) {
-      if (error.message === 'Directory does not exist') {
+      if (error?.code === 'OS-PLUG-FILE-0008') {
         await Filesystem.mkdir({
           directory: Directory.Data,
           path: this.cacheName,
