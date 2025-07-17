@@ -111,6 +111,8 @@ export class NativeStorageService extends PicsaAsyncService {
         path: this.cacheName,
       });
     } catch (error: any) {
+      // Codes used from 7.1.0 onwards
+      // https://capacitorjs.com/docs/apis/filesystem#errors
       if (error?.code === 'OS-PLUG-FILE-0008') {
         await Filesystem.mkdir({
           directory: Directory.Data,
