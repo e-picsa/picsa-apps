@@ -13,9 +13,7 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+
 jobs:
   android_release:
     runs-on: ubuntu-latest
@@ -23,6 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -36,26 +35,32 @@ jobs:
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+
       - name: Build App
         run: yarn nx run picsa-apps-app-native:build
-        # Re-sync as remote cache won't populate files during nx build command
+
       - name: Sync Capacitor
         run: npx cap sync
         working-directory: apps/picsa-apps/app-native
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: 'temurin'
+          java-version: '21'
           cache: 'gradle'
+
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
+
       # - name: Build Android Debug APK
       #   working-directory: apps/picsa-apps/app-native/android
       #   run: ./gradlew :app:assembleDebug
+
       - name: Build Android Release Bundle
         working-directory: apps/picsa-apps/app-native/android
         run: ./gradlew :app:bundleRelease
+
       - name: Sign Android Release
         id: sign_aab
         uses: r0adkll/sign-android-release@v1
@@ -65,8 +70,9 @@ jobs:
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
       - name: Upload to Google play
-        uses: r0adkll/upload-google-play@v1.1.2
+        uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: io.picsa.extension
