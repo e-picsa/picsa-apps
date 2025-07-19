@@ -57,11 +57,10 @@ export class ConfigurationService {
       const { user_type } = this.userSettings();
       if (user_type === 'extension' && theme) {
         document.body.dataset['theme'] = theme;
-        await this.updateNativeBarStyles();
       } else {
         document.body.dataset['theme'] = 'picsa-default';
-        await this.updateNativeBarStyles();
       }
+      await this.updateNativeBarStyles();
     });
 
     effect(() => {
