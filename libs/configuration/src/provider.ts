@@ -1,5 +1,7 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { StatusBar, Style, StyleOptions } from '@capacitor/status-bar';
+import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 import { DEPLOYMENT_DATA_HASHMAP, ICountryCode, IDeploymentId, ILocaleCode } from '@picsa/data/deployments';
 import { debounceTime } from 'rxjs';
 
@@ -49,14 +51,16 @@ export class ConfigurationService {
     this.enableLocalStorageSync();
     this.loadUserSettings();
 
-    effect(() => {
+    effect(async () => {
       /** HACK - update theme on config change for extension version (better in own service) */
       const { theme } = this.deploymentSettings();
       const { user_type } = this.userSettings();
       if (user_type === 'extension' && theme) {
         document.body.dataset['theme'] = theme;
+        await this.updateNativeBarStyles();
       } else {
         document.body.dataset['theme'] = 'picsa-default';
+        await this.updateNativeBarStyles();
       }
     });
 
@@ -74,6 +78,20 @@ export class ConfigurationService {
 
   public updateUserSettings(update: Partial<IUserSettings>) {
     this.userSettings.set({ ...this.userSettings(), ...update });
+  }
+
+  /**
+   * TODO
+   * -  Wait for ability to use different header and nav styles
+   *    https://github.com/capawesome-team/capacitor-plugins/issues/460
+   * -  Handle depending on theme
+   * -  If making top-nav block color will likely want collapsible header so not too jarring
+   * -  Will likely want transparent/light/grey footer
+   */
+  private async updateNativeBarStyles() {
+    // await EdgeToEdge.setBackgroundColor({ color: '#aa1344' });
+    // await StatusBar.setStyle({ style: Style.Dark });
+    // await StatusBar.setBackgroundColor({ color: '#aa1344' });
   }
 
   /**
