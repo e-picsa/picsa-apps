@@ -6,6 +6,7 @@ import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
+import { AppUserService } from '@picsa/shared/services/core/app-user.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
@@ -32,9 +33,12 @@ export class AppComponent implements OnInit {
     private monitoringService: MonitoringToolService,
     private migrationService: PicsaMigrationService,
     private appUpdateService: AppUpdateService,
+    private appUserService: AppUserService,
     private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector
-  ) {}
+  ) {
+    appUserService.init();
+  }
 
   async ngOnInit() {
     // wait for migrations to run

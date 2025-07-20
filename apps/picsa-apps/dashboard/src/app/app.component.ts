@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
+import { AppUserService } from '@picsa/shared/services/core/app-user.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { ADMIN_NAV_LINKS, DASHBOARD_NAV_LINKS } from './data';
@@ -37,10 +38,12 @@ export class AppComponent implements AfterViewInit {
   constructor(
     public supabaseService: SupabaseService,
     private deploymentService: DeploymentDashboardService,
+    private appUserService: AppUserService,
     dialogService: PicsaDialogService
   ) {
     // HACK - disable translation in dialog to prevent loading extension app config service theme
     dialogService.useTranslation = false;
+    appUserService.init();
   }
 
   async ngAfterViewInit() {
