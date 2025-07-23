@@ -1,4 +1,3 @@
-import { jsonToCSV } from '@picsa/utils/data';
 import { spawnSync } from 'child_process';
 import { emptyDirSync, ensureDirSync, existsSync, readJSONSync, rmSync, writeFileSync } from 'fs-extra';
 import { tmpdir } from 'os';
@@ -9,7 +8,6 @@ import type { ITranslationEntry } from './types';
 
 const I18N_DIR = resolve(__dirname, '../');
 const PROJECT_ROOT = resolve(I18N_DIR, '../../');
-const GENERATED_ASSETS_DIR = resolve(I18N_DIR, 'assets');
 const GENERATED_TEMPLATES_DIR = resolve(I18N_DIR, 'templates');
 const TEMPLATE_PATH = resolve(GENERATED_TEMPLATES_DIR, `_template.json`);
 
@@ -24,8 +22,6 @@ function main() {
 }
 
 function setupFolders() {
-  ensureDirSync(GENERATED_ASSETS_DIR);
-  emptyDirSync(GENERATED_ASSETS_DIR);
   ensureDirSync(GENERATED_TEMPLATES_DIR);
   emptyDirSync(GENERATED_TEMPLATES_DIR);
 }
@@ -67,15 +63,7 @@ function generateTranslationTemplates() {
     unique[el.text] = el;
   }
   const output = Object.values(unique);
-  writeOutputJson(output);
-  // write output csv
-  const headers: (keyof ITranslationEntry)[] = ['tool', 'context', 'text'];
-  const csv = jsonToCSV(output, headers);
-  const target = resolve(GENERATED_TEMPLATES_DIR, `_template.csv`);
-  writeFileSync(target, csv);
-
-  console.log('Templates generated', GENERATED_TEMPLATES_DIR);
-  console.log('Assets generated', GENERATED_ASSETS_DIR);
+  writeFileSync(TEMPLATE_PATH, JSON.stringify(output, null, 2));
 }
 
 function stringToTranslationEntry(text: string, tool: string, context?: string) {
@@ -85,17 +73,6 @@ function stringToTranslationEntry(text: string, tool: string, context?: string) 
   };
   if (context) entry.context = context;
   return entry;
-}
-
-function writeOutputJson(entries: ITranslationEntry[]) {
-  writeFileSync(TEMPLATE_PATH, JSON.stringify(entries, null, 2));
-  // write additional en version where key just matches value
-  const enJson = {};
-  const enJsonPath = resolve(GENERATED_ASSETS_DIR, 'global_en.json');
-  for (const { text } of Object.values(entries)) {
-    enJson[text] = text;
-  }
-  writeFileSync(enJsonPath, JSON.stringify(enJson, null, 2));
 }
 
 /**
