@@ -22,7 +22,7 @@ export async function xlsxToJson<T extends object>(blob: Blob): Promise<Record<s
 }
 
 /** Convert JSON data to xlsx and optionally download (if filename provided) */
-export async function jsonToXLSX(data: Record<string, any>[], sheetName: string, downloadFilename?: string) {
+export function jsonToXLSX(data: Record<string, any>[], sheetName: string, downloadFilename?: string) {
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
