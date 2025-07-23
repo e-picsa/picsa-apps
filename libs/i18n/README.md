@@ -10,7 +10,7 @@ A list of all strings used by the app can be generated via
 yarn i18n
 ```
 
-This will be stored in the [templates](./templates/) folder, for uploaded to the admin dashboard
+This will be stored in the [templates](./templates/) folder, to be uploaded to the admin dashboard
 
 ## Populate Translations
 
