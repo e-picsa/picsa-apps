@@ -60,7 +60,7 @@ export class AppUserService extends PicsaAsyncService {
     };
     const { data, error } = await (this.supabaseService.db as any)
       .table('app_users')
-      .upsert(profileData as any, { onConflict: 'device_id' })
+      .upsert(profileData, { onConflict: 'device_id' })
       .select();
     if (error) {
       console.error('[AppUser] Supabase error:', error);
@@ -81,7 +81,7 @@ export class AppUserService extends PicsaAsyncService {
 
     let webDeviceId = localStorage.getItem('picsa_web_device_id');
     if (!webDeviceId) {
-      webDeviceId = 'web_' + Math.random().toString(36).substring(2);
+      webDeviceId = 'web_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2));
       localStorage.setItem('picsa_web_device_id', webDeviceId);
     }
     return webDeviceId;
