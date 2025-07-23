@@ -81,7 +81,11 @@ export class AppUserService extends PicsaAsyncService {
 
     let webDeviceId = localStorage.getItem('picsa_web_device_id');
     if (!webDeviceId) {
-      webDeviceId = 'web_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2));
+      webDeviceId =
+        'web_' +
+        (typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).substring(2));
       localStorage.setItem('picsa_web_device_id', webDeviceId);
     }
     return webDeviceId;
