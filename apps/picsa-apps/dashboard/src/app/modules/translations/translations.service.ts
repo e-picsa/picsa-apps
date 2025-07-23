@@ -1,9 +1,12 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Injectable, signal } from '@angular/core';
+import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap } from '@picsa/utils';
+import download from 'downloadjs';
+import JSZip from 'jszip';
 
 type ITranslationDB = Database['public']['Tables']['translations'];
 export type ITranslationRow = ITranslationDB['Row'];
@@ -90,19 +93,53 @@ export class TranslationDashboardService extends PicsaAsyncService {
     return [tool, context, text].map((t) => t?.toLowerCase().replace(/[^a-z0-9]/g, '')).join('-');
   }
 
-  /** WiP - method to export translations json used in app */
-  public exportJson(data: ITranslationRow[], locale: string) {
-    const json: Record<string, string> = {};
-    for (const { text, ...columns } of data) {
-      if (locale in columns) {
-        const translatedText = columns[locale] || '';
-        if (json[text] && json[text] !== translatedText) {
-          console.warn('Duplicate translation skipped', text, translatedText, json[translatedText]);
+  /** Export a single zip file containing all translations for use in the app */
+  public async exportAllAppJsons() {
+    const locales = Object.keys(LOCALES_DATA_HASHMAP);
+    const zip = new JSZip();
+    for (const locale of locales) {
+      const json = this.exportJson(locale);
+      zip.file(`${locale}.json`, JSON.stringify(json, null, 2));
+    }
+    const blob = await zip.generateAsync({ type: 'blob' });
+    download(blob, `i18n_assets.zip`);
+  }
+
+  /** Export a single language json to include in the app */
+  public exportJson(locale: string, shouldDownload = false) {
+    const data = this.translations();
+    const translations = new Map<string, string>();
+    const sortedData = data.sort((a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1));
+
+    for (const { text, ...columns } of sortedData) {
+      const existingTranslation = translations.get(text);
+      if (!existingTranslation) {
+        // Add placeholder to track missing translations
+        translations.set(text, '');
+      }
+
+      // Store translated text
+      const translatedText = columns[locale];
+      if (translatedText !== null) {
+        if (existingTranslation && translatedText !== existingTranslation) {
+          console.warn('Duplicate translation skipped', { text, translatedText, existingTranslation });
         } else {
-          json[text] = translatedText;
+          translations.set(text, translatedText);
         }
       }
     }
-    console.log(locale, json);
+    // Replace missing translations with marker fallback
+    for (const [key, value] of translations.entries()) {
+      if (value === '') {
+        translations.set(key, `•${key}•`);
+      }
+    }
+    const json = Object.fromEntries(translations);
+
+    if (shouldDownload) {
+      download(JSON.stringify(json, null, 2), `${locale}.json`);
+    }
+
+    return json;
   }
 }

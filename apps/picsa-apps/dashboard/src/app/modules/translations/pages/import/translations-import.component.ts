@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { TranslationDashboardService } from '../../translations.service';
 import { TranslationsJSONImportComponent } from './components/json-import/json-import.component';
 import { TranslationsXLSXImportComponent } from './components/xlsx-import/xlsx-import.component';
 
@@ -11,4 +12,6 @@ import { TranslationsXLSXImportComponent } from './components/xlsx-import/xlsx-i
   styleUrl: './translations-import.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TranslationsImportComponent {}
+export class TranslationsImportComponent {
+  public service = inject(TranslationDashboardService);
+}
