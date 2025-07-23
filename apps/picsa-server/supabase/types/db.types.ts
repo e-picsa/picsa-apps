@@ -28,6 +28,97 @@ export type Database = {
   };
   public: {
     Tables: {
+      app_users: {
+        Row: {
+          country: string;
+          device_id: string;
+          platform: string | null;
+          user_type: string | null;
+        };
+        Insert: {
+          country: string;
+          device_id: string;
+          platform?: string | null;
+          user_type?: string | null;
+        };
+        Update: {
+          country?: string;
+          device_id?: string;
+          platform?: string | null;
+          user_type?: string | null;
+        };
+        Relationships: [];
+      };
+      climate_forecasts: {
+        Row: {
+          country_code: string | null;
+          date_modified: string;
+          district: string | null;
+          filename: string;
+          id: string;
+          language_code: string | null;
+          storage_file: string | null;
+          type: string | null;
+        };
+        Insert: {
+          country_code?: string | null;
+          date_modified: string;
+          district?: string | null;
+          filename: string;
+          id: string;
+          language_code?: string | null;
+          storage_file?: string | null;
+          type?: string | null;
+        };
+        Update: {
+          country_code?: string | null;
+          date_modified?: string;
+          district?: string | null;
+          filename?: string;
+          id?: string;
+          language_code?: string | null;
+          storage_file?: string | null;
+          type?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'climate_forecasts_storage_file_fkey';
+            columns: ['storage_file'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      climate_products: {
+        Row: {
+          created_at: string;
+          data: Json;
+          station_id: string;
+          type: string;
+        };
+        Insert: {
+          created_at?: string;
+          data: Json;
+          station_id: string;
+          type: string;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json;
+          station_id?: string;
+          type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'climate_products_station_id_fkey';
+            columns: ['station_id'];
+            isOneToOne: false;
+            referencedRelation: 'climate_stations';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       climate_stations: {
         Row: {
           country_code: string;
@@ -61,107 +152,27 @@ export type Database = {
         };
         Relationships: [];
       };
-      climate_summary_rainfall: {
-        Row: {
-          country_code: Database['public']['Enums']['country_code'];
-          created_at: string;
-          data: Json[];
-          metadata: Json;
-          station_id: string;
-          updated_at: string;
-        };
-        Insert: {
-          country_code: Database['public']['Enums']['country_code'];
-          created_at?: string;
-          data: Json[];
-          metadata: Json;
-          station_id: string;
-          updated_at?: string;
-        };
-        Update: {
-          country_code?: Database['public']['Enums']['country_code'];
-          created_at?: string;
-          data?: Json[];
-          metadata?: Json;
-          station_id?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'climate_summary_rainfall_station_id_fkey';
-            columns: ['station_id'];
-            isOneToOne: false;
-            referencedRelation: 'climate_stations';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
       crop_data: {
         Row: {
-          additional_data: Json;
-          additional_info: string | null;
           created_at: string;
           crop: string;
-          days_lower: number;
-          days_upper: number;
-          id: string;
-          maturity_period: string;
-          updated_at: string;
+          id: string | null;
+          label: string | null;
           variety: string;
         };
         Insert: {
-          additional_data?: Json;
-          additional_info?: string | null;
           created_at?: string;
           crop: string;
-          days_lower: number;
-          days_upper: number;
-          id?: string;
-          maturity_period: string;
-          updated_at?: string;
+          id?: string | null;
+          label?: string | null;
           variety: string;
         };
         Update: {
-          additional_data?: Json;
-          additional_info?: string | null;
           created_at?: string;
           crop?: string;
-          days_lower?: number;
-          days_upper?: number;
-          id?: string;
-          maturity_period?: string;
-          updated_at?: string;
+          id?: string | null;
+          label?: string | null;
           variety?: string;
-        };
-        Relationships: [];
-      };
-      crop_data_downscaled: {
-        Row: {
-          country_code: string;
-          created_at: string;
-          id: string;
-          location_id: string;
-          override_data: Json;
-          updated_at: string;
-          water_requirements: Json;
-        };
-        Insert: {
-          country_code: string;
-          created_at?: string;
-          id?: string;
-          location_id: string;
-          override_data?: Json;
-          updated_at?: string;
-          water_requirements?: Json;
-        };
-        Update: {
-          country_code?: string;
-          created_at?: string;
-          id?: string;
-          location_id?: string;
-          override_data?: Json;
-          updated_at?: string;
-          water_requirements?: Json;
         };
         Relationships: [];
       };
@@ -197,6 +208,13 @@ export type Database = {
           water_upper?: number;
         };
         Relationships: [
+          {
+            foreignKeyName: 'public_crop_station_data_crop_id_fkey';
+            columns: ['crop_id'];
+            isOneToOne: false;
+            referencedRelation: 'crop_data';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'public_crop_station_data_station_id_fkey';
             columns: ['station_id'];
@@ -236,42 +254,6 @@ export type Database = {
           label?: string;
           public?: boolean;
           variant?: string | null;
-        };
-        Relationships: [];
-      };
-      forecasts: {
-        Row: {
-          country_code: string;
-          created_at: string;
-          forecast_type: Database['public']['Enums']['forecast_type'] | null;
-          id: string;
-          language_code: string | null;
-          location: string[] | null;
-          mimetype: string | null;
-          storage_file: string | null;
-          updated_at: string;
-        };
-        Insert: {
-          country_code: string;
-          created_at?: string;
-          forecast_type?: Database['public']['Enums']['forecast_type'] | null;
-          id: string;
-          language_code?: string | null;
-          location?: string[] | null;
-          mimetype?: string | null;
-          storage_file?: string | null;
-          updated_at?: string;
-        };
-        Update: {
-          country_code?: string;
-          created_at?: string;
-          forecast_type?: Database['public']['Enums']['forecast_type'] | null;
-          id?: string;
-          language_code?: string | null;
-          location?: string[] | null;
-          mimetype?: string | null;
-          storage_file?: string | null;
-          updated_at?: string;
         };
         Relationships: [];
       };
@@ -433,7 +415,7 @@ export type Database = {
       };
       resource_files: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: string | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -450,7 +432,7 @@ export type Database = {
           title: string | null;
         };
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -467,7 +449,7 @@ export type Database = {
           title?: string | null;
         };
         Update: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -487,7 +469,7 @@ export type Database = {
       };
       resource_files_child: {
         Row: {
-          country_code: Database['public']['Enums']['country_code'];
+          country_code: string | null;
           cover_image: string | null;
           created_at: string;
           description: string | null;
@@ -505,7 +487,7 @@ export type Database = {
           title: string | null;
         };
         Insert: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -523,7 +505,7 @@ export type Database = {
           title?: string | null;
         };
         Update: {
-          country_code?: Database['public']['Enums']['country_code'];
+          country_code?: string | null;
           cover_image?: string | null;
           created_at?: string;
           description?: string | null;
@@ -629,18 +611,21 @@ export type Database = {
         Row: {
           created_at: string;
           deployment_id: string;
+          id: number;
           roles: Database['public']['Enums']['app_role'][];
           user_id: string;
         };
         Insert: {
           created_at?: string;
           deployment_id: string;
+          id?: number;
           roles?: Database['public']['Enums']['app_role'][];
           user_id?: string;
         };
         Update: {
           created_at?: string;
           deployment_id?: string;
+          id?: number;
           roles?: Database['public']['Enums']['app_role'][];
           user_id?: string;
         };
@@ -662,14 +647,12 @@ export type Database = {
           created_at: string | null;
           id: string | null;
           last_accessed_at: string | null;
-          level: number | null;
           metadata: Json | null;
           name: string | null;
           owner: string | null;
           owner_id: string | null;
           path_tokens: string[] | null;
           updated_at: string | null;
-          user_metadata: Json | null;
           version: string | null;
         };
         Insert: {
@@ -677,14 +660,12 @@ export type Database = {
           created_at?: string | null;
           id?: string | null;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
           owner_id?: string | null;
           path_tokens?: string[] | null;
           updated_at?: string | null;
-          user_metadata?: Json | null;
           version?: string | null;
         };
         Update: {
@@ -692,24 +673,18 @@ export type Database = {
           created_at?: string | null;
           id?: string | null;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
           owner_id?: string | null;
           path_tokens?: string[] | null;
           updated_at?: string | null;
-          user_metadata?: Json | null;
           version?: string | null;
         };
         Relationships: [];
       };
     };
     Functions: {
-      call_edge_function: {
-        Args: { name: string; body: Json };
-        Returns: number;
-      };
       custom_access_token_hook: {
         Args: { event: Json };
         Returns: Json;
@@ -717,21 +692,11 @@ export type Database = {
     };
     Enums: {
       app_role:
-        | 'viewer'
-        | 'author'
-        | 'admin'
         | 'resources.viewer'
         | 'resources.author'
         | 'resources.admin'
-        | 'deployments.viewer'
-        | 'deployments.author'
         | 'deployments.admin'
-        | 'translations.viewer'
-        | 'translations.author'
-        | 'translations.admin';
-      country_code: 'global' | 'mw' | 'zm' | 'tj';
-      forecast_type: 'daily' | 'seasonal' | 'downscaled';
-      locale_code: 'global_en' | 'mw_ny' | 'mw_tum' | 'zm_ny' | 'tj_tg';
+        | 'translations.viewer';
       resource_link_type: 'app' | 'social' | 'web';
     };
     CompositeTypes: {
@@ -806,7 +771,6 @@ export type Database = {
           created_at: string | null;
           id: string;
           last_accessed_at: string | null;
-          level: number | null;
           metadata: Json | null;
           name: string | null;
           owner: string | null;
@@ -822,7 +786,6 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
@@ -838,7 +801,6 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
@@ -852,38 +814,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'objects_bucketId_fkey';
-            columns: ['bucket_id'];
-            isOneToOne: false;
-            referencedRelation: 'buckets';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
-      prefixes: {
-        Row: {
-          bucket_id: string;
-          created_at: string | null;
-          level: number;
-          name: string;
-          updated_at: string | null;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string | null;
-          level?: number;
-          name: string;
-          updated_at?: string | null;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string | null;
-          level?: number;
-          name?: string;
-          updated_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'prefixes_bucketId_fkey';
             columns: ['bucket_id'];
             isOneToOne: false;
             referencedRelation: 'buckets';
@@ -994,17 +924,9 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      add_prefixes: {
-        Args: { _bucket_id: string; _name: string };
-        Returns: undefined;
-      };
       can_insert_object: {
         Args: { bucketid: string; name: string; owner: string; metadata: Json };
         Returns: undefined;
-      };
-      delete_prefix: {
-        Args: { _bucket_id: string; _name: string };
-        Returns: boolean;
       };
       extension: {
         Args: { name: string };
@@ -1015,18 +937,6 @@ export type Database = {
         Returns: string;
       };
       foldername: {
-        Args: { name: string };
-        Returns: string[];
-      };
-      get_level: {
-        Args: { name: string };
-        Returns: number;
-      };
-      get_prefix: {
-        Args: { name: string };
-        Returns: string;
-      };
-      get_prefixes: {
         Args: { name: string };
         Returns: string[];
       };
@@ -1089,63 +999,6 @@ export type Database = {
           updated_at: string;
           created_at: string;
           last_accessed_at: string;
-          metadata: Json;
-        }[];
-      };
-      search_legacy_v1: {
-        Args: {
-          prefix: string;
-          bucketname: string;
-          limits?: number;
-          levels?: number;
-          offsets?: number;
-          search?: string;
-          sortcolumn?: string;
-          sortorder?: string;
-        };
-        Returns: {
-          name: string;
-          id: string;
-          updated_at: string;
-          created_at: string;
-          last_accessed_at: string;
-          metadata: Json;
-        }[];
-      };
-      search_v1_optimised: {
-        Args: {
-          prefix: string;
-          bucketname: string;
-          limits?: number;
-          levels?: number;
-          offsets?: number;
-          search?: string;
-          sortcolumn?: string;
-          sortorder?: string;
-        };
-        Returns: {
-          name: string;
-          id: string;
-          updated_at: string;
-          created_at: string;
-          last_accessed_at: string;
-          metadata: Json;
-        }[];
-      };
-      search_v2: {
-        Args: {
-          prefix: string;
-          bucket_name: string;
-          limits?: number;
-          levels?: number;
-          start_after?: string;
-        };
-        Returns: {
-          key: string;
-          name: string;
-          id: string;
-          updated_at: string;
-          created_at: string;
           metadata: Json;
         }[];
       };
@@ -1260,23 +1113,7 @@ export const Constants = {
   },
   public: {
     Enums: {
-      app_role: [
-        'viewer',
-        'author',
-        'admin',
-        'resources.viewer',
-        'resources.author',
-        'resources.admin',
-        'deployments.viewer',
-        'deployments.author',
-        'deployments.admin',
-        'translations.viewer',
-        'translations.author',
-        'translations.admin',
-      ],
-      country_code: ['global', 'mw', 'zm', 'tj'],
-      forecast_type: ['daily', 'seasonal', 'downscaled'],
-      locale_code: ['global_en', 'mw_ny', 'mw_tum', 'zm_ny', 'tj_tg'],
+      app_role: ['resources.viewer', 'resources.author', 'resources.admin', 'deployments.admin', 'translations.viewer'],
       resource_link_type: ['app', 'social', 'web'],
     },
   },
