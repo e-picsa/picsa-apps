@@ -1,6 +1,3 @@
-import '@uppy/core/dist/style.min.css';
-import '@uppy/drag-drop/dist/style.min.css';
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { DashboardMaterialModule } from '../../../../material.module';

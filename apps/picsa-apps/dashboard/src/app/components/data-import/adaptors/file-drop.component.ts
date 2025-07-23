@@ -1,7 +1,3 @@
-// Ensure Uppy styles imported
-import '@uppy/core/dist/style.min.css';
-import '@uppy/drag-drop/dist/style.min.css';
-
 import { ChangeDetectionStrategy, Component, effect, ElementRef, input, output, viewChild } from '@angular/core';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { loadCSV } from '@picsa/utils';
