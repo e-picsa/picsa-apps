@@ -1,15 +1,6 @@
-import { arrayToHashmap, jsonToCSV } from '@picsa/utils/data';
+import { jsonToCSV } from '@picsa/utils/data';
 import { spawnSync } from 'child_process';
-import {
-  emptyDirSync,
-  ensureDirSync,
-  existsSync,
-  readdirSync,
-  readJSONSync,
-  readJsonSync,
-  rmSync,
-  writeFileSync,
-} from 'fs-extra';
+import { emptyDirSync, ensureDirSync, existsSync, readJSONSync, rmSync, writeFileSync } from 'fs-extra';
 import { tmpdir } from 'os';
 import { resolve } from 'path';
 
@@ -18,7 +9,6 @@ import type { ITranslationEntry } from './types';
 
 const I18N_DIR = resolve(__dirname, '../');
 const PROJECT_ROOT = resolve(I18N_DIR, '../../');
-const SOURCE_STRINGS_DIR = resolve(I18N_DIR, 'source');
 const GENERATED_ASSETS_DIR = resolve(I18N_DIR, 'assets');
 const GENERATED_TEMPLATES_DIR = resolve(I18N_DIR, 'templates');
 const TEMPLATE_PATH = resolve(GENERATED_TEMPLATES_DIR, `_template.json`);
@@ -31,7 +21,6 @@ const TEMPLATE_PATH = resolve(GENERATED_TEMPLATES_DIR, `_template.json`);
 function main() {
   setupFolders();
   generateTranslationTemplates();
-  generateAppLanguageAssets();
 }
 
 function setupFolders() {
@@ -89,42 +78,6 @@ function generateTranslationTemplates() {
   console.log('Assets generated', GENERATED_ASSETS_DIR);
 }
 
-/**
- * Check source strings dir. For every set of language translations merge with
- * template translations list to produce a single [lang].json file ready for
- * import into translation assets
- */
-function generateAppLanguageAssets() {
-  const entries: ITranslationEntry[] = readJsonSync(TEMPLATE_PATH);
-  const translatedFiles = readdirSync(SOURCE_STRINGS_DIR).map((name) => ({
-    filePath: resolve(SOURCE_STRINGS_DIR, name),
-    code: name.split('.')[0],
-  }));
-  for (const { filePath, code } of translatedFiles) {
-    const translated: Record<string, string> = {};
-    const untranslated: Record<string, string> = {};
-    const translations = readJsonSync(filePath);
-    // Populate case-insensitive translations to case-sensitive source entries
-    for (const { text } of entries) {
-      const translation = translations[text];
-      if (translation) {
-        translated[text] = translations[text];
-      } else {
-        // use marker to show non-translated version fallback
-        translated[text] = `•${text}•`;
-        untranslated[text] = '';
-      }
-    }
-    const outputTarget = resolve(GENERATED_ASSETS_DIR, `${code}.json`);
-    const outputTranslations = {
-      // Omit missing translations
-      // ...sortJsonByKey(untranslated),
-      ...sortJsonByKey(translated),
-    };
-    writeFileSync(outputTarget, JSON.stringify(outputTranslations, null, 2));
-  }
-}
-
 function stringToTranslationEntry(text: string, tool: string, context?: string) {
   const entry: ITranslationEntry = {
     text,
@@ -158,14 +111,6 @@ function generateNGXTranslateStrings(input: string): Record<string, string> {
   const extracted = readJSONSync(tmpTarget);
   rmSync(tmpTarget);
   return extracted;
-}
-
-function sortJsonByKey(json: Record<string, any>) {
-  const sorted = {};
-  for (const key of Object.keys(json).sort((a, b) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1))) {
-    sorted[key] = json[key];
-  }
-  return sorted;
 }
 
 if (require.main === module) {
