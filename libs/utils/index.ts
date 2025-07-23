@@ -8,4 +8,5 @@ export * from './browser.utils';
 export * from './data';
 export * from './mock';
 export * from './platform';
+// export * from './xlsx'   // allow treeshaking xlsx package by omitting common export
 export * from './xml';

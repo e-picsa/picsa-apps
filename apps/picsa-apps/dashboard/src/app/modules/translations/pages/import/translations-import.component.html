@@ -1,9 +1,11 @@
 <div class="page-content">
-  <!-- Import translated strings -->
-  <h2>CSV Translations</h2>
-  <dashboard-translation-csv-import></dashboard-translation-csv-import>
-
-  <!-- Import translation source strings -->
-  <h2 class="mt-8">App Strings</h2>
-  <dashboard-translation-json-import></dashboard-translation-json-import>
+  <h2>Import Translations</h2>
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="XLSX Translations">
+      <dashboard-translation-xlsx-import></dashboard-translation-xlsx-import>
+    </mat-tab>
+    <mat-tab label="App JSON">
+      <dashboard-translation-json-import></dashboard-translation-json-import>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -3,12 +3,13 @@ import '@uppy/drag-drop/dist/style.min.css';
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { TranslationsCSVImportComponent } from './components/csv-import/csv-import.component';
+import { DashboardMaterialModule } from '../../../../material.module';
 import { TranslationsJSONImportComponent } from './components/json-import/json-import.component';
+import { TranslationsXLSXImportComponent } from './components/xlsx-import/xlsx-import.component';
 
 @Component({
   selector: 'dashboard-translations-import',
-  imports: [TranslationsCSVImportComponent, TranslationsJSONImportComponent],
+  imports: [DashboardMaterialModule, TranslationsJSONImportComponent, TranslationsXLSXImportComponent],
   templateUrl: './translations-import.component.html',
   styleUrl: './translations-import.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

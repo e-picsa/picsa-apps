@@ -14,6 +14,7 @@ export class DeploymentDashboardService extends PicsaAsyncService {
   // all routing is blocked unless deployment set, so consumers can safely assume will be defined
   public readonly activeDeployment = signal<IDeploymentRow>(null as any);
 
+  /** Country code for active deployment */
   public activeDeploymentCountry = computed(() => this.activeDeployment().country_code);
 
   /** Geolocation data for active deployment */
