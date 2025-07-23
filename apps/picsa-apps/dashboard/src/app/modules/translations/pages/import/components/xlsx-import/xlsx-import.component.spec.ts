@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslationsXLSXImportComponent } from './xlsx-import.component';
 
-describe('CsvImportComponent', () => {
+describe('TranslationsXLSXImportComponent', () => {
   let component: TranslationsXLSXImportComponent;
   let fixture: ComponentFixture<TranslationsXLSXImportComponent>;
 

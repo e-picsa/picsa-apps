@@ -53,7 +53,7 @@ export class TranslationsXLSXImportComponent {
   public importCounter = signal(0);
 
   private uppy: Uppy;
-  private dropEl = viewChild('dragDrop', { read: ElementRef });
+  private dropEl = viewChild<unknown, ElementRef<HTMLDivElement>>('dragDrop', { read: ElementRef });
 
   constructor(
     private service: TranslationDashboardService,
@@ -87,17 +87,17 @@ export class TranslationsXLSXImportComponent {
         await this.service.table.update(update).eq('id', update.id as string);
       }
       if (insert) {
-        await this.service.table.insert(insert).eq('id', insert.id as string);
+        await this.service.table.insert(insert);
       }
       this.importCounter.update((v) => v + 1);
     }
     await this.service.listTranslations();
   }
 
-  private setupDropZone(target: ElementRef<HTMLDivElement>) {
+  private setupDropZone(target: HTMLDivElement) {
     if (this.uppy) return;
     this.uppy = new Uppy({ restrictions: { allowedFileTypes: ['.xlsx'] } }).use(DragDrop, {
-      target: target as any,
+      target,
       inputName: 'translations',
       replaceTargetContent: true,
       id: 'translations',
@@ -118,7 +118,10 @@ export class TranslationsXLSXImportComponent {
     const targetCode = this.deploymentService.activeDeploymentCountry();
     const translationData = translationJSON[targetCode];
     if (!translationData) {
-      throw new Error(`Expected sheet country code to match deployment: ${targetCode}`);
+      throw new Error(`Expected sheet country code to match deployment [${targetCode}]`);
+    }
+    if (translationData.length === 0) {
+      throw new Error(`Translation sheet [${targetCode}] has no rows`);
     }
     this.importTranslationData.set(translationData);
 
@@ -127,7 +130,9 @@ export class TranslationsXLSXImportComponent {
     const { tool, context, English, ...languageEntries } = translationData[0];
     const allLocales = LOCALES_DATA.filter((v) => v.country_code === targetCode);
     const localesByLabel = arrayToHashmap(allLocales, 'language_label');
-    const localeOptions = Object.keys(languageEntries).map((label) => localesByLabel[label]);
+    const localeOptions = Object.keys(languageEntries)
+      .map((label) => localesByLabel[label])
+      .filter(Boolean);
     this.importLocaleOptions.set(localeOptions);
   }
 
