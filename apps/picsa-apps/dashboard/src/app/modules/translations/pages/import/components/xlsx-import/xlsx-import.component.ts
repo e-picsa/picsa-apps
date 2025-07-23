@@ -3,6 +3,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ILocaleDataEntry, LOCALES_DATA } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -33,7 +34,7 @@ type ImportTranslationEntry = { tool: string; context: string; English: string; 
 
 @Component({
   selector: 'dashboard-translation-xlsx-import',
-  imports: [MatButtonModule, MatSelectModule, PicsaDataTableComponent],
+  imports: [MatButtonModule, MatSelectModule, MatTabsModule, PicsaDataTableComponent],
   templateUrl: './xlsx-import.component.html',
   styleUrl: './xlsx-import.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,8 +45,22 @@ export class TranslationsXLSXImportComponent {
   private importTranslationData = signal<ImportTranslationEntry[] | undefined>(undefined);
 
   public importSummary = signal<ImportSummary[] | undefined>(undefined);
+
+  /** Generate table summaries to display import actions alongside data */
+  public summaryTables = computed(() => {
+    const summary = this.importSummary();
+    if (!summary) return [];
+    // Track new or updated translations based on before value (not db entry)
+    const newSummary = summary.filter((v) => !v.before);
+    const updatedSummary = summary.filter((v) => v.before);
+    return [
+      { key: 'new', label: `New (${newSummary.length})`, data: newSummary },
+      { key: 'updated', label: `Updated (${updatedSummary.length})`, data: updatedSummary },
+    ];
+  });
   public tableOptions: IDataTableOptions = { displayColumns: ['context', 'tool', 'text', 'before', 'after'] };
 
+  /** Track db update operations (peformed sequentially as no bulk method available when updating different values) */
   public importTotal = computed(() => {
     return this.importSummary()?.length || 0;
   });

@@ -20,7 +20,13 @@
 @if(importSummary(); as summary){
 <h3>Summary</h3>
 
-<picsa-data-table [data]="summary" [options]="tableOptions"></picsa-data-table>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  @for (table of summaryTables(); track table.key) {
+  <mat-tab [label]="table.label">
+    <picsa-data-table [options]="tableOptions" [data]="table.data"></picsa-data-table>
+  </mat-tab>
+  }
+</mat-tab-group>
 
 <button mat-raised-button color="accent" class="my-8" [disabled]="importTotal() <= 0 || importCounter() > 0"
   (click)="processImport()">
