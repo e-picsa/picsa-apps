@@ -50,7 +50,7 @@ export const sortJsonKeys = <T extends Record<string, any>>(json: T, caseSensiti
   return Object.keys(json)
     .sort(caseSensitive ? caseSensitiveSort : caseInsensitiveSort)
     .reduce((obj, key) => {
-      obj[key] = sortJsonKeys(json[key]);
+      obj[key] = sortJsonKeys(json[key], caseSensitive);
       return obj;
     }, {}) as T;
 };
