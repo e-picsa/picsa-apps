@@ -1,37 +1,51 @@
 <!-- Ready -->
-@if(downloadStatus()==='ready' || downloadStatus()==='error'){
-<button mat-icon-button (click)="downloadResource()" [attr.data-style-variant]="styleVariant">
-  <div class="download-button-inner">
-    <mat-icon style="font-size: 30px; width: 30px">download</mat-icon>
-    @if(showSize){
-    <span class="resource-size"> {{ resource().size_kb | sizeMB }} MB </span>
-    }
-  </div>
-</button>
+@if (downloadStatus() === 'ready' || downloadStatus() === 'error') {
+  <button mat-icon-button (click)="downloadResource()" [attr.data-style-variant]="styleVariant">
+    <div class="download-button-inner">
+      <mat-icon style="font-size: 30px; width: 30px">download</mat-icon>
+      @if (showSize) {
+        <span class="resource-size"> {{ resource().size_kb | sizeMB }} MB </span>
+      }
+    </div>
+  </button>
 }
 <!-- Pending -->
-@if(downloadStatus()==='pending'){
-<div class="download-progress">
-  <mat-progress-spinner [class]="'spinner' + styleVariant" color="primary"
-    [mode]="downloadProgress() > 0 ? 'determinate' : 'indeterminate'" [value]="downloadProgress()" [diameter]="size"
-    [style.width]="sizePx" [attr.data-style-variant]="styleVariant">
-  </mat-progress-spinner>
-  <button mat-button class="download-cancel" (click)="cancelDownload()" [disabled]="downloadProgress() === 100"
-    [style.width]="sizePx" [style.min-width]="sizePx" [style.height]="sizePx" [attr.data-style-variant]="styleVariant">
-    <mat-icon>close</mat-icon>
-  </button>
-</div>
+@if (downloadStatus() === 'pending') {
+  <div class="download-progress">
+    <mat-progress-spinner
+      [class]="'spinner' + styleVariant"
+      color="primary"
+      [mode]="downloadProgress() > 0 ? 'determinate' : 'indeterminate'"
+      [value]="downloadProgress()"
+      [diameter]="size"
+      [style.width]="sizePx"
+      [attr.data-style-variant]="styleVariant"
+    >
+    </mat-progress-spinner>
+    <button
+      mat-button
+      class="download-cancel"
+      (click)="cancelDownload()"
+      [disabled]="downloadProgress() === 100"
+      [style.width]="sizePx"
+      [style.min-width]="sizePx"
+      [style.height]="sizePx"
+      [attr.data-style-variant]="styleVariant"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 }
 <!-- Finalizing (write to disk) -->
-@if(downloadStatus()==='finalizing'){
-<button mat-icon-button [attr.data-style-variant]="styleVariant">
-  <mat-icon>pending</mat-icon>
-</button>
+@if (downloadStatus() === 'finalizing') {
+  <button mat-icon-button [attr.data-style-variant]="styleVariant">
+    <mat-icon>pending</mat-icon>
+  </button>
 }
 
 <!-- Complete -->
-@if(downloadStatus()==='complete'){
-<button mat-icon-button [attr.data-style-variant]="styleVariant">
-  <mat-icon>download_done</mat-icon>
-</button>
+@if (downloadStatus() === 'complete') {
+  <button mat-icon-button [attr.data-style-variant]="styleVariant">
+    <mat-icon>download_done</mat-icon>
+  </button>
 }
