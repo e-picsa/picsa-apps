@@ -14,7 +14,7 @@ export async function setupTestEnv() {
 }
 
 /**
- * Hack - workaround firebase functions invoke method to allow passing back unformatted fetch result (used in tests)
+ * Hack - workaround functions invoke method to allow passing back unformatted fetch result (used in tests)
  * Also returns status and statusText alongside error and data information
  * https://github.com/supabase/functions-js/blob/main/src/FunctionsClient.ts
  */

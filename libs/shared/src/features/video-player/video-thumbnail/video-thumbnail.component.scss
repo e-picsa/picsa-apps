@@ -2,6 +2,10 @@
 
 $playerWidth: 854px;
 
+:host {
+  display: block;
+}
+
 .placeholder,
 .thumbnail {
   width: 100%;

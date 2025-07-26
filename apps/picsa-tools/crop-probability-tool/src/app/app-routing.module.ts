@@ -4,12 +4,12 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
     title: 'Crop Probability',
   },
   {
     path: ':stationId',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomeModule),
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
     title: 'Crop Probability',
   },
 ];

@@ -31,7 +31,6 @@
       "@picsa/data": ["libs/data/index.ts"],
       "@picsa/environments": ["libs/environments/src/index.ts"],
       "@picsa/extension-content/*": ["apps/picsa-tools/extension-content/*"],
-      "@picsa/extension/*": ["apps/picsa-apps/extension-app/*"],
       "@picsa/farmer-content/*": ["apps/picsa-tools/farmer-content/*"],
       "@picsa/forecasts/*": ["apps/picsa-tools/forecasts-tool/src/app/*"],
       "@picsa/forms": ["libs/forms"],

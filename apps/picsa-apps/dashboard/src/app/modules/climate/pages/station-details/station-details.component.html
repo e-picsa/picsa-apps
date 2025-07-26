@@ -1,18 +1,82 @@
 <div class="page-content">
-  @if(station(); as station){
-  <h2>{{ station.station_name }}</h2>
-  <table style="max-width: 600px">
-    <tr>
-      @for(key of stationSummary().keys; track $index){
-      <th>{{ key }}</th>
-      }
-    </tr>
-    @for(value of stationSummary().values; track $index){
-    <td>{{ value }}</td>
-    }
-  </table>
-  <dashboard-climate-rainfall-summary style="margin-top: 2rem"></dashboard-climate-rainfall-summary>
+  @if (service.activeStation(); as station) {
+    <div class="flex items-center">
+      <h2 class="flex-1">{{ station.station_name }}</h2>
+      <button mat-stroked-button (click)="refreshData(station)">
+        Refresh Data
+        <mat-icon>autorenew</mat-icon>
+      </button>
+    </div>
+
+    <mat-tab-group preserveContent>
+      <!-- Location Summary -->
+      <mat-tab>
+        <ng-template mat-tab-label><mat-icon>place</mat-icon>Location</ng-template>
+        <dashboard-climate-location-summary
+          [station]="station"
+          class="mt-3 max-w-lg"
+        ></dashboard-climate-location-summary>
+      </mat-tab>
+
+      <!-- Data Summary -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>view_list</mat-icon>
+          Data
+        </ng-template>
+        <dashboard-climate-data-summary [station]="station" [data]="stationData()"></dashboard-climate-data-summary>
+        <!-- HACK - update chart data when summary table updates -->
+      </mat-tab>
+
+      <!-- Charts -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>show_chart</mat-icon>
+          Charts
+        </ng-template>
+        <dashboard-climate-chart-summary [station]="station" [data]="stationData()"></dashboard-climate-chart-summary>
+      </mat-tab>
+
+      <!-- Crop Probabilities -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>percent</mat-icon>
+          Crop Probabilities
+        </ng-template>
+        <dashboard-climate-crop-probabilities
+          [data]="stationData()?.crop_probability_data"
+        ></dashboard-climate-crop-probabilities>
+      </mat-tab>
+    </mat-tab-group>
   } @else {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 </div>
+
+<!-- Refresh Data Dialog -->
+<ng-template #updateDialog>
+  <table class="data-updates">
+    <th></th>
+    @for (update of dataFetchUpdates(); track $index) {
+      <tr>
+        <td>
+          @switch (update.status) {
+            <!--  -->
+            @case ('pending') {
+              <mat-icon class="spin">autorenew</mat-icon>
+            }
+            <!--  -->
+            @case ('fulfilled') {
+              <mat-icon style="color: green">check_box</mat-icon>
+            }
+            <!--  -->
+            @case ('rejected') {
+              <mat-icon style="color: red">error</mat-icon>
+            }
+          }
+        </td>
+        <td>{{ update.id }}</td>
+      </tr>
+    }
+  </table>
+</ng-template>

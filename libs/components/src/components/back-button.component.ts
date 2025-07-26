@@ -1,8 +1,11 @@
 import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router } from '@angular/router';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
@@ -11,14 +14,18 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'back-button',
   template: `
-    <button *ngIf="variant === 'primary'" mat-button color="primary" (click)="back()">
-      <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
-    </button>
-    <button *ngIf="variant === 'white'" mat-button style="color:white" (click)="back()">
-      <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
-    </button>
+    @if (variant === 'primary') {
+      <button mat-button color="primary" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
+      </button>
+    }
+    @if (variant === 'white') {
+      <button mat-button style="color:white" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
+      </button>
+    }
   `,
-  standalone: false,
+  imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BackButton implements OnDestroy {
@@ -29,7 +36,7 @@ export class BackButton implements OnDestroy {
     private router: Router,
     private location: Location,
     private zone: NgZone,
-    private componentService: PicsaCommonComponentsService
+    private componentService: PicsaCommonComponentsService,
   ) {
     // provide access to back method through component service
     componentService.back = () => this.back();

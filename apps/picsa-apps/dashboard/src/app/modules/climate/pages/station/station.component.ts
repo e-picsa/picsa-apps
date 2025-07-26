@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -46,7 +47,11 @@ export class ClimateStationPageComponent {
     showStatusCode: false,
   };
 
-  constructor(public service: ClimateService, private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    public service: ClimateService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
   public handleMarkerClick(marker: IMapMarker) {
     const { _index } = marker;

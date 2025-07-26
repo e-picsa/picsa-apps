@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { Database } from '@picsa/server-types';
+import type { Database } from '@picsa/server-types';
 import { FileObject, FileOptions } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { firstValueFrom, Subject } from 'rxjs';
@@ -127,7 +127,7 @@ export class SupabaseStorageService extends PicsaAsyncService {
 
   public async putFile(
     options: { bucketId: string; filename: string; fileBlob: Blob; folderPath?: string },
-    fileOptions: FileOptions = { upsert: false }
+    fileOptions: FileOptions = { upsert: false },
   ) {
     const defaults = { folderPath: '' };
     const { bucketId, fileBlob, filename, folderPath } = { ...defaults, ...options };

@@ -1,24 +1,39 @@
-<div class="placeholderContainer">
+<div class="placeholderContainer" [attr.data-downloaded]="source() ? true : undefined">
   <div class="placeholder" [id]="playerId" #playerEl slot="fixed">
-    <!-- call the component for thumbnails -->
-     <picsa-video-thumbnail
-      [thumbnail]="thumbnail"
-      [videoUrl]="onlineVideoUrl"
-     >
-     </picsa-video-thumbnail>
-    <!-- <div *ngIf="thumbnail" class="thumbnail" [style.background-image]="'url(' + thumbnail + ')'"></div> -->
-    <button
-      *ngIf="showPlayButton"
-      mat-fab
-      color="primary"
-      class="play-button"
-      (click)="playVideo()"
-      [disabled]="!source"
-    >
-      <mat-icon>play_arrow</mat-icon>
-    </button>
+    <!-- Play Button -->
+    @if (source()) {
+      <button mat-fab color="primary" class="play-button" (click)="playVideo()">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
+    }
+    @if (source(); as source) {
+      <!-- Native -->
+      @if (isNative) {
+        <picsa-video-player-native
+          #nativePlayer
+          [source]="source"
+          [startTime]="startTime"
+          (playbackProgress)="handlePlaybackProgressChanged($event)"
+        ></picsa-video-player-native>
+      } @else {
+        <!-- Web -->
+        <picsa-video-player-web
+          #webPlayer
+          [source]="source"
+          [placeholderTime]="20"
+          [startTime]="startTime"
+          (playbackProgress)="handlePlaybackProgressChanged($event)"
+        ></picsa-video-player-web>
+      }
+    }
+    <!-- Thumbnail -->
+    @if (isNative || !source()) {
+      <picsa-video-thumbnail [videoId]="id" [thumbnail]="thumbnail" [videoUrl]="onlineVideoUrl" class="z-0">
+      </picsa-video-thumbnail>
+    }
   </div>
-  <div *ngIf="playbackPercentage > 0 && showPlayButton" class="progress-bar">
+  <!-- Playback Progress -->
+  <div class="progress-bar">
     <mat-progress-bar mode="determinate" [value]="playbackPercentage"></mat-progress-bar>
   </div>
 </div>

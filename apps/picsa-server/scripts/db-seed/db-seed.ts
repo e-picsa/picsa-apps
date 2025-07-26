@@ -98,7 +98,7 @@ class SupabaseSeed {
     const { storage } = this.client;
     // list all storage files to upload
     const entries = globSync('**', { stat: false, withFileTypes: true, cwd: SEED_STORAGE_DIR }).filter((g) =>
-      g.isFile()
+      g.isFile(),
     );
     // check existing buckets
     const { data: bucketRows, error: listError } = await storage.listBuckets();
@@ -144,21 +144,22 @@ class SupabaseSeed {
     console.log('\n', '\n', 'DB');
     // specify tables that should be loaded with priority
     // e.g. ensure populated if linked table seed data references
-    const priority = { climate_stations_rows: 1, resource_files_rows: 1 };
-    const csvFileNames = readdirSync(SEED_DIR, { withFileTypes: true })
+    const tableNames = readdirSync(SEED_DIR, { withFileTypes: true })
       .filter((f) => f.isFile() && f.name.endsWith('_rows.csv'))
-      .map((f) => f.name)
+      .map((f) => f.name.replace(`_rows.csv`, ''))
       // ensure child rows processed after parent
       .sort((a, b) => {
         // ensure tables with priority are processed before those without
-        const aPriority = priority[a] || 0;
-        const bPriority = priority[b] || 0;
-        return aPriority > bPriority ? 1 : -1;
+        const aPriority = SEED_DATA_CONFIGURATION[a]?.priority || 0;
+        const bPriority = SEED_DATA_CONFIGURATION[b]?.priority || 0;
+        // default sort by table name length to ensure child tables after parent
+        if (aPriority === bPriority) return a.length > b.length ? 1 : -1;
+        return aPriority < bPriority ? 1 : -1;
       });
     const results: any[] = [];
-    console.log(csvFileNames);
-    for (const csvFileName of csvFileNames) {
-      const tableName = csvFileName.replace('_rows.csv', '');
+    console.log('Import Order: ', tableNames);
+    for (const tableName of tableNames) {
+      const csvFileName = `${tableName}_rows.csv`;
       const csvPath = resolve(SEED_DIR, csvFileName);
       const csvString = readFileSync(csvPath, { encoding: 'utf8' });
       const csvRows = await loadCSV(csvString, { dynamicTyping: true, header: true, skipEmptyLines: true });

@@ -3,14 +3,14 @@ import type { IEnvironment } from '@picsa/models';
 import { FirebaseConfig } from './firebase/config';
 import GROUPS from './groups';
 
-/** Used in main picsa extension app, allows country-change at runtime */
+/** Used in main picsa app, allows country-change at runtime */
 const productionEnvironment: IEnvironment = {
   firebase: FirebaseConfig,
   group: GROUPS.GLOBAL,
   production: true,
   // TODO - load from CI
   supabase: {
-    appUser: { email: 'anonymous_user@picsa.app' },
+    appUser: { email: 'admin@picsa.app' },
     load: async () => {
       return {
         anonKey:

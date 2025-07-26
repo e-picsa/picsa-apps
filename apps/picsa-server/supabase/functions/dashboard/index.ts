@@ -6,6 +6,8 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { forecastStorage } from './forecast-storage.ts';
 import { forecastDB } from './forecast-db.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+import { admin } from './admin/index.ts';
+import { forecastCleanup } from './forecast-cleanup.ts';
 
 serve((req) => {
   // handle cors pre-flight
@@ -15,17 +17,22 @@ serve((req) => {
   if (req.method !== 'POST') {
     return new Response('Try sending a POST request instead', { status: 400 });
   }
+  const { pathname } = new URL(req.url);
+  // e.g. /dashboard/admin/list-users
+  const entryPoint = pathname.split('/')[2];
 
-  const endpoint = req.url.split('/').pop();
-
-  switch (endpoint) {
+  switch (entryPoint) {
+    case 'admin':
+      return admin(req);
     case 'forecast-db':
       return forecastDB(req);
     case 'forecast-storage':
       return forecastStorage(req);
+    case 'forecast-cleanup':
+      return forecastCleanup(req);
 
     default:
-      return new Response(`Invalid endpoint: ${endpoint}`, {
+      return new Response(`Invalid endpoint: ${entryPoint}`, {
         status: 501,
       });
   }

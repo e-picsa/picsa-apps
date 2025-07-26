@@ -1,8 +1,9 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
-import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { PicsaFormsModule } from '@picsa/forms';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { arrayToHashmap, arrayToHashmapArray, jsonToCSV } from '@picsa/utils';
 import { isObjectLiteral } from '@picsa/utils/object.utils';
 import download from 'downloadjs';
@@ -11,6 +12,7 @@ import { DataImportComponent } from '../../../../components/data-import/data-imp
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { CropInformationService, ICropDataDownscaled, ICropDataDownscaledWaterRequirements } from '../../services';
+import { CropMissingLocationsComponent } from './components/components/missing-locations.component';
 
 interface ICropDataImport {
   location_id: string;
@@ -39,7 +41,14 @@ interface ICropDataImport {
  */
 @Component({
   selector: 'dashboard-crop-admin',
-  imports: [CommonModule, DataImportComponent, PicsaDataTableComponent, DashboardMaterialModule],
+  imports: [
+    CommonModule,
+    DataImportComponent,
+    PicsaDataTableComponent,
+    DashboardMaterialModule,
+    CropMissingLocationsComponent,
+    PicsaFormsModule,
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,11 +81,14 @@ export class DashboardCropAdminComponent {
 
   public insertRows = signal<ICropDataDownscaled['Insert'][]>([]);
 
+  public countryCode = computed(() => this.deploymentService.activeDeploymentCountry());
+
   constructor(
     private service: CropInformationService,
     private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService
+    public dialog: MatDialog,
   ) {
+    service.ready();
     effect(async () => {
       const parsedRows = this.parsedRows();
       if (parsedRows.length > 0) {
@@ -93,16 +105,17 @@ export class DashboardCropAdminComponent {
     this.parsedRows.set(rows);
   }
 
-  public downloadTemplate() {
-    const dummyLocation = this.getLocationList()[0].id;
-    const dummyRow: ICropDataImport = {
-      location_id: dummyLocation,
-      crop: 'maize',
-      variety: 'PAN-53',
-      water_requirement: 420,
-    };
-    const csv = jsonToCSV([dummyRow]);
-    download(csv, `crop-water-requirements-template.csv`);
+  public downloadTemplate(selectedLocation: (string | undefined)[]) {
+    const cropData = this.service.cropData();
+    const location_id = selectedLocation.filter((v) => v !== undefined).pop() as string;
+    const dummyRows: ICropDataImport[] = cropData.map(({ crop, variety }) => ({
+      location_id,
+      crop,
+      variety,
+      water_requirement: '' as any,
+    }));
+    const csv = jsonToCSV(dummyRows);
+    download(csv, `crop-water-requirements.${location_id}.csv`);
   }
 
   public async processImport(rows: ICropDataDownscaled['Insert'][]) {
@@ -136,12 +149,6 @@ export class DashboardCropAdminComponent {
     this.insertRows.set(insertRows);
   }
 
-  private getLocationList() {
-    const { country_code } = this.deploymentService.activeDeployment();
-    const { admin_4, admin_5 } = GEO_LOCATION_DATA[country_code] as IGelocationData;
-    return admin_5 ? admin_5.locations : admin_4.locations;
-  }
-
   /** Convert flat import data type to nested db entries */
   private importToEntry(data: ICropDataImport[], country_code: string) {
     const merged: Record<string, ICropDataDownscaledWaterRequirements> = {};
@@ -155,7 +162,7 @@ export class DashboardCropAdminComponent {
       ([location_id, water_requirements]) => {
         const entry: ICropDataDownscaled['Insert'] = { country_code, location_id, water_requirements };
         return entry;
-      }
+      },
     );
     return entryRows;
   }
@@ -172,6 +179,11 @@ export class DashboardCropAdminComponent {
       }
     }
     return importRows;
+  }
+
+  private getLocationList() {
+    const locationData = this.deploymentService.activeDeploymentLocationData();
+    return locationData.admin_5?.locations || locationData.admin_4?.locations;
   }
 
   private qualityControlData(data: ICropDataImport[] = []) {

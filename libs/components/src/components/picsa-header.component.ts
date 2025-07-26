@@ -25,8 +25,8 @@ import { IHeaderOptions, PicsaCommonComponentsService } from '../services/compon
       </div>
       <h1 class="central-content">
         <ng-template [cdkPortalOutlet]="cdkPortalCenter" #portalOutlet></ng-template>
-        @if(!cdkPortalCenter){
-        <span class="title">{{ title | translate }}</span>
+        @if (!cdkPortalCenter) {
+          <span class="title">{{ title | translate }}</span>
         }
       </h1>
       <div class="end-content">
@@ -54,7 +54,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
     private componentsService: PicsaCommonComponentsService,
     private router: Router,
     private titleStrategy: DefaultTitleStrategy,
-    private titleService: Title
+    private titleService: Title,
   ) {
     effect(() => {
       const headerOptions = this.componentsService.headerOptions();
@@ -99,7 +99,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
             route = route.children.find((child) => child.outlet === 'primary');
           }
           return { title, headerStyle };
-        })
+        }),
       )
       .subscribe(({ title, headerStyle }) => {
         this.componentsService.patchHeader({
@@ -112,7 +112,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private handleHeaderOptionsChange(options: IHeaderOptions) {
     const { title, style, hideBackButton, hideHeader } = options;
     requestAnimationFrame(() => {
-      if (title) {
+      if (title && this.title !== title) {
         this.title = title;
         this.titleService.setTitle(title);
       }

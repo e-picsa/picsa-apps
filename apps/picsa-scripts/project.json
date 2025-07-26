@@ -1,0 +1,23 @@
+{
+  "name": "picsa-scripts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/picsa-scripts/src",
+  "projectType": "application",
+  "targets": {
+    "exec": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/{args.scriptName} --env-file=.env",
+        "cwd": "apps/picsa-scripts"
+      }
+    },
+    "watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx watch src/{args.scriptName} --env-file=.env",
+        "cwd": "apps/picsa-scripts"
+      }
+    }
+  },
+  "tags": []
+}

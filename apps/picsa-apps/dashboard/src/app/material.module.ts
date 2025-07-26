@@ -13,6 +13,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -35,6 +36,7 @@ const matModules = [
   MatRadioModule,
   MatSelectModule,
   MatSidenavModule,
+  MatSliderModule,
   MatStepperModule,
   MatTableModule,
   MatTabsModule,
@@ -47,7 +49,10 @@ const matModules = [
   exports: matModules,
 })
 export class DashboardMaterialModule {
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+  ) {
     this.registerIcons();
   }
 

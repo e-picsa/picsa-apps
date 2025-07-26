@@ -1,5 +1,6 @@
 import { IChartDefinitions, IChartMeta } from '@picsa/models';
 import merge from 'deepmerge';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
 import { LINE_TOOL_COLORS, LINE_TOOL_OPTIONS, PROBABILITY_TOOL_OPTIONS } from '../tool_definitions';
 
@@ -126,6 +127,7 @@ const definitions: IChartDefinitions = {
   },
   extreme_rainfall_days: {
     _id: 'extreme_rainfall_days',
+    disabled: true,
     name: 'Extreme Rainfall',
     shortname: 'Extreme',
     image: 'assets/climate-icons/extreme-rainfall.svg',
@@ -143,6 +145,58 @@ const definitions: IChartDefinitions = {
     tools,
     units: 'days',
     definition: 'Extreme rainfall are days where the total amount of rain exceeds the 95th Percentile',
+  },
+  temp_min: {
+    _id: 'temp_min',
+    name: translateMarker('Minimum Temperatures'),
+    shortname: translateMarker('Min Temps'),
+    image: 'assets/climate-icons/temp_min.svg',
+    keys: ['min_tmin', 'mean_tmin'],
+    data_labels: {
+      min_tmin: translateMarker('Lowest minimum daily temp'),
+      mean_tmin: translateMarker('Mean minimum daily temp'),
+    },
+    colors: ['#005b85', '#42c3ff'],
+    yFormat: 'value',
+    yLabel: translateMarker('Temperature (°C)'),
+    xLabel: '',
+    xVar: translateMarker('Year'),
+    axes: {
+      ...AXES_DEFAULT,
+      yMinor: 1,
+      yMajor: 2,
+    },
+    tooltip: { grouped: true },
+    legend: { show: true },
+    tools: {} as any,
+    units: '°C',
+    definition: translateMarker('The mean minimum and lowest minimum daily temperatures per year'),
+  },
+  temp_max: {
+    _id: 'temp_max',
+    name: translateMarker('Maximum Temperatures'),
+    shortname: translateMarker('Max Temps'),
+    image: 'assets/climate-icons/temp_max.svg',
+    keys: ['mean_tmax', 'max_tmax'],
+    data_labels: {
+      mean_tmax: translateMarker('Mean maximum daily temp'),
+      max_tmax: translateMarker('Highest maximum daily temp'),
+    },
+    colors: ['#f76e6e', '#850000'],
+    yFormat: 'value',
+    yLabel: translateMarker('Temperature (°C)'),
+    xLabel: '',
+    xVar: translateMarker('Year'),
+    axes: {
+      ...AXES_DEFAULT,
+      yMinor: 1,
+      yMajor: 2,
+    },
+    tooltip: { grouped: true },
+    legend: { show: true },
+    tools: {} as any,
+    units: '°C',
+    definition: translateMarker('The mean maximum and highest maximum daily temperatures per year'),
   },
 };
 

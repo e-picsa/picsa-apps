@@ -98,7 +98,7 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /**
        * Station Id
        * @default Kasungu
@@ -189,7 +189,7 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /**
        * Station Id
        * @default Kasungu
@@ -229,28 +229,15 @@ export interface components {
     CropSuccessProbabilitiesParameters: {
       /**
        * Country
-       * @default mw_test
+       * @default internal_tests
        * @enum {string}
        */
-      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /**
        * Station Id
-       * @default Kasungu
+       * @default Tamale
        */
       station_id?: string;
-      /** Water Requirements */
-      water_requirements?: number[];
-      /** Planting Length */
-      planting_length?: number[];
-      /** Planting Dates */
-      planting_dates?: number[];
-      /** Start Before Season */
-      start_before_season?: boolean;
-      /**
-       * Override
-       * @default false
-       */
-      override?: boolean;
     };
     /** CropSuccessProbabilitiesResponce */
     CropSuccessProbabilitiesResponce: {
@@ -262,31 +249,31 @@ export interface components {
     CropSuccessProbabilitiesdata: {
       /** Station */
       station: string;
-      /** Rain Total */
-      rain_total: number;
+      /** Total Rain */
+      total_rain: number;
       /** Plant Day */
       plant_day: number;
       /** Plant Length */
       plant_length: number;
-      /** Prop Success */
-      prop_success: number;
+      /** Prop Success With Start */
+      prop_success_with_start: number;
+      /** Prop Success No Start */
+      prop_success_no_start: number;
     };
     /** CropsSuccess */
     CropsSuccess: {
       /** Water Requirements */
-      water_requirements?: {
+      water_requirements?: string | {
         [key: string]: number;
       };
       /** Planting Dates */
-      planting_dates?: {
+      planting_dates?: string | {
         [key: string]: number;
       };
       /** Planting Length */
-      planting_length?: {
+      planting_length?: string | {
         [key: string]: number;
       };
-      /** Start Check */
-      start_check?: boolean;
     };
     /** DocumentMetadata */
     DocumentMetadata: {
@@ -300,6 +287,10 @@ export interface components {
       timeCreated: string;
       /** Updated */
       updated: string;
+      /** Metadata */
+      metadata?: {
+        [key: string]: string;
+      };
     };
     /** EndRains */
     EndRains: {
@@ -340,7 +331,7 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /**
        * Station Id
        * @default Kasungu
@@ -394,7 +385,7 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /**
        * Station Id
        * @default Kasungu
@@ -443,7 +434,7 @@ export interface components {
        * @default mw_test
        * @enum {string}
        */
-      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country?: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /**
        * Station Id
        * @default Kasungu
@@ -570,7 +561,7 @@ export interface components {
        * Country Code
        * @enum {string}
        */
-      country_code: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country_code: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       /** Definitions Id */
       definitions_id: unknown[];
       /** Climsoft List */
@@ -595,7 +586,7 @@ export interface components {
        * Country Code
        * @enum {string}
        */
-      country_code: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+      country_code: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
     };
     /** StationDefinitionDataResponce */
     StationDefinitionDataResponce: {
@@ -819,7 +810,7 @@ export interface operations {
   read_stations_v1_station__country__get: {
     parameters: {
       path: {
-        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       };
     };
     responses: {
@@ -841,7 +832,7 @@ export interface operations {
   read_stations_v1_station__country___station_id__get: {
     parameters: {
       path: {
-        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
         station_id: string;
       };
     };
@@ -864,15 +855,12 @@ export interface operations {
   get_documents_v1_documents__country__get: {
     parameters: {
       query?: {
-        /** @description Specify folder path prefixes. Can be used to filter folders timestamped YYYYMMDD, E.g. "202405" */
         prefix?: string;
-        /** @description Maximum number of results to return. If more than 1000 results required use multiple queries */
         max_results?: number;
-        /** @description Use expression for advanced pattern matching. To return only files and not folders end with "[^/]" */
         match_glob?: string;
       };
       path: {
-        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
       };
     };
     responses: {
@@ -897,7 +885,7 @@ export interface operations {
   download_document_v1_documents__country___filepath__get: {
     parameters: {
       path: {
-        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops";
+        country: "zm" | "mw" | "zm_test" | "mw_test" | "zm_workshops" | "mw_workshops" | "internal_tests";
         filepath: string;
       };
     };

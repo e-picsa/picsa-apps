@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
+import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
@@ -15,10 +15,7 @@ import { TourService } from '@picsa/shared/services/core/tour';
 import { ExtensionToolkitMaterialModule } from '../../material.module';
 import { HOME_TOUR } from './extension-home.tour';
 
-interface IPageLink {
-  name: string;
-  svgIcon: string;
-  url: string;
+interface IPageLink extends IToolsDataEntry {
   /** Element ID used in tours */
   tourId: string;
   /** Specify if only shown in dev mode */
@@ -27,40 +24,28 @@ interface IPageLink {
 
 const PAGE_LINKS: IPageLink[] = [
   {
-    name: translateMarker('Manual'),
-    svgIcon: 'extension_app:manual_tool',
-    url: '/manual',
+    ...TOOLS_DATA_HASHMAP.manual,
     tourId: 'manual',
   },
 
   {
-    name: translateMarker('Climate'),
-    svgIcon: 'extension_app:climate_tool',
-    url: '/climate',
+    ...TOOLS_DATA_HASHMAP.climate,
     tourId: 'climate',
   },
   {
-    name: translateMarker('Budget'),
-    svgIcon: 'extension_app:budget_tool',
-    url: '/budget',
+    ...TOOLS_DATA_HASHMAP.budget,
     tourId: 'budget',
   },
   {
-    name: translateMarker('Probability'),
-    svgIcon: 'extension_app:probability_tool',
-    url: '/crop-probability',
+    ...TOOLS_DATA_HASHMAP.crop_probability,
     tourId: 'crop-probability',
   },
   {
-    name: translateMarker('Options'),
-    svgIcon: 'extension_app:option_tool',
-    url: '/option',
+    ...TOOLS_DATA_HASHMAP.option,
     tourId: 'option',
   },
   {
-    name: translateMarker('Seasonal Calendar'),
-    svgIcon: 'extension_app:seasonal_calendar_tool',
-    url: '/seasonal-calendar',
+    ...TOOLS_DATA_HASHMAP.seasonal_calendar,
     tourId: 'seasonal-calendar',
   },
 
@@ -79,27 +64,19 @@ const PAGE_LINKS: IPageLink[] = [
 
 const ADDITIONAL_LINKS: IPageLink[] = [
   {
-    name: translateMarker('Resources'),
-    svgIcon: 'extension_app:resources_tool',
-    url: '/resources',
+    ...TOOLS_DATA_HASHMAP.resources,
     tourId: 'resources',
   },
   {
-    name: translateMarker('Forecasts'),
-    svgIcon: 'extension_app:forecasts_tool',
-    url: '/forecasts',
+    ...TOOLS_DATA_HASHMAP.forecasts,
     tourId: 'forecasts',
   },
   {
-    name: translateMarker('Farmer Activities'),
-    svgIcon: 'extension_app:farmer_activity',
-    url: '/farmer',
+    ...TOOLS_DATA_HASHMAP.farmer,
     tourId: 'farmer',
   },
   {
-    name: translateMarker('Monitoring'),
-    svgIcon: 'extension_app:data_collection',
-    url: '/monitoring',
+    ...TOOLS_DATA_HASHMAP.monitoring,
     tourId: 'monitoring',
   },
 
@@ -152,7 +129,7 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
     private router: Router,
     private componentsService: PicsaCommonComponentsService,
     private tourService: TourService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
   ) {}
 
   linkClicked(link: IPageLink) {

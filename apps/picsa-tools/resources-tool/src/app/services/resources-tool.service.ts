@@ -18,7 +18,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
 
-export type IDownloadStatus = 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
+export type IDownloadStatus = 'loading' | 'ready' | 'pending' | 'finalizing' | 'complete' | 'error';
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {
@@ -33,7 +33,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     private fileService: FileService,
     private analyticsService: AnalyticsService,
     private clipboard: Clipboard,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     super();
   }
@@ -200,7 +200,7 @@ export class ResourcesToolService extends PicsaAsyncService {
    * */
   private async diffDBHardcodedResources(
     collection: RxCollection<schemas.IResourceBase>,
-    hardcoded: schemas.IResourceBase[]
+    hardcoded: schemas.IResourceBase[],
   ) {
     const hardcodedHashmap = arrayToHashmap(hardcoded, 'id');
     const dbEntries = await collection.find().exec();

@@ -7,7 +7,7 @@ import { ILocaleCode } from '@picsa/data/deployments';
 import { IResourceFile } from '@picsa/resources/schemas';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
-import { RxAttachment, RxDocument } from 'rxdb';
+import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PICSA_MANUAL_CONTENTS_EXTENSION, PICSA_MANUAL_CONTENTS_FARMER } from '../../data';
@@ -67,7 +67,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private ConfigurationService: ConfigurationService,
     private resourcesService: ResourcesToolService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(({ page }) => {
       this.page = Number(page);
@@ -85,11 +85,9 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
   }
 
   /** Prompt manual load if resource file attachment updated */
-  public async handleResourceAttachmentChange(attachment?: RxAttachment<IResourceFile>) {
-    if (attachment) {
-      await this.loadManual();
-      this.cdr.markForCheck();
-    }
+  public async handleManualDownloaded() {
+    await this.loadManual();
+    this.cdr.markForCheck();
   }
 
   /**

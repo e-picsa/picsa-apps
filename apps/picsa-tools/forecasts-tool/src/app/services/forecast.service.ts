@@ -41,7 +41,7 @@ export class ForecastService extends PicsaAsyncService {
   constructor(
     private supabaseService: SupabaseService,
     private dbService: PicsaDatabase_V2_Service,
-    private dbAttachmentService: PicsaDatabaseAttachmentService
+    private dbAttachmentService: PicsaDatabaseAttachmentService,
   ) {
     super();
     effect(async () => {
@@ -95,7 +95,7 @@ export class ForecastService extends PicsaAsyncService {
 
   private async hackStoreHardcodedData(forecasts: IForecastRow[] = []) {
     const { error, success } = await this.dbCollection.bulkUpsert(
-      forecasts.map((forecast) => SERVER_DB_MAPPING(forecast))
+      forecasts.map((forecast) => SERVER_DB_MAPPING(forecast)),
     );
     if (error.length > 0) {
       console.error('forecast store error', error);
@@ -121,7 +121,7 @@ export class ForecastService extends PicsaAsyncService {
   }
   private async loadSeasonalForecasts(country_code: ICountryCode) {
     const seaonalForecasts = FORECASTS_DB.filter(
-      (v) => v.country_code === country_code && v.forecast_type === 'seasonal'
+      (v) => v.country_code === country_code && v.forecast_type === 'seasonal',
     );
     const dbDocs = await this.hackStoreHardcodedData(seaonalForecasts);
     this.seasonalForecastDocs.set(dbDocs);
