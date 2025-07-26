@@ -12,26 +12,12 @@
 <!-- Pending -->
 @if(downloadStatus()==='pending'){
 <div class="download-progress">
-  <mat-progress-spinner
-    [class]="'spinner' + styleVariant"
-    color="primary"
-    [mode]="downloadProgress() > 0 ? 'determinate' : 'indeterminate'"
-    [value]="downloadProgress"
-    [diameter]="size"
-    [style.width]="sizePx"
-    [attr.data-style-variant]="styleVariant"
-  >
+  <mat-progress-spinner [class]="'spinner' + styleVariant" color="primary"
+    [mode]="downloadProgress() > 0 ? 'determinate' : 'indeterminate'" [value]="downloadProgress()" [diameter]="size"
+    [style.width]="sizePx" [attr.data-style-variant]="styleVariant">
   </mat-progress-spinner>
-  <button
-    mat-button
-    class="download-cancel"
-    (click)="cancelDownload()"
-    [disabled]="downloadProgress() === 100"
-    [style.width]="sizePx"
-    [style.min-width]="sizePx"
-    [style.height]="sizePx"
-    [attr.data-style-variant]="styleVariant"
-  >
+  <button mat-button class="download-cancel" (click)="cancelDownload()" [disabled]="downloadProgress() === 100"
+    [style.width]="sizePx" [style.min-width]="sizePx" [style.height]="sizePx" [attr.data-style-variant]="styleVariant">
     <mat-icon>close</mat-icon>
   </button>
 </div>
