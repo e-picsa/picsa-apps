@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { effect, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -26,6 +27,7 @@ import {
 } from '../models/budget-tool.models';
 import { IBudgetCard, IBudgetCardWithValues } from '../schema';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
+import { BudgetService } from './budget.service';
 import { NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
 
 type IBudgetCounter = 'large' | 'large-half' | 'medium' | 'medium-half' | 'small' | 'small-half';
@@ -39,14 +41,9 @@ export class BudgetStore {
   public settings: IDeploymentSettings['budgetTool'];
   public counterSVGIcons: IBudgetCounterSVGIcons;
 
-  /** Budget column editor mode */
-  public editorEnabled = false;
-
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
-  @observable activePeriod = 0;
-  @observable activeType: IBudgetPeriodType = 'activities';
   @observable savedBudgets: IBudget[] = [];
   @observable valueCounters: IBudgetValueCounters = [[], []];
   @observable balance: IBudgetBalance = [];
@@ -58,20 +55,12 @@ export class BudgetStore {
     this.periodLabels = this.generatePeriodLabels(budget.meta);
     this.balance = this._calculateBalance(budget);
   }
-  @action setActivePeriod(index: number) {
-    this.activePeriod = index;
-  }
-  @action setActiveType(activeType: IBudgetPeriodType) {
-    this.activeType = activeType;
-  }
 
   /** Reset default budget values */
   @action unloadActiveBudget() {
     this.activeBudget = undefined as any;
     this.balance = [];
     this.valueCounters = [[], []];
-    this.activePeriod = 0;
-    this.activeType = 'activities';
   }
   get activeBudgetValue() {
     return toJS(this.activeBudget);
@@ -83,12 +72,13 @@ export class BudgetStore {
   }
 
   constructor(
+    private service: BudgetService,
     private db: PicsaDbService,
-    private configurationService: ConfigurationService,
     private printPrvdr: PrintProvider,
     private sanitizer: DomSanitizer,
     private dialogService: PicsaDialogService,
     private componentService: PicsaCommonComponentsService,
+    configurationService: ConfigurationService,
   ) {
     this.counterSVGIcons = this.createBudgetCounterSVGs();
     effect(() => {
@@ -110,7 +100,7 @@ export class BudgetStore {
   }
   // populate correct budget data based on editor data and current active cell
   saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
-    const period = this.activePeriod;
+    const period = this.service.activePeriod();
     // ensure clean write by cloning existing budget before updating deeply nested property
     const budgetData = JSON.parse(JSON.stringify(this.activeBudget.data));
     budgetData[period][type] = data;
@@ -168,9 +158,7 @@ export class BudgetStore {
    *            Editor Mode
    *
    ***************************************************************************/
-  public editorEnabledToggle() {
-    this.editorEnabled = !this.editorEnabled;
-  }
+
   public async editorAddTimePeriod() {
     const { data, meta } = this.activeBudget;
     this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;

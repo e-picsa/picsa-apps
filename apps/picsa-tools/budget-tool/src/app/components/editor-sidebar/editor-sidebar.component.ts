@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 
+import { BudgetService } from '../../store/budget.service';
 import { BudgetStore } from '../../store/budget.store';
 
 @Component({
@@ -9,12 +10,15 @@ import { BudgetStore } from '../../store/budget.store';
   standalone: false,
 })
 export class BudgetEditorSidebarComponent {
-  constructor(public store: BudgetStore) {}
+  constructor(
+    public store: BudgetStore,
+    public service: BudgetService,
+  ) {}
 
   @Output() emitClose = new EventEmitter<boolean>();
 
   public toggleEditorMode() {
-    this.store.editorEnabledToggle();
+    this.service.editMode.set(!this.service.editMode());
     this.emitClose.next(true);
   }
 }

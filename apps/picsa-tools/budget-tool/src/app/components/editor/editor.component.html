@@ -1,3 +1,4 @@
+<h2 class="period-title">{{periodLabel() | translate}}</h2>
 <!-- Editor -->
 <div id="editorContainer">
   <div *ngFor="let editorStep of editorSteps" class="type-row" [id]="'edit-' + editorStep.type">
@@ -7,14 +8,9 @@
     </div>
     <div class="selected-summary" *ngIf="data && data[editorStep.type] as selectedCards">
       <div class="selected-cards-container" [attr.data-type]="editorStep.type">
-        <budget-card-editor
-          *ngFor="let card of selectedCards; index as i; trackBy: trackByFn"
-          [card]="card"
-          [type]="editorStep.type"
-          (deleteClicked)="removeSelectedCard(editorStep.type, i)"
-          (valueChanged)="updateCardValue(editorStep.type, i, $event)"
-          @fadeInOut
-        >
+        <budget-card-editor *ngFor="let card of selectedCards; index as i; trackBy: trackByFn" [card]="card"
+          [type]="editorStep.type" (deleteClicked)="removeSelectedCard(editorStep.type, i)"
+          (valueChanged)="updateCardValue(editorStep.type, i, $event)" @fadeInOut>
         </budget-card-editor>
         <budget-card-placeholder (click)="showCardsList(editorStep.type)"></budget-card-placeholder>
       </div>
@@ -22,7 +18,7 @@
   </div>
 </div>
 <!-- Footer Next Button -->
-<button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" (click)="handleNextClick.emit()">
+<button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" (click)="nextClicked.emit()">
   Next
 </button>
 
@@ -31,20 +27,11 @@
   <div id="cardsList" *ngIf="data && periodType">
     <div #cardScroller style="flex: 1; overflow: auto" [ngSwitch]="periodType">
       <!-- Family Labour -->
-      <budget-cell-editor-family-labour
-        *ngSwitchCase="'familyLabour'"
-        @fadeInOut
-        [values]="data.familyLabour"
-        (valueChanged)="onEditorChange($event, 'familyLabour')"
-      ></budget-cell-editor-family-labour>
+      <budget-cell-editor-family-labour *ngSwitchCase="'familyLabour'" @fadeInOut [values]="data.familyLabour"
+        (valueChanged)="onEditorChange($event, 'familyLabour')"></budget-cell-editor-family-labour>
       <!-- Default Editor -->
-      <budget-cell-editor-card-select
-        *ngSwitchDefault
-        [type]="periodType"
-        [values]="data[periodType]"
-        [cards]="budgetCards"
-        (valueChanged)="onEditorChange($event, periodType)"
-      >
+      <budget-cell-editor-card-select *ngSwitchDefault [type]="periodType" [values]="data[periodType]"
+        [cards]="budgetCards" (valueChanged)="onEditorChange($event, periodType)">
       </budget-cell-editor-card-select>
     </div>
     <button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" mat-dialog-close>Next</button>
