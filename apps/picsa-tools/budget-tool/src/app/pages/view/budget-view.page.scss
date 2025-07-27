@@ -1,15 +1,11 @@
-// HACK - copied from options tool, should generalise
 .editor-popup {
   position: fixed;
   z-index: 2;
-
   width: 100%;
   top: 0;
   left: 0;
   display: flex;
-
-  margin-bottom: var(--footer-height, 0px);
-  height: calc(100% - var(--footer-height, 0px));
+  height: 100vh;
 }
 
 .slide-in {

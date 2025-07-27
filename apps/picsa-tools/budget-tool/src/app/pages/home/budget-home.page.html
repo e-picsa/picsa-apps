@@ -12,12 +12,8 @@
 
   <h2>{{ 'Saved Budgets' | translate }}</h2>
   <div *mobxAutorun data-tourid="create">
-    <budget-list-item
-      *ngFor="let budget of store.savedBudgets"
-      [routerLink]="['./view', budget._key]"
-      [budget]="budget"
-      (deleteClicked)="promptDelete(budget)"
-    >
+    <budget-list-item *ngFor="let budget of store.savedBudgets" [routerLink]="[ budget._key]" [budget]="budget"
+      (deleteClicked)="promptDelete(budget)">
     </budget-list-item>
   </div>
 </div>
