@@ -14,7 +14,7 @@
   <ng-container content>
     <!-- hide overflow so that editor can be stored outside bottom of page -->
     <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut
-      (cellClicked)="editorOpen.set(true)"></budget-table>
+      (cellClicked)="handleCellClicked($event)"></budget-table>
 
     <!-- Updated Editor -->
     <div class="editor-popup slide-in" [class.active]="editorOpen()">

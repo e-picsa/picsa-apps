@@ -35,7 +35,7 @@
       <!-- period rows -->
       <div *ngFor="let row of rows" class="cell">
         <budget-cell [periodIndex]="columnIndex" [type]="row.type"
-          (click)="onCellClick(columnIndex, row)"></budget-cell>
+          (click)="emitCellClicked(columnIndex, row)"></budget-cell>
       </div>
       <!-- Cash Balance -->
       <div class="cell">

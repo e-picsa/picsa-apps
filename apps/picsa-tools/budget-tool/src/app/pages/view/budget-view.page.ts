@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FadeInOut, OpenClosed } from '@picsa/shared/animations';
 
 import { BudgetShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
+import { IBudgetPeriodType } from '../../models/budget-tool.models';
 import { BudgetService } from '../../store/budget.service';
 import { BudgetStore } from '../../store/budget.store';
 
@@ -32,6 +33,12 @@ export class BudgetViewPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.unloadActiveBudget();
+  }
+
+  public handleCellClicked(e: { activePeriod: number; activeType: IBudgetPeriodType }) {
+    this.service.activePeriod.set(e.activePeriod);
+    this.service.activeType.set(e.activeType);
+    this.editorOpen.set(true);
   }
 
   async showShareDialog() {

@@ -221,11 +221,9 @@ export class BudgetStore {
     }
   }
   async loadBudget(budget: IBudget) {
-    console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
     this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
-    console.log('patching header', budget.meta.title);
     this.componentService.patchHeader({ title: budget.meta.title });
   }
 

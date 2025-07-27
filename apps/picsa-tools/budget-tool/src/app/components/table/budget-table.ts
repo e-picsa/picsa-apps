@@ -1,6 +1,6 @@
 import { Component, Input, output } from '@angular/core';
 
-import { IBudget } from '../../models/budget-tool.models';
+import { IBudget, IBudgetPeriodType } from '../../models/budget-tool.models';
 import { BudgetService } from '../../store/budget.service';
 import { BudgetStore } from '../../store/budget.store';
 import { BUDGET_PERIOD_ROWS, IBudgetPeriodRow } from '../../store/templates';
@@ -15,16 +15,14 @@ export class BudgetTableComponent {
   @Input() budget: IBudget;
   rows = BUDGET_PERIOD_ROWS;
 
-  cellClicked = output();
+  cellClicked = output<{ activePeriod: number; activeType: IBudgetPeriodType }>();
 
   constructor(
     public store: BudgetStore,
     public service: BudgetService,
   ) {}
 
-  public onCellClick(columnIndex: number, row: IBudgetPeriodRow) {
-    this.service.activePeriod.set(columnIndex);
-    this.service.activeType.set(row.type);
-    this.cellClicked.emit();
+  public emitCellClicked(columnIndex: number, row: IBudgetPeriodRow) {
+    this.cellClicked.emit({ activePeriod: columnIndex, activeType: row.type });
   }
 }
