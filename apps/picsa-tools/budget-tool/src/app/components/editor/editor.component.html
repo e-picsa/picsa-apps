@@ -13,7 +13,7 @@
     @if (data[editorStep.type]; as selectedCards) {
     <div class="selected-summary">
       <div class="selected-cards-container" [attr.data-type]="editorStep.type">
-        @for (card of selectedCards; track card.id) {
+        @for (card of selectedCards; track card.id+$index) {
         <budget-card-editor [card]="card" [type]="editorStep.type"
           (deleteClicked)="removeSelectedCard(editorStep.type, $index)"
           (valueChanged)="updateCardValue(editorStep.type, $index, $event)" @fadeInOut>
