@@ -143,7 +143,8 @@ mat-stepper.slim-headers {
     height: 48px;
   }
 }
-mat-stepper.responsive-content-padding {
+mat-stepper.responsive-content-padding,
+mat-horizontal-stepper.responsive-content-padding {
   .mat-horizontal-content-container {
     // keep enough padding to see shadow
     @apply p-2 sm:px-6 sm:pb-6;
