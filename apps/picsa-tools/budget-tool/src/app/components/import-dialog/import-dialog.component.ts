@@ -22,7 +22,10 @@ export class BudgetImportDialogComponent {
     { name: 'code-input-3', value: '' },
   ];
 
-  constructor(private store: BudgetStore, private router: Router) {}
+  constructor(
+    private store: BudgetStore,
+    private router: Router,
+  ) {}
 
   public async handleImport() {
     const code = this.importValue;
@@ -31,7 +34,7 @@ export class BudgetImportDialogComponent {
     await _wait(200);
     const budget = await this.store.loadBudgetByShareCode(code);
     if (budget) {
-      this.router.navigate([location.pathname, 'view', budget._key]);
+      this.router.navigate([location.pathname, budget._key]);
       this.status = 'Import success ';
     } else {
       this.status = 'Code not found';

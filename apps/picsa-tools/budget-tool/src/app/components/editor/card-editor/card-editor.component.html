@@ -9,11 +9,11 @@
 
   <!-- Inputs/Outputs Editor -->
   <div class="input-values" *ngIf="type === 'inputs' || type === 'outputs'">
-    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+    <mat-form-field class="card-input-field quantity no-padding">
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
       <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
     </mat-form-field>
-    <mat-form-field class="card-input-field cost">
+    <mat-form-field class="card-input-field cost no-padding">
       <mat-label>{{ 'Cost' | translate }}</mat-label>
       <input matInput [value]="card.values.cost" type="number" (change)="setValue($event, 'cost')" />
       <span matTextPrefix>{{ currency }} &nbsp;</span>
@@ -32,27 +32,19 @@
 
   <!-- Family Labor Editor -->
   <div class="input-values" *ngIf="type === 'familyLabour'">
-    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+    <mat-form-field class="card-input-field quantity">
       <mat-label>{{ 'Days' | translate }}</mat-label>
-      <input
-        matInput
-        [value]="card.values ? card.values.quantity : null"
-        type="number"
-        (change)="setValue($event, 'quantity')"
-      />
+      <input matInput [value]="card.values ? card.values.quantity : null" type="number"
+        (change)="setValue($event, 'quantity')" />
     </mat-form-field>
   </div>
 
   <!-- Produce Consumed Editor -->
   <div class="input-values" *ngIf="type === 'produceConsumed'">
-    <mat-form-field class="card-input-field quantity" style="margin-right: 8px">
+    <mat-form-field class="card-input-field quantity">
       <mat-label>{{ 'Quantity' | translate }}</mat-label>
-      <input
-        matInput
-        [value]="card.values ? card.values.quantity : null"
-        type="number"
-        (change)="setProduceConsumed($event)"
-      />
+      <input matInput [value]="card.values ? card.values.quantity : null" type="number"
+        (change)="setProduceConsumed($event)" />
     </mat-form-field>
   </div>
 </div>

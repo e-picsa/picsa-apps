@@ -14,16 +14,13 @@ export class BudgetPeriodSummaryComponent {
   @Input() periodIndex: number;
   rows = BUDGET_PERIOD_ROWS;
 
-  constructor(public store: BudgetStore, private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    public store: BudgetStore,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
   onCellClick(row: IBudgetPeriodRow) {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        type: row.type,
-      },
-      queryParamsHandling: 'merge',
-      replaceUrl: true,
-    });
+    //
   }
 }

@@ -1,4 +1,4 @@
-<div id="budget" [attr.data-editorEnabled]="store.editorEnabled">
+<div id="budget" [attr.data-editorEnabled]="service.editMode()">
   <!-- parent budget div used so additional h1 can be added here on print -->
   <div class="budget-container">
     <!-- First column -->
@@ -20,33 +20,22 @@
     <div class="time-period" *ngFor="let column of store.activeBudget.data; let columnIndex = index">
       <div class="time-period-title cell top-row">
         <!-- Editor - Delete -->
-        <button
-          mat-button
-          class="editor-button"
-          *ngIf="store.editorEnabled"
-          (click)="store.editorDeleteTimePeriod(columnIndex)"
-        >
+        <button mat-button class="editor-button" *ngIf="service.editMode()"
+          (click)="store.editorDeleteTimePeriod(columnIndex)">
           <mat-icon style="margin: 0">delete</mat-icon>
         </button>
         <!-- Label -->
         <span style="flex: 1">{{ store.periodLabels[columnIndex] | translate }}</span>
         <!-- Editor - Copy -->
-        <button
-          mat-button
-          class="editor-button"
-          *ngIf="store.editorEnabled"
-          (click)="store.editorCopyTimePeriod(columnIndex)"
-        >
+        <button mat-button class="editor-button" *ngIf="service.editMode()"
+          (click)="store.editorCopyTimePeriod(columnIndex)">
           <mat-icon style="margin: 0">content_copy</mat-icon>
         </button>
       </div>
       <!-- period rows -->
       <div *ngFor="let row of rows" class="cell">
-        <budget-cell
-          [periodIndex]="columnIndex"
-          [type]="row.type"
-          (click)="onCellClick(columnIndex, row)"
-        ></budget-cell>
+        <budget-cell [periodIndex]="columnIndex" [type]="row.type"
+          (click)="emitCellClicked(columnIndex, row)"></budget-cell>
       </div>
       <!-- Cash Balance -->
       <div class="cell">
@@ -64,14 +53,14 @@
       </div>
     </div>
     <!-- Editor - Add month -->
-    <div class="time-period" *ngIf="store.editorEnabled">
+    <div class="time-period" *ngIf="service.editMode()">
       <button mat-button style="height: 100%; background: wheat" (click)="store.editorAddTimePeriod()">
         <mat-icon>add</mat-icon>
       </button>
     </div>
   </div>
   <!-- Editor save -->
-  <div class="editor-save" *ngIf="store.editorEnabled" style="display: flex" (click)="store.editorEnabledToggle()">
+  <div class="editor-save" *ngIf="service.editMode()" style="display: flex" (click)="service.editMode.set(false)">
     <button mat-raised-button color="primary" class="footer-button">{{'Save' | translate}}</button>
   </div>
 </div>
