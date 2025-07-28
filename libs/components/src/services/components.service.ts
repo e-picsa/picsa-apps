@@ -3,6 +3,8 @@ import { Injectable, signal } from '@angular/core';
 import { isEqual } from '@picsa/utils/object.utils';
 import { BehaviorSubject } from 'rxjs';
 
+import type { PicsaSidenavComponent } from '../components';
+
 export interface IHeaderOptions {
   title?: string;
   style?: 'inverted' | 'primary';
@@ -13,6 +15,7 @@ export interface IHeaderOptions {
 
   hideBackButton?: boolean;
   hideHeader?: boolean;
+  hideSidenavHeader?: boolean;
 }
 export interface IBreadcrumbOptions {
   enabled?: boolean;
@@ -23,6 +26,8 @@ export interface IBreadcrumbOptions {
 export class PicsaCommonComponentsService {
   headerOptions = signal<IHeaderOptions>({}, { equal: isEqual });
   breadcrumbOptions$ = new BehaviorSubject<IBreadcrumbOptions>({});
+
+  public sidenav: PicsaSidenavComponent;
 
   /** Track navigation history - used by back-button components (multi-instance) */
   public navHistory: string[] = [];
@@ -49,8 +54,7 @@ export class PicsaCommonComponentsService {
     this.breadcrumbOptions$.next(updated);
   }
 
-  public back() {
-    // access to back implementation provided by back-button component (will be overridden)
-    console.warn('No back method specified');
+  public registerSidenav(sidenav: PicsaSidenavComponent) {
+    this.sidenav = sidenav;
   }
 }
