@@ -17,10 +17,8 @@ import { BehaviorSubject } from 'rxjs';
 
 import {
   IBudget,
-  IBudgetBalance,
   IBudgetCodeDoc,
   IBudgetMeta,
-  IBudgetPeriodData,
   IBudgetPeriodType,
   IBudgetValueCounters,
   IBudgetValueScale,

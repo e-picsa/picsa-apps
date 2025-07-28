@@ -39,19 +39,58 @@
       </div>
       <!-- Cash Balance -->
       <div class="cell">
-        <div *ngIf="store.balance && store.balance[columnIndex]" class="balance-cell-contents">
+        @if(service.cashBalances()[columnIndex]; as cashBalance){
+        <div class="balance-cell-contents">
           <div class="balance-value-container">
             <div class="balance-label">{{ store.periodLabels[columnIndex] | translate }}</div>
-            <div class="balance-value">{{ store.balance[columnIndex].period | number: '.0' }}</div>
+            <div class="balance-value">{{ cashBalance.balance | number: '.0' }}</div>
           </div>
           <hr />
           <div class="balance-value-container">
             <div class="balance-label">{{ 'Total' | translate }}</div>
-            <div class="balance-value">{{ store.balance[columnIndex].running | number: '.0' }}</div>
+            <div class="balance-value">{{ cashBalance.cumulative | number: '.0' }}</div>
           </div>
         </div>
+        }
+
       </div>
     </div>
+
+    <!-- Total Summary - -->
+    @if(!service.editMode()){
+    <div class="time-period">
+      <div class="time-period-title cell top-row">{{'Summary' | translate}}</div>
+      @for(row of rows; track row.type){
+      <div class="cell summary">
+        @switch (row.type) {
+        @case('familyLabour'){
+        <div class="flex items-center mb-1">
+          <img src="assets/budget-cards/family-labour_adultFemale.svg" class="w-8" />
+          <span>{{service.familyLaborTotal().female}}</span>
+          <img src="assets/budget-cards/family-labour_adultMale.svg" class="w-8 ml-2" />
+          <span>{{service.familyLaborTotal().male}}</span>
+        </div>
+        <mat-divider class="w-full"></mat-divider>
+        <div class="mt-1">{{service.familyLaborTotal().total}} {{'Days' | translate}}</div>
+        }
+        @case('produceConsumed'){
+        <div class="flex flex-wrap gap-2">
+          @for (entry of service.produceConsumedTotal(); track entry.id) {
+          <div class="flex items-center">
+            <img [src]="entry.image" class="w-10 h-10" />
+            <span class="summary-value">{{entry.total }}</span>
+          </div>
+          }
+        </div>
+        }
+        }
+      </div>
+      }
+      <div class="cell summary">{{service.settings().currency}} {{service.cashBalanceTotal() | number: '.0'}}</div>
+    </div>
+    }
+
+
     <!-- Editor - Add month -->
     <div class="time-period" *ngIf="service.editMode()">
       <button mat-button style="height: 100%; background: wheat" (click)="store.editorAddTimePeriod()">
