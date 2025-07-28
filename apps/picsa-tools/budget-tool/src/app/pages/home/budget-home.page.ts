@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { BudgetImportDialogComponent } from '../../components/import-dialog/import-dialog.component';
@@ -19,9 +20,11 @@ export class BudgetHomePage {
     public store: BudgetStore,
     private dialog: PicsaDialogService,
     private matDialog: MatDialog,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
-  async promptDelete(budget: IBudget) {
+  public async promptDelete(budget: IBudget) {
     const dialog = await this.dialog.open('delete');
     dialog.afterClosed().subscribe((v) => {
       if (v) {
@@ -33,7 +36,12 @@ export class BudgetHomePage {
     this.matDialog.open(BudgetImportDialogComponent);
   }
   public showBudgetCreate() {
-    this.matDialog.open(BudgetCreatePage, { panelClass: 'no-padding' });
+    const dialog = this.matDialog.open(BudgetCreatePage, { panelClass: 'no-padding' });
+    dialog.afterClosed().subscribe((budgetKey) => {
+      if (budgetKey) {
+        this.router.navigate([budgetKey], { relativeTo: this.route });
+      }
+    });
   }
 
   async deleteBudget(budget: IBudget) {

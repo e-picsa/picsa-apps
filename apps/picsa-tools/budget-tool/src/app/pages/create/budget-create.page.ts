@@ -1,9 +1,8 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MONTH_DATA } from '@picsa/data';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -48,9 +47,8 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,
-    private router: Router,
-    private route: ActivatedRoute,
     private cardService: BudgetCardService,
+    private dialogRef: MatDialogRef<BudgetCreatePage>,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -122,9 +120,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
     // generate period data
     const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
     await this.store.patchBudget({ data, meta });
-    this.router.navigate([this.store.activeBudget._key], {
-      relativeTo: this.route,
-    });
+    this.dialogRef.close(this.store.activeBudget._key);
   }
 
   public trackByFn(index: number, item: IBudgetCard) {

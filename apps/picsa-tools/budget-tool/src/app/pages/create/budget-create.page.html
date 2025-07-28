@@ -5,7 +5,7 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Enterprise' | translate }}</ng-template>
         <h2>{{ 'What is your type of enterprise?' | translate }}</h2>
-        <div class="flex flex-wrap gap-2 sm:gap-4">
+        <div class="card-list">
           <budget-card *ngFor="let card of enterpriseTypeCards; trackBy: trackByFn" [card]="card"
             (click)="enterpriseTypeClicked(card.id)" [selected]="enterpriseType === card.id" @fadeInOut></budget-card>
         </div>
@@ -21,7 +21,7 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Select' | translate }}</ng-template>
         <h2 *ngIf="filteredEnterprises.length" @fadeInOut>{{ 'Select Enterprise' | translate }}</h2>
-        <div style="display: flex; flex-wrap: wrap">
+        <div class="card-list">
           <budget-card *ngFor="let enterprise of filteredEnterprises" [card]="enterprise"
             (click)="setEnterprise(enterprise)" [selected]="budgetMetaForm.value.enterprise.id === enterprise.id"
             @fadeInOut>
@@ -42,7 +42,7 @@
       <mat-step>
         <ng-template matStepLabel>{{ 'Length' | translate }}</ng-template>
         <h2>{{ 'How long is your budget for?' | translate }}</h2>
-        <div style="display: flex; flex-wrap: wrap; align-items: center">
+        <div class="flex flex-wrap items-center">
           <button mat-button class="variable-container editable" (click)="periodTotalSelect.open()">
             <span class="variable-value">{{ budgetMetaForm.value.lengthTotal }}</span>
             <mat-select class="select--hidden" #periodTotalSelect formControlName="lengthTotal" style="opacity: 0">
