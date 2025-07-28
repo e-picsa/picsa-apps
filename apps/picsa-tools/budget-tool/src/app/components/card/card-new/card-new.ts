@@ -4,7 +4,8 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { toJS } from 'mobx';
 
-import { IBudgetCard, IBudgetCardGrouping, IBudgetCardType } from '../../../schema';
+import { IEnterpriseGroupType } from '../../../data';
+import { IBudgetCard, IBudgetCardType } from '../../../schema';
 import { BudgetStore } from '../../../store/budget.store';
 import { BudgetCardService } from '../../../store/budget-card.service';
 import { BudgetCardNewDialog } from './card-new-dialog';
@@ -21,7 +22,11 @@ export class BudgetCardNew {
   @Output() cardSaved = new EventEmitter<IBudgetCard>();
   card = PLACEHOLDER_CARD;
 
-  constructor(public dialog: MatDialog, public store: BudgetStore, private cardService: BudgetCardService) {}
+  constructor(
+    public dialog: MatDialog,
+    public store: BudgetStore,
+    private cardService: BudgetCardService,
+  ) {}
 
   showCardDialog() {
     // groupings should match the current enterprise unless otherwise specified
@@ -35,7 +40,7 @@ export class BudgetCardNew {
       id: generateID(),
       label: '',
       type,
-      groupings: groupings as IBudgetCardGrouping[],
+      groupings: groupings as IEnterpriseGroupType[],
       imgType: 'svg',
     };
     const dialogRef = this.dialog.open(BudgetCardNewDialog, {
