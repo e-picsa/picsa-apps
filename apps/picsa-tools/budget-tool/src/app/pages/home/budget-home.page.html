@@ -1,6 +1,6 @@
 <div class="page-content">
   <div class="button-grid">
-    <button mat-stroked-button color="primary" (click)="createClicked()" data-tourid="create">
+    <button mat-stroked-button color="primary" (click)="showBudgetCreate()" data-tourid="create">
       <div>{{ 'Create New Budget' | translate }}</div>
       <img src="assets/budget-icons/budget-create.svg" />
     </button>
@@ -16,4 +16,6 @@
       (deleteClicked)="promptDelete(budget)">
     </budget-list-item>
   </div>
+
+
 </div>

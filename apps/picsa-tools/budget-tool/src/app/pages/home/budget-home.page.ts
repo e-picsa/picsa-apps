@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { BudgetImportDialogComponent } from '../../components/import-dialog/import-dialog.component';
 import { IBudget } from '../../models/budget-tool.models';
 import { BudgetStore } from '../../store/budget.store';
+import { BudgetCreatePage } from '../create/budget-create.page';
 @Component({
   selector: 'budget-home',
   templateUrl: './budget-home.page.html',
@@ -17,18 +17,13 @@ export class BudgetHomePage {
   budgetDownloadMessage: string;
   constructor(
     public store: BudgetStore,
-    private router: Router,
-    private route: ActivatedRoute,
     private dialog: PicsaDialogService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
   ) {}
 
-  createClicked() {
-    this.router.navigate(['create'], { relativeTo: this.route });
-  }
   async promptDelete(budget: IBudget) {
     const dialog = await this.dialog.open('delete');
-    await dialog.afterClosed().subscribe((v) => {
+    dialog.afterClosed().subscribe((v) => {
       if (v) {
         this.deleteBudget(budget);
       }
@@ -36,6 +31,9 @@ export class BudgetHomePage {
   }
   public importBudgetCode() {
     this.matDialog.open(BudgetImportDialogComponent);
+  }
+  public showBudgetCreate() {
+    this.matDialog.open(BudgetCreatePage, { panelClass: 'no-padding' });
   }
 
   async deleteBudget(budget: IBudget) {

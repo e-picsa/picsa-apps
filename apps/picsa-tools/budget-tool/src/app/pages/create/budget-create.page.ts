@@ -1,11 +1,16 @@
+/* eslint-disable @nx/enforce-module-boundaries */
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MONTH_DATA } from '@picsa/data';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
+import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
+import { BudgetMaterialModule } from '../../material.module';
 import { IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
 import { IBudgetCard } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
@@ -18,7 +23,15 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   styleUrls: ['./budget-create.page.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    BudgetMaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BudgetToolComponentsModule,
+    PicsaTranslateModule,
+  ],
 })
 export class BudgetCreatePage implements OnInit, OnDestroy {
   budgetMetaForm: FormGroup;
@@ -44,7 +57,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   async ngOnInit() {
     this.store.createNewBudget();
     this.generateBudgetForm();
-    this.enterpriseTypeCards = await this.cardService.getEnterpriseGroupCards();
+    this.enterpriseTypeCards = this.cardService.enterpriseGroups;
     this.subscribeToEnterpriseChanges();
     this.cdr.markForCheck();
   }
@@ -98,6 +111,8 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
         takeUntil(this.componentDestroyed$),
       )
       .subscribe((enterprises) => {
+        // TODO - read from hardcoded data to preserve order?
+        console.log('enterprises', enterprises);
         this.filteredEnterprises = enterprises.filter((e) => e.groupings?.includes(this.enterpriseType as any));
         this.cdr.markForCheck();
       });
