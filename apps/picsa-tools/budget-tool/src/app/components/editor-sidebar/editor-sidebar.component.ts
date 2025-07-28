@@ -32,7 +32,7 @@ export class BudgetEditorSidebarComponent {
     this.router.navigate(['../'], { relativeTo: this.route, replaceUrl: true });
   }
 
-  async showShareDialog() {
+  public showShareDialog() {
     this.dialog.open(BudgetShareDialogComponent, { disableClose: true });
   }
 }

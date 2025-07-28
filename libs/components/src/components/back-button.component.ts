@@ -9,15 +9,17 @@ import { NavigationStackService } from '../services/navStack.service';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'back-button',
   template: `
-    @if (variant === 'primary') {
-      <button mat-button color="primary" (click)="navStackService.back()">
-        <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
-      </button>
-    }
-    @if (variant === 'white') {
-      <button mat-button style="color:white" (click)="navStackService.back()">
-        <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
-      </button>
+    @switch (variant) {
+      @case ('white') {
+        <button mat-button style="color:white" (click)="navStackService.back()">
+          <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
+        </button>
+      }
+      @default {
+        <button mat-button color="primary" (click)="navStackService.back()">
+          <mat-icon>arrow_back</mat-icon>{{ 'Back' | translate }}
+        </button>
+      }
     }
   `,
   imports: [MatButtonModule, MatIconModule, PicsaTranslateModule],
