@@ -1,4 +1,14 @@
-import { Component, computed, effect, ElementRef, output, signal, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  OnDestroy,
+  output,
+  signal,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FadeInOut } from '@picsa/shared/animations';
 import { _wait } from '@picsa/utils';
@@ -20,7 +30,7 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   // TODO - need full table detection on push to track propertly changes
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BudgetEditorComponent {
+export class BudgetEditorComponent implements OnDestroy {
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
   @ViewChild('cardScroller', { static: false }) cardScroller: ElementRef<HTMLDivElement>;
@@ -59,6 +69,10 @@ export class BudgetEditorComponent {
         this.loadEditorData();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.cardSubscription?.unsubscribe();
   }
 
   private async loadBudgetCards(type: IBudgetPeriodType) {
