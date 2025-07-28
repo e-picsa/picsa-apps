@@ -44,7 +44,6 @@ export class BudgetStore {
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
-  @observable savedBudgets: IBudget[] = [];
   @observable valueCounters: IBudgetValueCounters = [[], []];
   @observable balance: IBudgetBalance = [];
 
@@ -198,12 +197,11 @@ export class BudgetStore {
   }
   async saveBudget() {
     await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, true);
-    await this.loadSavedBudgets();
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
-      await this.loadSavedBudgets();
-      const budget = this.savedBudgets.find((b) => b._key === key);
+      const budgets = await this.loadSavedBudgets();
+      const budget = budgets.find((b) => b._key === key);
       if (budget) {
         this.loadBudget(toJS(budget));
       } else {
@@ -227,9 +225,9 @@ export class BudgetStore {
     this.componentService.patchHeader({ title: budget.meta.title });
   }
 
-  private async loadSavedBudgets(): Promise<void> {
+  public async loadSavedBudgets() {
     const budgets = await this.db.getCollection<IBudget>('budgetTool/${GROUP}/budgets');
-    this.savedBudgets = budgets.sort((a, b) => (b._modified > a._modified ? 1 : -1));
+    return budgets.sort((a, b) => (b._modified > a._modified ? 1 : -1));
   }
 
   async deleteBudget(budget: IBudget) {
@@ -237,7 +235,6 @@ export class BudgetStore {
     if (budget.shareCode) {
       await this.db.deleteDocs('budgetTool/default/shareCodes', [budget.shareCode]);
     }
-    this.loadSavedBudgets();
   }
 
   /** Duplicate a server budget and save locally */
@@ -286,7 +283,6 @@ export class BudgetStore {
    ***************************************************************************/
   @action
   public async init() {
-    this.loadSavedBudgets();
     await this.checkForUpdates();
     this.storeReady = true;
   }

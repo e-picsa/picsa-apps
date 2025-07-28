@@ -94,6 +94,10 @@
 .cell {
   border-bottom: 1px solid gray;
 }
+.cell.summary {
+  @apply flex flex-col items-center justify-center text-center;
+  border-bottom: none;
+}
 
 .image-holder {
   height: 100%;

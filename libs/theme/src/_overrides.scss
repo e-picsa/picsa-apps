@@ -110,6 +110,11 @@ mat-form-field.no-hint {
     display: none;
   }
 }
+// Remove padding at start and end of mat-form-field outlined variant
+.mdc-text-field--outlined {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
 
 // Reduce placeholder font size (inherited above)
 .mdc-text-field__input::placeholder {
