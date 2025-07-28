@@ -1,12 +1,4 @@
 <picsa-sidenav-layout #picsaSidenav *mobxAutorun>
-  <!-- Header -->
-  <button desktopHeader mat-button color="primary" *ngIf="!editorOpen()" aria-label="Share" (click)="showShareDialog()">
-    <mat-icon>share</mat-icon>{{'Share' | translate }}
-  </button>
-  <button mobileHeader mat-button color="primary" *ngIf="!editorOpen()" aria-label="Share" (click)="showShareDialog()">
-    <mat-icon>share</mat-icon>{{'Share' | translate }}
-  </button>
-
   <!-- Sidenav -->
   <budget-editor-sidebar sidenav (emitClose)="picsaSidenav.close()"></budget-editor-sidebar>
 

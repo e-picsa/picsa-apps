@@ -38,7 +38,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cardService: BudgetCardService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {
@@ -95,7 +95,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
           const ref = this.cardService.dbCollection.find({ selector: { type: 'enterprise' } });
           return ref.$.pipe(map((docs) => docs.map((doc) => doc._data)));
         }),
-        takeUntil(this.componentDestroyed$)
+        takeUntil(this.componentDestroyed$),
       )
       .subscribe((enterprises) => {
         this.filteredEnterprises = enterprises.filter((e) => e.groupings?.includes(this.enterpriseType as any));
@@ -107,7 +107,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
     // generate period data
     const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
     await this.store.patchBudget({ data, meta });
-    this.router.navigate(['../', 'view', this.store.activeBudget._key], {
+    this.router.navigate([this.store.activeBudget._key], {
       relativeTo: this.route,
     });
   }
@@ -132,7 +132,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   private _generateFormFromValues(v: any, requiredFields: string[] = []) {
     const fieldGroup = {};
     Object.keys(v).forEach(
-      (key) => (fieldGroup[key] = [v[key], requiredFields.includes(key) ? Validators.required : null])
+      (key) => (fieldGroup[key] = [v[key], requiredFields.includes(key) ? Validators.required : null]),
     );
     return this.fb.group(fieldGroup);
   }

@@ -26,6 +26,14 @@
             <span>{{ 'Forecasts' | translate}}</span>
           </div>
         </a>
+        @if(userType()==='farmer'){
+        <a mat-list-item routerLink="/farmer/beyond-picsa" (click)="drawer.close()">
+          <div style="display: flex; align-items: center">
+            <mat-icon style="margin-right: 8px">remember_me</mat-icon>
+            <span>{{ 'Digital Skills' | translate}}</span>
+          </div>
+        </a>
+        }
       </mat-nav-list>
       <picsa-configuration-summary style="margin-top: auto; padding: 4px" (click)="drawer.close()" />
       <footer>

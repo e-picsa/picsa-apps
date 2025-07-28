@@ -19,7 +19,7 @@
   @apply fixed left-0 w-screen h-screen z-10 overflow-hidden;
 }
 .tool-header {
-  @apply flex items-center;
+  @apply flex items-center gap-8 h-12;
 }
 mat-icon.tool-icon {
   @apply h-16 w-16;

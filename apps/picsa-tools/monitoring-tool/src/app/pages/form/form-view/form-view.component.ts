@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { NavigationStackService } from '@picsa/components/src/services/navStack.service';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
 import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
@@ -48,8 +48,8 @@ export class FormViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private monitoringService: MonitoringToolService,
-    private componentService: PicsaCommonComponentsService,
     private dialogService: PicsaDialogService,
+    private navStackService: NavigationStackService,
   ) {}
 
   async ngOnDestroy(): Promise<void> {
@@ -69,7 +69,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
     this.formEntry = entry;
     await this.finaliseForm('UPDATE');
     await this.monitoringService.showMessage('FORM_SAVE_SUCCESS');
-    this.componentService.back();
+    this.navStackService.back();
   }
 
   /** Handle save event triggered from button */
@@ -78,7 +78,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
       this.formEntry.draft = false;
       await this.finaliseForm('UPDATE');
       await this.monitoringService.showMessage('FORM_SUBMIT_SUCCESS');
-      this.componentService.back();
+      this.navStackService.back();
     }
   }
 
@@ -94,7 +94,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
       if (shouldDelete) {
         await this.finaliseForm('DELETE');
         await this.monitoringService.showMessage('FORM_DELETE_SUCCESS');
-        this.componentService.back();
+        this.navStackService.back();
       }
     });
   }

@@ -1,15 +1,5 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { DomPortal } from '@angular/cdk/portal';
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  input,
-  OnInit,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, computed, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
@@ -20,8 +10,6 @@ import { PicsaCommonComponentsService } from '../services/components.service';
  * @example
  * ```
  * <picsa-sidenav-layout>
- *  <div desktopHeader>This will appear in desktop header</div>
- *  <div mobileHeader>This will appear in mobile sidenav header</div>
  *  <div sidenav>This will appear in sidenav</div>
  *  <div content>This will appear in main content</div>
  * </picsa-sidename-layout>
@@ -32,20 +20,6 @@ import { PicsaCommonComponentsService } from '../services/components.service';
 @Component({
   selector: 'picsa-sidenav-layout',
   template: `
-    <div #headerContent [style.display]="headerAttached ? 'contents' : 'none'">
-      <!-- desktop-only header -->
-      <div [style.display]="mobileQuery.matches ? 'none' : 'contents'">
-        <ng-content select="[desktopHeader]"></ng-content>
-      </div>
-      <!-- default buttons -->
-      <button mat-button color="primary" #optionsToggleButton (click)="snav.toggle()">
-        <span style="margin-right: 8px">
-          <span>{{ 'Options' | translate }}</span>
-        </span>
-        <mat-icon iconPositionEnd>menu</mat-icon>
-      </button>
-    </div>
-
     <mat-sidenav-container style="flex: 1" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
       <mat-sidenav
         #snav
@@ -121,35 +95,41 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   ],
   standalone: false,
 })
-export class PicsaSidenavComponent implements OnInit, AfterViewInit {
+export class PicsaSidenavComponent implements OnInit, OnDestroy {
   private _mobileQueryListener: () => void;
   public mobileQuery: MediaQueryList;
 
   public headerAttached = false;
+
+  public hideHeader = input(false);
 
   /** Specify whether should be initially opened */
   initialOpen = input<boolean>();
 
   public opened = signal(this.initialOpen() ? true : false);
 
-  @ViewChild('headerContent') headerContent: ElementRef<HTMLElement>;
+  public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
+
   @ViewChild(MatSidenav) matSidenav: MatSidenav;
 
   constructor(
-    private componentsService: PicsaCommonComponentsService,
+    public componentsService: PicsaCommonComponentsService,
     private media: MediaMatcher,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
+    this.componentsService.registerSidenav(this);
+    this.componentsService.patchHeader({ showSidenavToggle: true });
     this.subscribeToLayoutChanges();
   }
-  ngAfterViewInit() {
-    setTimeout(() => {
-      const cdkPortalEnd = new DomPortal(this.headerContent);
-      this.componentsService.patchHeader({ cdkPortalEnd });
-      this.headerAttached = true;
-    }, 50);
+
+  ngOnDestroy(): void {
+    this.componentsService.patchHeader({ showSidenavToggle: false });
+  }
+
+  public toggle() {
+    this.matSidenav.toggle();
   }
 
   /** Public method to trigger sidebar close from child content */

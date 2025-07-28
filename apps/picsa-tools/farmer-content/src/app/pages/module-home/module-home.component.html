@@ -52,7 +52,7 @@
   }
 
   <!-- Custom Footer -->
-  <div class="mt-6 text-secondary flex items-center">
+  <div class="my-6 text-secondary flex items-center">
     <button mat-icon-button style="color: black" routerLink="/farmer"><mat-icon>home</mat-icon></button>
     @if(nextModule(); as nextModule){
     <button mat-button class="flex-1" (click)="goToModule(nextModule)">
@@ -68,28 +68,24 @@
 <!-- Tool Popup -->
 <!-- TODO - refactor to component (?) -->
 @if(toolStep(); as toolStep){
-<div
-  id="toolStep"
-  class="page tool-container"
-  [attr.data-has-header]="toolStep.tool.showHeader ? true : undefined"
-  [@flyInOut]="toolRouteSegments().length > 0 && !toolHidden() ? 'in' : 'out'"
->
-  @if(toolStep.tool.showHeader){
-  <!-- TODO - handle offset -->
-  } @else {
+<div id="toolStep" class="page tool-container"
+  [@flyInOut]="toolRouteSegments().length > 0 && !toolHidden() ? 'in' : 'out'">
+
   <!-- Custom tool header -->
   <div class="tool-header">
-    @if(toolRouteSegments().length > 1){
-    <back-button variant="primary"></back-button>
-    }
-
-    <button mat-button color="primary" class="p-4 m-2 ml-auto" (click)="hideTool()">
+    <button mat-button color="primary" class="p-4 flex-1" (click)="hideTool()">
       {{ 'Close' | translate }}
       <mat-icon>close</mat-icon>
     </button>
+    @if(showSidenavToggle()){
+    <button mat-button color="primary" class="p-4 flex-1" (click)="componentsService.toggleSidenav()">
+      {{ 'Options' | translate }}
+      <mat-icon>menu</mat-icon>
+    </button>
+    }
+
   </div>
 
-  }
 
   <router-outlet #toolRouter></router-outlet>
 </div>
