@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { BackButton, PicsaCommonComponentsService } from '@picsa/components/src';
+import { BackButton, PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
@@ -37,6 +37,7 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
     MatIconModule,
     PhotoInputComponent,
     PhotoListComponent,
+    PicsaCommonComponentsModule,
     RouterModule,
   ],
   templateUrl: './module-home.component.html',
@@ -115,12 +116,16 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     // Hide regular header when tool not in view (avoid conflicting local and tool headers)
     effect(() => {
       const hideHeader = this.toolHidden() || this.toolRouteSegments().length === 0;
-      this.componentService.patchHeader({ hideHeader });
+      this.componentService.patchHeader({ hideHeader, hideBackButton: true, hideSidenavHeader: true });
+      // Ensure any tool sidenav removed
+      if (hideHeader) {
+        this.componentService.patchHeader({ cdkPortalEnd: undefined });
+      }
     });
   }
 
   ngOnDestroy() {
-    this.componentService.patchHeader({ hideHeader: false });
+    this.componentService.patchHeader({ hideHeader: false, hideBackButton: false, hideSidenavHeader: false });
   }
 
   public showTool() {
@@ -140,6 +145,13 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     const toolStep = this.toolStep();
     if (toolStep) {
       this.toolHidden.set(true);
+    }
+  }
+
+  public toggleToolSidenav() {
+    const sidenav = this.componentService.sidenav;
+    if (sidenav) {
+      sidenav.toggle();
     }
   }
 

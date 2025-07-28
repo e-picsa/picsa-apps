@@ -9,17 +9,7 @@ export const ROUTES_COMMON: Routes = [
     title: translateMarker('Budget Tool'),
   },
   {
-    path: 'create',
-    loadChildren: () => import('./pages/create/budget-create.module').then((mod) => mod.BudgetCreatePageModule),
-    title: translateMarker('New Budget'),
-  },
-  {
-    path: 'view',
-    redirectTo: '/',
-    pathMatch: 'full',
-  },
-  {
-    path: 'view/:budgetKey',
+    path: ':budgetKey',
     loadChildren: () => import('./pages/view/budget-view.module').then((mod) => mod.BudgetViewPageModule),
     data: {
       headerStyle: 'inverted',
