@@ -86,6 +86,8 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     return undefined;
   });
 
+  public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
+
   /** Manually trigger content fade by setting signal (used when changing modules dynamically) */
   public fadeInContent = signal(true);
 
@@ -103,7 +105,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private componentService: PicsaCommonComponentsService,
+    public componentsService: PicsaCommonComponentsService,
   ) {
     effect(() => {
       const content = this.content();
@@ -116,16 +118,12 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     // Hide regular header when tool not in view (avoid conflicting local and tool headers)
     effect(() => {
       const hideHeader = this.toolHidden() || this.toolRouteSegments().length === 0;
-      this.componentService.patchHeader({ hideHeader, hideBackButton: true, hideSidenavHeader: true });
-      // Ensure any tool sidenav removed
-      if (hideHeader) {
-        this.componentService.patchHeader({ cdkPortalEnd: undefined });
-      }
+      this.componentsService.patchHeader({ hideHeader, hideBackButton: true });
     });
   }
 
   ngOnDestroy() {
-    this.componentService.patchHeader({ hideHeader: false, hideBackButton: false, hideSidenavHeader: false });
+    this.componentsService.patchHeader({ hideHeader: false, hideBackButton: false });
   }
 
   public showTool() {
@@ -145,13 +143,6 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     const toolStep = this.toolStep();
     if (toolStep) {
       this.toolHidden.set(true);
-    }
-  }
-
-  public toggleToolSidenav() {
-    const sidenav = this.componentService.sidenav;
-    if (sidenav) {
-      sidenav.toggle();
     }
   }
 

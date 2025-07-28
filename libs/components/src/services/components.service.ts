@@ -10,12 +10,11 @@ export interface IHeaderOptions {
   style?: 'inverted' | 'primary';
   /** Angular portal cdk to inject component into header slots */
   cdkPortalStart?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
-  cdkPortalEnd?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
   cdkPortalCenter?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
 
   hideBackButton?: boolean;
   hideHeader?: boolean;
-  hideSidenavHeader?: boolean;
+  showSidenavToggle?: boolean;
 }
 export interface IBreadcrumbOptions {
   enabled?: boolean;
@@ -27,7 +26,7 @@ export class PicsaCommonComponentsService {
   headerOptions = signal<IHeaderOptions>({}, { equal: isEqual });
   breadcrumbOptions$ = new BehaviorSubject<IBreadcrumbOptions>({});
 
-  public sidenav: PicsaSidenavComponent;
+  private sidenav: PicsaSidenavComponent;
 
   /** Track navigation history - used by back-button components (multi-instance) */
   public navHistory: string[] = [];
@@ -52,6 +51,11 @@ export class PicsaCommonComponentsService {
       },
     };
     this.breadcrumbOptions$.next(updated);
+  }
+  public toggleSidenav() {
+    if (this.sidenav) {
+      this.sidenav.toggle();
+    }
   }
 
   public registerSidenav(sidenav: PicsaSidenavComponent) {

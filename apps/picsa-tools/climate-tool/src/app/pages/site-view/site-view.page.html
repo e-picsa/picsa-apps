@@ -10,12 +10,8 @@
       <mat-icon iconPositionEnd>expand_more</mat-icon>
     </button>
     <!-- Use a hidden select that opens from button (instead of using full select form component) -->
-    <mat-select
-      style="width: 200px; position: absolute; right: 0; top: 18px; visibility: hidden"
-      #select
-      (selectionChange)="handleStationSelect(select.value)"
-      [value]="chartService.station?.id"
-    >
+    <mat-select style="width: 200px; position: absolute; right: 0; top: 18px; visibility: hidden" #select
+      (selectionChange)="handleStationSelect(select.value)" [value]="chartService.station?.id">
       @for(option of stationSelectOptions(); track option.value){
       <mat-option [value]="option.value" [attr.data-draft]="option.draft">{{option.label}}</mat-option>
       }
@@ -28,19 +24,9 @@
 
 <div class="page-content">
   <picsa-sidenav-layout #snav [initialOpen]="true">
-    <button desktopHeader mat-button color="primary" (click)="showShareDialog()">
-      <mat-icon>share</mat-icon>{{ 'Share' | translate }}
-    </button>
-    <button mobileHeader mat-button color="primary" (click)="showShareDialog()">
-      <mat-icon>share</mat-icon>{{ 'Share' | translate }}
-    </button>
     <climate-chart-options sidenav></climate-chart-options>
-    <climate-chart-layout
-      content
-      *ngIf="chartService.chartDefinition && chartService.station"
-      style="flex: 1"
-      [definition]="chartService.chartDefinition"
-    ></climate-chart-layout>
+    <climate-chart-layout content *ngIf="chartService.chartDefinition && chartService.station" style="flex: 1"
+      [definition]="chartService.chartDefinition"></climate-chart-layout>
   </picsa-sidenav-layout>
 </div>
 

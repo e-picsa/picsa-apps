@@ -115,21 +115,17 @@ if (!ENVIRONMENT.production) {
   templateUrl: './extension-home.component.html',
   styleUrl: './extension-home.component.scss',
 })
-export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
+export class ExtensionHomeComponent {
   /** List of home page display links, filtered when running in production */
   public picsaLinks = PAGE_LINKS;
   public additionalLinks = ADDITIONAL_LINKS;
   public version = APP_VERSION.semver;
 
-  @ViewChild('headerContent')
-  headerContent: ElementRef<HTMLElement>;
-
   constructor(
     public monitoringService: MonitoringToolService,
     private router: Router,
-    private componentsService: PicsaCommonComponentsService,
     private tourService: TourService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
   ) {}
 
   linkClicked(link: IPageLink) {
@@ -138,16 +134,6 @@ export class ExtensionHomeComponent implements AfterViewInit, OnDestroy {
     if (link.url === '/farmer') {
       this.configurationService.updateUserSettings({ user_type: 'farmer' });
     }
-  }
-
-  ngOnDestroy(): void {
-    this.componentsService.patchHeader({ cdkPortalEnd: undefined });
-  }
-
-  ngAfterViewInit() {
-    this.componentsService.patchHeader({
-      cdkPortalEnd: new DomPortal(this.headerContent),
-    });
   }
 
   public startTour() {

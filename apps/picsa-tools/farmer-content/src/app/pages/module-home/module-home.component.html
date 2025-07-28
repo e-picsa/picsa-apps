@@ -77,8 +77,8 @@
       {{ 'Close' | translate }}
       <mat-icon>close</mat-icon>
     </button>
-    @if(toolStep.tool.showSidenav){
-    <button mat-button color="primary" class="p-4 flex-1" (click)="toggleToolSidenav()">
+    @if(showSidenavToggle()){
+    <button mat-button color="primary" class="p-4 flex-1" (click)="componentsService.toggleSidenav()">
       {{ 'Options' | translate }}
       <mat-icon>menu</mat-icon>
     </button>

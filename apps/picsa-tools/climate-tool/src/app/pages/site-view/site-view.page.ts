@@ -63,7 +63,7 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     private componentsService: PicsaCommonComponentsService,
     private dialog: MatDialog,
     private viewContainer: ViewContainerRef,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     effect(async () => {
       const viewId = this.viewId() || 'rainfall';
@@ -97,10 +97,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     this.chartService.clearChartData();
     this.componentsService.patchHeader({ cdkPortalCenter: undefined });
     this.cdr.markForCheck();
-  }
-
-  async showShareDialog() {
-    this.dialog.open(ClimateShareDialogComponent, { disableClose: true });
   }
 
   public async handleStationSelect(id: string) {
