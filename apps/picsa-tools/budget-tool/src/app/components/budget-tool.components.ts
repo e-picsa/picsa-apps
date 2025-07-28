@@ -27,7 +27,6 @@ import { BudgetEditorComponent } from './editor/editor.component';
 import { BudgetEditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { BudgetImportDialogComponent } from './import-dialog/import-dialog.component';
 import { BudgetShareDialogComponent } from './share-dialog/share-dialog.component';
-import { BudgetPeriodSummaryComponent } from './summary/period-summary';
 import { BudgetTableComponent } from './table/budget-table';
 
 const components = [
@@ -45,7 +44,6 @@ const components = [
   BudgetCardNew,
   BudgetCardNewDialog,
   BudgetImportDialogComponent,
-  BudgetPeriodSummaryComponent,
   BudgetShareDialogComponent,
   BudgetTableComponent,
   BudgetSummaryComponent,

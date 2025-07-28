@@ -45,20 +45,18 @@ export class BudgetStore {
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
   @observable valueCounters: IBudgetValueCounters = [[], []];
-  @observable balance: IBudgetBalance = [];
 
   @observable periodLabels: string[] = [];
 
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     this.periodLabels = this.generatePeriodLabels(budget.meta);
-    this.balance = this._calculateBalance(budget);
+    this.service.budgetData.set(budget.data);
   }
 
   /** Reset default budget values */
   @action unloadActiveBudget() {
     this.activeBudget = undefined as any;
-    this.balance = [];
     this.valueCounters = [[], []];
   }
   get activeBudgetValue() {
@@ -312,43 +310,6 @@ export class BudgetStore {
     //   };
     // });
     // await this.db.setDocs(endpoint, docs);
-  }
-
-  /**************************************************************************
-   *            Calculation Methods
-   *
-   ***************************************************************************/
-
-  private _calculateBalance(budget: IBudget): IBudgetBalance {
-    // total for current period
-    const totals: { period: number; running: number }[] = [];
-    let runningTotal = 0;
-    budget.data.forEach((period, i) => {
-      const periodTotal = this._calculatePeriodTotal(period);
-      runningTotal = runningTotal + periodTotal;
-      totals[i] = {
-        period: periodTotal,
-        running: runningTotal,
-      };
-    });
-    return totals;
-  }
-  private _calculatePeriodTotal(period: IBudgetPeriodData) {
-    let balance = 0;
-    const inputCards = Object.values(period.inputs);
-    const inputsBalance = this._calculatePeriodCardTotals(inputCards);
-    const outputCards = Object.values(period.outputs);
-    const outputsBalance = this._calculatePeriodCardTotals(outputCards);
-    balance = outputsBalance - inputsBalance;
-    return balance;
-  }
-  private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
-    let total = 0;
-    cards.forEach((card) => {
-      const t = card.values?.total ? card.values.total : 0;
-      total = total + t;
-    });
-    return total;
   }
 
   /**************************************************************************
