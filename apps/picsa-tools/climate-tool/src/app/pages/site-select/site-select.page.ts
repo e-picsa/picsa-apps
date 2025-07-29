@@ -104,7 +104,7 @@ export class SiteSelectPage {
   };
 
   public tableData = computed(() => {
-    // may need to be refactored
+    // may need to be refactored in case we dont want to call this.dataService.stations(); multiple times
     const stations = this.dataService.stations();
     return stations.map((station, index) => {
       return { ...station, map: index + 1 };
