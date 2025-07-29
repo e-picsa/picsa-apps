@@ -1,15 +1,34 @@
-<div class="page-content no-padding">
-  <div style="flex: 1; z-index: 1">
-    <picsa-map
-      (onMarkerClick)="onMarkerClick($event)"
-      [mapOptions]="mapOptions"
-      [basemapOptions]="basemapOptions"
-      [markers]="mapMarkers()"
-      #picsaMap
-    ></picsa-map>
+<div class="page-content">
+  <div class="view-toggle">
+    <div class="toggle-buttons">
+      <button mat-stroked-button [color]="currentView === 'table' ? 'primary' : ''"
+        [class.active]="currentView === 'table'" (click)="setView('table')">
+        <mat-icon>list</mat-icon>
+        Station List
+      </button>
+      <button mat-stroked-button [color]="currentView === 'map' ? 'primary' : ''" [class.active]="currentView === 'map'"
+        (click)="setView('map')">
+        <mat-icon>map</mat-icon>
+        Map View
+      </button>
+    </div>
   </div>
-  <button (click)="goToSite(activeStation)" mat-raised-button color="primary" *ngIf="activeStation" id="siteButton">
-    <span id="siteButtonText">{{ activeStation.name }}</span>
-    <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-  </button>
+  <div class="content-wrapper" [ngClass]="'show-' + currentView">
+    <div class="table-section">
+      <picsa-data-table [options]="tableOptions" [data]="tableData()"></picsa-data-table>
+    </div>
+    <div class="map-section">
+      <picsa-map (onMarkerClick)="onMarkerClick($event)" [mapOptions]="mapOptions" [basemapOptions]="basemapOptions"
+        [markers]="mapMarkers()" #picsaMap>
+      </picsa-map>
+    </div>
+  </div>
+
+  <div class="action-button-container">
+    <button (click)="goToSite(activeStation)" mat-raised-button color="primary" *ngIf="activeStation"
+      class="site-button">
+      <span>{{ activeStation.name }}</span>
+      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+    </button>
+  </div>
 </div>

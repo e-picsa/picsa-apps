@@ -2,6 +2,7 @@ import { Component, computed, effect, NgZone, OnInit, viewChild } from '@angular
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IStationMeta } from '@picsa/models';
+import { IDataTableOptions } from '@picsa/shared/features';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { geoJSON, Map } from 'leaflet';
 import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from 'libs/data/geoLocation';
@@ -24,6 +25,9 @@ export class SiteSelectPage {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
   };
+
+  currentView: 'table' | 'map' = 'table';
+
   public mapMarkers = computed(() => {
     const stations = this.dataService.stations();
     const markers: IMapMarker[] = stations.map((station, _index) => ({
@@ -40,7 +44,7 @@ export class SiteSelectPage {
     private router: Router,
     private route: ActivatedRoute,
     private dataService: ClimateDataService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
   ) {
     effect(async () => {
       const map = this.picsaMap()?.map();
@@ -55,6 +59,10 @@ export class SiteSelectPage {
         this.getUserLocationAndSelectClosestStation(picsaMap);
       }
     });
+  }
+
+  setView(view: 'table' | 'map') {
+    this.currentView = view;
   }
 
   onMarkerClick(marker: IMapMarker) {
@@ -89,6 +97,20 @@ export class SiteSelectPage {
       .addTo(map);
   }
 
+  public tableOptions: IDataTableOptions = {
+    displayColumns: ['map', 'name', 'district'],
+    sort: { id: 'name', start: 'desc' },
+    handleRowClick: (station: IStationMeta) => this.goToSite(station),
+  };
+
+  public tableData = computed(() => {
+    // may need to be refactored
+    const stations = this.dataService.stations();
+    return stations.map((station, index) => {
+      return { ...station, map: index + 1 };
+    });
+  });
+
   private getUserLocationAndSelectClosestStation(picsaMap: PicsaMapComponent) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -100,7 +122,7 @@ export class SiteSelectPage {
         },
         (error) => {
           console.error('Error getting user location', error);
-        }
+        },
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
