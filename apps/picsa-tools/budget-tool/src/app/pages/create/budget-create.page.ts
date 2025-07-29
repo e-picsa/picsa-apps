@@ -109,8 +109,6 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
         takeUntil(this.componentDestroyed$),
       )
       .subscribe((enterprises) => {
-        // TODO - read from hardcoded data to preserve order?
-        console.log('enterprises', enterprises);
         this.filteredEnterprises = enterprises.filter((e) => e.groupings?.includes(this.enterpriseType as any));
         this.cdr.markForCheck();
       });
