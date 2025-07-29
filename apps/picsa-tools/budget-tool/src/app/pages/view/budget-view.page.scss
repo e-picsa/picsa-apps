@@ -2,16 +2,13 @@
   position: fixed;
   z-index: 2;
   width: 100%;
-  top: 0;
+  top: 100vh;
   left: 0;
   display: flex;
   height: 100vh;
+  transition: transform 0.3s ease-in-out;
 }
 
-.slide-in {
-  transition: transform 0.3s ease-in-out;
-  transform: translateY(100vh);
-}
 .slide-in.active {
-  transform: translateY(0);
+  transform: translateY(-100vh);
 }

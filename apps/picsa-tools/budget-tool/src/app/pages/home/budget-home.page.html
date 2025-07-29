@@ -1,9 +1,11 @@
 <div class="page-content">
+  <!-- Create -->
   <div class="button-grid">
-    <button mat-stroked-button color="primary" (click)="createClicked()" data-tourid="create">
+    <button mat-stroked-button color="primary" (click)="showBudgetCreate()" data-tourid="create">
       <div>{{ 'Create New Budget' | translate }}</div>
       <img src="assets/budget-icons/budget-create.svg" />
     </button>
+    <!-- Import -->
     <button mat-stroked-button color="primary" (click)="importBudgetCode()">
       <div>{{ 'Import Budget Code' | translate }}</div>
       <img src="assets/budget-icons/budget-import.svg" />
@@ -11,9 +13,15 @@
   </div>
 
   <h2>{{ 'Saved Budgets' | translate }}</h2>
-  <div *mobxAutorun data-tourid="create">
-    <budget-list-item *ngFor="let budget of store.savedBudgets" [routerLink]="[ budget._key]" [budget]="budget"
-      (deleteClicked)="promptDelete(budget)">
+  <div data-tourid="create">
+    @for(budget of savedBudgets(); track budget._key){
+    <!-- List -->
+    <budget-list-item [routerLink]="[ budget._key]" [budget]="budget" (deleteClicked)="promptDelete(budget)"
+      (copyClicked)="handleBudgetCopy(budget,$event)" (renameClicked)="handleBudgetRename(budget,$event)">
     </budget-list-item>
+    }
+
   </div>
+
+
 </div>

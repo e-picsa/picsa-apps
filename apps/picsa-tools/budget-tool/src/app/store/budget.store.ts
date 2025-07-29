@@ -17,10 +17,8 @@ import { BehaviorSubject } from 'rxjs';
 
 import {
   IBudget,
-  IBudgetBalance,
   IBudgetCodeDoc,
   IBudgetMeta,
-  IBudgetPeriodData,
   IBudgetPeriodType,
   IBudgetValueCounters,
   IBudgetValueScale,
@@ -44,22 +42,19 @@ export class BudgetStore {
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
-  @observable savedBudgets: IBudget[] = [];
   @observable valueCounters: IBudgetValueCounters = [[], []];
-  @observable balance: IBudgetBalance = [];
 
   @observable periodLabels: string[] = [];
 
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     this.periodLabels = this.generatePeriodLabels(budget.meta);
-    this.balance = this._calculateBalance(budget);
+    this.service.budgetData.set(budget.data);
   }
 
   /** Reset default budget values */
   @action unloadActiveBudget() {
     this.activeBudget = undefined as any;
-    this.balance = [];
     this.valueCounters = [[], []];
   }
   get activeBudgetValue() {
@@ -198,12 +193,11 @@ export class BudgetStore {
   }
   async saveBudget() {
     await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, true);
-    await this.loadSavedBudgets();
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
-      await this.loadSavedBudgets();
-      const budget = this.savedBudgets.find((b) => b._key === key);
+      const budgets = await this.loadSavedBudgets();
+      const budget = budgets.find((b) => b._key === key);
       if (budget) {
         this.loadBudget(toJS(budget));
       } else {
@@ -227,9 +221,9 @@ export class BudgetStore {
     this.componentService.patchHeader({ title: budget.meta.title });
   }
 
-  private async loadSavedBudgets(): Promise<void> {
+  public async loadSavedBudgets() {
     const budgets = await this.db.getCollection<IBudget>('budgetTool/${GROUP}/budgets');
-    this.savedBudgets = budgets.sort((a, b) => (b._modified > a._modified ? 1 : -1));
+    return budgets.sort((a, b) => (b._modified > a._modified ? 1 : -1));
   }
 
   async deleteBudget(budget: IBudget) {
@@ -237,7 +231,6 @@ export class BudgetStore {
     if (budget.shareCode) {
       await this.db.deleteDocs('budgetTool/default/shareCodes', [budget.shareCode]);
     }
-    this.loadSavedBudgets();
   }
 
   /** Duplicate a server budget and save locally */
@@ -286,7 +279,6 @@ export class BudgetStore {
    ***************************************************************************/
   @action
   public async init() {
-    this.loadSavedBudgets();
     await this.checkForUpdates();
     this.storeReady = true;
   }
@@ -316,43 +308,6 @@ export class BudgetStore {
     //   };
     // });
     // await this.db.setDocs(endpoint, docs);
-  }
-
-  /**************************************************************************
-   *            Calculation Methods
-   *
-   ***************************************************************************/
-
-  private _calculateBalance(budget: IBudget): IBudgetBalance {
-    // total for current period
-    const totals: { period: number; running: number }[] = [];
-    let runningTotal = 0;
-    budget.data.forEach((period, i) => {
-      const periodTotal = this._calculatePeriodTotal(period);
-      runningTotal = runningTotal + periodTotal;
-      totals[i] = {
-        period: periodTotal,
-        running: runningTotal,
-      };
-    });
-    return totals;
-  }
-  private _calculatePeriodTotal(period: IBudgetPeriodData) {
-    let balance = 0;
-    const inputCards = Object.values(period.inputs);
-    const inputsBalance = this._calculatePeriodCardTotals(inputCards);
-    const outputCards = Object.values(period.outputs);
-    const outputsBalance = this._calculatePeriodCardTotals(outputCards);
-    balance = outputsBalance - inputsBalance;
-    return balance;
-  }
-  private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
-    let total = 0;
-    cards.forEach((card) => {
-      const t = card.values?.total ? card.values.total : 0;
-      total = total + t;
-    });
-    return total;
   }
 
   /**************************************************************************

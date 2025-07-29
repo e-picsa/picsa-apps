@@ -110,6 +110,11 @@ mat-form-field.no-hint {
     display: none;
   }
 }
+// Remove padding at start and end of mat-form-field outlined variant
+.mdc-text-field--outlined {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
 
 // Reduce placeholder font size (inherited above)
 .mdc-text-field__input::placeholder {
@@ -143,7 +148,8 @@ mat-stepper.slim-headers {
     height: 48px;
   }
 }
-mat-stepper.responsive-content-padding {
+mat-stepper.responsive-content-padding,
+mat-horizontal-stepper.responsive-content-padding {
   .mat-horizontal-content-container {
     // keep enough padding to see shadow
     @apply p-2 sm:px-6 sm:pb-6;
