@@ -1,5 +1,7 @@
-import { Component, computed, effect, NgZone, OnInit, viewChild } from '@angular/core';
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ChangeDetectionStrategy, Component, computed, effect, NgZone, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IStationMeta } from '@picsa/models';
 import { IDataTableOptions } from '@picsa/shared/features';
@@ -9,11 +11,14 @@ import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from 'libs/data
 
 import { ClimateDataService } from '../../services/climate-data.service';
 
+const STRINGS = { showMap: translateMarker('Show Map'), showList: translateMarker('Show List') };
+
 @Component({
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteSelectPage {
   activeStation: any;
@@ -26,7 +31,9 @@ export class SiteSelectPage {
     maxNativeZoom: 8,
   };
 
-  currentView: 'table' | 'map' = 'table';
+  view = signal<'list' | 'map'>('map');
+
+  public strings = STRINGS;
 
   public mapMarkers = computed(() => {
     const stations = this.dataService.stations();
@@ -60,9 +67,8 @@ export class SiteSelectPage {
       }
     });
   }
-
-  setView(view: 'table' | 'map') {
-    this.currentView = view;
+  toggleView() {
+    this.view.set(this.view() === 'list' ? 'map' : 'list');
   }
 
   onMarkerClick(marker: IMapMarker) {

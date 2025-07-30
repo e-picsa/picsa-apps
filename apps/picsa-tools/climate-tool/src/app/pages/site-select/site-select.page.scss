@@ -1,119 +1,17 @@
-// #siteButton {
-//   position: absolute;
-//   bottom: 20px;
-//   z-index: 2;
-//   margin-left: 10%;
-//   width: 80%;
-//   height: 64px;
-// }
-
-// #siteButtonText {
-//   font-size: 1.5em;
-//   line-height: 3em;
-// }
-
-.content-wrapper {
-  flex: 1;
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  min-height: 0;
-}
-
-.table-section {
-  flex: 1;
-  min-width: 300px;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  ::ng-deep picsa-data-table {
-    height: calc(100vh - 200px);
-    overflow-y: auto;
+.table-container {
+  @apply flex flex-1 flex-col overflow-auto;
+  // hide on smaller screens during map view
+  &[data-view='map'] {
+    @apply hidden md:flex;
   }
 }
-
-.map-section {
-  flex: 1;
-  min-width: 300px;
-  position: sticky;
-  top: 1rem;
-  height: calc(100vh - 2rem);
+.map-container {
+  @apply flex-1;
+  // hide on smaller screens during table view
+  &[data-view='list'] {
+    @apply hidden md:block;
+  }
 }
-
-.action-button-container {
-  padding: 1rem;
-  background: white;
-  border-top: 1px solid #e9ecef;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-}
-
-.site-button {
-  width: 100%;
-  height: 64px !important;
-  font-size: 1.2rem !important;
-}
-
 .view-toggle {
-  display: none;
-  padding: 1rem;
-  background: white;
-  border-bottom: 1px solid #e9ecef;
-}
-
-@media (max-width: 768px) {
-  .view-toggle {
-    display: block;
-  }
-
-  .content-wrapper {
-    padding: 0;
-    gap: 0;
-
-    .table-section,
-    .map-section {
-      display: none;
-      min-width: 100%;
-      max-width: 100%;
-      height: calc(100vh - 120px);
-    }
-
-    &.show-table .table-section {
-      display: flex;
-
-      ::ng-deep picsa-data-table {
-        height: calc(100vh - 180px);
-      }
-    }
-
-    &.show-map .map-section {
-      display: block;
-      position: static;
-    }
-  }
-
-  .action-button-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-}
-
-@media (min-width: 769px) {
-  .content-wrapper {
-    .table-section,
-    .map-section {
-      display: flex !important;
-    }
-
-    .map-section {
-      display: block !important;
-    }
-  }
+  @apply absolute right-2 top-2 z-10 h-10 md:!hidden text-primary  bg-white;
 }
