@@ -37,7 +37,7 @@ const enterprises: Record<IEnterpriseGroupType, { id: string; label: string }[]>
     { label: 'afforestation', id: 'afforestation' },
     { label: 'beekeeping', id: 'beekeeping' },
     { label: 'brick making', id: 'brick-making' },
-    { label: 'casual labor', id: 'casual-labor' },
+    { label: 'casual labour', id: 'casual-labour' },
     { label: 'charcoal', id: 'charcoal' },
     { label: 'firewood', id: 'firewood' },
     { label: 'food selling', id: 'food-selling' },
