@@ -1,10 +1,9 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { DomPortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
+import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
 import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';

@@ -1,6 +1,7 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  // Ignore migration files which have circular imports
+  "ignorePatterns": ["services/core/db_v2/migration/**/*.ts"],
   "plugins": ["@angular-eslint"],
   "overrides": [
     {
