@@ -57,14 +57,14 @@ const enterprises: Record<IEnterpriseGroupType, { id: string; label: string }[]>
 
 const ENTERPRISE_CARDS: IBudgetCard[] = [];
 
-for (const [entepriseGroup, values] of Object.entries(enterprises)) {
+for (const [enterpriseGroup, values] of Object.entries(enterprises)) {
   for (const { id, label } of values) {
     ENTERPRISE_CARDS.push({
       id,
       label,
       imgType: 'svg',
       type: 'enterprise',
-      groupings: [entepriseGroup as IEnterpriseGroupType],
+      groupings: [enterpriseGroup as IEnterpriseGroupType],
     });
   }
 }
