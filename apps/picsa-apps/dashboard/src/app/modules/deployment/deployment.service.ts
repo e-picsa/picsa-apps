@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { computed, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { GEO_LOCATION_DATA, GEO_LOCATION_PLACEHOLDER, IGelocationData } from '@picsa/data/geoLocation';

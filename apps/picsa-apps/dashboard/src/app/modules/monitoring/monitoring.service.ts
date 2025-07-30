@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Database } from '@picsa/server-types';

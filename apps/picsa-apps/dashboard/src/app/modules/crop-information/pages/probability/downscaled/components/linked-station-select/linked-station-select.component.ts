@@ -1,12 +1,11 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
-import { DeploymentDashboardService } from 'apps/picsa-apps/dashboard/src/app/modules/deployment/deployment.service';
 
+import { IStationRow } from '../../../../../../climate/types';
+import { DeploymentDashboardService } from '../../../../../../deployment/deployment.service';
 import { ICropDataDownscaled } from '../../../../../services';
 
 @Component({

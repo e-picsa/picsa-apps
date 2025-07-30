@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { Injectable, signal } from '@angular/core';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { Database } from '@picsa/server-types';

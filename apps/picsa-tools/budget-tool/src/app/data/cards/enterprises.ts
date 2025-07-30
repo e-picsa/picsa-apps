@@ -8,191 +8,65 @@ export const ENTERPRISE_GROUPS = {
   livestock: translateMarker('livestock'),
   livelihood: translateMarker('livelihood'),
   fruits: translateMarker('fruits'),
-  fish: translateMarker('fish'),
-  afforestation: translateMarker('afforestation'),
 } as const;
 
 // Allow wildcard group type for inputs/outputs that apply to all enterprise groups
 export type IEnterpriseGroupType = keyof typeof ENTERPRISE_GROUPS | '*';
 
-export const ENTERPRISE_CARDS: IBudgetCard[] = [
-  // todo - ADD specific LIVELIHOOD options with cards
-  {
-    type: 'enterprise',
-    label: 'livelihood',
-    id: 'livelihood',
-    groupings: ['livelihood'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'cattle',
-    id: 'cattle',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'chicken',
-    id: 'chicken',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
+const enterprises: Record<IEnterpriseGroupType, { id: string; label: string }[]> = {
+  '*': [],
+  crop: [
+    { label: 'cowpeas', id: 'cowpeas' },
+    { label: 'groundnuts', id: 'groundnuts' },
+    { label: 'maize', id: 'maize' },
+    { label: 'onions', id: 'onions' },
+    { label: 'pigeon peas', id: 'pigeon-peas' },
+    { label: 'rice', id: 'rice' },
+    { label: 'sorghum', id: 'sorghum' },
+    { label: 'soya beans', id: 'soya-beans' },
+    { label: 'sweet potatoes', id: 'sweet-potatoes' },
+    { label: 'tomatoes', id: 'tomatoes' },
+  ],
+  fruits: [
+    { label: 'mixed', id: 'mixed' },
+    { label: 'paw-paw', id: 'paw-paw' },
+    { label: 'watermelon', id: 'watermelon' },
+  ],
+  livelihood: [
+    { id: 'fish', label: 'fish' },
+    { label: 'afforestation', id: 'afforestation' },
+    { label: 'beekeeping', id: 'beekeeping' },
+    { label: 'brick making', id: 'brick-making' },
+    { label: 'casual labour', id: 'casual-labour' },
+    { label: 'charcoal', id: 'charcoal' },
+    { label: 'firewood', id: 'firewood' },
+    { label: 'food selling', id: 'food-selling' },
+    { label: 'handicraft', id: 'handicraft' },
+    { label: 'retail trading', id: 'retail-trading' },
+  ],
+  livestock: [
+    { label: 'cattle', id: 'cattle' },
+    { label: 'chicken', id: 'chicken' },
+    { label: 'ducks', id: 'ducks' },
+    { label: 'goats', id: 'goats' },
+    { label: 'guinea fowl', id: 'guinea-fowl' },
+    { label: 'pigs', id: 'pigs' },
+    { label: 'sheep', id: 'sheep' },
+  ],
+};
 
-  {
-    type: 'enterprise',
-    label: 'ducks',
-    id: 'ducks',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
+const ENTERPRISE_CARDS: IBudgetCard[] = [];
 
-  {
-    type: 'enterprise',
-    label: 'goats',
-    id: 'goats',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'guinea fowl',
-    id: 'guinea-fowl',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
+for (const [enterpriseGroup, values] of Object.entries(enterprises)) {
+  for (const { id, label } of values) {
+    ENTERPRISE_CARDS.push({
+      id,
+      label,
+      imgType: 'svg',
+      type: 'enterprise',
+      groupings: [enterpriseGroup as IEnterpriseGroupType],
+    });
+  }
+}
 
-  {
-    type: 'enterprise',
-    label: 'pigs',
-    id: 'pigs',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'sheep',
-    id: 'sheep',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'mixed',
-    id: 'mixed',
-    groupings: ['fruits'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'paw-paw',
-    id: 'paw-paw',
-    groupings: ['fruits'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'watermelon',
-    id: 'watermelon',
-    groupings: ['fruits'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'fish',
-    id: 'fish',
-    groupings: ['fish'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'cowpeas',
-    id: 'cowpeas',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'groundnuts',
-    id: 'groundnuts',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'maize',
-    id: 'maize',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'onions',
-    id: 'onions',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'pigeon peas',
-    id: 'pigeon-peas',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'rice',
-    id: 'rice',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'sorghum',
-    id: 'sorghum',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'soya beans',
-    id: 'soya-beans',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'sweet potatoes',
-    id: 'sweet-potatoes',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'tomatoes',
-    id: 'tomatoes',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-
-  {
-    type: 'enterprise',
-    label: 'afforestation',
-    id: 'afforestation',
-    groupings: ['afforestation'],
-    imgType: 'svg',
-  },
-];
 export default ENTERPRISE_CARDS;

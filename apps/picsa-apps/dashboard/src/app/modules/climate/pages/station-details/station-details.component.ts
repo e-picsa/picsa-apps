@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { ChangeDetectionStrategy, Component, effect, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';

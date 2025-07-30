@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { computed, Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import {

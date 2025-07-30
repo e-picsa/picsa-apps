@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments/src';
 import { Database } from '@picsa/server-types';
