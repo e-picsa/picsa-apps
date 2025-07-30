@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';

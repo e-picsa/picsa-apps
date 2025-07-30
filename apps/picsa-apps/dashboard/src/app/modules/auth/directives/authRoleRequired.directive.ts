@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { Directive, effect, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { IAuthRole } from '@picsa/shared/services/core/supabase/services/supabase-auth.service';
 
