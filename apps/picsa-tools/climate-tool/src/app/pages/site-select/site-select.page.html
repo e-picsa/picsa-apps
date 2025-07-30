@@ -11,19 +11,25 @@
   <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
 
     <div class="table-container" [attr.data-view]="view()">
-      <picsa-data-table [options]="tableOptions" [data]="tableData()" class="flex-1"></picsa-data-table>
+      <picsa-data-table [options]="tableOptions" [data]="tableData()" class="flex-1"
+        (rowClick)="selectedStation.set($event)"></picsa-data-table>
     </div>
 
     <div class="map-container" [attr.data-view]="view()">
-      <picsa-map (onMarkerClick)="onMarkerClick($event)" [mapOptions]="mapOptions" [basemapOptions]="basemapOptions"
-        [markers]="mapMarkers()" #picsaMap class="flex-1">
+      <picsa-map (onMarkerClick)="selectedStation.set($event.data)" [mapOptions]="mapOptions"
+        [basemapOptions]="basemapOptions" [markers]="mapMarkers()" #picsaMap class="flex-1">
       </picsa-map>
-      <button (click)="goToSite(activeStation)" mat-raised-button color="primary" *ngIf="activeStation"
-        class="site-button">
-        <span>{{ activeStation.name }}</span>
-        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-      </button>
     </div>
 
   </div>
 </div>
+
+@if(selectedStation(); as selectedStation){
+<div class="site-select-container">
+  <button (click)="goToSite(selectedStation)" mat-raised-button color="primary">
+    <span>{{ selectedStation.name }}</span>
+    <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+  </button>
+</div>
+
+}

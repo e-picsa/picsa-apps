@@ -6,7 +6,7 @@
   }
 }
 .map-container {
-  @apply flex-1;
+  @apply flex-1 relative;
   // hide on smaller screens during table view
   &[data-view='list'] {
     @apply hidden md:block;
@@ -14,4 +14,11 @@
 }
 .view-toggle {
   @apply absolute right-2 top-2 z-10 h-10 md:!hidden text-primary  bg-white;
+}
+.site-select-container {
+  @apply absolute bottom-8 w-full z-10 flex;
+
+  & > button {
+    @apply m-auto text-2xl shadow-2xl h-16 w-full max-w-96;
+  }
 }
