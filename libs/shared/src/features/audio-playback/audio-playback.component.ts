@@ -1,13 +1,14 @@
-import { Component, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioService } from './audio-playback.service';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
+import { AudioService } from './audio-playback.service';
 
 @Component({
   selector: 'picsa-audio-playback',
   standalone: true,
-  imports:[CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule],
   templateUrl: './audio-playback.component.html',
   styleUrls: ['./audio-playback.component.scss'],
 })
