@@ -53,3 +53,6 @@ mat-option[data-draft='true'] {
 button.station-select {
   @apply sm:text-xl h-10 whitespace-nowrap;
 }
+button.map-button {
+  @apply sm:text-xl h-10;
+}
