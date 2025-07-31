@@ -49,3 +49,7 @@ mat-sidenav-container {
 mat-option[data-draft='true'] {
   opacity: 0.5;
 }
+
+button.station-select {
+  @apply sm:text-xl h-10 whitespace-nowrap;
+}
