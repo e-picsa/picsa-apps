@@ -12,22 +12,22 @@
 
     <div class="table-container" [attr.data-view]="view()">
       <picsa-data-table [options]="tableOptions" [data]="tableData()" class="flex-1"
-        (rowClick)="selectedStation.set($event)"></picsa-data-table>
+        (rowClick)="handleRowClick($event)"></picsa-data-table>
     </div>
 
     <div class="map-container" [attr.data-view]="view()">
-      <picsa-map (onMarkerClick)="selectedStation.set($event.data)" [mapOptions]="mapOptions"
-        [basemapOptions]="basemapOptions" [markers]="mapMarkers()" #picsaMap class="flex-1">
+      <picsa-map (onMarkerClick)="handleMarkerClick($event)" [mapOptions]="mapOptions" [basemapOptions]="basemapOptions"
+        [markers]="mapMarkers()" (onMapReady)="mapReady.set(true)" #picsaMap class="flex-1">
       </picsa-map>
     </div>
 
   </div>
 </div>
 
-@if(selectedStation(); as selectedStation){
+@if(selectedStation(); as station){
 <div class="site-select-container">
-  <button (click)="goToSite(selectedStation)" mat-raised-button color="primary">
-    <span>{{ selectedStation.name }}</span>
+  <button (click)="goToSite(station)" mat-raised-button color="primary">
+    <span>{{ station.name }}</span>
     <mat-icon iconPositionEnd>arrow_forward</mat-icon>
   </button>
 </div>

@@ -77,6 +77,13 @@
       {{ 'Close' | translate }}
       <mat-icon>close</mat-icon>
     </button>
+
+    <!-- Dynamic content injected into header (required for climate tool site select) -->
+    <div class="flex:1 overflow-hidden">
+      <ng-template [cdkPortalOutlet]="headerContent()"></ng-template>
+    </div>
+
+
     @if(showSidenavToggle()){
     <button mat-button color="primary" class="p-4 flex-1" (click)="componentsService.toggleSidenav()">
       {{ 'Options' | translate }}

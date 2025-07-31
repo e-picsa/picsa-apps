@@ -17,7 +17,8 @@
       }
     </mat-select>
     <button mat-button color="primary" (click)="goToSiteSelect()" style="font-size: 24px">
-      <mat-icon>place</mat-icon>{{ 'Map' | translate }}
+      <mat-icon>place</mat-icon>
+      <span class="hidden sm:inline">{{ 'Map' | translate }}</span>
     </button>
   </div>
 </ng-template>
