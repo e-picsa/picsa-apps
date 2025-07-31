@@ -13,14 +13,12 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { IChartId } from '@picsa/models/src';
 import { _wait } from '@picsa/utils';
 import { map } from 'rxjs/operators';
 
-import { ClimateShareDialogComponent } from '../../components/share-dialog/share-dialog.component';
 import { ClimateChartService } from '../../services/climate-chart.service';
 import { ClimateDataService } from '../../services/climate-data.service';
 import { ClimateToolService } from '../../services/climate-tool.service';
@@ -61,7 +59,6 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     private componentsService: PicsaCommonComponentsService,
-    private dialog: MatDialog,
     private viewContainer: ViewContainerRef,
     private cdr: ChangeDetectorRef,
   ) {
@@ -120,6 +117,8 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   }
 
   goToSiteSelect() {
+    // Store preferred to temp to allow map to also load (need to remove from config to prevent redirect)
+    localStorage.setItem('picsa_climate_station_temp', `${this.siteId()}`);
     // Clear the preferred station to prevent automatic redirect
     this.dataService.setPreferredStation('');
     this.router.navigate(['../'], {

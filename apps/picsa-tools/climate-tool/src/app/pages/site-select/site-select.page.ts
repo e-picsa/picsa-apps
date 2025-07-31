@@ -8,6 +8,7 @@ import { ConfigurationService } from '@picsa/configuration/src';
 import { IStationMeta } from '@picsa/models';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
+import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
 import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from 'libs/data/geoLocation';
 
@@ -64,6 +65,10 @@ export class SiteSelectPage {
     sort: { id: 'district', start: 'asc' },
   };
 
+  private nearestStation = signal<IStationMeta | undefined>(undefined);
+
+  private userCountryCode = computed(() => this.configurationService.userSettings().country_code);
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -72,20 +77,31 @@ export class SiteSelectPage {
   ) {
     effect(async () => {
       const map = this.picsaMap()?.map();
-      const { country_code } = this.configurationService.userSettings();
+      const country_code = this.userCountryCode();
       if (map && country_code) {
         await this.loadCountryAdminBoundaries(map, country_code);
       }
     });
-    effect(() => {
-      if (this.mapReady()) {
-        this.zoomToPreferredStation();
+    effect(async () => {
+      const picsaMap = this.picsaMap();
+      if (picsaMap && this.mapReady() && this.mapMarkers()?.length > 0) {
+        await this.checkTmpPreferredStation();
+        this.addUserLocationToMap(picsaMap);
       }
     });
+    // auto select nearest station if no other selected
+    effect(() => {
+      const nearest = this.nearestStation();
+      if (nearest && !this.selectedStation()) {
+        this.selectedStation.set(nearest);
+      }
+    });
+    // respond to selected station when map ready
     effect(() => {
       const selectedStation = this.selectedStation();
       const picsaMap = this.picsaMap();
-      if (selectedStation && picsaMap) {
+      const mapReady = this.mapReady();
+      if (selectedStation && picsaMap && mapReady) {
         this.handleStationSelected(selectedStation, picsaMap);
       }
     });
@@ -120,18 +136,28 @@ export class SiteSelectPage {
     if (this.dataService.getPreferredStation() !== selectedStation.id) {
       this.dataService.setPreferredStation(selectedStation.id);
     }
-    const marker = this.mapMarkers()[selectedStation['map'] - 1];
-    picsaMap.setActiveMarker(marker);
+
+    const marker = this.mapMarkers().find((m) => m.data?.id === selectedStation.id);
+    if (marker) {
+      picsaMap.setActiveMarker(marker);
+    }
   }
 
-  private zoomToPreferredStation() {
-    const preferredStation = this.dataService.getPreferredStation();
-    if (preferredStation) {
+  /**
+   * The site-select page is bypassed if user has already defined a preferred station,
+   * but a tmp station is set when navigating directly from the site view page to pick a new station
+   */
+  private async checkTmpPreferredStation() {
+    // allow passing selected as state data for case when navigating back from climate chart page
+    const tmpStation = localStorage.getItem('picsa_climate_station_temp');
+    if (tmpStation) {
+      localStorage.removeItem('picsa_climate_station_temp');
+      const marker = this.mapMarkers().find((v) => v.data?.id === tmpStation);
+      if (marker) {
+        await _wait(500);
+        this.selectedStation.set(marker.data);
+      }
       return;
-    }
-    const picsaMap = this.picsaMap();
-    if (picsaMap) {
-      return this.getUserLocationAndSelectClosestStation(picsaMap);
     }
   }
 
@@ -146,14 +172,14 @@ export class SiteSelectPage {
       .addTo(map);
   }
 
-  private getUserLocationAndSelectClosestStation(picsaMap: PicsaMapComponent) {
+  private addUserLocationToMap(picsaMap: PicsaMapComponent) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLat = position.coords.latitude;
           const userLng = position.coords.longitude;
-          this.selectClosestStation(picsaMap, userLat, userLng);
           picsaMap.setLocationMarker(userLat, userLng);
+          this.calcClosestStation(userLat, userLng);
         },
         (error) => {
           console.error('Error getting user location', error);
@@ -164,7 +190,7 @@ export class SiteSelectPage {
     }
   }
 
-  private selectClosestStation(picsaMap: PicsaMapComponent, userLat: number, userLng: number) {
+  private calcClosestStation(userLat: number, userLng: number) {
     let minDistance = Number.MAX_VALUE;
     const nearest = this.mapMarkers().reduce((previous, current) => {
       const stationLat = current.latlng[0];
@@ -178,8 +204,7 @@ export class SiteSelectPage {
       return previous;
     });
     if (nearest) {
-      this.selectedStation.set(nearest.data);
-      picsaMap.setActiveMarker(nearest);
+      this.nearestStation.set(nearest.data);
     }
   }
 
