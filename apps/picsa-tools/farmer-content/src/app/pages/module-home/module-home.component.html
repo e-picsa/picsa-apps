@@ -78,8 +78,8 @@
       <mat-icon>close</mat-icon>
     </button>
 
-    <!-- Dynamic content injected into header -->
-    <div class="flex:1">
+    <!-- Dynamic content injected into header (required for climate tool site select) -->
+    <div class="flex:1 overflow-hidden">
       <ng-template [cdkPortalOutlet]="headerContent()"></ng-template>
     </div>
 

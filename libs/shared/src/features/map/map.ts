@@ -13,6 +13,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { IStationMeta } from '@picsa/models/src';
 import * as L from 'leaflet';
 
 @Component({
@@ -81,9 +82,11 @@ export class PicsaMapComponent implements OnInit {
 
   /** Programatically set the active map marker and trigger click callback */
   public setActiveMarker(marker: IMapMarker) {
-    const { _index } = marker;
-    const renderedMarker = this.renderedMarkers[_index];
-    this._onMarkerClick(marker, renderedMarker);
+    if (marker) {
+      const { _index } = marker;
+      const renderedMarker = this.renderedMarkers[_index];
+      this._onMarkerClick(marker, renderedMarker);
+    }
   }
 
   /** Render a marker for current user location */
@@ -194,12 +197,12 @@ const MAP_DEFAULTS: L.MapOptions = {
   center: [0, 0],
 };
 
-export interface IMapMarker {
+export interface IMapMarker<T = IStationMeta> {
   iconUrl?: string;
   latlng: L.LatLngTuple;
   /** Display number with icon */
   number?: number;
-  data?: any;
+  data?: T;
   /** Index of station when rendered */
   _index: number;
 }
