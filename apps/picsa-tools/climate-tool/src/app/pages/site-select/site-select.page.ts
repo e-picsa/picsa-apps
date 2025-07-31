@@ -84,8 +84,7 @@ export class SiteSelectPage {
       const selectedStation = this.selectedStation();
       const picsaMap = this.picsaMap();
       if (selectedStation && picsaMap) {
-        const { latitude, longitude } = selectedStation;
-        picsaMap.map().flyTo([latitude, longitude], 12);
+        picsaMap.setActiveMarker({ _index: selectedStation['map'] - 1 } as any);
       }
     });
   }
