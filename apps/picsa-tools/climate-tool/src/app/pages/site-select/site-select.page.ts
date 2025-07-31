@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { ChangeDetectionStrategy, Component, computed, effect, NgZone, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,9 +24,12 @@ const STRINGS = { showMap: translateMarker('Show Map'), showList: translateMarke
   imports: [MatButtonModule, MatIconModule, PicsaMapComponent, PicsaDataTableComponent],
 })
 export class SiteSelectPage {
-  selectedStation = signal<IStationMeta | undefined>(undefined);
+  selectedStation = signal<IStationMeta | undefined>(undefined, { equal: (a, b) => a?.id === b?.id });
   // avoid static: true for map as created dynamic
   picsaMap = viewChild<PicsaMapComponent>('picsaMap');
+
+  mapReady = signal(false);
+
   // main options handled by featuredCountry
   mapOptions: IMapOptions = {};
   basemapOptions: IBasemapOptions = {
@@ -75,16 +78,15 @@ export class SiteSelectPage {
       }
     });
     effect(() => {
-      const picsaMap = this.picsaMap();
-      if (picsaMap) {
-        this.getUserLocationAndSelectClosestStation(picsaMap);
+      if (this.mapReady()) {
+        this.zoomToPreferredStation();
       }
     });
     effect(() => {
       const selectedStation = this.selectedStation();
       const picsaMap = this.picsaMap();
       if (selectedStation && picsaMap) {
-        picsaMap.setActiveMarker({ _index: selectedStation['map'] - 1 } as any);
+        this.handleStationSelected(selectedStation, picsaMap);
       }
     });
   }
@@ -93,8 +95,6 @@ export class SiteSelectPage {
   }
 
   goToSite(site: IStationMeta) {
-    this.dataService.setPreferredStation(site.id);
-
     // navigate
     this.router.navigate(['./', site.id], {
       relativeTo: this.route,
@@ -103,6 +103,36 @@ export class SiteSelectPage {
         view: 'rainfall',
       },
     });
+  }
+
+  public handleRowClick(station: IStationMeta) {
+    if (station?.id) {
+      this.selectedStation.set(station);
+    }
+  }
+  public handleMarkerClick(e: IMapMarker) {
+    if (e) {
+      this.selectedStation.set(e.data);
+    }
+  }
+
+  private handleStationSelected(selectedStation: IStationMeta, picsaMap: PicsaMapComponent) {
+    if (this.dataService.getPreferredStation() !== selectedStation.id) {
+      this.dataService.setPreferredStation(selectedStation.id);
+    }
+    const marker = this.mapMarkers()[selectedStation['map'] - 1];
+    picsaMap.setActiveMarker(marker);
+  }
+
+  private zoomToPreferredStation() {
+    const preferredStation = this.dataService.getPreferredStation();
+    if (preferredStation) {
+      return;
+    }
+    const picsaMap = this.picsaMap();
+    if (picsaMap) {
+      return this.getUserLocationAndSelectClosestStation(picsaMap);
+    }
   }
 
   /** Load country boundaries from geojson */
