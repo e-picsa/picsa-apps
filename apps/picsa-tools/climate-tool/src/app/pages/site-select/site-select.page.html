@@ -1,15 +1,35 @@
-<div class="page-content no-padding">
-  <div style="flex: 1; z-index: 1">
-    <picsa-map
-      (onMarkerClick)="onMarkerClick($event)"
-      [mapOptions]="mapOptions"
-      [basemapOptions]="basemapOptions"
-      [markers]="mapMarkers()"
-      #picsaMap
-    ></picsa-map>
+<!-- View Toggle (hidden on md+ screen size) -->
+@let toggleIcon = view()==='map' ? 'list' : 'map';
+@let toggleText = view()==='map' ? strings.showList : strings.showMap;
+<button mat-button (click)="toggleView()" class="view-toggle">
+  <mat-icon>{{toggleIcon}}</mat-icon>
+  {{toggleText}}
+</button>
+
+<div class="page-content">
+  <!-- Split screen display -->
+  <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
+
+    <div class="table-container" [attr.data-view]="view()">
+      <picsa-data-table [options]="tableOptions" [data]="tableData()" class="flex-1"
+        (rowClick)="selectedStation.set($event)"></picsa-data-table>
+    </div>
+
+    <div class="map-container" [attr.data-view]="view()">
+      <picsa-map (onMarkerClick)="selectedStation.set($event.data)" [mapOptions]="mapOptions"
+        [basemapOptions]="basemapOptions" [markers]="mapMarkers()" #picsaMap class="flex-1">
+      </picsa-map>
+    </div>
+
   </div>
-  <button (click)="goToSite(activeStation)" mat-raised-button color="primary" *ngIf="activeStation" id="siteButton">
-    <span id="siteButtonText">{{ activeStation.name }}</span>
+</div>
+
+@if(selectedStation(); as selectedStation){
+<div class="site-select-container">
+  <button (click)="goToSite(selectedStation)" mat-raised-button color="primary">
+    <span>{{ selectedStation.name }}</span>
     <mat-icon iconPositionEnd>arrow_forward</mat-icon>
   </button>
 </div>
+
+}

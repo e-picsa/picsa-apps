@@ -1,21 +1,30 @@
-import { Component, computed, effect, NgZone, OnInit, viewChild } from '@angular/core';
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ChangeDetectionStrategy, Component, computed, effect, NgZone, signal, viewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IStationMeta } from '@picsa/models';
+import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { geoJSON, Map } from 'leaflet';
 import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from 'libs/data/geoLocation';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 
+const STRINGS = { showMap: translateMarker('Show Map'), showList: translateMarker('Show List') };
+
 @Component({
   selector: 'climate-site-select',
   templateUrl: './site-select.page.html',
   styleUrls: ['./site-select.page.scss'],
-  standalone: false,
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatButtonModule, MatIconModule, PicsaMapComponent, PicsaDataTableComponent],
 })
 export class SiteSelectPage {
-  activeStation: any;
+  selectedStation = signal<IStationMeta | undefined>(undefined);
   // avoid static: true for map as created dynamic
   picsaMap = viewChild<PicsaMapComponent>('picsaMap');
   // main options handled by featuredCountry
@@ -24,6 +33,11 @@ export class SiteSelectPage {
     src: 'assets/mapTiles/raw/{z}/{x}/{y}.webp',
     maxNativeZoom: 8,
   };
+
+  view = signal<'list' | 'map'>('map');
+
+  public strings = STRINGS;
+
   public mapMarkers = computed(() => {
     const stations = this.dataService.stations();
     const markers: IMapMarker[] = stations.map((station, _index) => ({
@@ -35,12 +49,23 @@ export class SiteSelectPage {
     return markers;
   });
 
+  public tableData = computed(() => {
+    const stations = this.dataService.stations();
+    return stations.map((station, index) => {
+      return { ...station, map: index + 1 };
+    });
+  });
+
+  public tableOptions: IDataTableOptions = {
+    displayColumns: ['map', 'name', 'district'],
+    sort: { id: 'district', start: 'asc' },
+  };
+
   constructor(
-    private ngZone: NgZone,
     private router: Router,
     private route: ActivatedRoute,
     private dataService: ClimateDataService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
   ) {
     effect(async () => {
       const map = this.picsaMap()?.map();
@@ -55,14 +80,16 @@ export class SiteSelectPage {
         this.getUserLocationAndSelectClosestStation(picsaMap);
       }
     });
-  }
-
-  onMarkerClick(marker: IMapMarker) {
-    // linking to callback forces angular outside of usual cdr strategy/zone
-    // so have to manually call ngZone.run to detect changes
-    this.ngZone.run(() => {
-      this.activeStation = { ...(marker.data as IStationMeta) };
+    effect(() => {
+      const selectedStation = this.selectedStation();
+      const picsaMap = this.picsaMap();
+      if (selectedStation && picsaMap) {
+        picsaMap.setActiveMarker({ _index: selectedStation['map'] - 1 } as any);
+      }
     });
+  }
+  toggleView() {
+    this.view.set(this.view() === 'list' ? 'map' : 'list');
   }
 
   goToSite(site: IStationMeta) {
@@ -100,7 +127,7 @@ export class SiteSelectPage {
         },
         (error) => {
           console.error('Error getting user location', error);
-        }
+        },
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
@@ -121,10 +148,8 @@ export class SiteSelectPage {
       return previous;
     });
     if (nearest) {
-      this.ngZone.run(() => {
-        this.activeStation = nearest.data;
-        picsaMap.setActiveMarker(nearest);
-      });
+      this.selectedStation.set(nearest.data);
+      picsaMap.setActiveMarker(nearest);
     }
   }
 
