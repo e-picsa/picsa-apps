@@ -211,19 +211,12 @@ function copyTableWithClipboardApi(tableEl: HTMLTableElement) {
   const cleanedEl = inlineElementStyles(tableEl);
   const htmlBlob = new Blob([cleanedEl.outerHTML], { type: 'text/html' });
   const textBlob = new Blob([cleanedEl.innerText], { type: 'text/plain' });
-  navigator.clipboard
-    .write([
-      new ClipboardItem({
-        'text/html': htmlBlob,
-        'text/plain': textBlob,
-      }),
-    ])
-    .then(() => {
-      console.log('text copied');
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  navigator.clipboard.write([
+    new ClipboardItem({
+      'text/html': htmlBlob,
+      'text/plain': textBlob,
+    }),
+  ]);
 }
 
 function roundToNearest(value: number, n: number) {
@@ -240,7 +233,6 @@ function inlineElementStyles<T extends Element>(element: T) {
   // Get all elements in the SVG
   const allElements = [clone, ...clone.querySelectorAll('*')];
   const originalElements = [element, ...element.querySelectorAll('*')];
-  console.log(allElements);
 
   // Apply computed styles to each element
   allElements.forEach((element, index) => {
@@ -254,8 +246,6 @@ function inlineElementStyles<T extends Element>(element: T) {
 
       // Remove all non-essential attributes
       removeAttributes(element);
-    } else {
-      console.log('no original element', element);
     }
   });
   removeComments(clone);
@@ -280,10 +270,7 @@ function removeAttributes(element: Element) {
   const allowedAttrs = new Set(['rowspan', 'colspan', 'style']);
   Array.from(element.attributes).forEach((attr) => {
     if (!allowedAttrs.has(attr.name)) {
-      console.log('remove attr', attr.name);
       element.removeAttribute(attr.name);
-    } else {
-      console.log('keep', attr.name);
     }
   });
 }
