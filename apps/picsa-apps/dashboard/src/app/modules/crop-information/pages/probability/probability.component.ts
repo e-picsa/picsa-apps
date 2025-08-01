@@ -11,7 +11,6 @@ import {
   IDataTableOptions,
   PicsaDataTableComponent,
 } from '@picsa/shared/features/data-table/data-table.component';
-import { PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { arrayToHashmap } from '@picsa/utils';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
@@ -35,8 +34,6 @@ const TABLE_DISPLAY_COLUMNS: (keyof ICropDataDownscaledTableData)[] = ['location
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityComponent {
-  private picsaMapComponent = viewChild.required(PicsaMapComponent);
-
   public downscaledTableData = signal<ICropDataDownscaledTableData[]>([]);
 
   public downscaledTableDataOptions = signal<IDataTableOptions>({
@@ -55,7 +52,8 @@ export class CropProbabilityComponent {
     effect(async () => {
       const countryCode = this.deploymentService.activeDeploymentCountry();
       if (countryCode) {
-        await this.generateDownscaledTableData(countryCode);
+        const downscaledData = await this.generateDownscaledTableData(countryCode);
+        this.downscaledTableData.set(downscaledData);
       }
     });
   }
@@ -86,7 +84,9 @@ export class CropProbabilityComponent {
       });
       const merged = this.mergeDetailedLocationData(country_code, tableData);
       this.downscaledTableData.set(merged);
+      return merged;
     }
+    return [];
   }
 
   /** Merge crop location id with lookup geojson data  **/
