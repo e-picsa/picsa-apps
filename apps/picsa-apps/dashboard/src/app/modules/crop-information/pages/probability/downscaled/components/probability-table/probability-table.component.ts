@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, input, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -50,6 +50,8 @@ export class CropProbabilityTableComponent {
   public hasDownscaledWaterRequirements = computed(() => Object.keys(this.waterRequirements()).length > 0);
   public hasStationCropProbabilities = computed(() => this.stationProbabilities().length > 0);
 
+  private tableComponentRef = viewChild(CropProbabilityTableFrontend, { read: ElementRef });
+
   private cropDataHashmap = computed(() => arrayToHashmap(this.service.cropData(), 'id'));
   private probabilityHashmap = computed(() => this.generateProbabilityHashmap(this.stationProbabilities()));
 
@@ -80,6 +82,24 @@ export class CropProbabilityTableComponent {
     const output = { meta: this.tableMeta(), data: this.tableData() };
     // TODO - export full app format (currently just logged)
     console.log(output);
+  }
+  public copyToClipboard() {
+    // Get the HTML of the table
+    const el = this.tableComponentRef()?.nativeElement as HTMLDivElement;
+    if (el) {
+      const tableEl = el.querySelector('table');
+      if (tableEl) {
+        try {
+          // deprecated api - may not work on all browsers
+          copyTableWithExecCommand(tableEl);
+        } catch (error) {
+          // needs refining to get top-table layout correct
+          copyTableWithClipboardApi(tableEl);
+        }
+      }
+
+      return;
+    }
   }
 
   private generateTable(params: {
@@ -168,9 +188,119 @@ export class CropProbabilityTableComponent {
   }
 }
 
+/**
+ * Use (deprecated) internal `execCommand` to copy a table element in the same
+ * way that manually copying does
+ */
+function copyTableWithExecCommand(tableElement: Element) {
+  const range = document.createRange();
+  range.selectNode(tableElement);
+  const selection = window.getSelection();
+  if (selection) {
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    try {
+      document.execCommand('copy');
+    } finally {
+      selection.removeAllRanges();
+    }
+  }
+}
+
+/**
+ * Use clipboard api to copy table element, inlining styles and removing
+ * comments and attributes not supported in word docs
+ */
+function copyTableWithClipboardApi(tableEl: HTMLTableElement) {
+  const cleanedEl = inlineElementStyles(tableEl);
+  const htmlBlob = new Blob([cleanedEl.outerHTML], { type: 'text/html' });
+  const textBlob = new Blob([cleanedEl.innerText], { type: 'text/plain' });
+  navigator.clipboard
+    .write([
+      new ClipboardItem({
+        'text/html': htmlBlob,
+        'text/plain': textBlob,
+      }),
+    ])
+    .then(() => {
+      console.log('text copied');
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+
 function roundToNearest(value: number, n: number) {
   return Math.round(value / n) * n;
 }
 function toProbabilityOutOfTen(value: number) {
   return Math.round(value * 10);
+}
+
+function inlineElementStyles<T extends Element>(element: T) {
+  // Clone the SVG to avoid modifying the original
+  const clone = element.cloneNode(true) as T;
+
+  // Get all elements in the SVG
+  const allElements = [clone, ...clone.querySelectorAll('*')];
+  const originalElements = [element, ...element.querySelectorAll('*')];
+  console.log(allElements);
+
+  // Apply computed styles to each element
+  allElements.forEach((element, index) => {
+    const originalElement = originalElements[index];
+
+    if (originalElement) {
+      inlineStyles(originalElement, element);
+
+      // Remove all classes
+      element.removeAttribute('class');
+
+      // Remove all non-essential attributes
+      removeAttributes(element);
+    } else {
+      console.log('no original element', element);
+    }
+  });
+  removeComments(clone);
+  return clone;
+}
+
+function inlineStyles(originalElement: Element, cloneElement: Element) {
+  const allowedProps = ['color', 'font-size', 'font-weight', 'text-align', 'border', 'background', 'padding'];
+  const computedStyle = window.getComputedStyle(originalElement);
+  const styleString = Array.from(computedStyle)
+    .filter((prop) => computedStyle.getPropertyValue(prop))
+    .filter((prop) => allowedProps.find((v) => prop.startsWith(v)))
+    .map((prop) => `${prop}: ${computedStyle.getPropertyValue(prop)}`)
+    .join('; ');
+
+  if (styleString) {
+    cloneElement.setAttribute('style', styleString);
+  }
+}
+
+function removeAttributes(element: Element) {
+  const allowedAttrs = new Set(['rowspan', 'colspan', 'style']);
+  Array.from(element.attributes).forEach((attr) => {
+    if (!allowedAttrs.has(attr.name)) {
+      console.log('remove attr', attr.name);
+      element.removeAttribute(attr.name);
+    } else {
+      console.log('keep', attr.name);
+    }
+  });
+}
+
+// Remove all comment nodes recursively
+function removeComments(node: Node) {
+  for (let i = node.childNodes.length - 1; i >= 0; i--) {
+    const child = node.childNodes[i];
+    if (child.nodeType === Node.COMMENT_NODE) {
+      node.removeChild(child);
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      removeComments(child);
+    }
+  }
 }

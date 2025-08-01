@@ -28,11 +28,6 @@ th {
   padding: var(--th-padding);
 }
 
-div.season-start-text {
-  padding: 8px;
-  font-weight: bold;
-}
-
 td.crop-title,
 th.crop-title {
   text-transform: capitalize;
@@ -40,9 +35,11 @@ th.crop-title {
 
 td,
 tr,
-th,
-table {
-  border: $border-style;
+th {
+  border-top: $border-style !important;
+  border-bottom: $border-style !important;
+  border-left: $border-style !important;
+  border-right: $border-style !important;
   text-align: center;
 }
 th {
@@ -50,6 +47,21 @@ th {
 }
 tr.mat-mdc-row {
   --mat-table-row-item-container-height: var(--row-height);
+}
+
+table#startProbabilities {
+  table-layout: fixed;
+  border: none;
+  td:first-of-type {
+    border-left: none;
+  }
+  td:last-of-type {
+    border-right: none;
+  }
+  tr {
+    border-left: none;
+    border-right: none;
+  }
 }
 
 .disclaimer {

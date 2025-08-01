@@ -1,34 +1,39 @@
 @if (!hasStationCropProbabilities()) {
-  <!-- No probability data warning -->
-  <picsa-alert-box type="warning">
-    <div class="flex gap-8 items-center">
-      <div class="flex-1">
-        The selected station does not have any crop probability data
-        <br /><br />
-        Update probabilities from the climate station data page
-      </div>
-      <button mat-button [routerLink]="'/climate/station/' + station().station_id">View Station Data</button>
+<!-- No probability data warning -->
+<picsa-alert-box type="warning">
+  <div class="flex gap-8 items-center">
+    <div class="flex-1">
+      The selected station does not have any crop probability data
+      <br /><br />
+      Update probabilities from the climate station data page
     </div>
-  </picsa-alert-box>
+    <button mat-button [routerLink]="'/climate/station/' + station().station_id">View Station Data</button>
+  </div>
+</picsa-alert-box>
 }
 @if (!hasDownscaledWaterRequirements()) {
-  <!-- No probability data warning -->
-  <picsa-alert-box type="warning">
-    <div class="flex gap-8 items-center">
-      <div class="flex-1">
-        The selected location does not have any downscaled crop water requirements
-        <br /><br />
-        Update requirements from the crop variety page
-      </div>
-      <button mat-button routerLink="/crop/variety/">View Water Requirements</button>
+<!-- No probability data warning -->
+<picsa-alert-box type="warning">
+  <div class="flex gap-8 items-center">
+    <div class="flex-1">
+      The selected location does not have any downscaled crop water requirements
+      <br /><br />
+      Update requirements from the crop variety page
     </div>
-  </picsa-alert-box>
+    <button mat-button routerLink="/crop/variety/">View Water Requirements</button>
+  </div>
+</picsa-alert-box>
 }
 
 <!-- HACK - reuse frontend ui component -->
-<crop-probability-table [stationData]="tableData()" [stationMeta]="tableMeta()"></crop-probability-table>
+<crop-probability-table #table [stationData]="tableData()" [stationMeta]="tableMeta()"></crop-probability-table>
 
-<button mat-button class="mt-4" (click)="dialog.open(exportDialog)">Export</button>
+<div class="mt-4 flex gap-4">
+  <button mat-button class="mt-4" (click)="copyToClipboard()">Copy To Clipboard</button>
+
+  <button mat-button class="mt-4" (click)="dialog.open(exportDialog)">Export</button>
+
+</div>
 <ng-template #exportDialog>
   <button mat-stroked-button disabled>Export PDF (coming soon)</button>
   <button mat-stroked-button disabled>Export Word Doc (coming soon)</button>

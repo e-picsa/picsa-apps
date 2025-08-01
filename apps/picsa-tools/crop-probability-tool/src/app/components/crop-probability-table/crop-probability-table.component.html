@@ -40,34 +40,36 @@
     <!-- Use custom headers to display title and season start summary in top row -->
     <!-- This allows for the floating probability section -->
     <ng-container matColumnDef="title-column">
-      <th mat-header-cell *matHeaderCellDef [attr.colspan]="4">
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="4">
         <h2 style="flex: 1" data-tour-id="table-title">
           {{ 'Crop Information' | translate }} - {{ stationMeta().label }}
         </h2>
-      </th>
+      </td>
     </ng-container>
+
     <ng-container matColumnDef="season-start-summary-column">
+
       <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0"
         data-tour-id="season-start">
-        <table #startProbabilities style="table-layout: fixed">
-          <tr>
-            <td *ngFor="let column of probabilityColumns">
-              {{ column.label }}
-            </td>
-          </tr>
-        </table>
-        <div class="season-start-text ">
+        <div class="p-2 font-bold">
           {{ 'Probability of season start on or before date' | translate }}
         </div>
+        <table id="startProbabilities" style="width:100%">
 
-        <table #startProbabilities style="table-layout: fixed">
-          <tr>
+          <tr style="border-left: none; border-right:none;">
+            @for(column of probabilityColumns; track $index){
+            <td> {{ column.label }} </td>
+            }
+          </tr>
+
+
+          <tr style="border-left: none; border-right:none;">
             <td *ngFor="let probability of stationMeta().seasonProbabilities">
               {{ probability }}
             </td>
           </tr>
         </table>
-        <div class="season-start-text  " style="margin-top: 2rem; margin-left: -1px">
+        <div class="mt-4 p-2 font-bold">
           {{
           'Chance of receiving the water requirement in the
           days to maturity for this crop variety' | translate
