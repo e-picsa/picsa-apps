@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, input, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -68,7 +69,6 @@ export class CropProbabilityTableComponent {
       dateHeadings: this.startProbabilities().map((v) => v.label),
       label: this.station().station_name as string,
       notes: [],
-      // TODO
       seasonProbabilities: this.startProbabilities().map((v) => toProbabilityOutOfTen(v.probability) + ' / 10'),
     };
   });

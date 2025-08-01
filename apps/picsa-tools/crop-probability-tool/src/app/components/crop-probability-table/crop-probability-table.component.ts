@@ -91,13 +91,15 @@ export class CropProbabilityTableComponent {
 
     const entries: ITableRow[] = [];
     for (const { crop, data } of stationData) {
-      for (const item of data) {
+      data.forEach((item, index) => {
         const { probabilities, ...rest } = item;
         for (const { index, name } of this.probabilityColumns()) {
           rest[name] = probabilities?.[index] || '';
         }
-        entries.push({ ...rest, crop });
-      }
+        // set first row of each to span all crop rows (other rows set to 0 to omit)
+        const cropNameRowspan = index === 0 ? data.length : 0;
+        entries.push({ ...rest, crop, cropNameRowspan });
+      });
     }
     return entries;
   }
@@ -105,4 +107,6 @@ export class CropProbabilityTableComponent {
 
 interface ITableRow extends IStationCropDataItem {
   crop: string;
+  /** Number of rows the crop name should merge to take up */
+  cropNameRowspan: number;
 }
