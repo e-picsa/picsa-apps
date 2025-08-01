@@ -1,10 +1,5 @@
-<picsa-form-crop-select
-  [filterFn]="cropFilterFn"
-  (selectedChange)="filterData($event)"
-  [(ngModel)]="selectedCropName"
-  style="margin: 1rem"
-  [resetOption]="{ text: 'Show All', matIcon: 'apps' }"
-></picsa-form-crop-select>
+<picsa-form-crop-select [filterFn]="cropFilterFn" (selectedChange)="filterData($event)" [(ngModel)]="selectedCropName"
+  style="margin: 1rem" [resetOption]="{ text: 'Show All', matIcon: 'apps' }"></picsa-form-crop-select>
 
 <section class="table-container mat-mdc-table">
   <!-- Main table -->
@@ -36,10 +31,10 @@
 
     <!-- Probability columns -->
     <ng-container [matColumnDef]="column.name" *ngFor="let column of probabilityColumns">
-      <th mat-header-cell *matHeaderCellDef class="border-left border-top">
+      <th mat-header-cell *matHeaderCellDef>
         {{ column.label }}
       </th>
-      <td *matCellDef="let element" class="border-left border-bottom">{{ element[column.name] }}</td>
+      <td *matCellDef="let element">{{ element[column.name] }}</td>
     </ng-container>
 
     <!-- Use custom headers to display title and season start summary in top row -->
@@ -52,37 +47,29 @@
       </th>
     </ng-container>
     <ng-container matColumnDef="season-start-summary-column">
-      <td
-        mat-header-cell
-        *matHeaderCellDef
-        [attr.colspan]="probabilityColumns.length"
-        style="padding: 0"
-        data-tour-id="season-start"
-      >
-        <table #startProbabilities style="table-layout: fixed" class="border-left">
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0"
+        data-tour-id="season-start">
+        <table #startProbabilities style="table-layout: fixed">
           <tr>
-            <td *ngFor="let column of probabilityColumns" class="border-bottom border-top border-right">
+            <td *ngFor="let column of probabilityColumns">
               {{ column.label }}
             </td>
           </tr>
         </table>
-        <div class="season-start-text border-left">
+        <div class="season-start-text ">
           {{ 'Probability of season start on or before date' | translate }}
         </div>
 
-        <table #startProbabilities style="table-layout: fixed" class="border-left">
+        <table #startProbabilities style="table-layout: fixed">
           <tr>
-            <td
-              *ngFor="let probability of stationMeta().seasonProbabilities"
-              class="border-bottom border-top border-right"
-            >
+            <td *ngFor="let probability of stationMeta().seasonProbabilities">
               {{ probability }}
             </td>
           </tr>
         </table>
-        <div class="season-start-text border-left border-top" style="margin-top: 2rem; margin-left: -1px">
+        <div class="season-start-text  " style="margin-top: 2rem; margin-left: -1px">
           {{
-            'Chance of receiving the water requirement in the
+          'Chance of receiving the water requirement in the
           days to maturity for this crop variety' | translate
           }}
         </div>
@@ -91,7 +78,8 @@
     <tr mat-header-row *matHeaderRowDef="['title-column', 'season-start-summary-column']"></tr>
 
     <!-- Render main columns -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns">
+    </tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </section>

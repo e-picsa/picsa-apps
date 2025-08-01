@@ -1,8 +1,16 @@
 $border-style: 1px solid var(--color-light);
 
+:host {
+  display: block;
+  --td-padding: 8px;
+  --th-padding: 12px;
+  --min-width: 768px;
+  --row-height: 52px;
+}
+
 .table-container {
   // table requires space for probabilities and rest of table
-  min-width: 768px;
+  min-width: var(--min-width);
   overflow-x: auto;
   padding: 1rem;
 }
@@ -14,7 +22,10 @@ th {
   text-transform: capitalize;
 }
 td {
-  padding: 0.75rem;
+  padding: var(--td-padding);
+}
+th {
+  padding: var(--th-padding);
 }
 
 div.season-start-text {
@@ -27,18 +38,18 @@ th.crop-title {
   text-transform: capitalize;
 }
 
-// Use custom styles to organise borders on table elements
-.border-left {
-  border-left: $border-style;
+td,
+tr,
+th,
+table {
+  border: $border-style;
+  text-align: center;
 }
-.border-right {
-  border-right: $border-style;
+th {
+  font-weight: bold;
 }
-.border-top {
-  border-top: $border-style;
-}
-.border-bottom {
-  border-bottom: $border-style;
+tr.mat-mdc-row {
+  --mat-table-row-item-container-height: var(--row-height);
 }
 
 .disclaimer {
