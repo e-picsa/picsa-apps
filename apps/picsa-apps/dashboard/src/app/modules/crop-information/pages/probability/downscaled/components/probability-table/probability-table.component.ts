@@ -59,7 +59,7 @@ export class CropProbabilityTableComponent {
   public tableData = computed(() => {
     const cropDataHashmap = this.cropDataHashmap();
     const waterRequirements = this.waterRequirements() || {};
-    const startProbabilities = this.startProbabilities() || {};
+    const startProbabilities = this.startProbabilities() || [];
     return this.generateTable({ cropDataHashmap, waterRequirements, startProbabilities });
   });
 
