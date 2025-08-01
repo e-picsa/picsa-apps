@@ -26,7 +26,7 @@
 }
 
 <!-- HACK - reuse frontend ui component -->
-<crop-probability-table #table [stationData]="tableData()" [stationMeta]="tableMeta()"></crop-probability-table>
+<crop-probability-table #table [stationData]="tableData()" [tableMeta]="tableMeta()"></crop-probability-table>
 
 <div class="mt-4 flex gap-4">
   <button mat-button class="mt-4" (click)="copyToClipboard()">Copy To Clipboard</button>

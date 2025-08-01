@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { AlertBoxComponent } from '@picsa/components/src';
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
-import type { IProbabilityTableStationMeta, IStationCropData } from '@picsa/crop-probability/src/app/models';
+import type { IProbabilityTableMeta, IStationCropData } from '@picsa/crop-probability/src/app/models';
 import { ICropName } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
 import { ICropSuccessEntry, IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
@@ -48,6 +48,8 @@ export class CropProbabilityTableComponent {
 
   startProbabilities = input.required<ISeasonStartProbability[]>();
 
+  locationName = input.required<string>();
+
   public hasDownscaledWaterRequirements = computed(() => Object.keys(this.waterRequirements()).length > 0);
   public hasStationCropProbabilities = computed(() => this.stationProbabilities().length > 0);
 
@@ -63,12 +65,12 @@ export class CropProbabilityTableComponent {
     return this.generateTable({ cropDataHashmap, waterRequirements, startProbabilities });
   });
 
-  public tableMeta = computed<IProbabilityTableStationMeta>(() => {
+  public tableMeta = computed<IProbabilityTableMeta>(() => {
     return {
-      id: this.station().station_name as string,
+      id: '', // generated on export
+      label: this.locationName(),
+      station_label: this.station().station_name as string,
       dateHeadings: this.startProbabilities().map((v) => v.label),
-      label: this.station().station_name as string,
-      notes: [],
       seasonProbabilities: this.startProbabilities().map((v) => toProbabilityOutOfTen(v.probability) + ' / 10'),
     };
   });

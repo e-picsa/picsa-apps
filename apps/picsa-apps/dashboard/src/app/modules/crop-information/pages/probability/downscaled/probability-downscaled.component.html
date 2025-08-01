@@ -24,7 +24,7 @@
   @if (seasonStartProbabilities(); as startProbabilities) {
   <dashboard-crop-probability-table [waterRequirements]="downscaledWaterRequirements()"
     [stationProbabilities]="stationProbabilities" [station]="downscaled.station"
-    [startProbabilities]="startProbabilities"></dashboard-crop-probability-table>
+    [startProbabilities]="startProbabilities" [locationName]="locationMeta().label"></dashboard-crop-probability-table>
   }
   } @else {
   Loading station data...
