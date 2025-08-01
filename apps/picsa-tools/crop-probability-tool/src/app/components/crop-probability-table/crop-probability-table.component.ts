@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
@@ -21,7 +21,19 @@ export class CropProbabilityTableComponent {
   public displayedColumns: string[] = [];
 
   /** Tracking columns for individual probabilities */
-  public probabilityColumns: { name: string; label: string; index: number }[] = [];
+  public probabilityColumns = signal<{ name: string; label: string; index: number }[]>([]);
+
+  /**
+   * Generate placeholders to populate an ng-container column for each probability date and value
+   * These only generate placeholders for the RHS columns as left rowspan merges first 4 columns to left
+   **/
+  public probabilityHeaderDefs = computed(() => {
+    const columns = this.probabilityColumns();
+    return {
+      dates: columns.map((v, i) => `prob-date-${i}`),
+      values: columns.map((v, i) => `prob-value-${i}`),
+    };
+  });
 
   public dataSource: MatTableDataSource<ITableRow>;
   public selectedCropName = 'maize';
@@ -68,19 +80,20 @@ export class CropProbabilityTableComponent {
    * */
   private prepareTableRows(stationData: IStationCropData[]) {
     const { dateHeadings } = this.stationMeta();
-    this.probabilityColumns = dateHeadings.map((label, index) => ({
+    const probabilityColumns = dateHeadings.map((label, index) => ({
       label,
       name: `probability_${index}`,
       index,
     }));
-    const displayColumns = ['crop', 'variety', 'days', 'water', ...this.probabilityColumns.map((c) => c.name)];
+    this.probabilityColumns.set(probabilityColumns);
+    const displayColumns = ['crop', 'variety', 'days', 'water', ...this.probabilityColumns().map((c) => c.name)];
     this.displayedColumns = displayColumns;
 
     const entries: ITableRow[] = [];
     for (const { crop, data } of stationData) {
       for (const item of data) {
         const { probabilities, ...rest } = item;
-        for (const { index, name } of this.probabilityColumns) {
+        for (const { index, name } of this.probabilityColumns()) {
           rest[name] = probabilities?.[index] || '';
         }
         entries.push({ ...rest, crop });

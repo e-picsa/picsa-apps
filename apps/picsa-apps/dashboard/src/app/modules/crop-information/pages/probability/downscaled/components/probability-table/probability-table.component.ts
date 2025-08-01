@@ -89,15 +89,10 @@ export class CropProbabilityTableComponent {
     if (el) {
       const tableEl = el.querySelector('table');
       if (tableEl) {
-        try {
-          // deprecated api - may not work on all browsers
-          copyTableWithExecCommand(tableEl);
-        } catch (error) {
-          // needs refining to get top-table layout correct
-          copyTableWithClipboardApi(tableEl);
-        }
+        copyTableWithClipboardApi(tableEl);
+        // deprecated api - may not work on all browsers
+        // copyTableWithExecCommand(tableEl);
       }
-
       return;
     }
   }

@@ -30,7 +30,7 @@
     </ng-container>
 
     <!-- Probability columns -->
-    <ng-container [matColumnDef]="column.name" *ngFor="let column of probabilityColumns">
+    <ng-container [matColumnDef]="column.name" *ngFor="let column of probabilityColumns()">
       <th mat-header-cell *matHeaderCellDef>
         {{ column.label }}
       </th>
@@ -39,37 +39,26 @@
 
     <!-- Use custom headers to display title and season start summary in top row -->
     <!-- This allows for the floating probability section -->
-    <ng-container matColumnDef="title-column">
-      <td mat-header-cell *matHeaderCellDef [attr.colspan]="4">
+
+    <!-- LHS Templates -->
+    <ng-container matColumnDef="title-left">
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="4" [attr.rowspan]="4">
         <h2 style="flex: 1" data-tour-id="table-title">
-          {{ 'Crop Information' | translate }} - {{ stationMeta().label }}
+          {{ 'Crop Information' | translate }}<br>{{ stationMeta().label }}
         </h2>
       </td>
     </ng-container>
-
-    <ng-container matColumnDef="season-start-summary-column">
-
-      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns.length" style="padding: 0"
-        data-tour-id="season-start">
+    <!-- RHS -->
+    <ng-container matColumnDef="prob-text-right">
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns().length" data-tour-id="season-start">
         <div class="p-2 font-bold">
           {{ 'Probability of season start on or before date' | translate }}
         </div>
-        <table id="startProbabilities" style="width:100%">
-
-          <tr style="border-left: none; border-right:none;">
-            @for(column of probabilityColumns; track $index){
-            <td> {{ column.label }} </td>
-            }
-          </tr>
-
-
-          <tr style="border-left: none; border-right:none;">
-            <td *ngFor="let probability of stationMeta().seasonProbabilities">
-              {{ probability }}
-            </td>
-          </tr>
-        </table>
-        <div class="mt-4 p-2 font-bold">
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="water-text-right">
+      <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns().length" data-tour-id="season-start">
+        <div class="p-2 font-bold">
           {{
           'Chance of receiving the water requirement in the
           days to maturity for this crop variety' | translate
@@ -77,7 +66,22 @@
         </div>
       </td>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="['title-column', 'season-start-summary-column']"></tr>
+    @for(column of probabilityColumns(); track $index){
+    <ng-container [matColumnDef]="'prob-date-'+$index">
+      <td mat-header-cell *matHeaderCellDef>{{column.label}} </td>
+    </ng-container>
+    <ng-container [matColumnDef]="'prob-value-'+$index">
+      <td mat-header-cell *matHeaderCellDef>{{stationMeta().seasonProbabilities[$index]}} </td>
+    </ng-container>
+    }
+
+
+
+
+    <tr mat-header-row *matHeaderRowDef="['title-left', 'prob-text-right']"></tr>
+    <tr mat-header-row *matHeaderRowDef="probabilityHeaderDefs().dates"></tr>
+    <tr mat-header-row *matHeaderRowDef="probabilityHeaderDefs().values"></tr>
+    <tr mat-header-row *matHeaderRowDef="[ 'water-text-right']"></tr>
 
     <!-- Render main columns -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns">
