@@ -1429,12 +1429,12 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Crop water requirement (mm)",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Crop probabilities depend on when the season starts.\nHere you can see the probabilities of the season starting at different dates",
     "tool": "budget"
+  },
+  {
+    "text": "Crop Water Requirement",
+    "tool": "crop-probability"
   },
   {
     "text": "Crop Information",
@@ -1442,6 +1442,10 @@
   },
   {
     "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0",
     "tool": "crop-probability"
   },
   {
@@ -1458,6 +1462,14 @@
   },
   {
     "text": "Terciles",
+    "tool": "climate"
+  },
+  {
+    "text": "Show Map",
+    "tool": "climate"
+  },
+  {
+    "text": "Show List",
     "tool": "climate"
   },
   {
