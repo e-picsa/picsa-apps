@@ -66,7 +66,7 @@ export class CropProbabilityTableComponent implements OnInit {
     this.selectedCropName.set(this.filterCrop());
   }
 
-  public cropFilterFn = signal<(option: ICropData) => boolean>(undefined as any);
+  public cropFilterFn = signal<((option: ICropData) => boolean) | undefined>(undefined);
 
   private filterData() {
     const cropName = this.selectedCropName();
