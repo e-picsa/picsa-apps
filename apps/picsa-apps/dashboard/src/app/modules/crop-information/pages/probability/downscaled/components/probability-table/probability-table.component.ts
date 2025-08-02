@@ -1,8 +1,9 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, input, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { AlertBoxComponent } from '@picsa/components/src';
 import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@picsa/crop-probability/src/app/components/crop-probability-table/crop-probability-table.component';
@@ -33,7 +34,7 @@ export type ISeasonStartProbability = { plantDate: number; label: string; probab
 
 @Component({
   selector: 'dashboard-crop-probability-table',
-  imports: [CommonModule, AlertBoxComponent, MatButtonModule, RouterModule, CropProbabilityTableFrontend],
+  imports: [CommonModule, AlertBoxComponent, MatButtonModule, MatIcon, RouterModule, CropProbabilityTableFrontend],
   templateUrl: './probability-table.component.html',
   styleUrl: './probability-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,6 +76,8 @@ export class CropProbabilityTableComponent {
     };
   });
 
+  public copyStatus = signal<'ready' | 'pending' | 'success'>('ready');
+
   constructor(
     private service: CropInformationService,
     public dialog: MatDialog,
@@ -86,12 +89,17 @@ export class CropProbabilityTableComponent {
     console.log(output);
   }
   public copyToClipboard() {
+    this.copyStatus.set('pending');
     // Get the HTML of the table
     const el = this.tableComponentRef()?.nativeElement as HTMLDivElement;
     if (el) {
       const tableEl = el.querySelector('table');
       if (tableEl) {
         copyTableWithClipboardApi(tableEl);
+        this.copyStatus.set('success');
+        setTimeout(() => {
+          this.copyStatus.set('ready');
+        }, 1500);
         // deprecated api - may not work on all browsers
         // copyTableWithExecCommand(tableEl);
       }

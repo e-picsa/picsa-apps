@@ -33,7 +33,7 @@
       </td>
     </ng-container>
     <ng-container matColumnDef="water">
-      <th mat-header-cell *matHeaderCellDef>{{ 'Crop water requirement (mm)' | translate }}*</th>
+      <th mat-header-cell *matHeaderCellDef class="!normal-case">{{ 'Crop Water Requirement (mm)' | translate }}*</th>
       <td mat-cell *matCellDef="let element">
         <div *ngFor="let water of element.water">{{ water | translate }}</div>
       </td>
@@ -101,10 +101,9 @@
     <!-- Disclaimer -->
     <ng-container matColumnDef="disclaimer">
       <td mat-footer-cell *matFooterCellDef [attr.colspan]="4+probabilityColumns().length" class="footer-cell">
-        <div class="flex text-xs text-left">
-          <div>*</div>
-          <div>{{'Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0' | translate}}<br>
-            {{tableMeta().station_label}}</div>
+        <div class="text-xs text-left">
+          *{{'Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0' | translate}}<br>
+          {{tableMeta().station_label}}
         </div>
       </td>
     </ng-container>
