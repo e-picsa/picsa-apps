@@ -29,9 +29,18 @@
 <crop-probability-table #table [stationData]="tableData()" [tableMeta]="tableMeta()"></crop-probability-table>
 
 <div class="mt-4 flex gap-4">
-  <button mat-button class="mt-4" (click)="copyToClipboard()">Copy To Clipboard</button>
+  <button mat-stroked-button class="w-52" (click)="copyToClipboard()" [disabled]="copyStatus()==='pending'">
+    <mat-icon>
+      {{copyStatus()==='success' ? 'check' : 'content_copy'}}
+    </mat-icon>
+    <span>{{copyStatus()==='success' ? 'Copied' : 'Copy To Clipboard'}}</span>
+  </button>
 
-  <button mat-button class="mt-4" (click)="dialog.open(exportDialog)">Export</button>
+  <dashboard-crop-probability-language-select></dashboard-crop-probability-language-select>
+
+  <button mat-button class="ml-auto" (click)="dialog.open(exportDialog)">
+    <mat-icon>file_download </mat-icon> Export
+  </button>
 
 </div>
 <ng-template #exportDialog>

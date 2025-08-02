@@ -38,6 +38,7 @@ export interface IStationCropData {
 export interface IStationCropDataItem {
   variety: string;
   days: string;
-  water?: string[];
+  // TODO - use only numbers, migrate legacy mw data
+  water?: (string | number)[];
   probabilities?: string[];
 }
