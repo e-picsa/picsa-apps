@@ -68,3 +68,9 @@ td.footer-cell,
 tr.footer-row {
   border: none !important;
 }
+
+// Ensure probabilities and month titles fit in single row
+td.probability-cell,
+th.probability-cell {
+  @apply w-14 p-0 whitespace-nowrap;
+}
