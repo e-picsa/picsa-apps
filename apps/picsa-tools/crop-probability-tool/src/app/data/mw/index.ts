@@ -3,7 +3,7 @@ import { IProbabilityTable, IStationCropData } from '../../models';
 const MW_CROP_DATA: IProbabilityTable[] = [
   {
     id: 'kasungu/kasungu',
-    label: '',
+    label: 'Kasungu',
     station_label: 'KASUNGU MET STATION',
     dateHeadings: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
     seasonProbabilities: ['1/10', '3/10', '8/10', '9/10'],
@@ -11,7 +11,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'nkhotakota/nkhotakota',
-    label: '',
+    label: 'Nkhotakota',
     station_label: 'NKHOTAKOTA MET STATION',
     dateHeadings: ['30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['3/10', '6/10', '9/10', '10/10', '10/10'],
@@ -19,7 +19,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chikwawa/chapananga',
-    label: '',
+    label: 'Chapananga',
     station_label: 'CHAPANANGA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec'],
     seasonProbabilities: ['2/10', '3/10', '5/10', '7/10', '8/10'],
@@ -27,7 +27,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chikwawa/mitole_met_station',
-    label: '',
+    label: 'Mitole',
     station_label: 'MITOLE MET STATION',
     dateHeadings: ['10-Nov', '20-Nov', '30-Nov', '10-Dec', '20-Dec'],
     seasonProbabilities: ['1/10', '2/10', '4/10', '6/10', '8/10'],
@@ -35,7 +35,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chikwawa/nchalo',
-    label: '',
+    label: 'Nchalo',
     station_label: 'NGABU MET STATION',
     dateHeadings: ['10-Nov', '20-Nov', '30-Nov', '10-Dec', '20-Dec'],
     seasonProbabilities: ['1/10', '2/10', '4/10', '7/10', '8/10'],
@@ -43,7 +43,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chiradzulu/mikolongwe',
-    label: '',
+    label: 'Mikolongwe',
     station_label: 'MIKOLONGWE MET STATION',
     dateHeadings: ['10Nov', '20Nov', '30Nov', '10Dec', '20Dec', '30Dec'],
     seasonProbabilities: ['6/10', '7/10', '7/10', '9/10', '9/10', '9/10'],
@@ -51,7 +51,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chiradzulu/mombezi',
-    label: '',
+    label: 'Mombezi',
     station_label: 'MOMBEZI MET STATION',
     dateHeadings: ['10Nov', '20Nov', '30Nov', '10Dec', '20Dec', '30Dec'],
     seasonProbabilities: ['6/10', '7/10', '7/10', '9/10', '9/10', '9/10'],
@@ -59,7 +59,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chiradzulu/mulombozi',
-    label: '',
+    label: 'Mulombozi',
     station_label: 'MULOMBOZI MET STATION',
     dateHeadings: ['10Nov', '20Nov', '30Nov', '10Dec', '20Dec', '30Dec'],
     seasonProbabilities: ['2/10', '3/10', '5/10', '9/10', '9/10', '1'],
@@ -67,7 +67,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'chiradzulu/nalusu',
-    label: '',
+    label: 'Nalusu',
     station_label: 'NASULU MET STATION',
     dateHeadings: ['10Nov', '20Nov', '30Nov', '10Dec', '20Dec', '30Dec'],
     seasonProbabilities: ['6/10', '7/10', '7/10', '9/10', '9/10', '9/10'],
@@ -75,7 +75,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dedza/dedza',
-    label: '',
+    label: 'Dedza',
     station_label: 'DEDZA MET STATION',
     dateHeadings: ['10 NOV', '20 NOV', '30 NOV', '10 DEC', '20 DEC', '30 DEC', '09 JAN'],
     seasonProbabilities: ['2/10', '2/10', '4/10', '7/10', '9/10', '10/10', ''],
@@ -83,7 +83,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dedza/lobi',
-    label: '',
+    label: 'Lobi',
     station_label: 'LOBI MET STATION',
     dateHeadings: ['20 NOV', '30 NOV', '10 DEC', '20 DEC', '30 DEC', ''],
     seasonProbabilities: ['2/10', '4/10', '7/10', '9/10', '10/10', ''],
@@ -91,7 +91,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/boma_met_station',
-    label: '',
+    label: 'Boma',
     station_label: 'BOMA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -99,7 +99,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/madisi_met_station',
-    label: '',
+    label: 'Madisi',
     station_label: 'MADISI MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -107,7 +107,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/bowe_met_station',
-    label: '',
+    label: 'Bowe',
     station_label: 'BOWE MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -115,7 +115,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/nambuma_met_station',
-    label: '',
+    label: 'Nambuma',
     station_label: 'NAMBUMA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -123,7 +123,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/mponela_met_station',
-    label: '',
+    label: 'Mponela',
     station_label: 'MPONELA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -131,7 +131,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/nalunga_met_station',
-    label: '',
+    label: 'Nalunga',
     station_label: 'NALUNGA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -139,7 +139,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'dowa/mvera_met_station',
-    label: '',
+    label: 'Mvera',
     station_label: 'MVERA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan'],
     seasonProbabilities: ['1/10', '4/10', '7/10', '8/10', '9/10', '10/10'],
@@ -147,7 +147,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/bunda_met_station',
-    label: '',
+    label: 'Bunda',
     station_label: 'BUNDA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -155,7 +155,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/chileka_met_station',
-    label: '',
+    label: 'Chileka',
     station_label: 'CHILEKA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -163,7 +163,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/chitedze_met_station',
-    label: '',
+    label: 'Chitedze',
     station_label: 'CHITEDZE MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -171,7 +171,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/kia_met_station',
-    label: '',
+    label: 'Kia',
     station_label: 'KIA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -179,7 +179,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/nathenje_met_station',
-    label: '',
+    label: 'Nathenje',
     station_label: 'NATHENJE MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -187,7 +187,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/mpenu_met_station',
-    label: '',
+    label: 'Mpenu',
     station_label: 'MPENU MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -195,7 +195,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/sinyala_met_station',
-    label: '',
+    label: 'Sinyala',
     station_label: 'SINYALA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -203,7 +203,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'lilongwe/kasiya_met_station',
-    label: '',
+    label: 'Kasiya',
     station_label: 'KASIYA MET STATION',
     dateHeadings: ['20-Nov', '30-Nov', '10-Dec', '20-Dec', '30-DEC'],
     seasonProbabilities: ['2/10', '4/10', '7/10', '8/10', '9/10'],
@@ -211,7 +211,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'nkhata_bay/chintheche_nkhtata_bay',
-    label: '',
+    label: 'Chintheche',
     station_label: 'CHINTHECHE MET STATION',
     dateHeadings: ['10 Nov', '20 Nov', '30 Nov', '10 Dec', '20 Dec', '30 Dec'],
     seasonProbabilities: ['2/10', '3/10', '3/10', '7/10', '9/10', '9/10'],
@@ -219,7 +219,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'nkhata_bay/kawalazi_nkhtata_bay',
-    label: '',
+    label: 'Kawalazi',
     station_label: 'KAWALAZI MET STATION',
     dateHeadings: ['10 Nov', '20 Nov', '30 Nov', '10 Dec', '20 Dec', '30 Dec'],
     seasonProbabilities: ['1/10', '2/10', '3/10', '5/10', '7/10', '9/10'],
@@ -227,7 +227,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'nkhata_bay/mzenga_nkhtata_bay',
-    label: '',
+    label: 'Mzenga',
     station_label: 'MZENGA MET STATION',
     dateHeadings: ['10 Nov', '20 Nov', '30 Nov', '10 Dec', '20 Dec', '30 Dec'],
     seasonProbabilities: ['1/10', '1/10', '3/10', '4/10', '6/10', ''],
@@ -235,7 +235,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'nkhata_bay/nkhata_bay_met_nkhtata_bay',
-    label: '',
+    label: 'Nkhata Bay',
     station_label: 'NKHATA BAY MET STATION',
     dateHeadings: ['10 Nov', '20 Nov', '30 Nov', '10 Dec', '20 Dec', ''],
     seasonProbabilities: ['1/10', '2/10', '5/10', '6/10', '9/10', ''],
@@ -244,7 +244,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'salima/airport_met',
-    label: '',
+    label: 'Airport',
     station_label: 'AIRPORT MET STATION',
     dateHeadings: ['30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan', ''],
     seasonProbabilities: ['1/10', '1/10', '3/10', '6/10', '9/10', '10/10'],
@@ -252,7 +252,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'salima/chipoka_met',
-    label: '',
+    label: 'Chipoka',
     station_label: 'CHIPOKA MET STATION',
     dateHeadings: ['30 Nov', '10 Dec', '20 Dec', '30 Dec', '10-Jan', ''],
     seasonProbabilities: ['1/10', '1/10', '3/10', '6/10', '9/10', '10/10'],
@@ -260,7 +260,7 @@ const MW_CROP_DATA: IProbabilityTable[] = [
   },
   {
     id: 'salima/chitala_met',
-    label: '',
+    label: 'Chitala',
     station_label: 'CHITALA MET STATION',
     dateHeadings: ['30-Nov', '10-Dec', '20-Dec', '30-Dec', '10-Jan', ''],
     seasonProbabilities: ['1/10', '1/10', '3/10', '6/10', '8/10', '9/10'],

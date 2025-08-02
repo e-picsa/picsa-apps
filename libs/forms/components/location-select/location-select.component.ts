@@ -104,6 +104,10 @@ export class FormLocationSelectComponent {
       if (admin5Selected && !filteredLocations.find((v) => v.id === admin5Selected)) {
         this.admin5Selected.set(undefined);
       }
+      // Set value when only 1 option available
+      if (!admin5Selected && filteredLocations.length === 1) {
+        this.admin5Selected.set(filteredLocations[0].id);
+      }
     }
   }
 }
