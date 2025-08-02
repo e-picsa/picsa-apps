@@ -9,9 +9,9 @@
     <!-- <picsa-tour-button [tourId]="stationId() ? 'cropProbabilityTable' : 'cropProbabilitySelect'"></picsa-tour-button> -->
   </div>
   <!-- Table -->
-  @if (tableStationMeta(); as stationMeta) {
+  @if (tableStationMeta(); as tableMeta) {
     @if (tableStationData(); as stationData) {
-      <crop-probability-table [stationData]="stationData" [stationMeta]="stationMeta"></crop-probability-table>
+      <crop-probability-table [stationData]="stationData" [tableMeta]="tableMeta"></crop-probability-table>
     } @else {
       Loading...
     }
