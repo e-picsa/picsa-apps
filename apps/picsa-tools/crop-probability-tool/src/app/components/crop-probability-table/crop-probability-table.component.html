@@ -51,7 +51,7 @@
     <ng-container matColumnDef="title-left">
       <td mat-header-cell *matHeaderCellDef [attr.colspan]="4" [attr.rowspan]="4">
         <h2 style="flex: 1" data-tour-id="table-title">
-          {{ 'Crop Information' | translate }}<br>{{ stationMeta().label }}
+          {{ 'Crop Information' | translate }}<br>{{ tableMeta().label }}
         </h2>
       </td>
     </ng-container>
@@ -78,7 +78,7 @@
       <td mat-header-cell *matHeaderCellDef>{{column.label}} </td>
     </ng-container>
     <ng-container [matColumnDef]="'prob-value-'+$index">
-      <td mat-header-cell *matHeaderCellDef>{{stationMeta().seasonProbabilities[$index]}} </td>
+      <td mat-header-cell *matHeaderCellDef>{{tableMeta().seasonProbabilities[$index]}} </td>
     </ng-container>
     }
 
@@ -94,8 +94,18 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns">
     </tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <!-- Disclaimer -->
+    <ng-container matColumnDef="disclaimer">
+      <td mat-footer-cell *matFooterCellDef [attr.colspan]="4+probabilityColumns().length" class="footer-cell">
+        <div class="flex text-xs text-left">
+          <div>*</div>
+          <div>{{'Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0' | translate}}<br>
+            {{tableMeta().station_label}}</div>
+        </div>
+      </td>
+    </ng-container>
+    <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="footer-row"></tr>
+
   </table>
 </section>
-<div class="disclaimer">
-  <div *ngFor="let note of stationMeta().notes">{{ note | translate }}</div>
-</div>

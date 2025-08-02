@@ -7,7 +7,7 @@ import { PicsaFormsModule } from '@picsa/forms';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { arrayToHashmap } from '@picsa/utils';
 
-import { IProbabilityTableStationMeta, IStationCropData, IStationCropDataItem } from '../../models';
+import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '../../models';
 
 @Component({
   selector: 'crop-probability-table',
@@ -39,7 +39,7 @@ export class CropProbabilityTableComponent {
   public selectedCropName = 'maize';
 
   public stationData = input.required<IStationCropData[]>();
-  public stationMeta = input.required<IProbabilityTableStationMeta>();
+  public tableMeta = input.required<IProbabilityTableMeta>();
 
   private tableData: ITableRow[] = [];
 
@@ -79,7 +79,7 @@ export class CropProbabilityTableComponent {
    * Split probabilities into individual columns
    * */
   private prepareTableRows(stationData: IStationCropData[]) {
-    const { dateHeadings } = this.stationMeta();
+    const { dateHeadings } = this.tableMeta();
     const probabilityColumns = dateHeadings.map((label, index) => ({
       label,
       name: `probability_${index}`,

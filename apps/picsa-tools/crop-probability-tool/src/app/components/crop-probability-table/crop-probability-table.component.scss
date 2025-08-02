@@ -64,7 +64,7 @@ table#startProbabilities {
   }
 }
 
-.disclaimer {
-  margin: 1rem;
-  line-height: 2rem;
+td.footer-cell,
+tr.footer-row {
+  border: none !important;
 }

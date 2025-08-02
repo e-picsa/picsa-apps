@@ -105,7 +105,6 @@ export class ProbabilityDownscaledComponent {
     if (error) throw error;
     if (data) {
       this.downscaledData.set(data);
-      console.log('downscaled data', data);
     }
     this.dataLoading.set(false);
   }
