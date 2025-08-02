@@ -5,31 +5,31 @@
       {
         "variety": "SC 637",
         "days": "130-136",
-        "water": ["512-535mm"],
+        "water": [512, 535],
         "probabilities": ["9/10", "9/10", "6/10", "3/10", "0/10"]
       },
       {
         "variety": "SC 303",
         "days": "100",
-        "water": ["413mm"],
+        "water": [413],
         "probabilities": ["9/10", "10/10", "9/10", "9/10", "5/10"]
       },
       {
         "variety": "PAN 53",
         "days": "120",
-        "water": ["475mm"],
+        "water": [475],
         "probabilities": ["9/10", "9/10", "8/10", "5/10", "1/10"]
       },
       {
         "variety": "DK 777",
         "days": "120-130",
-        "water": ["475-512mm"],
+        "water": [475, 512],
         "probabilities": ["9/10", "9/10", "8/10", "5/10", "1/10"]
       },
       {
         "variety": "ZMS 606",
         "days": "125-130",
-        "water": ["495-512mm"],
+        "water": [495, 512],
         "probabilities": ["9/10", "9/10", "7-8/10", "4-5/10", "0-1/10"]
       }
     ]
@@ -40,13 +40,13 @@
       {
         "variety": "Kuyuma",
         "days": "100-115",
-        "water": ["362-409mm"],
+        "water": [362, 409],
         "probabilities": ["9-10/10", "10/10", "9-10/10", "6-9/10", "3-6/10"]
       },
       {
         "variety": "Sima",
         "days": "120",
-        "water": ["425mm"],
+        "water": [425],
         "probabilities": ["10/10", "9/10", "8/10", "5/10", "1/10"]
       }
     ]
@@ -55,21 +55,39 @@
     "crop": "beans",
     "data": [
       {
-        "variety": "Kabulangeti",
+        "variety": "Kabulangeti (Dry)",
         "days": "75-80",
-        "water": ["Dry: 326-344mm", "Green: 318-336mm"],
+        "water": [326, 344],
         "probabilities": ["7-8/10", "9/10", "10/10", "9-10/10", "9/10"]
       },
       {
-        "variety": "Mbereshi",
+        "variety": "Kabulangeti (Green)",
+        "days": "75-80",
+        "water": [318, 336],
+        "probabilities": ["7-8/10", "9/10", "10/10", "9-10/10", "9/10"]
+      },
+      {
+        "variety": "Mbereshi (Dry)",
         "days": "80-85",
-        "water": ["Dry:344-361mm", "Green:336-355mm"],
+        "water": [344, 361],
         "probabilities": ["6-8/10", "9/10", "10/10", "9-10/10", "8-9/10"]
       },
       {
-        "variety": "Sugar Beans",
+        "variety": "Mbereshi (Green)",
+        "days": "80-85",
+        "water": [336, 355],
+        "probabilities": ["6-8/10", "9/10", "10/10", "9-10/10", "8-9/10"]
+      },
+      {
+        "variety": "Sugar Beans (Dry)",
         "days": "85-115",
-        "water": ["Dry:361-465mm", "Green:355-463mm"],
+        "water": [361, 465],
+        "probabilities": ["8-9/10", "9/10", "9-10/10", "5-9/10", "3-8/10"]
+      },
+      {
+        "variety": "Sugar Beans (Green)",
+        "days": "85-115",
+        "water": [355, 463],
         "probabilities": ["8-9/10", "9/10", "9-10/10", "5-9/10", "3-8/10"]
       }
     ]
@@ -80,31 +98,31 @@
       {
         "variety": "MGV4",
         "days": "120-140",
-        "water": ["492-570mm"],
+        "water": [492, 570],
         "probabilities": ["9/10", "7-9/10", "3-8/10", "0-5/10", "0-1/10"]
       },
       {
         "variety": "MGV5",
         "days": "120",
-        "water": ["492mm"],
+        "water": [492],
         "probabilities": ["9/10", "7/10", "3/10", "0/10", "0/10"]
       },
       {
         "variety": "MGV8",
         "days": "120-130",
-        "water": ["492-530mm"],
+        "water": [492, 530],
         "probabilities": ["9/10", "9/10", "6-8/10", "3-5/10", "0-1/10"]
       },
       {
         "variety": "Chalimbana",
         "days": "140-160**",
-        "water": ["570-654mm"],
+        "water": [570, 654],
         "probabilities": ["8-9/10", "7/10", "3/10", "0/10", "0/10"]
       },
       {
         "variety": "Natal common",
         "days": "90-100",
-        "water": ["385-420mm"],
+        "water": [385, 420],
         "probabilities": ["9/10", "9-10/10", "9-10/10", "9/10", "5-7/10"]
       }
     ]
@@ -115,13 +133,13 @@
       {
         "variety": "Kafue",
         "days": "125-130",
-        "water": ["529-549mm"],
+        "water": [529, 549],
         "probabilities": ["9/10", "8-9/10", "5-7/10", "3/10", "0/10"]
       },
       {
         "variety": "Dina",
         "days": "135-140",
-        "water": ["569-589mm"],
+        "water": [569, 589],
         "probabilities": ["9/10", "7-8/10", "3-5/10", "1/10", "0/10"]
       }
     ]
@@ -132,7 +150,7 @@
       {
         "variety": "Milika",
         "days": "100",
-        "water": ["404mm"],
+        "water": [404],
         "probabilities": ["9/10", "10/10", "10/10", "9/10", "6/10"]
       }
     ]
@@ -143,26 +161,26 @@
       {
         "variety": "Lutembwe",
         "days": "90",
-        "water": "",
-        "probabilities": ""
+        "water": [""],
+        "probabilities": ["", "", "", "", ""]
       },
       {
         "variety": "Bubebe",
         "days": "70",
-        "water": "",
-        "probabilities": ""
+        "water": [""],
+        "probabilities": ["", "", "", "", ""]
       },
       {
         "variety": "M’Sandile",
         "days": "60",
-        "water": "",
-        "probabilities": ""
+        "water": [""],
+        "probabilities": ["", "", "", "", ""]
       },
       {
         "variety": "Mtilizi, Namuseba",
         "days": "65",
-        "water": "",
-        "probabilities": ""
+        "water": [""],
+        "probabilities": ["", "", "", "", ""]
       }
     ]
   },
@@ -172,7 +190,7 @@
       {
         "variety": "Chureza",
         "days": "160",
-        "water": ["500mm"],
+        "water": [500],
         "probabilities": ["4/10", "1/10", "0/10", "0/10", "0/10"]
       }
     ]
@@ -183,13 +201,13 @@
       {
         "variety": "Virginia",
         "days": "130",
-        "water": ["400-600mm"],
+        "water": [400, 600],
         "probabilities": ["9-10/10", "8-9/10", "5-6/10", "2-3/10", "0/10"]
       },
       {
         "variety": "Barley",
         "days": "130",
-        "water": ["400-600mm"],
+        "water": [400, 600],
         "probabilities": ["9-10/10", "8-9/10", "5-6/10", "2-3/10", "0/10"]
       }
     ]
@@ -200,13 +218,13 @@
       {
         "variety": "Bandawe",
         "days": "90-120",
-        "water": ["400mm"],
+        "water": [400],
         "probabilities": ["9-10/10", "9-10/10", "8-10/10", "5-9/10", "1-7/10"]
       },
       {
         "variety": "Chiwoko",
         "days": "90-120",
-        "water": ["400mm"],
+        "water": [400],
         "probabilities": ["9-10/10", "9-10/10", "8-10/10", "5-9/10", "1-7/10"]
       }
     ]

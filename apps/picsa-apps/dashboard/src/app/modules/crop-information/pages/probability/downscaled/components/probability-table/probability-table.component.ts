@@ -145,7 +145,7 @@ export class CropProbabilityTableComponent {
             days: [...new Set([days.lower, days_upper])].join(' - '),
             variety,
             probabilities: probabilityText,
-            water: [`${waterRequirement}mm`],
+            water: [waterRequirement],
           });
         } else {
           console.warn(`no variety data found for [${crop}/${variety}]`);

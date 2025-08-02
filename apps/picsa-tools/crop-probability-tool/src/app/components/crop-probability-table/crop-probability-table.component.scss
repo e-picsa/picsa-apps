@@ -72,5 +72,5 @@ tr.footer-row {
 // Ensure probabilities and month titles fit in single row
 td.probability-cell,
 th.probability-cell {
-  @apply w-14 p-0 whitespace-nowrap;
+  @apply min-w-14 p-0 whitespace-nowrap;
 }
