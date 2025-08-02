@@ -1,5 +1,8 @@
-<picsa-form-crop-select [filterFn]="cropFilterFn" (selectedChange)="filterData($event)" [(ngModel)]="selectedCropName"
-  style="margin: 1rem" [resetOption]="{ text: 'Show All', matIcon: 'apps' }"></picsa-form-crop-select>
+@if(cropFilterFn(); as filterFn){
+<picsa-form-crop-select [filterFn]="filterFn" [(ngModel)]="selectedCropName" style="margin: 1rem"
+  [resetOption]="{ text: 'Show All', matIcon: 'apps' }"></picsa-form-crop-select>
+}
+
 
 <section class="table-container mat-mdc-table">
   <!-- Main table -->

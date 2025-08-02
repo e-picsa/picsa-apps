@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, model, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CROPS_DATA_HASHMAP, ICropData } from '@picsa/data';
@@ -17,7 +17,7 @@ import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '.
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CropProbabilityTableComponent {
+export class CropProbabilityTableComponent implements OnInit {
   public displayedColumns: string[] = [];
 
   /** Tracking columns for individual probabilities */
@@ -36,27 +36,40 @@ export class CropProbabilityTableComponent {
   });
 
   public dataSource: MatTableDataSource<ITableRow>;
-  public selectedCropName = 'maize';
+  public selectedCropName = model('');
 
   public stationData = input.required<IStationCropData[]>();
   public tableMeta = input.required<IProbabilityTableMeta>();
+
+  /** Specify crop to use with initial filter */
+  public filterCrop = input<string>('');
 
   private tableData: ITableRow[] = [];
 
   public cropDataHashmap = CROPS_DATA_HASHMAP;
 
   constructor() {
+    // Load data and apply any initial filters
     effect(() => {
       const stationData = this.stationData();
       this.tableData = this.prepareTableRows(stationData);
-      this.filterData(this.selectedCropName);
+    });
+    effect(() => {
+      // Filter when selected crop name changes
+      this.selectedCropName();
+      this.filterData();
     });
   }
 
-  public cropFilterFn: (option: ICropData) => boolean;
+  ngOnInit() {
+    // Set the initial value from the input signal
+    this.selectedCropName.set(this.filterCrop());
+  }
 
-  filterData(cropName = '') {
-    this.selectedCropName = cropName;
+  public cropFilterFn = signal<(option: ICropData) => boolean>(undefined as any);
+
+  private filterData() {
+    const cropName = this.selectedCropName();
     // flatten data rows which are grouped by crop
     const dataSource = new MatTableDataSource(this.tableData);
     // apply custom filter to avoid partial matches (e.g. soya-beans matching beans)
@@ -71,7 +84,7 @@ export class CropProbabilityTableComponent {
   /** Generate list of crops for filtering that exist in the data */
   private generateCropFilters(stationData: IStationCropData[]) {
     const availableCrops = arrayToHashmap(stationData, 'crop');
-    this.cropFilterFn = ({ name }) => name in availableCrops;
+    this.cropFilterFn.set(({ name }) => name in availableCrops);
   }
 
   /**
