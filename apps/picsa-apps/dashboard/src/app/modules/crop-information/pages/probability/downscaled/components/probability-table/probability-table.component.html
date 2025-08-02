@@ -36,6 +36,8 @@
     <span>{{copyStatus()==='success' ? 'Copied' : 'Copy To Clipboard'}}</span>
   </button>
 
+  <dashboard-crop-probability-language-select></dashboard-crop-probability-language-select>
+
   <button mat-button class="ml-auto" (click)="dialog.open(exportDialog)">
     <mat-icon>file_download </mat-icon> Export
   </button>

@@ -13,6 +13,7 @@ import { arrayToHashmap } from '@picsa/utils';
 import { ICropSuccessEntry, IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
 
 import { CropInformationService, ICropData, ICropDataDownscaledWaterRequirements } from '../../../../../services';
+import { CropProbabilityLanguageSelectComponent } from '../language-select/language-select.component';
 
 const WATER_REQUIREMENT_ROUNDING = 25;
 const DAY_REQUIREMENT_ROUNDING = 15;
@@ -34,7 +35,15 @@ export type ISeasonStartProbability = { plantDate: number; label: string; probab
 
 @Component({
   selector: 'dashboard-crop-probability-table',
-  imports: [CommonModule, AlertBoxComponent, MatButtonModule, MatIcon, RouterModule, CropProbabilityTableFrontend],
+  imports: [
+    CommonModule,
+    AlertBoxComponent,
+    MatButtonModule,
+    MatIcon,
+    RouterModule,
+    CropProbabilityTableFrontend,
+    CropProbabilityLanguageSelectComponent,
+  ],
   templateUrl: './probability-table.component.html',
   styleUrl: './probability-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
