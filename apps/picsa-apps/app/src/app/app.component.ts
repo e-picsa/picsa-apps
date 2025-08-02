@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
+import { AppUserService } from '@picsa/shared/services/appUser.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
     private appUpdateService: AppUpdateService,
     private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector,
+    private appUserService: AppUserService,
   ) {}
 
   async ngOnInit() {
@@ -45,6 +47,7 @@ export class AppComponent implements OnInit {
     // and UI has chance to update
     await _wait(50);
 
+    this.appUserService.init();
     // eagerly enable analytics collection
     this.analyticsService.init(this.router);
     // eagerly load resources service to populate hardcoded resources
