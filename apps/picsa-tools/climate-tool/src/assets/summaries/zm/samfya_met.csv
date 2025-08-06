@@ -1,5 +1,4 @@
 Year,Start,End,Length,Rainfall,max_tmax,max_tmin,min_tmax,min_tmin,mean_tmax,mean_tmin,Extreme_events
-1956,,,,,,,,,,,
 1957,,284,,937,30.4,20.7,23.5,16.8,27.5,18.3,
 1958,134,301,167,1540,30.7,22.5,23.9,15.7,27.1,17.8,
 1959,141,289,148,1446,30.5,19.1,22.8,16.1,27.5,17.6,
@@ -66,5 +65,3 @@ Year,Start,End,Length,Rainfall,max_tmax,max_tmin,min_tmax,min_tmin,mean_tmax,mea
 2020,,293,,,,,,,,,
 2021,,311,,1018,34.2,23.1,26,16.3,30.5,19.7,
 2022,,,,210,,,,,,,
-2023,,,,,,,,,,,
-2024,,,,,,,,,,,
