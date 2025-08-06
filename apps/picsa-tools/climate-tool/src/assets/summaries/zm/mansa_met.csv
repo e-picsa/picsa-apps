@@ -1,7 +1,4 @@
 Year,Start,End,Length,Rainfall,max_tmax,max_tmin,min_tmax,min_tmin,mean_tmax,mean_tmin,Extreme_events
-1956,,,,,,,,,,,
-1957,,,,,,,,,,,
-1958,,,,,,,,,,,
 1959,,296,,1026,,,,,,,
 1960,131,305,174,1293,,,,,,,
 1961,116,309,193,1490,,,,,,,
