@@ -177,6 +177,29 @@
     ]
   },
   {
+    "crop": "soya-beans",
+    "data": [
+      {
+        "days": "135 - 140",
+        "variety": "DINA",
+        "probabilities": ["9 / 10", "8 / 10", "4 / 10", "1 / 10"],
+        "water": [465]
+      },
+      {
+        "days": "90 - 120",
+        "variety": "KAFUE",
+        "probabilities": ["9 / 10", "10 / 10", "9 / 10", "7 / 10"],
+        "water": [400]
+      },
+      {
+        "days": "120 - 125",
+        "variety": "SPIKE",
+        "probabilities": ["10 / 10", "9 / 10", "8 / 10", "4 / 10"],
+        "water": [430]
+      }
+    ]
+  },
+  {
     "crop": "sunflower",
     "data": [
       {
@@ -207,6 +230,17 @@
         "variety": "LUTEMBWE",
         "probabilities": ["10 / 10", "10 / 10", "9 / 10", "6 / 10"],
         "water": [340]
+      }
+    ]
+  },
+  {
+    "crop": "sweet-potatoes",
+    "data": [
+      {
+        "days": "85 - 120",
+        "variety": "CHINGOVWA",
+        "probabilities": ["9 / 10", "9 / 10", "9 / 10", "6 / 10"],
+        "water": [450]
       }
     ]
   },
@@ -243,13 +277,5 @@
         "water": [315]
       }
     ]
-  },
-  {
-    "crop": "soyabeans",
-    "data": []
-  },
-  {
-    "crop": "sweet_potatoes",
-    "data": []
   }
 ]

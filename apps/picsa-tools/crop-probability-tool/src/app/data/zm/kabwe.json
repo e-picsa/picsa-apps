@@ -206,6 +206,35 @@
     ]
   },
   {
+    "crop": "soya-beans",
+    "data": [
+      {
+        "days": "135 - 140",
+        "variety": "DINA",
+        "probabilities": ["7 / 10", "4 / 10", "1 / 10", "0 / 10", "0 / 10"],
+        "water": [585]
+      },
+      {
+        "days": "90 - 120",
+        "variety": "KAFUE",
+        "probabilities": ["8 / 10", "8 / 10", "6 / 10", "4 / 10", "2 / 10"],
+        "water": [505]
+      },
+      {
+        "days": "120 - 125",
+        "variety": "SPIKE",
+        "probabilities": ["9 / 10", "7 / 10", "4 / 10", "1 / 10", "0 / 10"],
+        "water": [520]
+      },
+      {
+        "days": "130 - 136",
+        "variety": "LUKANGA",
+        "probabilities": ["7 / 10", "4 / 10", "1 / 10", "0 / 10", "0 / 10"],
+        "water": [575]
+      }
+    ]
+  },
+  {
     "crop": "sunflower",
     "data": [
       {
@@ -251,11 +280,20 @@
     ]
   },
   {
-    "crop": "soyabeans",
-    "data": []
-  },
-  {
-    "crop": "sweet_potatoes",
-    "data": []
+    "crop": "sweet-potatoes",
+    "data": [
+      {
+        "days": "85 - 120",
+        "variety": "CHINGOVWA",
+        "probabilities": ["7 / 10", "7 / 10", "6 / 10", "4 / 10", "2 / 10"],
+        "water": [540]
+      },
+      {
+        "days": "85 - 120",
+        "variety": "ORANGE-FLESHED",
+        "probabilities": ["7 / 10", "7 / 10", "6 / 10", "4 / 10", "2 / 10"],
+        "water": [540]
+      }
+    ]
   }
 ]
