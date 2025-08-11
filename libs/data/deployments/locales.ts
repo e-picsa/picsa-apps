@@ -25,7 +25,7 @@ const LOCALES_BASE: {
   mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw' },
   mw_tum: { language_code: 'tum', language_label: 'Tumbuka', country_code: 'mw' },
   // Zambia
-  zm_ny: { language_code: 'ny', language_label: 'Chewa', country_code: 'zm' },
+  zm_ny: { language_code: 'ny', language_label: 'Nyanja', country_code: 'zm' },
   zm_bem: { language_code: 'bem', language_label: 'Bemba', country_code: 'zm' },
   zm_toi: { language_code: 'toi', language_label: 'Tonga', country_code: 'zm' },
   zm_loz: { language_code: 'loz', language_label: 'Lozi', country_code: 'zm' },
