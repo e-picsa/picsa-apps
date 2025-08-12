@@ -15,7 +15,7 @@ type IPicsaFarmerVideoId =
 const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData, 'id'>> = {
   intro: {
     children: [
-      // NOTE - 'global_en' does not exist for intro
+      // NOTE - 'global_en' does not exist for intro but ny versions include subtitles
       {
         id: '',
         locale_codes: ['mw_ny', 'global_en'],
@@ -207,7 +207,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       {
         id: '',
         // HACK - zm and mw have different english versions
-        locale_codes: ['zm_en' as any, 'global_en'],
+        locale_codes: ['zm_en' as any],
         size_kb: 26160,
         resolution: '360p',
         supabase_url:
@@ -229,7 +229,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       // TODO -  mw_en
       {
         id: '',
-        locale_codes: ['zm_en' as any, 'global_en'],
+        locale_codes: ['zm_en' as any],
         size_kb: 17390,
         resolution: '360p',
         supabase_url:
@@ -237,7 +237,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       },
       {
         id: '',
-        locale_codes: ['zm_ny', 'global_en'],
+        locale_codes: ['zm_ny'],
         size_kb: 20370,
         resolution: '360p',
         supabase_url:
