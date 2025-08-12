@@ -12,16 +12,4 @@ These are designed to standardise video files used in PICSA, including audio lev
 yarn scripts media/process
 ```
 
-This will run both audio normalisation and video compression scripts
-
-## Standalone Scripts
-
-Each script can also be run standalone, however successive processing will require output files copied back into input folder
-
-```sh
-yarn scripts media/normalise-audio
-```
-
-```sh
-yarn scripts media/compress-video
-```
+This will run scripts to normalise audio and compress to 360p
