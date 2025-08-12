@@ -2,7 +2,6 @@ import { promises as fs } from 'fs';
 import path, { resolve } from 'path';
 import { spawn } from 'child_process';
 import { emptyDir, ensureDir } from 'fs-extra';
-import cliProgress from 'cli-progress';
 
 interface ProcessingOptions {
   inputFolder: string;
@@ -160,83 +159,58 @@ class VideoProcessor {
     return new Promise((resolve, reject) => {
       console.log(`🎬 Starting processing: ${filename}`);
 
+      let lastProgress = 0;
+
       const ffmpeg = spawn('ffmpeg', args, {
         stdio: ['pipe', 'pipe', 'pipe'],
         shell: true, // Always use shell to handle quoted paths properly
       });
 
-      // Progress bar setup
-      const bar = new cliProgress.SingleBar(
-        {
-          format: `⏳ {filename} |{bar}| {percentage}% | ETA: {eta_formatted} | Elapsed: {elapsed_formatted}`,
-          barCompleteChar: '█',
-          barIncompleteChar: '░',
-          hideCursor: true,
-        },
-        cliProgress.Presets.shades_classic,
-      );
-
-      const startTime = Date.now();
-      let progressStarted = false;
-
       ffmpeg.on('error', (err) => {
         console.error(`\n❌ Failed to spawn ffmpeg: ${err.message}`);
-        if (progressStarted) bar.stop();
         reject(new Error(`FFmpeg spawn error: ${err.message}`));
       });
 
       let stderrBuffer = '';
 
       ffmpeg.stderr.on('data', (data) => {
-        stderrBuffer += data.toString();
+        const chunk = data.toString();
+        stderrBuffer += chunk;
+
         const lines = stderrBuffer.split('\n');
         stderrBuffer = lines.pop() || ''; // Keep the incomplete line in buffer
 
         for (const line of lines) {
-          // More comprehensive time regex that handles microseconds
-          const timeMatch = line.match(/time=(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?/);
+          // Try multiple progress patterns
+          let timeMatch = line.match(/time=(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?/);
 
           if (timeMatch) {
-            if (!progressStarted) {
-              bar.start(100, 0, {
-                filename: filename.slice(0, 30) + (filename.length > 30 ? '...' : ''),
-                eta_formatted: 'calculating...',
-                elapsed_formatted: this.formatDuration(0),
-              });
-              progressStarted = true;
-            }
-
-            const [, hh, mm, ss, microseconds] = timeMatch;
+            const [, hh, mm, ss] = timeMatch;
             const currentSeconds = parseInt(hh) * 3600 + parseInt(mm) * 60 + parseInt(ss);
             const progress = Math.min((currentSeconds / duration) * 100, 100);
 
-            const elapsedMs = Date.now() - startTime;
-            const remainingMs = progress > 5 ? (elapsedMs / progress) * (100 - progress) : 0;
-
-            bar.update(Math.floor(progress), {
-              eta_formatted: remainingMs > 0 ? this.formatDuration(remainingMs) : 'finishing...',
-              elapsed_formatted: this.formatDuration(elapsedMs),
-            });
+            // Only update if progress has changed significantly
+            if (Math.abs(progress - lastProgress) > 0.5) {
+              renderProgressBar(progress);
+              lastProgress = progress;
+            }
           }
         }
       });
 
-      ffmpeg.stdout.on('data', (data) => {
-        // FFmpeg shouldn't output much to stdout, but just in case
-        process.stdout.write(data);
-      });
-
       ffmpeg.on('close', (code) => {
-        if (progressStarted) {
-          bar.update(100);
-          bar.stop();
+        // Ensure progress bar reaches 100%
+        if (lastProgress < 100) {
+          renderProgressBar(100 - lastProgress);
         }
+
+        console.log(); // New line after progress bar
 
         if (code === 0) {
           console.log(`✅ Completed: ${filename}`);
           resolve();
         } else {
-          console.error(`\n❌ FFmpeg failed with code ${code} for: ${filename}`);
+          console.error(`❌ FFmpeg failed with code ${code} for: ${filename}`);
           reject(new Error(`FFmpeg failed with code ${code}`));
         }
       });
@@ -295,6 +269,13 @@ if (require.main === module) {
     console.error('💥 Processing failed:', err);
     process.exit(1);
   });
+}
+
+function renderProgressBar(progress: number) {
+  const width = 40; // bar width in characters
+  const filled = Math.round((progress / 100) * width);
+  const bar = '█'.repeat(filled) + '-'.repeat(width - filled);
+  process.stdout.write(`\r[${bar}] ${progress.toFixed(1)}%`);
 }
 
 export { VideoProcessor };
