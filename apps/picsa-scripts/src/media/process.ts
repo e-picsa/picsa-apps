@@ -181,12 +181,10 @@ class VideoProcessor {
         stderrBuffer = lines.pop() || ''; // Keep the incomplete line in buffer
 
         for (const line of lines) {
-          // Try multiple progress patterns
-          let timeMatch = line.match(/time=(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?/);
-
-          if (timeMatch) {
-            const [, hh, mm, ss] = timeMatch;
-            const currentSeconds = parseInt(hh) * 3600 + parseInt(mm) * 60 + parseInt(ss);
+          const progressMatch = line.match(/^out_time_us=(\d+)/);
+          if (progressMatch) {
+            const currentTimeUs = parseInt(progressMatch[1], 10);
+            const currentSeconds = currentTimeUs / 1_000_000;
             const progress = Math.min((currentSeconds / duration) * 100, 100);
 
             // Only update if progress has changed significantly
@@ -211,7 +209,7 @@ class VideoProcessor {
           resolve();
         } else {
           console.error(`❌ FFmpeg failed with code ${code} for: ${filename}`);
-          reject(new Error(`FFmpeg failed with code ${code}`));
+          reject(new Error(`FFmpeg failed with code ${code}\n${stderrBuffer}`));
         }
       });
     });
