@@ -58,7 +58,7 @@ class VideoProcessor {
 
   private async getVideoDuration(filePath: string): Promise<number> {
     return new Promise((resolve, reject) => {
-      console.log(`📏 Getting duration for: ${path.basename(filePath)}`);
+      console.log(`📏 Getting duration`);
 
       // Quote the file path to handle spaces properly
       const ffprobe = spawn(
@@ -157,7 +157,7 @@ class VideoProcessor {
 
   private async runFFmpeg(args: string[], filename: string, duration: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log(`🎬 Starting processing: ${filename}`);
+      console.log(`🎬 Starting processing`);
 
       let lastProgress = 0;
 
