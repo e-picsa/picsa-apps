@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path, { resolve } from 'path';
 import { spawn } from 'child_process';
+import { emptyDir, ensureDir } from 'fs-extra';
 
 interface CompressionOptions {
   inputFolder: string;
@@ -15,24 +16,25 @@ interface CompressionOptions {
   bufsize: string;
 }
 
+const DEFAULT_OPTIONS: CompressionOptions = {
+  inputFolder: resolve(__dirname, './input'),
+  outputFolder: resolve(__dirname, './output'),
+  videoCodec: 'libx264',
+  audioCodec: 'aac',
+  videoBitrate: '750k', // YouTube-like bitrate for 360p
+  audioBitrate: '128k',
+  preset: 'slow', // Better compression efficiency
+  crf: 23, // Constant Rate Factor for quality
+  maxrate: '1125k', // 1.5x target bitrate for VBV
+  bufsize: '2250k', // 2x maxrate for buffer
+};
+
 class VideoCompressor {
   private options: CompressionOptions;
   private supportedFormats = ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.flv'];
 
   constructor(options: Partial<CompressionOptions> = {}) {
-    this.options = {
-      inputFolder: resolve(__dirname, './input'),
-      outputFolder: resolve(__dirname, './output'),
-      videoCodec: 'libx264',
-      audioCodec: 'aac',
-      videoBitrate: '750k', // YouTube-like bitrate for 360p
-      audioBitrate: '128k',
-      preset: 'slow', // Better compression efficiency
-      crf: 23, // Constant Rate Factor for quality
-      maxrate: '1125k', // 1.5x target bitrate for VBV
-      bufsize: '2250k', // 2x maxrate for buffer
-      ...options,
-    };
+    this.options = { ...DEFAULT_OPTIONS, ...options };
   }
 
   /**
@@ -44,17 +46,6 @@ class VideoCompressor {
       return files.filter((file) => this.supportedFormats.includes(path.extname(file).toLowerCase()));
     } catch (error) {
       throw new Error(`Failed to read input directory: ${this.options.inputFolder}`);
-    }
-  }
-
-  /**
-   * Ensure output directory exists
-   */
-  private async ensureOutputDirectory(): Promise<void> {
-    try {
-      await fs.access(this.options.outputFolder);
-    } catch {
-      await fs.mkdir(this.options.outputFolder, { recursive: true });
     }
   }
 
@@ -279,7 +270,10 @@ class VideoCompressor {
       console.log('✅ FFmpeg found');
 
       console.log('📁 Ensuring output directory exists...');
-      await this.ensureOutputDirectory();
+      const { outputFolder } = this.options;
+      // Ensure output directory exists
+      await ensureDir(outputFolder);
+      await emptyDir(outputFolder);
 
       console.log('🔍 Scanning for video files...');
       const videoFiles = await this.getVideoFiles();
@@ -313,14 +307,7 @@ class VideoCompressor {
 
 // Usage
 async function main() {
-  const compressor = new VideoCompressor({
-    // You can customize these settings
-    videoBitrate: '750k', // YouTube 360p target
-    audioBitrate: '128k',
-    crf: 23, // Good quality/size balance
-    preset: 'slow', // Better compression
-  });
-
+  const compressor = new VideoCompressor();
   await compressor.compressAll();
 }
 

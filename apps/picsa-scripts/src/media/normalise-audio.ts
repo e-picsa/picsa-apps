@@ -1,6 +1,13 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { spawn } from 'child_process';
+import { emptyDir, ensureDir } from 'fs-extra';
+
+interface NormaliseOptions {
+  inputFolder: string;
+  outputFolder: string;
+  targetLUFS: number;
+}
 
 interface ProcessingResult {
   inputFile: string;
@@ -9,9 +16,13 @@ interface ProcessingResult {
   error?: string;
 }
 
-const inputFolder = './input';
-const outputFolder = './output';
-const targetLUFS = -14;
+const DEFAULT_OPTIONS: NormaliseOptions = {
+  inputFolder: path.resolve(__dirname, './input'),
+  outputFolder: path.resolve(__dirname, './output'),
+  targetLUFS: -14,
+};
+
+const SUPPORTED_EXTENSIONS = ['.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.webm', '.m4v', '.mpg', '.mpeg'];
 
 /**
  * Normalise audio levels of local media files
@@ -26,53 +37,25 @@ const targetLUFS = -14;
  * ```
  */
 class AudioNormalizer {
-  private readonly inputFolder: string;
-  private readonly outputFolder: string;
-  private readonly targetLUFS: number;
-  private readonly supportedExtensions: Set<string>;
+  private options: NormaliseOptions;
 
-  constructor() {
-    this.inputFolder = path.resolve(__dirname, inputFolder);
-    this.outputFolder = path.resolve(__dirname, outputFolder);
-    this.targetLUFS = targetLUFS;
-    this.supportedExtensions = new Set([
-      '.mp4',
-      '.avi',
-      '.mov',
-      '.mkv',
-      '.wmv',
-      '.flv',
-      '.webm',
-      '.m4v',
-      '.mpg',
-      '.mpeg',
-    ]);
-  }
-
-  /**
-   * Ensures the output directory exists
-   */
-  private async ensureOutputDirectory(): Promise<void> {
-    try {
-      await fs.access(this.outputFolder);
-    } catch {
-      await fs.mkdir(this.outputFolder, { recursive: true });
-      console.log(`Created output directory: ${this.outputFolder}`);
-    }
+  constructor(options: Partial<NormaliseOptions> = {}) {
+    this.options = { ...DEFAULT_OPTIONS, ...options };
   }
 
   /**
    * Gets all video files from the input directory
    */
   private async getVideoFiles(): Promise<string[]> {
+    const { inputFolder } = this.options;
     try {
-      const files = await fs.readdir(this.inputFolder);
+      const files = await fs.readdir(inputFolder);
       return files.filter((file) => {
         const ext = path.extname(file).toLowerCase();
-        return this.supportedExtensions.has(ext);
+        return SUPPORTED_EXTENSIONS.includes(ext);
       });
     } catch (error) {
-      throw new Error(`Failed to read input directory: ${this.inputFolder}. ${error}`);
+      throw new Error(`Failed to read input directory: ${inputFolder}. ${error}`);
     }
   }
 
@@ -120,6 +103,7 @@ class AudioNormalizer {
    * Normalizes audio in a video file to target LUFS
    */
   private async normalizeAudio(inputPath: string, outputPath: string): Promise<void> {
+    const { targetLUFS } = this.options;
     return new Promise((resolve, reject) => {
       console.log(`Processing: ${path.basename(inputPath)}`);
 
@@ -127,7 +111,7 @@ class AudioNormalizer {
         '-i',
         inputPath,
         '-af',
-        `loudnorm=I=${this.targetLUFS}:TP=-1.5:LRA=11:print_format=summary`,
+        `loudnorm=I=${targetLUFS}:TP=-1.5:LRA=11:print_format=summary`,
         '-c:v',
         'copy', // Copy video stream without re-encoding
         '-y', // Overwrite output file if it exists
@@ -161,8 +145,9 @@ class AudioNormalizer {
    * Processes a single video file
    */
   private async processFile(fileName: string): Promise<ProcessingResult> {
-    const inputPath = path.join(this.inputFolder, fileName);
-    const outputPath = path.join(this.outputFolder, fileName);
+    const { inputFolder, outputFolder, targetLUFS } = this.options;
+    const inputPath = path.join(inputFolder, fileName);
+    const outputPath = path.join(outputFolder, fileName);
 
     try {
       // Check if output file already exists
@@ -180,7 +165,7 @@ class AudioNormalizer {
 
       // Measure current LUFS
       const currentLUFS = await this.measureLUFS(inputPath);
-      console.log(`📊 ${fileName}: Current LUFS = ${currentLUFS.toFixed(2)}, ` + `Target = ${this.targetLUFS}`);
+      console.log(`📊 ${fileName}: Current LUFS = ${currentLUFS.toFixed(2)}, ` + `Target = ${targetLUFS}`);
 
       // Normalize audio
       await this.normalizeAudio(inputPath, outputPath);
@@ -206,14 +191,16 @@ class AudioNormalizer {
    * Processes all video files in the input directory
    */
   async processAllFiles(): Promise<ProcessingResult[]> {
-    console.log(`🎬 Audio Normalizer - Target: ${this.targetLUFS} LUFS`);
-    console.log(`📁 Input folder: ${this.inputFolder}`);
-    console.log(`📁 Output folder: ${this.outputFolder}`);
+    const { inputFolder, outputFolder, targetLUFS } = this.options;
+    console.log(`🎬 Audio Normalizer - Target: ${targetLUFS} LUFS`);
+    console.log(`📁 Input folder: ${inputFolder}`);
+    console.log(`📁 Output folder: ${outputFolder}`);
     console.log('─'.repeat(50));
 
     try {
       // Ensure output directory exists
-      await this.ensureOutputDirectory();
+      await ensureDir(outputFolder);
+      await emptyDir(outputFolder);
 
       // Get all video files
       const videoFiles = await this.getVideoFiles();

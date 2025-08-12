@@ -6,20 +6,22 @@ These are designed to standardise video files used in PICSA, including audio lev
 
 1. Add videos for processing to the `./input` folder
 
-2. Normalise audio
+2. Run processing scripts
+
+```sh
+yarn scripts media/process
+```
+
+This will run both audio normalisation and video compression scripts
+
+## Standalone Scripts
+
+Each script can also be run standalone, however successive processing will require output files copied back into input folder
 
 ```sh
 yarn scripts media/normalise-audio
 ```
 
-3. Copy process files from `./output` back to `./input` for next processing
-
-4. Compress video
-
 ```sh
 yarn scripts media/compress-video
 ```
-
-## TODO
-
-- [ ] Single script to handle processing in series

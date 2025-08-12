@@ -4,3 +4,4 @@ output/*
 !output/.gitkeep
 thumbnails/*
 !thumbnails/.gitkeep
+intermediates
