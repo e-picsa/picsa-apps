@@ -106,7 +106,7 @@ class VideoProcessor {
 
   private generateOutputFilename(inputFile: string): string {
     const name = path.basename(inputFile, path.extname(inputFile));
-    return `${name}_norm_360p.mp4`;
+    return `${name}_360p.mp4`;
   }
 
   private buildFFmpegArgs(inputPath: string, outputPath: string): string[] {
