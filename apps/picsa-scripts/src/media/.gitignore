@@ -1,3 +1,4 @@
 input/*
 !input/.gitkeep
 output/*
+thumbnails/*
