@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+
+import { ClimateShareDialogComponent } from '../share-dialog/share-dialog.component';
 
 @Component({
   selector: 'climate-chart-options',
@@ -6,4 +9,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./climate-chart-options.component.scss'],
   standalone: false,
 })
-export class ClimateChartOptionsComponent {}
+export class ClimateChartOptionsComponent {
+  private dialog = inject(MatDialog);
+  public async showShareDialog() {
+    this.dialog.open(ClimateShareDialogComponent, { disableClose: true });
+  }
+}

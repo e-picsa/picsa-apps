@@ -13,43 +13,28 @@ Nalunga: I would remove the last year
  */
 
 const stations: IStationMeta[] = [
-  // 2021-2023 legacy data (not in climate system)
-  {
-    id: 'chileka',
-    name: 'Chileka',
-    latitude: -15.679203,
-    longitude: 34.967697,
-  },
   {
     id: 'makanjira',
     name: 'Makanjira',
     latitude: -13.7050735,
     longitude: 35.037632,
-  },
-  {
-    id: 'monkeybay',
-    name: 'Monkeybay',
-    latitude: -14.0806369,
-    longitude: 34.9062036,
+    district: 'Mangochi',
   },
   {
     id: 'namwera',
     name: 'Namwera',
     latitude: -14.3530807,
     longitude: 35.4706477,
+    district: 'Mangochi',
   },
   // 2024 M-Climes data (not in climate system)
-  {
-    id: 'nkhatabay',
-    name: 'Nkhatabay',
-    latitude: -11.6,
-    longitude: 34.3,
-  },
+
   {
     id: 'chikwawa',
     name: 'Chikwawa',
     latitude: -16.03,
     longitude: 34.78,
+    district: 'Chikwawa',
   },
   {
     id: 'chiradzulu',
@@ -63,12 +48,14 @@ const stations: IStationMeta[] = [
     name: 'Dowa_agr',
     latitude: -13.65,
     longitude: 33.93,
+    district: 'Dowa',
   },
   {
     id: 'kasinthula',
     name: 'Kasinthula',
     latitude: -16.1,
     longitude: 34.8,
+    district: 'Chikwawa',
   },
   {
     id: 'kasiya',
@@ -82,18 +69,21 @@ const stations: IStationMeta[] = [
     name: 'Mponela',
     latitude: -13.53,
     longitude: 33.75,
+    district: 'Dowa',
   },
   {
     id: 'chapananga',
     name: 'Chapananga',
     latitude: -15.95,
     longitude: 34.43,
+    district: 'Chikwawa',
   },
   {
     id: 'golomoti',
     name: 'Golomoti',
     latitude: -14.4,
     longitude: 34.6,
+    district: 'Dedza',
   },
   {
     id: 'luwazi',
@@ -114,18 +104,21 @@ const stations: IStationMeta[] = [
     name: 'Ndakwera',
     latitude: -16.22,
     longitude: 34.7,
+    district: 'Chikwawa',
   },
   {
     id: 'chipoka',
     name: 'Chipoka',
     latitude: -13.9843,
     longitude: 34.49223,
+    district: 'Salima',
   },
   {
     id: 'chitala',
     name: 'Chitala',
     latitude: -13.68,
     longitude: 34.25,
+    district: 'Salima',
   },
   {
     id: 'kamuona',
@@ -153,6 +146,7 @@ const stations: IStationMeta[] = [
     name: 'Bunda',
     latitude: -14.18,
     longitude: 33.77,
+    district: 'Lilongwe',
   },
   // climate system
   {

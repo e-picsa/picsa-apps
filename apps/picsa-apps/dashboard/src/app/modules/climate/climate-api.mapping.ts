@@ -1,10 +1,9 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import type { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { SupabaseStorageService } from '@picsa/shared/services/core/supabase/services/supabase-storage.service';
 
 import { ClimateService } from './climate.service';
 import type { ClimateApiService } from './climate-api.service';
-import { IClimateStationData, IForecastRow, IForecastUpdate, IStationInsert, IStationRow } from './types';
+import { IForecastRow, IForecastUpdate, IStationInsert, IStationRow } from './types';
 
 export type IApiMapping = ReturnType<typeof ApiMapping>;
 export type IApiMappingName = keyof IApiMapping;

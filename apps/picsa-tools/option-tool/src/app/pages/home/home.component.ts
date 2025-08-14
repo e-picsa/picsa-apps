@@ -1,7 +1,5 @@
-import { DomPortal } from '@angular/cdk/portal';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
@@ -43,16 +41,12 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private service: OptionsToolService,
-    private componentService: PicsaCommonComponentsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.addSubheaderColumns();
   }
 
   async ngAfterViewInit() {
-    this.componentService.patchHeader({
-      cdkPortalEnd: new DomPortal(this.headerContent),
-    });
     const enterprise = this.route.snapshot.paramMap.get('enterprise');
     await this.service.ready();
     this.subscribeToDbChanges((enterprise as IOptionsToolEntry['enterprise']) || 'crop');
@@ -94,7 +88,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   private addSubheaderColumns() {
     const enabledSubheaders = ['performance', 'investment'];
     this.subheaderColumns = this.displayedColumns.map((name) =>
-      enabledSubheaders.includes(name) ? `${name}_subheader` : `default_subheader`
+      enabledSubheaders.includes(name) ? `${name}_subheader` : `default_subheader`,
     );
   }
 

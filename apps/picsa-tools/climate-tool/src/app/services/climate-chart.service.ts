@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Injectable, signal } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';

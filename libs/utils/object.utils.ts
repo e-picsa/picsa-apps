@@ -38,16 +38,19 @@ export function isEqual<T extends Record<string, any>>(a = {} as T, b = {} as T)
 }
 
 /** Order a nested json object literal in alphabetical key order */
-export const sortJsonKeys = <T extends Record<string, any>>(json: T): T => {
+export const sortJsonKeys = <T extends Record<string, any>>(json: T, caseSensitive = true): T => {
   // return non json-type data as-is
   if (!isObjectLiteral(json)) {
     return json;
   }
+  const caseSensitiveSort = (a: string, b: string) => (a > b ? 1 : -1);
+  const caseInsensitiveSort = (a: string, b: string) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+
   // recursively sort any nested json by key
   return Object.keys(json)
-    .sort()
+    .sort(caseSensitive ? caseSensitiveSort : caseInsensitiveSort)
     .reduce((obj, key) => {
-      obj[key] = sortJsonKeys(json[key]);
+      obj[key] = sortJsonKeys(json[key], caseSensitive);
       return obj;
     }, {}) as T;
 };

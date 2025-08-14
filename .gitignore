@@ -62,11 +62,12 @@ libs/environments/firebase/config.prod.ts
 !libs/theme/src/tailwind.config.js
 !libs/webcomponents/**
 
+# Legacy apps
+apps/picsa-apps/extension-app-native
+
 # map tiles   
 libs/features/map/tiles/assets-for-copy   
 libs/features/map/tiles/**/*.png
-
-apps/extension-toolkit/www_sourcemaps
 
 .env
 *.keystore

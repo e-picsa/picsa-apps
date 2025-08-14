@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Background color -->
+  <item android:drawable="@color/white" />
+  <!-- Centered logo, aspect ratio preserved -->
+  <item
+    android:drawable="@drawable/picsa_icon_foreground"
+    android:gravity="center"
+    android:width="360dp"
+    android:height="360dp"
+    />
+</layer-list>

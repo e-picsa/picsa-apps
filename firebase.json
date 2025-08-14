@@ -43,7 +43,7 @@
     },
     {
       "target": "extension-toolkit",
-      "public": "dist/apps/picsa-apps/extension-app",
+      "public": "dist/apps/picsa-apps/app",
       "rewrites": [
         {
           "source": "**",

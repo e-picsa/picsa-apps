@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -114,14 +113,14 @@ export class ClimateService extends PicsaAsyncService {
         id: 'Monthly Temperatures',
         fn: this.loadFromAPI.monthlyTemperatures(station),
       },
-      {
-        id: 'Season Start',
-        fn: this.loadFromAPI.seasonStart(station),
-      },
-      {
-        id: 'Extremes',
-        fn: this.loadFromAPI.extremes(station),
-      },
+      // {
+      //   id: 'Season Start',
+      //   fn: this.loadFromAPI.seasonStart(station),
+      // },
+      // {
+      //   id: 'Extremes',
+      //   fn: this.loadFromAPI.extremes(station),
+      // },
     ];
     const observables = requests.map(({ fn, id }, index) =>
       from(fn).pipe(

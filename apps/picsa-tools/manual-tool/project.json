@@ -18,7 +18,11 @@
         "tsConfig": "apps/picsa-tools/manual-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/picsa-tools/manual-tool/src/favicon.ico",
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
           "apps/picsa-tools/manual-tool/src/assets",
           {
             "glob": "picsa-field-manual-en.pdf",

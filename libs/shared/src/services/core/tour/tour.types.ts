@@ -1,7 +1,7 @@
 import type { Params } from '@angular/router';
-
 import type { IntroStep } from 'intro.js/src/core/steps';
 import type { Options } from 'intro.js/src/option';
+
 import type { TourService } from './tour.service';
 
 export interface ITourStep extends Partial<IntroStep> {

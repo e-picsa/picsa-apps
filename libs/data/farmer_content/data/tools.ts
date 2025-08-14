@@ -8,8 +8,8 @@ import { IToolsDataEntry, IToolsID, TOOLS_DATA_HASHMAP } from '../../tools';
 import { arrayToHashmap } from '@picsa/utils';
 
 interface IFarmerToolDataBase extends Partial<IToolsDataEntry> {
-  /** Show default app header of tool directly uses */
-  showHeader?: boolean;
+  /** Specify whether header should show sidenav toggle button */
+  showSidenav?: boolean;
 }
 
 // Utility type to use with const for derived keys and defined value types
@@ -17,8 +17,8 @@ type DataMapWithValues = Partial<Record<IToolsID, IFarmerToolDataBase>>;
 
 /** Specific overrides for tool data when displayed in farmer app */
 const FARMER_TOOLS_BASE = {
-  budget: { showHeader: true },
-  climate: { showHeader: true },
+  budget: { showSidenav: true },
+  climate: { showSidenav: true },
   crop_probability: { label: translateMarker('Probability and Risk') },
   option: {},
   seasonal_calendar: {},
@@ -27,8 +27,8 @@ const FARMER_TOOLS_BASE = {
 type IFarmerToolId = keyof typeof FARMER_TOOLS_BASE;
 
 export interface IFarmerToolData extends IToolsDataEntry {
-  /** Show default app header of tool directly uses */
-  showHeader?: boolean;
+  /** Specify whether header should show sidenav toggle button */
+  showSidenav?: boolean;
 }
 
 export const FARMER_TOOLS_DATA = Object.entries(FARMER_TOOLS_BASE).map(([id, overrides]) => {

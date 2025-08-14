@@ -43,13 +43,19 @@
             "glob": "*.*",
             "input": "apps/picsa-tools/climate-tool/src/assets/climate-icons",
             "output": "assets/climate-icons"
+          },
+          {
+            "glob": "*.json",
+            "input": "libs/i18n/assets",
+            "output": "assets/i18n"
           }
         ],
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",
           "node_modules/leaflet/dist/leaflet.css",
-          "@uppy/core/dist/style.min.css",
-          "@uppy/dashboard/dist/style.min.css"
+          "node_modules/@uppy/core/dist/style.min.css",
+          "node_modules/@uppy/drag-drop/dist/style.min.css",
+          "node_modules/@uppy/dashboard/dist/style.min.css"
         ],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]

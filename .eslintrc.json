@@ -10,7 +10,7 @@
           "warn",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["@picsa/shared", "@picsa/server-types"],
             "depConstraints": [
               {
                 "sourceTag": "*",

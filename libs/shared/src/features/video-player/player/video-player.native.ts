@@ -1,27 +1,23 @@
 import { Component, effect, input } from '@angular/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { _wait } from '@picsa/utils';
-import { CapacitorVideoPlayer, CapacitorVideoPlayerPlugin, capVideoPlayerOptions } from 'capacitor-video-player';
+import {
+  CapacitorVideoPlayer,
+  CapacitorVideoPlayerPlugin,
+  capVideoListener,
+  capVideoPlayerOptions,
+  VideoEventName,
+} from 'capacitor-video-player';
 
 import { generateID } from '../../../services/core/db/db.service';
 import { VideoPlayerBaseComponent } from './video-player.base';
 
-// Fix listeners missing from type
-// https://github.com/jepiqueau/capacitor-video-player/blob/master/docs/API.md#listeners
-type IVideoEvent =
-  | 'jeepCapVideoPlayerReady'
-  | 'jeepCapVideoPlayerPlay'
-  | 'jeepCapVideoPlayerPause'
-  | 'jeepCapVideoPlayerEnded'
-  | 'jeepCapVideoPlayerExit';
-interface capVideoListener {
-  fromPlayerId: string;
-  currentTime: number;
-}
-
 interface IVideoPlayer extends CapacitorVideoPlayerPlugin {
-  addListener: (event: IVideoEvent, callback: (data: capVideoListener) => void) => void;
-  removeListener: (event: IVideoEvent, callback: (data: capVideoListener) => void) => void;
+  // TODO - confirm whether this actually is passed, or whether need to
+  // manually retrieve after register and remove, e.g.
+  // `const listener = await this.videoPlayer.addListener(...)`
+  // `listener.remove()`
+  removeListener: (event: VideoEventName, callback: (data: capVideoListener) => void) => void;
 }
 
 @Component({
@@ -198,7 +194,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
     await ScreenOrientation.unlock();
   }
 
-  private listeners: { event: IVideoEvent; callback: (e: capVideoListener) => void }[] = [];
+  private listeners: { event: VideoEventName; callback: (e: capVideoListener) => void }[] = [];
 
   /**
    * Add listener for play events
@@ -231,14 +227,14 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
 
     // Pause
     const jeepCapVideoPlayerPause = (e: capVideoListener) => {
-      this.handlePlayerPause(e.currentTime, e.fromPlayerId);
+      this.handlePlayerPause(e.currentTime!, e.fromPlayerId!);
     };
     this.videoPlayer.addListener('jeepCapVideoPlayerPause', jeepCapVideoPlayerPause);
     this.listeners.push({ event: 'jeepCapVideoPlayerPause', callback: jeepCapVideoPlayerPause });
 
     // Ended
     const jeepCapVideoPlayerEnded = (e: capVideoListener) => {
-      this.handlePlayerEnded(e.currentTime, e.fromPlayerId);
+      this.handlePlayerEnded(e.currentTime!, e.fromPlayerId!);
     };
     this.videoPlayer.addListener('jeepCapVideoPlayerEnded', jeepCapVideoPlayerEnded);
     this.listeners.push({ event: 'jeepCapVideoPlayerEnded', callback: jeepCapVideoPlayerEnded });
@@ -249,7 +245,7 @@ export class VideoPlayerNativeComponent extends VideoPlayerBaseComponent {
       this.handlePlayerExit(e.currentTime, playerId);
     };
     this.videoPlayer.addListener('jeepCapVideoPlayerExit', jeepCapVideoPlayerExit);
-    this.listeners.push({ event: 'jeepCapVideoPlayerExit', callback: jeepCapVideoPlayerExit });
+    this.listeners.push({ event: 'jeepCapVideoPlayerExit', callback: jeepCapVideoPlayerExit } as any);
   }
 
   /** Remove all event listeners */

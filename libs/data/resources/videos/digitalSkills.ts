@@ -14,6 +14,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/Digital%20Skills/01%20%20Digital%20Skills%20Introduction%20EN.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        resolution: '360p',
+        size_kb: 8250,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/zm_ny/01.%20Digital%20Skills%20Introduction_NYA_360p.mp4',
+      },
     ],
   },
   '2_download_install_apps': {
@@ -26,6 +34,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         size_kb: 7500,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/Digital%20Skills/02%20%20How%20to%20Download%20and%20Install%20Apps%20EN.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        resolution: '360p',
+        size_kb: 5620,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/zm_ny/02.%20How%20to%20Download%20and%20Install%20Apps_NYA_360p.mp4',
       },
     ],
   },
@@ -40,6 +56,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/Digital%20Skills/03%20%20How%20to%20Keep%20Your%20Device%20Operational%20EN.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        resolution: '360p',
+        size_kb: 1054,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/zm_ny/03.%20How%20to%20keep%20%20your%20device%20operational_NYA_360p.mp4',
+      },
     ],
   },
   '4_digital_information': {
@@ -52,6 +76,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         size_kb: 7790,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/Digital%20Skills/04%20%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information%20EN.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        resolution: '360p',
+        size_kb: 6810,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/zm_ny/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_NYA_360p.mp4',
       },
     ],
   },
@@ -66,6 +98,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/Digital%20Skills/05%20%20How%20to%20share%20content%20with%20others%20EN.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        resolution: '360p',
+        size_kb: 5580,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/zm_ny/05.%20How%20to%20share%20content%20with%20others_NYA_360p.mp4',
+      },
     ],
   },
   '6_create_content': {
@@ -78,6 +118,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         size_kb: 9480,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/Digital%20Skills/06%20%20How%20to%20Create%20Your%20Own%20Content%20EN.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        resolution: '360p',
+        size_kb: 8100,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/zm_ny/06.%20%20How%20to%20Create%20Your%20Own%20Content_NYA_360p.mp4',
       },
     ],
   },
@@ -93,10 +141,10 @@ export const PICSA_VIDEO_DIGITAL_SKILLS_DATA: IPicsaVideoData[] = Object.entries
       child.id = `digital_skills_${id}_${locale_code}_${resolution}`;
       return child;
     }),
-  })
+  }),
 );
 
 export const PICSA_VIDEO_DIGITAL_SKILLS_HASHMAP: Record<string, IPicsaVideoData> = arrayToHashmap(
   PICSA_VIDEO_DIGITAL_SKILLS_DATA,
-  'id'
+  'id',
 );

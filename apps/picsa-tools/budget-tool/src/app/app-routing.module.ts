@@ -5,21 +5,11 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 export const ROUTES_COMMON: Routes = [
   {
     path: '',
-    loadChildren: () => import('./pages/home/budget-home.module').then((mod) => mod.BudgetHomePageModule),
+    loadComponent: () => import('./pages/home/budget-home.page').then((mod) => mod.BudgetHomePage),
     title: translateMarker('Budget Tool'),
   },
   {
-    path: 'create',
-    loadChildren: () => import('./pages/create/budget-create.module').then((mod) => mod.BudgetCreatePageModule),
-    title: translateMarker('New Budget'),
-  },
-  {
-    path: 'view',
-    redirectTo: '/',
-    pathMatch: 'full',
-  },
-  {
-    path: 'view/:budgetKey',
+    path: ':budgetKey',
     loadChildren: () => import('./pages/view/budget-view.module').then((mod) => mod.BudgetViewPageModule),
     data: {
       headerStyle: 'inverted',

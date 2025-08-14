@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { computed, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { GEO_LOCATION_DATA, GEO_LOCATION_PLACEHOLDER, IGelocationData } from '@picsa/data/geoLocation';
@@ -14,6 +13,7 @@ export class DeploymentDashboardService extends PicsaAsyncService {
   // all routing is blocked unless deployment set, so consumers can safely assume will be defined
   public readonly activeDeployment = signal<IDeploymentRow>(null as any);
 
+  /** Country code for active deployment */
   public activeDeploymentCountry = computed(() => this.activeDeployment().country_code);
 
   /** Geolocation data for active deployment */

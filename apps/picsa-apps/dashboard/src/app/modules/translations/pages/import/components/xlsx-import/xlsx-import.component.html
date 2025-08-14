@@ -1,0 +1,40 @@
+<p>Upload an <code class="mx-1">xslx</code> file to import translations</p>
+
+<!-- Locale Select -->
+@if(importLocaleOptions().length>0){
+<mat-form-field>
+  <mat-label>Select Language</mat-label>
+  <mat-select (selectionChange)="importLocaleSelected.set($event.value)">
+    @for(option of importLocaleOptions(); track option.id){
+    <mat-option [value]="option">{{option.language_label}}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+}
+<!-- File drop -->
+@else {
+<div #dragDrop></div>
+}
+
+<!-- Import Summary -->
+@if(importSummary(); as summary){
+<h3>Summary</h3>
+
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  @for (table of summaryTables(); track table.key) {
+  <mat-tab [label]="table.label">
+    <picsa-data-table [options]="tableOptions" [data]="table.data"></picsa-data-table>
+  </mat-tab>
+  }
+</mat-tab-group>
+
+<button mat-raised-button color="accent" class="my-8" [disabled]="importTotal() <= 0 || importCounter() > 0"
+  (click)="processImport()">
+  <span>Import</span>
+  @if (importTotal() > 0) {
+  <span style="margin-left: 8px">{{ importCounter() }} / {{ importTotal() }}</span>
+  }
+</button>
+}
+
+<button mat-stroked-button class="my-8" (click)="exportTemplate()">Download Template</button>

@@ -19,7 +19,7 @@
       "changeDetection": "OnPush"
     }
   },
-  "defaultProject": "picsa-apps-extension-app",
+  "defaultProject": "picsa-apps-app",
   "targetDefaults": {
     "serve": {
       "options": {

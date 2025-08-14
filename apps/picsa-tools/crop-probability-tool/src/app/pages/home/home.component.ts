@@ -38,7 +38,8 @@ export class HomeComponent implements OnInit {
     const countryCode = this.countryCode();
     const locationId = this.locationId();
     if (countryCode && locationId) {
-      return PROBABILITY_TABLE_DATA[countryCode]?.find((v) => v.id.endsWith(`/${locationId}`));
+      // Handle case where zm excludes admin_4 from param but may have additional admin_5 sublocation
+      return PROBABILITY_TABLE_DATA[countryCode]?.find((v) => v.id === locationId || v.id.endsWith(`/${locationId}`));
     }
     return undefined;
   });
@@ -89,7 +90,18 @@ export class HomeComponent implements OnInit {
     // filter admin_5 to only include those with child probability tables available
     if (data.admin_5) {
       data.admin_5.locations = data.admin_5.locations.filter((v) => availableLocations.admin_5.includes(v.id));
+
+      // HACK - zm data has multiple tables in same admin_5, e.g.
+      // `southern/mazabuka--kafue-polder` and `southern/mazabuka--magoye-agromet`
+      allData.forEach((entry) => {
+        const [admin_4, admin_5_with_sublocation] = entry.id.split('/');
+        const [admin_5, sublocation] = admin_5_with_sublocation.split('--');
+        if (sublocation) {
+          data.admin_5?.locations.push({ id: entry.id, label: entry.label, admin_4 });
+        }
+      });
     }
+
     // HACK - mw data does not track admin_5 but crop probability tables include multiple per
     // district so create entries to use in filter
     else {

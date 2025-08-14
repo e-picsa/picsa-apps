@@ -79,6 +79,10 @@
     "tool": "farmer_content"
   },
   {
+    "text": "Year",
+    "tool": "common"
+  },
+  {
     "text": "Who is using?",
     "tool": "common"
   },
@@ -181,8 +185,23 @@
     "context": "day_short_4"
   },
   {
+    "text": "The mean minimum and lowest minimum daily temperatures per year",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "The mean maximum and highest maximum daily temperatures per year",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
     "text": "Testimonials",
     "tool": "farmer_content"
+  },
+  {
+    "text": "Temperature (°C)",
+    "tool": "climate",
+    "context": "chart"
   },
   {
     "text": "Sweet Potatoes",
@@ -215,6 +234,10 @@
     "tool": "common_crops"
   },
   {
+    "text": "Short Term Forecast",
+    "tool": "farmer_content"
+  },
+  {
     "text": "Sesame",
     "tool": "common_crops"
   },
@@ -231,6 +254,10 @@
   {
     "text": "Seasonal total rainfall calculated between the defined start and defined end of the season",
     "tool": "common"
+  },
+  {
+    "text": "Seasonal Forecast",
+    "tool": "farmer_content"
   },
   {
     "text": "Seasonal Calendar",
@@ -330,7 +357,7 @@
   },
   {
     "text": "Options",
-    "tool": "farmer_content"
+    "tool": "budget"
   },
   {
     "text": "Onions",
@@ -383,9 +410,37 @@
     "context": "day_short_1"
   },
   {
+    "text": "Minimum Temperatures",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Min Temps",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Mean minimum daily temp",
+    "tool": "common"
+  },
+  {
+    "text": "Mean maximum daily temp",
+    "tool": "common"
+  },
+  {
     "text": "May",
     "tool": "common_months",
     "context": "month_05"
+  },
+  {
+    "text": "Maximum Temperatures",
+    "tool": "climate",
+    "context": "chart"
+  },
+  {
+    "text": "Max Temps",
+    "tool": "climate",
+    "context": "chart"
   },
   {
     "text": "March",
@@ -408,6 +463,10 @@
   {
     "text": "Maize",
     "tool": "common_crops"
+  },
+  {
+    "text": "Lowest minimum daily temp",
+    "tool": "common"
   },
   {
     "text": "Loading",
@@ -497,6 +556,10 @@
     "tool": "farmer_content"
   },
   {
+    "text": "Highest maximum daily temp",
+    "tool": "common"
+  },
+  {
     "text": "Heavy Rain",
     "tool": "common_weather"
   },
@@ -554,7 +617,7 @@
   },
   {
     "text": "District",
-    "tool": "crop-probability"
+    "tool": "common"
   },
   {
     "text": "Digital Skills Introduction",
@@ -713,6 +776,10 @@
   {
     "text": "Privacy Policy",
     "tool": "extension-content"
+  },
+  {
+    "text": "Digital Skills",
+    "tool": "extension"
   },
   {
     "text": "Click on the button below to retry",
@@ -1029,6 +1096,14 @@
     "tool": "budget"
   },
   {
+    "text": "Unlock",
+    "tool": "monitoring"
+  },
+  {
+    "text": "This form requires an access code to unlock",
+    "tool": "monitoring"
+  },
+  {
     "text": "Submit",
     "tool": "monitoring"
   },
@@ -1037,7 +1112,35 @@
     "tool": "monitoring"
   },
   {
+    "text": "Submission not found",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Status",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Restricted Form",
+    "tool": "monitoring"
+  },
+  {
     "text": "Records",
+    "tool": "monitoring"
+  },
+  {
+    "text": "No submissions found",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Loading submissions...",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Loading form...",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Incorrect access code. Please try again.",
     "tool": "monitoring"
   },
   {
@@ -1045,11 +1148,56 @@
     "tool": "monitoring"
   },
   {
+    "text": "Form submitted successfully",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Form saved successfully",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Form not found",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Form deleted",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Error loading form",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Enter access code",
+    "tool": "monitoring"
+  },
+  {
     "text": "Create New",
     "tool": "monitoring"
   },
   {
+    "text": "Close",
+    "tool": "common",
+    "context": "buttons"
+  },
+  {
+    "text": "Click the Create New button to add a submission",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Authenticating...",
+    "tool": "monitoring"
+  },
+  {
+    "text": "An error occurred",
+    "tool": "monitoring"
+  },
+  {
     "text": "All Submitted",
+    "tool": "monitoring"
+  },
+  {
+    "text": "Access Code",
     "tool": "monitoring"
   },
   {
@@ -1225,11 +1373,6 @@
     "tool": "forecasts"
   },
   {
-    "text": "Close",
-    "tool": "common",
-    "context": "buttons"
-  },
-  {
     "text": "If you recorded anything on paper you can capture photos here",
     "tool": "farmer-content"
   },
@@ -1262,10 +1405,6 @@
     "tool": "budget"
   },
   {
-    "text": "Station",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Probability of season start on or before date",
     "tool": "crop-probability"
   },
@@ -1290,12 +1429,12 @@
     "tool": "crop-probability"
   },
   {
-    "text": "Crop water requirement (mm)",
-    "tool": "crop-probability"
-  },
-  {
     "text": "Crop probabilities depend on when the season starts.\nHere you can see the probabilities of the season starting at different dates",
     "tool": "budget"
+  },
+  {
+    "text": "Crop Water Requirement",
+    "tool": "crop-probability"
   },
   {
     "text": "Crop Information",
@@ -1303,6 +1442,10 @@
   },
   {
     "text": "Chance of receiving the water requirement in the days to maturity for this crop variety",
+    "tool": "crop-probability"
+  },
+  {
+    "text": "Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0",
     "tool": "crop-probability"
   },
   {
@@ -1319,6 +1462,14 @@
   },
   {
     "text": "Terciles",
+    "tool": "climate"
+  },
+  {
+    "text": "Show Map",
+    "tool": "climate"
+  },
+  {
+    "text": "Show List",
     "tool": "climate"
   },
   {
@@ -1366,7 +1517,7 @@
     "tool": "budget"
   },
   {
-    "text": "hours",
+    "text": "livelihood",
     "tool": "budget"
   },
   {
@@ -1374,12 +1525,11 @@
     "tool": "budget"
   },
   {
-    "text": "fish",
-    "tool": "budget",
-    "context": "enterprise"
+    "text": "description",
+    "tool": "budget"
   },
   {
-    "text": "description",
+    "text": "days",
     "tool": "budget"
   },
   {
@@ -1396,11 +1546,6 @@
     "tool": "budget"
   },
   {
-    "text": "afforestation",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "What is your type of enterprise?",
     "tool": "budget"
   },
@@ -1409,7 +1554,15 @@
     "tool": "budget"
   },
   {
+    "text": "Summary",
+    "tool": "budget"
+  },
+  {
     "text": "Show More",
+    "tool": "budget"
+  },
+  {
+    "text": "Show All Budgets",
     "tool": "budget"
   },
   {
@@ -1450,10 +1603,6 @@
   },
   {
     "text": "Outputs",
-    "tool": "budget"
-  },
-  {
-    "text": "New Budget",
     "tool": "budget"
   },
   {
@@ -1680,29 +1829,9 @@
     "context": "inputs"
   },
   {
-    "text": "tomatoes",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
-    "text": "sweet potatoes",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
-    "text": "soya beans",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "sowing",
     "tool": "budget",
     "context": "activities"
-  },
-  {
-    "text": "sorghum",
-    "tool": "budget",
-    "context": "enterprise"
   },
   {
     "text": "sheller hire",
@@ -1715,11 +1844,6 @@
     "context": "inputs"
   },
   {
-    "text": "rice",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "protective equipment",
     "tool": "budget",
     "context": "inputs"
@@ -1730,19 +1854,9 @@
     "context": "inputs"
   },
   {
-    "text": "pigeon peas",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "ox cart",
     "tool": "budget",
     "context": "inputs"
-  },
-  {
-    "text": "onions",
-    "tool": "budget",
-    "context": "enterprise"
   },
   {
     "text": "manure wheelbarrows",
@@ -1755,24 +1869,9 @@
     "context": "inputs"
   },
   {
-    "text": "maize",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
-    "text": "groundnuts",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "fertiliser",
     "tool": "budget",
     "context": "inputs"
-  },
-  {
-    "text": "cowpeas",
-    "tool": "budget",
-    "context": "enterprise"
   },
   {
     "text": "chemicals",
@@ -1783,21 +1882,6 @@
     "text": "apply fertiliser",
     "tool": "budget",
     "context": "activities"
-  },
-  {
-    "text": "watermelon",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
-    "text": "paw-paw",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
-    "text": "mixed",
-    "tool": "budget",
-    "context": "enterprise"
   },
   {
     "text": "bags",
@@ -1825,11 +1909,6 @@
     "context": "inputs"
   },
   {
-    "text": "sheep",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "relocation",
     "tool": "budget",
     "context": "activities"
@@ -1843,11 +1922,6 @@
     "text": "provide supplements",
     "tool": "budget",
     "context": "activities"
-  },
-  {
-    "text": "pigs",
-    "tool": "budget",
-    "context": "enterprise"
   },
   {
     "text": "milk",
@@ -1870,16 +1944,6 @@
     "context": "inputs"
   },
   {
-    "text": "guinea fowl",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
-    "text": "goats",
-    "tool": "budget",
-    "context": "enterprise"
-  },
-  {
     "text": "fodder for livestock",
     "tool": "budget",
     "context": "outputs"
@@ -1900,14 +1964,39 @@
     "context": "outputs"
   },
   {
-    "text": "ducks",
+    "text": "dipping",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "build housing",
+    "tool": "budget",
+    "context": "activities"
+  },
+  {
+    "text": "sheep",
     "tool": "budget",
     "context": "enterprise"
   },
   {
-    "text": "dipping",
+    "text": "pigs",
     "tool": "budget",
-    "context": "activities"
+    "context": "enterprise"
+  },
+  {
+    "text": "guinea fowl",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "goats",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "ducks",
+    "tool": "budget",
+    "context": "enterprise"
   },
   {
     "text": "chicken",
@@ -1920,8 +2009,118 @@
     "context": "enterprise"
   },
   {
-    "text": "build housing",
+    "text": "retail trading",
     "tool": "budget",
-    "context": "activities"
+    "context": "enterprise"
+  },
+  {
+    "text": "handicraft",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "food selling",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "firewood",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "charcoal",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "casual labour",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "brick making",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "beekeeping",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "afforestation",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "fish",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "watermelon",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "paw-paw",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "mixed",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "tomatoes",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sweet potatoes",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "soya beans",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "sorghum",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "rice",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "pigeon peas",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "onions",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "maize",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "groundnuts",
+    "tool": "budget",
+    "context": "enterprise"
+  },
+  {
+    "text": "cowpeas",
+    "tool": "budget",
+    "context": "enterprise"
   }
 ]
