@@ -81,6 +81,11 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
     matIcon: 'poll',
   },
   {
+    label: 'App Statistics',
+    href: '/stats',
+    matIcon: 'apps',
+  },
+  {
     label: 'Translations',
     href: '/translations',
     matIcon: 'translate',
