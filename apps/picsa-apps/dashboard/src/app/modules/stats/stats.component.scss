@@ -1,35 +1,11 @@
 .app-stats-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  margin: 1rem auto;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  text-align: center;
-  margin-bottom: 0.4rem;
-}
-
-.title h1 {
-  font-size: 1.5rem;
-  margin: 0;
-  color: var(--color-primary);
-}
-
-.title p {
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 0.1rem;
+  @apply relative flex-1 w-full m-auto  shadow-md;
 }
 
 /* Iframe styling */
 .app-stats-wrapper iframe {
   width: 100%;
-  height: 90vh;
+  height: 100%;
   border: none;
   transition: opacity 0.3s ease-in-out;
 }
