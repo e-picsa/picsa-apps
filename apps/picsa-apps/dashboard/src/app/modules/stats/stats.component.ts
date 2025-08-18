@@ -1,12 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'dashboard-app-stats',
+  standalone: true,
   templateUrl: 'stats.component.html',
   styleUrl: 'stats.component.scss',
-  imports: [RouterModule],
+  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardStatsComponent {
