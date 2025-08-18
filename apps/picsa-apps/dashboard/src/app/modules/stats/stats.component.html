@@ -1,4 +1,22 @@
 <div class="page-content">
-    <h2>PICSA App Statistics</h2>
-    <iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/424bacea-f16d-44d9-82d7-b511f44ccb94/page/yNeFF" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe> 
+  <div class="title">
+    <h1>App Analytics Dashboard</h1>
+    <p>Interactive charts powered by Google Looker Studio</p>
+  </div>
+  <div class="app-stats-wrapper">
+    @if (loading) {
+      <div class="loader">
+        <div class="spinner"></div>
+        <p>Loading report...</p>
+      </div>
+    }
+    <iframe
+      [src]="reportUrl"
+      frameborder="0"
+      allowfullscreen
+      (load)="onLoad()"
+      [class.hidden]="loading"
+      sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+    ></iframe>
+  </div>
 </div>
