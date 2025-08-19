@@ -1,4 +1,4 @@
-import { Component, inject,OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
@@ -55,7 +55,8 @@ export class HomeComponent implements OnDestroy {
   }
 
   public async saveCopy() {
-    await this.service.save(this.calendarCopyForm.getRawValue());
+    const convertedData = this.formService.convertToSingleFormat(this.calendarCopyForm.getRawValue());
+    await this.service.save(convertedData);
     this.dialog.closeAll();
   }
 

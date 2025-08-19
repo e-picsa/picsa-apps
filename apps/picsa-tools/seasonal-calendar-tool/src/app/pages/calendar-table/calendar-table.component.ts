@@ -103,7 +103,8 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
 
   private enableFormAutoSave() {
     this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$), debounceTime(500)).subscribe((v) => {
-      this.service.save(this.formValue);
+      const convertedData = this.formService.convertToSingleFormat(this.formValue);
+      this.service.save(convertedData);
     });
   }
 

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject,Provider } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, Provider } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { IWeatherDataEntry, WEATHER_DATA, WEATHER_DATA_HASHMAP } from '@picsa/data/weather';
 
-import { PicsaFormBaseSelectComponent } from '../base/select';
+import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
 
 /** Accessor used for binding with ngModel or formgroups */
 export const CONTROL_VALUE_ACCESSOR: Provider = {
@@ -15,8 +15,8 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
 const SELECT_OPTIONS = WEATHER_DATA.filter((w) => w.label !== '');
 
 /**
- * Form control to allow visual selection of weather condition
- * Displays options in a popup and allows single selection
+ * Form control to allow visual selection of weather conditions
+ * Displays options in a popup and allows multiple selection
  */
 @Component({
   selector: 'picsa-form-weather-select',
@@ -26,7 +26,7 @@ const SELECT_OPTIONS = WEATHER_DATA.filter((w) => w.label !== '');
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class FormWeatherSelectComponent extends PicsaFormBaseSelectComponent<IWeatherDataEntry> {
+export class FormWeatherSelectComponent extends PicsaFormBaseSelectMultipleComponent<IWeatherDataEntry> {
   dialog = inject(MatDialog);
 
   constructor() {

@@ -1,4 +1,4 @@
-import { Component, inject,OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { CalendarEditorComponent } from '../../components/calendar-editor/calendar-editor.component';
@@ -31,7 +31,8 @@ export class CreateCalendarComponent implements OnInit {
     const isValid = this.editor.validate();
     if (isValid) {
       const formValue = this.form.getRawValue();
-      await this.service.save(formValue);
+      const convertedData = this.formService.convertToSingleFormat(formValue);
+      await this.service.save(convertedData);
       this.router.navigate(['..', formValue.id], { relativeTo: this.route, replaceUrl: true });
     }
   }
