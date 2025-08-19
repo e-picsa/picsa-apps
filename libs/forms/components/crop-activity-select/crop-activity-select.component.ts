@@ -3,7 +3,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP, ICropActivityDataEntry } from '@picsa/data';
 
-import { PicsaFormBaseSelectComponent } from '../base/select';
+import { PicsaFormBaseSelectMultipleComponent } from '../base/select-multiple';
 
 /** Accessor used for binding with ngModel or formgroups */
 export const CONTROL_VALUE_ACCESSOR: Provider = {
@@ -13,8 +13,8 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
 };
 
 /**
- * Form control to allow visual selection of crop-activity condition
- * Displays options in a popup and allows single selection
+ * Form control to allow visual selection of crop-activity conditions
+ * Displays options in a popup and allows multiple selection
  */
 @Component({
   selector: 'picsa-form-crop-activity-select',
@@ -24,8 +24,11 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class FormCropActivitySelectComponent extends PicsaFormBaseSelectComponent<ICropActivityDataEntry> {
-  constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {
+export class FormCropActivitySelectComponent extends PicsaFormBaseSelectMultipleComponent<ICropActivityDataEntry> {
+  constructor(
+    cdr: ChangeDetectorRef,
+    public dialog: MatDialog,
+  ) {
     super(cdr, CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP);
   }
 }

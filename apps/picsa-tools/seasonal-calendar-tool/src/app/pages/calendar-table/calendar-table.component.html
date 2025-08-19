@@ -21,13 +21,13 @@
           <tr>
             <th></th>
             @for (weatherControl of form.controls.weather.controls; track $index) {
-            <th formArrayName="weather">
+            <th>
               <div style="margin-bottom: 8px">
                 {{ columnLabels[$index] | translate }}
               </div>
               <picsa-form-weather-select
                 [formControl]="weatherControl"
-                [attr.data-hasValue]="weatherControl.value ? true : false"
+                [attr.data-hasValue]="weatherControl.value && weatherControl.value.length > 0 ? true : false"
               ></picsa-form-weather-select>
             </th>
             }
@@ -44,7 +44,7 @@
             <td>
               <picsa-form-crop-activity-select
                 [formControl]="control"
-                [attr.data-hasValue]="control.value ? true : false"
+                [attr.data-hasValue]="control.value && control.value.length > 0 ? true : false"
               ></picsa-form-crop-activity-select>
             </td>
             }
