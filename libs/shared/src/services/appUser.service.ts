@@ -6,6 +6,7 @@ import { isEqual } from '@picsa/utils/object.utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { PicsaAsyncService } from './asyncService.service';
+import { ErrorHandlerService } from './core/error-handler.service';
 import { NetworkService } from './core/network.service';
 import { SupabaseService } from './core/supabase/supabase.service';
 
@@ -40,7 +41,7 @@ export class AppUserService extends PicsaAsyncService {
   }
 
   /** Timer used to debounce sync */
-  private syncTimer: any = null;
+  private syncTimer: ReturnType<typeof setTimeout> | null = null;
 
   /** Amount of time waited before syncing, to allow batching multiple changes */
   private readonly SYNC_DEBOUNCE_MS = 5000;
@@ -49,6 +50,7 @@ export class AppUserService extends PicsaAsyncService {
     private configurationService: ConfigurationService,
     private supabaseService: SupabaseService,
     private networkService: NetworkService,
+    private errorService: ErrorHandlerService,
   ) {
     super();
 
@@ -77,7 +79,7 @@ export class AppUserService extends PicsaAsyncService {
       })
       .catch((error) => {
         // Failed to load from db despite network retries - ignore sync
-        console.error(error);
+        this.errorService.handleError(error);
       });
   }
 
