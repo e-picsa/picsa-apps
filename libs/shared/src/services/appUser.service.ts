@@ -14,10 +14,11 @@ const USER_ID_KEY = 'picsa_app_user_id';
 type IAppUser = Database['public']['Tables']['app_users'];
 
 /**
+ * Handle sync between local appUser data and db app_user table
+ *
  * TODO
  * - Row level security (ensure read/write own profile only)
  */
-
 @Injectable({ providedIn: 'root' })
 export class AppUserService extends PicsaAsyncService {
   private dbProfile = signal<IAppUser['Row'] | undefined>(undefined);
@@ -70,8 +71,8 @@ export class AppUserService extends PicsaAsyncService {
         if (data) {
           this.dbProfile.set(data);
         } else {
-          // No DB user - sync from local which will populate initial db entry
-          this.scheduleSync();
+          // No DB user - create
+          this.networkService.retryOnNetworkError(() => this.createUserProfile());
         }
       })
       .catch((error) => {
@@ -100,63 +101,64 @@ export class AppUserService extends PicsaAsyncService {
     return data;
   }
 
+  /**
+   * Create a timer to schedule sync. Clears any previous sync timer operations
+   * to avoid race condition or too many db updates if lots of changes made quickly
+   */
   private scheduleSync() {
     if (this.syncTimer) {
       clearTimeout(this.syncTimer);
     }
     this.syncTimer = setTimeout(() => {
-      this.syncUserProfile();
+      this.networkService.retryOnNetworkError(() => this.updateUserProfile());
       this.syncTimer = null;
     }, this.SYNC_DEBOUNCE_MS);
   }
 
-  private async syncUserProfile() {
+  /** Create a new user profile on db */
+  private async createUserProfile() {
     const userProfile = this.userProfile();
-    const dbProfile = this.dbProfile();
 
-    if (dbProfile) {
-      return this.networkService.retryOnNetworkError(() => this.updateUserProfile(userProfile, dbProfile));
-    } else {
-      return this.networkService.retryOnNetworkError(() => this.createUserProfile(userProfile));
-    }
-  }
-
-  private async createUserProfile(userProfile: IAppUser['Insert']) {
-    console.log('[App User] create profile');
     const { data, error } = await this.table.insert(userProfile).select().single();
     if (error) {
       // Throw error to be handled by network retry
       throw error;
     }
     if (data) {
+      console.log('[App User] profile created', data);
       this.dbProfile.set(data);
     }
   }
 
-  private async updateUserProfile(userProfile: IAppUser['Update'], dbProfile: IAppUser['Row']) {
-    const update = this.generateDBUpdate(userProfile, dbProfile);
+  /** Compare local and db user profiles, and sync any updates as required */
+  private async updateUserProfile() {
+    const userProfile = this.userProfile();
+    const dbProfile = this.dbProfile();
+
+    // Ignore unchanged
+    const update = this.generateDBUpdate(userProfile, dbProfile || {});
     if (Object.keys(update).length === 0) return;
-    console.log('[App User] sync profile');
+
     const { data, error } = await this.table.update(update).eq('id', this.appUserId).select().single();
     if (error) {
       // Throw error to be handled by network retry
       throw error;
     }
     if (data) {
+      console.log('[App User] profile synced', update);
       this.dbProfile.set(data);
     }
   }
 
+  /** Compare local user profile to db, and return list of changes to make from local to db */
   private generateDBUpdate(userProfile: Partial<IAppUser['Row']>, dbProfile: Partial<IAppUser['Row']>) {
     const update: IAppUser['Update'] = {};
-
     // only check for changes in user profile
     for (const [key, value] of Object.entries(userProfile)) {
       if (!isEqual(value, dbProfile[key])) {
         update[key] = value;
       }
     }
-
     return update;
   }
 }
