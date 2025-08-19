@@ -75,7 +75,8 @@ export class NetworkService {
    */
   private setupOnlineListeners() {
     const network$ = new Observable((subscriber) => {
-      Network.addListener('networkStatusChange', () => subscriber.next());
+      const listener = Network.addListener('networkStatusChange', () => subscriber.next());
+      return () => listener.then((l) => l.remove());
     });
     const online$ = fromEvent(window, 'online');
     const offline$ = fromEvent(window, 'offline');
@@ -105,10 +106,13 @@ export class NetworkService {
     if (!connected) return false;
 
     // Perform lightweiight web request to check if internet available
+    // This will typically use about 0.1-0.3KB per request when online,
+    // depending on whether connection treated as new or not
 
     // TODO
     // possibly better to use own backend service/function in case internet provider
     // provides free/whitelisted access to specific domain under control (e.g. Internet of Good Things)
+    // Also would have custom control over https keep-alive minimise new connection data overhead
     try {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 5000); // 5s timeout, if online should receive response by then
