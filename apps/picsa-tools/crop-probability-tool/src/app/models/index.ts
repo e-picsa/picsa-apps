@@ -1,16 +1,15 @@
 import { ICropName } from '@picsa/data';
 
-export type IProbabilityTable = IProbabilityTableStationMeta & {
+export type IProbabilityTable = IProbabilityTableMeta & {
   data: () => Promise<IStationCropData[]>;
 };
 
-export interface IProbabilityTableStationMeta {
-  /** Location id for routing */
+export interface IProbabilityTableMeta {
   id: string;
-  /** Station name to display in label */
+  /** Location label to use in heading */
   label: string;
-  /** Additional notes appended below table */
-  notes: string[];
+  /** Station name used in disclaimer for source of data */
+  station_label: string;
   /** Probabilities to display in header row for start of season */
   seasonProbabilities: string[];
   /** Text to display for heading columns */
@@ -19,7 +18,7 @@ export interface IProbabilityTableStationMeta {
 
 /**
  * @deprecated
- * Should refactor to use IProbabilityTableStationMeta
+ * Should refactor to use IProbabilityTableMeta
  */
 export interface IStationCropInformation {
   id: string;
@@ -39,6 +38,7 @@ export interface IStationCropData {
 export interface IStationCropDataItem {
   variety: string;
   days: string;
-  water?: string[];
+  // TODO - use only numbers, migrate legacy mw data
+  water?: (string | number)[];
   probabilities?: string[];
 }

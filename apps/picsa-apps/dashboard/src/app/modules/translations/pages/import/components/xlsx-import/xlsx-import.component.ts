@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -7,7 +6,7 @@ import { ILocaleDataEntry, LOCALES_DATA } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { arrayToHashmap } from '@picsa/utils';
-import { xlsxToJson } from '@picsa/utils/xlsx';
+import { jsonToXLSX, xlsxToJson } from '@picsa/utils/xlsx';
 import Uppy from '@uppy/core';
 import DragDrop from '@uppy/drag-drop';
 
@@ -106,6 +105,25 @@ export class TranslationsXLSXImportComponent {
       this.importCounter.update((v) => v + 1);
     }
     await this.service.listTranslations();
+  }
+
+  public exportTemplate() {
+    const translations = this.service.translations().filter((v) => !v.archived);
+    const countryCode = this.deploymentService.activeDeploymentCountry();
+    const countryLocales = LOCALES_DATA.filter((v) => v.country_code === countryCode);
+    const exportRows: ImportTranslationEntry[] = [];
+    // Prepare columns for xlsx export - including label columns for country locales
+    for (const translation of translations) {
+      const { context, tool, text: English } = translation;
+      const baseRow: ImportTranslationEntry = { context: context as string, tool, English };
+      for (const { id, language_label } of countryLocales) {
+        baseRow[language_label] = translation[id];
+      }
+      exportRows.push(baseRow);
+    }
+    // Convert to XLSX and download
+    const downloadFileName = `PICSA-Translations-${countryCode}-${new Date().toISOString().substring(0, 10)}.xlsx`;
+    jsonToXLSX(exportRows, `${countryCode}`, downloadFileName);
   }
 
   private setupDropZone(target: HTMLDivElement) {

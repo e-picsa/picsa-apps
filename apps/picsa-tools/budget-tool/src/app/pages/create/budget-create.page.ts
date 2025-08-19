@@ -1,11 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MONTH_DATA } from '@picsa/data';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
+import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { map, Subject, switchMap, takeUntil } from 'rxjs';
 
+import { BudgetToolComponentsModule } from '../../components/budget-tool.components';
+import { BudgetMaterialModule } from '../../material.module';
 import { IBudgetMeta, IEnterpriseScaleLentgh } from '../../models/budget-tool.models';
 import { IBudgetCard } from '../../schema';
 import { BudgetStore } from '../../store/budget.store';
@@ -18,7 +22,15 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   styleUrls: ['./budget-create.page.scss'],
   animations: [FadeInOut(ANIMATION_DELAYED)],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    BudgetMaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BudgetToolComponentsModule,
+    PicsaTranslateModule,
+  ],
 })
 export class BudgetCreatePage implements OnInit, OnDestroy {
   budgetMetaForm: FormGroup;
@@ -35,16 +47,15 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     public store: BudgetStore,
-    private router: Router,
-    private route: ActivatedRoute,
     private cardService: BudgetCardService,
-    private cdr: ChangeDetectorRef
+    private dialogRef: MatDialogRef<BudgetCreatePage>,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {
     this.store.createNewBudget();
     this.generateBudgetForm();
-    this.enterpriseTypeCards = await this.cardService.getEnterpriseGroupCards();
+    this.enterpriseTypeCards = this.cardService.enterpriseGroups;
     this.subscribeToEnterpriseChanges();
     this.cdr.markForCheck();
   }
@@ -95,7 +106,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
           const ref = this.cardService.dbCollection.find({ selector: { type: 'enterprise' } });
           return ref.$.pipe(map((docs) => docs.map((doc) => doc._data)));
         }),
-        takeUntil(this.componentDestroyed$)
+        takeUntil(this.componentDestroyed$),
       )
       .subscribe((enterprises) => {
         this.filteredEnterprises = enterprises.filter((e) => e.groupings?.includes(this.enterpriseType as any));
@@ -107,9 +118,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
     // generate period data
     const data = new Array(meta.lengthTotal).fill(PERIOD_DATA_TEMPLATE);
     await this.store.patchBudget({ data, meta });
-    this.router.navigate(['../', 'view', this.store.activeBudget._key], {
-      relativeTo: this.route,
-    });
+    this.dialogRef.close(this.store.activeBudget._key);
   }
 
   public trackByFn(index: number, item: IBudgetCard) {
@@ -132,7 +141,7 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   private _generateFormFromValues(v: any, requiredFields: string[] = []) {
     const fieldGroup = {};
     Object.keys(v).forEach(
-      (key) => (fieldGroup[key] = [v[key], requiredFields.includes(key) ? Validators.required : null])
+      (key) => (fieldGroup[key] = [v[key], requiredFields.includes(key) ? Validators.required : null]),
     );
     return this.fb.group(fieldGroup);
   }

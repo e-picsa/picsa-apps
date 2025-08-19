@@ -1,3 +1,4 @@
+import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -14,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { BackButton, PicsaCommonComponentsService } from '@picsa/components/src';
+import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components/src';
 import { FARMER_CONTENT_DATA, FARMER_CONTENT_DATA_BY_SLUG, IFarmerContent } from '@picsa/data';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { PhotoInputComponent, PhotoListComponent } from '@picsa/shared/features';
@@ -29,7 +30,6 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   selector: 'farmer-content-module-home',
   imports: [
     CommonModule,
-    BackButton,
     FarmerStepVideoComponent,
     PicsaTranslateModule,
     MatButtonModule,
@@ -37,6 +37,8 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
     MatIconModule,
     PhotoInputComponent,
     PhotoListComponent,
+    PicsaCommonComponentsModule,
+    PortalModule,
     RouterModule,
   ],
   templateUrl: './module-home.component.html',
@@ -85,8 +87,12 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     return undefined;
   });
 
+  public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
+
   /** Manually trigger content fade by setting signal (used when changing modules dynamically) */
   public fadeInContent = signal(true);
+
+  public headerContent = computed(() => this.componentsService.headerOptions().cdkPortalCenter);
 
   private contentEl = viewChild.required<ElementRef<HTMLDivElement>>('contentEl');
 
@@ -102,7 +108,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private componentService: PicsaCommonComponentsService,
+    public componentsService: PicsaCommonComponentsService,
   ) {
     effect(() => {
       const content = this.content();
@@ -115,12 +121,12 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     // Hide regular header when tool not in view (avoid conflicting local and tool headers)
     effect(() => {
       const hideHeader = this.toolHidden() || this.toolRouteSegments().length === 0;
-      this.componentService.patchHeader({ hideHeader });
+      this.componentsService.patchHeader({ hideHeader, hideBackButton: true });
     });
   }
 
   ngOnDestroy() {
-    this.componentService.patchHeader({ hideHeader: false });
+    this.componentsService.patchHeader({ hideHeader: false, hideBackButton: false });
   }
 
   public showTool() {

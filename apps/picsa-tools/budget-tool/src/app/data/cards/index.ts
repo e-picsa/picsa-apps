@@ -1,8 +1,11 @@
-import type { IBudgetCard } from '../schema/cards';
+import type { IBudgetCard } from '../../schema/cards';
+import ENTERPRISE_CARDS from './enterprises';
+export * from './enterprises';
 
 // This data is automatically populated on first load and update from live when available
 // TODO - migrate to use svgIcon property and existing iconsets, e.g. `svgIcon: picsa_crop:maize`
 export const BUDGET_CARDS: IBudgetCard[] = [
+  ...ENTERPRISE_CARDS,
   {
     type: 'activities',
     label: 'build housing',
@@ -11,30 +14,9 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'svg',
   },
   {
-    type: 'enterprise',
-    label: 'cattle',
-    id: 'cattle',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'chicken',
-    id: 'chicken',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
     type: 'activities',
     label: 'dipping',
     id: 'dipping',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'ducks',
-    id: 'ducks',
     groupings: ['livestock'],
     imgType: 'svg',
   },
@@ -67,20 +49,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'svg',
   },
   {
-    type: 'enterprise',
-    label: 'goats',
-    id: 'goats',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'guinea fowl',
-    id: 'guinea-fowl',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
     type: 'inputs',
     label: 'housing',
     id: 'housing',
@@ -109,13 +77,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'svg',
   },
   {
-    type: 'enterprise',
-    label: 'pigs',
-    id: 'pigs',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
     type: 'activities',
     label: 'provide supplements',
     id: 'provide-supplements',
@@ -133,13 +94,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     type: 'activities',
     label: 'relocation',
     id: 'relocation',
-    groupings: ['livestock'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'sheep',
-    id: 'sheep',
     groupings: ['livestock'],
     imgType: 'svg',
   },
@@ -177,34 +131,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     id: 'bags',
     groupings: ['livestock', 'crop'],
     imgType: 'png',
-  },
-  {
-    type: 'enterprise',
-    label: 'mixed',
-    id: 'mixed',
-    groupings: ['fruits'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'paw-paw',
-    id: 'paw-paw',
-    groupings: ['fruits'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'watermelon',
-    id: 'watermelon',
-    groupings: ['fruits'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'fish',
-    id: 'fish',
-    groupings: ['fish'],
-    imgType: 'svg',
   },
   {
     type: 'activities',
@@ -249,13 +175,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'png',
   },
   {
-    type: 'enterprise',
-    label: 'cowpeas',
-    id: 'cowpeas',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
     type: 'outputs',
     label: 'crop',
     id: 'crop',
@@ -266,13 +185,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     type: 'inputs',
     label: 'fertiliser',
     id: 'fertiliser',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'groundnuts',
-    id: 'groundnuts',
     groupings: ['crop'],
     imgType: 'svg',
   },
@@ -289,13 +201,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     id: 'land-clearing',
     groupings: ['crop'],
     imgType: 'png',
-  },
-  {
-    type: 'enterprise',
-    label: 'maize',
-    id: 'maize',
-    groupings: ['crop'],
-    imgType: 'svg',
   },
   {
     type: 'inputs',
@@ -319,23 +224,9 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'png',
   },
   {
-    type: 'enterprise',
-    label: 'onions',
-    id: 'onions',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
     type: 'inputs',
     label: 'ox cart',
     id: 'ox-cart',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
-    type: 'enterprise',
-    label: 'pigeon peas',
-    id: 'pigeon-peas',
     groupings: ['crop'],
     imgType: 'svg',
   },
@@ -368,13 +259,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'png',
   },
   {
-    type: 'enterprise',
-    label: 'rice',
-    id: 'rice',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
     type: 'inputs',
     label: 'seeds',
     id: 'seeds',
@@ -396,25 +280,11 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'png',
   },
   {
-    type: 'enterprise',
-    label: 'sorghum',
-    id: 'sorghum',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
     type: 'activities',
     label: 'sowing',
     id: 'sowing',
     groupings: ['crop'],
     imgType: 'png',
-  },
-  {
-    type: 'enterprise',
-    label: 'soya beans',
-    id: 'soya-beans',
-    groupings: ['crop'],
-    imgType: 'svg',
   },
   {
     type: 'activities',
@@ -424,25 +294,11 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     imgType: 'png',
   },
   {
-    type: 'enterprise',
-    label: 'sweet potatoes',
-    id: 'sweet-potatoes',
-    groupings: ['crop'],
-    imgType: 'svg',
-  },
-  {
     type: 'activities',
     label: 'threshing',
     id: 'threshing',
     groupings: ['crop'],
     imgType: 'png',
-  },
-  {
-    type: 'enterprise',
-    label: 'tomatoes',
-    id: 'tomatoes',
-    groupings: ['crop'],
-    imgType: 'svg',
   },
   {
     type: 'inputs',
@@ -531,13 +387,6 @@ export const BUDGET_CARDS: IBudgetCard[] = [
     id: 'labour---paid',
     groupings: ['crop', 'livestock'],
     imgType: 'png',
-  },
-  {
-    type: 'enterprise',
-    label: 'afforestation',
-    id: 'afforestation',
-    groupings: ['afforestation'],
-    imgType: 'svg',
   },
   {
     type: 'other',

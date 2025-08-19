@@ -6,6 +6,9 @@ textarea {
   font-size: 1.5em;
   margin-bottom: 1em;
 }
+.card-list {
+  @apply flex flex-wrap gap-2 sm:gap-4;
+}
 
 .variable-container {
   display: flex;

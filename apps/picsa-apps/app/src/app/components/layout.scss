@@ -29,6 +29,7 @@ mat-nav-list > a {
   background-color: white;
   padding: 8px;
   border-bottom: 1px solid var(--color-primary);
+  min-height: 64px;
 }
 mat-nav-list > a:first-of-type {
   border-top: 1px solid var(--color-primary);

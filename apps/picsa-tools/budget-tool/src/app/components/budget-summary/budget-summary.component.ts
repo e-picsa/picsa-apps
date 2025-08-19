@@ -19,7 +19,7 @@ interface ISummaryEntry {
 export class BudgetSummaryComponent implements OnInit {
   @Input() budgetData: IBudget['data'];
 
-  totalFamilyLabourHours = 0;
+  totalFamilyLabour = 0;
   totalInputsValue = 0;
   totalOutputsValue = 0;
   totalProduceSummary: ISummaryEntry[] = [];
@@ -32,7 +32,7 @@ export class BudgetSummaryComponent implements OnInit {
   calculateSummary() {
     this.budgetData.forEach((item) => {
       item.familyLabour.forEach((member) => {
-        this.totalFamilyLabourHours += member.values.quantity;
+        this.totalFamilyLabour += member.values.quantity;
       });
 
       item.inputs.forEach((input) => {

@@ -43,6 +43,11 @@
             "glob": "*.*",
             "input": "apps/picsa-tools/climate-tool/src/assets/climate-icons",
             "output": "assets/climate-icons"
+          },
+          {
+            "glob": "*.json",
+            "input": "libs/i18n/assets",
+            "output": "assets/i18n"
           }
         ],
         "styles": [

@@ -3,16 +3,18 @@ import { Injectable, signal } from '@angular/core';
 import { isEqual } from '@picsa/utils/object.utils';
 import { BehaviorSubject } from 'rxjs';
 
+import type { PicsaSidenavComponent } from '../components';
+
 export interface IHeaderOptions {
   title?: string;
   style?: 'inverted' | 'primary';
   /** Angular portal cdk to inject component into header slots */
   cdkPortalStart?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
-  cdkPortalEnd?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
   cdkPortalCenter?: DomPortal<HTMLElement> | TemplatePortal<unknown>;
 
   hideBackButton?: boolean;
   hideHeader?: boolean;
+  showSidenavToggle?: boolean;
 }
 export interface IBreadcrumbOptions {
   enabled?: boolean;
@@ -23,6 +25,8 @@ export interface IBreadcrumbOptions {
 export class PicsaCommonComponentsService {
   headerOptions = signal<IHeaderOptions>({}, { equal: isEqual });
   breadcrumbOptions$ = new BehaviorSubject<IBreadcrumbOptions>({});
+
+  private sidenav: PicsaSidenavComponent;
 
   /** Track navigation history - used by back-button components (multi-instance) */
   public navHistory: string[] = [];
@@ -48,9 +52,13 @@ export class PicsaCommonComponentsService {
     };
     this.breadcrumbOptions$.next(updated);
   }
+  public toggleSidenav() {
+    if (this.sidenav) {
+      this.sidenav.toggle();
+    }
+  }
 
-  public back() {
-    // access to back implementation provided by back-button component (will be overridden)
-    console.warn('No back method specified');
+  public registerSidenav(sidenav: PicsaSidenavComponent) {
+    this.sidenav = sidenav;
   }
 }
