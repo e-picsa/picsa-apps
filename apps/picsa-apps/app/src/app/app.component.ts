@@ -47,7 +47,6 @@ export class AppComponent implements OnInit {
     // and UI has chance to update
     await _wait(50);
 
-    this.appUserService.init();
     // eagerly enable analytics collection
     this.analyticsService.init(this.router);
     // eagerly load resources service to populate hardcoded resources
@@ -66,6 +65,11 @@ export class AppComponent implements OnInit {
         this.pushNotificationService.initializePushNotifications();
       }, 1000);
     }
+
+    // Lazy-init background services without await
+    setTimeout(() => {
+      this.appUserService.ready();
+    }, 2000);
   }
 
   private async runMigrations() {
