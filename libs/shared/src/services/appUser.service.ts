@@ -1,0 +1,166 @@
+import { computed, effect, Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { ConfigurationService } from '@picsa/configuration';
+import { Database } from '@picsa/server-types';
+import { isEqual } from '@picsa/utils/object.utils';
+import { v4 as uuidv4 } from 'uuid';
+
+import { PicsaAsyncService } from './asyncService.service';
+import { ErrorHandlerService } from './core/error-handler.service';
+import { NetworkService } from './core/network.service';
+import { SupabaseService } from './core/supabase/supabase.service';
+
+const USER_ID_KEY = 'picsa_app_user_id';
+
+type IAppUser = Database['public']['Tables']['app_users'];
+
+/**
+ * Handle sync between local appUser data and db app_user table
+ *
+ * TODO
+ * - Row level security (ensure read/write own profile only)
+ */
+@Injectable({ providedIn: 'root' })
+export class AppUserService extends PicsaAsyncService {
+  private dbProfile = signal<IAppUser['Row'] | undefined>(undefined);
+
+  private platform = Capacitor.getPlatform();
+
+  private userProfile = computed<IAppUser['Insert']>(
+    () => {
+      const { country_code, language_code, user_type } = this.configurationService.userSettings();
+      return { id: this.appUserId, country_code, language_code, user_type, platform: this.platform };
+    },
+    { equal: isEqual },
+  );
+
+  private appUserId = localStorage.getItem(USER_ID_KEY) || this.generateId();
+
+  private get table() {
+    return this.supabaseService.db.table('app_users');
+  }
+
+  /** Timer used to debounce sync */
+  private syncTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /** Amount of time waited before syncing, to allow batching multiple changes */
+  private readonly SYNC_DEBOUNCE_MS = 5000;
+
+  constructor(
+    private configurationService: ConfigurationService,
+    private supabaseService: SupabaseService,
+    private networkService: NetworkService,
+    private errorService: ErrorHandlerService,
+  ) {
+    super();
+
+    effect(() => {
+      // sync user profile when user updated (if initial db profile also loaded)
+      const userProfile = this.userProfile();
+      const dbProfile = this.dbProfile();
+      if (userProfile && dbProfile) {
+        this.scheduleSync();
+      }
+    });
+  }
+
+  public override async init(): Promise<void> {
+    // Load user profile from DB (create if not exists)
+    // Do not await as exponential backoff could take long time
+    this.networkService
+      .retryOnNetworkError(() => this.loadDbUserProfile(), 30)
+      .then((data) => {
+        if (data) {
+          this.dbProfile.set(data);
+        } else {
+          // No DB user - create
+          this.networkService.retryOnNetworkError(() => this.createUserProfile());
+        }
+      })
+      .catch((error) => {
+        // Failed to load from db despite network retries - ignore sync
+        this.errorService.handleError(error);
+      });
+  }
+
+  private generateId() {
+    const id = uuidv4();
+    localStorage.setItem(USER_ID_KEY, id);
+    return id;
+  }
+
+  /**
+   * Load the current user profile from the database
+   * Retries in case of no internet connectivity
+   */
+  private async loadDbUserProfile() {
+    await this.supabaseService.ready();
+    const { data, error } = await this.table.select('*').eq('id', this.appUserId).maybeSingle();
+    if (error) {
+      // Throw error to be handled by network retry
+      throw error;
+    }
+    return data;
+  }
+
+  /**
+   * Create a timer to schedule sync. Clears any previous sync timer operations
+   * to avoid race condition or too many db updates if lots of changes made quickly
+   */
+  private scheduleSync() {
+    if (this.syncTimer) {
+      clearTimeout(this.syncTimer);
+    }
+    this.syncTimer = setTimeout(() => {
+      this.networkService.retryOnNetworkError(() => this.updateUserProfile());
+      this.syncTimer = null;
+    }, this.SYNC_DEBOUNCE_MS);
+  }
+
+  /** Create a new user profile on db */
+  private async createUserProfile() {
+    const userProfile = this.userProfile();
+
+    const { data, error } = await this.table.insert(userProfile).select().single();
+    if (error) {
+      // Throw error to be handled by network retry
+      throw error;
+    }
+    if (data) {
+      console.log('[App User] profile created', data);
+      this.dbProfile.set(data);
+    }
+  }
+
+  /** Compare local and db user profiles, and sync any updates as required */
+  private async updateUserProfile() {
+    const userProfile = this.userProfile();
+    const dbProfile = this.dbProfile();
+
+    // Ignore unchanged
+    const update = this.generateDBUpdate(userProfile, dbProfile || {});
+    if (Object.keys(update).length === 0) return;
+
+    const { data, error } = await this.table.update(update).eq('id', this.appUserId).select().single();
+    if (error) {
+      // Throw error to be handled by network retry
+      throw error;
+    }
+    if (data) {
+      console.log('[App User] profile synced', update);
+      this.dbProfile.set(data);
+    }
+  }
+
+  /** Compare local user profile to db, and return list of changes to make from local to db */
+  private generateDBUpdate(userProfile: Partial<IAppUser['Row']>, dbProfile: Partial<IAppUser['Row']>) {
+    const update: IAppUser['Update'] = {};
+    // only check for changes in user profile
+    for (const [key, value] of Object.entries(userProfile)) {
+      if (!isEqual(value, dbProfile[key])) {
+        update[key] = value;
+      }
+    }
+    return update;
+  }
+}

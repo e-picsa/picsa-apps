@@ -28,6 +28,36 @@ export type Database = {
   };
   public: {
     Tables: {
+      app_users: {
+        Row: {
+          country_code: string | null;
+          created_at: string;
+          id: string;
+          language_code: string | null;
+          platform: string | null;
+          updated_at: string;
+          user_type: string | null;
+        };
+        Insert: {
+          country_code?: string | null;
+          created_at?: string;
+          id: string;
+          language_code?: string | null;
+          platform?: string | null;
+          updated_at?: string;
+          user_type?: string | null;
+        };
+        Update: {
+          country_code?: string | null;
+          created_at?: string;
+          id?: string;
+          language_code?: string | null;
+          platform?: string | null;
+          updated_at?: string;
+          user_type?: string | null;
+        };
+        Relationships: [];
+      };
       climate_station_data: {
         Row: {
           annual_rainfall_data: Json[] | null;
@@ -600,9 +630,11 @@ export type Database = {
           id: string;
           ke_sw: string | null;
           mw_ny: string | null;
+          mw_tum: string | null;
           text: string;
           tj_tg: string | null;
           tool: string;
+          updated_at: string | null;
           zm_bem: string | null;
           zm_kqn: string | null;
           zm_loz: string | null;
@@ -618,9 +650,11 @@ export type Database = {
           id: string;
           ke_sw?: string | null;
           mw_ny?: string | null;
+          mw_tum?: string | null;
           text: string;
           tj_tg?: string | null;
           tool: string;
+          updated_at?: string | null;
           zm_bem?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
@@ -636,9 +670,11 @@ export type Database = {
           id?: string;
           ke_sw?: string | null;
           mw_ny?: string | null;
+          mw_tum?: string | null;
           text?: string;
           tj_tg?: string | null;
           tool?: string;
+          updated_at?: string | null;
           zm_bem?: string | null;
           zm_kqn?: string | null;
           zm_loz?: string | null;
@@ -754,7 +790,7 @@ export type Database = {
         | 'translations.author'
         | 'translations.admin';
       country_code: 'global' | 'mw' | 'zm' | 'tj';
-      forecast_type: 'daily' | 'seasonal' | 'downscaled';
+      forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
         | 'global_en'
         | 'mw_ny'
@@ -1310,7 +1346,7 @@ export const Constants = {
         'translations.admin',
       ],
       country_code: ['global', 'mw', 'zm', 'tj'],
-      forecast_type: ['daily', 'seasonal', 'downscaled'],
+      forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
       locale_code: [
         'global_en',
         'mw_ny',

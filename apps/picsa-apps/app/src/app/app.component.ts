@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
+import { AppUserService } from '@picsa/shared/services/appUser.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
     private appUpdateService: AppUpdateService,
     private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector,
+    private appUserService: AppUserService,
   ) {}
 
   async ngOnInit() {
@@ -63,6 +65,11 @@ export class AppComponent implements OnInit {
         this.pushNotificationService.initializePushNotifications();
       }, 1000);
     }
+
+    // Lazy-init background services without await
+    setTimeout(() => {
+      this.appUserService.ready();
+    }, 2000);
   }
 
   private async runMigrations() {
