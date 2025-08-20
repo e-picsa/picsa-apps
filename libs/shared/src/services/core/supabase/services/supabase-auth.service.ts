@@ -97,12 +97,31 @@ export class SupabaseAuthService extends PicsaAsyncService {
     return this.auth.signOut();
   }
 
+  /**
+   * Try to sign in existing session user, falling back to anonymous if failed
+   *
+   * NOTE - this will create new anonymous users on auth, so only should be used
+   * in app when not providing alternative sign-in provider and requiring db access
+   * */
+  public async signInAppUserOrAnonymous() {
+    const { error: getUserError } = await this.auth.getUser();
+    if (getUserError) {
+      const { data, error: signInError } = await this.auth.signInAnonymously();
+      if (signInError) {
+        console.error('Failed to sign in anonymous user', signInError);
+      }
+      if (data) {
+        console.log('Anonymous user signed in', data);
+      }
+    }
+  }
+
   /** Attempt to sign-in as persisted user, with fallback to anonymous */
-  public async signInDefaultUser() {
+  public async signInDashboardDevUser() {
     const { error } = await this.auth.getUser();
     if (error) {
       console.log('User session not found, signing in anonymous user');
-      return this.signInAnonymousUser();
+      return this.signInDevUser();
     }
     // return user as updated by auth change subscriber
     return this.authUser;
@@ -137,7 +156,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
   }
 
   /** User shared credential to sign in as an anonymous user for supabase */
-  private async signInAnonymousUser() {
+  private async signInDevUser() {
     const { email, password } = ENVIRONMENT.supabase.appUser;
     const { error } = await this.auth.signInWithPassword({ email, password: password || email });
     // TODO - could consider function to generate app user base on id which could also use RLS for sync

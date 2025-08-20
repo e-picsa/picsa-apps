@@ -4,14 +4,10 @@ import { ConfigurationService } from '@picsa/configuration';
 import { Database } from '@picsa/server-types';
 import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
-import { v4 as uuidv4 } from 'uuid';
 
-import { ErrorHandlerService } from './core/error-handler.service';
-import { NetworkService } from './core/network.service';
-import { SupabaseService } from './core/supabase/supabase.service';
-import { PicsaSyncService } from './syncService.service';
-
-const USER_ID_KEY = 'picsa_app_user_id';
+import { ErrorHandlerService } from './error-handler.service';
+import { NetworkService } from './network.service';
+import { SupabaseService } from './supabase/supabase.service';
 
 type IAppUser = Database['public']['Tables']['app_users'];
 
@@ -19,25 +15,25 @@ type IAppUser = Database['public']['Tables']['app_users'];
  * Handle sync between local appUser data and db app_user table
  * This is a 1-way push, where local config is source of truth
  * and simply updates row in DB on change
- *
- * TODO
- * - Row level security (ensure read/write own profile only)
  */
 @Injectable({ providedIn: 'root' })
-export class AppUserService extends PicsaSyncService {
+export class AppUserService {
+  public enabled = signal(false);
+
   private dbProfile = signal<IAppUser['Row'] | undefined>(undefined);
 
   private platform = Capacitor.getPlatform();
 
-  private userProfile = computed<IAppUser['Insert']>(
+  /** User supabase auth_user id as db only allows user to write to own row */
+  private userId = computed(() => this.supabaseService.auth.authUser()?.id);
+
+  private userProfile = computed<Omit<IAppUser['Insert'], 'user_id'>>(
     () => {
       const { country_code, language_code, user_type } = this.configurationService.userSettings();
-      return { id: this.appUserId, country_code, language_code, user_type, platform: this.platform };
+      return { country_code, language_code, user_type, platform: this.platform };
     },
     { equal: isEqual },
   );
-
-  private appUserId = localStorage.getItem(USER_ID_KEY) || this.generateId();
 
   private get table() {
     return this.supabaseService.db.table('app_users');
@@ -63,49 +59,58 @@ export class AppUserService extends PicsaSyncService {
     private networkService: NetworkService,
     private errorService: ErrorHandlerService,
   ) {
-    super();
+    // Ensure auth user signed in
+    effect(async () => {
+      if (!this.enabled()) return;
+      await this.supabaseService.ready();
+      const isOnline = this.networkService.isOnline();
+      const userId = this.userId();
+      if (isOnline && !userId) {
+        await this.supabaseService.auth.signInAppUserOrAnonymous();
+      }
+    });
 
     // When user is online attempt to load profile from DB (create if does not exist)
     effect(async () => {
+      if (!this.enabled()) return;
+      const userId = this.userId();
       const isOnline = this.networkService.isOnline();
-      if (isOnline && !this.dbProfile()) {
-        const dbProfile = await this.loadDbUserProfile();
+      if (isOnline && userId && !this.dbProfile()) {
+        const dbProfile = await this.loadDbUserProfile(userId);
         if (dbProfile) {
           this.dbProfile.set(dbProfile);
         } else {
-          await this.createUserProfile();
+          await this.createUserProfile(userId);
         }
       }
     });
 
     // When user is online attempt sync pending update
     effect(async () => {
+      if (!this.enabled()) return;
+      const userId = this.userId();
       const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
-      if (isOnline && pendingUpdate) {
-        await this.updateUserProfile();
+      if (isOnline && userId && pendingUpdate) {
+        await this.updateUserProfile(userId);
       }
     });
   }
 
-  private generateId() {
-    const id = uuidv4();
-    localStorage.setItem(USER_ID_KEY, id);
-    return id;
-  }
-
-  private async loadDbUserProfile() {
-    await this.supabaseService.ready();
-    const { data, error } = await this.table.select('*').eq('id', this.appUserId).maybeSingle();
+  private async loadDbUserProfile(user_id: string) {
+    const { data, error } = await this.table.select('*').eq('user_id', user_id).maybeSingle();
     if (error) {
       this.errorService.handleError(error);
     }
     return data;
   }
 
-  private async createUserProfile() {
+  private async createUserProfile(user_id: string) {
     const userProfile = this.userProfile();
-    const { data, error } = await this.table.insert(userProfile).select().single();
+    const { data, error } = await this.table
+      .insert({ ...userProfile, user_id })
+      .select()
+      .single();
     if (error) {
       this.errorService.handleError(error);
     }
@@ -115,14 +120,14 @@ export class AppUserService extends PicsaSyncService {
     }
   }
 
-  private async updateUserProfile() {
+  private async updateUserProfile(user_id: string) {
     const userProfile = this.userProfile();
     const dbProfile = this.dbProfile();
 
     const update = this.generateDBUpdate(userProfile, dbProfile || {});
     if (Object.keys(update).length === 0) return;
 
-    const { data, error } = await this.table.update(update).eq('id', this.appUserId).select().single();
+    const { data, error } = await this.table.update(update).eq('user_id', user_id).select().single();
     if (error) {
       this.errorService.handleError(error);
     }

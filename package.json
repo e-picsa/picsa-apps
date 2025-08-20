@@ -1,6 +1,6 @@
 {
   "name": "picsa-apps",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "license": "See LICENSE",
   "scripts": {
     "ng": "nx",
@@ -79,7 +79,7 @@
     "@ngx-translate/http-loader": "~16.0.1",
     "@nx/angular": "20.3.0",
     "@stencil/angular-output-target": "^0.10.2",
-    "@supabase/supabase-js": "^2.49.4",
+    "@supabase/supabase-js": "^2.55.0",
     "@uppy/angular": "^0.6.1",
     "@uppy/core": "^3.7.1",
     "@uppy/dashboard": "^3.7.1",
@@ -208,7 +208,7 @@
     "puppeteer": "^15.5.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-visualizer": "^5.8.3",
-    "supabase": "^2.22.12",
+    "supabase": "^2.34.3",
     "tailwindcss": "^3.4.13",
     "ts-jest": "29.1.1",
     "tsx": "^4.19.2",

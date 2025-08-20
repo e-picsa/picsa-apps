@@ -32,28 +32,28 @@ export type Database = {
         Row: {
           country_code: string | null;
           created_at: string;
-          id: string;
           language_code: string | null;
           platform: string | null;
           updated_at: string;
+          user_id: string;
           user_type: string | null;
         };
         Insert: {
           country_code?: string | null;
           created_at?: string;
-          id: string;
           language_code?: string | null;
           platform?: string | null;
           updated_at?: string;
+          user_id: string;
           user_type?: string | null;
         };
         Update: {
           country_code?: string | null;
           created_at?: string;
-          id?: string;
           language_code?: string | null;
           platform?: string | null;
           updated_at?: string;
+          user_id?: string;
           user_type?: string | null;
         };
         Relationships: [];
