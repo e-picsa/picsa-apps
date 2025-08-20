@@ -20,20 +20,24 @@ execute procedure moddatetime(updated_at);
 alter table app_users enable row level security;
 
 -- Allow users to select their own row
-create policy "Users can read their own app_user"
+create policy "Users can view their own data only"
 on app_users
 for select
-using (auth.uid() = user_id);
+to authenticated
+using (
+  (select auth.uid()) = user_id
+);
 
 -- Allow users to insert their own row
 create policy "Users can insert their own app_user"
 on app_users
 for insert
-with check (auth.uid() = user_id);
+to authenticated
+with check ( (select auth.uid()) = user_id );
 
 -- Allow users to update their own row
 create policy "Users can update their own app_user"
 on app_users
 for update
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
+to authenticated
+with check ( (select auth.uid()) = user_id );

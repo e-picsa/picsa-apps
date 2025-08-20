@@ -61,9 +61,12 @@ export class AppUserService {
   ) {
     // Ensure auth user signed in
     effect(async () => {
+      if (!this.enabled()) return;
       await this.supabaseService.ready();
-      if (this.enabled() && this.networkService.isOnline() && !this.userId()) {
-        await this.supabaseService.auth.signInDefaultUser().catch((error) => this.errorService.handleError(error));
+      const isOnline = this.networkService.isOnline();
+      const userId = this.userId();
+      if (isOnline && !userId) {
+        await this.supabaseService.auth.signInAppUserOrAnonymous();
       }
     });
 
