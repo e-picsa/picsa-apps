@@ -1,4 +1,4 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, Injectable, OnInit, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { Database } from '@picsa/server-types';
@@ -6,10 +6,9 @@ import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ErrorHandlerService } from './core/error-handler.service';
-import { NetworkService } from './core/network.service';
-import { SupabaseService } from './core/supabase/supabase.service';
-import { PicsaSyncService } from './syncService.service';
+import { ErrorHandlerService } from './error-handler.service';
+import { NetworkService } from './network.service';
+import { SupabaseService } from './supabase/supabase.service';
 
 const USER_ID_KEY = 'picsa_app_user_id';
 
@@ -24,7 +23,9 @@ type IAppUser = Database['public']['Tables']['app_users'];
  * - Row level security (ensure read/write own profile only)
  */
 @Injectable({ providedIn: 'root' })
-export class AppUserService extends PicsaSyncService {
+export class AppUserService {
+  public enabled = signal(false);
+
   private dbProfile = signal<IAppUser['Row'] | undefined>(undefined);
 
   private platform = Capacitor.getPlatform();
@@ -63,10 +64,18 @@ export class AppUserService extends PicsaSyncService {
     private networkService: NetworkService,
     private errorService: ErrorHandlerService,
   ) {
-    super();
+    // Ensure auth user signed in
+    effect(async () => {
+      await this.supabaseService.ready();
+      const authUser = this.supabaseService.auth.authUser();
+      if (this.enabled() && this.networkService.isOnline() && !authUser) {
+        await this.supabaseService.auth.signInDefaultUser();
+      }
+    });
 
     // When user is online attempt to load profile from DB (create if does not exist)
     effect(async () => {
+      if (!this.enabled() || !this.supabaseService.auth.authUser()) return;
       const isOnline = this.networkService.isOnline();
       if (isOnline && !this.dbProfile()) {
         const dbProfile = await this.loadDbUserProfile();
@@ -80,6 +89,7 @@ export class AppUserService extends PicsaSyncService {
 
     // When user is online attempt sync pending update
     effect(async () => {
+      if (!this.enabled() || !this.supabaseService.auth.authUser()) return;
       const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
       if (isOnline && pendingUpdate) {
@@ -95,7 +105,6 @@ export class AppUserService extends PicsaSyncService {
   }
 
   private async loadDbUserProfile() {
-    await this.supabaseService.ready();
     const { data, error } = await this.table.select('*').eq('id', this.appUserId).maybeSingle();
     if (error) {
       this.errorService.handleError(error);

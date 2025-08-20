@@ -5,8 +5,8 @@ import { Capacitor } from '@capacitor/core';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
-import { AppUserService } from '@picsa/shared/services/appUser.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
+import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
@@ -66,9 +66,9 @@ export class AppComponent implements OnInit {
       }, 1000);
     }
 
-    // Lazy-init background services without await
+    // Lazy-init background services
     setTimeout(() => {
-      this.appUserService.ready();
+      this.appUserService.enabled.set(true);
     }, 2000);
   }
 
