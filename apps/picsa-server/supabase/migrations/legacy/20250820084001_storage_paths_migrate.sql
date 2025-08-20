@@ -31,3 +31,37 @@ ALTER TABLE public.resource_files_child
   ON DELETE SET NULL;
 
 COMMENT ON COLUMN public.resource_files_child.storage_file IS 'Foreign key to the unique path in public.storage_objects mirror.';
+
+
+-- Remove the old, invalid foreign key constraint.
+ALTER TABLE public.resource_links
+  DROP CONSTRAINT IF EXISTS resource_links_cover_image_fkey;
+
+-- Add the new, valid foreign key constraint referencing the mirror table's unique path.
+ALTER TABLE public.resource_links
+  ADD CONSTRAINT resource_links_cover_image_fkey
+  FOREIGN KEY (cover_image)
+  REFERENCES public.storage_objects(path)
+  ON DELETE SET NULL;
+
+COMMENT ON COLUMN public.resource_links.cover_image IS 'Foreign key to the unique path in public.storage_objects mirror.';
+
+
+
+-- 
+-- Remove the old, invalid foreign key constraint.
+ALTER TABLE public.monitoring_forms
+  DROP CONSTRAINT IF EXISTS monitoring_forms_form_xlsx_fkey;
+
+-- Add the new, valid foreign key constraint referencing the mirror table's unique path.
+ALTER TABLE public.monitoring_forms
+  ADD CONSTRAINT monitoring_forms_form_xlsx_fkey
+  FOREIGN KEY (form_xlsx)
+  REFERENCES public.storage_objects(path)
+  ON DELETE SET NULL;
+
+COMMENT ON COLUMN public.monitoring_forms.form_xlsx IS 'Foreign key to the unique path in public.storage_objects mirror.';
+
+
+
+
