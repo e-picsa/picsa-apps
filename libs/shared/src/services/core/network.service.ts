@@ -11,6 +11,7 @@ export class NetworkService {
   /** Online status observable, with debounce and unique pipes to handle flaky connections */
   private isOnline$ = this.setupOnlineListeners();
 
+  /** Signal to track online status, for use in effects */
   public isOnline = toSignal(this.isOnline$);
 
   constructor() {
