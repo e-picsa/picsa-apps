@@ -2,13 +2,14 @@ import { computed, effect, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { Database } from '@picsa/server-types';
+import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { PicsaAsyncService } from './asyncService.service';
 import { ErrorHandlerService } from './core/error-handler.service';
 import { NetworkService } from './core/network.service';
 import { SupabaseService } from './core/supabase/supabase.service';
+import { PicsaSyncService } from './syncService.service';
 
 const USER_ID_KEY = 'picsa_app_user_id';
 
@@ -16,12 +17,14 @@ type IAppUser = Database['public']['Tables']['app_users'];
 
 /**
  * Handle sync between local appUser data and db app_user table
+ * This is a 1-way push, where local config is source of truth
+ * and simply updates row in DB on change
  *
  * TODO
  * - Row level security (ensure read/write own profile only)
  */
 @Injectable({ providedIn: 'root' })
-export class AppUserService extends PicsaAsyncService {
+export class AppUserService extends PicsaSyncService {
   private dbProfile = signal<IAppUser['Row'] | undefined>(undefined);
 
   private platform = Capacitor.getPlatform();
@@ -40,11 +43,19 @@ export class AppUserService extends PicsaAsyncService {
     return this.supabaseService.db.table('app_users');
   }
 
-  /** Timer used to debounce sync */
-  private syncTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Determine if profile sync required if online db profile differs from local */
+  private pendingDBUpdate = computed(() => {
+    const userProfile = this.userProfile();
+    const dbProfile = this.dbProfile();
+    if (userProfile && dbProfile) {
+      const update = this.generateDBUpdate(userProfile, dbProfile);
+      return Object.keys(update).length > 0 ? update : null;
+    }
+    return null;
+  });
 
-  /** Amount of time waited before syncing, to allow batching multiple changes */
-  private readonly SYNC_DEBOUNCE_MS = 5000;
+  /** Debounce profile update db writes  */
+  private pendingDBUpdateDebounded = debounceSignal(this.pendingDBUpdate, 5000, null);
 
   constructor(
     private configurationService: ConfigurationService,
@@ -54,33 +65,27 @@ export class AppUserService extends PicsaAsyncService {
   ) {
     super();
 
-    effect(() => {
-      // sync user profile when user updated (if initial db profile also loaded)
-      const userProfile = this.userProfile();
-      const dbProfile = this.dbProfile();
-      if (userProfile && dbProfile) {
-        this.scheduleSync();
+    // When user is online attempt to load profile from DB (create if does not exist)
+    effect(async () => {
+      const isOnline = this.networkService.isOnline();
+      if (isOnline && !this.dbProfile()) {
+        const dbProfile = await this.loadDbUserProfile();
+        if (dbProfile) {
+          this.dbProfile.set(dbProfile);
+        } else {
+          await this.createUserProfile();
+        }
       }
     });
-  }
 
-  public override async init(): Promise<void> {
-    // Load user profile from DB (create if not exists)
-    // Do not await as exponential backoff could take long time
-    this.networkService
-      .retryOnNetworkError(() => this.loadDbUserProfile(), 30)
-      .then((data) => {
-        if (data) {
-          this.dbProfile.set(data);
-        } else {
-          // No DB user - create
-          this.networkService.retryOnNetworkError(() => this.createUserProfile());
-        }
-      })
-      .catch((error) => {
-        // Failed to load from db despite network retries - ignore sync
-        this.errorService.handleError(error);
-      });
+    // When user is online attempt sync pending update
+    effect(async () => {
+      const isOnline = this.networkService.isOnline();
+      const pendingUpdate = this.pendingDBUpdateDebounded();
+      if (isOnline && pendingUpdate) {
+        await this.updateUserProfile();
+      }
+    });
   }
 
   private generateId() {
@@ -89,42 +94,20 @@ export class AppUserService extends PicsaAsyncService {
     return id;
   }
 
-  /**
-   * Load the current user profile from the database
-   * Retries in case of no internet connectivity
-   */
   private async loadDbUserProfile() {
     await this.supabaseService.ready();
     const { data, error } = await this.table.select('*').eq('id', this.appUserId).maybeSingle();
     if (error) {
-      // Throw error to be handled by network retry
-      throw error;
+      this.errorService.handleError(error);
     }
     return data;
   }
 
-  /**
-   * Create a timer to schedule sync. Clears any previous sync timer operations
-   * to avoid race condition or too many db updates if lots of changes made quickly
-   */
-  private scheduleSync() {
-    if (this.syncTimer) {
-      clearTimeout(this.syncTimer);
-    }
-    this.syncTimer = setTimeout(() => {
-      this.networkService.retryOnNetworkError(() => this.updateUserProfile());
-      this.syncTimer = null;
-    }, this.SYNC_DEBOUNCE_MS);
-  }
-
-  /** Create a new user profile on db */
   private async createUserProfile() {
     const userProfile = this.userProfile();
-
     const { data, error } = await this.table.insert(userProfile).select().single();
     if (error) {
-      // Throw error to be handled by network retry
-      throw error;
+      this.errorService.handleError(error);
     }
     if (data) {
       console.log('[App User] profile created', data);
@@ -132,19 +115,16 @@ export class AppUserService extends PicsaAsyncService {
     }
   }
 
-  /** Compare local and db user profiles, and sync any updates as required */
   private async updateUserProfile() {
     const userProfile = this.userProfile();
     const dbProfile = this.dbProfile();
 
-    // Ignore unchanged
     const update = this.generateDBUpdate(userProfile, dbProfile || {});
     if (Object.keys(update).length === 0) return;
 
     const { data, error } = await this.table.update(update).eq('id', this.appUserId).select().single();
     if (error) {
-      // Throw error to be handled by network retry
-      throw error;
+      this.errorService.handleError(error);
     }
     if (data) {
       console.log('[App User] profile synced', update);
@@ -152,10 +132,8 @@ export class AppUserService extends PicsaAsyncService {
     }
   }
 
-  /** Compare local user profile to db, and return list of changes to make from local to db */
   private generateDBUpdate(userProfile: Partial<IAppUser['Row']>, dbProfile: Partial<IAppUser['Row']>) {
     const update: IAppUser['Update'] = {};
-    // only check for changes in user profile
     for (const [key, value] of Object.entries(userProfile)) {
       if (!isEqual(value, dbProfile[key])) {
         update[key] = value;

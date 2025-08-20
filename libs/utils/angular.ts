@@ -1,6 +1,8 @@
+import { Signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd } from '@angular/router';
 import type { ActivatedRoute, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
+import { debounceTime, filter, map, startWith } from 'rxjs';
 
 function throwIfAlreadyLoaded(parentModule: any, moduleName: string) {
   if (parentModule) {
@@ -58,6 +60,12 @@ export function ngRouterMergedSnapshot$(router: Router) {
   return router.events.pipe(
     filter((e) => e instanceof NavigationEnd),
     map(() => mergeRouterSnapshots(router)),
-    startWith(mergeRouterSnapshots(router))
+    startWith(mergeRouterSnapshots(router)),
   );
+}
+
+export function debounceSignal<T>(source: Signal<T>, delay: number, initialValue: T): Signal<T> {
+  return toSignal(toObservable(source).pipe(debounceTime(delay)), {
+    initialValue,
+  });
 }
