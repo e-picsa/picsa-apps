@@ -1,16 +1,13 @@
-import { computed, effect, Injectable, OnInit, signal } from '@angular/core';
+import { computed, effect, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { Database } from '@picsa/server-types';
 import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
-import { v4 as uuidv4 } from 'uuid';
 
 import { ErrorHandlerService } from './error-handler.service';
 import { NetworkService } from './network.service';
 import { SupabaseService } from './supabase/supabase.service';
-
-const USER_ID_KEY = 'picsa_app_user_id';
 
 type IAppUser = Database['public']['Tables']['app_users'];
 
@@ -18,9 +15,6 @@ type IAppUser = Database['public']['Tables']['app_users'];
  * Handle sync between local appUser data and db app_user table
  * This is a 1-way push, where local config is source of truth
  * and simply updates row in DB on change
- *
- * TODO
- * - Row level security (ensure read/write own profile only)
  */
 @Injectable({ providedIn: 'root' })
 export class AppUserService {
@@ -30,15 +24,16 @@ export class AppUserService {
 
   private platform = Capacitor.getPlatform();
 
+  /** User supabase auth_user id as db only allows user to write to own row */
+  private userId = computed(() => this.supabaseService.auth.authUser()?.id);
+
   private userProfile = computed<IAppUser['Insert']>(
     () => {
       const { country_code, language_code, user_type } = this.configurationService.userSettings();
-      return { id: this.appUserId, country_code, language_code, user_type, platform: this.platform };
+      return { user_id: this.userId() as string, country_code, language_code, user_type, platform: this.platform };
     },
     { equal: isEqual },
   );
-
-  private appUserId = localStorage.getItem(USER_ID_KEY) || this.generateId();
 
   private get table() {
     return this.supabaseService.db.table('app_users');
@@ -67,18 +62,18 @@ export class AppUserService {
     // Ensure auth user signed in
     effect(async () => {
       await this.supabaseService.ready();
-      const authUser = this.supabaseService.auth.authUser();
-      if (this.enabled() && this.networkService.isOnline() && !authUser) {
+      if (this.enabled() && this.networkService.isOnline() && !this.userId()) {
         await this.supabaseService.auth.signInDefaultUser();
       }
     });
 
     // When user is online attempt to load profile from DB (create if does not exist)
     effect(async () => {
-      if (!this.enabled() || !this.supabaseService.auth.authUser()) return;
+      if (!this.enabled()) return;
+      const userId = this.userId();
       const isOnline = this.networkService.isOnline();
-      if (isOnline && !this.dbProfile()) {
-        const dbProfile = await this.loadDbUserProfile();
+      if (isOnline && userId && !this.dbProfile()) {
+        const dbProfile = await this.loadDbUserProfile(userId);
         if (dbProfile) {
           this.dbProfile.set(dbProfile);
         } else {
@@ -89,23 +84,18 @@ export class AppUserService {
 
     // When user is online attempt sync pending update
     effect(async () => {
-      if (!this.enabled() || !this.supabaseService.auth.authUser()) return;
+      if (!this.enabled()) return;
+      const userId = this.userId();
       const isOnline = this.networkService.isOnline();
       const pendingUpdate = this.pendingDBUpdateDebounded();
-      if (isOnline && pendingUpdate) {
-        await this.updateUserProfile();
+      if (isOnline && userId && pendingUpdate) {
+        await this.updateUserProfile(userId);
       }
     });
   }
 
-  private generateId() {
-    const id = uuidv4();
-    localStorage.setItem(USER_ID_KEY, id);
-    return id;
-  }
-
-  private async loadDbUserProfile() {
-    const { data, error } = await this.table.select('*').eq('id', this.appUserId).maybeSingle();
+  private async loadDbUserProfile(userId: string) {
+    const { data, error } = await this.table.select('*').eq('user_id', userId).maybeSingle();
     if (error) {
       this.errorService.handleError(error);
     }
@@ -124,14 +114,14 @@ export class AppUserService {
     }
   }
 
-  private async updateUserProfile() {
+  private async updateUserProfile(userId: string) {
     const userProfile = this.userProfile();
     const dbProfile = this.dbProfile();
 
     const update = this.generateDBUpdate(userProfile, dbProfile || {});
     if (Object.keys(update).length === 0) return;
 
-    const { data, error } = await this.table.update(update).eq('id', this.appUserId).select().single();
+    const { data, error } = await this.table.update(update).eq('user_id', userId).select().single();
     if (error) {
       this.errorService.handleError(error);
     }
