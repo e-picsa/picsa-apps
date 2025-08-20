@@ -109,7 +109,7 @@ export class AppUserService {
     const userProfile = this.userProfile();
     const { data, error } = await this.table
       .insert({ ...userProfile, user_id })
-      .select()
+      .select('*')
       .single();
     if (error) {
       this.errorService.handleError(error);
@@ -126,13 +126,12 @@ export class AppUserService {
 
     const update = this.generateDBUpdate(userProfile, dbProfile || {});
     if (Object.keys(update).length === 0) return;
-
     const { data, error } = await this.table.update(update).eq('user_id', user_id).select().single();
     if (error) {
       this.errorService.handleError(error);
     }
     if (data) {
-      console.log('[App User] profile synced', update);
+      console.log('[App User] profile updated', update);
       this.dbProfile.set(data);
     }
   }
