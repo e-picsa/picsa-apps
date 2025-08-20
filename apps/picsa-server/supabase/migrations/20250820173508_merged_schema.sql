@@ -277,7 +277,7 @@ alter table "public"."storage_objects" enable row level security;
   create table "public"."user_roles" (
     "created_at" timestamp with time zone not null default now(),
     "deployment_id" text not null,
-    "user_id" uuid not null default gen_random_uuid(),
+    "user_id" uuid not null,
     "roles" app_role[] not null default ARRAY[]::app_role[]
       );
 
