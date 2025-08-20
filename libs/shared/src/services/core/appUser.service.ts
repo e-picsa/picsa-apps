@@ -27,10 +27,10 @@ export class AppUserService {
   /** User supabase auth_user id as db only allows user to write to own row */
   private userId = computed(() => this.supabaseService.auth.authUser()?.id);
 
-  private userProfile = computed<IAppUser['Insert']>(
+  private userProfile = computed<Omit<IAppUser['Insert'], 'user_id'>>(
     () => {
       const { country_code, language_code, user_type } = this.configurationService.userSettings();
-      return { user_id: this.userId() as string, country_code, language_code, user_type, platform: this.platform };
+      return { country_code, language_code, user_type, platform: this.platform };
     },
     { equal: isEqual },
   );
@@ -63,7 +63,7 @@ export class AppUserService {
     effect(async () => {
       await this.supabaseService.ready();
       if (this.enabled() && this.networkService.isOnline() && !this.userId()) {
-        await this.supabaseService.auth.signInDefaultUser();
+        await this.supabaseService.auth.signInDefaultUser().catch((error) => this.errorService.handleError(error));
       }
     });
 
@@ -77,7 +77,7 @@ export class AppUserService {
         if (dbProfile) {
           this.dbProfile.set(dbProfile);
         } else {
-          await this.createUserProfile();
+          await this.createUserProfile(userId);
         }
       }
     });
@@ -94,17 +94,20 @@ export class AppUserService {
     });
   }
 
-  private async loadDbUserProfile(userId: string) {
-    const { data, error } = await this.table.select('*').eq('user_id', userId).maybeSingle();
+  private async loadDbUserProfile(user_id: string) {
+    const { data, error } = await this.table.select('*').eq('user_id', user_id).maybeSingle();
     if (error) {
       this.errorService.handleError(error);
     }
     return data;
   }
 
-  private async createUserProfile() {
+  private async createUserProfile(user_id: string) {
     const userProfile = this.userProfile();
-    const { data, error } = await this.table.insert(userProfile).select().single();
+    const { data, error } = await this.table
+      .insert({ ...userProfile, user_id })
+      .select()
+      .single();
     if (error) {
       this.errorService.handleError(error);
     }
@@ -114,14 +117,14 @@ export class AppUserService {
     }
   }
 
-  private async updateUserProfile(userId: string) {
+  private async updateUserProfile(user_id: string) {
     const userProfile = this.userProfile();
     const dbProfile = this.dbProfile();
 
     const update = this.generateDBUpdate(userProfile, dbProfile || {});
     if (Object.keys(update).length === 0) return;
 
-    const { data, error } = await this.table.update(update).eq('user_id', userId).select().single();
+    const { data, error } = await this.table.update(update).eq('user_id', user_id).select().single();
     if (error) {
       this.errorService.handleError(error);
     }
