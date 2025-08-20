@@ -386,7 +386,7 @@ alter table "public"."monitoring_forms" add constraint "monitoring_forms_cover_i
 
 alter table "public"."monitoring_forms" validate constraint "monitoring_forms_cover_image_fkey";
 
-alter table "public"."monitoring_forms" add constraint "monitoring_forms_form_xlsx_fkey" FOREIGN KEY (form_xlsx) REFERENCES storage.objects(path) ON UPDATE CASCADE ON DELETE SET NULL not valid;
+alter table "public"."monitoring_forms" add constraint "monitoring_forms_form_xlsx_fkey" FOREIGN KEY (form_xlsx) REFERENCES storage_objects(path) ON DELETE SET NULL not valid;
 
 alter table "public"."monitoring_forms" validate constraint "monitoring_forms_form_xlsx_fkey";
 
@@ -414,7 +414,7 @@ alter table "public"."resource_files_child" add constraint "resource_files_child
 
 alter table "public"."resource_files_child" validate constraint "resource_files_child_storage_file_fkey";
 
-alter table "public"."resource_links" add constraint "resource_links_cover_image_fkey" FOREIGN KEY (cover_image) REFERENCES storage.objects(path) ON UPDATE CASCADE ON DELETE SET NULL not valid;
+alter table "public"."resource_links" add constraint "resource_links_cover_image_fkey" FOREIGN KEY (cover_image) REFERENCES storage_objects(path) ON DELETE SET NULL not valid;
 
 alter table "public"."resource_links" validate constraint "resource_links_cover_image_fkey";
 
