@@ -40,4 +40,5 @@ create policy "Users can update their own app_user"
 on app_users
 for update
 to authenticated
-with check ( (select auth.uid()) = user_id );
+-- NOTE - do not use `with check` as blocks returning the row after in chained query
+using( (select auth.uid()) = user_id );
