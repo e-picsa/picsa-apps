@@ -17,7 +17,7 @@ export class NetworkService {
   constructor() {
     effect(() => {
       if (this.isOnline() !== undefined) {
-        console.log('[Network]', this.isOnline() ? 'Online' : 'Offline');
+        console.log('[NETWORK]', this.isOnline() ? 'Online' : 'Offline');
       }
     });
   }
