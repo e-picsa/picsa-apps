@@ -17,6 +17,8 @@ type IAppUser = Database['public']['Tables']['app_users'];
 
 /**
  * Handle sync between local appUser data and db app_user table
+ * This is a 1-way push, where local config is source of truth
+ * and simply updates row in DB on change
  *
  * TODO
  * - Row level security (ensure read/write own profile only)
