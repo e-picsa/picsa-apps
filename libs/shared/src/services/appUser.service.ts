@@ -6,6 +6,7 @@ import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ErrorHandlerService } from './core/error-handler.service';
 import { NetworkService } from './core/network.service';
 import { SupabaseService } from './core/supabase/supabase.service';
 import { PicsaSyncService } from './syncService.service';
@@ -58,6 +59,7 @@ export class AppUserService extends PicsaSyncService {
     private configurationService: ConfigurationService,
     private supabaseService: SupabaseService,
     private networkService: NetworkService,
+    private errorService: ErrorHandlerService,
   ) {
     super();
 
@@ -93,14 +95,18 @@ export class AppUserService extends PicsaSyncService {
   private async loadDbUserProfile() {
     await this.supabaseService.ready();
     const { data, error } = await this.table.select('*').eq('id', this.appUserId).maybeSingle();
-    if (error) throw error;
+    if (error) {
+      this.errorService.handleError(error);
+    }
     return data;
   }
 
   private async createUserProfile() {
     const userProfile = this.userProfile();
     const { data, error } = await this.table.insert(userProfile).select().single();
-    if (error) throw error;
+    if (error) {
+      this.errorService.handleError(error);
+    }
     if (data) {
       console.log('[App User] profile created', data);
       this.dbProfile.set(data);
@@ -115,7 +121,9 @@ export class AppUserService extends PicsaSyncService {
     if (Object.keys(update).length === 0) return;
 
     const { data, error } = await this.table.update(update).eq('id', this.appUserId).select().single();
-    if (error) throw error;
+    if (error) {
+      this.errorService.handleError(error);
+    }
     if (data) {
       console.log('[App User] profile synced', update);
       this.dbProfile.set(data);
