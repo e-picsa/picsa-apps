@@ -104,11 +104,11 @@ export class SupabaseAuthService extends PicsaAsyncService {
    * in app when not providing alternative sign-in provider and requiring db access
    * */
   public async signInAppUserOrAnonymous() {
-    const { error } = await this.auth.getUser();
-    if (error) {
-      const { data, error } = await this.auth.signInAnonymously();
-      if (error) {
-        console.error('Failed to sign in anonymous user', error);
+    const { error: getUserError } = await this.auth.getUser();
+    if (getUserError) {
+      const { data, error: signInError } = await this.auth.signInAnonymously();
+      if (signInError) {
+        console.error('Failed to sign in anonymous user', signInError);
       }
       if (data) {
         console.log('Anonymous user signed in', data);
