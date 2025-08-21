@@ -10,6 +10,7 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { firstValueFrom, Subject } from 'rxjs';
 
 import { PicsaAsyncService } from '../../../asyncService.service';
+import { ErrorHandlerService } from '../../error-handler.service';
 import { PicsaNotificationService } from '../../notification.service';
 
 type IDeploymentAuthRoles = {
@@ -46,6 +47,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private notificationService: PicsaNotificationService,
+    private errorService: ErrorHandlerService,
   ) {
     super();
     effect(() => {
@@ -104,14 +106,19 @@ export class SupabaseAuthService extends PicsaAsyncService {
    * in app when not providing alternative sign-in provider and requiring db access
    * */
   public async signInAppUserOrAnonymous() {
-    const { error: getUserError } = await this.auth.getUser();
-    if (getUserError) {
+    const { data, error: getSessionError } = await this.auth.getSession();
+    if (getSessionError) {
+      this.errorService.handleError(getSessionError);
+      return;
+    }
+    if (!data.session) {
       const { data, error: signInError } = await this.auth.signInAnonymously();
       if (signInError) {
-        console.error('Failed to sign in anonymous user', signInError);
+        console.error('[SUPABASE AUTH] Failed to sign in anonymous user', signInError);
+        this.errorService.handleError(signInError);
       }
-      if (data) {
-        console.log('Anonymous user signed in', data);
+      if (data.user) {
+        console.log('[SUPABASE AUTH] Anonymous user created', data);
       }
     }
   }
@@ -120,7 +127,6 @@ export class SupabaseAuthService extends PicsaAsyncService {
   public async signInDashboardDevUser() {
     const { error } = await this.auth.getUser();
     if (error) {
-      console.log('User session not found, signing in anonymous user');
       return this.signInDevUser();
     }
     // return user as updated by auth change subscriber
