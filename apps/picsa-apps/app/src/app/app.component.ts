@@ -8,6 +8,7 @@ import { ResourcesToolService } from '@picsa/resources/services/resources-tool.s
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
+import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
@@ -36,39 +37,51 @@ export class AppComponent implements OnInit {
     private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector,
     private appUserService: AppUserService,
+    private errorService: ErrorHandlerService,
   ) {}
 
   async ngOnInit() {
     // wait for migrations to run
     await this.runMigrations();
-    this.ready.set(true);
 
     // ensure service initialisation only occurs after migrations complete
     // and UI has chance to update
     await _wait(50);
 
-    // eagerly enable analytics collection
-    this.analyticsService.init(this.router);
-    // eagerly load resources service to populate hardcoded resources
-    this.resourcesService.ready();
-    // eagerly load monitoring service to sync form data
-    this.monitoringService.ready();
     this.ready.set(true);
 
-    if (Capacitor.isNativePlatform()) {
-      this.performanceService.init();
-      this.crashlyticsService.ready();
-      // check for available updates
-      this.appUpdateService.checkForUpdates();
-      // delay push notification as will prompt for permissions
-      setTimeout(() => {
-        this.pushNotificationService.initializePushNotifications();
-      }, 1000);
-    }
+    this.loadEagerServices();
+    this.loadDeferredServices();
+  }
 
-    // Lazy-init background services
+  /** Load immediate services in background (non-blocking) */
+  private loadEagerServices() {
+    const ops = [
+      // eagerly enable analytics collection
+      this.analyticsService.init(this.router).catch((err) => this.errorService.handleError(err)),
+      // eagerly load resources service to populate hardcoded resources
+      this.resourcesService.ready().catch((err) => this.errorService.handleError(err)),
+      // eagerly load monitoring service to sync form data
+      this.monitoringService.ready().catch((err) => this.errorService.handleError(err)),
+    ];
+    Promise.allSettled(ops);
+  }
+
+  /** Load background services after timeout (non-blocking) */
+  private loadDeferredServices() {
     setTimeout(() => {
       this.appUserService.enabled.set(true);
+
+      // Native-only
+      if (Capacitor.isNativePlatform()) {
+        const ops = [
+          this.performanceService.init(),
+          this.crashlyticsService.ready().catch((err) => this.errorService.handleError(err)),
+          this.pushNotificationService.initializePushNotifications().catch((err) => this.errorService.handleError(err)),
+          this.appUpdateService.checkForUpdates().catch((err) => this.errorService.handleError(err)),
+        ];
+        Promise.allSettled(ops);
+      }
     }, 2000);
   }
 
