@@ -28,13 +28,25 @@ jobs:
           node-version: 22.x
           cache: 'yarn'
 
+      - name: Populate supabase config
+        env:
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          jq -n \
+            --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
+            --arg anonKey "$SUPABASE_ANON_KEY" \
+            '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+            > libs/environments/src/supabase/config.json
+
       - name: Install node modules
         run: yarn install --immutable
 
       - name: Populate google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+        run: |
+          echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
 
       - name: Build App
         run: yarn nx run picsa-apps-app-native:build

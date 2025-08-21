@@ -18,6 +18,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
+
+      - name: Populate supabase config
+        env:
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          jq -n \
+            --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
+            --arg anonKey "$SUPABASE_ANON_KEY" \
+            '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+            > libs/environments/src/supabase/config.json
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
