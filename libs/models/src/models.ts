@@ -34,8 +34,6 @@ export interface IFirebaseConfig {
 }
 
 export interface ISupabaseConfig {
-  /** Default credentials used by app to login as anonymous user */
-  appUser: { email: string; password?: string };
   /** Async function used to load credentials which may be stored in local file */
   load: () => Promise<{
     anonKey: string;

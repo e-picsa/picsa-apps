@@ -161,10 +161,11 @@ export class SupabaseAuthService extends PicsaAsyncService {
     }
   }
 
-  /** User shared credential to sign in as an anonymous user for supabase */
+  /** Use generated dev credential when running supabase locally */
   private async signInDevUser() {
-    const { email, password } = ENVIRONMENT.supabase.appUser;
-    const { error } = await this.auth.signInWithPassword({ email, password: password || email });
+    const email = 'admin@picsa.app';
+    const password = 'admin@picsa.app';
+    const { error } = await this.auth.signInWithPassword({ email, password });
     // TODO - could consider function to generate app user base on id which could also use RLS for sync
     if (error) {
       console.error(error);
