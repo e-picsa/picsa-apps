@@ -58,19 +58,13 @@ export class AppComponent implements OnInit {
   private loadEagerServices() {
     const ops = [
       // eagerly enable analytics collection
-      this.analyticsService.init(this.router),
+      this.analyticsService.init(this.router).catch((err) => this.errorService.handleError(err)),
       // eagerly load resources service to populate hardcoded resources
-      this.resourcesService.ready(),
+      this.resourcesService.ready().catch((err) => this.errorService.handleError(err)),
       // eagerly load monitoring service to sync form data
-      this.monitoringService.ready(),
+      this.monitoringService.ready().catch((err) => this.errorService.handleError(err)),
     ];
-    Promise.allSettled(ops).then((responses) => {
-      for (const response of responses) {
-        if (response.status === 'rejected') {
-          this.errorService.handleError(new Error(response.reason));
-        }
-      }
-    });
+    Promise.allSettled(ops);
   }
 
   /** Load background services after timeout (non-blocking) */
@@ -82,17 +76,11 @@ export class AppComponent implements OnInit {
       if (Capacitor.isNativePlatform()) {
         const ops = [
           this.performanceService.init(),
-          this.crashlyticsService.ready(),
-          this.pushNotificationService.initializePushNotifications(),
-          this.appUpdateService.checkForUpdates(),
+          this.crashlyticsService.ready().catch((err) => this.errorService.handleError(err)),
+          this.pushNotificationService.initializePushNotifications().catch((err) => this.errorService.handleError(err)),
+          this.appUpdateService.checkForUpdates().catch((err) => this.errorService.handleError(err)),
         ];
-        Promise.allSettled(ops).then((responses) => {
-          for (const response of responses) {
-            if (response.status === 'rejected') {
-              this.errorService.handleError(new Error(response.reason));
-            }
-          }
-        });
+        Promise.allSettled(ops);
       }
     }, 2000);
   }
