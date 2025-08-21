@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
+import { Component, computed, effect, input, output, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -46,6 +46,8 @@ export class AppLayoutComponent {
   );
   public userType = computed(() => this.configurationService.userSettings().user_type);
   public version = APP_VERSION.semver;
+
+  public versionClicked = output();
 
   constructor(
     private router: Router,

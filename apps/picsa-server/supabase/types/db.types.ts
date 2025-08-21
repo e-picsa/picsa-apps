@@ -11,10 +11,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
+          extensions?: Json;
           operationName?: string;
           query?: string;
           variables?: Json;
-          extensions?: Json;
         };
         Returns: Json;
       };
@@ -30,6 +30,7 @@ export type Database = {
     Tables: {
       app_users: {
         Row: {
+          app_version: string | null;
           country_code: string | null;
           created_at: string;
           language_code: string | null;
@@ -39,6 +40,7 @@ export type Database = {
           user_type: string | null;
         };
         Insert: {
+          app_version?: string | null;
           country_code?: string | null;
           created_at?: string;
           language_code?: string | null;
@@ -48,6 +50,7 @@ export type Database = {
           user_type?: string | null;
         };
         Update: {
+          app_version?: string | null;
           country_code?: string | null;
           created_at?: string;
           language_code?: string | null;
@@ -267,7 +270,15 @@ export type Database = {
           public?: boolean;
           variant?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'deployments_icon_path_fkey';
+            columns: ['icon_path'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+        ];
       };
       forecasts: {
         Row: {
@@ -303,7 +314,15 @@ export type Database = {
           storage_file?: string | null;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'forecasts_storage_file_fkey';
+            columns: ['storage_file'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+        ];
       };
       kobo_sync: {
         Row: {
@@ -381,7 +400,22 @@ export type Database = {
           summary_fields?: Json[] | null;
           title?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'monitoring_forms_cover_image_fkey';
+            columns: ['cover_image'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+          {
+            foreignKeyName: 'monitoring_forms_form_xlsx_fkey';
+            columns: ['form_xlsx'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+        ];
       };
       monitoring_tool_submissions: {
         Row: {
@@ -462,7 +496,15 @@ export type Database = {
           sort_order?: number;
           title?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'resource_collections_cover_image_fkey';
+            columns: ['cover_image'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+        ];
       };
       resource_files: {
         Row: {
@@ -516,7 +558,22 @@ export type Database = {
           storage_file?: string | null;
           title?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'resource_files_cover_image_fkey';
+            columns: ['cover_image'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+          {
+            foreignKeyName: 'resource_files_storage_file_fkey';
+            columns: ['storage_file'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+        ];
       };
       resource_files_child: {
         Row: {
@@ -581,6 +638,20 @@ export type Database = {
             referencedRelation: 'resource_files';
             referencedColumns: ['id'];
           },
+          {
+            foreignKeyName: 'resource_files_child_cover_image_fkey';
+            columns: ['cover_image'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+          {
+            foreignKeyName: 'resource_files_child_storage_file_fkey';
+            columns: ['storage_file'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
         ];
       };
       resource_links: {
@@ -619,6 +690,50 @@ export type Database = {
           title?: string | null;
           type?: Database['public']['Enums']['resource_link_type'];
           url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'resource_links_cover_image_fkey';
+            columns: ['cover_image'];
+            isOneToOne: false;
+            referencedRelation: 'storage_objects';
+            referencedColumns: ['path'];
+          },
+        ];
+      };
+      storage_objects: {
+        Row: {
+          bucket_id: string | null;
+          created_at: string | null;
+          id: string;
+          last_accessed_at: string | null;
+          metadata: Json | null;
+          name: string | null;
+          owner: string | null;
+          path: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          bucket_id?: string | null;
+          created_at?: string | null;
+          id: string;
+          last_accessed_at?: string | null;
+          metadata?: Json | null;
+          name?: string | null;
+          owner?: string | null;
+          path?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          bucket_id?: string | null;
+          created_at?: string | null;
+          id?: string;
+          last_accessed_at?: string | null;
+          metadata?: Json | null;
+          name?: string | null;
+          owner?: string | null;
+          path?: string | null;
+          updated_at?: string | null;
         };
         Relationships: [];
       };
@@ -696,7 +811,7 @@ export type Database = {
           created_at?: string;
           deployment_id: string;
           roles?: Database['public']['Enums']['app_role'][];
-          user_id?: string;
+          user_id: string;
         };
         Update: {
           created_at?: string;
@@ -716,58 +831,11 @@ export type Database = {
       };
     };
     Views: {
-      storage_objects: {
-        Row: {
-          bucket_id: string | null;
-          created_at: string | null;
-          id: string | null;
-          last_accessed_at: string | null;
-          level: number | null;
-          metadata: Json | null;
-          name: string | null;
-          owner: string | null;
-          owner_id: string | null;
-          path_tokens: string[] | null;
-          updated_at: string | null;
-          user_metadata: Json | null;
-          version: string | null;
-        };
-        Insert: {
-          bucket_id?: string | null;
-          created_at?: string | null;
-          id?: string | null;
-          last_accessed_at?: string | null;
-          level?: number | null;
-          metadata?: Json | null;
-          name?: string | null;
-          owner?: string | null;
-          owner_id?: string | null;
-          path_tokens?: string[] | null;
-          updated_at?: string | null;
-          user_metadata?: Json | null;
-          version?: string | null;
-        };
-        Update: {
-          bucket_id?: string | null;
-          created_at?: string | null;
-          id?: string | null;
-          last_accessed_at?: string | null;
-          level?: number | null;
-          metadata?: Json | null;
-          name?: string | null;
-          owner?: string | null;
-          owner_id?: string | null;
-          path_tokens?: string[] | null;
-          updated_at?: string | null;
-          user_metadata?: Json | null;
-          version?: string | null;
-        };
-        Relationships: [];
-      };
+      [_ in never]: never;
     };
     Functions: {
       call_edge_function: {
-        Args: { name: string; body: Json };
+        Args: { body: Json; name: string };
         Returns: number;
       };
       custom_access_token_hook: {
@@ -777,16 +845,16 @@ export type Database = {
     };
     Enums: {
       app_role:
-        | 'viewer'
-        | 'author'
-        | 'admin'
         | 'resources.viewer'
         | 'resources.author'
         | 'resources.admin'
-        | 'deployments.viewer'
-        | 'deployments.author'
         | 'deployments.admin'
         | 'translations.viewer'
+        | 'viewer'
+        | 'author'
+        | 'admin'
+        | 'deployments.viewer'
+        | 'deployments.author'
         | 'translations.author'
         | 'translations.admin';
       country_code: 'global' | 'mw' | 'zm' | 'tj';
@@ -877,12 +945,10 @@ export type Database = {
           created_at: string | null;
           id: string;
           last_accessed_at: string | null;
-          level: number | null;
           metadata: Json | null;
           name: string | null;
           owner: string | null;
           owner_id: string | null;
-          path: string | null;
           path_tokens: string[] | null;
           updated_at: string | null;
           user_metadata: Json | null;
@@ -893,12 +959,10 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
           owner_id?: string | null;
-          path?: string | null;
           path_tokens?: string[] | null;
           updated_at?: string | null;
           user_metadata?: Json | null;
@@ -909,12 +973,10 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           last_accessed_at?: string | null;
-          level?: number | null;
           metadata?: Json | null;
           name?: string | null;
           owner?: string | null;
           owner_id?: string | null;
-          path?: string | null;
           path_tokens?: string[] | null;
           updated_at?: string | null;
           user_metadata?: Json | null;
@@ -923,38 +985,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'objects_bucketId_fkey';
-            columns: ['bucket_id'];
-            isOneToOne: false;
-            referencedRelation: 'buckets';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      prefixes: {
-        Row: {
-          bucket_id: string;
-          created_at: string | null;
-          level: number;
-          name: string;
-          updated_at: string | null;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string | null;
-          level?: number;
-          name: string;
-          updated_at?: string | null;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string | null;
-          level?: number;
-          name?: string;
-          updated_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'prefixes_bucketId_fkey';
             columns: ['bucket_id'];
             isOneToOne: false;
             referencedRelation: 'buckets';
@@ -1065,17 +1095,9 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      add_prefixes: {
-        Args: { _bucket_id: string; _name: string };
-        Returns: undefined;
-      };
       can_insert_object: {
-        Args: { bucketid: string; name: string; owner: string; metadata: Json };
+        Args: { bucketid: string; metadata: Json; name: string; owner: string };
         Returns: undefined;
-      };
-      delete_prefix: {
-        Args: { _bucket_id: string; _name: string };
-        Returns: boolean;
       };
       extension: {
         Args: { name: string };
@@ -1089,53 +1111,41 @@ export type Database = {
         Args: { name: string };
         Returns: string[];
       };
-      get_level: {
-        Args: { name: string };
-        Returns: number;
-      };
-      get_prefix: {
-        Args: { name: string };
-        Returns: string;
-      };
-      get_prefixes: {
-        Args: { name: string };
-        Returns: string[];
-      };
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>;
         Returns: {
-          size: number;
           bucket_id: string;
+          size: number;
         }[];
       };
       list_multipart_uploads_with_delimiter: {
         Args: {
           bucket_id: string;
-          prefix_param: string;
           delimiter_param: string;
           max_keys?: number;
           next_key_token?: string;
           next_upload_token?: string;
+          prefix_param: string;
         };
         Returns: {
-          key: string;
-          id: string;
           created_at: string;
+          id: string;
+          key: string;
         }[];
       };
       list_objects_with_delimiter: {
         Args: {
           bucket_id: string;
-          prefix_param: string;
           delimiter_param: string;
           max_keys?: number;
-          start_after?: string;
           next_token?: string;
+          prefix_param: string;
+          start_after?: string;
         };
         Returns: {
-          name: string;
           id: string;
           metadata: Json;
+          name: string;
           updated_at: string;
         }[];
       };
@@ -1145,79 +1155,22 @@ export type Database = {
       };
       search: {
         Args: {
-          prefix: string;
           bucketname: string;
-          limits?: number;
           levels?: number;
+          limits?: number;
           offsets?: number;
+          prefix: string;
           search?: string;
           sortcolumn?: string;
           sortorder?: string;
         };
         Returns: {
-          name: string;
-          id: string;
-          updated_at: string;
           created_at: string;
+          id: string;
           last_accessed_at: string;
           metadata: Json;
-        }[];
-      };
-      search_legacy_v1: {
-        Args: {
-          prefix: string;
-          bucketname: string;
-          limits?: number;
-          levels?: number;
-          offsets?: number;
-          search?: string;
-          sortcolumn?: string;
-          sortorder?: string;
-        };
-        Returns: {
           name: string;
-          id: string;
           updated_at: string;
-          created_at: string;
-          last_accessed_at: string;
-          metadata: Json;
-        }[];
-      };
-      search_v1_optimised: {
-        Args: {
-          prefix: string;
-          bucketname: string;
-          limits?: number;
-          levels?: number;
-          offsets?: number;
-          search?: string;
-          sortcolumn?: string;
-          sortorder?: string;
-        };
-        Returns: {
-          name: string;
-          id: string;
-          updated_at: string;
-          created_at: string;
-          last_accessed_at: string;
-          metadata: Json;
-        }[];
-      };
-      search_v2: {
-        Args: {
-          prefix: string;
-          bucket_name: string;
-          limits?: number;
-          levels?: number;
-          start_after?: string;
-        };
-        Returns: {
-          key: string;
-          name: string;
-          id: string;
-          updated_at: string;
-          created_at: string;
-          metadata: Json;
         }[];
       };
     };
@@ -1230,21 +1183,25 @@ export type Database = {
   };
 };
 
-type DefaultSchema = Database[Extract<keyof Database, 'public'>];
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R;
     }
     ? R
@@ -1258,14 +1215,16 @@ export type Tables<
     : never;
 
 export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof Database },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I;
     }
     ? I
@@ -1279,14 +1238,16 @@ export type TablesInsert<
     : never;
 
 export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof Database },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U;
     }
     ? U
@@ -1300,27 +1261,33 @@ export type TablesUpdate<
     : never;
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof Database },
+  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
     ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
     : never;
 
 export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes'] | { schema: keyof Database },
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema['CompositeTypes']
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
     ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never;
@@ -1332,16 +1299,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: [
-        'viewer',
-        'author',
-        'admin',
         'resources.viewer',
         'resources.author',
         'resources.admin',
-        'deployments.viewer',
-        'deployments.author',
         'deployments.admin',
         'translations.viewer',
+        'viewer',
+        'author',
+        'admin',
+        'deployments.viewer',
+        'deployments.author',
         'translations.author',
         'translations.admin',
       ],

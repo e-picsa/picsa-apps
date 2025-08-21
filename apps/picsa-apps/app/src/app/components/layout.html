@@ -38,7 +38,7 @@
       <picsa-configuration-summary style="margin-top: auto; padding: 4px" (click)="drawer.close()" />
       <footer>
         <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
-        <div>v{{ version }}</div>
+        <div (click)="versionClicked.emit()">v{{ version }}</div>
       </footer>
     </div>
   </mat-drawer>
