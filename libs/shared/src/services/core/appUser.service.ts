@@ -1,6 +1,7 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
+import { APP_VERSION } from '@picsa/environments/src';
 import { Database } from '@picsa/server-types';
 import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
@@ -20,17 +21,18 @@ type IAppUser = Database['public']['Tables']['app_users'];
 export class AppUserService {
   public enabled = signal(false);
 
+  /** User supabase auth_user id as db only allows user to write to own row */
+  public userId = computed(() => this.supabaseService.auth.authUser()?.id);
+
   private dbProfile = signal<IAppUser['Row'] | undefined>(undefined);
 
   private platform = Capacitor.getPlatform();
 
-  /** User supabase auth_user id as db only allows user to write to own row */
-  private userId = computed(() => this.supabaseService.auth.authUser()?.id);
-
   private userProfile = computed<Omit<IAppUser['Insert'], 'user_id'>>(
     () => {
       const { country_code, language_code, user_type } = this.configurationService.userSettings();
-      return { country_code, language_code, user_type, platform: this.platform };
+      const app_version = APP_VERSION.semver;
+      return { country_code, language_code, user_type, platform: this.platform, app_version };
     },
     { equal: isEqual },
   );

@@ -2,6 +2,8 @@
 import { Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
+import { Device } from '@capacitor/device';
+import { APP_VERSION } from '@picsa/environments/src';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
@@ -54,6 +56,26 @@ export class AppComponent implements OnInit {
     this.loadDeferredServices();
   }
 
+  public async showDebugInfo() {
+    const { operatingSystem, osVersion, webViewVersion } = await Device.getInfo();
+    const { identifier: device_id } = await Device.getId();
+    const debugInfo = {
+      app_version: APP_VERSION.semver,
+      user_id: this.appUserService.userId(),
+      device_id,
+      operatingSystem,
+      osVersion,
+      webViewVersion,
+    };
+    const debugText = JSON.stringify(debugInfo, null, 2);
+    alert(debugText);
+    try {
+      navigator.clipboard.writeText(debugText);
+    } catch (error) {
+      //
+    }
+  }
+
   /** Load immediate services in background (non-blocking) */
   private loadEagerServices() {
     const ops = [
@@ -68,21 +90,25 @@ export class AppComponent implements OnInit {
   }
 
   /** Load background services after timeout (non-blocking) */
-  private loadDeferredServices() {
-    setTimeout(() => {
-      this.appUserService.enabled.set(true);
-
-      // Native-only
-      if (Capacitor.isNativePlatform()) {
-        const ops = [
-          this.performanceService.init(),
-          this.crashlyticsService.ready().catch((err) => this.errorService.handleError(err)),
-          this.pushNotificationService.initializePushNotifications().catch((err) => this.errorService.handleError(err)),
-          this.appUpdateService.checkForUpdates().catch((err) => this.errorService.handleError(err)),
-        ];
-        Promise.allSettled(ops);
+  private async loadDeferredServices() {
+    await _wait(2000);
+    this.appUserService.enabled.set(true);
+    // Native-only
+    if (Capacitor.isNativePlatform()) {
+      // async init
+      const ops = [
+        this.crashlyticsService.ready().catch((err) => this.errorService.handleError(err)),
+        this.pushNotificationService.initializePushNotifications().catch((err) => this.errorService.handleError(err)),
+        this.appUpdateService.checkForUpdates().catch((err) => this.errorService.handleError(err)),
+      ];
+      await Promise.allSettled(ops);
+      // regular init
+      try {
+        this.performanceService.init();
+      } catch (error) {
+        this.errorService.handleError(error as any);
       }
-    }, 2000);
+    }
   }
 
   private async runMigrations() {
