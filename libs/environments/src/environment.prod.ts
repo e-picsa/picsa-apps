@@ -29,7 +29,6 @@ export default productionEnvironment;
  * ```
  * */
 async function loadSupabaseConfig(): Promise<{ anonKey: string; apiUrl: string }> {
-  console.log('load supabase config');
   const defaultConfig = {
     apiUrl: 'http://localhost:54321',
     anonKey:
