@@ -47,28 +47,53 @@ export class AppComponent implements OnInit {
     // and UI has chance to update
     await _wait(50);
 
-    // eagerly enable analytics collection
-    this.analyticsService.init(this.router);
-    // eagerly load resources service to populate hardcoded resources
-    this.resourcesService.ready();
-    // eagerly load monitoring service to sync form data
-    this.monitoringService.ready();
     this.ready.set(true);
 
-    // Wait before loading background services
-    await _wait(2000);
-    this.appUserService.enabled.set(true);
+    this.loadEagerServices();
+    this.loadDeferredServices();
+  }
 
-    // Run in parallel in case any ops hang or fail
-    if (Capacitor.isNativePlatform()) {
-      const ops = [
-        async () => this.performanceService.init(),
-        async () => this.crashlyticsService.ready(),
-        async () => this.pushNotificationService.initializePushNotifications(),
-        async () => this.appUpdateService.checkForUpdates(),
-      ];
-      await Promise.allSettled(ops);
-    }
+  /** Load immediate services in background (non-blocking) */
+  private loadEagerServices() {
+    const ops = [
+      // eagerly enable analytics collection
+      async () => this.analyticsService.init(this.router),
+      // eagerly load resources service to populate hardcoded resources
+      async () => this.resourcesService.ready(),
+      // eagerly load monitoring service to sync form data
+      async () => this.monitoringService.ready(),
+    ];
+    Promise.allSettled(ops).then((responses) => {
+      for (const response of responses) {
+        if (response.status === 'rejected') {
+          console.error(`[Service Init Failed]`, response.reason);
+        }
+      }
+    });
+  }
+
+  /** Load background services after timeout (non-blocking) */
+  private loadDeferredServices() {
+    setTimeout(() => {
+      this.appUserService.enabled.set(true);
+
+      // Native-only
+      if (Capacitor.isNativePlatform()) {
+        const ops = [
+          async () => this.performanceService.init(),
+          async () => this.crashlyticsService.ready(),
+          async () => this.pushNotificationService.initializePushNotifications(),
+          async () => this.appUpdateService.checkForUpdates(),
+        ];
+        Promise.allSettled(ops).then((responses) => {
+          for (const response of responses) {
+            if (response.status === 'rejected') {
+              console.error(`[Service Init Failed]`, response.reason);
+            }
+          }
+        });
+      }
+    }, 2000);
   }
 
   private async runMigrations() {
