@@ -2,7 +2,6 @@ import type { IEnvironment } from '@picsa/models';
 
 import { FirebaseConfig } from './firebase/config';
 import GROUPS from './groups';
-import { loadSupabaseConfig } from './supabase';
 
 /** Used in main picsa app, allows country-change at runtime */
 const productionEnvironment: IEnvironment = {
@@ -11,12 +10,14 @@ const productionEnvironment: IEnvironment = {
   production: true,
   supabase: {
     load: async () => {
-      const config = await loadSupabaseConfig();
-      if (!config) {
-        console.error(`[Supabase] production config not found`);
-        return { anonKey: '', apiUrl: '' };
+      try {
+        // Populated to assets by CI, or locally following `yarn nx run picsa-server:seed`
+        const res = await fetch('/assets/supabaseConfig.json');
+        return res.json();
+      } catch (error) {
+        console.error(`[Supabase] local config not found`);
+        return { apiUrl: '', anonKey: '' };
       }
-      return config;
     },
   },
 };

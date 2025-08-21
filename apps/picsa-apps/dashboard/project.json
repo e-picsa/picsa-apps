@@ -48,7 +48,8 @@
             "glob": "*.json",
             "input": "libs/i18n/assets",
             "output": "assets/i18n"
-          }
+          },
+          { "glob": "*", "input": "libs/environments/src/assets", "output": "assets" }
         ],
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",
