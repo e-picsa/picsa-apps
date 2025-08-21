@@ -55,21 +55,20 @@ export class AppComponent implements OnInit {
     this.monitoringService.ready();
     this.ready.set(true);
 
-    if (Capacitor.isNativePlatform()) {
-      this.performanceService.init();
-      this.crashlyticsService.ready();
-      // check for available updates
-      this.appUpdateService.checkForUpdates();
-      // delay push notification as will prompt for permissions
-      setTimeout(() => {
-        this.pushNotificationService.initializePushNotifications();
-      }, 1000);
-    }
+    // Wait before loading background services
+    await _wait(2000);
+    this.appUserService.enabled.set(true);
 
-    // Lazy-init background services
-    setTimeout(() => {
-      this.appUserService.enabled.set(true);
-    }, 2000);
+    // Run in parallel in case any ops hang or fail
+    if (Capacitor.isNativePlatform()) {
+      const ops = [
+        async () => this.performanceService.init(),
+        async () => this.crashlyticsService.ready(),
+        async () => this.pushNotificationService.initializePushNotifications(),
+        async () => this.appUpdateService.checkForUpdates(),
+      ];
+      await Promise.allSettled(ops);
+    }
   }
 
   private async runMigrations() {
