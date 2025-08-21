@@ -8,6 +8,7 @@ import { ResourcesToolService } from '@picsa/resources/services/resources-tool.s
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
+import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
 import { AppUpdateService } from '@picsa/shared/services/native/app-update';
@@ -36,12 +37,12 @@ export class AppComponent implements OnInit {
     private pushNotificationService: PicsaPushNotificationService,
     private injector: Injector,
     private appUserService: AppUserService,
+    private errorService: ErrorHandlerService,
   ) {}
 
   async ngOnInit() {
     // wait for migrations to run
     await this.runMigrations();
-    this.ready.set(true);
 
     // ensure service initialisation only occurs after migrations complete
     // and UI has chance to update
@@ -66,7 +67,7 @@ export class AppComponent implements OnInit {
     Promise.allSettled(ops).then((responses) => {
       for (const response of responses) {
         if (response.status === 'rejected') {
-          console.error(`[Service Init Failed]`, response.reason);
+          this.errorService.handleError(new Error(response.reason));
         }
       }
     });
@@ -88,7 +89,7 @@ export class AppComponent implements OnInit {
         Promise.allSettled(ops).then((responses) => {
           for (const response of responses) {
             if (response.status === 'rejected') {
-              console.error(`[Service Init Failed]`, response.reason);
+              this.errorService.handleError(new Error(response.reason));
             }
           }
         });
