@@ -28,7 +28,7 @@ jobs:
             --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
             --arg anonKey "$SUPABASE_ANON_KEY" \
             '{apiUrl: $apiUrl, anonKey: $anonKey}' \
-            > libs/environments/src/supabase/config.json
+            > libs/environments/src/assets/supabaseConfig.json
 
       - name: Setup Node
         uses: actions/setup-node@v4

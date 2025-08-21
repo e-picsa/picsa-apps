@@ -9,46 +9,22 @@ const productionEnvironment: IEnvironment = {
   group: GROUPS.GLOBAL,
   production: true,
   supabase: {
-    load: async () => await loadSupabaseConfig(),
+    load: async () => {
+      try {
+        // Populated to assets by CI, or locally following `yarn nx run picsa-server:seed`
+        // Requires asset populated to project
+        // { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
+        const res = await fetch('/assets/supabaseConfig.json');
+        if (!res.ok) {
+          throw new Error(`Failed to fetch supabase config: ${res.status} ${res.statusText}`);
+        }
+        return res.json();
+      } catch (error) {
+        console.error(`[Supabase] local config not found`, error);
+        throw new Error('[Supabase] Could not load configuration. Application cannot start.');
+      }
+    },
   },
 };
 
 export default productionEnvironment;
-
-/**
- * Asynchronously load supabase dev environment from local config file
- * This enables any developers to provide their own local anonKey by creating a
- * `config.json` file in the local `supabase` environment folder
- *
- * https://stackoverflow.com/a/47956054/5693245
- *
- * It will be automatically populated when running locally with db seed
- *
- * ```sh
- * yarn nx run picsa-server:seed
- * ```
- * */
-async function loadSupabaseConfig(): Promise<{ anonKey: string; apiUrl: string }> {
-  const defaultConfig = {
-    apiUrl: 'http://localhost:54321',
-    anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
-  };
-  return new Promise((resolve) => {
-    // Use a variable filename so that compiler bundles all files in folder
-    // regardless of whether specific config file exists or not
-    const filename = 'config.json';
-    // use try-catch (web) and promise catch (node)
-    try {
-      import(`./supabase/${filename}`)
-        .then((res) => {
-          resolve({ ...defaultConfig, ...res.default });
-        })
-        .catch(() => {
-          resolve(defaultConfig);
-        });
-    } catch (error) {
-      resolve(defaultConfig);
-    }
-  });
-}

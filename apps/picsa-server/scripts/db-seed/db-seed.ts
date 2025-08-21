@@ -16,7 +16,7 @@ const ROOT_DIR = resolve(__dirname, '../../../../');
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 const SEED_STORAGE_DIR = resolve(SUPABASE_DIR, 'data', 'storage');
-const SUPABASE_ENV_CONFIG = resolve(ROOT_DIR, 'libs/environments/src/supabase/config.json');
+const SUPABASE_ENV_ASSET = resolve(ROOT_DIR, 'libs/environments/src/assets/supabaseConfig.json');
 
 /**
  * Response model from `supbase status --output json` command
@@ -65,7 +65,7 @@ class SupabaseSeed {
   private async storeFrontendCredentials(apiUrl: string, anonKey: string) {
     // Store credentials to frontend env config
     const frontendConfig = { apiUrl, anonKey };
-    await writeFile(SUPABASE_ENV_CONFIG, JSON.stringify(frontendConfig, null, 2));
+    await writeFile(SUPABASE_ENV_ASSET, JSON.stringify(frontendConfig, null, 2));
   }
 
   /** Use the supabase cli to automatically detect credentials of server running locally */
