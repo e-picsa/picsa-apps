@@ -57,11 +57,11 @@ export class AppComponent implements OnInit {
   private loadEagerServices() {
     const ops = [
       // eagerly enable analytics collection
-      async () => this.analyticsService.init(this.router),
+      this.analyticsService.init(this.router),
       // eagerly load resources service to populate hardcoded resources
-      async () => this.resourcesService.ready(),
+      this.resourcesService.ready(),
       // eagerly load monitoring service to sync form data
-      async () => this.monitoringService.ready(),
+      this.monitoringService.ready(),
     ];
     Promise.allSettled(ops).then((responses) => {
       for (const response of responses) {
@@ -80,10 +80,10 @@ export class AppComponent implements OnInit {
       // Native-only
       if (Capacitor.isNativePlatform()) {
         const ops = [
-          async () => this.performanceService.init(),
-          async () => this.crashlyticsService.ready(),
-          async () => this.pushNotificationService.initializePushNotifications(),
-          async () => this.appUpdateService.checkForUpdates(),
+          this.performanceService.init(),
+          this.crashlyticsService.ready(),
+          this.pushNotificationService.initializePushNotifications(),
+          this.appUpdateService.checkForUpdates(),
         ];
         Promise.allSettled(ops).then((responses) => {
           for (const response of responses) {
