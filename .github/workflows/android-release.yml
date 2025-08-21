@@ -34,7 +34,20 @@ jobs:
       - name: Populate google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+        run: |
+          echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+
+      - name: Populate supabase config
+        env:
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          cat > libs/environments/src/supabase/config.json <<EOF
+          {
+            "apiUrl": "https://${SUPABASE_PROJECT_ID}.supabase.co",
+            "anonKey": "${SUPABASE_ANON_KEY}"
+          }
+          EOF
 
       - name: Build App
         run: yarn nx run picsa-apps-app-native:build
