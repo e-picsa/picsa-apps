@@ -842,6 +842,15 @@ export type Database = {
         Args: { event: Json };
         Returns: Json;
       };
+      get_non_anonymous_users: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          email: string;
+          email_confirmed_at: string;
+          id: string;
+          last_sign_in_at: string;
+        }[];
+      };
     };
     Enums: {
       app_role:

@@ -31,13 +31,17 @@ async function getAuthRoles(req: Request) {
 
   const [header, payload, signature] = decode(token);
   // NOTE - no need to verify jwt as already handled by supabase
-  const { picsa_roles } = payload as SupabaseAuthJWT;
-  return picsa_roles as { [deployment_id: string]: IAppRole[] };
+  const { picsa_roles = {}, role: coreRole } = payload as SupabaseAuthJWT;
+  const userRoles = picsa_roles as { [deployment_id: string]: IAppRole[] };
+  return { userRoles, coreRole };
 }
 
 /** Check whether the request user has specific user role on deployment */
 export async function hasAuthRole(req: Request, deployment_id: string, role: IAppRole) {
-  const userRoles = await getAuthRoles(req);
+  const { userRoles, coreRole } = await getAuthRoles(req);
+  // allow api using service token role
+  if (coreRole === 'service_role') return true;
+
   const deploymentRoles = userRoles[deployment_id] || [];
   const [featureName, featureRole] = role.split('.');
   // allow global role
@@ -59,9 +63,8 @@ async function refreshRoles(token: string) {
   const user = userData.user;
   if (user) {
     console.log('user', user);
+    // Query user roles from the database
+    const { data, error } = await adminClient.from('user_roles').select('deployment_id, roles').eq('user_id', user?.id);
+    // TODO - merge roles in same way as auth hook
   }
-
-  // Query user roles from the database
-  const { data, error } = await adminClient.from('user_roles').select('deployment_id, roles').eq('user_id', user?.id);
-  // TODO - merge roles in same way as auth hook
 }
