@@ -25,11 +25,11 @@ on:
         default: main
 
   # (avoid automated push as will often need manual migration apply)
-  push:
-    branches:
-      - fix/dashboard-build
-    # paths:
-    #   - 'apps/picsa-apps/dashboard/**'
+  # push:
+  #   branches:
+  #     - fix/dashboard-build
+  # paths:
+  #   - 'apps/picsa-apps/dashboard/**'
 
 jobs:
   web_release_dashboard:
@@ -71,8 +71,8 @@ jobs:
       - name: Debug
         run: ls dist/apps/picsa-apps/dashboard/browser/assets
 
-      # - name: Deploy
-      #   run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy
+        run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       # TODO - run supabase db migrations (if required)
       # TODO - handle staging/preview deploy (if required)
