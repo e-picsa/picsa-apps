@@ -52,11 +52,6 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      # Required build script defined in dashboard project `vercel.json`
-      - name: Build
-        run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      # HACK - vercel build missing config (could be nx caching issue or vercel git ignore) - populate after build
       - name: Populate supabase config
         env:
           SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
@@ -66,7 +61,11 @@ jobs:
             --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
             --arg anonKey "$SUPABASE_ANON_KEY" \
             '{apiUrl: $apiUrl, anonKey: $anonKey}' \
-            > dist/apps/picsa-apps/dashboard/browser/assets/supabaseConfig.json
+            > libs/environments/src/assets/supabaseConfig.json
+
+        # Required build script defined in dashboard project `vercel.json`
+      - name: Build
+        run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Debug
         run: ls dist/apps/picsa-apps/dashboard/browser/assets
