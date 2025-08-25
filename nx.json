@@ -63,8 +63,7 @@
     "sharedGlobals": [],
     "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"]
   },
-  "nxCloudAccessToken": "MzdiZjQ1ODMtM2QyMy00ZWZhLWJlZjAtNWY2MzNhNTFmZGY5=",
-  "nxCloudId": "68abb9119edcc86b64785224",
+  // "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
   "useInferencePlugins": false,
   "defaultBase": "main"
 }
