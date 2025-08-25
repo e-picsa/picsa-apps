@@ -63,7 +63,8 @@
     "sharedGlobals": [],
     "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"]
   },
-  "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
+  // NOTE - disable nx cloud if limits exceeded by commenting out line below
+  // "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
   "useInferencePlugins": false,
   "defaultBase": "main"
 }
