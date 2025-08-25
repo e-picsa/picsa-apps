@@ -27,7 +27,7 @@ on:
   # (avoid automated push as will often need manual migration apply)
   # push:
   #   branches:
-  #     - fix/dashboard-build
+  #     - main
   # paths:
   #   - 'apps/picsa-apps/dashboard/**'
 
@@ -66,9 +66,6 @@ jobs:
         # Required build script defined in dashboard project `vercel.json`
       - name: Build
         run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Debug
-        run: ls dist/apps/picsa-apps/dashboard/browser/assets
 
       - name: Deploy
         run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
