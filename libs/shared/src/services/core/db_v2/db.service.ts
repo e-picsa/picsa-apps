@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ENVIRONMENT } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments';
 import md5 from 'crypto-js/md5';
 import { addRxPlugin, createRxDatabase, MangoQuerySelector, nativeSha256, RxCollection, RxDatabase } from 'rxdb';
 import { RxDBAttachmentsPlugin } from 'rxdb/plugins/attachments';
@@ -28,7 +28,10 @@ export class PicsaDatabase_V2_Service extends PicsaAsyncService {
     [key: string]: RxCollection;
   }>;
 
-  constructor(private userService: PicsaUserService, private syncService: PicsaDatabaseSyncService) {
+  constructor(
+    private userService: PicsaUserService,
+    private syncService: PicsaDatabaseSyncService,
+  ) {
     super();
   }
 

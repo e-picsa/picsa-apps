@@ -1,7 +1,7 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
-import { APP_VERSION } from '@picsa/environments/src';
+import { APP_VERSION } from '@picsa/environments/src/version';
 import { Database } from '@picsa/server-types';
 import { debounceSignal } from '@picsa/utils/angular';
 import { isEqual } from '@picsa/utils/object.utils';
@@ -31,7 +31,7 @@ export class AppUserService {
   private userProfile = computed<Omit<IAppUser['Insert'], 'user_id'>>(
     () => {
       const { country_code, language_code, user_type } = this.configurationService.userSettings();
-      const app_version = APP_VERSION.semver;
+      const app_version = APP_VERSION;
       return { country_code, language_code, user_type, platform: this.platform, app_version };
     },
     { equal: isEqual },

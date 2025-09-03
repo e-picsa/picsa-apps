@@ -9,7 +9,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { APP_VERSION } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { filter, map } from 'rxjs';
@@ -45,7 +45,7 @@ export class AppLayoutComponent {
     ),
   );
   public userType = computed(() => this.configurationService.userSettings().user_type);
-  public version = APP_VERSION.semver;
+  public version = APP_VERSION;
 
   public versionClicked = output();
 
