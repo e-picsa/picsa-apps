@@ -1,0 +1,17 @@
+<div class="icon-color-toggle">
+    <button mat-button (click)="showSkinSelector = !showSkinSelector">
+      Icon Color
+      <mat-icon>{{ showSkinSelector ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+  
+    <div *ngIf="showSkinSelector" class="skin-tone-selector">
+        <div
+        class="color-circle"
+        *ngFor="let option of skinToneOptions"
+        [ngStyle]="{ 'background-color': option.color }"
+        [class.selected]="selectedColor === option.color"
+        (click)="selectColor(option.color)"
+        [title]="option.label"
+      ></div>
+    </div>
+</div>
