@@ -15,7 +15,7 @@ const productionEnvironment: IEnvironment = {
         // Requires asset populated to project
         // { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
         // avoid nx caching issues by updating `project.json` with `build.inputs`
-        // "{projectRoot}/libs/environments/src/assets"
+        // with named input `"inputs": ["default", "supabaseConfig"]`
         const res = await fetch('/assets/supabaseConfig.json');
         if (!res.ok) {
           throw new Error(`Failed to fetch supabase config: ${res.status} ${res.statusText}`);
