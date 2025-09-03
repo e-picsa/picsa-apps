@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "{projectRoot}/libs/environments/src/assets"],
+      "inputs": ["default", "libs/environments/src/assets"],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
