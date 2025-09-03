@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ENVIRONMENT } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
 import { createClient, FunctionsHttpError, SupabaseClient } from '@supabase/supabase-js';
