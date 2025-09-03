@@ -62,7 +62,7 @@
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [],
     "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"],
-    "supabaseConfig": ["libs/environments/supabaseConfig.json"]
+    "supabaseConfig": ["{workspaceRoot}/libs/environments/src/assets/*.json"]
   },
   // NOTE - disable nx cloud if limits exceeded by commenting out line below
   "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
