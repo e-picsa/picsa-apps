@@ -178,7 +178,7 @@ export class TranslationsXLSXImportComponent {
       rowBase.id = this.service.generateTranslationID(rowBase);
       const translation = languageEntries[locale.language_label];
       // trim whitespace and remove any accidental duplicate spaces (2 or more)
-      rowBase[`${locale.id}`] = translation.trim().replace(/ {2,}/gi, ' ');
+      rowBase[`${locale.id}`] = translation?.trim().replace(/ {2,}/gi, ' ');
       rows.push(rowBase);
     }
     return rows;
