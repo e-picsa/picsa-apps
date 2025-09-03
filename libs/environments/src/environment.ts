@@ -14,6 +14,7 @@ const supabaseDefaultConfig = {
 const ENVIRONMENT: IEnvironment = {
   ...PRODUCTION_ENVIRONMENT,
   production: false,
+  version: '0.0.0-dev',
   supabase: {
     load: async () => {
       try {

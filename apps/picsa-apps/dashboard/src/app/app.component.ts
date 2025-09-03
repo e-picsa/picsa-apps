@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { APP_VERSION } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
@@ -30,7 +30,7 @@ export class AppComponent implements AfterViewInit {
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
   adminLinks = ADMIN_NAV_LINKS;
-  appVersion = APP_VERSION.semver;
+  appVersion = ENVIRONMENT.version;
 
   public deployment = this.deploymentService.activeDeployment;
 

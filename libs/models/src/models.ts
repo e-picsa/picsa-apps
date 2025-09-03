@@ -44,6 +44,8 @@ export interface ISupabaseConfig {
 // combined settings
 export interface IEnvironment {
   production: boolean;
+  /** Semver version */
+  version: string;
   firebase: IFirebaseConfig;
   group: IGroupSettings;
   supabase: ISupabaseConfig;

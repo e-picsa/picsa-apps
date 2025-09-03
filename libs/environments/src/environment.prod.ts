@@ -1,5 +1,6 @@
 import type { IEnvironment } from '@picsa/models';
 
+import { version } from '../../../package.json';
 import { FirebaseConfig } from './firebase/config';
 import GROUPS from './groups';
 
@@ -8,6 +9,7 @@ const productionEnvironment: IEnvironment = {
   firebase: FirebaseConfig,
   group: GROUPS.GLOBAL,
   production: true,
+  version,
   supabase: {
     load: async () => {
       try {

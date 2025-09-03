@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
-import { APP_VERSION } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
     const { operatingSystem, osVersion, webViewVersion } = await Device.getInfo();
     const { identifier: device_id } = await Device.getId();
     const debugInfo = {
-      app_version: APP_VERSION.semver,
+      app_version: ENVIRONMENT.version,
       user_id: this.appUserService.userId(),
       device_id,
       operatingSystem,

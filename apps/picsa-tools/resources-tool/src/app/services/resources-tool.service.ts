@@ -4,7 +4,7 @@ import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { APP_VERSION, ENVIRONMENT } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments/src';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa/shared/services/core/db_v2';
@@ -33,7 +33,7 @@ export class ResourcesToolService extends PicsaAsyncService {
     private fileService: FileService,
     private analyticsService: AnalyticsService,
     private clipboard: Clipboard,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     super();
   }
@@ -168,7 +168,7 @@ export class ResourcesToolService extends PicsaAsyncService {
 
     // Use caching system to only populate once per app version launch in production
     const assetsCacheVersion = this.getAssetResourcesVersion();
-    if (ENVIRONMENT.production && assetsCacheVersion === APP_VERSION.semver) {
+    if (ENVIRONMENT.production && assetsCacheVersion === ENVIRONMENT.version) {
       return;
     }
     // Update DB with hardcoded entries
@@ -200,7 +200,7 @@ export class ResourcesToolService extends PicsaAsyncService {
    * */
   private async diffDBHardcodedResources(
     collection: RxCollection<schemas.IResourceBase>,
-    hardcoded: schemas.IResourceBase[]
+    hardcoded: schemas.IResourceBase[],
   ) {
     const hardcodedHashmap = arrayToHashmap(hardcoded, 'id');
     const dbEntries = await collection.find().exec();
@@ -239,7 +239,7 @@ export class ResourcesToolService extends PicsaAsyncService {
   }
 
   private setAssetResourcesVersion() {
-    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, APP_VERSION.semver);
+    return localStorage.setItem(`picsa-resources-tool||assets-cache-version`, ENVIRONMENT.version);
   }
 
   public async shareLink(url: string) {

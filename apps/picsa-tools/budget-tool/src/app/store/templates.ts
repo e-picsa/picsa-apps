@@ -1,5 +1,5 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { APP_VERSION } from '@picsa/environments';
+import { ENVIRONMENT } from '@picsa/environments';
 import { generateDBMeta } from '@picsa/shared/services/core/db';
 
 import {
@@ -21,7 +21,7 @@ export const PERIOD_DATA_TEMPLATE: IBudgetPeriodData = {
 // don't assert type so missing _key field picked up in create new budget from store
 export const NEW_BUDGET_TEMPLATE: IBudget = {
   apiVersion: BUDGET_API_VERSION,
-  _appVersion: APP_VERSION.semver,
+  _appVersion: ENVIRONMENT.version,
   data: [],
   meta: {
     title: '',
