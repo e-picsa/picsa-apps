@@ -46,44 +46,64 @@ DECLARE
     sub_removed JSONB;
     add_obj JSONB := '{}'::jsonb;
     rem_obj JSONB := '{}'::jsonb;
+    all_keys TEXT[];
 BEGIN
-    FOR key IN
-        SELECT key FROM (
-            SELECT jsonb_object_keys(old)
-            UNION
-            SELECT jsonb_object_keys(new)
-        ) s
+    -- Handle null inputs
+    IF old IS NULL THEN old := '{}'::jsonb; END IF;
+    IF new IS NULL THEN new := '{}'::jsonb; END IF;
+    
+    -- Get all unique keys from both objects
+    SELECT ARRAY(
+        SELECT DISTINCT unnest(
+            ARRAY(SELECT jsonb_object_keys(old)) || 
+            ARRAY(SELECT jsonb_object_keys(new))
+        )
+    ) INTO all_keys;
+
+    FOREACH key IN ARRAY all_keys
     LOOP
         old_val := old -> key;
         new_val := new -> key;
 
         IF old_val IS NULL AND new_val IS NOT NULL THEN
+            -- Key was added
             add_obj := add_obj || jsonb_build_object(key, new_val);
 
         ELSIF new_val IS NULL AND old_val IS NOT NULL THEN
+            -- Key was removed
             rem_obj := rem_obj || jsonb_build_object(key, old_val);
 
-        ELSIF jsonb_typeof(old_val) = 'object'
+        ELSIF jsonb_typeof(old_val) = 'object' 
            AND jsonb_typeof(new_val) = 'object' THEN
+            -- Both are objects, recurse
             SELECT diff.added, diff.removed
             INTO sub_added, sub_removed
             FROM audit.jsonb_recursive_diff(old_val, new_val) AS diff;
 
-            IF sub_added IS NOT NULL THEN
+            -- Only add to result if there are actual changes
+            IF sub_added IS NOT NULL AND sub_added != '{}'::jsonb THEN
                 add_obj := add_obj || jsonb_build_object(key, sub_added);
             END IF;
-            IF sub_removed IS NOT NULL THEN
+            IF sub_removed IS NOT NULL AND sub_removed != '{}'::jsonb THEN
                 rem_obj := rem_obj || jsonb_build_object(key, sub_removed);
             END IF;
 
         ELSIF old_val IS DISTINCT FROM new_val THEN
+            -- Values are different
             add_obj := add_obj || jsonb_build_object(key, new_val);
             rem_obj := rem_obj || jsonb_build_object(key, old_val);
         END IF;
     END LOOP;
 
-    added := CASE WHEN add_obj = '{}'::jsonb THEN NULL ELSE add_obj END;
-    removed := CASE WHEN rem_obj = '{}'::jsonb THEN NULL ELSE rem_obj END;
+    -- Return NULL for empty objects - fixed the boolean logic
+    added := CASE 
+        WHEN add_obj = '{}'::jsonb THEN NULL 
+        ELSE add_obj 
+    END;
+    removed := CASE 
+        WHEN rem_obj = '{}'::jsonb THEN NULL 
+        ELSE rem_obj 
+    END;
 
     RETURN NEXT;
 END;
@@ -95,18 +115,20 @@ CREATE OR REPLACE FUNCTION audit.audit_with_diff()
 RETURNS TRIGGER AS $$
 DECLARE
     pk JSONB;
+    old_row JSONB;
+    new_row JSONB;
     added JSONB;
     removed JSONB;
     user_email TEXT;
 BEGIN
-    -- Extract user email from JWT claims (if available)
+    -- Extract user email from JWT claims
     BEGIN
         user_email := (current_setting('request.jwt.claims', true)::jsonb ->> 'email');
     EXCEPTION WHEN others THEN
         user_email := NULL;
     END;
 
-    -- Build JSONB of primary key(s) (works for single-column PKs; extend for composite if needed)
+    -- Build PK JSON (works for single-column PKs; extend for composite if needed)
     pk := jsonb_build_object(
         (SELECT a.attname
          FROM pg_index i
@@ -134,17 +156,19 @@ BEGIN
     );
 
     IF (TG_OP = 'UPDATE') THEN
+        -- Exclude noisy columns
+        old_row := to_jsonb(OLD.*) - 'updated_at';
+        new_row := to_jsonb(NEW.*) - 'updated_at';
+
         -- Prevent no-op updates
-        IF to_jsonb(OLD.*) IS NOT DISTINCT FROM to_jsonb(NEW.*) THEN
-            RAISE NOTICE 'No change detected in table %, PK=%, skipping update',
-                TG_TABLE_NAME, pk;
+        IF old_row IS NOT DISTINCT FROM new_row THEN
             RETURN NULL;
         END IF;
 
         -- Compute recursive diff
         SELECT diff.added, diff.removed
         INTO added, removed
-        FROM audit.jsonb_recursive_diff(to_jsonb(OLD.*), to_jsonb(NEW.*)) AS diff;
+        FROM audit.jsonb_recursive_diff(old_row, new_row) AS diff;
 
         INSERT INTO audit.audit_log(
             schema_name, table_name, operation, row_pk,
@@ -173,13 +197,11 @@ BEGIN
 
     ELSIF (TG_OP = 'DELETE') THEN
         INSERT INTO audit.audit_log(
-            schema_name, table_name, operation, row_pk,
-            new_data, diff_added, diff_removed,
+            schema_name, table_name, operation, row_pk, new_data,
             changed_by, changed_by_email
         )
         VALUES (
-            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk,
-            NULL, NULL, to_jsonb(OLD.*),  -- store deleted row in diff_removed
+            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk, to_jsonb(OLD.*),
             auth.uid(), user_email
         );
 
@@ -188,5 +210,4 @@ BEGIN
 
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql
-SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
