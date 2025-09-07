@@ -232,8 +232,3 @@ BEGIN
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-
--- TODO
--- Check if select statement works to setup trigger with args
--- See if can update audit columns after setup
