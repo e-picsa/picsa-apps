@@ -1,10 +1,10 @@
 -- ============================================================
--- Function: setup_table_audit
+-- Function: enable_table_audit
 -- Purpose: Bulk setup of audit triggers for a table
 --
 -- Usage:
 --   -- Basic usage with a single-column primary key
---   SELECT audit.setup_table_audit(
+--   SELECT audit.enable_table_audit(
 --       'public',                -- schema name
 --       'my_table',              -- table name
 --       'id',                    -- primary key column
@@ -17,7 +17,7 @@
 --   -- You may need to extend audit_with_diff to accept multiple
 --   -- PK columns and concatenate them into pk_value.
 -- ============================================================
-CREATE OR REPLACE FUNCTION audit.setup_table_audit(
+CREATE OR REPLACE FUNCTION audit.enable_table_audit(
     p_schema TEXT,
     p_table TEXT,
     p_pk_column TEXT,
@@ -73,6 +73,30 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================================
+-- Function: disable_table_audit
+-- Purpose: Remove audit triggers from a table
+--
+-- Usage:
+--   -- Remove audit triggers from a table
+--   SELECT audit.disable_table_audit(
+--       'public',                -- schema name
+--       'my_table'               -- table name
+--   );
+-- ============================================================
+CREATE OR REPLACE FUNCTION audit.disable_table_audit(
+    p_schema TEXT,
+    p_table TEXT
+)
+RETURNS VOID AS $$ 
+BEGIN
+    EXECUTE format('DROP TRIGGER IF EXISTS audit_trigger ON %I.%I', p_schema, p_table);
+    EXECUTE format('DROP TRIGGER IF EXISTS prevent_noop_update_trigger ON %I.%I', p_schema, p_table);
+
+    RAISE NOTICE 'Audit triggers removed from %.%', p_schema, p_table;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================
 -- Function: get_record_history
 -- Purpose: Retrieve audit history for a specific record
 --
@@ -83,13 +107,6 @@ $$ LANGUAGE plpgsql;
 --       'my_table',              -- table name
 --       '123',                   -- primary key value (as text)
 --       50                       -- optional limit (default 50)
---   );
---
---   -- Example for climate_station_data
---   SELECT * FROM audit.get_record_history(
---       'public',
---       'climate_station_data',
---       'station-001'
 --   );
 -- ============================================================
 CREATE OR REPLACE FUNCTION audit.get_record_history(
@@ -152,32 +169,3 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================================
--- Function: remove_table_audit
--- Purpose: Remove audit triggers from a table
---
--- Usage:
---   -- Remove audit triggers from a table
---   SELECT audit.remove_table_audit(
---       'public',                -- schema name
---       'my_table'               -- table name
---   );
---
---   -- Example for climate_station_data
---   SELECT audit.remove_table_audit(
---       'public',
---       'climate_station_data'
---   );
--- ============================================================
-CREATE OR REPLACE FUNCTION audit.remove_table_audit(
-    p_schema TEXT,
-    p_table TEXT
-)
-RETURNS VOID AS $$ 
-BEGIN
-    EXECUTE format('DROP TRIGGER IF EXISTS audit_trigger ON %I.%I', p_schema, p_table);
-    EXECUTE format('DROP TRIGGER IF EXISTS prevent_noop_update_trigger ON %I.%I', p_schema, p_table);
-
-    RAISE NOTICE 'Audit triggers removed from %.%', p_schema, p_table;
-END;
-$$ LANGUAGE plpgsql;
