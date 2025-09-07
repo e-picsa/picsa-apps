@@ -24,16 +24,16 @@ CREATE SCHEMA IF NOT EXISTS audit;
 -- Main audit log table
 CREATE TABLE IF NOT EXISTS audit.audit_log (
     id BIGSERIAL PRIMARY KEY,
-    schema_name TEXT NOT NULL,       -- schema of the audited table
-    table_name TEXT NOT NULL,        -- name of the audited table
-    operation TEXT NOT NULL,         -- 'INSERT', 'UPDATE', 'DELETE'
-    row_pk JSONB NOT NULL,           -- primary key(s) of the row
-    new_data JSONB,                  -- row after change
-    diff_added JSONB,                -- JSONB keys/values added or changed
-    diff_removed JSONB,              -- JSONB keys/values removed or changed
+    schema_name TEXT NOT NULL,           -- schema of the audited table
+    table_name TEXT NOT NULL,            -- name of the audited table
+    operation TEXT NOT NULL,             -- 'INSERT', 'UPDATE', 'DELETE'
+    pk_value TEXT NOT NULL,              -- primary key value as string
+    new_data JSONB,                      -- row data after change (NULL for DELETE)
+    diff_added JSONB,                    -- JSONB keys/values added or changed (UPDATE only)
+    diff_removed JSONB,                  -- JSONB keys/values removed or changed (UPDATE only)
     changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    changed_by UUID DEFAULT auth.uid(),  -- Supabase user UUID
-    changed_by_email TEXT             -- optional: Supabase user email
+    changed_by UUID DEFAULT auth.uid(), -- Supabase user UUID
+    changed_by_email TEXT                -- optional: Supabase user email
 );
 
 CREATE OR REPLACE FUNCTION audit.jsonb_recursive_diff(old JSONB, new JSONB)
@@ -111,16 +111,29 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 
 
 -- Create function to store table change history (audit) with diffs
+-- Required primary key column passed as arg when using, e.g.
+
+-- CREATE TRIGGER audit_trigger
+-- AFTER INSERT OR UPDATE OR DELETE ON public.climate_station_data
+-- FOR EACH ROW
+-- EXECUTE FUNCTION audit.audit_with_diff("station_id");
+
 CREATE OR REPLACE FUNCTION audit.audit_with_diff()
 RETURNS TRIGGER AS $$
 DECLARE
-    pk JSONB;
+    pk_value TEXT;
+    pk_column TEXT;
     old_row JSONB;
     new_row JSONB;
     added JSONB;
     removed JSONB;
     user_email TEXT;
 BEGIN
+    -- Require PK column argument
+    IF TG_NARGS = 0 THEN
+        RAISE EXCEPTION 'audit.audit_with_diff() requires primary key column name as argument';
+    END IF;
+
     -- Extract user email from JWT claims
     BEGIN
         user_email := (current_setting('request.jwt.claims', true)::jsonb ->> 'email');
@@ -128,32 +141,20 @@ BEGIN
         user_email := NULL;
     END;
 
-    -- Build PK JSON (works for single-column PKs; extend for composite if needed)
-    pk := jsonb_build_object(
-        (SELECT a.attname
-         FROM pg_index i
-         JOIN pg_attribute a ON a.attrelid = i.indrelid
-                            AND a.attnum = ANY(i.indkey)
-         WHERE i.indrelid = TG_RELID
-           AND i.indisprimary
-         LIMIT 1),
-        CASE WHEN TG_OP = 'DELETE'
-             THEN to_jsonb(OLD.*)->>(SELECT a.attname
-                                     FROM pg_index i
-                                     JOIN pg_attribute a ON a.attrelid = i.indrelid
-                                                        AND a.attnum = ANY(i.indkey)
-                                     WHERE i.indrelid = TG_RELID
-                                       AND i.indisprimary
-                                     LIMIT 1)
-             ELSE to_jsonb(NEW.*)->>(SELECT a.attname
-                                     FROM pg_index i
-                                     JOIN pg_attribute a ON a.attrelid = i.indrelid
-                                                        AND a.attnum = ANY(i.indkey)
-                                     WHERE i.indrelid = TG_RELID
-                                       AND i.indisprimary
-                                     LIMIT 1)
-        END
-    );
+    -- Get PK column from trigger argument
+    pk_column := TG_ARGV[0];
+
+    -- Extract PK value
+    pk_value := CASE WHEN TG_OP = 'DELETE'
+                    THEN to_jsonb(OLD.*) ->> pk_column
+                    ELSE to_jsonb(NEW.*) ->> pk_column
+                END;
+
+    -- Validate PK value exists
+    IF pk_value IS NULL THEN
+        RAISE EXCEPTION 'Primary key column "%" not found or is NULL in table %.%', 
+            pk_column, TG_TABLE_SCHEMA, TG_TABLE_NAME;
+    END IF;
 
     IF (TG_OP = 'UPDATE') THEN
         -- Exclude noisy columns
@@ -171,12 +172,12 @@ BEGIN
         FROM audit.jsonb_recursive_diff(old_row, new_row) AS diff;
 
         INSERT INTO audit.audit_log(
-            schema_name, table_name, operation, row_pk,
+            schema_name, table_name, operation, pk_value,
             new_data, diff_added, diff_removed,
             changed_by, changed_by_email
         )
         VALUES (
-            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk,
+            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value,
             to_jsonb(NEW.*), added, removed,
             auth.uid(), user_email
         );
@@ -185,11 +186,11 @@ BEGIN
 
     ELSIF (TG_OP = 'INSERT') THEN
         INSERT INTO audit.audit_log(
-            schema_name, table_name, operation, row_pk, new_data,
+            schema_name, table_name, operation, pk_value, new_data,
             changed_by, changed_by_email
         )
         VALUES (
-            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk, to_jsonb(NEW.*),
+            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, to_jsonb(NEW.*),
             auth.uid(), user_email
         );
 
@@ -197,11 +198,11 @@ BEGIN
 
     ELSIF (TG_OP = 'DELETE') THEN
         INSERT INTO audit.audit_log(
-            schema_name, table_name, operation, row_pk, new_data,
+            schema_name, table_name, operation, pk_value, new_data,
             changed_by, changed_by_email
         )
         VALUES (
-            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk, to_jsonb(OLD.*),
+            TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, to_jsonb(OLD.*),
             auth.uid(), user_email
         );
 
