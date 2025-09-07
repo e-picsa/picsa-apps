@@ -24,7 +24,7 @@ for PostgreSQL (compatible with Supabase).
   Utility functions for managing audit:
   - `audit.enable_table_audit(schema, table, pk_column, excluded_columns[])`
   - `audit.disable_table_audit(schema, table)`
-  - `audit.get_record_history(schema, table, pk_value, limit)`
+  - `audit.get_audit_history(schema, table, pk_value, limit)`
   - `audit.cleanup_old_records(retention_days)`
 
 ## Usage
@@ -50,7 +50,7 @@ To view history for a record:
 
 ```sql
 SELECT *
-FROM audit.get_record_history('public', 'climate_station', '123');
+FROM audit.get_audit_history('public', 'climate_station', '123');
 ```
 
 To clean up old records (default 365 days):

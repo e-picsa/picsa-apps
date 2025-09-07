@@ -97,19 +97,19 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================================
--- Function: get_record_history
+-- Function: get_audit_history
 -- Purpose: Retrieve audit history for a specific record
 --
 -- Usage:
 --   -- Get last 50 changes for a record
---   SELECT * FROM audit.get_record_history(
+--   SELECT * FROM audit.get_audit_history(
 --       'public',                -- schema name
 --       'my_table',              -- table name
 --       '123',                   -- primary key value (as text)
 --       50                       -- optional limit (default 50)
 --   );
 -- ============================================================
-CREATE OR REPLACE FUNCTION audit.get_record_history(
+CREATE OR REPLACE FUNCTION audit.get_audit_history(
     p_schema TEXT,
     p_table TEXT,
     p_pk_value TEXT,
