@@ -112,8 +112,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION audit.create_audit_view(
     p_schema TEXT,
     p_table TEXT,
-    p_view_name TEXT,
-    p_grant_role TEXT DEFAULT NULL
+    p_view_name TEXT
 )
 RETURNS VOID AS $$
 BEGIN
@@ -139,8 +138,8 @@ BEGIN
         WHERE schema_name = %L AND table_name = %L
     $sql$, p_view_name, p_schema, p_table);
 
-    RAISE NOTICE 'Audit view "audit.%" created for %.% (granted to role: %)', 
-        p_view_name, p_schema, p_table, COALESCE(p_grant_role, 'none');
+    RAISE NOTICE 'Audit view "audit.%" created for %.%', 
+        p_view_name, p_schema, p_table;
 END;
 $$ LANGUAGE plpgsql;
 
