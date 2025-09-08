@@ -1,6 +1,9 @@
 -- Create table to store audit data
 CREATE SCHEMA IF NOT EXISTS audit;
 
+-- Only permit specific ops (no truncate, merge, drop, upsert)
+CREATE TYPE audit.operation_type AS ENUM ('INSERT', 'UPDATE', 'DELETE');
+
 -- ============================================================
 -- Main audit log table
 -- ============================================================
@@ -8,7 +11,7 @@ CREATE TABLE IF NOT EXISTS audit.audit_log (
     id BIGSERIAL PRIMARY KEY,
     schema_name TEXT NOT NULL,           -- schema of the audited table
     table_name TEXT NOT NULL,            -- name of the audited table
-    operation TEXT NOT NULL,             -- 'INSERT', 'UPDATE', 'DELETE'
+    operation audit.operation_type NOT NULL, -- 'INSERT', 'UPDATE', 'DELETE'
     pk_value TEXT NOT NULL,              -- primary key value as string
     new_data JSONB,                      -- row data after change (NULL for DELETE)
     diff_added JSONB,                    -- JSONB keys/values added or changed (UPDATE only)
@@ -17,6 +20,20 @@ CREATE TABLE IF NOT EXISTS audit.audit_log (
     changed_by UUID DEFAULT auth.uid(), -- Supabase user UUID
     changed_by_email TEXT                -- optional: Supabase user email
 );
+
+-- ============================================================
+-- Row-level security
+-- ============================================================
+
+ALTER TABLE audit.audit_log ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own audit records"
+ON audit.audit_log
+FOR SELECT
+TO authenticated
+USING (changed_by = auth.uid());
+
+-- NOTE - public-facing audit logs will be exposed with custom views
 
 -- ============================================================
 -- Indexes for audit_log

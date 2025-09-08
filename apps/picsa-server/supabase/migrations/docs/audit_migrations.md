@@ -1,8 +1,3 @@
-# TODO
-
-- [ ] Check if select statement works to setup trigger with args
-- [ ] See if can update audit columns after setup
-
 # Audit Migrations
 
 This folder contains SQL migrations that set up a generic auditing system

@@ -139,7 +139,9 @@ BEGIN
     ORDER BY al.changed_at DESC
     LIMIT p_limit;
 END;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$$ LANGUAGE plpgsql STABLE SECURITY INVOKER;
+
+GRANT EXECUTE ON FUNCTION audit.get_audit_history(TEXT, TEXT, TEXT, INT) TO authenticated;
 
 -- ============================================================
 -- Function: cleanup_old_records

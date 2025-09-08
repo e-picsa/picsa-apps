@@ -134,7 +134,7 @@ BEGIN
     END IF;
 
     BEGIN
-        -- Extract user email from JWT claims
+        -- Extract user email from JWT claims (Supabase)
         BEGIN
             user_email := (current_setting('request.jwt.claims', true)::jsonb ->> 'email');
         EXCEPTION WHEN others THEN
@@ -156,22 +156,17 @@ BEGIN
                 pk_column, TG_TABLE_SCHEMA, TG_TABLE_NAME;
         END IF;
 
+        -- Handle UPDATE
         IF (TG_OP = 'UPDATE') THEN
-            -- Build row JSON
             old_row := to_jsonb(OLD.*);
             new_row := to_jsonb(NEW.*);
-            
+
             -- Remove excluded columns (arguments 1+ are excluded columns)
             FOR i IN 1..TG_NARGS-1 LOOP
                 col := TG_ARGV[i];
                 old_row := old_row - col;
                 new_row := new_row - col;
             END LOOP;
-
-            -- Prevent no-op updates
-            IF old_row IS NOT DISTINCT FROM new_row THEN
-                RETURN NULL;
-            END IF;
 
             -- Compute recursive diff
             SELECT diff.added, diff.removed
@@ -191,25 +186,27 @@ BEGIN
 
             RETURN NEW;
 
+        -- Handle INSERT
         ELSIF (TG_OP = 'INSERT') THEN
             INSERT INTO audit.audit_log(
-                schema_name, table_name, operation, pk_value, new_data,
+                schema_name, table_name, operation, pk_value, new_data, diff_added,
                 changed_by, changed_by_email
             )
             VALUES (
-                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, to_jsonb(NEW.*),
+                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, to_jsonb(NEW.*), to_jsonb(NEW.*),
                 auth.uid(), user_email
             );
 
             RETURN NEW;
 
+        -- Handle DELETE
         ELSIF (TG_OP = 'DELETE') THEN
-            INSERT INTO audit.audit_log(
-                schema_name, table_name, operation, pk_value, new_data,
+           INSERT INTO audit.audit_log(
+                schema_name, table_name, operation, pk_value, new_data, diff_removed,
                 changed_by, changed_by_email
             )
             VALUES (
-                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, to_jsonb(OLD.*),
+                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, NULL, to_jsonb(OLD.*),
                 auth.uid(), user_email
             );
 
@@ -221,7 +218,7 @@ BEGIN
         GET STACKED DIAGNOSTICS error_context = PG_EXCEPTION_CONTEXT;
         RAISE WARNING 'Audit trigger failed for table %.%: % - %', 
             TG_TABLE_SCHEMA, TG_TABLE_NAME, SQLERRM, error_context;
-        
+
         -- Return appropriate value to continue the operation
         CASE TG_OP
             WHEN 'DELETE' THEN RETURN OLD;
