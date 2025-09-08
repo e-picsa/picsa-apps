@@ -79,7 +79,7 @@ export class ClimateService extends PicsaAsyncService {
 
   /** Get DB station data row for a specific station id */
   public getStationData(stationId: string) {
-    return this.stationDataDB.select<'*', IClimateStationData['Row']>('*').eq('station_id', stationId).single();
+    return this.stationDataDB.select<'*', IClimateStationData['Row']>('*').eq('station_id', stationId).maybeSingle();
   }
   /** Get DB station data for all entries within a specific country */
   public getAllStationData(countryCode: string) {
@@ -87,7 +87,7 @@ export class ClimateService extends PicsaAsyncService {
   }
 
   /** Update DB with partial station data update */
-  public updateStationData(station: IStationRow, update: IClimateStationData['Update']) {
+  public async updateStationData(station: IStationRow, update: IClimateStationData['Update']) {
     return this.stationDataDB.upsert({
       ...update,
       country_code: station.country_code as any,
