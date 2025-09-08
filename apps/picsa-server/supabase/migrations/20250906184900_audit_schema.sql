@@ -23,17 +23,14 @@ CREATE TABLE IF NOT EXISTS audit.audit_log (
 
 -- ============================================================
 -- Row-level security
+-- By default only service role will be able to access audit logs
+-- Custom views can be created to expose subsets of audit logs
 -- ============================================================
 
 ALTER TABLE audit.audit_log ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view their own audit records"
-ON audit.audit_log
-FOR SELECT
-TO authenticated
-USING (changed_by = auth.uid());
-
--- NOTE - public-facing audit logs will be exposed with custom views
+REVOKE ALL ON audit.audit_log FROM PUBLIC;
+REVOKE ALL ON audit.audit_log FROM authenticated;
 
 -- ============================================================
 -- Indexes for audit_log

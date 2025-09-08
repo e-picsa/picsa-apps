@@ -96,6 +96,54 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+-- ============================================================
+-- Function: create_audit_view
+-- Purpose:  Creates a restricted view over audit.audit_log for a specific table.
+--           RLS roles should be set after creation
+--
+-- Usage:
+--   SELECT audit.create_audit_view(
+--       'public',                      -- schema name of original table
+--       'climate_station_data',        -- table name of original table
+--       'climate_station_data_audit'   -- name for the new view
+--   );
+-- ============================================================
+CREATE OR REPLACE FUNCTION audit.create_audit_view(
+    p_schema TEXT,
+    p_table TEXT,
+    p_view_name TEXT,
+    p_grant_role TEXT DEFAULT NULL
+)
+RETURNS VOID AS $$
+BEGIN
+    -- Drop existing view if it exists (idempotent)
+    EXECUTE format('DROP VIEW IF EXISTS audit.%I CASCADE', p_view_name);
+
+    -- Create a restricted view that shows only audit logs for the given table
+    EXECUTE format($sql$
+        CREATE VIEW audit.%I AS
+        SELECT
+            id,
+            schema_name,
+            table_name,
+            operation,
+            pk_value,
+            new_data,
+            diff_added,
+            diff_removed,
+            changed_at,
+            changed_by,
+            changed_by_email
+        FROM audit.audit_log
+        WHERE schema_name = %L AND table_name = %L
+    $sql$, p_view_name, p_schema, p_table);
+
+    RAISE NOTICE 'Audit view "audit.%" created for %.% (granted to role: %)', 
+        p_view_name, p_schema, p_table, COALESCE(p_grant_role, 'none');
+END;
+$$ LANGUAGE plpgsql;
+
 -- ============================================================
 -- Function: get_audit_history
 -- Purpose: Retrieve audit history for a specific record

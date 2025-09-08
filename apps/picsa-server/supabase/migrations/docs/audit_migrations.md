@@ -21,6 +21,7 @@ for PostgreSQL (compatible with Supabase).
   - `audit.disable_table_audit(schema, table)`
   - `audit.get_audit_history(schema, table, pk_value, limit)`
   - `audit.cleanup_old_records(retention_days)`
+  - `audit.create_audit_view(schema, table, view_name)`
 
 ## Usage
 
@@ -53,6 +54,18 @@ To clean up old records (default 365 days):
 ```sql
 SELECT audit.cleanup_old_records(180);
 ```
+
+### Creating a restricted audit view for a specific table
+
+```sql
+SELECT audit.create_audit_view(
+  'public',                      -- schema name of the original table
+  'climate_station_data',        -- table name
+  'climate_station_data_audit'   -- name of the new view in `audit` schema
+);
+```
+
+After running the above, you can grant permissions as needed
 
 ---
 
