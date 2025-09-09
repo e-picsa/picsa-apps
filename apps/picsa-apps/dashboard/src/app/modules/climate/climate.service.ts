@@ -5,7 +5,7 @@ import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { ngRouterMergedSnapshot$ } from '@picsa/utils/angular';
-import { catchError, from, map, merge, of, startWith } from 'rxjs';
+import { catchError, concat, concatMap, from, map, mergeMap, of } from 'rxjs';
 
 import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
@@ -95,7 +95,7 @@ export class ClimateService extends PicsaAsyncService {
     });
   }
 
-  public updateStationDataFromApi(station: IStationRow) {
+  public updateStationDataFromApi(station: IStationRow, concurrent = false) {
     const requests = [
       {
         id: 'Annual Rainfall',
@@ -122,16 +122,34 @@ export class ClimateService extends PicsaAsyncService {
       //   fn: this.loadFromAPI.extremes(station),
       // },
     ];
-    const observables = requests.map(({ fn, id }, index) =>
-      from(fn).pipe(
-        map((value): IDataRefreshStatus => ({ status: 'fulfilled', id, value, index })),
-        catchError((reason) => of<IDataRefreshStatus>({ status: 'rejected', id, reason, index })),
-        startWith<IDataRefreshStatus>({ status: 'pending', id, index }),
+
+    // Start all requests with pending status
+    // 1️⃣ Emit all pending statuses right away
+    const pendings$ = from(
+      requests.map(
+        ({ id }, index): IDataRefreshStatus => ({
+          status: 'pending',
+          id,
+          index,
+        }),
       ),
     );
-    const status$ = merge(...observables);
 
-    return status$;
+    // Choose operator depending on whether wanting to make requests concurrently or not
+    // 2️⃣ Choose operator: sequential (`concatMap`) or concurrent (`mergeMap`)
+    const operator = concurrent ? mergeMap : concatMap;
+
+    const execution$ = from(requests).pipe(
+      operator(({ fn, id }, index) =>
+        from(fn).pipe(
+          map((value): IDataRefreshStatus => ({ status: 'fulfilled', id, value, index })),
+          catchError((reason) => of<IDataRefreshStatus>({ status: 'rejected', id, reason, index })),
+        ),
+      ),
+    );
+
+    // 3️⃣ Concatenate: pendings first, then results
+    return concat(pendings$, execution$);
   }
 
   private async loadData(deployment: IDeploymentRow) {

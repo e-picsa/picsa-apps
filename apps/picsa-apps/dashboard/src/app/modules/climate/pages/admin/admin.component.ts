@@ -10,7 +10,6 @@ import { allSettledInBatches } from '@picsa/utils';
 import download from 'downloadjs';
 import JSZip from 'jszip';
 import { unparse } from 'papaparse';
-import { lastValueFrom, Subject } from 'rxjs';
 
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService, IDataRefreshStatus } from '../../climate.service';
@@ -33,7 +32,8 @@ interface IStationAdminSummary {
   updateSignal: WritableSignal<IStatusUpdate>;
 }
 
-const REFRESH_BATCH_SIZE = 3;
+const REFRESH_BATCH_SIZE = 1; // TODO - increase batch size when api more consistent
+
 const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['name', 'updated_at', 'start_year', 'end_year', 'station'];
 
 /**
@@ -122,32 +122,28 @@ export class ClimateAdminPageComponent {
     // create signal to track data changes and observer to track in refreshAll
     const { station, updateSignal } = summary;
     updateSignal.update((v) => ({ ...v, started: true }));
-    const sub = new Subject();
 
-    this.service.updateStationDataFromApi(station).subscribe({
-      next: (v) => {
-        updateSignal.update(({ completed, statuses, started }) => {
-          statuses[v.index] = v;
-          return { completed, started, statuses: [...statuses] };
-        });
-      },
-      error: (e) => {
-        console.error(e);
-        sub.complete();
-      },
-      complete: async () => {
-        updateSignal.update((v) => ({
-          ...v,
-          completed: true,
-        }));
-        sub.complete();
-        // Refresh all data if triggered from single click event
-        if (e) {
-          await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
-        }
-      },
+    return new Promise<void>((resolve, reject) => {
+      this.service.updateStationDataFromApi(station).subscribe({
+        next: (status) => {
+          updateSignal.update(({ statuses, ...rest }) => {
+            statuses[status.index] = status;
+            return { ...rest, statuses: [...statuses] };
+          });
+        },
+        error: (err) => {
+          console.error(err);
+          reject(err);
+        },
+        complete: async () => {
+          updateSignal.update((v) => ({ ...v, completed: true }));
+          if (e) {
+            await this.loadAllStationsData(this.deploymentService.activeDeployment()?.country_code as string);
+          }
+          resolve();
+        },
+      });
     });
-    return sub;
   }
 
   /** Trigger data refresh for all stations */
@@ -162,8 +158,7 @@ export class ClimateAdminPageComponent {
       // add update to queue
       promises.push(async () => {
         try {
-          const sub = this.refreshStation(summary);
-          await lastValueFrom(sub);
+          await this.refreshStation(summary);
         } catch (error) {
           console.error(`[${summary.station.station_id}]`, (error as any).message);
         } finally {
@@ -178,7 +173,7 @@ export class ClimateAdminPageComponent {
 
   public handleSummaryClick(e: Event, row: IStationAdminSummary, updateStatus: IDataRefreshStatus) {
     e.stopImmediatePropagation();
-    console.log(`[row.name] ${updateStatus.id}`, updateStatus.status, { row, updateStatus });
+    console.log(`[${row.name}] ${updateStatus.id}`, updateStatus.status, { row, updateStatus });
     // Try to refresh rejected
     if (updateStatus.status === 'rejected') {
       return this.refreshStation(row);
