@@ -33,12 +33,33 @@
         <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.updated_at">
           <mat-icon>download</mat-icon>
         </button>
-        @if (row.updateSignal().completed) {
-          <button mat-icon-button (click)="showUpdateSummary(row, $event)">
-            <mat-icon>check_circle</mat-icon>
-          </button>
+
+        <!-- Update summary icons -->
+        @if (row.updateSignal().started) {
+          @for (statusUpdate of row.updateSignal().statuses; track $index) {
+            @let status = statusUpdate.status;
+            <button
+              mat-icon-button
+              [matTooltip]="statusUpdate.id"
+              class="status-icon"
+              [attr.data-status]="status"
+              (click)="handleSummaryClick($event, row, statusUpdate)"
+            >
+              @switch (status) {
+                @case ('pending') {
+                  <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                }
+                @case ('fulfilled') {
+                  <mat-icon color="primary">check_circle</mat-icon>
+                }
+                @case ('rejected') {
+                  <mat-icon color="warn">error</mat-icon>
+                }
+              }
+            </button>
+          }
         } @else {
-          <button mat-icon-button (click)="refreshStation(row, $event)" [disabled]="row.updateSignal().started">
+          <button mat-icon-button (click)="refreshStation(row, $event)">
             <mat-icon>autorenew</mat-icon>
           </button>
         }

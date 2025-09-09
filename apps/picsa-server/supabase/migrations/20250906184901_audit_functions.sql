@@ -179,7 +179,7 @@ BEGIN
                 changed_by, changed_by_email
             )
             VALUES (
-                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value,
+                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP::audit.operation_type, pk_value,
                 to_jsonb(NEW.*), added, removed,
                 auth.uid(), user_email
             );
@@ -193,7 +193,7 @@ BEGIN
                 changed_by, changed_by_email
             )
             VALUES (
-                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, to_jsonb(NEW.*), to_jsonb(NEW.*),
+                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP::audit.operation_type, pk_value, to_jsonb(NEW.*), to_jsonb(NEW.*),
                 auth.uid(), user_email
             );
 
@@ -206,7 +206,7 @@ BEGIN
                 changed_by, changed_by_email
             )
             VALUES (
-                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP, pk_value, NULL, to_jsonb(OLD.*),
+                TG_TABLE_SCHEMA, TG_TABLE_NAME, TG_OP::audit.operation_type, pk_value, NULL, to_jsonb(OLD.*),
                 auth.uid(), user_email
             );
 
