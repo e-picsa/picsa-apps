@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "supabaseConfig"],
+      "inputs": ["default", "envAssets"],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -20,6 +20,7 @@
           "apps/picsa-apps/dashboard/src/favicon.ico",
           "apps/picsa-apps/dashboard/src/favicon.svg",
           "apps/picsa-apps/dashboard/src/assets",
+          "libs/environments/src/assets",
           {
             "glob": "*.svg",
             "input": "libs/data/crop_activity/svgs",
@@ -49,8 +50,7 @@
             "glob": "*.json",
             "input": "libs/i18n/assets",
             "output": "assets/i18n"
-          },
-          { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
+          }
         ],
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",

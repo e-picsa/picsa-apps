@@ -25,9 +25,9 @@ on:
         default: main
 
   # (avoid automated push as will often need manual migration apply)
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - fix/dashboard-supabase-config
   # paths:
   #   - 'apps/picsa-apps/dashboard/**'
 
@@ -66,6 +66,16 @@ jobs:
         # Required build script defined in dashboard project `vercel.json`
       - name: Build
         run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Verify supabase config in built output
+        run: |
+          CONFIG_FILE=dist/apps/picsa-apps/dashboard/browser/assets/supabaseConfig.json
+          if [ ! -f "$CONFIG_FILE" ]; then
+            echo "❌ Missing $CONFIG_FILE in build output!"
+            exit 1
+          fi
+          echo "✅ Found supabase config in build output"
+          cat "$CONFIG_FILE"
 
       - name: Deploy
         run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
