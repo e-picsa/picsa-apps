@@ -114,7 +114,7 @@
             "ignore": ["**/*-es5.min.mjs"],
             "output": "/assets/pdf-viewer"
           },
-          { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
+          { "glob": "**/*.json", "input": "libs/environments/src/assets", "output": "assets" }
         ],
         "styles": [
           "node_modules/leaflet/dist/leaflet.css",
