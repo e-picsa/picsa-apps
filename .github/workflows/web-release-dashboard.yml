@@ -72,6 +72,7 @@ jobs:
           CONFIG_FILE=dist/apps/picsa-apps/dashboard/browser/assets/supabase.config.json
           if [ ! -f "$CONFIG_FILE" ]; then
             echo "❌ Missing $CONFIG_FILE in build output!"
+            ls dist/apps/picsa-apps/dashboard/browser/assets
             exit 1
           fi
           echo "✅ Found supabase config in build output"

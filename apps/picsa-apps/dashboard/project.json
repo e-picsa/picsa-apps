@@ -51,7 +51,7 @@
             "output": "assets/i18n"
           },
           {
-            "glob": "supabase.config.json",
+            "glob": "*.json",
             "input": "libs/environments/src/supabase",
             "output": "assets"
           }
