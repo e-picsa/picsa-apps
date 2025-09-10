@@ -25,9 +25,9 @@ on:
         default: main
 
   # (avoid automated push as will often need manual migration apply)
-  push:
-    branches:
-      - fix/dashboard-build-3
+  # push:
+  #   branches:
+  #     - fix/dashboard-build-3
   # paths:
   #   - 'apps/picsa-apps/dashboard/**'
 
