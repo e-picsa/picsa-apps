@@ -17,6 +17,11 @@ import { ClimateService, IDataRefreshStatus } from '../../climate.service';
 import { hackConvertStationDataForDisplay } from '../../climate.utils';
 import type { IAnnualRainfallSummariesData, IClimateStationData, IStationRow } from '../../types';
 
+// variables used in quality-control checking data
+const QC_RECENT_YEARS_THRESHOLD = 10;
+const QC_MIN_TOTAL_YEARS_DATA = 30;
+const QC_MIN_RECENT_YEARS_DATA = 7;
+
 interface IStatusUpdate {
   statuses: IDataRefreshStatus[];
   started: boolean;
@@ -110,7 +115,7 @@ export class ClimateAdminPageComponent {
     const zip = new JSZip();
     for (const entry of this.tableData()) {
       const { rainfall_export_data } = entry;
-      if (rainfall_export_data) {
+      if (rainfall_export_data && rainfall_export_data.length > 0) {
         const columns = Object.keys(rainfall_export_data[0]);
         const csv = unparse(rainfall_export_data, { columns });
         zip.file(`${entry.station.id}.csv`, csv);
@@ -125,7 +130,7 @@ export class ClimateAdminPageComponent {
     e.preventDefault();
     e.stopImmediatePropagation();
     const rainfall_export_data = summary.rainfall_export_data;
-    if (rainfall_export_data) {
+    if (rainfall_export_data && rainfall_export_data.length > 0) {
       const station_id = summary.station.station_id;
       const columns = Object.keys(rainfall_export_data[0]);
       const csv = unparse(rainfall_export_data, { columns });
@@ -232,20 +237,20 @@ export class ClimateAdminPageComponent {
       // HACK - some data includes additional entry at end with first year (out of order)
       const rainfall_export_data = hackConvertStationDataForDisplay(stationData).sort((a, b) => a.Year - b.Year);
       const completeEntries = rainfall_export_data.filter((v) => v.Start && v.End && v.Length && v.Rainfall);
-      const recentYear = new Date().getFullYear() - 10;
+      const recentYear = new Date().getFullYear() - QC_RECENT_YEARS_THRESHOLD;
       const rainfall_total_years = completeEntries.length;
       const rainfall_last_ten_years = completeEntries.filter((v) => v.Year >= recentYear).length;
 
       // qc check
       const issues: string[] = [];
-      if (rainfall_total_years < 30) {
+      if (rainfall_total_years < QC_MIN_TOTAL_YEARS_DATA) {
         if (rainfall_total_years === 0) {
           issues.push(`No Complete Data`);
         } else {
           issues.push(`Only ${rainfall_total_years} Years Complete Data`);
         }
       }
-      if (rainfall_last_ten_years < 7) {
+      if (rainfall_last_ten_years < QC_MIN_RECENT_YEARS_DATA) {
         if (rainfall_last_ten_years === 0) {
           issues.push(`No Recent Data`);
         } else {
