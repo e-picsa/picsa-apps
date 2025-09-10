@@ -22,7 +22,12 @@
     style="margin-top: 1em"
     [data]="tableData()"
     [options]="tableOptions"
-    [valueTemplates]="{ updated_at: updatedAtTemplate, products: productsTemplate, station: stationTemplate }"
+    [valueTemplates]="{
+      updated_at: updatedAtTemplate,
+      products: productsTemplate,
+      rainfall_issues: rainfallIssuesTemplate,
+      rainfall_export_data: downloadTemplate,
+    }"
   >
     <ng-template #updatedAtTemplate let-value>
       {{ value | date: 'mediumDate' }}
@@ -69,10 +74,18 @@
         }
       </div>
     </ng-template>
-    <!-- Station column includes refresh and csv download -->
-    <ng-template #stationTemplate let-station let-row="row">
+    <!-- Rainfall issues  -->
+    <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
+      @if (issues) {
+        <div [matTooltip]="row.rainfall_issues_details.join(',\n')">
+          <mat-icon>announcement</mat-icon>
+        </div>
+      }
+    </ng-template>
+    <!-- CSV download column  -->
+    <ng-template #downloadTemplate let-row="row">
       <div class="flex gap-2 items-center">
-        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.updated_at">
+        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
           <mat-icon>download</mat-icon>
         </button>
       </div>

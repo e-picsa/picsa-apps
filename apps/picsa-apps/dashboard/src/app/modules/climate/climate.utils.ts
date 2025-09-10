@@ -41,7 +41,10 @@ export function hackConvertStationDataForDisplay(stationData: IClimateStationDat
     };
     if (typeof year === 'number') entry.Year = year;
 
+    // mw uses end_rains_doy, zm uses end_season_doy (both use start_rains_doy, both use season_rain)
+    if (typeof end_rains_doy === 'number') entry.End = end_rains_doy;
     if (typeof end_season_doy === 'number') entry.End = end_season_doy;
+
     if (typeof start_rains_doy === 'number') entry.Start = start_rains_doy;
     if (typeof season_length === 'number') entry.Length = season_length;
     // HACK - replace 0mm with null value
