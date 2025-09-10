@@ -69,7 +69,7 @@ jobs:
 
       - name: Verify supabase config in built output
         run: |
-          CONFIG_FILE=dist/apps/picsa-apps/dashboard/browser/assets/supabase.config.prod.json
+          CONFIG_FILE=dist/apps/picsa-apps/dashboard/browser/assets/supabase.config.json
           if [ ! -f "$CONFIG_FILE" ]; then
             echo "❌ Missing $CONFIG_FILE in build output!"
             exit 1
