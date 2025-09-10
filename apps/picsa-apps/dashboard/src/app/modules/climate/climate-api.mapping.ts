@@ -204,9 +204,22 @@ export const ApiMapping = (
           station_id: `${d.station_id.toLowerCase().replace(/[^a-z]/gi, '_')}`,
         }),
       );
+      // Hack - filter duplicate entries (case sensitive variations from r-instat)
+      const unique = Object.values(
+        update.reduce(
+          (acc, current) => {
+            if (current.station_id in acc) {
+              console.warn(`Duplicate stations:`, acc[current.station_id], current);
+            }
+            acc[current.station_id] = current;
+            return acc;
+          },
+          {} as Record<string, IStationInsert>,
+        ),
+      );
       const { error: dbError, data: dbData } = await supabaseService.db
         .table('climate_stations')
-        .upsert<IStationInsert>(update)
+        .upsert<IStationInsert>(unique)
         .select();
       if (dbError) throw dbError;
       if (dbData?.length > 0) {
