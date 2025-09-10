@@ -17,7 +17,7 @@ Also ensure nx includes when calculating hash for caching
 {
   "targets": {
     "build": {
-      "inputs": ["default", { "fileset": "libs/environments/src/supabase/supabase.config.prod.json" }],
+      "inputs": ["default", { "fileset": "{workspaceRoot}/libs/environments/src/supabase/supabase.config.prod.json" }],
       "options": {
         "assets": [
           {
