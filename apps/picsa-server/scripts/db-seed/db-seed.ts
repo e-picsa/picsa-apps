@@ -16,7 +16,7 @@ const ROOT_DIR = resolve(__dirname, '../../../../');
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 const SEED_STORAGE_DIR = resolve(SUPABASE_DIR, 'data', 'storage');
-const SUPABASE_ENV_ASSET = resolve(ROOT_DIR, 'libs/environments/src/assets/supabaseConfig.json');
+const SUPABASE_ENV_ASSET = resolve(ROOT_DIR, 'libs/environments/src/supabase/supabase.config.json');
 
 /**
  * Response model from `supbase status --output json` command

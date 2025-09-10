@@ -37,7 +37,7 @@ jobs:
             --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
             --arg anonKey "$SUPABASE_ANON_KEY" \
             '{apiUrl: $apiUrl, anonKey: $anonKey}' \
-            > libs/environments/src/assets/supabaseConfig.json
+            > libs/environments/src/supabase/supabase.config.prod.json
 
       - name: Install node modules
         run: yarn install --immutable
