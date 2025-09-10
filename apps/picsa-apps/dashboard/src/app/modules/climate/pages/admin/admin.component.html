@@ -22,19 +22,16 @@
     style="margin-top: 1em"
     [data]="tableData()"
     [options]="tableOptions"
-    [valueTemplates]="{ updated_at: updatedAtTemplate, station: stationTemplate }"
+    [valueTemplates]="{ updated_at: updatedAtTemplate, products: productsTemplate, station: stationTemplate }"
   >
     <ng-template #updatedAtTemplate let-value>
       {{ value | date: 'mediumDate' }}
     </ng-template>
-    <!-- Station column includes refresh and csv download -->
-    <ng-template #stationTemplate let-station let-row="row">
-      <div class="flex gap-2 items-center">
-        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.updated_at">
-          <mat-icon>download</mat-icon>
-        </button>
 
-        <!-- Update summary icons -->
+    <!-- Products summary -->
+    <ng-template #productsTemplate let-products let-row="row">
+      <div class="flex gap-2 items-center">
+        <!-- Pending product download status -->
         @if (row.updateSignal().started) {
           @for (statusUpdate of row.updateSignal().statuses; track $index) {
             @let status = statusUpdate.status;
@@ -59,10 +56,30 @@
             </button>
           }
         } @else {
-          <button mat-icon-button (click)="refreshStation(row, $event)">
-            <mat-icon>autorenew</mat-icon>
-          </button>
+          <!-- Product download summary -->
+          @for (product of products; track $index) {
+            <button
+              mat-icon-button
+              [matTooltip]="product.label"
+              class="status-icon"
+              (click)="refreshStation(row, $event)"
+            >
+              @if (product.available) {
+                <mat-icon color="primary">check</mat-icon>
+              } @else {
+                <mat-icon color="warn">close</mat-icon>
+              }
+            </button>
+          }
         }
+      </div>
+    </ng-template>
+    <!-- Station column includes refresh and csv download -->
+    <ng-template #stationTemplate let-station let-row="row">
+      <div class="flex gap-2 items-center">
+        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.updated_at">
+          <mat-icon>download</mat-icon>
+        </button>
       </div>
     </ng-template>
   </picsa-data-table>

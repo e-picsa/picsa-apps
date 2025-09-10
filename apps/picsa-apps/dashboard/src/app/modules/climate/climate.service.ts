@@ -102,12 +102,12 @@ export class ClimateService extends PicsaAsyncService {
         fn: this.loadFromAPI.rainfallSummaries(station),
       },
       {
-        id: 'Annual Temperatures',
-        fn: this.loadFromAPI.annualTemperature(station),
-      },
-      {
         id: 'Crop Probabilities',
         fn: this.loadFromAPI.cropProbabilities(station),
+      },
+      {
+        id: 'Annual Temperatures',
+        fn: this.loadFromAPI.annualTemperature(station),
       },
       {
         id: 'Monthly Temperatures',
