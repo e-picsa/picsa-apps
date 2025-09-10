@@ -19,7 +19,7 @@ const ENVIRONMENT: IEnvironment = {
       try {
         // Populated to assets by CI, or locally following `yarn nx run picsa-server:seed`
         // Requires asset populated to project
-        // { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
+        // { "glob": "**/*.json", "input": "libs/environments/src/assets", "output": "assets" }
         const res = await fetch('/assets/supabaseConfig.json');
         if (res.ok) {
           return res.json();

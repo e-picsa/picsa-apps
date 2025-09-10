@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "supabaseConfig"],
+      "inputs": ["default", "envAssets"],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -50,7 +50,7 @@
             "input": "libs/i18n/assets",
             "output": "assets/i18n"
           },
-          { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
+          { "glob": "**/*.json", "input": "libs/environments/src/assets", "output": "assets" }
         ],
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",

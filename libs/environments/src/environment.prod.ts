@@ -13,9 +13,9 @@ const productionEnvironment: IEnvironment = {
       try {
         // Populated to assets by CI, or locally following `yarn nx run picsa-server:seed`
         // Requires asset populated to project
-        // { "glob": "*.json", "input": "libs/environments/src/assets", "output": "assets" }
+        // { "glob": "**/*.json", "input": "libs/environments/src/assets", "output": "assets" }
         // avoid nx caching issues by updating `project.json` with `build.inputs`
-        // with named input `"inputs": ["default", "supabaseConfig"]`
+        // with named input `"inputs": ["default", "envAssets"]`
         const res = await fetch('/assets/supabaseConfig.json');
         if (!res.ok) {
           throw new Error(`Failed to fetch supabase config: ${res.status} ${res.statusText}`);
