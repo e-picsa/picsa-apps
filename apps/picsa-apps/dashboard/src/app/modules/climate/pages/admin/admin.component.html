@@ -58,12 +58,7 @@
         } @else {
           <!-- Product download summary -->
           @for (product of products; track $index) {
-            <button
-              mat-icon-button
-              [matTooltip]="product.label"
-              class="status-icon"
-              (click)="refreshStation(row, $event)"
-            >
+            <button mat-icon-button [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
               @if (product.available) {
                 <mat-icon color="primary">check</mat-icon>
               } @else {
