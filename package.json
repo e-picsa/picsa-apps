@@ -128,6 +128,7 @@
     "tslib": "^2.5.0",
     "uuid": "^9.0.1",
     "xlsx": "^0.18.5",
+    "zod": "^4.1.5",
     "zone.js": "0.15.0"
   },
   "devDependencies": {
