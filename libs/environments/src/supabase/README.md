@@ -11,11 +11,13 @@ yarn nx run picsa-server:seed
 ## App Integration
 
 Ensure app `project.json` includes config asset and production file replacements
+Also ensure nx includes when calculating hash for caching
 
 ```json
 {
   "targets": {
     "build": {
+      "inputs": ["default", { "fileset": "libs/environments/src/supabase/supabase.config.prod.json" }],
       "options": {
         "assets": [
           {

@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default"],
+      "inputs": ["default", { "fileset": "libs/environments/src/supabase/supabase.config.prod.json" }],
       "allowedCommonJsDependencies": ["*"],
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
