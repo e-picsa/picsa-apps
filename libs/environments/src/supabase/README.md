@@ -20,7 +20,7 @@ Ensure app `project.json` includes config asset and production file replacements
         "assets": [
           {
             "glob": "supabase.config.json",
-            "input": "libs/assets",
+            "input": "libs/environments/src/supabase",
             "output": "assets"
           }
         ]

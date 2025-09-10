@@ -58,7 +58,7 @@ export class SupabaseService extends PicsaAsyncService {
       try {
         const json = await res.json();
         const parsed = Config.parse(json);
-        parsed;
+        return parsed;
       } catch (error) {
         console.error('[Supabase] Config parse failed', error);
       }
