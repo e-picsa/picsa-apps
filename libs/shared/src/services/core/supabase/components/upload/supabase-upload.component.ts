@@ -151,7 +151,7 @@ export class SupabaseUploadComponent {
   }
 
   private async registerSupabaseUppyUploader() {
-    const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
+    const { anonKey, apiUrl } = this.supabaseService.config;
     this.uppy.use(Tus, {
       endpoint: `${apiUrl}/storage/v1/upload/resumable`,
       headers: {

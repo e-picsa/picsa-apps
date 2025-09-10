@@ -3,6 +3,13 @@ import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
 import { createClient, FunctionsHttpError, SupabaseClient } from '@supabase/supabase-js';
+import * as z from 'zod';
+
+const Config = z.object({
+  anonKey: z.string(),
+  apiUrl: z.string(),
+});
+type SupabaseConfig = z.infer<typeof Config>;
 
 import { PicsaAsyncService } from '../../asyncService.service';
 import { SupabaseAuthService } from './services/supabase-auth.service';
@@ -17,6 +24,8 @@ export class SupabaseService extends PicsaAsyncService {
   /** Access to postgres db as a shortcut to table from method */
   public db: { table: SupabaseClient<Database>['from'] };
 
+  public config: SupabaseConfig;
+
   private supabase: SupabaseClient;
 
   constructor(
@@ -27,7 +36,10 @@ export class SupabaseService extends PicsaAsyncService {
   }
 
   public override async init(): Promise<void> {
-    const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
+    this.config = await this.loadConfig();
+
+    const { apiUrl, anonKey } = this.config;
+
     this.supabase = createClient(apiUrl, anonKey, {});
 
     this.db = { table: (relation: string) => this.supabase.from(relation) };
@@ -39,6 +51,29 @@ export class SupabaseService extends PicsaAsyncService {
     // trigger child service initialisers optimistically
     this.auth.ready();
     this.storage.ready();
+  }
+  private async loadConfig(): Promise<SupabaseConfig> {
+    const res = await fetch('/assets/supabase.config.json');
+    if (res.ok) {
+      try {
+        const json = await res.json();
+        const parsed = Config.parse(json);
+        parsed;
+      } catch (error) {
+        console.error('[Supabase] Config parse failed', error);
+      }
+    }
+    // handle no, or invalid config
+    if (ENVIRONMENT.production) {
+      throw new Error(`[Supabase] Config - not available`);
+    } else {
+      console.warn(`[Supabase] Config - use dev config`);
+      return {
+        apiUrl: 'http://localhost:54321',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+      };
+    }
   }
 
   /**
