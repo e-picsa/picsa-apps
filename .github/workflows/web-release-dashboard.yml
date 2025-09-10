@@ -25,9 +25,9 @@ on:
         default: main
 
   # (avoid automated push as will often need manual migration apply)
-  # push:
-  #   branches:
-  #     - fix/dashboard-supabase-config
+  push:
+    branches:
+      - fix/dashboard-supabase-config
   # paths:
   #   - 'apps/picsa-apps/dashboard/**'
 
