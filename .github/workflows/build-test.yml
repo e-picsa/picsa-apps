@@ -37,6 +37,6 @@ jobs:
             --arg apiUrl "" \
             --arg anonKey "" \
             '{apiUrl: $apiUrl, anonKey: $anonKey}' \
-            > libs/environments/src/supabase/supabase.config.prod.json
+            > libs/environments/src/supabase/supabase.config.json
 
       - run: yarn nx build

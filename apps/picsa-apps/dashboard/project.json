@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", { "fileset": "{workspaceRoot}/libs/environments/src/supabase/supabase.config.prod.json" }],
+      "inputs": ["default", { "fileset": "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json" }],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -51,7 +51,7 @@
             "output": "assets/i18n"
           },
           {
-            "glob": "*.json",
+            "glob": "supabase.config.json",
             "input": "libs/environments/src/supabase",
             "output": "assets"
           }
@@ -86,10 +86,6 @@
             {
               "replace": "libs/environments/src/environment.ts",
               "with": "libs/environments/src/environment.prod.ts"
-            },
-            {
-              "replace": "libs/environments/src/supabase/supabase.config.json",
-              "with": "libs/environments/src/supabase/supabase.config.prod.json"
             }
           ],
           "outputHashing": "all"
