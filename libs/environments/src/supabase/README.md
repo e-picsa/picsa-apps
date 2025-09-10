@@ -10,12 +10,13 @@ yarn nx run picsa-server:seed
 
 ## App Integration
 
-Ensure app `project.json` includes config asset and production file replacements
+Ensure app `project.json` includes config asset and nx includes when calculating hash for caching
 
 ```json
 {
   "targets": {
     "build": {
+      "inputs": ["default", { "fileset": "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json" }],
       "options": {
         "assets": [
           {
@@ -24,16 +25,6 @@ Ensure app `project.json` includes config asset and production file replacements
             "output": "assets"
           }
         ]
-      },
-      "configurations": {
-        "production": {
-          "fileReplacements": [
-            {
-              "replace": "libs/environments/src/supabase/supabase.config.json",
-              "with": "libs/environments/src/supabase/supabase.config.prod.json"
-            }
-          ]
-        }
       }
     }
   }
@@ -54,5 +45,5 @@ When running build on CI production config should be populated, e.g.
       --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
       --arg anonKey "$SUPABASE_ANON_KEY" \
       '{apiUrl: $apiUrl, anonKey: $anonKey}' \
-      > libs/environments/src/supabase/supabase.config.prod.json
+      > libs/environments/src/supabase/supabase.config.json
 ```

@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default"],
+      "inputs": ["default", { "fileset": "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json" }],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -86,10 +86,6 @@
             {
               "replace": "libs/environments/src/environment.ts",
               "with": "libs/environments/src/environment.prod.ts"
-            },
-            {
-              "replace": "libs/environments/src/supabase/supabase.config.json",
-              "with": "libs/environments/src/supabase/supabase.config.prod.json"
             }
           ],
           "outputHashing": "all"
