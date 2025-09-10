@@ -63,10 +63,12 @@ export class ClimateStationPageComponent {
   }
 
   private calcMapMarkers(stations: IStationRow[]): IMapMarker[] {
-    return stations.map((s, _index) => ({
-      _index,
-      latlng: [s.latitude as number, s.longitude as number],
-      number: _index + 1,
-    }));
+    return stations
+      .filter((s) => s.latitude !== null && s.longitude !== null)
+      .map((s, _index) => ({
+        _index,
+        latlng: [s.latitude as number, s.longitude as number],
+        number: _index + 1,
+      }));
   }
 }

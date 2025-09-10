@@ -44,12 +44,14 @@ export class SiteSelectPage {
 
   public mapMarkers = computed(() => {
     const stations = this.dataService.stations();
-    const markers: IMapMarker[] = stations.map((station, _index) => ({
-      latlng: [station.latitude, station.longitude],
-      data: station,
-      number: _index + 1,
-      _index,
-    }));
+    const markers: IMapMarker[] = stations
+      .filter((s) => s.latitude !== null && s.longitude !== null)
+      .map((station, _index) => ({
+        latlng: [station.latitude, station.longitude],
+        data: station,
+        number: _index + 1,
+        _index,
+      }));
     return markers;
   });
 

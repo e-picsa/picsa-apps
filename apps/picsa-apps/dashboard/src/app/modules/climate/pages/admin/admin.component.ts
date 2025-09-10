@@ -22,6 +22,8 @@ interface IStatusUpdate {
   completed: boolean;
 }
 
+type IProductSummary = { id: string; available: boolean };
+
 interface IStationAdminSummary {
   name: string;
   station: IStationRow;
@@ -29,12 +31,20 @@ interface IStationAdminSummary {
   rainfall_data?: IAnnualRainfallSummariesData[];
   start_year?: number;
   end_year?: number;
+  products: IProductSummary[];
   updateSignal: WritableSignal<IStatusUpdate>;
 }
 
 const REFRESH_BATCH_SIZE = 1; // TODO - increase batch size when api more consistent
 
-const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = ['name', 'updated_at', 'start_year', 'end_year', 'station'];
+const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
+  'name',
+  'updated_at',
+  'start_year',
+  'end_year',
+  'products',
+  'station',
+];
 
 /**
  * TODOs - See #333 (possibly outdated after #404)
@@ -189,8 +199,6 @@ export class ClimateAdminPageComponent {
     const columns = Object.keys(csvData[0]);
     const csv = unparse(csvData, { columns });
     return csv;
-
-    return undefined;
   }
 
   private generateTableSummaryData(
@@ -202,6 +210,7 @@ export class ClimateAdminPageComponent {
         station,
         name: station.station_name as string,
         updateSignal: this.getRowUpdateSignal(station),
+        products: [],
       };
       const stationData = allStationDataHashmap[station.id as string];
       if (stationData) {
@@ -213,9 +222,24 @@ export class ClimateAdminPageComponent {
         const entries = rainfall_data.sort((a, b) => a.year - b.year);
         summary.start_year = entries[0]?.year;
         summary.end_year = entries[entries.length - 1]?.year;
+
+        summary.products = this.generateProductSummary(stationData);
       }
       return summary;
     });
+  }
+
+  private generateProductSummary(stationData: IClimateStationData['Row']) {
+    const { annual_rainfall_data, annual_temperature_data, crop_probability_data, monthly_temperature_data } =
+      stationData;
+    // TODO - combine with data from climate service
+    const productSummaries: IProductSummary[] = [
+      { id: 'Annual Rainfall', available: annual_rainfall_data !== null },
+      { id: 'Crop Probabilities', available: crop_probability_data !== null },
+      { id: 'Annual Temperatures', available: annual_temperature_data !== null },
+      { id: 'Monthly Temperatures', available: monthly_temperature_data !== null },
+    ];
+    return productSummaries;
   }
 
   /** create or reuse signal to provide live data refresh updates */
