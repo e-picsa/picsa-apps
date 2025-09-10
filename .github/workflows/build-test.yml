@@ -30,4 +30,13 @@ jobs:
       - run: yarn lint
       # - run: yarn nx test
       # Ensure can also build
+
+      - name: Add mock supabase config
+        run: |
+          jq -n \
+            --arg apiUrl "" \
+            --arg anonKey "" \
+            '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+            > libs/environments/src/supabase/supabase.config.prod.json
+
       - run: yarn nx build
