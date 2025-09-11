@@ -16,7 +16,7 @@ Ensure app `project.json` includes config asset and nx includes when calculating
 {
   "targets": {
     "build": {
-      "inputs": ["default", { "fileset": "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json" }],
+      "inputs": ["default", "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json"],
       "options": {
         "assets": [
           {
