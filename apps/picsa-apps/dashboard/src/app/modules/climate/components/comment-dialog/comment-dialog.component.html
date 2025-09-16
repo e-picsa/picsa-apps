@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>{{data.isEditMode ? 'Edit Comment' : 'Mark for Review'}}</h2>
+
+<mat-dialog-content>
+  @if (!data.isEditMode) {
+    <p class="station-info">
+      <strong>Station:</strong> {{ data.stationName }}<br>
+      <strong>Chart:</strong> {{ data.chartName }}
+    </p>
+  }
+  @if (data.isEditMode && data.editComment) {
+    <p class="comment-info">
+      <strong>Created:</strong> {{ data.editComment.date_created | date:'short' }}<br>
+      <strong>Status:</strong> {{ data.editComment.resolved ? 'Resolved' : 'Unresolved' }}
+    </p>
+  }
+  
+  <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Comment</mat-label>
+      <textarea
+        matInput
+        formControlName="comment"
+        rows="4"
+        placeholder="Describe the issue or inconsistency you found..."
+      ></textarea>
+      @if (commentForm.get('comment')?.hasError('required')) {
+        <mat-error>Comment is required</mat-error>
+      }
+      @if (commentForm.get('comment')?.hasError('minlength')) {
+        <mat-error>Comment must be at least 5 characters</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isSubmitting">
+    Cancel
+  </button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()" 
+    [disabled]="!commentForm.valid || isSubmitting"
+  >
+    @if (isSubmitting) {
+      <mat-spinner diameter="20"></mat-spinner>
+    }
+    @if (!isSubmitting) {
+      <span>{{data.isEditMode ? 'Update Comment' : 'Submit Review'}}</span>
+    }
+    @if (isSubmitting) {
+      <span>Submitting...</span>
+    }
+  </button>
+</mat-dialog-actions>
