@@ -53,6 +53,12 @@ export class ChartSummaryComponent {
     return this.comments().filter((c) => c.chart_name === activeChart.name && !c.resolved).length;
   });
 
+  public commentsForCurrentChart = computed<ClimateComment[]>(() => {
+    const activeChart = this.activeChartDefinition();
+    if (!activeChart) return [];
+    return this.comments().filter((c) => c.chart_name === activeChart.name);
+  });
+
   constructor(
     private dialog: MatDialog,
     private commentService: ClimateCommentService,
@@ -119,12 +125,6 @@ export class ChartSummaryComponent {
 
   public toggleCommentsList() {
     this.showCommentsList.set(!this.showCommentsList());
-  }
-
-  public getCommentsForCurrentChart(): ClimateComment[] {
-    const activeChart = this.activeChartDefinition();
-    if (!activeChart) return [];
-    return this.comments().filter((c) => c.chart_name === activeChart.name);
   }
 
   public canEditComment(comment: ClimateComment): boolean {

@@ -39,13 +39,13 @@
       @if (showCommentsList()) {
         <div class="comments-sidebar">
           <div class="comments-header">
-            <span>Comments ({{getCommentsForCurrentChart().length}})</span>
+            <span>Comments ({{commentsForCurrentChart().length}})</span>
             <button mat-icon-button (click)="toggleCommentsList()">
               <mat-icon>close</mat-icon>
             </button>
           </div>
           <div class="comments-list">
-            @for (comment of getCommentsForCurrentChart(); track comment.id) {
+            @for (comment of commentsForCurrentChart(); track comment.id) {
               <div class="comment-item" [class.resolved]="comment.resolved" (click)="openCommentModal(comment)">
                 <div class="comment-info">
                   <strong>{{comment.created_by_name}}</strong>
