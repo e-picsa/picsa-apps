@@ -1,28 +1,17 @@
 <picsa-sidenav-layout #picsaSidenav *mobxAutorun>
-  <!-- Header -->
-  <button desktopHeader mat-button color="primary" *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
-    <mat-icon>share</mat-icon>{{'Share' | translate }}
-  </button>
-  <button mobileHeader mat-button color="primary" *ngIf="!isEditorOpen" aria-label="Share" (click)="showShareDialog()">
-    <mat-icon>share</mat-icon>{{'Share' | translate }}
-  </button>
-
   <!-- Sidenav -->
   <budget-editor-sidebar sidenav (emitClose)="picsaSidenav.close()"></budget-editor-sidebar>
 
   <!-- Main content -->
   <ng-container content>
     <!-- hide overflow so that editor can be stored outside bottom of page -->
-    <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut></budget-table>
+    <budget-table *ngIf="store.activeBudget" [budget]="store.activeBudget" @fadeInOut
+      (cellClicked)="handleCellClicked($event)"></budget-table>
 
     <!-- Updated Editor -->
-    <div class="editor-popup slide-in" [class.active]="isEditorOpen">
-      <budget-editor
-        *ngIf="store.activeType && store.activeBudget && store.activeBudget.data"
-        [activePeriod]="store.activePeriod"
-        [activeType]="store.activeType"
-        (handleNextClick)="handleEditorNext()"
-      ></budget-editor>
+    <div class="editor-popup slide-in" [class.active]="editorOpen()">
+      <budget-editor *ngIf="store.activeBudget && store.activeBudget.data"
+        (nextClicked)="editorOpen.set(false)"></budget-editor>
     </div>
   </ng-container>
 </picsa-sidenav-layout>

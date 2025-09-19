@@ -8,11 +8,14 @@ type IPicsaFarmerVideoId =
   | 'historic_climate'
   | 'probability_risk'
   | 'options'
-  | 'participatory_budget';
+  | 'participatory_budget'
+  | 'seasonal_forecast'
+  | 'short_term_forecast';
 
 const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData, 'id'>> = {
   intro: {
     children: [
+      // NOTE - 'global_en' does not exist for intro but ny versions include subtitles
       {
         id: '',
         locale_codes: ['mw_ny', 'global_en'],
@@ -199,6 +202,49 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       },
     ],
   },
+  seasonal_forecast: {
+    children: [
+      {
+        id: '',
+        // HACK - zm and mw have different english versions
+        locale_codes: ['zm_en' as any],
+        size_kb: 26160,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/7a%20Seasonal%20Forecast_Zambia_360p.mp4',
+      },
+      // TODO - mw_en
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 31030,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/Seasonal%20Forecast%20-%20Zambia_NYA_norm_360p.mp4',
+      },
+    ],
+  },
+  short_term_forecast: {
+    children: [
+      // TODO -  mw_en
+      {
+        id: '',
+        locale_codes: ['zm_en' as any],
+        size_kb: 17390,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/7b%20Short%20Term%20Forecast_Zambia_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_ny'],
+        size_kb: 20370,
+        resolution: '360p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/Short%20Term%20Forecast%20-%20Zambia_NYA_norm_360p.mp4',
+      },
+    ],
+  },
 };
 
 export const PICSA_FARMER_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(PICSA_FARMER_VIDEOS_BASE).map(
@@ -211,10 +257,10 @@ export const PICSA_FARMER_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(PICSA_
       child.id = `farmer_${id}_${locale_code}_${resolution}`;
       return child;
     }),
-  })
+  }),
 );
 
 export const PICSA_FARMER_VIDEOS_HASHMAP: Record<IPicsaFarmerVideoId, IPicsaVideoData> = arrayToHashmap(
   PICSA_FARMER_VIDEOS_DATA,
-  'id'
+  'id',
 );

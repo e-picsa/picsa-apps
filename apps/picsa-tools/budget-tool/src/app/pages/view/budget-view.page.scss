@@ -1,24 +1,14 @@
-// HACK - copied from options tool, should generalise
 .editor-popup {
   position: fixed;
   z-index: 2;
-
   width: 100%;
-  top: 0;
+  top: 100vh;
   left: 0;
   display: flex;
-
-  // Include margin for top/bottom banners
-  // Inherit footer-height from farmer content or use fallback value if not defined
-  margin-top: 56px;
-  margin-bottom: var(--footer-height, 0px);
-  height: calc(100% - 56px - var(--footer-height, 0px));
-}
-
-.slide-in {
+  height: 100vh;
   transition: transform 0.3s ease-in-out;
-  transform: translateY(100vh);
 }
+
 .slide-in.active {
-  transform: translateY(0);
+  transform: translateY(-100vh);
 }

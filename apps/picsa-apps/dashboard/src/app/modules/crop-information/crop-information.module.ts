@@ -23,12 +23,19 @@ import { RouterModule } from '@angular/router';
       {
         path: 'variety/:id',
         loadComponent: () =>
-          import('./pages/variety-details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
+          import('./pages/variety/details/variety-details.component').then((m) => m.CropVarietyDetailsComponent),
       },
       {
         path: 'probability',
         loadComponent: () =>
           import('./pages/probability/probability.component').then((m) => m.CropProbabilityComponent),
+      },
+      {
+        path: 'probability/:locationId',
+        loadComponent: () =>
+          import('./pages/probability/downscaled/probability-downscaled.component').then(
+            (m) => m.ProbabilityDownscaledComponent,
+          ),
       },
     ]),
   ],

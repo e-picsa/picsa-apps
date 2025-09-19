@@ -7,6 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
+      "inputs": ["default", "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json"],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -43,13 +44,24 @@
             "glob": "*.*",
             "input": "apps/picsa-tools/climate-tool/src/assets/climate-icons",
             "output": "assets/climate-icons"
+          },
+          {
+            "glob": "*.json",
+            "input": "libs/i18n/assets",
+            "output": "assets/i18n"
+          },
+          {
+            "glob": "supabase.config.json",
+            "input": "libs/environments/src/supabase",
+            "output": "assets"
           }
         ],
         "styles": [
           "apps/picsa-apps/dashboard/src/styles.scss",
           "node_modules/leaflet/dist/leaflet.css",
-          "@uppy/core/dist/style.min.css",
-          "@uppy/dashboard/dist/style.min.css"
+          "node_modules/@uppy/core/dist/style.min.css",
+          "node_modules/@uppy/drag-drop/dist/style.min.css",
+          "node_modules/@uppy/dashboard/dist/style.min.css"
         ],
         "stylePreprocessorOptions": {
           "includePaths": ["libs/theme/src"]

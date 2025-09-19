@@ -1,0 +1,53 @@
+<picsa-data-table
+  [data]="tableData()"
+  [options]="tableOptions"
+  (rowClick)="editWaterRequirement($event)"
+></picsa-data-table>
+
+<button mat-stroked-button (click)="editWaterRequirement()" class="block mt-4 w-full">
+  <mat-icon>add</mat-icon>New Entry
+</button>
+
+<ng-template #inputDialog>
+  <h2 mat-dialog-title style="margin-bottom: 2rem; font-size: 1.5rem">Water Requirements</h2>
+  <mat-dialog-content>
+    <!-- Location Select -->
+    <div [style.display]="selectedEntry()?.location_id ? 'none' : 'contents'">
+      <picsa-form-location-select
+        [countryCode]="countryCode"
+        (valueChanged)="handleFormLocationChange($event)"
+      ></picsa-form-location-select>
+      <mat-dialog-actions align="start">
+        <button mat-button mat-dialog-close>Cancel</button>
+      </mat-dialog-actions>
+    </div>
+
+    <!-- Water Requirement -->
+    <div [style.display]="selectedEntry()?.location_id ? 'contents' : 'none'">
+      <p>{{ selectedEntry()?.location_id }}</p>
+      <mat-form-field>
+        <mat-label>Water Requirement</mat-label>
+        <input
+          matInput
+          type="number"
+          min="0"
+          max="2000"
+          step="5"
+          [value]="selectedEntry()?.water_requirement"
+          #waterInput
+        />
+      </mat-form-field>
+      <mat-dialog-actions align="start">
+        <button mat-button (click)="handleFormLocationChange([])">Cancel</button>
+        <button
+          mat-button
+          [disabled]="waterInput.value === selectedEntry()?.water_requirement?.toString()"
+          mat-dialog-close
+          (click)="save(waterInput.value)"
+        >
+          Save
+        </button>
+      </mat-dialog-actions>
+    </div>
+  </mat-dialog-content>
+</ng-template>

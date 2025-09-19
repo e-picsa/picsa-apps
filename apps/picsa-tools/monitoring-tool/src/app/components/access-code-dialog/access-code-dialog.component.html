@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{ 'Restricted Form' | translate }}</h2>
+<div mat-dialog-content>
+  <p>
+    {{ 'This form requires an access code to unlock' | translate }}
+  </p>
+
+  <mat-form-field style="width: 100%" [class.error]="showError()">
+    <mat-label>{{ 'Access Code' | translate }}</mat-label>
+    <input
+      CdkFocusInitial
+      matInput
+      [value]="accessCode()"
+      (input)="onAccessCodeInput($event)"
+      [type]="hidePassword() ? 'password' : 'text'"
+      placeholder="{{ 'Enter access code' | translate }}"
+      (keyup.enter)="validateAndSubmit()"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="togglePasswordVisibility()"
+      [attr.aria-label]="'Toggle password visibility'"
+      type="button"
+    >
+      <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+  </mat-form-field>
+  @if (showError()) {
+    <div class="error-message">
+      {{ 'Incorrect access code. Please try again.' | translate }}
+    </div>
+  }
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
+  <button mat-raised-button color="primary" (click)="validateAndSubmit()" [disabled]="!accessCode().trim()">
+    {{ 'Unlock' | translate }}
+  </button>
+</div>

@@ -1,101 +1,256 @@
-crop,variety,maturity_period,days_lower,days_upper,additional_data,created_at,updated_at,additional_info
-beans,CHAMBESHI,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,CHIPOLOPOLO,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,KABULANGETI,early,75,80,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,KALUNGU,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,KAMPEMBA,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,LUANGENI,early,95,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,LUKUPA,early,75,80,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,LUNGWE-BUNGWE,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,LUSAKA,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,LYAMBAI,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,MBERESHI,early,80,85,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,MENSO-PANSAKA,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,POMBA,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,SOLWEZI,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-beans,WHITE-(KALUNGU),early,75,80,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cotton,CDT-II,late,140,160,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cotton,CHURAZA,medium,135,150,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cotton,F135,medium,135,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,BLACK-EYED,early,60,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,BROWN-EYED,early,60,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,BUBEBE,early,63,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,CHIPINI,early,63,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,LUTEMBWE,early,110,115,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,MUSANDILE,early,60,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,NAMUSEBA,early,60,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-cowpeas,RED-EYE,early,60,70,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,CHALIMBANA,medium,130,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,CHAMPION,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,CHIPEGO,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,CHISHANGO,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,KACHOLOLO,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,KARIBA,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,MAKULU-RED,early,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,MGV4,medium,130,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,MGV5,early,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,MGV8,medium,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,NACHIKONDO,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,NATAL-COMMON,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,SOLONTONI,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-groundnuts,WAMUSANGA,early,85,90,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,ADV-637,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,ADV2302,early,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,ADV637,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,ADV657,medium,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,AF635,medium,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,AF638,medium,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,AMAC-614,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,DK777,early,115,120,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,DKC-80-23,early,110,120,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,DKC7500,medium,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,DKC80-33,early,110,115,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,DKC90-89,early,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,ETG-M-601,early,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,ETG-M401,early,100,110,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GANKATA,late,140,155,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GV635,early,115,120,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GV637,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GV638,early,115,120,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GV640A,medium,135,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GV672A,medium,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,GV673A,medium,120,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KAFWEMBA,late,130,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KAM-601,medium,135,145,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KAM-602,early,120,125,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KAM-617,early,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KAM-618,medium,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KKS-603,early,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KKS501,early,115,125,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KKS607,medium,110,129,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,KKS609,medium,132,145,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,LAKE-401,early,120,125,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,LAKE-501,early,120,125,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,LAKE-601,medium,135,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,LAKE-606,medium,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,MRI-624,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,MRI-634,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,MRI514,early,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,P3506W,medium,125,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,P3812W,medium,135,145,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,PAN-413,early,110,115,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,PAN-53,early,125,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,PAN3M-05,early,95,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,PAN7M-81,medium,120,145,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,PAN7M-83,medium,125,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,PHB30G19,early,110,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-303,early,90,100,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-403,early,115,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-411,early,115,120,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-419,early,120,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-513,early,127,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-555,early,127,130,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-627,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-633,medium,130,136,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-637,medium,130,136,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-647,medium,130,135,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-657,medium,130,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-719,late,145,150,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-721,late,135,140,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-727,late,150,155,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
-maize,SC-733,late,135,145,{},2025-04-01 19:59:52.730333+00,2025-04-01 19:59:52.730333+00,
+crop,variety,maturity_period,days_lower,days_upper,additional_info,additional_data
+beans,CHAMBESHI,early,85,90,,{}
+beans,CHAMBISHI,early,80,85,,{}
+beans,CHIPOLOPOLO,early,85,90,,{}
+beans,KABULANGETI,early,75,80,,{}
+beans,KALUNGU,early,85,90,,{}
+beans,KAMPEMBA,early,85,90,,{}
+beans,LUANGENI,early,95,100,,{}
+beans,LUKUPA,early,75,80,,{}
+beans,LUNGWE-BUNGWE,early,85,90,,{}
+beans,LUSAKA,early,85,90,,{}
+beans,LWANGENI,early,95,100,,{}
+beans,LYAMBAI,early,85,90,,{}
+beans,MBERESHI,early,80,85,,{}
+beans,MENSO-PANSAKA,early,85,90,,{}
+beans,POMBA,early,85,90,,{}
+beans,SOLWEZI,early,85,90,,{}
+beans,SUGAR-BEANS,early,85,115,,{}
+beans,WHITE-(KALUNGU),early,75,80,,{}
+cotton,CDT-II,late,140,160,,{}
+cotton,CHURAZA,medium,135,150,,{}
+cotton,F135,medium,135,140,,{}
+cowpeas,BLACK-EYED,early,60,70,,{}
+cowpeas,BROWN-EYED,early,60,70,,{}
+cowpeas,BUBEBE,early,63,70,,{}
+cowpeas,CHIPINI,early,63,70,,{}
+cowpeas,LUTEMBWE,early,110,115,,{}
+cowpeas,MUSANDILE,early,60,70,,{}
+cowpeas,NAMUSEBA,early,60,70,,{}
+cowpeas,RED-EYE,early,60,70,,{}
+groundnuts,CHALIMBANA,medium,130,140,,{}
+groundnuts,CHAMPION,early,90,100,,{}
+groundnuts,CHIPEGO,early,90,100,,{}
+groundnuts,CHISHANGO,early,90,100,,{}
+groundnuts,KACHOLOLO,early,90,100,,{}
+groundnuts,KARIBA,early,90,100,,{}
+groundnuts,LUPANDE,early,90,100,,{}
+groundnuts,MAKULU-RED,early,125,130,,{}
+groundnuts,MGV4,medium,130,140,,{}
+groundnuts,MGV5,early,125,130,,{}
+groundnuts,MGV8,medium,120,130,,{}
+groundnuts,NACHIKONDO,early,90,100,,{}
+groundnuts,NATAL-COMMON,early,90,100,,{}
+groundnuts,SOLONTONI,early,90,100,,{}
+groundnuts,WAMUSANGA,early,85,90,,{}
+maize,ADV-637,medium,130,135,,{}
+maize,ADV2302,early,120,130,,{}
+maize,ADV637,medium,130,135,,{}
+maize,ADV657,medium,120,130,,{}
+maize,AF635,medium,120,130,,{}
+maize,AF638,medium,120,130,,{}
+maize,AMAC-612,medium,140,140,,{}
+maize,AMAC-614,medium,130,135,,{}
+maize,AMAC-616,medium,145,145,,{}
+maize,DK777,early,115,120,,{}
+maize,DKC-80-23,early,110,120,,{}
+maize,DKC7500,medium,125,130,,{}
+maize,DKC80-33,early,110,115,,{}
+maize,DKC90-89,early,120,130,,{}
+maize,ETG-401,early,100,110,,{}
+maize,ETG-601,medium,125,130,,{}
+maize,ETG-M-601,early,125,130,,{}
+maize,ETG-M401,early,100,110,,{}
+maize,GANKANTA,late,140,155,,{}
+maize,GANKATA,late,140,155,,{}
+maize,GV635,early,115,120,,{}
+maize,GV637,medium,130,135,,{}
+maize,GV638,early,115,120,,{}
+maize,GV640A,medium,135,140,,{}
+maize,GV672A,medium,120,130,,{}
+maize,GV673A,medium,120,135,,{}
+maize,K2-603,medium,130,130,,{}
+maize,KAFWEMBA,late,130,140,,{}
+maize,KAM-601,medium,135,145,,{}
+maize,KAM-602,early,120,125,,{}
+maize,KAM-617,early,120,130,,{}
+maize,KAM-618,medium,120,130,,{}
+maize,KKS-601,medium,140,140,,{}
+maize,KKS-603,early,120,130,,{}
+maize,KKS-609,medium,132,145,,{}
+maize,KKS501,early,115,125,,{}
+maize,KKS607,medium,110,129,,{}
+maize,KKS609,medium,132,145,,{}
+maize,LAKE-401,early,120,125,,{}
+maize,LAKE-501,early,120,125,,{}
+maize,LAKE-601,medium,135,140,,{}
+maize,LAKE-606,medium,125,130,,{}
+maize,M-401,early,100,110,,{}
+maize,M-601,medium,125,130,,{}
+maize,MRI-514,early,125,130,,{}
+maize,MRI-624,medium,130,135,,{}
+maize,MRI-634,medium,130,135,,{}
+maize,MRI514,early,125,130,,{}
+maize,MRI624,medium,130,135,,{}
+maize,P-3812,medium,135,145,,{}
+maize,P-3812W,medium,135,145,,{}
+maize,P2848W,early,110,115,,{}
+maize,P3506,medium,135,135,,{}
+maize,P3506W,medium,125,135,,{}
+maize,P3812W,medium,135,145,,{}
+maize,PAN-3M-05,early,100,100,,{}
+maize,PAN-413,early,110,115,,{}
+maize,PAN-4M-11,early,110,115,,{}
+maize,PAN-4M-23,early,110,115,,{}
+maize,PAN-53,early,125,130,,{}
+maize,PAN-7M-81,medium,130,135,,{}
+maize,PAN-7M-83,medium,125,135,,{}
+maize,PAN3M-05,early,95,100,,{}
+maize,PAN7M-81,medium,120,145,,{}
+maize,PAN7M-83,medium,125,135,,{}
+maize,PHB-30G19,early,110,130,,{}
+maize,PHB-3812,medium,135,145,,{}
+maize,PHB30G19,early,110,130,,{}
+maize,PIONEER-2809-W,early,128,128,,{}
+maize,PIONEER-30G19,medium,130,130,,{}
+maize,SC-303,early,90,100,,{}
+maize,SC-403,early,115,130,,{}
+maize,SC-411,early,115,120,,{}
+maize,SC-419,early,120,130,,{}
+maize,SC-513,early,127,130,,{}
+maize,SC-555,early,127,130,,{}
+maize,SC-608,medium,135,140,,{}
+maize,SC-627,medium,130,135,,{}
+maize,SC-633,medium,130,136,,{}
+maize,SC-637,medium,130,136,,{}
+maize,SC-647,medium,130,135,,{}
+maize,SC-657,medium,130,140,,{}
+maize,SC-719,late,145,150,,{}
+maize,SC-721,late,135,140,,{}
+maize,SC-727,late,150,155,,{}
+maize,SC-733,late,135,145,,{}
+maize,SC304,early,60,80,Kalulu,{}
+maize,SC657,medium,130,140,,{}
+maize,SEEDCO-303,early,90,110,,{}
+maize,SEEDCO-403,early,125,127,,{}
+maize,SEEDCO-419,early,125,128,,{}
+maize,SEEDCO-513,medium,127,130,,{}
+maize,SEEDCO-555,medium,127,130,,{}
+maize,SEEDCO-633,medium,130,136,,{}
+maize,SEEDCO-637,medium,130,136,,{}
+maize,SEEDCO-647,medium,130,135,,{}
+maize,SEEDCO-657,medium,130,136,,{}
+maize,SEEDCO-719,late,140,145,,{}
+maize,SEEDCO-727,late,148,150,,{}
+maize,SEEDCO-733,late,145,150,,{}
+maize,SY-4052,early,110,125,,{}
+maize,SY-5054,early,125,130,,{}
+maize,SY-5944,early,125,130,,{}
+maize,SY-6250,medium,130,135,,{}
+maize,SY-6444,medium,130,135,,{}
+maize,SY4052,early,110,125,,{}
+maize,SY5054,early,125,130,,{}
+maize,SY5944,early,125,130,,{}
+maize,SY6444,medium,130,135,,{}
+maize,WH-101,early,105,120,,{}
+maize,WH-403,early,115,130,,{}
+maize,WH-504,medium,120,130,,{}
+maize,WH-507,early,120,130,,{}
+maize,WH-509,medium,120,130,,{}
+maize,WH101,early,105,120,,{}
+maize,ZARI10,early,90,95,,{}
+maize,ZM-405,early,100,105,,{}
+maize,ZM-451,early,110,120,,{}
+maize,ZM-521,early,120,130,,{}
+maize,ZM-621,medium,130,135,,{}
+maize,ZM601,medium,120,130,,{}
+maize,ZMS-301,early,75,80,,{}
+maize,ZMS-328,early,95,105,,{}
+maize,ZMS-405,early,100,105,,{}
+maize,ZMS-415,early,110,115,,{}
+maize,ZMS-419,early,110,120,,{}
+maize,ZMS-421,early,110,120,,{}
+maize,ZMS-520,early,120,125,,{}
+maize,ZMS-606,medium,125,130,,{}
+maize,ZMS-608Y,medium,130,135,,{}
+maize,ZMS-616,medium,110,125,,{}
+maize,ZMS-620,medium,130,135,,{}
+maize,ZMS-638,medium,125,130,,{}
+maize,ZMS-647,medium,120,130,,{}
+maize,ZMS-664A,medium,120,130,,{}
+maize,ZMS-720,late,140,150,,{}
+maize,ZMS-721,late,140,150,,{}
+millet,CHIBULI,medium,110,125,,{}
+millet,DORA,early,110,125,,{}
+millet,FINGER,medium,105,150,,{}
+millet,KAUFELA,early,110,125,,{}
+millet,KUOMBOKA,early,110,125,,{}
+millet,LOCAL,early,110,125,,{}
+millet,LUBASI,early,110,125,,{}
+millet,MABUTILA,early,110,125,,{}
+millet,MUBUTILA,medium,110,125,,{}
+millet,MUTUBILA,medium,110,125,,{}
+millet,NAMWENYA,medium,110,125,,{}
+millet,NSENGA,medium,110,125,,{}
+millet,NYIKA,medium,110,125,,{}
+millet,PEARL,early,75,85,,{}
+millet,SEPO,early,110,125,,{}
+millet,TUSO,early,110,125,,{}
+rice,KABUNDI,medium,125,130,,{}
+rice,KILOMBELO,early,120,125,,{}
+rice,KULA-NA-BWANA,medium,125,130,,{}
+rice,MONGU,medium,120,130,,{}
+rice,MONGU-,medium,110,120,,{}
+rice,MUZENGA,medium,120,130,,{}
+rice,NERICA-4,early,120,130,,{}
+rice,SUPER,early,110,120,,{}
+rice,TOSIKI,medium,125,130,,{}
+rice,XIANGZOG,medium,110,120,,{}
+sorghum,KAFWAMBA,late,100,110,,{}
+sorghum,KUYUMA,early,100,110,,{}
+sorghum,LOCAL,late,130,140,,{}
+sorghum,MAKOMBE,early,100,110,,{}
+sorghum,MMSH,early,110,120,,{}
+sorghum,NSIMA,early,110,120,,{}
+sorghum,SHAKU,early,110,120,,{}
+sorghum,SIMA,early,110,120,,{}
+sorghum,WSV,early,110,120,,{}
+sorghum,ZSV-15,early,120,125,,{}
+sorghum,ZSV-16,early,120,125,,{}
+sorghum,ZSV-36,early,120,125,,{}
+sorghum,ZSV-36R,medium,100,110,,{}
+sorghum,ZSV17,early,128,135,,{}
+soya-beans,DINA,late,135,140,,{}
+soya-beans,KAFUE,early,90,120,,{}
+soya-beans,KALEYA,early,120,125,,{}
+soya-beans,KARIBA,early,125,135,,{}
+soya-beans,LUKANGA,medium,130,136,,{}
+soya-beans,MAGOYE,early,125,135,,{}
+soya-beans,MWENEZI,medium,120,130,,{}
+soya-beans,SAFARI,medium,120,125,,{}
+soya-beans,SC-SPIKE,medium,125,125,,{}
+soya-beans,SPIKE,early,120,125,,{}
+sunflower,CH258,early,100,120,,{}
+sunflower,MILIKA,early,100,110,,{}
+sunflower,RECORD,early,110,120,,{}
+sunflower,SAONA,early,80,120,,{}
+sweet-potatoes,BANDAWE,early,90,120,,{}
+sweet-potatoes,CHINGOVWA,early,85,120,,{}
+sweet-potatoes,CHIWOKO,early,90,120,,{}
+sweet-potatoes,GARNET,early,85,120,,{}
+sweet-potatoes,KAPIRI,early,85,120,,{}
+sweet-potatoes,KAPOKOLA,early,85,120,,{}
+sweet-potatoes,MAKENI,early,85,120,,{}
+sweet-potatoes,MAKONONGO,early,85,120,,{}
+sweet-potatoes,MUDAWILA,early,85,120,,{}
+sweet-potatoes,MULUNGUSHI,early,85,120,,{}
+sweet-potatoes,MUNUNSHI,early,85,120,,{}
+sweet-potatoes,MWANIBYALILANJI,early,85,120,,{}
+sweet-potatoes,OFSP,early,85,120,,{}
+sweet-potatoes,OLYMPIA,early,85,120,,{}
+sweet-potatoes,ORANGE,early,85,120,,{}
+sweet-potatoes,ORANGE-CHINGOVWA,early,85,120,,{}
+sweet-potatoes,ORANGE-FLESHED,early,85,120,,{}
+sweet-potatoes,ZAMBEZI,early,85,120,,{}
+tobacco,BARLEY,medium,130,130,,{}
+tobacco,VIRGINIA,medium,130,130,,{}

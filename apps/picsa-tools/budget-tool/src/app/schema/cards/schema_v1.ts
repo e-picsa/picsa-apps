@@ -2,7 +2,8 @@ import { generateID } from '@picsa/shared/services/core/db/db.service';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
-import { IBudgetCardCustomMeta, IBudgetCardGrouping, IBudgetCardType, IBudgetCardValues } from './common';
+import type { IEnterpriseGroupType } from '../../data';
+import { IBudgetCardCustomMeta, IBudgetCardType, IBudgetCardValues } from './common';
 
 // Initial migration simply the same as legacy version
 // cards are used for budget table population as well as enterprise
@@ -12,7 +13,7 @@ export type IBudgetCard_v1 = {
   id: string;
   label: string;
   type: IBudgetCardType;
-  groupings?: IBudgetCardGrouping[];
+  groupings?: IEnterpriseGroupType[];
   customMeta?: IBudgetCardCustomMeta;
   values?: IBudgetCardValues;
   imgType: 'svg' | 'png';

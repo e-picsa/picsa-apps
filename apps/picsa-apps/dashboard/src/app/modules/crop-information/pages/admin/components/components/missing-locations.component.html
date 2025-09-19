@@ -1,0 +1,20 @@
+<div class="flex gap-4 items-center">
+  @if (missingLocations().length > 0) {
+    <mat-icon>error</mat-icon>
+    <div class="flex-1">
+      <p>{{ missingLocations().length }} locations do not have entries</p>
+      <button mat-stroked-button (click)="addPlaceholderLocations(missingLocations())">Add Placeholder Entries</button>
+    </div>
+  } @else {
+    @if (emptyLocations().length > 0) {
+      <mat-icon>info</mat-icon>
+      <details class="flex-1">
+        <summary>{{ emptyLocations().length }} locations do not have water requirements for any crops</summary>
+        {{ emptyLocationsList() }}
+      </details>
+    } @else {
+      <mat-icon>check_box</mat-icon>
+      <p class="flex-1">All Locations have entries</p>
+    }
+  }
+</div>

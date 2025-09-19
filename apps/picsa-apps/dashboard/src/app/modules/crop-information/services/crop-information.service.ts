@@ -1,5 +1,4 @@
 import { computed, Injectable, signal } from '@angular/core';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -22,10 +21,13 @@ export type ICropDataMerged = ICropData['Row'] & { downscaled: ICropDataMergedWa
 @Injectable({ providedIn: 'root' })
 export class CropInformationService extends PicsaAsyncService {
   public get cropDataTable() {
-    return this.supabaseService.db.table<'crop_data', ICropData>('crop_data');
+    return this.supabaseService.db.table('crop_data');
   }
   public get cropDataDownscaledTable() {
-    return this.supabaseService.db.table<'crop_data_downscaled', ICropDataDownscaled>('crop_data_downscaled');
+    return this.supabaseService.db.table('crop_data_downscaled');
+  }
+  public get stationDataTable() {
+    return this.supabaseService.db.table('climate_station_data');
   }
 
   public cropData = signal<ICropData['Row'][]>([]);
@@ -39,7 +41,7 @@ export class CropInformationService extends PicsaAsyncService {
   constructor(
     private supabaseService: SupabaseService,
     private dashboardService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     super();
   }

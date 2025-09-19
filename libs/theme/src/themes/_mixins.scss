@@ -8,4 +8,5 @@
   --color-black: #1a2138;
   --color-light: #d8d8d8;
   --color-white: #ffffff;
+  --color-secondary-200: #{map-get($accent, 200)};
 }

@@ -1,8 +1,3 @@
-<div #headerContent style="margin-right: 8px; display: flex; justify-content: flex-end">
-  <!-- TODO - decide if still useful to have multiple profiles now direct-to-farmer exists -->
-  <!-- <picsa-profile-select></picsa-profile-select> -->
-</div>
-
 <div class="page-content background-image">
   <div class="link-container">
     <h2 class="section-header">
@@ -11,16 +6,11 @@
     <div class="link-grid">
       <!-- PICSA Links -->
       @for (link of picsaLinks; track $index) {
-      <div
-        [attr.data-tour-id]="link.tourId"
-        [attr.data-dev-only]="link.devOnly"
-        data-cy="link"
-        class="grid-tile"
-        (click)="linkClicked(link)"
-      >
+      <div [attr.data-tour-id]="link.tourId" [attr.data-dev-only]="link.devOnly" data-cy="link" class="grid-tile"
+        (click)="linkClicked(link)">
         <div style="text-align: center">
-          <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
-          <div class="nav-text">{{ link.name | translate }}</div>
+          <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ link.label | translate }}</div>
         </div>
         @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
         <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
@@ -34,16 +24,11 @@
     </h2>
     <div class="link-grid">
       @for (link of additionalLinks; track $index) {
-      <div
-        [attr.data-tour-id]="link.tourId"
-        [attr.data-dev-only]="link.devOnly"
-        data-cy="link"
-        class="grid-tile"
-        (click)="linkClicked(link)"
-      >
+      <div [attr.data-tour-id]="link.tourId" [attr.data-dev-only]="link.devOnly" data-cy="link" class="grid-tile"
+        (click)="linkClicked(link)">
         <div style="text-align: center">
-          <mat-icon [svgIcon]="link.svgIcon" class="nav-icon"></mat-icon>
-          <div class="nav-text">{{ link.name | translate }}</div>
+          <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
+          <div class="nav-text">{{ link.label | translate }}</div>
         </div>
         @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
         <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
@@ -53,6 +38,7 @@
       <!-- Dev Links -->
 
       <!-- Tour -->
+      <!-- TODO - if uncommenting will need to refactor to use svg asset from local svgs folder -->
 
       <!-- <div class="grid-tile" (click)="startTour()" style="position: relative">
         <div style="text-align: center">

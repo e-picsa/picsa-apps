@@ -1,31 +1,18 @@
-$height: 30px;
+$height: 40px;
 
 :host {
   display: flex;
 }
-
-.status-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-light);
-  border-radius: 4px;
-}
-
-.status-label,
-button.status-refresh-button,
-.status-code {
-  height: 30px;
-  padding: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+button.refresh-button {
+  --mdc-outlined-button-container-height: #{$height};
+  --mat-outlined-button-horizontal-padding: 0;
 }
 
 .status-code {
-  height: calc($height + 2px);
-  margin-top: -2px 0;
-  width: 24px;
+  height: #{$height};
+  line-height: #{$height};
+  padding: 0 2px 0 2px;
+  min-width: 32px;
   color: white;
   background: var(--color-light);
   border-top-left-radius: 4px;
@@ -38,8 +25,8 @@ button.status-refresh-button,
   }
 }
 
-button.status-refresh-button {
-  --mdc-icon-button-state-layer-size: calc($height + 16px) !important;
+.label {
+  @apply flex-1 w-20 px-2 overflow-hidden text-ellipsis text-center;
 }
 
 // mat-progress-spinner.mat-white {

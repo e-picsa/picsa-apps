@@ -18,7 +18,11 @@
         "tsConfig": "apps/picsa-tools/budget-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/picsa-tools/budget-tool/src/favicon.ico",
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
           "apps/picsa-tools/budget-tool/src/assets",
           {
             "glob": "**/*",

@@ -268,9 +268,6 @@ export const STATION_CROP_DATA = [
         '30-Dec': ' 6/10',
       },
     ],
-    notes: [
-      'Calculated by using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0 and climate data for Kasungu Station. Longitude: 33.46, Latitude:-13.0, Altitude: 1015',
-    ],
     dates: ['15-Nov', '30-Nov', '15-Dec', '30-Dec'],
     season_probabilities: ['1/10', '3/10', '8/10', '9/10'],
   },

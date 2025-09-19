@@ -37,7 +37,10 @@ export class ResourceItemLinkComponent {
   // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() click: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
   /** Specific icons to use as action buttons below link. Used when main image not fully indicative of link type */
   public actionButtons: { [type in IResourceLink['subtype']]: { matIcon?: string; svgIcon?: string } | null } = {
@@ -72,7 +75,7 @@ export class ResourceItemLinkComponent {
     if (url.startsWith('/resources/collection/')) {
       return this.goToCollection(url.replace('/resources/collection/', ''));
     }
-    // TODO - if running standalone resources will not be available, consider UI or rewrite to picsa extension app
+    // TODO - if running standalone resources will not be available, consider UI or rewrite to picsa app
     return this.router.navigateByUrl(url);
   }
 

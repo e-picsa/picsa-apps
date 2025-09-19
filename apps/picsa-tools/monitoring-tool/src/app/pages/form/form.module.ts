@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { WebcomponentsNgxModule } from '@picsa/webcomponents-ngx';
 
 import { MonitoringToolComponentsModule } from '../../components/monitoring-tool-components.module';
 import { FormViewComponent } from './form-view/form-view.component';
@@ -19,7 +20,13 @@ const routes: Route[] = [
 ];
 
 @NgModule({
-  imports: [CommonModule, MonitoringToolComponentsModule, PicsaTranslateModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    MonitoringToolComponentsModule,
+    PicsaTranslateModule,
+    RouterModule.forChild(routes),
+    WebcomponentsNgxModule,
+  ],
   declarations: [FormViewComponent, SubmissionListComponent],
 })
 export class FormModule {}

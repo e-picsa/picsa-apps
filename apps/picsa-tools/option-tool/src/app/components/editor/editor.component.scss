@@ -72,10 +72,6 @@ $container-border-radius: 16px;
     }
   }
 }
-// mat-container
-.mat-horizontal-content-container {
-  @apply p-0 sm:py-6;
-}
 
 h3.StepTitle {
   width: -webkit-fill-available;

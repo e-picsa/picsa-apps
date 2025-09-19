@@ -32,8 +32,7 @@
 
 // Input values
 .input-values {
-  margin: 10px;
-  text-align: left;
+  @apply flex flex-wrap gap-2 sm:gap-4 mx-0 my-4 text-left;
 }
 
 .card-input-field {
@@ -45,10 +44,10 @@
 }
 
 .card-input-field.quantity {
-  width: 100px;
+  width: 88px;
 }
 .card-input-field.cost {
-  width: 175px;
+  width: 152px;
 }
 .card-input.total {
   width: 200px;

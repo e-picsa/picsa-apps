@@ -6,6 +6,7 @@ import type { IntroStep } from 'intro.js/src/core/steps';
 import type { IntroJs } from 'intro.js/src/intro';
 import type { Options } from 'intro.js/src/option';
 import { filter, map, merge, skip, Subscription, take } from 'rxjs';
+
 import type { ITourStep } from './tour.types';
 
 const DEFAULT_OPTIONS: Partial<Options> = {
@@ -244,7 +245,7 @@ export class TourService {
           root: null,
           rootMargin: '0px',
           threshold: 1.0,
-        }
+        },
       );
       observer.observe(el);
       el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
@@ -284,7 +285,7 @@ export class TourService {
           const wasHandled = routeEvents.handler(v, this);
           return wasHandled;
         }),
-        take(1)
+        take(1),
       );
       this.routeEvents$ = routeChanges.subscribe();
     }

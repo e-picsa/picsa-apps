@@ -82,7 +82,7 @@ export class PicsaDatabaseSyncService {
     return Promise.all(
       Object.values(this.registeredCollections).map(async (collection) => {
         await this.syncPendingDocs(collection);
-      })
+      }),
     );
   }
 
@@ -127,7 +127,7 @@ export class PicsaDatabaseSyncService {
     const pendingDeleteDocs = await this.syncDeleteCollection.find().exec();
     const ops = pendingDeleteDocs.map(async (doc) => {
       const { collectionName, documentId } = doc._data;
-      const table = this.supabaseService.db.table(collectionName);
+      const table = this.supabaseService.db.table(collectionName as any);
       const { error } = await table.delete().eq('_id', documentId);
       if (!error) {
         await doc.remove();
@@ -146,7 +146,7 @@ export class PicsaDatabaseSyncService {
       const { _meta, _rev, _sync_push_status, _sync_push_timestamp, ...keptFields } = d._data as ISyncPushEntry;
       return keptFields;
     });
-    const table = this.supabaseService.db.table(collection.name);
+    const table = this.supabaseService.db.table(collection.name as any);
     const res = await table.upsert(records);
     if (res.status === 201 || res.status === 200) {
       // update local collection status where applicatble

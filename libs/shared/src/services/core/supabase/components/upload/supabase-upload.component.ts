@@ -1,6 +1,3 @@
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
-
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +11,6 @@ import Uppy, { InternalMetadata, UploadResult, UppyFile, UppyOptions } from '@up
 import { DashboardOptions } from '@uppy/dashboard';
 import Tus from '@uppy/tus';
 
-import { PicsaNotificationService } from '../../../notification.service';
 import { SupabaseStorageService } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
 
@@ -106,7 +102,7 @@ export class SupabaseUploadComponent {
 
   private storageService: SupabaseStorageService;
 
-  constructor(private supabaseService: SupabaseService, private notificationService: PicsaNotificationService) {}
+  constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
     await this.supabaseService.ready();
@@ -149,13 +145,13 @@ export class SupabaseUploadComponent {
 
         const result: IUploadResult = { data, meta };
         return result;
-      })
+      }),
     );
     this.uploadComplete.next(uploads);
   }
 
   private async registerSupabaseUppyUploader() {
-    const { anonKey, apiUrl } = await ENVIRONMENT.supabase.load();
+    const { anonKey, apiUrl } = this.supabaseService.config;
     this.uppy.use(Tus, {
       endpoint: `${apiUrl}/storage/v1/upload/resumable`,
       headers: {

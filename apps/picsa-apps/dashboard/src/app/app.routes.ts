@@ -36,6 +36,14 @@ export const appRoutes: Route[] = [
     loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule),
   },
   {
+    path: 'admin',
+    loadChildren: () => import('./modules/admin/admin.module').then((m) => m.AdminModule),
+  },
+  {
+    path: 'stats',
+    loadChildren: () => import('./modules/stats/stats.module').then((m) => m.StatsModule),
+  },
+  {
     path: '**',
     redirectTo: 'home',
     pathMatch: 'full',

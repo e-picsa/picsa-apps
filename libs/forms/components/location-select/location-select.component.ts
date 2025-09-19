@@ -26,6 +26,9 @@ export class FormLocationSelectComponent {
 
   public value = input<(string | undefined)[]>([]);
 
+  /** Optional method to apply to data before rendering locations in list */
+  public locationModifier = input<(data: IGelocationData, countryCode: string) => IGelocationData>((data) => data);
+
   public valueChanged = output<(string | undefined)[]>();
 
   /** Location selected as stored to user profile (admin_4 district/province level) */
@@ -33,12 +36,12 @@ export class FormLocationSelectComponent {
   public admin5Options = signal<{ id: string; label: string }[]>([]);
   public admin5Selected = signal<string | undefined>(undefined);
 
-  private computedValue = computed<(string | undefined)[]>(
+  public computedValue = computed<(string | undefined)[]>(
     () => this.getComputedValue(this.admin4Selected(), this.admin5Selected()),
-    { equal: isEqual }
+    { equal: isEqual },
   );
 
-  private isValid = computed(() => {
+  public isValid = computed(() => {
     const computedValue = this.computedValue();
     const locationData = this.locationData();
     if (locationData.admin_5) return computedValue[5] ? true : false;
@@ -81,9 +84,9 @@ export class FormLocationSelectComponent {
   }
 
   private getLocationData(country_code: string): IGelocationData {
-    const locationData = GEO_LOCATION_DATA[country_code];
+    const locationData: IGelocationData = GEO_LOCATION_DATA[country_code];
     if (locationData) {
-      return locationData;
+      return this.locationModifier()(locationData, country_code);
     } else {
       console.error('[Location Select] no data for country', country_code);
       return { admin_4: { label: '', locations: [], topoJson: () => null as any } };
@@ -100,6 +103,10 @@ export class FormLocationSelectComponent {
       const admin5Selected = this.admin5Selected();
       if (admin5Selected && !filteredLocations.find((v) => v.id === admin5Selected)) {
         this.admin5Selected.set(undefined);
+      }
+      // Set value when only 1 option available
+      if (!admin5Selected && filteredLocations.length === 1) {
+        this.admin5Selected.set(filteredLocations[0].id);
       }
     }
   }

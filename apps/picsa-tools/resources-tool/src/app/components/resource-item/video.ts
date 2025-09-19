@@ -7,8 +7,8 @@ import { IResourceFile } from '../../schemas';
 @Component({
   selector: 'resource-item-video',
   template: `
-    @if(resource.title){
-    <h2>{{ resource.title | translate }}</h2>
+    @if (resource.title) {
+      <h2>{{ resource.title | translate }}</h2>
     }
     <picsa-video-player
       [source]="fileURI"
@@ -18,8 +18,8 @@ import { IResourceFile } from '../../schemas';
       [id]="resource.id"
     >
     </picsa-video-player>
-    @if(resource.description){
-    <p>{{ resource.description | translate }}</p>
+    @if (resource.description) {
+      <p>{{ resource.description | translate }}</p>
     }
   `,
   imports: [PicsaVideoPlayerModule, PicsaTranslateModule],
@@ -27,7 +27,7 @@ import { IResourceFile } from '../../schemas';
 export class ResourceItemVideoComponent {
   public videoSource: string;
 
-  @Input() fileURI: string;
+  @Input() fileURI: string | null;
 
   @Input() resource: IResourceFile;
 }

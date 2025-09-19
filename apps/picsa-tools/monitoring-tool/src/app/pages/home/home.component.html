@@ -3,30 +3,24 @@
     <div class="content-container">
       <div style="display: flex; align-items: center">
         <h2 style="flex: 1">{{ 'Forms' | translate }}</h2>
-        <button
-          mat-stroked-button
-          color="primary"
-          style="margin-left: auto"
-          *ngIf="service.pendingSyncCount >= 1"
-          (click)="syncPending()"
-        >
-          <mat-icon>cloud_upload</mat-icon>
-          <span> {{ 'Submit' | translate }} {{ service.pendingSyncCount }} {{ 'Records' | translate }} </span>
-        </button>
-        <button
-          mat-stroked-button
-          color="primary"
-          style="margin-left: auto"
-          *ngIf="service.pendingSyncCount <= 0"
-          (click)="syncPending()"
-        >
-          <mat-icon>task_alt</mat-icon>
-          {{ 'All Submitted' | translate }}
-        </button>
+        @if (service.pendingSyncCount >= 1) {
+          <button mat-stroked-button color="primary" style="margin-left: auto" (click)="syncPending()">
+            <mat-icon>cloud_upload</mat-icon>
+            <span> {{ 'Submit' | translate }} {{ service.pendingSyncCount }} {{ 'Records' | translate }} </span>
+          </button>
+        }
+        @if (service.pendingSyncCount <= 0) {
+          <button mat-stroked-button color="primary" style="margin-left: auto" (click)="syncPending()">
+            <mat-icon>task_alt</mat-icon>
+            {{ 'All Submitted' | translate }}
+          </button>
+        }
       </div>
 
       <div class="list-container">
-        <monitoring-form-item *ngFor="let form of forms" [form]="form"></monitoring-form-item>
+        @for (form of forms(); track form._id) {
+          <monitoring-form-item [form]="form"></monitoring-form-item>
+        }
       </div>
     </div>
   </div>

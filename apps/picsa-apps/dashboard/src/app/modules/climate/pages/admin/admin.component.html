@@ -2,30 +2,93 @@
   <h2>Admin</h2>
   <div style="display: flex; align-items: center; gap: 2em">
     <p style="flex: 1">See the table below for rainfall summary data for all stations</p>
+    <!-- Data Download -->
+    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
+      <mat-icon>download</mat-icon>Download All
+    </button>
     <!-- Data Refresh -->
     <button mat-stroked-button color="primary" (click)="refreshAllStations()" [disabled]="refreshCount() > -1">
       <mat-icon>refresh</mat-icon>
       <span>
-        @if(refreshCount() > -1){
-        {{ refreshCount() }} / {{ tableData().length }} } @else { Refresh All}
+        @if (refreshCount() > -1) {
+          {{ refreshCount() }} / {{ tableData().length }}
+        } @else {
+          Refresh All
+        }
       </span>
-    </button>
-    <!-- Data Download -->
-    <button mat-stroked-button color="primary" (click)="downloadAllStationsCSV()">
-      <mat-icon>download</mat-icon>Download All
     </button>
   </div>
   <picsa-data-table
     style="margin-top: 1em"
     [data]="tableData()"
     [options]="tableOptions"
-    [valueTemplates]="{ csv: csvTemplate, updated_at: updatedAtTemplate }"
+    [valueTemplates]="{
+      updated_at: updatedAtTemplate,
+      products: productsTemplate,
+      rainfall_issues: rainfallIssuesTemplate,
+      rainfall_export_data: downloadTemplate,
+    }"
   >
-    <ng-template #csvTemplate let-row="row" let-value="value">
-      <button mat-button (click)="downloadStationCSV(row)" [disabled]="!value"><mat-icon>download</mat-icon></button>
-    </ng-template>
     <ng-template #updatedAtTemplate let-value>
       {{ value | date: 'mediumDate' }}
+    </ng-template>
+
+    <!-- Products summary -->
+    <ng-template #productsTemplate let-products let-row="row">
+      <div class="flex gap-2 items-center">
+        <!-- Pending product download status -->
+        @if (row.updateSignal().started) {
+          @for (statusUpdate of row.updateSignal().statuses; track $index) {
+            @let status = statusUpdate.status;
+            <button
+              mat-icon-button
+              [matTooltip]="statusUpdate.id"
+              class="status-icon"
+              [attr.data-status]="status"
+              (click)="handleSummaryClick($event, row, statusUpdate)"
+            >
+              @switch (status) {
+                @case ('pending') {
+                  <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                }
+                @case ('fulfilled') {
+                  <mat-icon color="primary">check_circle</mat-icon>
+                }
+                @case ('rejected') {
+                  <mat-icon color="warn">error</mat-icon>
+                }
+              }
+            </button>
+          }
+        } @else {
+          <!-- Product download summary -->
+          @for (product of products; track $index) {
+            <button mat-icon-button [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
+              @if (product.available) {
+                <mat-icon color="primary">check</mat-icon>
+              } @else {
+                <mat-icon color="warn">close</mat-icon>
+              }
+            </button>
+          }
+        }
+      </div>
+    </ng-template>
+    <!-- Rainfall issues  -->
+    <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
+      @if (issues) {
+        <div [matTooltip]="row.rainfall_issues_details.join(',\n')">
+          <mat-icon>announcement</mat-icon>
+        </div>
+      }
+    </ng-template>
+    <!-- CSV download column  -->
+    <ng-template #downloadTemplate let-row="row">
+      <div class="flex gap-2 items-center">
+        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
+          <mat-icon>download</mat-icon>
+        </button>
+      </div>
     </ng-template>
   </picsa-data-table>
 </div>

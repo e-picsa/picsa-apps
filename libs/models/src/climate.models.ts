@@ -36,20 +36,30 @@ export interface IStationData {
   Length: number;
   Rainfall: number;
   Extreme_events: number;
+  max_tmax?: number;
+  max_tmin?: number;
+  min_tmax?: number;
+  min_tmin?: number;
+  mean_tmax?: number;
+  mean_tmin?: number;
 }
 
 export type IChartConfig = Partial<c3.ChartConfiguration>;
 
-export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days';
+export type IChartId = 'start' | 'end' | 'length' | 'rainfall' | 'extreme_rainfall_days' | 'temp_min' | 'temp_max';
 export type IChartDefinitions = { [id in IChartId]: IChartMeta };
 
 export interface IChartMeta {
   _id: IChartId;
+  /** Disable a chart from display */
+  disabled?: boolean;
   name: string;
   shortname: string;
   image: string;
   /** Column names for data series */
   keys: (keyof IStationData)[];
+  /** Optional override of text to show legend instead of data name */
+  data_labels?: Record<string, string>;
   /** Colors for data series */
   colors: string[];
   yFormat: 'value' | 'date' | 'date-from-July';
@@ -59,6 +69,14 @@ export interface IChartMeta {
   tools: { line: ILineToolOptions; probability: IProbabilityToolOptions };
   units: string;
   definition: string;
+  legend?: {
+    /** Specify whether to show chart legend */
+    show?: boolean;
+  };
+  tooltip?: {
+    /** Specify whether to group data series when displaying tooltip */
+    grouped?: boolean;
+  };
   axes: {
     /** Min/max values (default calculate from data) */
     yMin: number;

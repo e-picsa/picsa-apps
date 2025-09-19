@@ -8,9 +8,9 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - fix/app-supabase-config
 jobs:
   web_release:
     runs-on: ubuntu-latest
@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -27,7 +28,30 @@ jobs:
       - name: Install node modules
         run: yarn install --immutable
 
-      - run: yarn nx run picsa-apps-extension-app:build
+      - name: Populate supabase config
+        env:
+          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          jq -n \
+            --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
+            --arg anonKey "$SUPABASE_ANON_KEY" \
+            '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+            > libs/environments/src/supabase/supabase.config.json
+
+      - run: yarn nx run picsa-apps-app:build
+
+      - name: Verify supabase config in built output
+        run: |
+          CONFIG_FILE=dist/apps/picsa-apps/app/assets/supabase.config.json
+          if [ ! -f "$CONFIG_FILE" ]; then
+            echo "❌ Missing $CONFIG_FILE in build output!"
+            ls dist/apps/picsa-apps/app/assets
+            exit 1
+          fi
+          echo "✅ Found supabase config in build output"
+          cat "$CONFIG_FILE"
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

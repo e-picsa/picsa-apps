@@ -5,20 +5,24 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { CROP_ACTIVITY_DATA } from './crop_activity';
 import { WEATHER_DATA } from './weather';
 import { CROPS_DATA } from './crops';
-import { IPicsaDataWithIcons } from './models';
+import { TOOLS_DATA } from './tools';
 
 /** List of datasets that include icons for registration */
-export const ICON_PACK_DATA: Record<string, IPicsaDataWithIcons[]> = {
+export const ICON_PACK_DATA = {
   crop_activity: CROP_ACTIVITY_DATA,
   crops: CROPS_DATA,
+  tools: TOOLS_DATA,
   weather: WEATHER_DATA,
-};
+} as const;
 export type IconPackName = keyof typeof ICON_PACK_DATA;
 
 @Injectable({ providedIn: 'root' })
 export class DataIconRegistry {
   private registeredIcons: Record<string, boolean> = {};
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {}
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+  ) {}
 
   public registerMatIcons(iconPack: IconPackName) {
     // Avoid re-registering by checking if first matIcon has already been registered
@@ -29,7 +33,7 @@ export class DataIconRegistry {
       this.matIconRegistry.addSvgIconInNamespace(
         `picsa_${iconPack}`,
         svgIcon,
-        this.domSanitizer.bypassSecurityTrustResourceUrl(assetIconPath)
+        this.domSanitizer.bypassSecurityTrustResourceUrl(assetIconPath),
       );
     }
     this.registeredIcons[iconPack] = true;
@@ -47,7 +51,7 @@ export class DataIconRegistry {
       error: (err) => {
         const exampleImport = `\n\n{"glob": "*.svg", "input": "libs/data/${iconPack}/svgs","output": "assets/svgs/${iconPack}"}\n\n`;
         throw new Error(
-          `Failed to retrieve icon ${namespace}:${svgIcon}\nensure imported into app project.json ${exampleImport}`
+          `Failed to retrieve icon ${namespace}:${svgIcon}\nensure imported into app project.json ${exampleImport}`,
         );
       },
     });

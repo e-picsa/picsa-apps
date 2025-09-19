@@ -1,5 +1,6 @@
-<button mat-button routerLink="../../"><mat-icon>map</mat-icon>View Map</button>
-<mat-divider></mat-divider>
+<button mat-button color="primary" (click)="showShareDialog()">
+    <mat-icon>share</mat-icon>{{ 'Share' | translate }}
+</button>
 <h3>{{ 'Chart' | translate }}</h3>
 <climate-view-select></climate-view-select>
 <mat-divider></mat-divider>

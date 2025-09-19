@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.chart-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1rem;
+}
+.chart-card {
+  display: flex;
+  flex-direction: column;
+}
+.chart-card-image {
+  height: 50px;
+  width: 50px;
+  margin: auto;
+  object-fit: cover;
+}
+.chart-card-label {
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+button.chart-button {
+  --mdc-text-button-container-height: auto;
+  border: 1px solid var(--color-light);
+  width: 100px;
+  padding: 8px;
+}

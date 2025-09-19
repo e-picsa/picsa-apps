@@ -1,9 +1,19 @@
-<div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
-  <crop-probability-station-select
-    [selectedStationId]="activeStation?.id"
-    style="padding: 1em; margin-top: 1em"
-    data-tour-id="station-select"
-  ></crop-probability-station-select>
-  <picsa-tour-button [tourId]="activeStation ? 'cropProbabilityTable' : 'cropProbabilitySelect'"></picsa-tour-button>
+<div class="page-content">
+  <!-- Station Select -->
+  <div style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
+    <picsa-form-location-select
+      [countryCode]="countryCode()"
+      (valueChanged)="handleLocationChange($event)"
+      [locationModifier]="locationModifier"
+    ></picsa-form-location-select>
+    <!-- <picsa-tour-button [tourId]="stationId() ? 'cropProbabilityTable' : 'cropProbabilitySelect'"></picsa-tour-button> -->
+  </div>
+  <!-- Table -->
+  @if (tableStationMeta(); as tableMeta) {
+    @if (tableStationData(); as stationData) {
+      <crop-probability-table [stationData]="stationData" [tableMeta]="tableMeta" filterCrop="maize"></crop-probability-table>
+    } @else {
+      Loading...
+    }
+  }
 </div>
-<crop-probability-table [activeStation]="activeStation" *ngIf="activeStation"></crop-probability-table>

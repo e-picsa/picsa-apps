@@ -1,9 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ENVIRONMENT } from '@picsa/environments/src';
 import type { ITranslationEntry } from '@picsa/i18n/src/types';
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -125,11 +123,8 @@ export class TranslationsJSONImportComponent {
     }
     await this.service.ready();
     const serverHashmap = arrayToHashmap(this.service.translations(), 'id');
-    let summary = this.generateSourceSummary(localHashmap, serverHashmap);
-    // When running locally allow one-time migration of existing translations from i18n folder
-    if (!ENVIRONMENT.production) {
-      summary = await this.hackLookupLegacyTranslations(summary);
-    }
+    const summary = this.generateSourceSummary(localHashmap, serverHashmap);
+
     this.importSummary.set(summary);
     this.importTotal.set(summary.add.length + summary.archive.length + summary.restore.length);
   }
@@ -164,42 +159,4 @@ export class TranslationsJSONImportComponent {
     }
     return summary;
   }
-
-  /**
-   * Previously translations were stored in individual json files as exported from google drive
-   * Read the file contents of this drive to allow a one-time migration to include translated
-   * strings with newly populated database entries
-   */
-  private async hackLookupLegacyTranslations(summary: ImportActionSummary) {
-    const hardcodedTranslations = {
-      zm_ny: async () => (await import('../../../../../../../../../../../libs/i18n/source/zm_ny.json')).default,
-      mw_ny: async () => (await import('../../../../../../../../../../../libs/i18n/source/mw_ny.json')).default,
-      ke_sw: async () => (await import('../../../../../../../../../../../libs/i18n/source/ke_sw.json')).default,
-      tj_tg: async () => (await import('../../../../../../../../../../../libs/i18n/source/tj_tg.json')).default,
-    };
-    for (const [language_code, importer] of Object.entries(hardcodedTranslations)) {
-      // Import source json file contents
-      const imported = await importer();
-      // Extract list of existing translations, using non-case-sensitive lookup keys
-      const translationsHashmap: Record<string, string> = {};
-      for (const [key, value] of Object.entries(imported)) {
-        translationsHashmap[textToLookupKey(key)] = value;
-      }
-      // Populate existing translations where they exist
-      summary.add = summary.add.map((entry) => {
-        const translatedValue = translationsHashmap[textToLookupKey(entry.text)];
-        if (translatedValue) {
-          entry[language_code] = translatedValue;
-        }
-        return entry;
-      });
-    }
-    return summary;
-  }
-}
-
-// When dealing with legacy translations lookup values ignoring case and non alphanumeric characters
-// to allow for common discrepencies in translations
-function textToLookupKey(text: string) {
-  return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 }

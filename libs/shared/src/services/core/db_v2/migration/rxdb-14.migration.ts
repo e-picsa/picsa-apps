@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { Injector } from '@angular/core';
 import { COLLECTION as BUDGET_CARDS_COLLECTION } from '@picsa/budget/src/app/schema/cards';
 import { COLLECTION as MONITORING_FORMS_COLLECTION } from '@picsa/monitoring/src/app/schema/forms';
@@ -45,7 +44,7 @@ const DB_COLLECTION_NAMES = [
   'video_player',
 ] as const;
 
-const rxdb14CollectionMeta: Record<typeof DB_COLLECTION_NAMES[number], IMigrateMeta> = {
+const rxdb14CollectionMeta: Record<(typeof DB_COLLECTION_NAMES)[number], IMigrateMeta> = {
   // migrate
   attachments: { creator: ATTACHMENTS_COLLECTION, strategy: 'migrate' },
   budget_cards: { creator: BUDGET_CARDS_COLLECTION, strategy: 'migrate' },

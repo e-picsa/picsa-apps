@@ -1,55 +1,26 @@
-:host {
-  --footer-height: 48px;
-  // Adjust farmer tabs to compensate for header and increased footer size
-  @screen sm {
-    --footer-height: 64px;
+.header-title {
+  @apply text-[var(--color-primary)]  text-2xl text-center mr-2 -ml-2;
+}
+
+.step-title {
+  @apply m-0 p-2 text-white bg-[var(--color-secondary)];
+}
+
+.tool-step-container {
+  @apply flex-1 flex flex-col justify-center items-center cursor-pointer;
+
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
   }
 }
-.content-container {
-  flex: 1;
+.tool-container {
+  @apply fixed left-0 w-screen h-screen z-10 overflow-hidden;
 }
-.top-banner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid var(--color-secondary);
+.tool-header {
+  @apply flex items-center gap-1 sm:gap-2 md:gap-4 h-12;
 }
-.content-icon {
-  width: 128px;
-  height: 128px;
-  background: rgba(255, 255, 255, 0.65);
-  padding: 8px;
-}
-.title {
-  flex: 1;
-  text-align: center;
-  color: var(--color-secondary);
-  font-weight: bold;
-  text-transform: capitalize;
-  padding: 16px;
-}
-
-.tab-icon {
-  margin-right: 4px;
-}
-
-.tab-content {
-  --tab-height: calc(100vh - var(--footer-height) - 2 * var(--page-padding)); // page-padding inherited
-
-  padding: 0;
-  height: 100%;
-  // background: yellow;
-  display: flex;
-  flex-direction: column;
-  @apply md:max-w-screen-md m-auto;
-  padding: var(--page-padding);
-  max-height: var(--tab-height);
-  overflow: auto;
-}
-.tab-content[data-tool-content='true'] {
-  --page-padding: 0px;
-}
-// HACK - reduce page size when using header
-.page[data-has-header='true'] {
-  max-height: calc(var(--tab-height) - 3.5rem);
+mat-icon.tool-icon {
+  @apply h-16 w-16;
 }

@@ -1,11 +1,17 @@
 <div style="display: flex; flex-direction: column; flex: 1">
-  <h3 style="margin-top: 0">{{ 'Tools' | translate }}</h3>
+
+  <h3 style="margin-top: 0">{{ 'Options' | translate }}</h3>
+  <button mat-button aria-label="Share" (click)="showShareDialog()">
+    <mat-icon>share</mat-icon>{{'Share' | translate }}
+  </button>
+  <button mat-button (click)="goToBudgetHome()">
+    <mat-icon>list_alt</mat-icon>{{'Show All Budgets' | translate }}
+  </button>
+  <h3 style="margin-top: 2rem">{{ 'Tools' | translate }}</h3>
   <button mat-button *ngIf="store.activeBudget && store.activeBudget.meta" (click)="toggleEditorMode()">
     <mat-icon>calendar_view_week</mat-icon>{{ 'Edit Budget' | translate }}
   </button>
   <mat-divider></mat-divider>
   <h3>{{ 'Legend' | translate }}</h3>
   <budget-balance-legend [valueCounters]="store.valueCounters"></budget-balance-legend>
-  <mat-divider></mat-divider>
-  <picsa-configuration-summary style="margin-top: auto; margin-bottom: 8px"></picsa-configuration-summary>
 </div>

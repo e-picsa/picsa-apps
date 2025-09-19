@@ -19,8 +19,13 @@
       "changeDetection": "OnPush"
     }
   },
-  "defaultProject": "picsa-apps-extension-app",
+  "defaultProject": "picsa-apps-app",
   "targetDefaults": {
+    "serve": {
+      "options": {
+        "proxyConfig": "{workspaceRoot}/proxy.conf.js"
+      }
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
@@ -58,6 +63,7 @@
     "sharedGlobals": [],
     "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"]
   },
+  // NOTE - disable nx cloud if limits exceeded by commenting out line below
   "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",
   "useInferencePlugins": false,
   "defaultBase": "main"

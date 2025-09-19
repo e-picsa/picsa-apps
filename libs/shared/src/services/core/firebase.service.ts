@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import { ENVIRONMENT } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 
 @Injectable({ providedIn: 'root' })

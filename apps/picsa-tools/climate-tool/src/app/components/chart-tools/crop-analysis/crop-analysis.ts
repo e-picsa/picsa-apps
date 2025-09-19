@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ICropRequirement } from '@picsa/models';
 
 @Component({
@@ -13,7 +12,6 @@ export class CropAnalysisComponent implements OnInit {
   totalSelected = 0;
   cropGroups: any[];
   @Output() cropsSelected = new EventEmitter<ICropRequirement[]>();
-  constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     // Removed CC 2024-06 hardcoded cropdata list

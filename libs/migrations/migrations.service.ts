@@ -1,7 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { MIGRATIONS } from './migrations';
 import { IMigrationStatus } from './types';
-import { APP_VERSION, ENVIRONMENT } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/src/version';
 
 interface IMigrationMeta {
   first_install_version: number;
@@ -75,7 +76,7 @@ export class PicsaMigrationService {
       // HACK - As first install only tracked from v3.52, fallback to v3.0.0 if the user is not
       // a first-time user but does not have accurate first install version
       const previousUser = localStorage.getItem('picsa_user_settings');
-      firstInstallVersion = previousUser ? '3.0.0' : APP_VERSION.semver;
+      firstInstallVersion = previousUser ? '3.0.0' : APP_VERSION;
       localStorage.setItem('picsa_app_first_install_version', firstInstallVersion);
       return firstInstallVersion;
     }

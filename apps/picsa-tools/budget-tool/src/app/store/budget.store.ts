@@ -1,8 +1,10 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { effect, Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { ConfigurationService } from '@picsa/configuration';
 import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
-import { APP_VERSION } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/src/version';
 import { IAppMeta } from '@picsa/models';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
@@ -15,16 +17,15 @@ import { BehaviorSubject } from 'rxjs';
 
 import {
   IBudget,
-  IBudgetBalance,
   IBudgetCodeDoc,
   IBudgetMeta,
-  IBudgetPeriodData,
   IBudgetPeriodType,
   IBudgetValueCounters,
   IBudgetValueScale,
 } from '../models/budget-tool.models';
 import { IBudgetCard, IBudgetCardWithValues } from '../schema';
 import { checkForBudgetUpgrades } from '../utils/budget.upgrade';
+import { BudgetService } from './budget.service';
 import { NEW_BUDGET_TEMPLATE, PERIOD_DATA_TEMPLATE } from './templates';
 
 type IBudgetCounter = 'large' | 'large-half' | 'medium' | 'medium-half' | 'small' | 'small-half';
@@ -38,39 +39,23 @@ export class BudgetStore {
   public settings: IDeploymentSettings['budgetTool'];
   public counterSVGIcons: IBudgetCounterSVGIcons;
 
-  /** Budget column editor mode */
-  public editorEnabled = false;
-
   @observable storeReady = false;
   @observable budgetCards: IBudgetCard[] = [];
   @observable activeBudget: IBudget = undefined as any;
-  @observable activePeriod = 0;
-  @observable activeType: IBudgetPeriodType = 'activities';
-  @observable savedBudgets: IBudget[] = [];
   @observable valueCounters: IBudgetValueCounters = [[], []];
-  @observable balance: IBudgetBalance = [];
 
   @observable periodLabels: string[] = [];
 
   @action setActiveBudget(budget: IBudget) {
     this.activeBudget = budget;
     this.periodLabels = this.generatePeriodLabels(budget.meta);
-    this.balance = this._calculateBalance(budget);
-  }
-  @action setActivePeriod(index: number) {
-    this.activePeriod = index;
-  }
-  @action setActiveType(activeType: IBudgetPeriodType) {
-    this.activeType = activeType;
+    this.service.budgetData.set(budget.data);
   }
 
   /** Reset default budget values */
   @action unloadActiveBudget() {
     this.activeBudget = undefined as any;
-    this.balance = [];
     this.valueCounters = [[], []];
-    this.activePeriod = 0;
-    this.activeType = 'activities';
   }
   get activeBudgetValue() {
     return toJS(this.activeBudget);
@@ -82,11 +67,13 @@ export class BudgetStore {
   }
 
   constructor(
+    private service: BudgetService,
     private db: PicsaDbService,
-    private configurationService: ConfigurationService,
     private printPrvdr: PrintProvider,
     private sanitizer: DomSanitizer,
-    private dialogService: PicsaDialogService
+    private dialogService: PicsaDialogService,
+    private componentService: PicsaCommonComponentsService,
+    configurationService: ConfigurationService,
   ) {
     this.counterSVGIcons = this.createBudgetCounterSVGs();
     effect(() => {
@@ -108,7 +95,7 @@ export class BudgetStore {
   }
   // populate correct budget data based on editor data and current active cell
   saveEditor(data: IBudgetCardWithValues[], type: IBudgetPeriodType) {
-    const period = this.activePeriod;
+    const period = this.service.activePeriod();
     // ensure clean write by cloning existing budget before updating deeply nested property
     const budgetData = JSON.parse(JSON.stringify(this.activeBudget.data));
     budgetData[period][type] = data;
@@ -166,9 +153,7 @@ export class BudgetStore {
    *            Editor Mode
    *
    ***************************************************************************/
-  public editorEnabledToggle() {
-    this.editorEnabled = !this.editorEnabled;
-  }
+
   public async editorAddTimePeriod() {
     const { data, meta } = this.activeBudget;
     this.activeBudget.meta.lengthTotal = meta.lengthTotal + 1;
@@ -208,12 +193,11 @@ export class BudgetStore {
   }
   async saveBudget() {
     await this.db.setDoc('budgetTool/${GROUP}/budgets', this.activeBudgetValue, true);
-    await this.loadSavedBudgets();
   }
   async loadBudgetByKey(key: string) {
     if (!this.activeBudget || this.activeBudget._key !== key) {
-      await this.loadSavedBudgets();
-      const budget = this.savedBudgets.find((b) => b._key === key);
+      const budgets = await this.loadSavedBudgets();
+      const budget = budgets.find((b) => b._key === key);
       if (budget) {
         this.loadBudget(toJS(budget));
       } else {
@@ -231,15 +215,15 @@ export class BudgetStore {
     }
   }
   async loadBudget(budget: IBudget) {
-    console.log('loading budget', budget);
     budget = checkForBudgetUpgrades(budget);
     this.valueCounters = this._generateValueCounters(budget);
     this.setActiveBudget(budget);
+    this.componentService.patchHeader({ title: budget.meta.title });
   }
 
-  private async loadSavedBudgets(): Promise<void> {
+  public async loadSavedBudgets() {
     const budgets = await this.db.getCollection<IBudget>('budgetTool/${GROUP}/budgets');
-    this.savedBudgets = budgets.sort((a, b) => (b._modified > a._modified ? 1 : -1));
+    return budgets.sort((a, b) => (b._modified > a._modified ? 1 : -1));
   }
 
   async deleteBudget(budget: IBudget) {
@@ -247,7 +231,6 @@ export class BudgetStore {
     if (budget.shareCode) {
       await this.db.deleteDocs('budgetTool/default/shareCodes', [budget.shareCode]);
     }
-    this.loadSavedBudgets();
   }
 
   /** Duplicate a server budget and save locally */
@@ -296,7 +279,6 @@ export class BudgetStore {
    ***************************************************************************/
   @action
   public async init() {
-    this.loadSavedBudgets();
     await this.checkForUpdates();
     this.storeReady = true;
   }
@@ -305,10 +287,10 @@ export class BudgetStore {
   // attempt to reload any hardcoded data present in the app
   private async checkForUpdates() {
     const version = await this.db.getDoc<IAppMeta>('_appMeta', 'VERSION');
-    const updateRequired = !version || version.value !== APP_VERSION.semver;
+    const updateRequired = !version || version.value !== APP_VERSION;
     if (updateRequired) {
       await this.setHardcodedData();
-      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.semver };
+      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION };
       this.db.setDoc('_appMeta', update);
     }
   }
@@ -326,43 +308,6 @@ export class BudgetStore {
     //   };
     // });
     // await this.db.setDocs(endpoint, docs);
-  }
-
-  /**************************************************************************
-   *            Calculation Methods
-   *
-   ***************************************************************************/
-
-  private _calculateBalance(budget: IBudget): IBudgetBalance {
-    // total for current period
-    const totals: { period: number; running: number }[] = [];
-    let runningTotal = 0;
-    budget.data.forEach((period, i) => {
-      const periodTotal = this._calculatePeriodTotal(period);
-      runningTotal = runningTotal + periodTotal;
-      totals[i] = {
-        period: periodTotal,
-        running: runningTotal,
-      };
-    });
-    return totals;
-  }
-  private _calculatePeriodTotal(period: IBudgetPeriodData) {
-    let balance = 0;
-    const inputCards = Object.values(period.inputs);
-    const inputsBalance = this._calculatePeriodCardTotals(inputCards);
-    const outputCards = Object.values(period.outputs);
-    const outputsBalance = this._calculatePeriodCardTotals(outputCards);
-    balance = outputsBalance - inputsBalance;
-    return balance;
-  }
-  private _calculatePeriodCardTotals(cards: IBudgetCard[]) {
-    let total = 0;
-    cards.forEach((card) => {
-      const t = card.values?.total ? card.values.total : 0;
-      total = total + t;
-    });
-    return total;
   }
 
   /**************************************************************************

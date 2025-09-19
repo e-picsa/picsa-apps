@@ -1,30 +1,47 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IToolsDataEntry, IToolsID, TOOLS_DATA_HASHMAP } from '../../tools';
 
 /*******************************************************************
  * Farmer Tools
  ********************************************************************/
 
 import { arrayToHashmap } from '@picsa/utils';
-import { IToolData } from '../types';
 
-// TODO - consider including svgIcons and using for extension tool also (refactor to folder and icon pack)
-const TOOLS_BASE = {
-  budget: { label: translateMarker('Budget'), href: 'budget', title: translateMarker('Tool'), showHeader: true },
-  climate: { label: translateMarker('Climate'), href: 'climate', title: translateMarker('Tool'), showHeader: true },
-  options: { label: translateMarker('Options'), href: 'option', title: translateMarker('Tool') },
-  probability_and_risk: {
-    label: translateMarker('Probability and Risk'),
-    href: 'crop-probability',
-    title: translateMarker('Tool'),
-  },
-  seasonal_calendar: {
-    label: translateMarker('Seasonal Calendar'),
-    href: 'seasonal-calendar',
-    title: translateMarker('Tool'),
-  },
-};
+interface IFarmerToolDataBase extends Partial<IToolsDataEntry> {
+  /** Specify whether header should show sidenav toggle button */
+  showSidenav?: boolean;
+}
 
-export type IToolId = keyof typeof TOOLS_BASE;
+// Utility type to use with const for derived keys and defined value types
+type DataMapWithValues = Partial<Record<IToolsID, IFarmerToolDataBase>>;
 
-export const TOOLS_DATA: IToolData[] = Object.entries(TOOLS_BASE).map(([id, data]) => ({ ...data, id: id as IToolId }));
-export const TOOLS_DATA_HASHMAP: Record<IToolId, IToolData> = arrayToHashmap(TOOLS_DATA, 'id');
+/** Specific overrides for tool data when displayed in farmer app */
+const FARMER_TOOLS_BASE = {
+  budget: { showSidenav: true },
+  climate: { showSidenav: true },
+  crop_probability: { label: translateMarker('Probability and Risk') },
+  option: {},
+  seasonal_calendar: {},
+} as const satisfies DataMapWithValues;
+
+type IFarmerToolId = keyof typeof FARMER_TOOLS_BASE;
+
+export interface IFarmerToolData extends IToolsDataEntry {
+  /** Specify whether header should show sidenav toggle button */
+  showSidenav?: boolean;
+}
+
+export const FARMER_TOOLS_DATA = Object.entries(FARMER_TOOLS_BASE).map(([id, overrides]) => {
+  const data = TOOLS_DATA_HASHMAP[id] as IToolsDataEntry;
+  const toolData: IFarmerToolData = {
+    ...data,
+    ...overrides,
+    // HACK - replace leading '/' for easier use in modules
+    url: data.url.replace('/', '') as any,
+  };
+  return toolData;
+});
+export const FARMER_TOOLS_DATA_HASHMAP: Record<IFarmerToolId, IFarmerToolData> = arrayToHashmap(
+  FARMER_TOOLS_DATA,
+  'id',
+);

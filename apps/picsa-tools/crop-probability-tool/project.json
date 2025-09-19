@@ -18,7 +18,11 @@
         "tsConfig": "apps/picsa-tools/crop-probability-tool/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/picsa-tools/crop-probability-tool/src/favicon.ico",
+          {
+            "glob": "**/*",
+            "input": "libs/shared-assets/favicon",
+            "output": ""
+          },
           "apps/picsa-tools/crop-probability-tool/src/assets"
         ],
         "styles": ["apps/picsa-tools/crop-probability-tool/src/styles.scss", "libs/theme/src/_index.scss"],

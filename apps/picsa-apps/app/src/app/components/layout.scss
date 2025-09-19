@@ -1,0 +1,43 @@
+.loading-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+button#menuButton {
+  padding: 8px;
+  width: 48px;
+  height: 48px;
+}
+#menuIcon {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+  line-height: 32px;
+}
+.draw-content {
+  width: 300px;
+  background: var(--color-primary-50);
+  padding: 0;
+}
+.close-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+mat-nav-list > a {
+  background-color: white;
+  padding: 8px;
+  border-bottom: 1px solid var(--color-primary);
+  min-height: 64px;
+}
+mat-nav-list > a:first-of-type {
+  border-top: 1px solid var(--color-primary);
+}
+
+footer {
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+}

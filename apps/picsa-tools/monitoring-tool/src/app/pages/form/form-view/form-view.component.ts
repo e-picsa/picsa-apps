@@ -1,12 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { PicsaCommonComponentsService } from '@picsa/components/src';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NavigationStackService } from '@picsa/components/src/services/navStack.service';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { xmlNodeReplaceContent, xmlToJson } from '@picsa/utils';
 import type { IEnketoFormEntry } from 'dist/libs/webcomponents/dist/types/components/enketo-webform/enketo-webform';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
+import { IMonitoringForm } from '../../../schema/forms';
 import { IFormSubmission } from '../../../schema/submissions';
 import { MonitoringToolService } from '../../../services/monitoring-tool.service';
 
@@ -24,96 +25,103 @@ export class FormViewComponent implements OnInit, OnDestroy {
     model: string;
     /** DB submission */
     submission: IFormSubmission;
-  };
+  } | null = null;
 
   /** Form entry data from enketo form */
   public formEntry?: IEnketoFormEntry;
-  private formId: string;
+
+  public isLoading = signal(true);
+  public isAuthenticating = signal(false);
+
+  private formId = '';
+  private currentForm: IMonitoringForm | null = null;
+
   /** Track if form has already had finalisation action (e.g. update/delete) */
   private formFinalised = false;
 
   private formInteracted = false;
 
   /** DB doc linked to current submission entry */
-  private submissionDoc: RxDocument<IFormSubmission>;
-  private componentDestroyed$ = new Subject<boolean>();
-
+  private submissionDoc?: RxDocument<IFormSubmission>;
+  private componentDestroyed$ = new Subject<void>();
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private monitoringService: MonitoringToolService,
-    private componentService: PicsaCommonComponentsService,
-    private dialogService: PicsaDialogService
+    private dialogService: PicsaDialogService,
+    private navStackService: NavigationStackService,
   ) {}
 
-  async ngOnDestroy() {
+  async ngOnDestroy(): Promise<void> {
     await this.handleViewDestroy();
-    this.componentDestroyed$.next(true);
-  }
 
-  async ngOnInit() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+  async ngOnInit(): Promise<void> {
     await this.monitoringService.ready();
     this.subscribeToRouteChanges();
   }
 
   /** Handle save event triggered from enketo form */
-  public async handleSave(e: Event) {
-    const entry: IEnketoFormEntry = (e as any).detail.entry;
+  public async handleSave(e: Event): Promise<void> {
+    const entry: IEnketoFormEntry = (e as CustomEvent).detail.entry;
     this.formEntry = entry;
     await this.finaliseForm('UPDATE');
-    this.componentService.back();
+    await this.monitoringService.showMessage('FORM_SAVE_SUCCESS');
+    this.navStackService.back();
   }
 
   /** Handle save event triggered from button */
-  public async handleCustomSave() {
+  public async handleCustomSave(): Promise<void> {
     if (this.formEntry) {
       this.formEntry.draft = false;
       await this.finaliseForm('UPDATE');
-      this.componentService.back();
+      await this.monitoringService.showMessage('FORM_SUBMIT_SUCCESS');
+      this.navStackService.back();
     }
   }
 
   /** When autosave triggered store value in memory (write on destroy) */
-  public async handleAutosave(e: Event) {
+  public async handleAutosave(e: Event): Promise<void> {
     this.formInteracted = true;
-    const entry = (e as any).detail as IEnketoFormEntry;
+    const entry = (e as CustomEvent).detail as IEnketoFormEntry;
     this.formEntry = entry;
   }
-
-  public async promptDelete() {
+  public async promptDelete(): Promise<void> {
     const dialog = await this.dialogService.open('delete');
     dialog.afterClosed().subscribe(async (shouldDelete) => {
       if (shouldDelete) {
         await this.finaliseForm('DELETE');
-        this.componentService.back();
+        await this.monitoringService.showMessage('FORM_DELETE_SUCCESS');
+        this.navStackService.back();
       }
     });
-
-    // TODO - Delete from server (?)
   }
 
-  private async handleViewDestroy() {
+  private async handleViewDestroy(): Promise<void> {
     // Check whether outstanding data requires saving/deleting
-    if (!this.formFinalised) {
+    if (!this.formFinalised && this.formInitial) {
       const action = this.determineFormAction();
       // save as draft if data updated
-      if (action === 'UPDATE') {
-        this.formEntry!.draft = true;
+      if (action === 'UPDATE' && this.formEntry) {
+        this.formEntry.draft = true;
       }
       await this.finaliseForm(action);
     }
   }
 
   /**
-   * Determine what action to take when finalising form, possibilities:
-   * DELETE - current data empty
-   * IGNORE - form not interacted with
-   * UPDATE - all other cases (TODO - could check if metadata only changed)
+   * Determine what action to take when finalising form
    */
   private determineFormAction(): 'UPDATE' | 'DELETE' | 'IGNORE' {
+    if (!this.formInitial?.submission) return 'IGNORE';
+
     const afterJson = this.getFormEntryJson(this.formEntry?.xml);
     const { enketoEntry, json: beforeJson } = this.formInitial.submission;
     const before = { json: beforeJson, xml: enketoEntry?.xml || '' };
     const after = { json: afterJson, xml: this.formEntry?.xml || '' };
+
     // Empty form data, delete
     if (Object.keys(before.json).length === 0 && Object.keys(after.json).length === 0) return 'DELETE';
     // Form not interacted with, ignore
@@ -121,16 +129,19 @@ export class FormViewComponent implements OnInit, OnDestroy {
     return 'UPDATE';
   }
 
-  /**
-   *
-   * TODO - add tests
-   */
-  private async finaliseForm(action: 'UPDATE' | 'DELETE' | 'IGNORE') {
+  private async finaliseForm(action: 'UPDATE' | 'DELETE' | 'IGNORE'): Promise<void> {
+    if (!this.submissionDoc) return;
+
     const afterJson = this.getFormEntryJson(this.formEntry?.xml);
 
     this.formFinalised = true;
     console.log('[FORM]', action, afterJson);
-    if (action === 'DELETE') return this.submissionDoc.remove();
+
+    if (action === 'DELETE') {
+      await this.submissionDoc.remove();
+      return;
+    }
+
     if (action === 'UPDATE') {
       const patch: Partial<IFormSubmission> = {
         json: afterJson,
@@ -138,70 +149,83 @@ export class FormViewComponent implements OnInit, OnDestroy {
         _modified: new Date().toISOString(),
         _sync_push_status: this.formEntry?.draft ? 'draft' : 'ready',
       };
-      return this.submissionDoc.incrementalPatch(patch);
+      await this.submissionDoc.incrementalPatch(patch);
     }
-    return;
   }
-
-  /**
-   *
-   */
-  private getFormEntryJson(formXml = '') {
+  private getFormEntryJson(formXml = ''): Record<string, unknown> {
     if (formXml) {
       // json nested by entry id, e.g. {abcde: {name:'Joe'}}
       const entryJson = xmlToJson(formXml);
       const [id] = Object.keys(entryJson);
-      return entryJson[id];
+      return entryJson[id] || {};
     }
     return {};
   }
 
-  private async loadFormSubmission(id: string, submission: IFormSubmission) {
+  private async loadFormSubmission(id: string, submission: IFormSubmission): Promise<void> {
+    this.isLoading.set(true);
     const formMeta = await this.monitoringService.getForm(id);
+
     if (formMeta) {
-      let { model } = formMeta.enketoDefinition;
-      const { form } = formMeta.enketoDefinition;
-      // replace the xml <instance>...</instance> content with the submission xml to load values
-      if (submission.enketoEntry?.xml) {
-        model = xmlNodeReplaceContent({ xml: model, tagname: 'instance', content: submission.enketoEntry.xml });
+      this.currentForm = formMeta;
+
+      // Check if form is locked and redirect if necessary
+      if (this.isFormLocked(formMeta)) {
+        this.router.navigate(['../../../'], { relativeTo: this.route });
       }
-      this.formEntry = submission.enketoEntry;
-      this.formInitial = { form, model, submission };
+
+      try {
+        let { model } = formMeta.enketoDefinition;
+        const { form } = formMeta.enketoDefinition;
+
+        // replace the xml <instance>...</instance> content with the submission xml to load values
+        if (submission.enketoEntry?.xml) {
+          model = xmlNodeReplaceContent({ xml: model, tagname: 'instance', content: submission.enketoEntry.xml });
+        }
+
+        this.formEntry = submission.enketoEntry;
+        this.formInitial = { form, model, submission };
+      } catch (error) {
+        console.error('Error loading form submission:', error);
+        await this.monitoringService.showMessage('FORM_LOAD_ERROR');
+        return;
+      } finally {
+        this.isLoading.set(false);
+      }
+    } else {
+      this.isLoading.set(false);
+      await this.monitoringService.showMessage('FORM_NOT_FOUND');
+      return;
     }
   }
 
-  private subscribeToRouteChanges() {
+  private isFormLocked(form: IMonitoringForm): boolean {
+    return !!form.access_code && !form.access_unlocked;
+  }
+
+  private subscribeToRouteChanges(): void {
     this.route.params.pipe(takeUntil(this.componentDestroyed$)).subscribe(async (params) => {
       const { formId, submissionId } = params;
       if (formId !== this.formId) {
         this.formId = formId;
         if (submissionId) {
-          const submissionDoc = await this.monitoringService.dbSubmissionsCollection.findOne(submissionId).exec();
-          if (submissionDoc) {
-            this.submissionDoc = submissionDoc;
-            await this.loadFormSubmission(formId, submissionDoc._data);
+          try {
+            const submissionDoc = await this.monitoringService.dbSubmissionsCollection.findOne(submissionId).exec();
+            if (submissionDoc) {
+              this.submissionDoc = submissionDoc;
+              await this.loadFormSubmission(formId, submissionDoc._data);
+            } else {
+              throw new Error('Submission not found');
+            }
+          } catch (error) {
+            console.error('Error loading submission:', error);
+            await this.monitoringService.showMessage('SUBMISSION_NOT_FOUND');
+            this.router.navigate(['view', formId]);
           }
+        } else {
+          this.isLoading.set(false);
         }
       }
     });
-  }
-
-  /**
-   * Use native http client on android device to avoid cors issues
-   * NOTE - fails to send form body as per
-   * https://github.com/ionic-team/capacitor/pull/6206
-   * Potential workaround (below) or will require API
-   * https://github.com/silkimen/cordova-plugin-advanced-http#uploadfile
-   */
-  private wipTestKoboEndpoint() {
-    // const koboService = new KoboService({ authToken: environment.koboAuthToken });
-    // if (Capacitor.isNativePlatform()) {
-    //   koboService.httpHandlers.req = (endpoint, options) => {
-    //     return CapacitorHttp.request({ url: endpoint, ...(options as any) }).then(async (res) => ({
-    //       status: res.status,
-    //       text: res.data,
-    //     }));
-    //   };
-    // }
   }
 }

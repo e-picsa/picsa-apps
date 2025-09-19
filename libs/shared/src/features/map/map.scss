@@ -37,31 +37,29 @@ button {
   pointer-events: none;
   display: none;
 }
-.leaflet-marker-icon.active {
-  border: 4px solid red;
 
-  // box-sizing: border-box;
+.number-circle {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+
+  .number {
+    @apply text-center shadow-2xl h-6 w-6 rounded-xl text-primary;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
-.leaflet-marker-icon {
-  background: var(--color-primary);
-  border-radius: 4px;
-}
-.leaflet-marker-icon.secondary {
-  background: var(--color-secondary);
-}
-.leaflet-marker-icon.location-icon {
-  color: white;
-}
-.number-tooltip {
-  background: white;
-  color: var(--color-primary);
-  font-weight: bold;
-  border: none;
-  border-radius: 50%;
-  height: 22px;
-  width: 22px;
-  padding: 2px;
-  line-height: 22px;
-  text-align: center;
-  font-size: 18px;
+// Marker selected styles set on parent
+.leaflet-marker-icon.selected > .number-circle {
+  transform: scale(1.4);
+  .number {
+    background: var(--color-primary);
+    color: white;
+  }
+  z-index: 9999;
 }

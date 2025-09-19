@@ -1,4 +1,4 @@
-import { Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -25,12 +25,17 @@ import { IHeaderOptions, PicsaCommonComponentsService } from '../services/compon
       </div>
       <h1 class="central-content">
         <ng-template [cdkPortalOutlet]="cdkPortalCenter" #portalOutlet></ng-template>
-        @if(!cdkPortalCenter){
-        <span class="title">{{ title | translate }}</span>
+        @if (!cdkPortalCenter) {
+          <span class="title">{{ title | translate }}</span>
         }
       </h1>
       <div class="end-content">
-        <ng-template [cdkPortalOutlet]="cdkPortalEnd" #portalOutlet></ng-template>
+        <!-- sidenav toggle -->
+        @if (showSidenavToggle()) {
+          <button mat-icon-button (click)="componentsService.toggleSidenav()">
+            <mat-icon>menu</mat-icon>
+          </button>
+        }
       </div>
     </header>
     <picsa-breadcrumbs> </picsa-breadcrumbs>
@@ -48,13 +53,14 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   /** Inject dynamic content into header slots using angular cdk portal */
   public cdkPortalStart: IHeaderOptions['cdkPortalStart'];
   public cdkPortalCenter: IHeaderOptions['cdkPortalCenter'];
-  public cdkPortalEnd: IHeaderOptions['cdkPortalEnd'];
+
+  public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
 
   constructor(
-    private componentsService: PicsaCommonComponentsService,
+    public componentsService: PicsaCommonComponentsService,
     private router: Router,
     private titleStrategy: DefaultTitleStrategy,
-    private titleService: Title
+    private titleService: Title,
   ) {
     effect(() => {
       const headerOptions = this.componentsService.headerOptions();
@@ -99,7 +105,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
             route = route.children.find((child) => child.outlet === 'primary');
           }
           return { title, headerStyle };
-        })
+        }),
       )
       .subscribe(({ title, headerStyle }) => {
         this.componentsService.patchHeader({
@@ -112,7 +118,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   private handleHeaderOptionsChange(options: IHeaderOptions) {
     const { title, style, hideBackButton, hideHeader } = options;
     requestAnimationFrame(() => {
-      if (title) {
+      if (title && this.title !== title) {
         this.title = title;
         this.titleService.setTitle(title);
       }
@@ -128,7 +134,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
   }
 
   private setPortalContent(options: IHeaderOptions) {
-    const { cdkPortalStart, cdkPortalCenter, cdkPortalEnd } = options;
+    const { cdkPortalStart, cdkPortalCenter } = options;
     // Center Portal
     if (!cdkPortalStart) {
       this.cdkPortalStart = undefined;
@@ -142,13 +148,6 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
     }
     if (!cdkPortalCenter?.isAttached) {
       this.cdkPortalCenter = cdkPortalCenter;
-    }
-    // End Portal
-    if (!cdkPortalEnd) {
-      this.cdkPortalEnd = undefined;
-    }
-    if (!cdkPortalEnd?.isAttached) {
-      this.cdkPortalEnd = cdkPortalEnd;
     }
   }
 }

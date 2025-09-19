@@ -1,10 +1,11 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, effect, Injectable, signal } from '@angular/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 import { arrayToHashmap, arrayToHashmapArray } from '@picsa/utils';
 
+import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { DashboardStorageService } from '../storage';
 import { IResourceCollectionRow, IResourceFileChildRow, IResourceFileRow, IResourceLinkRow } from './types';
 
@@ -39,15 +40,21 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   constructor(
     private supabaseService: SupabaseService,
     private storageService: DashboardStorageService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
+    deploymentService: DeploymentDashboardService,
   ) {
     super();
+    effect(async () => {
+      const countryCode = deploymentService.activeDeploymentCountry();
+      if (countryCode) {
+        await this.listResources(countryCode);
+      }
+    });
   }
 
   public override async init() {
     await this.supabaseService.ready();
     await this.storageService.ready();
-    await this.listResources();
   }
 
   /** Retrieve all child resources with a given parent resource id */
@@ -61,7 +68,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     return collectionIds.map((id) => this.collectionsById()[id]);
   }
 
-  private async listResources() {
+  private async listResources(countryCode: string) {
     // Load all resource tables
     const serverData = {
       collections: [] as IResourceCollectionRow[],
@@ -70,7 +77,10 @@ export class ResourcesDashboardService extends PicsaAsyncService {
       links: [] as IResourceLinkRow[],
     };
     const promises = Object.entries(this.tables).map(async ([name, table]) => {
-      const { data, error } = await table.select('*');
+      const { data, error } = await table
+        .select('*')
+        .in('country_code', [countryCode as any, 'global'])
+        .order('created_at');
       if (error) {
         throw new Error(error.message);
       }
@@ -90,7 +100,7 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     function assignResourceCollection(
       type: 'links' | 'files' | 'collections',
       resourceId: string,
-      collectionId: string
+      collectionId: string,
     ) {
       if (!resourceCollectionSummary[type][resourceId]) {
         resourceCollectionSummary[type][resourceId] = [];

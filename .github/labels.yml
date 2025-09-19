@@ -34,5 +34,5 @@
   { 'color': '000000', 'description': 'Updates related to Dashboard app', 'name': 'App: Dashboard' },
   { 'color': '000000', 'description': 'Updates related to Server app', 'name': 'App: Server' },
   { 'color': '000000', 'description': 'Updates related to Farmer app', 'name': 'App: Farmer' },
-  { 'color': '000000', 'description': 'Updates related to Farmer app', 'name': 'App: Extension' },
+  { 'color': '000000', 'description': 'Updates related to Extension app', 'name': 'App: Extension' },
 ]
