@@ -1,7 +1,7 @@
 <!-- Playlist View  -->
 @if (viewMode() === 'playlist') {
   <mat-list class="playlist-container">
-    @for (video of videoResources(); track video.id) {
+    @for (video of videosWithRankedChildren(); track video.id) {
       <div class="playlist-item" (click)="player.handleItemClick()">
         <farmer-step-video-player class="w-48" [video]="video" #player></farmer-step-video-player>
         <h3 class="flex-1 ml-4">{{ video.title }}</h3>
@@ -14,7 +14,7 @@
 }
 <!-- Single View  -->
 @else {
-  @if (videoResources()[0]; as video) {
-    <farmer-step-video-player [video]="video" #player></farmer-step-video-player>
+  @if (videosWithRankedChildren()[0]; as video) {
+    <farmer-step-video-player [video]="video"></farmer-step-video-player>
   }
 }

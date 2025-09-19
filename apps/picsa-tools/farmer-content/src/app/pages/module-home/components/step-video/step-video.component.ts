@@ -1,22 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { ConfigurationService, IUserSettings } from '@picsa/configuration/src';
+import { ConfigurationService } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
-import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 
 import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
 
-/**
- * Temporary component to help migrate between legacy flat resource format
- * to newer content which contains nested videos and allows auto-select
- * video based on user's locale preference
- *
- * TODO - ideally all video resources should be refactored in a similar way
- * and support for child resources integrated into main resource components
- */
 @Component({
   selector: 'farmer-step-video',
   imports: [CommonModule, MatListModule, MatDivider, PicsaVideoPlayerModule, FarmerStepVideoPlayerComponent],
@@ -24,36 +15,34 @@ import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
-  videos = input.required<IPicsaVideoData[]>();
+  private configurationService = inject(ConfigurationService);
 
-  public videoResources = computed(() => this.toVideoResources(this.videos()));
+  public videos = input.required<IPicsaVideoData[]>();
+
+  /**
+   * Videos contain multiple child videos. Sort by most relevant to user
+   * and filter out videos with no relevant child video resources
+   * */
+  public videosWithRankedChildren = computed(() => {
+    // HACK - when identifying video to show user cannot rely solely on language_code as
+    // that populates 'global_en' when different country used (should be zm_en)
+    // So instead use country_code specified and language part of localeCode
+    const { country_code: userCountry, language_code } = this.configurationService.userSettings();
+    const [_, userLanguage] = language_code.split('_');
+
+    return this.videos()
+      .map((video) => ({ ...video, children: getRankedChildVideos(video, userCountry, userLanguage) }))
+      .filter((video) => video.children.length > 0);
+  });
 
   public viewMode = computed<'single' | 'playlist'>(() => (this.videos().length > 1 ? 'playlist' : 'single'));
-
-  constructor(private configurationService: ConfigurationService) {}
-
-  private toVideoResources(videos: IPicsaVideoData[]) {
-    const userSettings = this.configurationService.userSettings();
-    const rankedVideos = videos.map((video) => getRankedChildVideos(video, userSettings));
-    console.log({ videos, rankedVideos });
-    return videos
-      .map((video) => getRankedChildVideos(video, userSettings))
-      .map(([topRanked]) => RESOURCE_VIDEO_HASHMAP[topRanked?.id])
-      .filter((resource) => resource !== undefined);
-  }
 }
 
 /**
  * Rank available child video formats in order by user language settings
  * Returns undefined if no child video formats found that match either country or global language settings
  */
-function getRankedChildVideos(video: IPicsaVideoData, userSettings: IUserSettings) {
-  // HACK - when identifying video to show user cannot rely solely on language_code as
-  // that populates 'global_en' when different country used (should be zm_en)
-  // So instead use country_code specified and language part of localeCode
-  const { country_code: userCountry, language_code } = userSettings;
-  const [_, userLanguage] = language_code.split('_');
-
+function getRankedChildVideos(video: IPicsaVideoData, userCountry: string, userLanguage: string) {
   return video.children
     .map((v) => ({ ...v, _rank: getVideoRank(userCountry, userLanguage, v) }))
     .filter(({ _rank }) => _rank > 0)
