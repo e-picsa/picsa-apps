@@ -25,8 +25,6 @@ export interface IResourceBase_v0 {
   priority?: number;
   /** additional metadata populated for specific resource types */
   meta?: any;
-  /** Languages the resource is available in */
-  languages?: string[];
 }
 
 export const SCHEMA_BASE_V0: RxJsonSchema<IResourceBase_v0> = {
@@ -45,7 +43,6 @@ export const SCHEMA_BASE_V0: RxJsonSchema<IResourceBase_v0> = {
     priority: { type: 'number', default: 1.0 },
     title: { type: 'string' },
     meta: { type: 'object' },
-    languages: { type: 'array', default: [] },
   },
   required: ['id'],
   primaryKey: 'id',

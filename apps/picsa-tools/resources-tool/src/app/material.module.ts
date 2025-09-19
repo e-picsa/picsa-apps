@@ -40,7 +40,10 @@ const Modules = [
   ],
 })
 export class ResourcesMaterialModule {
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+  ) {
     this.registerIcons();
   }
 
