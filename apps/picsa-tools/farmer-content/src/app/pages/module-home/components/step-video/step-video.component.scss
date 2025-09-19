@@ -9,15 +9,3 @@
     background-color: rgba(0, 0, 0, 0.04);
   }
 }
-.video-downloader {
-  @apply rounded-md text-white text-center p-2;
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10;
-  // convert hex secondary color to rgb and make 70% opacity
-  background-color: color-mix(in srgb, var(--color-black) 70%, transparent);
-  &[data-status='loading'] {
-    display: none;
-  }
-  &[data-status='complete'] {
-    display: none;
-  }
-}

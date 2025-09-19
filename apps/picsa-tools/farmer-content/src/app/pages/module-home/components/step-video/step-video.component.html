@@ -2,33 +2,10 @@
 @if (viewMode() === 'playlist') {
   <mat-list class="playlist-container">
     @for (video of videoResources(); track video.id) {
-      <div class="playlist-item" (click)="handleItemClick(dl, videoPlayer)">
-        <div class="relative">
-          <div class="w-48">
-            <picsa-video-player
-              #videoPlayer
-              [source]="dl.fileURI()"
-              [thumbnail]="video.cover?.image"
-              [onlineVideoUrl]="video.url"
-              [id]="video.id"
-            >
-            </picsa-video-player>
-          </div>
-
-          <resource-download
-            #dl
-            [resource]="video"
-            [showSize]="true"
-            [size]="48"
-            styleVariant="white"
-            class="video-downloader"
-            [attr.data-status]="dl.downloadStatus()"
-          ></resource-download>
-        </div>
-
+      <div class="playlist-item" (click)="player.handleItemClick()">
+        <farmer-step-video-player class="w-48" [video]="video" #player></farmer-step-video-player>
         <h3 class="flex-1 ml-4">{{ video.title }}</h3>
       </div>
-
       @if (!$last) {
         <mat-divider></mat-divider>
       }
@@ -38,25 +15,6 @@
 <!-- Single View  -->
 @else {
   @if (videoResources()[0]; as video) {
-    <div class="relative">
-      <picsa-video-player
-        #videoPlayer
-        [source]="dl.fileURI()"
-        [thumbnail]="video.cover?.image"
-        [onlineVideoUrl]="video.url"
-        [id]="video.id"
-      >
-      </picsa-video-player>
-
-      <resource-download
-        #dl
-        [resource]="video"
-        [showSize]="true"
-        [size]="48"
-        styleVariant="white"
-        class="video-downloader"
-        [attr.data-status]="dl.downloadStatus()"
-      ></resource-download>
-    </div>
+    <farmer-step-video-player [video]="video" #player></farmer-step-video-player>
   }
 }

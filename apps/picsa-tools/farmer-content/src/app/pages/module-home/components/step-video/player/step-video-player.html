@@ -1,0 +1,23 @@
+@if(videoResource(); as video){
+<div class="relative">
+  <picsa-video-player
+    #videoPlayer
+    [source]="dl.fileURI()"
+    [thumbnail]="video.cover?.image"
+    [onlineVideoUrl]="video.url"
+    [id]="video.id"
+  >
+  </picsa-video-player>
+
+  <resource-download
+    #dl
+    [resource]="video"
+    [showSize]="true"
+    [size]="48"
+    styleVariant="white"
+    class="video-downloader"
+    [attr.data-status]="dl.downloadStatus()"
+  ></resource-download>
+</div>
+
+}

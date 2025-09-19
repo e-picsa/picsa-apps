@@ -5,10 +5,9 @@ import { MatListModule } from '@angular/material/list';
 import { ConfigurationService, IUserSettings } from '@picsa/configuration/src';
 import { IPicsaVideo, IPicsaVideoData } from '@picsa/data/resources';
 import { RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResourceDownloadComponent } from '@picsa/resources/components';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
-import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
+
+import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
 
 /**
  * Temporary component to help migrate between legacy flat resource format
@@ -20,31 +19,23 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
  */
 @Component({
   selector: 'farmer-step-video',
-  imports: [CommonModule, MatListModule, MatDivider, ResourceDownloadComponent, PicsaVideoPlayerModule],
+  imports: [CommonModule, MatListModule, MatDivider, PicsaVideoPlayerModule, FarmerStepVideoPlayerComponent],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })
 export class FarmerStepVideoComponent {
-  /** */
-  viewMode = input<'single' | 'playlist'>('single');
-
   videos = input.required<IPicsaVideoData[]>();
 
   public videoResources = computed(() => this.toVideoResources(this.videos()));
 
-  constructor(private configurationService: ConfigurationService) {}
+  public viewMode = computed<'single' | 'playlist'>(() => (this.videos().length > 1 ? 'playlist' : 'single'));
 
-  public handleItemClick(dlComponent: ResourceDownloadComponent, videoPlayer: VideoPlayerComponent) {
-    if (dlComponent.downloadStatus() === 'ready') {
-      return dlComponent.downloadResource();
-    }
-    if (videoPlayer.source()) {
-      videoPlayer.playVideo();
-    }
-  }
+  constructor(private configurationService: ConfigurationService) {}
 
   private toVideoResources(videos: IPicsaVideoData[]) {
     const userSettings = this.configurationService.userSettings();
+    const rankedVideos = videos.map((video) => getRankedChildVideos(video, userSettings));
+    console.log({ videos, rankedVideos });
     return videos
       .map((video) => getRankedChildVideos(video, userSettings))
       .map(([topRanked]) => RESOURCE_VIDEO_HASHMAP[topRanked?.id])
