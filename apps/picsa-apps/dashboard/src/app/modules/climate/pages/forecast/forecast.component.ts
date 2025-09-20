@@ -72,7 +72,7 @@ export class ClimateForecastPageComponent {
     private service: ClimateService,
     private supabase: SupabaseService,
     private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {
     effect(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

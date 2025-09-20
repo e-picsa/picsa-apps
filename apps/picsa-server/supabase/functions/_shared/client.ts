@@ -35,7 +35,7 @@ export const getClient = (req?: Request) => {
       global: {
         headers,
       },
-    }
+    },
   );
 };
 
