@@ -7,58 +7,58 @@
     <h2 class="header-title">{{ content()?.title || '' | translate }}</h2>
   </div>
 
-  @if(content(); as content){
-
-  <!-- Main Content -->
-  <div [@fadeInOut]="fadeInContent() ? 'in' : 'out'">
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-screen-lg m-auto">
-      @for(step of content.steps; track $index){
-      <mat-card class="flex flex-col">
-        <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
-        <div class="flex-1 flex flex-col">
-          @switch (step.type) {
-          <!-- Video -->
-          @case('video'){
-          <farmer-step-video [videos]="[step.video]"></farmer-step-video>
-          }
-          <!-- Video Playlist-->
-          @case('videoPlaylist'){
-          <farmer-step-video [videos]="step.videos" viewMode="playlist"></farmer-step-video>
-
-          }
-          <!-- Review -->
-          @case ('review') { @if(photoAlbum(); as album){
-          <div class="p-2">
-            <p>{{ 'If you recorded anything on paper you can capture photos here' | translate }}</p>
-            <picsa-photo-list [album]="album"></picsa-photo-list>
-            <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
-          </div>
-
-          } }
-          <!-- Tool -->
-          @case ('tool') { @if(toolStep()?.tool; as tool){
-          <div class="tool-step-container" (click)="showTool()">
-            <h3 class="mt-0">{{ tool.label | translate }}</h3>
-            <mat-icon class="tool-icon mb-2" [svgIcon]="'picsa_tools:' + tool.svgIcon"></mat-icon>
-          </div>
-          } } }
-        </div>
-      </mat-card>
-
-      }
+  @if (content(); as content) {
+    <!-- Main Content -->
+    <div [@fadeInOut]="fadeInContent() ? 'in' : 'out'">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-screen-lg m-auto">
+        @for (step of content.steps; track $index) {
+          <mat-card class="flex flex-col">
+            <mat-card-title class="step-title">{{ $index + 1 }}. {{ step.title | translate }}</mat-card-title>
+            <div class="flex-1 flex flex-col">
+              @switch (step.type) {
+                <!-- Video -->
+                @case ('video') {
+                  <farmer-step-video [videos]="[step.video]"></farmer-step-video>
+                }
+                <!-- Video Playlist-->
+                @case ('videoPlaylist') {
+                  <farmer-step-video [videos]="step.videos"></farmer-step-video>
+                }
+                <!-- Review -->
+                @case ('review') {
+                  @if (photoAlbum(); as album) {
+                    <div class="p-2">
+                      <p>{{ 'If you recorded anything on paper you can capture photos here' | translate }}</p>
+                      <picsa-photo-list [album]="album"></picsa-photo-list>
+                      <picsa-photo-input class="mt-2" [album]="album" style="margin-top: 2rem"></picsa-photo-input>
+                    </div>
+                  }
+                }
+                <!-- Tool -->
+                @case ('tool') {
+                  @if (toolStep()?.tool; as tool) {
+                    <div class="tool-step-container" (click)="showTool()">
+                      <h3 class="mt-0">{{ tool.label | translate }}</h3>
+                      <mat-icon class="tool-icon mb-2" [svgIcon]="'picsa_tools:' + tool.svgIcon"></mat-icon>
+                    </div>
+                  }
+                }
+              }
+            </div>
+          </mat-card>
+        }
+      </div>
     </div>
-  </div>
-
   }
 
   <!-- Custom Footer -->
   <div class="my-6 text-secondary flex items-center">
     <button mat-icon-button style="color: black" routerLink="/farmer"><mat-icon>home</mat-icon></button>
-    @if(nextModule(); as nextModule){
-    <button mat-button class="flex-1" (click)="goToModule(nextModule)">
-      <span>{{ nextModule.title | translate }}</span>
-      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-    </button>
+    @if (nextModule(); as nextModule) {
+      <button mat-button class="flex-1" (click)="goToModule(nextModule)">
+        <span>{{ nextModule.title | translate }}</span>
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
     }
   </div>
 </div>
@@ -67,35 +67,34 @@
 
 <!-- Tool Popup -->
 <!-- TODO - refactor to component (?) -->
-@if(toolStep(); as toolStep){
-<div id="toolStep" class="page tool-container"
-  [@flyInOut]="toolRouteSegments().length > 0 && !toolHidden() ? 'in' : 'out'">
+@if (toolStep(); as toolStep) {
+  <div
+    id="toolStep"
+    class="page tool-container"
+    [@flyInOut]="toolRouteSegments().length > 0 && !toolHidden() ? 'in' : 'out'"
+  >
+    <!-- Custom tool header -->
+    <div class="tool-header">
+      <button mat-button color="primary" class="p-4 flex-1 max-w-32" (click)="hideTool()">
+        {{ 'Close' | translate }}
+        <mat-icon>close</mat-icon>
+      </button>
 
-  <!-- Custom tool header -->
-  <div class="tool-header">
-    <button mat-button color="primary" class="p-4 flex-1 max-w-32" (click)="hideTool()">
-      {{ 'Close' | translate }}
-      <mat-icon>close</mat-icon>
-    </button>
+      <!-- Dynamic content injected into header (required for climate tool site select) -->
+      <div class="flex-1 overflow-hidden">
+        <ng-template [cdkPortalOutlet]="headerContent()"></ng-template>
+      </div>
 
-    <!-- Dynamic content injected into header (required for climate tool site select) -->
-    <div class="flex-1 overflow-hidden">
-      <ng-template [cdkPortalOutlet]="headerContent()"></ng-template>
+      @if (showSidenavToggle()) {
+        <button mat-button color="primary" class="p-4 flex-1 max-w-32" (click)="componentsService.toggleSidenav()">
+          {{ 'Options' | translate }}
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
     </div>
 
-
-    @if(showSidenavToggle()){
-    <button mat-button color="primary" class="p-4 flex-1 max-w-32" (click)="componentsService.toggleSidenav()">
-      {{ 'Options' | translate }}
-      <mat-icon>menu</mat-icon>
-    </button>
-    }
-
+    <router-outlet #toolRouter></router-outlet>
   </div>
-
-
-  <router-outlet #toolRouter></router-outlet>
-</div>
 }
 
 <!-- TODO - track video viewed state from step videos (e.g. checkmark) -->
