@@ -29,7 +29,9 @@ export class FarmerStepVideoPlayerComponent {
   public video = input.required<IPicsaVideoData>();
 
   public videoLanguageOptions = computed(() =>
-    this.video().children.map(({ locale_codes }) => LOCALES_DATA_HASHMAP[locale_codes[0]]),
+    this.video()
+      .children.map(({ locale_codes }) => LOCALES_DATA_HASHMAP[locale_codes[0]])
+      .filter(Boolean),
   );
 
   public videoLanguageSelected = signal<ILocaleDataEntry | undefined>(undefined);
