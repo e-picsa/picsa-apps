@@ -14,9 +14,10 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/global/videos/operational/Intro%20Video%20English.mp4',
       },
+      // ZM
       {
         id: '',
-        locale_codes: ['zm_ny', 'global_en'],
+        locale_codes: ['zm_ny'],
         resolution: '480p',
         size_kb: 22300,
         supabase_url:

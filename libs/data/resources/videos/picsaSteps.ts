@@ -2,7 +2,6 @@ import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
 type IPicsaFarmerVideoId =
-  | 'intro'
   | 'ram'
   | 'seasonal_calendar'
   | 'historic_climate'
@@ -13,27 +12,6 @@ type IPicsaFarmerVideoId =
   | 'short_term_forecast';
 
 const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData, 'id'>> = {
-  intro: {
-    children: [
-      // NOTE - 'global_en' does not exist for intro but ny versions include subtitles
-      {
-        id: '',
-        locale_codes: ['mw_ny', 'global_en'],
-        resolution: '360p',
-        size_kb: 15790,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/PICSA%20Malawi%20Intro%202025.mp4',
-      },
-      {
-        id: '',
-        locale_codes: ['zm_ny', 'global_en'],
-        resolution: '360p',
-        size_kb: 15960,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Zambia%20Intro%202025.mp4',
-      },
-    ],
-  },
   ram: {
     children: [
       {
