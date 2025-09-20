@@ -51,6 +51,11 @@ function getRankedChildVideos(video: IPicsaVideoData, userCountry: string, userL
 
 function getVideoRank(userCountry: string, userLanguage: string, video: IPicsaVideo) {
   const [audio, subtitle] = video.locale_codes;
+  if (!audio) {
+    console.warn(video);
+    console.error(`[Step Video] - Locale Code missing`);
+    return -1;
+  }
   const [audioCountry, audioLanguage] = audio.split('_');
   const subtitleLanguage = subtitle?.split('_')[1];
 
@@ -66,5 +71,7 @@ function getVideoRank(userCountry: string, userLanguage: string, video: IPicsaVi
   if (userCountry === 'global') return 5;
   // 6 - return global fallback
   if (audioCountry === 'global' && audioLanguage === 'en') return 6;
+  // 7 - return all videos for country
+  if (audioCountry === userCountry) return 7;
   return -1;
 }
