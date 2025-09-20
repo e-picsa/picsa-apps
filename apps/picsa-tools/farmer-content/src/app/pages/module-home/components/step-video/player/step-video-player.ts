@@ -1,5 +1,10 @@
-import { Component, computed, input, viewChild } from '@angular/core';
+import { Component, computed, effect, input, signal, viewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { IPicsaVideoData, RESOURCE_VIDEO_HASHMAP } from '@picsa/data/resources';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
 import { PicsaVideoPlayerModule } from '@picsa/shared/features';
 import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-player.component';
@@ -9,6 +14,8 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
  * to newer content which contains nested videos and allows auto-select
  * video based on user's locale preference
  *
+ * Includes additonal language select option
+ *
  * TODO - ideally all video resources should be refactored in a similar way
  * and support for child resources integrated into main resource components
  */
@@ -16,12 +23,34 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
   selector: 'farmer-step-video-player',
   templateUrl: 'step-video-player.html',
   styleUrl: 'step-video-player.scss',
-  imports: [PicsaVideoPlayerModule, ResourceDownloadComponent],
+  imports: [PicsaVideoPlayerModule, ResourceDownloadComponent, MatIcon, MatButtonModule, MatMenuModule],
 })
 export class FarmerStepVideoPlayerComponent {
   public video = input.required<IPicsaVideoData>();
 
-  public videoResources = computed(() => this.toVideoResources(this.video()));
+  public videoLanguageOptions = computed(() =>
+    this.video().children.map(({ locale_codes }) => LOCALES_DATA_HASHMAP[locale_codes[0]]),
+  );
+
+  public videoLanguageSelected = signal<ILocaleDataEntry | undefined>(undefined);
+
+  public videoResource = computed(() => {
+    const languageSelected = this.videoLanguageSelected();
+    if (languageSelected) {
+      const targetVideo = this.video().children.find((v) => v.locale_codes[0] === languageSelected.id);
+      if (targetVideo) {
+        return RESOURCE_VIDEO_HASHMAP[targetVideo.id];
+      }
+    }
+    return undefined;
+  });
+
+  constructor() {
+    effect(() => {
+      const [languageDefaultOption] = this.videoLanguageOptions();
+      this.videoLanguageSelected.set(languageDefaultOption);
+    });
+  }
 
   public playerComponent = viewChild<VideoPlayerComponent>('videoPlayer');
   public downloaderComponent = viewChild<ResourceDownloadComponent>('dl');
@@ -36,9 +65,5 @@ export class FarmerStepVideoPlayerComponent {
     if (videoPlayer?.source()) {
       videoPlayer.playVideo();
     }
-  }
-
-  private toVideoResources(video: IPicsaVideoData) {
-    return video.children.map((v) => RESOURCE_VIDEO_HASHMAP[v.id]).filter(Boolean);
   }
 }

@@ -2,7 +2,7 @@
   @apply p-0;
 }
 .playlist-item {
-  @apply flex cursor-pointer items-center h-28 relative;
+  @apply flex cursor-pointer items-center relative;
   transition: background-color 0.2s ease-in-out;
 
   &:hover {

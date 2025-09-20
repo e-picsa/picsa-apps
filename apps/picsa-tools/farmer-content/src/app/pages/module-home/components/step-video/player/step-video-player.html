@@ -1,4 +1,5 @@
-@if(videoResources()[0]; as video){
+<!-- Video download and play -->
+@if(videoResource(); as video){
 <div class="relative">
   <picsa-video-player
     #videoPlayer
@@ -19,5 +20,20 @@
     [attr.data-status]="dl.downloadStatus()"
   ></resource-download>
 </div>
+}
+<!-- Video Language Select -->
+@if(videoLanguageOptions().length > 1){
+<button mat-button [matMenuTriggerFor]="menu" class="language-select" (click)="$event.stopImmediatePropagation()">
+  <div class="flex gap-2 items-center">
+    <mat-icon matButtonIcon align="start">language</mat-icon>
+    {{videoLanguageSelected()?.language_label}}
+    <mat-icon matButtonIcon align="end">arrow_drop_down</mat-icon>
+  </div>
+</button>
+<mat-menu #menu>
+  @for(option of videoLanguageOptions(); track option.id){
+  <button mat-menu-item (click)="videoLanguageSelected.set(option)">{{option.language_label}}</button>
+  }
+</mat-menu>
 
 }
