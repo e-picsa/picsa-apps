@@ -65,6 +65,23 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Introduction%20to%20Operational%20Tools%20-%20LUV_480p.mp4',
       },
+      // MW
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 14100,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/Malawi%20Chewa%20Intro%20Video_480p.mp4',
+      },
+      // TODO
+      // {
+      //   id: '',
+      //   locale_codes: ['mw_tum'],
+      //   size_kb: 0,
+      //   resolution: '480p',
+      //   supabase_url: '',
+      // },
     ],
   },
 
@@ -131,6 +148,22 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
 
       // MW
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 6990,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/HCI%20Malawi%20_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['mw_tum'],
+        size_kb: 7840,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/HCI%20Operational%20Tool_TUM_480p.mp4',
+      },
     ],
   },
 
@@ -195,6 +228,23 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Tool%20Operational%20-%20LUV_480p.mp4',
       },
+      // MW
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 31700,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/Options%20Operational%20Video_Malawi_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['mw_tum'],
+        size_kb: 29350,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/Options%20Operational%20Tool_TUM_480p.mp4',
+      },
     ],
   },
   participatory_budget: {
@@ -257,6 +307,23 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Participatory%20Budget%20Tool%20%20-%20LUV_480p.mp4',
       },
+      // MW
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        size_kb: 27200,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/PB%20Operational%20Video_Malawi_480p.mp4',
+      },
+      // TODO
+      // {
+      //   id: '',
+      //   locale_codes: ['mw_tum'],
+      //   size_kb: 0,
+      //   resolution: '480p',
+      //   supabase_url: '',
+      // },
     ],
   },
 };
