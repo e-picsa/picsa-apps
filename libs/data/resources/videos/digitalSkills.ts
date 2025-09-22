@@ -240,7 +240,7 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         resolution: '360p',
         size_kb: 13730,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/03.%20How%20to%20Keep%20Your%20Device%20Operational_LUV_360p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/03.%20How%20to%20Keep%20Your%20Device%20Operational_TNG_360p.mp4',
       },
       // MW
       // {
@@ -293,7 +293,7 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         resolution: '360p',
         size_kb: 6280,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_BEM_360p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_LOZ_360p.mp4',
       },
       {
         id: '',
@@ -301,7 +301,7 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         resolution: '360p',
         size_kb: 6520,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_BEM_360p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_LUV_360p.mp4',
       },
       {
         id: '',
@@ -464,7 +464,7 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         resolution: '360p',
         size_kb: 6690,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/06.%20How%20to%20Create%20Your%20Own%20Content_BEM_360p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/06.%20How%20to%20Create%20Your%20Own%20Content_LOZ_360p.mp4',
       },
       {
         id: '',

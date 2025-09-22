@@ -197,7 +197,7 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         id: '',
         locale_codes: ['zm_toi'],
         resolution: '360p',
-        size_kb: -1,
+        size_kb: 7710,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/Victoria%20Ngombe_TON_360p.mp4',
       },

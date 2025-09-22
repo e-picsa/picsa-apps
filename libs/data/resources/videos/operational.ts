@@ -236,7 +236,7 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         size_kb: 31050,
         resolution: '480p',
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Tool%20Operational%20-%20LUV_480p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Tool%20Operational_BEM_480p.mp4',
       },
       {
         id: '',

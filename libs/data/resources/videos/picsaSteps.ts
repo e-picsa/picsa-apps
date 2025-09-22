@@ -508,7 +508,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
         size_kb: 29090,
         resolution: '360p',
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/09.%20Participatory%20Budgets%20KON_360p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/PICSA%20Steps/09.%20Participatory%20Budgets%20LUV_2_360p.mp4',
       },
       {
         id: '',
