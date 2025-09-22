@@ -11,6 +11,13 @@ on:
   push:
     branches:
       - fix/app-supabase-config
+
+env:
+  # Ensure supabase config env available to all steps as used in nx build cache computation
+  # as well as populating file
+  SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
 jobs:
   web_release:
     runs-on: ubuntu-latest
@@ -29,9 +36,6 @@ jobs:
         run: yarn install --immutable
 
       - name: Populate supabase config
-        env:
-          SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           jq -n \
             --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \

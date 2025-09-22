@@ -16,7 +16,7 @@ Ensure app `project.json` includes config asset and nx includes when calculating
 {
   "targets": {
     "build": {
-      "inputs": ["default", "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json"],
+      "inputs": ["default", "supabaseConfig"],
       "options": {
         "assets": [
           {
@@ -29,6 +29,18 @@ Ensure app `project.json` includes config asset and nx includes when calculating
     }
   }
 }
+```
+
+The `supabaseConfig` named asset is defined in main `nx.json` to include both the generated json file as well as environment variables used in CI
+
+```json
+ "namedInputs": {
+    "supabaseConfig": [
+      "!{workspaceRoot}/libs/environments/src/supabase/supabase.config.json",
+      { "env": "SUPABASE_PROJECT_ID" },
+      { "env": "SUPABASE_ANON_KEY" }
+    ]
+ }
 ```
 
 ## CI
