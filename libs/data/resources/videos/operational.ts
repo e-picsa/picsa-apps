@@ -74,14 +74,14 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/Malawi%20Chewa%20Intro%20Video_480p.mp4',
       },
-      // TODO
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_tum'],
-      //   size_kb: 0,
-      //   resolution: '480p',
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_tum'],
+        size_kb: 13510,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/Intro%20Oparation%20Tool_TUM_480p.mp4',
+      },
     ],
   },
 
@@ -316,14 +316,14 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/PB%20Operational%20Video_Malawi_480p.mp4',
       },
-      // TODO
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_tum'],
-      //   size_kb: 0,
-      //   resolution: '480p',
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_tum'],
+        size_kb: 25540,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/operational/PB%20Operational%20Tool_TUM_480p.mp4',
+      },
     ],
   },
 };

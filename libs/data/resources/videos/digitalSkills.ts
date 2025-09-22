@@ -486,7 +486,7 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
         id: '',
         locale_codes: ['zm_lun'],
         resolution: '360p',
-        size_kb: 0,
+        size_kb: 8720,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/06.%20How%20to%20Create%20Your%20Own%20Content_LND_360p.mp4',
       },

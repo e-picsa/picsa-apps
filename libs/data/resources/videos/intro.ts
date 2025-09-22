@@ -48,20 +48,53 @@ const PICSA_INTRO_VIDEOS_BASE: Record<IPicsaIntroVideoId, Omit<IPicsaVideoData, 
       // ZM
       {
         id: '',
-        locale_codes: ['zm_bem'],
-        resolution: '360p',
-        size_kb: 19120,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/PICSA%20Zambia%20Intro_BEM_360p.mp4',
-      },
-      {
-        id: '',
         locale_codes: ['zm_ny', 'global_en'],
         resolution: '360p',
         size_kb: 18100,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/PICSA%20Zambia%20Intro_NYA_360p.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['zm_bem'],
+        resolution: '360p',
+        size_kb: 19120,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/PICSA%20Zambia%20Intro_BEM_360p.mp4',
+      },
+      // TODO
+      // {
+      //   id: '',
+      //   locale_codes: ['zm_kqn'],
+      //   resolution: '360p',
+      //   size_kb: 0,
+      //   supabase_url: '',
+      // },
+      {
+        id: '',
+        locale_codes: ['zm_loz'],
+        resolution: '360p',
+        size_kb: 18850,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/PICSA%20Zambia%20Intro_LOZ_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_lue'],
+        resolution: '360p',
+        size_kb: 17220,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/Zambia%20PICSA%20Intro_LUV_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_lun'],
+        resolution: '360p',
+        size_kb: 17240,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/Zamiba%20PICSA%20Intro_LUN_360p.mp4',
+      },
+
       {
         id: '',
         locale_codes: ['zm_toi'],

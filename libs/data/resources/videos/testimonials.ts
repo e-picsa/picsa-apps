@@ -102,6 +102,14 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
       },
       {
         id: '',
+        locale_codes: ['zm_kqn'],
+        resolution: '360p',
+        size_kb: 15320,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/John%20Tembo_KON_360p.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_loz'],
         resolution: '360p',
         size_kb: 15610,
@@ -152,6 +160,14 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
         size_kb: 7730,
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/Victoria%20Ngombe_BEM_360p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_kqn'],
+        resolution: '360p',
+        size_kb: 7840,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/testimonials/Victoria%20Ngombe_KON_360p.mp4',
       },
       {
         id: '',
