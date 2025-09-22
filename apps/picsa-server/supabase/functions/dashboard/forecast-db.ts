@@ -110,7 +110,26 @@ function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: s
   return apiForecasts.map((v) => ({
     country_code,
     id: v.name,
-    forecast_type: 'daily',
+    forecast_type: mapForecastType(v),
     mimetype: v.contentType,
+    label: v.metadata?.subject || null,
   }));
+}
+
+function mapForecastType(apiForecast: IApiClimateForecast): IDBClimateForecastInsert['forecast_type'] {
+  const { sender, subject = '' } = apiForecast.metadata || {};
+  const cleanSubject = subject.toLowerCase().replace(/ /g, '');
+  // ZM
+  if (sender?.includes('zambianweather@gmail.com')) {
+    if (cleanSubject.includes('7day')) {
+      return 'weekly';
+    }
+  }
+  // MW
+  if (sender?.includes('metmalawi.gov.mw')) {
+    if (cleanSubject.includes('fiveday')) {
+      return 'weekly';
+    }
+  }
+  return 'daily';
 }
