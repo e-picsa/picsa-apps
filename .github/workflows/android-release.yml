@@ -51,6 +51,17 @@ jobs:
       - name: Build App
         run: yarn nx run picsa-apps-app-native:build
 
+      - name: Verify supabase config in built output
+        run: |
+          CONFIG_FILE=dist/apps/picsa-apps/app/assets/supabase.config.json
+          if [ ! -f "$CONFIG_FILE" ]; then
+            echo "❌ Missing $CONFIG_FILE in build output!"
+            ls dist/apps/picsa-apps/app/assets
+            exit 1
+          fi
+          echo "✅ Found supabase config in build output"
+          cat "$CONFIG_FILE"
+
       - name: Sync Capacitor
         run: npx cap sync
         working-directory: apps/picsa-apps/app-native
