@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "inputs": ["default", "{workspaceRoot}/libs/environments/src/supabase/supabase.config.json"],
+      "inputs": ["default", "supabaseConfig"],
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
