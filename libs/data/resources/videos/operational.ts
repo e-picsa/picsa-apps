@@ -35,14 +35,6 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
-        locale_codes: ['zm_loz'],
-        resolution: '480p',
-        size_kb: 11810,
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Intro%20Operational%20Tool%20-%20LOZ_480p.mp4',
-      },
-      {
-        id: '',
         locale_codes: ['zm_bem'],
         resolution: '480p',
         size_kb: 13000,
@@ -51,11 +43,11 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
-        locale_codes: ['zm_toi'],
+        locale_codes: ['zm_kqn'],
         resolution: '480p',
-        size_kb: 16780,
+        size_kb: 12910,
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Intro%20to%20Operational%20Tools_TNG_480p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Intro%20Tool_KON_480p.mp4',
       },
       {
         id: '',
@@ -65,6 +57,32 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Introduction%20to%20Operational%20Tools%20-%20LUV_480p.mp4',
       },
+      {
+        id: '',
+        locale_codes: ['zm_lun'],
+        resolution: '480p',
+        size_kb: 18840,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Intro%20Operational%20Tool_LUN_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_loz'],
+        resolution: '480p',
+        size_kb: 11810,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Intro%20Operational%20Tool%20-%20LOZ_480p.mp4',
+      },
+
+      {
+        id: '',
+        locale_codes: ['zm_toi'],
+        resolution: '480p',
+        size_kb: 16780,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Intro%20to%20Operational%20Tools_TNG_480p.mp4',
+      },
+
       // MW
       {
         id: '',
@@ -116,19 +134,19 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
-        locale_codes: ['zm_loz'],
-        size_kb: 7320,
+        locale_codes: ['zm_bem'],
+        size_kb: 7520,
         resolution: '480p',
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Operational%20Tool%20-%20LOZ_480p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Tool%20Operational_BEM_480p.mp4',
       },
       {
         id: '',
-        locale_codes: ['zm_toi'],
-        size_kb: 9860,
+        locale_codes: ['zm_kqn'],
+        size_kb: 6790,
         resolution: '480p',
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Operational%20Tool_TNG_480p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Operational%20Tool_KON_480p.mp4',
       },
       {
         id: '',
@@ -140,11 +158,27 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
-        locale_codes: ['zm_bem'],
-        size_kb: 7520,
+        locale_codes: ['zm_loz'],
+        size_kb: 7320,
         resolution: '480p',
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Tool%20Operational_BEM_480p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Operational%20Tool%20-%20LOZ_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_lun'],
+        size_kb: 8820,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Operational%20Tool_LUN_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_toi'],
+        size_kb: 9860,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/HCI%20Operational%20Tool_TNG_480p.mp4',
       },
 
       // MW
@@ -198,19 +232,27 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
+        locale_codes: ['zm_bem'],
+        size_kb: 31050,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Tool%20Operational%20-%20LUV_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_kqn'],
+        resolution: '480p',
+        size_kb: 29470,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Tool_KON_480p.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_loz'],
         size_kb: 27940,
         resolution: '480p',
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Operational%20Tool%20-%20LOZ_480p.mp4',
-      },
-      {
-        id: '',
-        locale_codes: ['zm_toi'],
-        size_kb: 33250,
-        resolution: '480p',
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Operational%20Tool_TNG_480p.mp4',
       },
       {
         id: '',
@@ -222,11 +264,19 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
-        locale_codes: ['zm_bem'],
-        size_kb: 31050,
+        locale_codes: ['zm_lun'],
+        resolution: '480p',
+        size_kb: 29760,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Operational%20Tool_LUN_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_toi'],
+        size_kb: 33250,
         resolution: '480p',
         supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Tool%20Operational%20-%20LUV_480p.mp4',
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Options%20Operational%20Tool_TNG_480p.mp4',
       },
       // MW
       {
@@ -267,22 +317,7 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       //   resolution: '480p',
       //   supabase_url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/pb.mp4',
       // },
-      {
-        id: '',
-        locale_codes: ['zm_loz'],
-        size_kb: 21890,
-        resolution: '480p',
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/PB%20Operational%20Tool%20-%20LOZ_480p.mp4',
-      },
-      {
-        id: '',
-        locale_codes: ['zm_toi'],
-        size_kb: 29240,
-        resolution: '480p',
-        supabase_url:
-          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/PB%20Operational%20Tool_TNG_480p.mp4',
-      },
+
       {
         id: '',
         locale_codes: ['zm_ny'],
@@ -301,11 +336,43 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
       },
       {
         id: '',
+        locale_codes: ['zm_kqn'],
+        resolution: '480p',
+        size_kb: 25670,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/PB%20%20Tool_KON_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_loz'],
+        size_kb: 21890,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/PB%20Operational%20Tool%20-%20LOZ_480p.mp4',
+      },
+      {
+        id: '',
         locale_codes: ['zm_lue'],
         size_kb: 26260,
         resolution: '480p',
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Participatory%20Budget%20Tool%20%20-%20LUV_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_lun'],
+        resolution: '480p',
+        size_kb: 37920,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/Participatory%20Budget%20Tool_LUN_480p.mp4',
+      },
+      {
+        id: '',
+        locale_codes: ['zm_toi'],
+        size_kb: 29240,
+        resolution: '480p',
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/operational/PB%20Operational%20Tool_TNG_480p.mp4',
       },
       // MW
       {
