@@ -15,6 +15,7 @@ interface ProcessingOptions {
   crf: number;
   maxrate: string;
   bufsize: string;
+  scale: 360 | 480;
 }
 
 const DEFAULT_OPTIONS: ProcessingOptions = {
@@ -29,6 +30,7 @@ const DEFAULT_OPTIONS: ProcessingOptions = {
   crf: 23,
   maxrate: '1125k',
   bufsize: '2250k',
+  scale: 480,
 };
 
 class VideoProcessor {
@@ -106,18 +108,19 @@ class VideoProcessor {
 
   private generateOutputFilename(inputFile: string): string {
     const name = path.basename(inputFile, path.extname(inputFile));
-    return `${name}_360p.mp4`;
+    const { scale } = this.options;
+    return `${name}_${scale}p.mp4`;
   }
 
   private buildFFmpegArgs(inputPath: string, outputPath: string): string[] {
-    const { targetLUFS, videoCodec, audioCodec, videoBitrate, audioBitrate, preset, crf, maxrate, bufsize } =
+    const { targetLUFS, videoCodec, audioCodec, videoBitrate, audioBitrate, preset, crf, maxrate, bufsize, scale } =
       this.options;
 
     return [
       '-i',
       `"${inputPath}"`, // Quote input path
       '-vf',
-      'scale=-2:360', // Downscale to 360p
+      `scale=-2:${scale}`, // Scale to target height (auto-scales width and rounds to multiple of 2)
       '-af',
       `loudnorm=I=${targetLUFS}:TP=-1.5:LRA=11`, // Normalize audio
       '-c:v',
