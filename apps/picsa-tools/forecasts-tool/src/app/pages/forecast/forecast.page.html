@@ -21,6 +21,18 @@
     <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
     }
   </div>
+
+  <!-- Weekly Forecasts -->
+  <h2>{{'Weekly' | translate}}</h2>
+  <div class="flex flex-wrap items-center gap-4">
+    @if(weeklyForecasts().length===0){
+    <div class="mx-auto w-24 mt-4">
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
+    } @for(forecast of weeklyForecasts(); track forecast.id){
+    <ng-container *ngTemplateOutlet="forecastItem; context: { $implicit: forecast }"></ng-container>
+    }
+  </div>
   <!-- <div class="h-0 w-full"></div> -->
 
   <!-- Seasonal Forecasts -->

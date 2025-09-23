@@ -97,7 +97,6 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
     .select('*')
     .like('id', `${query_prefix}%`)
     .eq('country_code', country_code)
-    .eq('forecast_type', 'daily')
     .order('id', { ascending: false });
 
   if (error) {

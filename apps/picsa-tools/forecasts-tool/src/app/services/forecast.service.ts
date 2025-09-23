@@ -23,6 +23,7 @@ export class ForecastService extends PicsaAsyncService {
   public enabled = signal(false);
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
+  public weeklyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public seasonalForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
   public downscaledForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
 
@@ -48,7 +49,11 @@ export class ForecastService extends PicsaAsyncService {
       const country_code = this.countryLocation();
       if (country_code) {
         await this.ready();
-        this.loadDailyForecasts(country_code);
+        // load weekly before daily as will likely include latest daily
+        this.loadWeeklyForecasts(country_code).then(() => {
+          this.loadDailyForecasts(country_code);
+        });
+
         this.loadSeasonalForecasts(country_code);
       }
     });
@@ -106,10 +111,10 @@ export class ForecastService extends PicsaAsyncService {
 
   private async loadDailyForecasts(country_code: ICountryCode) {
     // populate any forecasts that are in the cache
-    const cachedForecasts = await this.loadCachedForecasts(country_code);
+    const cachedForecasts = await this.loadCachedForecasts(country_code, 'daily');
     this.dailyForecastDocs.set(cachedForecasts);
     // load new forecasts from the server
-    const serverForecasts = await this.loadServerForecasts(country_code, cachedForecasts[0]);
+    const serverForecasts = await this.loadServerDailyForecasts(country_code, cachedForecasts[0]);
     if (serverForecasts.length > 0) {
       const { success, error } = await this.saveForecasts(serverForecasts);
       if (error.length > 0) {
@@ -117,6 +122,21 @@ export class ForecastService extends PicsaAsyncService {
         throw new Error(`[Forecast] failed to load daily forecasts`);
       }
       this.dailyForecastDocs.update((v) => [...success, ...v].slice(0, 3));
+    }
+  }
+  private async loadWeeklyForecasts(country_code: ICountryCode) {
+    // populate any forecasts that are in the cache
+    const cachedForecasts = await this.loadCachedForecasts(country_code, 'weekly');
+    this.weeklyForecastDocs.set(cachedForecasts);
+    // load new forecasts from the server
+    const serverForecasts = await this.loadServerWeeklyForecasts(country_code, cachedForecasts[0]);
+    if (serverForecasts.length > 0) {
+      const { success, error } = await this.saveForecasts(serverForecasts);
+      if (error.length > 0) {
+        console.error(error);
+        throw new Error(`[Forecast] failed to load daily forecasts`);
+      }
+      this.weeklyForecastDocs.update((v) => [...success, ...v].slice(0, 3));
     }
   }
   private async loadSeasonalForecasts(country_code: ICountryCode) {
@@ -144,9 +164,9 @@ export class ForecastService extends PicsaAsyncService {
     return doc;
   }
 
-  private async loadCachedForecasts(country_code: string) {
+  private async loadCachedForecasts(country_code: string, forecast_type: IForecast['forecast_type']) {
     // only filter if non-global country used
-    const selector: MangoQuerySelector<IForecast> = { forecast_type: 'daily' };
+    const selector: MangoQuerySelector<IForecast> = { forecast_type };
     if (country_code !== 'global') {
       selector.country_code = country_code;
     }
@@ -159,11 +179,11 @@ export class ForecastService extends PicsaAsyncService {
     return saved;
   }
 
-  private async loadServerForecasts(country_code: string, latest?: IForecast): Promise<IForecast[]> {
+  private async loadServerDailyForecasts(country_code: string, latest?: IForecast): Promise<IForecast[]> {
     await this.supabaseService.ready();
     // only retrieve forecasts that have storage files stored
     // NOTE - these are populated on a separate cron schedule to forecast db entries
-    const query = this.table.select<'*', IForecastRow>('*').neq('storage_file', null);
+    const query = this.table.select<'*', IForecastRow>('*').neq('storage_file', null).eq('forecast_type', 'daily');
     if (country_code !== 'global') {
       query.eq('country_code', country_code);
     }
@@ -171,6 +191,25 @@ export class ForecastService extends PicsaAsyncService {
       query.gt('id', latest.id);
     }
     const { data = [], error } = await query.order('id', { ascending: false }).limit(3);
+    if (error) {
+      console.error(error);
+      // TODO - handle error
+      throw error;
+    }
+    return (data || []).map((el) => SERVER_DB_MAPPING(el));
+  }
+  private async loadServerWeeklyForecasts(country_code: string, latest?: IForecast): Promise<IForecast[]> {
+    await this.supabaseService.ready();
+    // only retrieve forecasts that have storage files stored
+    // NOTE - these are populated on a separate cron schedule to forecast db entries
+    const query = this.table.select<'*', IForecastRow>('*').neq('storage_file', null).eq('forecast_type', 'weekly');
+    if (country_code !== 'global') {
+      query.eq('country_code', country_code);
+    }
+    if (latest) {
+      query.gt('id', latest.id);
+    }
+    const { data = [], error } = await query.order('id', { ascending: false }).limit(1);
     if (error) {
       console.error(error);
       // TODO - handle error
