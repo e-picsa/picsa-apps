@@ -49,12 +49,12 @@ export class ForecastService extends PicsaAsyncService {
       const country_code = this.countryLocation();
       if (country_code) {
         await this.ready();
-        // load weekly before daily as will likely include latest daily
-        this.loadWeeklyForecasts(country_code).then(() => {
-          this.loadDailyForecasts(country_code);
-        });
-
+        // Eagerly load seasonal forecasts
         this.loadSeasonalForecasts(country_code);
+
+        // load weekly before daily as may impact on most recent date
+        await this.loadWeeklyForecasts(country_code);
+        await this.loadDailyForecasts(country_code);
       }
     });
 
@@ -134,9 +134,9 @@ export class ForecastService extends PicsaAsyncService {
       const { success, error } = await this.saveForecasts(serverForecasts);
       if (error.length > 0) {
         console.error(error);
-        throw new Error(`[Forecast] failed to load daily forecasts`);
+        throw new Error(`[Forecast] failed to load weekly forecasts`);
       }
-      this.weeklyForecastDocs.update((v) => [...success, ...v].slice(0, 3));
+      this.weeklyForecastDocs.update((v) => [...success, ...v].slice(0, 1));
     }
   }
   private async loadSeasonalForecasts(country_code: ICountryCode) {

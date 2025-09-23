@@ -115,20 +115,26 @@ function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: s
   }));
 }
 
+const FORECAST_TYPE_MAPPINGS: {
+  sender: string;
+  subjectKeyword: string;
+  type: IDBClimateForecastInsert['forecast_type'];
+}[] = [
+  { sender: 'zambianweather@gmail.com', subjectKeyword: '7day', type: 'weekly' },
+  { sender: 'metmalawi.gov.mw', subjectKeyword: 'fiveday', type: 'weekly' },
+];
+
 function mapForecastType(apiForecast: IApiClimateForecast): IDBClimateForecastInsert['forecast_type'] {
-  const { sender, subject = '' } = apiForecast.metadata || {};
+  const { sender, subject } = apiForecast.metadata || {};
+  // Fallback assume daily
+  if (!sender || !subject) {
+    return 'daily';
+  }
   const cleanSubject = subject.toLowerCase().replace(/ /g, '');
-  // ZM
-  if (sender?.includes('zambianweather@gmail.com')) {
-    if (cleanSubject.includes('7day')) {
-      return 'weekly';
-    }
-  }
-  // MW
-  if (sender?.includes('metmalawi.gov.mw')) {
-    if (cleanSubject.includes('fiveday')) {
-      return 'weekly';
-    }
-  }
-  return 'daily';
+  // Use keyword mapping to try and identify type
+  const mapping = FORECAST_TYPE_MAPPINGS.find(
+    (m) => sender.includes(m.sender) && cleanSubject.includes(m.subjectKeyword),
+  );
+
+  return mapping?.type || 'daily';
 }
