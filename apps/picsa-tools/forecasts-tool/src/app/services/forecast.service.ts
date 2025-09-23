@@ -126,7 +126,7 @@ export class ForecastService extends PicsaAsyncService {
       return this.loadSeasonalForecasts(country_code);
     }
 
-    const cached = await this.loadCachedForecasts(country_code, config.type);
+    const cached = await this.loadCachedForecasts(country_code, config.type, config.limit);
     config.signal.set(cached);
 
     if (config.includeStorage) {
@@ -207,14 +207,14 @@ export class ForecastService extends PicsaAsyncService {
     return success;
   }
 
-  private async loadCachedForecasts(country_code: string, forecast_type: IForecast['forecast_type']) {
+  private async loadCachedForecasts(country_code: string, forecast_type: IForecast['forecast_type'], limit: number) {
     const selector: MangoQuerySelector<IForecast> = { forecast_type };
 
     if (country_code !== 'global') {
       selector.country_code = country_code;
     }
 
-    return await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit: 3 }).exec();
+    return await this.dbCollection.find({ selector, sort: [{ id: 'desc' }], limit }).exec();
   }
 
   private async saveForecasts(forecasts: IForecast[]) {
