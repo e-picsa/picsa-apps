@@ -39,9 +39,9 @@ export class ForecastService extends PicsaAsyncService {
   private countryLocation = signal<ICountryCode | undefined>(undefined);
 
   private loaderConfigs: LoaderConfig[] = [
-    { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
-    { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
     { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 0 },
+    { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
+    { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
   ];
 
   private get table() {
@@ -118,9 +118,7 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   private async loadAllForecastTypes(country_code: ICountryCode) {
-    for (const config of this.loaderConfigs) {
-      await this.loadForecastType(country_code, config);
-    }
+    return Promise.all(this.loaderConfigs.map(async (config) => await this.loadForecastType(country_code, config)));
   }
 
   private async loadForecastType(country_code: ICountryCode, config: LoaderConfig) {
@@ -133,7 +131,6 @@ export class ForecastService extends PicsaAsyncService {
 
     if (config.includeStorage) {
       const serverForecasts = await this.loadServerForecasts(country_code, config.type, cached[0], config.limit);
-
       if (serverForecasts.length > 0) {
         const { success, error } = await this.saveForecasts(serverForecasts);
         if (error.length > 0) {

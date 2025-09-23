@@ -125,7 +125,7 @@ export class ForecastComponent implements OnDestroy {
       let label: string | undefined = undefined;
       let image: string | undefined = undefined;
       if (forecast_type === 'daily' || forecast_type === 'weekly') {
-        label = doc.label || this.generateForecastLabel(storage_file);
+        label = this.generateForecastLabel(doc);
       } else {
         image = `assets/svgs/forecast_${forecast_type}.svg`;
       }
@@ -149,12 +149,21 @@ export class ForecastComponent implements OnDestroy {
     return summaries;
   }
 
-  private generateForecastLabel(storage_file: string) {
-    const filename = storage_file.split('/').pop();
-    if (filename) {
-      const [basename, extension] = filename.split('.');
-      return basename.replace(/[-_]/g, ' ');
+  private generateForecastLabel(forecast: IForecast) {
+    const { country_code, label, storage_file } = forecast;
+    // HACK - mw sender subject label not well formatted, prefer using storage file
+    if (country_code === 'mw') {
+      return storageFileToLabel(storage_file);
     }
-    return storage_file;
+    if (label) return label;
+    return storageFileToLabel(storage_file);
   }
+}
+function storageFileToLabel(storage_file: string) {
+  const filename = storage_file.split('/').pop();
+  if (filename) {
+    const [basename] = filename.split('.');
+    return basename.replace(/[-_]/g, ' ');
+  }
+  return storage_file;
 }
