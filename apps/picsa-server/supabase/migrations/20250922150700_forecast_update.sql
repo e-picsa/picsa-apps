@@ -1,0 +1,2 @@
+ALTER TABLE forecasts
+ADD COLUMN label TEXT;

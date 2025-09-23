@@ -26,7 +26,7 @@ interface IForecastSummary {
   id: string;
   type: string | null;
   title: string;
-  label: string;
+  label?: string;
   image?: string;
   storage_file: string;
   downloaded: boolean;
@@ -56,6 +56,7 @@ export class ForecastComponent implements OnDestroy {
   public locationSelected = computed(() => this.configurationService.userSettings().location, { equal: isEqual });
 
   public dailyForecasts = computed(() => this.generateForecastSummary(this.service.dailyForecastDocs()));
+  public weeklyForecasts = computed(() => this.generateForecastSummary(this.service.weeklyForecastDocs()));
   public downscaledForecasts = computed(() => this.generateForecastSummary(this.service.downscaledForecastDocs()));
   public seasonalForecasts = computed(() => this.generateForecastSummary(this.service.seasonalForecastDocs()));
 
@@ -72,7 +73,10 @@ export class ForecastComponent implements OnDestroy {
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
-  constructor(private service: ForecastService, private configurationService: ConfigurationService) {
+  constructor(
+    private service: ForecastService,
+    private configurationService: ConfigurationService,
+  ) {
     effect(() => {
       const { location } = configurationService.userSettings();
       service.setForecastLocation(location);
@@ -116,9 +120,16 @@ export class ForecastComponent implements OnDestroy {
       // rename seasonal forecast title to say 'national' instead
       const title = forecast_type === 'seasonal' ? STRINGS.National : (forecast_type as string);
       const languageLabel = LOCALES_DATA_HASHMAP[language_code || '']?.language_label;
+
       // only include filename label for daily forecast, use image for seasonal and downscaled
-      const label = forecast_type === 'daily' ? this.generateForecastLabel(storage_file) : '';
-      const image = forecast_type === 'daily' ? undefined : `assets/svgs/forecast_${forecast_type}.svg`;
+      let label: string | undefined = undefined;
+      let image: string | undefined = undefined;
+      if (forecast_type === 'daily' || forecast_type === 'weekly') {
+        label = this.generateForecastLabel(doc);
+      } else {
+        image = `assets/svgs/forecast_${forecast_type}.svg`;
+      }
+
       const summary: IForecastSummary = {
         _doc: doc,
         id,
@@ -138,12 +149,21 @@ export class ForecastComponent implements OnDestroy {
     return summaries;
   }
 
-  private generateForecastLabel(storage_file: string) {
-    const filename = storage_file.split('/').pop();
-    if (filename) {
-      const [basename, extension] = filename.split('.');
-      return basename.replace(/[-_]/g, ' ');
+  private generateForecastLabel(forecast: IForecast) {
+    const { country_code, label, storage_file } = forecast;
+    // HACK - mw sender subject label not well formatted, prefer using storage file
+    if (country_code === 'mw') {
+      return storageFileToLabel(storage_file);
     }
-    return storage_file;
+    if (label) return label;
+    return storageFileToLabel(storage_file);
   }
+}
+function storageFileToLabel(storage_file: string) {
+  const filename = storage_file.split('/').pop();
+  if (filename) {
+    const [basename] = filename.split('.');
+    return basename.replace(/[-_]/g, ' ');
+  }
+  return storage_file;
 }

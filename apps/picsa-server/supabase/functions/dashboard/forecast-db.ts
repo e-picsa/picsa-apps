@@ -97,7 +97,6 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
     .select('*')
     .like('id', `${query_prefix}%`)
     .eq('country_code', country_code)
-    .eq('forecast_type', 'daily')
     .order('id', { ascending: false });
 
   if (error) {
@@ -110,7 +109,32 @@ function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: s
   return apiForecasts.map((v) => ({
     country_code,
     id: v.name,
-    forecast_type: 'daily',
+    forecast_type: mapForecastType(v),
     mimetype: v.contentType,
+    label: v.metadata?.subject || null,
   }));
+}
+
+const FORECAST_TYPE_MAPPINGS: {
+  sender: string;
+  subjectKeyword: string;
+  type: IDBClimateForecastInsert['forecast_type'];
+}[] = [
+  { sender: 'zambianweather@gmail.com', subjectKeyword: '7day', type: 'weekly' },
+  { sender: 'metmalawi.gov.mw', subjectKeyword: 'fiveday', type: 'weekly' },
+];
+
+function mapForecastType(apiForecast: IApiClimateForecast): IDBClimateForecastInsert['forecast_type'] {
+  const { sender, subject } = apiForecast.metadata || {};
+  // Fallback assume daily
+  if (!sender || !subject) {
+    return 'daily';
+  }
+  const cleanSubject = subject.toLowerCase().replace(/ /g, '');
+  // Use keyword mapping to try and identify type
+  const mapping = FORECAST_TYPE_MAPPINGS.find(
+    (m) => sender.includes(m.sender) && cleanSubject.includes(m.subjectKeyword),
+  );
+
+  return mapping?.type || 'daily';
 }

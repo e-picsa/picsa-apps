@@ -6,7 +6,6 @@ import { FunctionResponses } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
-import { FunctionsHttpError } from '@supabase/supabase-js';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
@@ -24,7 +23,7 @@ const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
   'country_code',
   'forecast_type',
   'location',
-  'file_name',
+  'label',
   'storage_file',
 ];
 
@@ -136,7 +135,6 @@ export class ClimateForecastPageComponent {
     const forecasts = data?.[country_code] || [];
 
     this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(forecasts), v));
-    console.log('[Api Data Updated]', { country_code, data, forecasts });
 
     return forecasts;
   }

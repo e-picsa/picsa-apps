@@ -33,6 +33,7 @@ export type Database = {
           app_version: string | null;
           country_code: string | null;
           created_at: string;
+          label: string | null;
           language_code: string | null;
           platform: string | null;
           updated_at: string;
@@ -43,6 +44,7 @@ export type Database = {
           app_version?: string | null;
           country_code?: string | null;
           created_at?: string;
+          label?: string | null;
           language_code?: string | null;
           platform?: string | null;
           updated_at?: string;
@@ -53,6 +55,7 @@ export type Database = {
           app_version?: string | null;
           country_code?: string | null;
           created_at?: string;
+          label?: string | null;
           language_code?: string | null;
           platform?: string | null;
           updated_at?: string;
@@ -286,6 +289,7 @@ export type Database = {
           created_at: string;
           forecast_type: Database['public']['Enums']['forecast_type'] | null;
           id: string;
+          label: string | null;
           language_code: string | null;
           location: string[] | null;
           mimetype: string | null;
@@ -297,6 +301,7 @@ export type Database = {
           created_at?: string;
           forecast_type?: Database['public']['Enums']['forecast_type'] | null;
           id: string;
+          label?: string | null;
           language_code?: string | null;
           location?: string[] | null;
           mimetype?: string | null;
@@ -308,6 +313,7 @@ export type Database = {
           created_at?: string;
           forecast_type?: Database['public']['Enums']['forecast_type'] | null;
           id?: string;
+          label?: string | null;
           language_code?: string | null;
           location?: string[] | null;
           mimetype?: string | null;
