@@ -54,7 +54,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     private service: SeasonCalendarService,
     private formService: SeasonCalendarFormService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {
@@ -97,7 +97,8 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
 
   private enableFormAutoSave() {
     this.form.valueChanges.pipe(takeUntil(this.componentDestroyed$), debounceTime(500)).subscribe((v) => {
-      this.service.save(this.formValue);
+      const convertedData = this.formService.convertToSingleFormat(this.formValue);
+      this.service.save(convertedData);
     });
   }
 

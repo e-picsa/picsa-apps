@@ -1,7 +1,15 @@
 <div class="display-container">
-  @if(selected && selectedOption){
+  @if(selected && selected.length > 0){
   <div (click)="dialog.open(inputDialog)" style="height: 100%; width: 100%">
-    <mat-icon style="height: 100%; width: 100%" [svgIcon]="'picsa_weather:' + selectedOption.svgIcon"></mat-icon>
+    @if(selected.length === 1){
+    <mat-icon style="height: 100%; width: 100%" [svgIcon]="'picsa_weather:' + selectedOptions[0].svgIcon"></mat-icon>
+    } @else {
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 2px;">
+      @for(option of selectedOptions; track option.id){
+      <mat-icon style="height: 40px; width: 40px; font-size: 40px;" [svgIcon]="'picsa_weather:' + option.svgIcon"></mat-icon>
+      }
+    </div>
+    }
   </div>
   } @else {
   <button style="height: 100%" mat-stroked-button (click)="dialog.open(inputDialog)">
@@ -15,7 +23,7 @@
 <ng-template #inputDialog>
   <div class="select-container">
     @for(option of selectOptions; track option.id){
-    <div class="option-container" [attr.data-selected]="option.id === selected" (click)="selected = option.id">
+    <div class="option-container" [attr.data-selected]="selected.includes(option.id)" (click)="toggleSelected(option.id)">
       <div class="option-label">{{ option.label | translate }}</div>
       <mat-icon class="option-icon" [svgIcon]="'picsa_weather:' + option.svgIcon"></mat-icon>
     </div>
