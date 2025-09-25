@@ -9,11 +9,14 @@ import { resolve } from 'path';
 import { execSync } from 'child_process';
 
 import { SEED_DATA_CONFIGURATION, ISeedDataConfiguration } from './db-seed.config';
+import { writeFile } from 'fs/promises';
 
 const ROOT_DIR = resolve(__dirname, '../../../../');
+
 const SUPABASE_DIR = resolve(__dirname, '../../', 'supabase');
 const SEED_DIR = resolve(SUPABASE_DIR, 'data');
 const SEED_STORAGE_DIR = resolve(SUPABASE_DIR, 'data', 'storage');
+const SUPABASE_ENV_ASSET = resolve(ROOT_DIR, 'libs/environments/src/supabase/supabase.config.json');
 
 /**
  * Response model from `supbase status --output json` command
@@ -48,12 +51,21 @@ class SupabaseSeed {
 
   public async run() {
     // log into supabase using service role to allow storage bucket manipulation
-    const { SERVICE_ROLE_KEY, API_URL } = this.getCredentials();
+    const { SERVICE_ROLE_KEY, API_URL, ANON_KEY } = this.getCredentials();
     this.client = createClient(API_URL, SERVICE_ROLE_KEY, {});
+
     await this.ensureClientReady();
     // import storage objects first as some db rows depend on storage db entry ref
     await this.importStorageObjects();
     await this.importDBRows();
+    await this.storeFrontendCredentials(API_URL, ANON_KEY);
+  }
+
+  /** Populate credentials to frontend app to allow anon access */
+  private async storeFrontendCredentials(apiUrl: string, anonKey: string) {
+    // Store credentials to frontend env config
+    const frontendConfig = { apiUrl, anonKey };
+    await writeFile(SUPABASE_ENV_ASSET, JSON.stringify(frontendConfig, null, 2));
   }
 
   /** Use the supabase cli to automatically detect credentials of server running locally */
@@ -98,7 +110,7 @@ class SupabaseSeed {
     const { storage } = this.client;
     // list all storage files to upload
     const entries = globSync('**', { stat: false, withFileTypes: true, cwd: SEED_STORAGE_DIR }).filter((g) =>
-      g.isFile()
+      g.isFile(),
     );
     // check existing buckets
     const { data: bucketRows, error: listError } = await storage.listBuckets();

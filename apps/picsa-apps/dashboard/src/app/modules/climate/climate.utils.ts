@@ -19,7 +19,11 @@ export function hackConvertStationDataForDisplay(stationData: IClimateStationDat
 
   const data: IStationData[] = mergedData.map((el) => {
     const { max_tmax, max_tmin, min_tmax, min_tmin, mean_tmax, mean_tmin } = el;
-    const { year, end_rains_doy, end_season_doy, season_length, seasonal_rain, annual_rain, start_rains_doy } = el;
+    const { year, end_season_doy, season_length, seasonal_rain, start_rains_doy } = el;
+
+    // Legacy variables, e.g. annual_rain fixed 1st October - 30th April
+    // TODO - push for single value to be populated at api level
+    const { annual_rain, end_rains_doy, end_rains_date, start_rains_date } = el;
 
     const entry: IStationData = {
       Year: undefined as any,
@@ -36,16 +40,15 @@ export function hackConvertStationDataForDisplay(stationData: IClimateStationDat
       Extreme_events: undefined as any,
     };
     if (typeof year === 'number') entry.Year = year;
-    // HACK - use either end_rains or end_season depending on which has data populated
-    // TODO - push for single value to be populated at api level
+
+    // mw uses end_rains_doy, zm uses end_season_doy (both use start_rains_doy, both use season_rain)
     if (typeof end_rains_doy === 'number') entry.End = end_rains_doy;
     if (typeof end_season_doy === 'number') entry.End = end_season_doy;
+
     if (typeof start_rains_doy === 'number') entry.Start = start_rains_doy;
     if (typeof season_length === 'number') entry.Length = season_length;
     // HACK - replace 0mm with null value
-    if (seasonal_rain) entry.Rainfall = seasonal_rain;
-    // HACK - mw uses seasonal_rain but zm uses annual_rainfall - API should return consistent
-    if (annual_rain) entry.Rainfall = annual_rain;
+    if (typeof seasonal_rain === 'number') entry.Rainfall = seasonal_rain;
 
     return cleanEntry(entry);
   });

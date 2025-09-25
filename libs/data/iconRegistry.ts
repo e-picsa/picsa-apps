@@ -19,7 +19,10 @@ export type IconPackName = keyof typeof ICON_PACK_DATA;
 @Injectable({ providedIn: 'root' })
 export class DataIconRegistry {
   private registeredIcons: Record<string, boolean> = {};
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {}
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+  ) {}
 
   public registerMatIcons(iconPack: IconPackName) {
     // Avoid re-registering by checking if first matIcon has already been registered
@@ -30,7 +33,7 @@ export class DataIconRegistry {
       this.matIconRegistry.addSvgIconInNamespace(
         `picsa_${iconPack}`,
         svgIcon,
-        this.domSanitizer.bypassSecurityTrustResourceUrl(assetIconPath)
+        this.domSanitizer.bypassSecurityTrustResourceUrl(assetIconPath),
       );
     }
     this.registeredIcons[iconPack] = true;
@@ -48,7 +51,7 @@ export class DataIconRegistry {
       error: (err) => {
         const exampleImport = `\n\n{"glob": "*.svg", "input": "libs/data/${iconPack}/svgs","output": "assets/svgs/${iconPack}"}\n\n`;
         throw new Error(
-          `Failed to retrieve icon ${namespace}:${svgIcon}\nensure imported into app project.json ${exampleImport}`
+          `Failed to retrieve icon ${namespace}:${svgIcon}\nensure imported into app project.json ${exampleImport}`,
         );
       },
     });

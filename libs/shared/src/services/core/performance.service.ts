@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { FirebasePerformance } from '@capacitor-firebase/performance';
 import { FirebasePerformance as IFirebasePerformance, getPerformance } from '@firebase/performance';
-import { ENVIRONMENT } from '@picsa/environments/src';
+import { ENVIRONMENT } from '@picsa/environments';
 
 import { PicsaFirebaseService } from './firebase.service';
 

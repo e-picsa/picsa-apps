@@ -14,6 +14,12 @@ on:
     types: [published]
   workflow_dispatch:
 
+env:
+  # Ensure supabase config env available to all steps as used in nx build cache computation
+  # as well as populating file
+  SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
 jobs:
   android_release:
     runs-on: ubuntu-latest
@@ -28,16 +34,36 @@ jobs:
           node-version: 22.x
           cache: 'yarn'
 
+      - name: Populate supabase config
+        run: |
+          jq -n \
+            --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
+            --arg anonKey "$SUPABASE_ANON_KEY" \
+            '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+            > libs/environments/src/supabase/supabase.config.json
+
       - name: Install node modules
         run: yarn install --immutable
 
       - name: Populate google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+        run: |
+          echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
 
       - name: Build App
         run: yarn nx run picsa-apps-app-native:build
+
+      - name: Verify supabase config in built output
+        run: |
+          CONFIG_FILE=dist/apps/picsa-apps/app/assets/supabase.config.json
+          if [ ! -f "$CONFIG_FILE" ]; then
+            echo "❌ Missing $CONFIG_FILE in build output!"
+            ls dist/apps/picsa-apps/app/assets
+            exit 1
+          fi
+          echo "✅ Found supabase config in build output"
+          cat "$CONFIG_FILE"
 
       - name: Sync Capacitor
         run: npx cap sync

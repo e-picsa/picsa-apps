@@ -2,13 +2,13 @@ import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-mark
 
 import { IFarmerContent, IFarmerContentStep } from '../../types';
 import {
-  PICSA_FARMER_VIDEOS_HASHMAP,
+  PICSA_INTRO_VIDEOS_HASHMAP,
   PICSA_VIDEO_TESTIMONIAL_DATA,
   PICSA_OPERATIONAL_VIDEOS_HASHMAP,
 } from '@picsa/data/resources';
 
 const steps: IFarmerContentStep[] = [
-  { type: 'video', video: PICSA_FARMER_VIDEOS_HASHMAP.intro, title: translateMarker('Introduction') },
+  { type: 'video', video: PICSA_INTRO_VIDEOS_HASHMAP.intro, title: translateMarker('Introduction') },
   {
     type: 'videoPlaylist',
     title: translateMarker('Testimonials'),

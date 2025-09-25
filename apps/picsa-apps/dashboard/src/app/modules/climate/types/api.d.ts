@@ -550,13 +550,13 @@ export interface components {
       /** Station Name */
       station_name: string;
       /** Latitude */
-      latitude: number;
+      latitude?: number;
       /** Longitude */
-      longitude: number;
+      longitude?: number;
       /** Elevation */
-      elevation: number;
+      elevation?: number;
       /** District */
-      district: string;
+      district?: string;
       /**
        * Country Code
        * @enum {string}
@@ -575,13 +575,13 @@ export interface components {
       /** Station Name */
       station_name: string;
       /** Latitude */
-      latitude: number;
+      latitude?: number;
       /** Longitude */
-      longitude: number;
+      longitude?: number;
       /** Elevation */
-      elevation: number;
+      elevation?: number;
       /** District */
-      district: string;
+      district?: string;
       /**
        * Country Code
        * @enum {string}

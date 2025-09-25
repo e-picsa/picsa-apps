@@ -67,7 +67,7 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     private route: ActivatedRoute,
     private ConfigurationService: ConfigurationService,
     private resourcesService: ResourcesToolService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(({ page }) => {
       this.page = Number(page);

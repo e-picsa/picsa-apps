@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
+import { Component, computed, effect, input, output, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +9,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PicsaCommonComponentsModule, PicsaCommonComponentsService } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
-import { APP_VERSION } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { filter, map } from 'rxjs';
@@ -45,7 +45,9 @@ export class AppLayoutComponent {
     ),
   );
   public userType = computed(() => this.configurationService.userSettings().user_type);
-  public version = APP_VERSION.semver;
+  public version = APP_VERSION;
+
+  public versionClicked = output();
 
   constructor(
     private router: Router,

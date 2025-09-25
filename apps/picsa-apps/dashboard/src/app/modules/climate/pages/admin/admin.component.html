@@ -22,26 +22,72 @@
     style="margin-top: 1em"
     [data]="tableData()"
     [options]="tableOptions"
-    [valueTemplates]="{ updated_at: updatedAtTemplate, station: stationTemplate }"
+    [valueTemplates]="{
+      updated_at: updatedAtTemplate,
+      products: productsTemplate,
+      rainfall_issues: rainfallIssuesTemplate,
+      rainfall_export_data: downloadTemplate,
+    }"
   >
     <ng-template #updatedAtTemplate let-value>
       {{ value | date: 'mediumDate' }}
     </ng-template>
-    <!-- Station column includes refresh and csv download -->
-    <ng-template #stationTemplate let-station let-row="row">
+
+    <!-- Products summary -->
+    <ng-template #productsTemplate let-products let-row="row">
       <div class="flex gap-2 items-center">
-        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.updated_at">
+        <!-- Pending product download status -->
+        @if (row.updateSignal().started) {
+          @for (statusUpdate of row.updateSignal().statuses; track $index) {
+            @let status = statusUpdate.status;
+            <button
+              mat-icon-button
+              [matTooltip]="statusUpdate.id"
+              class="status-icon"
+              [attr.data-status]="status"
+              (click)="handleSummaryClick($event, row, statusUpdate)"
+            >
+              @switch (status) {
+                @case ('pending') {
+                  <mat-icon style="color: var(--color-light)">hourglass_top</mat-icon>
+                }
+                @case ('fulfilled') {
+                  <mat-icon color="primary">check_circle</mat-icon>
+                }
+                @case ('rejected') {
+                  <mat-icon color="warn">error</mat-icon>
+                }
+              }
+            </button>
+          }
+        } @else {
+          <!-- Product download summary -->
+          @for (product of products; track $index) {
+            <button mat-icon-button [matTooltip]="product.id" class="status-icon" (click)="refreshStation(row, $event)">
+              @if (product.available) {
+                <mat-icon color="primary">check</mat-icon>
+              } @else {
+                <mat-icon color="warn">close</mat-icon>
+              }
+            </button>
+          }
+        }
+      </div>
+    </ng-template>
+    <!-- Rainfall issues  -->
+    <ng-template #rainfallIssuesTemplate let-row="row" let-issues>
+      @if (issues) {
+        <div [matTooltip]="row.rainfall_issues_details.join(',\n')">
+          <mat-icon>announcement</mat-icon>
+        </div>
+      }
+    </ng-template>
+    <!-- CSV download column  -->
+    <ng-template #downloadTemplate let-row="row">
+      <div class="flex gap-2 items-center">
+        <button mat-button (click)="downloadStationCSV(row, $event)" [disabled]="!row.rainfall_export_data">
           <mat-icon>download</mat-icon>
         </button>
-        @if (row.updateSignal().completed) {
-          <button mat-icon-button (click)="showUpdateSummary(row, $event)">
-            <mat-icon>check_circle</mat-icon>
-          </button>
-        } @else {
-          <button mat-icon-button (click)="refreshStation(row, $event)" [disabled]="row.updateSignal().started">
-            <mat-icon>autorenew</mat-icon>
-          </button>
-        }
       </div>
     </ng-template>
   </picsa-data-table>

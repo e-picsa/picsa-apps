@@ -17,13 +17,16 @@ import { SupabaseSignInDialogComponent } from '../sign-in-dialog/sign-in-dialog.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileMenuComponent implements AfterViewInit {
-  constructor(public supabaseAuthService: SupabaseAuthService, private dialog: MatDialog) {}
+  constructor(
+    public supabaseAuthService: SupabaseAuthService,
+    private dialog: MatDialog,
+  ) {}
 
   async ngAfterViewInit() {
     await this.supabaseAuthService.ready();
     // HACK - use anonymous user when running in dev
     if (!ENVIRONMENT.production) {
-      await this.supabaseAuthService.signInDefaultUser();
+      await this.supabaseAuthService.signInDashboardDevUser();
     }
   }
   public signOut() {

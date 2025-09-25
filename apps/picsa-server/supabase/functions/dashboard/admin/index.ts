@@ -50,6 +50,6 @@ export const admin = async (req: Request) => {
     }
 
     default:
-      return ErrorResponse(`Invalid endpoint: ${adminEndpoint}`, 501);
+      return ErrorResponse(`Invalid admin endpoint: ${adminEndpoint}`, 501);
   }
 };

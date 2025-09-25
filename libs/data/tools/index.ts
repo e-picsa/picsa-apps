@@ -31,6 +31,6 @@ export const TOOLS_DATA = Object.entries(TOOLS_DATA_BASE).map(([id, { label, url
   };
 });
 
-export type IToolsDataEntry = typeof TOOLS_DATA[0];
+export type IToolsDataEntry = (typeof TOOLS_DATA)[0];
 
 export const TOOLS_DATA_HASHMAP = arrayToHashmap(TOOLS_DATA, 'id') as Record<IToolsID, IToolsDataEntry>;

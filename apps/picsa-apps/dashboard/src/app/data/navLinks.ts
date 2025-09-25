@@ -99,6 +99,11 @@ export const DASHBOARD_NAV_LINKS: INavLink[] = [
 
 export const ADMIN_NAV_LINKS: INavLink[] = [
   {
+    label: 'Statistics',
+    href: '/stats',
+    matIcon: 'query_stats',
+  },
+  {
     label: 'Deployments',
     href: '/deployment',
     matIcon: 'apps',

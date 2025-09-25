@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs';
   selector: 'farmer-content-tool',
   template: `
     <div class="page">
-      @if(!toolId()){
-      <!-- Tools List -->
-      <div class="page-content">
-        @for(tool of tools; track tool.id){
-        <div>
-          <a [routerLink]="tool.url">{{ tool.label }}</a>
+      @if (!toolId()) {
+        <!-- Tools List -->
+        <div class="page-content">
+          @for (tool of tools; track tool.id) {
+            <div>
+              <a [routerLink]="tool.url">{{ tool.label }}</a>
+            </div>
+          }
         </div>
-        }
-      </div>
       }
       <!-- Tool View -->
       <router-outlet></router-outlet>
@@ -33,8 +33,8 @@ export class FarmerToolPlaceholderComponent {
       map((e) => {
         const toolId = (e as NavigationEnd).url.split('/').pop();
         return toolId !== 'tool' ? toolId : '';
-      })
-    )
+      }),
+    ),
   );
   constructor(private router: Router) {}
 }

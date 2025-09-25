@@ -33,20 +33,9 @@ export interface IFirebaseConfig {
   measurementId: string;
 }
 
-export interface ISupabaseConfig {
-  /** Default credentials used by app to login as anonymous user */
-  appUser: { email: string; password?: string };
-  /** Async function used to load credentials which may be stored in local file */
-  load: () => Promise<{
-    anonKey: string;
-    apiUrl: string;
-  }>;
-}
-
 // combined settings
 export interface IEnvironment {
   production: boolean;
   firebase: IFirebaseConfig;
   group: IGroupSettings;
-  supabase: ISupabaseConfig;
 }

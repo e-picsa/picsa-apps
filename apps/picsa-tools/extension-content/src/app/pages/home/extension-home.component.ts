@@ -6,7 +6,8 @@ import { Router, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
-import { APP_VERSION, ENVIRONMENT } from '@picsa/environments';
+import { ENVIRONMENT } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/src/version';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { TourService } from '@picsa/shared/services/core/tour';
@@ -118,7 +119,7 @@ export class ExtensionHomeComponent {
   /** List of home page display links, filtered when running in production */
   public picsaLinks = PAGE_LINKS;
   public additionalLinks = ADDITIONAL_LINKS;
-  public version = APP_VERSION.semver;
+  public version = APP_VERSION;
 
   constructor(
     public monitoringService: MonitoringToolService,

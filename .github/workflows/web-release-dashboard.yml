@@ -16,6 +16,10 @@ concurrency:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  # Ensure supabase config env available to all steps as used in nx build cache computation
+  # as well as populating file
+  SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 on:
   workflow_dispatch:
     inputs:
@@ -25,12 +29,11 @@ on:
         default: main
 
   # (avoid automated push as will often need manual migration apply)
-
   # push:
   #   branches:
-  #     - main
-  #   paths:
-  #     - 'apps/picsa-apps/dashboard/**'
+  #     - fix/dashboard-build-3
+  # paths:
+  #   - 'apps/picsa-apps/dashboard/**'
 
 jobs:
   web_release_dashboard:
@@ -53,9 +56,28 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      # Required build script defined in dashboard project `vercel.json`
+      - name: Populate supabase config
+        run: |
+          jq -n \
+            --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
+            --arg anonKey "$SUPABASE_ANON_KEY" \
+            '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+            > libs/environments/src/supabase/supabase.config.json
+
+        # Required build script defined in dashboard project `vercel.json`
       - name: Build
         run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Verify supabase config in built output
+        run: |
+          CONFIG_FILE=dist/apps/picsa-apps/dashboard/browser/assets/supabase.config.json
+          if [ ! -f "$CONFIG_FILE" ]; then
+            echo "❌ Missing $CONFIG_FILE in build output!"
+            ls dist/apps/picsa-apps/dashboard/browser/assets
+            exit 1
+          fi
+          echo "✅ Found supabase config in build output"
+          cat "$CONFIG_FILE"
 
       - name: Deploy
         run: npx vercel --local-config apps/picsa-apps/dashboard/vercel.json deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

@@ -4,7 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { ConfigurationService } from '@picsa/configuration';
 import { IDeploymentSettings, MONTH_DATA } from '@picsa/data';
-import { APP_VERSION } from '@picsa/environments';
+import { APP_VERSION } from '@picsa/environments/src/version';
 import { IAppMeta } from '@picsa/models';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateDBMeta, PicsaDbService } from '@picsa/shared/services/core/db';
@@ -287,10 +287,10 @@ export class BudgetStore {
   // attempt to reload any hardcoded data present in the app
   private async checkForUpdates() {
     const version = await this.db.getDoc<IAppMeta>('_appMeta', 'VERSION');
-    const updateRequired = !version || version.value !== APP_VERSION.semver;
+    const updateRequired = !version || version.value !== APP_VERSION;
     if (updateRequired) {
       await this.setHardcodedData();
-      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION.semver };
+      const update: IAppMeta = { _key: 'VERSION', value: APP_VERSION };
       this.db.setDoc('_appMeta', update);
     }
   }

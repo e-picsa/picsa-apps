@@ -5,17 +5,14 @@ import { IAdminListUsersResponse } from './types.ts';
 /** List all available authentication users */
 export const listUsers = async () => {
   const adminClient = getServiceRoleClient();
-  // TODO - pagination
-  const { data, error } = await adminClient.auth.admin.listUsers({ perPage: 500 });
+  // NOTE - avoid `admin.listUsers` as returns all anonymous users
+  // Cannot access `auth` schema so use created rpc function
+  const { data, error } = await adminClient.rpc('get_non_anonymous_users');
+
   if (error) {
     console.error(error);
     return ErrorResponse(error.message);
   }
 
-  return JSONResponse<IAdminListUsersResponse>(
-    data.users.map((user) => {
-      const { email, email_confirmed_at, last_sign_in_at, id } = user;
-      return { email, email_confirmed_at, id, last_sign_in_at };
-    })
-  );
+  return JSONResponse<IAdminListUsersResponse>(data || []);
 };
