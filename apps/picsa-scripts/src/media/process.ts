@@ -30,7 +30,7 @@ const DEFAULT_OPTIONS: ProcessingOptions = {
   crf: 23,
   maxrate: '1125k',
   bufsize: '2250k',
-  scale: 480,
+  scale: 360,
 };
 
 class VideoProcessor {
