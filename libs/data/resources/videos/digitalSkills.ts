@@ -72,13 +72,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/01.%20Digital%20Skills%20Introduction_TNG_360p.mp4',
       },
       // MW
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_ny'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        resolution: '360p',
+        size_kb: 7550,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/Digital%20Skills/01.%20Digital%20Skills%20Introduction_CHE_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['mw_tum'],
@@ -157,13 +158,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/02.%20How%20to%20Download%20and%20Install%20Apps_TNG_360p.mp4',
       },
       // MW
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_ny'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        resolution: '360p',
+        size_kb: 5760,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/Digital%20Skills/02.%20How%20to%20Dowload%20and%20Install%20Apps_CHE_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['mw_tum'],
@@ -243,13 +245,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/03.%20How%20to%20Keep%20Your%20Device%20Operational_TNG_360p.mp4',
       },
       // MW
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_ny'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        resolution: '360p',
+        size_kb: 10860,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/Digital%20Skills/03.%20How%20to%20keep%20your%20device%20operational_CHE_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['mw_tum'],
@@ -328,13 +331,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_TNG_360p.mp4',
       },
       // MW
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_ny'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        resolution: '360p',
+        size_kb: 6250,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/Digital%20Skills/04.%20How%20to%20Search%20for%20and%20Evaluate%20Digital%20Information_CHE_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['mw_tum'],
@@ -413,13 +417,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/05.%20How%20to%20Share%20Content%20With%20Others_TNG_360p.mp4',
       },
       // MW
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_ny'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        resolution: '360p',
+        size_kb: 5650,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/Digital%20Skills/05.%20How%20to%20share%20content%20with%20others_CHE_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['mw_tum'],
@@ -499,13 +504,14 @@ const PICSA_VIDEO_DIGITAL_SKILLS_BASE: Record<string, Omit<IPicsaVideoData, 'id'
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/Digital%20Skills/06.%20How%20to%20Create%20Your%20Own%20Content_TNG_360p.mp4',
       },
       // MW
-      // {
-      //   id: '',
-      //   locale_codes: ['mw_ny'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['mw_ny'],
+        resolution: '360p',
+        size_kb: 6710,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/mw/videos/Digital%20Skills/06.%20How%20to%20Create%20Content_CHE_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['mw_tum'],

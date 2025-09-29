@@ -62,14 +62,14 @@ const PICSA_INTRO_VIDEOS_BASE: Record<IPicsaIntroVideoId, Omit<IPicsaVideoData, 
         supabase_url:
           'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/PICSA%20Zambia%20Intro_BEM_360p.mp4',
       },
-      // TODO
-      // {
-      //   id: '',
-      //   locale_codes: ['zm_kqn'],
-      //   resolution: '360p',
-      //   size_kb: 0,
-      //   supabase_url: '',
-      // },
+      {
+        id: '',
+        locale_codes: ['zm_kqn'],
+        resolution: '360p',
+        size_kb: 17250,
+        supabase_url:
+          'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/videos/intro/Zambia%20PICSA%20Intro-KON_360p.mp4',
+      },
       {
         id: '',
         locale_codes: ['zm_loz'],
