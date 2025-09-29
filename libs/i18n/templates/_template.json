@@ -1361,15 +1361,15 @@
     "tool": "manual"
   },
   {
+    "text": "Short Term",
+    "tool": "forecasts"
+  },
+  {
     "text": "Seasonal",
     "tool": "forecasts"
   },
   {
     "text": "National",
-    "tool": "forecasts"
-  },
-  {
-    "text": "Daily",
     "tool": "forecasts"
   },
   {
