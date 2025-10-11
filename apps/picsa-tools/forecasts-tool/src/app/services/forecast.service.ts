@@ -186,7 +186,8 @@ export class ForecastService extends PicsaAsyncService {
       (v) => v.forecast_type === 'downscaled',
       (v) => v.country_code === country_code,
       (v) => v.location?.[0] === admin_4,
-      (v) => v.location?.[1] === admin_5,
+      // Allow single forecast for multiple downscaled locations
+      (v) => v.location?.[1] === undefined || v.location?.[1] === admin_5,
     ];
 
     const forecasts = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));

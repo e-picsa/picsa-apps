@@ -127,6 +127,8 @@ export class ForecastComponent implements OnDestroy {
       if (forecast_type === 'daily' || forecast_type === 'weekly') {
         label = this.generateForecastLabel(doc);
       } else {
+        // allow label and image on seasonal/downscaled
+        label = doc.label || undefined;
         image = `assets/svgs/forecast_${forecast_type}.svg`;
       }
 
