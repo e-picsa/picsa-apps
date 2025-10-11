@@ -10,8 +10,8 @@ const seasonal: IForecastRow[] = [
     language_code: 'global_en',
     location: [],
     mimetype: 'application/pdf',
-    created_at: '2024-10-14 18:12:29.879524+00',
-    updated_at: '2024-10-14 18:12:29.879524+00',
+    created_at: '2025-10-11 12:03:19.879524+00',
+    updated_at: '2025-10-11 12:03:19.879524+00',
   },
 ];
 
@@ -24,8 +24,8 @@ export const downscaled: IForecastRow[] = [
     language_code: 'zm_ny',
     location: ['eastern'],
     storage_file: 'zm/forecasts/downscaled/2025-26/zmd-downscaled-eastern-2025-26.nya.pdf',
-    created_at: '',
-    updated_at: '',
+    created_at: '2025-10-11 12:03:19.879524+00',
+    updated_at: '2025-10-11 12:03:19.879524+00',
     mimetype: 'application/pdf',
   },
 ];
