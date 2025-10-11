@@ -57,16 +57,19 @@
     (click)="handleForecastClick(forecast)"
   >
     <h3 class="forecast-heading">{{forecast.title | translate}}</h3>
-    <!-- image content -->
+    <!-- seasonal/downscaled: image + label -->
     @if(forecast.image){
-    <div class="flex-1 p-2 overflow-hidden">
+    <div class="flex-1 min-h-0">
       <img class="forecast-image" [src]="forecast.image" />
     </div>
-    }
-    <!-- label content -->
+    @if(forecast.label){
+    <div class="p-1 text-center">{{forecast.label}}</div>
+    } }
+    <!-- daily/weekly: label only -->
     @else {
     <div class="flex-1 p-2 overflow-auto capitalize">{{forecast.label}}</div>
     }
+
     <div class="forecast-bottom-bar" [attr.data-forecast-type]="forecast.type">
       <div class="language-label">{{forecast.languageLabel}}</div>
       <picsa-supabase-storage-download [storage_path]="forecast.storage_file" #downloader (click)="downloader.stop()">
