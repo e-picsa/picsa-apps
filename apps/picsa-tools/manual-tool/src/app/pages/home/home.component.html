@@ -1,5 +1,3 @@
-@let variant = manualVariant();
-
 <div class="page-content">
   <div class="pdf-container slide-in" [class.active]="pageNumber()">
     @if (pdfSrc(); as src) {
@@ -9,52 +7,30 @@
     }
   </div>
 
-  <div class="flex items-center gap-2">
-    <!-- Custom header used outside mat-tab-group to allow language select inline with tabs  -->
-    <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-      <a mat-tab-link [active]="variant === 'extension'" (click)="manualVariant.set('extension')">{{
-        'Extension' | translate
-      }}</a>
-      <a mat-tab-link [active]="variant === 'farmer'" (click)="manualVariant.set('farmer')">{{
-        'Farmer' | translate
-      }}</a>
-    </nav>
+  <picsa-manual-select class="w-full mt-2" (manualSelected)="handleManualSelected($event)"></picsa-manual-select>
 
-    <picsa-manual-select
-      class="ml-auto mt-2"
-      (manualSelected)="handleManualSelected($event)"
-      [variant]="variant"
-    ></picsa-manual-select>
-  </div>
-
-  <mat-tab-nav-panel #tabPanel>
-    <!-- Download -->
-    @if (showDownloadPrompt()) {
-      <picsa-alert-box
-        [style.display]="showDownloadPrompt() ? 'block' : 'none'"
-        type="info"
-        [title]="'Download the PICSA Manual' | translate"
-        style="margin-top: 2rem; display: flex; width: 100%"
-      >
-        <div style="max-width: 300px; margin: auto">
-          @if (manualDoc(); as doc) {
-            <resource-download
-              [resource]="doc._data"
-              (fileDownloaded)="handleManualDownloaded($event)"
-            ></resource-download>
-          }
-        </div>
-      </picsa-alert-box>
-    }
-    <!-- Steps -->
-    @else {
-      @if (pdfSrc()) {
-        @if (variant === 'extension') {
-          <picsa-manual-steps-container [stepData]="manualContents()" [@fadeInOut]></picsa-manual-steps-container>
-        } @else {
-          <picsa-manual-steps-container [stepData]="manualContents()" [@fadeInOut]></picsa-manual-steps-container>
+  <!-- Download -->
+  @if (showDownloadPrompt()) {
+    <picsa-alert-box
+      [style.display]="showDownloadPrompt() ? 'block' : 'none'"
+      type="info"
+      [title]="'Download the PICSA Manual' | translate"
+      style="margin-top: 2rem; display: flex; width: 100%"
+    >
+      <div style="max-width: 300px; margin: auto">
+        @if (manualDoc(); as doc) {
+          <resource-download
+            [resource]="doc._data"
+            (fileDownloaded)="handleManualDownloaded($event)"
+          ></resource-download>
         }
-      }
+      </div>
+    </picsa-alert-box>
+  }
+  <!-- Steps -->
+  @else {
+    @if (pdfSrc()) {
+      <picsa-manual-steps-container [stepData]="manualContents()" [@fadeInOut]></picsa-manual-steps-container>
     }
-  </mat-tab-nav-panel>
+  }
 </div>

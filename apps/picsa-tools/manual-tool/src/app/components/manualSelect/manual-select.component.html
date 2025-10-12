@@ -1,11 +1,26 @@
-<mat-form-field appearance="outline" class="flex-1 no-hint">
-  <mat-label>
-    <mat-icon>translate</mat-icon>
-    {{ 'Language' | translate }}</mat-label
-  >
-  <mat-select [(ngModel)]="languageSelected">
-    @for (option of languageOptions(); track option.id) {
-      <mat-option [value]="option.id">{{ option.language_label }}</mat-option>
-    }
-  </mat-select>
-</mat-form-field>
+@let variant = manualVariant();
+
+<div class="flex items-center gap-2">
+  <!-- Custom header used outside mat-tab-group to allow language select inline with tabs  -->
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    <a mat-tab-link [active]="variant === 'extension'" (click)="manualVariant.set('extension')">{{
+      'Extension' | translate
+    }}</a>
+    <a mat-tab-link [active]="variant === 'farmer'" (click)="manualVariant.set('farmer')">{{ 'Farmer' | translate }}</a>
+  </nav>
+
+  <mat-form-field appearance="outline" class="ml-auto no-hint">
+    <mat-label>
+      <mat-icon>translate</mat-icon>
+      {{ 'Language' | translate }}</mat-label
+    >
+    <mat-select [(ngModel)]="languageSelected">
+      @for (option of languageOptions(); track option.id) {
+        <mat-option [value]="option.id">{{ option.language_label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<!-- Don't display tab panel, only used to allow for nav-bar -->
+<mat-tab-nav-panel #tabPanel style="display: none"></mat-tab-nav-panel>

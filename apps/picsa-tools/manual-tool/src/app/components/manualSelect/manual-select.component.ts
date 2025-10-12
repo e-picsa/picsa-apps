@@ -7,31 +7,32 @@ import {
   DestroyRef,
   effect,
   inject,
-  input,
   model,
   output,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ILocaleCode, ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { IResourceFile } from '@picsa/resources/schemas';
 import { PicsaTranslateModule, PicsaTranslateService } from '@picsa/shared/modules';
 
 import { LOCALISED_MANUALS, PICSA_MANUAL_CONTENTS } from '../../data';
-import { IManualPeriodEntryLocalised, IManualStepLocalised } from '../../models';
+import { IManualPeriodEntryLocalised, IManualStepLocalised, IManualVariant } from '../../models';
 
 @Component({
   selector: 'picsa-manual-select',
-  imports: [CommonModule, MatSelectModule, MatIconModule, FormsModule, PicsaTranslateModule],
+  imports: [CommonModule, MatSelectModule, MatIconModule, MatTabsModule, FormsModule, PicsaTranslateModule],
   templateUrl: './manual-select.component.html',
   styleUrl: './manual-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 // TODO - rename manual-version-select and return manual data (?)
 export class ManualSelectComponent {
-  variant = input.required<'farmer' | 'extension'>();
+  public manualVariant = signal(this.getDefaultManualVariant());
 
   public manualSelected = output<{ manual: IResourceFile; contents: IManualPeriodEntryLocalised[] }>();
 
@@ -45,7 +46,7 @@ export class ManualSelectComponent {
 
   // Lookup localised manuals available for current country
   private availableManuals = computed(() => {
-    const variant = this.variant();
+    const variant = this.manualVariant();
     const countryCode = this.countryCode();
     const filteredEntries = Object.entries(LOCALISED_MANUALS[variant]).filter(
       ([locale]) => locale.startsWith(countryCode) || locale === 'global_en',
@@ -66,7 +67,7 @@ export class ManualSelectComponent {
     // Reset language select when variant changes
     effect(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const variant = this.variant();
+      const variant = this.manualVariant();
       this.languageSelected.set(undefined);
     });
 
@@ -105,6 +106,14 @@ export class ManualSelectComponent {
     this.destroyRef.onDestroy(() => {
       this.restoreAppLanguage();
     });
+
+    // Store default manual variant when set
+    effect(() => {
+      const variant = this.manualVariant();
+      if (variant) {
+        this.storeDefaultManualVariant(variant);
+      }
+    });
   }
 
   private restoreAppLanguage() {
@@ -123,13 +132,21 @@ export class ManualSelectComponent {
   }
 
   private generateLocalisedContents(locale: ILocaleCode): IManualPeriodEntryLocalised[] {
-    return PICSA_MANUAL_CONTENTS[this.variant()].map(({ label, steps }) => {
+    return PICSA_MANUAL_CONTENTS[this.manualVariant()].map(({ label, steps }) => {
       const localisedSteps = steps.map(({ activities, label, name, page, type }) => {
-        const localisedStep: IManualStepLocalised = { activities, label, name, type, page: page[locale] };
+        const localisedStep: IManualStepLocalised = { activities, label, name, type, page: page[locale] || -1 };
         return localisedStep;
       });
       const localisedPeriod: IManualPeriodEntryLocalised = { label, steps: localisedSteps };
       return localisedPeriod;
     });
+  }
+
+  /** use localstorage to track farmer version preference */
+  private getDefaultManualVariant(): IManualVariant {
+    return localStorage.getItem('manual_version') === 'farmer' ? 'farmer' : 'extension';
+  }
+  private storeDefaultManualVariant(version: IManualVariant) {
+    return localStorage.setItem('manual_version', version);
   }
 }

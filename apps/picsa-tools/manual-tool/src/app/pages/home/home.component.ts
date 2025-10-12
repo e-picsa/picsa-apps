@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { ChangeDetectionStrategy, Component, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IResourceFile } from '@picsa/resources/schemas';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
@@ -8,7 +8,7 @@ import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
 import { LOCALISED_MANUALS } from '../../data';
-import { IManualPeriodEntryLocalised, IManualVariant } from '../../models';
+import { IManualPeriodEntryLocalised } from '../../models';
 @Component({
   selector: 'picsa-manual-home',
   templateUrl: './home.component.html',
@@ -25,8 +25,6 @@ export class HomeComponent implements OnDestroy {
   public pdfSrc = signal<string | undefined>(undefined);
 
   public showDownloadPrompt = signal(false);
-
-  public manualVariant = signal(this.getManualVersion());
 
   private componentDestroyed$ = new Subject<boolean>();
 
@@ -73,20 +71,6 @@ export class HomeComponent implements OnDestroy {
       }
     }
     this.showDownloadPrompt.set(true);
-  }
-
-  public async setSelectedTab(index: number) {
-    this.pdfSrc.set(undefined);
-    const version = index === 1 ? 'farmer' : 'extension';
-    this.setManualVersion(version);
-  }
-
-  /** use localstorage to track farmer version preference */
-  private getManualVersion(): IManualVariant {
-    return localStorage.getItem('manual_version') === 'farmer' ? 'farmer' : 'extension';
-  }
-  private setManualVersion(version: IManualVariant) {
-    return localStorage.setItem('manual_version', version);
   }
 
   ngOnDestroy() {
