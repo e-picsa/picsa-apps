@@ -6,7 +6,7 @@ import { IManualPeriodEntry } from '../../models';
 
 export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
   {
-    label: translateMarker('PICSA'),
+    label: '',
     steps: [
       {
         page: {
