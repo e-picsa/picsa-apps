@@ -24,7 +24,11 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
         type: 'step',
         activities: [],
       },
-
+    ],
+  },
+  {
+    label: translateMarker('Long before the season'),
+    steps: [
       {
         page: {
           global_en: 6,
@@ -194,9 +198,14 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    label: translateMarker('Just before the season'),
+    steps: [
       {
         page: {
-          global_en: -1,
+          global_en: 20,
           zm_ny: -1,
           mw_ny: -1,
           zm_bem: 21,
@@ -212,7 +221,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
       },
       {
         page: {
-          global_en: -1,
+          global_en: 21,
           zm_ny: -1,
           mw_ny: -1,
           zm_bem: 22,
@@ -232,9 +241,14 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    label: translateMarker('During the season'),
+    steps: [
       {
         page: {
-          global_en: -1,
+          global_en: 22,
           zm_ny: -1,
           mw_ny: -1,
           zm_bem: 23,
@@ -250,7 +264,7 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
       },
       {
         page: {
-          global_en: -1,
+          global_en: 23,
           zm_ny: -1,
           mw_ny: -1,
           zm_bem: 26,
@@ -270,9 +284,14 @@ export const PICSA_MANUAL_CONTENTS_FARMER: IManualPeriodEntry[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    label: translateMarker('After the season'),
+    steps: [
       {
         page: {
-          global_en: -1,
+          global_en: 24,
           zm_ny: -1,
           mw_ny: -1,
           zm_bem: 27,
