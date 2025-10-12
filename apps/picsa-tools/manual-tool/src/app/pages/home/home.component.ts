@@ -1,34 +1,14 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { ConfigurationService } from '@picsa/configuration/src';
-import { ILocaleCode } from '@picsa/data/deployments';
 import { IResourceFile } from '@picsa/resources/schemas';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { RxDocument } from 'rxdb';
 import { Subject, takeUntil } from 'rxjs';
 
-import { PICSA_MANUAL_CONTENTS_EXTENSION, PICSA_MANUAL_CONTENTS_FARMER } from '../../data';
-import { PICSA_MANUAL_RESOURCES } from '../../data';
-
-type IManualVersion = 'extension' | 'farmer';
-const TAB_MAPPING: { [version in IManualVersion]: number } = { extension: 0, farmer: 1 };
-
-const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IResourceFile } } = {
-  extension: {
-    en: PICSA_MANUAL_RESOURCES.picsa_manual,
-    zm_ny: PICSA_MANUAL_RESOURCES.picsa_manual_chichewa,
-    mw_ny: PICSA_MANUAL_RESOURCES.picsa_manual_chichewa,
-  },
-  farmer: {
-    en: PICSA_MANUAL_RESOURCES.picsa_manual_farmer,
-    zm_ny: PICSA_MANUAL_RESOURCES.picsa_manual_chichewa_farmer,
-    mw_ny: PICSA_MANUAL_RESOURCES.picsa_manual_chichewa_farmer,
-  },
-} as const;
-
+import { LOCALISED_MANUALS } from '../../data';
+import { IManualPeriodEntryLocalised, IManualVariant } from '../../models';
 @Component({
   selector: 'picsa-manual-home',
   templateUrl: './home.component.html',
@@ -37,96 +17,75 @@ const LOCALISED_VERSIONS: { [version in IManualVersion]: { [code: string]: IReso
   animations: [FlyInOut({ axis: 'Y' }), FadeInOut({ inDelay: 200, inSpeed: 300 })],
   standalone: false,
 })
-export class HomeComponent implements OnDestroy, AfterViewInit {
-  // TODO - ideally all variables should be tracked by version (use additional component)
-  public resourceDocs: { [version in IManualVersion]: RxDocument<IResourceFile> | null } = {
-    farmer: null,
-    extension: null,
-  };
+export class HomeComponent implements OnDestroy {
+  public manualDoc = signal<RxDocument<IResourceFile> | undefined>(undefined);
+  public manualContents = signal<IManualPeriodEntryLocalised[]>([]);
 
-  public languageCode: ILocaleCode;
+  public pageNumber = signal<number | undefined>(undefined);
+  public pdfSrc = signal<string | undefined>(undefined);
 
-  public page?: number = undefined;
-  public pdfSrc?: string;
-  /** Used to track whether extension or farmer tab should be displayed */
-  public initialTabIndex = 0;
+  public showDownloadPrompt = signal(false);
 
-  public contents = {
-    extension: PICSA_MANUAL_CONTENTS_EXTENSION,
-    farmer: PICSA_MANUAL_CONTENTS_FARMER,
-  };
-
-  public downloadPrompt = {
-    show: false,
-    title: translateMarker('Download the PICSA Manual'),
-  };
+  public manualVariant = signal(this.getManualVersion());
 
   private componentDestroyed$ = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
-    private ConfigurationService: ConfigurationService,
     private resourcesService: ResourcesToolService,
-    private cdr: ChangeDetectorRef,
   ) {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(({ page }) => {
-      this.page = Number(page);
-      this.cdr.markForCheck();
+      this.pageNumber.set(Number(page));
     });
-    const version = this.getManualVersion();
-    this.initialTabIndex = TAB_MAPPING[version];
-    this.languageCode = this.ConfigurationService.userSettings().language_code;
-  }
-
-  async ngAfterViewInit() {
-    await this.resourcesService.ready();
-    await this.loadManual();
-    this.cdr.markForCheck();
+    this.resourcesService.ready();
   }
 
   /** Prompt manual load if resource file attachment updated */
-  public async handleManualDownloaded() {
-    await this.loadManual();
-    this.cdr.markForCheck();
+  public async handleManualDownloaded(uri: string) {
+    if (uri) {
+      this.showDownloadPrompt.set(false);
+      this.pdfSrc.set(uri);
+    }
+  }
+
+  public async handleManualSelected(e: { manual: IResourceFile; contents: IManualPeriodEntryLocalised[] }) {
+    const { contents, manual } = e;
+    this.manualContents.set(contents);
+    this.loadManual(manual);
   }
 
   /**
    * Read local language setting and manual version preference to determine which version of the manual
    * to attempt loading
    */
-  private async loadManual() {
+  private async loadManual(manual: IResourceFile) {
     await this.resourcesService.ready();
-    const version = this.getManualVersion();
-    const manualResource = LOCALISED_VERSIONS[version][this.languageCode] || LOCALISED_VERSIONS[version].en;
-    if (this.pdfSrc) {
-      return;
-    }
-    const manualDoc = await this.resourcesService.dbFiles.findOne(manualResource.id).exec();
+
+    const manualDoc = await this.resourcesService.dbFiles.findOne(manual.id).exec();
+    this.manualDoc.set(manualDoc || undefined);
+
     if (manualDoc) {
-      this.resourceDocs[version] = manualDoc;
       const uri = await this.resourcesService.getFileAttachmentURI(manualDoc, true);
       if (uri) {
-        this.downloadPrompt.show = false;
-        this.pdfSrc = uri;
+        this.showDownloadPrompt.set(false);
+        this.pdfSrc.set(uri);
         return;
       }
     }
-    this.downloadPrompt.show = true;
+    this.showDownloadPrompt.set(true);
   }
 
   public async setSelectedTab(index: number) {
-    this.pdfSrc = undefined;
+    this.pdfSrc.set(undefined);
     const version = index === 1 ? 'farmer' : 'extension';
     this.setManualVersion(version);
-    await this.loadManual();
-    this.cdr.markForCheck();
   }
 
   /** use localstorage to track farmer version preference */
-  private getManualVersion(): IManualVersion {
+  private getManualVersion(): IManualVariant {
     return localStorage.getItem('manual_version') === 'farmer' ? 'farmer' : 'extension';
   }
-  private setManualVersion(version: IManualVersion) {
+  private setManualVersion(version: IManualVariant) {
     return localStorage.setItem('manual_version', version);
   }
 
@@ -134,8 +93,8 @@ export class HomeComponent implements OnDestroy, AfterViewInit {
     // revoke any created object uris (use timeout to avoid destroy while still in use)
     setTimeout(() => {
       this.resourcesService.revokeFileAttachmentURIs([
-        ...Object.values(LOCALISED_VERSIONS.extension).map((manual) => manual.filename),
-        ...Object.values(LOCALISED_VERSIONS.farmer).map((manual) => manual.filename),
+        ...Object.values(LOCALISED_MANUALS.extension).map((manual) => manual.filename),
+        ...Object.values(LOCALISED_MANUALS.farmer).map((manual) => manual.filename),
       ]);
     }, 500);
     this.componentDestroyed$.next(true);

@@ -1,54 +1,60 @@
+@let variant = manualVariant();
+
 <div class="page-content">
-  <div class="pdf-container slide-in" [class.active]="page">
-    <picsa-pdf-viewer [page]="page" [src]="pdfSrc" *ngIf="pdfSrc">
-      <back-button style="margin-right: 8px" variant="primary"></back-button>
-    </picsa-pdf-viewer>
+  <div class="pdf-container slide-in" [class.active]="pageNumber()">
+    @if (pdfSrc(); as src) {
+      <picsa-pdf-viewer [page]="pageNumber()" [src]="src">
+        <back-button style="margin-right: 8px" variant="primary"></back-button>
+      </picsa-pdf-viewer>
+    }
   </div>
 
-  <mat-tab-group
-    animationDuration="0ms"
-    dynamicHeight
-    [selectedIndex]="initialTabIndex"
-    (selectedIndexChange)="setSelectedTab($event)"
-  >
-    <!-- Extension version -->
-    <mat-tab [label]="'Extension' | translate" #extensionTab>
-      <ng-container *ngTemplateOutlet="manualDownload; context: { version: 'extension' }"></ng-container>
-      <picsa-manual-steps-container
-        [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
-        [pageMapping]="languageCode"
-        [stepData]="contents.extension"
-        [@fadeInOut]="extensionTab.isActive ? 'in' : 'out'"
-      ></picsa-manual-steps-container>
-    </mat-tab>
+  <div class="flex items-center gap-2">
+    <!-- Custom header used outside mat-tab-group to allow language select inline with tabs  -->
+    <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+      <a mat-tab-link [active]="variant === 'extension'" (click)="manualVariant.set('extension')">{{
+        'Extension' | translate
+      }}</a>
+      <a mat-tab-link [active]="variant === 'farmer'" (click)="manualVariant.set('farmer')">{{
+        'Farmer' | translate
+      }}</a>
+    </nav>
 
-    <!-- Farmer Version -->
-    <mat-tab [label]="'Farmer' | translate" #farmerTab>
-      <ng-container *ngTemplateOutlet="manualDownload; context: { version: 'farmer' }"></ng-container>
-      <picsa-manual-steps-container
-        [style.visibility]="pdfSrc ? 'visible' : 'hidden'"
-        [pageMapping]="languageCode"
-        [stepData]="contents.farmer"
-        [@fadeInOut]="farmerTab.isActive ? 'in' : 'out'"
-      ></picsa-manual-steps-container>
-    </mat-tab>
-  </mat-tab-group>
-</div>
+    <picsa-manual-select
+      class="ml-auto mt-2"
+      (manualSelected)="handleManualSelected($event)"
+      [variant]="variant"
+    ></picsa-manual-select>
+  </div>
 
-<ng-template #manualDownload let-version="version">
-  <picsa-alert-box
-    [style.display]="downloadPrompt.show ? 'block' : 'none'"
-    type="info"
-    [title]="downloadPrompt.title"
-    style="margin-top: 2rem; display: flex; width: 100%"
-  >
-    <div style="max-width: 300px; margin: auto">
-      @if(resourceDocs[version]){
-      <resource-download
-        [resource]="resourceDocs[version]._data"
-        (fileDownloaded)="handleManualDownloaded()"
-      ></resource-download>
+  <mat-tab-nav-panel #tabPanel>
+    <!-- Download -->
+    @if (showDownloadPrompt()) {
+      <picsa-alert-box
+        [style.display]="showDownloadPrompt() ? 'block' : 'none'"
+        type="info"
+        [title]="'Download the PICSA Manual' | translate"
+        style="margin-top: 2rem; display: flex; width: 100%"
+      >
+        <div style="max-width: 300px; margin: auto">
+          @if (manualDoc(); as doc) {
+            <resource-download
+              [resource]="doc._data"
+              (fileDownloaded)="handleManualDownloaded($event)"
+            ></resource-download>
+          }
+        </div>
+      </picsa-alert-box>
+    }
+    <!-- Steps -->
+    @else {
+      @if (pdfSrc()) {
+        @if (variant === 'extension') {
+          <picsa-manual-steps-container [stepData]="manualContents()" [@fadeInOut]></picsa-manual-steps-container>
+        } @else {
+          <picsa-manual-steps-container [stepData]="manualContents()" [@fadeInOut]></picsa-manual-steps-container>
+        }
       }
-    </div>
-  </picsa-alert-box>
-</ng-template>
+    }
+  </mat-tab-nav-panel>
+</div>

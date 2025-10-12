@@ -1,24 +1,27 @@
-<!-- List version -->
-<!-- <button mat-button class="activity-link" color="primary" [routerLink]="['activity']">
-  <mat-icon>grid_on</mat-icon>
-</button> -->
-<section class="period-section" *ngFor="let period of stepData">
-  <h2 class="section-label">{{ period.label | translate }}</h2>
-  <table class="manual-steps">
-    <tr class="manual-step" *ngFor="let step of period.steps" (click)="goToStep(step)">
-      <td style="width: 50px; border-right: none; font-weight: bold">{{ step.name | translate }}</td>
-      <td style="border-left: none">{{ step.label | translate }}</td>
-      <td style="border-right: none">
-        <div class="step-items">
-          <div class="step-item" *ngFor="let activity of step.activities">
-            <mat-icon color="primary" [svgIcon]="activity.svgIcon"></mat-icon>
-            <div class="step-item-label">{{ activity.label }}</div>
-          </div>
-        </div>
-      </td>
-      <td class="step-arrow" style="border-left: none">
-        <mat-icon>chevron_right</mat-icon>
-      </td>
-    </tr>
-  </table>
-</section>
+@for (period of stepData(); track $index) {
+  <section class="period-section">
+    <h2 class="section-label">{{ period.label | translate }}</h2>
+    <table class="manual-steps">
+      @for (step of period.steps; track $index) {
+        <!-- HACK - not all steps available in all versions currently -->
+        @if (step.page >= 0) {
+          <tr class="manual-step" (click)="goToStep(step)">
+            <td style="width: 50px; border-right: none; font-weight: bold">{{ step.name | translate }}</td>
+            <td style="border-left: none">{{ step.label | translate }}</td>
+            <td style="border-right: none">
+              <div class="step-items">
+                <div class="step-item" *ngFor="let activity of step.activities">
+                  <mat-icon color="primary" [svgIcon]="activity.svgIcon"></mat-icon>
+                  <div class="step-item-label">{{ activity.label }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="step-arrow" style="border-left: none">
+              <mat-icon>chevron_right</mat-icon>
+            </td>
+          </tr>
+        }
+      }
+    </table>
+  </section>
+}
