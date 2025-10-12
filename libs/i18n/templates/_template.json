@@ -1293,10 +1293,6 @@
     "tool": "manual"
   },
   {
-    "text": "PICSA",
-    "tool": "manual"
-  },
-  {
     "text": "Options by context",
     "tool": "manual"
   },
@@ -1317,7 +1313,23 @@
     "tool": "manual"
   },
   {
+    "text": "Language",
+    "tool": "manual"
+  },
+  {
+    "text": "L",
+    "tool": "manual"
+  },
+  {
+    "text": "K",
+    "tool": "manual"
+  },
+  {
     "text": "Just before the season",
+    "tool": "manual"
+  },
+  {
+    "text": "J",
     "tool": "manual"
   },
   {
@@ -1325,11 +1337,31 @@
     "tool": "manual"
   },
   {
+    "text": "I",
+    "tool": "manual"
+  },
+  {
     "text": "Historic climate",
     "tool": "manual"
   },
   {
+    "text": "H",
+    "tool": "manual"
+  },
+  {
+    "text": "G",
+    "tool": "manual"
+  },
+  {
     "text": "Farmers choose",
+    "tool": "manual"
+  },
+  {
+    "text": "F",
+    "tool": "manual"
+  },
+  {
+    "text": "E",
     "tool": "manual"
   },
   {
@@ -1338,6 +1370,10 @@
   },
   {
     "text": "Download the PICSA Manual",
+    "tool": "manual"
+  },
+  {
+    "text": "D",
     "tool": "manual"
   },
   {
@@ -1353,11 +1389,23 @@
     "tool": "manual"
   },
   {
+    "text": "C",
+    "tool": "manual"
+  },
+  {
+    "text": "B",
+    "tool": "manual"
+  },
+  {
     "text": "After the season",
     "tool": "manual"
   },
   {
     "text": "Activity Flow Chart",
+    "tool": "manual"
+  },
+  {
+    "text": "A",
     "tool": "manual"
   },
   {
