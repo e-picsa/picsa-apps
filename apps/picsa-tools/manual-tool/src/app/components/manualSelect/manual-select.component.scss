@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+// make compact to fit alongside farmer/extension select
+mat-form-field {
+  --mat-form-field-container-vertical-padding: 4px;
+  --mat-form-field-container-height: 24px;
+  max-width: 140px;
+}
+mat-select.mat-mdc-select {
+  font-size: 18px;
+}
