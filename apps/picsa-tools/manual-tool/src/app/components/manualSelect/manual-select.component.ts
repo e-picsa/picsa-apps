@@ -47,8 +47,8 @@ export class ManualSelectComponent {
   private availableManuals = computed(() => {
     const variant = this.variant();
     const countryCode = this.countryCode();
-    const filteredEntries = Object.entries(LOCALISED_MANUALS[variant]).filter(([locale]) =>
-      locale.startsWith(countryCode),
+    const filteredEntries = Object.entries(LOCALISED_MANUALS[variant]).filter(
+      ([locale]) => locale.startsWith(countryCode) || locale === 'global_en',
     );
     return Object.fromEntries(filteredEntries);
   });
@@ -96,7 +96,7 @@ export class ManualSelectComponent {
     // Temporarily change app language if manual lang selected
     effect(() => {
       const lang = this.languageSelected();
-      if (lang && lang !== this.translateService.language) {
+      if (lang && lang !== this.translateService.ngxTranslate.currentLang) {
         this.translateService.ngxTranslate.use(lang);
       }
     });

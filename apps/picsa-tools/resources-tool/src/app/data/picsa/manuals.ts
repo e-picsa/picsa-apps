@@ -1,12 +1,20 @@
 import { IResourceCollection, IResourceFile } from '../../schemas';
 
+type IFarmerManualId_ZM =
+  | 'picsa_manual_farmer_zm_bem'
+  | 'picsa_manual_farmer_zm_loz'
+  | 'picsa_manual_farmer_zm_lun'
+  | 'picsa_manual_farmer_zm_lue'
+  | 'picsa_manual_farmer_zm_toi';
+
 type IPicsaManualId =
   | 'picsa_manual'
   | 'picsa_manual_farmer'
   | 'picsa_manual_chichewa'
   | 'picsa_manual_chichewa_farmer'
   | 'picsa_manual_tumbuka'
-  | 'picsa_manual_tajik';
+  | 'picsa_manual_tajik'
+  | IFarmerManualId_ZM;
 
 /**
  * List of manuals available both within manual tool and resource collection
@@ -109,6 +117,87 @@ export const PICSA_MANUAL_RESOURCES: { [id in IPicsaManualId]: IResourceFile } =
     size_kb: 2610.8,
     filter: { countries: ['tj'] },
     keywords: ['manual', 'extension'],
+    priority: 1,
+  },
+  // ZM Farmer Updated
+  picsa_manual_farmer_zm_bem: {
+    id: 'picsa_manual_farmer_zm_bem',
+    type: 'file',
+    subtype: 'pdf',
+    title: 'Ukusangwako ku milimo ya miceele iyabikwa pamo iya bulimi',
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'bem',
+    filename: 'picsa-manual-farmer.bem.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/manual/farmer/picsa-manual-farmer.bem.pdf',
+    md5Checksum: 'cdce2b36a9289bb80f12c5cc5b8ee44a',
+    size_kb: 1580,
+    filter: { countries: ['zm'] },
+    keywords: ['manual', 'farmer'],
+    priority: 1,
+  },
+  picsa_manual_farmer_zm_loz: {
+    id: 'picsa_manual_farmer_zm_loz',
+    type: 'file',
+    subtype: 'pdf',
+    title: '', // TODO
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'loz',
+    filename: 'picsa-manual-farmer.loz.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/manual/farmer/picsa-manual-farmer.loz.pdf',
+    md5Checksum: 'bb03052eb1b8239c63b5cc76cdfe1df0',
+    size_kb: 2270,
+    filter: { countries: ['zm'] },
+    keywords: ['manual', 'farmer'],
+    priority: 1,
+  },
+  picsa_manual_farmer_zm_lue: {
+    id: 'picsa_manual_farmer_zm_lue',
+    type: 'file',
+    subtype: 'pdf',
+    title: '', // TODO
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'lue',
+    filename: 'picsa-manual-farmer.lue.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/manual/farmer/picsa-manual-farmer.lue.pdf',
+    md5Checksum: '0d4adee4eec5ce0fc4167b0a403aef06',
+    size_kb: 2060,
+    filter: { countries: ['zm'] },
+    keywords: ['manual', 'farmer'],
+    priority: 1,
+  },
+  picsa_manual_farmer_zm_lun: {
+    id: 'picsa_manual_farmer_zm_lun',
+    type: 'file',
+    subtype: 'pdf',
+    title: '', // TODO
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'lun',
+    filename: 'picsa-manual-farmer.lun.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/manual/farmer/picsa-manual-farmer.lun.pdf',
+    md5Checksum: '81318fa3795635281f11299a4e4b3398',
+    size_kb: 1830,
+    filter: { countries: ['zm'] },
+    keywords: ['manual', 'farmer'],
+    priority: 1,
+  },
+  picsa_manual_farmer_zm_toi: {
+    id: 'picsa_manual_farmer_zm_toi',
+    type: 'file',
+    subtype: 'pdf',
+    title: '', // TODO
+    mimetype: 'application/pdf',
+    description: '',
+    language: 'toi',
+    filename: 'picsa-manual-farmer.toi.pdf',
+    url: 'https://wpctacqpzxfzlucblowh.supabase.co/storage/v1/object/public/zm/manual/farmer/picsa-manual-farmer.toi.pdf',
+    md5Checksum: '6c8b96d4eefd91fc109918d491604faa',
+    size_kb: 2160,
+    filter: { countries: ['zm'] },
+    keywords: ['manual', 'farmer'],
     priority: 1,
   },
 };
