@@ -128,7 +128,8 @@ export class ManualSelectComponent {
     if (this.languageOptions().find((v) => v.id === appLanguageCode)) {
       return appLanguageCode;
     }
-    return this.languageOptions()[0].id as ILocaleCode;
+    const [firstOption] = this.languageOptions();
+    return (firstOption?.id as ILocaleCode) || 'global_en';
   }
 
   private generateLocalisedContents(locale: ILocaleCode): IManualPeriodEntryLocalised[] {
