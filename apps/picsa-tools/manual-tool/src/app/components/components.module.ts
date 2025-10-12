@@ -6,10 +6,12 @@ import { PicsaCommonComponentsModule } from '@picsa/components';
 import { PdfViewerComponent } from '@picsa/shared/features';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
+import { ManualSelectComponent } from './manualSelect/manual-select.component';
 import { ManualToolMaterialModule } from './material.module';
 import { stepsContainerComponent } from './stepsContainer/stepsContainer.component';
 
 const Components = [stepsContainerComponent];
+const STANDALONE_COMPONENTS = [ManualSelectComponent];
 
 @NgModule({
   imports: [
@@ -19,8 +21,15 @@ const Components = [stepsContainerComponent];
     PicsaTranslateModule,
     PdfViewerComponent,
     RouterModule,
+    ...STANDALONE_COMPONENTS,
   ],
-  exports: [ManualToolMaterialModule, PicsaCommonComponentsModule, PdfViewerComponent, ...Components],
+  exports: [
+    ManualToolMaterialModule,
+    PicsaCommonComponentsModule,
+    PdfViewerComponent,
+    ...Components,
+    ...STANDALONE_COMPONENTS,
+  ],
   declarations: Components,
   providers: [],
 })
