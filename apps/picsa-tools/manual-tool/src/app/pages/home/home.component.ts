@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { ChangeDetectionStrategy, Component, effect, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IResourceFile } from '@picsa/resources/schemas';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
@@ -39,11 +39,8 @@ export class HomeComponent implements OnDestroy {
   }
 
   /** Prompt manual load if resource file attachment updated */
-  public async handleManualDownloaded(uri: string) {
-    if (uri) {
-      this.showDownloadPrompt.set(false);
-      this.pdfSrc.set(uri);
-    }
+  public async handleManualDownloaded() {
+    return this.setPDFViewerUri(this.manualDoc());
   }
 
   public async handleManualSelected(e: { manual: IResourceFile; contents: IManualPeriodEntryLocalised[] }) {
@@ -58,10 +55,12 @@ export class HomeComponent implements OnDestroy {
    */
   private async loadManual(manual: IResourceFile) {
     await this.resourcesService.ready();
-
     const manualDoc = await this.resourcesService.dbFiles.findOne(manual.id).exec();
     this.manualDoc.set(manualDoc || undefined);
+    return this.setPDFViewerUri(this.manualDoc());
+  }
 
+  private async setPDFViewerUri(manualDoc?: RxDocument<IResourceFile>) {
     if (manualDoc) {
       const uri = await this.resourcesService.getFileAttachmentURI(manualDoc, true);
       if (uri) {

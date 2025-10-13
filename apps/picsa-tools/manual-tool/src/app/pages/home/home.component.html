@@ -22,10 +22,7 @@
     >
       @if (manualDoc(); as doc) {
         <div class="flex justify-center">
-          <resource-download
-            [resource]="doc._data"
-            (fileDownloaded)="handleManualDownloaded($event)"
-          ></resource-download>
+          <resource-download [resource]="doc._data" (fileDownloaded)="handleManualDownloaded()"></resource-download>
         </div>
       }
     </picsa-alert-box>
