@@ -14,12 +14,7 @@
 
   <!-- Download -->
   @if (showDownloadPrompt()) {
-    <picsa-alert-box
-      [style.display]="showDownloadPrompt() ? 'block' : 'none'"
-      type="info"
-      [title]="'Download the PICSA Manual' | translate"
-      class="mt-8 w-full max-w-80 mx-auto"
-    >
+    <picsa-alert-box type="info" [title]="'Download the PICSA Manual' | translate" class="mt-8 w-full max-w-80 mx-auto">
       @if (manualDoc(); as doc) {
         <div class="flex justify-center">
           <resource-download [resource]="doc._data" (fileDownloaded)="handleManualDownloaded()"></resource-download>

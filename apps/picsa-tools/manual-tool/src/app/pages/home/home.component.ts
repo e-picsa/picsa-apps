@@ -40,7 +40,7 @@ export class HomeComponent implements OnDestroy {
 
   /** Prompt manual load if resource file attachment updated */
   public async handleManualDownloaded() {
-    return this.setPDFViewerUri(this.manualDoc());
+    await this.setPDFViewerUri(this.manualDoc());
   }
 
   public async handleManualSelected(e: { manual: IResourceFile; contents: IManualPeriodEntryLocalised[] }) {
@@ -57,7 +57,7 @@ export class HomeComponent implements OnDestroy {
     await this.resourcesService.ready();
     const manualDoc = await this.resourcesService.dbFiles.findOne(manual.id).exec();
     this.manualDoc.set(manualDoc || undefined);
-    return this.setPDFViewerUri(this.manualDoc());
+    await this.setPDFViewerUri(this.manualDoc());
   }
 
   private async setPDFViewerUri(manualDoc?: RxDocument<IResourceFile>) {
