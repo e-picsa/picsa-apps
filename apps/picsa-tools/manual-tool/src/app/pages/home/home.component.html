@@ -7,24 +7,19 @@
     }
   </div>
 
-  <picsa-manual-select class="w-full my-4" (manualSelected)="handleManualSelected($event)"></picsa-manual-select>
+  <picsa-manual-select
+    class="w-full my-4 overflow-x-auto"
+    (manualSelected)="handleManualSelected($event)"
+  ></picsa-manual-select>
 
   <!-- Download -->
   @if (showDownloadPrompt()) {
-    <picsa-alert-box
-      [style.display]="showDownloadPrompt() ? 'block' : 'none'"
-      type="info"
-      [title]="'Download the PICSA Manual' | translate"
-      style="margin-top: 2rem; display: flex; width: 100%"
-    >
-      <div style="max-width: 300px; margin: auto">
-        @if (manualDoc(); as doc) {
-          <resource-download
-            [resource]="doc._data"
-            (fileDownloaded)="handleManualDownloaded($event)"
-          ></resource-download>
-        }
-      </div>
+    <picsa-alert-box type="info" [title]="'Download the PICSA Manual' | translate" class="mt-8 w-full max-w-80 mx-auto">
+      @if (manualDoc(); as doc) {
+        <div class="flex justify-center">
+          <resource-download [resource]="doc._data" (fileDownloaded)="handleManualDownloaded()"></resource-download>
+        </div>
+      }
     </picsa-alert-box>
   }
   <!-- Steps -->
