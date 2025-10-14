@@ -24,8 +24,8 @@ export const downscaled: IForecastRow[] = [
     language_code: 'global_en',
     location: ['eastern'],
     storage_file: 'zm/forecasts/downscaled/2025-26/zmd-downscaled-eastern-2025-26.pdf',
-    created_at: '2025-10-11 12:03:19.879524+00',
-    updated_at: '2025-10-11 12:03:19.879524+00',
+    created_at: '2025-10-13 18:27:31.879524+00',
+    updated_at: '2025-10-13 18:27:31.879524+00',
     mimetype: 'application/pdf',
   },
   {
