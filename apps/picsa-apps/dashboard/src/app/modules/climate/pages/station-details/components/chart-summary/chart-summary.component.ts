@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -28,16 +28,19 @@ import { IClimateStationData, IStationRow } from '../../../../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartSummaryComponent {
+  // Inputs - data flowing down from parent
   public station = input.required<IStationRow>();
+  public discussions = input<ClimateComment[]>([]);
+  readonly data = input<IClimateStationData['Row'] | null>();
 
+  // Outputs - events flowing up to parent
+  public discussionsChanged = output<void>();
+
+  // Internal component state
   public chartDefintions = signal<IChartMeta[]>([]);
   public activeChartDefinition = signal<IChartMeta | undefined>(undefined);
-
   public activeChartConfig = signal<Partial<ChartConfiguration> | undefined>(undefined);
-  public comments = signal<ClimateComment[]>([]);
   public showCommentsList = signal<boolean>(false);
-
-  readonly data = input<IClimateStationData['Row'] | null>();
 
   public chartData = computed<IStationData[]>(() => {
     const data = this.data();
@@ -50,13 +53,13 @@ export class ChartSummaryComponent {
   public unresolvedCommentsCount = computed<number>(() => {
     const activeChart = this.activeChartDefinition();
     if (!activeChart) return 0;
-    return this.comments().filter((c) => c.chart_name === activeChart.name && !c.resolved).length;
+    return this.discussions().filter((c) => c.chart_name === activeChart.name && !c.resolved).length;
   });
 
   public commentsForCurrentChart = computed<ClimateComment[]>(() => {
     const activeChart = this.activeChartDefinition();
     if (!activeChart) return [];
-    return this.comments().filter((c) => c.chart_name === activeChart.name);
+    return this.discussions().filter((c) => c.chart_name === activeChart.name);
   });
 
   constructor(
@@ -79,20 +82,6 @@ export class ChartSummaryComponent {
         this.activeChartConfig.set(chartConfig);
       }
     });
-
-    // Load comments when station changes
-    effect(async () => {
-      const station = this.station();
-      if (station) {
-        try {
-          const comments = await this.commentService.getComments(station.id || station.station_id);
-          this.comments.set(comments);
-        } catch (error) {
-          console.error('Failed to load comments:', error);
-          this.comments.set([]);
-        }
-      }
-    });
   }
 
   public showCommentDialog() {
@@ -109,15 +98,10 @@ export class ChartSummaryComponent {
         },
       });
 
-      dialogRef.afterClosed().subscribe(async (result) => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          // Refresh comments after new comment is added
-          try {
-            const comments = await this.commentService.getComments(station.id || station.station_id);
-            this.comments.set(comments);
-          } catch (error) {
-            console.error('Failed to refresh comments:', error);
-          }
+          // Emit event to parent to refresh discussions
+          this.discussionsChanged.emit();
         }
       });
     }
@@ -138,9 +122,8 @@ export class ChartSummaryComponent {
 
     try {
       await this.commentService.toggleCommentResolved(station.id || station.station_id, comment.id);
-      // Refresh comments
-      const comments = await this.commentService.getComments(station.id || station.station_id);
-      this.comments.set(comments);
+      // Emit event to parent to refresh discussions
+      this.discussionsChanged.emit();
     } catch (error) {
       console.error('Failed to toggle comment resolved status:', error);
     }
@@ -152,9 +135,8 @@ export class ChartSummaryComponent {
 
     try {
       await this.commentService.deleteComment(station.id || station.station_id, comment.id);
-      // Refresh comments
-      const comments = await this.commentService.getComments(station.id || station.station_id);
-      this.comments.set(comments);
+      // Emit event to parent to refresh discussions
+      this.discussionsChanged.emit();
     } catch (error) {
       console.error('Failed to delete comment:', error);
     }
@@ -178,15 +160,10 @@ export class ChartSummaryComponent {
       },
     });
 
-    dialogRef.afterClosed().subscribe(async (result) => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Refresh comments after edit
-        try {
-          const comments = await this.commentService.getComments(station.id || station.station_id);
-          this.comments.set(comments);
-        } catch (error) {
-          console.error('Failed to refresh comments:', error);
-        }
+        // Emit event to parent to refresh discussions
+        this.discussionsChanged.emit();
       }
     });
   }

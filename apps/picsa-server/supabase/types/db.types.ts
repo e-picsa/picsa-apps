@@ -70,7 +70,6 @@ export type Database = {
           annual_rainfall_metadata: Json | null;
           annual_temperature_data: Json[] | null;
           annual_temperature_metadata: Json | null;
-          comments: Json[];
           country_code: Database['public']['Enums']['country_code'];
           created_at: string;
           crop_probability_data: Json[] | null;
@@ -89,7 +88,6 @@ export type Database = {
           annual_rainfall_metadata?: Json | null;
           annual_temperature_data?: Json[] | null;
           annual_temperature_metadata?: Json | null;
-          comments?: Json[];
           country_code: Database['public']['Enums']['country_code'];
           created_at?: string;
           crop_probability_data?: Json[] | null;
@@ -108,7 +106,6 @@ export type Database = {
           annual_rainfall_metadata?: Json | null;
           annual_temperature_data?: Json[] | null;
           annual_temperature_metadata?: Json | null;
-          comments?: Json[];
           country_code?: Database['public']['Enums']['country_code'];
           created_at?: string;
           crop_probability_data?: Json[] | null;
@@ -131,6 +128,42 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      discussions: {
+        Row: {
+          id: string;
+          tool: string;
+          context: Json;
+          comment: string;
+          created_by: string;
+          created_by_name: string;
+          created_at: string;
+          updated_at: string;
+          resolved: boolean;
+        };
+        Insert: {
+          id?: string;
+          tool: string;
+          context: Json;
+          comment: string;
+          created_by: string;
+          created_by_name: string;
+          created_at?: string;
+          updated_at?: string;
+          resolved?: boolean;
+        };
+        Update: {
+          id?: string;
+          tool?: string;
+          context?: Json;
+          comment?: string;
+          created_by?: string;
+          created_by_name?: string;
+          created_at?: string;
+          updated_at?: string;
+          resolved?: boolean;
+        };
+        Relationships: [];
       };
       climate_stations: {
         Row: {
