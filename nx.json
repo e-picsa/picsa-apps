@@ -61,7 +61,14 @@
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [],
-    "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"]
+    "production": ["default", "!{projectRoot}/.eslintrc.json", "!{projectRoot}/src/test-setup.[jt]s"],
+    // Ensure config file included in cache (! to negate gitignore) with fallback to env vars used in CI
+    // To fix various instances where value not cached as expected
+    "supabaseConfig": [
+      "!{workspaceRoot}/libs/environments/src/supabase/supabase.config.json",
+      { "env": "SUPABASE_PROJECT_ID" },
+      { "env": "SUPABASE_ANON_KEY" }
+    ]
   },
   // NOTE - disable nx cloud if limits exceeded by commenting out line below
   "nxCloudAccessToken": "ZjQ3YmMxZTMtNTEzNS00ODA5LWJlYjctOWU1N2NhMDI2ZjFkfHJlYWQtd3JpdGU=",

@@ -51,7 +51,10 @@ export class VideoPlayerComponent {
 
   protected showThumbnail = signal(true);
 
-  constructor(private analyticsService: AnalyticsService, private playerService: VideoPlayerService) {
+  constructor(
+    private analyticsService: AnalyticsService,
+    private playerService: VideoPlayerService,
+  ) {
     effect((onCleanup) => {
       const source = this.source();
       onCleanup(() => {

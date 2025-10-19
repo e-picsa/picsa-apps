@@ -1,16 +1,16 @@
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 
-import { IManualPeriodEntry } from './common';
+import { IManualPeriodEntry } from '../../models';
 
 /** Picsa manual contents organised by section and step */
 
 export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
   {
-    label: translateMarker('PICSA'),
+    label: '',
     steps: [
       {
         page: {
-          en: 5,
+          global_en: 5,
           zm_ny: 5,
           mw_ny: 5,
         },
@@ -21,7 +21,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 8,
+          global_en: 8,
           zm_ny: 10,
           mw_ny: 10,
         },
@@ -37,7 +37,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
     steps: [
       {
         page: {
-          en: 11,
+          global_en: 11,
           zm_ny: 13,
           mw_ny: 13,
         },
@@ -59,7 +59,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 16,
+          global_en: 16,
           zm_ny: 18,
           mw_ny: 18,
         },
@@ -76,7 +76,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 25,
+          global_en: 25,
           zm_ny: 27,
           mw_ny: 27,
         },
@@ -93,7 +93,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 29,
+          global_en: 29,
           zm_ny: 31,
           mw_ny: 31,
         },
@@ -120,7 +120,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 39,
+          global_en: 39,
           zm_ny: 41,
           mw_ny: 41,
         },
@@ -137,7 +137,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 41,
+          global_en: 41,
           zm_ny: 43,
           mw_ny: 43,
         },
@@ -154,7 +154,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 45,
+          global_en: 45,
           zm_ny: 47,
           mw_ny: 47,
         },
@@ -176,7 +176,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
     steps: [
       {
         page: {
-          en: 48,
+          global_en: 48,
           zm_ny: 50,
           mw_ny: 50,
         },
@@ -187,7 +187,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 52,
+          global_en: 52,
           zm_ny: 54,
           mw_ny: 54,
         },
@@ -209,7 +209,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
     steps: [
       {
         page: {
-          en: 55,
+          global_en: 55,
           zm_ny: 57,
           mw_ny: 57,
         },
@@ -220,7 +220,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
       },
       {
         page: {
-          en: 57,
+          global_en: 57,
           zm_ny: 59,
           mw_ny: 59,
         },
@@ -242,7 +242,7 @@ export const PICSA_MANUAL_CONTENTS_EXTENSION: IManualPeriodEntry[] = [
     steps: [
       {
         page: {
-          en: 59,
+          global_en: 59,
           zm_ny: 61,
           mw_ny: 61,
         },

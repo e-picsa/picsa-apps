@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FarmerStepVideoComponent } from './step-video.component';
+import { ManualSelectComponent } from './manual-select.component';
 
-describe('FarmerStepVideoComponent', () => {
-  let component: FarmerStepVideoComponent;
-  let fixture: ComponentFixture<FarmerStepVideoComponent>;
+describe('ManualSelectComponent', () => {
+  let component: ManualSelectComponent;
+  let fixture: ComponentFixture<ManualSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FarmerStepVideoComponent],
+      imports: [ManualSelectComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(FarmerStepVideoComponent);
+    fixture = TestBed.createComponent(ManualSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
