@@ -7,6 +7,7 @@ const videos: Record<string, IResourceFile> = {
     mimetype: 'video/mp4',
     description: 'A summary of how to create resource allocation maps (RAMs)',
     filename: 'ram-refresher.mp4',
+    language: 'global_en',
     type: 'file',
     subtype: 'video',
     cover: { image: 'assets/resources/covers/ram-refresher.jpg' },

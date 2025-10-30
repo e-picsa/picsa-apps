@@ -534,7 +534,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       // MW
       {
         id: '',
-        locale_codes: ['mw_en' as any],
+        locale_codes: ['mw_en'],
         size_kb: 27130,
         resolution: '360p',
         supabase_url:
@@ -559,7 +559,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       // ZM
       {
         id: '',
-        locale_codes: ['zm_en' as any],
+        locale_codes: ['zm_en'],
         size_kb: 26160,
         resolution: '360p',
         supabase_url:
@@ -630,7 +630,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       // MW
       {
         id: '',
-        locale_codes: ['mw_en' as any],
+        locale_codes: ['mw_en'],
         size_kb: 18530,
         resolution: '360p',
         supabase_url:
@@ -655,7 +655,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
       // ZM
       {
         id: '',
-        locale_codes: ['zm_en' as any],
+        locale_codes: ['zm_en'],
         size_kb: 17390,
         resolution: '360p',
         supabase_url:

@@ -80,7 +80,7 @@ export class PicsaConfigurationSelectComponent implements OnInit {
     if (country_code === 'global') {
       return LOCALES_DATA;
     }
-    return LOCALES_DATA.filter((o) => o.country_code === 'global' || o.country_code === country_code);
+    return LOCALES_DATA.filter((o) => o.country_code === country_code);
   });
 
   public userTypeOptions = [
@@ -100,7 +100,7 @@ export class PicsaConfigurationSelectComponent implements OnInit {
     private fb: FormBuilder,
     private configurationService: ConfigurationService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
