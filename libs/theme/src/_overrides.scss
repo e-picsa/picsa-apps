@@ -91,6 +91,10 @@ mat-select.mat-mdc-select {
   --mat-select-enabled-trigger-text-color: var(--color-primary);
   --mat-select-trigger-text-line-height: 38px;
 }
+// fix case where dropdown arrow sits outside box in mat-form-field select dropdown
+mat-select .mat-mdc-select-arrow-wrapper {
+  overflow-x: clip;
+}
 
 // Reduce padding and remove inset from fields with custom .input-field or .no-padding class
 mat-form-field.input-field,

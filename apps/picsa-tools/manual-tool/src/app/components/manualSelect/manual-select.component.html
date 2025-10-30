@@ -1,6 +1,6 @@
 @let variant = manualVariant();
 
-<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 overflow-x-auto justify-between">
   <!-- Custom header used outside mat-tab-group to allow language select inline with tabs  -->
   <nav mat-tab-nav-bar [tabPanel]="tabPanel">
     <a mat-tab-link [active]="variant === 'extension'" (click)="manualVariant.set('extension')">{{
@@ -8,8 +8,8 @@
     }}</a>
     <a mat-tab-link [active]="variant === 'farmer'" (click)="manualVariant.set('farmer')">{{ 'Farmer' | translate }}</a>
   </nav>
-
-  <mat-form-field appearance="outline" class="ml-auto no-hint">
+  <!-- Use overflow-x-clip to fix horizontal scroll bar due to pseudo child elements -->
+  <mat-form-field appearance="outline" class="no-hint">
     <mat-label>
       <mat-icon>translate</mat-icon>
       {{ 'Language' | translate }}</mat-label
