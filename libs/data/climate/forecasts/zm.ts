@@ -40,6 +40,30 @@ export const downscaled: IForecastRow[] = [
     updated_at: '2025-10-11 12:03:19.879524+00',
     mimetype: 'application/pdf',
   },
+  {
+    id: 'zmd-downscaled-southern-2025-26.pdf',
+    country_code: 'zm',
+    forecast_type: 'downscaled',
+    label: '2025 - 2026',
+    language_code: 'global_en',
+    location: ['southern'],
+    storage_file: 'zm/forecasts/downscaled/2025-26/zmd-downscaled-southern-2025-26.pdf',
+    created_at: '2025-10-11 12:03:19.879524+00',
+    updated_at: '2025-10-11 12:03:19.879524+00',
+    mimetype: 'application/pdf',
+  },
+  {
+    id: 'zmd-downscaled-luapula-2025-26.pdf',
+    country_code: 'zm',
+    forecast_type: 'downscaled',
+    label: '2025 - 2026',
+    language_code: 'global_en',
+    location: ['luapula'],
+    storage_file: 'zm/forecasts/downscaled/2025-26/zmd-downscaled-luapula-2025-26.pdf',
+    created_at: '2025-10-11 12:03:19.879524+00',
+    updated_at: '2025-10-11 12:03:19.879524+00',
+    mimetype: 'application/pdf',
+  },
 ];
 
 export default { seasonal, downscaled };
