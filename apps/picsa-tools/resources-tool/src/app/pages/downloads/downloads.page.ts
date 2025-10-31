@@ -1,4 +1,4 @@
-import { Component, computed, inject, model, signal, viewChildren } from '@angular/core';
+import { Component, computed, inject, model } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
-import { ResourcesDownloadService } from '@picsa/resources/services/resources-download-service';
+import { ResourcesDownloadService } from '@picsa/resources/services/resources-download.service';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
