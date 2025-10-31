@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { ChangeDetectionStrategy, Component, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ResourceDownloadComponent } from '@picsa/resources/components';
 import { IResourceFile } from '@picsa/resources/schemas';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
@@ -38,9 +39,11 @@ export class HomeComponent implements OnDestroy {
     this.resourcesService.ready();
   }
 
-  /** Prompt manual load if resource file attachment updated */
-  public async handleManualDownloaded() {
-    await this.setPDFViewerUri(this.manualDoc());
+  public async handleDlStatusChange(dl: ResourceDownloadComponent) {
+    if (dl.downloadStatus() === 'complete') {
+      // Prompt manual load if resource file attachment updated
+      this.setPDFViewerUri(this.manualDoc());
+    }
   }
 
   public async handleManualSelected(e: { manual: IResourceFile; contents: IManualPeriodEntryLocalised[] }) {

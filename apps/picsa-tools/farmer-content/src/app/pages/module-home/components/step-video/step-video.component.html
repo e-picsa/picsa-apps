@@ -2,7 +2,7 @@
 @if (viewMode() === 'playlist') {
   <mat-list class="playlist-container">
     @for (video of videosWithRankedChildren(); track video.id) {
-      <div class="playlist-item" (click)="player.handleItemClick()">
+      <div class="playlist-item" (click)="player.handleItemClick($event)">
         <farmer-step-video-player class="w-48" [video]="video" #player></farmer-step-video-player>
         <h3 class="flex-1 ml-4">{{ video.title }}</h3>
       </div>

@@ -6,11 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
+import { ResourcesDownloadService } from '@picsa/resources/services/resources-download-service';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
-import { _wait } from '@picsa/utils';
-import PQueue from 'p-queue';
 import { RxDocument } from 'rxdb';
 import { switchMap } from 'rxjs';
 
@@ -47,6 +46,7 @@ const DISPLAY_COLUMNS = [
 })
 export class DownloadsPageComponent {
   private configurationService = inject(ConfigurationService);
+  private downloadService = inject(ResourcesDownloadService);
 
   private dbFiles$ = this.service.ready$.pipe(switchMap(() => this.service.dbFiles.find().$));
 
@@ -60,8 +60,6 @@ export class DownloadsPageComponent {
   });
 
   public tableData = computed(() => this.resourceFileDocs().map((doc) => this.toTableData(doc)));
-
-  public bulkDownloadStatus = signal<string | undefined>(undefined);
 
   public pendingDownloads = computed(() =>
     this.tableData()
@@ -93,9 +91,6 @@ export class DownloadsPageComponent {
     rowTrackBy: (_, row: IResourceTableEntry) => row.id,
   };
 
-  private downloadComponents = viewChildren(ResourceDownloadComponent);
-  private downloadQueue: PQueue;
-
   constructor(public service: ResourcesToolService) {}
 
   public async deleteDownload(resource: IResourceFile) {
@@ -110,38 +105,8 @@ export class DownloadsPageComponent {
     if (entry._downloaded) {
       return this.handleResourceOpen(entry);
     } else {
-      return this.downloadResource(entry);
+      return this.downloadResource(entry.doc);
     }
-  }
-
-  public async startBulkDownload() {
-    if (this.bulkDownloadStatus()) {
-      this.stopBulkDownload();
-    }
-    // mark all UIs pending
-    this.downloadComponents().forEach((c) => c.downloadStatus.set('pending'));
-    // queue downloads
-    const totalDownloads = this.pendingDownloads().length;
-    const queue = new PQueue({ concurrency: 1, autoStart: false });
-    this.bulkDownloadStatus.set(`0 / ${totalDownloads}`);
-    queue.on('next', () => {
-      this.bulkDownloadStatus.set(`${totalDownloads - queue.pending - queue.size} / ${totalDownloads}`);
-    });
-    for (const pending of this.pendingDownloads()) {
-      queue.add(async () => this.downloadResource(pending));
-    }
-    this.downloadQueue = queue;
-    queue.start();
-    await this.downloadQueue.onIdle();
-    this.bulkDownloadStatus.set(undefined);
-  }
-  public stopBulkDownload() {
-    this.downloadQueue?.pause();
-    this.downloadQueue?.clear();
-    for (const component of this.downloadComponents()) {
-      component.cancelDownload();
-    }
-    this.bulkDownloadStatus.set(undefined);
   }
 
   private async handleResourceOpen(entry: IResourceTableEntry) {
@@ -152,14 +117,9 @@ export class DownloadsPageComponent {
   }
 
   /** Programatically trigger rendered <resource-download> component to download specific resource */
-  private async downloadResource(resource: IResourceFile) {
-    // Give time for ui updates to process before starting download
-    await _wait(200);
-    const downloadComponent = this.downloadComponents().find((v) => v.resource().id === resource.id);
-    if (downloadComponent) {
-      return downloadComponent.download();
-    }
-    return;
+  private async downloadResource(doc: RxDocument<IResourceFile>) {
+    const entry = await this.downloadService.register(doc);
+    await entry.download();
   }
 
   /** Filter resources both by resource own country filter, and then by selected language filter */
@@ -178,8 +138,6 @@ export class DownloadsPageComponent {
     return {
       ...doc._data,
       _downloaded: Object.keys(doc._data._attachments).length > 0,
-      // use filename if title not available
-      title: doc.title || doc.filename,
       doc,
     };
   }

@@ -12,9 +12,9 @@ import { PicsaDatabase_V2_Service, PicsaDatabaseAttachmentService } from '@picsa
 import { FileService } from '@picsa/shared/services/core/file.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { NativeStorageService } from '@picsa/shared/services/native';
-import { _wait, arrayToHashmap } from '@picsa/utils';
+import { arrayToHashmap } from '@picsa/utils';
 import { RxCollection, RxDocument } from 'rxdb';
-import { BehaviorSubject, lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 
 import { DB_COLLECTION_ENTRIES, DB_FILE_ENTRIES, DB_LINK_ENTRIES } from '../data';
 import * as schemas from '../schemas';
@@ -23,9 +23,6 @@ export type IDownloadStatus = 'loading' | 'ready' | 'pending' | 'finalizing' | '
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {
-  /** Track active downloadStatus by resource ID */
-  public downloads: Record<string, { progress: number; status: string }> = {};
-
   constructor(
     private dbService: PicsaDatabase_V2_Service,
     private dbAttachmentService: PicsaDatabaseAttachmentService,
@@ -101,10 +98,6 @@ export class ResourcesToolService extends PicsaAsyncService {
     }
   }
 
-  public async putFileAttachment(doc: RxDocument<schemas.IResourceFile>, data: Blob) {
-    return this.dbAttachmentService.putAttachment(doc, doc.filename, data);
-  }
-
   /**
    * Retrieve a doc attachment and convert to URI for use within components
    * NOTE - on web this will create an objectURL in the document which should be revoked when no longer required
@@ -127,41 +120,6 @@ export class ResourcesToolService extends PicsaAsyncService {
 
   public removeFileAttachment(doc: RxDocument<schemas.IResourceFile>) {
     return this.dbAttachmentService.removeAttachment(doc, doc.filename);
-  }
-
-  public triggerResourceDownload(doc: RxDocument<schemas.IResourceFile>) {
-    let downloadData: Blob;
-    // Create observables that can be subscribed to from component that triggers method
-    const progress$ = new BehaviorSubject(0);
-    const status$ = new BehaviorSubject<IDownloadStatus>('pending');
-    // Handle download, also passing back subscription so that component can cancel if required
-    const { subscription, updates$ } = this.fileService.downloadFile(doc.url, 'blob');
-
-    updates$.subscribe({
-      next: ({ progress, data }) => {
-        progress$.next(progress);
-        // NOTE - might be called multiple times before completing so avoid persisting data here
-        if (progress === 100) {
-          downloadData = data as Blob;
-          status$.next('finalizing');
-        }
-      },
-      error: (error) => {
-        status$.next('error');
-        console.error(error);
-        throw error;
-      },
-      complete: async () => {
-        // give small timeout to allow UI to update
-        await _wait(100);
-        // persist to document attachment
-        await this.putFileAttachment(doc, downloadData);
-        status$.next('complete');
-        status$.complete();
-        progress$.complete();
-      },
-    });
-    return { progress$, status$, subscription };
   }
 
   private async populateHardcodedResources() {
@@ -232,7 +190,7 @@ export class ResourcesToolService extends PicsaAsyncService {
             if (blob.size === existingAttachment?.length) return;
             await this.removeFileAttachment(dbDoc);
           }
-          await this.putFileAttachment(dbDoc, blob);
+          await this.dbAttachmentService.putAttachment(dbDoc, dbDoc.filename, blob);
         }
       }
     }

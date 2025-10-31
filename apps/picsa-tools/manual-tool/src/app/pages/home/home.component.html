@@ -14,7 +14,11 @@
     <picsa-alert-box type="info" [title]="'Download the PICSA Manual' | translate" class="mt-8 w-full max-w-80 mx-auto">
       @if (manualDoc(); as doc) {
         <div class="flex justify-center">
-          <resource-download [resource]="doc._data" (fileDownloaded)="handleManualDownloaded()"></resource-download>
+          <resource-download
+            [resource]="doc._data"
+            #dl
+            (downloadStatusChange)="handleDlStatusChange(dl)"
+          ></resource-download>
         </div>
       }
     </picsa-alert-box>

@@ -27,6 +27,7 @@ import { VideoPlayerComponent } from '@picsa/shared/features/video-player/video-
 })
 export class FarmerStepVideoPlayerComponent {
   public video = input.required<IPicsaVideoData>();
+  public videoUri = signal<string | undefined>(undefined);
 
   public videoLanguageOptions = computed(() =>
     this.video()
@@ -54,15 +55,27 @@ export class FarmerStepVideoPlayerComponent {
     });
   }
 
+  public async handleDlStatusChange(downloader: ResourceDownloadComponent) {
+    if (downloader.downloadStatus() === 'complete') {
+      const uri = await downloader.uri(true);
+      if (uri) {
+        this.videoUri.set(uri);
+      }
+    } else {
+      this.videoUri.set(undefined);
+    }
+  }
+
   public playerComponent = viewChild<VideoPlayerComponent>('videoPlayer');
   public downloaderComponent = viewChild<ResourceDownloadComponent>('dl');
 
   // Expose public click handler to allow programattic click from playlist
-  public async handleItemClick() {
+  public async handleItemClick(e: Event) {
     const dlComponent = this.downloaderComponent();
     const videoPlayer = this.playerComponent();
     if (dlComponent?.downloadStatus() === 'ready') {
-      return dlComponent.download();
+      dlComponent.download(e);
+      return;
     }
     if (videoPlayer?.source()) {
       videoPlayer.playVideo();
