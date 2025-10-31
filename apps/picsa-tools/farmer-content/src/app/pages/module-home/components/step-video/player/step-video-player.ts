@@ -58,11 +58,11 @@ export class FarmerStepVideoPlayerComponent {
   public downloaderComponent = viewChild<ResourceDownloadComponent>('dl');
 
   // Expose public click handler to allow programattic click from playlist
-  public handleItemClick() {
+  public async handleItemClick() {
     const dlComponent = this.downloaderComponent();
     const videoPlayer = this.playerComponent();
     if (dlComponent?.downloadStatus() === 'ready') {
-      return dlComponent.downloadResource();
+      return dlComponent.download();
     }
     if (videoPlayer?.source()) {
       videoPlayer.playVideo();

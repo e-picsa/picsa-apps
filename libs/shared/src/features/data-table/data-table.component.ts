@@ -42,6 +42,8 @@ export interface IDataTableOptions {
    * Bind to row click events
    * */
   handleRowClick?: (row: any, event: Event) => void;
+  /** Optimise re-renders by passing track by function */
+  rowTrackBy?: (_: number, row: any) => any;
 }
 
 /** Default header formatter. Splits '_' column names and capitalises each word */
@@ -136,6 +138,7 @@ export class PicsaDataTableComponent<T = Record<string, any>> implements OnChang
     sort: true,
     handleRowClick: () => null,
     formatHeader: formatHeaderDefault,
+    rowTrackBy: (_, row) => row?.id ?? row,
   };
 
   public dataSource: MatTableDataSource<any>;

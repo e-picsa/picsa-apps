@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
+import { _wait } from '@picsa/utils';
 import { RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -26,7 +27,7 @@ export class ResourceDownloadComponent implements OnDestroy {
   /** File URI emitter */
   fileDownloaded = output<string>();
 
-  private download$?: Subscription;
+  private downloadSubscription?: Subscription;
   private componentDestroyed$ = new Subject();
 
   /** Show size text */
@@ -43,7 +44,10 @@ export class ResourceDownloadComponent implements OnDestroy {
   constructor(private service: ResourcesToolService) {
     effect(async () => {
       const resource = this.resource();
-      this.loadDBDoc(resource);
+      // load db doc when input resource changes
+      if (resource.id !== this.dbDoc()?.id) {
+        this.loadDBDoc(resource);
+      }
     });
     // Emit whenever file download complete/retrieved and URI available for use
     effect(() => {
@@ -88,27 +92,46 @@ export class ResourceDownloadComponent implements OnDestroy {
     this.componentDestroyed$.complete();
   }
 
-  public downloadResource() {
+  public async download() {
     const doc = this.dbDoc();
-    if (doc) {
-      const { download$, progress$, status$ } = this.service.triggerResourceDownload(doc);
-      progress$.subscribe((progress) => {
-        this.downloadProgress.set(progress);
+    if (!doc) return;
+    this.downloadProgress.set(0);
+    this.downloadStatus.set('pending');
+    await _wait(3000);
+    const { subscription, progress$, status$ } = this.service.triggerResourceDownload(doc);
+    this.downloadSubscription = subscription;
+
+    // UI signals
+    const sub1 = progress$.subscribe((p) => this.downloadProgress.set(p));
+    const sub2 = status$.subscribe((s) => this.downloadStatus.set(s));
+
+    // Expose a single promise to callers
+    return new Promise<void>((resolve, reject) => {
+      const sub3 = status$.subscribe((s) => {
+        if (s === 'complete') {
+          cleanup();
+          resolve();
+        } else if (s === 'error') {
+          cleanup();
+          reject(new Error('download failed'));
+        }
       });
-      status$.subscribe((status) => {
-        this.downloadStatus.set(status);
-      });
-      this.download$ = download$;
-    }
+
+      const cleanup = () => {
+        sub1.unsubscribe();
+        sub2.unsubscribe();
+        sub3.unsubscribe();
+      };
+    });
   }
 
   /** Cancel ongoing download */
   public cancelDownload() {
-    this.downloadStatus.set('ready');
-    if (this.download$) {
-      this.download$.unsubscribe();
-      this.download$ = undefined;
+    if (this.downloadSubscription) {
+      this.downloadSubscription.unsubscribe();
+      this.downloadSubscription = undefined;
       this.downloadProgress.set(0);
     }
+    this.downloadStatus.set('ready');
   }
 }

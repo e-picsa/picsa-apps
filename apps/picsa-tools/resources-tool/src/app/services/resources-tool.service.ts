@@ -135,7 +135,9 @@ export class ResourcesToolService extends PicsaAsyncService {
     const progress$ = new BehaviorSubject(0);
     const status$ = new BehaviorSubject<IDownloadStatus>('pending');
     // Handle download, also passing back subscription so that component can cancel if required
-    const download$ = this.fileService.downloadFile(doc.url, 'blob').subscribe({
+    const { subscription, updates$ } = this.fileService.downloadFile(doc.url, 'blob');
+
+    updates$.subscribe({
       next: ({ progress, data }) => {
         progress$.next(progress);
         // NOTE - might be called multiple times before completing so avoid persisting data here
@@ -159,7 +161,7 @@ export class ResourcesToolService extends PicsaAsyncService {
         progress$.complete();
       },
     });
-    return { progress$, status$, download$ };
+    return { progress$, status$, subscription };
   }
 
   private async populateHardcodedResources() {
@@ -219,7 +221,8 @@ export class ResourcesToolService extends PicsaAsyncService {
       // TODO - could skip if db already contains attachment (although would need systme to track update)
       // and can't easiliy use asset digest. Would likely need to track db updates instead of bulk
       if (dbDoc) {
-        const res = await lastValueFrom(this.fileService.downloadFile(`/assets/${relativePath}`, 'blob'));
+        const { updates$ } = this.fileService.downloadFile(`/assets/${relativePath}`, 'blob');
+        const res = await lastValueFrom(updates$);
         if (res?.data) {
           const blob = res.data as Blob;
           const existingAttachment = dbDoc.getAttachment(dbDoc.filename);
