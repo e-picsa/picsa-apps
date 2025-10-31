@@ -20,11 +20,14 @@ export interface ILocaleDataEntry {
 const LOCALES_BASE: {
   [code in ILocaleCode]: { language_code: string; language_label: string; country_code: ICountryCode };
 } = {
+  // Default (non-localised)
   global_en: { language_code: 'en', language_label: 'English', country_code: 'global' },
   // Malawi
+  mw_en: { language_code: 'en', language_label: 'English', country_code: 'mw' },
   mw_ny: { language_code: 'ny', language_label: 'Chichewa', country_code: 'mw' },
   mw_tum: { language_code: 'tum', language_label: 'Tumbuka', country_code: 'mw' },
   // Zambia
+  zm_en: { language_code: 'en', language_label: 'English', country_code: 'zm' },
   zm_ny: { language_code: 'ny', language_label: 'Nyanja', country_code: 'zm' },
   zm_bem: { language_code: 'bem', language_label: 'Bemba', country_code: 'zm' },
   zm_toi: { language_code: 'toi', language_label: 'Tonga', country_code: 'zm' },

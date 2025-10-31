@@ -885,7 +885,9 @@ export type Database = {
         | 'zm_loz'
         | 'zm_lun'
         | 'zm_kqn'
-        | 'zm_lue';
+        | 'zm_lue'
+        | 'zm_en'
+        | 'mw_en';
       resource_link_type: 'app' | 'social' | 'web';
     };
     CompositeTypes: {
@@ -1341,6 +1343,8 @@ export const Constants = {
         'zm_lun',
         'zm_kqn',
         'zm_lue',
+        'zm_en',
+        'mw_en',
       ],
       resource_link_type: ['app', 'social', 'web'],
     },

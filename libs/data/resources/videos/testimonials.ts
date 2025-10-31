@@ -2,7 +2,7 @@ import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
 const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> = {
-  // LEGACY - To Remove in 2026
+  // LEGACY - To Remove from server in 2026
   // {
   //       id: '',
   //       locale_codes: ['zm_ny', 'global_en'],
@@ -42,7 +42,7 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
     children: [
       {
         id: '',
-        locale_codes: ['mw_ny', 'global_en'],
+        locale_codes: ['mw_ny', 'mw_en'],
         resolution: '360p',
         size_kb: 9890,
         supabase_url:
@@ -64,7 +64,7 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
     children: [
       {
         id: '',
-        locale_codes: ['mw_ny', 'global_en'],
+        locale_codes: ['mw_ny', 'mw_en'],
         resolution: '360p',
         size_kb: 13300,
         supabase_url:
@@ -86,7 +86,7 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
     children: [
       {
         id: '',
-        locale_codes: ['zm_ny', 'global_en'],
+        locale_codes: ['zm_ny', 'zm_en'],
         resolution: '360p',
         size_kb: 20670,
         supabase_url:
@@ -147,7 +147,7 @@ const PICSA_VIDEO_TESTIMONIAL_BASE: Record<string, Omit<IPicsaVideoData, 'id'>> 
     children: [
       {
         id: '',
-        locale_codes: ['zm_ny', 'global_en'],
+        locale_codes: ['zm_ny', 'zm_en'],
         resolution: '360p',
         size_kb: 8600,
         supabase_url:

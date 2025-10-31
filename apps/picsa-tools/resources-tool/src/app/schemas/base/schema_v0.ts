@@ -1,4 +1,4 @@
-import { ICountryCode } from '@picsa/data/deployments';
+import { ICountryCode, ILocaleCode } from '@picsa/data/deployments';
 import { RxJsonSchema } from 'rxdb';
 
 export interface IResourceBase_v0 {
@@ -18,7 +18,7 @@ export interface IResourceBase_v0 {
     countries?: ICountryCode[];
   };
   /** Language of resource */
-  language?: string;
+  language?: ILocaleCode;
   /** Custom keywords used for some filtering (manual) and in future could be used for search */
   keywords?: string[];
   /** Order of priority when shown in list (highest numbers shown first) */

@@ -78,11 +78,11 @@ export class FormatValuePipe implements PipeTransform {
  * The table will display all cell values directly, without any additional formatting
  * If needing to render values within a custom template this can be done via `valueTemplates`.
  * Value templates can access the value through any default named variable `let-{varName}`
- * The full row can also be accessed through `let-row`
+ * The full row can also be accessed through `let-row="row"`
  * @example
  * ```
  * <picsa-data-table [data]="myData" [valueTemplates]={col1:col1Template}>
- *  <ng-template #col1Template let-value let-row>
+ *  <ng-template #col1Template let-value let-row="row">
  *    <span class='some-custom-class'>{{value | modifierPipe}}</span>
  *    <span>{{row.anotherField}}</span>
  *  </ng-template>

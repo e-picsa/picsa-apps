@@ -7,7 +7,7 @@ import { IPicsaVideoData } from '../types';
 export function hackGenerateLegacyResources(videos: IPicsaVideoData[]) {
   const resources: IResourceFile[] = [];
   for (const { children, description, title } of videos) {
-    for (const { id, size_kb, supabase_url, locale_codes, resolution } of children) {
+    for (const { id, size_kb, supabase_url, locale_codes } of children) {
       const resourceFile: IResourceFile = {
         id,
         filename: `${id}.mp4`,
@@ -19,6 +19,7 @@ export function hackGenerateLegacyResources(videos: IPicsaVideoData[]) {
         type: 'file',
         url: supabase_url,
         description,
+        language: locale_codes[0],
       };
       resources.push(resourceFile);
     }
