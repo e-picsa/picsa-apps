@@ -14,16 +14,18 @@ export class PicsaTranslateService {
     ngxTranslate.setDefaultLang('global_en');
     effect(() => {
       const { language_code } = configurationService.userSettings();
-      if (language_code && language_code !== this.language) {
-        this.language = language_code;
-        // use global en if any localised en language selected
-        if (language_code.endsWith('_en')) {
-          this.ngxTranslate.use('global_en');
-        } else {
-          this.ngxTranslate.use(language_code);
-        }
-      }
+      this.setLanguage(language_code);
     });
+  }
+  public setLanguage(code: ILocaleCode) {
+    if (code === this.language) return;
+    this.language = code;
+    // use global en if any localised en language selected
+    if (code.endsWith('_en')) {
+      this.ngxTranslate.use('global_en');
+    } else {
+      this.ngxTranslate.use(code);
+    }
   }
 
   // use translate service to translate strings that will be displayed

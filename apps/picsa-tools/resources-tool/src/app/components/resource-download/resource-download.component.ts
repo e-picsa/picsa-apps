@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
-import { _wait } from '@picsa/utils';
 import { RxDocument } from 'rxdb';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 
@@ -97,7 +96,6 @@ export class ResourceDownloadComponent implements OnDestroy {
     if (!doc) return;
     this.downloadProgress.set(0);
     this.downloadStatus.set('pending');
-    await _wait(3000);
     const { subscription, progress$, status$ } = this.service.triggerResourceDownload(doc);
     this.downloadSubscription = subscription;
 

@@ -1,39 +1,46 @@
 <div style="display: flex; align-items: center">
   <!-- Data Search -->
-  @if(tableOptions.search){
-  <mat-form-field class="search-field" style="flex: 1">
-    <mat-label>Search Data</mat-label>
-    <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
-    <mat-icon matPrefix>search</mat-icon>
-  </mat-form-field>
+  @if (tableOptions.search) {
+    <mat-form-field class="search-field" style="flex: 1">
+      <mat-label>Search Data</mat-label>
+      <input matInput #filterInput (keyup)="applyFilter(filterInput.value)" />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
   }
   <!-- Data Export -->
-  @if(tableOptions.exportFilename){
-  <button mat-button style="margin-right: auto" (click)="handleExport()">
-    <mat-icon>file_download</mat-icon>Export CSV
-  </button>
+  @if (tableOptions.exportFilename) {
+    <button mat-button style="margin-right: auto" (click)="handleExport()">
+      <mat-icon>file_download</mat-icon>Export CSV
+    </button>
   }
 </div>
 
 <!-- Main Table -->
-<table mat-table matSort [dataSource]="dataSource" [matSortDisabled]="!tableOptions.sort">
-  @for(column of tableOptions.displayColumns; track column; let index=$index){
-  <ng-container [matColumnDef]="column">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column | formatValue: tableOptions.formatHeader }}</th>
+<table
+  mat-table
+  matSort
+  [dataSource]="dataSource"
+  [matSortDisabled]="!tableOptions.sort"
+  [trackBy]="tableOptions.rowTrackBy"
+  recycleRows
+>
+  @for (column of tableOptions.displayColumns; track column; let index = $index) {
+    <ng-container [matColumnDef]="column">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column | formatValue: tableOptions.formatHeader }}</th>
 
-    <td mat-cell *matCellDef="let row">
-      @if(valueTemplates[column]){
-      <!-- custom value templates  -->
-      <ng-container
-        [ngTemplateOutlet]="valueTemplates[column]"
-        [ngTemplateOutletContext]="$any({ $implicit: row[column], row: row, column: column })"
-      ></ng-container>
-      } @else {
-      <!-- Default value template -->
-      {{ row[column] }}
-      }
-    </td>
-  </ng-container>
+      <td mat-cell *matCellDef="let row">
+        @if (valueTemplates[column]) {
+          <!-- custom value templates  -->
+          <ng-container
+            [ngTemplateOutlet]="valueTemplates[column]"
+            [ngTemplateOutletContext]="$any({ $implicit: row[column], row: row, column: column })"
+          ></ng-container>
+        } @else {
+          <!-- Default value template -->
+          {{ row[column] }}
+        }
+      </td>
+    </ng-container>
   }
 
   <tr mat-header-row *matHeaderRowDef="tableOptions.displayColumns"></tr>

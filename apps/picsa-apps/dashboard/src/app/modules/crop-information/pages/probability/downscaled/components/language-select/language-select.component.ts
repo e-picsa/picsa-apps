@@ -29,11 +29,11 @@ export class CropProbabilityLanguageSelectComponent {
     this.generateLanguageOptions(this.deploymentService.activeDeploymentCountry()),
   );
 
-  constructor(ngxTranslate: TranslateService) {
+  constructor(translateService: TranslateService) {
     // HACK - Set frontend translation service lang on language selection change
     effect(() => {
       const selected = this.languageSelected();
-      ngxTranslate.use(selected);
+      translateService.use(selected);
     });
   }
 
