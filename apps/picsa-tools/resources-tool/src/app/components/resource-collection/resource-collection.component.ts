@@ -44,6 +44,7 @@ export class ResourceCollectionComponent {
   public showcollectionNotFound = signal(false);
 
   public files = signal<IResourceFile[]>([]);
+  public fileDocs = signal<RxDocument<IResourceFile>[]>([]);
   public links = signal<IResourceLink[]>([]);
   public collections = signal<IResourceCollection[]>([]);
 
@@ -68,7 +69,7 @@ export class ResourceCollectionComponent {
       const allCollections = await this.service.dbCollections.find().exec();
       console.log(
         'Collections',
-        allCollections.map((d) => d._data)
+        allCollections.map((d) => d._data),
       );
     }
   }
@@ -80,8 +81,8 @@ export class ResourceCollectionComponent {
     const collectionDocs = await this.service.dbCollections.findByIds(collections).sort('priority').exec();
     this.collections.set(this.processDocs(collectionDocs));
     const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
+    this.fileDocs.set(Object.values(fileDocs));
     this.files.set(this.processDocs(fileDocs));
-    console.log('files', this.files());
   }
   private processDocs(docs: Map<string, RxDocument<any>>) {
     const entries = [...docs.values()];

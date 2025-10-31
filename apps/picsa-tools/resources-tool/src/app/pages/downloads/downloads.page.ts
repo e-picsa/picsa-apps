@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { ICountryCode, ILocaleCode, LOCALES_DATA } from '@picsa/data';
-import { ResourcesDownloadService } from '@picsa/resources/services/resources-download.service';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
@@ -15,6 +14,7 @@ import { switchMap } from 'rxjs';
 
 import { ResourceDownloadComponent, ResourceDownloadMultipleComponent } from '../../components';
 import { IResourceFile } from '../../schemas';
+import { ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 /** Table data stores original doc separate to data, and populates _downloaded state */
