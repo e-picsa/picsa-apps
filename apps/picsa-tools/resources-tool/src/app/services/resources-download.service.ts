@@ -64,21 +64,22 @@ export class ResourcesDownloadService {
     return entry;
   }
 
-  public async downloadMultiple(docs: RxDocument<IResourceFile>[], concurrency = 1) {
-    const queue = new PQueue({ concurrency });
-    const tasks = docs.map(async (doc) => {
+  public async queueMultiple(docs: RxDocument<IResourceFile>[], concurrency = 1) {
+    const queue = new PQueue({ concurrency, autoStart: true });
+    for (const doc of docs) {
       const entry = await this.register(doc);
       // set all entries to pending status while queing
       entry.status.set('pending');
-      return queue.add(async () => {
+      queue.add(async () => {
         // only download if hasn't been manually cancelled
         if (entry.status() === 'pending') {
           return entry.download();
         }
         return doc;
       });
-    });
-    return Promise.allSettled(tasks);
+    }
+
+    return queue;
   }
 
   public unregister(id?: string) {

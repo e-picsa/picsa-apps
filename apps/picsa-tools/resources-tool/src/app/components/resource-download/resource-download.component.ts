@@ -12,11 +12,11 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { DownloadEntry, ResourcesDownloadService } from '@picsa/resources/services/resources-download-service';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
 import { RxDocument } from 'rxdb';
 
 import { IResourceFile } from '../../schemas';
+import { DownloadEntry, ResourcesDownloadService } from '../../services/resources-download.service';
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 @Component({

@@ -8,15 +8,7 @@
       }
     </mat-chip-listbox>
     <!-- Bulk download -->
-    @if(bulkDownloadStatus()){
-    <button mat-stroked-button class="ml-4" (click)="stopBulkDownload()">
-      <mat-icon>cancel</mat-icon> {{ 'Downloading' | translate }} {{bulkDownloadStatus()}}
-    </button>
-    } @else {
-    <button mat-stroked-button class="ml-4" (click)="startBulkDownload()">
-      <mat-icon>download</mat-icon> {{ 'Download All' | translate }} {{ pendingDownloadsSize() | sizeMB }} MB
-    </button>
-    }
+    <resource-download-multiple [docs]="pendingDownloads()"></resource-download-multiple>
   </div>
   <!-- Custom language filter -->
 
@@ -28,7 +20,11 @@
       (rowClick)="handleRowClick($event)"
     >
       <ng-template #size_kb let-value>{{value | sizeMB}} MB</ng-template>
-      <ng-template #title let-value>{{value | translate}}</ng-template>
+      <ng-template #title let-value let-row="row">
+        @if(value){ {{value | translate}} } @else {
+        <span class="text-xs opacity-50">{{row.filename}}</span>
+        }
+      </ng-template>
       <ng-template #language let-value>{{languageLabels[value]}}</ng-template>
       <ng-template #subtype let-value>
         @switch (value) { @case ('pdf') {
