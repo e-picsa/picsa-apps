@@ -185,6 +185,11 @@ export class ResourcesDownloadService {
     if (!entry) return null;
     const { _doc } = entry;
     const filename = _doc.filename ?? _doc.id;
-    return this.attachmentService.getFileAttachmentURI(_doc, filename, convertFileSrc);
+    const uri = await this.attachmentService.getFileAttachmentURI(_doc, filename, convertFileSrc);
+    if (uri) {
+      this.uris.set(id, uri);
+      return uri;
+    }
+    return null;
   }
 }
