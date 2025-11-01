@@ -116,6 +116,7 @@
     "ngx-json-viewer": "^3.2.1",
     "ngx-lottie": "^13.0.0",
     "openapi-fetch": "^0.8.2",
+    "p-queue": "^9.0.0",
     "papaparse": "^5.3.2",
     "parse": "3.4.2",
     "perfect-freehand": "^1.2.2",

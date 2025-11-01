@@ -1,54 +1,57 @@
 <div class="page-content">
-  <div style="margin-left: auto; margin-bottom: 1rem">
-    <resource-download-multiple [resources]="fileResources" style="margin-left: auto"></resource-download-multiple>
+  <div class="flex m-2 flex-wrap gap-4 justify-center">
+    <mat-chip-listbox class="flex flex-1 gap-2 min-w-64" (change)="languageFilter.set($event.value)">
+      @for(option of languageFilterOptions(); track option.id){
+      <mat-chip-option color="primary" [selected]="languageFilter()===option.id" [value]="option.id"
+        >{{option.language_label}}</mat-chip-option
+      >
+      }
+    </mat-chip-listbox>
+    <!-- Bulk download -->
+    <resource-download-multiple [docs]="pendingDownloads()"></resource-download-multiple>
   </div>
-  <table mat-table matSort [dataSource]="fileResourceDocs" class="mat-elevation-z8">
-    <ng-container matColumnDef="mimetype">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Type' | translate }}</th>
-      <td mat-cell *matCellDef="let doc">
-        @switch (doc._data.subtype) { @case ('pdf') {
+  <!-- Custom language filter -->
+
+  <div class="w-full overflow-auto mt-2 sm:mt-4">
+    <picsa-data-table
+      [data]="tableData()"
+      [options]="tableOptions"
+      [valueTemplates]="{size_kb,title,subtype,language,_downloaded,_actions}"
+      (rowClick)="handleRowClick($event)"
+    >
+      <ng-template #subtype let-value>
+        @switch (value) { @case ('pdf') {
         <mat-icon svgIcon="resources_tool:filetype_pdf"></mat-icon>
         } @case ('video') {
         <mat-icon svgIcon="resources_tool:filetype_video"></mat-icon>
         } @default {
         <mat-icon svgIcon="resources_tool:filetype_document"></mat-icon>
         } }
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Title' | translate }}</th>
-      <td mat-cell *matCellDef="let doc">{{ doc._data.title }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="size_kb">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Size' | translate }}</th>
-      <td mat-cell *matCellDef="let doc">{{ doc._data.size_kb | sizeMB }}MB</td>
-    </ng-container>
-
-    <ng-container matColumnDef="download_button">
-      <th mat-header-cell *matHeaderCellDef class="icon-column"></th>
-      <td mat-cell *matCellDef="let doc" class="icon-column">
-        <resource-download [resource]="doc._data"></resource-download>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="menu_options">
-      <th mat-header-cell *matHeaderCellDef class="icon-column"></th>
-      <td mat-cell *matCellDef="let resource" class="icon-column">
-        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="more options">
-          <mat-icon>more_vert</mat-icon>
+      </ng-template>
+      <ng-template #_downloaded let-downloaded let-row="row">
+        @if(downloaded){
+        <button mat-icon-button>
+          <mat-icon>download_done</mat-icon>
         </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="deleteDownload(resource)">
-            <mat-icon>delete</mat-icon>
-            <span>Delete</span>
-          </button>
-        </mat-menu>
-      </td>
-    </ng-container>
+        } @else {
+        <resource-download [resource]="row" (click)="$event.stopImmediatePropagation()"></resource-download>
+        }
+      </ng-template>
+      <ng-template #title let-value let-row="row">
+        @if(value){ {{value | translate}} } @else {
+        <span class="text-xs opacity-50">{{row.filename}}</span>
+        }
+      </ng-template>
+      <ng-template #language let-value>{{languageLabels[value]}}</ng-template>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+      <ng-template #size_kb let-value>{{value | sizeMB}} MB</ng-template>
+      <ng-template #_actions let-actions let-row="row">
+        @if(actions.delete){
+        <button mat-icon-button (click)="deleteDownload(row,$event)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+        }
+      </ng-template>
+    </picsa-data-table>
+  </div>
 </div>

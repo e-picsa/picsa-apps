@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, viewChild } from '@angular/core';
-import { _wait } from '@picsa/utils';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { RxDocument } from 'rxdb';
 
 import { IResourceFile, IResourceLink } from '../../../schemas';
@@ -20,6 +19,7 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
   @Input() resource: IResourceFile;
 
   public dbDoc: RxDocument<IResourceFile>;
+  public fileUri = signal<string | null>(null);
 
   private downloader = viewChild.required(ResourceDownloadComponent);
 
@@ -53,9 +53,20 @@ export class ResourceItemFileComponent implements OnInit, OnDestroy {
 
   /** Generic file opener */
   public async handleFileLinkClick(e: Event) {
-    const fileURI = this.downloader().fileURI();
-    if (fileURI) {
-      this.service.openFileResource(fileURI, this.dbDoc!.type, this.resource.id);
+    const uri = await this.downloader().uri();
+    if (uri) {
+      this.service.openFileResource(uri, this.dbDoc!.type, this.resource.id);
     }
+  }
+
+  public async handleDownloadStatusChange(dl: ResourceDownloadComponent) {
+    if (dl.downloadStatus() === 'complete') {
+      const uri = await dl.uri(false);
+      if (uri) {
+        this.fileUri.set(uri);
+        return;
+      }
+    }
+    this.fileUri.set(null);
   }
 }
