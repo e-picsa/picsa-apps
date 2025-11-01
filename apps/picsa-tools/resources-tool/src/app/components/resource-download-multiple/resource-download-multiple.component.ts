@@ -60,6 +60,7 @@ export class ResourceDownloadMultipleComponent {
     this.status.set('ready');
   }
   public stopDownload() {
+    this.status.set('ready');
     const docs = this.docs();
     docs.forEach(async (doc) => {
       const dlEntry = await this.downloadService.register(doc);

@@ -18,14 +18,17 @@ import { ResourcesDownloadService } from '../../services/resources-download.serv
 import { ResourcesToolService } from '../../services/resources-tool.service';
 
 /** Table data stores original doc separate to data, and populates _downloaded state */
-type IResourceTableEntry = IResourceFile & { _downloaded: boolean } & { doc: RxDocument<IResourceFile> };
+type IResourceTableEntry = IResourceFile & { _downloaded: boolean; _actions: Record<string, boolean> } & {
+  doc: RxDocument<IResourceFile>;
+};
 
 const DISPLAY_COLUMNS = [
-  'subtype',
-  'title',
-  'language',
-  'size_kb',
   '_downloaded',
+  'title',
+  'subtype',
+  'size_kb',
+  'language',
+  '_actions',
 ] as const satisfies (keyof IResourceTableEntry)[];
 
 @Component({
@@ -84,7 +87,8 @@ export class DownloadsPageComponent {
     formatHeader: (value) => {
       if (value === 'subtype') return 'Type';
       if (value === 'size_kb') return 'Size';
-      if (value === '_downloaded') return 'Download';
+      if (value === '_downloaded') return '';
+      if (value === '_actions') return '';
       return formatHeaderDefault(value);
     },
     search: false,
@@ -93,7 +97,8 @@ export class DownloadsPageComponent {
 
   constructor(public service: ResourcesToolService) {}
 
-  public async deleteDownload(resource: IResourceFile) {
+  public async deleteDownload(resource: IResourceFile, event: Event) {
+    event.stopImmediatePropagation();
     const doc = await this.service.dbFiles.findOne(resource.id).exec();
     if (doc) {
       return this.service.removeFileAttachment(doc);
@@ -135,9 +140,12 @@ export class DownloadsPageComponent {
   }
 
   private toTableData(doc: RxDocument<IResourceFile>): IResourceTableEntry {
+    const _downloaded = Object.keys(doc._data._attachments).length > 0;
+    const _actions = { delete: _downloaded ? true : false };
     return {
       ...doc._data,
-      _downloaded: Object.keys(doc._data._attachments).length > 0,
+      _downloaded,
+      _actions,
       doc,
     };
   }

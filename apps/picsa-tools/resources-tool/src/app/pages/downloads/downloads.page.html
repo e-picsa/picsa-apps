@@ -16,16 +16,9 @@
     <picsa-data-table
       [data]="tableData()"
       [options]="tableOptions"
-      [valueTemplates]="{size_kb,title,subtype,language,_downloaded}"
+      [valueTemplates]="{size_kb,title,subtype,language,_downloaded,_actions}"
       (rowClick)="handleRowClick($event)"
     >
-      <ng-template #size_kb let-value>{{value | sizeMB}} MB</ng-template>
-      <ng-template #title let-value let-row="row">
-        @if(value){ {{value | translate}} } @else {
-        <span class="text-xs opacity-50">{{row.filename}}</span>
-        }
-      </ng-template>
-      <ng-template #language let-value>{{languageLabels[value]}}</ng-template>
       <ng-template #subtype let-value>
         @switch (value) { @case ('pdf') {
         <mat-icon svgIcon="resources_tool:filetype_pdf"></mat-icon>
@@ -37,22 +30,26 @@
       </ng-template>
       <ng-template #_downloaded let-downloaded let-row="row">
         @if(downloaded){
-        <button
-          mat-icon-button
-          [matMenuTriggerFor]="menu"
-          aria-label="more options"
-          (click)="$event.stopImmediatePropagation()"
-        >
-          <mat-icon>more_vert</mat-icon>
+        <button mat-icon-button>
+          <mat-icon>download_done</mat-icon>
         </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="deleteDownload(row)">
-            <mat-icon>delete</mat-icon>
-            <span>Delete</span>
-          </button>
-        </mat-menu>
         } @else {
         <resource-download [resource]="row" (click)="$event.stopImmediatePropagation()"></resource-download>
+        }
+      </ng-template>
+      <ng-template #title let-value let-row="row">
+        @if(value){ {{value | translate}} } @else {
+        <span class="text-xs opacity-50">{{row.filename}}</span>
+        }
+      </ng-template>
+      <ng-template #language let-value>{{languageLabels[value]}}</ng-template>
+
+      <ng-template #size_kb let-value>{{value | sizeMB}} MB</ng-template>
+      <ng-template #_actions let-actions let-row="row">
+        @if(actions.delete){
+        <button mat-icon-button (click)="deleteDownload(row,$event)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
         }
       </ng-template>
     </picsa-data-table>
