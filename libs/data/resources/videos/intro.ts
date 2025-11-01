@@ -111,6 +111,7 @@ const PICSA_INTRO_VIDEOS_BASE: Record<IPicsaIntroVideoId, Omit<IPicsaVideoData, 
 
 export const PICSA_INTRO_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(PICSA_INTRO_VIDEOS_BASE).map(
   ([id, entry]) => ({
+    ...entry,
     id: id as IPicsaIntroVideoId,
     children: entry.children.map((child) => {
       const { locale_codes, resolution } = child;

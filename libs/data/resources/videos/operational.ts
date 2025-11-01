@@ -402,6 +402,7 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
 
 export const PICSA_OPERATIONAL_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(PICSA_OPERATIONAL_VIDEOS_BASE).map(
   ([id, entry]) => ({
+    ...entry,
     id: id as IPicsaOperationalVideoID,
     children: entry.children.map((child) => {
       const { locale_codes, resolution } = child;

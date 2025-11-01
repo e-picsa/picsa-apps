@@ -732,6 +732,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
 
 export const PICSA_FARMER_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(PICSA_FARMER_VIDEOS_BASE).map(
   ([id, entry]) => ({
+    ...entry,
     id: id as IPicsaFarmerVideoId,
     children: entry.children.map((child) => {
       const { locale_codes, resolution } = child;
