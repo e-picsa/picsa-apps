@@ -2,14 +2,12 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, signal } fro
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { IResourceFile } from '@picsa/resources/schemas';
-import { ResourcesDownloadService } from '@picsa/resources/services/resources-download.service';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SizeMBPipe } from '@picsa/shared/pipes/sizeMB';
-import PQueue from 'p-queue';
 import { RxDocument } from 'rxdb';
 
-import { ResourceDownloadComponent } from '../resource-download/resource-download.component';
+import { IResourceFile } from '../../schemas';
+import { ResourcesDownloadService } from '../../services/resources-download.service';
 
 @Component({
   selector: 'resource-download-multiple',
