@@ -1,3 +1,4 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
@@ -5,6 +6,7 @@ type IPicsaOperationalVideoID = 'intro' | 'historic_climate' | 'options' | 'part
 
 const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPicsaVideoData, 'id'>> = {
   intro: {
+    title: translateMarker('Intro - Operational'),
     children: [
       // Global
       {
@@ -104,6 +106,7 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
   },
 
   historic_climate: {
+    title: translateMarker('Historic Climate - Operational'),
     children: [
       // Global
       {
@@ -202,6 +205,7 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
   },
 
   options: {
+    title: translateMarker('Options - Operational'),
     children: [
       // Global
       {
@@ -298,6 +302,7 @@ const PICSA_OPERATIONAL_VIDEOS_BASE: Record<IPicsaOperationalVideoID, Omit<IPics
     ],
   },
   participatory_budget: {
+    title: translateMarker('Participatory Budgets - Operational'),
     children: [
       // Global
       {

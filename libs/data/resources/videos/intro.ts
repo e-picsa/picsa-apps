@@ -1,3 +1,4 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
@@ -5,6 +6,7 @@ type IPicsaIntroVideoId = 'intro';
 
 const PICSA_INTRO_VIDEOS_BASE: Record<IPicsaIntroVideoId, Omit<IPicsaVideoData, 'id'>> = {
   intro: {
+    title: translateMarker('Picsa Intro'),
     children: [
       // NOTE - 'global_en' does not exist for intro but ny versions include subtitles
 
