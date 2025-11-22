@@ -2,14 +2,9 @@
   <div style="display: flex; align-items: center">
     <h2 class="mr-2">Forecasts</h2>
     <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
-    <button
-      mat-stroked-button
-      color="primary"
-      *roleRequired="'climate.admin'"
-      class="ml-auto"
-      (click)="addForecast(tabGroup.selectedIndex)"
-    >
-      <mat-icon>add</mat-icon>Add Forecast
+    <button mat-stroked-button color="primary" *roleRequired="'climate.admin'" class="ml-auto" (click)="addForecast()">
+      <mat-icon>add</mat-icon>
+      <span class="capitalize">Add {{ activeForecastType() }} Forecast</span>
     </button>
     <picsa-refresh-spinner
       [spin]="refreshPending()"
@@ -17,7 +12,7 @@
       (click)="handleRefreshClick()"
     ></picsa-refresh-spinner>
   </div>
-  <mat-tab-group #tabGroup>
+  <mat-tab-group #tabGroup (selectedIndexChange)="handleTabChange($event)">
     @for (tab of forecastTabs; track tab.type) {
       <mat-tab [label]="tab.label">
         <picsa-data-table [data]="tab.data()" [options]="tableOptions" [valueTemplates]="{ created_at, storage_file }">

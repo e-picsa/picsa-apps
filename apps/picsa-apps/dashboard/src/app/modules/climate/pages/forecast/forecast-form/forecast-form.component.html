@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Upload Forecast</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="flex flex-col gap-4 p-4">
+    <picsa-supabase-upload
+      #uploader
+      [fileDropHeight]="130"
+      (fileChanged)="handleFileDropped($event)"
+      [hideUploadButton]="true"
+      [storageBucketName]="countryCode"
+      [fileTypes]="['application/pdf']"
+    />
+
+    @if (forecastType === 'daily' || forecastType === 'weekly') {
+      <mat-form-field appearance="outline">
+        <mat-label>Label</mat-label>
+        <input matInput formControlName="label" />
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Language Code</mat-label>
+      <mat-select formControlName="language_code">
+        @for (option of languageOptions(); track option.id) {
+          <mat-option [value]="option.id">{{ option.language_label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Forecast Type</mat-label>
+      <mat-select formControlName="forecast_type">
+        <mat-option value="daily">Daily</mat-option>
+        <mat-option value="weekly">Weekly</mat-option>
+        <mat-option value="downscaled">Downscaled</mat-option>
+        <mat-option value="seasonal">Seasonal</mat-option>
+      </mat-select>
+    </mat-form-field>
+    @if (forecastType === 'downscaled') {
+      <mat-form-field appearance="outline">
+        <mat-label>Location</mat-label>
+        <mat-select formControlName="location">
+          @for (option of locationOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" (click)="save(uploader)" [disabled]="form.invalid || form.disabled">
+    Save
+  </button>
+</mat-dialog-actions>

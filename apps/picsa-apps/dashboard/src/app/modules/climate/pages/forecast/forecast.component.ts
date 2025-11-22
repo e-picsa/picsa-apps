@@ -12,25 +12,15 @@ import { DashboardMaterialModule } from '../../../../material.module';
 import { AuthRoleRequiredDirective } from '../../../auth';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
-import { IForecastRow } from '../../types';
+import { ForecastType, IForecastRow } from '../../types';
 import { ForecastFormComponent, IForecastDialogData } from './forecast-form/forecast-form.component';
 import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
 
-interface IForecastTableRow extends IForecastRow {
-  file_name: string;
-}
-
 type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
 
-const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
-  'created_at',
-  'forecast_type',
-  'location',
-  'label',
-  'storage_file',
-];
+const DISPLAY_COLUMNS: (keyof IForecastRow)[] = ['created_at', 'forecast_type', 'location', 'label', 'storage_file'];
 
-type IForecastTab = { type: IForecastRow['forecast_type']; label: string; data: Signal<IForecastTableRow[]> };
+type IForecastTab = { type: ForecastType; label: string; data: Signal<IForecastRow[]> };
 
 @Component({
   selector: 'dashboard-climate-forecast',
@@ -48,22 +38,26 @@ type IForecastTab = { type: IForecastRow['forecast_type']; label: string; data: 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateForecastPageComponent {
-  public forecastData = signal<IForecastTableRow[]>([]);
+  public forecasts = this.db.signalQuery({ filter: { country_code: this.deploymentService.activeDeploymentCountry } });
 
-  private forecastDataFiltered = (type: IForecastRow['forecast_type']) =>
-    computed(() => this.forecastData().filter((v) => v.forecast_type === type));
+  public dailyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'daily'));
+  public weeklyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'weekly'));
+  public downscaledForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'downscaled'));
+  public seasonalForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'seasonal'));
 
   // Single source of truth for tabs
   public forecastTabs: IForecastTab[] = [
-    { type: 'daily', label: 'Daily', data: this.forecastDataFiltered('daily') },
-    { type: 'weekly', label: 'Weekly', data: this.forecastDataFiltered('weekly') },
-    { type: 'downscaled', label: 'Downscaled', data: this.forecastDataFiltered('downscaled') },
-    { type: 'seasonal', label: 'Seasonal', data: this.forecastDataFiltered('seasonal') },
+    { type: 'daily', label: 'Daily', data: this.dailyForecasts },
+    { type: 'weekly', label: 'Weekly', data: this.weeklyForecasts },
+    { type: 'downscaled', label: 'Downscaled', data: this.downscaledForecasts },
+    { type: 'seasonal', label: 'Seasonal', data: this.seasonalForecasts },
   ];
+
+  public activeForecastType = signal<ForecastType>(this.forecastTabs[0].type);
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: (row: IForecastTableRow) => this.handleStorageClick(row),
+    handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
   };
 
   public refreshPending = signal(false);
@@ -73,7 +67,7 @@ export class ClimateForecastPageComponent {
   /** When querying data use name prefixes to limit search results, e.g. 202406* pattern match */
   private apiQueryPrefix = computed(() => this.apiStartDate().toISOString().replace(/-/g, '').substring(0, 6));
 
-  private countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code);
+  private countryCode = computed(() => this.deploymentService.activeDeploymentCountry());
 
   /** Use combination of apiQuery and countryCode to avoid repeated data refresh on load */
   private apiQueryMemo = computed(() => this.countryCode() && `${this.countryCode()}/${this.apiQueryPrefix()}`);
@@ -95,7 +89,6 @@ export class ClimateForecastPageComponent {
     effect(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const memo = this.apiQueryMemo();
-      this.forecastData.set([]);
       await this.service.ready();
       await this.loadDBData();
       await this.handleRefreshClick();
@@ -108,7 +101,7 @@ export class ClimateForecastPageComponent {
     this.refreshPending.set(false);
   }
 
-  public async handleStorageClick(row: IForecastTableRow) {
+  public async handleStorageClick(row: IForecastRow) {
     let { storage_file } = row;
     // handle download if storage file doesn't exist or hasn't been downloaded
     if (!storage_file && this.activeDownloads[row.id] !== 'complete') {
@@ -120,11 +113,12 @@ export class ClimateForecastPageComponent {
     open(publicLink, '_blank');
   }
 
-  public async addForecast(forecastTabIndex: number | null) {
-    const data: IForecastDialogData = { country_code: this.countryCode() };
-    if (typeof forecastTabIndex === 'number') {
-      data.forecast_type = this.forecastTabs[forecastTabIndex]?.type;
-    }
+  public handleTabChange(index: number) {
+    this.activeForecastType.set(this.forecastTabs[index].type);
+  }
+
+  public async addForecast() {
+    const data: IForecastDialogData = { country_code: this.countryCode(), forecast_type: this.activeForecastType() };
     const dialog = this.dialog.open(ForecastFormComponent, { data });
 
     dialog.afterClosed().subscribe((v) => {
@@ -140,9 +134,7 @@ export class ClimateForecastPageComponent {
       .eq('country_code', country_code)
       .like('id', `${this.apiQueryPrefix()}%`);
     if (error) throw error;
-    if (data?.length > 0) {
-      this.forecastData.set(this.toTableData(data));
-    }
+
     return data;
   }
 
@@ -165,19 +157,7 @@ export class ClimateForecastPageComponent {
 
     const forecasts = data?.[country_code] || [];
 
-    this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(forecasts), v));
-
     return forecasts;
-  }
-
-  private toTableData(data: IForecastRow[] = []): IForecastTableRow[] {
-    return data
-      .map((el) => {
-        // compute file_name column from storage file path
-        const file_name = el.id.split('/').pop() || '';
-        return { ...el, file_name };
-      })
-      .sort((a, b) => (b.id > a.id ? 1 : -1));
   }
 
   private async downloadStorageFile(row: IForecastRow) {

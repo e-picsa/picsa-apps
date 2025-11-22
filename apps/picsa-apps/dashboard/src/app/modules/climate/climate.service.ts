@@ -70,7 +70,7 @@ export class ClimateService extends PicsaAsyncService {
     });
   }
   private get stationDataDB() {
-    return this.supabaseService.db.table<'climate_station_data', IClimateStationData>('climate_station_data');
+    return this.supabaseService.db.table('climate_station_data');
   }
 
   public override async init() {
