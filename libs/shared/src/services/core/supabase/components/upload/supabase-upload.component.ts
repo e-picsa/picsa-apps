@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { ENVIRONMENT } from '@picsa/environments';
 import { UppyAngularDashboardModule } from '@uppy/angular';
 import Uppy, { InternalMetadata, UploadResult, UppyFile, UppyOptions } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
@@ -13,6 +12,8 @@ import Tus from '@uppy/tus';
 
 import { SupabaseStorageService } from '../../services/supabase-storage.service';
 import { SupabaseService } from '../../supabase.service';
+
+export type FileDropFile = UppyFile;
 
 /** Metadata populated to uploads so that supabase can process correctly */
 interface IUploadMeta extends InternalMetadata {
@@ -67,6 +68,8 @@ export class SupabaseUploadComponent {
 
   @Input() autoUpload = false;
 
+  @Input() hideUploadButton = false;
+
   @Input() set disabled(disabled: boolean) {
     // Update options through plugin interface for better change detection
     this.dashboardOptions = { ...this.dashboardOptions, disabled };
@@ -80,7 +83,7 @@ export class SupabaseUploadComponent {
   }
 
   @Output() uploadComplete = new EventEmitter<IUploadResult[]>();
-  @Output() fileChanged = new EventEmitter<UppyFile>();
+  @Output() fileChanged = new EventEmitter<FileDropFile | undefined>();
 
   public uppy: Uppy;
 
@@ -108,6 +111,16 @@ export class SupabaseUploadComponent {
     await this.supabaseService.ready();
     this.storageService = this.supabaseService.storage;
     this.initUppy();
+  }
+
+  public renameFile(originalName: string, newName: string) {
+    const targetFile = this.files.find((f) => f.name === originalName);
+    if (targetFile) {
+      const { id, meta } = targetFile;
+      const objectName = `${this.storageFolderPath}/${newName}`;
+      this.uppy.setFileState(id, { name: newName });
+      this.uppy.setFileMeta(id, { ...meta, name: newName, objectName });
+    }
   }
 
   private async initUppy() {
