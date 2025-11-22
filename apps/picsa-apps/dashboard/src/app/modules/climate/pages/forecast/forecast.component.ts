@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { RefreshSpinnerComponent } from '@picsa/components';
 import { FunctionResponses } from '@picsa/server-types';
@@ -8,9 +9,11 @@ import { PicsaNotificationService } from '@picsa/shared/services/core/notificati
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
 import { IForecastRow } from '../../types';
+import { ForecastFormComponent, IForecastDialogData } from './forecast-form/forecast-form.component';
 import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
 
 interface IForecastTableRow extends IForecastRow {
@@ -20,12 +23,14 @@ interface IForecastTableRow extends IForecastRow {
 type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
 
 const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
-  'country_code',
+  'created_at',
   'forecast_type',
   'location',
   'label',
   'storage_file',
 ];
+
+type IForecastTab = { type: IForecastRow['forecast_type']; label: string; data: Signal<IForecastTableRow[]> };
 
 @Component({
   selector: 'dashboard-climate-forecast',
@@ -36,6 +41,7 @@ const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
     PicsaDataTableComponent,
     DashboardMaterialModule,
     RefreshSpinnerComponent,
+    AuthRoleRequiredDirective,
   ],
   templateUrl: './forecast.component.html',
   styleUrls: ['./forecast.component.scss'],
@@ -43,6 +49,17 @@ const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
 })
 export class ClimateForecastPageComponent {
   public forecastData = signal<IForecastTableRow[]>([]);
+
+  private forecastDataFiltered = (type: IForecastRow['forecast_type']) =>
+    computed(() => this.forecastData().filter((v) => v.forecast_type === type));
+
+  // Single source of truth for tabs
+  public forecastTabs: IForecastTab[] = [
+    { type: 'daily', label: 'Daily', data: this.forecastDataFiltered('daily') },
+    { type: 'weekly', label: 'Weekly', data: this.forecastDataFiltered('weekly') },
+    { type: 'downscaled', label: 'Downscaled', data: this.forecastDataFiltered('downscaled') },
+    { type: 'seasonal', label: 'Seasonal', data: this.forecastDataFiltered('seasonal') },
+  ];
 
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
@@ -66,6 +83,8 @@ export class ClimateForecastPageComponent {
   private get db() {
     return this.supabase.db.table('forecasts');
   }
+
+  private dialog = inject(MatDialog);
 
   constructor(
     private service: ClimateService,
@@ -99,6 +118,18 @@ export class ClimateForecastPageComponent {
     const [bucket, ...path] = (storage_file as string).split('/');
     const publicLink = this.supabase.storage.getPublicLink(bucket, path.join('/'));
     open(publicLink, '_blank');
+  }
+
+  public async addForecast(forecastTabIndex: number | null) {
+    const data: IForecastDialogData = { country_code: this.countryCode() };
+    if (typeof forecastTabIndex === 'number') {
+      data.forecast_type = this.forecastTabs[forecastTabIndex]?.type;
+    }
+    const dialog = this.dialog.open(ForecastFormComponent, { data });
+
+    dialog.afterClosed().subscribe((v) => {
+      console.log('forecast dialog closed', v);
+    });
   }
 
   private async loadDBData() {
