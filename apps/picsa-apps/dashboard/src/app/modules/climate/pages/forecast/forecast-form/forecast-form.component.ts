@@ -87,8 +87,8 @@ export class ForecastFormComponent {
       return null;
     }
     const value = this.form.getRawValue() as ForecastFormValue;
-
-    return { ...value, id: value.storage_file as string };
+    // id will populate when saving
+    return { ...value, id: '' };
   }
 
   constructor() {
@@ -127,10 +127,11 @@ export class ForecastFormComponent {
         if (uploadPath) {
           validatedValue.storage_file = uploadPath;
           validatedValue.mimetype = 'application/pdf';
-          const { error } = await this.handleDBUpdate(pendingUpload, validatedValue);
+          // populate id and upload to db
+          validatedValue.id = FORECAST_ID_MAPPING[this.forecastType](pendingUpload, validatedValue);
+          const { error } = await this.supabaseService.db.table('forecasts').insert(validatedValue);
           if (error) {
-            console.error(error);
-            // TODO - rollback file upload?
+            await this.supabaseService.storage.deleteFile(this.countryCode, uploadPath);
             throw error;
           }
           this.dialogRef.close(this.validatedValue);
@@ -167,11 +168,6 @@ export class ForecastFormComponent {
       console.error({ successful, failed });
       throw new Error(`Storage file upload failed`);
     }
-  }
-
-  private async handleDBUpdate(file: FileDropFile, formValues: ForecastFormValue) {
-    const id = FORECAST_ID_MAPPING[this.forecastType](file, formValues);
-    return this.supabaseService.db.table('forecasts').insert({ ...formValues, id });
   }
 
   /** Attempt to popualte downscaled location from file name */
