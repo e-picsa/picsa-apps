@@ -79,8 +79,6 @@ export class ForecastFormComponent {
     forecast_type: this.fb.control({ value: null, disabled: true }, Validators.required),
   });
 
-  private formValue = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue() as ForecastFormValue)));
-
   /** Return form value if validation satisfied */
   private get validatedValue(): IForecastInsert | null {
     if (this.form.invalid) {

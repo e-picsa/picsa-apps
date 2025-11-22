@@ -3,8 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, s
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { RefreshSpinnerComponent } from '@picsa/components';
+import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { FunctionResponses } from '@picsa/server-types';
-import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
@@ -18,9 +19,12 @@ import { DashboardClimateMonthSelectComponent } from './month-select/month-selec
 
 type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
 
-const DISPLAY_COLUMNS: (keyof IForecastRow)[] = ['created_at', 'forecast_type', 'location', 'label', 'storage_file'];
-
-type IForecastTab = { type: ForecastType; label: string; data: Signal<IForecastRow[]> };
+type IForecastTab = {
+  type: ForecastType;
+  label: string;
+  data: Signal<IForecastRow[]>;
+  columns: (keyof IForecastRow)[];
+};
 
 @Component({
   selector: 'dashboard-climate-forecast',
@@ -47,18 +51,47 @@ export class ClimateForecastPageComponent {
 
   // Single source of truth for tabs
   public forecastTabs: IForecastTab[] = [
-    { type: 'daily', label: 'Daily', data: this.dailyForecasts },
-    { type: 'weekly', label: 'Weekly', data: this.weeklyForecasts },
-    { type: 'downscaled', label: 'Downscaled', data: this.downscaledForecasts },
-    { type: 'seasonal', label: 'Seasonal', data: this.seasonalForecasts },
+    {
+      type: 'seasonal',
+      label: 'Seasonal',
+      data: this.seasonalForecasts,
+      columns: ['created_at', 'location', 'language_code', 'storage_file'],
+    },
+    {
+      type: 'downscaled',
+      label: 'Downscaled',
+      data: this.downscaledForecasts,
+      columns: ['created_at', 'location', 'language_code', 'storage_file'],
+    },
+    {
+      type: 'weekly',
+      label: 'Weekly',
+      data: this.weeklyForecasts,
+      columns: ['created_at', 'label', 'storage_file'],
+    },
+    {
+      type: 'daily',
+      label: 'Daily',
+      data: this.dailyForecasts,
+      columns: ['created_at', 'label', 'storage_file'],
+    },
   ];
 
-  public activeForecastType = signal<ForecastType>(this.forecastTabs[0].type);
+  private activeForecastTabIndex = signal(0);
 
-  public tableOptions: IDataTableOptions = {
-    displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
-  };
+  public activeForecastType = computed(() => this.forecastTabs[this.activeForecastTabIndex()].type);
+
+  public tableOptions = computed((): IDataTableOptions => {
+    const { columns } = this.forecastTabs[this.activeForecastTabIndex()] as IForecastTab;
+    return {
+      displayColumns: columns,
+      handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
+      formatHeader: (v) => {
+        if (v === 'language_code') return 'Language';
+        return formatHeaderDefault(v);
+      },
+    };
+  });
 
   public refreshPending = signal(false);
 
@@ -73,6 +106,8 @@ export class ClimateForecastPageComponent {
   private apiQueryMemo = computed(() => this.countryCode() && `${this.countryCode()}/${this.apiQueryPrefix()}`);
 
   public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
+
+  public locales = LOCALES_DATA_HASHMAP;
 
   private get db() {
     return this.supabase.db.table('forecasts');
@@ -114,7 +149,7 @@ export class ClimateForecastPageComponent {
   }
 
   public handleTabChange(index: number) {
-    this.activeForecastType.set(this.forecastTabs[index].type);
+    this.activeForecastTabIndex.set(index);
   }
 
   public async addForecast() {

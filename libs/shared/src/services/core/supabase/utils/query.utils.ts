@@ -45,7 +45,6 @@ function liveQuery$<T extends Record<string, any>>(
       .filter(([, v]) => v !== undefined)
       .map(([k, v]) => `${k}=eq.${v}`)
       .join(',');
-    console.log('subscribe to changes', filterString);
     const ch = supabase
       .channel(`rt-${tableName}-${filterString || 'all'}`)
       .on(
@@ -57,7 +56,6 @@ function liveQuery$<T extends Record<string, any>>(
           ...(filterString ? { filter: filterString } : {}),
         },
         (p) => {
-          console.log('changes detected', p);
           const type = p.eventType.toLowerCase() as 'insert' | 'update' | 'delete';
           subscriber.next({ type, new: p.new as T, old: p.old as T });
         },

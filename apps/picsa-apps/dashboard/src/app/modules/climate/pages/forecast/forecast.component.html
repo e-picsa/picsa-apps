@@ -15,7 +15,11 @@
   <mat-tab-group #tabGroup (selectedIndexChange)="handleTabChange($event)">
     @for (tab of forecastTabs; track tab.type) {
       <mat-tab [label]="tab.label">
-        <picsa-data-table [data]="tab.data()" [options]="tableOptions" [valueTemplates]="{ created_at, storage_file }">
+        <picsa-data-table
+          [data]="tab.data()"
+          [options]="tableOptions()"
+          [valueTemplates]="{ created_at, storage_file, language_code }"
+        >
         </picsa-data-table>
       </mat-tab>
     }
@@ -36,3 +40,4 @@
     }
   </button>
 </ng-template>
+<ng-template #language_code let-language> {{ locales[language]?.language_label }} </ng-template>
