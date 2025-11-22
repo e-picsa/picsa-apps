@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LOCALES_DATA } from '@picsa/data';
@@ -8,7 +7,6 @@ import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { DBToFormBuilderType } from '@picsa/forms';
 import { FileDropFile, SupabaseService, SupabaseUploadComponent } from '@picsa/shared/services/core/supabase';
-import { map } from 'rxjs';
 
 import { DashboardMaterialModule } from '../../../../../material.module';
 import { ForecastType, IForecastInsert } from '../../../types';
@@ -19,12 +17,15 @@ export type IForecastDialogData = {
 };
 type ForecastFormValue = Omit<IForecastInsert, 'id'>;
 
+//
+const [YEAR, MONTH, DAY] = [new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, new Date().getUTCDate()];
+
 /** Generate target path for storage file upload depending on forecast type */
-const FORECAST_FOLDER_SEGMENT_MAPPING: Record<ForecastType, (d: Date) => (string | number)[]> = {
-  daily: (d) => ['forecasts', 'daily', d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()],
-  weekly: (d) => ['forecasts', 'weekly', d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()],
-  downscaled: (d) => ['forecasts', 'downscaled', d.getUTCFullYear()],
-  seasonal: (d) => ['forecasts', 'seasonal', d.getUTCFullYear()],
+const FORECAST_FOLDER_SEGMENT_MAPPING: Record<ForecastType, () => (string | number)[]> = {
+  daily: () => ['forecasts', 'daily', YEAR, MONTH, DAY],
+  weekly: () => ['forecasts', 'weekly', YEAR, MONTH, DAY],
+  downscaled: () => ['forecasts', 'downscaled', YEAR],
+  seasonal: () => ['forecasts', 'seasonal', YEAR],
 };
 const FORECAST_FILE_NAME_MAPPING: Record<ForecastType, (file: FileDropFile, value: ForecastFormValue) => string> = {
   daily: (file) => file.name,
@@ -33,10 +34,10 @@ const FORECAST_FILE_NAME_MAPPING: Record<ForecastType, (file: FileDropFile, valu
   seasonal: (file, value) => `${value.location}_${value.language_code}.${file.extension}`,
 };
 const FORECAST_ID_MAPPING: Record<ForecastType, (file: FileDropFile, value: ForecastFormValue) => string> = {
-  daily: (file) => `${new Date().toISOString().slice(0, 8)}/${file.name}`,
-  weekly: (file) => `${new Date().toISOString().slice(0, 8)}/${file.name}`,
-  downscaled: (_, value) => `${new Date().getFullYear()}/${value.location}_${value.language_code}`,
-  seasonal: (_, value) => `${new Date().getFullYear()}/${value.location}_${value.language_code}`,
+  daily: (file) => `${[YEAR, MONTH, DAY].join()}/${file.name}`,
+  weekly: (file) => `${[YEAR, MONTH, DAY].join()}/${file.name}`,
+  downscaled: (_, value) => `${YEAR}/${value.location}_${value.language_code}`,
+  seasonal: (_, value) => `${YEAR}/${value.location}_${value.language_code}`,
 };
 
 @Component({
@@ -73,10 +74,11 @@ export class ForecastFormComponent {
     language_code: this.fb.control(null, Validators.required),
     mimetype: this.fb.control(null),
     storage_file: this.fb.control(null, Validators.required),
-    location: this.fb.control(null),
-
+    downscaled_location: this.fb.control(null),
     // Enums: explicit control allows null start
     forecast_type: this.fb.control({ value: null, disabled: true }, Validators.required),
+    // LEGACY - location array will be removed to just use downscaled
+    location: this.fb.control([]),
   });
 
   /** Return form value if validation satisfied */
@@ -150,7 +152,7 @@ export class ForecastFormComponent {
     formValue: ForecastFormValue,
   ) {
     // map pending upload file to correct folder and filename
-    const storageFolderPath = FORECAST_FOLDER_SEGMENT_MAPPING[this.forecastType](new Date()).join('/');
+    const storageFolderPath = FORECAST_FOLDER_SEGMENT_MAPPING[this.forecastType]().join('/');
     const storageFileName = FORECAST_FILE_NAME_MAPPING[this.forecastType](file, formValue);
     const bucketName = this.countryCode;
     ref.storageBucketName = bucketName;
@@ -175,9 +177,9 @@ export class ForecastFormComponent {
   /** Attempt to popualte downscaled location from file name */
   private populateDownscaledLocation(file?: FileDropFile) {
     if (file) {
-      const location = this.guessDownscaleLocationFromFile(file.name);
-      if (location && location !== this.form.value.location) {
-        this.form.patchValue({ location });
+      const downscaled_location = this.guessDownscaleLocationFromFile(file.name);
+      if (downscaled_location && downscaled_location !== this.form.value.downscaled_location) {
+        this.form.patchValue({ downscaled_location });
         return;
       }
     }
@@ -194,9 +196,9 @@ export class ForecastFormComponent {
 
   /** Enable location validators when using downscaled forecast */
   private setLocationValidators(forecastType: IForecastInsert['forecast_type']) {
-    const locationCtrl = this.form.controls.location;
+    const downscaledLocationControl = this.form.controls.downscaled_location;
     if (forecastType === 'downscaled') {
-      locationCtrl.setValidators(Validators.required);
+      downscaledLocationControl.setValidators(Validators.required);
     }
   }
 }

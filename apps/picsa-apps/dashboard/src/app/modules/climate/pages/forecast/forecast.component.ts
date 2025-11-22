@@ -55,13 +55,13 @@ export class ClimateForecastPageComponent {
       type: 'seasonal',
       label: 'Seasonal',
       data: this.seasonalForecasts,
-      columns: ['created_at', 'location', 'language_code', 'storage_file'],
+      columns: ['created_at', 'language_code', 'storage_file'],
     },
     {
       type: 'downscaled',
       label: 'Downscaled',
       data: this.downscaledForecasts,
-      columns: ['created_at', 'location', 'language_code', 'storage_file'],
+      columns: ['created_at', 'downscaled_location', 'language_code', 'storage_file'],
     },
     {
       type: 'weekly',
@@ -154,11 +154,8 @@ export class ClimateForecastPageComponent {
 
   public async addForecast() {
     const data: IForecastDialogData = { country_code: this.countryCode(), forecast_type: this.activeForecastType() };
-    const dialog = this.dialog.open(ForecastFormComponent, { data });
-
-    dialog.afterClosed().subscribe((v) => {
-      console.log('forecast dialog closed', v);
-    });
+    this.dialog.open(ForecastFormComponent, { data });
+    // dialog will handle save, data will auto-reload from liveSignal subscription
   }
 
   private async loadDBData() {

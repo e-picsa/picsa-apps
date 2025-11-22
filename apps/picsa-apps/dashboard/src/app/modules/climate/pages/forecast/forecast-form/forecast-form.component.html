@@ -19,8 +19,8 @@
 
     @if (forecastType === 'downscaled') {
       <mat-form-field appearance="outline">
-        <mat-label>Location</mat-label>
-        <mat-select formControlName="location">
+        <mat-label>Downscaled Location</mat-label>
+        <mat-select formControlName="downscaled_location">
           @for (option of locationOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }

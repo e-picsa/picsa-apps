@@ -2,7 +2,6 @@ import type { Database } from '@picsa/server-types';
 import type { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2';
 import { RxJsonSchema } from 'rxdb';
 
-import { IForecastRow } from '../types/forecast.types';
 import { IForecast_V0 } from './schema_v0';
 
 const SCHEMA_VERSION = 1;
@@ -48,19 +47,4 @@ export const COLLECTION_V1: IPicsaCollectionCreator<IForecast_V1> = {
   migrationStrategies: {
     1: (legacyDoc: IForecast_V0): IForecast_V1 => ({ ...legacyDoc, label: null }),
   },
-};
-
-export const SERVER_DB_MAPPING_V1 = (row: IForecastRow): IForecast_V1 => {
-  const { country_code, forecast_type, id, language_code, location, mimetype, storage_file, label } = row;
-  return {
-    country_code,
-    forecast_type,
-    id,
-    language_code,
-    location,
-    mimetype,
-    label,
-    // null storage files filtered during db query
-    storage_file: storage_file as string,
-  };
 };
