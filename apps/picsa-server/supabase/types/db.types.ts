@@ -871,7 +871,10 @@ export type Database = {
         | 'deployments.viewer'
         | 'deployments.author'
         | 'translations.author'
-        | 'translations.admin';
+        | 'translations.admin'
+        | 'climate.viewer'
+        | 'climate.author'
+        | 'climate.admin';
       country_code: 'global' | 'mw' | 'zm' | 'tj';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
@@ -1328,6 +1331,9 @@ export const Constants = {
         'deployments.author',
         'translations.author',
         'translations.admin',
+        'climate.viewer',
+        'climate.author',
+        'climate.admin',
       ],
       country_code: ['global', 'mw', 'zm', 'tj'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],
