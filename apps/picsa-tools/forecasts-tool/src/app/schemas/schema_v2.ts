@@ -32,11 +32,8 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IForecast_V2> = {
   },
 };
 
-export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => {
-  const { storage_file, ...rest } = row;
-  return {
-    ...rest,
-    // null storage files filtered during db query
-    storage_file: storage_file as string,
-  };
-};
+export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => ({
+  ...row,
+  // null storage files filtered during db query
+  storage_file: row.storage_file as string,
+});

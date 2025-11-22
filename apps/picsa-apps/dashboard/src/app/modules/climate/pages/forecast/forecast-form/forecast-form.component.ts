@@ -15,29 +15,33 @@ export type IForecastDialogData = {
   country_code: string;
   forecast_type: ForecastType;
 };
-type ForecastFormValue = Omit<IForecastInsert, 'id'>;
+// id will be populated on upload, location is deprecated (use downscaled_location)
+type ForecastFormValue = Omit<IForecastInsert, 'id' | 'location'>;
 
-//
-const [YEAR, MONTH, DAY] = [new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, new Date().getUTCDate()];
+const [YEAR, MONTH, DAY] = [
+  () => new Date().getUTCFullYear(),
+  () => new Date().getUTCMonth() + 1,
+  () => new Date().getUTCDate(),
+];
 
 /** Generate target path for storage file upload depending on forecast type */
 const FORECAST_FOLDER_SEGMENT_MAPPING: Record<ForecastType, () => (string | number)[]> = {
-  daily: () => ['forecasts', 'daily', YEAR, MONTH, DAY],
-  weekly: () => ['forecasts', 'weekly', YEAR, MONTH, DAY],
-  downscaled: () => ['forecasts', 'downscaled', YEAR],
-  seasonal: () => ['forecasts', 'seasonal', YEAR],
+  daily: () => ['forecasts', 'daily', YEAR(), MONTH(), DAY()],
+  weekly: () => ['forecasts', 'weekly', YEAR(), MONTH(), DAY()],
+  downscaled: () => ['forecasts', 'downscaled', YEAR()],
+  seasonal: () => ['forecasts', 'seasonal', YEAR()],
 };
 const FORECAST_FILE_NAME_MAPPING: Record<ForecastType, (file: FileDropFile, value: ForecastFormValue) => string> = {
   daily: (file) => file.name,
   weekly: (file) => file.name,
-  downscaled: (file, value) => `${value.location}_${value.language_code}.${file.extension}`,
-  seasonal: (file, value) => `${value.location}_${value.language_code}.${file.extension}`,
+  downscaled: (file, value) => `${value.downscaled_location}_${value.language_code}.${file.extension}`,
+  seasonal: (file, value) => `${value.downscaled_location}_${value.language_code}.${file.extension}`,
 };
 const FORECAST_ID_MAPPING: Record<ForecastType, (file: FileDropFile, value: ForecastFormValue) => string> = {
   daily: (file) => `${[YEAR, MONTH, DAY].join()}/${file.name}`,
   weekly: (file) => `${[YEAR, MONTH, DAY].join()}/${file.name}`,
-  downscaled: (_, value) => `${YEAR}/${value.location}_${value.language_code}`,
-  seasonal: (_, value) => `${YEAR}/${value.location}_${value.language_code}`,
+  downscaled: (_, value) => `${YEAR}/${value.downscaled_location}_${value.language_code}`,
+  seasonal: (_, value) => `${YEAR}/${value.downscaled_location}_${value.language_code}`,
 };
 
 @Component({
@@ -77,8 +81,6 @@ export class ForecastFormComponent {
     downscaled_location: this.fb.control(null),
     // Enums: explicit control allows null start
     forecast_type: this.fb.control({ value: null, disabled: true }, Validators.required),
-    // LEGACY - location array will be removed to just use downscaled
-    location: this.fb.control([]),
   });
 
   /** Return form value if validation satisfied */
@@ -179,8 +181,8 @@ export class ForecastFormComponent {
         return;
       }
     }
-    if (this.form.value.location) {
-      this.form.patchValue({ location: null });
+    if (this.form.value.downscaled_location) {
+      this.form.patchValue({ downscaled_location: null });
     }
   }
 

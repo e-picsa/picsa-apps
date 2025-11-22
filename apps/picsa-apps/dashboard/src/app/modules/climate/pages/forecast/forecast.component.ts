@@ -42,7 +42,12 @@ type IForecastTab = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateForecastPageComponent {
-  public forecasts = this.db.liveSignal({ filter: { country_code: this.deploymentService.activeDeploymentCountry } });
+  public forecasts = this.db.liveSignal({
+    filter: {
+      country_code: this.deploymentService.activeDeploymentCountry,
+    },
+    orderBy: { column: 'created_at', ascending: false },
+  });
 
   public dailyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'daily'));
   public weeklyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'weekly'));
