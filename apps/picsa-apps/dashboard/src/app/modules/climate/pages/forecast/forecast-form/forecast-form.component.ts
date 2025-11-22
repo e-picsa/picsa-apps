@@ -34,14 +34,14 @@ const FORECAST_FOLDER_SEGMENT_MAPPING: Record<ForecastType, () => (string | numb
 const FORECAST_FILE_NAME_MAPPING: Record<ForecastType, (file: FileDropFile, value: ForecastFormValue) => string> = {
   daily: (file) => file.name,
   weekly: (file) => file.name,
-  downscaled: (file, value) => `${value.downscaled_location}_${value.language_code}.${file.extension}`,
-  seasonal: (file, value) => `${value.downscaled_location}_${value.language_code}.${file.extension}`,
+  downscaled: (file, v) => `${v.downscaled_location}.${v.language_code}.${file.extension}`,
+  seasonal: (file, v) => `${v.language_code}.${file.extension}`,
 };
 const FORECAST_ID_MAPPING: Record<ForecastType, (file: FileDropFile, value: ForecastFormValue) => string> = {
-  daily: (file) => `${[YEAR, MONTH, DAY].join()}/${file.name}`,
-  weekly: (file) => `${[YEAR, MONTH, DAY].join()}/${file.name}`,
-  downscaled: (_, value) => `${YEAR}/${value.downscaled_location}_${value.language_code}`,
-  seasonal: (_, value) => `${YEAR}/${value.downscaled_location}_${value.language_code}`,
+  daily: (file) => `${[YEAR(), MONTH(), DAY()].join()}/${file.name}`,
+  weekly: (file) => `${[YEAR(), MONTH(), DAY()].join()}/${file.name}`,
+  downscaled: (_, v) => `${YEAR()}/downscaled/${v.downscaled_location}/${v.language_code}`,
+  seasonal: (_, v) => `${YEAR()}/seasonal/${v.language_code}`,
 };
 
 @Component({

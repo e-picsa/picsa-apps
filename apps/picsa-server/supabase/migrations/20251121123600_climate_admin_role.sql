@@ -7,3 +7,4 @@ ALTER TABLE public.forecasts ADD COLUMN downscaled_location text;
 
 -- Allow forecasts to emit realtimie updates
 alter publication supabase_realtime add table forecasts;
+alter table forecasts replica identity full;

@@ -108,13 +108,14 @@ export function tableWithLive<T extends keyof Tables>(injector: Injector, client
      * Bind a signal to a live DB query. This query will fetch all data on first load and stream updates
      *
      * IMPORTANT
-     * 1. It requires enabling table publication
+     * 1. It requires enabling table publication and replica identry, @example
+     * ```sql
+     * alter publication supabase_realtime add table forecasts;
+     * alter table forecasts replica identity full;
+     * ```
      * https://supabase.com/docs/guides/realtime/postgres-changes#quick-start
      *
-     * 2. It will not detect deletions
-     * https://supabase.com/docs/guides/realtime/postgres-changes#limitations
-     *
-     * 3. It is not very efficient, and should only be used in cases where data changes are infrequent
+     * 2. It is not very efficient, and should only be used in cases where data changes are infrequent
      * and number of subscribers limited (e.g. dashboard uploaded forecasts)
      * https://supabase.com/docs/guides/realtime/postgres-changes#database-instance-and-realtime-performance
      */
