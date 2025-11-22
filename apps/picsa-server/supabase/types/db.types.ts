@@ -291,7 +291,7 @@ export type Database = {
           id: string;
           label: string | null;
           language_code: string | null;
-          location: string[] | null;
+          location: string | null;
           mimetype: string | null;
           storage_file: string | null;
           updated_at: string;
@@ -303,7 +303,7 @@ export type Database = {
           id: string;
           label?: string | null;
           language_code?: string | null;
-          location?: string[] | null;
+          location?: string | null;
           mimetype?: string | null;
           storage_file?: string | null;
           updated_at?: string;
@@ -315,7 +315,7 @@ export type Database = {
           id?: string;
           label?: string | null;
           language_code?: string | null;
-          location?: string[] | null;
+          location?: string | null;
           mimetype?: string | null;
           storage_file?: string | null;
           updated_at?: string;

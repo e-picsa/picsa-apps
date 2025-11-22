@@ -1,3 +1,5 @@
+import { Database } from '@picsa/server-types';
+
 import * as APITypes from './api';
 export * from './db';
 
@@ -12,3 +14,5 @@ export type IAnnualTemperatureSummariesMetadata = schemas['TemperatureSummariesM
 export type IAPICountryCode = schemas['StationDataResponce']['country_code'];
 
 export type ICropSuccessEntry = schemas['CropSuccessProbabilitiesdata'];
+
+export type ForecastType = Database['public']['Enums']['forecast_type'];
