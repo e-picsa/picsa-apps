@@ -38,7 +38,7 @@ type IForecastTab = { type: ForecastType; label: string; data: Signal<IForecastR
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateForecastPageComponent {
-  public forecasts = this.db.signalQuery({ filter: { country_code: this.deploymentService.activeDeploymentCountry } });
+  public forecasts = this.db.liveSignal({ filter: { country_code: this.deploymentService.activeDeploymentCountry } });
 
   public dailyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'daily'));
   public weeklyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'weekly'));

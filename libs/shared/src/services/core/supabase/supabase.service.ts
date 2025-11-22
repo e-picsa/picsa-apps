@@ -15,7 +15,7 @@ type Tables = Database['public']['Tables'];
 import { PicsaAsyncService } from '../../asyncService.service';
 import { SupabaseAuthService } from './services/supabase-auth.service';
 import { SupabaseStorageService } from './services/supabase-storage.service';
-import { TableWithSignal, tableWithSignal } from './utils/query.utils';
+import { TableWithLive, tableWithLive } from './utils/query.utils';
 
 /**
  * Main entrypoint for interacting with Supabase backend
@@ -24,7 +24,7 @@ import { TableWithSignal, tableWithSignal } from './utils/query.utils';
 @Injectable({ providedIn: 'root' })
 export class SupabaseService extends PicsaAsyncService {
   /** Access to postgres db as a shortcut to table from method */
-  public db: { table<T extends keyof Tables>(relation: T): TableWithSignal<T> };
+  public db: { table<T extends keyof Tables>(relation: T): TableWithLive<T> };
 
   public config: SupabaseConfig;
 
@@ -46,7 +46,7 @@ export class SupabaseService extends PicsaAsyncService {
     this.supabase = createClient(apiUrl, anonKey, {});
 
     this.db = {
-      table: (relation) => tableWithSignal(this.injector, this.supabase, relation),
+      table: (relation) => tableWithLive(this.injector, this.supabase, relation),
     };
 
     // register supabase instance with child services
