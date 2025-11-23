@@ -39,7 +39,8 @@ export class ForecastService extends PicsaAsyncService {
   private countryLocation = signal<ICountryCode | undefined>(undefined);
 
   private loaderConfigs: LoaderConfig[] = [
-    { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 0 },
+    { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 2 },
+    { type: 'downscaled', signal: this.seasonalForecastDocs, limit: 2 },
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
     { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
   ];
@@ -185,7 +186,7 @@ export class ForecastService extends PicsaAsyncService {
     const filters: ((v: IForecastRow) => boolean)[] = [
       (v) => v.forecast_type === 'downscaled',
       (v) => v.country_code === country_code,
-      (v) => v.downscaled_location === (admin_5 || admin_4),
+      (v) => (admin_5 && v.downscaled_location === admin_5) || v.downscaled_location === admin_4,
     ];
 
     const forecasts = FORECASTS_DB.filter((v) => filters.every((fn) => fn(v)));

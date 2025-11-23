@@ -60,13 +60,13 @@ export class ClimateForecastPageComponent {
       type: 'seasonal',
       label: 'Seasonal',
       data: this.seasonalForecasts,
-      columns: ['created_at', 'language_code', 'storage_file'],
+      columns: ['created_at', 'label', 'language_code', 'storage_file'],
     },
     {
       type: 'downscaled',
       label: 'Downscaled',
       data: this.downscaledForecasts,
-      columns: ['created_at', 'downscaled_location', 'language_code', 'storage_file'],
+      columns: ['created_at', 'label', 'downscaled_location', 'language_code', 'storage_file'],
     },
     {
       type: 'weekly',
