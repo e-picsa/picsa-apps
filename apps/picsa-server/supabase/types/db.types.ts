@@ -287,6 +287,7 @@ export type Database = {
         Row: {
           country_code: string;
           created_at: string;
+          downscaled_location: string | null;
           forecast_type: Database['public']['Enums']['forecast_type'] | null;
           id: string;
           label: string | null;
@@ -299,6 +300,7 @@ export type Database = {
         Insert: {
           country_code: string;
           created_at?: string;
+          downscaled_location?: string | null;
           forecast_type?: Database['public']['Enums']['forecast_type'] | null;
           id: string;
           label?: string | null;
@@ -311,6 +313,7 @@ export type Database = {
         Update: {
           country_code?: string;
           created_at?: string;
+          downscaled_location?: string | null;
           forecast_type?: Database['public']['Enums']['forecast_type'] | null;
           id?: string;
           label?: string | null;
@@ -871,7 +874,10 @@ export type Database = {
         | 'deployments.viewer'
         | 'deployments.author'
         | 'translations.author'
-        | 'translations.admin';
+        | 'translations.admin'
+        | 'climate.viewer'
+        | 'climate.author'
+        | 'climate.admin';
       country_code: 'global' | 'mw' | 'zm' | 'tj';
       forecast_type: 'daily' | 'seasonal' | 'downscaled' | 'weekly';
       locale_code:
@@ -1328,6 +1334,9 @@ export const Constants = {
         'deployments.author',
         'translations.author',
         'translations.admin',
+        'climate.viewer',
+        'climate.author',
+        'climate.admin',
       ],
       country_code: ['global', 'mw', 'zm', 'tj'],
       forecast_type: ['daily', 'seasonal', 'downscaled', 'weekly'],

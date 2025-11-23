@@ -2,21 +2,42 @@
   <div style="display: flex; align-items: center">
     <h2 class="mr-2">Forecasts</h2>
     <dashboard-climate-forecast-month-select (dateChanged)="apiStartDate.set($event)" />
-    <picsa-refresh-spinner [spin]="refreshPending()" [disabled]="refreshPending()" (click)="handleRefreshClick()" class="ml-auto"></picsa-refresh-spinner>
+    <button mat-stroked-button color="primary" *roleRequired="'climate.admin'" class="ml-auto" (click)="addForecast()">
+      <mat-icon>add</mat-icon>
+      <span class="capitalize">Add {{ activeForecastType() }} Forecast</span>
+    </button>
+    <picsa-refresh-spinner
+      [spin]="refreshPending()"
+      [disabled]="refreshPending()"
+      (click)="handleRefreshClick()"
+    ></picsa-refresh-spinner>
   </div>
-  <picsa-data-table [data]="forecastData()" [options]="tableOptions" [valueTemplates]="{ updated_at,storage_file }">
-    <ng-template #updated_at let-value> {{ value | date }} </ng-template>
-    <ng-template #storage_file let-value let-row="row">
-      @let status = activeDownloads()[row.id];
-      <button mat-icon-button [disabled]="status === 'pending'">
-        @if(value || status==='complete'){
-        <mat-icon>open_in_new</mat-icon>
-        } @else if(status==='pending'){
-        <mat-icon class="spin">autorenew</mat-icon>
-        } @else {
-        <mat-icon>download</mat-icon>
-        }
-      </button>
-    </ng-template>
-  </picsa-data-table>
+  <mat-tab-group #tabGroup (selectedIndexChange)="handleTabChange($event)">
+    @for (tab of forecastTabs; track tab.type) {
+      <mat-tab [label]="tab.label">
+        <picsa-data-table
+          [data]="tab.data()"
+          [options]="tableOptions()"
+          [valueTemplates]="{ created_at, storage_file, language_code }"
+        >
+        </picsa-data-table>
+      </mat-tab>
+    }
+  </mat-tab-group>
 </div>
+
+<!-- Table templates -->
+<ng-template #created_at let-value> {{ value | date }} </ng-template>
+<ng-template #storage_file let-value let-row="row">
+  @let status = activeDownloads()[row.id];
+  <button mat-icon-button [disabled]="status === 'pending'">
+    @if (value || status === 'complete') {
+      <mat-icon>open_in_new</mat-icon>
+    } @else if (status === 'pending') {
+      <mat-icon class="spin">autorenew</mat-icon>
+    } @else {
+      <mat-icon>download</mat-icon>
+    }
+  </button>
+</ng-template>
+<ng-template #language_code let-language> {{ locales[language]?.language_label }} </ng-template>

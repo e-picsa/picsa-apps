@@ -1,31 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { RefreshSpinnerComponent } from '@picsa/components';
+import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { FunctionResponses } from '@picsa/server-types';
-import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
+import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
 
 import { DashboardMaterialModule } from '../../../../material.module';
+import { AuthRoleRequiredDirective } from '../../../auth';
 import { DeploymentDashboardService } from '../../../deployment/deployment.service';
 import { ClimateService } from '../../climate.service';
-import { IForecastRow } from '../../types';
+import { ForecastType, IForecastRow } from '../../types';
+import { ForecastFormComponent, IForecastDialogData } from './forecast-form/forecast-form.component';
 import { DashboardClimateMonthSelectComponent } from './month-select/month-select.component';
-
-interface IForecastTableRow extends IForecastRow {
-  file_name: string;
-}
 
 type IForecastDBAPIResponse = { data: FunctionResponses['Dashboard']['forecast-db']; error?: any };
 
-const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
-  'country_code',
-  'forecast_type',
-  'location',
-  'label',
-  'storage_file',
-];
+type IForecastTab = {
+  type: ForecastType;
+  label: string;
+  data: Signal<IForecastRow[]>;
+  columns: (keyof IForecastRow)[];
+};
 
 @Component({
   selector: 'dashboard-climate-forecast',
@@ -36,18 +35,68 @@ const DISPLAY_COLUMNS: (keyof IForecastTableRow)[] = [
     PicsaDataTableComponent,
     DashboardMaterialModule,
     RefreshSpinnerComponent,
+    AuthRoleRequiredDirective,
   ],
   templateUrl: './forecast.component.html',
   styleUrls: ['./forecast.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateForecastPageComponent {
-  public forecastData = signal<IForecastTableRow[]>([]);
+  public forecasts = this.db.liveSignal({
+    filter: {
+      country_code: this.deploymentService.activeDeploymentCountry,
+    },
+    orderBy: { column: 'created_at', ascending: false },
+  });
 
-  public tableOptions: IDataTableOptions = {
-    displayColumns: DISPLAY_COLUMNS,
-    handleRowClick: (row: IForecastTableRow) => this.handleStorageClick(row),
-  };
+  public dailyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'daily'));
+  public weeklyForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'weekly'));
+  public downscaledForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'downscaled'));
+  public seasonalForecasts = computed(() => this.forecasts().filter((v) => v.forecast_type === 'seasonal'));
+
+  // Single source of truth for tabs
+  public forecastTabs: IForecastTab[] = [
+    {
+      type: 'seasonal',
+      label: 'Seasonal',
+      data: this.seasonalForecasts,
+      columns: ['created_at', 'language_code', 'storage_file'],
+    },
+    {
+      type: 'downscaled',
+      label: 'Downscaled',
+      data: this.downscaledForecasts,
+      columns: ['created_at', 'downscaled_location', 'language_code', 'storage_file'],
+    },
+    {
+      type: 'weekly',
+      label: 'Weekly',
+      data: this.weeklyForecasts,
+      columns: ['created_at', 'label', 'storage_file'],
+    },
+    {
+      type: 'daily',
+      label: 'Daily',
+      data: this.dailyForecasts,
+      columns: ['created_at', 'label', 'storage_file'],
+    },
+  ];
+
+  private activeForecastTabIndex = signal(0);
+
+  public activeForecastType = computed(() => this.forecastTabs[this.activeForecastTabIndex()].type);
+
+  public tableOptions = computed((): IDataTableOptions => {
+    const { columns } = this.forecastTabs[this.activeForecastTabIndex()] as IForecastTab;
+    return {
+      displayColumns: columns,
+      handleRowClick: (row: IForecastRow) => this.handleStorageClick(row),
+      formatHeader: (v) => {
+        if (v === 'language_code') return 'Language';
+        return formatHeaderDefault(v);
+      },
+    };
+  });
 
   public refreshPending = signal(false);
 
@@ -56,16 +105,20 @@ export class ClimateForecastPageComponent {
   /** When querying data use name prefixes to limit search results, e.g. 202406* pattern match */
   private apiQueryPrefix = computed(() => this.apiStartDate().toISOString().replace(/-/g, '').substring(0, 6));
 
-  private countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code);
+  private countryCode = computed(() => this.deploymentService.activeDeploymentCountry());
 
   /** Use combination of apiQuery and countryCode to avoid repeated data refresh on load */
   private apiQueryMemo = computed(() => this.countryCode() && `${this.countryCode()}/${this.apiQueryPrefix()}`);
 
   public activeDownloads = signal<Record<string, 'pending' | 'complete'>>({});
 
+  public locales = LOCALES_DATA_HASHMAP;
+
   private get db() {
     return this.supabase.db.table('forecasts');
   }
+
+  private dialog = inject(MatDialog);
 
   constructor(
     private service: ClimateService,
@@ -76,7 +129,6 @@ export class ClimateForecastPageComponent {
     effect(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const memo = this.apiQueryMemo();
-      this.forecastData.set([]);
       await this.service.ready();
       await this.loadDBData();
       await this.handleRefreshClick();
@@ -89,7 +141,7 @@ export class ClimateForecastPageComponent {
     this.refreshPending.set(false);
   }
 
-  public async handleStorageClick(row: IForecastTableRow) {
+  public async handleStorageClick(row: IForecastRow) {
     let { storage_file } = row;
     // handle download if storage file doesn't exist or hasn't been downloaded
     if (!storage_file && this.activeDownloads[row.id] !== 'complete') {
@@ -101,6 +153,16 @@ export class ClimateForecastPageComponent {
     open(publicLink, '_blank');
   }
 
+  public handleTabChange(index: number) {
+    this.activeForecastTabIndex.set(index);
+  }
+
+  public async addForecast() {
+    const data: IForecastDialogData = { country_code: this.countryCode(), forecast_type: this.activeForecastType() };
+    this.dialog.open(ForecastFormComponent, { data });
+    // dialog will handle save, data will auto-reload from liveSignal subscription
+  }
+
   private async loadDBData() {
     const { country_code } = this.deploymentService.activeDeployment();
     // Load data stored in supabase db if available. Otherwise load from api
@@ -109,9 +171,7 @@ export class ClimateForecastPageComponent {
       .eq('country_code', country_code)
       .like('id', `${this.apiQueryPrefix()}%`);
     if (error) throw error;
-    if (data?.length > 0) {
-      this.forecastData.set(this.toTableData(data));
-    }
+
     return data;
   }
 
@@ -134,19 +194,7 @@ export class ClimateForecastPageComponent {
 
     const forecasts = data?.[country_code] || [];
 
-    this.forecastData.update((v) => ([] as IForecastTableRow[]).concat(this.toTableData(forecasts), v));
-
     return forecasts;
-  }
-
-  private toTableData(data: IForecastRow[] = []): IForecastTableRow[] {
-    return data
-      .map((el) => {
-        // compute file_name column from storage file path
-        const file_name = el.id.split('/').pop() || '';
-        return { ...el, file_name };
-      })
-      .sort((a, b) => (b.id > a.id ? 1 : -1));
   }
 
   private async downloadStorageFile(row: IForecastRow) {

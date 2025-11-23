@@ -107,6 +107,7 @@ async function getDBForecasts(query: { country_code: string; query_prefix: strin
 
 function mapApiForecastToDb(apiForecasts: IApiClimateForecast[], country_code: string): IDBClimateForecastInsert[] {
   return apiForecasts.map((v) => ({
+    created_at: v.timeCreated,
     country_code,
     id: v.name,
     forecast_type: mapForecastType(v),
