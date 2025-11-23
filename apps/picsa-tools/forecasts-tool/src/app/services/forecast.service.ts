@@ -39,8 +39,9 @@ export class ForecastService extends PicsaAsyncService {
   private countryLocation = signal<ICountryCode | undefined>(undefined);
 
   private loaderConfigs: LoaderConfig[] = [
+    // TODO - limit should be time based not total based (number of translated versions vary)
     { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 2 },
-    { type: 'downscaled', signal: this.seasonalForecastDocs, limit: 2 },
+    { type: 'downscaled', signal: this.downscaledForecastDocs, limit: 2 },
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
     { type: 'daily', signal: this.dailyForecastDocs, limit: 3, includeStorage: true },
   ];
