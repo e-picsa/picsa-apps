@@ -17,7 +17,7 @@ export const SCHEMA_V2: RxJsonSchema<IForecast_V2> = {
   version: SCHEMA_VERSION,
   properties: {
     ...keptProperties,
-    downscaled_location: { type: 'string' },
+    downscaled_location: { type: ['string', 'null'] },
   },
   required: ['id', 'country_code', 'storage_file'],
   primaryKey: 'id',
