@@ -94,8 +94,6 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
 
   public headerContent = computed(() => this.componentsService.headerOptions().cdkPortalCenter);
 
-  private contentEl = viewChild.required<ElementRef<HTMLDivElement>>('contentEl');
-
   private slug = toSignal(this.route.params.pipe(map((params) => params.slug)));
 
   private url = toSignal(
@@ -154,7 +152,8 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     this.fadeInContent.set(false);
     await _wait(100);
     this.router.navigate(['farmer', module.slug], { replaceUrl: true });
-    this.contentEl().nativeElement.scrollTo({ top: 0, behavior: 'instant' });
+    // Ensure all parent/child pages are fully restored to top scroll position
+    document.querySelectorAll('.page').forEach((el) => (el.scrollTop = 0));
     await _wait(100);
     this.fadeInContent.set(true);
   }
