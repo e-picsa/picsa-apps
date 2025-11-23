@@ -74,7 +74,7 @@ export class ForecastFormComponent {
   // 2. Pass the type to fb.group<T> to enforce strict matching immediately
   public form = this.fb.group<DBToFormBuilderType<ForecastFormValue>>({
     country_code: this.fb.nonNullable.control(null, Validators.required),
-    label: this.fb.control(null),
+    label: this.fb.control(null, Validators.required),
     language_code: this.fb.control(null, Validators.required),
     mimetype: this.fb.control(null),
     storage_file: this.fb.control(null, Validators.required),
@@ -116,6 +116,7 @@ export class ForecastFormComponent {
       if (this.forecastType === 'downscaled') {
         this.populateDownscaledLocation(file);
       }
+      this.populateLabel(file);
     });
   }
 
@@ -183,6 +184,22 @@ export class ForecastFormComponent {
     }
     if (this.form.value.downscaled_location) {
       this.form.patchValue({ downscaled_location: null });
+    }
+  }
+  private populateLabel(file?: FileDropFile) {
+    if (file) {
+      // Default label
+      let label = `${YEAR()} - ${YEAR() + 1}`;
+      if (this.forecastType === 'weekly' || this.forecastType === 'daily') {
+        label = `${this.forecastType} Forecast: ${YEAR()}-${MONTH()}-${DAY()}`;
+      }
+      if (this.form.value.label !== label) {
+        this.form.patchValue({ label });
+      }
+    } else {
+      if (this.form.value.label) {
+        this.form.patchValue({ label: null });
+      }
     }
   }
 

@@ -28,15 +28,21 @@ export const COLLECTION_V2: IPicsaCollectionCreator<IForecast_V2> = {
   isUserCollection: false,
   migrationStrategies: {
     ...COLLECTION_V1.migrationStrategies,
-    2: ({ location, ...keptProperties }: IForecast_V1): IForecast_V2 => ({
-      ...keptProperties,
-      downscaled_location: null,
-    }),
+    // schema change - clear all local docs and repopulate from server
+    2: () => null,
   },
 };
 
-export const SERVER_DB_MAPPING_V2 = ({ location, ...keptProperties }: IForecastRow): IForecast_V2 => ({
-  ...keptProperties,
-  // null storage files filtered during db query
-  storage_file: keptProperties.storage_file as string,
-});
+export const SERVER_DB_MAPPING_V2 = (row: IForecastRow): IForecast_V2 => {
+  const { country_code, downscaled_location, forecast_type, id, label, language_code, mimetype } = row;
+  return {
+    country_code,
+    downscaled_location,
+    forecast_type,
+    id,
+    label,
+    language_code,
+    mimetype, // null storage files filtered during db query
+    storage_file: row.storage_file as string,
+  };
+};

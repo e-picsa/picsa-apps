@@ -9,14 +9,10 @@
       [storageBucketName]="countryCode"
       [fileTypes]="['application/pdf']"
     />
-
-    @if (forecastType === 'daily' || forecastType === 'weekly') {
-      <mat-form-field appearance="outline">
-        <mat-label>Label</mat-label>
-        <input matInput formControlName="label" />
-      </mat-form-field>
-    }
-
+    <mat-form-field appearance="outline">
+      <mat-label>Label</mat-label>
+      <input matInput formControlName="label" />
+    </mat-form-field>
     @if (forecastType === 'downscaled') {
       <mat-form-field appearance="outline">
         <mat-label>Downscaled Location</mat-label>
