@@ -22,7 +22,7 @@ type ForecastType = 'daily' | 'weekly' | 'seasonal' | 'downscaled';
 interface LoaderConfig {
   type: ForecastType;
   signal: WritableSignal<RxDocument<IForecast>[]>;
-  limit: number;
+  limit?: number;
   includeStorage?: boolean;
 }
 
@@ -39,7 +39,8 @@ export class ForecastService extends PicsaAsyncService {
   private countryLocation = signal<ICountryCode | undefined>(undefined);
 
   private loaderConfigs: LoaderConfig[] = [
-    // TODO - limit should be time based not total based (number of translated versions vary)
+    // TODO - limit not very useful, can have multiple translated versions
+    //        Should try move to time-based filter/query instead, or better table replication
     { type: 'seasonal', signal: this.seasonalForecastDocs, limit: 2 },
     { type: 'downscaled', signal: this.downscaledForecastDocs, limit: 2 },
     { type: 'weekly', signal: this.weeklyForecastDocs, limit: 1, includeStorage: true },
@@ -128,7 +129,7 @@ export class ForecastService extends PicsaAsyncService {
       return this.loadSeasonalForecasts(country_code);
     }
 
-    const cached = await this.loadCachedForecasts(country_code, config.type, config.limit);
+    const cached = await this.loadCachedForecasts(country_code, config.type, config.limit || 1);
     config.signal.set(cached);
 
     if (config.includeStorage) {
