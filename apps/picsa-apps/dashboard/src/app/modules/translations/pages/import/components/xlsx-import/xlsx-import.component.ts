@@ -110,7 +110,9 @@ export class TranslationsXLSXImportComponent {
   public exportTemplate() {
     const translations = this.service.translations().filter((v) => !v.archived);
     const countryCode = this.deploymentService.activeDeploymentCountry();
-    const countryLocales = LOCALES_DATA.filter((v) => v.country_code === countryCode);
+    const countryLocales = LOCALES_DATA.filter(
+      (v) => v.country_code === countryCode && !v.language_code.includes('en'),
+    );
     const exportRows: ImportTranslationEntry[] = [];
     // Prepare columns for xlsx export - including label columns for country locales
     for (const translation of translations) {
