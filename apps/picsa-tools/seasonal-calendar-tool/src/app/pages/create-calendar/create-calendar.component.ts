@@ -16,7 +16,7 @@ export class CreateCalendarComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private service: SeasonCalendarService,
-    private formService: SeasonCalendarFormService
+    private formService: SeasonCalendarFormService,
   ) {}
 
   @ViewChild(CalendarEditorComponent, { static: false }) editor: CalendarEditorComponent;
@@ -33,7 +33,8 @@ export class CreateCalendarComponent implements OnInit {
     const isValid = this.editor.validate();
     if (isValid) {
       const formValue = this.form.getRawValue();
-      await this.service.save(formValue);
+      const convertedData = this.formService.convertToSingleFormat(formValue);
+      await this.service.save(convertedData);
       this.router.navigate(['..', formValue.id], { relativeTo: this.route, replaceUrl: true });
     }
   }
