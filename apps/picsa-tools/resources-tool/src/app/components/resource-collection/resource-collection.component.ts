@@ -44,6 +44,7 @@ export class ResourceCollectionComponent {
   public showcollectionNotFound = signal(false);
 
   public files = signal<IResourceFile[]>([]);
+  public pendingDownloads = signal<RxDocument<IResourceFile>[]>([]);
   public links = signal<IResourceLink[]>([]);
   public collections = signal<IResourceCollection[]>([]);
 
@@ -65,11 +66,6 @@ export class ResourceCollectionComponent {
       await this.loadCollectionResources(foundCollection._data);
     } else {
       console.warn('Collection not found', id);
-      const allCollections = await this.service.dbCollections.find().exec();
-      console.log(
-        'Collections',
-        allCollections.map((d) => d._data)
-      );
     }
   }
 
@@ -79,9 +75,11 @@ export class ResourceCollectionComponent {
     this.links.set(this.processDocs(linkDocs));
     const collectionDocs = await this.service.dbCollections.findByIds(collections).sort('priority').exec();
     this.collections.set(this.processDocs(collectionDocs));
+    // manually process fileDocs to also allow storing to fileDocs signal
     const fileDocs = await this.service.dbFiles.findByIds(files).sort('priority').exec();
-    this.files.set(this.processDocs(fileDocs));
-    console.log('files', this.files());
+    const filtered = this.service.filterLocalisedResources([...fileDocs.values()]);
+    this.pendingDownloads.set(filtered.filter((f) => f.allAttachments().length === 0));
+    this.files.set(filtered.map((d) => d._data));
   }
   private processDocs(docs: Map<string, RxDocument<any>>) {
     const entries = [...docs.values()];

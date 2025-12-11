@@ -98,7 +98,7 @@ export class ManualSelectComponent {
     effect(() => {
       const lang = this.languageSelected();
       if (lang && lang !== this.translateService.ngxTranslate.currentLang) {
-        this.translateService.ngxTranslate.use(lang);
+        this.translateService.setLanguage(lang);
       }
     });
 
@@ -119,7 +119,7 @@ export class ManualSelectComponent {
   private restoreAppLanguage() {
     const { language_code } = this.configurationService.userSettings();
     if (language_code !== this.translateService.ngxTranslate.currentLang) {
-      this.translateService.ngxTranslate.use(language_code);
+      this.translateService.setLanguage(language_code);
     }
   }
 

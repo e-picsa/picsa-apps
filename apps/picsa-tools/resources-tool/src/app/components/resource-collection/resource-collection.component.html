@@ -1,58 +1,61 @@
-@if(showcollectionNotFound()){
-<picsa-alert-box type="info" style="margin: 2rem">{{ 'Collection not found' | translate }}</picsa-alert-box>
-} @if(collection(); as collection){
-<mat-card style="flex: 1">
-  <!-- Header -->
-  <mat-card-header>
-    <mat-card-title>{{ collection.title | translate }}</mat-card-title>
-    <mat-card-subtitle> {{ collection.description || '' }} </mat-card-subtitle>
-    @if(collection.cover?.image){
-    <img mat-card-avatar [src]="collection.cover?.image" />
-    }
-  </mat-card-header>
-  <!-- Contents -->
-  <mat-card-content>
-    @if(collection.language){
-    <span style="margin-top: 2em" class="language-code">{{ collection.language.toUpperCase() }}</span>
-    }
-    <!-- Sub-collections -->
-    @if(collections().length > 0){
-    <div style="margin-top: 2rem" class="child-resources">
-      <mat-card-title style="font-size: 20px">{{ 'Collections' | translate }}</mat-card-title>
-      <div class="list-container">
-        @for(collection of collections(); track collection.id){
-        <resource-item-collection [collection]="collection" style="margin-bottom: 8px"></resource-item-collection>
-        }
-      </div>
-    </div>
-    }
-    <!-- Files -->
-    @if(files().length>0){
-    <div style="margin-top: 2rem" class="child-resources">
-      <div style="display: flex">
-        <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
-        <resource-download-multiple [resources]="files()" style="margin-left: auto"></resource-download-multiple>
-      </div>
+@if (showcollectionNotFound()) {
+  <picsa-alert-box type="info" style="margin: 2rem">{{ 'Collection not found' | translate }}</picsa-alert-box>
+}
+@if (collection(); as collection) {
+  <mat-card style="flex: 1">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title>{{ collection.title | translate }}</mat-card-title>
+      <mat-card-subtitle> {{ collection.description || '' }} </mat-card-subtitle>
+      @if (collection.cover?.image) {
+        <img mat-card-avatar [src]="collection.cover?.image" />
+      }
+    </mat-card-header>
+    <!-- Contents -->
+    <mat-card-content>
+      @if (collection.language) {
+        <span style="margin-top: 2em" class="language-code">{{ collection.language.toUpperCase() }}</span>
+      }
+      <!-- Sub-collections -->
+      @if (collections().length > 0) {
+        <div style="margin-top: 2rem" class="child-resources">
+          <mat-card-title style="font-size: 20px">{{ 'Collections' | translate }}</mat-card-title>
+          <div class="list-container">
+            @for (collection of collections(); track collection.id) {
+              <resource-item-collection [collection]="collection" style="margin-bottom: 8px"></resource-item-collection>
+            }
+          </div>
+        </div>
+      }
+      <!-- Files -->
+      @if (files().length > 0) {
+        <div style="margin-top: 2rem" class="child-resources">
+          <div style="display: flex">
+            <mat-card-title style="font-size: 20px">{{ 'Files' | translate }}</mat-card-title>
+            <resource-download-multiple
+              [docs]="pendingDownloads()"
+              style="margin-left: auto"
+            ></resource-download-multiple>
+          </div>
 
-      <div class="list-container">
-        @for(resource of files(); track resource.id){
-        <resource-item-file [resource]="resource" style="margin-bottom: 8px"> </resource-item-file>
-        }
-      </div>
-    </div>
-    }
-    <!-- Links -->
-    @if(links().length > 0){
-    <div style="margin-top: 2rem" class="child-resources">
-      <mat-card-title style="font-size: 20px">{{ 'Links' | translate }}</mat-card-title>
-      <div class="list-container">
-        @for(resource of links(); track resource.id){
-        <resource-item-link [resource]="resource" style="margin-bottom: 8px"> </resource-item-link>
-        }
-      </div>
-    </div>
-    }
-  </mat-card-content>
-</mat-card>
-
+          <div class="list-container">
+            @for (resource of files(); track resource.id) {
+              <resource-item-file [resource]="resource" style="margin-bottom: 8px"> </resource-item-file>
+            }
+          </div>
+        </div>
+      }
+      <!-- Links -->
+      @if (links().length > 0) {
+        <div style="margin-top: 2rem" class="child-resources">
+          <mat-card-title style="font-size: 20px">{{ 'Links' | translate }}</mat-card-title>
+          <div class="list-container">
+            @for (resource of links(); track resource.id) {
+              <resource-item-link [resource]="resource" style="margin-bottom: 8px"> </resource-item-link>
+            }
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
 }

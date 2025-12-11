@@ -44,17 +44,3 @@ export const COLLECTION_V0: IPicsaCollectionCreator<IForecast_V0> = {
   isUserCollection: false,
   migrationStrategies: {},
 };
-
-export const SERVER_DB_MAPPING_V0 = (row: IForecastRow): IForecast_V0 => {
-  const { country_code, forecast_type, id, language_code, location, mimetype, storage_file } = row;
-  return {
-    country_code,
-    forecast_type,
-    id,
-    language_code,
-    location,
-    mimetype,
-    // null storage files filtered during db query
-    storage_file: storage_file as string,
-  };
-};

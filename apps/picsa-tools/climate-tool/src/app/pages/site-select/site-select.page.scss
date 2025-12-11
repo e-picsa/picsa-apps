@@ -1,3 +1,6 @@
+:host {
+  display: contents;
+}
 .table-container {
   @apply flex flex-1 flex-col overflow-auto;
   // hide on smaller screens during map view

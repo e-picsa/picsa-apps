@@ -1,3 +1,4 @@
+import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { arrayToHashmap } from '@picsa/utils';
 import { IPicsaVideoData } from '../types';
 
@@ -13,6 +14,7 @@ type IPicsaFarmerVideoId =
 
 const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData, 'id'>> = {
   ram: {
+    title: translateMarker('Resource Allocation Map'),
     children: [
       {
         id: '',
@@ -99,6 +101,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
     ],
   },
   seasonal_calendar: {
+    title: translateMarker('Seasonal Calendar'),
     children: [
       {
         id: '',
@@ -185,6 +188,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
     ],
   },
   historic_climate: {
+    title: translateMarker('Historical Climate Information'),
     children: [
       {
         id: '',
@@ -271,6 +275,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
     ],
   },
   probability_risk: {
+    title: translateMarker('Probability and Risk'),
     children: [
       {
         id: '',
@@ -357,6 +362,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
     ],
   },
   options: {
+    title: translateMarker('Crop, Livestock and Livelihood Options'),
     children: [
       {
         id: '',
@@ -443,6 +449,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
     ],
   },
   participatory_budget: {
+    title: translateMarker('Participatory Budget'),
     children: [
       {
         id: '',
@@ -530,6 +537,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
   },
   // Each country also provides en variant
   seasonal_forecast: {
+    title: translateMarker('Seasonal Forecast'),
     children: [
       // MW
       {
@@ -626,6 +634,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
   },
   // Each country also provides en variant
   short_term_forecast: {
+    title: translateMarker('Short Term Forecast'),
     children: [
       // MW
       {
@@ -723,6 +732,7 @@ const PICSA_FARMER_VIDEOS_BASE: Record<IPicsaFarmerVideoId, Omit<IPicsaVideoData
 
 export const PICSA_FARMER_VIDEOS_DATA: IPicsaVideoData[] = Object.entries(PICSA_FARMER_VIDEOS_BASE).map(
   ([id, entry]) => ({
+    ...entry,
     id: id as IPicsaFarmerVideoId,
     children: entry.children.map((child) => {
       const { locale_codes, resolution } = child;
