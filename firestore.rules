@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Match any document within the budgetTool collection or any of its subcollections
+    match /budgetTool/{allPaths=**} {
+      // Allow public read access to everything under budgetTool
+      allow read: if true;
+      
+      // Keep writes restricted unless specifically needed
+      allow write: if false;
+    }
+
+    // Explicitly deny all other collections for security
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
