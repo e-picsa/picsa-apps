@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, effect, signal, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';
 
 import { DashboardMaterialModule } from '../../../../material.module';
 import { ClimateService, IDataRefreshStatus } from '../../climate.service';
+import { ClimateComment } from '../../components/comment-dialog/comment-dialog.component';
+import { ClimateCommentService } from '../../services/climate-comment.service';
 import { IClimateStationData, IStationRow } from '../../types';
 import { ChartSummaryComponent } from './components/chart-summary/chart-summary.component';
 import { CropProbabilitiesComponent } from './components/crop-probabilities/crop-probabilities.component';
@@ -30,10 +32,18 @@ export class StationDetailsPageComponent {
 
   public stationData = signal<IClimateStationData['Row'] | null>(null);
 
+  // Optimized: Computed signal for station discussions (client-side filtering)
+  public stationDiscussions = computed<ClimateComment[]>(() => {
+    const station = this.service.activeStation();
+    if (!station) return [];
+    return this.service.getStationDiscussions(station.id as string);
+  });
+
   private isFirstDataLoad = true;
 
   constructor(
     public service: ClimateService,
+    private commentService: ClimateCommentService,
     private dialog: MatDialog,
   ) {
     effect(() => {
@@ -55,6 +65,11 @@ export class StationDetailsPageComponent {
         await this.refreshData(station);
       }
     }
+  }
+
+  // Handle discussion change events from child components (optimized)
+  public async onDiscussionsChanged() {
+    await this.service.loadAllDiscussions();
   }
 
   /**

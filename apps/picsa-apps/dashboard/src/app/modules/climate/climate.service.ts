@@ -11,6 +11,8 @@ import { DeploymentDashboardService } from '../deployment/deployment.service';
 import { IDeploymentRow } from '../deployment/types';
 import { ApiMapping } from './climate-api.mapping';
 import { ClimateApiService } from './climate-api.service';
+import { ClimateComment } from './components/comment-dialog/comment-dialog.component';
+import { ClimateCommentService } from './services/climate-comment.service';
 import { IAPICountryCode, IClimateStationData, IStationRow } from './types';
 
 export interface IDataRefreshStatus {
@@ -25,6 +27,9 @@ export interface IDataRefreshStatus {
 export class ClimateService extends PicsaAsyncService {
   public apiStatus: number;
   public stations = signal<IStationRow[]>([]);
+
+  // All climate discussions loaded upfront for instant filtering
+  public allDiscussions = signal<ClimateComment[]>([]);
 
   /** Lookup active station from stationId param and db stations list*/
   public activeStation = computed<IStationRow>(() => {
@@ -58,6 +63,7 @@ export class ClimateService extends PicsaAsyncService {
     private router: Router,
     private deploymentSevice: DeploymentDashboardService,
     private notificationService: PicsaNotificationService,
+    private commentService: ClimateCommentService,
   ) {
     super();
     this.ready();
@@ -75,6 +81,24 @@ export class ClimateService extends PicsaAsyncService {
 
   public override async init() {
     await this.supabaseService.ready();
+    // Load all discussions upfront for instant filtering
+    await this.loadAllDiscussions();
+  }
+
+  // Load all climate discussions once for efficient client-side filtering
+  public async loadAllDiscussions() {
+    try {
+      const discussions = await this.commentService.getAllClimateDiscussions();
+      this.allDiscussions.set(discussions);
+    } catch (error) {
+      console.error('Failed to load all discussions:', error);
+      this.allDiscussions.set([]);
+    }
+  }
+
+  // Get discussions for specific station (client-side filtering)
+  public getStationDiscussions(stationId: string): ClimateComment[] {
+    return this.allDiscussions().filter((d) => d.station_id === stationId);
   }
 
   /** Get DB station data row for a specific station id */

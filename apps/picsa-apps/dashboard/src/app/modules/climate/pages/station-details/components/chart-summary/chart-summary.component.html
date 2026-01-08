@@ -15,5 +15,64 @@
   }
 </div>
 @if (activeChartConfig(); as chartConfig) {
-  <picsa-chart #picsaChart [config]="chartConfig" style="margin-top: 1rem; height: 500px"></picsa-chart>
+  <div class="chart-container">
+    <div class="chart-actions">
+      <span></span>
+      <div class="action-buttons">
+        <button mat-button color="warn" (click)="showCommentDialog()">
+          <mat-icon>flag</mat-icon>
+          Mark for Review
+        </button>
+        @if (unresolvedCommentsCount() > 0) {
+          <button mat-icon-button color="primary" (click)="toggleCommentsList()" matTooltip="View comments">
+            <mat-icon matBadge="{{unresolvedCommentsCount()}}" matBadgeColor="warn" aria-hidden="false">comment</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+    
+    <div class="chart-with-comments">
+      <div class="chart-area">
+        <picsa-chart #picsaChart [config]="chartConfig"></picsa-chart>
+      </div>
+      
+      @if (showCommentsList()) {
+        <div class="comments-sidebar">
+          <div class="comments-header">
+            <span>Comments ({{commentsForCurrentChart().length}})</span>
+            <button mat-icon-button (click)="toggleCommentsList()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div class="comments-list">
+            @for (comment of commentsForCurrentChart(); track comment.id) {
+              <div class="comment-item" [class.resolved]="comment.resolved" (click)="openCommentModal(comment)">
+                <div class="comment-info">
+                  <strong>{{comment.created_by_name}}</strong>
+                  <small>{{comment.date_created | date:'short'}}</small>
+                </div>
+                <p class="comment-text">{{comment.comment}}</p>
+                <div class="comment-actions">
+                  @if (!comment.resolved) {
+                    <mat-chip color="warn">Unresolved</mat-chip>
+                  }
+                  <button mat-icon-button 
+                          [color]="comment.resolved ? 'accent' : 'primary'"
+                          (click)="toggleCommentResolved(comment); $event.stopPropagation()"
+                          [matTooltip]="comment.resolved ? 'Mark as unresolved' : 'Mark as resolved'">
+                    <mat-icon>{{comment.resolved ? 'undo' : 'check'}}</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteComment(comment); $event.stopPropagation()" matTooltip="Delete comment">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            } @empty {
+              <p class="no-comments">No comments for this chart</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
 }
