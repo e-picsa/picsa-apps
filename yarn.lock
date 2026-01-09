@@ -471,17 +471,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:19.0.5":
-  version: 19.0.5
-  resolution: "@angular/compiler@npm:19.0.5"
+"@angular/compiler@npm:19.2.18":
+  version: 19.2.18
+  resolution: "@angular/compiler@npm:19.2.18"
   dependencies:
     tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/core": 19.0.5
-  peerDependenciesMeta:
-    "@angular/core":
-      optional: true
-  checksum: 10c0/66135ee13ba98c58df12dcb62125f8c4d1722b451ff85ec9f2c8c6df4e9aa57b6dbaf1c625d11ace1011c112323ba0d40e202d3c0b7990ebd8631303baa09c1e
+  checksum: 10c0/7827ea7e171823bfc40d9d024fad896c1c790214b8c577b0cb5850578c3a9d40d465495ab9d7ae2725fb659f1ab6cae017995849200d4e26ea972fddeac8e046
   languageName: node
   linkType: hard
 
@@ -17170,7 +17165,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
+  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
   languageName: node
   linkType: hard
 
@@ -19930,7 +19925,7 @@ __metadata:
     "@angular/cdk": "npm:19.0.4"
     "@angular/cli": "npm:~19.0.0"
     "@angular/common": "npm:19.0.5"
-    "@angular/compiler": "npm:19.0.5"
+    "@angular/compiler": "npm:19.2.18"
     "@angular/compiler-cli": "npm:19.0.5"
     "@angular/core": "npm:19.0.5"
     "@angular/forms": "npm:19.0.5"
