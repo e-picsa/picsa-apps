@@ -44,6 +44,11 @@ export function handleCollectionModifiers(picsaCollection: IPicsaCollectionCreat
   if (syncPush) {
     collection.schema.properties['_sync_push_status'] = { type: 'string' };
   }
+  // If collection pulled from server db store published_at and deleted
+  if (picsaCollection.syncPull) {
+    collection.schema.properties['published_at'] = { type: ['string', 'null'] };
+    collection.schema.properties['deleted'] = { type: 'boolean' };
+  }
   return { collection, hookFactories };
 }
 

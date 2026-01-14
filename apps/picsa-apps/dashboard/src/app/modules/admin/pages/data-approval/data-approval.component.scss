@@ -1,0 +1,43 @@
+.container {
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.table-container {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+table {
+  width: 100%;
+}
+
+.unpublished {
+  color: #f44336; // Red for unpublished/draft
+  font-style: italic;
+}
+
+.no-data {
+  padding: 40px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+}

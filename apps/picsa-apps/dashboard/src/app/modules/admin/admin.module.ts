@@ -18,6 +18,11 @@ import { RouterModule } from '@angular/router';
         loadComponent: () =>
           import('./pages/user-permissions/user-permissions.component').then((m) => m.AdminUserPermissionsComponent),
       },
+      {
+        path: 'data-approval',
+        loadComponent: () =>
+          import('./pages/data-approval/data-approval.component').then((m) => m.DataApprovalComponent),
+      },
     ]),
   ],
 })

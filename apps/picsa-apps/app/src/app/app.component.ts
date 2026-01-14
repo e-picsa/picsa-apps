@@ -10,6 +10,8 @@ import { ResourcesToolService } from '@picsa/resources/services/resources-tool.s
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
+import { DataSyncService } from '@picsa/shared/services/core/db_v2/data-sync.service';
+import { SYNC_COLLECTIONS } from '@picsa/shared/services/core/db_v2/schemas/sync-data';
 import { ErrorHandlerService } from '@picsa/shared/services/core/error-handler.service';
 import { PerformanceService } from '@picsa/shared/services/core/performance.service';
 import { PicsaPushNotificationService } from '@picsa/shared/services/core/push-notifications.service';
@@ -40,6 +42,7 @@ export class AppComponent implements OnInit {
     private injector: Injector,
     private appUserService: AppUserService,
     private errorService: ErrorHandlerService,
+    private dataSyncService: DataSyncService,
   ) {}
 
   async ngOnInit() {
@@ -85,6 +88,8 @@ export class AppComponent implements OnInit {
       this.resourcesService.ready().catch((err) => this.errorService.handleError(err)),
       // eagerly load monitoring service to sync form data
       this.monitoringService.ready().catch((err) => this.errorService.handleError(err)),
+      // eagerly load data sync service
+      this.dataSyncService.init(SYNC_COLLECTIONS).catch((err) => this.errorService.handleError(err)),
     ];
     Promise.allSettled(ops);
   }
