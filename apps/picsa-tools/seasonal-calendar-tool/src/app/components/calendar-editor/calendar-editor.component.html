@@ -12,7 +12,7 @@
   <h2>{{ 'Season Crops' | translate }}</h2>
   <picsa-form-crop-select-multiple [formControl]="metaFormControls.enterprises"></picsa-form-crop-select-multiple>
   @if(metaFormControls.enterprises.touched && metaFormControls.enterprises.errors){
-  <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
+    <mat-error>{{ 'Please select at least 1 crop' | translate }}</mat-error>
   }
 
   <!-- Months generators -->
@@ -22,9 +22,11 @@
       <mat-form-field>
         <mat-label>{{ 'Start Month ' | translate }} :</mat-label>
         <mat-select id="startMonth" [formControl]="monthForm.controls.startIndex">
-          <mat-option *ngFor="let month of monthOptions; index as i" [value]="i">{{
-            month.label | translate
-          }}</mat-option>
+          @for (month of monthOptions; track month; let i = $index) {
+            <mat-option [value]="i">{{
+              month.label | translate
+            }}</mat-option>
+          }
         </mat-select>
         <mat-error>{{ 'Please enter start month' | translate }}</mat-error>
       </mat-form-field>
@@ -36,7 +38,7 @@
     </div>
     <div class="calendar-summary">
       @for (month of monthLabels; track $index) {
-      <div>{{ month | translate }}</div>
+        <div>{{ month | translate }}</div>
       }
     </div>
   </div>

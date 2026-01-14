@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
@@ -13,7 +13,7 @@ import { IClimateStationData, IStationRow } from '../../../../types';
 
 @Component({
   selector: 'dashboard-climate-chart-summary',
-  imports: [CommonModule, PicsaChartComponent, DashboardMaterialModule],
+  imports: [PicsaChartComponent, DashboardMaterialModule],
   templateUrl: './chart-summary.component.html',
   styleUrl: './chart-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
@@ -11,7 +10,7 @@ import { DeploymentDashboardService } from '../../../../../../../modules/deploym
 
 @Component({
   selector: 'dashboard-crop-probability-language-select',
-  imports: [CommonModule, FormsModule, MatFormField, MatIcon, MatLabel, MatSelect, MatOption, PicsaTranslateModule],
+  imports: [FormsModule, MatFormField, MatIcon, MatLabel, MatSelect, MatOption, PicsaTranslateModule],
   templateUrl: './language-select.component.html',
   styleUrl: './language-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

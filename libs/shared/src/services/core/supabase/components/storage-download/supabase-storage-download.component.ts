@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import ky, { KyResponse } from 'ky';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
@@ -19,7 +18,7 @@ import { SupabaseService } from '../../supabase.service';
  */
 @Component({
   selector: 'picsa-supabase-storage-download',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './supabase-storage-download.component.html',
   styleUrl: './supabase-storage-download.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,8 +35,8 @@ export class SupabaseStorageDownloadComponent {
     firstValueFrom(
       this.completed$.pipe(
         filter((v) => v === true),
-        map(() => ({ error: this.error, data: this.data }))
-      )
+        map(() => ({ error: this.error, data: this.data })),
+      ),
     );
 
   // Internals
@@ -70,7 +69,7 @@ export class SupabaseStorageDownloadComponent {
         console.error(err);
         this.error = err;
         this.completed$.next(true);
-      }
+      },
     );
   }
 

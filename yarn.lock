@@ -17733,14 +17733,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:10.0.0":
-  version: 10.0.0
-  resolution: "eslint-config-prettier@npm:10.0.0"
+"eslint-config-prettier@npm:9.1.0":
+  version: 9.1.0
+  resolution: "eslint-config-prettier@npm:9.1.0"
   peerDependencies:
     eslint: ">=7.0.0"
   bin:
-    eslint-config-prettier: build/bin/cli.js
-  checksum: 10c0/eb45eafe89fb02a0715b489596be65df378b068c0bb51ba6ff696d89a5959508b71019baf568011cb696299a5664aa57d04aa2933f37758a7fac881ce516f98f
+    eslint-config-prettier: bin/cli.js
+  checksum: 10c0/6d332694b36bc9ac6fdb18d3ca2f6ac42afa2ad61f0493e89226950a7091e38981b66bac2b47ba39d15b73fff2cd32c78b850a9cf9eed9ca9a96bfb2f3a2f10d
   languageName: node
   linkType: hard
 
@@ -25582,7 +25582,7 @@ __metadata:
     downloadjs: "npm:^1.4.7"
     enketo-core: "npm:^6.1.3"
     eslint: "npm:8.57.0"
-    eslint-config-prettier: "npm:10.0.0"
+    eslint-config-prettier: "npm:9.1.0"
     eslint-plugin-cypress: "npm:2.13.4"
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     execa: "npm:^5.1.1"

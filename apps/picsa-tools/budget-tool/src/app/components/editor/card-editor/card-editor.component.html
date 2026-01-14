@@ -8,43 +8,49 @@
   </div>
 
   <!-- Inputs/Outputs Editor -->
-  <div class="input-values" *ngIf="type === 'inputs' || type === 'outputs'">
-    <mat-form-field class="card-input-field quantity no-padding">
-      <mat-label>{{ 'Quantity' | translate }}</mat-label>
-      <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
-    </mat-form-field>
-    <mat-form-field class="card-input-field cost no-padding">
-      <mat-label>{{ 'Cost' | translate }}</mat-label>
-      <input matInput [value]="card.values.cost" type="number" (change)="setValue($event, 'cost')" />
-      <span matTextPrefix>{{ currency }} &nbsp;</span>
-    </mat-form-field>
-    <div style="display: flex; align-items: flex-end; box-sizing: border-box">
-      <div style="margin-right: 10px">
-        <span>{{ currency }}</span>
+  @if (type === 'inputs' || type === 'outputs') {
+    <div class="input-values">
+      <mat-form-field class="card-input-field quantity no-padding">
+        <mat-label>{{ 'Quantity' | translate }}</mat-label>
+        <input matInput [value]="card.values.quantity" type="number" (change)="setValue($event, 'quantity')" />
+      </mat-form-field>
+      <mat-form-field class="card-input-field cost no-padding">
+        <mat-label>{{ 'Cost' | translate }}</mat-label>
+        <input matInput [value]="card.values.cost" type="number" (change)="setValue($event, 'cost')" />
+        <span matTextPrefix>{{ currency }} &nbsp;</span>
+      </mat-form-field>
+      <div style="display: flex; align-items: flex-end; box-sizing: border-box">
+        <div style="margin-right: 10px">
+          <span>{{ currency }}</span>
+        </div>
+        <div style="color: rgba(0, 0, 0, 0.38)">
+          <div style="font-size: 0.75em">{{ 'Total' | translate }}</div>
+          <div>{{ card.values.total | number: '.0' }}</div>
+        </div>
       </div>
-      <div style="color: rgba(0, 0, 0, 0.38)">
-        <div style="font-size: 0.75em">{{ 'Total' | translate }}</div>
-        <div>{{ card.values.total | number: '.0' }}</div>
-      </div>
+      <div class="underline"></div>
     </div>
-    <div class="underline"></div>
-  </div>
+  }
 
   <!-- Family Labour Editor -->
-  <div class="input-values" *ngIf="type === 'familyLabour'">
-    <mat-form-field class="card-input-field quantity">
-      <mat-label>{{ 'Days' | translate }}</mat-label>
-      <input matInput [value]="card.values ? card.values.quantity : null" type="number"
-        (change)="setValue($event, 'quantity')" />
-    </mat-form-field>
-  </div>
+  @if (type === 'familyLabour') {
+    <div class="input-values">
+      <mat-form-field class="card-input-field quantity">
+        <mat-label>{{ 'Days' | translate }}</mat-label>
+        <input matInput [value]="card.values ? card.values.quantity : null" type="number"
+          (change)="setValue($event, 'quantity')" />
+        </mat-form-field>
+      </div>
+    }
 
-  <!-- Produce Consumed Editor -->
-  <div class="input-values" *ngIf="type === 'produceConsumed'">
-    <mat-form-field class="card-input-field quantity">
-      <mat-label>{{ 'Quantity' | translate }}</mat-label>
-      <input matInput [value]="card.values ? card.values.quantity : null" type="number"
-        (change)="setProduceConsumed($event)" />
-    </mat-form-field>
-  </div>
-</div>
+    <!-- Produce Consumed Editor -->
+    @if (type === 'produceConsumed') {
+      <div class="input-values">
+        <mat-form-field class="card-input-field quantity">
+          <mat-label>{{ 'Quantity' | translate }}</mat-label>
+          <input matInput [value]="card.values ? card.values.quantity : null" type="number"
+            (change)="setProduceConsumed($event)" />
+          </mat-form-field>
+        </div>
+      }
+    </div>

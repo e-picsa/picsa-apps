@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -23,14 +22,7 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   animations: [FadeInOut(ANIMATION_DELAYED)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    CommonModule,
-    BudgetMaterialModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BudgetToolComponentsModule,
-    PicsaTranslateModule,
-  ],
+  imports: [BudgetMaterialModule, FormsModule, ReactiveFormsModule, BudgetToolComponentsModule, PicsaTranslateModule],
 })
 export class BudgetCreatePage implements OnInit, OnDestroy {
   budgetMetaForm: FormGroup;

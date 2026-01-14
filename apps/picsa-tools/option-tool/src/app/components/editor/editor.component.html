@@ -5,26 +5,46 @@
 
   <mat-stepper [linear]="false" #stepper class="slim-headers responsive-content-padding">
     <!-- Step header (common) -->
-    <mat-step matStepContent *ngFor="let step of stepperSteps; index as stepIndex">
-      <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
-      <div class="StepContainer" [attr.data-step]="stepIndex + 1">
-        <h3 class="StepTitle">{{ step.title | translate }}</h3>
-        <div class="StepContent">
-          <!-- Step inputs (loaded from templates below) -->
-          <ng-container [ngSwitch]="step.id">
-            <ng-container *ngSwitchCase="'practice'" [ngTemplateOutlet]="practiceInput"></ng-container>
-            <ng-container *ngSwitchCase="'gender_decisions'" [ngTemplateOutlet]="decisionsInput"></ng-container>
-            <ng-container *ngSwitchCase="'gender_activities'" [ngTemplateOutlet]="activitiesInput"></ng-container>
-            <ng-container *ngSwitchCase="'benefits'" [ngTemplateOutlet]="benefitsInput"></ng-container>
-            <ng-container *ngSwitchCase="'performance'" [ngTemplateOutlet]="performanceInput"></ng-container>
-            <ng-container *ngSwitchCase="'investment'" [ngTemplateOutlet]="investmentInput"></ng-container>
-            <ng-container *ngSwitchCase="'time'" [ngTemplateOutlet]="timeInput"></ng-container>
-            <ng-container *ngSwitchCase="'risk'" [ngTemplateOutlet]="riskInput"></ng-container>
-            <ng-container *ngSwitchDefault>Input Not found</ng-container>
-          </ng-container>
+    @for (step of stepperSteps; track step; let stepIndex = $index) {
+      <mat-step matStepContent>
+        <ng-template matStepLabel>{{ step.label | translate }}</ng-template>
+        <div class="StepContainer" [attr.data-step]="stepIndex + 1">
+          <h3 class="StepTitle">{{ step.title | translate }}</h3>
+          <div class="StepContent">
+            <!-- Step inputs (loaded from templates below) -->
+            @switch (step.id) {
+              @case ('practice') {
+                <ng-container [ngTemplateOutlet]="practiceInput"></ng-container>
+              }
+              @case ('gender_decisions') {
+                <ng-container [ngTemplateOutlet]="decisionsInput"></ng-container>
+              }
+              @case ('gender_activities') {
+                <ng-container [ngTemplateOutlet]="activitiesInput"></ng-container>
+              }
+              @case ('benefits') {
+                <ng-container [ngTemplateOutlet]="benefitsInput"></ng-container>
+              }
+              @case ('performance') {
+                <ng-container [ngTemplateOutlet]="performanceInput"></ng-container>
+              }
+              @case ('investment') {
+                <ng-container [ngTemplateOutlet]="investmentInput"></ng-container>
+              }
+              @case ('time') {
+                <ng-container [ngTemplateOutlet]="timeInput"></ng-container>
+              }
+              @case ('risk') {
+                <ng-container [ngTemplateOutlet]="riskInput"></ng-container>
+              }
+              @default {
+                Input Not found
+              }
+            }
+          </div>
         </div>
-      </div>
-    </mat-step>
+      </mat-step>
+    }
 
     <!-- 1. Practice -->
     <ng-template #practiceInput>
@@ -46,7 +66,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
-      >
+        >
       </ng-container>
     </ng-template>
 
@@ -66,19 +86,21 @@
     <!-- 4. Benefits -->
     <ng-template #benefitsInput>
       <div class="entry-rows">
-        <div class="entry-row-item" *ngFor="let benefit of values.benefits; index as i">
-          <div class="benefit-container">
-            <input [(ngModel)]="benefit.benefit" class="form-control" style="flex: 1" />
-            <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
-              <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
-              <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
-                <mat-icon>close</mat-icon>
-              </button>
+        @for (benefit of values.benefits; track benefit; let i = $index) {
+          <div class="entry-row-item">
+            <div class="benefit-container">
+              <input [(ngModel)]="benefit.benefit" class="form-control" style="flex: 1" />
+              <div style="min-width: 200px; display: flex; align-items: center; justify-content: center">
+                <option-gender-input [(ngModel)]="values.benefits[i].beneficiary"></option-gender-input>
+                <button mat-button color="primary" (click)="handleRemovingBenefits(i)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        }
         <!-- Only enable adding more benefits when previous are validated
-            TODO would be easier to manage all validation if using formgroups -->
+        TODO would be easier to manage all validation if using formgroups -->
         <button
           style="margin-bottom: 16px; margin-top: -16px"
           (click)="handleMoreBenefits()"
@@ -88,7 +110,7 @@
             (values.benefits[values.benefits.length - 1].benefit === undefined ||
               values.benefits[values.benefits.length - 1].beneficiary.length === 0)
           "
-        >
+          >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'benefit' | translate }}
         </button>
       </div>
@@ -102,15 +124,17 @@
     <!-- 5. Performance -->
     <ng-template #performanceInput>
       <div class="entry-rows">
-        <div class="entry-row-item" *ngFor="let condition of performanceConditions">
-          <div class="icon-with-heading">
-            <div class="icon-heading">{{ condition.label | translate }}</div>
-            <div class="icon-container">
-              <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
+        @for (condition of performanceConditions; track condition) {
+          <div class="entry-row-item">
+            <div class="icon-with-heading">
+              <div class="icon-heading">{{ condition.label | translate }}</div>
+              <div class="icon-container">
+                <mat-icon [svgIcon]="condition.svgIcon"></mat-icon>
+              </div>
             </div>
+            <option-performance-input [(ngModel)]="values.performance[condition.id]"></option-performance-input>
           </div>
-          <option-performance-input [(ngModel)]="values.performance[condition.id]"></option-performance-input>
-        </div>
+        }
       </div>
 
       <ng-container
@@ -124,15 +148,17 @@
     <!-- 6. Investment -->
     <ng-template #investmentInput>
       <div class="entry-rows">
-        <div *ngFor="let investment of investmentTypes" class="entry-row-item">
-          <div class="icon-with-heading">
-            <div class="icon-heading">{{ investment.label | translate }}</div>
-            <div class="icon-container">
-              <mat-icon style="color: #8a2644; font-size: 36px">{{ investment.matIcon }}</mat-icon>
+        @for (investment of investmentTypes; track investment) {
+          <div class="entry-row-item">
+            <div class="icon-with-heading">
+              <div class="icon-heading">{{ investment.label | translate }}</div>
+              <div class="icon-container">
+                <mat-icon style="color: #8a2644; font-size: 36px">{{ investment.matIcon }}</mat-icon>
+              </div>
             </div>
+            <option-investment-input [(ngModel)]="values.investment[investment.id]"></option-investment-input>
           </div>
-          <option-investment-input [(ngModel)]="values.investment[investment.id]"></option-investment-input>
-        </div>
+        }
       </div>
       <ng-container
         [ngTemplateOutlet]="stepButtons"
@@ -162,20 +188,22 @@
     <!-- 8. Risk -->
     <ng-template #riskInput>
       <div class="entry-rows">
-        <div class="entry-row-item" *ngFor="let risk of values.risk; index as i; trackBy: trackByIndex">
-          <div style="display: flex; align-items: center">
-            <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
-            <button mat-icon-button (click)="values.risk.splice(i, 1)">
-              <mat-icon>close</mat-icon>
-            </button>
+        @for (risk of values.risk; track trackByIndex(i, risk); let i = $index) {
+          <div class="entry-row-item">
+            <div style="display: flex; align-items: center">
+              <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
+              <button mat-icon-button (click)="values.risk.splice(i, 1)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
           </div>
-        </div>
+        }
         <button
           style="margin-bottom: 16px; margin-top: -16px"
           (click)="values.risk.push('')"
           mat-button
           [disabled]="values.risk.length > 0 && !values.risk[values.risk.length - 1]"
-        >
+          >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
         </button>
       </div>
@@ -190,28 +218,34 @@
     <!-- Context variables an be passed via `[ngTemplateOutletContext]="{ nextDisabled: true }"` -->
     <ng-template #stepButtons let-nextDisabled="nextDisabled" let-firstStep="stepper.selectedIndex === 0">
       <div class="step-buttons">
-        <button *ngIf="stepper.selectedIndex === 0" mat-button (click)="promptDelete()" [disabled]="nextDisabled">
-          <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
-        </button>
-        <button *ngIf="stepper.selectedIndex > 0" mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
-        <button
-          *ngIf="stepper.selectedIndex < 7"
-          mat-raised-button
-          color="primary"
-          [disabled]="nextDisabled"
-          matStepperNext
-        >
-          {{ 'Next' | translate }}
-        </button>
-        <button
-          *ngIf="stepper.selectedIndex === 7"
-          mat-raised-button
-          color="primary"
-          [disabled]="nextDisabled"
-          (click)="submitForm()"
-        >
-          {{ 'Finish' | translate }}
-        </button>
+        @if (stepper.selectedIndex === 0) {
+          <button mat-button (click)="promptDelete()" [disabled]="nextDisabled">
+            <mat-icon name="delete">delete</mat-icon> {{ 'Delete' | translate }}
+          </button>
+        }
+        @if (stepper.selectedIndex > 0) {
+          <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
+        }
+        @if (stepper.selectedIndex < 7) {
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="nextDisabled"
+            matStepperNext
+            >
+            {{ 'Next' | translate }}
+          </button>
+        }
+        @if (stepper.selectedIndex === 7) {
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="nextDisabled"
+            (click)="submitForm()"
+            >
+            {{ 'Finish' | translate }}
+          </button>
+        }
       </div>
     </ng-template>
   </mat-stepper>

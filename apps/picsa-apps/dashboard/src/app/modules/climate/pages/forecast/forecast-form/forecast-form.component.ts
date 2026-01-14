@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -46,7 +45,7 @@ const FORECAST_ID_MAPPING: Record<ForecastType, (file: FileDropFile, value: Fore
 
 @Component({
   selector: 'dashboard-climate-forecast-form',
-  imports: [CommonModule, ReactiveFormsModule, DashboardMaterialModule, SupabaseUploadComponent],
+  imports: [ReactiveFormsModule, DashboardMaterialModule, SupabaseUploadComponent],
   templateUrl: './forecast-form.component.html',
   styleUrl: './forecast-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

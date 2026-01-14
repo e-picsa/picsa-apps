@@ -24,7 +24,11 @@
             "output": ""
           },
           "apps/picsa-tools/extension-content/src/assets",
-          { "glob": "*.svg", "input": "libs/data/tools/svgs", "output": "assets/svgs/tools" }
+          {
+            "glob": "*.svg",
+            "input": "libs/data/tools/svgs",
+            "output": "assets/svgs/tools"
+          }
         ],
         "styles": ["apps/picsa-tools/extension-content/src/styles.scss"],
         "scripts": []
@@ -63,7 +67,8 @@
           "buildTarget": "extension-content:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

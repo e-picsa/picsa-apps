@@ -1,11 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { IStationRow } from '../../../../../types';
 
 @Component({
   selector: 'dashboard-climate-location-summary',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './location-summary.component.html',
   styleUrl: './location-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

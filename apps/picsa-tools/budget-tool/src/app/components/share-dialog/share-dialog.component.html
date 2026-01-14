@@ -15,10 +15,12 @@
     </button>
   </div>
 </div>
-<div class="share-code-box" *ngIf="shareCode">
-  <h4>Share Code</h4>
-  <h2>{{ shareCode }}</h2>
-</div>
+@if (shareCode) {
+  <div class="share-code-box">
+    <h4>Share Code</h4>
+    <h2>{{ shareCode }}</h2>
+  </div>
+}
 <div class="status-message">{{ status }}</div>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>

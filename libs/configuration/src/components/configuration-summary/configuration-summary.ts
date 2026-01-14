@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -12,7 +11,7 @@ import { PicsaConfigurationSelectComponent } from '../configuration-select/confi
   selector: 'picsa-configuration-summary',
   templateUrl: 'configuration-summary.html',
   styleUrl: './configuration-summary.scss',
-  imports: [CommonModule, MatButtonModule, MatDialogModule, PicsaConfigurationSelectComponent],
+  imports: [MatButtonModule, MatDialogModule, PicsaConfigurationSelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaConfigurationSummaryComponent {
@@ -21,7 +20,7 @@ export class PicsaConfigurationSummaryComponent {
   constructor(
     public configurationService: ConfigurationService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();

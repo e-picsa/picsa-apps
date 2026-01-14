@@ -1,21 +1,23 @@
 <div class="page-content">
   <h2>{{ 'Saved Calendars' | translate }}</h2>
   <div class="calendar-list">
-    <div class="feedbackMessage" *ngIf="dbCalendars.length === 0">{{ 'No saved calendars' | translate }}</div>
+    @if (dbCalendars.length === 0) {
+      <div class="feedbackMessage">{{ 'No saved calendars' | translate }}</div>
+    }
     <!-- Calendar list items -->
     @for (calendar of dbCalendars; track calendar.id) {
-    <mat-card class="calendars-display" [routerLink]="calendar.id">
-      <mat-card-content>
-        <div style="display: flex">
-          <mat-card-title style="flex: 1">
-            {{ calendar.name }}
-          </mat-card-title>
-          <button mat-icon-button [matMenuTriggerFor]="budgetMenu" (click)="handleMenuClick($event, calendar)">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+      <mat-card class="calendars-display" [routerLink]="calendar.id">
+        <mat-card-content>
+          <div style="display: flex">
+            <mat-card-title style="flex: 1">
+              {{ calendar.name }}
+            </mat-card-title>
+            <button mat-icon-button [matMenuTriggerFor]="budgetMenu" (click)="handleMenuClick($event, calendar)">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
     }
   </div>
   <!-- Create calendar button -->

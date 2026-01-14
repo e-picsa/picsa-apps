@@ -1,20 +1,24 @@
-<budget-card
-  *ngFor="let card of enterpriseCards"
-  [card]="card"
-  (click)="onCardClicked(card)"
-  [selected]="selected[card.id]"
-  @fadeInOut
-></budget-card>
-<div @fadeInOut *ngIf="!showAllCards">
-  <button mat-button (click)="showAllCards = true">{{ 'Show More' | translate }}</button>
-</div>
+@for (card of enterpriseCards; track card) {
+  <budget-card
+    [card]="card"
+    (click)="onCardClicked(card)"
+    [selected]="selected[card.id]"
+    @fadeInOut
+  ></budget-card>
+}
+@if (!showAllCards) {
+  <div @fadeInOut>
+    <button mat-button (click)="showAllCards = true">{{ 'Show More' | translate }}</button>
+  </div>
+}
 @if(showAllCards){
-<budget-card
-  *ngFor="let card of otherCards"
-  [card]="card"
-  (click)="onCardClicked(card)"
-  [selected]="selected[card.id]"
-  @fadeInOut
-></budget-card>
-<budget-card-new (cardSaved)="onCardCreated($event)" [type]="type" @fadeInOut></budget-card-new>
+  @for (card of otherCards; track card) {
+    <budget-card
+      [card]="card"
+      (click)="onCardClicked(card)"
+      [selected]="selected[card.id]"
+      @fadeInOut
+    ></budget-card>
+  }
+  <budget-card-new (cardSaved)="onCardCreated($event)" [type]="type" @fadeInOut></budget-card-new>
 }

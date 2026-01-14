@@ -1,14 +1,16 @@
 <div style="display: flex">
   <!-- Counters -->
   <div class="counter-container">
-    <div *ngFor="let label of labels; let i = index">
-      <div style="display: flex; font-size: small">
-        <div style="width: 20px; height: 20px">
-          <img class="dot-value-image" [src]="'assets/budget-icons/dot-' + label + '.svg'" />
+    @for (label of labels; track label; let i = $index) {
+      <div>
+        <div style="display: flex; font-size: small">
+          <div style="width: 20px; height: 20px">
+            <img class="dot-value-image" [src]="'assets/budget-icons/dot-' + label + '.svg'" />
+          </div>
+          <div>= {{ values[i] | number: '.0' }}</div>
         </div>
-        <div>= {{ values[i] | number: '.0' }}</div>
       </div>
-    </div>
+    }
   </div>
   <!-- Buttons -->
   <div class="buttons-container">

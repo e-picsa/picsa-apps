@@ -17,7 +17,6 @@
         "commands": ["firebase deploy --only hosting:resources-tool"]
       }
     },
-
     "build": {
       "executor": "@angular-devkit/build-angular:browser-esbuild",
       "outputs": ["{options.outputPath}"],
@@ -83,7 +82,8 @@
           "buildTarget": "picsa-tools-resources-tool:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

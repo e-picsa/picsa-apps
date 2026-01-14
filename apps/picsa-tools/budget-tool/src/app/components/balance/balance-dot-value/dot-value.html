@@ -1,1 +1,3 @@
-<div class="dot-value-image" *ngFor="let counter of counterAllocation" [innerHtml]="svgIcons[counter.icon]"></div>
+@for (counter of counterAllocation; track counter) {
+  <div class="dot-value-image" [innerHtml]="svgIcons[counter.icon]"></div>
+}

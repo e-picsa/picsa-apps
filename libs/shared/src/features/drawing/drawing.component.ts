@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,7 +28,7 @@ type Segment = {
 
 @Component({
   selector: 'picsa-custom-drawing',
-  imports: [CommonModule, MatButtonModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
+  imports: [MatButtonModule, MatDialogModule, MatIconModule, PicsaTranslateModule],
   templateUrl: './drawing.component.html',
   styleUrls: ['./drawing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -209,7 +208,7 @@ function getSvgPathFromStroke(points: number[][], precision = 2, closed = true) 
   const c = points[2];
 
   let result = `M${a[0].toFixed(precision)},${a[1].toFixed(precision)} Q${b[0].toFixed(precision)},${b[1].toFixed(
-    precision
+    precision,
   )} ${average(b[0], c[0]).toFixed(precision)},${average(b[1], c[1]).toFixed(precision)} T`;
 
   for (let i = 2, max = len - 1; i < max; i++) {

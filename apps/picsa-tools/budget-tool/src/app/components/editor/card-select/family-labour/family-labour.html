@@ -1,40 +1,46 @@
 <div class="member-card-container">
-  <mat-card appearance="outlined" class="member-card" *ngFor="let familyCard of values; let i = index">
-    <div style="width: 36px">
-      <budget-card-image class="small" [card]="familyCard" style="display: contents"></budget-card-image>
-    </div>
-
-    <mat-form-field class="card-input-field quantity member-input">
-      <mat-label>{{'Days' | translate}}</mat-label>
-      <input
-        matInput
-        [value]="familyCard.values ? familyCard.values.quantity : null"
-        type="number"
-        (change)="setValue($event, i)"
-      />
-    </mat-form-field>
-    <button mat-button (click)="removeMember(i)" class="member-delete-button">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-card>
+  @for (familyCard of values; track familyCard; let i = $index) {
+    <mat-card appearance="outlined" class="member-card">
+      <div style="width: 36px">
+        <budget-card-image class="small" [card]="familyCard" style="display: contents"></budget-card-image>
+      </div>
+      <mat-form-field class="card-input-field quantity member-input">
+        <mat-label>{{'Days' | translate}}</mat-label>
+        <input
+          matInput
+          [value]="familyCard.values ? familyCard.values.quantity : null"
+          type="number"
+          (change)="setValue($event, i)"
+          />
+      </mat-form-field>
+      <button mat-button (click)="removeMember(i)" class="member-delete-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card>
+  }
 </div>
 <!--Add member cards  -->
 <div class="member-add-container">
-  <div
-    matRipple
-    class="member-card placeholder"
-    *ngFor="let memberCard of addMemberCards"
-    (click)="addMember(memberCard.id)"
-  >
-    <div>
-      <mat-icon>add</mat-icon>
+  @for (memberCard of addMemberCards; track memberCard) {
+    <div
+      matRipple
+      class="member-card placeholder"
+      (click)="addMember(memberCard.id)"
+      >
+      <div>
+        <mat-icon>add</mat-icon>
+      </div>
+      <div style="width: 36px">
+        <budget-card-image class="small" [card]="memberCard" style="display: contents"></budget-card-image>
+      </div>
+      <div style="flex: 1; margin-left: 1rem">
+        @if (memberCard.id==='adultMale') {
+          <span>{{ 'Add Male Member' | translate }}</span>
+        }
+        @if (memberCard.id==='adultFemale') {
+          <span> {{ 'Add Female Member' | translate }}</span>
+        }
+      </div>
     </div>
-    <div style="width: 36px">
-      <budget-card-image class="small" [card]="memberCard" style="display: contents"></budget-card-image>
-    </div>
-    <div style="flex: 1; margin-left: 1rem">
-      <span *ngIf="memberCard.id==='adultMale'">{{ 'Add Male Member' | translate }}</span>
-      <span *ngIf="memberCard.id==='adultFemale'"> {{ 'Add Female Member' | translate }}</span>
-    </div>
-  </div>
+  }
 </div>

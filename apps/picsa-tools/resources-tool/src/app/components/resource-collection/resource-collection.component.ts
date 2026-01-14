@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AlertBoxComponent } from '@picsa/components';
@@ -19,7 +19,6 @@ import {
   selector: 'resource-collection',
   imports: [
     AlertBoxComponent,
-    CommonModule,
     MatCardModule,
     PicsaTranslateModule,
     ResourceDownloadMultipleComponent,

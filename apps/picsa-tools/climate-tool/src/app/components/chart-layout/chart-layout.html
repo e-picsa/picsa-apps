@@ -1,19 +1,23 @@
 <!-- line tool -->
-<climate-line-tool #lineTool *ngIf="toolService.enabled['line']"></climate-line-tool>
+@if (toolService.enabled['line']) {
+  <climate-line-tool #lineTool></climate-line-tool>
+}
 <!-- chart -->
 <picsa-chart #picsaChart [config]="chartService.chartConfig" [data]="$any(chartService.stationData)"></picsa-chart>
 <!-- definition -->
 <div class="chart-definition">{{definition.definition | translate}}</div>
 <!-- probability tool -->
-<climate-probability-tool
-  *ngIf="toolService.enabled['line']"
-  style="height: 140px"
-  [lineValue]="$any(toolService.tools['line'].value)"
-  [values]="chartService.chartSeriesData"
-  [chartName]="definition.name"
-></climate-probability-tool>
+@if (toolService.enabled['line']) {
+  <climate-probability-tool
+    style="height: 140px"
+    [lineValue]="$any(toolService.tools['line'].value)"
+    [values]="chartService.chartSeriesData"
+    [chartName]="definition.name"
+  ></climate-probability-tool>
+}
 <!-- terciles tool -->
-<climate-terciles-tool
-  *ngIf="toolService.enabled['terciles']"
-  [values]="chartService.chartSeriesData"
-></climate-terciles-tool>
+@if (toolService.enabled['terciles']) {
+  <climate-terciles-tool
+    [values]="chartService.chartSeriesData"
+  ></climate-terciles-tool>
+}

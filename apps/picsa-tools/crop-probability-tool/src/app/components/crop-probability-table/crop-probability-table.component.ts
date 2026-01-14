@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, model, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -13,7 +12,7 @@ import { IProbabilityTableMeta, IStationCropData, IStationCropDataItem } from '.
   selector: 'crop-probability-table',
   templateUrl: './crop-probability-table.component.html',
   styleUrls: ['./crop-probability-table.component.scss'],
-  imports: [CommonModule, FormsModule, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
+  imports: [FormsModule, MatTableModule, PicsaFormsModule, PicsaTranslateModule],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
