@@ -98,7 +98,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/resources-tool"],
       "options": {
-        "jestConfig": "apps/picsa-tools/resources-tool/jest.config.ts"
+        "jestConfig": "apps/picsa-tools/resources-tool/jest.config.ts",
+        "tsConfig": "apps/picsa-tools/resources-tool/tsconfig.spec.json"
       }
     }
   }

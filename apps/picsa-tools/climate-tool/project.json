@@ -86,7 +86,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/climate-tool"],
       "options": {
-        "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts"
+        "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts",
+        "tsConfig": "apps/picsa-tools/climate-tool/tsconfig.spec.json"
       }
     }
   }

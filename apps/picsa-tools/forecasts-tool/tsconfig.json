@@ -9,7 +9,9 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "useDefineForClassFields": false,
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "module": "preserve",
+    "lib": ["dom", "dom.iterable", "es2022"]
   },
   "files": [],
   "include": [],

@@ -246,7 +246,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/app"],
       "options": {
-        "jestConfig": "apps/picsa-apps/app/jest.config.ts"
+        "jestConfig": "apps/picsa-apps/app/jest.config.ts",
+        "tsConfig": "apps/picsa-apps/app/tsconfig.spec.json"
       }
     }
   }

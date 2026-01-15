@@ -21,7 +21,7 @@ export default {
     ],
   },
   // moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/i18n',
+  coverageDirectory: '../../coverage/libs/webcomponents',
   // TODO - add support for external data imported
   // https://stackoverflow.com/a/72622089
   moduleNameMapper: {

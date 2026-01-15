@@ -87,7 +87,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/budget-tool"],
       "options": {
-        "jestConfig": "apps/picsa-tools/budget-tool/jest.config.ts"
+        "jestConfig": "apps/picsa-tools/budget-tool/jest.config.ts",
+        "tsConfig": "apps/picsa-tools/budget-tool/tsconfig.spec.json"
       }
     }
   }

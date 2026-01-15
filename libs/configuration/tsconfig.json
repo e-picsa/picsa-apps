@@ -12,6 +12,8 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "module": "preserve",
+    "lib": ["dom", "dom.iterable", "es2022"]
   }
 }

@@ -13,7 +13,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared"],
       "options": {
-        "jestConfig": "libs/shared/jest.config.ts"
+        "jestConfig": "libs/shared/jest.config.ts",
+        "tsConfig": "libs/shared/tsconfig.spec.json"
       }
     }
   }

@@ -87,7 +87,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/monitoring-tool"],
       "options": {
-        "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts"
+        "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts",
+        "tsConfig": "apps/picsa-tools/monitoring-tool/tsconfig.spec.json"
       }
     }
   }

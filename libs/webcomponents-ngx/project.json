@@ -10,7 +10,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/webcomponents-ngx"],
       "options": {
-        "jestConfig": "libs/webcomponents-ngx/jest.config.ts"
+        "jestConfig": "libs/webcomponents-ngx/jest.config.ts",
+        "tsConfig": "libs/webcomponents-ngx/tsconfig.spec.json"
       }
     },
     "lint": {
