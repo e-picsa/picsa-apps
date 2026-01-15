@@ -66,7 +66,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{ nextDisabled: values.gender_decisions.length === 0 }"
-        >
+      >
       </ng-container>
     </ng-template>
 
@@ -110,7 +110,7 @@
             (values.benefits[values.benefits.length - 1].benefit === undefined ||
               values.benefits[values.benefits.length - 1].beneficiary.length === 0)
           "
-          >
+        >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'benefit' | translate }}
         </button>
       </div>
@@ -140,7 +140,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{
-          nextDisabled: !(values.performance.lowRf && values.performance.midRf && values.performance.highRf)
+          nextDisabled: !(values.performance.lowRf && values.performance.midRf && values.performance.highRf),
         }"
       ></ng-container>
     </ng-template>
@@ -163,7 +163,7 @@
       <ng-container
         [ngTemplateOutlet]="stepButtons"
         [ngTemplateOutletContext]="{
-          nextDisabled: !(values.investment.money && values.investment.time)
+          nextDisabled: !(values.investment.money && values.investment.time),
         }"
       ></ng-container>
     </ng-template>
@@ -188,7 +188,7 @@
     <!-- 8. Risk -->
     <ng-template #riskInput>
       <div class="entry-rows">
-        @for (risk of values.risk; track trackByIndex(i, risk); let i = $index) {
+        @for (risk of values.risk; track trackByIndex(i); let i = $index) {
           <div class="entry-row-item">
             <div style="display: flex; align-items: center">
               <input style="margin-left: 4px" [(ngModel)]="values.risk[i]" class="form-control" />
@@ -203,7 +203,7 @@
           (click)="values.risk.push('')"
           mat-button
           [disabled]="values.risk.length > 0 && !values.risk[values.risk.length - 1]"
-          >
+        >
           + {{ 'Add' | translate }}{{ ' ' }}{{ 'risk' | translate }}
         </button>
       </div>
@@ -227,22 +227,12 @@
           <button mat-button matStepperPrevious>{{ 'Back' | translate }}</button>
         }
         @if (stepper.selectedIndex < 7) {
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="nextDisabled"
-            matStepperNext
-            >
+          <button mat-raised-button color="primary" [disabled]="nextDisabled" matStepperNext>
             {{ 'Next' | translate }}
           </button>
         }
         @if (stepper.selectedIndex === 7) {
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="nextDisabled"
-            (click)="submitForm()"
-            >
+          <button mat-raised-button color="primary" [disabled]="nextDisabled" (click)="submitForm()">
             {{ 'Finish' | translate }}
           </button>
         }

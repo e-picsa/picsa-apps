@@ -31,7 +31,7 @@ export class PicsaChartComponent {
   @Input() config: IChartConfig = {};
 
   // dispatch resize event to trigger chart resize on orientation change
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange', [])
   onOrientationChange() {
     if (this.chart) {
       setTimeout(() => {
