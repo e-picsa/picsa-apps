@@ -6,4 +6,6 @@ export interface IPicsaCollectionCreator<T> extends RxCollectionCreator<T> {
   isUserCollection: boolean;
   /** Push a copy of all data to server db */
   syncPush?: boolean;
+  /** Pull data from server db */
+  syncPull?: boolean;
 }
