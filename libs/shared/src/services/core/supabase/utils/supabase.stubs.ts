@@ -1,0 +1,110 @@
+import { Injector, signal } from '@angular/core';
+import { Database } from '@picsa/server-types';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { of } from 'rxjs';
+
+import { TableWithLive } from './query.utils';
+
+type Tables = Database['public']['Tables'];
+type TableRow<T extends keyof Tables> = Tables[T]['Row'];
+
+/** Check if supabase dev server is available, to allow fallback to stub server   */
+export async function checkBackendAvailability(url: string): Promise<boolean> {
+  try {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 500); // short timeout
+
+    await fetch(`${url}/auth/v1/health`, { signal: controller.signal }).catch(async () => {
+      // Fallback: try checking just the root if specific health check fails/not standard
+      return fetch(url, { signal: controller.signal });
+    });
+
+    clearTimeout(id);
+    return true; // If we got a response (even 404), the server is running.
+  } catch (err) {
+    console.warn('[Supabase] Backend unavailable - switching to offline/stub mode');
+    return false;
+  }
+}
+
+export function createOfflineSupabaseClient(): SupabaseClient<Database> {
+  const stubClient = {
+    auth: {
+      onAuthStateChange: () => {
+        // Return a subscription that does nothing
+        return {
+          data: {
+            subscription: {
+              unsubscribe: () => {
+                /* no-op */
+              },
+            },
+          },
+        };
+      },
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      signInWithPassword: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
+      signInAnonymously: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
+      signUp: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
+      signOut: () => Promise.resolve({ error: null }),
+      resetPasswordForEmail: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
+      updateUser: () => Promise.resolve({ error: { message: 'Offline Mode: Backend unavailable' } }),
+      refreshSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    },
+    storage: {
+      from: (_bucket: string) => ({
+        upload: () => Promise.resolve({ error: { message: 'Offline Mode' } }),
+        getPublicUrl: () => ({ data: { publicUrl: '' } }),
+        list: () => Promise.resolve({ data: [], error: null }),
+        remove: () => Promise.resolve({ data: [], error: null }),
+      }),
+    },
+    functions: {
+      invoke: () => Promise.resolve({ error: { message: 'Offline Mode' } }),
+    },
+    // The 'from' method handles DB queries
+    from: (table: string) => createStubQueryBuilder(table),
+  };
+
+  return stubClient as unknown as SupabaseClient<Database>;
+}
+
+function createStubQueryBuilder(_table: string) {
+  // Override standard builder methods to return empty results/promises
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const stubBuilder: any = {
+    select: () => Promise.resolve({ data: [], error: null }),
+    insert: () => Promise.resolve({ data: null, error: null }),
+    update: () => Promise.resolve({ data: null, error: null }),
+    upsert: () => Promise.resolve({ data: null, error: null }),
+    delete: () => Promise.resolve({ data: null, error: null }),
+    eq: () => stubBuilder,
+    in: () => stubBuilder,
+    like: () => stubBuilder, // Added for storage service usage
+    order: () => stubBuilder,
+    limit: () => stubBuilder,
+    single: () => Promise.resolve({ data: null, error: null }),
+    maybeSingle: () => Promise.resolve({ data: null, error: null }),
+  };
+  return stubBuilder;
+}
+
+/**
+ * Wraps the stub query builder with the live query API needed by the app.
+ * This replaces the previous stubTableWithLive function.
+ */
+export function stubTableWithLive<T extends keyof Tables>(
+  injector: Injector,
+  client: SupabaseClient<Database>,
+  table: T,
+) {
+  const builder = client.from(table); // This will call the stubbed 'from' method above
+
+  const api = {
+    liveQuery$: () => of([] as TableRow<T>[]),
+    liveSignal: () => signal([] as TableRow<T>[]),
+  };
+
+  return Object.assign(builder, api) as TableWithLive<T>;
+}
