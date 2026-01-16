@@ -51,13 +51,13 @@ export class SupabaseService extends PicsaAsyncService {
       this.isAvailable = await checkBackendAvailability(apiUrl);
     }
 
-    this.supabase = this.isAvailable ? createOfflineSupabaseClient() : createClient(apiUrl, anonKey, {});
+    this.supabase = this.isAvailable ? createClient(apiUrl, anonKey, {}) : createOfflineSupabaseClient();
 
     this.db = {
       table: (relation) =>
         this.isAvailable
-          ? stubTableWithLive(this.injector, this.supabase, relation)
-          : tableWithLive(this.injector, this.supabase, relation),
+          ? tableWithLive(this.injector, this.supabase, relation)
+          : stubTableWithLive(this.injector, this.supabase, relation),
     };
 
     // register supabase instance with child services
