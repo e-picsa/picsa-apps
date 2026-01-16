@@ -1,5 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AlertBoxComponent } from '@picsa/components';

@@ -1,5 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaFormsModule } from '@picsa/forms';

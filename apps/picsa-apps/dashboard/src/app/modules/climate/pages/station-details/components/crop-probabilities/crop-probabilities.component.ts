@@ -1,9 +1,7 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
-import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 
+import { DashboardMaterialModule } from '../../../../../../material.module';
 import { IClimateStationData, ICropSuccessEntry } from '../../../../types';
 import { DashboardClimateDataGridComponent } from './data-grid/data-grid/data-grid.component';
 

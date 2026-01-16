@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { FileObject, FileOptions } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';

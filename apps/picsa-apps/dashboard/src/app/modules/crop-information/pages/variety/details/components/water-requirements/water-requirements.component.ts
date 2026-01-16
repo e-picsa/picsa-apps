@@ -1,5 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { ChangeDetectionStrategy, Component, computed, input, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';

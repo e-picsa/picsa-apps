@@ -1,13 +1,12 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+/* eslint-disable @nx/enforce-module-boundaries */
 import { generateChartConfig } from '@picsa/climate/src/app/utils';
 import { CLIMATE_CHART_DEFINTIONS } from '@picsa/data/climate/chart_definitions';
 import { IChartMeta, IStationData } from '@picsa/models/src';
 import { PicsaChartComponent } from '@picsa/shared/features';
-import { DashboardMaterialModule } from 'apps/picsa-apps/dashboard/src/app/material.module';
 import { ChartConfiguration } from 'c3';
 
+import { DashboardMaterialModule } from '../../../../../../material.module';
 import { hackConvertStationDataForDisplay } from '../../../../climate.utils';
 import { IClimateStationData, IStationRow } from '../../../../types';
 

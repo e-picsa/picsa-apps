@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -42,7 +41,7 @@ export class ViewMonitoringFormsComponent implements OnInit {
     private route: ActivatedRoute,
     private dialogService: PicsaDialogService,
     private notificationService: PicsaNotificationService,
-    private router: Router
+    private router: Router,
   ) {}
   async ngOnInit() {
     await this.service.ready();

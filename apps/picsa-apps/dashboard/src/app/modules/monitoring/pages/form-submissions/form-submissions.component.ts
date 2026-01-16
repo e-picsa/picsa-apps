@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
@@ -24,7 +23,11 @@ export class FormSubmissionsComponent {
   dataLoadError: string;
   displayedColumns: string[];
 
-  constructor(private service: MonitoringFormsDashboardService, private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private service: MonitoringFormsDashboardService,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {
     this.service.ready();
     this.route.params.subscribe(async (params) => {
       const id = params['id'];

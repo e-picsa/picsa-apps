@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
 import { effect, Inject, Injectable, signal } from '@angular/core';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';

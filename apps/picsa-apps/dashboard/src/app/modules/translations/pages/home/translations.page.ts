@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { COUNTRIES_DATA_HASHMAP, ILocaleDataEntry, LOCALES_DATA, LOCALES_DATA_HASHMAP } from '@picsa/data';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
@@ -97,7 +96,7 @@ export class TranslationsPageComponent {
   constructor(
     public service: TranslationDashboardService,
     public dialog: MatDialog,
-    deploymentService: DeploymentDashboardService
+    deploymentService: DeploymentDashboardService,
   ) {
     effect(async () => {
       const deployment = deploymentService.activeDeployment();
