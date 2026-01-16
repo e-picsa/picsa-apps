@@ -16,6 +16,7 @@ import { PicsaAsyncService } from '../../asyncService.service';
 import { SupabaseAuthService } from './services/supabase-auth.service';
 import { SupabaseStorageService } from './services/supabase-storage.service';
 import { TableWithLive, tableWithLive } from './utils/query.utils';
+import { checkBackendAvailability, createOfflineSupabaseClient, stubTableWithLive } from './utils/supabase.stubs';
 
 /**
  * Main entrypoint for interacting with Supabase backend
@@ -27,6 +28,8 @@ export class SupabaseService extends PicsaAsyncService {
   public db: { table<T extends keyof Tables>(relation: T): TableWithLive<T> };
 
   public config: SupabaseConfig;
+
+  public isAvailable = true;
 
   private supabase: SupabaseClient<Database>;
 
@@ -43,10 +46,18 @@ export class SupabaseService extends PicsaAsyncService {
 
     const { apiUrl, anonKey } = this.config;
 
-    this.supabase = createClient(apiUrl, anonKey, {});
+    // Use stubbed client if running locally and backend server not available
+    if (!ENVIRONMENT.production) {
+      this.isAvailable = await checkBackendAvailability(apiUrl);
+    }
+
+    this.supabase = this.isAvailable ? createClient(apiUrl, anonKey, {}) : createOfflineSupabaseClient();
 
     this.db = {
-      table: (relation) => tableWithLive(this.injector, this.supabase, relation),
+      table: (relation) =>
+        this.isAvailable
+          ? tableWithLive(this.injector, this.supabase, relation)
+          : stubTableWithLive(this.injector, this.supabase, relation),
     };
 
     // register supabase instance with child services
@@ -57,6 +68,7 @@ export class SupabaseService extends PicsaAsyncService {
     this.auth.ready();
     this.storage.ready();
   }
+
   private async loadConfig(): Promise<SupabaseConfig> {
     const res = await fetch('/assets/supabase.config.json');
     if (res.ok) {
