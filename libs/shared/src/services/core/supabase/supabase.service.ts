@@ -98,6 +98,10 @@ export class SupabaseService extends PicsaAsyncService {
    * Includes custom error handling of non-2xx response codes
    */
   public async invokeFunction<ResponseType>(endpoint: string, options: FunctionInvokeOptions = {}) {
+    if (!this.isAvailable) {
+      console.warn('[Supabase] Function cannot be invoked when server not running');
+      return null;
+    }
     const { data, error } = await this.supabase.functions.invoke<ResponseType>(endpoint, {
       method: 'POST',
       body: {},

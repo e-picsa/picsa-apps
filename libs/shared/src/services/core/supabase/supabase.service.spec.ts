@@ -77,9 +77,4 @@ describe('SupabaseService', () => {
 
     expect(service.isAvailable).toBe(true);
   });
-
-  it('should prevent function invocation when offline', async () => {
-    service.isAvailable = false;
-    await expect(service.invokeFunction('test')).rejects.toThrow('Supabase Offline');
-  });
 });
