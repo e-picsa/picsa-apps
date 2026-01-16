@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';

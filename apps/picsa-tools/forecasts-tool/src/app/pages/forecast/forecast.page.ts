@@ -9,6 +9,7 @@ import { LOCALES_DATA_HASHMAP } from '@picsa/data/deployments/locales';
 import { PicsaFormsModule } from '@picsa/forms';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceItemLinkComponent } from '@picsa/resources/components/resource-item';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { IResourceLink } from '@picsa/resources/schemas';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 import { SupabaseStorageDownloadComponent } from '@picsa/shared/services/core/supabase';

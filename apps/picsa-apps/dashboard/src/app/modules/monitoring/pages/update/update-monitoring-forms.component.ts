@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, OnInit, ViewChild } from 
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 import { PicsaLoadingComponent } from '@picsa/shared/features/loading/loading';
 import {

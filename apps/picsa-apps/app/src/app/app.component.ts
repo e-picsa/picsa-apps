@@ -1,12 +1,14 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, Injector, OnInit, signal } from '@angular/core';
+import { Component, effect, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
+import { ConfigurationService } from '@picsa/configuration';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaMigrationService } from '@picsa/migrations';
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
+import { PicsaTranslateService } from '@picsa/shared/modules';
 import { AnalyticsService } from '@picsa/shared/services/core/analytics.service';
 import { AppUserService } from '@picsa/shared/services/core/appUser.service';
 import { CrashlyticsService } from '@picsa/shared/services/core/crashlytics.service';
@@ -40,7 +42,16 @@ export class AppComponent implements OnInit {
     private injector: Injector,
     private appUserService: AppUserService,
     private errorService: ErrorHandlerService,
-  ) {}
+    private configurationService: ConfigurationService,
+    private translateService: PicsaTranslateService,
+  ) {
+    effect(() => {
+      const { language_code } = this.configurationService.userSettings();
+      if (language_code) {
+        this.translateService.setLanguage(language_code);
+      }
+    });
+  }
 
   async ngOnInit() {
     // wait for migrations to run

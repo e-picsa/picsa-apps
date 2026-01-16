@@ -1,7 +1,6 @@
 import { Component, ElementRef, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 type IAlertType = 'info' | 'warning';

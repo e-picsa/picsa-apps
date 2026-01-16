@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Database } from '@picsa/server-types';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
 

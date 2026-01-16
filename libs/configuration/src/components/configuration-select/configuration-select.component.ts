@@ -19,8 +19,7 @@ import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { COUNTRIES_DATA, DEPLOYMENT_DATA, ICountryCode, IDeploymentId, ILocaleCode, LOCALES_DATA } from '@picsa/data';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { PicsaTranslateModule } from '@picsa/shared/modules';
+import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
 import { ConfigurationService, IUserSettings } from '../../provider';
 

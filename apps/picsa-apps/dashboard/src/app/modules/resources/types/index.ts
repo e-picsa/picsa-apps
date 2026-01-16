@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import type { Database } from '@picsa/server-types';
 
 export type IResourceCollectionRow = Database['public']['Tables']['resource_collections']['Row'];
