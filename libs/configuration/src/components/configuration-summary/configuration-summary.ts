@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { COUNTRIES_DATA_HASHMAP, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
@@ -16,26 +16,24 @@ import { PicsaConfigurationSelectComponent } from '../configuration-select/confi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaConfigurationSummaryComponent {
-  public label = '';
-  public image = '';
+  public label = signal('');
+  public image = signal('');
   constructor(
     public configurationService: ConfigurationService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
   ) {
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();
       if (country_code) {
         const countryMeta = COUNTRIES_DATA_HASHMAP[country_code];
         const { flag_path, label } = countryMeta;
-        this.label = label;
+        this.label.set(label);
         const { language_code } = this.configurationService.userSettings();
         const languageMeta = LOCALES_DATA_HASHMAP[language_code];
         if (languageMeta) {
-          this.label += ` - ${languageMeta.language_label}`;
+          this.label.set(`${label} - ${languageMeta.language_label}`);
         }
-        this.image = flag_path;
-        this.cdr.markForCheck();
+        this.image.set(flag_path);
       }
     });
   }

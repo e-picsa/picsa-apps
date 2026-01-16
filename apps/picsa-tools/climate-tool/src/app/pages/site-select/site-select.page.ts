@@ -1,16 +1,15 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { ChangeDetectionStrategy, Component, computed, effect, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
-import { ConfigurationService } from '@picsa/configuration/src';
+import { ConfigurationService } from '@picsa/configuration';
+import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from '@picsa/data/geoLocation';
 import { IStationMeta } from '@picsa/models';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { IBasemapOptions, IMapMarker, IMapOptions, PicsaMapComponent } from '@picsa/shared/features/map/map';
 import { _wait } from '@picsa/utils/browser.utils';
 import { geoJSON, Map } from 'leaflet';
-import { GEO_LOCATION_DATA, IGelocationData, topoJsonToGeoJson } from 'libs/data/geoLocation';
 
 import { ClimateDataService } from '../../services/climate-data.service';
 
