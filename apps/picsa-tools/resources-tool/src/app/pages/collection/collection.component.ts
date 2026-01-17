@@ -19,7 +19,10 @@ interface ICollectionPageRouteParams {
 export class CollectionComponent implements OnInit, OnDestroy {
   public collectionId = toSignal(this.route.params.pipe(map((v) => (v as ICollectionPageRouteParams).collectionId)));
 
-  constructor(private route: ActivatedRoute, private componentsService: PicsaCommonComponentsService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private componentsService: PicsaCommonComponentsService,
+  ) {}
 
   ngOnDestroy() {
     this.componentsService.updateBreadcrumbOptions({ enabled: false });

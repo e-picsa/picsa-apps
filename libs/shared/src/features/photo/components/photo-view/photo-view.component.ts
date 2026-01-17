@@ -25,7 +25,11 @@ export class PhotoViewComponent {
 
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
-  constructor(private service: PhotoService, private dialog: PicsaDialogService, public photoDialog: MatDialog) {
+  constructor(
+    private service: PhotoService,
+    private dialog: PicsaDialogService,
+    public photoDialog: MatDialog,
+  ) {
     effect(async (onCleanup) => {
       const photo = this.photo;
       const uri = await this.service.getPhotoAttachment(photo().id);

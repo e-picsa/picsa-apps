@@ -19,7 +19,7 @@ export class OptionMaterialModule {
   constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
-    dataIconRegistry: DataIconRegistry
+    dataIconRegistry: DataIconRegistry,
   ) {
     this.registerIcons();
     // register additional icons provided from shared data lib

@@ -28,7 +28,7 @@ export class HomeComponent implements OnDestroy {
     private service: SeasonCalendarService,
     public dialog: MatDialog,
     private dialogService: PicsaDialogService,
-    private formService: SeasonCalendarFormService
+    private formService: SeasonCalendarFormService,
   ) {
     this.subscribeToDbChanges();
   }

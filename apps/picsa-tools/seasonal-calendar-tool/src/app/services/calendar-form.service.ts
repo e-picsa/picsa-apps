@@ -131,12 +131,12 @@ export class SeasonCalendarFormService {
     return this.fb.nonNullable.group({
       months: new FormControl<CalendarDataEntry['meta']['months']>(
         { value: [], disabled: false },
-        { nonNullable: true, validators: [Validators.required] }
+        { nonNullable: true, validators: [Validators.required] },
       ),
       enterpriseType: new FormControl<CalendarDataEntry['meta']['enterpriseType']>('crop', { nonNullable: true }),
       enterprises: new FormControl<CalendarDataEntry['meta']['enterprises']>(
         { value: [], disabled: false },
-        { nonNullable: true, validators: [Validators.required] }
+        { nonNullable: true, validators: [Validators.required] },
       ),
     });
   }

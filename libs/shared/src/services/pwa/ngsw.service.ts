@@ -14,7 +14,10 @@ import { PicsaTranslateService } from '../../modules';
 })
 export class DEPRECATED_ServiceWorkerService {
   // want to use on all live sites as well as firebase production serve
-  constructor(private swUpdate: SwUpdate, private translations: PicsaTranslateService) {}
+  constructor(
+    private swUpdate: SwUpdate,
+    private translations: PicsaTranslateService,
+  ) {}
   // callable initialisation as will likely depend on environment
   initialiseSw() {
     this._subscribeToUpdates();
@@ -26,7 +29,7 @@ export class DEPRECATED_ServiceWorkerService {
   private async promptUpdate() {
     // TODO - refactor
     const message = await this.translations.translateText(
-      'New Update available! Reload this page to see the latest version.'
+      'New Update available! Reload this page to see the latest version.',
     );
     alert(message);
     // const toast = await this.toastCtrl.create({

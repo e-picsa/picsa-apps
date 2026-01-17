@@ -33,7 +33,10 @@ export const APP_COMMON_IMPORTS = [
 })
 export class AppModule {
   // ensure translate service initialised
-  constructor(public translate: PicsaTranslateService, budgetStore: BudgetStore) {
+  constructor(
+    public translate: PicsaTranslateService,
+    budgetStore: BudgetStore,
+  ) {
     budgetStore.init();
   }
 }

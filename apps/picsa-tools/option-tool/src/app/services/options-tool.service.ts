@@ -8,7 +8,10 @@ import { COLLECTION, IOptionsToolEntry } from '../schemas';
 
 @Injectable({ providedIn: 'root' })
 export class OptionsToolService extends PicsaAsyncService {
-  constructor(private dbService: PicsaDatabase_V2_Service, private printPrvdr: PrintProvider) {
+  constructor(
+    private dbService: PicsaDatabase_V2_Service,
+    private printPrvdr: PrintProvider,
+  ) {
     super();
   }
 

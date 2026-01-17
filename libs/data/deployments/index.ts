@@ -77,7 +77,7 @@ export const DEPLOYMENT_DATA = Object.entries(DEPLOYMENTS_BASE).map(([id, data])
   };
 });
 
-export type IDeploymentSettingsDataEntry = typeof DEPLOYMENT_DATA[0];
+export type IDeploymentSettingsDataEntry = (typeof DEPLOYMENT_DATA)[0];
 
 export const DEPLOYMENT_DATA_HASHMAP = arrayToHashmap(DEPLOYMENT_DATA, 'id') as {
   [code in IDeploymentId]: IDeploymentSettingsDataEntry;

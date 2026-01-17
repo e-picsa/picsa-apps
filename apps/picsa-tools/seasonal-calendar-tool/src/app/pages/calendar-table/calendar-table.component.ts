@@ -54,7 +54,7 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
     private service: SeasonCalendarService,
     private formService: SeasonCalendarFormService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit() {

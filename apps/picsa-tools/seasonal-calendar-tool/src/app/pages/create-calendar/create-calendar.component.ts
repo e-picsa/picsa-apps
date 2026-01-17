@@ -16,7 +16,7 @@ export class CreateCalendarComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private service: SeasonCalendarService,
-    private formService: SeasonCalendarFormService
+    private formService: SeasonCalendarFormService,
   ) {}
 
   @ViewChild(CalendarEditorComponent, { static: false }) editor: CalendarEditorComponent;

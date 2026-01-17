@@ -18,4 +18,4 @@ const DB_COLLECTION_NAMES = [
   'video_player',
 ] as const;
 
-export type IDBCollectionName = typeof DB_COLLECTION_NAMES[number];
+export type IDBCollectionName = (typeof DB_COLLECTION_NAMES)[number];

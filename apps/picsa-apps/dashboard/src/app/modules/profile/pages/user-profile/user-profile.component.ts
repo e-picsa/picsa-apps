@@ -15,7 +15,10 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
 export class UserProfileComponent {
   public authRoleLevels = ['viewer', 'author', 'admin'];
   public authRoleFeatures: string[] = [];
-  constructor(public authService: DashboardAuthService, public deploymentService: DeploymentDashboardService) {
+  constructor(
+    public authService: DashboardAuthService,
+    public deploymentService: DeploymentDashboardService,
+  ) {
     effect(() => {
       const authRoleFeatures: string[] = [];
 

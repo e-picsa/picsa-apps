@@ -48,14 +48,14 @@ export const CROP_PROBABILITY_TABLE_TOUR: ITourStep[] = [
       selector: 'section.table-container',
     },
     text: translateMarker(
-      'In the crop information table, you will be able to see the probabilities for different crops through the different seasons.'
+      'In the crop information table, you will be able to see the probabilities for different crops through the different seasons.',
     ),
   },
 
   {
     id: 'season-start',
     text: translateMarker(
-      'Crop probabilities depend on when the season starts.\nHere you can see the probabilities of the season starting at different dates'
+      'Crop probabilities depend on when the season starts.\nHere you can see the probabilities of the season starting at different dates',
     ),
   },
   {
@@ -63,7 +63,7 @@ export const CROP_PROBABILITY_TABLE_TOUR: ITourStep[] = [
       selector: 'tr[mat-header-row]:last-of-type',
     },
     text: translateMarker(
-      'Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates'
+      'Each row contains information about crop, variety, days to maturity and water requirement. Probabilities of receiving requirements are shown for different planting dates',
     ),
   },
   {
@@ -93,7 +93,7 @@ export const CROP_PROBABILITY_TABLE_TOUR: ITourStep[] = [
       selector: 'tbody>tr>td:nth-of-type(5)',
     },
     text: translateMarker(
-      'The maturity and water requirements can be used to calculate the chance of satisfying these conditions for a specific planting date'
+      'The maturity and water requirements can be used to calculate the chance of satisfying these conditions for a specific planting date',
     ),
   },
   {

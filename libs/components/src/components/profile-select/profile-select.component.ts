@@ -35,7 +35,7 @@ export class ProfileSelectComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private userService: PicsaUserService,
     private picsaDialog: PicsaDialogService,
-    fb: FormBuilder
+    fb: FormBuilder,
   ) {
     this.profileForm = fb.group(PROFILE_FORM_BASE);
     this.resetForm();

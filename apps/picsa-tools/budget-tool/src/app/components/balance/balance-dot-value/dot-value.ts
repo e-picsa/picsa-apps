@@ -48,7 +48,7 @@ export class BudgetBalanceDotValueComponent {
             value: divisor,
             icon: labels[i],
             isNegative: val < 0,
-          })
+          }),
         );
       });
       // Avoid rendering very large number of counters

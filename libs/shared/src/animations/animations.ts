@@ -8,14 +8,14 @@ export const OpenClosed = trigger('openClosed', [
     style({
       height: '*',
       opacity: 1,
-    })
+    }),
   ),
   state(
     'closed',
     style({
       height: '0',
       opacity: 0,
-    })
+    }),
   ),
   transition('open => closed', [animate('0.2s')]),
   transition('closed => open', [animate('0.2s')]),
@@ -30,14 +30,14 @@ export function FadeInOut(config: Partial<IAnimationConfig> = {}) {
       style({
         opacity: 1,
         ...c.inStyle,
-      })
+      }),
     ),
     state(
       'out',
       style({
         opacity: 0,
         ...c.outStyle,
-      })
+      }),
     ),
     // state transitions don't pick up well when coming from void state
     // (e.g. part of ngIf statement), so explicitly define

@@ -28,7 +28,10 @@ export class BudgetCellComponent implements OnInit, OnDestroy, OnChanges {
   cellValue$: Subscription;
   cellData: IBudgetCard[];
 
-  constructor(public store: BudgetStore, private cdr: ChangeDetectorRef) {}
+  constructor(
+    public store: BudgetStore,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this._addValueSubscription();

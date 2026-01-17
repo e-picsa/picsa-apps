@@ -27,7 +27,10 @@ const SELECT_OPTIONS = WEATHER_DATA.filter((w) => w.label !== '');
   standalone: false,
 })
 export class FormWeatherSelectComponent extends PicsaFormBaseSelectComponent<IWeatherDataEntry> {
-  constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {
+  constructor(
+    cdr: ChangeDetectorRef,
+    public dialog: MatDialog,
+  ) {
     super(cdr, SELECT_OPTIONS, WEATHER_DATA_HASHMAP);
   }
 }
