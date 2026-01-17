@@ -22380,7 +22380,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
+  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
   languageName: node
   linkType: hard
 
@@ -24283,9 +24283,9 @@ __metadata:
   linkType: hard
 
 "node-forge@npm:^1, node-forge@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "node-forge@npm:1.3.1"
-  checksum: 10c0/e882819b251a4321f9fc1d67c85d1501d3004b4ee889af822fd07f64de3d1a8e272ff00b689570af0465d65d6bf5074df9c76e900e0aff23e60b847f2a46fbe8
+  version: 1.3.3
+  resolution: "node-forge@npm:1.3.3"
+  checksum: 10c0/9c6f53b0ebb34865872cf62a35b0aef8fb337e2efc766626c2e3a0040f4c02933bf29a62ba999eb44a2aca73bd512c4eda22705a47b94654b9fb8ed53db9a1db
   languageName: node
   linkType: hard
 
