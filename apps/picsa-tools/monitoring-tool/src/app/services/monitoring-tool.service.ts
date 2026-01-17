@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -13,17 +13,13 @@ import * as SubmissionSchema from '../schema/submissions';
 
 @Injectable({ providedIn: 'root' })
 export class MonitoringToolService extends PicsaAsyncService {
+  private dbService = inject(PicsaDatabase_V2_Service);
+  private syncService = inject(PicsaDatabaseSyncService);
+  private translateService = inject(PicsaTranslateService);
+  private snackBar = inject(MatSnackBar);
+
   /** Track number of items pending push to server db (0 value implies fully synced) */
   public pendingSyncCount = -1;
-
-  constructor(
-    private dbService: PicsaDatabase_V2_Service,
-    private syncService: PicsaDatabaseSyncService,
-    private translateService: PicsaTranslateService,
-    private snackBar: MatSnackBar,
-  ) {
-    super();
-  }
 
   /**
    * Initialisation method automatically called on instantiation

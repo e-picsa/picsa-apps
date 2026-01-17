@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +26,13 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   standalone: false,
 })
 export class SubmissionListComponent implements OnInit, OnDestroy {
+  private service = inject(MonitoringToolService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private componentService = inject(PicsaCommonComponentsService);
+  private cdr = inject(ChangeDetectorRef);
+  private snackBar = inject(MatSnackBar);
+
   public submissionData = new MatTableDataSource<IFormSubmission>([]);
   public displayedColumns: string[] = [];
   public displayedColumnsMeta: IMonitoringForm['summaryFields'] = [];
@@ -30,15 +45,6 @@ export class SubmissionListComponent implements OnInit, OnDestroy {
   private componentDestroyed$ = new Subject<void>();
   private form: IMonitoringForm | null = null;
   private formId = '';
-
-  constructor(
-    private service: MonitoringToolService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private componentService: PicsaCommonComponentsService,
-    private cdr: ChangeDetectorRef,
-    private snackBar: MatSnackBar,
-  ) {}
 
   async ngOnInit(): Promise<void> {
     await this.service.ready();

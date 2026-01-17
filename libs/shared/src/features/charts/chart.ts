@@ -1,4 +1,13 @@
-import { Component, ElementRef, HostListener, Input, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+  SimpleChanges,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { IChartConfig } from '@picsa/models';
 import * as c3 from 'c3';
 
@@ -15,6 +24,8 @@ import * as c3 from 'c3';
     for similar implementation on chartjs lib
 */
 export class PicsaChartComponent {
+  private elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
+
   public chart: c3.ChartAPI;
 
   @ViewChild('chart', { static: true })
@@ -48,7 +59,6 @@ export class PicsaChartComponent {
       }, 200);
     }
   }
-  constructor(private elementRef: ElementRef<HTMLDivElement>) {}
 
   /**********************************************************************************
    *  Custom creation and change event handling

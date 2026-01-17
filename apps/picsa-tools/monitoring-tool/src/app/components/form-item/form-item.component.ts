@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   Injector,
   input,
   OnInit,
@@ -31,6 +32,12 @@ import { MonitoringMaterialModule } from '../material.module';
   imports: [MonitoringMaterialModule, PicsaTranslateModule],
 })
 export class FormItemComponent implements OnInit {
+  private service = inject(MonitoringToolService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+  private injector = inject(Injector);
+  private route = inject(ActivatedRoute);
+
   public form = input.required<Omit<IMonitoringForm, 'enketoDefinition'>>();
 
   public statusIcons = STATUS_ICONS;
@@ -47,13 +54,7 @@ export class FormItemComponent implements OnInit {
   // Placeholder signal will be replaced during init
   private submissions = signal<IFormSubmission[]>([]);
 
-  constructor(
-    private service: MonitoringToolService,
-    private dialog: MatDialog,
-    private router: Router,
-    private injector: Injector,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     effect(() => {
       this.updateSyncCounters(this.submissions());
     });

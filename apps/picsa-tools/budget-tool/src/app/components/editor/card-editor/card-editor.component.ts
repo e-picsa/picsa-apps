@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject,Input, Output } from '@angular/core';
 
 import { IBudgetPeriodType } from '../../../models/budget-tool.models';
 import { IBudgetCardWithValues } from '../../../schema';
@@ -11,14 +11,16 @@ import { BudgetStore } from '../../../store/budget.store';
   standalone: false,
 })
 export class BudgetCardEditorComponent {
+  store = inject(BudgetStore);
+
   currency: string;
   @Input() card: IBudgetCardWithValues;
   @Input() type: IBudgetPeriodType;
   @Output() deleteClicked = new EventEmitter<IBudgetCardWithValues>();
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues>();
 
-  constructor(public store: BudgetStore) {
-    this.currency = store.settings.currency;
+  constructor() {
+    this.currency = this.store.settings.currency;
   }
 
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky

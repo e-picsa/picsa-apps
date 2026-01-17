@@ -5,6 +5,7 @@ import {
   Component,
   computed,
   EventEmitter,
+  inject,
   OnInit,
   Output,
   ViewChild,
@@ -45,6 +46,11 @@ import { ConfigurationService, IUserSettings } from '../../provider';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaConfigurationSelectComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private configurationService = inject(ConfigurationService);
+  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+
   @Output() selectionChange = new EventEmitter<IUserSettings>();
 
   // mat-stepper prefers individual forms per step
@@ -92,13 +98,6 @@ export class PicsaConfigurationSelectComponent implements OnInit {
   ] as const;
 
   @ViewChild(MatStepper) stepper: MatStepper;
-
-  constructor(
-    private fb: FormBuilder,
-    private configurationService: ConfigurationService,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-  ) {}
 
   ngOnInit() {
     const { country_code, language_code, user_type } = this.configurationService.userSettings();

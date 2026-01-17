@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,9 @@ const modules = [MatButtonModule, MatIconModule, MatCardModule, MatProgressBarMo
   exports: modules,
 })
 export class ExtensionToolkitMaterialModule {
-  constructor(dataIconRegistry: DataIconRegistry) {
+  constructor() {
+    const dataIconRegistry = inject(DataIconRegistry);
+
     dataIconRegistry.registerMatIcons('tools');
   }
 }

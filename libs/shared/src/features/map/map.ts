@@ -6,6 +6,7 @@ import {
   Component,
   effect,
   EventEmitter,
+  inject,
   input,
   OnInit,
   Output,
@@ -25,6 +26,8 @@ import * as L from 'leaflet';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaMapComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+
   @Output() onMapReady = new EventEmitter<L.Map>();
   @Output() onLayerClick = new EventEmitter<L.Layer>();
   @Output() onMarkerClick = new EventEmitter<IMapMarker>();
@@ -47,7 +50,7 @@ export class PicsaMapComponent implements OnInit {
 
   private selected: { marker?: IMapMarker; renderedMarker?: L.Marker<any> } = {};
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor() {
     // Load any input markers whenever both markers and map exist
     effect(() => {
       const inputMarkers = this.markers();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,input, output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AlertBoxComponent } from '@picsa/components';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -29,6 +29,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionComponent {
+  private service = inject(ResourcesToolService);
+
   /** Resource collection id to load */
   public id = input.required<string>();
 
@@ -45,7 +47,7 @@ export class ResourceCollectionComponent {
   public links = signal<IResourceLink[]>([]);
   public collections = signal<IResourceCollection[]>([]);
 
-  constructor(private service: ResourcesToolService) {
+  constructor() {
     effect(() => {
       const id = this.id();
       this.loadCollection(id);

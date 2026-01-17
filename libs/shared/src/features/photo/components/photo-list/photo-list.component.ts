@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject,input } from '@angular/core';
 
 import { PicsaTranslateModule } from '../../../../modules';
 import { PhotoService } from '../../photo.service';
@@ -11,6 +11,8 @@ import { PhotoViewComponent } from '../photo-view/photo-view.component';
   styleUrl: './photo-list.component.scss',
 })
 export class PhotoListComponent {
+  private service = inject(PhotoService);
+
   album = input<string>();
 
   photos = computed(() => {
@@ -18,6 +20,4 @@ export class PhotoListComponent {
     const photoDocs = this.service.photos();
     return album ? photoDocs.filter((d) => d.album === album) : photoDocs;
   });
-
-  constructor(private service: PhotoService) {}
 }

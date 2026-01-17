@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { inject,Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { PicsaTranslateService } from '../../modules/translate/translate.service';
@@ -9,10 +9,8 @@ import { IPicsaDialogConfig, IPicsaDialogData } from './dialog.models';
   providedIn: 'root',
 })
 export class PicsaDialogService {
-  constructor(
-    private dialog: MatDialog,
-    private injector: Injector,
-  ) {}
+  private dialog = inject(MatDialog);
+  private injector = inject(Injector);
 
   /**
    * Specify whether to use translation (default true)

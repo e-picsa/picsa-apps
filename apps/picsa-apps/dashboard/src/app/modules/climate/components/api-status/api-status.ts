@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,input, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -32,6 +32,9 @@ const DEFAULT_OPTIONS: IApiStatusOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardClimateApiStatusComponent implements OnDestroy {
+  api = inject(ClimateApiService);
+  service = inject(ClimateService);
+
   public label = input('');
   public status = signal<IStatus>('pending');
   public code = signal<number>(0);
@@ -39,10 +42,7 @@ export class DashboardClimateApiStatusComponent implements OnDestroy {
   private componentDestroyed$ = new Subject();
   private subscription: Subscription;
 
-  constructor(
-    public api: ClimateApiService,
-    public service: ClimateService,
-  ) {
+  constructor() {
     effect(() => {
       const id = this.clientId();
       // clear any previous subscription

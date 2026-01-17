@@ -1,6 +1,14 @@
 /* tslint:disable */
 /* auto-generated angular directive proxies */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, NgZone } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  NgZone,
+} from '@angular/core';
 import { Components } from '@picsa/webcomponents';
 
 import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
@@ -17,12 +25,13 @@ import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
   standalone: false,
 })
 export class EnketoWebform {
+  protected z = inject(NgZone);
+
   protected el: HTMLElement;
-  constructor(
-    c: ChangeDetectorRef,
-    r: ElementRef,
-    protected z: NgZone,
-  ) {
+  constructor() {
+    const c = inject(ChangeDetectorRef);
+    const r = inject(ElementRef);
+
     c.detach();
     this.el = r.nativeElement;
     proxyOutputs(this, this.el, ['dataUpdated', 'formSaved']);

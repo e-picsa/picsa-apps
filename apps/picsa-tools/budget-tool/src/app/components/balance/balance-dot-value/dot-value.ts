@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject,Input } from '@angular/core';
 
 import { IBudgetValueCounters } from '../../../models/budget-tool.models';
 import { BudgetStore, IBudgetCounterSVGIcons } from '../../../store/budget.store';
@@ -10,8 +10,10 @@ import { BudgetStore, IBudgetCounterSVGIcons } from '../../../store/budget.store
   standalone: false,
 })
 export class BudgetBalanceDotValueComponent {
+  private store = inject(BudgetStore);
+
   public svgIcons: IBudgetCounterSVGIcons;
-  constructor(private store: BudgetStore) {
+  constructor() {
     this.svgIcons = this.store.counterSVGIcons;
   }
   _value = 0;

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject,OnDestroy, OnInit } from '@angular/core';
 import { IsActiveMatchOptions } from '@angular/router';
 import { IChartMeta } from '@picsa/models/src';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,6 +13,8 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   standalone: false,
 })
 export class ViewSelectComponent implements OnInit, OnDestroy {
+  private chartService = inject(ClimateChartService);
+
   /** List of charts available for display */
   public availableCharts: IChartMeta[] = [];
 
@@ -28,8 +30,6 @@ export class ViewSelectComponent implements OnInit, OnDestroy {
   };
 
   private componentDestroyed$ = new Subject();
-
-  constructor(private chartService: ClimateChartService) {}
 
   ngOnInit(): void {
     this.subscribeToStationChanges();

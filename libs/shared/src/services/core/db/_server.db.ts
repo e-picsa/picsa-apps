@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import type { IDBDoc, IDBEndpoint } from '@picsa/models';
 import {
   collection,
@@ -19,7 +19,9 @@ import { AbstractDBService } from './abstract.db';
 @Injectable({ providedIn: 'root' })
 export class DBServerService implements AbstractDBService {
   private firestore: Firestore;
-  constructor(firebaseService: PicsaFirebaseService) {
+  constructor() {
+    const firebaseService = inject(PicsaFirebaseService);
+
     this.firestore = getFirestore(firebaseService.app);
   }
 

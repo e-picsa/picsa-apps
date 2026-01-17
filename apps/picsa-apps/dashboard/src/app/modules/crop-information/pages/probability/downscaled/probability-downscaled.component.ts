@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject,signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,6 +34,10 @@ type ICropDataDownscaledWithStation = ICropDataDownscaled['Row'] & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProbabilityDownscaledComponent {
+  private route = inject(ActivatedRoute);
+  private deploymentService = inject(DeploymentDashboardService);
+  private service = inject(CropInformationService);
+
   public locationId = toSignal(this.route.params.pipe(map((v) => v.locationId)));
   private countryCode = computed(() => this.deploymentService.activeDeployment()?.country_code);
 
@@ -54,11 +58,7 @@ export class ProbabilityDownscaledComponent {
     return this.getLocationData(downscaledData);
   });
 
-  constructor(
-    private route: ActivatedRoute,
-    private deploymentService: DeploymentDashboardService,
-    private service: CropInformationService,
-  ) {
+  constructor() {
     effect(() => {
       const location_id = this.locationId();
       const country_code = this.countryCode();

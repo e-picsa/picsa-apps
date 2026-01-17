@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ILocaleCode, LOCALES_DATA_HASHMAP } from '@picsa/data';
 import type { Database } from '@picsa/server-types';
@@ -25,6 +34,8 @@ type ActionSummary = { [key in Action]: ITranslationRow[] };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsCSVImportComponent {
+  private service = inject(TranslationDashboardService);
+
   public importSummary = signal<ActionSummary>(this.prepareActions([], []));
   public importTotal = computed(() => {
     const { add, update } = this.importSummary();
@@ -36,7 +47,7 @@ export class TranslationsCSVImportComponent {
   private uppy: Uppy;
   private dropEl = viewChild('dragDrop', { read: ElementRef });
 
-  constructor(private service: TranslationDashboardService) {
+  constructor() {
     effect(() => {
       const el = this.dropEl();
       if (el) {

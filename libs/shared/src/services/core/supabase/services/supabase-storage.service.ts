@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import type { Database } from '@picsa/server-types';
 import { FileObject, FileOptions } from '@supabase/storage-js';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -31,15 +31,13 @@ type IStorageEntrySDK = FileObject;
  **/
 @Injectable({ providedIn: 'root' })
 export class SupabaseStorageService extends PicsaAsyncService {
+  private notificationService = inject(PicsaNotificationService);
+
   private storage: SupabaseClient['storage'];
   private client: SupabaseClient;
 
   /** Track parent service registration */
   private register$ = new Subject<SupabaseClient>();
-
-  constructor(private notificationService: PicsaNotificationService) {
-    super();
-  }
 
   public override async init(): Promise<void> {
     // wait for service to have supabase client registered (done in app module)

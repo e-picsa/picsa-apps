@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject,Input, Output } from '@angular/core';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
 
 import { IBudgetCard, IBudgetCardType, IBudgetCardWithValues } from '../../../schema';
@@ -12,6 +12,8 @@ import { BudgetStore } from '../../../store/budget.store';
   standalone: false,
 })
 export class BudgetCellEditorCardSelectComponent {
+  store = inject(BudgetStore);
+
   @Input() set values(values: IBudgetCardWithValues[]) {
     this.setValues(values);
   }
@@ -26,8 +28,6 @@ export class BudgetCellEditorCardSelectComponent {
   selected: { [id: string]: boolean } = {};
   selectedArray: IBudgetCardWithValues[] = [];
   showAllCards = false;
-
-  constructor(public store: BudgetStore) {}
   // split type cards between those matching current enterprise and those not
   filterCards(cards: IBudgetCard[]) {
     const enterpriseGroup = this.store.enterpriseGroup;

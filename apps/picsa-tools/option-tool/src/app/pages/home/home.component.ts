@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject,OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { _wait } from '@picsa/utils/browser.utils';
 import { RxDocument } from 'rxdb';
@@ -15,6 +15,9 @@ import { OptionsToolService } from '../../services/options-tool.service';
   standalone: false,
 })
 export class HomeComponent implements AfterViewInit, OnDestroy {
+  private service = inject(OptionsToolService);
+  private route = inject(ActivatedRoute);
+
   public optionsDisplayList: IOptionsToolEntry[] = [];
 
   /** List of columns to display in table. Note, order will match template keys */
@@ -39,10 +42,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   @ViewChild('headerContent')
   headerContent: ElementRef<HTMLElement>;
 
-  constructor(
-    private service: OptionsToolService,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     this.addSubheaderColumns();
   }
 

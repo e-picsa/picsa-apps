@@ -1,4 +1,4 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -23,6 +23,12 @@ export interface IDataRefreshStatus {
 
 @Injectable({ providedIn: 'root' })
 export class ClimateService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+  private api = inject(ClimateApiService);
+  private router = inject(Router);
+  private deploymentSevice = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
+
   public apiStatus: number;
   public stations = signal<IStationRow[]>([]);
 
@@ -52,13 +58,7 @@ export class ClimateService extends PicsaAsyncService {
     ngRouterMergedSnapshot$(this.router).pipe(map(({ params }) => decodeURIComponent(params.stationId))),
   );
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private api: ClimateApiService,
-    private router: Router,
-    private deploymentSevice: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService,
-  ) {
+  constructor() {
     super();
     this.ready();
     // Update list of available stations for deployment country code and station id on change

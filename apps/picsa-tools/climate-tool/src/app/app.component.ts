@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 
 @Component({
@@ -8,8 +8,9 @@ import { PicsaTranslateService } from '@picsa/shared/modules/translate';
   standalone: false,
 })
 export class AppComponent {
+  translate = inject(PicsaTranslateService);
+
   title = 'climate-tool';
-  constructor(public translate: PicsaTranslateService) {}
 }
 
 @Component({

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject,Input } from '@angular/core';
 
 import { IBudgetValueCounters } from '../../../models/budget-tool.models';
 import { BudgetStore } from '../../../store/budget.store';
@@ -10,9 +10,10 @@ import { BudgetStore } from '../../../store/budget.store';
   standalone: false,
 })
 export class BudgetBalanceLegendComponent {
+  store = inject(BudgetStore);
+
   labels: string[] = [];
   values: number[] = [];
-  constructor(public store: BudgetStore) {}
   @Input() set valueCounters(valueCounters: IBudgetValueCounters) {
     if (valueCounters) {
       // only keep the even items (non-half values)

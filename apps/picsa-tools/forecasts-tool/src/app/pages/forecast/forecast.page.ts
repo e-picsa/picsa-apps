@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, OnDestroy, signal, viewChildren } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -49,6 +49,9 @@ interface IForecastSummary {
   ],
 })
 export class ForecastComponent implements OnDestroy {
+  private service = inject(ForecastService);
+  private configurationService = inject(ConfigurationService);
+
   /** Forecast summary for display in forecast-viewer component */
   public viewerForecast = signal<IForecastSummary | undefined>(undefined);
   public viewerOpen = signal(false);
@@ -74,13 +77,12 @@ export class ForecastComponent implements OnDestroy {
   /** List of rendered SupabaseStorageDownload components for direct interaction */
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
-  constructor(
-    private service: ForecastService,
-    private configurationService: ConfigurationService,
-  ) {
+  constructor() {
+    const configurationService = this.configurationService;
+
     effect(() => {
       const { location } = configurationService.userSettings();
-      service.setForecastLocation(location);
+      this.service.setForecastLocation(location);
     });
   }
 

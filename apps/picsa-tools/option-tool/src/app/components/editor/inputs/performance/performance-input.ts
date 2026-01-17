@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input, Provider } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  forwardRef,
+  inject,
+  Input,
+  Provider,
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectComponent } from '@picsa/forms/components/base/select';
@@ -60,7 +68,9 @@ export class PerformanceInputComponent extends PicsaFormBaseSelectComponent<(typ
     return this.selectedOption?.readonlyIcon || '';
   }
 
-  constructor(cdr: ChangeDetectorRef) {
+  constructor() {
+    const cdr = inject(ChangeDetectorRef);
+
     super(cdr, SELECT_OPTIONS);
   }
 }

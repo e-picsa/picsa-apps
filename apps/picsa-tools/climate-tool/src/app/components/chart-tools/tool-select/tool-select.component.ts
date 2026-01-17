@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { ClimateToolService } from '../../../services/climate-tool.service';
 
@@ -9,5 +9,5 @@ import { ClimateToolService } from '../../../services/climate-tool.service';
   standalone: false,
 })
 export class ToolSelectComponent {
-  constructor(public toolService: ClimateToolService) {}
+  toolService = inject(ClimateToolService);
 }

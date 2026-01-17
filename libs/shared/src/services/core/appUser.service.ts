@@ -1,4 +1,4 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject,Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { APP_VERSION } from '@picsa/environments/src/version';
@@ -19,6 +19,11 @@ type IAppUser = Database['public']['Tables']['app_users'];
  */
 @Injectable({ providedIn: 'root' })
 export class AppUserService {
+  private configurationService = inject(ConfigurationService);
+  private supabaseService = inject(SupabaseService);
+  private networkService = inject(NetworkService);
+  private errorService = inject(ErrorHandlerService);
+
   public enabled = signal(false);
 
   /** User supabase auth_user id as db only allows user to write to own row */
@@ -55,12 +60,7 @@ export class AppUserService {
   /** Debounce profile update db writes  */
   private pendingDBUpdateDebounded = debounceSignal(this.pendingDBUpdate, 5000, null);
 
-  constructor(
-    private configurationService: ConfigurationService,
-    private supabaseService: SupabaseService,
-    private networkService: NetworkService,
-    private errorService: ErrorHandlerService,
-  ) {
+  constructor() {
     // Ensure auth user signed in
     effect(async () => {
       if (!this.enabled()) return;

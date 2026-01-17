@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject,Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
@@ -17,16 +17,14 @@ import { BudgetCardNewDialog } from './card-new-dialog';
   standalone: false,
 })
 export class BudgetCardNew {
+  dialog = inject(MatDialog);
+  store = inject(BudgetStore);
+  private cardService = inject(BudgetCardService);
+
   @Input() type: IBudgetCardType;
   @Input() groupings: string[];
   @Output() cardSaved = new EventEmitter<IBudgetCard>();
   card = PLACEHOLDER_CARD;
-
-  constructor(
-    public dialog: MatDialog,
-    public store: BudgetStore,
-    private cardService: BudgetCardService,
-  ) {}
 
   showCardDialog() {
     // groupings should match the current enterprise unless otherwise specified

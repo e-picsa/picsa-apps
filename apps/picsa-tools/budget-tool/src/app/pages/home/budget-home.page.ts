@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,OnInit, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -21,18 +21,16 @@ import { BudgetListItemComponent } from './list-item/budget-list-item';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetHomePage implements OnInit {
+  private store = inject(BudgetStore);
+  private dialog = inject(PicsaDialogService);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   sharedDisabled: boolean;
   budgetDownloadMessage: string;
 
   public savedBudgets = signal<IBudget[]>([]);
-
-  constructor(
-    private store: BudgetStore,
-    private dialog: PicsaDialogService,
-    private matDialog: MatDialog,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     this.loadBudgets();

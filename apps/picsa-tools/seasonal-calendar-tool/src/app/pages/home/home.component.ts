@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject,OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaDialogService } from '@picsa/shared/features';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
@@ -16,6 +16,11 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   standalone: false,
 })
 export class HomeComponent implements OnDestroy {
+  private service = inject(SeasonCalendarService);
+  dialog = inject(MatDialog);
+  private dialogService = inject(PicsaDialogService);
+  private formService = inject(SeasonCalendarFormService);
+
   /** Track current calendar selected from editing from menu popup */
   public calendarCopyForm: ISeasonCalendarForm;
   public calendarDeleteDoc: RxDocument<CalendarDataEntry>;
@@ -24,12 +29,7 @@ export class HomeComponent implements OnDestroy {
 
   public dbCalendars: RxDocument<CalendarDataEntry>[] = [];
 
-  constructor(
-    private service: SeasonCalendarService,
-    public dialog: MatDialog,
-    private dialogService: PicsaDialogService,
-    private formService: SeasonCalendarFormService,
-  ) {
+  constructor() {
     this.subscribeToDbChanges();
   }
 

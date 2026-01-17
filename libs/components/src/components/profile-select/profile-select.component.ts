@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject,OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ANIMATION_DELAYED, FadeInOut } from '@picsa/shared/animations';
@@ -24,6 +24,10 @@ const PROFILE_FORM_BASE: { [key in keyof IPicsaUser]: FormControl } = {
   standalone: false,
 })
 export class ProfileSelectComponent implements OnInit, OnDestroy {
+  dialog = inject(MatDialog);
+  private userService = inject(PicsaUserService);
+  private picsaDialog = inject(PicsaDialogService);
+
   public activeProfile: IPicsaUser;
   public contentView: 'list' | 'create' | 'edit' = 'list';
   public profileForm: FormGroup<typeof PROFILE_FORM_BASE>;
@@ -31,12 +35,9 @@ export class ProfileSelectComponent implements OnInit, OnDestroy {
 
   private componentDestroyed$ = new Subject<boolean>();
 
-  constructor(
-    public dialog: MatDialog,
-    private userService: PicsaUserService,
-    private picsaDialog: PicsaDialogService,
-    fb: FormBuilder,
-  ) {
+  constructor() {
+    const fb = inject(FormBuilder);
+
     this.profileForm = fb.group(PROFILE_FORM_BASE);
     this.resetForm();
   }

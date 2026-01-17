@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsModule } from '@picsa/components';
@@ -115,17 +115,15 @@ if (!ENVIRONMENT.production) {
   styleUrl: './extension-home.component.scss',
 })
 export class ExtensionHomeComponent {
+  monitoringService = inject(MonitoringToolService);
+  private router = inject(Router);
+  private tourService = inject(TourService);
+  private configurationService = inject(ConfigurationService);
+
   /** List of home page display links, filtered when running in production */
   public picsaLinks = PAGE_LINKS;
   public additionalLinks = ADDITIONAL_LINKS;
   public version = APP_VERSION;
-
-  constructor(
-    public monitoringService: MonitoringToolService,
-    private router: Router,
-    private tourService: TourService,
-    private configurationService: ConfigurationService,
-  ) {}
 
   linkClicked(link: IPageLink) {
     this.router.navigate([link.url]);

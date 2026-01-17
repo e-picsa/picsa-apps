@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject,Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 
 import { VideoPlayerService } from '../video-player.service';
@@ -12,6 +12,8 @@ const THUMBNAIL_HEIGHT = 360;
   styleUrls: ['./video-thumbnail.component.scss'],
 })
 export class VideoThumbnailComponent implements OnInit, OnDestroy {
+  private service = inject(VideoPlayerService);
+
   @Input() videoUrl?: string;
 
   @Input() thumbnail?: string;
@@ -22,8 +24,6 @@ export class VideoThumbnailComponent implements OnInit, OnDestroy {
 
   /** Thumbnail generation video element */
   private videoEl = signal<HTMLVideoElement | undefined>(undefined);
-
-  constructor(private service: VideoPlayerService) {}
 
   // Load existing thumbnail (if exists), or create videoEl to generate thumbnail
   async ngOnInit() {

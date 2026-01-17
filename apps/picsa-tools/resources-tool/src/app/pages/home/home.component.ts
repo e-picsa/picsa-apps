@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject,OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -15,9 +15,9 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   imports: [PicsaTranslateModule, MatButtonModule, MatIconModule, ResourceItemCollectionComponent, RouterLink],
 })
 export class HomeComponent implements OnInit {
-  public collections: IResourceCollection[];
+  service = inject(ResourcesToolService);
 
-  constructor(public service: ResourcesToolService) {}
+  public collections: IResourceCollection[];
 
   async ngOnInit() {
     await this.service.ready();

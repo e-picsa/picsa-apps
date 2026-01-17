@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject,Input, OnInit } from '@angular/core';
 import { ILineToolOptions, IProbabilityToolOptions } from '@picsa/models/src';
 
 import { IProbabilities } from '../../../models';
@@ -13,6 +13,8 @@ import { ClimateChartService } from '../../../services/climate-chart.service';
 
 // take an array of numbers (values) and number to test (x), and display metrics
 export class ProbabilityToolComponent implements OnInit {
+  private chartService = inject(ClimateChartService);
+
   @Input() chartName: string;
 
   probabilities?: IProbabilities;
@@ -40,8 +42,6 @@ export class ProbabilityToolComponent implements OnInit {
     this._values = values;
     this.updateProbabilities();
   }
-
-  constructor(private chartService: ClimateChartService) {}
 
   ngOnInit(): void {
     this.lineOptions = this.chartService.chartDefinition!.tools.line;

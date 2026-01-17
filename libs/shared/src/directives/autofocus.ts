@@ -1,4 +1,4 @@
-import { Directive, ElementRef, input } from '@angular/core';
+import { Directive, ElementRef, inject,input } from '@angular/core';
 
 /**
  * Small utility to ensure element autofocuses when page loaded
@@ -17,8 +17,9 @@ import { Directive, ElementRef, input } from '@angular/core';
   selector: '[appAutoFocus]',
 })
 export class AutofocusDirective {
-  appAutofocus = input(true); //Control autofocus
-  constructor(private host: ElementRef) {}
+  private host = inject(ElementRef);
+
+  appAutofocus = input(true);
 
   ngAfterViewInit() {
     this.host.nativeElement.focus();

@@ -1,4 +1,4 @@
-import { Injectable, NgZone, Optional } from '@angular/core';
+import { inject,Injectable, NgZone } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
@@ -19,12 +19,10 @@ export class DeepLinksServiceConfig {
  * https://capacitorjs.com/docs/guides/deep-links#angular
  */
 export class DeepLinksService {
-  constructor(
-    @Optional() public config: DeepLinksServiceConfig,
-    private zone: NgZone,
-    private router: Router,
-    private bottomSheet: MatBottomSheet,
-  ) {}
+  config = inject(DeepLinksServiceConfig, { optional: true });
+  private zone = inject(NgZone);
+  private router = inject(Router);
+  private bottomSheet = inject(MatBottomSheet);
 
   public init() {
     if (Capacitor.isNativePlatform()) {

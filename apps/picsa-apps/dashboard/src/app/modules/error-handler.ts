@@ -1,9 +1,11 @@
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, inject,Injectable } from '@angular/core';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardErrorHandler implements ErrorHandler {
-  constructor(private notificationService: PicsaNotificationService) {
+  private notificationService = inject(PicsaNotificationService);
+
+  constructor() {
     // Ensure errors handled if thrown globally
     // https://github.com/angular/angular/issues/56240
     window.addEventListener('unhandledrejection', (e) => {

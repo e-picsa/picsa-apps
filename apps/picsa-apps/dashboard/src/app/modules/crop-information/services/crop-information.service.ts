@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject,Injectable, signal } from '@angular/core';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -20,6 +20,10 @@ export type ICropDataMerged = ICropData['Row'] & { downscaled: ICropDataMergedWa
 
 @Injectable({ providedIn: 'root' })
 export class CropInformationService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+  private dashboardService = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
+
   public get cropDataTable() {
     return this.supabaseService.db.table('crop_data');
   }
@@ -37,14 +41,6 @@ export class CropInformationService extends PicsaAsyncService {
     const downscaledData = this.downscaledData();
     return this.mergeData(data, downscaledData);
   });
-
-  constructor(
-    private supabaseService: SupabaseService,
-    private dashboardService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService,
-  ) {
-    super();
-  }
 
   public override async init() {
     await this.supabaseService.ready();

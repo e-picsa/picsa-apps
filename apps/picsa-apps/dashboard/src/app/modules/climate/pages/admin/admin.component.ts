@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject,signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -73,6 +73,11 @@ const DISPLAY_COLUMNS: (keyof IStationAdminSummary)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateAdminPageComponent {
+  private service = inject(ClimateService);
+  private deploymentService = inject(DeploymentDashboardService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public tableData = computed(() => {
     const stations = this.service.stations();
     const allStationDataHashmap = this.allStationDataHashmap();
@@ -96,12 +101,7 @@ export class ClimateAdminPageComponent {
   /** Keep reference to generated row update signals to prevent recreation on data load */
   private rowUpdateSignals = new Map<string, WritableSignal<IStatusUpdate>>();
 
-  constructor(
-    private service: ClimateService,
-    private deploymentService: DeploymentDashboardService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     effect(async () => {
       const country_code = this.deploymentService.activeDeployment()?.country_code;
       if (country_code) {

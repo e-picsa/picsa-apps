@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -38,6 +47,9 @@ type ImportTranslationEntry = { tool: string; context: string; English: string; 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsXLSXImportComponent {
+  private service = inject(TranslationDashboardService);
+  private deploymentService = inject(DeploymentDashboardService);
+
   public importLocaleOptions = signal<ILocaleDataEntry[]>([]);
   public importLocaleSelected = signal<ILocaleDataEntry | undefined>(undefined);
   private importTranslationData = signal<ImportTranslationEntry[] | undefined>(undefined);
@@ -68,10 +80,7 @@ export class TranslationsXLSXImportComponent {
   private uppy: Uppy;
   private dropEl = viewChild<unknown, ElementRef<HTMLDivElement>>('dragDrop', { read: ElementRef });
 
-  constructor(
-    private service: TranslationDashboardService,
-    private deploymentService: DeploymentDashboardService,
-  ) {
+  constructor() {
     effect(() => {
       const el = this.dropEl();
       if (el) {

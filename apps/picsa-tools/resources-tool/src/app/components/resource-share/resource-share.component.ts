@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Capacitor } from '@capacitor/core';
@@ -15,15 +15,13 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   imports: [MatButtonModule, MatIconModule],
 })
 export class ResourceShareComponent {
+  private service = inject(ResourcesToolService);
+  private cdr = inject(ChangeDetectorRef);
+
   public attachment?: RxAttachment<IResourceFile>;
 
   link = input.required<string>();
   uri = input<string>();
-
-  constructor(
-    private service: ResourcesToolService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   public async share() {
     // on native prefer to share file directly

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -33,6 +33,11 @@ const TABLE_DISPLAY_COLUMNS: (keyof ICropDataDownscaledTableData)[] = ['location
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityComponent {
+  private service = inject(CropInformationService);
+  private deploymentService = inject(DeploymentDashboardService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public downscaledTableData = signal<ICropDataDownscaledTableData[]>([]);
 
   public downscaledTableDataOptions = signal<IDataTableOptions>({
@@ -40,12 +45,7 @@ export class CropProbabilityComponent {
     hideColumns: [],
   });
 
-  constructor(
-    private service: CropInformationService,
-    private deploymentService: DeploymentDashboardService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     this.service.ready();
 
     effect(async () => {

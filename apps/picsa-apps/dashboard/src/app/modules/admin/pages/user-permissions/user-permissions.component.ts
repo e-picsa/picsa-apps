@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Database, FunctionResponses } from '@picsa/server-types';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features/data-table';
@@ -23,6 +32,10 @@ interface IUserWithRoles extends IAuthUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminUserPermissionsComponent implements OnInit {
+  dialog = inject(MatDialog);
+  private supabase = inject(SupabaseService);
+  private deploymentService = inject(DeploymentDashboardService);
+
   /** List of all auth users combined with active deployment role */
   public allUsers = computed(() => {
     const users = this.authUsers();
@@ -59,12 +72,6 @@ export class AdminUserPermissionsComponent implements OnInit {
   private get deploymentId() {
     return this.deploymentService.activeDeployment().id;
   }
-
-  constructor(
-    public dialog: MatDialog,
-    private supabase: SupabaseService,
-    private deploymentService: DeploymentDashboardService,
-  ) {}
 
   async ngOnInit() {
     await this.supabase.ready();

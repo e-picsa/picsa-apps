@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject,OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationStackService } from '@picsa/components/src/services/navStack.service';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -18,6 +18,12 @@ import { MonitoringToolService } from '../../../services/monitoring-tool.service
   standalone: false,
 })
 export class FormViewComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private monitoringService = inject(MonitoringToolService);
+  private dialogService = inject(PicsaDialogService);
+  private navStackService = inject(NavigationStackService);
+
   public formInitial: {
     /** html form representation */
     form: string;
@@ -44,13 +50,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
   /** DB doc linked to current submission entry */
   private submissionDoc?: RxDocument<IFormSubmission>;
   private componentDestroyed$ = new Subject<void>();
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private monitoringService: MonitoringToolService,
-    private dialogService: PicsaDialogService,
-    private navStackService: NavigationStackService,
-  ) {}
 
   async ngOnDestroy(): Promise<void> {
     await this.handleViewDestroy();

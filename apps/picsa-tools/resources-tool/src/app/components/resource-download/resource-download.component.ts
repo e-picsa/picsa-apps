@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   Input,
   input,
   OnDestroy,
@@ -27,6 +28,9 @@ import { ResourcesToolService } from '../../services/resources-tool.service';
   imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, SizeMBPipe],
 })
 export class ResourceDownloadComponent implements OnDestroy {
+  private service = inject(ResourcesToolService);
+  private downloadService = inject(ResourcesDownloadService);
+
   public downloadStatus = computed(() => this.downloader()?.status());
   public downloadProgress = computed(() => this.downloader()?.progress() || 0);
 
@@ -45,10 +49,7 @@ export class ResourceDownloadComponent implements OnDestroy {
 
   private downloader = signal<DownloadEntry | undefined>(undefined);
 
-  constructor(
-    private service: ResourcesToolService,
-    private downloadService: ResourcesDownloadService,
-  ) {
+  constructor() {
     effect(async () => {
       const resource = this.resource();
       // load db doc when input resource changes

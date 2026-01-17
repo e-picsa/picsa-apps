@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, ElementRef, input, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject,input, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -16,6 +16,8 @@ import { ENTRY_TEMPLATE } from '../../schema';
   imports: [PicsaTranslateModule, MatButtonModule, MatIconModule],
 })
 export class PhotoInputComponent {
+  private photoService = inject(PhotoService);
+
   @ViewChild('fileInput') fileInput: ElementRef;
   /** Store photo within a specific named album */
   album = input.required<string>();
@@ -24,8 +26,6 @@ export class PhotoInputComponent {
    * If duplicate will override
    */
   name = input<string>();
-
-  constructor(private photoService: PhotoService) {}
 
   async ngOnInit() {
     await this.photoService.init();

@@ -1,4 +1,4 @@
-import { effect, Injectable, signal, WritableSignal } from '@angular/core';
+import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
@@ -28,6 +28,10 @@ interface LoaderConfig {
 
 @Injectable({ providedIn: 'root' })
 export class ForecastService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+  private dbService = inject(PicsaDatabase_V2_Service);
+  private dbAttachmentService = inject(PicsaDatabaseAttachmentService);
+
   public enabled = signal(false);
 
   public dailyForecastDocs = signal<RxDocument<IForecast>[]>([], { equal: isEqual });
@@ -55,13 +59,8 @@ export class ForecastService extends PicsaAsyncService {
     return this.dbService.db.collections['forecasts'] as RxCollection<IForecast>;
   }
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private dbService: PicsaDatabase_V2_Service,
-    private dbAttachmentService: PicsaDatabaseAttachmentService,
-  ) {
+  constructor() {
     super();
-
     effect(async () => {
       const country_code = this.countryLocation();
       if (country_code) {

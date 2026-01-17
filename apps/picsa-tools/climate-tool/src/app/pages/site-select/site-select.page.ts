@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject,signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,6 +24,11 @@ const STRINGS = { showMap: translateMarker('Show Map'), showList: translateMarke
   imports: [MatButtonModule, MatIconModule, PicsaMapComponent, PicsaDataTableComponent],
 })
 export class SiteSelectPage {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private dataService = inject(ClimateDataService);
+  private configurationService = inject(ConfigurationService);
+
   selectedStation = signal<IStationMeta | undefined>(undefined, { equal: (a, b) => a?.id === b?.id });
   // avoid static: true for map as created dynamic
   picsaMap = viewChild<PicsaMapComponent>('picsaMap');
@@ -70,12 +75,7 @@ export class SiteSelectPage {
 
   private userCountryCode = computed(() => this.configurationService.userSettings().country_code);
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private dataService: ClimateDataService,
-    private configurationService: ConfigurationService,
-  ) {
+  constructor() {
     effect(async () => {
       const map = this.picsaMap()?.map();
       const country_code = this.userCountryCode();

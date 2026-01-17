@@ -16,12 +16,8 @@ import { PicsaAsyncService } from '../asyncService.service';
  */
 export class CrashlyticsService extends PicsaAsyncService {
   /** Service will only be enabled in production on native device (not supported on web) */
-  private enabled = false;
+  private enabled = Capacitor.isNativePlatform() && ENVIRONMENT.production;
 
-  constructor() {
-    super();
-    this.enabled = Capacitor.isNativePlatform() && ENVIRONMENT.production;
-  }
   public override async init() {
     if (this.enabled) {
       const { setEnabled, setUserId, sendUnsentReports, setCustomKey } = FirebaseCrashlytics;

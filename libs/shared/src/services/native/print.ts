@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { Capacitor } from '@capacitor/core';
 import { _wait } from '@picsa/utils';
@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas';
 
 @Injectable({ providedIn: 'root' })
 export class PrintProvider {
-  constructor(private socialSharing: SocialSharing) {}
+  private socialSharing = inject(SocialSharing);
 
   /**
    * Convert HTML content to an image and share

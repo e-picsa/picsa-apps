@@ -1,4 +1,4 @@
-import { Component, Inject, Injectable } from '@angular/core';
+import { Component, inject,Injectable } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
@@ -11,7 +11,7 @@ interface IUserNotificationData {
 
 @Injectable({ providedIn: 'root' })
 export class PicsaNotificationService {
-  constructor(private snackBar: MatSnackBar) {}
+  private snackBar = inject(MatSnackBar);
 
   /** Show a user notification with an error icon (dismiss after 2s) */
   public showErrorNotification(message: string, config: MatSnackBarConfig = { duration: 3000 }) {
@@ -49,8 +49,6 @@ export class PicsaNotificationService {
   imports: [MatIconModule, MatButtonModule],
 })
 export class SnackBarWithIconComponent {
-  constructor(
-    @Inject(MAT_SNACK_BAR_DATA) public data: IUserNotificationData,
-    public snackRef: MatSnackBarRef<SnackBarWithIconComponent>,
-  ) {}
+  data = inject<IUserNotificationData>(MAT_SNACK_BAR_DATA);
+  snackRef = inject<MatSnackBarRef<SnackBarWithIconComponent>>(MatSnackBarRef);
 }

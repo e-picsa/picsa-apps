@@ -1,5 +1,14 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import type { ITranslationEntry } from '@picsa/i18n/src/types';
@@ -36,6 +45,8 @@ type ImportActionSummary = { [key in ImportActions]: ITranslationImportEntry[] }
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsJSONImportComponent {
+  private service = inject(TranslationDashboardService);
+
   public importSummary = signal<ImportActionSummary>(this.generateSourceSummary({}, {}));
   public importCounter = signal(0);
   public importTotal = signal(-1);
@@ -62,7 +73,7 @@ export class TranslationsJSONImportComponent {
   private uppy: Uppy;
   private dropEl = viewChild('dragDrop', { read: ElementRef });
 
-  constructor(private service: TranslationDashboardService) {
+  constructor() {
     effect(() => {
       const el = this.dropEl();
       if (el) {

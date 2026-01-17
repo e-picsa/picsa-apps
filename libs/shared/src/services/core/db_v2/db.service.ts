@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import md5 from 'crypto-js/md5';
 import { addRxPlugin, createRxDatabase, MangoQuerySelector, nativeSha256, RxCollection, RxDatabase } from 'rxdb';
@@ -23,17 +23,13 @@ import { IPicsaCollectionCreator } from './models';
  */
 @Injectable({ providedIn: 'root' })
 export class PicsaDatabase_V2_Service extends PicsaAsyncService {
+  private userService = inject(PicsaUserService);
+  private syncService = inject(PicsaDatabaseSyncService);
+
   public override initOnCreate = true;
   public db: RxDatabase<{
     [key: string]: RxCollection;
   }>;
-
-  constructor(
-    private userService: PicsaUserService,
-    private syncService: PicsaDatabaseSyncService,
-  ) {
-    super();
-  }
 
   /**
    * Initialise the database

@@ -3,6 +3,7 @@ import {
   computed,
   effect,
   ElementRef,
+  inject,
   OnDestroy,
   output,
   signal,
@@ -31,6 +32,11 @@ import { BUDGET_PERIOD_ROWS } from '../../store/templates';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetEditorComponent implements OnDestroy {
+  service = inject(BudgetService);
+  store = inject(BudgetStore);
+  cardService = inject(BudgetCardService);
+  private dialog = inject(MatDialog);
+
   /** View reference to ng-template content shown in dialog */
   @ViewChild('cardsListDialog') cardsListDialog: TemplateRef<any>;
   @ViewChild('cardScroller', { static: false }) cardScroller: ElementRef<HTMLDivElement>;
@@ -50,21 +56,16 @@ export class BudgetEditorComponent implements OnDestroy {
 
   private cardSubscription: Subscription;
 
-  constructor(
-    public service: BudgetService,
-    public store: BudgetStore,
-    public cardService: BudgetCardService,
-    private dialog: MatDialog,
-  ) {
+  constructor() {
     effect(() => {
-      const type = service.activeType();
+      const type = this.service.activeType();
       if (type) {
         this.loadBudgetCards(type);
         this.scrollToType(type);
       }
     });
     effect(() => {
-      const period = service.activePeriod();
+      const period = this.service.activePeriod();
       if (period !== undefined) {
         this.loadEditorData();
       }

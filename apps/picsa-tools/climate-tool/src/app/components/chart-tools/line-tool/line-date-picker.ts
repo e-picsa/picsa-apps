@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { DateRange, MatDateRangeSelectionStrategy } from '@angular/material/datepicker';
 
 @Injectable()
 export class LineDatePickerSelectionStrategy<D> implements MatDateRangeSelectionStrategy<D> {
-  constructor(private _dateAdapter: DateAdapter<D>) {}
+  private _dateAdapter = inject<DateAdapter<D>>(DateAdapter);
 
   selectionFinished(date: D | null): DateRange<D> {
     return this.selectAsWeek(date);

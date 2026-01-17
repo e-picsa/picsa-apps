@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   ElementRef,
+  inject,
   OnDestroy,
   signal,
   viewChild,
@@ -46,6 +47,10 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class FarmerContentModuleHomeComponent implements OnDestroy {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  componentsService = inject(PicsaCommonComponentsService);
+
   public content = computed<IFarmerContent | undefined>(
     () => {
       const slug = this.slug();
@@ -101,11 +106,7 @@ export class FarmerContentModuleHomeComponent implements OnDestroy {
     ),
   );
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    public componentsService: PicsaCommonComponentsService,
-  ) {
+  constructor() {
     effect(() => {
       const content = this.content();
       if (!content) {

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, inject,Input, OnDestroy } from '@angular/core';
 
 import { ClimateChartService } from '../../../services/climate-chart.service';
 import { calcPercentile } from '../../../services/climate-tool.service';
@@ -15,6 +15,8 @@ interface ITercile {
   standalone: false,
 })
 export class TercilesToolComponent implements OnDestroy {
+  private chartService = inject(ClimateChartService);
+
   /** Value of current series data displayed */
   @Input() set values(values: number[]) {
     setTimeout(() => {
@@ -23,8 +25,6 @@ export class TercilesToolComponent implements OnDestroy {
   }
 
   terciles: { upper?: ITercile; lower?: ITercile } = {};
-
-  constructor(private chartService: ClimateChartService) {}
 
   ngOnDestroy() {
     // when tool is toggle off also remove from the graph

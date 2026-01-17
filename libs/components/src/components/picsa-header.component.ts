@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject,OnDestroy, OnInit, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
   ActivatedRouteSnapshot,
@@ -44,6 +44,11 @@ import { IHeaderOptions, PicsaCommonComponentsService } from '../services/compon
   standalone: false,
 })
 export class PicsaHeaderComponent implements OnInit, OnDestroy {
+  componentsService = inject(PicsaCommonComponentsService);
+  private router = inject(Router);
+  private titleStrategy = inject(DefaultTitleStrategy);
+  private titleService = inject(Title);
+
   public title = '';
   public style: 'primary' | 'inverted' = 'primary';
   public hideBackButton = signal(false);
@@ -56,12 +61,7 @@ export class PicsaHeaderComponent implements OnInit, OnDestroy {
 
   public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
 
-  constructor(
-    public componentsService: PicsaCommonComponentsService,
-    private router: Router,
-    private titleStrategy: DefaultTitleStrategy,
-    private titleService: Title,
-  ) {
+  constructor() {
     effect(() => {
       const headerOptions = this.componentsService.headerOptions();
       this.handleHeaderOptionsChange(headerOptions);

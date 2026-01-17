@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,6 +17,9 @@ import { DeploymentItemComponent } from '../deployment-item/deployment-item.comp
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeploymentSelectComponent implements OnInit {
+  service = inject(DeploymentDashboardService);
+  private authService = inject(DashboardAuthService);
+
   /** Computed list of deployments where user has auth roles */
   public userDeployments = computed<IDeploymentRow[]>(() => {
     const user = this.authService.authUser();
@@ -26,10 +29,6 @@ export class DeploymentSelectComponent implements OnInit {
     }
     return [];
   });
-  constructor(
-    public service: DeploymentDashboardService,
-    private authService: DashboardAuthService,
-  ) {}
 
   async ngOnInit() {
     await this.service.ready();

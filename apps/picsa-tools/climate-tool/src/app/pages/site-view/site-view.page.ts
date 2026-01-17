@@ -6,6 +6,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   OnDestroy,
   signal,
   TemplateRef,
@@ -38,6 +39,15 @@ interface ISiteViewParams {
   standalone: false,
 })
 export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
+  chartService = inject(ClimateChartService);
+  private dataService = inject(ClimateDataService);
+  private toolService = inject(ClimateToolService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private componentsService = inject(PicsaCommonComponentsService);
+  private viewContainer = inject(ViewContainerRef);
+  private cdr = inject(ChangeDetectorRef);
+
   public showRotateAnimation = signal(false);
 
   public stationSelectOptions = computed(() => {
@@ -52,16 +62,7 @@ export class ClimateSiteViewComponent implements OnDestroy, AfterViewInit {
   private _siteId: string;
 
   @ViewChild('headerPortal') headerPortal: TemplateRef<unknown>;
-  constructor(
-    public chartService: ClimateChartService,
-    private dataService: ClimateDataService,
-    private toolService: ClimateToolService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private componentsService: PicsaCommonComponentsService,
-    private viewContainer: ViewContainerRef,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     effect(async () => {
       const viewId = this.viewId() || 'rainfall';
       const siteId = this.siteId();

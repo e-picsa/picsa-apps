@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { switchMap } from 'rxjs';
@@ -14,6 +14,9 @@ import { MonitoringToolService } from '../../services/monitoring-tool.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
+  service = inject(MonitoringToolService);
+  private configurationService = inject(ConfigurationService);
+
   forms = signal<IMonitoringForm[]>([]);
 
   // wait until service ready emitted before subscribing to dbFormCollection
@@ -21,11 +24,8 @@ export class HomeComponent {
     initialValue: [],
   });
 
-  constructor(
-    public service: MonitoringToolService,
-    private configurationService: ConfigurationService,
-  ) {
-    service.ready();
+  constructor() {
+    this.service.ready();
 
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();

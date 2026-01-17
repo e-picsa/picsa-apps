@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
@@ -15,12 +15,10 @@ import { PicsaAsyncService } from '../asyncService.service';
   providedIn: 'root',
 })
 export class NativeStorageService extends PicsaAsyncService {
+  private fileOpener = inject(FileOpener);
+
   cacheName = 'picsa_extension';
   private basePath: string;
-
-  constructor(private fileOpener: FileOpener) {
-    super();
-  }
 
   public override async init() {
     console.log('[Native Storage] init');

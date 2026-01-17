@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -19,18 +19,14 @@ export interface IMonitoringStorageEntry extends IStorageEntry {
 }
 @Injectable({ providedIn: 'root' })
 export class MonitoringFormsDashboardService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+  private http = inject(HttpClient);
+  private notificationService = inject(PicsaNotificationService);
+
   public forms: IMonitoringFormsRow[] = [];
 
   public get table() {
     return this.supabaseService.db.table(FORMS_TABLE);
-  }
-
-  constructor(
-    private supabaseService: SupabaseService,
-    private http: HttpClient,
-    private notificationService: PicsaNotificationService,
-  ) {
-    super();
   }
 
   public override async init() {

@@ -1,5 +1,15 @@
 import { TemplatePortal } from '@angular/cdk/portal';
-import { Component, computed, effect, input, output, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  TemplateRef,
+  viewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +41,9 @@ import { filter, map } from 'rxjs';
   ],
 })
 export class AppLayoutComponent {
+  private router = inject(Router);
+  private configurationService = inject(ConfigurationService);
+
   showLoader = input<boolean>();
   ready = input<boolean>();
   menuButtonTemplate = viewChild.required<TemplateRef<HTMLElement>>('menuButtonTemplate');
@@ -47,12 +60,10 @@ export class AppLayoutComponent {
 
   public versionClicked = output();
 
-  constructor(
-    private router: Router,
-    private configurationService: ConfigurationService,
-    componentService: PicsaCommonComponentsService,
-    viewContainer: ViewContainerRef,
-  ) {
+  constructor() {
+    const componentService = inject(PicsaCommonComponentsService);
+    const viewContainer = inject(ViewContainerRef);
+
     effect(() => {
       // Inject menu button into global header when on farmer or extension home
       const { cdkPortalStart } = componentService.headerOptions();

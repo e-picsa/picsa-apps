@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, effect, Injector, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
@@ -25,26 +25,26 @@ import { _wait } from '@picsa/utils';
   standalone: false,
 })
 export class AppComponent implements OnInit {
+  private analyticsService = inject(AnalyticsService);
+  private router = inject(Router);
+  private performanceService = inject(PerformanceService);
+  private crashlyticsService = inject(CrashlyticsService);
+  private resourcesService = inject(ResourcesToolService);
+  private monitoringService = inject(MonitoringToolService);
+  private migrationService = inject(PicsaMigrationService);
+  private appUpdateService = inject(AppUpdateService);
+  private pushNotificationService = inject(PicsaPushNotificationService);
+  private injector = inject(Injector);
+  private appUserService = inject(AppUserService);
+  private errorService = inject(ErrorHandlerService);
+  private configurationService = inject(ConfigurationService);
+  private translateService = inject(PicsaTranslateService);
+
   title = 'PICSA App';
   public ready = signal(false);
   public showLoader = signal(false);
 
-  constructor(
-    private analyticsService: AnalyticsService,
-    private router: Router,
-    private performanceService: PerformanceService,
-    private crashlyticsService: CrashlyticsService,
-    private resourcesService: ResourcesToolService,
-    private monitoringService: MonitoringToolService,
-    private migrationService: PicsaMigrationService,
-    private appUpdateService: AppUpdateService,
-    private pushNotificationService: PicsaPushNotificationService,
-    private injector: Injector,
-    private appUserService: AppUserService,
-    private errorService: ErrorHandlerService,
-    private configurationService: ConfigurationService,
-    private translateService: PicsaTranslateService,
-  ) {
+  constructor() {
     effect(() => {
       const { language_code } = this.configurationService.userSettings();
       if (language_code) {

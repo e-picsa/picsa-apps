@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -24,21 +24,21 @@ type RouteParams = { id: string };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyDetailsComponent {
+  service = inject(CropInformationService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  dialog = inject(MatDialog);
+
   public isNewEntry = signal(false);
   public editMode = signal(false);
   public cropData = signal<ICropDataMerged | undefined>(undefined);
 
   private cropId = toSignal(this.route.params.pipe(map((v) => (v as RouteParams).id)));
 
-  constructor(
-    public service: CropInformationService,
-    private router: Router,
-    private route: ActivatedRoute,
-    public dialog: MatDialog,
-  ) {
-    service.ready();
+  constructor() {
+    this.service.ready();
     effect(() => {
-      if (!service.readySignal()) return;
+      if (!this.service.readySignal()) return;
       const cropId = this.cropId();
       if (cropId === 'add') {
         this.isNewEntry.set(true);

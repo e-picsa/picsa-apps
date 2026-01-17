@@ -42,6 +42,11 @@ type IForecastTab = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateForecastPageComponent {
+  private service = inject(ClimateService);
+  private supabase = inject(SupabaseService);
+  private deploymentService = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
+
   public forecasts = this.db.liveSignal({
     filter: {
       country_code: this.deploymentService.activeDeploymentCountry,
@@ -120,12 +125,7 @@ export class ClimateForecastPageComponent {
 
   private dialog = inject(MatDialog);
 
-  constructor(
-    private service: ClimateService,
-    private supabase: SupabaseService,
-    private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService,
-  ) {
+  constructor() {
     effect(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const memo = this.apiQueryMemo();

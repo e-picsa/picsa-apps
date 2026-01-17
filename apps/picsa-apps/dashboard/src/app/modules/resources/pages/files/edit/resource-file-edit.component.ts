@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LOCALES_DATA } from '@picsa/data';
@@ -32,15 +32,13 @@ import { IResourceFileRow } from '../../../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFileEditComponent implements OnInit {
-  constructor(
-    private service: ResourcesDashboardService,
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService,
-    private dialog: PicsaDialogService,
-  ) {}
+  private service = inject(ResourcesDashboardService);
+  private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private deploymentService = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
+  private dialog = inject(PicsaDialogService);
 
   public storageBucketName = computed(() => this.deploymentService.activeDeployment().country_code);
 

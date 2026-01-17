@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -33,16 +33,14 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordResetComponent {
+  private router = inject(Router);
+  private supabaseAuthService = inject(SupabaseAuthService);
+  private notificationService = inject(PicsaNotificationService);
+
   public form = new FormGroup<{ password: FormControl; confirmPassword?: FormControl }>({
     confirmPassword: new FormControl('', [Validators.required]),
     password: new FormControl('', Validators.required),
   });
-
-  constructor(
-    private router: Router,
-    private supabaseAuthService: SupabaseAuthService,
-    private notificationService: PicsaNotificationService,
-  ) {}
 
   public async handlePasswordReset() {
     if (this.form.value.password !== this.form.value.confirmPassword) {

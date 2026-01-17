@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { TranslationsEditComponent } from './translations-edit.component';
 
 describe('TranslationsEditComponent', () => {

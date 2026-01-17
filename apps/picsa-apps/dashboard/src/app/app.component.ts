@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject,signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaDialogService } from '@picsa/shared/features';
@@ -27,6 +27,9 @@ import { ProfileMenuComponent } from './modules/profile/components/profile-menu/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit {
+  supabaseService = inject(SupabaseService);
+  private deploymentService = inject(DeploymentDashboardService);
+
   title = 'picsa-apps-dashboard';
   navLinks = DASHBOARD_NAV_LINKS;
   adminLinks = ADMIN_NAV_LINKS;
@@ -36,11 +39,9 @@ export class AppComponent implements AfterViewInit {
 
   public initComplete = signal(false);
 
-  constructor(
-    public supabaseService: SupabaseService,
-    private deploymentService: DeploymentDashboardService,
-    dialogService: PicsaDialogService,
-  ) {
+  constructor() {
+    const dialogService = inject(PicsaDialogService);
+
     // HACK - disable translation in dialog to prevent loading extension app config service theme
     dialogService.useTranslation = false;
   }

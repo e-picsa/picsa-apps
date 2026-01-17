@@ -1,6 +1,15 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 
-import { ChangeDetectionStrategy, Component, computed, ElementRef, input, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -48,6 +57,9 @@ export type ISeasonStartProbability = { plantDate: number; label: string; probab
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropProbabilityTableComponent {
+  private service = inject(CropInformationService);
+  dialog = inject(MatDialog);
+
   /** Location water requiremetns */
   waterRequirements = input.required<ICropDataDownscaledWaterRequirements>();
   /** Station crop probability lookup table entries */
@@ -85,11 +97,6 @@ export class CropProbabilityTableComponent {
   });
 
   public copyStatus = signal<'ready' | 'pending' | 'success'>('ready');
-
-  constructor(
-    private service: CropInformationService,
-    public dialog: MatDialog,
-  ) {}
 
   public exportAppJson() {
     const output = { meta: this.tableMeta(), data: this.tableData() };

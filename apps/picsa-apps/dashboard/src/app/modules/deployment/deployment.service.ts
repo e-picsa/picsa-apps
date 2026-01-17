@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject,Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { GEO_LOCATION_DATA, GEO_LOCATION_PLACEHOLDER, IGelocationData } from '@picsa/data/geoLocation';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -9,6 +9,8 @@ import { IDeploymentRow } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class DeploymentDashboardService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+
   public readonly deployments = signal<IDeploymentRow[]>([]);
   // all routing is blocked unless deployment set, so consumers can safely assume will be defined
   public readonly activeDeployment = signal<IDeploymentRow>(null as any);
@@ -27,10 +29,6 @@ export class DeploymentDashboardService extends PicsaAsyncService {
 
   public get table() {
     return this.supabaseService.db.table('deployments');
-  }
-
-  constructor(private supabaseService: SupabaseService) {
-    super();
   }
 
   public override async init() {

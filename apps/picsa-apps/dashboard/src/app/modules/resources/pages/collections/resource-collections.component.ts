@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -39,6 +39,10 @@ const DISPLAY_COLUMNS: (keyof IMergedCollection)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceCollectionsComponent implements OnInit {
+  private service = inject(ResourcesDashboardService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public collections: IMergedCollection[] = [];
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
@@ -62,14 +66,10 @@ export class ResourceCollectionsComponent implements OnInit {
     },
   };
 
-  constructor(
-    private service: ResourcesDashboardService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     effect(() => {
       const collectionsHashmap = this.service.collectionsById();
-      const collections = service.collections().map((c) => this.mergeCollectionData(c, collectionsHashmap));
+      const collections = this.service.collections().map((c) => this.mergeCollectionData(c, collectionsHashmap));
       this.collections = collections.sort(this.sortCollections);
     });
   }

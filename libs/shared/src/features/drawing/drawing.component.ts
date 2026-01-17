@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   ElementRef,
+  inject,
   input,
   output,
   signal,
@@ -34,6 +35,8 @@ type Segment = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaDrawingComponent {
+  dialog = inject(MatDialog);
+
   /** SVG drawing viewbox and container size */
   size = input(384);
 
@@ -82,8 +85,6 @@ export class PicsaDrawingComponent {
   };
 
   @ViewChild('svgElement') svgElement: ElementRef<SVGElement>;
-
-  constructor(public dialog: MatDialog) {}
 
   handlePointerDown(event: PointerEvent) {
     // Set svg element as target for future pointer events (will release automatically on pointerup)

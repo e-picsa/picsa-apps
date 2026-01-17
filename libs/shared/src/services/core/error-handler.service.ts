@@ -1,4 +1,4 @@
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, inject,Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { fromError as getStacktraceFromError } from 'stacktrace-js';
 
@@ -8,9 +8,7 @@ import { CrashlyticsService } from './crashlytics.service';
   providedIn: 'root',
 })
 export class ErrorHandlerService extends ErrorHandler {
-  constructor(private crashlyticsService: CrashlyticsService) {
-    super();
-  }
+  private crashlyticsService = inject(CrashlyticsService);
 
   /**
    * Custom error handling. On web this uses the default error handling

@@ -40,6 +40,9 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupabaseSignInDialogComponent {
+  private notificationService = inject(PicsaNotificationService);
+  private supabaseAuthService = inject(SupabaseAuthService);
+
   public title = 'Sign In';
   public template: 'signIn' | 'register' | 'reset' = 'signIn';
 
@@ -51,11 +54,6 @@ export class SupabaseSignInDialogComponent {
   });
 
   private readonly dialogRef = inject(MatDialogRef<SupabaseSignInDialogComponent>);
-
-  constructor(
-    private notificationService: PicsaNotificationService,
-    private supabaseAuthService: SupabaseAuthService,
-  ) {}
 
   public enableResetMode() {
     this.template = 'reset';

@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { inject,ModuleWithProviders, NgModule } from '@angular/core';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +12,9 @@ import { DeepLinksService, DeepLinksServiceConfig } from './deep-links.service';
   declarations: [AppOpenPromptComponent],
 })
 export class PicsaDeepLinksModule {
-  constructor(deepLinksService: DeepLinksService) {
+  constructor() {
+    const deepLinksService = inject(DeepLinksService);
+
     deepLinksService.init();
   }
   // https://angular.io/guide/singleton-services#providing-a-singleton-service

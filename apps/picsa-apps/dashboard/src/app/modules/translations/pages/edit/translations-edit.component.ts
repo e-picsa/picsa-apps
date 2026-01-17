@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -15,15 +15,20 @@ import { ITranslationRow, TranslationDashboardService } from '../../translations
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsEditComponent {
+  private service = inject(TranslationDashboardService);
+  data = inject<{
+    row: ITranslationRow;
+    locale: ILocaleCode;
+  }>(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+
   public text: string;
 
   public form = this.fb.group({ value: [''] });
 
-  constructor(
-    private service: TranslationDashboardService,
-    @Inject(MAT_DIALOG_DATA) public data: { row: ITranslationRow; locale: ILocaleCode },
-    private fb: FormBuilder,
-  ) {
+  constructor() {
+    const data = this.data;
+
     // populate source text
     this.text = data.row.text;
     // populate saved translation value

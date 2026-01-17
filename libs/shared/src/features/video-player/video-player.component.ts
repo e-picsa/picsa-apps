@@ -1,4 +1,4 @@
-import { Component, effect, HostBinding, Input, input, signal, viewChild } from '@angular/core';
+import { Component, effect, HostBinding, inject,Input, input, signal, viewChild } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { capVideoPlayerOptions } from 'capacitor-video-player';
 
@@ -15,6 +15,9 @@ import { VideoPlayerService } from './video-player.service';
   standalone: false,
 })
 export class VideoPlayerComponent {
+  private analyticsService = inject(AnalyticsService);
+  private playerService = inject(VideoPlayerService);
+
   public isNative = Capacitor.isNativePlatform();
 
   public startTime: number;
@@ -51,10 +54,7 @@ export class VideoPlayerComponent {
 
   protected showThumbnail = signal(true);
 
-  constructor(
-    private analyticsService: AnalyticsService,
-    private playerService: VideoPlayerService,
-  ) {
+  constructor() {
     effect((onCleanup) => {
       const source = this.source();
       onCleanup(() => {

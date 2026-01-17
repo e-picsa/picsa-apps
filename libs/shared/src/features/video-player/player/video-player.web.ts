@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { firstValueFrom, map } from 'rxjs';
@@ -24,6 +24,8 @@ import { VideoPlayerBaseComponent } from './video-player.base';
   ],
 })
 export class VideoPlayerWebComponent extends VideoPlayerBaseComponent implements OnInit {
+  private sanitizer = inject(DomSanitizer);
+
   public videoUrl = computed(() => {
     const source = this.source();
     return this.sanitizer.bypassSecurityTrustUrl(source);
@@ -41,7 +43,7 @@ export class VideoPlayerWebComponent extends VideoPlayerBaseComponent implements
 
   private registeredListeners: Partial<Record<keyof HTMLVideoElementEventMap, () => void>> = {};
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor() {
     super();
     // Add/Remove event listeners on creation
     effect((onCleanup) => {
