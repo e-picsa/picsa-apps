@@ -60,6 +60,7 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   constructor() {
+    super();
     effect(async () => {
       const country_code = this.countryLocation();
       if (country_code) {
