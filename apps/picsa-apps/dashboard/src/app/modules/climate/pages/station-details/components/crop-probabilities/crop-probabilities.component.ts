@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 
@@ -15,7 +14,7 @@ interface IProbabilityEntry {
 
 @Component({
   selector: 'dashboard-climate-crop-probabilities',
-  imports: [CommonModule, DashboardClimateDataGridComponent, DashboardMaterialModule, PicsaDataTableComponent],
+  imports: [DashboardClimateDataGridComponent, DashboardMaterialModule, PicsaDataTableComponent],
   templateUrl: './crop-probabilities.component.html',
   styleUrl: './crop-probabilities.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -10,7 +9,7 @@ import { FarmerStepVideoPlayerComponent } from './player/step-video-player';
 
 @Component({
   selector: 'farmer-step-video',
-  imports: [CommonModule, MatListModule, MatDivider, PicsaVideoPlayerModule, FarmerStepVideoPlayerComponent],
+  imports: [MatListModule, MatDivider, PicsaVideoPlayerModule, FarmerStepVideoPlayerComponent],
   templateUrl: './step-video.component.html',
   styleUrl: './step-video.component.scss',
 })

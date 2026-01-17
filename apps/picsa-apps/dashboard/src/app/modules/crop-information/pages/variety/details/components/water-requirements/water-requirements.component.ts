@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
@@ -20,7 +19,7 @@ interface IWaterRequirementTableData {
 
 @Component({
   selector: 'dashboard-crop-water-requirements',
-  imports: [CommonModule, DashboardMaterialModule, PicsaDataTableComponent, PicsaFormsModule],
+  imports: [DashboardMaterialModule, PicsaDataTableComponent, PicsaFormsModule],
   templateUrl: './water-requirements.component.html',
   styleUrl: './water-requirements.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

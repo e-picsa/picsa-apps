@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'i18n',
-  preset: '../../../jest.preset.js',
+  preset: '../../jest.preset.js',
   globals: {},
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -12,7 +12,7 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/i18n',
+  coverageDirectory: '../../coverage/libs/i18n',
 
   // TODO - add support for external data imported
   // https://stackoverflow.com/a/72622089

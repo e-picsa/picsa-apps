@@ -1,5 +1,4 @@
 import { PortalModule } from '@angular/cdk/portal';
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,7 +28,6 @@ import { FarmerStepVideoComponent } from './components/step-video/step-video.com
 @Component({
   selector: 'farmer-content-module-home',
   imports: [
-    CommonModule,
     FarmerStepVideoComponent,
     PicsaTranslateModule,
     MatButtonModule,

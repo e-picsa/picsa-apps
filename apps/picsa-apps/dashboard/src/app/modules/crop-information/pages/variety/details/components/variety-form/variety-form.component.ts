@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,7 +11,7 @@ import { ICropData } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-variety-form',
-  imports: [CommonModule, DashboardMaterialModule, FormsModule, ReactiveFormsModule],
+  imports: [DashboardMaterialModule, FormsModule, ReactiveFormsModule],
   templateUrl: './variety-form.component.html',
   styleUrl: './variety-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

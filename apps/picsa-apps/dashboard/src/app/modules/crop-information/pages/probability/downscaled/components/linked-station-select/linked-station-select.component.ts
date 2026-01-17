@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
@@ -10,7 +9,7 @@ import { ICropDataDownscaled } from '../../../../../services';
 
 @Component({
   selector: 'dashboard-crop-linked-station-select',
-  imports: [CommonModule, MatSelectModule, MatFormField, MatButtonModule],
+  imports: [MatSelectModule, MatFormField, MatButtonModule],
   templateUrl: './linked-station-select.component.html',
   styleUrl: './linked-station-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

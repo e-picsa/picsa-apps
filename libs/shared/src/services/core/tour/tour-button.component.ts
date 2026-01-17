@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +15,7 @@ import { TourService } from './tour.service';
     <mat-icon class="tour-icon mat-elevation-z4">question_mark</mat-icon>
     <span>{{ 'Demo' | translate }}</span>
   </button>`,
-  imports: [CommonModule, MatIconModule, MatButtonModule, PicsaTranslateModule],
+  imports: [MatIconModule, MatButtonModule, PicsaTranslateModule],
   styles: [
     `
       :host {

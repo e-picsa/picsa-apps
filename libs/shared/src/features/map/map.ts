@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -17,7 +17,7 @@ import { IStationMeta } from '@picsa/models/src';
 import * as L from 'leaflet';
 
 @Component({
-  imports: [CommonModule, LeafletModule],
+  imports: [LeafletModule],
   selector: 'picsa-map',
   templateUrl: './map.html',
   styleUrls: ['./map.scss'],

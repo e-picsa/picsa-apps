@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, effect, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +24,7 @@ const STORED_LOCATION_FIELD = 'picsa_crop_tool_location';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   standalone: true,
-  imports: [CommonModule, PicsaFormsModule, CropProbabilityTableComponent, PicsaTourButton],
+  imports: [PicsaFormsModule, CropProbabilityTableComponent, PicsaTourButton],
 })
 export class HomeComponent implements OnInit {
   public locationId = toSignal(this.route.queryParams.pipe(map(({ locationId }: IQueryParams) => locationId)));

@@ -1,5 +1,4 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -26,7 +25,6 @@ import { ConfigurationService, IUserSettings } from '../../provider';
 @Component({
   selector: 'picsa-configuration-select',
   imports: [
-    CommonModule,
     PicsaTranslateModule,
     MatButtonModule,
     MatIconModule,

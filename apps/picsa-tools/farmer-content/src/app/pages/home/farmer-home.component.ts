@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
@@ -12,7 +11,6 @@ import { PicsaTranslateModule } from '@picsa/shared/modules';
 @Component({
   selector: 'farmer-home',
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatRippleModule,

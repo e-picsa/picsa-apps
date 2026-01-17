@@ -8,9 +8,11 @@
     <mat-icon>list_alt</mat-icon>{{'Show All Budgets' | translate }}
   </button>
   <h3 style="margin-top: 2rem">{{ 'Tools' | translate }}</h3>
-  <button mat-button *ngIf="store.activeBudget && store.activeBudget.meta" (click)="toggleEditorMode()">
-    <mat-icon>calendar_view_week</mat-icon>{{ 'Edit Budget' | translate }}
-  </button>
+  @if (store.activeBudget && store.activeBudget.meta) {
+    <button mat-button (click)="toggleEditorMode()">
+      <mat-icon>calendar_view_week</mat-icon>{{ 'Edit Budget' | translate }}
+    </button>
+  }
   <mat-divider></mat-divider>
   <h3>{{ 'Legend' | translate }}</h3>
   <budget-balance-legend [valueCounters]="store.valueCounters"></budget-balance-legend>

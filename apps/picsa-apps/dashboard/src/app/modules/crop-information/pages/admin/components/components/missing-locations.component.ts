@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,7 +9,7 @@ import { CropInformationService, ICropDataDownscaled } from '../../../../service
 
 @Component({
   selector: 'dashboard-crop-missing-locations',
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './missing-locations.component.html',
   styleUrl: './missing-locations.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

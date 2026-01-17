@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/configuration';
@@ -8,7 +7,7 @@ import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PicsaConfigurationSelectComponent],
+  imports: [PicsaConfigurationSelectComponent],
 })
 export class HomePageComponent {
   // use a signal to only show content after potential redirects evaluated

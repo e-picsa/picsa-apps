@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, ElementRef, input, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -36,7 +36,6 @@ export type ISeasonStartProbability = { plantDate: number; label: string; probab
 @Component({
   selector: 'dashboard-crop-probability-table',
   imports: [
-    CommonModule,
     AlertBoxComponent,
     MatButtonModule,
     MatIcon,

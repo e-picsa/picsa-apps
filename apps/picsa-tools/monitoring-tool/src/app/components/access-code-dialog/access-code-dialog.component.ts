@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, Inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
@@ -15,7 +14,7 @@ export interface AccessCodeDialogResult {
   selector: 'monitoring-access-code-dialog',
   templateUrl: './access-code-dialog.component.html',
   styleUrls: ['./access-code-dialog.component.scss'],
-  imports: [CommonModule, MonitoringMaterialModule, PicsaTranslateModule],
+  imports: [MonitoringMaterialModule, PicsaTranslateModule],
 })
 export class AccessCodeDialogComponent {
   accessCode = signal('');

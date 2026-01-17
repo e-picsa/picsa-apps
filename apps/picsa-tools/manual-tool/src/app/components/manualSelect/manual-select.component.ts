@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +25,7 @@ import { IManualPeriodEntryLocalised, IManualStepLocalised, IManualVariant } fro
 
 @Component({
   selector: 'picsa-manual-select',
-  imports: [CommonModule, MatSelectModule, MatIconModule, MatTabsModule, FormsModule, PicsaTranslateModule],
+  imports: [MatSelectModule, MatIconModule, MatTabsModule, FormsModule, PicsaTranslateModule],
   templateUrl: './manual-select.component.html',
   styleUrl: './manual-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

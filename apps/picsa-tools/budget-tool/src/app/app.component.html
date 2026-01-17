@@ -1,6 +1,8 @@
 <div class="page">
   <picsa-header></picsa-header>
-  <div *ngIf="store.storeReady">
-    <router-outlet outlet="budget-router"></router-outlet>
-  </div>
+  @if (store.storeReady) {
+    <div>
+      <router-outlet outlet="budget-router"></router-outlet>
+    </div>
+  }
 </div>

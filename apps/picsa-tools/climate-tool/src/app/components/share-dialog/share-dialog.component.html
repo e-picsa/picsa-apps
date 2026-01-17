@@ -8,17 +8,19 @@
       </div>
     </button>
     <!-- <button mat-button class="share-button" (click)="shareLink()" [disabled]="disabled" style="margin-left: 4px">
-      <div style="margin-top: 8px">
-        <img src="assets/budget-icons/share-mobile.svg" style="height: 100px" [attr.data-disabled]="disabled || null" />
-        <div>{{ 'Share App Link' | translate }}</div>
-      </div>
-    </button> -->
+    <div style="margin-top: 8px">
+      <img src="assets/budget-icons/share-mobile.svg" style="height: 100px" [attr.data-disabled]="disabled || null" />
+      <div>{{ 'Share App Link' | translate }}</div>
+    </div>
+  </button> -->
+</div>
+</div>
+@if (shareCode) {
+  <div class="share-code-box">
+    <h4>Share Code</h4>
+    <h2>{{ shareCode }}</h2>
   </div>
-</div>
-<div class="share-code-box" *ngIf="shareCode">
-  <h4>Share Code</h4>
-  <h2>{{ shareCode }}</h2>
-</div>
+}
 <div class="status-message">{{ status }}</div>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>{{ 'Close' | translate }}</button>

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   FormControl,
@@ -28,15 +27,7 @@ export class showErrorAfterInteraction implements ErrorStateMatcher {
 @Component({
   selector: 'dashboard-password-reset.',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-  ],
+  imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule],
   templateUrl: './password-reset.component.html',
   styleUrl: './password-reset.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +41,7 @@ export class PasswordResetComponent {
   constructor(
     private router: Router,
     private supabaseAuthService: SupabaseAuthService,
-    private notificationService: PicsaNotificationService
+    private notificationService: PicsaNotificationService,
   ) {}
 
   public async handlePasswordReset() {

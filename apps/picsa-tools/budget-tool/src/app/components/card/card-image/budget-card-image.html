@@ -1,5 +1,9 @@
 <!-- image loaded from file -->
-<img *ngIf="imgUrl" [src]="imgUrl" class="card-image" [attr.data-card-id]="card.id" />
+@if (imgUrl) {
+  <img [src]="imgUrl" class="card-image" [attr.data-card-id]="card.id" />
+}
 
 <!-- image loaded from custom drawing -->
-<div style="width: 100%; height: 100%" *ngIf="imgData" [innerHtml]="imgData"></div>
+@if (imgData) {
+  <div style="width: 100%; height: 100%" [innerHtml]="imgData"></div>
+}

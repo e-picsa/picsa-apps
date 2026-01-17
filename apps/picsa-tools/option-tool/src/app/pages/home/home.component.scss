@@ -6,7 +6,7 @@
   flex: 1;
   @apply max-w-screen-lg;
   // allow space for table box shadow
-  @apply sm:w-[calc(100%-16px)] sm:mx-auto sm:my-4;
+  @apply sm:w-[calc(100%_-_16px)] sm:mx-auto sm:my-4;
 }
 // ************************************************************
 //  Table - General

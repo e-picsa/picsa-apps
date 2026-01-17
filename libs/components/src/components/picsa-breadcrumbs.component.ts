@@ -7,14 +7,20 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
 @Component({
   selector: 'picsa-breadcrumbs',
   template: `
-    <div class="breadcrumbs-container" *ngIf="options.enabled && breadcrumbs.length > 2">
-      <div *ngFor="let breadcrumb of breadcrumbs; last as isLast">
-        <button mat-button [routerLink]="breadcrumb.path">
-          {{ breadcrumb.label }}
-        </button>
-        <mat-icon *ngIf="!isLast" style="line-height:36px">chevron_right</mat-icon>
+    @if (options.enabled && breadcrumbs.length > 2) {
+      <div class="breadcrumbs-container">
+        @for (breadcrumb of breadcrumbs; track breadcrumb; let isLast = $last) {
+          <div>
+            <button mat-button [routerLink]="breadcrumb.path">
+              {{ breadcrumb.label }}
+            </button>
+            @if (!isLast) {
+              <mat-icon style="line-height:36px">chevron_right</mat-icon>
+            }
+          </div>
+        }
       </div>
-    </div>
+    }
   `,
   styles: [
     `
@@ -33,7 +39,10 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
   public options: IBreadcrumbOptions = { hideOnPaths: {}, enabled: false };
   private destroyed$ = new Subject<boolean>();
   private rebuild$ = new Subject<boolean>();
-  constructor(private componentsService: PicsaCommonComponentsService, private router: Router) {
+  constructor(
+    private componentsService: PicsaCommonComponentsService,
+    private router: Router,
+  ) {
     effect(() => {
       const headerOptions = this.componentsService.headerOptions();
       const title = headerOptions.title;
@@ -54,7 +63,7 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
     this.rebuild$
       .pipe(
         takeUntil(this.destroyed$),
-        debounce(() => interval(50))
+        debounce(() => interval(50)),
       )
       .subscribe(() => this.constructBreadcrumbs());
   }
@@ -79,7 +88,7 @@ export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
     this.router.events
       .pipe(
         takeUntil(this.destroyed$),
-        filter((event) => event instanceof NavigationEnd)
+        filter((event) => event instanceof NavigationEnd),
       )
       .subscribe(() => {
         this.rebuild$.next(true);

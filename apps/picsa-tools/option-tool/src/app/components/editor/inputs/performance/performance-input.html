@@ -1,19 +1,24 @@
-<div class="input-container" *ngIf="!options.readonly">
-  <button
-    mat-button
-    *ngFor="let option of selectOptions"
-    class="select-button"
-    (click)="selected=option.id"
-    [attr.data-value]="option.id"
-    [attr.data-selected]="selected===option.id"
-  >
-    <div>
-      <mat-icon>{{option.matIcon}}</mat-icon>
-      <div>{{ option.label | translate }}</div>
-    </div>
-  </button>
-</div>
+@if (!options.readonly) {
+  <div class="input-container">
+    @for (option of selectOptions; track option) {
+      <button
+        mat-button
+        class="select-button"
+        (click)="selected=option.id"
+        [attr.data-value]="option.id"
+        [attr.data-selected]="selected===option.id"
+        >
+        <div>
+          <mat-icon>{{option.matIcon}}</mat-icon>
+          <div>{{ option.label | translate }}</div>
+        </div>
+      </button>
+    }
+  </div>
+}
 <!-- Alternatively readonly mode which just displays selected icon -->
-<div class="readonly-value" *ngIf="options.readonly" [attr.data-value]="selected">
-  <mat-icon>{{selectedIconValue}}</mat-icon>
-</div>
+@if (options.readonly) {
+  <div class="readonly-value" [attr.data-value]="selected">
+    <mat-icon>{{selectedIconValue}}</mat-icon>
+  </div>
+}

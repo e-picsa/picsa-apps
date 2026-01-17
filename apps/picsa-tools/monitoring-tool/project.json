@@ -71,7 +71,8 @@
           "buildTarget": "picsa-tools-monitoring-tool:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -86,7 +87,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/monitoring-tool"],
       "options": {
-        "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts"
+        "jestConfig": "apps/picsa-tools/monitoring-tool/jest.config.ts",
+        "tsConfig": "apps/picsa-tools/monitoring-tool/tsconfig.spec.json"
       }
     }
   }

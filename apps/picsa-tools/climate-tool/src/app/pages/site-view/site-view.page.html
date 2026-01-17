@@ -1,5 +1,5 @@
 @if(chartService.chartPngBlob(); as chartPngBlob){
-<climate-print-layout [chartPngBlob]="chartPngBlob"></climate-print-layout>
+  <climate-print-layout [chartPngBlob]="chartPngBlob"></climate-print-layout>
 }
 
 <!-- Header to inject into global header component -->
@@ -7,30 +7,32 @@
   <div style="position: relative; display: flex; align-items: center; width: 100%">
     <button mat-button color="primary" (click)="select.open()" class="station-select">
       @if(chartService.station){ {{chartService.station.name}} }
-      <mat-icon iconPositionEnd>expand_more</mat-icon>
-    </button>
-    <!-- Use a hidden select that opens from button (instead of using full select form component) -->
-    <mat-select style="width: 200px; position: absolute; right: 0; top: 18px; visibility: hidden" #select
-      (selectionChange)="handleStationSelect(select.value)" [value]="chartService.station?.id">
-      @for(option of stationSelectOptions(); track option.value){
-      <mat-option [value]="option.value" [attr.data-draft]="option.draft">{{option.label}}</mat-option>
+        <mat-icon iconPositionEnd>expand_more</mat-icon>
+      </button>
+      <!-- Use a hidden select that opens from button (instead of using full select form component) -->
+      <mat-select style="width: 200px; position: absolute; right: 0; top: 18px; visibility: hidden" #select
+        (selectionChange)="handleStationSelect(select.value)" [value]="chartService.station?.id">
+        @for(option of stationSelectOptions(); track option.value){
+          <mat-option [value]="option.value" [attr.data-draft]="option.draft">{{option.label}}</mat-option>
+        }
+      </mat-select>
+      <button mat-button color="primary" (click)="goToSiteSelect()" class="map-button">
+        <mat-icon>place</mat-icon>
+        <span class="hidden sm:inline">{{ 'Map' | translate }}</span>
+      </button>
+    </div>
+  </ng-template>
+
+  <div class="page-content">
+    <picsa-sidenav-layout #snav [initialOpen]="true">
+      <climate-chart-options sidenav></climate-chart-options>
+      @if (chartService.chartDefinition && chartService.station) {
+        <climate-chart-layout content style="flex: 1"
+        [definition]="chartService.chartDefinition"></climate-chart-layout>
       }
-    </mat-select>
-    <button mat-button color="primary" (click)="goToSiteSelect()" class="map-button">
-      <mat-icon>place</mat-icon>
-      <span class="hidden sm:inline">{{ 'Map' | translate }}</span>
-    </button>
+    </picsa-sidenav-layout>
   </div>
-</ng-template>
 
-<div class="page-content">
-  <picsa-sidenav-layout #snav [initialOpen]="true">
-    <climate-chart-options sidenav></climate-chart-options>
-    <climate-chart-layout content *ngIf="chartService.chartDefinition && chartService.station" style="flex: 1"
-      [definition]="chartService.chartDefinition"></climate-chart-layout>
-  </picsa-sidenav-layout>
-</div>
-
-<!-- @if(showRotateAnimation()){
-<picsa-animation name="rotate-phone" [loops]="2" [delay]="2000"></picsa-animation>
-} -->
+  <!-- @if(showRotateAnimation()){
+  <picsa-animation name="rotate-phone" [loops]="2" [delay]="2000"></picsa-animation>
+  } -->

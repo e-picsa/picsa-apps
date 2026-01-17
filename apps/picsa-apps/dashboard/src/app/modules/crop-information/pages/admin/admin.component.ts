@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaFormsModule } from '@picsa/forms';
@@ -41,7 +40,6 @@ interface ICropDataImport {
 @Component({
   selector: 'dashboard-crop-admin',
   imports: [
-    CommonModule,
     DataImportComponent,
     PicsaDataTableComponent,
     DashboardMaterialModule,

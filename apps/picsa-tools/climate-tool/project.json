@@ -70,7 +70,8 @@
           "buildTarget": "picsa-tools-climate-tool:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -85,7 +86,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-tools/climate-tool"],
       "options": {
-        "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts"
+        "jestConfig": "apps/picsa-tools/climate-tool/jest.config.ts",
+        "tsConfig": "apps/picsa-tools/climate-tool/tsconfig.spec.json"
       }
     }
   }

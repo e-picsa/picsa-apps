@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,7 +23,6 @@ type ICropDataDownscaledWithStation = ICropDataDownscaled['Row'] & {
 @Component({
   selector: 'dashboard-crop-probability-downscaled',
   imports: [
-    CommonModule,
     CropLinkedStationSelectComponent,
     CropProbabilityTableComponent,
     MatIconModule,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,7 +41,6 @@ export interface IUploadResult {
 @Component({
   selector: 'picsa-supabase-upload',
   imports: [
-    CommonModule,
     UppyAngularDashboardModule,
     MatIconModule,
     MatButtonModule,

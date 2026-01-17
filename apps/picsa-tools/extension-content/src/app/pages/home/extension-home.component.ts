@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
@@ -105,7 +105,6 @@ if (!ENVIRONMENT.production) {
 @Component({
   selector: 'extension-home',
   imports: [
-    CommonModule,
     ExtensionToolkitMaterialModule,
     MatIconModule,
     PicsaCommonComponentsModule,

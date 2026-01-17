@@ -4,7 +4,8 @@
     "outDir": "../../dist/out-tsc",
     "declaration": true,
     "noPropertyAccessFromIndexSignature": false,
-    "types": []
+    "types": [],
+    "moduleResolution": "bundler"
   },
   "include": ["**/*.ts"],
   "exclude": ["jest.config.ts", "**/*.spec.ts"]

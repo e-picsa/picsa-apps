@@ -66,13 +66,16 @@
             "input": "libs/data/crop_activity/svgs",
             "output": "assets/svgs/crop_activity"
           },
-
           {
             "glob": "*.svg",
             "input": "libs/data/farmer_content/svgs",
             "output": "assets/svgs/farmer_content"
           },
-          { "glob": "*.svg", "input": "libs/data/tools/svgs", "output": "assets/svgs/tools" },
+          {
+            "glob": "*.svg",
+            "input": "libs/data/tools/svgs",
+            "output": "assets/svgs/tools"
+          },
           {
             "glob": "**/*",
             "input": "apps/picsa-tools/climate-tool/src/assets",
@@ -227,7 +230,8 @@
           "buildTarget": "picsa-apps-app:build:production"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -242,7 +246,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/picsa-apps/app"],
       "options": {
-        "jestConfig": "apps/picsa-apps/app/jest.config.ts"
+        "jestConfig": "apps/picsa-apps/app/jest.config.ts",
+        "tsConfig": "apps/picsa-apps/app/tsconfig.spec.json"
       }
     }
   }

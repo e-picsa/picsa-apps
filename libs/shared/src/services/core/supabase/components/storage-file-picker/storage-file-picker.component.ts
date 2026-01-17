@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, Directive, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,7 +39,7 @@ export class SupabaseStoragePickerDirective {
 
 @Component({
   selector: 'picsa-supabase-storage-file-picker',
-  imports: [CommonModule, FormsModule, MatButtonModule, MatListModule, MatTabsModule],
+  imports: [FormsModule, MatButtonModule, MatListModule, MatTabsModule],
   templateUrl: './storage-file-picker.component.html',
   styleUrls: ['./storage-file-picker.component.scss'],
 })

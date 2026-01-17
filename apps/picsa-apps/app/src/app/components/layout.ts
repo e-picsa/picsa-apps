@@ -1,5 +1,4 @@
 import { TemplatePortal } from '@angular/cdk/portal';
-import { CommonModule } from '@angular/common';
 import { Component, computed, effect, input, output, TemplateRef, viewChild, ViewContainerRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +18,6 @@ import { filter, map } from 'rxjs';
   templateUrl: 'layout.html',
   styleUrl: 'layout.scss',
   imports: [
-    CommonModule,
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,

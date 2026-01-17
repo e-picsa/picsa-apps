@@ -7,7 +7,7 @@
   <div class="table-container mat-elevation-z8" id="options">
     <table mat-table [dataSource]="dbDataDocs">
       <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+      The actual rendered columns are set as a property on the row definition" -->
 
       <!-- Practice Column -->
       <ng-container matColumnDef="practice">
@@ -20,7 +20,7 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'Who makes decisions' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <option-gender-input [ngModel]="element._data.gender_decisions"
-            [options]="{ readonly: true }"></option-gender-input>
+          [options]="{ readonly: true }"></option-gender-input>
         </td>
       </ng-container>
 
@@ -29,7 +29,7 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'Who does activity' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <option-gender-input [ngModel]="element._data.gender_activities"
-            [options]="{ readonly: true }"></option-gender-input>
+          [options]="{ readonly: true }"></option-gender-input>
         </td>
       </ng-container>
 
@@ -37,10 +37,12 @@
       <ng-container matColumnDef="benefits">
         <th mat-header-cell *matHeaderCellDef>{{ 'Benefits and who' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <div *ngFor="let benefit of element._data.benefits; index as i" style="display: flex">
-            <div style="flex: 1">{{ benefit.benefit }}</div>
-            <option-gender-input [ngModel]="benefit.beneficiary" [options]="{ readonly: true }"></option-gender-input>
-          </div>
+          @for (benefit of element._data.benefits; track benefit; let i = $index) {
+            <div style="display: flex">
+              <div style="flex: 1">{{ benefit.benefit }}</div>
+              <option-gender-input [ngModel]="benefit.beneficiary" [options]="{ readonly: true }"></option-gender-input>
+            </div>
+          }
         </td>
       </ng-container>
 
@@ -52,11 +54,11 @@
         <td mat-cell *matCellDef="let element" class="split-values">
           <div>
             <option-performance-input [options]="{ readonly: true }"
-              [ngModel]="element._data.performance.lowRf"></option-performance-input>
+            [ngModel]="element._data.performance.lowRf"></option-performance-input>
             <option-performance-input [options]="{ readonly: true }"
-              [ngModel]="element._data.performance.midRf"></option-performance-input>
+            [ngModel]="element._data.performance.midRf"></option-performance-input>
             <option-performance-input [options]="{ readonly: true }"
-              [ngModel]="element._data.performance.highRf"></option-performance-input>
+            [ngModel]="element._data.performance.highRf"></option-performance-input>
           </div>
         </td>
       </ng-container>
@@ -67,9 +69,9 @@
         <td mat-cell *matCellDef="let element" class="split-values">
           <div>
             <option-investment-input [(ngModel)]="element._data.investment.money"
-              [options]="{ readonly: true }"></option-investment-input>
+            [options]="{ readonly: true }"></option-investment-input>
             <option-investment-input [(ngModel)]="element._data.investment.time"
-              [options]="{ readonly: true }"></option-investment-input>
+            [options]="{ readonly: true }"></option-investment-input>
           </div>
         </td>
       </ng-container>
@@ -78,9 +80,11 @@
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef>{{ 'Time' | translate }}</th>
         <td mat-cell style="text-align: center" *matCellDef="let element">
-          <span *ngIf="element._data.time.value">
-            {{ element._data.time.value }}{{ (element._data.time.unit | translate).slice(0, 1) }}
-          </span>
+          @if (element._data.time.value) {
+            <span>
+              {{ element._data.time.value }}{{ (element._data.time.unit | translate).slice(0, 1) }}
+            </span>
+          }
         </td>
       </ng-container>
 
@@ -88,13 +92,15 @@
       <ng-container matColumnDef="risk">
         <th mat-header-cell *matHeaderCellDef>{{ 'Risks' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <div *ngFor="let risk of element._data.risk">{{ risk }}</div>
+          @for (risk of element._data.risk; track risk) {
+            <div>{{ risk }}</div>
+          }
         </td>
       </ng-container>
 
-      <!-- Sub Headers 
-        Templates for any required subheaders as defined in component ts (fallback to default)
-        adapted from https://stackoverflow.com/q/56724439
+      <!-- Sub Headers
+      Templates for any required subheaders as defined in component ts (fallback to default)
+      adapted from https://stackoverflow.com/q/56724439
       -->
       <ng-container matColumnDef="performance_subheader">
         <th mat-header-cell *matHeaderCellDef class="split-values subheader">
