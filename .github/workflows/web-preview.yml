@@ -18,10 +18,10 @@ jobs:
         with:
           lfs: true
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.x
-          cache: 'yarn'
+          node-version: 24.x
+          cache: "yarn"
 
       - name: Install node modules
         run: yarn install --immutable
@@ -29,8 +29,8 @@ jobs:
       - run: yarn nx run picsa-apps-app:build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           projectId: picsa-apps
           target: extension-toolkit
           expires: 30d

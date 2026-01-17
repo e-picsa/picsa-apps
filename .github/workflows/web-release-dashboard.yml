@@ -45,10 +45,10 @@ jobs:
           lfs: true
           ref: ${{inputs.branch}}
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.x
-          cache: 'yarn'
+          node-version: 24.x
+          cache: "yarn"
 
       - name: Install node modules
         run: yarn install --immutable && npm i -g vercel
