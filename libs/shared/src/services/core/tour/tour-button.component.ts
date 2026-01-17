@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject,Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -34,8 +34,9 @@ import { TourService } from './tour.service';
   ],
 })
 export class PicsaTourButton {
+  private service = inject(TourService);
+
   @Input() tourId: string;
-  constructor(private service: TourService) {}
 
   public startTour() {
     if (!this.tourId) {

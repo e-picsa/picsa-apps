@@ -1,4 +1,4 @@
-import { Injectable, Injector, runInInjectionContext } from '@angular/core';
+import { inject,Injectable, Injector, runInInjectionContext } from '@angular/core';
 import { PDFScriptLoaderService } from 'ngx-extended-pdf-viewer';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
@@ -6,14 +6,10 @@ import { ErrorHandlerService } from '../../services/core/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class PicsaPDFViewerService extends PicsaAsyncService {
-  public isCompatible = false;
+  private injector = inject(Injector);
+  private errorService = inject(ErrorHandlerService);
 
-  constructor(
-    private injector: Injector,
-    private errorService: ErrorHandlerService,
-  ) {
-    super();
-  }
+  public isCompatible = false;
 
   public override async init() {
     await this.runCompatibilityCheck();

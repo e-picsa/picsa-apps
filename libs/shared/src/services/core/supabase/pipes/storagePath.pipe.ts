@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject,Pipe, PipeTransform } from '@angular/core';
 
 import { SupabaseStorageService } from '../services/supabase-storage.service';
 
@@ -14,7 +14,8 @@ import { SupabaseStorageService } from '../services/supabase-storage.service';
   standalone: true,
 })
 export class StoragePathPipe implements PipeTransform {
-  constructor(private storageService: SupabaseStorageService) {}
+  private storageService = inject(SupabaseStorageService);
+
   transform(path: string): string {
     const [bucketId, ...pathSegments] = path.split('/');
     const objectPath = pathSegments.join('/');

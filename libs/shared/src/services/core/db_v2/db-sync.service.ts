@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Network } from '@capacitor/network';
 import { _wait } from '@picsa/utils';
 import { RxCollection, RxDatabase, RxDocument } from 'rxdb';
@@ -26,14 +26,14 @@ export interface ISyncPushEntry {
  */
 @Injectable({ providedIn: 'root' })
 export class PicsaDatabaseSyncService {
+  private supabaseService = inject(SupabaseService);
+
   private registeredCollections: Record<string, RxCollection> = {};
 
   private db: RxDatabase<{ [key: string]: RxCollection }>;
 
   /** Track local document deletions in separate collection to sync to server */
   private syncDeleteCollection: RxCollection<ISyncDeleteEntry>;
-
-  constructor(private supabaseService: SupabaseService) {}
 
   /**
    * Register database for sync service to interact with

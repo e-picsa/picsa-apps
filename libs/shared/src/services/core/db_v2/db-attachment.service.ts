@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { base64ToBlob } from '@picsa/utils';
 import { blobToBase64String, RxCollection, RxDocument } from 'rxdb';
@@ -26,15 +26,11 @@ import { ATTACHMENTS_COLLECTION, IAttachment } from './schemas/attachments';
  ********************************************************************************************/
 @Injectable({ providedIn: 'root' })
 export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
+  private dbService = inject(PicsaDatabase_V2_Service);
+  private nativeStorageService = inject(NativeStorageService);
+
   /** Track any generate objectURLs so that they can be removed from dom as required */
   private objectURLs: { [filename: string]: string } = {};
-
-  constructor(
-    private dbService: PicsaDatabase_V2_Service,
-    private nativeStorageService: NativeStorageService,
-  ) {
-    super();
-  }
 
   get collection() {
     return this.dbService.db.collections.attachments as RxCollection<IAttachment>;

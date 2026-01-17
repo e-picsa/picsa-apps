@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { FirebasePerformance } from '@capacitor-firebase/performance';
 import { FirebasePerformance as IFirebasePerformance, getPerformance } from '@firebase/performance';
@@ -13,9 +13,9 @@ import { PicsaFirebaseService } from './firebase.service';
  * https://www.npmjs.com/package/@capacitor-firebase/performanceF
  * */
 export class PerformanceService {
-  private performance: IFirebasePerformance;
+  private firebaseService = inject(PicsaFirebaseService);
 
-  constructor(private firebaseService: PicsaFirebaseService) {}
+  private performance: IFirebasePerformance;
 
   public init() {
     if (Capacitor.isNativePlatform() && ENVIRONMENT.production) {

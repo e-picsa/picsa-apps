@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { IDBDoc, IDBEndpoint } from '@picsa/models';
 
@@ -19,11 +19,10 @@ type IDBSource = 'cache' | 'server';
  ***********************************************************************/
 @Injectable({ providedIn: 'root' })
 export class PicsaDbService implements AbstractDBService {
-  constructor(
-    private cache: DBCacheService,
-    private server: DBServerService,
-    private sync: DBSyncService,
-  ) {}
+  private cache = inject(DBCacheService);
+  private server = inject(DBServerService);
+  private sync = inject(DBSyncService);
+
   getCollection<IDBDoc>(endpoint: IDBEndpoint, src: IDBSource = 'cache', newerThan = '') {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'

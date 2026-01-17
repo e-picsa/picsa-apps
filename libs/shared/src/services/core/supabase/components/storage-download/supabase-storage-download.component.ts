@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,input, output, signal } from '@angular/core';
 import ky, { KyResponse } from 'ky';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 
@@ -24,6 +24,8 @@ import { SupabaseService } from '../../supabase.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupabaseStorageDownloadComponent {
+  private service = inject(SupabaseService);
+
   /** Storage file path */
   storage_path = input.required<string>();
 
@@ -44,8 +46,6 @@ export class SupabaseStorageDownloadComponent {
   private error: any;
   private completed$: BehaviorSubject<boolean>;
   private data: Blob | Record<string, any>;
-
-  constructor(private service: SupabaseService) {}
 
   public async start() {
     this.progress.set(0);

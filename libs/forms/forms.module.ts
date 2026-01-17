@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Inject, Injectable, ModuleWithProviders, NgModule } from '@angular/core';
+import { inject,Injectable, ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -35,10 +35,12 @@ export class PicsaFormsModuleConfig {
   declarations: [...PICSA_FORM_COMPONENTS],
 })
 export class PicsaFormsModule {
-  constructor(
-    dataIconRegistry: DataIconRegistry,
-    @Inject(PicsaFormsModuleConfig) private config: PicsaFormsModuleConfig,
-  ) {
+  private config = inject<PicsaFormsModuleConfig>(PicsaFormsModuleConfig);
+
+  constructor() {
+    const dataIconRegistry = inject(DataIconRegistry);
+    const config = this.config;
+
     for (const iconPack of config.iconPacks) {
       dataIconRegistry.registerMatIcons(iconPack);
     }

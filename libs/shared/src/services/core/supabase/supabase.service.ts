@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { inject,Injectable, Injector } from '@angular/core';
 import { ENVIRONMENT } from '@picsa/environments';
 import { Database } from '@picsa/server-types';
 import type { FunctionInvokeOptions } from '@supabase/functions-js';
@@ -24,6 +24,10 @@ import { checkBackendAvailability, createOfflineSupabaseClient, stubTableWithLiv
  */
 @Injectable({ providedIn: 'root' })
 export class SupabaseService extends PicsaAsyncService {
+  private injector = inject(Injector);
+  storage = inject(SupabaseStorageService);
+  auth = inject(SupabaseAuthService);
+
   /** Access to postgres db as a shortcut to table from method */
   public db: { table<T extends keyof Tables>(relation: T): TableWithLive<T> };
 
@@ -32,14 +36,6 @@ export class SupabaseService extends PicsaAsyncService {
   public isAvailable = true;
 
   private supabase: SupabaseClient<Database>;
-
-  constructor(
-    private injector: Injector,
-    public storage: SupabaseStorageService,
-    public auth: SupabaseAuthService,
-  ) {
-    super();
-  }
 
   public override async init(): Promise<void> {
     this.config = await this.loadConfig();

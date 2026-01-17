@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { effect, Inject, Injectable, signal } from '@angular/core';
+import { effect, inject,Injectable, signal } from '@angular/core';
 import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
@@ -28,6 +28,10 @@ interface ICustomAuthJWTPayload extends JwtPayload {
  */
 @Injectable({ providedIn: 'root' })
 export class SupabaseAuthService extends PicsaAsyncService {
+  private document = inject<Document>(DOCUMENT);
+  private notificationService = inject(PicsaNotificationService);
+  private errorService = inject(ErrorHandlerService);
+
   /** Authenticated user */
   public authUser = signal<IAuthUser | undefined>(undefined, {
     equal: (a, b) => {
@@ -42,11 +46,7 @@ export class SupabaseAuthService extends PicsaAsyncService {
 
   private auth: SupabaseAuthClient;
 
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private notificationService: PicsaNotificationService,
-    private errorService: ErrorHandlerService,
-  ) {
+  constructor() {
     super();
     effect(() => {
       const user = this.authUser();

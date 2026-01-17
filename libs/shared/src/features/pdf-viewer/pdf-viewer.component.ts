@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input, signal, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, inject,Input, signal, ViewEncapsulation } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { App } from '@capacitor/app';
@@ -18,6 +18,8 @@ import { PicsaPDFViewerService } from './pdf-viewer.service';
   imports: [NgxExtendedPdfViewerModule, MatButtonModule, CommonModule, PicsaTranslateModule],
 })
 export class PdfViewerComponent implements AfterViewInit {
+  service = inject(PicsaPDFViewerService);
+
   sidebarOpen = false;
   // additional locales are currently excluded from main build
   locale = 'en-GB';
@@ -28,7 +30,7 @@ export class PdfViewerComponent implements AfterViewInit {
   public serviceReady = toSignal(this.service.ready$, { initialValue: false });
   public isCompatible = signal(false);
 
-  constructor(public service: PicsaPDFViewerService) {
+  constructor() {
     // name of folder pdf viewer assets copied to as declared in `angular.json`
     pdfDefaultOptions.assetsFolder = 'assets/pdf-viewer';
     // force viewer to not use es5 fallback (not included in build)

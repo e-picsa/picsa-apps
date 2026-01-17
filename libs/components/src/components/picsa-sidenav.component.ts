@@ -1,5 +1,15 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component, computed, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  computed,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 
 import { PicsaCommonComponentsService } from '../services/components.service';
@@ -96,6 +106,10 @@ import { PicsaCommonComponentsService } from '../services/components.service';
   standalone: false,
 })
 export class PicsaSidenavComponent implements OnInit, OnDestroy {
+  componentsService = inject(PicsaCommonComponentsService);
+  private media = inject(MediaMatcher);
+  private cdr = inject(ChangeDetectorRef);
+
   private _mobileQueryListener: () => void;
   public mobileQuery: MediaQueryList;
 
@@ -111,12 +125,6 @@ export class PicsaSidenavComponent implements OnInit, OnDestroy {
   public showSidenavToggle = computed(() => this.componentsService.headerOptions().showSidenavToggle);
 
   @ViewChild(MatSidenav) matSidenav: MatSidenav;
-
-  constructor(
-    public componentsService: PicsaCommonComponentsService,
-    private media: MediaMatcher,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit() {
     this.componentsService.registerSidenav(this);

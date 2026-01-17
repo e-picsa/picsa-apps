@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject,Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -52,6 +52,8 @@ export interface IUploadResult {
   styleUrls: ['./supabase-upload.component.scss'],
 })
 export class SupabaseUploadComponent {
+  private supabaseService = inject(SupabaseService);
+
   /** Default height of file dropper */
   @Input() fileDropHeight = 300;
 
@@ -102,8 +104,6 @@ export class SupabaseUploadComponent {
   };
 
   private storageService: SupabaseStorageService;
-
-  constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
     await this.supabaseService.ready();

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { IDBDoc, IDBEndpoint } from '@picsa/models';
 import { BehaviorSubject } from 'rxjs';
 
@@ -7,12 +7,12 @@ import { DBServerService, IServerWriteBatchEntry } from './_server.db';
 
 @Injectable({ providedIn: 'root' })
 export class DBSyncService {
+  private cache = inject(DBCacheService);
+  private server = inject(DBServerService);
+
   private _isSyncing = false;
   public pending$ = new BehaviorSubject<number>(0);
-  constructor(
-    private cache: DBCacheService,
-    private server: DBServerService,
-  ) {
+  constructor() {
     this.processWrites();
   }
 

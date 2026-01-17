@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Provider } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject,Provider } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP, ICropActivityDataEntry } from '@picsa/data';
@@ -25,10 +25,11 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   standalone: false,
 })
 export class FormCropActivitySelectComponent extends PicsaFormBaseSelectComponent<ICropActivityDataEntry> {
-  constructor(
-    cdr: ChangeDetectorRef,
-    public dialog: MatDialog,
-  ) {
+  dialog = inject(MatDialog);
+
+  constructor() {
+    const cdr = inject(ChangeDetectorRef);
+
     super(cdr, CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP);
   }
 }

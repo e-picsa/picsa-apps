@@ -1,5 +1,5 @@
 import { Location, PopStateEvent } from '@angular/common';
-import { Injectable, NgZone } from '@angular/core';
+import { inject,Injectable, NgZone } from '@angular/core';
 import { NavigationEnd, Route, Router } from '@angular/router';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -8,14 +8,14 @@ import { filter } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationStackService {
+  private router = inject(Router);
+  private location = inject(Location);
+  private zone = inject(NgZone);
+
   private stack: string[] = [];
   private redirectRoutes: Set<string>;
 
-  constructor(
-    private router: Router,
-    private location: Location,
-    private zone: NgZone,
-  ) {
+  constructor() {
     this.redirectRoutes = this.collectRedirectRoutes();
 
     // Track browser back/forward

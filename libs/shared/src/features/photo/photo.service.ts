@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Injectable, signal } from '@angular/core';
+import { inject,Injectable, signal } from '@angular/core';
 import { isEqual } from '@picsa/utils/object.utils';
 import { RxCollection } from 'rxdb';
 
@@ -11,17 +11,13 @@ import * as Schema from './schema';
   providedIn: 'root',
 })
 export class PhotoService extends PicsaAsyncService {
+  private dbService = inject(PicsaDatabase_V2_Service);
+  private attachmentService = inject(PicsaDatabaseAttachmentService);
+
   public collection: RxCollection<Schema.IPhotoEntry>;
 
   /** List of all stored photos, exposed as signal */
   public photos = signal<Schema.IPhotoEntry[]>([], { equal: isEqual });
-
-  constructor(
-    private dbService: PicsaDatabase_V2_Service,
-    private attachmentService: PicsaDatabaseAttachmentService,
-  ) {
-    super();
-  }
 
   override async init() {
     try {

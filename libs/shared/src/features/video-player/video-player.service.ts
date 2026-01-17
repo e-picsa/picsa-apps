@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { RxCollection } from 'rxdb';
 
 import { PicsaAsyncService } from '../../services/asyncService.service';
@@ -15,7 +15,9 @@ export class VideoPlayerService extends PicsaAsyncService {
   /** Keep cache of generated thumbnails */
   // public thumbnailCache = new Map<string, string>();
 
-  constructor(dbService: PicsaDatabase_V2_Service) {
+  constructor() {
+    const dbService = inject(PicsaDatabase_V2_Service);
+
     super();
     this.dbService = dbService;
   }

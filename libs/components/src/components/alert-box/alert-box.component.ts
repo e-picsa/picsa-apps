@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input } from '@angular/core';
+import { Component, ElementRef, inject,Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
@@ -25,6 +25,8 @@ const COLOR_MAPPING: { [type in IAlertType]: number[] } = {
  * https://squidfunk.github.io/mkdocs-material/reference/admonitions
  */
 export class AlertBoxComponent {
+  private element = inject<ElementRef<HTMLElement>>(ElementRef);
+
   public icon: string;
 
   @Input() set type(type: IAlertType) {
@@ -40,8 +42,6 @@ export class AlertBoxComponent {
     }
   }
   @Input() title: string;
-
-  constructor(private element: ElementRef<HTMLElement>) {}
 }
 function capitaliseString(s = '') {
   return s[0].toUpperCase() + s.substring(1);

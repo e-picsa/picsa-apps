@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnChanges,
   output,
@@ -111,6 +112,8 @@ export class FormatValuePipe implements PipeTransform {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PicsaDataTableComponent<T = Record<string, any>> implements OnChanges {
+  private cdr = inject(ChangeDetectorRef);
+
   @Input() data: T[] = [];
 
   /** User option overrides */
@@ -144,8 +147,6 @@ export class PicsaDataTableComponent<T = Record<string, any>> implements OnChang
   public dataSource: MatTableDataSource<any>;
 
   private searchText = '';
-
-  constructor(private cdr: ChangeDetectorRef) {}
 
   // Load data when inputs updated (prefer changes over input setters to avoid duplicate load)
   ngOnChanges(): void {

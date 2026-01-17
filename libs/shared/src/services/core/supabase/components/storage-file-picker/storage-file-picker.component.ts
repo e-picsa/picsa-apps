@@ -1,4 +1,4 @@
-import { Component, Directive, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, Directive, EventEmitter, HostListener, inject,Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,6 +19,8 @@ import { SupabaseService } from '../../supabase.service';
   standalone: true,
 })
 export class SupabaseStoragePickerDirective {
+  private dialog = inject(MatDialog);
+
   @Input() storageBucketName?: string;
   @Input() storageFolderPath?: string;
   @Output() storageFileSelected = new EventEmitter<IStorageEntry | undefined>();
@@ -33,8 +35,6 @@ export class SupabaseStoragePickerDirective {
       this.storageFileSelected.next(entry);
     });
   }
-
-  constructor(private dialog: MatDialog) {}
 }
 
 @Component({
@@ -44,6 +44,8 @@ export class SupabaseStoragePickerDirective {
   styleUrls: ['./storage-file-picker.component.scss'],
 })
 export class SupabaseStorageFilePickerComponent {
+  private supabaseService = inject(SupabaseService);
+
   @Output() fileSelected = new EventEmitter<IStorageEntry | undefined>();
   @Input() storageBucketName?: string;
   @Input() storageFolderPath?: string;
@@ -57,8 +59,6 @@ export class SupabaseStorageFilePickerComponent {
   public selected: IStorageEntry[] = [];
 
   public previewUrl: string;
-
-  constructor(private supabaseService: SupabaseService) {}
 
   private get storage() {
     return this.supabaseService.storage;

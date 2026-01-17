@@ -1,5 +1,5 @@
 import { MatIconRegistry } from '@angular/material/icon';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { CROP_ACTIVITY_DATA } from './crop_activity';
@@ -18,11 +18,10 @@ export type IconPackName = keyof typeof ICON_PACK_DATA;
 
 @Injectable({ providedIn: 'root' })
 export class DataIconRegistry {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
+
   private registeredIcons: Record<string, boolean> = {};
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
-  ) {}
 
   public registerMatIcons(iconPack: IconPackName) {
     // Avoid re-registering by checking if first matIcon has already been registered

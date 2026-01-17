@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject,input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -17,7 +17,9 @@ export class RefreshSpinnerComponent {
   spin = input(false);
   disabled = input(false);
 
-  constructor(elementRef: ElementRef<HTMLElement>) {
+  constructor() {
+    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
     // Prevent click proagation when disabled state set
     // https://github.com/angular/angular/issues/9587#issuecomment-228464139
     elementRef.nativeElement.addEventListener('click', (e) => {

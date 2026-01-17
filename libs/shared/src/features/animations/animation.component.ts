@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, OnInit, TemplateRef, viewChild } from '@angular/core';
+import { Component, ElementRef, inject,input, OnInit, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';
 import { AnimationOptions, BMCompleteLoopEvent } from 'ngx-lottie';
@@ -12,6 +12,9 @@ import type { IAvailableAnimations } from './models';
   standalone: false,
 })
 export class PicsaAnimationComponent implements OnInit {
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private dialog = inject(MatDialog);
+
   /** Name of animation file to display */
   name = input.required<IAvailableAnimations>();
   /** Number of loops to show animation for */
@@ -22,11 +25,6 @@ export class PicsaAnimationComponent implements OnInit {
   private dialogTemplate = viewChild.required<TemplateRef<HTMLElement>>('dialogTemplate');
 
   public options: AnimationOptions;
-
-  constructor(
-    private host: ElementRef<HTMLElement>,
-    private dialog: MatDialog,
-  ) {}
 
   private async selfDestruct() {
     this.dialog.closeAll();

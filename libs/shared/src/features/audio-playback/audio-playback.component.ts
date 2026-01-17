@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, inject,Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -12,10 +12,10 @@ import { AudioService } from './audio-playback.service';
   styleUrls: ['./audio-playback.component.scss'],
 })
 export class AudioPlaybackComponent implements OnDestroy {
+  private audioService = inject(AudioService);
+
   @Input() audioUrl: string;
   isAudioPlaying = false;
-
-  constructor(private audioService: AudioService) {}
 
   togglePlayback(): void {
     this.isAudioPlaying = !this.isAudioPlaying;

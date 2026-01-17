@@ -1,5 +1,5 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, firstValueFrom, of, Subscription } from 'rxjs';
 
 export interface IStorageFileEntry {
@@ -16,7 +16,7 @@ export type IStorageFilesHashmap = {
 
 @Injectable({ providedIn: 'root' })
 export class FileService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   /**
    * Read a file from the local assets folder

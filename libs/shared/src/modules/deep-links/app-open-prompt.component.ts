@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 import { CommunicationService } from '../../services/promptToHomePageService.service';
@@ -71,12 +71,13 @@ import { DeepLinksService } from './deep-links.service';
   standalone: false,
 })
 export class AppOpenPromptComponent {
+  private bottomSheet = inject(MatBottomSheet);
+  private communicationService = inject(CommunicationService);
+
   appDynamicLink: string;
-  constructor(
-    deepLinksService: DeepLinksService,
-    private bottomSheet: MatBottomSheet,
-    private communicationService: CommunicationService,
-  ) {
+  constructor() {
+    const deepLinksService = inject(DeepLinksService);
+
     this.appDynamicLink = deepLinksService.config.appDynamicLink;
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject,Input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import SVGS from './svgs';
@@ -10,9 +10,10 @@ import SVGS from './svgs';
   styleUrls: ['./loading.scss'],
 })
 export class PicsaLoadingComponent {
+  private sanitizer = inject(DomSanitizer);
+
   @Input() name: IPicsaLoaders;
   loaderHtml: SafeHtml;
-  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     const svgName = this.name || 'bars';

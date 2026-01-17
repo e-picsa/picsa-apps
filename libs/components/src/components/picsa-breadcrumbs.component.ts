@@ -1,4 +1,4 @@
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, inject,OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { debounce, filter, interval, Subject, takeUntil } from 'rxjs';
 
@@ -34,15 +34,15 @@ import { IBreadcrumbOptions, PicsaCommonComponentsService } from '../services/co
   standalone: false,
 })
 export class PicsaBreadcrumbsComponent implements OnInit, OnDestroy {
+  private componentsService = inject(PicsaCommonComponentsService);
+  private router = inject(Router);
+
   public breadcrumbs: { label: string; path: string }[] = [];
   private aliases: Map<string, string>;
   public options: IBreadcrumbOptions = { hideOnPaths: {}, enabled: false };
   private destroyed$ = new Subject<boolean>();
   private rebuild$ = new Subject<boolean>();
-  constructor(
-    private componentsService: PicsaCommonComponentsService,
-    private router: Router,
-  ) {
+  constructor() {
     effect(() => {
       const headerOptions = this.componentsService.headerOptions();
       const title = headerOptions.title;

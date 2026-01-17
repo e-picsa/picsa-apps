@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { _wait } from '@picsa/utils';
 import introJs from 'intro.js';
@@ -20,6 +20,8 @@ const DEFAULT_OPTIONS: Partial<Options> = {
 /** Interact with Intro.JS tours */
 @Injectable({ providedIn: 'root' })
 export class TourService {
+  private route = inject(ActivatedRoute);
+
   private registeredTours: Record<string, ITourStep[]> = {};
 
   private intro: IntroJs;
@@ -44,8 +46,6 @@ export class TourService {
 
   /** Track if tour has been manually paused so that event listeners can be preserved */
   private tourPaused = false;
-
-  constructor(private route: ActivatedRoute) {}
 
   /**
    * Specify whether tour is being used inside a mat tab (e.g. nested farmer activities)

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Provider } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject,Provider } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { IWeatherDataEntry, WEATHER_DATA, WEATHER_DATA_HASHMAP } from '@picsa/data/weather';
@@ -27,10 +27,11 @@ const SELECT_OPTIONS = WEATHER_DATA.filter((w) => w.label !== '');
   standalone: false,
 })
 export class FormWeatherSelectComponent extends PicsaFormBaseSelectComponent<IWeatherDataEntry> {
-  constructor(
-    cdr: ChangeDetectorRef,
-    public dialog: MatDialog,
-  ) {
+  dialog = inject(MatDialog);
+
+  constructor() {
+    const cdr = inject(ChangeDetectorRef);
+
     super(cdr, SELECT_OPTIONS, WEATHER_DATA_HASHMAP);
   }
 }

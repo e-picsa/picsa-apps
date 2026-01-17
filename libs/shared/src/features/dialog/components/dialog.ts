@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IPicsaDialogData, IPicsaDialogSelectOption } from '../dialog.models';
@@ -9,10 +9,8 @@ import { IPicsaDialogData, IPicsaDialogSelectOption } from '../dialog.models';
   standalone: false,
 })
 export class PicsaDialogComponent {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: IPicsaDialogData = {},
-    public dialogRef: MatDialogRef<PicsaDialogComponent>,
-  ) {}
+  data = inject<IPicsaDialogData>(MAT_DIALOG_DATA) ?? {};
+  dialogRef = inject<MatDialogRef<PicsaDialogComponent>>(MatDialogRef);
 }
 
 // action dialogs present title, html content, optional loader and action buttons

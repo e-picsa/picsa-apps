@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, Injectable, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, inject,Injectable, OnDestroy, OnInit } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class ScrollRestoreService {
@@ -29,11 +29,10 @@ export class ScrollRestoreService {
  */
 @Directive({ selector: '[scrollRestore]', standalone: true })
 export class PicsaScrollRestoreDirective implements OnInit, AfterViewInit, OnDestroy {
+  private el = inject<ElementRef<HTMLDivElement>>(ElementRef);
+  private service = inject(ScrollRestoreService);
+
   private pathname: string;
-  constructor(
-    private el: ElementRef<HTMLDivElement>,
-    private service: ScrollRestoreService,
-  ) {}
 
   ngOnInit(): void {
     this.pathname = location.pathname;
