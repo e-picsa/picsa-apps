@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { switchMap } from 'rxjs';
