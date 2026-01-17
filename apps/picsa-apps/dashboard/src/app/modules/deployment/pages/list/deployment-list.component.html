@@ -18,7 +18,7 @@
   <picsa-data-table
     [data]="data"
     [options]="tableOptions"
-    [valueTemplates]="{public,access_key_md5,icon_path}"
+    [valueTemplates]="{ public, access_key_md5, icon_path }"
   ></picsa-data-table>
 </ng-template>
 
@@ -32,7 +32,7 @@
 </ng-template>
 
 <ng-template #icon_path let-icon_path>
-  @if(icon_path){
-  <img [src]="icon_path | storagePath" style="height: 50px" />
+  @if (icon_path) {
+    <img [src]="icon_path | storagePath" style="height: 50px" />
   }
 </ng-template>

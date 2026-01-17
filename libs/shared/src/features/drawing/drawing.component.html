@@ -18,22 +18,21 @@
       style="touch-action: none"
     >
       <!-- Previously rendered segments -->
-      @for(segment of segments; track segment.id){
-      <path [attr.d]="segment.path()" [id]="segment.id" />
+      @for (segment of segments; track segment.id) {
+        <path [attr.d]="segment.path()" [id]="segment.id" />
       }
 
       <!-- Active segment -->
-      @if(activeSegment.path()){
-      <path [attr.d]="activeSegment.path()" [id]="activeSegment.id" />
+      @if (activeSegment.path()) {
+        <path [attr.d]="activeSegment.path()" [id]="activeSegment.id" />
       }
     </svg>
     <!-- Draw Prompt Logo -->
-    @if(segments.length===0 && !activeSegment.path()){
-    <div class="draw-logo">
-      <mat-icon>draw</mat-icon>
-      <div>{{ 'Draw Here' | translate }}</div>
-    </div>
-
+    @if (segments.length === 0 && !activeSegment.path()) {
+      <div class="draw-logo">
+        <mat-icon>draw</mat-icon>
+        <div>{{ 'Draw Here' | translate }}</div>
+      </div>
     }
   </div>
 </div>

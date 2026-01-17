@@ -2,34 +2,36 @@
   <h2>Deployments</h2>
   <p>You are a member of the following app deployments</p>
   <div class="deployments-list">
-    @for(deployment of deploymentService.deployments();track deployment.id){
-        <dashboard-deployment-item (click)="deploymentService.setActiveDeployment(deployment.id)" [deployment]="deployment" [attr.data-active]="deployment.id===deploymentService.activeDeployment()?.id"  />
+    @for (deployment of deploymentService.deployments(); track deployment.id) {
+      <dashboard-deployment-item
+        (click)="deploymentService.setActiveDeployment(deployment.id)"
+        [deployment]="deployment"
+        [attr.data-active]="deployment.id === deploymentService.activeDeployment()?.id"
+      />
     }
   </div>
 
-  @if(deploymentService.activeDeployment(); as activeDeployment){
+  @if (deploymentService.activeDeployment(); as activeDeployment) {
     <h2 style="margin-top: 3rem">Permissions</h2>
     <table class="permissions-table">
       <tr>
-        <th style="width:80px">Feature</th>
+        <th style="width: 80px">Feature</th>
         @for (level of authRoleLevels; track level) {
-        <th style="width: 50px">{{ level }}</th>
+          <th style="width: 50px">{{ level }}</th>
         }
       </tr>
-      @for(feature of authRoleFeatures; track feature){
-      <tr>
-        <td>{{ feature }}</td>
-        @for (level of authRoleLevels; track level) {
-        <td>
-          @if(authService.authRoles().includes($any(feature+'.'+level))){
-            <mat-checkbox [checked]="true" [disabled]="true"></mat-checkbox>
+      @for (feature of authRoleFeatures; track feature) {
+        <tr>
+          <td>{{ feature }}</td>
+          @for (level of authRoleLevels; track level) {
+            <td>
+              @if (authService.authRoles().includes($any(feature + '.' + level))) {
+                <mat-checkbox [checked]="true" [disabled]="true"></mat-checkbox>
+              }
+            </td>
           }
-          
-        </td>
-        }
-      </tr>
+        </tr>
       }
     </table>
   }
-  
 </div>

@@ -1,20 +1,21 @@
-@if(cropFilterFn(); as filterFn){
-  <picsa-form-crop-select [filterFn]="filterFn" [(ngModel)]="selectedCropName" style="margin: 1rem"
-  [resetOption]="{ text: 'Show All', matIcon: 'apps' }"></picsa-form-crop-select>
+@if (cropFilterFn(); as filterFn) {
+  <picsa-form-crop-select
+    [filterFn]="filterFn"
+    [(ngModel)]="selectedCropName"
+    style="margin: 1rem"
+    [resetOption]="{ text: 'Show All', matIcon: 'apps' }"
+  ></picsa-form-crop-select>
 }
 
-
 <section class="table-container mat-mdc-table">
-
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
     <!---------------------------- HEADER SECTION --------------------------->
 
     <!-- LHS Templates -->
     <ng-container matColumnDef="title-left">
       <td mat-header-cell *matHeaderCellDef [attr.colspan]="4" [attr.rowspan]="4">
         <h2 style="flex: 1" data-tour-id="table-title">
-          {{ 'Crop Information' | translate }}<br>{{ tableMeta().label }}
+          {{ 'Crop Information' | translate }}<br />{{ tableMeta().label }}
         </h2>
       </td>
     </ng-container>
@@ -31,18 +32,18 @@
       <td mat-header-cell *matHeaderCellDef [attr.colspan]="probabilityColumns().length" data-tour-id="season-start">
         <div class="p-2 font-bold">
           {{
-          'Chance of receiving the water requirement in the
+            'Chance of receiving the water requirement in the
           days to maturity for this crop variety' | translate
           }}
         </div>
       </td>
     </ng-container>
-    @for(column of probabilityColumns(); track $index){
-      <ng-container [matColumnDef]="'prob-date-'+$index">
-        <td mat-header-cell *matHeaderCellDef>{{column.label}} </td>
+    @for (column of probabilityColumns(); track $index) {
+      <ng-container [matColumnDef]="'prob-date-' + $index">
+        <td mat-header-cell *matHeaderCellDef>{{ column.label }}</td>
       </ng-container>
-      <ng-container [matColumnDef]="'prob-value-'+$index">
-        <td mat-header-cell *matHeaderCellDef>{{tableMeta().seasonProbabilities[$index]}} </td>
+      <ng-container [matColumnDef]="'prob-value-' + $index">
+        <td mat-header-cell *matHeaderCellDef>{{ tableMeta().seasonProbabilities[$index] }}</td>
       </ng-container>
     }
 
@@ -50,11 +51,9 @@
     <tr mat-header-row *matHeaderRowDef="['title-left', 'prob-text-right']"></tr>
     <tr mat-header-row *matHeaderRowDef="probabilityHeaderDefs().dates"></tr>
     <tr mat-header-row *matHeaderRowDef="probabilityHeaderDefs().values"></tr>
-    <tr mat-header-row *matHeaderRowDef="[ 'water-text-right']"></tr>
-
+    <tr mat-header-row *matHeaderRowDef="['water-text-right']"></tr>
 
     <!---------------------------- MAIN SECTION --------------------------->
-
 
     <!-- Column Templates -->
 
@@ -62,7 +61,7 @@
       <th mat-header-cell *matHeaderCellDef class="crop-title">{{ 'Crop' | translate }}</th>
       <ng-container *matCellDef="let element">
         <!-- merge crop name across multiple rows as defined in data -->
-        @if(element.cropNameRowspan > 0){
+        @if (element.cropNameRowspan > 0) {
           <td mat-cell class="crop-title" [attr.rowspan]="element.cropNameRowspan">
             {{ cropDataHashmap[element.crop]?.label || element.crop | translate }}
           </td>
@@ -86,37 +85,37 @@
 
     <ng-container matColumnDef="water">
       <th mat-header-cell *matHeaderCellDef class="!normal-case">
-        {{ 'Crop Water Requirement' | translate }}*<br>(mm)</th>
-        <td mat-cell *matCellDef="let element">
-          @let water= element.water.join('-');
-          <div>{{ water | translate }} mm</div>
-        </td>
+        {{ 'Crop Water Requirement' | translate }}*<br />(mm)
+      </th>
+      <td mat-cell *matCellDef="let element">
+        @let water = element.water.join('-');
+        <div>{{ water | translate }} mm</div>
+      </td>
+    </ng-container>
+
+    <!-- Probability columns -->
+    @for (column of probabilityColumns(); track column) {
+      <ng-container [matColumnDef]="column.name">
+        <th mat-header-cell *matHeaderCellDef class="probability-cell">{{ column.label }}</th>
+        <td *matCellDef="let element" class="probability-cell">{{ element[column.name] }}</td>
       </ng-container>
+    }
 
-      <!-- Probability columns -->
-      @for (column of probabilityColumns(); track column) {
-        <ng-container [matColumnDef]="column.name">
-          <th mat-header-cell *matHeaderCellDef class="probability-cell"> {{ column.label }} </th>
-          <td *matCellDef="let element" class="probability-cell">{{ element[column.name] }}</td>
-        </ng-container>
-      }
+    <!-- Render Rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-      <!-- Render Rows -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"> </tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <!---------------------------- FOOTER SECTION --------------------------->
 
-      <!---------------------------- FOOTER SECTION --------------------------->
-
-      <!-- Disclaimer -->
-      <ng-container matColumnDef="disclaimer">
-        <td mat-footer-cell *matFooterCellDef [attr.colspan]="4+probabilityColumns().length" class="footer-cell">
-          <div class="text-xs text-left">
-            *{{'Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0' | translate}}<br>
-            {{tableMeta().station_label}}
-          </div>
-        </td>
-      </ng-container>
-      <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="footer-row"></tr>
-
-    </table>
-  </section>
+    <!-- Disclaimer -->
+    <ng-container matColumnDef="disclaimer">
+      <td mat-footer-cell *matFooterCellDef [attr.colspan]="4 + probabilityColumns().length" class="footer-cell">
+        <div class="text-xs text-left">
+          *{{ 'Calculated using FAO CLIMWAT 2.0 for Cropwat and Cropwat 8.0' | translate }}<br />
+          {{ tableMeta().station_label }}
+        </div>
+      </td>
+    </ng-container>
+    <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="footer-row"></tr>
+  </table>
+</section>

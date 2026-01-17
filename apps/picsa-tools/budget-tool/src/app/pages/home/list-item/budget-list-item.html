@@ -7,16 +7,22 @@
       <mat-card-subtitle>{{ budget()._created | date }}</mat-card-subtitle>
     </div>
     <budget-summary [budgetData]="budget().data" style="margin-bottom: 1.2rem; width: 150px"></budget-summary>
-    <button mat-icon-button [matMenuTriggerFor]="budgetMenu" style="height: 70px; width: 50px"
-      (click)="$event.stopPropagation()">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="budgetMenu"
+      style="height: 70px; width: 50px"
+      (click)="$event.stopPropagation()"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
 
     <mat-menu #budgetMenu="matMenu">
-      <button mat-menu-item aria-label="Copy"
-        (click)="showCopyDialog(dialogBase)"><mat-icon>content_copy</mat-icon>Copy</button>
-      <button mat-menu-item aria-label="Edit"
-        (click)="showRenameDialog(dialogBase)"><mat-icon>edit</mat-icon>Rename</button>
+      <button mat-menu-item aria-label="Copy" (click)="showCopyDialog(dialogBase)">
+        <mat-icon>content_copy</mat-icon>Copy
+      </button>
+      <button mat-menu-item aria-label="Edit" (click)="showRenameDialog(dialogBase)">
+        <mat-icon>edit</mat-icon>Rename
+      </button>
       <button mat-menu-item aria-label="Delete" color="light" (click)="deleteClicked.emit()">
         <mat-icon>delete</mat-icon>
         Delete

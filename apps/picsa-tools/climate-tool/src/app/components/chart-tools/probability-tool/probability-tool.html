@@ -1,81 +1,74 @@
 @if (probabilities) {
-  <div style="display: flex">
-    <!-- show/hide control -->
-    <div style="margin-right: 2em">
-      <mat-button-toggle-group #show="matButtonToggleGroup" value="show">
-        <mat-button-toggle value="show" [style.display]="show.value === 'hide' ? 'block' : 'none'"
-          ><mat-icon>visibility</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="hide" [style.display]="show.value === 'show' ? 'block' : 'none'"
-            ><mat-icon>visibility_off</mat-icon></mat-button-toggle
-            >
-          </mat-button-toggle-group>
-        </div>
-        <!-- displays -->
-        <div
-          style="position: relative; margin-right: 30px; flex: 1"
-          [style.visibility]="show.value === 'show' ? 'visible' : 'hidden'"
-          >
-          <!-- 1-10 counters -->
-          <div class="probability-grid-container">
-            @for (i of numberToArray(10); track i) {
-              <div class="probability-grid-cell">
-                <span class="probability-grid-cell-label">{{ i + 1 }}0</span>
-              </div>
-            }
-          </div>
-          <!-- coloured blocks -->
-          <div
-            class="probability-blocks-group"
-            style="display: flex"
-            [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'"
-            >
-            @for (b of numberToArray(probabilities.above.count); track b) {
-              <div
-                class="block above"
-                [style.background-color]="lineOptions.above.color"
-              ></div>
-            }
-            @for (b of numberToArray(probabilities.below.count); track b) {
-              <div
-                class="block below"
-                [style.background-color]="lineOptions.below.color"
-              ></div>
-            }
-          </div>
-          <!-- text -->
-          <div class="probability-info">
-            <div style="display: flex; margin-top: 1em" [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'">
-              <mat-card
-                class="text-summary"
-                appearance="outlined"
-                mat-elevation-z4
-                [style.border-color]="lineOptions.above.color"
-                >
-                <div class="summary-label" [style.color]="lineOptions.above.color">
-                  <span>{{options.above.label | translate}}</span>
-                </div>
-                <div style="margin: 4px">
-                  {{ probabilities.above.count }} {{ 'out of' | translate }} {{ probabilities.total }}
-                </div>
-                <div class="prob-10">{{ probabilities.above.inTen }} {{ 'years out of every 10' | translate }}</div>
-              </mat-card>
-              <mat-card
-                class="text-summary"
-                appearance="outlined"
-                mat-elevation-z4
-                [style.border-color]="lineOptions.below.color"
-                >
-                <div class="summary-label" [style.color]="lineOptions.below.color">
-                  <span>{{options.below.label | translate}}</span>
-                </div>
-                <div style="margin: 4px">
-                  {{ probabilities.below.count }} {{ 'out of' | translate }} {{ probabilities.total }}
-                </div>
-                <div class="prob-10">{{ probabilities.below.inTen }} {{ 'years out of every 10' | translate }}</div>
-              </mat-card>
-            </div>
-          </div>
-        </div>
+<div style="display: flex">
+  <!-- show/hide control -->
+  <div style="margin-right: 2em">
+    <mat-button-toggle-group #show="matButtonToggleGroup" value="show">
+      <mat-button-toggle value="show" [style.display]="show.value === 'hide' ? 'block' : 'none'"
+        ><mat-icon>visibility</mat-icon></mat-button-toggle
+      >
+      <mat-button-toggle value="hide" [style.display]="show.value === 'show' ? 'block' : 'none'"
+        ><mat-icon>visibility_off</mat-icon></mat-button-toggle
+      >
+    </mat-button-toggle-group>
+  </div>
+  <!-- displays -->
+  <div
+    style="position: relative; margin-right: 30px; flex: 1"
+    [style.visibility]="show.value === 'show' ? 'visible' : 'hidden'"
+  >
+    <!-- 1-10 counters -->
+    <div class="probability-grid-container">
+      @for (i of numberToArray(10); track i) {
+      <div class="probability-grid-cell">
+        <span class="probability-grid-cell-label">{{ i + 1 }}0</span>
       </div>
-    }
+      }
+    </div>
+    <!-- coloured blocks -->
+    <div
+      class="probability-blocks-group"
+      style="display: flex"
+      [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'"
+    >
+      @for (b of numberToArray(probabilities.above.count); track b) {
+      <div class="block above" [style.background-color]="lineOptions.above.color"></div>
+      } @for (b of numberToArray(probabilities.below.count); track b) {
+      <div class="block below" [style.background-color]="lineOptions.below.color"></div>
+      }
+    </div>
+    <!-- text -->
+    <div class="probability-info">
+      <div style="display: flex; margin-top: 1em" [style.flex-direction]="options.reverse ? 'row-reverse' : 'row'">
+        <mat-card
+          class="text-summary"
+          appearance="outlined"
+          mat-elevation-z4
+          [style.border-color]="lineOptions.above.color"
+        >
+          <div class="summary-label" [style.color]="lineOptions.above.color">
+            <span>{{options.above.label | translate}}</span>
+          </div>
+          <div style="margin: 4px">
+            {{ probabilities.above.count }} {{ 'out of' | translate }} {{ probabilities.total }}
+          </div>
+          <div class="prob-10">{{ probabilities.above.inTen }} {{ 'years out of every 10' | translate }}</div>
+        </mat-card>
+        <mat-card
+          class="text-summary"
+          appearance="outlined"
+          mat-elevation-z4
+          [style.border-color]="lineOptions.below.color"
+        >
+          <div class="summary-label" [style.color]="lineOptions.below.color">
+            <span>{{options.below.label | translate}}</span>
+          </div>
+          <div style="margin: 4px">
+            {{ probabilities.below.count }} {{ 'out of' | translate }} {{ probabilities.total }}
+          </div>
+          <div class="prob-10">{{ probabilities.below.inTen }} {{ 'years out of every 10' | translate }}</div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+}

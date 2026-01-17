@@ -3,8 +3,8 @@
     <mat-form-field appearance="outline" floatLabel="always">
       <mat-label>Crop</mat-label>
       <mat-select matInput formControlName="crop">
-        @for(option of cropOptions; track option.id){
-        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+        @for (option of cropOptions; track option.id) {
+          <mat-option [value]="option.id">{{ option.label }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

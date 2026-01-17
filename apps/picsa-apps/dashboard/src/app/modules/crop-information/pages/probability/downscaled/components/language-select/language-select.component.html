@@ -1,10 +1,11 @@
 <mat-form-field appearance="outline" class="flex-1 max-w-sm">
-    <mat-label>
-        <mat-icon>translate</mat-icon>
-        {{'Language' | translate}}</mat-label>
-    <mat-select [(ngModel)]="languageSelected">
-        @for(option of languageOptions(); track option.id){
-        <mat-option [value]="option.id">{{option.language_label}}</mat-option>
-        }
-    </mat-select>
+  <mat-label>
+    <mat-icon>translate</mat-icon>
+    {{ 'Language' | translate }}</mat-label
+  >
+  <mat-select [(ngModel)]="languageSelected">
+    @for (option of languageOptions(); track option.id) {
+      <mat-option [value]="option.id">{{ option.language_label }}</mat-option>
+    }
+  </mat-select>
 </mat-form-field>

@@ -5,12 +5,12 @@
     <div class="time-period">
       <div class="time-period-title cell top-row"></div>
       @for (row of rows; track row) {
-        <div class="cell row-title">
-          <span>{{ row.label | translate }}</span>
-          @if (row.sublabel) {
-            <span style="font-size: 14px"><br />{{ row.sublabel | translate }}</span>
-          }
-        </div>
+      <div class="cell row-title">
+        <span>{{ row.label | translate }}</span>
+        @if (row.sublabel) {
+        <span style="font-size: 14px"><br />{{ row.sublabel | translate }}</span>
+        }
+      </div>
       }
       <!-- cash balance legend -->
       <div class="cell row-title">
@@ -22,99 +22,96 @@
 
     <!-- Time periods (calculated vertically) -->
     @for (column of store.activeBudget.data; track column; let columnIndex = $index) {
-      <div class="time-period">
-        <div class="time-period-title cell top-row">
-          <!-- Editor - Delete -->
-          @if (service.editMode()) {
-            <button mat-button class="editor-button"
-              (click)="store.editorDeleteTimePeriod(columnIndex)">
-              <mat-icon style="margin: 0">delete</mat-icon>
-            </button>
-          }
-          <!-- Label -->
-          <span style="flex: 1">{{ store.periodLabels[columnIndex] | translate }}</span>
-          <!-- Editor - Copy -->
-          @if (service.editMode()) {
-            <button mat-button class="editor-button"
-              (click)="store.editorCopyTimePeriod(columnIndex)">
-              <mat-icon style="margin: 0">content_copy</mat-icon>
-            </button>
-          }
-        </div>
-        <!-- period rows -->
-        @for (row of rows; track row) {
-          <div class="cell">
-            <budget-cell [periodIndex]="columnIndex" [type]="row.type"
-            (click)="emitCellClicked(columnIndex, row)"></budget-cell>
-          </div>
+    <div class="time-period">
+      <div class="time-period-title cell top-row">
+        <!-- Editor - Delete -->
+        @if (service.editMode()) {
+        <button mat-button class="editor-button" (click)="store.editorDeleteTimePeriod(columnIndex)">
+          <mat-icon style="margin: 0">delete</mat-icon>
+        </button>
         }
-        <!-- Cash Balance -->
-        <div class="cell">
-          @if(service.cashBalances()[columnIndex]; as cashBalance){
-            <div class="balance-cell-contents">
-              <div class="balance-value-container">
-                <div class="balance-label">{{ store.periodLabels[columnIndex] | translate }}</div>
-                <div class="balance-value">{{ cashBalance.balance | number: '.0' }}</div>
-              </div>
-              <hr />
-              <div class="balance-value-container">
-                <div class="balance-label">{{ 'Total' | translate }}</div>
-                <div class="balance-value">{{ cashBalance.cumulative | number: '.0' }}</div>
-              </div>
-            </div>
-          }
-        </div>
+        <!-- Label -->
+        <span style="flex: 1">{{ store.periodLabels[columnIndex] | translate }}</span>
+        <!-- Editor - Copy -->
+        @if (service.editMode()) {
+        <button mat-button class="editor-button" (click)="store.editorCopyTimePeriod(columnIndex)">
+          <mat-icon style="margin: 0">content_copy</mat-icon>
+        </button>
+        }
       </div>
+      <!-- period rows -->
+      @for (row of rows; track row) {
+      <div class="cell">
+        <budget-cell
+          [periodIndex]="columnIndex"
+          [type]="row.type"
+          (click)="emitCellClicked(columnIndex, row)"
+        ></budget-cell>
+      </div>
+      }
+      <!-- Cash Balance -->
+      <div class="cell">
+        @if(service.cashBalances()[columnIndex]; as cashBalance){
+        <div class="balance-cell-contents">
+          <div class="balance-value-container">
+            <div class="balance-label">{{ store.periodLabels[columnIndex] | translate }}</div>
+            <div class="balance-value">{{ cashBalance.balance | number: '.0' }}</div>
+          </div>
+          <hr />
+          <div class="balance-value-container">
+            <div class="balance-label">{{ 'Total' | translate }}</div>
+            <div class="balance-value">{{ cashBalance.cumulative | number: '.0' }}</div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
     }
 
     <!-- Total Summary - -->
     @if(!service.editMode()){
-      <div class="time-period">
-        <div class="time-period-title cell top-row">{{'Summary' | translate}}</div>
-        @for(row of rows; track row.type){
-          <div class="cell summary">
-            @switch (row.type) {
-              @case('familyLabour'){
-                <div class="flex items-center mb-1">
-                  <img src="assets/budget-cards/family-labour_adultFemale.svg" class="w-8" />
-                  <span>{{service.familyLaborTotal().female}}</span>
-                  <img src="assets/budget-cards/family-labour_adultMale.svg" class="w-8 ml-2" />
-                  <span>{{service.familyLaborTotal().male}}</span>
-                </div>
-                <mat-divider class="w-full"></mat-divider>
-                <div class="mt-1">{{service.familyLaborTotal().total}} {{'Days' | translate}}</div>
-              }
-              @case('produceConsumed'){
-                <div class="flex flex-wrap gap-2">
-                  @for (entry of service.produceConsumedTotal(); track entry.id) {
-                    <div class="flex items-center">
-                      <img [src]="entry.image" class="w-10 h-10" />
-                      <span class="summary-value">{{entry.total }}</span>
-                    </div>
-                  }
-                </div>
-              }
-            }
+    <div class="time-period">
+      <div class="time-period-title cell top-row">{{'Summary' | translate}}</div>
+      @for(row of rows; track row.type){
+      <div class="cell summary">
+        @switch (row.type) { @case('familyLabour'){
+        <div class="flex items-center mb-1">
+          <img src="assets/budget-cards/family-labour_adultFemale.svg" class="w-8" />
+          <span>{{service.familyLaborTotal().female}}</span>
+          <img src="assets/budget-cards/family-labour_adultMale.svg" class="w-8 ml-2" />
+          <span>{{service.familyLaborTotal().male}}</span>
+        </div>
+        <mat-divider class="w-full"></mat-divider>
+        <div class="mt-1">{{service.familyLaborTotal().total}} {{'Days' | translate}}</div>
+        } @case('produceConsumed'){
+        <div class="flex flex-wrap gap-2">
+          @for (entry of service.produceConsumedTotal(); track entry.id) {
+          <div class="flex items-center">
+            <img [src]="entry.image" class="w-10 h-10" />
+            <span class="summary-value">{{entry.total }}</span>
           </div>
-        }
-        <div class="cell summary">{{service.settings().currency}} {{service.cashBalanceTotal() | number: '.0'}}</div>
+          }
+        </div>
+        } }
       </div>
+      }
+      <div class="cell summary">{{service.settings().currency}} {{service.cashBalanceTotal() | number: '.0'}}</div>
+    </div>
     }
-
 
     <!-- Editor - Add month -->
     @if (service.editMode()) {
-      <div class="time-period">
-        <button mat-button style="height: 100%; background: wheat" (click)="store.editorAddTimePeriod()">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
+    <div class="time-period">
+      <button mat-button style="height: 100%; background: wheat" (click)="store.editorAddTimePeriod()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
     }
   </div>
   <!-- Editor save -->
   @if (service.editMode()) {
-    <div class="editor-save" style="display: flex" (click)="service.editMode.set(false)">
-      <button mat-raised-button color="primary" class="footer-button">{{'Save' | translate}}</button>
-    </div>
+  <div class="editor-save" style="display: flex" (click)="service.editMode.set(false)">
+    <button mat-raised-button color="primary" class="footer-button">{{'Save' | translate}}</button>
+  </div>
   }
 </div>

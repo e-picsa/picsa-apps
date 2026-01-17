@@ -2,23 +2,17 @@
   <div [innerHTML]="data.title"></div>
   <div [innerHTML]="data.html"></div>
   @if (data.loader) {
-    <picsa-loading [name]="data.loader"> </picsa-loading>
-  }
-  @if (data.buttons) {
-    <div mat-dialog-actions>
-      <!-- HACK - want to disable autofocus on first element so provide conditional focus element -->
-      @for (button of data.buttons; track button) {
-        @if (!button.focus) {
-          <button class="picsa-dialog-button" mat-button [mat-dialog-close]="button.value">
-            {{ button.text | translate}}
-          </button>
-        }
-        @if (button.focus) {
-          <button mat-button [mat-dialog-close]="button.value" cdkFocusInitial>
-            {{ button.text| translate }}
-          </button>
-        }
-      }
-    </div>
+  <picsa-loading [name]="data.loader"> </picsa-loading>
+  } @if (data.buttons) {
+  <div mat-dialog-actions>
+    <!-- HACK - want to disable autofocus on first element so provide conditional focus element -->
+    @for (button of data.buttons; track button) { @if (!button.focus) {
+    <button class="picsa-dialog-button" mat-button [mat-dialog-close]="button.value">
+      {{ button.text | translate}}
+    </button>
+    } @if (button.focus) {
+    <button mat-button [mat-dialog-close]="button.value" cdkFocusInitial>{{ button.text| translate }}</button>
+    } }
+  </div>
   }
 </div>

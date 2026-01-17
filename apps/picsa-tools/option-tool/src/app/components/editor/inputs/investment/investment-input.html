@@ -1,26 +1,26 @@
 @if (!options.readonly) {
-  <div class="input-container">
-    @for (option of selectOptions; track option) {
-      <button
-        mat-button
-        class="select-button"
-        (click)="selected=option.id"
-        [attr.data-value]="option.id"
-        [attr.data-selected]="selected===option.id"
-        >
-        <div>
-          <mat-icon>{{option.matIcon}}</mat-icon>
-          <div>{{ option.label | translate }}</div>
-        </div>
-      </button>
-    }
-  </div>
+<div class="input-container">
+  @for (option of selectOptions; track option) {
+  <button
+    mat-button
+    class="select-button"
+    (click)="selected=option.id"
+    [attr.data-value]="option.id"
+    [attr.data-selected]="selected===option.id"
+  >
+    <div>
+      <mat-icon>{{option.matIcon}}</mat-icon>
+      <div>{{ option.label | translate }}</div>
+    </div>
+  </button>
+  }
+</div>
 }
 <!-- Alternatively readonly mode which just displays selected icon -->
 @if (options.readonly) {
-  <div class="readonly-value" [attr.data-value]="selected">
-    @if (selectedOption) {
-      <span>{{selectedOption.label.substring(0,1)}}</span>
-    }
-  </div>
+<div class="readonly-value" [attr.data-value]="selected">
+  @if (selectedOption) {
+  <span>{{selectedOption.label.substring(0,1)}}</span>
+  }
+</div>
 }

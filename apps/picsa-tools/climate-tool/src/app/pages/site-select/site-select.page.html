@@ -1,6 +1,6 @@
 <!-- View Toggle (hidden on md+ screen size) -->
-@let toggleIcon = view()==='map' ? 'list' : 'map';
-@let toggleText = view()==='map' ? strings.showList : strings.showMap;
+@let toggleIcon = view()==='map' ? 'list' : 'map'; @let toggleText = view()==='map' ? strings.showList :
+strings.showMap;
 <button mat-button (click)="toggleView()" class="view-toggle">
   <mat-icon>{{toggleIcon}}</mat-icon>
   {{toggleText}}
@@ -9,18 +9,27 @@
 <div class="page-content">
   <!-- Split screen display -->
   <div class="flex flex-1 gap-1 lg:gap-2 overflow-auto">
-
     <div class="table-container" [attr.data-view]="view()">
-      <picsa-data-table [options]="tableOptions" [data]="tableData()" class="flex-1"
-        (rowClick)="handleRowClick($event)"></picsa-data-table>
+      <picsa-data-table
+        [options]="tableOptions"
+        [data]="tableData()"
+        class="flex-1"
+        (rowClick)="handleRowClick($event)"
+      ></picsa-data-table>
     </div>
 
     <div class="map-container" [attr.data-view]="view()">
-      <picsa-map (onMarkerClick)="handleMarkerClick($event)" [mapOptions]="mapOptions" [basemapOptions]="basemapOptions"
-        [markers]="mapMarkers()" (onMapReady)="mapReady.set(true)" #picsaMap class="flex-1">
+      <picsa-map
+        (onMarkerClick)="handleMarkerClick($event)"
+        [mapOptions]="mapOptions"
+        [basemapOptions]="basemapOptions"
+        [markers]="mapMarkers()"
+        (onMapReady)="mapReady.set(true)"
+        #picsaMap
+        class="flex-1"
+      >
       </picsa-map>
     </div>
-
   </div>
 </div>
 

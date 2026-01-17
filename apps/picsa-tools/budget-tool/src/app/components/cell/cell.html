@@ -1,88 +1,83 @@
 <div class="cell-container" *mobxAutorun>
   @if (cellData) {
-    <div style="height: 100%">
-      <div style="height: 100%" id="cellTypeSwitch">
-        @switch (type) {
-          <!-- activities -->
-          @case ('activities') {
-            <div style="display: flex; flex-wrap: wrap; height: 100%">
-              @for (card of cellData; track card) {
-                <budget-card-image
-                  [class]="cellData.length > 1 ? 'small' : 'medium'"
-                  [card]="card"
-                ></budget-card-image>
-              }
-            </div>
-          }
-          <!-- inputs -->
-          @case ('inputs') {
-            <div>
-              @for (card of cellData; track card) {
-                <div class="cell-values-row">
-                  <budget-card-image class="small" [card]="card"></budget-card-image>
-                  <span class="badge input-badge" [matBadge]="card.values!.quantity"></span>
-                  @if (card.values!.total) {
-                    <budget-balance-dot-value
-                      [value]="card.values!.total"
-                      [valueCounters]="store.valueCounters"
-                      class="negative"
-                    ></budget-balance-dot-value>
-                  }
-                </div>
-              }
-            </div>
-          }
-          <!-- family labour -->
-          @case ('familyLabour') {
-            <div style="display: flex; flex-wrap: wrap; padding: 5px">
-              @for (card of cellData; track card) {
-                <div>
-                  <budget-card-image class="x-small" [card]="card"></budget-card-image>
-                  <span [class]="'badge family-badge '+card.id" [matBadge]="card.values!.quantity"></span>
-                </div>
-              }
-            </div>
-          }
-          <!-- outputs -->
-          @case ('outputs') {
-            <div>
-              @for (card of cellData; track card) {
-                <div class="cell-values-row">
-                  <budget-card-image class="small" [card]="card"></budget-card-image>
-                  <span class="badge output-badge" [matBadge]="card.values!.quantity"></span>
-                  @if (card.values!.total) {
-                    <budget-balance-dot-value
-                      [value]="card.values!.total"
-                      [valueCounters]="store.valueCounters"
-                    ></budget-balance-dot-value>
-                  }
-                </div>
-              }
-            </div>
-          }
-          <!-- produce consumed -->
-          @case ('produceConsumed') {
-            <div>
-              @for (card of cellData; track card) {
-                <div class="cell-values-row">
-                  <budget-card-image class="small" [card]="card"></budget-card-image>
-                  <span class="badge consumed-badge" [matBadge]="card.values!.quantity"></span>
-                </div>
-              }
-            </div>
-          }
-          <!-- default (none) -->
-          <!-- <div *ngSwitchDefault></div> -->
+  <div style="height: 100%">
+    <div style="height: 100%" id="cellTypeSwitch">
+      @switch (type) {
+      <!-- activities -->
+      @case ('activities') {
+      <div style="display: flex; flex-wrap: wrap; height: 100%">
+        @for (card of cellData; track card) {
+        <budget-card-image [class]="cellData.length > 1 ? 'small' : 'medium'" [card]="card"></budget-card-image>
         }
       </div>
+      }
+      <!-- inputs -->
+      @case ('inputs') {
+      <div>
+        @for (card of cellData; track card) {
+        <div class="cell-values-row">
+          <budget-card-image class="small" [card]="card"></budget-card-image>
+          <span class="badge input-badge" [matBadge]="card.values!.quantity"></span>
+          @if (card.values!.total) {
+          <budget-balance-dot-value
+            [value]="card.values!.total"
+            [valueCounters]="store.valueCounters"
+            class="negative"
+          ></budget-balance-dot-value>
+          }
+        </div>
+        }
+      </div>
+      }
+      <!-- family labour -->
+      @case ('familyLabour') {
+      <div style="display: flex; flex-wrap: wrap; padding: 5px">
+        @for (card of cellData; track card) {
+        <div>
+          <budget-card-image class="x-small" [card]="card"></budget-card-image>
+          <span [class]="'badge family-badge '+card.id" [matBadge]="card.values!.quantity"></span>
+        </div>
+        }
+      </div>
+      }
+      <!-- outputs -->
+      @case ('outputs') {
+      <div>
+        @for (card of cellData; track card) {
+        <div class="cell-values-row">
+          <budget-card-image class="small" [card]="card"></budget-card-image>
+          <span class="badge output-badge" [matBadge]="card.values!.quantity"></span>
+          @if (card.values!.total) {
+          <budget-balance-dot-value
+            [value]="card.values!.total"
+            [valueCounters]="store.valueCounters"
+          ></budget-balance-dot-value>
+          }
+        </div>
+        }
+      </div>
+      }
+      <!-- produce consumed -->
+      @case ('produceConsumed') {
+      <div>
+        @for (card of cellData; track card) {
+        <div class="cell-values-row">
+          <budget-card-image class="small" [card]="card"></budget-card-image>
+          <span class="badge consumed-badge" [matBadge]="card.values!.quantity"></span>
+        </div>
+        }
+      </div>
+      }
+      <!-- default (none) -->
+      <!-- <div *ngSwitchDefault></div> -->
+      }
     </div>
-  }
-
-  @if (!cellData) {
-    <div class="add-cell-data" [attr.data-html2canvas-ignore]="true">
-      <!-- ignore add icon when rendering to canvas -->
-      <mat-icon>add</mat-icon>
-    </div>
+  </div>
+  } @if (!cellData) {
+  <div class="add-cell-data" [attr.data-html2canvas-ignore]="true">
+    <!-- ignore add icon when rendering to canvas -->
+    <mat-icon>add</mat-icon>
+  </div>
   }
   <!-- *** future - only show add for produce consumed if there are outputs in the corresponding time period -->
 </div>

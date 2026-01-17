@@ -12,10 +12,10 @@
       <b>{{ totalOutputsValue }}</b>
     </p> -->
   @for (produce of totalProduceSummary; track produce.id) {
-  <section [matTooltip]="'Total ' + produce.label + ' consumed'">
-    <img [src]="produce.imgPath" [alt]="produce.label + ' Icon'" class="summary-icon" />
-    <span class="summary-value">{{ produce.total }} {{ 'consumed' | translate }}</span>
-  </section>
+    <section [matTooltip]="'Total ' + produce.label + ' consumed'">
+      <img [src]="produce.imgPath" [alt]="produce.label + ' Icon'" class="summary-icon" />
+      <span class="summary-value">{{ produce.total }} {{ 'consumed' | translate }}</span>
+    </section>
   }
 
   <section matTooltip="Final Cash Balance">

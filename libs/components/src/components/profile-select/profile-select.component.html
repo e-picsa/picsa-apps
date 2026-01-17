@@ -3,7 +3,7 @@
   class="avatar"
   (click)="dialog.open(profileSelectDialog)"
   [style.background]="activeProfile && activeProfile.color ? activeProfile.color : 'rgba(255,255,255,0.6)'"
-  >
+>
   @if (activeProfile && activeProfile.initials) {
     <span>{{ activeProfile.initials }}</span>
   } @else {
@@ -30,7 +30,7 @@
                   class="avatar large"
                   (click)="loadProfile(profile._id, true)"
                   [style.background]="profile.color"
-                  >
+                >
                   <span>{{ profile.initials }}</span>
                 </button>
               </div>
@@ -43,11 +43,7 @@
             </div>
           </div>
           @if (profileArray.length > 0) {
-            <button
-              mat-stroked-button
-              style="margin-top: auto"
-              (click)="setContentView('edit')"
-              >
+            <button mat-stroked-button style="margin-top: auto" (click)="setContentView('edit')">
               <mat-icon>edit</mat-icon>{{ 'Edit Profiles' | translate }}
             </button>
           }
@@ -95,7 +91,7 @@
               style="margin: auto"
               [style.background]="profileForm.value.color"
               (click)="colorPicker.showPicker()"
-              >
+            >
               {{ profileForm.value.initials }}
             </button>
             <input type="color" #colorPicker formControlName="color" style="visibility: hidden; width: 0" />
@@ -107,7 +103,9 @@
             <button mat-button (click)="setContentView('list')" style="margin-left: auto">
               {{ 'Cancel' | translate }}
             </button>
-            <button mat-button (click)="saveProfile()" [disabled]="profileForm.invalid">{{ 'Save' | translate }}</button>
+            <button mat-button (click)="saveProfile()" [disabled]="profileForm.invalid">
+              {{ 'Save' | translate }}
+            </button>
           </div>
         </form>
       }

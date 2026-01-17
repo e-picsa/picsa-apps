@@ -8,7 +8,7 @@
   (ngModelChange)="setLineToolValue($event)"
   [step]="step"
   orient="vertical"
-  />
+/>
 
 @if (inputType === 'number') {
   <mat-form-field class="lineToolInputField no-padding">
@@ -18,7 +18,7 @@
       placeholder="Line"
       [(ngModel)]="value"
       (ngModelChange)="setLineToolValue($event)"
-      />
+    />
   </mat-form-field>
 }
 
@@ -30,7 +30,7 @@
       [matDatepicker]="picker"
       (dateChange)="setLineToolFromDate($event.target.value)"
       style="display: none"
-      />
+    />
     <mat-datepicker #picker touchUi [calendarHeaderComponent]="datePickerHeader"></mat-datepicker>
     <button mat-icon-button (click)="picker.open()" class="calendar-picker-button">
       <mat-icon>calendar_month</mat-icon>

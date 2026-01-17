@@ -1,25 +1,24 @@
-@if(supabaseAuthService.authUser(); as user){
-<div style="position: absolute; top: 4px; right: 8px; font-size: 12px">
-  {{ user.email }}
-</div>
-<button mat-button [matMenuTriggerFor]="beforeMenu" style="margin-top: 16px">
-  User
-  <mat-icon iconPositionEnd>account_circle</mat-icon>
-</button>
-<mat-menu #beforeMenu="matMenu" xPosition="before">
-  <button mat-menu-item routerLink="/profile">
-    <mat-icon>person</mat-icon>
-    Profile
+@if (supabaseAuthService.authUser(); as user) {
+  <div style="position: absolute; top: 4px; right: 8px; font-size: 12px">
+    {{ user.email }}
+  </div>
+  <button mat-button [matMenuTriggerFor]="beforeMenu" style="margin-top: 16px">
+    User
+    <mat-icon iconPositionEnd>account_circle</mat-icon>
   </button>
-  <button mat-menu-item (click)="supabaseAuthService.signOut()">
-    <mat-icon>logout</mat-icon>
-    Sign Out
-  </button>
-</mat-menu>
-
+  <mat-menu #beforeMenu="matMenu" xPosition="before">
+    <button mat-menu-item routerLink="/profile">
+      <mat-icon>person</mat-icon>
+      Profile
+    </button>
+    <button mat-menu-item (click)="supabaseAuthService.signOut()">
+      <mat-icon>logout</mat-icon>
+      Sign Out
+    </button>
+  </mat-menu>
 } @else {
-<button mat-button (click)="promptSignIn()" style="margin: 8px 0">
-  <mat-icon>person</mat-icon>
-  Sign In
-</button>
+  <button mat-button (click)="promptSignIn()" style="margin: 8px 0">
+    <mat-icon>person</mat-icon>
+    Sign In
+  </button>
 }

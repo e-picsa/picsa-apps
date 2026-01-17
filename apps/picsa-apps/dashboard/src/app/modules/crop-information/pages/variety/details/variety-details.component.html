@@ -12,33 +12,35 @@
         [editable]="editMode()"
         #variety
       ></dashboard-crop-variety-form>
-      @let formDisabled = variety.form.pristine || !variety.form.valid ;
+      @let formDisabled = variety.form.pristine || !variety.form.valid;
       <div class="flex mb-8">
-        @if(editMode()){ @if(!isNewEntry()){
-        <button mat-raised-button color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
-        }
-        <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
-          Submit
-        </button>
+        @if (editMode()) {
+          @if (!isNewEntry()) {
+            <button mat-raised-button color="primary" (click)="editMode.set(false)" class="mr-2">Cancel</button>
+          }
+          <button mat-raised-button color="primary" (click)="submitForm(variety.value)" [disabled]="formDisabled">
+            Submit
+          </button>
         } @else {
-        <button mat-raised-button color="primary" (click)="editMode.set(true)">Edit</button>
-        } @if(variety.value.id){
-        <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
-          <mat-icon>delete</mat-icon>
-          Delete
-        </button>
+          <button mat-raised-button color="primary" (click)="editMode.set(true)">Edit</button>
+        }
+        @if (variety.value.id) {
+          <button mat-button class="ml-auto" (click)="dialog.open(deleteDialog)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
         }
       </div>
     </mat-tab>
-    @if(cropData(); as cropData){
-    <!-- Water Requirements -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon class="mr-1">water_drop</mat-icon>
-        Water Requirements
-      </ng-template>
-      <dashboard-crop-water-requirements class="mt-2" [data]="cropData"></dashboard-crop-water-requirements>
-    </mat-tab>
+    @if (cropData(); as cropData) {
+      <!-- Water Requirements -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="mr-1">water_drop</mat-icon>
+          Water Requirements
+        </ng-template>
+        <dashboard-crop-water-requirements class="mt-2" [data]="cropData"></dashboard-crop-water-requirements>
+      </mat-tab>
     }
   </mat-tab-group>
 </div>
@@ -52,10 +54,10 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Cancel</button>
-    @if(variety.value.id){
-    <button mat-button [mat-dialog-close]="true" (click)="handleDelete(variety.value.id)" cdkFocusInitial>
-      Delete
-    </button>
+    @if (variety.value.id) {
+      <button mat-button [mat-dialog-close]="true" (click)="handleDelete(variety.value.id)" cdkFocusInitial>
+        Delete
+      </button>
     }
   </mat-dialog-actions>
 </ng-template>

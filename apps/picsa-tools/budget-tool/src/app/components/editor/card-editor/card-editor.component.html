@@ -37,20 +37,28 @@
     <div class="input-values">
       <mat-form-field class="card-input-field quantity">
         <mat-label>{{ 'Days' | translate }}</mat-label>
-        <input matInput [value]="card.values ? card.values.quantity : null" type="number"
-          (change)="setValue($event, 'quantity')" />
-        </mat-form-field>
-      </div>
-    }
-
-    <!-- Produce Consumed Editor -->
-    @if (type === 'produceConsumed') {
-      <div class="input-values">
-        <mat-form-field class="card-input-field quantity">
-          <mat-label>{{ 'Quantity' | translate }}</mat-label>
-          <input matInput [value]="card.values ? card.values.quantity : null" type="number"
-            (change)="setProduceConsumed($event)" />
-          </mat-form-field>
-        </div>
-      }
+        <input
+          matInput
+          [value]="card.values ? card.values.quantity : null"
+          type="number"
+          (change)="setValue($event, 'quantity')"
+        />
+      </mat-form-field>
     </div>
+  }
+
+  <!-- Produce Consumed Editor -->
+  @if (type === 'produceConsumed') {
+    <div class="input-values">
+      <mat-form-field class="card-input-field quantity">
+        <mat-label>{{ 'Quantity' | translate }}</mat-label>
+        <input
+          matInput
+          [value]="card.values ? card.values.quantity : null"
+          type="number"
+          (change)="setProduceConsumed($event)"
+        />
+      </mat-form-field>
+    </div>
+  }
+</div>
