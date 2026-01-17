@@ -38,7 +38,7 @@ export class CropVarietyDetailsComponent {
   constructor() {
     this.service.ready();
     effect(() => {
-      if (!service.readySignal()) return;
+      if (!this.service.readySignal()) return;
       const cropId = this.cropId();
       if (cropId === 'add') {
         this.isNewEntry.set(true);
