@@ -20,9 +20,7 @@ export class BudgetCardEditorComponent {
   @Output() valueChanged = new EventEmitter<IBudgetCardWithValues>();
 
   constructor() {
-    const store = this.store;
-
-    this.currency = store.settings.currency;
+    this.currency = this.store.settings.currency;
   }
 
   // using manual bindings instead of ngmodel as nested ngfor-ngmodel with matInput tricky
