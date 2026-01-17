@@ -28,7 +28,7 @@ export class HomeComponent implements OnDestroy {
     private service: SeasonCalendarService,
     public dialog: MatDialog,
     private dialogService: PicsaDialogService,
-    private formService: SeasonCalendarFormService
+    private formService: SeasonCalendarFormService,
   ) {
     this.subscribeToDbChanges();
   }
@@ -55,7 +55,8 @@ export class HomeComponent implements OnDestroy {
   }
 
   public async saveCopy() {
-    await this.service.save(this.calendarCopyForm.getRawValue());
+    const convertedData = this.formService.convertToSingleFormat(this.calendarCopyForm.getRawValue());
+    await this.service.save(convertedData);
     this.dialog.closeAll();
   }
 
