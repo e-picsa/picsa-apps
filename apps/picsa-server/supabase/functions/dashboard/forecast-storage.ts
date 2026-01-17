@@ -67,7 +67,7 @@ class ForecastStorageUpdate {
   /** Retrieve forecast data from API, store to supabase storage and update DB */
   private async storeForecast(
     country_code: string,
-    id: string
+    id: string,
   ): Promise<{ data?: IDBClimateForecastRow; error?: any }> {
     const supabaseClient = getClient();
     // download from api

@@ -9,7 +9,10 @@ import { IPicsaDialogConfig, IPicsaDialogData } from './dialog.models';
   providedIn: 'root',
 })
 export class PicsaDialogService {
-  constructor(private dialog: MatDialog, private injector: Injector) {}
+  constructor(
+    private dialog: MatDialog,
+    private injector: Injector,
+  ) {}
 
   /**
    * Specify whether to use translation (default true)
@@ -24,7 +27,7 @@ export class PicsaDialogService {
   async open(
     template: ICustomTemplate = 'blank',
     customData: IPicsaDialogData = {},
-    customConfig: IPicsaDialogConfig = {}
+    customConfig: IPicsaDialogConfig = {},
   ) {
     // merge default with custom data and additional config
     const templateConfig = DIALOG_TEMPLATES[template];

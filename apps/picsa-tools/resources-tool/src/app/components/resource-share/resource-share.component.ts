@@ -20,7 +20,10 @@ export class ResourceShareComponent {
   link = input.required<string>();
   uri = input<string>();
 
-  constructor(private service: ResourcesToolService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private service: ResourcesToolService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   public async share() {
     // on native prefer to share file directly

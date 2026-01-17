@@ -1,17 +1,21 @@
-<button mat-button class="select-button" [matMenuTriggerFor]="menu" [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'">
-  @if(service.activeDeployment(); as deployment){
+<button
+  mat-button
+  class="select-button"
+  [matMenuTriggerFor]="menu"
+  [style.visibility]="userDeployments().length > 0 ? 'visible' : 'hidden'"
+>
+  @if (service.activeDeployment(); as deployment) {
     <dashboard-deployment-item [deployment]="deployment" [active]="true" />
   } @else {
-  <div>Select Deployment</div>
+    <div>Select Deployment</div>
   }
   <mat-icon iconPositionEnd>unfold_more</mat-icon>
 </button>
 
-<mat-menu #menu="matMenu" style="width:200px">
-  @for(deployment of userDeployments(); track deployment.id){
-  <button mat-menu-item (click)="service.setActiveDeployment(deployment.id)">
+<mat-menu #menu="matMenu" style="width: 200px">
+  @for (deployment of userDeployments(); track deployment.id) {
+    <button mat-menu-item (click)="service.setActiveDeployment(deployment.id)">
       <dashboard-deployment-item [deployment]="deployment" />
-  </button>
-
+    </button>
   }
 </mat-menu>

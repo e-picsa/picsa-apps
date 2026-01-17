@@ -29,7 +29,10 @@ export class PicsaDatabaseAttachmentService extends PicsaAsyncService {
   /** Track any generate objectURLs so that they can be removed from dom as required */
   private objectURLs: { [filename: string]: string } = {};
 
-  constructor(private dbService: PicsaDatabase_V2_Service, private nativeStorageService: NativeStorageService) {
+  constructor(
+    private dbService: PicsaDatabase_V2_Service,
+    private nativeStorageService: NativeStorageService,
+  ) {
     super();
   }
 

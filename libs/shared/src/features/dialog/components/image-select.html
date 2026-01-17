@@ -2,12 +2,12 @@
   <h2 [innerHTML]="data.title"></h2>
   <div style="display: flex">
     @for (option of data.selectOptions; track option) {
-      <div class="select-option" (click)="select(option)">
-        @if (option.image) {
-          <img [src]="option.image" class="select-image" />
-        }
-        <div>{{ option.text | translate }}</div>
-      </div>
+    <div class="select-option" (click)="select(option)">
+      @if (option.image) {
+      <img [src]="option.image" class="select-image" />
+      }
+      <div>{{ option.text | translate }}</div>
+    </div>
     }
   </div>
 </div>

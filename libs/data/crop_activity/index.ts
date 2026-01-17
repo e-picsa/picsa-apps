@@ -29,7 +29,7 @@ const CROP_ACTIVITY_BASE = {
 
 // Extract list of available weather names
 type CropActivityName = keyof typeof CROP_ACTIVITY_BASE;
-export type ICropActivityDataEntry = typeof CROP_ACTIVITY_DATA[0];
+export type ICropActivityDataEntry = (typeof CROP_ACTIVITY_DATA)[0];
 
 // TODO - migrate budget tool to use
 export const CROP_ACTIVITY_DATA = Object.entries(CROP_ACTIVITY_BASE)

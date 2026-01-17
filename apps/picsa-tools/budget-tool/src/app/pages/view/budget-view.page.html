@@ -6,19 +6,17 @@
   <ng-container content>
     <!-- hide overflow so that editor can be stored outside bottom of page -->
     @if (store.activeBudget) {
-      <budget-table
-        class="h-full"
-        [budget]="store.activeBudget"
-        @fadeInOut
-        (cellClicked)="handleCellClicked($event)"
-      ></budget-table>
+    <budget-table
+      class="h-full"
+      [budget]="store.activeBudget"
+      @fadeInOut
+      (cellClicked)="handleCellClicked($event)"
+    ></budget-table>
     }
   </ng-container>
 </picsa-sidenav-layout>
 <div class="editor-popup slide-in" [class.active]="editorOpen()">
   @if (store.activeBudget && store.activeBudget.data) {
-    <budget-editor
-      (nextClicked)="editorOpen.set(false)"
-    ></budget-editor>
+  <budget-editor (nextClicked)="editorOpen.set(false)"></budget-editor>
   }
 </div>

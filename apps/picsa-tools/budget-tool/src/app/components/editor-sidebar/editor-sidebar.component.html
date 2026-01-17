@@ -1,11 +1,10 @@
 <div style="display: flex; flex-direction: column; flex: 1">
-
   <h3 style="margin-top: 0">{{ 'Options' | translate }}</h3>
   <button mat-button aria-label="Share" (click)="showShareDialog()">
-    <mat-icon>share</mat-icon>{{'Share' | translate }}
+    <mat-icon>share</mat-icon>{{ 'Share' | translate }}
   </button>
   <button mat-button (click)="goToBudgetHome()">
-    <mat-icon>list_alt</mat-icon>{{'Show All Budgets' | translate }}
+    <mat-icon>list_alt</mat-icon>{{ 'Show All Budgets' | translate }}
   </button>
   <h3 style="margin-top: 2rem">{{ 'Tools' | translate }}</h3>
   @if (store.activeBudget && store.activeBudget.meta) {

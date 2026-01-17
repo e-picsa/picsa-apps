@@ -1,8 +1,8 @@
-@if(uri()){
-<img [src]="uri()" (click)="openPhotoDialog()" />
-
-} @if(errorMsg()){
-<div class="error-msg">{{ errorMsg() }}</div>
+@if (uri()) {
+  <img [src]="uri()" (click)="openPhotoDialog()" />
+}
+@if (errorMsg()) {
+  <div class="error-msg">{{ errorMsg() }}</div>
 }
 
 <ng-template #dialogTemplate>

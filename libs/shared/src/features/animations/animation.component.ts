@@ -23,7 +23,10 @@ export class PicsaAnimationComponent implements OnInit {
 
   public options: AnimationOptions;
 
-  constructor(private host: ElementRef<HTMLElement>, private dialog: MatDialog) {}
+  constructor(
+    private host: ElementRef<HTMLElement>,
+    private dialog: MatDialog,
+  ) {}
 
   private async selfDestruct() {
     this.dialog.closeAll();

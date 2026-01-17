@@ -16,7 +16,10 @@ export class PhotoService extends PicsaAsyncService {
   /** List of all stored photos, exposed as signal */
   public photos = signal<Schema.IPhotoEntry[]>([], { equal: isEqual });
 
-  constructor(private dbService: PicsaDatabase_V2_Service, private attachmentService: PicsaDatabaseAttachmentService) {
+  constructor(
+    private dbService: PicsaDatabase_V2_Service,
+    private attachmentService: PicsaDatabaseAttachmentService,
+  ) {
     super();
   }
 

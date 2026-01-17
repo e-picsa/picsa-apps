@@ -35,7 +35,10 @@ export class EmbeddedRoutingModule {
 })
 export class BaseModule {
   // ensure translate has been initiated
-  constructor(public translate: PicsaTranslateService, budgetStore: BudgetStore) {
+  constructor(
+    public translate: PicsaTranslateService,
+    budgetStore: BudgetStore,
+  ) {
     budgetStore.init();
   }
 }

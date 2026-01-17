@@ -30,7 +30,10 @@ export class ScrollRestoreService {
 @Directive({ selector: '[scrollRestore]', standalone: true })
 export class PicsaScrollRestoreDirective implements OnInit, AfterViewInit, OnDestroy {
   private pathname: string;
-  constructor(private el: ElementRef<HTMLDivElement>, private service: ScrollRestoreService) {}
+  constructor(
+    private el: ElementRef<HTMLDivElement>,
+    private service: ScrollRestoreService,
+  ) {}
 
   ngOnInit(): void {
     this.pathname = location.pathname;

@@ -26,7 +26,10 @@ export class DeploymentSelectComponent implements OnInit {
     }
     return [];
   });
-  constructor(public service: DeploymentDashboardService, private authService: DashboardAuthService) {}
+  constructor(
+    public service: DeploymentDashboardService,
+    private authService: DashboardAuthService,
+  ) {}
 
   async ngOnInit() {
     await this.service.ready();

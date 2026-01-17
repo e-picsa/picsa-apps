@@ -13,7 +13,10 @@ import { IBudgetCard } from '../../../schema';
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetCardNewDialog {
   public card: IBudgetCard;
-  constructor(public dialogRef: MatDialogRef<BudgetCardNewDialog>, @Inject(MAT_DIALOG_DATA) card: IBudgetCard) {
+  constructor(
+    public dialogRef: MatDialogRef<BudgetCardNewDialog>,
+    @Inject(MAT_DIALOG_DATA) card: IBudgetCard,
+  ) {
     this.card = card;
   }
 

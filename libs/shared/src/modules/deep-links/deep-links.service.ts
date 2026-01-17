@@ -23,7 +23,7 @@ export class DeepLinksService {
     @Optional() public config: DeepLinksServiceConfig,
     private zone: NgZone,
     private router: Router,
-    private bottomSheet: MatBottomSheet
+    private bottomSheet: MatBottomSheet,
   ) {}
 
   public init() {

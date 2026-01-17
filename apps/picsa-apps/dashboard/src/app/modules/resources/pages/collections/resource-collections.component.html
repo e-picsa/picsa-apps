@@ -24,7 +24,7 @@
     [valueTemplates]="{
       modified_at: modifiedAtTemplate,
       cover_image: coverImageTemplate,
-      collection_parent: collectionParentTemplate
+      collection_parent: collectionParentTemplate,
     }"
   >
     <!-- cover image -->
@@ -33,12 +33,12 @@
     </ng-template>
     <!-- parent collection -->
     <ng-template #collectionParentTemplate let-collection>
-      @if(collection){
-      <img
-        class="cover-image color-on-hover"
-        [src]="collection.cover_image | storagePath"
-        [matTooltip]="collection.title"
-      />
+      @if (collection) {
+        <img
+          class="cover-image color-on-hover"
+          [src]="collection.cover_image | storagePath"
+          [matTooltip]="collection.title"
+        />
       }
     </ng-template>
 

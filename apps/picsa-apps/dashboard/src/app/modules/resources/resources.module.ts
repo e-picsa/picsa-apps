@@ -49,14 +49,14 @@ import { RouterModule } from '@angular/router';
         path: 'collections/create',
         loadComponent: () =>
           import('./pages/collections/edit/resource-collection-edit.component').then(
-            (m) => m.ResourceCollectionEditComponent
+            (m) => m.ResourceCollectionEditComponent,
           ),
       },
       {
         path: 'collections/:id',
         loadComponent: () =>
           import('./pages/collections/edit/resource-collection-edit.component').then(
-            (m) => m.ResourceCollectionEditComponent
+            (m) => m.ResourceCollectionEditComponent,
           ),
       },
     ]),

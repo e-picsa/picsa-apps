@@ -11,7 +11,11 @@
   <!-- Table -->
   @if (tableStationMeta(); as tableMeta) {
     @if (tableStationData(); as stationData) {
-      <crop-probability-table [stationData]="stationData" [tableMeta]="tableMeta" filterCrop="maize"></crop-probability-table>
+      <crop-probability-table
+        [stationData]="stationData"
+        [tableMeta]="tableMeta"
+        filterCrop="maize"
+      ></crop-probability-table>
     } @else {
       Loading...
     }

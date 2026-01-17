@@ -1,54 +1,57 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2 style="flex: 1">Monitoring Form View</h2>
-    @if(form){
-    <div class="action-button-section">
-      <button mat-raised-button color="primary" routerLink="edit">Edit Form</button>
-      <button mat-raised-button color="primary" routerLink="submissions">View Submissions</button>
-    </div>
+    @if (form) {
+      <div class="action-button-section">
+        <button mat-raised-button color="primary" routerLink="edit">Edit Form</button>
+        <button mat-raised-button color="primary" routerLink="submissions">View Submissions</button>
+      </div>
     }
   </div>
-  @if(form){
-  <label>Enketo Form</label>
-  <enketo-webform [form]="enketoForm" [model]="enketoModel"></enketo-webform>
+  @if (form) {
+    <label>Enketo Form</label>
+    <enketo-webform [form]="enketoForm" [model]="enketoModel"></enketo-webform>
 
-  <form class="form-content">
-    <div class="form-data">
-      <label>Date of Creation</label>
-      <div class="data-container">{{ form.created_at | date: 'mediumDate' }}</div>
-    </div>
-    <div class="form-data">
-      <label>Title</label>
-      <div class="data-container">{{ form.title }}</div>
-    </div>
-    <div class="form-data">
-      <label>Description</label>
-      <div class="data-container">{{ form.description }}</div>
-    </div>
-
-    <div class="form-data">
-      <label>Summary Fields</label>
-      <div class="data-container">
-        @if(form.summary_fields && form.summary_fields.length > 0){ @for (field of form.summary_fields; track $index) {
-        @if( field){
-        <strong>{{ field['label'] }}:</strong> {{ field['field'] }}
-        } } }
+    <form class="form-content">
+      <div class="form-data">
+        <label>Date of Creation</label>
+        <div class="data-container">{{ form.created_at | date: 'mediumDate' }}</div>
       </div>
-    </div>
-    <div class="form-data">
-      <!-- <enketo-webform [form]="form.enketo_form" [model]="form.enketo_model"></enketo-webform> -->
-    </div>
-    <!-- <div class="form-data">
+      <div class="form-data">
+        <label>Title</label>
+        <div class="data-container">{{ form.title }}</div>
+      </div>
+      <div class="form-data">
+        <label>Description</label>
+        <div class="data-container">{{ form.description }}</div>
+      </div>
+
+      <div class="form-data">
+        <label>Summary Fields</label>
+        <div class="data-container">
+          @if (form.summary_fields && form.summary_fields.length > 0) {
+            @for (field of form.summary_fields; track $index) {
+              @if (field) {
+                <strong>{{ field['label'] }}:</strong> {{ field['field'] }}
+              }
+            }
+          }
+        </div>
+      </div>
+      <div class="form-data">
+        <!-- <enketo-webform [form]="form.enketo_form" [model]="form.enketo_model"></enketo-webform> -->
+      </div>
+      <!-- <div class="form-data">
       <label>Enketo Definition</label>
       <div class="data-container">
         <ngx-json-viewer [json]="form.enketo_definition"></ngx-json-viewer>
       </div>
     </div> -->
-  </form>
-  <button mat-button color="warning" (click)="promptDelete()">Delete Form</button>
-  } @else if(dataLoadError) {
-  <div>{{ dataLoadError }}</div>
+    </form>
+    <button mat-button color="warning" (click)="promptDelete()">Delete Form</button>
+  } @else if (dataLoadError) {
+    <div>{{ dataLoadError }}</div>
   } @else {
-  <div>Loading...</div>
+    <div>Loading...</div>
   }
 </div>

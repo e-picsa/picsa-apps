@@ -62,7 +62,11 @@ export class ResourceCollectionsComponent implements OnInit {
     },
   };
 
-  constructor(private service: ResourcesDashboardService, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private service: ResourcesDashboardService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {
     effect(() => {
       const collectionsHashmap = this.service.collectionsById();
       const collections = service.collections().map((c) => this.mergeCollectionData(c, collectionsHashmap));
@@ -75,7 +79,7 @@ export class ResourceCollectionsComponent implements OnInit {
 
   private mergeCollectionData(
     collection: IResourceCollectionRow,
-    collectionsHashmap: Record<string, IResourceCollectionRow>
+    collectionsHashmap: Record<string, IResourceCollectionRow>,
   ): IMergedCollection {
     return {
       ...collection,

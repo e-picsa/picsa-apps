@@ -3,43 +3,43 @@
     <mat-label>{{ 'Search Resources' | translate }}...</mat-label>
     <input matInput type="text" [(ngModel)]="query" (input)="onSearchInputChange()" appAutoFocus />
   </mat-form-field>
-  @if(totalResults===0){
-  <div>
-    @if(query.length > 2){
-    <span>{{ 'No results found' | translate }}</span>
-    } @else {
-    <span>{{ 'Input at least 3 letters to search' | translate }}</span>
-    }
-  </div>
+  @if (totalResults === 0) {
+    <div>
+      @if (query.length > 2) {
+        <span>{{ 'No results found' | translate }}</span>
+      } @else {
+        <span>{{ 'Input at least 3 letters to search' | translate }}</span>
+      }
+    </div>
   }
 
   <!-- Collection Results -->
-  @if(searchResults.collection.length > 0){
-  <h2>{{ 'Collections' | translate }} ({{ searchResults.collection.length }})</h2>
-  <div class="list-container">
-    @for(collection of searchResults.collection; track collection.id){
-    <resource-item-collection [collection]="collection"></resource-item-collection>
-    }
-  </div>
+  @if (searchResults.collection.length > 0) {
+    <h2>{{ 'Collections' | translate }} ({{ searchResults.collection.length }})</h2>
+    <div class="list-container">
+      @for (collection of searchResults.collection; track collection.id) {
+        <resource-item-collection [collection]="collection"></resource-item-collection>
+      }
+    </div>
   }
 
   <!-- File Results -->
-  @if(searchResults.file.length > 0){
-  <h2>{{ 'Files' | translate }} ({{ searchResults.file.length }})</h2>
-  <div class="list-container">
-    @for(file of searchResults.file; track file.id){
-    <resource-item-file [resource]="file"></resource-item-file>
-    }
-  </div>
+  @if (searchResults.file.length > 0) {
+    <h2>{{ 'Files' | translate }} ({{ searchResults.file.length }})</h2>
+    <div class="list-container">
+      @for (file of searchResults.file; track file.id) {
+        <resource-item-file [resource]="file"></resource-item-file>
+      }
+    </div>
   }
 
   <!-- Link Results -->
-  @if(searchResults.link.length > 0){
-  <h2>{{ 'Links' | translate }} ({{ searchResults.link.length }})</h2>
-  <div class="list-container">
-    @for(link of searchResults.link; track link.id){
-    <resource-item-link [resource]="link"></resource-item-link>
-    }
-  </div>
+  @if (searchResults.link.length > 0) {
+    <h2>{{ 'Links' | translate }} ({{ searchResults.link.length }})</h2>
+    <div class="list-container">
+      @for (link of searchResults.link; track link.id) {
+        <resource-item-link [resource]="link"></resource-item-link>
+      }
+    </div>
   }
 </div>

@@ -7,5 +7,5 @@ import ZM_STATIONS from './zm';
 export const HARDCODED_STATIONS = ([] as IStationMeta[]).concat(
   MW_STATIONS,
   // TJ_STATIONS,
-  ZM_STATIONS
+  ZM_STATIONS,
 );

@@ -48,7 +48,7 @@ export const INVESTMENT_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class InvestmentInputComponent extends PicsaFormBaseSelectComponent<typeof SELECT_OPTIONS[0]> {
+export class InvestmentInputComponent extends PicsaFormBaseSelectComponent<(typeof SELECT_OPTIONS)[0]> {
   /** Configurable display options (none currently used) */
   @Input() options: { readonly?: boolean } = {};
 

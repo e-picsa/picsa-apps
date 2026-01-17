@@ -68,7 +68,7 @@ export class CombinedProbabilityComponent {
   // used by combined probabilty component (not currently in use)
   private calculateCombinedProbability(
     data?: IStationData[],
-    conditions: { key: string; value: any; operator: '>=' | '<=' }[] = []
+    conditions: { key: string; value: any; operator: '>=' | '<=' }[] = [],
   ) {
     // //conditions are defined in format {key1:valueToTest1, key2:valueToTest2...}
     // console.log('data', data);

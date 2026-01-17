@@ -54,7 +54,7 @@ export class SupabaseSignInDialogComponent {
 
   constructor(
     private notificationService: PicsaNotificationService,
-    private supabaseAuthService: SupabaseAuthService
+    private supabaseAuthService: SupabaseAuthService,
   ) {}
 
   public enableResetMode() {
@@ -74,7 +74,7 @@ export class SupabaseSignInDialogComponent {
     this.title = 'Register';
     this.form.addControl(
       'passwordConfirm',
-      new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch])
+      new FormControl('', [Validators.required, PICSAFormValidators.passwordMatch]),
     );
   }
 
@@ -109,7 +109,7 @@ export class SupabaseSignInDialogComponent {
       this.form.enable();
       throw new Error(error.message);
     } else {
-      this.notificationService.showSuccessNotification(`Reset email sent, please check your inbox`,{duration:5000});
+      this.notificationService.showSuccessNotification(`Reset email sent, please check your inbox`, { duration: 5000 });
       this.dialogRef.close();
     }
   }

@@ -20,7 +20,11 @@ export class BudgetCardComponent {
   @Input() selected: boolean;
   @Input() showCustomCardDelete = true;
 
-  constructor(public store: BudgetStore, private dialog: PicsaDialogService, private cardService: BudgetCardService) {}
+  constructor(
+    public store: BudgetStore,
+    private dialog: PicsaDialogService,
+    private cardService: BudgetCardService,
+  ) {}
 
   async promptCustomDelete(e: Event) {
     e.stopPropagation();

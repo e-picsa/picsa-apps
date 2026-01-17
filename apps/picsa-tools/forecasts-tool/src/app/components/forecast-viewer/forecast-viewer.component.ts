@@ -38,7 +38,10 @@ export class ForecastViewerComponent implements OnDestroy {
   /** PDF forecasts will be linked as URI for render in the <picsa-pdf-viewer> component */
   public pdfForecastData = signal<string | undefined>(undefined);
 
-  constructor(private dbAttachmentService: PicsaDatabaseAttachmentService, private sanitizer: DomSanitizer) {
+  constructor(
+    private dbAttachmentService: PicsaDatabaseAttachmentService,
+    private sanitizer: DomSanitizer,
+  ) {
     effect(async () => {
       const forecast = this.forecast();
       this.clearForecastData();

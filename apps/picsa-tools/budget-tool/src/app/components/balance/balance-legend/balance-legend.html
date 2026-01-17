@@ -2,14 +2,14 @@
   <!-- Counters -->
   <div class="counter-container">
     @for (label of labels; track label; let i = $index) {
-      <div>
-        <div style="display: flex; font-size: small">
-          <div style="width: 20px; height: 20px">
-            <img class="dot-value-image" [src]="'assets/budget-icons/dot-' + label + '.svg'" />
-          </div>
-          <div>= {{ values[i] | number: '.0' }}</div>
+    <div>
+      <div style="display: flex; font-size: small">
+        <div style="width: 20px; height: 20px">
+          <img class="dot-value-image" [src]="'assets/budget-icons/dot-' + label + '.svg'" />
         </div>
+        <div>= {{ values[i] | number: '.0' }}</div>
       </div>
+    </div>
     }
   </div>
   <!-- Buttons -->

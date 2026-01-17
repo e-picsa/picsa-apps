@@ -51,6 +51,6 @@ export class PicsaNotificationService {
 export class SnackBarWithIconComponent {
   constructor(
     @Inject(MAT_SNACK_BAR_DATA) public data: IUserNotificationData,
-    public snackRef: MatSnackBarRef<SnackBarWithIconComponent>
+    public snackRef: MatSnackBarRef<SnackBarWithIconComponent>,
   ) {}
 }

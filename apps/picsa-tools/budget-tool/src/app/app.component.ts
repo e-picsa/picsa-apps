@@ -14,7 +14,10 @@ export class AppComponent {
   title = 'picsa-budget-tool';
   standalone = true;
   storeReady = false;
-  constructor(public store: BudgetStore, public translate?: PicsaTranslateService) {}
+  constructor(
+    public store: BudgetStore,
+    public translate?: PicsaTranslateService,
+  ) {}
 }
 
 @Component({

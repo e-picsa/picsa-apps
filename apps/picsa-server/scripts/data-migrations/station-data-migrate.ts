@@ -117,7 +117,7 @@ function extractNestedVarieties(data: any[]) {
             .replace(/ or /gi, ',') // hack, replace or statements for comma
             .split(',')
             .map((v) => v.trim())
-            .filter((v) => v !== '' && v !== '-') // hack, remove (mostly) empty entries
+            .filter((v) => v !== '' && v !== '-'), // hack, remove (mostly) empty entries
         ),
       ];
       console.log('names', varietyNames);

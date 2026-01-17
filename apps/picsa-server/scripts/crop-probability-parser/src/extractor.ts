@@ -82,12 +82,12 @@ export class DocExtractor {
       const districtFolderPath = resolve(countryFolder.path, countryFolder.name);
 
       const districtFolders = readdirSync(districtFolderPath, { withFileTypes: true }).filter((dir) =>
-        dir.isDirectory()
+        dir.isDirectory(),
       );
       for (const districtFolder of districtFolders) {
         const sheetsFolderPath = resolve(districtFolder.path, districtFolder.name);
         const sheetNames = readdirSync(sheetsFolderPath).filter(
-          (docName) => EXTENSIONS.includes(extname(docName)) && !docName.startsWith('~$')
+          (docName) => EXTENSIONS.includes(extname(docName)) && !docName.startsWith('~$'),
         );
         for (const sheetName of sheetNames) {
           const sheetPath = resolve(sheetsFolderPath, sheetName);

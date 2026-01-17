@@ -41,7 +41,7 @@ export const GENDER_INPUT_CONTROL_VALUE_ACCESSOR: Provider = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<typeof SELECT_OPTIONS[0]> {
+export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<(typeof SELECT_OPTIONS)[0]> {
   // public override selectOptions = SELECT_OPTIONS;
 
   /** Configurable display options */

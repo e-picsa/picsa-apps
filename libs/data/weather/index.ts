@@ -16,7 +16,7 @@ const WEATHER_DATA_BASE = {
 
 // Extract list of available weather names
 type IWeatherID = keyof typeof WEATHER_DATA_BASE;
-export type IWeatherDataEntry = typeof WEATHER_DATA[0];
+export type IWeatherDataEntry = (typeof WEATHER_DATA)[0];
 
 export const WEATHER_DATA = Object.entries(WEATHER_DATA_BASE).map(([id, { label }]) => {
   const iconData: IPicsaDataWithIcons = {

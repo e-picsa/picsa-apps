@@ -9,7 +9,10 @@ import { DBServerService, IServerWriteBatchEntry } from './_server.db';
 export class DBSyncService {
   private _isSyncing = false;
   public pending$ = new BehaviorSubject<number>(0);
-  constructor(private cache: DBCacheService, private server: DBServerService) {
+  constructor(
+    private cache: DBCacheService,
+    private server: DBServerService,
+  ) {
     this.processWrites();
   }
 

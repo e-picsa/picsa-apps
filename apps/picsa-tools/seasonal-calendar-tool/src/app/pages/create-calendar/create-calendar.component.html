@@ -1,11 +1,11 @@
 <div class="page-content">
-  @if(form){
-  <seasonal-calendar-editor #editor [form]="form"></seasonal-calendar-editor>
-  <div class="submit-button">
-    <button mat-raised-button class="footer-button" color="primary" (click)="handleSubmit()">
-      <mat-icon>add</mat-icon>
-      {{ 'Create' | translate }}
-    </button>
-  </div>
+  @if (form) {
+    <seasonal-calendar-editor #editor [form]="form"></seasonal-calendar-editor>
+    <div class="submit-button">
+      <button mat-raised-button class="footer-button" color="primary" (click)="handleSubmit()">
+        <mat-icon>add</mat-icon>
+        {{ 'Create' | translate }}
+      </button>
+    </div>
   }
 </div>

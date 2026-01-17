@@ -75,7 +75,7 @@ export class AppOpenPromptComponent {
   constructor(
     deepLinksService: DeepLinksService,
     private bottomSheet: MatBottomSheet,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
   ) {
     this.appDynamicLink = deepLinksService.config.appDynamicLink;
   }

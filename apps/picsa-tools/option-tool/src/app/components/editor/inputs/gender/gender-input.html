@@ -1,48 +1,47 @@
 @if (!options.readonly) {
-  <div>
-    <div class="input-container">
-      @for (option of selectOptions; track option) {
-        <button
-          mat-button
-          class="select-button"
-          (click)="toggleSelected(option.id)"
-          [attr.data-gender]="option.id"
-          [attr.data-selected]="selected.includes(option.id)"
-          >
-          <div>
-            <mat-icon class="gender-icon" [svgIcon]="option.svgIcon"></mat-icon>
-            <div class="gender-label">{{ option.label | translate }}</div>
-          </div>
-        </button>
-      }
-    </div>
-    @if (options.showValueText) {
-      <div class="text-value">
-        @for (text of valueTextArray; track text) {
-          <span>{{text | translate}}</span>
-        }
+<div>
+  <div class="input-container">
+    @for (option of selectOptions; track option) {
+    <button
+      mat-button
+      class="select-button"
+      (click)="toggleSelected(option.id)"
+      [attr.data-gender]="option.id"
+      [attr.data-selected]="selected.includes(option.id)"
+    >
+      <div>
+        <mat-icon class="gender-icon" [svgIcon]="option.svgIcon"></mat-icon>
+        <div class="gender-label">{{ option.label | translate }}</div>
       </div>
+    </button>
     }
   </div>
+  @if (options.showValueText) {
+  <div class="text-value">
+    @for (text of valueTextArray; track text) {
+    <span>{{text | translate}}</span>
+    }
+  </div>
+  }
+</div>
 }
 
 <!-- readonly display - Render all icons but hide non-selected to keep consistent spacing -->
 @if (options.readonly) {
-  <div style="display: flex">
-    @for (option of selectOptions; track option) {
-      <div class="readonly-value" [attr.data-gender]="option.id">
-        <mat-icon
-          [svgIcon]="option.svgIcon"
-          [style.visibility]="selected.includes(option.id) ? 'visible' : 'hidden'"
-        ></mat-icon>
-      </div>
-    }
-    @if (options.showValueText) {
-      <div class="text-value">
-        @for (text of valueTextArray; track text) {
-          <span>{{text | translate}}</span>
-        }
-      </div>
+<div style="display: flex">
+  @for (option of selectOptions; track option) {
+  <div class="readonly-value" [attr.data-gender]="option.id">
+    <mat-icon
+      [svgIcon]="option.svgIcon"
+      [style.visibility]="selected.includes(option.id) ? 'visible' : 'hidden'"
+    ></mat-icon>
+  </div>
+  } @if (options.showValueText) {
+  <div class="text-value">
+    @for (text of valueTextArray; track text) {
+    <span>{{text | translate}}</span>
     }
   </div>
+  }
+</div>
 }

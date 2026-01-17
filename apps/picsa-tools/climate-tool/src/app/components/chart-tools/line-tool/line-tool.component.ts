@@ -33,7 +33,10 @@ export class LineToolComponent implements OnInit, OnDestroy {
 
   private componentDestroyed$ = new Subject<boolean>();
 
-  constructor(private chartService: ClimateChartService, private toolService: ClimateToolService) {}
+  constructor(
+    private chartService: ClimateChartService,
+    private toolService: ClimateToolService,
+  ) {}
 
   ngOnInit(): void {
     this.subscribeToDefinitionChanges();

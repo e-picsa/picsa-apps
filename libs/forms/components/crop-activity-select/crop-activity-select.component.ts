@@ -25,7 +25,10 @@ export const CONTROL_VALUE_ACCESSOR: Provider = {
   standalone: false,
 })
 export class FormCropActivitySelectComponent extends PicsaFormBaseSelectComponent<ICropActivityDataEntry> {
-  constructor(cdr: ChangeDetectorRef, public dialog: MatDialog) {
+  constructor(
+    cdr: ChangeDetectorRef,
+    public dialog: MatDialog,
+  ) {
     super(cdr, CROP_ACTIVITY_DATA, CROP_ACTIVITY_HASHMAP);
   }
 }

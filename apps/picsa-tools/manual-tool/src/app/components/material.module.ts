@@ -13,7 +13,10 @@ const MODULES = [MatButtonModule, MatInputModule, MatIconModule, MatTabsModule];
   exports: MODULES,
 })
 export class ManualToolMaterialModule {
-  constructor(private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  constructor(
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+  ) {
     this.registerIcons();
   }
 

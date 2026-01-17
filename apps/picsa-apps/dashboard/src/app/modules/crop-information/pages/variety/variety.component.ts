@@ -31,7 +31,7 @@ export class CropVarietyComponent implements OnInit {
     this.service.cropDataMerged().map((v) => {
       const tableRow: ITableDataRow = { ...v, downscaled_locations: v.downscaled.length };
       return tableRow;
-    })
+    }),
   );
 
   public tableOptions: IDataTableOptions = {
@@ -45,7 +45,7 @@ export class CropVarietyComponent implements OnInit {
     public service: CropInformationService,
     private notificationService: PicsaNotificationService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   async ngOnInit() {

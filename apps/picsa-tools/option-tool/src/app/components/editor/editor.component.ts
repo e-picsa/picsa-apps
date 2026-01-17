@@ -27,7 +27,7 @@ export class EditorComponent implements OnInit {
   constructor(
     private dialog: PicsaDialogService,
     private route: ActivatedRoute,
-    private componentService: PicsaCommonComponentsService
+    private componentService: PicsaCommonComponentsService,
   ) {}
 
   ngOnInit() {

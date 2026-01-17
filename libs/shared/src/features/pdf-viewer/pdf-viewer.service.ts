@@ -8,7 +8,10 @@ import { ErrorHandlerService } from '../../services/core/error-handler.service';
 export class PicsaPDFViewerService extends PicsaAsyncService {
   public isCompatible = false;
 
-  constructor(private injector: Injector, private errorService: ErrorHandlerService) {
+  constructor(
+    private injector: Injector,
+    private errorService: ErrorHandlerService,
+  ) {
     super();
   }
 

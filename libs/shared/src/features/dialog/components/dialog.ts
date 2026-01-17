@@ -11,7 +11,7 @@ import { IPicsaDialogData, IPicsaDialogSelectOption } from '../dialog.models';
 export class PicsaDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IPicsaDialogData = {},
-    public dialogRef: MatDialogRef<PicsaDialogComponent>
+    public dialogRef: MatDialogRef<PicsaDialogComponent>,
   ) {}
 }
 

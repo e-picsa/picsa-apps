@@ -1,18 +1,18 @@
 <div class="page-content">
   <div style="display: flex; align-items: center">
     <h2 style="flex: 1">
-      @if(form){
-      {{ form.title }}
+      @if (form) {
+        {{ form.title }}
       }
     </h2>
   </div>
-  @if(submissions){
-  <h3>Submissions</h3>
-  <picsa-data-table [data]="submissions" [valueTemplates]="{}" [options]="{ displayColumns: displayedColumns }">
-  </picsa-data-table>
-  } @else if(dataLoadError){
-  <div>{{ dataLoadError }}</div>
+  @if (submissions) {
+    <h3>Submissions</h3>
+    <picsa-data-table [data]="submissions" [valueTemplates]="{}" [options]="{ displayColumns: displayedColumns }">
+    </picsa-data-table>
+  } @else if (dataLoadError) {
+    <div>{{ dataLoadError }}</div>
   } @else {
-  <div>Loading...</div>
+    <div>Loading...</div>
   }
 </div>

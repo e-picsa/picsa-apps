@@ -54,7 +54,10 @@ import { BUDGET_CARDS } from './data';
   ],
 })
 export class BudgetMaterialModule {
-  constructor(private matIconRegistry?: MatIconRegistry, private domSanitizer?: DomSanitizer) {
+  constructor(
+    private matIconRegistry?: MatIconRegistry,
+    private domSanitizer?: DomSanitizer,
+  ) {
     this.registerIcons();
   }
   registerIcons() {
@@ -64,7 +67,7 @@ export class BudgetMaterialModule {
       for (const { id } of budgetCardSVGs) {
         this.matIconRegistry.addSvgIcon(
           `picsa_budget_${id}`,
-          this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/budget-cards/${id}.svg`)
+          this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/budget-cards/${id}.svg`),
         );
       }
 
@@ -73,7 +76,7 @@ export class BudgetMaterialModule {
       for (const id of svgs) {
         this.matIconRegistry.addSvgIcon(
           `picsa_budget_${id}`,
-          this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${id}.svg`)
+          this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/svgs/${id}.svg`),
         );
       }
     }

@@ -17,7 +17,11 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
   imgData: SafeHtml;
   imgUrl: SafeUrl;
   objUrl: string;
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     if (this.card.customMeta) {
@@ -52,8 +56,8 @@ export class BudgetCardImageComponent implements OnInit, OnDestroy {
     const imgData = await firstValueFrom(
       this.http.get(targetImg, { responseType: 'blob' }).pipe(
         // send fallback image on error
-        catchError(() => this.http.get(fallbackImg, { responseType: 'blob' }))
-      )
+        catchError(() => this.http.get(fallbackImg, { responseType: 'blob' })),
+      ),
     );
     return imgData;
   }

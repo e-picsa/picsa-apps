@@ -47,7 +47,7 @@ export class LineDatePickerHeaderComponent<D> implements OnDestroy {
     private _calendar: MatCalendar<D>,
     private _dateAdapter: DateAdapter<D>,
     @Inject(MAT_DATE_FORMATS) private _dateFormats: MatDateFormats,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
   ) {
     _calendar.stateChanges.pipe(takeUntil(this._destroyed)).subscribe(() => cdr.markForCheck());
   }

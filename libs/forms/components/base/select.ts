@@ -71,7 +71,7 @@ export abstract class PicsaFormBaseSelectComponent<T extends { id: string }>
   constructor(
     private cdr: ChangeDetectorRef,
     @Inject('selectOptions') public selectOptions: T[],
-    @Inject('selectOptionsHashmap') public selectOptionsHashmap: Record<string, T> = null as any
+    @Inject('selectOptionsHashmap') public selectOptionsHashmap: Record<string, T> = null as any,
   ) {
     if (!this.selectOptionsHashmap) {
       this.selectOptionsHashmap = arrayToHashmap(this.selectOptions, 'id');

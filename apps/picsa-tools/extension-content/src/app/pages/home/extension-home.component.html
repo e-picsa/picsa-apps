@@ -6,16 +6,21 @@
     <div class="link-grid">
       <!-- PICSA Links -->
       @for (link of picsaLinks; track $index) {
-      <div [attr.data-tour-id]="link.tourId" [attr.data-dev-only]="link.devOnly" data-cy="link" class="grid-tile"
-        (click)="linkClicked(link)">
-        <div style="text-align: center">
-          <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
-          <div class="nav-text">{{ link.label | translate }}</div>
+        <div
+          [attr.data-tour-id]="link.tourId"
+          [attr.data-dev-only]="link.devOnly"
+          data-cy="link"
+          class="grid-tile"
+          (click)="linkClicked(link)"
+        >
+          <div style="text-align: center">
+            <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
+            <div class="nav-text">{{ link.label | translate }}</div>
+          </div>
+          @if (link.tourId === 'monitoring' && monitoringService.pendingSyncCount > 0) {
+            <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
+          }
         </div>
-        @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
-        <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
-        }
-      </div>
       }
     </div>
     <!-- Additional Links -->
@@ -24,16 +29,21 @@
     </h2>
     <div class="link-grid">
       @for (link of additionalLinks; track $index) {
-      <div [attr.data-tour-id]="link.tourId" [attr.data-dev-only]="link.devOnly" data-cy="link" class="grid-tile"
-        (click)="linkClicked(link)">
-        <div style="text-align: center">
-          <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
-          <div class="nav-text">{{ link.label | translate }}</div>
+        <div
+          [attr.data-tour-id]="link.tourId"
+          [attr.data-dev-only]="link.devOnly"
+          data-cy="link"
+          class="grid-tile"
+          (click)="linkClicked(link)"
+        >
+          <div style="text-align: center">
+            <mat-icon [svgIcon]="'picsa_tools:' + link.svgIcon" class="nav-icon"></mat-icon>
+            <div class="nav-text">{{ link.label | translate }}</div>
+          </div>
+          @if (link.tourId === 'monitoring' && monitoringService.pendingSyncCount > 0) {
+            <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
+          }
         </div>
-        @if (link.tourId==='monitoring' && monitoringService.pendingSyncCount>0) {
-        <div class="tile-badge mat-elevation-z8">{{ monitoringService.pendingSyncCount }}</div>
-        }
-      </div>
       }
       <!-- Dev Links -->
 

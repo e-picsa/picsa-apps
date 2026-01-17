@@ -19,7 +19,11 @@ type IDBSource = 'cache' | 'server';
  ***********************************************************************/
 @Injectable({ providedIn: 'root' })
 export class PicsaDbService implements AbstractDBService {
-  constructor(private cache: DBCacheService, private server: DBServerService, private sync: DBSyncService) {}
+  constructor(
+    private cache: DBCacheService,
+    private server: DBServerService,
+    private sync: DBSyncService,
+  ) {}
   getCollection<IDBDoc>(endpoint: IDBEndpoint, src: IDBSource = 'cache', newerThan = '') {
     endpoint = this._mapEndpoint(endpoint);
     return src === 'cache'
@@ -56,7 +60,7 @@ export class PicsaDbService implements AbstractDBService {
     if (sync) {
       this.sync.addWrites(
         endpoint,
-        dbDocs.map((d) => d._key)
+        dbDocs.map((d) => d._key),
       );
     }
     return dbDocs;
@@ -128,7 +132,7 @@ export class PicsaDbService implements AbstractDBService {
 export const generateDBMeta = (
   doc: any = {},
   // sometimes we want to keep the modification date such as loading hardcoded data
-  keepModified = false
+  keepModified = false,
 ): IDBDoc => {
   const { _key, _created, _modified } = doc;
   return {

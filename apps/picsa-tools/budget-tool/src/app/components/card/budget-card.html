@@ -1,20 +1,10 @@
 @if (!card._deleted) {
-  <mat-card
-    appearance="outlined"
-    mat-elevation-z4
-    class="budget-card selectable"
-    [attr.selected]="selected"
-    >
-    <budget-card-image [card]="card"></budget-card-image>
-    <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
-  </mat-card>
-}
-@if (showCustomCardDelete && card.customMeta && !selected) {
-  <button
-    mat-button
-    class="delete-button"
-    (click)="promptCustomDelete($event)"
-    >
-    <mat-icon class="delete-button-icon">delete</mat-icon>
-  </button>
+<mat-card appearance="outlined" mat-elevation-z4 class="budget-card selectable" [attr.selected]="selected">
+  <budget-card-image [card]="card"></budget-card-image>
+  <div [class]="'card-title ' + card.id">{{ card.label | translate }}</div>
+</mat-card>
+} @if (showCustomCardDelete && card.customMeta && !selected) {
+<button mat-button class="delete-button" (click)="promptCustomDelete($event)">
+  <mat-icon class="delete-button-icon">delete</mat-icon>
+</button>
 }

@@ -22,7 +22,7 @@ export class TranslationsEditComponent {
   constructor(
     private service: TranslationDashboardService,
     @Inject(MAT_DIALOG_DATA) public data: { row: ITranslationRow; locale: ILocaleCode },
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     // populate source text
     this.text = data.row.text;

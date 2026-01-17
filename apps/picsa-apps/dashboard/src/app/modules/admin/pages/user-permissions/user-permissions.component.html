@@ -17,16 +17,16 @@
 <ng-template #userPermissionsDialog>
   <h2 mat-dialog-title class="mb-2">User Permissions</h2>
   <mat-dialog-content>
-    @if(editableUser(); as user){
-    <button
-      mat-button
-      mat-dialog-close
-      (click)="removeUser(user.id)"
-      [disabled]="user.roles.includes('admin') || user.roles.includes('deployments.admin')"
-    >
-      <mat-icon>person_remove</mat-icon>
-      Remove User
-    </button>
+    @if (editableUser(); as user) {
+      <button
+        mat-button
+        mat-dialog-close
+        (click)="removeUser(user.id)"
+        [disabled]="user.roles.includes('admin') || user.roles.includes('deployments.admin')"
+      >
+        <mat-icon>person_remove</mat-icon>
+        Remove User
+      </button>
     }
   </mat-dialog-content>
   <mat-dialog-actions>

@@ -1,18 +1,10 @@
 @if (terciles.lower; as tercile) {
-  <div
-    class="label"
-    id="lowerTercile"
-    [ngStyle]="{ left: tercile.labelPosition.x, top: tercile.labelPosition.y }"
-    >
+  <div class="label" id="lowerTercile" [ngStyle]="{ left: tercile.labelPosition.x, top: tercile.labelPosition.y }">
     Lower = {{ tercile.value }}
   </div>
 }
 @if (terciles.upper; as tercile) {
-  <div
-    class="label"
-    id="upperTercile"
-    [ngStyle]="{ left: tercile.labelPosition.x, top: tercile.labelPosition.y }"
-    >
+  <div class="label" id="upperTercile" [ngStyle]="{ left: tercile.labelPosition.x, top: tercile.labelPosition.y }">
     Upper = {{ tercile.value }}
   </div>
 }

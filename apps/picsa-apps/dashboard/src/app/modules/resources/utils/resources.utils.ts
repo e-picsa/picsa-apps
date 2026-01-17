@@ -26,7 +26,7 @@ export function getCollectionHierarchy(
   _nodes = {},
   _mappings = {},
   _counter = 0,
-  _maxAttempts = 10
+  _maxAttempts = 10,
 ) {
   _counter++;
   function attemptMap(data: IResourceCollectionRow[]) {

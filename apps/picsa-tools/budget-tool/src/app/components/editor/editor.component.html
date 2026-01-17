@@ -2,29 +2,33 @@
 <!-- Editor -->
 <div id="editorContainer">
   @for (editorStep of editorSteps; track editorStep.type) {
-  <div class="type-row" [id]="'edit-' + editorStep.type">
-    <div class="type-label">
-      <span>{{ editorStep.label | translate }}</span>
-      @if(editorStep.sublabel){
-      <span style="font-size: 14px"><br />{{ editorStep.sublabel | translate }}</span>
+    <div class="type-row" [id]="'edit-' + editorStep.type">
+      <div class="type-label">
+        <span>{{ editorStep.label | translate }}</span>
+        @if (editorStep.sublabel) {
+          <span style="font-size: 14px"><br />{{ editorStep.sublabel | translate }}</span>
+        }
+      </div>
+      @if (data(); as data) {
+        @if (data[editorStep.type]; as selectedCards) {
+          <div class="selected-summary">
+            <div class="selected-cards-container" [attr.data-type]="editorStep.type">
+              @for (card of selectedCards; track card.id + $index) {
+                <budget-card-editor
+                  [card]="card"
+                  [type]="editorStep.type"
+                  (deleteClicked)="removeSelectedCard(editorStep.type, $index)"
+                  (valueChanged)="updateCardValue(editorStep.type, $index, $event)"
+                  @fadeInOut
+                >
+                </budget-card-editor>
+              }
+              <budget-card-placeholder (click)="showCardsList(editorStep.type)"></budget-card-placeholder>
+            </div>
+          </div>
+        }
       }
     </div>
-    @if (data(); as data) {
-    @if (data[editorStep.type]; as selectedCards) {
-    <div class="selected-summary">
-      <div class="selected-cards-container" [attr.data-type]="editorStep.type">
-        @for (card of selectedCards; track card.id+$index) {
-        <budget-card-editor [card]="card" [type]="editorStep.type"
-          (deleteClicked)="removeSelectedCard(editorStep.type, $index)"
-          (valueChanged)="updateCardValue(editorStep.type, $index, $event)" @fadeInOut>
-        </budget-card-editor>
-        }
-        <budget-card-placeholder (click)="showCardsList(editorStep.type)"></budget-card-placeholder>
-      </div>
-    </div>
-    }
-    }
-  </div>
   }
 </div>
 <!-- Footer Next Button -->
@@ -35,31 +39,36 @@
 <!-- Dialog -->
 <ng-template #cardsListDialog>
   @if (service.activeType(); as type) {
-  @if(data(); as data){
-  <div id="cardsList">
-    <div #cardScroller style="flex: 1; overflow: auto">
-      @switch(type){
-      @case ('familyLabour') {
-      <!-- Family Labour -->
-      <budget-cell-editor-family-labour @fadeInOut [values]="data.familyLabour"
-        (valueChanged)="onEditorChange($event, 'familyLabour')"></budget-cell-editor-family-labour>
+    @if (data(); as data) {
+      <div id="cardsList">
+        <div #cardScroller style="flex: 1; overflow: auto">
+          @switch (type) {
+            @case ('familyLabour') {
+              <!-- Family Labour -->
+              <budget-cell-editor-family-labour
+                @fadeInOut
+                [values]="data.familyLabour"
+                (valueChanged)="onEditorChange($event, 'familyLabour')"
+              ></budget-cell-editor-family-labour>
+            }
+            @default {
+              <!-- Default Editor -->
+              <budget-cell-editor-card-select
+                [type]="type"
+                [values]="data[type]"
+                [cards]="budgetCards()"
+                (valueChanged)="onEditorChange($event, type)"
+              >
+              </budget-cell-editor-card-select>
+            }
+          }
+        </div>
 
-      }
-      @default {
-      <!-- Default Editor -->
-      <budget-cell-editor-card-select [type]="type" [values]="data[type]" [cards]="budgetCards()"
-        (valueChanged)="onEditorChange($event, type)">
-      </budget-cell-editor-card-select>
-      }
-      }
-    </div>
-
-    <button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" mat-dialog-close>
-      Next
-    </button>
-  </div>
-  }
-
+        <button mat-raised-button color="primary" class="footer-button" style="margin: 1rem" mat-dialog-close>
+          Next
+        </button>
+      </div>
+    }
   }
 </ng-template>
 

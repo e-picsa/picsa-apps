@@ -46,7 +46,7 @@ function populateResourceContents(baseDir: string) {
 function updateContentMtimes(
   fileContents: Record<string, IContentsEntry>,
   localContents: Record<string, IContentsEntry>,
-  baseDir: string
+  baseDir: string,
 ) {
   Object.entries(localContents).forEach(([key, entry]) => {
     const { md5Checksum, modifiedTime, relativePath } = entry;

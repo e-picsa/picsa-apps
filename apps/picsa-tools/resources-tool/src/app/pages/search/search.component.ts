@@ -68,7 +68,7 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
     private service: ResourcesToolService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnInit() {

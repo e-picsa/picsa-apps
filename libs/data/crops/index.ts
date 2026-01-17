@@ -49,5 +49,5 @@ export const CROPS_DATA = Object.entries(CROPS_DATA_BASE).map(([id, entry]) => {
 export const CROPS_DATA_HASHMAP = arrayToHashmap(CROPS_DATA, 'name');
 
 // type-defintions extracted from hardcoded data
-export type ICropData = typeof CROPS_DATA[number];
+export type ICropData = (typeof CROPS_DATA)[number];
 export type ICropName = keyof typeof CROPS_DATA_BASE;

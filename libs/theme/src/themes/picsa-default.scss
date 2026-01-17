@@ -86,8 +86,7 @@ $theme-default: mat.m2-define-light-theme(
       accent: $palette-accent,
       warn: $palette-warn,
     ),
-    typography:
-      mat.m2-define-typography-config(
+    typography: mat.m2-define-typography-config(
         $font-family: 'Noto Sans',
       ),
   )

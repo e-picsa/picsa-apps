@@ -18,7 +18,11 @@ import { ProxyCmp, proxyOutputs } from './angular-component-lib/utils';
 })
 export class EnketoWebform {
   protected el: HTMLElement;
-  constructor(c: ChangeDetectorRef, r: ElementRef, protected z: NgZone) {
+  constructor(
+    c: ChangeDetectorRef,
+    r: ElementRef,
+    protected z: NgZone,
+  ) {
     c.detach();
     this.el = r.nativeElement;
     proxyOutputs(this, this.el, ['dataUpdated', 'formSaved']);

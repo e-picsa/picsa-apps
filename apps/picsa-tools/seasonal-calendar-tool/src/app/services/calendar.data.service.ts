@@ -10,7 +10,10 @@ import { CalendarDataEntry, COLLECTION } from '../schema';
   providedIn: 'root',
 })
 export class SeasonCalendarService extends PicsaAsyncService {
-  constructor(private dbService: PicsaDatabase_V2_Service, private printPrvdr: PrintProvider) {
+  constructor(
+    private dbService: PicsaDatabase_V2_Service,
+    private printPrvdr: PrintProvider,
+  ) {
     super();
   }
 
