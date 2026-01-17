@@ -12,11 +12,11 @@ jobs:
     steps:
       # Checkout repo to access local templates (if updated)
       - name: checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v6
       # Assign labels based on files modified
       # https://github.com/actions/labeler
       - name: Assign PR path Labels
-        uses: actions/labeler@v5
+        uses: actions/labeler@v6
         with:
           configuration-path: .github/pr-labeler.config.yml
           sync-labels: false
