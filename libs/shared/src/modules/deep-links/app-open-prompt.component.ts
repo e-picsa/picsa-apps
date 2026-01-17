@@ -78,7 +78,7 @@ export class AppOpenPromptComponent {
   constructor() {
     const deepLinksService = inject(DeepLinksService);
 
-    this.appDynamicLink = deepLinksService.config.appDynamicLink;
+    this.appDynamicLink = deepLinksService.config!.appDynamicLink;
   }
 
   triggerTour() {
