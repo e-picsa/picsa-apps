@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,Input } from '@angular/core';
 import { PicsaDialogService } from '@picsa/shared/features';
 
 import { IBudgetCard } from '../../schema';
@@ -15,16 +15,14 @@ import { BudgetCardService } from '../../store/budget-card.service';
 
 // implement CVA so can be used in form and template bindings to pass back value
 export class BudgetCardComponent {
+  store = inject(BudgetStore);
+  private dialog = inject(PicsaDialogService);
+  private cardService = inject(BudgetCardService);
+
   // use partial as not sure whether will be budget card or custom budget card
   @Input() card: IBudgetCard;
   @Input() selected: boolean;
   @Input() showCustomCardDelete = true;
-
-  constructor(
-    public store: BudgetStore,
-    private dialog: PicsaDialogService,
-    private cardService: BudgetCardService,
-  ) {}
 
   async promptCustomDelete(e: Event) {
     e.stopPropagation();

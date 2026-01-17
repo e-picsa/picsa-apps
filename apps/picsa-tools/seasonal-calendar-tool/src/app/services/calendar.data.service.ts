@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { PrintProvider } from '@picsa/shared/services/native';
@@ -10,12 +10,8 @@ import { CalendarDataEntry, COLLECTION } from '../schema';
   providedIn: 'root',
 })
 export class SeasonCalendarService extends PicsaAsyncService {
-  constructor(
-    private dbService: PicsaDatabase_V2_Service,
-    private printPrvdr: PrintProvider,
-  ) {
-    super();
-  }
+  private dbService = inject(PicsaDatabase_V2_Service);
+  private printPrvdr = inject(PrintProvider);
 
   /** Provide database options tool collection (with typings) */
   public get dbCollection() {

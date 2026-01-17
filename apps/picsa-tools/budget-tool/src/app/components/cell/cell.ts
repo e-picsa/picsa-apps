@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -23,15 +24,13 @@ import { BudgetStore } from '../../store/budget.store';
   standalone: false,
 })
 export class BudgetCellComponent implements OnInit, OnDestroy, OnChanges {
+  store = inject(BudgetStore);
+  private cdr = inject(ChangeDetectorRef);
+
   @Input() type: string;
   @Input() periodIndex: number;
   cellValue$: Subscription;
   cellData: IBudgetCard[];
-
-  constructor(
-    public store: BudgetStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this._addValueSubscription();

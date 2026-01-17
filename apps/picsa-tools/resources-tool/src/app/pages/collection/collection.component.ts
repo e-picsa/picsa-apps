@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject,OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -17,12 +17,10 @@ interface ICollectionPageRouteParams {
   imports: [ResourceCollectionComponent, RouterModule],
 })
 export class CollectionComponent implements OnInit, OnDestroy {
-  public collectionId = toSignal(this.route.params.pipe(map((v) => (v as ICollectionPageRouteParams).collectionId)));
+  private route = inject(ActivatedRoute);
+  private componentsService = inject(PicsaCommonComponentsService);
 
-  constructor(
-    private route: ActivatedRoute,
-    private componentsService: PicsaCommonComponentsService,
-  ) {}
+  public collectionId = toSignal(this.route.params.pipe(map((v) => (v as ICollectionPageRouteParams).collectionId)));
 
   ngOnDestroy() {
     this.componentsService.updateBreadcrumbOptions({ enabled: false });

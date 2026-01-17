@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject,OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { FadeInOut, OpenClosed } from '@picsa/shared/animations';
@@ -17,14 +17,12 @@ import { BudgetStore } from '../../store/budget.store';
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetViewPage implements OnInit, OnDestroy {
-  public editorOpen = signal(false);
+  private route = inject(ActivatedRoute);
+  store = inject(BudgetStore);
+  service = inject(BudgetService);
+  private dialog = inject(MatDialog);
 
-  constructor(
-    private route: ActivatedRoute,
-    public store: BudgetStore,
-    public service: BudgetService,
-    private dialog: MatDialog,
-  ) {}
+  public editorOpen = signal(false);
 
   async ngOnInit() {
     await this.loadBudget();

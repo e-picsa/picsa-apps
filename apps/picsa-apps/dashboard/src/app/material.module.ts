@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -49,10 +49,10 @@ const matModules = [
   exports: matModules,
 })
 export class DashboardMaterialModule {
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
-  ) {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
+
+  constructor() {
     this.registerIcons();
   }
 

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -25,6 +33,12 @@ import { PERIOD_DATA_TEMPLATE } from '../../store/templates';
   imports: [BudgetMaterialModule, FormsModule, ReactiveFormsModule, BudgetToolComponentsModule, PicsaTranslateModule],
 })
 export class BudgetCreatePage implements OnInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  store = inject(BudgetStore);
+  private cardService = inject(BudgetCardService);
+  private dialogRef = inject<MatDialogRef<BudgetCreatePage>>(MatDialogRef);
+  private cdr = inject(ChangeDetectorRef);
+
   budgetMetaForm: FormGroup;
   enterpriseToggle = false;
   enterpriseType: string;
@@ -36,13 +50,6 @@ export class BudgetCreatePage implements OnInit, OnDestroy {
   enterpriseTypeCards: IBudgetCard[] = [];
   private componentDestroyed$ = new Subject<boolean>();
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
-  constructor(
-    private fb: FormBuilder,
-    public store: BudgetStore,
-    private cardService: BudgetCardService,
-    private dialogRef: MatDialogRef<BudgetCreatePage>,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   async ngOnInit() {
     this.store.createNewBudget();

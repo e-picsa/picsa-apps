@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject,signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaFormsModule } from '@picsa/forms';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -51,6 +51,10 @@ interface ICropDataImport {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardCropAdminComponent {
+  private service = inject(CropInformationService);
+  private deploymentService = inject(DeploymentDashboardService);
+  dialog = inject(MatDialog);
+
   public errors = signal<ICropDataImport[]>([]);
   public errorTableOptions: IDataTableOptions = {
     displayColumns: ['_row_number', 'location_id', 'crop', 'variety', 'water_requirement', '_error'],
@@ -80,11 +84,9 @@ export class DashboardCropAdminComponent {
 
   public countryCode = computed(() => this.deploymentService.activeDeploymentCountry());
 
-  constructor(
-    private service: CropInformationService,
-    private deploymentService: DeploymentDashboardService,
-    public dialog: MatDialog,
-  ) {
+  constructor() {
+    const service = this.service;
+
     service.ready();
     effect(async () => {
       const parsedRows = this.parsedRows();

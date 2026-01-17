@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input, Provider } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  forwardRef,
+  inject,
+  Input,
+  Provider,
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
 import { PicsaFormBaseSelectMultipleComponent } from '@picsa/forms/components/base/select-multiple';
@@ -47,7 +55,9 @@ export class GenderInputComponent extends PicsaFormBaseSelectMultipleComponent<(
   /** Configurable display options */
   @Input() options: { showValueText?: boolean; readonly?: boolean } = {};
 
-  constructor(cdr: ChangeDetectorRef) {
+  constructor() {
+    const cdr = inject(ChangeDetectorRef);
+
     super(cdr, SELECT_OPTIONS);
   }
 

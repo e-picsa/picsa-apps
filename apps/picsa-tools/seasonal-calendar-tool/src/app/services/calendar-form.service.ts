@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { generateID } from '@picsa/shared/services/core/db/db.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -20,12 +20,12 @@ export type ISeasonCalendarForm = ReturnType<SeasonCalendarFormService['createFo
  */
 @Injectable({ providedIn: 'root' })
 export class SeasonCalendarFormService {
+  private fb = inject(FormBuilder);
+
   /** Observable used to manage form event subscriptions */
   private formCreated$ = new Subject<ISeasonCalendarForm>();
 
   private form: ISeasonCalendarForm;
-
-  constructor(private fb: FormBuilder) {}
 
   /** Create an angular form for tracking seasonal calendar data */
   public createForm(values: Partial<CalendarDataEntry> = {}) {

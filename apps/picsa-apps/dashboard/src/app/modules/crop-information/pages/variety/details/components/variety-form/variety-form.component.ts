@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 
-import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CROPS_DATA } from '@picsa/data';
@@ -17,6 +17,8 @@ import { ICropData } from '../../../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardCropVarietyFormComponent {
+  private formBuilder = inject(FormBuilder);
+
   public editable = input(false);
   public initialValue = input<ICropData['Insert'] | undefined>(undefined);
 
@@ -34,7 +36,7 @@ export class DashboardCropVarietyFormComponent {
 
   private varietyValue = toSignal(this.form.controls.variety.valueChanges);
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor() {
     effect(() => {
       const value = this.initialValue();
       if (value) {

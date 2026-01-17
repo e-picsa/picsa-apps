@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { ChangeDetectionStrategy, Component, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceDownloadComponent } from '@picsa/resources/components';
 import { IResourceFile } from '@picsa/resources/schemas';
@@ -19,6 +19,9 @@ import { IManualPeriodEntryLocalised } from '../../models';
   standalone: false,
 })
 export class HomeComponent implements OnDestroy {
+  private route = inject(ActivatedRoute);
+  private resourcesService = inject(ResourcesToolService);
+
   public manualDoc = signal<RxDocument<IResourceFile> | undefined>(undefined);
   public manualContents = signal<IManualPeriodEntryLocalised[]>([]);
 
@@ -29,10 +32,7 @@ export class HomeComponent implements OnDestroy {
 
   private componentDestroyed$ = new Subject<boolean>();
 
-  constructor(
-    private route: ActivatedRoute,
-    private resourcesService: ResourcesToolService,
-  ) {
+  constructor() {
     this.route.queryParams.pipe(takeUntil(this.componentDestroyed$)).subscribe(({ page }) => {
       this.pageNumber.set(Number(page));
     });

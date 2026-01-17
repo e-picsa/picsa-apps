@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,input, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField, MatSelectModule } from '@angular/material/select';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -15,16 +15,16 @@ import { ICropDataDownscaled } from '../../../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropLinkedStationSelectComponent {
+  private supabaseService = inject(SupabaseService);
+  private deploymentService = inject(DeploymentDashboardService);
+
   public allStations = signal<IStationRow[]>([]);
   public locationId = input.required<string>();
   public downscaledData = input.required<ICropDataDownscaled['Row']>();
 
   public stationSelected = output<string | undefined>();
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private deploymentService: DeploymentDashboardService,
-  ) {
+  constructor() {
     effect(async () => {
       const countryCode = this.deploymentService.activeDeploymentCountry();
       const locationId = this.locationId();

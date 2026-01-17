@@ -1,4 +1,4 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject,Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -10,6 +10,10 @@ import { IResourceCollectionRow, IResourceFileChildRow, IResourceFileRow, IResou
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesDashboardService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+  private storageService = inject(DashboardStorageService);
+  private notificationService = inject(PicsaNotificationService);
+
   public collections = signal<IResourceCollectionRow[]>([]);
   public files = signal<IResourceFileRow[]>([]);
   public links = signal<IResourceLinkRow[]>([]);
@@ -36,12 +40,9 @@ export class ResourcesDashboardService extends PicsaAsyncService {
     };
   }
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private storageService: DashboardStorageService,
-    private notificationService: PicsaNotificationService,
-    deploymentService: DeploymentDashboardService,
-  ) {
+  constructor() {
+    const deploymentService = inject(DeploymentDashboardService);
+
     super();
     effect(async () => {
       const countryCode = deploymentService.activeDeploymentCountry();

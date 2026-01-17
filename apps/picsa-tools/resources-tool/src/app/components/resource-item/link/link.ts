@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject,input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,6 +15,9 @@ import { ResourceShareComponent } from '../../resource-share/resource-share.comp
   imports: [MatCardModule, MatIconModule, PicsaTranslateModule, ResourceShareComponent],
 })
 export class ResourceItemLinkComponent {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   resource = input.required<IResourceLink>();
 
   shareUrl = computed<string>(() => {
@@ -36,11 +39,6 @@ export class ResourceItemLinkComponent {
   /** Check if any existing click handlers already bound to element to use as override */
   // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() click: EventEmitter<any> = new EventEmitter<any>();
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   /** Specific icons to use as action buttons below link. Used when main image not fully indicative of link type */
   public actionButtons: { [type in IResourceLink['subtype']]: { matIcon?: string; svgIcon?: string } | null } = {

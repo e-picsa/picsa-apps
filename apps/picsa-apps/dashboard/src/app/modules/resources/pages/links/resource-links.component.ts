@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -33,17 +33,19 @@ const DISPLAY_COLUMNS: (keyof IResourceLinkRow)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinksComponent implements OnInit {
+  private service = inject(ResourcesDashboardService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public links = signal<IResourceLinkRow[]>([]);
   public tableOptions: IDataTableOptions = {
     displayColumns: DISPLAY_COLUMNS,
     handleRowClick: (row: IResourceLinkRow) => this.router.navigate([row.id], { relativeTo: this.route }),
   };
 
-  constructor(
-    private service: ResourcesDashboardService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
+    const service = this.service;
+
     effect(() => {
       const links = service.links();
       const sorted = links.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));

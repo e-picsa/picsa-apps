@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import type { Database } from '@picsa/server-types';
@@ -29,20 +29,18 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewMonitoringFormsComponent implements OnInit {
+  private service = inject(MonitoringFormsDashboardService);
+  private route = inject(ActivatedRoute);
+  private dialogService = inject(PicsaDialogService);
+  private notificationService = inject(PicsaNotificationService);
+  private router = inject(Router);
+
   public form: IMonitoringFormsRow;
 
   public enketoForm: string;
   public enketoModel: string;
 
   dataLoadError: string;
-
-  constructor(
-    private service: MonitoringFormsDashboardService,
-    private route: ActivatedRoute,
-    private dialogService: PicsaDialogService,
-    private notificationService: PicsaNotificationService,
-    private router: Router,
-  ) {}
   async ngOnInit() {
     await this.service.ready();
     this.route.params.subscribe(async (params) => {

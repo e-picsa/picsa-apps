@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject,OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigurationService } from '@picsa/configuration/src';
@@ -27,6 +27,11 @@ const STORED_LOCATION_FIELD = 'picsa_crop_tool_location';
   imports: [PicsaFormsModule, CropProbabilityTableComponent, PicsaTourButton],
 })
 export class HomeComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private tourService = inject(TourService);
+  private configService = inject(ConfigurationService);
+
   public locationId = toSignal(this.route.queryParams.pipe(map(({ locationId }: IQueryParams) => locationId)));
 
   public countryCode = computed(() => this.configService.deploymentSettings().country_code);
@@ -43,12 +48,7 @@ export class HomeComponent implements OnInit {
     return undefined;
   });
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private tourService: TourService,
-    private configService: ConfigurationService,
-  ) {
+  constructor() {
     effect(async () => {
       const meta = this.tableStationMeta();
       if (meta) {

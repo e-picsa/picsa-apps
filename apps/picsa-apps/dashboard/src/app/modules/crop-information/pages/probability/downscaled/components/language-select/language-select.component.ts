@@ -28,7 +28,9 @@ export class CropProbabilityLanguageSelectComponent {
     this.generateLanguageOptions(this.deploymentService.activeDeploymentCountry()),
   );
 
-  constructor(translateService: TranslateService) {
+  constructor() {
+    const translateService = inject(TranslateService);
+
     // HACK - Set frontend translation service lang on language selection change
     effect(() => {
       const selected = this.languageSelected();

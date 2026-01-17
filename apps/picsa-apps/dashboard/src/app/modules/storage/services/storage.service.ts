@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject,Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import {
   IStorageEntry,
@@ -18,14 +18,12 @@ export interface IDashboardStorageEntry extends IStorageEntry {
  */
 @Injectable({ providedIn: 'root' })
 export class DashboardStorageService extends PicsaAsyncService {
+  private storageService = inject(SupabaseStorageService);
+
   /** List of files available globally or to deployment-country bucket */
   public storageHashmap = signal<Record<string, IDashboardStorageEntry>>({});
 
   public storageList = signal<IDashboardStorageEntry[]>([]);
-
-  constructor(private storageService: SupabaseStorageService) {
-    super();
-  }
 
   public override async init() {
     await this.storageService.ready();

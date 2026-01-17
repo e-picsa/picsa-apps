@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { effect, Injectable } from '@angular/core';
+import { effect, inject,Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
 import { ConfigurationService } from '@picsa/configuration';
@@ -35,6 +35,13 @@ export type IBudgetCounterSVGIcons = Record<IBudgetCounter, SafeResourceUrl>;
   providedIn: 'root',
 })
 export class BudgetStore {
+  private service = inject(BudgetService);
+  private db = inject(PicsaDbService);
+  private printPrvdr = inject(PrintProvider);
+  private sanitizer = inject(DomSanitizer);
+  private dialogService = inject(PicsaDialogService);
+  private componentService = inject(PicsaCommonComponentsService);
+
   changes = new BehaviorSubject<[number, string]>([null, null] as any);
   public settings: IDeploymentSettings['budgetTool'];
   public counterSVGIcons: IBudgetCounterSVGIcons;
@@ -66,15 +73,9 @@ export class BudgetStore {
     return this.activeBudget.meta.enterprise.groupings![0];
   }
 
-  constructor(
-    private service: BudgetService,
-    private db: PicsaDbService,
-    private printPrvdr: PrintProvider,
-    private sanitizer: DomSanitizer,
-    private dialogService: PicsaDialogService,
-    private componentService: PicsaCommonComponentsService,
-    configurationService: ConfigurationService,
-  ) {
+  constructor() {
+    const configurationService = inject(ConfigurationService);
+
     this.counterSVGIcons = this.createBudgetCounterSVGs();
     effect(() => {
       const { budgetTool } = configurationService.deploymentSettings();

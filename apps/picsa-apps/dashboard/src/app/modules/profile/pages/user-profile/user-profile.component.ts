@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { DashboardAuthService } from '../../../auth/services/auth.service';
@@ -13,12 +13,12 @@ import { DeploymentDashboardService } from '../../../deployment/deployment.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserProfileComponent {
+  authService = inject(DashboardAuthService);
+  deploymentService = inject(DeploymentDashboardService);
+
   public authRoleLevels = ['viewer', 'author', 'admin'];
   public authRoleFeatures: string[] = [];
-  constructor(
-    public authService: DashboardAuthService,
-    public deploymentService: DeploymentDashboardService,
-  ) {
+  constructor() {
     effect(() => {
       const authRoleFeatures: string[] = [];
 

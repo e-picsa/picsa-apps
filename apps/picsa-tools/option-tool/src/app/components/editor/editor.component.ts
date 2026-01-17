@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject,OnInit, Output, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { PicsaCommonComponentsService } from '@picsa/components/src';
@@ -14,6 +14,10 @@ import { ENTRY_TEMPLATE, IOptionsToolEntry } from '../../schemas';
   standalone: false,
 })
 export class EditorComponent implements OnInit {
+  private dialog = inject(PicsaDialogService);
+  private route = inject(ActivatedRoute);
+  private componentService = inject(PicsaCommonComponentsService);
+
   public values = ENTRY_TEMPLATE();
   public performanceConditions = PERFORMANCE_CONDITIONS;
   public investmentTypes = INVESTMENT_TYPES;
@@ -23,12 +27,6 @@ export class EditorComponent implements OnInit {
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @Output() dataTransfer = new EventEmitter<IOptionsToolEntry | null>();
-
-  constructor(
-    private dialog: PicsaDialogService,
-    private route: ActivatedRoute,
-    private componentService: PicsaCommonComponentsService,
-  ) {}
 
   ngOnInit() {
     const enterpriseID = this.route.snapshot.paramMap.get('enterprise');

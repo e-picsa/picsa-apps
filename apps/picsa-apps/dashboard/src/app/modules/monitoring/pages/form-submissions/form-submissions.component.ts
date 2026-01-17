@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import type { Database } from '@picsa/server-types';
@@ -18,16 +18,18 @@ export type IMonitoringSubmissionsRow = Database['public']['Tables']['monitoring
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormSubmissionsComponent {
+  private service = inject(MonitoringFormsDashboardService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
   public form: IMonitoringFormsRow | null = null;
   public submissions: any[];
   dataLoadError: string;
   displayedColumns: string[];
 
-  constructor(
-    private service: MonitoringFormsDashboardService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {
+  constructor() {
+    const service = this.service;
+
     this.service.ready();
     this.route.params.subscribe(async (params) => {
       const id = params['id'];

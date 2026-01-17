@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject,Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -13,13 +13,11 @@ import { BudgetShareDialogComponent } from '../share-dialog/share-dialog.compone
   standalone: false,
 })
 export class BudgetEditorSidebarComponent {
-  constructor(
-    public store: BudgetStore,
-    public service: BudgetService,
-    private dialog: MatDialog,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
+  store = inject(BudgetStore);
+  service = inject(BudgetService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   @Output() emitClose = new EventEmitter<boolean>();
 

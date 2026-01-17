@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, output, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { loadCSV } from '@picsa/utils';
 import Uppy from '@uppy/core';
@@ -22,13 +31,15 @@ import DragDrop from '@uppy/drag-drop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataImportFileDropComponent {
+  private notificationService = inject(PicsaNotificationService);
+
   private uppy: Uppy;
   private dropEl = viewChild('dragDrop', { read: ElementRef });
 
   public dataLoaded = output<any[]>();
   public note = input('Accepts CSV or JSON Data');
 
-  constructor(private notificationService: PicsaNotificationService) {
+  constructor() {
     effect(() => {
       const el = this.dropEl();
       if (el) {

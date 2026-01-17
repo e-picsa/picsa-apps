@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject,OnDestroy, OnInit } from '@angular/core';
 import { MAT_DATE_RANGE_SELECTION_STRATEGY } from '@angular/material/datepicker';
 import { LINE_TOOL_OPTIONS } from '@picsa/data/climate/tool_definitions';
 import { Subject, takeUntil } from 'rxjs';
@@ -21,6 +21,9 @@ import { LineDatePickerHeaderComponent } from './line-date-picker-header';
   standalone: false,
 })
 export class LineToolComponent implements OnInit, OnDestroy {
+  private chartService = inject(ClimateChartService);
+  private toolService = inject(ClimateToolService);
+
   public value?: number;
   public ranges: { min: number; max: number };
   public step: number;
@@ -32,11 +35,6 @@ export class LineToolComponent implements OnInit, OnDestroy {
   private options = LINE_TOOL_OPTIONS;
 
   private componentDestroyed$ = new Subject<boolean>();
-
-  constructor(
-    private chartService: ClimateChartService,
-    private toolService: ClimateToolService,
-  ) {}
 
   ngOnInit(): void {
     this.subscribeToDefinitionChanges();

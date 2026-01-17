@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, input, OnDestroy, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,input, OnDestroy, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -23,6 +23,9 @@ interface IViewerForecast {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForecastViewerComponent implements OnDestroy {
+  private dbAttachmentService = inject(PicsaDatabaseAttachmentService);
+  private sanitizer = inject(DomSanitizer);
+
   public forecast = input<IViewerForecast>();
 
   public closeClicked = output();
@@ -38,10 +41,7 @@ export class ForecastViewerComponent implements OnDestroy {
   /** PDF forecasts will be linked as URI for render in the <picsa-pdf-viewer> component */
   public pdfForecastData = signal<string | undefined>(undefined);
 
-  constructor(
-    private dbAttachmentService: PicsaDatabaseAttachmentService,
-    private sanitizer: DomSanitizer,
-  ) {
+  constructor() {
     effect(async () => {
       const forecast = this.forecast();
       this.clearForecastData();

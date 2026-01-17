@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal, TemplateRef, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GEO_LOCATION_DATA, IGelocationData } from '@picsa/data/geoLocation';
 import { PicsaFormsModule } from '@picsa/forms';
@@ -25,6 +34,11 @@ interface IWaterRequirementTableData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardCropWaterRequirementsComponent {
+  dialog = inject(MatDialog);
+  private service = inject(CropInformationService);
+  private deploymentService = inject(DeploymentDashboardService);
+  private notificationService = inject(PicsaNotificationService);
+
   public data = input.required<ICropDataMerged>();
 
   public tableData = computed(() =>
@@ -41,13 +55,6 @@ export class DashboardCropWaterRequirementsComponent {
   public countryCode = this.deploymentService.activeDeploymentCountry();
 
   private dialogTemplate = viewChild.required('inputDialog', { read: TemplateRef });
-
-  constructor(
-    public dialog: MatDialog,
-    private service: CropInformationService,
-    private deploymentService: DeploymentDashboardService,
-    private notificationService: PicsaNotificationService,
-  ) {}
 
   public async save(waterRequirementInput: string) {
     const { crop, variety } = this.data();

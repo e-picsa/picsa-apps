@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject,OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { CalendarEditorComponent } from '../../components/calendar-editor/calendar-editor.component';
@@ -12,12 +12,10 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   standalone: false,
 })
 export class CreateCalendarComponent implements OnInit {
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private service: SeasonCalendarService,
-    private formService: SeasonCalendarFormService,
-  ) {}
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private service = inject(SeasonCalendarService);
+  private formService = inject(SeasonCalendarFormService);
 
   @ViewChild(CalendarEditorComponent, { static: false }) editor: CalendarEditorComponent;
 

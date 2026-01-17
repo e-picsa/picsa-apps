@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { IManualPeriodEntryLocalised, IManualStepLocalised } from '../../models';
@@ -11,12 +11,10 @@ import { IManualPeriodEntryLocalised, IManualStepLocalised } from '../../models'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class stepsContainerComponent {
-  stepData = input.required<IManualPeriodEntryLocalised[]>();
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
+  stepData = input.required<IManualPeriodEntryLocalised[]>();
 
   public goToStep(step: IManualStepLocalised) {
     // Use query params to open pageMapping mapping pages

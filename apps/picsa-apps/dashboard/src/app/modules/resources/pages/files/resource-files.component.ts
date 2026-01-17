@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -39,6 +39,10 @@ const TABLE_COLUMNS: (keyof IMergedResources)[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFilesComponent implements OnInit {
+  private service = inject(ResourcesDashboardService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public resources = signal<IMergedResources[]>([]);
 
   public readonly tableOptions: IDataTableOptions = {
@@ -54,12 +58,10 @@ export class ResourceFilesComponent implements OnInit {
       return formatHeaderDefault(value);
     },
   };
-  constructor(
-    private service: ResourcesDashboardService,
-    private router: Router,
-    private route: ActivatedRoute,
-    deploymentService: DeploymentDashboardService,
-  ) {
+  constructor() {
+    const service = this.service;
+    const deploymentService = inject(DeploymentDashboardService);
+
     effect(() => {
       const resources = service.files();
       const deployment = deploymentService.activeDeployment();

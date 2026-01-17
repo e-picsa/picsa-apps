@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PicsaCommonComponentsModule } from '@picsa/components/src';
@@ -32,11 +32,12 @@ export const APP_COMMON_IMPORTS = [
   bootstrap: [AppComponent],
 })
 export class AppModule {
+  translate = inject(PicsaTranslateService);
+
   // ensure translate service initialised
-  constructor(
-    public translate: PicsaTranslateService,
-    budgetStore: BudgetStore,
-  ) {
+  constructor() {
+    const budgetStore = inject(BudgetStore);
+
     budgetStore.init();
   }
 }

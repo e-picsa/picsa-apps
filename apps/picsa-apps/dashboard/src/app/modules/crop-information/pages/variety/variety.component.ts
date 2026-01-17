@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject,OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
@@ -26,6 +26,11 @@ interface ITableDataRow extends ICropDataMerged {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CropVarietyComponent implements OnInit {
+  service = inject(CropInformationService);
+  private notificationService = inject(PicsaNotificationService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
   // populate additional column to track total number of downscaled locations data available for
   public tableData = computed(() =>
     this.service.cropDataMerged().map((v) => {
@@ -40,13 +45,6 @@ export class CropVarietyComponent implements OnInit {
       this.router.navigate(['./', row.id], { relativeTo: this.route });
     },
   };
-
-  constructor(
-    public service: CropInformationService,
-    private notificationService: PicsaNotificationService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
 
   async ngOnInit() {
     await this.service.ready();

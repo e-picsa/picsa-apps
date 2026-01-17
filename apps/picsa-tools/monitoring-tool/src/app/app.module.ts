@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -37,6 +37,5 @@ export const APP_COMMON_IMPORTS = [
   schemas: [],
 })
 export class AppModule {
-  // ensure translate service initialised
-  constructor(public translate: PicsaTranslateService) {}
+  translate = inject(PicsaTranslateService);
 }

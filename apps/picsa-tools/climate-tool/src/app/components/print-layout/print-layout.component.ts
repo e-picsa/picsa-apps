@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,input, OnDestroy, OnInit } from '@angular/core';
 import { PicsaTranslateModule } from '@picsa/shared/modules';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -11,14 +11,14 @@ import { ClimateChartService } from '../../services/climate-chart.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimatePrintLayoutComponent implements OnInit, OnDestroy {
+  private chartService = inject(ClimateChartService);
+
   public stationName: string;
   public chartName: string;
   public chartDefinition: string;
 
   public chartPngBlob = input.required<Blob>();
   public pngSrc: string;
-
-  constructor(private chartService: ClimateChartService) {}
 
   ngOnInit(): void {
     this.pngSrc = URL.createObjectURL(this.chartPngBlob());

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject,Input } from '@angular/core';
 import { IStationData } from '@picsa/models';
 
 import { ClimateDataService } from '../../../services/climate-data.service';
@@ -9,6 +9,8 @@ import { ClimateDataService } from '../../../services/climate-data.service';
   standalone: false,
 })
 export class CombinedProbabilityComponent {
+  dataService = inject(ClimateDataService);
+
   @Input() data: IStationData[];
 
   plantDate: any;
@@ -20,7 +22,7 @@ export class CombinedProbabilityComponent {
   dayValue: number;
   test = 'red';
 
-  constructor(public dataService: ClimateDataService) {
+  constructor() {
     this.plantDate = { min: 1, max: 8, value: 3, step: 1 };
     this.labels = {
       1: 'Week 1, November',

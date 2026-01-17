@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -39,6 +39,11 @@ interface ISearchResultsByType {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceSearchComponent implements OnInit, OnDestroy {
+  private service = inject(ResourcesToolService);
+  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   query = '';
 
   // https://www.fusejs.io/api/options.html
@@ -63,13 +68,6 @@ export class ResourceSearchComponent implements OnInit, OnDestroy {
 
   /** Store total number of results across types */
   public totalResults?: number;
-
-  constructor(
-    private service: ResourcesToolService,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   async ngOnInit() {
     await this.initializeServiceData();

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject,Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MONTH_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
 import { Subject, takeUntil } from 'rxjs';
@@ -14,6 +14,8 @@ type IMonthForm = ReturnType<CalendarEditorComponent['createMonthForm']>;
   standalone: false,
 })
 export class CalendarEditorComponent implements OnInit, OnDestroy {
+  private fb = inject(FormBuilder);
+
   /** List of month data to use in select component */
   public monthOptions = MONTH_DATA;
 
@@ -25,8 +27,6 @@ export class CalendarEditorComponent implements OnInit, OnDestroy {
   public monthForm: IMonthForm;
 
   @Input() form: ISeasonCalendarForm;
-
-  constructor(private fb: FormBuilder) {}
 
   // get controls of nested `entry.meta` form
   public get metaFormControls() {

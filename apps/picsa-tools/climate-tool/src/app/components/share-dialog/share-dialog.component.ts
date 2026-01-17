@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { _wait } from '@picsa/utils';
 
 import { ClimateChartService } from '../../services/climate-chart.service';
@@ -14,13 +14,11 @@ import { ClimateChartService } from '../../services/climate-chart.service';
  * TODO - combine with budget share to common dialogs/components
  */
 export class ClimateShareDialogComponent {
+  private chartService = inject(ClimateChartService);
+
   public status = '';
   public disabled = false;
   public shareCode: string;
-
-  constructor(private chartService: ClimateChartService) {
-    //
-  }
 
   public async sharePicture() {
     this.disabled = true;

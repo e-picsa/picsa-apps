@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject,OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
@@ -40,6 +40,13 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpdateMonitoringFormsComponent implements OnInit {
+  private service = inject(MonitoringFormsDashboardService);
+  private route = inject(ActivatedRoute);
+  private storageService = inject(SupabaseStorageService);
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private deploymentService = inject(DeploymentDashboardService);
+
   public convertXlsxFeedbackMessage = '';
   public allowedFileTypes = ['xlsx', 'xls'].map((ext) => `.${ext}`);
   public allowedCoverTypes = ['jpg', 'jpeg', 'svg', 'png'].map((ext) => `.${ext}`);
@@ -62,15 +69,6 @@ export class UpdateMonitoringFormsComponent implements OnInit {
   });
 
   @ViewChild('formUploader') formUploader: SupabaseUploadComponent;
-
-  constructor(
-    private service: MonitoringFormsDashboardService,
-    private route: ActivatedRoute,
-    private storageService: SupabaseStorageService,
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private deploymentService: DeploymentDashboardService,
-  ) {}
   async ngOnInit() {
     await this.service.ready();
     this.route.params.subscribe(async (params) => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2';
 import { RxCollection } from 'rxdb';
@@ -8,9 +8,11 @@ import * as CardSchema from '../schema/cards';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetCardService extends PicsaAsyncService {
+  private dbService = inject(PicsaDatabase_V2_Service);
+
   public enterpriseGroups = this.getEnterpriseGroupCards();
 
-  constructor(private dbService: PicsaDatabase_V2_Service) {
+  constructor() {
     super();
     this.ready().then(() => console.log('[Budget Card] service ready'));
     // TODO - migrate legacy db custom cards (if possible)

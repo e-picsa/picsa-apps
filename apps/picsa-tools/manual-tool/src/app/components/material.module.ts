@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,10 +13,10 @@ const MODULES = [MatButtonModule, MatInputModule, MatIconModule, MatTabsModule];
   exports: MODULES,
 })
 export class ManualToolMaterialModule {
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
-  ) {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
+
+  constructor() {
     this.registerIcons();
   }
 

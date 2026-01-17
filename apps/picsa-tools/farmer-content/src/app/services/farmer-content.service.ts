@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FARMER_TOOLS_DATA } from '@picsa/data';
 import { DataIconRegistry } from '@picsa/data/iconRegistry';
@@ -7,7 +7,9 @@ const TOOL_PREFIXES = FARMER_TOOLS_DATA.map((t) => t.url);
 
 @Injectable({ providedIn: 'root' })
 export class FarmerContentService {
-  constructor(dataIconRegistry: DataIconRegistry) {
+  constructor() {
+    const dataIconRegistry = inject(DataIconRegistry);
+
     dataIconRegistry.registerMatIcons('tools');
   }
   /**

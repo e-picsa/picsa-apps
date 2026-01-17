@@ -48,6 +48,8 @@ const DISPLAY_COLUMNS = [
   ],
 })
 export class DownloadsPageComponent {
+  service = inject(ResourcesToolService);
+
   private configurationService = inject(ConfigurationService);
   private downloadService = inject(ResourcesDownloadService);
 
@@ -94,8 +96,6 @@ export class DownloadsPageComponent {
     search: false,
     rowTrackBy: (_, row: IResourceTableEntry) => row.id,
   };
-
-  constructor(public service: ResourcesToolService) {}
 
   public async deleteDownload(resource: IResourceFile, event: Event) {
     event.stopImmediatePropagation();

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Injectable, signal } from '@angular/core';
+import { inject,Injectable, signal } from '@angular/core';
 import { MONTH_DATA } from '@picsa/data';
 import type { IChartConfig, IChartId, IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { PicsaChartComponent } from '@picsa/shared/features/charts/chart';
@@ -15,6 +15,10 @@ import { ClimateDataService } from './climate-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateChartService {
+  private translateService = inject(PicsaTranslateService);
+  private dataService = inject(ClimateDataService);
+  private printProvider = inject(PrintProvider);
+
   public chartDefinition?: IChartMeta;
 
   /** Binding for active rendered chart component */
@@ -50,12 +54,6 @@ export class ClimateChartService {
 
   /** List of month names translated */
   private monthNames: string[] = [];
-
-  constructor(
-    private translateService: PicsaTranslateService,
-    private dataService: ClimateDataService,
-    private printProvider: PrintProvider,
-  ) {}
 
   public async clearChartData() {
     this.chartDefinition$.next(undefined);

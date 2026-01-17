@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PicsaTranslateService } from '@picsa/shared/modules/translate';
 
 import { BudgetStore } from './store/budget.store';
@@ -11,13 +11,12 @@ import { BudgetStore } from './store/budget.store';
   standalone: false,
 })
 export class AppComponent {
+  store = inject(BudgetStore);
+  translate? = inject(PicsaTranslateService);
+
   title = 'picsa-budget-tool';
   standalone = true;
   storeReady = false;
-  constructor(
-    public store: BudgetStore,
-    public translate?: PicsaTranslateService,
-  ) {}
 }
 
 @Component({

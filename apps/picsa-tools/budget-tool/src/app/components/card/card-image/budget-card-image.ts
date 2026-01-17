@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject,Input, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeUrl } from '@angular/platform-browser';
 import { catchError, firstValueFrom } from 'rxjs';
 
@@ -13,15 +13,14 @@ import { IBudgetCard } from '../../../schema';
   standalone: false,
 })
 export class BudgetCardImageComponent implements OnInit, OnDestroy {
+  private http = inject(HttpClient);
+  private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
+
   @Input() card: IBudgetCard;
   imgData: SafeHtml;
   imgUrl: SafeUrl;
   objUrl: string;
-  constructor(
-    private http: HttpClient,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit() {
     if (this.card.customMeta) {

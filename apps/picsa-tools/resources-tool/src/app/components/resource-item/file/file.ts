@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,Input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { RxDocument } from 'rxdb';
 
 import { IResourceFile, IResourceLink } from '../../../schemas';
@@ -16,14 +16,14 @@ import { ResourceItemVideoComponent } from '../video';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceItemFileComponent implements OnInit, OnDestroy {
+  private service = inject(ResourcesToolService);
+
   @Input() resource: IResourceFile;
 
   public dbDoc: RxDocument<IResourceFile>;
   public fileUri = signal<string | null>(null);
 
   private downloader = viewChild.required(ResourceDownloadComponent);
-
-  constructor(private service: ResourcesToolService) {}
 
   async ngOnInit() {
     await this.service.ready();

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject,Injectable, signal } from '@angular/core';
 import { LOCALES_DATA_HASHMAP } from '@picsa/data';
 import { Database } from '@picsa/server-types';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
@@ -13,6 +13,8 @@ export type ITranslationInsert = ITranslationDB['Insert'];
 
 @Injectable({ providedIn: 'root' })
 export class TranslationDashboardService extends PicsaAsyncService {
+  private supabaseService = inject(SupabaseService);
+
   public translations = signal<ITranslationRow[]>([]);
 
   /** Track a list of translations by id for lookup and local update */
@@ -20,10 +22,6 @@ export class TranslationDashboardService extends PicsaAsyncService {
 
   public get table() {
     return this.supabaseService.db.table('translations');
-  }
-
-  constructor(private supabaseService: SupabaseService) {
-    super();
   }
 
   public override async init() {

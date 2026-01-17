@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { inject,ModuleWithProviders, NgModule } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { registerEmbeddedRoutes } from '@picsa/utils/angular';
@@ -20,7 +20,11 @@ export class EmbeddedConfig {
   imports: [RouterModule.forChild([])],
 })
 export class EmbeddedRoutingModule {
-  constructor(router: Router, embeddedConfig: EmbeddedConfig, service: FarmerContentService) {
+  constructor() {
+    const router = inject(Router);
+    const embeddedConfig = inject(EmbeddedConfig);
+    const service = inject(FarmerContentService);
+
     registerEmbeddedRoutes(appRoutes, router, embeddedConfig.urlPrefix);
     service.createNestedToolRoutes(router);
   }
@@ -35,8 +39,7 @@ export class EmbeddedRoutingModule {
   bootstrap: [PicsaFarmerContent],
 })
 export class BaseModule {
-  // ensure translate has been initiated
-  constructor(public translate: PicsaTranslateService) {}
+  translate = inject(PicsaTranslateService);
 }
 
 /** Use to import directly into another app via lazy-loading */

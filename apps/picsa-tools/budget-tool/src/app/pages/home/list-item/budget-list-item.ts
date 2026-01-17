@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, model, output, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,input, model, output, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -26,6 +26,9 @@ import { BudgetStore } from '../../../store/budget.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetListItemComponent {
+  private dialog = inject(MatDialog);
+  store = inject(BudgetStore);
+
   budget = input.required<IBudget>();
 
   deleteClicked = output();
@@ -33,11 +36,6 @@ export class BudgetListItemComponent {
   renameClicked = output<{ title: string; description: string }>();
 
   copyClicked = output<{ title: string; description: string }>();
-
-  constructor(
-    private dialog: MatDialog,
-    public store: BudgetStore,
-  ) {}
 
   public titleInput = model('');
   public descriptionInput = model('');

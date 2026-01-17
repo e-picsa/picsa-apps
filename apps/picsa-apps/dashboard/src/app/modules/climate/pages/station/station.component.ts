@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -24,6 +24,10 @@ const displayColumns: (keyof IStationRow)[] = ['district', 'station_name'];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClimateStationPageComponent {
+  service = inject(ClimateService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public tableOptions: IDataTableOptions = {
     displayColumns: ['map', ...displayColumns],
     sort: { id: 'district', start: 'desc' },
@@ -45,12 +49,6 @@ export class ClimateStationPageComponent {
     events: { refresh: async () => this.service.loadFromAPI.station(this.service.apiCountryCode) },
     showStatusCode: false,
   };
-
-  constructor(
-    public service: ClimateService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   public handleMarkerClick(marker: IMapMarker) {
     const { _index } = marker;

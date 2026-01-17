@@ -1,4 +1,4 @@
-import { Component, Inject, signal } from '@angular/core';
+import { Component, inject,signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 
@@ -17,14 +17,12 @@ export interface AccessCodeDialogResult {
   imports: [MonitoringMaterialModule, PicsaTranslateModule],
 })
 export class AccessCodeDialogComponent {
+  dialogRef = inject<MatDialogRef<AccessCodeDialogComponent>>(MatDialogRef);
+  form = inject<IMonitoringForm>(MAT_DIALOG_DATA);
+
   accessCode = signal('');
   hidePassword = signal(true);
   showError = signal(false);
-
-  constructor(
-    public dialogRef: MatDialogRef<AccessCodeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public form: IMonitoringForm,
-  ) {}
   togglePasswordVisibility(): void {
     this.hidePassword.update((value) => !value);
   }

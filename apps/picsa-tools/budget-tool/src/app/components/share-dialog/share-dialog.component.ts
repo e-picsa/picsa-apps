@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { _wait } from '@picsa/utils';
 
 import { BudgetStore } from '../../store/budget.store';
@@ -10,11 +10,11 @@ import { BudgetStore } from '../../store/budget.store';
   standalone: false,
 })
 export class BudgetShareDialogComponent {
+  private store = inject(BudgetStore);
+
   public status = '';
   public disabled = false;
   public shareCode: string;
-
-  constructor(private store: BudgetStore) {}
 
   public async sharePicture() {
     this.disabled = true;

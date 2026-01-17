@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,11 +16,12 @@ const COMPONENTS = [MatButtonModule, MatDialogModule, MatIconModule, MatSelectMo
   exports: COMPONENTS,
 })
 export class OptionMaterialModule {
-  constructor(
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer,
-    dataIconRegistry: DataIconRegistry,
-  ) {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
+
+  constructor() {
+    const dataIconRegistry = inject(DataIconRegistry);
+
     this.registerIcons();
     // register additional icons provided from shared data lib
     dataIconRegistry.registerMatIcons('weather');

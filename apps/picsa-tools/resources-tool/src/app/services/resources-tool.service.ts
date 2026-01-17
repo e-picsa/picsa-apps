@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
@@ -23,18 +23,14 @@ export type IDownloadStatus = 'loading' | 'ready' | 'pending' | 'finalizing' | '
 
 @Injectable({ providedIn: 'root' })
 export class ResourcesToolService extends PicsaAsyncService {
-  constructor(
-    private dbService: PicsaDatabase_V2_Service,
-    private dbAttachmentService: PicsaDatabaseAttachmentService,
-    private configurationService: ConfigurationService,
-    private nativeStorageService: NativeStorageService,
-    private fileService: FileService,
-    private analyticsService: AnalyticsService,
-    private clipboard: Clipboard,
-    private notificationService: PicsaNotificationService,
-  ) {
-    super();
-  }
+  private dbService = inject(PicsaDatabase_V2_Service);
+  private dbAttachmentService = inject(PicsaDatabaseAttachmentService);
+  private configurationService = inject(ConfigurationService);
+  private nativeStorageService = inject(NativeStorageService);
+  private fileService = inject(FileService);
+  private analyticsService = inject(AnalyticsService);
+  private clipboard = inject(Clipboard);
+  private notificationService = inject(PicsaNotificationService);
 
   private canShare: boolean;
 

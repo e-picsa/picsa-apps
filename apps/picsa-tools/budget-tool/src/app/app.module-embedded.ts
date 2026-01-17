@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
+import { inject,ModuleWithProviders, NgModule } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { PicsaTranslateService } from '@picsa/shared/modules';
 import { registerEmbeddedRoutes } from '@picsa/utils/angular';
@@ -20,7 +20,10 @@ export class EmbeddedConfig {
   imports: [RouterModule.forChild([])],
 })
 export class EmbeddedRoutingModule {
-  constructor(router: Router, embeddedConfig: EmbeddedConfig) {
+  constructor() {
+    const router = inject(Router);
+    const embeddedConfig = inject(EmbeddedConfig);
+
     registerEmbeddedRoutes(ROUTES_COMMON, router, embeddedConfig.urlPrefix);
   }
 }
@@ -34,11 +37,12 @@ export class EmbeddedRoutingModule {
   bootstrap: [AppComponentEmbedded],
 })
 export class BaseModule {
+  translate = inject(PicsaTranslateService);
+
   // ensure translate has been initiated
-  constructor(
-    public translate: PicsaTranslateService,
-    budgetStore: BudgetStore,
-  ) {
+  constructor() {
+    const budgetStore = inject(BudgetStore);
+
     budgetStore.init();
   }
 }

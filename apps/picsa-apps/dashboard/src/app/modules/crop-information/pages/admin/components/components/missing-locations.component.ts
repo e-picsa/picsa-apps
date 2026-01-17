@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { IGelocationData } from '@picsa/data/geoLocation';
@@ -20,6 +20,9 @@ import { CropInformationService, ICropDataDownscaled } from '../../../../service
  * that is not present in the database
  */
 export class CropMissingLocationsComponent {
+  private service = inject(CropInformationService);
+  private deploymentService = inject(DeploymentDashboardService);
+
   /** Locations without db entry */
   public missingLocations = computed(() => {
     const downscaledData = this.service.downscaledData();
@@ -38,11 +41,6 @@ export class CropMissingLocationsComponent {
       .map((v) => v.location_id)
       .join(', '),
   );
-
-  constructor(
-    private service: CropInformationService,
-    private deploymentService: DeploymentDashboardService,
-  ) {}
 
   public async addPlaceholderLocations(locations: { id: string; label: string }[]) {
     const country_code = this.deploymentService.activeDeploymentCountry();

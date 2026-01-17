@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,12 +17,10 @@ import { IResourceLinkRow } from '../../../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinkEditComponent implements OnInit {
-  constructor(
-    private service: ResourcesDashboardService,
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private deploymentService: DeploymentDashboardService,
-  ) {}
+  private service = inject(ResourcesDashboardService);
+  private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private deploymentService = inject(DeploymentDashboardService);
 
   public form = this.formBuilder.group({
     id: new FormControl<string | null>(null),

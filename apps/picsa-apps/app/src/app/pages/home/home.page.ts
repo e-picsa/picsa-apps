@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/configuration';
 
@@ -10,13 +10,14 @@ import { ConfigurationService, PicsaConfigurationSelectComponent } from '@picsa/
   imports: [PicsaConfigurationSelectComponent],
 })
 export class HomePageComponent {
+  configurationService = inject(ConfigurationService);
+
   // use a signal to only show content after potential redirects evaluated
   showContent = signal(false);
 
-  constructor(
-    public configurationService: ConfigurationService,
-    router: Router,
-  ) {
+  constructor() {
+    const router = inject(Router);
+
     effect(() => {
       // navigate to /extension or /farmer tool home if configured
       const { deployment_id, user_type } = this.configurationService.userSettings();

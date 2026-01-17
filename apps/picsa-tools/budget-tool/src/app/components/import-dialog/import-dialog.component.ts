@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { _wait } from '@picsa/utils';
 
@@ -11,6 +11,9 @@ import { BudgetStore } from '../../store/budget.store';
   standalone: false,
 })
 export class BudgetImportDialogComponent {
+  private store = inject(BudgetStore);
+  private router = inject(Router);
+
   public status = '';
   public disabled = false;
 
@@ -21,11 +24,6 @@ export class BudgetImportDialogComponent {
     { name: 'code-input-2', value: '' },
     { name: 'code-input-3', value: '' },
   ];
-
-  constructor(
-    private store: BudgetStore,
-    private router: Router,
-  ) {}
 
   public async handleImport() {
     const code = this.importValue;

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject,OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Database } from '@picsa/server-types';
@@ -18,6 +18,10 @@ export type IMonitoringFormsRow = Database['public']['Tables']['monitoring_forms
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MonitoringPageComponent implements OnInit {
+  service = inject(MonitoringFormsDashboardService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   displayedColumns: (keyof IMonitoringFormsRow)[] = [
     'title',
     'description',
@@ -26,12 +30,6 @@ export class MonitoringPageComponent implements OnInit {
     'enketo_model',
     'created_at',
   ];
-
-  constructor(
-    public service: MonitoringFormsDashboardService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   public tableOptions: IDataTableOptions = {
     paginatorSizes: [25, 50],

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject,input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -30,12 +30,12 @@ const filetypeIconMapping = {
  * to the public url of the file, as populated from resources store cache
  */
 export class DashboardStorageLinkComponent implements OnInit {
+  private service = inject(DashboardStorageService);
+
   /** Resource storage id */
   id = input.required<string>();
 
   displayStyle = input<'button' | 'link' | 'default'>('default');
-
-  constructor(private service: DashboardStorageService) {}
 
   public entry = signal<IDashboardStorageEntry | undefined>(undefined);
 

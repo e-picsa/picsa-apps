@@ -1,5 +1,5 @@
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -18,6 +18,8 @@ const DISPLAYED_COLUMNS: (keyof IDeploymentRow)[] = ['country_code', 'label', 'p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeploymentListComponent implements OnInit {
+  service = inject(DeploymentDashboardService);
+
   public farmer: IDeploymentRow[] = [];
   public extension: IDeploymentRow[] = [];
   public other: IDeploymentRow[] = [];
@@ -32,7 +34,7 @@ export class DeploymentListComponent implements OnInit {
     },
   };
 
-  constructor(public service: DeploymentDashboardService) {
+  constructor() {
     effect(() => {
       const allDeployments = this.service.deployments();
       this.farmer = allDeployments.filter((d) => d.variant === 'farmer');

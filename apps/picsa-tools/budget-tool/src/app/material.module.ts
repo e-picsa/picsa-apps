@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject,NgModule } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -54,10 +54,10 @@ import { BUDGET_CARDS } from './data';
   ],
 })
 export class BudgetMaterialModule {
-  constructor(
-    private matIconRegistry?: MatIconRegistry,
-    private domSanitizer?: DomSanitizer,
-  ) {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
+
+  constructor() {
     this.registerIcons();
   }
   registerIcons() {

@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, inject,Injectable } from '@angular/core';
 import { ConfigurationService } from '@picsa/configuration';
 import { IChartMeta, IStationData, IStationMeta } from '@picsa/models';
 import { arrayToHashmap, loadCSV } from '@picsa/utils';
@@ -7,6 +7,8 @@ import * as DATA from '../data';
 
 @Injectable({ providedIn: 'root' })
 export class ClimateDataService {
+  private configurationService = inject(ConfigurationService);
+
   public activeChart: IChartMeta;
   public yValues: number[];
 
@@ -26,7 +28,7 @@ export class ClimateDataService {
 
   private stationHashmap = computed(() => arrayToHashmap(this.stations(), 'id'));
 
-  constructor(private configurationService: ConfigurationService) {
+  constructor() {
     this.stationDataCache = arrayToHashmap(DATA.HARDCODED_STATIONS, 'id');
   }
 

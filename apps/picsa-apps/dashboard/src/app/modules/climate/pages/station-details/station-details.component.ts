@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, signal, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject,signal, TemplateRef, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { _wait } from '@picsa/utils';
 
@@ -24,6 +24,9 @@ import { LocationSummaryComponent } from './components/location-summary/location
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StationDetailsPageComponent {
+  service = inject(ClimateService);
+  private dialog = inject(MatDialog);
+
   public dataFetchUpdates = signal<IDataRefreshStatus[]>([]);
 
   private updatesDialog = viewChild.required('updateDialog', { read: TemplateRef });
@@ -32,10 +35,7 @@ export class StationDetailsPageComponent {
 
   private isFirstDataLoad = true;
 
-  constructor(
-    public service: ClimateService,
-    private dialog: MatDialog,
-  ) {
+  constructor() {
     effect(() => {
       const station = this.service.activeStation();
       if (station) {

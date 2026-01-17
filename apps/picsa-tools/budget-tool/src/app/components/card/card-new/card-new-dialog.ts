@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IBudgetCard } from '../../../schema';
@@ -12,11 +12,12 @@ import { IBudgetCard } from '../../../schema';
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class BudgetCardNewDialog {
+  dialogRef = inject<MatDialogRef<BudgetCardNewDialog>>(MatDialogRef);
+
   public card: IBudgetCard;
-  constructor(
-    public dialogRef: MatDialogRef<BudgetCardNewDialog>,
-    @Inject(MAT_DIALOG_DATA) card: IBudgetCard,
-  ) {
+  constructor() {
+    const card = inject<IBudgetCard>(MAT_DIALOG_DATA);
+
     this.card = card;
   }
 

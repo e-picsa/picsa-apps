@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject,signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
@@ -30,6 +30,9 @@ export type ITranslationRow = Database['public']['Tables']['translations']['Row'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TranslationsPageComponent {
+  service = inject(TranslationDashboardService);
+  dialog = inject(MatDialog);
+
   /** Table options specific to active deployment (display columns vary depending on country) */
   public tableOptions = computed<IDataTableOptions>(() => {
     const locale = this.locale();
@@ -93,11 +96,9 @@ export class TranslationsPageComponent {
   /** Track active country code to avoid refreshing list when toggling between different country versions */
   private activeCountryCode: string;
 
-  constructor(
-    public service: TranslationDashboardService,
-    public dialog: MatDialog,
-    deploymentService: DeploymentDashboardService,
-  ) {
+  constructor() {
+    const deploymentService = inject(DeploymentDashboardService);
+
     effect(async () => {
       const deployment = deploymentService.activeDeployment();
       if (deployment) {

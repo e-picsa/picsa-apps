@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CROPS_DATA, MONTH_DATA_HASHMAP } from '@picsa/data';
@@ -18,6 +26,13 @@ import { ISeasonCalendarForm, SeasonCalendarFormService } from '../../services/c
   standalone: false,
 })
 export class CalendarTableComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private service = inject(SeasonCalendarService);
+  private formService = inject(SeasonCalendarFormService);
+  dialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+
   /** Table column labels (e.g. names of months) */
   public columnLabels: string[] = [];
 
@@ -47,15 +62,6 @@ export class CalendarTableComponent implements OnInit, OnDestroy {
   private cropsByName = arrayToHashmap(CROPS_DATA as any as { name: string; label: string }[], 'name');
 
   private componentDestroyed$ = new Subject<boolean>();
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private service: SeasonCalendarService,
-    private formService: SeasonCalendarFormService,
-    public dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   async ngOnInit() {
     await this.service.ready();

@@ -24,7 +24,9 @@ export class AuthRoleRequiredDirective {
   /** Input signal to track role required for view */
   public roleRequired = input<IAuthRole>();
 
-  constructor(service: DashboardAuthService) {
+  constructor() {
+    const service = inject(DashboardAuthService);
+
     // recalcuate user view permissions whenever requiredRole or deploymentRoles change
     effect(() => {
       const requiredRole = this.roleRequired();
