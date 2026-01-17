@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject,OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { firstValueFrom, map } from 'rxjs';

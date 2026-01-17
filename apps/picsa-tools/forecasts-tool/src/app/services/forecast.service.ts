@@ -1,4 +1,4 @@
-import { effect, inject,Injectable, signal, WritableSignal } from '@angular/core';
+import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { IUserSettings } from '@picsa/configuration/src';
 import { ICountryCode } from '@picsa/data';
 import { FORECASTS_DB } from '@picsa/data/climate/forecasts';
@@ -60,8 +60,6 @@ export class ForecastService extends PicsaAsyncService {
   }
 
   constructor() {
-    super();
-
     effect(async () => {
       const country_code = this.countryLocation();
       if (country_code) {

@@ -1,4 +1,4 @@
-import { computed, effect, inject,Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { PicsaAsyncService } from '@picsa/shared/services/asyncService.service';
 import { PicsaNotificationService } from '@picsa/shared/services/core/notification.service';
 import { SupabaseService } from '@picsa/shared/services/core/supabase';
@@ -41,9 +41,9 @@ export class ResourcesDashboardService extends PicsaAsyncService {
   }
 
   constructor() {
+    super();
     const deploymentService = inject(DeploymentDashboardService);
 
-    super();
     effect(async () => {
       const countryCode = deploymentService.activeDeploymentCountry();
       if (countryCode) {

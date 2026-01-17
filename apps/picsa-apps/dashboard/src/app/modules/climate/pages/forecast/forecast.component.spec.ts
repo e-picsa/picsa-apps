@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { ForecastComponent } from './forecast.component';
 
 describe('ForecastComponent', () => {

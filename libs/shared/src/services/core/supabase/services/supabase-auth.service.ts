@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { effect, inject,Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import type { Database } from '@picsa/server-types';
 import { objectDiff } from '@picsa/utils/object.utils';
 import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
