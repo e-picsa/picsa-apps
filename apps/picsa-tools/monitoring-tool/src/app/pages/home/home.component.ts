@@ -25,8 +25,6 @@ export class HomeComponent {
   });
 
   constructor() {
-    const service = this.service;
-
     service.ready();
 
     effect(() => {
