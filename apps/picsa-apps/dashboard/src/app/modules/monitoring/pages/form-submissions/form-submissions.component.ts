@@ -28,12 +28,10 @@ export class FormSubmissionsComponent {
   displayedColumns: string[];
 
   constructor() {
-    const service = this.service;
-
     this.service.ready();
     this.route.params.subscribe(async (params) => {
       const id = params['id'];
-      const form = await service.getFormById(id);
+      const form = await this.service.getFormById(id);
       this.form = form;
       if (form && form.summary_fields) {
         this.displayedColumns = form.summary_fields.map((entry) => entry?.['field']);

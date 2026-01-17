@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject,OnDestroy, signal, viewChildren } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { marker as translateMarker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -78,12 +78,11 @@ export class ForecastComponent implements OnDestroy {
   private downloaders = viewChildren(SupabaseStorageDownloadComponent);
 
   constructor() {
-    const service = this.service;
     const configurationService = this.configurationService;
 
     effect(() => {
       const { location } = configurationService.userSettings();
-      service.setForecastLocation(location);
+      this.service.setForecastLocation(location);
     });
   }
 

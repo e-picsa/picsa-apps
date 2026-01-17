@@ -57,17 +57,15 @@ export class BudgetEditorComponent implements OnDestroy {
   private cardSubscription: Subscription;
 
   constructor() {
-    const service = this.service;
-
     effect(() => {
-      const type = service.activeType();
+      const type = this.service.activeType();
       if (type) {
         this.loadBudgetCards(type);
         this.scrollToType(type);
       }
     });
     effect(() => {
-      const period = service.activePeriod();
+      const period = this.service.activePeriod();
       if (period !== undefined) {
         this.loadEditorData();
       }

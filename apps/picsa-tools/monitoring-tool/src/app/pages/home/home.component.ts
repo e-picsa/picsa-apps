@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject,OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ConfigurationService } from '@picsa/configuration/src';
 import { switchMap } from 'rxjs';
@@ -25,7 +25,7 @@ export class HomeComponent {
   });
 
   constructor() {
-    service.ready();
+    this.service.ready();
 
     effect(() => {
       const { country_code } = this.configurationService.deploymentSettings();

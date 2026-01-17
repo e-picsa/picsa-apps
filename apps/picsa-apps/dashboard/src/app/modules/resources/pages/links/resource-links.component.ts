@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject,OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
 import { StoragePathPipe } from '@picsa/shared/services/core/supabase';
@@ -44,10 +44,8 @@ export class ResourceLinksComponent implements OnInit {
   };
 
   constructor() {
-    const service = this.service;
-
     effect(() => {
-      const links = service.links();
+      const links = this.service.links();
       const sorted = links.sort((a, b) => (b.modified_at > a.modified_at ? 1 : -1));
       this.links.set(sorted);
     });

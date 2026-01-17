@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, effect, inject,Injector, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, Injector, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';

@@ -8,7 +8,6 @@ import { PicsaTranslateModule } from '@picsa/shared/modules/translate';
 import { PicsaSharedPipesModule } from '@picsa/shared/pipes';
 
 import { ClimateChartLayoutComponent } from './chart-layout/chart-layout';
-import { CombinedProbabilityComponent } from './chart-tools/combined-probability/combined-probability';
 import { CropAnalysisComponent } from './chart-tools/crop-analysis/crop-analysis';
 import { LineDatePickerHeaderComponent } from './chart-tools/line-tool/line-date-picker-header';
 import { LineToolComponent } from './chart-tools/line-tool/line-tool.component';
@@ -27,7 +26,6 @@ const Components = [
   ClimateChartLayoutComponent,
   ClimateChartOptionsComponent,
   ClimateShareDialogComponent,
-  CombinedProbabilityComponent,
   CropAnalysisComponent,
   LineToolComponent,
   LineDatePickerHeaderComponent,

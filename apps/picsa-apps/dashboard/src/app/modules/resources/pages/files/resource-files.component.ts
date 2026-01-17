@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject,OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ILocaleDataEntry, LOCALES_DATA_HASHMAP } from '@picsa/data/deployments';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -59,11 +59,10 @@ export class ResourceFilesComponent implements OnInit {
     },
   };
   constructor() {
-    const service = this.service;
     const deploymentService = inject(DeploymentDashboardService);
 
     effect(() => {
-      const resources = service.files();
+      const resources = this.service.files();
       const deployment = deploymentService.activeDeployment();
       if (deployment) {
         // filter for resources targetting same country or marked as global

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject,signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PicsaFormsModule } from '@picsa/forms';
 import { formatHeaderDefault, IDataTableOptions, PicsaDataTableComponent } from '@picsa/shared/features';
@@ -85,9 +85,7 @@ export class DashboardCropAdminComponent {
   public countryCode = computed(() => this.deploymentService.activeDeploymentCountry());
 
   constructor() {
-    const service = this.service;
-
-    service.ready();
+    this.service.ready();
     effect(async () => {
       const parsedRows = this.parsedRows();
       if (parsedRows.length > 0) {

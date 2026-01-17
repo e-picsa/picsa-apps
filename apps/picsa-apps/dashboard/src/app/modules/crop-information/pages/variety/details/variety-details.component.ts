@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject,signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -36,9 +36,7 @@ export class CropVarietyDetailsComponent {
   private cropId = toSignal(this.route.params.pipe(map((v) => (v as RouteParams).id)));
 
   constructor() {
-    const service = this.service;
-
-    service.ready();
+    this.service.ready();
     effect(() => {
       if (!service.readySignal()) return;
       const cropId = this.cropId();
