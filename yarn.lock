@@ -3301,22 +3301,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime-corejs3@npm:7.17.8":
-  version: 7.17.8
-  resolution: "@babel/runtime-corejs3@npm:7.17.8"
+"@babel/runtime-corejs3@npm:7.28.4":
+  version: 7.28.4
+  resolution: "@babel/runtime-corejs3@npm:7.28.4"
   dependencies:
-    core-js-pure: "npm:^3.20.2"
-    regenerator-runtime: "npm:^0.13.4"
-  checksum: 10c0/dafc2427203ffbf3aafd9d087c57df3edfe9bc699b1a577455395925420aa75cd61352f7a5822e5bb1b56f2e943f1f235c4ca6b87ed9d7377fa2bc4104be5620
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:7.17.9":
-  version: 7.17.9
-  resolution: "@babel/runtime@npm:7.17.9"
-  dependencies:
-    regenerator-runtime: "npm:^0.13.4"
-  checksum: 10c0/758ce8855a75408555ed9d196c82c86350257765095a5d3e05df35875d1b0cd42223c6f62356f000b1e1efe8e345d6312c60ae98e8727a2a49909a656f0fd805
+    core-js-pure: "npm:^3.43.0"
+  checksum: 10c0/0a7fe2d4e36d345acf090dd685b5c6ed55af3ead69a84e2cfca56631815dd757f3a362031b376cc746f63f0fd856e7a5280807833f7fa9a5b7f1febd97f8c0da
   languageName: node
   linkType: hard
 
@@ -15506,10 +15496,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:^3.20.2":
-  version: 3.39.0
-  resolution: "core-js-pure@npm:3.39.0"
-  checksum: 10c0/5d954e467703ea1e860eb070bd72cf9dc5bfddd7037c09d750f0eba3ffc4066db741a595af86dc833a709929e161a909e48da3cbdd2d9bee7795cb516dc9f7d4
+"core-js-pure@npm:^3.43.0":
+  version: 3.47.0
+  resolution: "core-js-pure@npm:3.47.0"
+  checksum: 10c0/7eb5f897e532b33e6ea85ec2c60073fc2fe943e4543ec9903340450fc0f3b46b5b118d57d332e9f2c3d681a8b7b219a4cc64ccf548d933f6b79f754b682696dd
   languageName: node
   linkType: hard
 
@@ -19854,12 +19844,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"idb-keyval@npm:6.0.3":
-  version: 6.0.3
-  resolution: "idb-keyval@npm:6.0.3"
-  dependencies:
-    safari-14-idb-fix: "npm:^3.0.0"
-  checksum: 10c0/d70f871a4319d9416b1eecfd97f2519da27fb392c669909afa26a6cd879b085dba763d523e54ba19e0aa8ae74284a0523e0202ff866da071de3969c4e1fdd683
+"idb-keyval@npm:6.2.2":
+  version: 6.2.2
+  resolution: "idb-keyval@npm:6.2.2"
+  checksum: 10c0/b52f0d2937cc2ec9f1da536b0b5c0875af3043ca210714beaffead4ec1f44f2ad322220305fd024596203855224d9e3523aed83e971dfb62ddc21b5b1721aeef
   languageName: node
   linkType: hard
 
@@ -22380,7 +22368,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
+  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
   languageName: node
   linkType: hard
 
@@ -25315,22 +25303,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parse@npm:3.4.2":
-  version: 3.4.2
-  resolution: "parse@npm:3.4.2"
+"parse@npm:7.0.0":
+  version: 7.0.0
+  resolution: "parse@npm:7.0.0"
   dependencies:
-    "@babel/runtime": "npm:7.17.9"
-    "@babel/runtime-corejs3": "npm:7.17.8"
-    crypto-js: "npm:4.1.1"
-    idb-keyval: "npm:6.0.3"
+    "@babel/runtime-corejs3": "npm:7.28.4"
+    crypto-js: "npm:4.2.0"
+    idb-keyval: "npm:6.2.2"
     react-native-crypto-js: "npm:1.0.0"
-    uuid: "npm:3.4.0"
-    ws: "npm:7.5.1"
-    xmlhttprequest: "npm:1.8.0"
+    uuid: "npm:10.0.0"
+    ws: "npm:8.18.3"
   dependenciesMeta:
     crypto-js:
       optional: true
-  checksum: 10c0/520d7fd285b37d7fac2558a28b7270c8b99b36e75f0e49f3b22dedb5a13c0714e88f6ebdd085bf2311132b330abe93f7a7a5ccd711c2e4d52917c17cecf09502
+  checksum: 10c0/b6db44ee4d50742de31221e1c985d9b854bb57aeeee80856a75e321c57dda5c48a68d7ac8382823927af8333a9e5fb967c43b748435f4ceebf1fb4926a2f3b91
   languageName: node
   linkType: hard
 
@@ -25624,7 +25610,7 @@ __metadata:
     openapi-typescript: "npm:^6.7.3"
     p-queue: "npm:^9.0.0"
     papaparse: "npm:^5.3.2"
-    parse: "npm:3.4.2"
+    parse: "npm:7.0.0"
     perfect-freehand: "npm:^1.2.2"
     postcss: "npm:^8.4.47"
     postcss-import: "npm:~14.1.0"
@@ -27667,13 +27653,6 @@ __metadata:
   dependencies:
     tslib: "npm:^2.1.0"
   checksum: 10c0/1fcd33d2066ada98ba8f21fcbbcaee9f0b271de1d38dc7f4e256bfbc6ffcdde68c8bfb69093de7eeb46f24b1fb820620bf0223706cff26b4ab99a7ff7b2e2c45
-  languageName: node
-  linkType: hard
-
-"safari-14-idb-fix@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "safari-14-idb-fix@npm:3.0.0"
-  checksum: 10c0/c30e41677b00eb039486f39033bf045d0410d1eaed78158900d9d170b718e26b791567a363a2f4cca853359ba69c273e1b9ef1746b3f97d717233d67b56f6ed4
   languageName: node
   linkType: hard
 
@@ -30480,12 +30459,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:3.4.0":
-  version: 3.4.0
-  resolution: "uuid@npm:3.4.0"
+"uuid@npm:10.0.0":
+  version: 10.0.0
+  resolution: "uuid@npm:10.0.0"
   bin:
-    uuid: ./bin/uuid
-  checksum: 10c0/1c13950df865c4f506ebfe0a24023571fa80edf2e62364297a537c80af09c618299797bbf2dbac6b1f8ae5ad182ba474b89db61e0e85839683991f7e08795347
+    uuid: dist/bin/uuid
+  checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
   languageName: node
   linkType: hard
 
@@ -31368,21 +31347,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:7.5.1":
-  version: 7.5.1
-  resolution: "ws@npm:7.5.1"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/a64bf3881c0656bb3ffc00531ca9b5e58112a08906519c3cd3c6445602131cdddce87fb5521bb746c90d4d4258c0d600cc92741c462d2b52d0a831a034ba6579
-  languageName: node
-  linkType: hard
-
 "ws@npm:8.14.2":
   version: 8.14.2
   resolution: "ws@npm:8.14.2"
@@ -31428,6 +31392,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:8.18.3, ws@npm:^8.18.2":
+  version: 8.18.3
+  resolution: "ws@npm:8.18.3"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
+  languageName: node
+  linkType: hard
+
 "ws@npm:8.8.0":
   version: 8.8.0
   resolution: "ws@npm:8.8.0"
@@ -31440,21 +31419,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/c7843c2321cba2c7e234bca2d0fa9babb7ff6c4bcf131423f2af50577b6f80b3ee862296de79efb9116b46834b19ca78e8292c75eeef7000fc02ff8a9a57948f
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.18.2":
-  version: 8.18.3
-  resolution: "ws@npm:8.18.3"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
   languageName: node
   linkType: hard
 
@@ -31548,13 +31512,6 @@ __metadata:
   version: 2.0.0
   resolution: "xmlhttprequest-ssl@npm:2.0.0"
   checksum: 10c0/b64ab371459bd5e3a4827e3c7535759047d285fd310aea6fd028973d547133f3be0d473c1fdae9f14d89bf509267759198ae1fbe89802079a7e217ddd990d734
-  languageName: node
-  linkType: hard
-
-"xmlhttprequest@npm:1.8.0":
-  version: 1.8.0
-  resolution: "xmlhttprequest@npm:1.8.0"
-  checksum: 10c0/c890661562e4cb6c36a126071e956047164296f58b0058ab28a9c9f1c3b46a65bf421a242d3449363a2aadc3d9769146160b10a501710d476a17d77d41a5c99e
   languageName: node
   linkType: hard
 
