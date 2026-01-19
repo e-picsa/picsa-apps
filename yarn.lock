@@ -22380,7 +22380,7 @@ __metadata:
 "leaflet-draw@github:enketo/Leaflet.draw#ff730785db7fcccbf2485ffcf4dffe1238a7c617":
   version: 1.0.4
   resolution: "leaflet-draw@https://github.com/enketo/Leaflet.draw.git#commit=ff730785db7fcccbf2485ffcf4dffe1238a7c617"
-  checksum: 10c0/df331497e0ab2708b734ecc8dc5479a7533c32e39f61494d71c2481d6e8b12499d18502c34775d2587a0aeac20366741a3cc06dd9731027af58db9f58040ff28
+  checksum: 10c0/bd20b41e4d1fd552b0c95231ba27f48edec47ea1b32fbf2accbdfaec70845484d15bccd263b23bd1f3af97d9e36588a38b04879d0cdf795678857b1fc7250cca
   languageName: node
   linkType: hard
 
@@ -30557,9 +30557,9 @@ __metadata:
   linkType: hard
 
 "validator@npm:^13.7.0":
-  version: 13.12.0
-  resolution: "validator@npm:13.12.0"
-  checksum: 10c0/21d48a7947c9e8498790550f56cd7971e0e3d724c73388226b109c1bac2728f4f88caddfc2f7ed4b076f9b0d004316263ac786a17e9c4edf075741200718cd32
+  version: 13.15.26
+  resolution: "validator@npm:13.15.26"
+  checksum: 10c0/d66041685c531423f6b514d0481228503b96682fe30ed7925ad77ff3cd08c3983dc94f45e18457e44f62f89027b94a3342009d65421800ce65f6e0d2c6eaf7fc
   languageName: node
   linkType: hard
 
