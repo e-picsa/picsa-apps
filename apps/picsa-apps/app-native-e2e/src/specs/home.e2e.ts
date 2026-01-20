@@ -1,6 +1,6 @@
-import { expect, $ } from '@wdio/globals';
-import * as path from 'path';
+import { $, expect } from '@wdio/globals';
 import * as fs from 'fs';
+import * as path from 'path';
 
 describe('PICSA Native App', () => {
   it('should load the home screen', async () => {
