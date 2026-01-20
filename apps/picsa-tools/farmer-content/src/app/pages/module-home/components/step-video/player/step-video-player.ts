@@ -57,7 +57,7 @@ export class FarmerStepVideoPlayerComponent {
 
   public async handleDlStatusChange(downloader: ResourceDownloadComponent) {
     if (downloader.downloadStatus() === 'complete') {
-      const uri = await downloader.uri(true);
+      const uri = await downloader.uri(false);
       if (uri) {
         this.videoUri.set(uri);
       }
