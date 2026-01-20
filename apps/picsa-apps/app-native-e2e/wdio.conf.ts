@@ -52,9 +52,11 @@ export const config: Options.Testrunner = {
     [
       'appium',
       {
+        command: 'appium',
         args: {
-          address: 'localhost',
+          address: '127.0.0.1',
           port: 4723,
+          relaxedSecurity: true,
         },
         logPath: './',
       },
