@@ -16,6 +16,17 @@
         "cwd": "apps/picsa-apps/app-native"
       }
     },
+    "build-debug-apk": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "outputs": [
+        "{projectRoot}/android/app/build/outputs/apk/debug/app-debug.apk"
+      ],
+      "options": {
+        "command":  "gradlew assembleDebug",
+        "cwd": "apps/picsa-apps/app-native/android"
+      }
+    },
     "serve": {
       "cache": false,
       "executor": "nx:run-commands",
