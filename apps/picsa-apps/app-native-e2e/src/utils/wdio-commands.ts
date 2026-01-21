@@ -30,7 +30,7 @@ export async function setLocalStorage(data: Record<string, unknown>, shouldReloa
   // Ensure we are in webview
   await browser.switchToWebView();
 
-  await browser.execute((state: Record<string, string>) => {
+  await browser.execute((state: Record<string, unknown>) => {
     Object.keys(state).forEach((key) => {
       const value = state[key];
       const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
