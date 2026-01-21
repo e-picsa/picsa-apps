@@ -1,0 +1,29 @@
+{
+  "name": "picsa-apps-app-native-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/picsa-apps/app-native-e2e/src",
+  "tags": [],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wdio run wdio.conf.ts",
+        "cwd": "apps/picsa-apps/app-native-e2e"
+      },
+      "dependsOn": [
+        {
+          "target": "build-debug-apk",
+          "projects": ["picsa-apps-app-native"]
+        }
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/picsa-apps/app-native-e2e/**/*.ts"]
+      }
+    }
+  }
+}

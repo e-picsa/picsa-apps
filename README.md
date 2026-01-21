@@ -23,6 +23,10 @@
 
 This project was generated using [Nx](https://nx.dev).
 
+## Testing
+
+- [Android E2E Testing](./apps/picsa-apps/app-native-e2e/README.md)
+
 ## Links and Resources
 
 - [Nx Documentation](https://nx.dev/angular)
