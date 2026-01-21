@@ -8,7 +8,7 @@
     "e2e": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["default", "^production"],
+      "inputs": ["{projectRoot}/**/*.ts"],
       "options": {
         "command": "wdio run wdio.conf.ts",
         "cwd": "apps/picsa-apps/app-native-e2e"
