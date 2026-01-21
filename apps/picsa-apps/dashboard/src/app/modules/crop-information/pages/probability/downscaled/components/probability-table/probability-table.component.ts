@@ -19,8 +19,8 @@ import { CropProbabilityTableComponent as CropProbabilityTableFrontend } from '@
 import type { IProbabilityTableMeta, IStationCropData } from '@picsa/crop-probability/src/app/models';
 import { ICropName } from '@picsa/data';
 import { arrayToHashmap } from '@picsa/utils';
-import { ICropSuccessEntry, IStationRow } from 'apps/picsa-apps/dashboard/src/app/modules/climate/types';
 
+import { ICropSuccessEntry, IStationRow } from '../../../../../../climate/types';
 import { CropInformationService, ICropData, ICropDataDownscaledWaterRequirements } from '../../../../../services';
 import { CropProbabilityLanguageSelectComponent } from '../language-select/language-select.component';
 

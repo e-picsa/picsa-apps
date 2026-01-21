@@ -1,10 +1,9 @@
-import { Database } from '@picsa/server-types';
+import { ClimateApi, Database } from '@picsa/server-types';
 
-import * as APITypes from './api';
 export * from './db';
 
 // Re-export specific API Types
-type schemas = APITypes.components['schemas'];
+type schemas = ClimateApi.components['schemas'];
 export type IAnnualRainfallSummariesData = schemas['AnnualRainfallSummariesdata'];
 export type IAnnualRainfallSummariesMetadata = schemas['AnnualRainfallSummariesMetadata'];
 
