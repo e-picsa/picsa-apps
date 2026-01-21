@@ -1,3 +1,4 @@
+import { browser } from '@wdio/globals';
 import type { Options } from '@wdio/types';
 import path from 'path';
 
