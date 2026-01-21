@@ -3,6 +3,12 @@ name: Android E2E Tests
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      api-level:
+        description: "Android API level for emulator"
+        required: false
+        default: "34"
+        type: string
 
 jobs:
   build:
@@ -17,6 +23,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      API_LEVEL: ${{ inputs.api-level || '34' }}
     steps:
       - uses: actions/checkout@v6
 
@@ -48,14 +56,13 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          # key: avd-${{ matrix.api-level }}
-          key: avd-34
+          key: avd-${{ env.API_LEVEL }}
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: ${{ env.API_LEVEL }}
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
@@ -64,7 +71,7 @@ jobs:
       - name: Run Appium tests on emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: ${{ env.API_LEVEL }}
           arch: x86_64
           profile: pixel_6
           emulator-options: -no-snapshot-save -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect
@@ -74,7 +81,7 @@ jobs:
           APK_PATH: ${{ github.workspace }}/apk
 
       - name: Upload screenshots
-        if: always() # Upload even if tests fail
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-screenshots-${{ github.run_id }}
