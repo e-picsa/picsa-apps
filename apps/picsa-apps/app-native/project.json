@@ -8,9 +8,11 @@
   "implicitDependencies": ["picsa-apps-app"],
   "targets": {
     "build": {
-      "cache": false,
+      "cache": true,
       "executor": "nx:run-commands",
-      "outputs": [],
+      "outputs": ["{projectRoot}/android/app/src/main/assets/public"],
+      "inputs": ["production", "^production", "{projectRoot}/capacitor.config.ts"],
+      "dependsOn": ["^build"],
       "options": {
         "command": "npx cap sync",
         "cwd": "apps/picsa-apps/app-native"
@@ -18,7 +20,9 @@
     },
     "build-debug-apk": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
+      "cache": true,
+      "inputs": ["default", "^production"],
       "outputs": [
         "{projectRoot}/android/app/build/outputs/apk/debug/app-debug.apk"
       ],
