@@ -1,3 +1,4 @@
+import { browser } from '@wdio/globals';
 import type { Options } from '@wdio/types';
 import path from 'path';
 
@@ -42,6 +43,7 @@ export const config: Options.Testrunner = {
   // Test Configurations
   // ===================
   //
+  maxInstances: 1,
   logLevel: 'info',
   bail: 0,
   baseUrl: 'http://localhost',
@@ -67,5 +69,14 @@ export const config: Options.Testrunner = {
   mochaOpts: {
     ui: 'bdd',
     timeout: 60000,
+  },
+  before: async function () {
+    const { switchToWebView, loadState } = await import('./src/utils/wdio-commands');
+
+    // Add custom command to switch to WebView
+    browser.addCommand('switchToWebView', switchToWebView);
+
+    // Add custom command to load state
+    browser.addCommand('loadState', loadState);
   },
 };

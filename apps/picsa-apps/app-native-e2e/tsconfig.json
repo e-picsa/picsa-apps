@@ -5,9 +5,9 @@
     "outDir": "../../../dist/out-tsc",
     "allowSyntheticDefaultImports": true,
     "module": "commonjs",
-    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"],
     "target": "es2019"
   },
   "include": ["src/**/*.ts", "wdio.conf.ts", "**/*.d.ts"],
-  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "test-setup.ts"]
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "test-setup.ts"],
+  "files": ["src/types/wdio.d.ts"]
 }

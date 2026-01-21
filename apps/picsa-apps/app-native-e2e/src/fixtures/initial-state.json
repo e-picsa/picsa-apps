@@ -1,0 +1,12 @@
+{
+  "picsa_user_settings": {
+    "country_code": "zm",
+    "deployment_id": "zm",
+    "language_code": "zm_en",
+    "user_type": "farmer",
+    "location": [null, null, "zm"],
+    "climate_tool": {
+      "station_id": ""
+    }
+  }
+}
