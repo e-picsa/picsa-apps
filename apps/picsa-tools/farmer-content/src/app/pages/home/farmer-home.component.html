@@ -1,13 +1,23 @@
 <div class="page-content" style="padding-top: 0" scrollRestore @fadeInOut>
+
+  <picsa-svg-colour-selector></picsa-svg-colour-selector>
+  
   <div class="step-grid">
-    @for (step of content; track step.id) {
-      <div class="step-container" matRipple [routerLink]="step.slug" [attr.data-disabled]="step.disabled">
-        <div style="position: relative">
-          <div class="step-image-container">
-            <img class="step-image" [src]="step.icon_path" />
-          </div>
-          @if (step.stepNumber && step.stepNumber > -1) {
-            <div class="step-number">{{ step.stepNumber }}</div>
+    @for(step of content; track step.id){
+    <div class="step-container" matRipple [routerLink]="step.slug" [attr.data-disabled]="step.disabled">
+      <div style="position: relative">
+        <div [id]="'icon-' + step.id" class="step-image-container" >
+          <picsa-dynamic-colour-svgs [svgUrl]="step.icon_path" />
+        </div>
+        @if($index>0){
+        <div class="step-number">{{ $index }}</div>
+        }
+      </div>
+      <div class="step-content">
+        <h2 class="step-title">{{ step.title | translate }}</h2>
+        <div class="tags-container">
+          @for(tag of step.tags; track tag){
+          <span class="tag" [attr.data-color]="tag.color">{{ tag.label | translate }}</span>
           }
         </div>
         <div class="step-content">
@@ -22,6 +32,7 @@
           <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
+    </div>
     }
   </div>
 </div>
