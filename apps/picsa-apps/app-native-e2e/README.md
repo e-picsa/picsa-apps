@@ -44,6 +44,15 @@ This will automatically build device apk and run tests
 - The tests defined in `src/specs` are executed.
 - Screenshots are saved to `apps/picsa-apps/app-native-e2e/screenshots`.
 
+## Test Development
+
+If a debug apk has already been built, tests can be run independent of build via
+
+```sh
+cd apps/picsa-apps/app-native-e2e
+yarn wdio run wdio.conf.ts
+```
+
 ## Troubleshooting
 
 - **"Couldn't find plugin appium service"**: Ensure `@wdio/appium-service` is installed in `devDependencies`.

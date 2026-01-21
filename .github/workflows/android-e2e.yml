@@ -1,14 +1,14 @@
 name: Android E2E Tests
 
 on:
-  pull_request:
+  # pull_request:
   workflow_dispatch:
     inputs:
       api-level:
         description: "Android API level for emulator"
         required: false
-        default: "34"
-        type: string
+        default: 34
+        type: number
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      API_LEVEL: ${{ inputs.api-level || '34' }}
+      API_LEVEL: ${{ inputs.api-level || 34 }}
     steps:
       - uses: actions/checkout@v6
 

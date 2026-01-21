@@ -1,6 +1,10 @@
 import { browser } from '@wdio/globals';
 import type { Options } from '@wdio/types';
+import { existsSync, mkdirSync } from 'fs';
+import { emptyDirSync } from 'fs-extra';
 import path from 'path';
+
+import { PATHS } from './src/constants';
 
 const isCI = !!process.env.CI;
 
@@ -60,8 +64,18 @@ export const config: Options.Testrunner = {
     timeout: isCI ? 300000 : 60000,
   },
   before: async function () {
-    const { switchToWebView, loadState } = await import('./src/utils/wdio-commands');
+    const { switchToWebView } = await import('./src/utils/wdio-commands');
     browser.addCommand('switchToWebView', switchToWebView);
-    browser.addCommand('loadState', loadState);
+    const { loadPicsaConfig } = await import('./src/utils/picsa-utils');
+    browser.addCommand('loadPicsaConfig', loadPicsaConfig);
+    setupScreenshotsFolder();
   },
 };
+
+function setupScreenshotsFolder() {
+  const screenshotPath = PATHS.SCREENSHOTS;
+  if (!existsSync(screenshotPath)) {
+    mkdirSync(screenshotPath, { recursive: true });
+  }
+  emptyDirSync(screenshotPath);
+}
