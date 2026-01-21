@@ -1,0 +1,71 @@
+name: Android E2E Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/android-build.yml
+    with:
+      build-type: debug
+    secrets:
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+
+  e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: ./apk
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run Appium tests
+        working-directory: apps/picsa-apps/app-native-e2e
+        run: yarn wdio run wdio.conf.ts
+        env:
+          APK_PATH: ${{ github.workspace }}/apk
+
+      - name: Run Appium tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-snapshot-save -no-window -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            # Start Appium server in background
+            npx appium --relaxed-security &
+            APPIUM_PID=$!
+            sleep 10
+
+            # Run tests
+            cd apps/picsa-apps/app-native-e2e
+            npx wdio run wdio.conf.ts
+
+            # Cleanup
+            kill $APPIUM_PID || true
+
+      - name: Upload screenshots
+        if: always() # Upload even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screenshots-${{ github.run_id }}
+          path: apps/picsa-apps/app-native-e2e/screenshots
+          retention-days: 14
+          if-no-files-found: ignore

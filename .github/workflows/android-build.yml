@@ -1,0 +1,133 @@
+name: Android Build (Reusable)
+
+on:
+    workflow_call:
+        inputs:
+            build-type:
+                description: "Build type: debug or release"
+                required: true
+                type: string
+        outputs:
+            artifact-name:
+                description: "Name of the uploaded artifact"
+                value: ${{ jobs.build.outputs.artifact-name }}
+        secrets:
+            SUPABASE_ANON_KEY:
+                required: true
+            GOOGLE_SERVICES_JSON:
+                required: true
+            # Only required for release builds
+            ANDROID_SIGNING_KEY_B64:
+                required: false
+            ANDROID_KEY_ALIAS:
+                required: false
+            ANDROID_KEY_STORE_PASSWORD:
+                required: false
+            ANDROID_KEY_PASSWORD:
+                required: false
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        outputs:
+            artifact-name: ${{ steps.set-artifact-name.outputs.name }}
+        env:
+            SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+            SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  lfs: true
+
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24.x
+                  cache: "yarn"
+
+            - name: Populate supabase config
+              run: |
+                  jq -n \
+                    --arg apiUrl "https://${SUPABASE_PROJECT_ID}.supabase.co" \
+                    --arg anonKey "$SUPABASE_ANON_KEY" \
+                    '{apiUrl: $apiUrl, anonKey: $anonKey}' \
+                    > libs/environments/src/supabase/supabase.config.json
+
+            - name: Install node modules
+              run: yarn install --immutable
+
+            - name: Populate google-services.json
+              env:
+                  GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+              run: |
+                  echo $GOOGLE_SERVICES_JSON > apps/picsa-apps/app-native/android/app/google-services.json
+
+            - name: Build App
+              run: yarn nx run picsa-apps-app-native:build
+
+            - name: Verify supabase config in built output
+              run: |
+                  CONFIG_FILE=dist/apps/picsa-apps/app/assets/supabase.config.json
+                  if [ ! -f "$CONFIG_FILE" ]; then
+                    echo "❌ Missing $CONFIG_FILE in build output!"
+                    ls dist/apps/picsa-apps/app/assets
+                    exit 1
+                  fi
+                  echo "✅ Found supabase config in build output"
+                  cat "$CONFIG_FILE"
+
+            - name: Sync Capacitor
+              run: npx cap sync
+              working-directory: apps/picsa-apps/app-native
+
+            - name: Set up JDK 21
+              uses: actions/setup-java@v5
+              with:
+                  distribution: "temurin"
+                  java-version: "21"
+                  cache: "gradle"
+
+            - name: Setup Android SDK
+              uses: android-actions/setup-android@v3
+
+            - name: Build Android Debug APK
+              if: inputs.build-type == 'debug'
+              working-directory: apps/picsa-apps/app-native/android
+              run: ./gradlew :app:assembleDebug
+
+            - name: Build Android Release Bundle
+              if: inputs.build-type == 'release'
+              working-directory: apps/picsa-apps/app-native/android
+              run: ./gradlew :app:bundleRelease
+
+            - name: Sign Android Release
+              if: inputs.build-type == 'release'
+              id: sign_aab
+              uses: r0adkll/sign-android-release@v1
+              with:
+                  releaseDirectory: apps/picsa-apps/app-native/android/app/build/outputs/bundle/release
+                  signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY_B64 }}
+                  alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+                  keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+                  keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+            - name: Set artifact name
+              id: set-artifact-name
+              run: echo "name=android-${{ inputs.build-type }}-${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+            - name: Upload Debug APK
+              if: inputs.build-type == 'debug'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ steps.set-artifact-name.outputs.name }}
+                  path: apps/picsa-apps/app-native/android/app/build/outputs/apk/debug/*.apk
+                  retention-days: 7
+
+            - name: Upload Signed Release AAB
+              if: inputs.build-type == 'release'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ steps.set-artifact-name.outputs.name }}
+                  path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
+                  retention-days: 30
