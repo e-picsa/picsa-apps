@@ -1,12 +1,14 @@
+import type { UserSettingName } from '../fixtures/initial-state';
+
 declare global {
   namespace WebdriverIO {
     interface Browser {
       /**
-       * Loads localStorage state from a JSON fixture file.
-       * @param fixturePath Path to the json file relative to fixtures directory
+       * Loads predetermined picsa configuration into localstorage
+       * @param configName Named config fixture
        * @param shouldReload Whether to reload the page after setting (default: true)
        */
-      loadState: (fixturePath: string, shouldReload?: boolean) => Promise<void>;
+      loadPicsaConfig: (configName: UserSettingName, shouldReload?: boolean) => Promise<void>;
 
       /**
        * Switch to the WebView context of the hybrid app.
