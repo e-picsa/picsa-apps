@@ -1,8 +1,4 @@
-import {
-  IStationCropData,
-  IStationCropDataItem,
-  IStationCropInformation,
-} from '../../../../picsa-tools/crop-probability-tool/src/app/models';
+import { IStationCropData, IStationCropDataItem, IStationCropInformation } from '@picsa/crop-probability/src/models';
 
 export class DocParser {
   constructor(public rowData: string[][]) {}
