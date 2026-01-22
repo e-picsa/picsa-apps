@@ -13,7 +13,7 @@ global.structuredClone = (v) => JSON.parse(JSON.stringify(v));
 
 import crypto from 'crypto';
 
-import { MockPicsaDatabase_V2_Service } from '../db.service.mock.spec';
+import { MockPicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2/db.service.mock.spec';
 
 Object.defineProperty(globalThis, 'crypto', { value: { subtle: crypto.subtle } });
 
