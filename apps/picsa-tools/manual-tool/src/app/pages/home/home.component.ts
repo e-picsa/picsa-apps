@@ -1,8 +1,10 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-import { ChangeDetectionStrategy, Component, inject,OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourceDownloadComponent } from '@picsa/resources/components';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { IResourceFile } from '@picsa/resources/schemas';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ResourcesToolService } from '@picsa/resources/services/resources-tool.service';
 import { FadeInOut, FlyInOut } from '@picsa/shared/animations';
 import { RxDocument } from 'rxdb';

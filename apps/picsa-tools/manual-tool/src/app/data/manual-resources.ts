@@ -1,11 +1,11 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { ILocaleCode } from '@picsa/data';
 /**
  * Re-export manual resources from resource tool
  * TODO - consider if still required in resources or if can be moved standalone here
  */
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { PICSA_MANUAL_RESOURCES } from '@picsa/resources/data/picsa/manuals';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { IResourceFile } from '@picsa/resources/schemas';
 
 import { IManualVariant } from '../models';

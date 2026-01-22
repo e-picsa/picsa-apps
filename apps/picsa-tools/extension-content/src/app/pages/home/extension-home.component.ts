@@ -1,5 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-
 import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
@@ -9,6 +7,7 @@ import { IToolsDataEntry, TOOLS_DATA_HASHMAP } from '@picsa/data/tools';
 import { ENVIRONMENT } from '@picsa/environments';
 import { APP_VERSION } from '@picsa/environments/src/version';
 import { PicsaTranslateModule } from '@picsa/i18n';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { MonitoringToolService } from '@picsa/monitoring/src/app/services/monitoring-tool.service';
 import { TourService } from '@picsa/shared/services/core/tour';
 
