@@ -15,13 +15,13 @@ import { RxDBMigrationPlugin } from 'rxdb-14/plugins/migration';
 import { RxDBQueryBuilderPlugin } from 'rxdb-14/plugins/query-builder';
 import { getRxStorageDexie } from 'rxdb-14/plugins/storage-dexie';
 
-import { COLLECTION as PHOTO_COLLECTION } from '../../../../features/photo/schema';
-import { COLLECTION as VIDEO_COLLECTION } from '../../../../features/video-player/schema';
-import { PicsaDatabase_V2_Service } from '../db.service';
-import { IPicsaCollectionCreator } from '../models';
-import { ATTACHMENTS_COLLECTION } from '../schemas/attachments';
-import { SYNC_DELETE_COLLECTION } from '../schemas/sync_delete';
-import { removeIndexedDB } from './common';
+import { COLLECTION as PHOTO_COLLECTION } from '@picsa/shared/features/photo/schema';
+import { COLLECTION as VIDEO_COLLECTION } from '@picsa/shared/features/video-player/schema';
+import { PicsaDatabase_V2_Service } from '@picsa/shared/services/core/db_v2/db.service';
+import { IPicsaCollectionCreator } from '@picsa/shared/services/core/db_v2/models';
+import { ATTACHMENTS_COLLECTION } from '@picsa/shared/services/core/db_v2/schemas/attachments';
+import { SYNC_DELETE_COLLECTION } from '@picsa/shared/services/core/db_v2/schemas/sync_delete';
+import { removeIndexedDB } from '@picsa/shared/services/core/db_v2/indexeddb.utils';
 
 interface IMigrateMeta {
   creator: IPicsaCollectionCreator<any>;

@@ -14,7 +14,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { IStationMeta } from '@picsa/models/src';
+import { IStationMeta } from '@picsa/models';
 import * as L from 'leaflet';
 
 @Component({

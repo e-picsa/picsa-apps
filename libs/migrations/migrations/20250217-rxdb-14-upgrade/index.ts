@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
-import { RXDB_14_Migrate } from '@picsa/shared/services/core/db_v2/migration';
-import { IMigration } from '../types';
+import { RXDB_14_Migrate } from './rxdb-14.migration';
+import { IMigration } from '../../types';
 
 const migration: IMigration = {
   id: 20250217,

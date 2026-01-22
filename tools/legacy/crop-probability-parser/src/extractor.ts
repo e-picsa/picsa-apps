@@ -2,7 +2,7 @@ import { readdirSync } from 'fs-extra';
 import { extname, relative, resolve } from 'path';
 import { loadAsync } from 'jszip';
 import { readFileSync } from 'fs';
-import { xmlToJson } from '../../../../../libs/utils/xml';
+import { xmlToJson } from '@picsa/utils/xml';
 import { IWordXMLJSON } from './types';
 import { PATHS } from './paths';
 import { ensureWrite, flattenJSON } from './utils';
