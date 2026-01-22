@@ -1,7 +1,7 @@
 {
   "name": "i18n-gen",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/i18n/src",
+  "sourceRoot": "libs/i18n-gen/src",
   "projectType": "library",
   "tags": [],
   "targets": {

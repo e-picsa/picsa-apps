@@ -20,8 +20,7 @@ import { TranslationDashboardService } from '../../../../translations.service';
 
 type ITranslationRow = Database['public']['Tables']['translations']['Row'];
 
-interface ITranslationImportEntry {
-  id: string;
+interface ITranslationFileEntry {
   /** case-sensitive string representation for translation */
   text: string;
   /** associated tool for context */
@@ -29,6 +28,11 @@ interface ITranslationImportEntry {
   /** additional context related to tool */
   context?: string;
 }
+
+interface ITranslationImportEntry extends ITranslationFileEntry {
+  id: string;
+}
+
 enum ImportActions {
   skip = 'skip',
   add = 'add',
@@ -125,13 +129,13 @@ export class TranslationsJSONImportComponent {
    * what database actions are required for each when comparing to values
    * that already exist on server (i.e. update, skip, archive, restore)
    */
-  private async prepareSourceActions(entries: ITranslationImportEntry[]) {
+  private async prepareSourceActions(entries: ITranslationFileEntry[]) {
     if (!Array.isArray(entries)) {
       this.uppy.cancelAll();
       console.error(entries);
       throw new Error('Data is not formatted correctly');
     }
-    const localHashmap: Record<string, ITranslationImportEntry> = {};
+    const localHashmap: Record<string, ITranslationFileEntry> = {};
     for (const entry of entries) {
       const id = this.service.generateTranslationID(entry as ITranslationRow);
       localHashmap[id] = entry;
@@ -145,10 +149,7 @@ export class TranslationsJSONImportComponent {
   }
 
   /** Compare local translation import with server and generate action summary */
-  private generateSourceSummary(
-    local: Record<string, ITranslationImportEntry>,
-    server: Record<string, ITranslationRow>,
-  ) {
+  private generateSourceSummary(local: Record<string, ITranslationFileEntry>, server: Record<string, ITranslationRow>) {
     const summary: ImportActionSummary = { add: [], restore: [], archive: [], skip: [] };
     for (const [id, entry] of Object.entries(local)) {
       const serverEntry = server[id];
